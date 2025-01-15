@@ -420,6 +420,7 @@ export class AonApplication extends AonElement {
     });  
 
     let span = this.createElement(TAG.SPAN);
+	span.id = `aonSidenavTitle${data.id}Name`;
     span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
@@ -986,6 +987,18 @@ export class AonApplication extends AonElement {
         } 
         span.innerHTML = text;
       }
+    }
+  }
+
+  /**
+   * 
+   * @param {String} id  
+   * @param {Number} title 
+   */
+  updateSidenavTitle(id, title){
+    let span = this.getElement(`aonSidenavTitle${id}Name`);
+    if(span){
+        span.innerHTML = title;
     }
   }
 

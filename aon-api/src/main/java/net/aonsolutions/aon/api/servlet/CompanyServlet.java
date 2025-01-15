@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+import java.io.InterruptedIOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -6,6 +7,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.naming.LimitExceededException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +58,11 @@ import net.aonsolutions.aon.api.servlet.task.TaskFilter;
 public class CompanyServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CompanyServlet.class.getName());
-
+	
+	private static class LimitExceededException extends RuntimeException {
+		
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API COMPANY SERVLET - GET METHOD");
@@ -225,19 +232,29 @@ public class CompanyServlet extends AonApiHttpServlet{
 			
 			JSONArray jsArray = new JSONArray();
 			
+			Integer limit = api.getData().optInt(IJsonNames.LIMIT, Integer.MAX_VALUE); 
+			
 			List<String> schemas = AONContext.getSchemas();
 		
-			for(String schema : schemas) {
-				LinkedList<Integer> ds = new LinkedList<>();	
-				AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, null, null)
-				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
-				.forEach(
-					ac -> {
-					if(!ds.contains(ac.getDomain().getId())){
-						jsArray.put(ac.toJSON());
-						ds.add(ac.getDomain().getId());
-					}
-				});
+			try {
+				for(String schema : schemas) {
+					LinkedList<Integer> ds = new LinkedList<>();	
+					
+					AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, 1, limit)
+					.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
+					.forEach(
+						ac -> {
+						if(!ds.contains(ac.getDomain().getId())){
+							jsArray.put(ac.toJSON());
+							ds.add(ac.getDomain().getId());
+						}
+						if ( jsArray.length() == limit ) 
+							throw new LimitExceededException();
+					});
+					
+				}
+			} catch ( LimitExceededException e ) {
+				
 			}
 			
 			return jsArray;
