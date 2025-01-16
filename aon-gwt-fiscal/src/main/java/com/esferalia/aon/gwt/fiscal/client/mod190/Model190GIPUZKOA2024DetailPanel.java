@@ -7,9 +7,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190GIPUZKOADetail2023.IModel190DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190GIPUZKOADetail2024.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902022GipuzkoaKey;
+import com.esferalia.aon.occam.api.model.type.Mod1902024GipuzkoaKey;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -22,14 +22,24 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model190GIPUZKOA2024DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
 	private static final String WIDTH_200PX = "200px";
 
 	private int tabIndex; 
 	private DocumentTextBox document;
+
+	private ListBox disability;
+	private ListBox contract;
+	private AonDoubleBox applicableReduction;
+	private AonDoubleBox deducibleExpense;
+	private AonDoubleBox compensatoryPension;
+	private AonIntegerBox otherDescendent;
+	private ListBox titConvivivencia;
+	private AonDocumentTextBox spouseDocument;
+	private ListBox compInfancia;
 	
-	public Model190GIPUZKOA2023DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
+	public Model190GIPUZKOA2024DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
 		FlowPanel additionalDataPanel = new FlowPanel();
 		FlowPanel ilPanel = new FlowPanel();
 		
@@ -114,15 +124,15 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod1902022GipuzkoaKey k : Mod1902022GipuzkoaKey.values()) {
+		for (Mod1902024GipuzkoaKey k : Mod1902024GipuzkoaKey.values()) {
 			key.addItem(k.getDescription(),k.getValue());
 		}
 		
-		Model190GIPUZKOA2023DetailPanel.setValue(key, subkey, detail);
+		Model190GIPUZKOA2024DetailPanel.setValue(key, subkey, detail);
 		
 		key.addChangeHandler(event -> {
 			subkey.clear();
-			Mod1902022GipuzkoaKey keyEnum = Mod1902022GipuzkoaKey.values()[key.getSelectedIndex()];
+			Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 			detail.setKey( keyEnum.toString() );
 			if (keyEnum.hasSubkeys()) {
 				subkey.setEnabled(true);
@@ -134,15 +144,15 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
-			Model190GIPUZKOA2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-			Model190GIPUZKOA2023DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			enableOrDisableIlPanel(key, subkey, ilPanel);
+			enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 1, key);
 		tab2.getFlexCellFormatter().setRowSpan(0, 1, 4);
 		
 		subkey.addChangeHandler(event -> {
-			Mod1902022GipuzkoaKey keyEnum = Mod1902022GipuzkoaKey.values()[key.getSelectedIndex()];
+			Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 			if (keyEnum.hasSubkeys()) {
 				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
 				detail.setSubKey(keyEnum.getSubKeys()[idx]);
@@ -150,8 +160,8 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
-			Model190GIPUZKOA2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-			Model190GIPUZKOA2023DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			enableOrDisableIlPanel(key, subkey, ilPanel);
+			enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.subkey()));
@@ -271,10 +281,11 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 			callback.onValueChanged(detail);
 		});
 		tab3.setWidget(2, 3, outputRetentionIL);
-		Model190GIPUZKOA2023DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+		enableOrDisableIlPanel(key, subkey, ilPanel);
 		ilPanel.add(tab3);
 		panel.add(ilPanel);
 		
+		// Datos adicionales
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.getColumnFormatter().setWidth( 0, "100px");
@@ -298,7 +309,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.compensatoryPension()));
 		tab4.setWidget(1, 5, new Model190SmallerLabel("Total descendientes"));
 		
-		ListBox disability = new ListBox();
+		disability = new ListBox();
 		disability.setWidth("40px");
 		disability.addItem("0");
 		disability.addItem("1");
@@ -311,8 +322,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		});
 		tab4.setWidget(2, 0, disability);
 		
-		
-		ListBox contract = new ListBox();
+		contract = new ListBox();
 		contract.setWidth("40px");
 		contract.addItem("-");
 		contract.addItem("1");
@@ -326,16 +336,15 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		});
 		tab4.setWidget(2, 1, contract);
 
-		AonDoubleBox applicableReduction = new AonDoubleBox();
+		applicableReduction = new AonDoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
 		applicableReduction.addValueChangeHandler(event -> {
 			detail.setApplicableReduction(applicableReduction.getValue());
 			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(2, 2, applicableReduction);
-
 		
-		AonDoubleBox deducibleExpense = new AonDoubleBox();
+		deducibleExpense = new AonDoubleBox();
 		deducibleExpense.setValue(detail.getDeducibleExpense());
 		deducibleExpense.addValueChangeHandler(event -> {
 			detail.setDeducibleExpense(deducibleExpense.getValue());
@@ -343,8 +352,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		});
 		tab4.setWidget(2, 3, deducibleExpense);
 
-		
-		AonDoubleBox compensatoryPension = new AonDoubleBox();
+		compensatoryPension = new AonDoubleBox();
 		compensatoryPension.setValue(detail.getCompensatoryPension());
 		compensatoryPension.addValueChangeHandler(event -> {
 			detail.setCompensatoryPension(compensatoryPension.getValue());
@@ -352,7 +360,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		});
 		tab4.setWidget(2, 4, compensatoryPension);
 		
-		AonIntegerBox otherDescendent = new AonIntegerBox();
+		otherDescendent = new AonIntegerBox();
 		otherDescendent.setMaxLength(1);
 		otherDescendent.setVisibleLength(1);
 		otherDescendent.setValue(detail.getOtherDescendent());
@@ -361,10 +369,9 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(2, 5, otherDescendent);
-
 		
 		tab4.setWidget(3, 0, new Model190SmallerLabel("Tit. unidad conviv."));
-		ListBox titConvivivencia = new ListBox();
+		titConvivivencia = new ListBox();
 		titConvivivencia.setWidth("40px");
 		titConvivivencia.addItem("----");
 		titConvivivencia.addItem("1 - El perceptor es el titular de la unidad de convivencia.");
@@ -377,7 +384,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		tab4.setWidget(4,0 , titConvivivencia);
 		
 		tab4.setWidget(3, 1, new Model190SmallerLabel("NIF titular ud. conv."));
-		AonDocumentTextBox spouseDocument = new AonDocumentTextBox();
+		spouseDocument = new AonDocumentTextBox();
 		spouseDocument.setVisibleLength(9);
 		spouseDocument.setMaxLength(9);
 
@@ -389,7 +396,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		tab4.setWidget(4, 1, spouseDocument);
 
 		tab4.setWidget(3, 2, new Model190SmallerLabel("Compl. ayuda infancia"));
-		ListBox compInfancia = new ListBox();
+		compInfancia = new ListBox();
 		compInfancia.setWidth("40px");
 		compInfancia.addItem("----");
 		compInfancia.addItem("1 - La prestaci\u00F3n incluye cuant\u00EDas complemento de ayuda para la infancia previsto en el IMV");
@@ -485,6 +492,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 
 	@Override
 	public void setAccessKey(char key) {
+		// do nothing
 	}
 
 	@Override
@@ -500,9 +508,9 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 
 	private static void setValue(ListBox key, ListBox subKey, Mod190Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod1902022GipuzkoaKey.A.toString());
+			detail.setKey(Mod1902024GipuzkoaKey.A.toString());
 		}
-		Mod1902022GipuzkoaKey keyEnum = Mod1902022GipuzkoaKey.valueOf(detail.getKey());
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		subKey.clear();
 		if (keyEnum.hasSubkeys()) {
@@ -519,26 +527,41 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		}
 	}
 
-	private static void enableOrDisableAdditionalDataPanel(ListBox key, ListBox subKey, Panel  panel) {
-		Mod1902022GipuzkoaKey keyEnum = Mod1902022GipuzkoaKey.values()[key.getSelectedIndex()];
+	private void enableOrDisableAdditionalDataPanel(ListBox key, ListBox subKey, Panel  panel) {
+		
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
-		panel.setVisible( 
-					Mod1902022GipuzkoaKey.A == keyEnum
-				|| (Mod1902022GipuzkoaKey.B == keyEnum && "01".equals(subk))
-				|| (Mod1902022GipuzkoaKey.B == keyEnum && "02".equals(subk))
-				|| (Mod1902022GipuzkoaKey.B == keyEnum && "04".equals(subk))
-				||  Mod1902022GipuzkoaKey.C == keyEnum
-				|| (Mod1902022GipuzkoaKey.E == keyEnum && "01".equals(subk))
-				|| (Mod1902022GipuzkoaKey.L == keyEnum && "29".equals(subk))
-			);
+		boolean a = Mod1902024GipuzkoaKey.A == keyEnum;
+		boolean abc = Mod1902024GipuzkoaKey.A == keyEnum || Mod1902024GipuzkoaKey.B == keyEnum || Mod1902024GipuzkoaKey.C == keyEnum;
+		boolean e01 = Mod1902024GipuzkoaKey.E == keyEnum && "01".equals(subk);
+		boolean efghi = (Mod1902024GipuzkoaKey.E == keyEnum) || 
+				        (Mod1902024GipuzkoaKey.F == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk))) ||
+				        (Mod1902024GipuzkoaKey.G == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk) || "08".equals(subk))) ||
+				        (Mod1902024GipuzkoaKey.H == keyEnum) ||
+				        (Mod1902024GipuzkoaKey.I == keyEnum);
+		boolean l051027 = Mod1902024GipuzkoaKey.L == keyEnum && ("05".equals(subk) || "10".equals(subk) || "27".equals(subk));
+		boolean l29 = Mod1902024GipuzkoaKey.L == keyEnum && "29".equals(subk);
+		
+		panel.setVisible(abc || efghi || l051027 || l29); 
+		
+		disability.setEnabled(a);                            // Discapacidad: Clave A.
+		contract.setEnabled(a);                              // Tipo de relación: Clave A.
+		applicableReduction.setEnabled(abc || efghi);        // Importe no integrado: Claves A, B,	C, E, F (subclaves 01 a 06), G (subclaves 01 a 06 y 08), H e I.
+		deducibleExpense.setEnabled(abc || e01 || l051027);  // Gastos deducibles: Claves A, B, C, E01, L05, L10 y L27.
+		compensatoryPension.setEnabled(abc);                 // Pensiones compensatorias: Claves A, B y C.
+		otherDescendent.setEnabled(abc);                     // Descendientes: Claves A, B y C.
+		titConvivivencia.setEnabled(l29);                    // Titular de la unidad de convivencia: Clave L29.
+		spouseDocument.setEnabled(l29);                      // NIF titular unidad de convivencia: Clave L29.
+		compInfancia.setEnabled(l29);                        // Complemento ayuda a la infancia: Clave L29.
+		
 	}
 	
-	private static void enableOrDisableIlPanel(ListBox key, ListBox subKey, Panel  panel) {
-		Mod1902022GipuzkoaKey keyEnum = Mod1902022GipuzkoaKey.values()[key.getSelectedIndex()];
+	private void enableOrDisableIlPanel(ListBox key, ListBox subKey, Panel  panel) {
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
 		panel.setVisible( 
-				Mod1902022GipuzkoaKey.A == keyEnum
-				|| (Mod1902022GipuzkoaKey.B == keyEnum && "01".equals(subk))
+				Mod1902024GipuzkoaKey.A == keyEnum
+				|| (Mod1902024GipuzkoaKey.B == keyEnum && "01".equals(subk))
 			);
 	}
 	

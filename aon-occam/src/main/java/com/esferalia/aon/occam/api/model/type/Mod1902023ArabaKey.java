@@ -4,7 +4,7 @@ public enum Mod1902023ArabaKey {
 	 A ("A - Rendimientos del trabajo: Empleados por cuenta ajena en general"
 		 ,null
 	 )
-	,B ("B - Pensionistas y perceptores de haberes pasivos y dem\u00E1s prestaciones previstas en el artículo 18.a) de la Norma Foral del Impuesto"
+	,B ("B - Pensionistas y perceptores de haberes pasivos y dem\u00E1s prestaciones previstas en el art\u00EDculo 18.a) de la Norma Foral del Impuesto"
 		,new String[] { "01", "03", "10", "11", "12", "13", "14", "20", "21", "22", "23", "24", "25", "26", "27"}
 	)
 	,C ("C - Prestaciones o subsidios por desempleo"
