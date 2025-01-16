@@ -293,10 +293,10 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		
 		tab4.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.disability()));
 		tab4.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.contract()));
-		tab4.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.applicableReduction()));
+		tab4.setWidget(1, 2, new Model190SmallerLabel("Importe no integrado"));
 		tab4.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.deducibleExpense()));
 		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.compensatoryPension()));
-		tab4.setWidget(1, 5, new Model190SmallerLabel( AonStringUtils.abbreviate(AON.MSG.descendant(),34) ));
+		tab4.setWidget(1, 5, new Model190SmallerLabel("Total descendientes"));
 		
 		ListBox disability = new ListBox();
 		disability.setWidth("40px");
@@ -376,7 +376,7 @@ public class Model190GIPUZKOA2023DetailPanel extends SimpleLayoutPanel implement
 		});
 		tab4.setWidget(4,0 , titConvivivencia);
 		
-		tab4.setWidget(3, 1, new Model190SmallerLabel(AON.MSG.spouseDocument()));
+		tab4.setWidget(3, 1, new Model190SmallerLabel("NIF titular ud. conv."));
 		AonDocumentTextBox spouseDocument = new AonDocumentTextBox();
 		spouseDocument.setVisibleLength(9);
 		spouseDocument.setMaxLength(9);
