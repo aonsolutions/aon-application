@@ -752,6 +752,8 @@ export class AonApplication extends AonElement {
         let infoButton = new AonIconButton();
         infoButton.id = "infoButton"+option.name;
         infoButton.icon = MATERIAL_ICONS.INFO;
+        infoButton.style.position = "sticky";
+        infoButton.style.left = "250px";
         infoButton.getButton().style.height = "fit-content";
         infoButton.getButton().style.top = "7px";
         infoButton.addEventListener(EVENT.CLICK, () => {
