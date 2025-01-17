@@ -1538,6 +1538,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
 		this.tabLayOutPanel.selectTab(0, false);
 		this.position = selectedEmployeeIdx;
+		this.salaryWidget.resetSelectPdfSalary();
 
 		// Get Idc Dates
 		initializeIdcDateListBox();
