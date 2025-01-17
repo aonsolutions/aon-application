@@ -1070,6 +1070,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 				&& !salaryDraft.getFiscalModels().isEmpty();
 	}
 
+
+	public boolean isEqualsDbIrpfAmounts() {
+		return salaryDraft.isEqualsDbIrpfAmounts();
+	}
+
 	public List<Variable> getDrafContext() {
 		return salaryDraft.getDraftContext();
 	}
