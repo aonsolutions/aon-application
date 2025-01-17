@@ -420,6 +420,7 @@ export class AonApplication extends AonElement {
     });  
 
     let span = this.createElement(TAG.SPAN);
+    span.id = `aonSidenavTitle${data.id}Name`;
     span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
