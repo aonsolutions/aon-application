@@ -1033,6 +1033,18 @@ export class AonApplication extends AonElement {
     }
   }
 
+    /**
+   * 
+   * @param {String} id  
+   * @param {Number} title 
+   */
+    updateSidenavTitle(id, title){
+      let span = this.getElement(`aonSidenavTitle${id}Name`);
+      if(span){
+          span.innerHTML = title;
+      }
+    }
+
   addOption(name, icon, fn) {
     this.addToolbarOption(name, icon, fn);
   }
