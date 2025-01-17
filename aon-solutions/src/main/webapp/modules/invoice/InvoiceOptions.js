@@ -109,6 +109,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED_INVOICES,
     icon: MATERIAL_ICONS.UNARCHIVE,
+    info: "Prueba en el alert del info button de facturas",
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",

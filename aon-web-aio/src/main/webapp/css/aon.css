@@ -4569,3 +4569,52 @@ aon-superset iframe {
 	justify-content: center;
 }
 
+.infoButton{
+  height: fit-content !important;
+  right: -80px;
+  top: 7px;
+  position: relative;
+}
+
+.ventanaModalDivGeneral{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ventanaModalDivContenido{
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 1000px;
+  min-width: 500px;
+}
+
+.ventanaModalTitulo{
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.ventanaModalTexto{
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.ventanaModalBoton{
+  background-color : #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -420,7 +420,6 @@ export class AonApplication extends AonElement {
     });  
 
     let span = this.createElement(TAG.SPAN);
-	span.id = `aonSidenavTitle${data.id}Name`;
     span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
@@ -747,6 +746,18 @@ export class AonApplication extends AonElement {
         span.style.marginLeft = '28px';
       }
       li.appendChild(span);
+    
+      if(this.isBeta() && option.info){
+        let infoButton = new AonIconButton();
+        infoButton.id = "infoButton"+option.name;
+        infoButton.icon = MATERIAL_ICONS.INFO;
+        infoButton.getButton().style.height = "fit-content";
+        infoButton.getButton().style.top = "7px";
+        infoButton.addEventListener(EVENT.CLICK, () => {
+          this.ventanaModal(option.name,option.info);
+        });
+        li.appendChild(infoButton);
+      }
 
       if (option.actions) {
         let actionDiv = this.createElement(TAG.SPAN);
@@ -811,6 +822,37 @@ export class AonApplication extends AonElement {
         });
       }
     }
+  }
+
+  ventanaModal(titulo, texto) {
+    const divGeneral = this.createElement(TAG.DIV);
+    divGeneral.className = "ventanaModalDivGeneral";
+  
+    const divContenido = this.createElement(TAG.DIV);
+    divContenido.className = "ventanaModalDivContenido";
+  
+    const title = document.createElement("h3");
+    title.innerText = titulo;
+    title.clasName = "ventanaModalTitulo";
+  
+    const contenido = document.createElement("p");
+    contenido.innerHTML = texto;
+    contenido.className = "ventanaModalTexto";
+  
+    const boton = document.createElement("button");
+    boton.innerText = MSG.CLOSE;
+    boton.className = "ventanaModalBoton";
+  
+    boton.addEventListener("click", () => {
+      document.body.removeChild(divGeneral);
+    });
+  
+    divContenido.appendChild(title);
+    divContenido.appendChild(contenido);
+    divContenido.appendChild(boton);
+
+    divGeneral.appendChild(divContenido);
+    document.body.appendChild(divGeneral);
   }
 
   addSidenavOptions(title, options, newButton) {
@@ -987,18 +1029,6 @@ export class AonApplication extends AonElement {
         } 
         span.innerHTML = text;
       }
-    }
-  }
-
-  /**
-   * 
-   * @param {String} id  
-   * @param {Number} title 
-   */
-  updateSidenavTitle(id, title){
-    let span = this.getElement(`aonSidenavTitle${id}Name`);
-    if(span){
-        span.innerHTML = title;
     }
   }
 
