@@ -24,7 +24,7 @@ public class SalaryDraft extends SalaryPreview {
 		public static final int NUM_VALUES = Scope.values().length;
 
 	}
-
+	
 	private Integer dbId;
 	private Integer ssId;
 	
@@ -72,6 +72,8 @@ public class SalaryDraft extends SalaryPreview {
 	private Double dbProrationBase;
 	private Double ssProrationBase;
 
+	private Double totalIrpf;
+	private Double dbTotalIrpf;
 	private Double remuneration;
 	private Double dbRemuneration;
 	private Double totalLiquid;
@@ -80,6 +82,9 @@ public class SalaryDraft extends SalaryPreview {
 	private Double dbTotalPayment;
 	private Double totalDeduction;
 	private Double dbTotalDeduction;
+	private Double totalEmployee;
+	private Double dbTotalEmployee;
+	private Double ssTotalEmployee;
 	private Double totalEnterprise;
 	private Double dbTotalEnterprise;
 	private Double ssTotalEnterprise;
@@ -107,6 +112,8 @@ public class SalaryDraft extends SalaryPreview {
 
 	private List<Payment> agreementPayments;
 	
+	private boolean equalsDbIrpfAmounts;
+
 
 	public SalaryDraft() {
 		context = new LinkedList<>();
@@ -129,6 +136,8 @@ public class SalaryDraft extends SalaryPreview {
 		draftBonuses = new Stack<>();
 		
 		agreementPayments = new LinkedList<>();
+		
+		equalsDbIrpfAmounts = false;
 		
 	}
 
@@ -797,7 +806,23 @@ public class SalaryDraft extends SalaryPreview {
 		this.ssProrationBase = ssProrationBase;
 		return this;
 	}
+	
+	public Double getTotalIrpf() {
+		return totalIrpf;
+	}
+	
+	public Double getDbTotalIrpf() {
+		return dbTotalIrpf;
+	}
 
+	public void setTotalIrpf(Double totalIrpf) {
+		this.totalIrpf = totalIrpf;
+	}
+	
+	public void setDbTotalIrpf(Double dbTotalIrpf) {
+		this.dbTotalIrpf = dbTotalIrpf;
+	}
+	
 	public Double getDbRemuneration() {
 		return dbRemuneration;
 	}
@@ -833,10 +858,29 @@ public class SalaryDraft extends SalaryPreview {
 	public Double getDbTotalDeduction() {
 		return dbTotalDeduction;
 	}
-
-	public SalaryDraft setDbTotalEnterprise(Double dbTotalEnterprise) {
-		this.dbTotalEnterprise = dbTotalEnterprise;
-		return this;
+	
+	public Double getTotalEmployee() {
+		return totalEmployee;
+	}
+	
+	public Double getDbTotalEmployee() {
+		return dbTotalEmployee;
+	}
+	
+	public Double getSsTotalEmployee() {
+		return ssTotalEmployee;
+	}
+	
+	public void setTotalEmployee(Double totalEmployee) {
+		this.totalEmployee = totalEmployee;
+	}
+	
+	public void setDbTotalEmployee(Double dbTotalEmployee) {
+		this.dbTotalEmployee = dbTotalEmployee;
+	}
+	
+	public void setSsTotalEmployee(Double ssTotalEmployee) {
+		this.ssTotalEmployee = ssTotalEmployee;
 	}
 
 	public Double getDbTotalEnterprise() {
@@ -909,10 +953,23 @@ public class SalaryDraft extends SalaryPreview {
 	public Double getTotalEnterprise() {
 		return totalEnterprise;
 	}
+	
+	public Double getSsTotalEnterprise() {
+		return ssTotalEnterprise;
+	}
 
 	public SalaryDraft setTotalEnterprise(Double totalEnterprise) {
 		this.totalEnterprise = totalEnterprise;
 		return this;
+	}
+	
+	public SalaryDraft setDbTotalEnterprise(Double dbTotalEnterprise) {
+		this.dbTotalEnterprise = dbTotalEnterprise;
+		return this;
+	}
+
+	public void setSsTotalEnterprise(Double ssTotalEnterprise) {
+		this.ssTotalEnterprise = ssTotalEnterprise;
 	}
 
 	public String getEnterpriseCity() {
@@ -1031,7 +1088,19 @@ public class SalaryDraft extends SalaryPreview {
 		return this;
 	}
 
+	public boolean isEqualsDbIrpfAmounts() {
+		return equalsDbIrpfAmounts;
+	}
 
+	public void setEqualsDbIrpfAmounts(boolean dbEqualsIrpfAmounts) {
+		this.equalsDbIrpfAmounts = dbEqualsIrpfAmounts;
+	}
+	
+	
+	public boolean isSafeEmit() {
+		return fiscalModels.isEmpty() || equalsDbIrpfAmounts; 
+	}
+	
 	// ------------------------------------------------------------------------
 
 }
