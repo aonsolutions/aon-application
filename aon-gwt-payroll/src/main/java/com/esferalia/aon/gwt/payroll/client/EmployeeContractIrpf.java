@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -29,6 +30,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -93,6 +95,7 @@ public class EmployeeContractIrpf extends AonCustomDockLayout {
 	
 	private static enum COLUMNS {
 		  MON(AonStringUtils.EMPTY					,"6rem"				,"font-weight: bold; text-align: center;")
+		, TYP("Tipo"								,"5rem"  			,"")
 		, IRF("% IRFP"								,"7rem"  			,"text-align: right;")
 		, BDN("Base Dineraria"						,"7rem"  			,"text-align: right;")
 		, IDN("IRPF Dineraria"						,"7rem"  			,"text-align: right;")
@@ -275,23 +278,49 @@ public class EmployeeContractIrpf extends AonCustomDockLayout {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		if(null != employeeIrpf && AonStringUtils.equalsIgnoreCase("Manual", employeeIrpf.getSalaryType())) {
+		if(null != employeeIrpf && !employeeIrpf.isAlcatraz()  && AonStringUtils.equalsIgnoreCase("Manual", employeeIrpf.getSalaryType())) {
 			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton("Eliminar", AON.CSS.aonIconDelete());
 			deleteBtn.addStyleName(AON.CSS.aonCustomRowButtom());
 			deleteBtn.addClickHandler(e -> {
-				deleteEmployeeIrpf(employeeIrpf);
-				initEmployeeIrpfTable();
-				saveButton.setEnabled(true);
+				e.stopPropagation();
+				deleteBtn.setEnabled(false);
+				
+				AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Tramo IRPF",
+						new HTML("Se va a proceder a eliminar el tramo de IRPF <b>" + employeeIrpf.getSalaryType() + " (" + getStringMonth(month)  + ")" + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+				
+				deleteDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						deleteBtn.setEnabled(true);
+					}
+					
+					@Override
+					public void onAccept() {
+						deleteEmployeeIrpf(employeeIrpf);
+						onSave();
+					}
+				});
 			});
 			buttonContainer.add(deleteBtn);
 		}
 		
+		if(null != employeeIrpf && employeeIrpf.isAlcatraz()) {
+			AonTableButton aeatButton = new AonTableButton(
+					"Mod111 (" + employeeIrpf.getAlcatrazYear() + ", " + employeeIrpf.getAlcatrazPeriod().getDescription() + ")", 
+					getAeatButton(employeeIrpf)
+			);
+			buttonContainer.add(aeatButton);
+		}
+		
 		HTMLPanel row = tab.createRow();
 		
-		Label monthLabel = new Label(getStringMonth(month));
+		Label monthLabel = new Label(firstLine ? getStringMonth(month) : "");
 		monthLabel.setTitle(getStringMonth(month));
 		tab.addInlineStyle(monthLabel, COLUMNS.MON.getCellStyleClass());
 		tab.addRow(row, monthLabel, COLUMNS.MON.getColWidth());
+		
+		tab.addRow(row, new Label(null != employeeIrpf ? employeeIrpf.getSalaryType() : ""), COLUMNS.TYP.getColWidth());
 		
 		HTMLPanel irpfPercentPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		irpfPercentPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
@@ -482,10 +511,26 @@ public class EmployeeContractIrpf extends AonCustomDockLayout {
 		employeeSSQuoteBaseBox.addValueChangeHandler(e -> createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId()));
 	}
 	
+	private String getAeatButton(EmployeeIrpf employeeIrpf) {
+		switch (employeeIrpf.getAlcatrazTerritory()) {
+			case ARABA:
+				return "aon-icon-araba";
+			case BIZKAIA:
+				return "aon-icon-bizkaia";
+			case GIPUZKOA:
+				return "aon-icon-gipuzkoa";
+			case NAVARRA:
+				return "aon-icon-navarra";
+			default:
+				return "aon-icon-aeat";
+		}
+	}
+	
 	private void getAccumulateRow() {
 		tab.createFooter();
 
 		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.MON.getColWidth());
+		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.TYP.getColWidth());
 		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.IRF.getColWidth());
 		
 		tab.addFooter(new Label(format(getAccumulateMoneyBase())), COLUMNS.BDN.getColWidth(), "text-align: right;");
@@ -649,7 +694,12 @@ public class EmployeeContractIrpf extends AonCustomDockLayout {
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		
-		setSelectedValueLB(yearLB, year.toString());
+		Date februaryDate = DateUtils.getDate(1, DateUtils.getYear());
+		if(februaryDate.after(new Date())) {
+			year--;
+			setSelectedValueLB(yearLB, year.toString());
+		} else
+			setSelectedValueLB(yearLB, year.toString());
 	}
 	
 	private void changeYear() {
