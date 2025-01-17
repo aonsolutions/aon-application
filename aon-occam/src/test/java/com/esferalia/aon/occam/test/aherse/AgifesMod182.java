@@ -106,7 +106,7 @@ public class AgifesMod182 {
 		StringBuffer buf = new StringBuffer();
 		buf.append("1");
 		buf.append("182");
-		buf.append("2023");
+		buf.append("2024");
 		buf.append("G20124749");
 		buf.append(AonFiscalFileUtils.text("AGIFES",(57-18+1)));
 		buf.append("T");
@@ -131,7 +131,7 @@ public class AgifesMod182 {
 					buf = new StringBuffer();
 					buf.append("2");
 					buf.append("182");
-					buf.append("2023");
+					buf.append("2024");
 					buf.append("G20124749");
 					buf.append(AonFiscalFileUtils.document(reg.getDocument()));
 					buf.append(AonFiscalFileUtils.spaces(35-27+1));
@@ -168,13 +168,14 @@ public class AgifesMod182 {
 
 	private static Registry parseLine(String line) {
 		String[] tokens = AonStringUtils.splitPreserveAllTokens(line, '|');
+		double amount = AonNumberUtils.todouble( AonStringUtils.replace(tokens[5],",","."));
 		return new Registry()
 			.setDocument(tokens[0])
 			.setName(tokens[1])
 			.setCity(tokens[2])
 			.setZip(tokens[3])
 			.setProvince(tokens[4])
-			.setAmount(AonNumberUtils.todouble(tokens[5]))
+			.setAmount(amount)
 			;
 	}	
 	

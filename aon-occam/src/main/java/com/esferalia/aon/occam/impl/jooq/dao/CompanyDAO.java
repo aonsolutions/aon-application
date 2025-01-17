@@ -401,7 +401,9 @@ public class CompanyDAO {
 					)
 				)
 			)
-			.orderBy(REGISTRY.NAME)
+			//.orderBy(REGISTRY.NAME)
+			.limit(perPage)
+			.offset(( page -1 ) * perPage)
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 	

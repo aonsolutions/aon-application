@@ -7,9 +7,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190ARABADetail2023.IModel190DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190GIPUZKOADetail2024.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
-import com.esferalia.aon.occam.api.model.type.Mod1902023ArabaKey;
+import com.esferalia.aon.occam.api.model.type.Mod1902024GipuzkoaKey;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -22,24 +22,24 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model190GIPUZKOA2024DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
 	private static final String WIDTH_200PX = "200px";
 
 	private int tabIndex; 
 	private DocumentTextBox document;
 
-	private AonDoubleBox compensatoryPension;
 	private ListBox disability;
 	private ListBox contract;
 	private AonDoubleBox applicableReduction;
 	private AonDoubleBox deducibleExpense;
+	private AonDoubleBox compensatoryPension;
 	private AonIntegerBox otherDescendent;
 	private ListBox titConvivivencia;
 	private AonDocumentTextBox spouseDocument;
 	private ListBox compInfancia;
 	
-	public Model190ARABA2023DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
+	public Model190GIPUZKOA2024DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
 		FlowPanel additionalDataPanel = new FlowPanel();
 		FlowPanel ilPanel = new FlowPanel();
 		
@@ -124,15 +124,15 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 
 		final ListBox key = new ListBox();
 		key.setWidth("40px");
-		for (Mod1902023ArabaKey k : Mod1902023ArabaKey.values()) {
+		for (Mod1902024GipuzkoaKey k : Mod1902024GipuzkoaKey.values()) {
 			key.addItem(k.getDescription(),k.getValue());
 		}
 		
-		Model190ARABA2023DetailPanel.setValue(key, subkey, detail);
+		Model190GIPUZKOA2024DetailPanel.setValue(key, subkey, detail);
 		
-		key.addChangeHandler( event -> {
+		key.addChangeHandler(event -> {
 			subkey.clear();
-			Mod1902023ArabaKey keyEnum = Mod1902023ArabaKey.values()[key.getSelectedIndex()];
+			Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 			detail.setKey( keyEnum.toString() );
 			if (keyEnum.hasSubkeys()) {
 				subkey.setEnabled(true);
@@ -144,14 +144,15 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
+			enableOrDisableIlPanel(key, subkey, ilPanel);
 			enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
 			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 1, key);
 		tab2.getFlexCellFormatter().setRowSpan(0, 1, 4);
 		
-		subkey.addChangeHandler(event ->  {
-			Mod1902023ArabaKey keyEnum = Mod1902023ArabaKey.values()[key.getSelectedIndex()];
+		subkey.addChangeHandler(event -> {
+			Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
 			if (keyEnum.hasSubkeys()) {
 				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
 				detail.setSubKey(keyEnum.getSubKeys()[idx]);
@@ -159,6 +160,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 				subkey.setEnabled(false);
 				detail.setSubKey(null);
 			}
+			enableOrDisableIlPanel(key, subkey, ilPanel);
 			enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
 			callback.onValueChanged(detail);
 		});
@@ -246,7 +248,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		tab3.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
 		tab3.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
-		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral."));
+		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01"));
 
 		tab3.setWidget(1, 0, new Label());
 		tab3.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perceptionValoration()));
@@ -254,9 +256,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		tab3.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		tab3.setWidget(1, 4, new Label());
 		
-		tab3.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.money()));
-		tab3.getCellFormatter().addStyleName(2, 0, AON.CSS.aonTextRight());
-
+		tab3.setWidget(2, 0, new Label());
 		AonDoubleBox perceptionIL = new AonDoubleBox();
 		perceptionIL.setValue(detail.getPerceptionIL());
 		perceptionIL.addValueChangeHandler(event -> {
@@ -264,6 +264,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 			callback.onValueChanged(detail);
 		});
 		tab3.setWidget(2, 1, perceptionIL);
+		
 		
 		AonDoubleBox retentionIL = new AonDoubleBox();
 		retentionIL.setValue(detail.getRetentionIL());
@@ -273,37 +274,18 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab3.setWidget(2, 2, retentionIL);
 		
-		tab3.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.inKind()));
-		tab3.getCellFormatter().addStyleName(3, 0, AON.CSS.aonTextRight());		
-		
-		AonDoubleBox inKindPerceptionIL = new AonDoubleBox();
-		inKindPerceptionIL.setValue(detail.getInKindPerceptionIL());
-		inKindPerceptionIL.addValueChangeHandler(event -> {
-			detail.setInKindPerceptionIL(inKindPerceptionIL.getValue());
+		AonDoubleBox outputRetentionIL = new AonDoubleBox();
+		outputRetentionIL.setValue(detail.getOutputRetentionIL());
+		outputRetentionIL.addValueChangeHandler(event -> {
+			detail.setOutputRetentionIL(outputRetentionIL.getValue());
 			callback.onValueChanged(detail);
 		});
-		tab3.setWidget(3, 1, inKindPerceptionIL);
-
-		AonDoubleBox inKindDepositIL = new AonDoubleBox();
-		inKindDepositIL.setValue(detail.getInKindDepositIL());
-		inKindDepositIL.addValueChangeHandler(event -> {
-			detail.setInKindDepositIL(inKindDepositIL.getValue());
-			callback.onValueChanged(detail);
-		});
-		tab3.setWidget(3, 2, inKindDepositIL);
-
-		AonDoubleBox inKindOutputDepositIL = new AonDoubleBox();
-		inKindOutputDepositIL.setValue(detail.getInKindOutputDepositIL());
-		inKindOutputDepositIL.addValueChangeHandler(event -> {
-			detail.setInKindOutputDepositIL(inKindOutputDepositIL.getValue());
-			callback.onValueChanged(detail);
-		});
-		tab3.setWidget(3, 3, inKindOutputDepositIL);
-
+		tab3.setWidget(2, 3, outputRetentionIL);
+		enableOrDisableIlPanel(key, subkey, ilPanel);
 		ilPanel.add(tab3);
 		panel.add(ilPanel);
 		
-		// Datos adicionales		
+		// Datos adicionales
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.getColumnFormatter().setWidth( 0, "100px");
@@ -322,7 +304,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		
 		tab4.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.disability()));
 		tab4.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.contract()));
-		tab4.setWidget(1, 2, new Model190SmallerLabel("Importe no integrable en IRPF"));
+		tab4.setWidget(1, 2, new Model190SmallerLabel("Importe no integrado"));
 		tab4.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.deducibleExpense()));
 		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.compensatoryPension()));
 		tab4.setWidget(1, 5, new Model190SmallerLabel("Total descendientes"));
@@ -361,7 +343,6 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(2, 2, applicableReduction);
-
 		
 		deducibleExpense = new AonDoubleBox();
 		deducibleExpense.setValue(detail.getDeducibleExpense());
@@ -370,7 +351,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(2, 3, deducibleExpense);
-		
+
 		compensatoryPension = new AonDoubleBox();
 		compensatoryPension.setValue(detail.getCompensatoryPension());
 		compensatoryPension.addValueChangeHandler(event -> {
@@ -388,7 +369,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(2, 5, otherDescendent);
-
+		
 		tab4.setWidget(3, 0, new Model190SmallerLabel("Tit. unidad conviv."));
 		titConvivivencia = new ListBox();
 		titConvivivencia.setWidth("40px");
@@ -428,10 +409,9 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		tab4.setWidget(4, 2, compInfancia);
 		
 		additionalDataPanel.add(tab4);
-		
 		panel.add(additionalDataPanel);
 		enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-
+		
 		FlexTable tab31 = new FlexTable();
 		tab31.getColumnFormatter().setWidth(0, WIDTH_200PX);
 		tab31.getColumnFormatter().setWidth(1, WIDTH_200PX);
@@ -499,6 +479,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 
 		tab31.setWidget(2, 5, new Label());
 		panel.add(tab31);
+		
 
 		scroll.setWidget(panel);
 		setWidget(scroll);
@@ -511,7 +492,7 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 
 	@Override
 	public void setAccessKey(char key) {
-		// DO NOTHING
+		// do nothing
 	}
 
 	@Override
@@ -527,9 +508,9 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 
 	private static void setValue(ListBox key, ListBox subKey, Mod190Detail detail) {
 		if (AonStringUtils.isBlank( detail.getKey())) {
-			detail.setKey(Mod1902023ArabaKey.A.toString());
+			detail.setKey(Mod1902024GipuzkoaKey.A.toString());
 		}
-		Mod1902023ArabaKey keyEnum = Mod1902023ArabaKey.valueOf(detail.getKey());
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.valueOf(detail.getKey());
 		key.setSelectedIndex(keyEnum.ordinal());
 		subKey.clear();
 		if (keyEnum.hasSubkeys()) {
@@ -546,33 +527,42 @@ public class Model190ARABA2023DetailPanel extends SimpleLayoutPanel implements F
 		}
 	}
 
-	private void enableOrDisableAdditionalDataPanel(ListBox key, ListBox subKey, Panel panel) {
-		// Solo en las claves A, B, C, E.01, F, G (subclaves 01 a 06 y 08), H, I, L.05, L.10, L.27 y L.29.
-		Mod1902023ArabaKey keyEnum = Mod1902023ArabaKey.values()[key.getSelectedIndex()];
-		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
-		boolean abc = Mod1902023ArabaKey.A == keyEnum || Mod1902023ArabaKey.B == keyEnum || Mod1902023ArabaKey.C == keyEnum;
-		boolean ae01 = Mod1902023ArabaKey.A == keyEnum || (Mod1902023ArabaKey.E == keyEnum && "01".equals(subk));
-		boolean fghi = (Mod1902023ArabaKey.F == keyEnum) ||
-				       (Mod1902023ArabaKey.G == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk) || "08".equals(subk))) ||
-					   (Mod1902023ArabaKey.H == keyEnum) ||
-					   (Mod1902023ArabaKey.I == keyEnum);
-		boolean l051027 = Mod1902023ArabaKey.L == keyEnum && ("05".equals(subk) || "10".equals(subk) || "27".equals(subk));
-		boolean l29 = Mod1902023ArabaKey.L == keyEnum && "29".equals(subk);
-		panel.setVisible(abc || ae01 || fghi || l051027 || l29);
+	private void enableOrDisableAdditionalDataPanel(ListBox key, ListBox subKey, Panel  panel) {
 		
-		// Dentro de los datos adicionales, cada campo se habilita según clave y subclave
-		if (panel.isVisible()) {
-			disability.setEnabled(abc);                           // Discapacidad: Claves A, B, C	
-			contract.setEnabled(ae01);                            // Contrato o relación: Claves A, E.01	
-			applicableReduction.setEnabled(abc || ae01 || fghi);  // Importe no integrable en IRPF: Claves A, B, C, E.01, F, G (subclaves 01 a 06 y 08), H e I	
-			deducibleExpense.setEnabled(abc || ae01 || l051027);  // Gastos deducibles: Claves A, B, C, E.01, L.05, L.10 y L.27	
-			compensatoryPension.setEnabled(abc);                  // Pensiones compensatorias: Claves A, B, C	
-			otherDescendent.setEnabled(abc);                      // Total descendientes: Claves A, B, C
-			titConvivivencia.setEnabled(l29);                     // Tit. unidad conviv.: Clave L.29	
-			spouseDocument.setEnabled(l29);                       // NIF titular ud. conv.: Clave L.29	
-			compInfancia.setEnabled(l29);                         // Compl. ayuda infancia: Clave L.29
-		}
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
+		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
+		boolean a = Mod1902024GipuzkoaKey.A == keyEnum;
+		boolean abc = Mod1902024GipuzkoaKey.A == keyEnum || Mod1902024GipuzkoaKey.B == keyEnum || Mod1902024GipuzkoaKey.C == keyEnum;
+		boolean e01 = Mod1902024GipuzkoaKey.E == keyEnum && "01".equals(subk);
+		boolean efghi = (Mod1902024GipuzkoaKey.E == keyEnum) || 
+				        (Mod1902024GipuzkoaKey.F == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk))) ||
+				        (Mod1902024GipuzkoaKey.G == keyEnum && ("01".equals(subk) || "02".equals(subk) || "03".equals(subk) || "04".equals(subk) || "05".equals(subk) || "06".equals(subk) || "08".equals(subk))) ||
+				        (Mod1902024GipuzkoaKey.H == keyEnum) ||
+				        (Mod1902024GipuzkoaKey.I == keyEnum);
+		boolean l051027 = Mod1902024GipuzkoaKey.L == keyEnum && ("05".equals(subk) || "10".equals(subk) || "27".equals(subk));
+		boolean l29 = Mod1902024GipuzkoaKey.L == keyEnum && "29".equals(subk);
+		
+		panel.setVisible(abc || efghi || l051027 || l29); 
+		
+		disability.setEnabled(a);                            // Discapacidad: Clave A.
+		contract.setEnabled(a);                              // Tipo de relación: Clave A.
+		applicableReduction.setEnabled(abc || efghi);        // Importe no integrado: Claves A, B,	C, E, F (subclaves 01 a 06), G (subclaves 01 a 06 y 08), H e I.
+		deducibleExpense.setEnabled(abc || e01 || l051027);  // Gastos deducibles: Claves A, B, C, E01, L05, L10 y L27.
+		compensatoryPension.setEnabled(abc);                 // Pensiones compensatorias: Claves A, B y C.
+		otherDescendent.setEnabled(abc);                     // Descendientes: Claves A, B y C.
+		titConvivivencia.setEnabled(l29);                    // Titular de la unidad de convivencia: Clave L29.
+		spouseDocument.setEnabled(l29);                      // NIF titular unidad de convivencia: Clave L29.
+		compInfancia.setEnabled(l29);                        // Complemento ayuda a la infancia: Clave L29.
+		
+	}
 	
+	private void enableOrDisableIlPanel(ListBox key, ListBox subKey, Panel  panel) {
+		Mod1902024GipuzkoaKey keyEnum = Mod1902024GipuzkoaKey.values()[key.getSelectedIndex()];
+		String subk = ((subKey.getSelectedIndex() == -1) ? null : subKey.getValue(subKey.getSelectedIndex()));
+		panel.setVisible( 
+				Mod1902024GipuzkoaKey.A == keyEnum
+				|| (Mod1902024GipuzkoaKey.B == keyEnum && "01".equals(subk))
+			);
 	}
 	
 }

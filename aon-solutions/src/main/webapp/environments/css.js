@@ -154,7 +154,7 @@ export const AON_APPS_DIV = 'aonAppsDiv';
 export const AON_COMPANY_DIV = 'aonCompanyDiv';
 export const AON_COMPANY_TITLE_DIV = 'aonCompanyTitleDiv';
 export const AON_COMPANY_FILTER_EMPTY = 'aonCompanyFilterEmpty';
-
+export const AON_COMPANY_FILTER_LOADING = 'aonCompanyFilterLoading';
 // aon-figma.css
 
 export const AON_LOGIN = 'aonLogin';

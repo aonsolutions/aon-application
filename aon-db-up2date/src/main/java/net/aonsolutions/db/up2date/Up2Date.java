@@ -27,6 +27,7 @@ import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
 import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIII;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
 
@@ -500,7 +501,9 @@ public class Up2Date {
 
 			// MEI2025Insert.MEI2025INSERT,
 			// Holidays2025Insert.HOLIDAYS2025INSERT
-			BasesMax2025Update.BASESMAX2025UPDATE
+			// BasesMax2025Update.BASESMAX2025UPDATE
+			
+			SalaryHoursFixIII.SALARYHOURSFIXIII
 			
 
 	};

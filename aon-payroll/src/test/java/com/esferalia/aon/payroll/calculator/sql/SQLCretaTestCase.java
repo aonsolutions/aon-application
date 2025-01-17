@@ -769,6 +769,90 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
+    public void testCretaFormacionEnAlternanciaNormalTutoriaTramosIII()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException,
+	    XMLStreamException, FactoryConfigurationError {
+    	Connection connection = getConnection();
+    	AONContext aonContext = new AONContext(connection);
+
+    	cleanSalaries(aonContext);
+
+    	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+    	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+    	Date endDate = getLastDayOfMonth(startDate);
+
+    	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C421, "10");
+
+    	int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+
+    	addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_C737, "68.00");
+    	addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H06, "34");
+    	
+    	Date startItDate = add(startDate, DAY_OF_MONTH, 9);
+    	Date endItDate = add(startItDate, DAY_OF_MONTH, 4);
+    	addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startItDate, endItDate, null);
+
+    	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos = getTrabajadoresTramos(
+    		connection, startDate, endDate, ccc, contract);
+    	LiquidacionMes liquidacionMes = trabajadoresYTramos.getLiquidacion().getLiquidacionMes().get(0);
+    	Trabajador trabajador = liquidacionMes.getTrabajadores().getTrabajador().get(0);
+    	assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().getFirst());
+    	assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().getLast());
+
+    	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+    	org.junit.Assert.assertEquals(3, bases.size());
+
+    	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
+
+    	org.junit.Assert.assertEquals(4, datos.size());
+
+    	Date prevStartItDate = add(startItDate, DAY_OF_MONTH, -1 );
+    	int firstPeriodDays = get(prevStartItDate, DAY_OF_MONTH);
+
+    	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(175000 * firstPeriodDays / 30.00, c500, DELTA);
+
+    	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(175000 * firstPeriodDays / 30.00, c601, DELTA);
+
+    	double h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(Math.floor(34.00 * firstPeriodDays / ( monthDays - 5.00)), h6, DELTA);
+
+    	double c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
+        		.collect(Collectors.summingDouble(Double::parseDouble));
+        	org.junit.Assert.assertEquals(( 68.00 / 34.00 * h6 ) * 100.00 , c737, DELTA);
+
+
+        datos = bases.get(2).getDatosTramo().getDato();
+
+    	org.junit.Assert.assertEquals(4, datos.size());
+
+    	c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(175000 * (monthDays- 5 - firstPeriodDays) / 30.00, c500, 1);
+
+    	c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(175000 * (monthDays - 5 - firstPeriodDays) / 30.00, c601, 1);
+    	
+    	double previousH6 = h6; 
+    	h6 = datos.stream().filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
+    		.collect(Collectors.summingDouble(Double::parseDouble));
+    	org.junit.Assert.assertEquals(34.00 - previousH6 , h6, DELTA);
+
+    	c737 = datos.stream().filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
+        		.collect(Collectors.summingDouble(Double::parseDouble));
+        	org.junit.Assert.assertEquals((68.00 / 34.00 * h6 ) * 100.00, c737, DELTA);
+
+
+    }
+
+    @Test
     public void testCretaFormacionEnAlternanciaNormalFormacion()
 	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException,
 	    XMLStreamException, FactoryConfigurationError {
