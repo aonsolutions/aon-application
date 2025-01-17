@@ -122,6 +122,25 @@ public class Mod190Writer {
 			}
 			
 		},
+
+		BIZKAIA_2024{
+
+			@Override
+			void fill(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2024Bizkaia.fill(mod190, wr);
+			}
+
+			@Override
+			void fillBoeFormat(Mod190 mod190, Writer wr) throws IOException {
+				Mod190File2024Aeat.fill(mod190, wr);
+			}
+
+			@Override
+			boolean accept(Mod190 mod190) {
+				return (mod190.isBizkaia() && mod190.getYear() >= 2024);
+			}
+			
+		},
 		BIZKAIA_2017{
 
 			@Override
@@ -136,11 +155,10 @@ public class Mod190Writer {
 
 			@Override
 			boolean accept(Mod190 mod190) {
-				return (mod190.isBizkaia() && mod190.getYear() >= 2017);
+				return (mod190.isBizkaia() && mod190.getYear() >= 2017 && mod190.getYear() <= 2023);
 			}
 			
 		},
-
 		BIZKAIA_2016{
 
 			@Override
