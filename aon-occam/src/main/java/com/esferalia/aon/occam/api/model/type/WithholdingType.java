@@ -51,7 +51,7 @@ public enum WithholdingType implements Serializable {
 		
 		@Override 
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
-			return visitor.visitProfessional(t);
+			return visitor.visitTransportOperator(t);
 		}
 	}
 	

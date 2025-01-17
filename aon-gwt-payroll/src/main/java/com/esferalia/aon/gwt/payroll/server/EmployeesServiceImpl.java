@@ -3830,12 +3830,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, Integer domainId, SalaryDraft draft) throws SQLException {
-		if (draft.hasDbSalary())
-			deleteSalaries(conn, domainId, draft.getDbId());
+		//if (draft.hasDbSalary())
+		//	deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
 			deleteAllSettles(conn, domainId, draft.getEmployee().getId());
 
-		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder.ReplaceJooqSalaryBuilder<>(conn, domainId, draft.getDbId());
 		RoundSalaryBuilder<ISalary> jooqRoundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 				EmployeesServiceHelper.round(2));
 		jooqSalaryBuilder.setListener(new SalaryBuilderListener());
@@ -3882,8 +3882,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@SuppressWarnings("unchecked")
 	private static void calculateAndSave(Connection conn, Integer domainId, SalaryDraft draft, Date sections[]) throws SQLException {
-		if (draft.hasDbSalary())
-			deleteSalaries(conn, domainId, draft.getDbId());
+		//if (draft.hasDbSalary())
+		//	deleteSalaries(conn, domainId, draft.getDbId());
 		if (draft.getType() == Type.SETTLE)
 			deleteAllSettles(conn, domainId, draft.getEmployee().getId());
 
@@ -3910,7 +3910,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			EmployeesServiceHelper.calculate(conn, draft, collectSalaryBuilder, salaryDraftBuilder, salaryCalculator);
 
-			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(conn);
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder.ReplaceJooqSalaryBuilder<>(conn, draft.getId(), domainId);
 			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder,
 					EmployeesServiceHelper.round(2));
 			jooqSalaryBuilder.setListener(new SalaryBuilderListener());

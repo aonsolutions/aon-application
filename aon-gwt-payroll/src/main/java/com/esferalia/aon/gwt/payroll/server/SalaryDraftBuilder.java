@@ -68,6 +68,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
+import com.esferalia.aon.gwt.payroll.util.SalaryDraftUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
@@ -78,6 +79,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.util.SalaryUtils;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -425,6 +427,8 @@ public class SalaryDraftBuilder
 			bonus.setDescription(ssBonus.getDescription());
 			//salaryDraft.addBonus(bonus);
 		}
+		
+		salaryDraft.setEqualsDbIrpfAmounts(SalaryUtils.equalsIrpfAmounts(SalaryDraftUtils.asSalary(salaryDraft), dbSalary));
 	}
 
 	public void setSsSalary(com.esferalia.aon.payroll.Salary ssSalary) throws SalaryException {
@@ -731,14 +735,14 @@ public class SalaryDraftBuilder
 
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
-		// TODO Auto-generated method stub
+		salaryDraft.setTotalIrpf(totalIrpf);
 
 	}
 
 	@Override
 	public void setTotalSS(
 			Double socialSecurityContributions) {
-		// TODO Auto-generated method stub
+		salaryDraft.setTotalEmployee(socialSecurityContributions);
 
 	}
 

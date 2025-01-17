@@ -3085,10 +3085,10 @@ public class SalaryDraft extends ResizeComposite
 	public void onChange(SalarySelect salarySelect) {
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
-		delayButton.setVisible(!hasFiscalModels() && isDelay());
-		extraButton.setVisible(!hasFiscalModels() && isExtra());
-		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && isSalary());
+		delayButton.setVisible(isSafeEmit() && isDelay());
+		extraButton.setVisible(isSafeEmit() && isExtra());
+		settleButton.setVisible(isSafeEmit() && isSettle());
+		salaryButton.setVisible(isSafeEmit() && isSalary());
 		
 		
 
@@ -3133,10 +3133,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
-		delayButton.setVisible(!hasFiscalModels() && isDelay());
-		extraButton.setVisible(!hasFiscalModels() && isExtra());
-		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && isSalary());
+		delayButton.setVisible(isSafeEmit() && isDelay());
+		extraButton.setVisible(isSafeEmit() && isExtra());
+		settleButton.setVisible(isSafeEmit() && isSettle());
+		salaryButton.setVisible(isSafeEmit() && isSalary());
 		
 		showTimeRulePanel();
 		showDbTimeRulePanel();
@@ -3521,10 +3521,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		setFiscalModelIcon(fiscalModelsButton);
 		fiscalModelsButton.setVisible(hasFiscalModels());
-		delayButton.setVisible(!hasFiscalModels() && isDelay());
-		extraButton.setVisible(!hasFiscalModels() && isExtra());
-		settleButton.setVisible(!hasFiscalModels() && isSettle());
-		salaryButton.setVisible(!hasFiscalModels() && isSalary());
+		delayButton.setVisible(isSafeEmit() && isDelay());
+		extraButton.setVisible(isSafeEmit() && isExtra());
+		settleButton.setVisible(isSafeEmit() && isSettle());
+		salaryButton.setVisible(isSafeEmit() && isSalary());
 
 		acceptButton.setEnabled(hasDrafts() && !isAutomatic() );
 	}
@@ -6903,9 +6903,18 @@ public class SalaryDraft extends ResizeComposite
 		return salaryDraftObject != null && salaryDraftObject.hasEvents();
 	}
 	
+	private boolean isSafeEmit() {
+		return !hasFiscalModels() || isEqualsDbIrpfAmounts();
+	}
+
 	private boolean hasFiscalModels() {
 		return salaryDraftObject != null && salaryDraftObject.hasFiscalModels();
 	}
+	
+	private boolean isEqualsDbIrpfAmounts() {
+		return salaryDraftObject != null && salaryDraftObject.isEqualsDbIrpfAmounts();
+	}
+	
 
 	private boolean hasAonInfoEvents() {
 		if ( salaryDraftObject == null )
