@@ -165,8 +165,6 @@ export class AonInvoicePanel extends AonElement {
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
       
-      if(this.isBeta()) this.getApplication().addToolbarOption("Close", "disabled_by_default", () => this.closingInvoice());
-      
       this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
       
       if (this.getDur().isOcr() || this.getDur().isInvofox())
