@@ -174,7 +174,7 @@ export class AonFiscal extends AonElement {
         title: "Precálculo",
         name: "Precálculo",
         app: FISCAL,
-        options: [futurePeriod],
+        options: futurePeriod,
         // options: [VAT_PANEL, RETENTION_PANEL],
       };
 
@@ -333,50 +333,51 @@ export class AonFiscal extends AonElement {
 
   async filterFutureFiscal() {
     let result = await this.getFilterModels();
+    let futureFiscals = [];
 
     if (!result || result.length === 0) {
       return;
     }
 
-    let lastPeriod;
-    let period;
-    let periodText;
-    let year;
+    let currentLastPeriod;
+    let currentPeriod;
+    let currentPeriodText;
+    let currentYear;
 
     if (result[0].period == "T1") {
-      period = "T2";
-      periodText = "2º Trim. " + result[0].year;
-      year = result[0].year;
-      lastPeriod = new Date(result[0].year + "-" + "03-31");
+      currentPeriod = "T1";
+      currentPeriodText = "1º Trim. " + (result[0].year);
+      currentYear = result[0].year;
+      currentLastPeriod = new Date(result[0].year + "-" + "12-31");
     } else if (result[0].period == "T2") {
-      period = "T3";
-      periodText = "3º Trim. " + result[0].year;
-      year = result[0].year;
-      lastPeriod = new Date(result[0].year + "-" + "06-30");
+      currentPeriod = "T2";
+      currentPeriodText = "2º Trim. " + result[0].year;
+      currentYear = result[0].year;
+      currentLastPeriod = new Date(result[0].year + "-" + "03-31");
     } else if (result[0].period == "T3") {
-      period = "T4";
-      periodText = "4º Trim. " + result[0].year;
-      year = result[0].year;
-      lastPeriod = new Date(result[0].year + "-" + "09-30");
+      currentPeriod = "T3";
+      currentPeriodText = "3º Trim. " + result[0].year;
+      currentYear = result[0].year;
+      currentLastPeriod = new Date(result[0].year + "-" + "06-30");
     } else {
-      period = "T1";
-      periodText = "1º Trim. " + (result[0].year + 1);
-      year = result[0].year + 1;
-      lastPeriod = new Date(result[0].year + "-" + "12-31");
+      currentPeriod = "T4";
+      currentPeriodText = "4º Trim. " + result[0].year;
+      currentYear = result[0].year;
+      currentLastPeriod = new Date(result[0].year + "-" + "09-30");
     }
 
-    let futurePeriod = {
-      name: periodText,
+    let currentPeriodObj = {
+      name: currentPeriodText,
       icon: MATERIAL_ICONS.EVENT,
       clickable: true,
-      id: "Future",
+      id: "Current",
       fn: () => {
-        if(this._filter.estimationFilter){
+        if(this._filter.estimationFilter && this._filter.estimationFilter.year == currentYear){
           this._filter.estimationFilter = undefined;
           this.addBackgroundSidenav();
           this.showView(FISCAL_VIEWS.AON_TAX);
         } else {
-          this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
+          this._filter.estimationFilter = {year: currentYear, period: currentPeriod, title: currentPeriodText, periodText: currentPeriodText};
           this._filter.model = undefined;
           this.showView(FISCAL_VIEWS.AON_FUTURE_TAX);
         }
@@ -385,7 +386,58 @@ export class AonFiscal extends AonElement {
       },
     };
 
-    return futurePeriod;
+    futureFiscals.push(currentPeriodObj);
+
+    let futureLastPeriod;
+    let futurePeriod;
+    let futurePeriodText;
+    let futureYear;
+
+    if (result[0].period == "T1") {
+      futurePeriod = "T2";
+      futurePeriodText = "2º Trim. " + result[0].year;
+      futureYear = result[0].year;
+      futureLastPeriod = new Date(result[0].year + "-" + "03-31");
+    } else if (result[0].period == "T2") {
+      futurePeriod = "T3";
+      futurePeriodText = "3º Trim. " + result[0].year;
+      futureYear = result[0].year;
+      futureLastPeriod = new Date(result[0].year + "-" + "06-30");
+    } else if (result[0].period == "T3") {
+      futurePeriod = "T4";
+      futurePeriodText = "4º Trim. " + result[0].year;
+      futureYear = result[0].year;
+      futureLastPeriod = new Date(result[0].year + "-" + "09-30");
+    } else {
+      futurePeriod = "T1";
+      futurePeriodText = "1º Trim. " + (result[0].year + 1);
+      futureYear = result[0].year + 1;
+      futureLastPeriod = new Date(result[0].year + "-" + "12-31");
+    }
+
+    let futurePeriodObj = {
+      name: futurePeriodText,
+      icon: MATERIAL_ICONS.EVENT,
+      clickable: true,
+      id: "Future",
+      fn: () => {
+        if(this._filter.estimationFilter && this._filter.estimationFilter.year == futureYear){
+          this._filter.estimationFilter = undefined;
+          this.addBackgroundSidenav();
+          this.showView(FISCAL_VIEWS.AON_TAX);
+        } else {
+          this._filter.estimationFilter = {year: futureYear, period: futurePeriod, title: futurePeriodText, periodText: futurePeriodText};
+          this._filter.model = undefined;
+          this.showView(FISCAL_VIEWS.AON_FUTURE_TAX);
+        }
+        // this._filter.estimationFilter = {year: year, period: period, title: periodText, periodText: periodText};
+        
+      },
+    };
+
+    futureFiscals.push(futurePeriodObj);
+
+    return futureFiscals;
 
     // const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
 

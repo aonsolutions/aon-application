@@ -703,8 +703,8 @@ public class JooqPayrollSalaries {
 		List<Byte> salaryTypes = new ArrayList<Byte>();
 		if(params.isSalary()) salaryTypes.add((byte)0);
 		if(params.isExtra()) salaryTypes.add((byte)1);
-		if(params.isDelay()) salaryTypes.add((byte)2);
-		if(params.isSettle()) salaryTypes.add((byte)3);
+		if(params.isSettle()) salaryTypes.add((byte)2);
+		if(params.isDelay()) salaryTypes.add((byte)3);
 		
 		condition = condition.and(
 				SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal())
