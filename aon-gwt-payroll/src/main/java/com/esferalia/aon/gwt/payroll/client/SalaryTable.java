@@ -303,43 +303,45 @@ public abstract class SalaryTable extends ScrollPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton deleteButton = new AonTableButton("Borrar N\u00f3mina", AON.CSS.aonIconDelete());
-		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
-		deleteButton.addClickHandler(e -> {
-			e.stopPropagation();
-			deleteButton.setEnabled(false);
-			
-			AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n N\u00f3minas",
-					new HTML("Se va a proceder a eliminar la n\u00f3mina <b>" + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate())  + ")" + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-			
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
+		if(!salary.isAlcatraz()) {
+			AonTableButton deleteButton = new AonTableButton("Borrar N\u00f3mina", AON.CSS.aonIconDelete());
+			deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
+			deleteButton.addClickHandler(e -> {
+				e.stopPropagation();
+				deleteButton.setEnabled(false);
 				
-				@Override
-				public void onCancel() {
-					deleteButton.setEnabled(true);
-				}
+				AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n N\u00f3minas",
+						new HTML("Se va a proceder a eliminar la n\u00f3mina <b>" + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate())  + ")" + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 				
-				@Override
-				public void onAccept() {
-					if(salary.isAlcatraz()) {
-						List<SalaryInfo> alcatrazSalaries = new ArrayList<>();
-						alcatrazSalaries.add(salary);
-						createAlcatrazWarning(alcatrazSalaries);
-					}else if(salary.isFinance()) {
-						List<SalaryInfo> financeSalaries = new ArrayList<>();
-						financeSalaries.add(salary);
-						createFinanceWarning(financeSalaries);
-					} else {
-						onShowLoadingMessage("Eliminando n\u00f3mina seleccionada...");
-						delete(salary);
+				deleteDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						deleteButton.setEnabled(true);
 					}
 					
-					
-				}
+					@Override
+					public void onAccept() {
+						if(salary.isAlcatraz()) {
+							List<SalaryInfo> alcatrazSalaries = new ArrayList<>();
+							alcatrazSalaries.add(salary);
+							createAlcatrazWarning(alcatrazSalaries);
+						}else if(salary.isFinance()) {
+							List<SalaryInfo> financeSalaries = new ArrayList<>();
+							financeSalaries.add(salary);
+							createFinanceWarning(financeSalaries);
+						} else {
+							onShowLoadingMessage("Eliminando n\u00f3mina seleccionada...");
+							delete(salary);
+						}
+						
+						
+					}
+				});
+				
 			});
-			
-		});
-		buttonContainer.add(deleteButton);
+			buttonContainer.add(deleteButton);
+		}
 		
 		if(salary.getType() == Type.SETTLE) {
 			AonTableButton settlerButton = new AonTableButton("Carta Finiquito", AON.CSS.aonIconPdf());

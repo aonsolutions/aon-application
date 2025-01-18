@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Properties.MarketingCampaignProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectActivityDAO.ProjectActivityFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
@@ -743,6 +745,15 @@ public class MarketingCampaignDAO {
 		if(null != params.getStatus())
 			condition = condition.and(TARGET.STATUS.eq(params.getStatus()));
 		
+		if(params.isCustomer()) {
+			List<Byte> customerStatus = new ArrayList<Byte>();
+			if(params.isCustomerActive()) customerStatus.add((byte)0);
+			if(params.isCustomerInactive()) customerStatus.add((byte)1);
+			if(params.isCustomerBloqued()) customerStatus.add((byte)2);
+			
+			condition = condition.and(CUSTOMER.STATUS.in(customerStatus));
+		}
+		
 		return condition;
 	}
 	
@@ -846,6 +857,7 @@ public class MarketingCampaignDAO {
 					.setProject(!checkField(r, PROJECT.ID) ? null : ProjectFiller.build(r))
 					.setProjectActivity(!checkField(r, PROJECT_ACTIVITY.ID) || null == r.getValue(PROJECT_ACTIVITY.ID) ? null : ProjectActivityFiller.build(r))
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) && null != r.getValue(CUSTOMER.REGISTRY))
+					.setCustomerStatus(checkField(r, CUSTOMER.REGISTRY) && null != r.getValue(CUSTOMER.REGISTRY) ? RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)) : null)
 					.setMarketingAction(new MarketingAction().setDescription(!checkField(r, MK_ACTION.ID) || null == r.getValue(MK_ACTION.ID) ? null : r.get(MK_ACTION.DESCRIPTION)))
 					;
 					

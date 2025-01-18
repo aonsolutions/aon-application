@@ -58,13 +58,14 @@ public abstract class MarketingActionTargetMassivePanel extends ScrollPanel {
 	private static enum COLS {
 		CHK(AonStringUtils.EMPTY					,"2rem"				,"")
 		, DES("Cliente Potencial"					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, SCP(AON.MSG.scope()						,"6rem" 			,"")
+		, SCP(AON.MSG.scope()						,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, ENT("Entidad"								,"5rem" 			,"")
 		, PRO("Propaganda"							,"5rem" 			,"")
 		, EXP("Expediente"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, ACT("Actividad"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA(AON.MSG.status()						,"4rem" 			,"")
 		, CUS("Cliente"								,"3rem" 			,"")
+		, CST(AON.MSG.status() + " C."				,"5rem" 			,"")
 		, ACC("Acci\u00f3n"							,"8rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		;
 
@@ -137,6 +138,7 @@ public abstract class MarketingActionTargetMassivePanel extends ScrollPanel {
 		colTabletHidden.add(COLS.ENT);
 //		colTabletHidden.add(COLS.SUR);
 		colTabletHidden.add(COLS.CUS);
+		colTabletHidden.add(COLS.CST);
 	}
 
 	public boolean isSearchEnabled() {
@@ -200,8 +202,12 @@ public abstract class MarketingActionTargetMassivePanel extends ScrollPanel {
 					});
 					
 					tab.addHeader(checkAllButton, col.getColWidth());
-				} else
-					tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				} else {
+					if(params.isCustomer())
+						tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+					else if(col != COLS.CST)
+						tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
+				}
 			}
 	}
 	
@@ -262,7 +268,10 @@ public abstract class MarketingActionTargetMassivePanel extends ScrollPanel {
 		tab.addInlineStyle(name, COLS.DES.getCellStyleClass());
 		tab.addRow(row, name, COLS.DES.getColWidth());
 		
-		tab.addRow(row, new Label(null == marketingActionTarget.getScope() ? "" : marketingActionTarget.getScope().getDescription()), COLS.SCP.getColWidth());
+		Label scope = new Label(null == marketingActionTarget.getScope() ? "" : marketingActionTarget.getScope().getDescription());
+		scope.setTitle(null == marketingActionTarget.getScope() ? "" : marketingActionTarget.getScope().getDescription());
+		tab.addInlineStyle(scope, COLS.SCP.getCellStyleClass());
+		tab.addRow(row, scope, COLS.SCP.getColWidth());
 		
 		if(!isTablet)
 			tab.addRow(row, new Label(marketingActionTarget.isLegalPerson() ? "Pers. Fisica" : "Pers. Juridica"), COLS.ENT.getColWidth());
@@ -281,8 +290,12 @@ public abstract class MarketingActionTargetMassivePanel extends ScrollPanel {
 		
 		tab.addRow(row, new Label(null == marketingActionTarget.getStatus() ? "" : marketingActionTarget.getStatus().getDescription()), COLS.STA.getColWidth());
 		
-		if(!isTablet)
+		if(!isTablet) {
 			tab.addRow(row, new Label(marketingActionTarget.isCustomer() ? "Si" : "No"), COLS.CUS.getColWidth());
+		
+			if(params.isCustomer())
+				tab.addRow(row, new Label(null == marketingActionTarget.getCustomerStatus() ? "" : marketingActionTarget.getCustomerStatus().getDescription()), COLS.CST.getColWidth());
+		}
 		
 		Label action = new Label(null == marketingActionTarget.getMarketingAction() ? "" : marketingActionTarget.getMarketingAction().getDescription());
 		action.setTitle(null == marketingActionTarget.getMarketingAction() ? "" : marketingActionTarget.getMarketingAction().getDescription());

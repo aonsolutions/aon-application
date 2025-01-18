@@ -3,6 +3,9 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
+
 public class EmployeeIrpf implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,6 +22,11 @@ public class EmployeeIrpf implements Serializable {
 	private Double irpfPercent;
 	private Double employeeSSQuote;
 	private Double totalIrpf;
+	
+	private boolean isAlcatraz;
+	private Integer alcatrazYear;
+	private AlcatrazPeriod alcatrazPeriod;
+	private AlcatrazTerritory alcatrazTerritory;
 	
 	public EmployeeIrpf() {
 		this.isNew = false;
@@ -155,6 +163,38 @@ public class EmployeeIrpf implements Serializable {
 	public EmployeeIrpf setTotalIrpf(Double totalIrpf) {
 		this.totalIrpf = totalIrpf;
 		return this;
+	}
+	
+	public void setAlcatraz(boolean isAlcatraz) {
+		this.isAlcatraz = isAlcatraz;
+	}
+	
+	public boolean isAlcatraz() {
+		return isAlcatraz;
+	}
+	
+	public Integer getAlcatrazYear() {
+		return alcatrazYear;
+	}
+	
+	public void setAlcatrazYear(Integer alcatrazYear) {
+		this.alcatrazYear = alcatrazYear;
+	}
+	
+	public AlcatrazPeriod getAlcatrazPeriod() {
+		return alcatrazPeriod;
+	}
+	
+	public void setAlcatrazPeriod(AlcatrazPeriod alcatrazPeriod) {
+		this.alcatrazPeriod = alcatrazPeriod;
+	}
+	
+	public AlcatrazTerritory getAlcatrazTerritory() {
+		return alcatrazTerritory;
+	}
+	
+	public void setAlcatrazTerritory(AlcatrazTerritory alcatrazTerritory) {
+		this.alcatrazTerritory = alcatrazTerritory;
 	}
 	
 	public static double round(double value, int places) {
