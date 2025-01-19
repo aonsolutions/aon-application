@@ -22,6 +22,11 @@ import * as GWT from "../../gwt/gwt.js";
     parent.aonInvoiceList(filter);
   }
 
+  export const info = (title, description) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.confirmDialog(title, description, () => {});
+  }
+
   export const customerList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
@@ -109,6 +114,11 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED_INVOICES,
     icon: MATERIAL_ICONS.UNARCHIVE,
+    actions:[{
+      id: 'Info',
+      icon: 'info',
+      action: () => info(MSG.ISSUED_INVOICES, "Información sobre que se incluye en el apartado de Facturas recibidas")
+    }],
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
