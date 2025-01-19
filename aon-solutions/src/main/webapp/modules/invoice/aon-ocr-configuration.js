@@ -19,6 +19,7 @@ export class AonOcrConfiguration extends AonElement {
         this.DIV = this.id + 'Div';
         this.PERSONALIZED = this.id + 'Personalized';
         this.ENVIRONMENT = this.id + 'Environment';
+        this.APIKEY = this.id + 'Apikey';
         // this.AUTO_ACCEPT = this.id + 'AutoAccept';
         this.AUTO_RECORD = this.id + 'AutoRecord';
         this.CARD = this.id + 'Card';
@@ -120,29 +121,22 @@ export class AonOcrConfiguration extends AonElement {
 		env.setOptions(this.configuration.environments);
         env.addEventListener(EVENT.SELECT,(e) => {
 			this.configuration.environment = e.detail.id;
-            this.configuration.apiKey = e.detail.apiKey;
+            let ak = this.getElement(this.APIKEY);
+            ak.setDisabled(false);
+            ak.setValue("");
 		});
         div1.appendChild(env)
 
-        // let div2 = this.createDiv();
-        // div2.style.marginBottom = '10px';
-        // content.appendChild(div2)
-        // let autoAccept = new AonSwitch()
-        // autoAccept.id = this.AUTO_ACCEPT;
-        // autoAccept.title = 'Aceptar Facturas Automáticamente';
-        // div2.appendChild(autoAccept);
-        // autoAccept.checked = this.configuration.autoAccept;
-        // autoAccept.addEventListener(EVENT.CHANGE, () => this.configuration.autoAccept = autoAccept.checked);
-
-        let div3 = this.createDiv();
-        div3.style.marginBottom = '10px';
-        content.appendChild(div3)
-        let autoRecord = new AonSwitch()
-        autoRecord.id = this.AUTO_RECORD;
-        autoRecord.title = 'Contabilizar Facturas Automáticamente';
-        div3.appendChild(autoRecord);
-        autoRecord.checked = this.configuration.autoRecord;
-        autoRecord.addEventListener(EVENT.CHANGE, () => this.configuration.autoRecord = autoRecord.checked);
+        let div2 = this.createDiv();
+        div2.style.marginBottom = '10px';
+        content.appendChild(div2);
+        let apikey = createInput(this.APIKEY, "apikey");
+        apikey.setDisabled(true);
+        apikey.setValue(this.configuration.apiKey);
+        apikey.addEventListener(EVENT.CHANGE, () => {
+            this.configuration.apiKey = apikey.getValue();
+        });
+        div2.appendChild(apikey);
     }
 
     getConfiguration() {

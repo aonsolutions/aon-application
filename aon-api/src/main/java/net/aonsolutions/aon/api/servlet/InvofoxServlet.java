@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
+import com.esferalia.aon.occam.api.model.finance.InvofoxEnvironment;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDataNames;
@@ -617,33 +618,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	public static JSONObject getConfiguration(AonApiData api) {
 		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
 		JSONObject invofoxConfigurationJSON = InvofoxConfigurationJSON.toJSON(invofoxConfiguration);
-//		if(!invofoxConfiguration.isLoginRequired()) {
-//			OCRLogin ocrLogin = OCRInvofox
-//					.getLogin(invofoxConfiguration.getUser(), invofoxConfiguration.getPass(), invofoxConfiguration.getApiUrl()).getLogin()
-//					.orElse(new OCRLogin());
-//			
-//			String token = ocrLogin.getToken().orElse(null);
-//			String account = ocrLogin.getUser().orElse(new OCRUser()).getAccount().orElse(null);
-//			
-//			if(token != null && account != null) {
-//				JSONArray environments = new JSONArray();
-//				
-//				OCRInvofox.getEnvironments(token, account).getEnvironments().stream().forEach(env-> {
-//					OCRApiKey apikey = env.getApikeys().stream().filter(f -> f.isActive()).findFirst().orElse(new OCRApiKey());
-//					if(AonStringUtils.isBlank(apikey.getKey())) {
-//						OCRApiKeyResponse resp = OCRInvofox.createApikey(token, env.getId());
-//						apikey = resp.getApikey().orElse(new OCRApiKey());
-//					}
-//					JSONObject envJSON = new JSONObject();
-//					envJSON.put(IJsonNames.ID, env.getId());
-//					envJSON.put(IJsonNames.NAME, env.getName());
-//					envJSON.put(IJsonNames.API_KEY, apikey.getKey());
-//					environments.put(envJSON);
-//				});
-//				invofoxConfigurationJSON.put("environments", environments);
-//			}
-//		}
 
+		JSONArray environments = new JSONArray();
+		InvofoxEnvironment.stream().forEach(r -> {
+			JSONObject envJSON = new JSONObject();
+			envJSON.put(IJsonNames.ID, r.getId());
+			envJSON.put(IJsonNames.NAME, r.getDescription());
+			environments.put(envJSON);
+		});
+		invofoxConfigurationJSON.put("environments", environments);
 		return invofoxConfigurationJSON;
 	}
 	
