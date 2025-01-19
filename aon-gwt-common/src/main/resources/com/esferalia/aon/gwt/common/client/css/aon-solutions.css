@@ -1067,6 +1067,7 @@
     gap: 0.5rem;
     border-bottom: 1px solid #b9b8b8;
     width: 300px;
+    justify-content: end;
 }
 
 /* Estilo del contenido del PopupPanel */
