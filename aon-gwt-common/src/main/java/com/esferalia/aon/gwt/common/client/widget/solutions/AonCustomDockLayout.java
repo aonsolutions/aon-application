@@ -107,6 +107,11 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		searchFilterComponent.hideSearchWidget();
 	}
 	
+	// Show only search button, hide text input
+	public void showSeachButton() {
+		searchFilterComponent.showSeachButton();
+	}
+	
 	public void addFilterWidget(Widget widget) {
 		searchFilterComponent.addFilterWidget(widget);
 	}

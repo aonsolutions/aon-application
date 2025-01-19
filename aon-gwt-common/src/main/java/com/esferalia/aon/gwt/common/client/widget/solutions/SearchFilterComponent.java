@@ -223,6 +223,13 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	public AonTableButton getFilterButton() {
 		return filterButton;
 	}
+	
+	// Show only search button, hide text input
+	public void showSeachButton() {
+		searchButton.setVisible(false);
+		searchTextBox.setVisible(false);
+		this.getElement().getStyle().setProperty("border", "none");
+	}
 
 	public void hideSearchWidget() {
 		this.setVisible(false);
