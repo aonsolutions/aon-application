@@ -274,10 +274,12 @@ public class SalaryWidget extends AonCustomDockLayout {
 				sort.addItem("Tipo", "type");
 				sort.addItem("F. Inicio", "start");
 				sort.addItem("F. Fin", "end");
+				sort.setValue("start");
 				sort.getListBox().addChangeHandler(event -> onSearch());
 
 				asc.addItem("Ascendente", "true");
 				asc.addItem("Descendete", "false");
+				asc.setValue("false");
 				asc.getListBox().addChangeHandler(event -> onSearch());
 
 				addSortWidget(sort);
@@ -591,6 +593,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 	}
 	
 	private void onClosePDF() {
+		this.selectPdfSalaries.clear();
 		showSalary();
 	}
 	
@@ -625,16 +628,19 @@ public class SalaryWidget extends AonCustomDockLayout {
 	
 	public SalaryWidget setIsEnterprise() {
 		isEnterprise = true;
+		setSearchPlaceholder("Busque por CT / Tabajador...");
 		return this;
 	}
 	
 	public SalaryWidget setIsWorkplace() {
 		isWorkplace = true;
+		setSearchPlaceholder("Busque por Tabajador...");
 		return this;
 	}
 	
 	public SalaryWidget setIsEmployee() {
 		isEmployee = true;
+		showSeachButton();
 		return this;
 	}
 	
@@ -649,7 +655,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		if( contractEndDate != null && (contractEndDate.before(new Date()) || contractEndDate.equals(new Date())) ) {
 			period.getListBox().setSelectedIndex(5);
 			
-			start.setValue(DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(DateUtils.copyDateOnly(contractEndDate), -1)));
+			start.setValue(DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(DateUtils.copyDateOnly(contractEndDate), -12)));
 			end.setValue(DateUtils.getLastDayOfMonth(contractEndDate));
 		} else {
 			period.getListBox().setSelectedIndex(4);

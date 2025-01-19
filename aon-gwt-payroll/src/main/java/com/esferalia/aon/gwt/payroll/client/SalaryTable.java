@@ -373,7 +373,6 @@ public abstract class SalaryTable extends ScrollPanel {
 					"Mod111 (" + salary.getAlcatrazYear() + ", " + salary.getAlcatrazPeriod().getDescription() + ")", 
 					getAeatButton(salary)
 			);
-			aeatButton.addStyleName(AON.CSS.aonCustomRowButtom());
 			buttonContainer.add(aeatButton);
 		}
 		
