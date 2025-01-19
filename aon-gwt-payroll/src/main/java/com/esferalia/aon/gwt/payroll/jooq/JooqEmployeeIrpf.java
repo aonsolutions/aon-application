@@ -344,13 +344,13 @@ public class JooqEmployeeIrpf {
 	private static String getSalaryType(Byte type) {
 		switch (type) {
 		case (byte) 0:
-			return "N\u00F3minas";
+			return "N\u00F3mina";
 		case (byte) 1:
-			return "N\u00F3minas"; //"Extra";
+			return "Extra"; //"Extra";
 		case (byte) 2:
-			return "N\u00F3minas"; //"Finiquito";
+			return "Finiquito"; //"Finiquito";
 		case (byte) 3:
-			return "N\u00F3minas"; //"Retraso";
+			return "Atraso"; //"Atraso";
 		case (byte) 4:
 			return "L00";
 		case (byte) 5:
