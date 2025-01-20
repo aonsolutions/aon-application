@@ -112,13 +112,8 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_ISSUED_BETA = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
-    name: MSG.ISSUED_INVOICES,
+    name: MSG.ISSUEDS,
     icon: MATERIAL_ICONS.UNARCHIVE,
-    actions:[{
-      id: 'Info',
-      icon: 'info',
-      action: () => info(MSG.ISSUED_INVOICES, "Información sobre que se incluye en el apartado de Facturas recibidas")
-    }],
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
@@ -154,7 +149,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
-    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
+    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKET,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",
@@ -176,7 +171,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const PROFORMA_INVOICES = {
     id: CONSTANT.PROFORMA_INVOICES.initCap(),
     name: MSG.PROFORMA_INVOICES,
-    icon: MATERIAL_ICONS.UNARCHIVE,
+    icon: "edit_document",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "emitida" })
   }
 
@@ -190,7 +185,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const RAWDOC_INBOX_RECEIVED_NEW = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED_NEW.initCap(),
     name: MSG.DRAFT + " " + MSG.RECEIVED_INVOICES,
-    icon: MATERIAL_ICONS.ARCHIVE,
+    icon: "edit_document",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
@@ -211,8 +206,8 @@ import * as GWT from "../../gwt/gwt.js";
   
   export const RAWDOC_INBOX_TICKET_NEW = {
     id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
-    name: MSG.DRAFT + " " + MSG.TICKET,
-    icon: MATERIAL_ICONS.RECEIPT,
+    name: MSG.DRAFT + " " + MSG.SIMPLIFIED_INVOICES+"/"+MSG.TICKET,
+    icon: "edit_note",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
 
@@ -256,7 +251,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const OTHER_INCOMES = {
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
-    icon: MATERIAL_ICONS.EURO,
+    icon: "add_card",
     fn: () => alert("EN DESARROLLO")
   }
 
@@ -270,7 +265,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const OTHER_EXPENSES = {
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
-    icon: MATERIAL_ICONS.EURO,
+    icon: "account_balance_wallet",
     fn: () => alert("EN DESARROLLO")
   }
 
@@ -295,7 +290,12 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
-    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ]
+    options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
+    // actions:[{
+    //   id: 'Info',
+    //   icon: 'info',
+    //   action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
+    // }],
   }
 
   export const MAIN_EXPENSES = {
