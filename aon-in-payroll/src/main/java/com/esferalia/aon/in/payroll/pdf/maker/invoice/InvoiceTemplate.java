@@ -238,10 +238,7 @@ public class InvoiceTemplate {
 	private void manageSupplies(Invoice invoice) {
 		if (invoice != null && invoice.getDetails() != null) {
 			invoice.getDetails().stream()
-			.filter(detail -> detail.getItem() != null 
-				&& detail.getItem().getProduct() != null 
-				&& ProductType.PREPAYMENT.equals(detail.getItem().getProduct().getType()) 
-				&& detail.getPrice() != 0.0 &&  detail.getQuantity() != 0.0)
+			.filter(detail -> detail.isPrepayment())
 			.forEach(detail -> this.specialTaxes.add(detail));
 		}
 	}

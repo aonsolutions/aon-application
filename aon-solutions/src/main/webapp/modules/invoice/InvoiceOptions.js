@@ -22,6 +22,11 @@ import * as GWT from "../../gwt/gwt.js";
     parent.aonInvoiceList(filter);
   }
 
+  export const info = (title, description) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.confirmDialog(title, description, () => {});
+  }
+
   export const customerList = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
@@ -109,6 +114,11 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED_INVOICES,
     icon: MATERIAL_ICONS.UNARCHIVE,
+    actions:[{
+      id: 'Info',
+      icon: 'info',
+      action: () => info(MSG.ISSUED_INVOICES, "Información sobre que se incluye en el apartado de Facturas recibidas")
+    }],
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
@@ -144,7 +154,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
-    name: MSG.TICKET,
+    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",
@@ -177,6 +187,13 @@ import * as GWT from "../../gwt/gwt.js";
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
 
+  export const RAWDOC_INBOX_RECEIVED_NEW = {
+    id: CONSTANT.RAWDOC_INBOX_RECEIVED_NEW.initCap(),
+    name: MSG.DRAFT + " " + MSG.RECEIVED_INVOICES,
+    icon: MATERIAL_ICONS.ARCHIVE,
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
+  }
+
   export const RAWDOC_INBOX_RECEIVED_DRAFT = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED.initCap(),
     name: MSG.PENDING_DRAFTS,
@@ -188,6 +205,13 @@ import * as GWT from "../../gwt/gwt.js";
   export const RAWDOC_INBOX_TICKET = {
     id: CONSTANT.RAWDOC_INBOX_TICKET.initCap(),
     name: MSG.TICKET,
+    icon: MATERIAL_ICONS.RECEIPT,
+    fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
+  }
+  
+  export const RAWDOC_INBOX_TICKET_NEW = {
+    id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
+    name: MSG.DRAFT + " " + MSG.TICKET,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
@@ -209,7 +233,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.REJECTEDS,
+    name: MSG.REVIEW,
     icon: MATERIAL_ICONS.REPORT,
     fn: () => invoiceList( { status: CONSTANT.REJECTED })
   }
@@ -223,7 +247,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_PENDINGS = {
     id: CONSTANT.PENDINGS.initCap(),
-    name: MSG.PENDINGS,
+    name: MSG.PENDING_INVOICES,
     icon: MATERIAL_ICONS.INBOX,
     opened: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
@@ -232,28 +256,28 @@ import * as GWT from "../../gwt/gwt.js";
   export const OTHER_INCOMES = {
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.EURO,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const OFFERS = {
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.CONTRACT,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const OTHER_EXPENSES = {
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.EURO,
     fn: () => alert("EN DESARROLLO")
   }
 
   export const STAFF_EXPENSES = {
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
-    icon: MATERIAL_ICONS.PERSON,
+    icon: MATERIAL_ICONS.GROUP,
     fn: () => alert("EN DESARROLLO")    
   }
 
@@ -278,13 +302,13 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [INVOICE_RECEIVED_BETA, INVOICE_TICKET, RAWDOC_INBOX_RECEIVED_DRAFT, OTHER_EXPENSES, STAFF_EXPENSES]
+    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES, STAFF_EXPENSES]
   }
 
   export const MAIN_DOCUMENTS = {
     id: CONSTANT.DOCUMENT.initCap(),
-    title: MSG.DOCUMENTS,
-    name: MSG.DOCUMENTS,
+    title: MSG.PENDING,
+    name: MSG.PENDING,
     options: [RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH]
   }
 
@@ -315,7 +339,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const REGISTRY = {
     id: CONSTANT.HOLDERS.initCap(),
-    name: MSG.HOLDERS,
+    name: MSG.CONTACTS,
     icon: MATERIAL_ICONS.PEOPLE,
     clickable: false,
     options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
@@ -323,7 +347,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
-    name: MSG.PRODUCTS,
+    name: MSG.PRODUCTS_AND_SERVICES,
     icon: MATERIAL_ICONS.INVENTORY_2,
     fn: () => productList({ expense: false })
   }
@@ -390,7 +414,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.MANAGEMENT.initCap(),
     title: MSG.MANAGEMENT,
     name: MSG.MANAGEMENT,
-    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT, CLOSING_INVOICE ]
+    options:[ REGISTRY, CONCEPTS, CHARGES_PAYMENTS, FISCAL_DRAFT] //, CLOSING_INVOICE ]
   }
 
 

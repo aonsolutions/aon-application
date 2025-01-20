@@ -33,14 +33,6 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
 		addStyleName(AON.CSS.aonCustomTextBox());
-		
-		// Agregar manejador de blur en el componente
-//      RootPanel.get().addDomHandler(event -> {
-//            if (hasFocus && !optionsPopup.isShowing()) {
-//                fireBlurEvent(); // Lanzar el evento si se pierde el foco
-//                hasFocus = false;
-//            }
-//      }, ClickEvent.getType());
 
 		createTitle(title);
 		createInput();
@@ -75,9 +67,8 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 		int top = this.getAbsoluteTop() + this.getOffsetHeight();
         int left = this.getAbsoluteLeft();
         optionsPopup.setPopupPosition(left, top);
-        optionsPopup.getElement().getStyle().setZIndex(3);
+        optionsPopup.getElement().getStyle().setZIndex(70);
         optionsPopup.show(); // Muestra con animación
-//        hasFocus = true;
 	}
 	
 	public void clearOption() {

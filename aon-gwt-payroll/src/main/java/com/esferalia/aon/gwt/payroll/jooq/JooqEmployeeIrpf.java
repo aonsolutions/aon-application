@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
@@ -23,6 +24,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
+import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
+import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -73,40 +78,47 @@ public class JooqEmployeeIrpf {
 		Integer year =  calendar.get(Calendar.YEAR);
 		
 		while (isSameYear(iteratorDate, year)) {
+			
 			// Payroll endDate
 			Calendar endDateCalendar = Calendar.getInstance();
 			endDateCalendar.setTime(iteratorDate);
 			endDateCalendar.set(Calendar.DAY_OF_MONTH, endDateCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date endDate = endDateCalendar.getTime();
 			
+			// SalaryTypes
+			List<Byte> salaryTypes = new ArrayList<Byte>();
+			salaryTypes.add((byte)0); // Nomina
+			salaryTypes.add((byte)1); // Extra
+			salaryTypes.add((byte)2); // Finiquito
+			salaryTypes.add((byte)3); // Atraso
+			salaryTypes.add((byte)7); // M190 manual
+			
 			// Salary Records
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)).or(SALARY.ISSUE_DATE.eq(parseDateToSQL(iteratorDate)).or(SALARY.ISSUE_DATE.eq( parseDateToSQL(endDate)))))
-					.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNumber).or(SALARY.EMPLOYEE_DOCUMENT.eq(document)))
+					.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNumber).or(SALARY.EMPLOYEE_DOCUMENT.eq(document)))
 					.and(SALARY.DOMAIN.eq(domainId))
-					.orderBy(SALARY.TYPE)
+					.and(SALARY.TYPE.in(salaryTypes))
+					.and(
+							(
+									SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+									SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)))
+							).or(
+									SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+									SALARY.CHARGE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)))
+							)
+					)
+					.orderBy(SALARY.START_DATE, SALARY.TYPE)
 					.fetch();
 			
 			if(salaryRecords.isNotEmpty()) {
 				if(salaryRecords.size() > 1)
 					System.err.println("More than one Salary for a month (contractId : " + salaryRecords.get(0).get(SALARY.CONTRACT) + ", ssNumber : " + ssNumber + ", Date : " + formatDate.format(iteratorDate) + ")");
 				
-				EmployeeIrpf employeeIrpf = new EmployeeIrpf();
-				Integer salaryId = null;
-				String salaryType = null;
-				Double employeeSSQuoteAcumulate = 0.00;
-				Double totalIrpfAcumulate = 0.00;
-				Double inkindBaseAcumulate = 0.00;
-				Double moneyBaseAcumulate = 0.00;
-				Double irpfPercentAcumulate = 0.00;
-				Double moneyQuoteAcumulate = 0.00;
-				Double inkindQuoteAcumulate = 0.00;
-				
 				// Get SalaryRecord
 				for(Record salaryRecord : salaryRecords) {
 					
-					salaryId = salaryRecord.get(SALARY.ID);
-					salaryType = getSalaryType(salaryRecord.get(SALARY.TYPE));
+					Integer salaryId = salaryRecord.get(SALARY.ID);
+					String salaryType = getSalaryType(salaryRecord.get(SALARY.TYPE));
 					
 					if(AonStringUtils.equalsIgnoreCase(salaryType, "Manual")) {
 						EmployeeIrpf employeeIrpfL190 = createEmployeeIrpfL190(dslContext, iteratorDate, salaryId, salaryType, salaryRecord);
@@ -146,18 +158,6 @@ public class JooqEmployeeIrpf {
 					}
 					
 					Double inkindBase = salaryRecord.get(SALARY.INKIND_IRPF_BASE);
-					if(inkindBase == 0.00) {
-						Double value = dslContext.select(SALARY_DEDUCTION.AMOUNT).from(SALARY_DEDUCTION)
-								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
-								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("EN_ESPECIE")).fetchOne(SALARY_DEDUCTION.AMOUNT);
-						
-						List<String> baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-								.where(SALARY_DATA.NAME.eq("BASE_CGC"))
-								.and(SALARY_DATA.SALARY.eq(salaryId))
-								.fetch(SALARY_DATA.EXPRESSION);
-						if(null != value && !baseCgcStr.isEmpty())
-							inkindBase = Double.parseDouble(baseCgcStr.get(0)) - value;
-					}
 					
 					Double moneyBase = salaryRecord.get(SALARY.MONEY_IRPF_BASE);
 					
@@ -186,38 +186,42 @@ public class JooqEmployeeIrpf {
 						}
 					}
 					
-					// Acumulate
-					if(AonStringUtils.equalsIgnoreCase(salaryType, "L00") || AonStringUtils.equalsIgnoreCase(salaryType, "L13"))
-						employeeSSQuoteAcumulate = employeeSSQuote;
-					else
-						employeeSSQuoteAcumulate += employeeSSQuote;
-					totalIrpfAcumulate += totalIrpf;
-					inkindBaseAcumulate += inkindBase;
-					moneyBaseAcumulate += moneyBase;
-					irpfPercentAcumulate += irpfPercent;
-					moneyQuoteAcumulate += moneyQuote;
-					inkindQuoteAcumulate += inkindQuote;
-					
-					employeeIrpf.setDate(iteratorDate)
+					EmployeeIrpf employeeIrpf = new EmployeeIrpf()
+								.setDate(iteratorDate)
 								.setSalaryId(salaryId)
 								.setSalaryType(salaryType)
-								.setMoneyBase(moneyBaseAcumulate)
-								.setMoneyQuote(moneyQuoteAcumulate)
-								.setInkindBase(inkindBaseAcumulate)
-								.setInkindQuote(inkindQuoteAcumulate)
-								.setIrpfPercent(irpfPercentAcumulate)
-								.setEmployeeSSQuote(employeeSSQuoteAcumulate)
-								.setTotalIrpf(totalIrpfAcumulate);
+								.setIrpfPercent(irpfPercent)
+								.setMoneyBase(moneyBase)
+								.setMoneyQuote(moneyQuote)
+								.setInkindBase(inkindBase)
+								.setInkindQuote(inkindQuote)
+								.setTotalIrpf(totalIrpf)
+								.setEmployeeSSQuote(employeeSSQuote)
+								;
+					
+					//Is Alcatraz
+					Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryId)).fetch();
+					if(!alcatrazRecords.isEmpty()) {
+						employeeIrpf.setAlcatraz(true);
+						
+						FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+						employeeIrpf.setAlcatrazYear(fsModelRecord.getYear());
+						employeeIrpf.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+						employeeIrpf.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+						
+					} else employeeIrpf.setAlcatraz(false);
+					
+					if(AonStringUtils.isNotBlank(salaryType) && !AonStringUtils.equalsIgnoreCase(salaryType, "Manual"))
+						employeeIrpfList.add(employeeIrpf);
 				}
-				
-				if(AonStringUtils.isNotBlank(salaryType) && !AonStringUtils.equalsIgnoreCase(salaryType, "Manual"))
-					employeeIrpfList.add(employeeIrpf);
 			}
 			
 			// Add month to iteratorDate
 			iteratorCalendar.add(Calendar.MONTH, 1);
 			iteratorDate = iteratorCalendar.getTime();
 		}
+		
+		employeeIrpfList.forEach(employeeIrpf -> System.out.println(employeeIrpf.getDate() + " --> " + employeeIrpf.getSalaryType()));
 		
 		return employeeIrpfList;
 	}
@@ -235,15 +239,13 @@ public class JooqEmployeeIrpf {
 	}
 
 	private static Double getInkindQuote(DSLContext dslContext, Integer salaryId, String salaryType, Double inkindBase, Double irpfPercent) {
-		if(AonStringUtils.equalsIgnoreCase(salaryType, "Manual")) {
-			List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
+		List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryId))
 				.and(SALARY_PAYMENT.TYPE.eq((byte)13))
-				.fetch(SALARY_PAYMENT.QUOTE);
+				.fetch(SALARY_PAYMENT.IRPF);
 			
-			if(!quotes.isEmpty()) return quotes.get(0);
-		}
-		return inkindBase * irpfPercent / 100;
+		if(!quotes.isEmpty()) return quotes.get(0);
+		else return 0.00;
 	}
 
 	private static EmployeeIrpf createEmployeeIrpfL190(DSLContext dslContext, Date iteratorDate, Integer salaryId, String salaryType, Record salaryRecord) throws IllegalArgumentException {
@@ -324,19 +326,31 @@ public class JooqEmployeeIrpf {
 					.setEmployeeSSQuote(employeeSSQuote)
 					.setTotalIrpf(totalIrpf);
 		
+		//Is Alcatraz
+		Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryId)).fetch();
+		if(!alcatrazRecords.isEmpty()) {
+			employeeIrpf.setAlcatraz(true);
+			
+			FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+			employeeIrpf.setAlcatrazYear(fsModelRecord.getYear());
+			employeeIrpf.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+			employeeIrpf.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+			
+		} else employeeIrpf.setAlcatraz(false);
+		
 		return employeeIrpf;
 	}
 
 	private static String getSalaryType(Byte type) {
 		switch (type) {
 		case (byte) 0:
-			return "N\u00F3minas";
+			return "N\u00F3mina";
 		case (byte) 1:
-			return "N\u00F3minas"; //"Extra";
+			return "Extra"; //"Extra";
 		case (byte) 2:
-			return "N\u00F3minas"; //"Finiquito";
+			return "Finiquito"; //"Finiquito";
 		case (byte) 3:
-			return "N\u00F3minas"; //"Retraso";
+			return "Atraso"; //"Atraso";
 		case (byte) 4:
 			return "L00";
 		case (byte) 5:

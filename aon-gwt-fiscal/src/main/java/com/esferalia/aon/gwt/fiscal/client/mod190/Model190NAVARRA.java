@@ -63,7 +63,7 @@ public class Model190NAVARRA extends Model190Base {
 				}
 				@Override
 				public boolean isBoeFormatEnabled() {
-					return true;
+					return (getModel().getYear() <= 2023);
 				}
 
 				@Override
@@ -96,7 +96,11 @@ public class Model190NAVARRA extends Model190Base {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
+		if (getModel().getYear() >= 2024) {
+			setDetailManager( new Model190NAVARRADetail2024( getCallback() , getModel(), selectedIndex ));
+		} else {
+			setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
+		}
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}
 	

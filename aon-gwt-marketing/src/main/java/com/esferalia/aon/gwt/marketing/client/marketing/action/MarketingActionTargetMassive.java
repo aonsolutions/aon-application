@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.marketing.client.marketing.action;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -9,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.marketing.client.marketing.MarketingModuleOptions;
 import com.esferalia.aon.occam.api.model.Advertising;
@@ -21,6 +25,8 @@ import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
@@ -61,6 +67,7 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 	private AonCustomListBox projectActivity = new AonCustomListBox("Tipo Actividad");
 	private AonCustomListBox status = new AonCustomListBox("Estado");
 	private AonCustomListBox customer = new AonCustomListBox("Cliente");
+	private AonCustomMultiSelectBox customerStatus = new AonCustomMultiSelectBox("Estado Cliente");
 	private AonCustomListBox mkAction = new AonCustomListBox("Acci\u00f3n Comercial");
 	
 	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
@@ -84,7 +91,7 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 		ensureDebugId("actionTargetMassive");
 		
 		getElement().getStyle().setProperty("padding", "1rem");
-		getElement().getStyle().setProperty("width", isTablet ? "50rem" : "70rem");
+		getElement().getStyle().setProperty("width", isTablet ? "50rem" : "75rem");
 		
 		dockLayout = new AonCustomDockLayout("Clientes Potenciales", true) {
 			
@@ -136,6 +143,7 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 			Advertising marketingActionMediaType = Advertising.values()[i];
 			advertising.addItem(marketingActionMediaType.getDescription(), marketingActionMediaType.ordinal() + "");
 		}
+		advertising.setValue(Advertising.ALLOWED.ordinal() + "");
 		advertising.getListBox().addChangeHandler(event -> onSearch());
 		
 		projectType.addItem("-", "");
@@ -163,7 +171,24 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 		
 		customer.addItem( "Sin cliente", "false");
 		customer.addItem( "Con Cliente", "true");
-		customer.getListBox().addChangeHandler(event -> onSearch());
+		customer.getListBox().addChangeHandler(event -> {
+			customerStatus.setVisible(Boolean.parseBoolean(customer.getValue()));
+			onSearch();
+		});
+		
+		Set<String> customerStatusOpt = new HashSet<String>();
+		customerStatusOpt.add("Activo");
+		customerStatusOpt.add("Inactivo");
+		customerStatusOpt.add("Bloqueado");
+		customerStatus.setOptions(customerStatusOpt);
+		customerStatus.setSelectedOptions(new HashSet<String>(Arrays.asList("Activo")));
+		customerStatus.setVisible(false);
+		customerStatus.addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+            	onSearch();
+            }
+        });
 		
 		dockLayout.addFilterWidget(scope);
 		dockLayout.addFilterWidget(entity);
@@ -172,6 +197,7 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 		dockLayout.addFilterWidget(projectActivity);
 		dockLayout.addFilterWidget(status);
 		dockLayout.addFilterWidget(customer);
+		dockLayout.addFilterWidget(customerStatus);
 		dockLayout.addFilterWidget(mkAction);
 		
 		sort.addItem("Nombre", "name");
@@ -380,11 +406,14 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 				.setProjectActivity(AonStringUtils.isBlank(projectActivity.getValue()) ? null : Integer.parseInt(projectActivity.getValue()))
 				.setStatus(AonStringUtils.isBlank(status.getValue()) ? null : Byte.parseByte(status.getValue()))
 				.setCustomer(Boolean.parseBoolean(customer.getValue()))
+				.setCustomerActive(customerStatus.getSelectedOptions().contains("Activo"))
+				.setCustomerInactive(customerStatus.getSelectedOptions().contains("Inactivo"))
+				.setCustomerBloqued(customerStatus.getSelectedOptions().contains("Bloqueado"))
 				.setMkAction(AonStringUtils.isBlank(mkAction.getValue()) ? null : Integer.parseInt(mkAction.getValue()))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				;
-				
+		
 		return params;
 	}
 

@@ -84,7 +84,6 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		
 		// ---------------------------------------------------------------- FIRST ROW
 		FlowPanel firstRowPanel = new FlowPanel();
-		firstRowPanel.addStyleName(AON.CSS.aonMarginTop());
 		firstRowPanel.addStyleName(AON.CSS.aonPositionRelative());
 		filterPanel.add(firstRowPanel);
 		
@@ -165,6 +164,8 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
+		secondRowPanel.addStyleName(AON.CSS.aonMarginTop());
+		secondRowPanel.addStyleName(AON.CSS.aonPositionRelative());
 		filterPanel.add(secondRowPanel);
 
 		Label titularLabel = new InlineLabel(AON.MSG.titular());
@@ -178,6 +179,8 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 
 		// ---------------------------------------------------------------- THIRD ROW
 		FlowPanel thirdRowPanel = new FlowPanel();
+		thirdRowPanel.addStyleName(AON.CSS.aonMarginTop());
+		thirdRowPanel.addStyleName(AON.CSS.aonPositionRelative());
 		filterPanel.add(thirdRowPanel);
 		
 		Label withholdingTypeLabel = new InlineLabel(AON.MSG.withholdingType());
@@ -247,6 +250,8 @@ public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChange
 		
 		// ---------------------------------------------------------------- FOURTH ROW
 		FlowPanel fourthRowPanel = new FlowPanel();
+		fourthRowPanel.addStyleName(AON.CSS.aonMarginTop());
+		fourthRowPanel.addStyleName(AON.CSS.aonPositionRelative());
 		filterPanel.add(fourthRowPanel);
 
 		Label orderbyLabel = new InlineLabel("Ordenar por...");

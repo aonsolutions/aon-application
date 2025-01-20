@@ -52,9 +52,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
@@ -1697,6 +1699,102 @@ public class Bases {
 				throws NoSuchVariableException, UnMatchedVariableException {
 			return DistributeCCretaData.get(variable, salary,new Period(toDate(desde), toDate(hasta)));
 		}
+		
+	}
+
+	private static class DistributeHCretaDataByDiff extends HCretaData {
+		
+		public DistributeHCretaDataByDiff(String variable) {
+			super(variable);
+		}
+		
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException, UnMatchedVariableException {
+			return get(salary, new Period(toDate(desde), toDate(hasta)));
+		}
+		
+		public Double get(Salary salary, Period period)
+				throws NoSuchVariableException, UnMatchedVariableException {
+			if ( isLast(variable, salary, period) ) {
+				return DistributeHCretaDataByDiff.getByDiff(variable, salary, period); 
+			} else {
+				return DistributeHCretaDataByDiff.get(variable, salary, period);
+			}
+		}
+		
+		
+		protected static Double get(String variable,
+				Salary salary, Period p) throws NoSuchVariableException,
+						UnMatchedVariableException {
+			return Math.floor(DistributeCCretaData.get(variable, salary, p));
+		}
+		
+		protected static double getByDiff(String variable, Salary salary, Period p) throws NoSuchVariableException, UnMatchedVariableException {
+			return getAll(variable, salary, p) - getOther(variable, salary, p);
+		}
+		
+
+		protected static boolean isLast(String variable, Salary salary, Period p ) {
+			List<Period> varPeriods = 
+			salary.getContextData()
+			.getOrDefault(variable, Collections.emptyList()).stream()
+			.map(d -> new Period(d.getStartDate(), d.getEndDate()))
+			.filter(p::intersects).collect(Collectors.toList());
+
+			return
+			salary.getContextData()
+			.getOrDefault(WORKED_DAYS.getName(), Collections.emptyList())
+			.stream().map( d -> new Period(d.getStartDate(),d.getEndDate()))
+			.flatMap(period -> intersect(period, varPeriods))
+			.sorted((p1,p2) -> p2.compareTo(p1)) // reverse last at first
+			.findFirst().filter( period-> p.getEnd().compareTo(period.getEnd()) >= 0 )
+			.isPresent()
+			;
+		}
+		
+		protected static double getAll(String variable,
+				Salary salary, Period p) {
+			return salary.getContextData()
+			.getOrDefault(variable, Collections.emptyList())
+			.stream()
+        	.filter(d -> p.intersects(new Period(d.getStartDate(),d.getEndDate())))
+			.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+			
+		}
+
+		protected static double getOther(String variable,
+				Salary salary, Period p) throws NoSuchVariableException, UnMatchedVariableException {
+			
+			List<Period> varPeriods = 
+			salary.getContextData()
+			.getOrDefault(variable, Collections.emptyList()).stream()
+			.map(d -> new Period(d.getStartDate(), d.getEndDate()))
+			.filter(p::intersects).collect(Collectors.toList());
+
+			List<Period> workedPeriods =
+			salary.getContextData()
+			.getOrDefault(WORKED_DAYS.getName(), Collections.emptyList())
+			.stream().map( d -> new Period(d.getStartDate(),d.getEndDate()))
+			.flatMap(period -> intersect(period, varPeriods))
+			.flatMap(period -> period.sub(p).stream() )
+			.sorted((p1,p2) -> p2.compareTo(p1)) // reverse last at first
+			.toList();
+			
+			double other = 0.00;
+			
+			for (Period period : workedPeriods) {
+				other += DistributeHCretaDataByDiff.get(variable, salary, period);
+			}
+			return other;
+		}
+
+
+		private static Stream<Period> intersect(Period p, List<Period> periods) {
+			return Period.intersect(Collections.singleton(p), periods).stream();
+		}
+		
+		
 	}
 
 	private static class DistributeCCretaData extends CCretaData {
@@ -1777,6 +1875,71 @@ public class Bases {
 		}
 	}
 	
+	private static class DistributeCCretaDataByDiffH extends CCretaData {
+		
+		private DistributeHCretaDataByDiff hCretaData ;
+		
+		public DistributeCCretaDataByDiffH(String variable, DistributeHCretaDataByDiff hCretaData  ) {
+			super(variable);
+			this.hCretaData = hCretaData;
+		}
+
+		// CCretaData ---------------------------------------------------------
+
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException,
+				UnMatchedVariableException {
+			return get(variable, salary,
+					new Period(toDate(desde), toDate(hasta)), hCretaData);
+		}
+
+		// --------------------------------------------------------------------
+
+		protected static Double get(String variable,
+				Salary salary, Period p, DistributeHCretaDataByDiff hCretaData) throws NoSuchVariableException,
+						UnMatchedVariableException {
+			List<ContextData> datas = salary.getContextData()
+					.getOrDefault(variable, Collections.emptyList());
+
+			double intersectsValue = datas.stream()
+	        	.filter(d -> p.intersects(new Period(d.getStartDate(),d.getEndDate())))
+			.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+
+			if (intersectsValue == 0.00)
+				throw new NoSuchVariableException(variable);
+			
+			double intersectsHours  = 
+			salary.getContextData()
+			.getOrDefault(hCretaData.variable, Collections.emptyList())
+			.stream().filter(d -> p.intersects(new Period(d.getStartDate(),d.getEndDate())))
+			.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+			;
+			
+			if ( intersectsHours == 0.00 )
+				return DistributeCCretaData.get(variable, salary, p);
+			
+			double periodHours = hCretaData.get(salary, p);
+			
+			return intersectsValue / intersectsHours * Math.min(periodHours, intersectsHours);
+		}
+		
+		private static long days(Period p) {
+			return p.daysStream().count();
+		}
+
+		private static long days(ContextData d) {
+			return new Period(d.getStartDate(),d.getEndDate()).daysStream().count();
+		}
+
+		private static Double eval(ContextData d) {
+			return ExpressionContext.eval(d.getExpression(), Double.class);
+		}
+
+		private static Stream<Period> intersect(Period p, List<Period> periods) {
+			return Period.intersect(Collections.singleton(p), periods).stream();
+		}
+	}
 
 
 	private static class CompositeCCretaData
@@ -2135,8 +2298,8 @@ public class Bases {
 				};
 			});
 			
-			put("737", new DistributeCCretaData(SLD_C737.getName()));
-			put("06", new DistributeHCretaData(SLD_H06.getName()));
+			put("06", new DistributeHCretaDataByDiff(SLD_H06.getName()));
+			put("737", new DistributeCCretaDataByDiffH(SLD_C737.getName(), new DistributeHCretaDataByDiff(SLD_H06.getName())));
 			put("03", new DistributeHCretaData(SLD_H03.getName()));
 			put("04", new DistributeHCretaData(SLD_H04.getName()));
 			

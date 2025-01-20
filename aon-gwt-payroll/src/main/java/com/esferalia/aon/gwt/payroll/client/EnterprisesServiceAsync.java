@@ -168,6 +168,7 @@ public interface EnterprisesServiceAsync {
 	
 	void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException ;
 	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	void saveContractClause(String currentDomainName, String currentUser, ContractClause contractClause, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	void deleteContractClause(String currentDomainName, Integer clauseId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void importContractClauses(String currentDomainName, List<Integer> clausesIds, Integer contractId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getDomainClauses(String currentDomainName, AsyncCallback<List<ContractClause>> asyncCallback) throws IllegalArgumentException;
@@ -329,10 +330,15 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Activity Summary
 	
 	void getActivitySummary(String currentDomainName, String currentUser, ActivitySummaryParams params, AsyncCallback<List<ActivitySummaryObject>> asyncCallback) throws IllegalArgumentException;
+	
 	// ------------------------------------------------ Salaries
 	
 	void getSalaries(String domain, String user, SalaryParams params, AsyncCallback<List<SalaryInfo>> asyncCallback) throws IllegalArgumentException;
-	
+
 	void deleteSalary(String domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+
+	// ------------------------------------------------ Utils
+	
+	void getScopes(String currentDomainName, String currentUser, AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException;
 
 }

@@ -703,8 +703,8 @@ public class JooqPayrollSalaries {
 		List<Byte> salaryTypes = new ArrayList<Byte>();
 		if(params.isSalary()) salaryTypes.add((byte)0);
 		if(params.isExtra()) salaryTypes.add((byte)1);
-		if(params.isDelay()) salaryTypes.add((byte)2);
-		if(params.isSettle()) salaryTypes.add((byte)3);
+		if(params.isSettle()) salaryTypes.add((byte)2);
+		if(params.isDelay()) salaryTypes.add((byte)3);
 		
 		condition = condition.and(
 				SALARY.TYPE.lt((byte)Salary.Type.L00.ordinal())
@@ -751,11 +751,28 @@ public class JooqPayrollSalaries {
 			condition = condition.and( SALARY.CONTRACT.eq(params.getContract()) );
 		}
 		
+		
 		if(null != params.getStart())
-			condition = condition.and( SALARY.END_DATE.ge(AonDateUtils.toSql(params.getStart())) );
+			condition = condition.and(
+					(
+							SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.ISSUE_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					).or(
+							SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.CHARGE_DATE.ge(AonDateUtils.toSql(params.getStart())))
+					)
+			);
 		
 		if(null != params.getEnd())
-			condition = condition.and( SALARY.END_DATE.le(AonDateUtils.toSql(params.getEnd())) );
+			condition = condition.and(
+					(
+							SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.ISSUE_DATE.le(AonDateUtils.toSql(params.getEnd())))
+					).or(
+							SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.CHARGE_DATE.le(AonDateUtils.toSql(params.getEnd())))
+					)
+			);
 		
 		return condition;
 	}

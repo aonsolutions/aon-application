@@ -105,6 +105,7 @@ export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
+export const CONTRACT = 'contract';
 export const CREDIT_CARD = 'credit_card';
 
 // ----- D
@@ -115,6 +116,7 @@ export const DELETE = 'delete';
 export const DELETE_FOREVER = 'delete_forever';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DICTIONARY = 'dictionary';
+export const DO_NOT_DISTURB_ON = 'do_not_disturb_on';
 export const DOCUMENT_SCANNER = 'document_scanner';
 export const DONE = 'done';
 

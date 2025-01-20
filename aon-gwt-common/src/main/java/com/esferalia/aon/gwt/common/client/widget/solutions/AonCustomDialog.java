@@ -450,11 +450,11 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 	}
 
 	public void showLoaded() {
-		// Show center
-		Scheduler.get().scheduleDeferred(() -> {
-			center();
-			show();
-		});
+		// Show the dialog and defer centering to ensure correct positioning
+	    Scheduler.get().scheduleDeferred(() -> {
+	        show();
+	        Scheduler.get().scheduleDeferred(() -> center());
+	    });
 	}
 	
 	public static interface AonCustomDialogCallback {

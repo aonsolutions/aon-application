@@ -4,70 +4,61 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.payroll.client.ContractClausePanel.AonContractClausePanelCallback;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DeckPanel;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class ContractClauseUI extends ResizeComposite {
+public abstract class ContractClauseUI extends ScrollPanel {
+	
+	private SimplePanel container;
+	private AonCustomTable tab;
+	
+	private static enum COLUMN {
+		  LIN("Linea"								,"5rem"				,"")
+		, NAM("Nombre"								,"10rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DES("Descripci\u00f3n"					,"-moz-available"  	,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
+		;
 
-	// -------------------------------------------------- UiBinder
+		String headerLabel;
+		String colWidth;
+		String cellStyleClass;
 
-	private static ContractClauseUIBinder uiBinder = GWT.create(ContractClauseUIBinder.class);
+		private COLUMN(String headerLabel,String colWidth) {
+			this(headerLabel, colWidth, null);
+		}
 
-	interface ContractClauseUIBinder extends UiBinder<Widget, ContractClauseUI> {}
-
-	// -------------------------------------------------- UiFields
-
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String headerLabelStyle();
-		String maxWidthTB();
-		String maxWidthLB();
-		String clauseTD();
-		String flex();
-		String loading();
+		private COLUMN(String headerLabel,String colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
 	}
-	
-	@UiField
-	VerticalPanel clausesTable;
-
-	@UiField
-	Grid clausesDataTableHeader;
-	
-	@UiField
-	DeckPanel deckPanel;
-	
-	@UiField
-	ScrollPanel clausesScrollPanel;
-	
-	@UiField
-	Grid clausesDataTable;
-
-	@UiField
-	HTMLPanel loadingClausesPanel;
 	
 	// ------------------------------------------------------ Constructor
 	
@@ -76,7 +67,109 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	private Integer contractId;
 	
 	protected ContractClauseUI() {
-		initWidget(uiBinder.createAndBindUi(this));
+		this.setHeight("100%");
+		
+		container = new SimplePanel();
+		container.getElement().getStyle().setProperty("padding", "0 1rem");
+		setWidget(container);
+	}
+	
+	private void onSearch() {
+		search();
+	}
+	
+	private void search() {
+		container.clear();
+		tab = new AonCustomTable();
+		
+		paintHeader();
+		container.setWidget(tab);
+		searchData();
+	}
+	
+	private void paintHeader() {
+		HTMLPanel header = tab.createHeader();
+		header.getElement().getStyle().setProperty("top", "0px");
+		
+		for ( COLUMN col : COLUMN.values()) 
+			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());		
+	}
+	
+	private void searchData() {
+		showLoadingMessage("Cargando clausulas ...");
+		getList(clauses -> {
+			onHideMessage();
+			
+			boolean something = false;
+			
+			for(ContractClause clause : clauses) {
+				something = true;
+				paintRow(clause);
+			}
+			
+			if (!something) {
+				FlowPanel line = new FlowPanel();
+				InlineLabel label = new InlineLabel(AON.MSG.noData());
+				line.add(label);
+				container.clear();
+				container.add(line);
+			}
+		}, f -> showErrorMessage("Obtenci\u00f3n Clausulas", f.getMessage()));
+	}
+
+	private void paintRow(ContractClause clause) {
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		
+		if(null != clause.getContract()) {
+			AonTableButton deleteButton = new AonTableButton("Borrar Clausula", AON.CSS.aonIconDelete());
+			deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
+			deleteButton.addClickHandler(e -> {
+				e.stopPropagation();
+				deleteButton.setEnabled(false);
+				
+				AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Documentos",
+						new HTML("Se va a proceder a eliminar la clausula <b>" + clause.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+				
+				deleteDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						deleteButton.setEnabled(true);
+					}
+					
+					@Override
+					public void onAccept() {
+						deleteContractClause(
+								clause.getId(), 
+				    			s -> {
+				    				showSuccessMessage("Borrado Clausula", "La clausula ha sido eliminada correctamente");
+				    				onSearch();
+				    			}, 
+				    			f -> showErrorMessage("Borrado Clausula", f.getMessage()));
+					}
+				});
+				
+			});
+			buttonContainer.add(deleteButton);
+		}
+		
+		HTMLPanel row = tab.createRow();
+		row.addDomHandler(e -> editClause(clause), ClickEvent.getType());
+		
+		tab.addRow(row, new Label(null == clause.getLineNumber() ? "" : clause.getLineNumber().toString()), COLUMN.LIN.getColWidth());
+		
+		Label name = new Label(clause.getName());
+		name.setTitle(clause.getName());
+		tab.addInlineStyle(name, COLUMN.NAM.getCellStyleClass());
+		tab.addRow(row, name, COLUMN.NAM.getColWidth());
+		
+		Label description = new Label(clause.getDescription());
+		description.setTitle(clause.getDescription());
+		tab.addInlineStyle(description, COLUMN.DES.getCellStyleClass());
+		tab.addRow(row, description, COLUMN.DES.getColWidth());
+		
+		tab.addRow(row, buttonContainer, COLUMN.BUT.getColWidth());
 	}
 	
 	// ------------------------------------------------------ setEmployeeContractInfo
@@ -84,198 +177,51 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		this.contractId = this.employeeContractInfo.getContractInfo().getContractId();
-		
-		reloadCaluses();
-	}
-	
-	private void reloadCaluses() {
-		initializeView();
-		
-		getContractClauses(s -> {
-			if(employeeContractInfo.getContractClauses().isEmpty())
-				showEmptyTable();
-			else 
-				loadClauses();
-		}, f -> showErrorMessage("Error obtenci\u00f3n Clausulas", f.getMessage()));
-	}
-
-	private void loadClauses() {
-		resetClauseDataTableStructure();
-		showMainTable();
-		for(ContractClause contractClause : employeeContractInfo.getContractClauses())
-			if(contractClause.getId() == null || contractClause.getId() > 0)
-				paintContractClause(contractClause);
-	}
-
-	// ------------------------------------------------------ Initialize View
-
-	private void initializeView() {
-		initClausesTable();
-		paintHeaderClausesTable();
-		
-		setScrollPanelsHeight();
-		setColumnsWidth();
-		
-		showLoadingPanel();
-	}
-
-	private void initClausesTable() {
-		clausesDataTableHeader.clear();
-		clausesDataTableHeader.resize(0, 0);
-		clausesDataTableHeader.resizeColumns(4);
-		clausesDataTable.clear();
-		clausesDataTable.resize(0, 0);
-		clausesDataTable.resizeColumns(4);
-	}
-	
-	private void paintHeaderClausesTable() {
-		int row = clausesDataTableHeader.insertRow(clausesDataTableHeader.getRowCount());
-		
-		Label line = new Label("L\u00CDNEA");
-		Label name = new Label("NOMBRE");
-		Label description = new Label("DESCRIPCI\u00D3N");
-		Label action = new Label("");
-		
-		line.addStyleName(style.headerLabelStyle());
-		name.addStyleName(style.headerLabelStyle());
-		description.addStyleName(style.headerLabelStyle());
-		action.addStyleName(style.headerLabelStyle());
-		
-		clausesDataTableHeader.setWidget(row, 0, line);
-		clausesDataTableHeader.setWidget(row, 1, name);
-		clausesDataTableHeader.setWidget(row, 2, description);
-		clausesDataTableHeader.setWidget(row, 3, action);
-	}
-	
-	private void setScrollPanelsHeight() {
-		clausesScrollPanel.setHeight((Window.getClientHeight() - 390) + "px");
-	}
-	
-	private void setColumnsWidth() {
-		clausesDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(100, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(200, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(595, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(50, Unit.PX);
-		
-		clausesDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(595, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-		
-		clausesDataTable.getColumnFormatter().addStyleName(0, style.clauseTD());
-		clausesDataTable.getColumnFormatter().addStyleName(1, style.clauseTD());
-		clausesDataTable.getColumnFormatter().addStyleName(3, style.clauseTD());	
-	}
-	
-	private void showLoadingPanel() {
-		AonToolbarSmallButton loadingBtn = new AonToolbarSmallButton("Cargando Clausulas", AON.CSS.aonIconRenew());
-		loadingBtn.addStyleName(style.loading());
-		Label loadingLabel = new Label("Cargando clausulas ...");
-
-		loadingClausesPanel.clear();
-		loadingClausesPanel.add(loadingBtn);
-		loadingClausesPanel.add(loadingLabel);
-
-		deckPanel.showWidget(1);
-	}
-
-	private void showMainTable() {
-		deckPanel.showWidget(0);
-	}
-	
-	private void showEmptyTable() {
-		deckPanel.showWidget(2);
-	}
-	
-	// ------------------------------------------------------ PaintContractAttach
-	
-	private void paintContractClause(ContractClause contractClause) {
-		// Insert new row
-		int row = this.clausesDataTable.insertRow(clausesDataTable.getRowCount());
-		
-		// Line TextBox
-		TextBox lineTB = new TextBox();
-		lineTB.setText(contractClause.getLineNumber() + "");
-		lineTB.addValueChangeHandler(e -> contractClause.setLineNumber(Short.parseShort(e.getValue())));
-		
-		// Name TextBox
-		TextBox nameTB = new TextBox();
-		nameTB.setText(contractClause.getName());
-		nameTB.addValueChangeHandler(e -> contractClause.setName(e.getValue()));
-		
-		// Description TextBox
-		TextArea descriptionTA = new TextArea();
-		descriptionTA.setValue(contractClause.getDescription());
-		descriptionTA.addValueChangeHandler(e -> contractClause.setDescription(e.getValue()));
-		
-		// Delete Button
-		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
-		deleteBTN.addClickHandler(e -> {
-			if(contractClause.getId() == null) {
-				employeeContractInfo.getContractClauses().remove(contractClause);
-				resetClauseDataTableStructure();
-				loadClauses();
-			} else {
-				AonDialog deleteDialog = new AonDialog("Eliminar clasula", new HTML("\u00BFDesea eliminar esta clausula\u003F"));
-				deleteDialog.confirm(new AonAcceptDialogCallback() {
-					
-					@Override
-					public void onCancel() {
-						// Nothing to do here
-					}
-					
-					@Override
-					public void onAccept() {
-				    	deleteContractClause(
-				    			contractClause.getId(), 
-				    			s -> {
-				    				showSuccessMessage("Borrado Clausula", "La clausula ha sido eliminada correctamente");
-				    				reloadCaluses();
-				    			}, 
-				    			f -> showErrorMessage("Borrado Clausula", f.getMessage()));
-					}
-				});
-			}
-			
-		});
-		
-		// Add Styles
-		lineTB.addStyleName(style.maxWidthTB());
-		nameTB.addStyleName(style.maxWidthTB());
-		descriptionTA.addStyleName(style.maxWidthTB());
-		descriptionTA.setHeight("95px");
-		
-		// It null == contract ? global_attachs cant be deleted
-		if(null == contractClause.getContract()) {
-			lineTB.setReadOnly(true);
-			nameTB.setReadOnly(true);
-			descriptionTA.setReadOnly(true);
-		}
-		
-		clausesDataTable.setWidget(row, 0, lineTB);
-		clausesDataTable.setWidget(row, 1, nameTB);
-		clausesDataTable.setWidget(row, 2, descriptionTA);
-		if(null != contractClause.getContract())
-			clausesDataTable.setWidget(row, 3, deleteBTN);
-		else
-			clausesDataTable.setWidget(row, 3, new Label());
-		
-		clausesDataTable.getCellFormatter().addStyleName(row, 0, style.clauseTD());
-		clausesDataTable.getCellFormatter().addStyleName(row, 1, style.clauseTD());
-		clausesDataTable.getCellFormatter().addStyleName(row, 3, style.clauseTD());
+		onSearch();
 	}
 	
 	// ------------------------------------------------------ Toolbar methods
 	
 	public void newClause() {
-		ContractClause contractClause = new ContractClause();
-		contractClause.setDomain(employeeContractInfo.getEmployeeInfo().getDomain());
-		contractClause.setContract(employeeContractInfo.getContractInfo().getContractId());
-		contractClause.setLineNumber((short)(employeeContractInfo.getContractClauses().size()+1));
-		contractClause.setDescription("");
-		employeeContractInfo.getContractClauses().add(contractClause);
+		AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption( "CLAUSULA" );
+		ContractClausePanel contractClausePanel = new ContractClausePanel( employeeContractInfo.getEmployeeInfo().getDomain(), employeeContractInfo.getContractInfo().getContractId(), employeeContractInfo.getContractClauses().size(), new AonContractClausePanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept() {
+				dialog.hide();
+				onSearch();
+			}
+		});
 		
-		loadClauses();
+		dialog.add( contractClausePanel );
+		dialog.showLoaded();
+	}
+	
+	private void editClause(ContractClause contractClause) {
+		AonCustomDialog dialog = new AonCustomDialog();
+		dialog.setCaption( "CLAUSULA" );
+		ContractClausePanel contractClausePanel = new ContractClausePanel( contractClause, new AonContractClausePanelCallback() {
+			
+			@Override
+			public void onCancel() {
+				dialog.hide();
+			}
+			
+			@Override
+			public void onAccept() {
+				dialog.hide();
+				onSearch();
+			}
+		});
+		
+		dialog.add( contractClausePanel );
+		dialog.showLoaded();
 	}
 	
 	public void importClause() {
@@ -288,7 +234,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 						clausesIds, 
 						s -> {
 							showSuccessMessage("Importaci\u00f3n Clausulas", "Clausulas importadas correctamente");
-							reloadCaluses();
+							onSearch();
 						}, f -> showErrorMessage("Importaci\u00f3n Clausulas", f.getMessage()));
 			}
 		};
@@ -297,12 +243,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	public void saveClauses() {
 		saveContractClause(s -> {
 			showSuccessMessage("Clausulas", "Clausulas guardadas correctamente");
-			getContractClauses(su -> {
-				if(employeeContractInfo.getContractClauses().isEmpty())
-					showEmptyTable();
-				else 
-					loadClauses();
-			}, f -> showErrorMessage("Error obtenci\u00f3n Clausulas", f.getMessage()));
+			onSearch();
 		}, f -> {});
 	}
 	
@@ -314,15 +255,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 	
 	protected abstract void showLoadingMessage(String message);
 	
-	// ------------------------------------------------------ Refresh table
-
-	private void resetClauseDataTableStructure() {
-		clausesDataTable.clear();
-		clausesDataTable.resize(0, 0);
-		clausesDataTable.resizeColumns(4);
-		
-		setColumnsWidth();
-	}
+	protected abstract void onHideMessage();
 	
 	// ------------------------------------------------------ ContractClause.CRUD
 	
@@ -343,7 +276,7 @@ public abstract class ContractClauseUI extends ResizeComposite {
 		
 	}
 	
-	public void getContractClauses(Consumer<List<ContractClause>> success, Consumer<Throwable> failure) {
+	public void getList(Consumer<List<ContractClause>> success, Consumer<Throwable> failure) {
 		impl.getContractClauses(contractId, new AsyncCallback<List<ContractClause>>() {
 			
 			@Override

@@ -379,20 +379,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		// Set variables
 		this.contrataEmployeeObject = contrataEmployeeObject;		
 		
-		// Load animation
-		new Animation() {
-
-	        @Override
-	        protected void onUpdate( double progress ) {
-	        	getScrollPanel().getElement().getStyle().setOpacity( progress );
-	        }
-
-	        @Override
-	        protected void onComplete() {
-	        	getScrollPanel().getElement().getStyle().setOpacity( 1.0 );
-	        }
-	    }.run( 1000 );
-		
 	    // Select first tab and init view 
 	    getTabLayoutPanel().selectTab(0, false);
 		employee.initializeView();
@@ -795,9 +781,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	// ------------------------------------------------- Abstract Methods
 	
-	protected abstract ScrollPanel getScrollPanel();
 	protected abstract TabLayoutPanel getTabLayoutPanel();
-	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
