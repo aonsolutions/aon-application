@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -67,8 +68,8 @@ public class CostCSVServlet extends HttpServlet {
 			else
 				types = Collections.unmodifiableList(new ArrayList<Integer>());
 			
-			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
-			workplaceId = req.getParameter(WORKPLACE.getName()) != null ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
+			enterpriseId = AonStringUtils.isNotBlank(req.getParameter(ENTERPRISE.getName())) ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
+			workplaceId = AonStringUtils.isNotBlank(req.getParameter(WORKPLACE.getName())) ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			domainName = req.getParameter(DOMAIN.getName()) != null && !req.getParameter(DOMAIN.getName()).isEmpty() ? req.getParameter(DOMAIN.getName()) : req.getServerName();

@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -65,8 +66,8 @@ public class CostExcelServlet extends HttpServlet {
 			else
 				types.add(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
 			
-			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
-			workplaceId = req.getParameter(WORKPLACE.getName()) != null ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
+			enterpriseId = AonStringUtils.isNotBlank(req.getParameter(ENTERPRISE.getName())) ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
+			workplaceId = AonStringUtils.isNotBlank(req.getParameter(WORKPLACE.getName())) ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			excelType = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));

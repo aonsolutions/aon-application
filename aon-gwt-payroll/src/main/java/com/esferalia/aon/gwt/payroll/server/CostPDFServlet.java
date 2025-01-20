@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -91,10 +92,10 @@ public class CostPDFServlet extends HttpServlet {
 			else
 				types = new com.esferalia.aon.occam.api.model.type.SalaryType[0];
 
-			enterpriseId = req.getParameter(ENTERPRISE.getName()) != null
+			enterpriseId = AonStringUtils.isNotBlank(req.getParameter(ENTERPRISE.getName()))
 					? Integer.parseInt(req.getParameter(ENTERPRISE.getName()))
 					: null;
-			workplaceId = req.getParameter(WORKPLACE.getName()) != null
+			workplaceId = AonStringUtils.isNotBlank(req.getParameter(WORKPLACE.getName()))
 					? Integer.parseInt(req.getParameter(WORKPLACE.getName()))
 					: null;
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));

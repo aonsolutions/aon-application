@@ -5,22 +5,22 @@ import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryServic
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Base64;
 import java.util.Optional;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.esferalia.aon.in.payroll.excel.RemunerationRecord;
+import com.esferalia.aon.in.payroll.excel.RemunerationRecord.RemunerationRecordCallback;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
-
-import com.esferalia.aon.in.payroll.excel.RemunerationRecord;
-import com.esferalia.aon.in.payroll.excel.RemunerationRecord.RemunerationRecordCallback;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RemunerationRecord", 
@@ -51,7 +51,7 @@ public class RemunerationRecordServlet extends HttpServlet {
 		String enterpriseIdStr = req.getParameter("enterpriseId");
 		String yearStr = req.getParameter("year");
 		Integer year = yearStr != null && !yearStr.isEmpty() ? Integer.parseInt(yearStr) : null;
-		Integer enterpriseId = enterpriseIdStr != null && !enterpriseIdStr.isEmpty() ? Integer.parseInt(enterpriseIdStr) : null;
+		Integer enterpriseId = AonStringUtils.isNotBlank(enterpriseIdStr) ? Integer.parseInt(enterpriseIdStr) : null;
 		
 		
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {

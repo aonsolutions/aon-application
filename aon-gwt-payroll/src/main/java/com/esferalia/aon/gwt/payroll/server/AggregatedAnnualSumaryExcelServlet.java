@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -55,12 +56,12 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		Optional<Integer> workplaceId = Optional.empty();
 		Integer year = null;
 		
-		if (enterpriseIdStr != null && !enterpriseIdStr.isEmpty()) {
+		if (AonStringUtils.isNotBlank(enterpriseIdStr)) {
 			try {
 				enterpriseId = Optional.ofNullable(Integer.parseInt(enterpriseIdStr));
 			} catch (NumberFormatException e) {}
 		}
-		if (workplaceIdStr != null && !workplaceIdStr.isEmpty()) {
+		if (AonStringUtils.isNotBlank(workplaceIdStr)) {
 			try {
 				workplaceId = Optional.ofNullable(Integer.parseInt(workplaceIdStr));
 			} catch (NumberFormatException e) {}

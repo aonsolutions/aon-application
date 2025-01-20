@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -1263,6 +1264,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void deleteSalary(String domainName, String currentUser, Integer id, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteSalary(domainName, currentUser, id, callback);
+	}
+	
+	// ------------------------------------------------ Costs
+
+	@Override
+	public void getCostReceiptHTML(String domain, CostParams params, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCostReceiptHTML(domain, params, callback);
 	}
 	
 	// ------------------------------------------------ Utils

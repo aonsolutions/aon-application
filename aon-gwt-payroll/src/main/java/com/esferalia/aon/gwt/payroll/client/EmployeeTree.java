@@ -2388,6 +2388,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public WorkplaceTabLayoutPanel() {
 			add("Centro de Trabajo", getWorkplaceDraft(), this::onWorkplaceSelected);
 			add("Costes", getCost(), this::onCostsSelected);
+			add("Costes (Nuevo)", getWorkplaceCostWidget(), this::onCostsWidgetSelected);
 			add("N\u00f3minas", getWorkplceSalary(), this::onSalariesSelected);
 			add("Calendario", getCalendarDraft(), this::onCalendarSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
@@ -2406,6 +2407,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCostsSelected() {
 			employees.getWorkplaceCost(workplace, o -> getCost().setCostDocuments(o));
+		}
+		
+		void onCostsWidgetSelected() {
+			getWorkplaceCostWidget().setWorkplace(workplace.getId());
 		}
 
 		void onStatsSelected() {
@@ -2470,6 +2475,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public EnterpriseTabLayoutPanel() {
 			add("Empresa", getEnterpriseDraft(), this::onEnterpriseSelected);
 			add("Costes", getCost(), this::onCostsSelected);
+			add("Costes (Nuevo)", getEnterpriseCostWidget(), this::onCostsWidgetSelected);
 			add("N\u00f3minas", getEnterpriseSalary(), this::onSalariesSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
 			add("Partes IT", getEnterpriseIT(), this::onITsSelected);
@@ -2481,6 +2487,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCostsSelected() {
 			employees.getEnterpriseCost(enterprise, o -> getCost().setCostDocuments(o));
+		}
+		
+		void onCostsWidgetSelected() {
+			getEnterpriseCostWidget().setEnterprise(enterprise.getId());
 		}
 
 		void onStatsSelected() {
@@ -2530,6 +2540,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private JSF jsf;
 	private Documents documents;
 	private Cost cost;
+	private CostWidget costEnterprise;
+	private CostWidget costWorkplace;
 	private Irpf irpf;
 	private Salary salary;
 	private Statistics stats;
@@ -3198,6 +3210,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			(cost = new Cost()).addListener(this);
 
 		return cost;
+	}
+	
+	private CostWidget getWorkplaceCostWidget() {
+		if (costWorkplace == null)
+			costWorkplace = new CostWidget();
+
+		return costWorkplace;
+	}
+	
+	private CostWidget getEnterpriseCostWidget() {
+		if (costEnterprise == null)
+			costEnterprise = new CostWidget();
+
+		return costEnterprise;
 	}
 
 	private Irpf getIrpf() {
