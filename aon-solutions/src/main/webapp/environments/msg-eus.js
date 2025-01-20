@@ -357,6 +357,7 @@ export const PRODUCT_NOT_EMPTY = "Produktua ezin da hutsik geratu";
 export const PRODUCT_MUST_BE_SELECTED = "Produktu bat aukeratzea derrigorrezkoa da";
 export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
+export const PROFORMA_INVOICES = "Zirriborroa/Proforma";
 
 // ----- Q
 
@@ -369,6 +370,7 @@ export const QUOTA = 'Kuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
+export const RECEIVED_INVOICES = "Jasotakoa";
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
 export const RECENTLY_OPENED = "Berriki irekia";
