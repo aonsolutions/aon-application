@@ -149,7 +149,7 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
-    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKET,
+    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",
@@ -206,7 +206,7 @@ import * as GWT from "../../gwt/gwt.js";
   
   export const RAWDOC_INBOX_TICKET_NEW = {
     id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
-    name: MSG.DRAFT + " " + MSG.SIMPLIFIED_INVOICES+"/"+MSG.TICKET,
+    name: MSG.DRAFT + " " + MSG.SIMPLIFIED+"/"+MSG.TICKETS,
     icon: "edit_note",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
@@ -291,11 +291,11 @@ import * as GWT from "../../gwt/gwt.js";
     title: MSG.INCOMES,
     name: MSG.INCOMES,
     options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
-    // actions:[{
-    //   id: 'Info',
-    //   icon: 'info',
-    //   action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
-    // }],
+    actions:[{
+      id: 'Info',
+      icon: 'info',
+      action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
+    }],
   }
 
   export const MAIN_EXPENSES = {
@@ -362,7 +362,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const CHARGES_PAYMENTS = {
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
-    icon: MATERIAL_ICONS.PAYMENT,
+    icon: MATERIAL_ICONS.EURO_SYMBOL,
     fn: () => gwtLoad(GWT.FINANCE)
   }
 
@@ -383,7 +383,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const FISCAL_DRAFT = {
     id: "fiscalModelDraft",
     name: "Precálculo Impuestos",
-    icon: MATERIAL_ICONS.PAYMENT
+    icon: MATERIAL_ICONS.ACCOUNT_BALANCE
   }
 
   export const INVEST = {
