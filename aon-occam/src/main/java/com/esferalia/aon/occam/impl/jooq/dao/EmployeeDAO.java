@@ -287,6 +287,7 @@ public class EmployeeDAO {
 		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
 		.and(ENTERPRISE_CCC.CCC.eq(employee.getCcc()))
 		.and(ENTERPRISE_CCC.TYPE.eq(getCCCType(employee)))
+		.limit(1)
 		.fetchOptionalInto(ENTERPRISE_CCC)
 		.orElseGet(() -> {
 			

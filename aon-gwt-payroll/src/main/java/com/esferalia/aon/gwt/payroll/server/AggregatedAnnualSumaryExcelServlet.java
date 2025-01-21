@@ -10,6 +10,9 @@ import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryServic
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 import jakarta.servlet.ServletException;
@@ -20,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.in.payroll.excel.AggregatedAnnualSummary;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(
@@ -33,6 +37,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
 public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy");
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -45,6 +51,10 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		resp.setHeader("Content-disposition", "attachment; filename=\"ResumenAnualAgregado."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		String enterpriseIdStr = req.getParameter(ENTERPRISE.getName());
 		String workplaceIdStr = req.getParameter(WORKPLACE.getName());
+		
+		String enterpriseName = req.getParameter("enterpriseName");
+		String workplaceName = req.getParameter("workplaceName");
+		
 		String domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName()) : req.getServerName();
 		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		String yearStr = req.getParameter(YEAR.getName());
@@ -55,12 +65,12 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 		Optional<Integer> workplaceId = Optional.empty();
 		Integer year = null;
 		
-		if (enterpriseIdStr != null && !enterpriseIdStr.isEmpty()) {
+		if (AonStringUtils.isNotBlank(enterpriseIdStr)) {
 			try {
 				enterpriseId = Optional.ofNullable(Integer.parseInt(enterpriseIdStr));
 			} catch (NumberFormatException e) {}
 		}
-		if (workplaceIdStr != null && !workplaceIdStr.isEmpty()) {
+		if (AonStringUtils.isNotBlank(workplaceIdStr)) {
 			try {
 				workplaceId = Optional.ofNullable(Integer.parseInt(workplaceIdStr));
 			} catch (NumberFormatException e) {}
@@ -70,6 +80,20 @@ public class AggregatedAnnualSumaryExcelServlet extends HttpServlet {
 				year = Integer.parseInt(yearStr);
 			} catch (NumberFormatException e) {}
 		}
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		Date startDate = calendar.getTime();
+		
+		resp.setContentType(MimeType.MS_EXCEL.getName());
+		String fileName = "Resumen_Anual_Agregado_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName) + "_" + formatter.format(startDate) + "." + MimeType.MS_EXCEL_2007.getExtension();
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
+		
 		
 		try (OutputStream os = resp.getOutputStream()){
 		AggregatedAnnualSummary.writeExcel(
