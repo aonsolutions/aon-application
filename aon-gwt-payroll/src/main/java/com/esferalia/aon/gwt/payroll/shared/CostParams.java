@@ -21,6 +21,8 @@ public class CostParams implements Serializable {
 	private boolean l03;
 	private boolean l13;
 	
+	private boolean groupByWorkplace = false;
+	
 	public CostParams() {
 		super();
 	}
@@ -121,6 +123,15 @@ public class CostParams implements Serializable {
 
 	public CostParams setL13(boolean l13) {
 		this.l13 = l13;
+		return this;
+	}
+
+	public boolean isGroupByWorkplace() {
+		return groupByWorkplace;
+	}
+
+	public CostParams setGroupByWorkplace(boolean groupByWorkplace) {
+		this.groupByWorkplace = groupByWorkplace;
 		return this;
 	}
 	

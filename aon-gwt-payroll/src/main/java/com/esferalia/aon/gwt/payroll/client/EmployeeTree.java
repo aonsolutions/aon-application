@@ -2387,8 +2387,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 		public WorkplaceTabLayoutPanel() {
 			add("Centro de Trabajo", getWorkplaceDraft(), this::onWorkplaceSelected);
-			add("Costes", getCost(), this::onCostsSelected);
-			add("Costes (Nuevo)", getWorkplaceCostWidget(), this::onCostsWidgetSelected);
+//			add("Costes", getCost(), this::onCostsSelected);
+			add("Costes", getWorkplaceCostWidget(), this::onCostsWidgetSelected);
 			add("N\u00f3minas", getWorkplceSalary(), this::onSalariesSelected);
 			add("Calendario", getCalendarDraft(), this::onCalendarSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
@@ -2474,8 +2474,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 		public EnterpriseTabLayoutPanel() {
 			add("Empresa", getEnterpriseDraft(), this::onEnterpriseSelected);
-			add("Costes", getCost(), this::onCostsSelected);
-			add("Costes (Nuevo)", getEnterpriseCostWidget(), this::onCostsWidgetSelected);
+//			add("Costes", getCost(), this::onCostsSelected);
+			add("Costes", getEnterpriseCostWidget(), this::onCostsWidgetSelected);
 			add("N\u00f3minas", getEnterpriseSalary(), this::onSalariesSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
 			add("Partes IT", getEnterpriseIT(), this::onITsSelected);

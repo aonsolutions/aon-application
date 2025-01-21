@@ -80,6 +80,7 @@ public class CostPDFServlet extends HttpServlet {
 		String domainName;
 		String user;
 		com.esferalia.aon.occam.api.model.type.SalaryType[] types;
+		Boolean groupByWorkplace = false;
 
 		// Picking up the parameters
 		{
@@ -103,6 +104,8 @@ public class CostPDFServlet extends HttpServlet {
 			domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName())
 					: req.getServerName();
 			user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
+			
+			groupByWorkplace = Boolean.parseBoolean(req.getParameter("groupByWorkplace"));
 		}
 
 		Calendar calendar = Calendar.getInstance();
@@ -116,8 +119,15 @@ public class CostPDFServlet extends HttpServlet {
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
 
-		JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, startDate,
-				endDate, enterpriseId, workplaceId, types);
+		if(groupByWorkplace) {
+			try {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				JooqEnterpriseSalaryBuilder.generateEnterprisePayrollByPeriod(resp.getOutputStream(), domainName, domainId, user, startDate, endDate, enterpriseId, workplaceId, types);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else 
+			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(resp.getOutputStream(), domainName, user, startDate, endDate, enterpriseId, workplaceId, types);
 
 	}
 

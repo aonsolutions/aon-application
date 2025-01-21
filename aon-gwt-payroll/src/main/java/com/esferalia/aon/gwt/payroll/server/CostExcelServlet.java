@@ -16,10 +16,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.code.aon.person.Person;
 import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel.EnterprisePayrollExcelParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
@@ -54,6 +56,7 @@ public class CostExcelServlet extends HttpServlet {
 		String user;
 		com.esferalia.aon.in.payroll.excel.ExcelType excelType;
 		List<com.esferalia.aon.occam.api.model.type.SalaryType> types = new ArrayList<com.esferalia.aon.occam.api.model.type.SalaryType>() ;
+		Boolean groupByWorkplace = false;
 		
 		//Picking up the parameters
 		{
@@ -71,8 +74,17 @@ public class CostExcelServlet extends HttpServlet {
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			excelType = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));
+			
 			domainName = req.getParameter(DOMAIN.getName());
 			user = req.getParameter(USER.getName());
+			
+			groupByWorkplace = Boolean.parseBoolean(req.getParameter("groupByWorkplace"));
+			
+			if(groupByWorkplace && excelType == com.esferalia.aon.in.payroll.excel.ExcelType.SUMMARY)
+				excelType = com.esferalia.aon.in.payroll.excel.ExcelType.PERIOD_SUMMARY;
+			else if(groupByWorkplace && excelType == com.esferalia.aon.in.payroll.excel.ExcelType.COMPLETE)
+				excelType = com.esferalia.aon.in.payroll.excel.ExcelType.PERIOD_COMPLETE;	
+				
 		}
 		
 		
@@ -87,6 +99,7 @@ public class CostExcelServlet extends HttpServlet {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
+		Date endDate = AonDateUtils.getMonthLastDay(calendar.getTime());
 		try (ServletOutputStream sos = resp.getOutputStream()) {
 			EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
 					.setDomainName(domainName)
@@ -96,7 +109,15 @@ public class CostExcelServlet extends HttpServlet {
 					.setWorkplaceId(workplaceId)
 					.setExcelType(excelType);
 			
-			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate, types);
+			Person person[] = {};
+			
+			if(groupByWorkplace) 
+				EnterprisePayrollExcel.enterprisePayrollGeneratorByPeriod(params, startDate, endDate, types.toArray(com.esferalia.aon.occam.api.model.type.SalaryType[]::new), person);
+			else 
+				EnterprisePayrollExcel.enterprisePayrollGeneratorByEmployee(params, startDate, endDate, types.toArray(com.esferalia.aon.occam.api.model.type.SalaryType[]::new), person);
+			
+				
+//			EnterprisePayrollExcel.simpleEnterprisePayrollGenerator(params, startDate, types);
 			resp.getOutputStream().flush();
 			resp.flushBuffer();
 		}

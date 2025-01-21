@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.RemunerationRecordService;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDProgess;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -233,6 +234,8 @@ public class CostWidget extends AonCustomDockLayout {
 	private AonToolbarButton bidoqBtn;
 	
 	private AonCustomListBox period2 = new AonCustomListBox("Periodo");
+	private AonCustomListBox detail = new AonCustomListBox("Detalle");
+	private AonCustomListBox workplace = new AonCustomListBox("Centro Trabajo");
 	
 //	private AonCustomListBox period = new AonCustomListBox("Periodo");
 //	private AonCustomDateBox start = new AonCustomDateBox("Desde");
@@ -273,6 +276,18 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		addFilterWidget(period2);
 		period2.addChangeHandler(e -> onSearch());
+		
+		detail.clearItems();
+		detail.addItem("Agrupar por CT", "true");
+		detail.addItem("Con trabajadores", "false");
+		addFilterWidget(detail);
+		detail.addChangeHandler(e -> onSearch());
+		
+		workplace.clearItems();
+		workplace.addItem("Todos", "");
+		workplace.setVisible(false);
+		addFilterWidget(workplace);
+		workplace.addChangeHandler(e -> onSearch());
 		
 //		period.addItem("Mes actual");
 //        period.addItem("\u00daltimos dos meses");
@@ -452,6 +467,9 @@ public class CostWidget extends AonCustomDockLayout {
 		Date startDate = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
 		Date endDate = DateUtils.getLastDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
 		
+		if(AonStringUtils.isNotBlank(workplace.getValue()) || null != workplaceId)
+			workplaceId = AonStringUtils.isBlank(workplace.getValue()) ? workplaceId : Integer.parseInt(workplace.getValue());
+		
 		this.params = new CostParams()
 //				.setStart(start.getValue())
 //				.setEnd(end.getValue())
@@ -464,6 +482,7 @@ public class CostWidget extends AonCustomDockLayout {
 				.setL00(salaryType.getSelectedOptions().contains("L00"))
 				.setL03(salaryType.getSelectedOptions().contains("L03"))
 				.setL13(salaryType.getSelectedOptions().contains("L13"))
+				.setGroupByWorkplace(Boolean.valueOf(detail.getValue()))
 				
 				.setEnterprise(enterpriseId)
 				.setWorkplace(workplaceId)
@@ -548,11 +567,6 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_excel/");
 		
-//		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_excel/"
-//				+ date.getMonth() + "_" + (date.getYear() + 1900) + "_"
-//				+ this.enterpriseId + "_" + this.workplaceId + "."
-//				+ "xsl");
-		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(printURL);
 		formPanel.setMethod(FormPanel.METHOD_POST);
@@ -596,6 +610,8 @@ public class CostWidget extends AonCustomDockLayout {
 			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.L03.ordinal())));
 		
+		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
+		
 		formPanel.add(flowPanel);
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
@@ -612,11 +628,6 @@ public class CostWidget extends AonCustomDockLayout {
 		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_csv/");
-		
-//		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_csv/"
-//				+ date.getMonth() + "_" + (date.getYear() + 1900) + "_"
-//				+ this.enterpriseId + "_" + this.workplaceId + "."
-//				+ "csv");
 		
 		FormPanel formPanel = new FormPanel("_blank");
 		formPanel.setAction(printURL);
@@ -653,11 +664,6 @@ public class CostWidget extends AonCustomDockLayout {
 	
 	public void printPDF () {
 		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
-		
-//		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/"
-//				+ date.getMonth() + "_" + (date.getYear() + 1900) + "_"
-//				+ this.enterpriseId + "_" + this.workplaceId + "."
-//				+ "pdf");
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/");
 		
@@ -701,6 +707,8 @@ public class CostWidget extends AonCustomDockLayout {
 		if (salaryType.getSelectedOptions().contains("L03"))
 			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.L03.ordinal())));
+		
+		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
 		
 		formPanel.add(flowPanel);
 		
@@ -913,7 +921,24 @@ public class CostWidget extends AonCustomDockLayout {
 							bidoqBtn.setVisible(null != dur && dur.isBidoq());
 							bidoqBtn.setEnabled(null != dur && dur.isBidoq());
 				    	}
-						onSearch();
+						
+						service.getWorkplaces(new AsyncCallback<List<Workplace>>() {
+							
+							@Override
+							public void onSuccess(List<Workplace> workplaces) {
+								workplace.clearItems();
+								workplace.addItem("Todos", "");
+								workplaces.stream().forEach(workplaceIt -> workplace.addItem(workplaceIt.getDescription(), workplaceIt.getId().toString()));
+								workplace.setVisible(true);
+								onSearch();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {}
+							
+						});
+						
+						
 					}
 
 					@Override

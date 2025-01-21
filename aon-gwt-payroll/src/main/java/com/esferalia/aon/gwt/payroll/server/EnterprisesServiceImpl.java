@@ -5090,6 +5090,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String getCostReceiptHTML(String domain, CostParams params) throws IllegalArgumentException {
 		try {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			
 			List<com.esferalia.aon.occam.api.model.type.SalaryType> salaryTypes = new ArrayList<>();
 			if(params.isSalary()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
 			if(params.isExtra()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.EXTRA);
@@ -5101,8 +5103,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ByteArrayOutputStream oos = new ByteArrayOutputStream();
 
-			JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
-
+			if(params.isGroupByWorkplace())
+				JooqEnterpriseSalaryBuilder.generateEnterprisePayrollByPeriod(oos, domain, "", domainId, params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
+			else
+				JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
+			
 			byte bytes[] = oos.toByteArray();
 						
 			InputStream data = new ByteArrayInputStream(bytes);
@@ -5112,7 +5117,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			encodeURIComponent(MimeType.PDF.getName(), data, writer);
 
 			return writer.toString();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
