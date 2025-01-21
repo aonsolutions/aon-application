@@ -9,11 +9,14 @@ import static com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params.WORKPLA
 import static com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params.YEAR;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,6 +45,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 		}
 )
 public class CostCSVServlet extends HttpServlet {
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy");
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -53,6 +57,10 @@ public class CostCSVServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Integer enterpriseId;
 		Integer workplaceId;
+		
+		String enterpriseName;
+		String workplaceName;
+		
 		Integer month;
 		Integer year;
 		String domainName;
@@ -70,15 +78,28 @@ public class CostCSVServlet extends HttpServlet {
 			
 			enterpriseId = AonStringUtils.isNotBlank(req.getParameter(ENTERPRISE.getName())) ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
 			workplaceId = AonStringUtils.isNotBlank(req.getParameter(WORKPLACE.getName())) ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
+			
+			enterpriseName = req.getParameter("enterpriseName");
+			workplaceName = req.getParameter("workplaceName");
+			
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			domainName = req.getParameter(DOMAIN.getName()) != null && !req.getParameter(DOMAIN.getName()).isEmpty() ? req.getParameter(DOMAIN.getName()) : req.getServerName();
 			user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		}
 		
-		resp.setContentType(MimeType.CSV.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.CSV.getExtension()+ "\";");
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		Date startDate = calendar.getTime();
 		
+		resp.setContentType(MimeType.CSV.getName());
+		String fileName = "Costes_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName) + "_" + formatter.format(startDate) + "." + MimeType.CSV.getExtension();
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 		
 		try (ServletOutputStream sos = resp.getOutputStream();
 				CloseableAONContext aonContext = AONContext.getAONContext(domainName, user) ) {

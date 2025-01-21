@@ -2410,7 +2410,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void onCostsWidgetSelected() {
-			getWorkplaceCostWidget().setWorkplace(workplace.getId());
+			getWorkplaceCostWidget().setWorkplace(enterprise, workplace);
 		}
 
 		void onStatsSelected() {
@@ -2490,7 +2490,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void onCostsWidgetSelected() {
-			getEnterpriseCostWidget().setEnterprise(enterprise.getId());
+			getEnterpriseCostWidget().setEnterprise(enterprise);
 		}
 
 		void onStatsSelected() {

@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
 import com.esferalia.aon.gwt.payroll.shared.CostExcelService;
 import com.esferalia.aon.gwt.payroll.shared.CostParams;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterprisePayrollPDFService;
 import com.esferalia.aon.gwt.payroll.shared.ExcelType;
 import com.esferalia.aon.gwt.payroll.shared.RemunerationRecordService;
@@ -255,11 +256,12 @@ public class CostWidget extends AonCustomDockLayout {
 	private DomainUserRoles dur;
 	
 	private CostParams params;
-	private Integer enterpriseId;
-	private Integer workplaceId;
+	private Enterprise enterpriseId;
+	private Workplace workplaceId;
 
 //	private CostDocuments costDocuments;
 	private List<Cost> costs;
+	private List<Workplace> workplaces;
 	
 	// ----------------------------------------------- Constructor
 	
@@ -287,7 +289,10 @@ public class CostWidget extends AonCustomDockLayout {
 		workplace.addItem("Todos", "");
 		workplace.setVisible(false);
 		addFilterWidget(workplace);
-		workplace.addChangeHandler(e -> onSearch());
+		workplace.addChangeHandler(e -> {
+			workplaceId = AonStringUtils.isBlank(workplace.getValue()) ? new Workplace() : workplaces.stream().filter(wp -> wp.getId() == Integer.parseInt(workplace.getValue())).findFirst().get();
+			onSearch();
+		});
 		
 //		period.addItem("Mes actual");
 //        period.addItem("\u00daltimos dos meses");
@@ -467,9 +472,6 @@ public class CostWidget extends AonCustomDockLayout {
 		Date startDate = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
 		Date endDate = DateUtils.getLastDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
 		
-		if(AonStringUtils.isNotBlank(workplace.getValue()) || null != workplaceId)
-			workplaceId = AonStringUtils.isBlank(workplace.getValue()) ? workplaceId : Integer.parseInt(workplace.getValue());
-		
 		this.params = new CostParams()
 //				.setStart(start.getValue())
 //				.setEnd(end.getValue())
@@ -484,23 +486,26 @@ public class CostWidget extends AonCustomDockLayout {
 				.setL13(salaryType.getSelectedOptions().contains("L13"))
 				.setGroupByWorkplace(Boolean.valueOf(detail.getValue()))
 				
-				.setEnterprise(enterpriseId)
-				.setWorkplace(workplaceId)
+				.setEnterprise(enterpriseId.getId())
+				.setWorkplace(workplaceId.getId())
 				;
 	}
 	
 	// ----------------------------------------------- Cost.Methods
 	
-	private void onPublish(Integer enterpriseId, Integer workplaceId, int month, int year, String type) {
+	private void onPublish(Enterprise enterprise, Workplace workplace, int month, int year, String type) {
 		StringBuffer requestDataBuffer = new StringBuffer();
 
 		requestDataBuffer.append("&" + ShareService.MONTH + "=" + month);
 		requestDataBuffer.append("&" + ShareService.YEAR + "=" + year);
-		if (null != workplaceId)
-			requestDataBuffer.append("&" + ShareService.WORKPLACE + "=" + workplaceId);
+		if (null != workplace)
+			requestDataBuffer.append("&" + ShareService.WORKPLACE + "=" + workplace.getId());
 		else
-			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "=" + enterpriseId);
+			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "=" + enterprise.getId());
 		requestDataBuffer.append("&type=" + type);
+		requestDataBuffer.append("&enterpriseName=" + enterprise.getName());
+		if (null != workplace && AonStringUtils.isNotBlank(workplace.getDescription()))
+			requestDataBuffer.append("&workplaceName=" + workplace.getDescription());
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString());
 	}
@@ -577,9 +582,9 @@ public class CostWidget extends AonCustomDockLayout {
 		flowPanel.add(new Hidden(CostExcelService.Params.YEAR.getName()
 				, String.valueOf((date.getYear() + 1900))));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.ENTERPRISE.getName()
-				, null == this.enterpriseId ? "" : String.valueOf(this.enterpriseId)));
+				, null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.WORKPLACE.getName()
-				, null == this.workplaceId ? "" : String.valueOf(this.workplaceId)));
+				, null == this.workplaceId.getId() ? "" : String.valueOf(this.workplaceId.getId())));
 		flowPanel.add(new Hidden(CostExcelService.Params.EXCEL_TYPE.getName()
 				, excelType.name()));
 		flowPanel.add(new Hidden(CostExcelService.Params.DOMAIN.getName()
@@ -612,6 +617,10 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
 		
+		flowPanel.add(new Hidden("enterpriseName", this.enterpriseId.getName()));
+		if (null != workplaceId && AonStringUtils.isNotBlank(workplaceId.getDescription()))
+			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
+		
 		formPanel.add(flowPanel);
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
@@ -636,8 +645,8 @@ public class CostWidget extends AonCustomDockLayout {
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(Params.MONTH.getName(), String.valueOf(date.getMonth())));
 		flowPanel.add(new Hidden(Params.YEAR.getName(), String.valueOf((date.getYear() + 1900))));
-		flowPanel.add(new Hidden(Params.ENTERPRISE.getName(), null == this.enterpriseId ? "" : String.valueOf(this.enterpriseId)));
-		flowPanel.add(new Hidden(Params.WORKPLACE.getName(),null == this.workplaceId ? "" : String.valueOf(this.workplaceId)));
+		flowPanel.add(new Hidden(Params.ENTERPRISE.getName(), null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
+		flowPanel.add(new Hidden(Params.WORKPLACE.getName(),null == this.workplaceId.getId() ? "" : String.valueOf(this.workplaceId.getId())));
 		flowPanel.add(new Hidden(Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(Params.USER.getName(), Wnd.getCurrentUser()));
 		
@@ -649,6 +658,10 @@ public class CostWidget extends AonCustomDockLayout {
 			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.SETTLE.ordinal())));
 		if (salaryType.getSelectedOptions().contains("Atrasos"))
 			flowPanel.add(new Hidden(Params.FILTER.getName(), String.valueOf(Salary.Type.DELAY.ordinal())));
+		
+		flowPanel.add(new Hidden("enterpriseName", this.enterpriseId.getName()));
+		if (null != workplaceId && AonStringUtils.isNotBlank(workplaceId.getDescription()))
+			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
 		
 		formPanel.add(flowPanel);
 		
@@ -677,9 +690,9 @@ public class CostWidget extends AonCustomDockLayout {
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.YEAR.getName()
 				, String.valueOf((date.getYear() + 1900))));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.ENTERPRISE.getName()
-				, null == this.enterpriseId ? "" : String.valueOf(this.enterpriseId)));
+				, null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.WORKPLACE.getName()
-				, null == this.workplaceId ? "" : String.valueOf(this.workplaceId)));
+				, null == this.workplaceId.getId() ? "" : String.valueOf(this.workplaceId.getId())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.DOMAIN.getName()
 				, Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.USER.getName()
@@ -710,6 +723,10 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
 		
+		flowPanel.add(new Hidden("enterpriseName", this.enterpriseId.getName()));
+		if (null != workplaceId && AonStringUtils.isNotBlank(workplaceId.getDescription()))
+			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
+		
 		formPanel.add(flowPanel);
 		
 		formPanel.addSubmitCompleteHandler(e1 -> {
@@ -729,12 +746,15 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.YEAR.getName(), String.valueOf(year)));
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.ENTERPRISE.getName(), null == this.enterpriseId ? "" : String.valueOf(this.enterpriseId)));
-		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.WORKPLACE.getName(), null == this.workplaceId ? "" : String.valueOf(this.workplaceId)));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.ENTERPRISE.getName(), null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
+		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.WORKPLACE.getName(), null == this.workplaceId.getId() ? "" : String.valueOf(this.workplaceId.getId())));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.COMPLETE.getName(), "true"));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.USER.getName(), Wnd.getCurrentUser()));
 		flowPanel.add(new Hidden(AggregatedAnnualSummaryService.Params.TYPE.getName(), type.name()));
+		flowPanel.add(new Hidden("enterpriseName", this.enterpriseId.getName()));
+		if (null != workplaceId && AonStringUtils.isNotBlank(workplaceId.getDescription()))
+			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
 		
 		formPanel.add(flowPanel);
 		
@@ -794,9 +814,12 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(RemunerationRecordService.Params.YEAR.getName(), String.valueOf(year)));
-		flowPanel.add(new Hidden(RemunerationRecordService.Params.ENTERPRISE.getName(), null == this.enterpriseId ? "" : String.valueOf(this.enterpriseId)));
+		flowPanel.add(new Hidden(RemunerationRecordService.Params.ENTERPRISE.getName(), null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(RemunerationRecordService.Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
 		flowPanel.add(new Hidden(RemunerationRecordService.Params.USER.getName(), Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("enterpriseName", this.enterpriseId.getName()));
+		if (null != workplaceId && AonStringUtils.isNotBlank(workplaceId.getDescription()))
+			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
 		
 		formPanel.add(flowPanel);
 		
@@ -866,9 +889,10 @@ public class CostWidget extends AonCustomDockLayout {
 		xhr.send(requestDataBuilder.toString());
 	}
 	
-	public void setWorkplace(Integer workplaceId) {
-		this.workplaceId = workplaceId;
-		employeesService.getWorkplaceCosts(this.workplaceId, new AsyncCallback<List<Cost>>() {
+	public void setWorkplace(Enterprise enterprise, Workplace workplace) {
+		this.enterpriseId = enterprise;
+		this.workplaceId = workplace;
+		employeesService.getWorkplaceCosts(this.workplaceId.getId(), new AsyncCallback<List<Cost>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, caught.getMessage());
@@ -899,9 +923,10 @@ public class CostWidget extends AonCustomDockLayout {
 		});
 	}
 	
-	public void setEnterprise(Integer enterpriseId) {
-		this.enterpriseId = enterpriseId;
-		employeesService.getEnterpriseCosts(this.enterpriseId, new AsyncCallback<List<Cost>>() {
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterpriseId = enterprise;
+		this.workplaceId = new Workplace();
+		employeesService.getEnterpriseCosts(this.enterpriseId.getId(), new AsyncCallback<List<Cost>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, caught.getMessage());
@@ -925,7 +950,9 @@ public class CostWidget extends AonCustomDockLayout {
 						service.getWorkplaces(new AsyncCallback<List<Workplace>>() {
 							
 							@Override
-							public void onSuccess(List<Workplace> workplaces) {
+							public void onSuccess(List<Workplace> workplacesDb) {
+								workplaces = workplacesDb;
+								
 								workplace.clearItems();
 								workplace.addItem("Todos", "");
 								workplaces.stream().forEach(workplaceIt -> workplace.addItem(workplaceIt.getDescription(), workplaceIt.getId().toString()));

@@ -9,6 +9,7 @@ import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.WORKP
 import static com.esferalia.aon.gwt.payroll.shared.CostExcelService.Params.YEAR;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -40,6 +41,8 @@ import jakarta.servlet.http.HttpServletResponse;
 		}
 )
 public class CostExcelServlet extends HttpServlet {
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy");
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -50,6 +53,10 @@ public class CostExcelServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Integer enterpriseId;
 		Integer workplaceId;
+		
+		String enterpriseName;
+		String workplaceName;
+		
 		Integer month;
 		Integer year;
 		String domainName;
@@ -71,6 +78,10 @@ public class CostExcelServlet extends HttpServlet {
 			
 			enterpriseId = AonStringUtils.isNotBlank(req.getParameter(ENTERPRISE.getName())) ? Integer.parseInt(req.getParameter(ENTERPRISE.getName())) : null;
 			workplaceId = AonStringUtils.isNotBlank(req.getParameter(WORKPLACE.getName())) ? Integer.parseInt(req.getParameter(WORKPLACE.getName())) : null;
+			
+			enterpriseName = req.getParameter("enterpriseName");
+			workplaceName = req.getParameter("workplaceName");
+			
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			excelType = com.esferalia.aon.in.payroll.excel.ExcelType.valueOf(req.getParameter(EXCEL_TYPE.getName()));
@@ -84,13 +95,9 @@ public class CostExcelServlet extends HttpServlet {
 				excelType = com.esferalia.aon.in.payroll.excel.ExcelType.PERIOD_SUMMARY;
 			else if(groupByWorkplace && excelType == com.esferalia.aon.in.payroll.excel.ExcelType.COMPLETE)
 				excelType = com.esferalia.aon.in.payroll.excel.ExcelType.PERIOD_COMPLETE;	
-				
 		}
 		
 		
-		resp.setContentType(MimeType.MS_EXCEL.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"Costes."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
-
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
@@ -100,6 +107,11 @@ public class CostExcelServlet extends HttpServlet {
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
 		Date endDate = AonDateUtils.getMonthLastDay(calendar.getTime());
+		
+		resp.setContentType(MimeType.MS_EXCEL.getName());
+		String fileName = "Costes_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName + "_") + formatter.format(startDate) + "." +  MimeType.MS_EXCEL_2007.getExtension();
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
+
 		try (ServletOutputStream sos = resp.getOutputStream()) {
 			EnterprisePayrollExcelParams params = new EnterprisePayrollExcelParams()
 					.setDomainName(domainName)

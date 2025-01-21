@@ -41,7 +41,7 @@ public class CostModule extends MainEntryPoint {
 			
 			@Override
 			public void onSuccess(Enterprise enterprise) {
-				costWidget.setEnterprise(enterprise.getId());
+				costWidget.setEnterprise(enterprise);
 			}
 			
 			@Override
