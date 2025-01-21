@@ -1166,7 +1166,7 @@ export class AonApplication extends AonElement {
       d.clear();
       d.type = "";
       d.setContentHTML(subtitle);
-      if (!this.isMobile()) d.width = '400px';
+      if (!this.isMobile()) d.width = '650px';
       d.setTitle(title);
       d.open();
       if(buttonTitle) {
