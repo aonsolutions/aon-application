@@ -2950,14 +2950,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// more clear.
 			
 			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + SALARY
-					+ " WHERE " + WORKPLACE + "." + WorkplaceColumns.DOMAIN + " = " + SALARY + "."
-					+ SalaryColumns.DOMAIN + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?" + " AND " + SALARY
-					+ "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
+					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol 
+					+ " FROM " + WORKPLACE + ", " + SALARY + ", " + CONTRACT 
+					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = " + CONTRACT + "." + ContractColumns.ID 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
 					+ " ORDER BY 2 , 1 ASC ";
+			
+			// This SQL dont filter by workplace, just by domain
+//			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
+//					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + SALARY
+//					+ " WHERE " + WORKPLACE + "." + WorkplaceColumns.DOMAIN + " = " + SALARY + "."
+//					+ SalaryColumns.DOMAIN + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?" + " AND " + SALARY
+//					+ "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
+//					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
+			
 			rs = stmt.executeQuery();
 
 			return getWorkplaceCosts(rs, workplaceId, yearCol, monthCol);
