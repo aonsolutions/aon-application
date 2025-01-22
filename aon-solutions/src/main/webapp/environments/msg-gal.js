@@ -371,7 +371,7 @@ export const QUOTA = 'Cota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
-export const RECEIVED_INVOICES = "Recibido";
+export const RECEIVED_INVOICES = "Facturas Recibidas";
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recentes';
 export const RECENTLY_OPENED = "Aberto recentemente";

@@ -370,7 +370,7 @@ export const QUOTA = 'Kuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
-export const RECEIVED_INVOICES = "Jasotakoa";
+export const RECEIVED_INVOICES = "Jasotako Fakturak";
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
 export const RECENTLY_OPENED = "Berriki irekia";

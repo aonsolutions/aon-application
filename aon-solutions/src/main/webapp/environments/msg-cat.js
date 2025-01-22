@@ -367,7 +367,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Rebuda';
-export const RECEIVED_INVOICES = "Rebudes";
+export const RECEIVED_INVOICES = "Factures Rebudes";
 export const RECEIVEDS = 'Rebudes';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Obert recentment";
