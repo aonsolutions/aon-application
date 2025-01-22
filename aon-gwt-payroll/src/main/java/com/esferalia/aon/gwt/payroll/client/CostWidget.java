@@ -280,8 +280,9 @@ public class CostWidget extends AonCustomDockLayout {
 		period2.addChangeHandler(e -> onSearch());
 		
 		detail.clearItems();
-		detail.addItem("Agrupar por CT", "true");
+		detail.addItem("Agrupar Centro Trabajo", "true");
 		detail.addItem("Con trabajadores", "false");
+		detail.setValue("false");
 		addFilterWidget(detail);
 		detail.addChangeHandler(e -> onSearch());
 		
@@ -410,13 +411,15 @@ public class CostWidget extends AonCustomDockLayout {
 		salaryOptions.add("L13");
 		salaryType.setSelectedOptions(salaryOptions);
 		
-		//onSearch();
 		period2.getListBox().setSelectedIndex(0);
-		period2.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
 		
-		//onSearch();
-		//period.getListBox().setSelectedIndex(1);
-		//period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+		detail.setValue("false");
+		
+		if(workplace.isVisible()) {
+			workplace.setValue("");
+			workplace.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+		} else
+			period2.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
 	}
 
 //	private void updateDates() {
