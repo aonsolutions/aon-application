@@ -366,7 +366,7 @@ public class EnterprisePayrollExcel {
 		List<Integer> filteredPersons = new LinkedList<>();
 		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
 		
-		if (persons != null) {
+		if (persons != null && persons.length > 0) {
 			for (Person person : persons) {
 				if (person != null && person.getId() != null)
 					filteredPersons.add(person.getId());
@@ -396,19 +396,22 @@ public class EnterprisePayrollExcel {
 				.filter(p -> filteredPersons.isEmpty() || filteredPersons.contains(p.getEmployeeId()))
 				.filter(p -> p.getEmployeeId() != null)
 				.forEach(p -> {
-					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getWorkplace().equals(p.workplace) && pa.getEmployeeId().equals(p.getEmployeeId())).findFirst();
-					EnterprisePayroll enterprisePayroll = null;
-					if (optPayroll.isPresent()) {
-						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
-						
-						EnterprisePayrollExcelUtils.sumPayrolls(enterprisePayroll, p);
-						
-					} else {
-						p.salaryType = null;
-						p.startDate = null;
-						p.endDate = null;
-						payrolls.add(p);
-					}
+					payrolls.add(p);
+					
+					// Esto agrupaba todas las nominas de un trabajador
+//					Optional<IEnterprisePayroll> optPayroll = payrolls.stream().filter(pa -> pa.getWorkplace().equals(p.workplace) && pa.getEmployeeId().equals(p.getEmployeeId())).findFirst();
+//					EnterprisePayroll enterprisePayroll = null;
+//					if (optPayroll.isPresent()) {
+//						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
+//						
+//						EnterprisePayrollExcelUtils.sumPayrolls(enterprisePayroll, p);
+//						
+//					} else {
+//						p.salaryType = null;
+//						p.startDate = null;
+//						p.endDate = null;
+//						payrolls.add(p);
+//					}
 				});
 
 					
@@ -430,7 +433,7 @@ public class EnterprisePayrollExcel {
 		List<Integer> filteredPersons = new LinkedList<>();
 		List<SalaryType> typesList = Arrays.asList(salaryFilter != null ? salaryFilter : new SalaryType[0]);
 		
-		if (persons != null) {
+		if (persons != null && persons.length > 0) {
 			for (Person person : persons) {
 				if (person != null && person.getId() != null)
 					filteredPersons.add(person.getId());
@@ -467,10 +470,7 @@ public class EnterprisePayrollExcel {
 					EnterprisePayroll enterprisePayroll = null;
 					if (optPayroll.isPresent()) {
 						enterprisePayroll = (EnterprisePayroll) optPayroll.get();
-						
 						EnterprisePayrollExcelUtils.sumPayrolls(enterprisePayroll, p);
-						
-						
 					} else {
 						
 						if (p.endDate != null) {							
@@ -482,7 +482,8 @@ public class EnterprisePayrollExcel {
 							cal.set(Calendar.DAY_OF_MONTH, 1);							
 							p.startDate = cal.getTime();
 						}
-						p.salaryType = null;
+						// Por defecto nominas (ya que estan acumulados por periodo)
+						p.salaryType = SalaryType.SALARY;
 						p.employee = EnterprisePayrollExcelUtils.getMonthYearName(p.getEndDate());
 						payrolls.add(p);
 					}

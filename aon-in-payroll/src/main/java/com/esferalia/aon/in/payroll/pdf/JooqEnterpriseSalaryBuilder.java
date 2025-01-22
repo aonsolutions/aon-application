@@ -84,11 +84,11 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param workplaceId
 	 * @param types Salary types that will be displayed
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
 		generateEnterprisePayroll(outputStream, domain, null, user, startDate, endDate, enterpriseId, workplaceId, types);
 	}
 	
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
 		Condition condition;
 		if (workplaceId != null && workplaceId != 0)
 			condition = WORKPLACE.ID.eq(workplaceId);
@@ -316,7 +316,90 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		
 	}
-	
+
+	public static void generateEnterprisePayrollByPeriod (OutputStream outputStream, String domain, String user, Integer domainId,  Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+		Condition condition;
+		if (workplaceId != null && workplaceId != 0)
+			condition = WORKPLACE.ID.eq(workplaceId);
+		else
+			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+				, new java.sql.Date(endDate.getTime())));
+		
+		Collection<Integer> typeInts = Arrays.stream(types)
+				.map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal)
+				.collect(Collectors.toList());
+		
+		condition = condition.and(SALARY.TYPE.in(typeInts));
+		
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
+			DSLContext ctx = aonContext.getDslContext();
+			
+			
+			Byte[] enumBytes = new Byte[types != null ? types.length : 0];
+			int index = 0;
+			for (com.esferalia.aon.occam.api.model.type.SalaryType type : types) {
+				enumBytes[index++] = type.value();
+			}
+			
+			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = getContractDataByWorkplace(aonContext, startDate, endDate, enterpriseId, workplaceId);
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = 
+					getEnterprisePayrollsByPeriod(ctx, condition.and(SALARY.TYPE.in(enumBytes)), Optional.ofNullable(contractDatas));
+			
+			String enterpriseName = "";
+			if (null == enterpriseId || enterpriseId <= 0) {
+				if (workplaceId != null && workplaceId > 0) {
+					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+							, aonContext.getDomainId()
+							, aonContext.getUser()
+							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+				} else {
+					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
+					if (optEnterprise.isPresent()) {
+						enterpriseId = optEnterprise.get().getRegistry();
+					}
+				}
+			}
+			
+			try {				
+				AtomicInteger entId = new AtomicInteger(enterpriseId);
+				enterpriseName = AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), user, r -> r.getIdProperty().eq(entId.get())).getName();
+			} catch (Exception e) {
+				enterpriseName = "";
+			}
+			
+			
+			
+			Attach attach1 = AON.getAttach(
+					aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+					.and(f.getDomainProperty().eq(aonContext.getDomainId()))
+					, AttachType.REGISTRY
+					);
+			
+			byte[] byteLogo = attach1.getData();
+			
+			InputStream logo = null;
+			
+			try {
+				logo = new ByteArrayInputStream(byteLogo);
+			} catch (NullPointerException e) {
+			}
+			String subheader = "Empresa: ";
+			if (enterpriseName != null) {
+				subheader = subheader.concat(enterpriseName);
+			}
+			
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, null);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate);
+		} catch (CanNotCreatePdfException e) {			
+		} catch (IOException e) {}
+		
+		
+	}
 	
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
@@ -556,6 +639,7 @@ public class JooqEnterpriseSalaryBuilder {
 			throws IOException {
 		return getEnterprisePayrolls(ctx, condition, Optional.empty());
 	}
+	
 	private static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrolls(DSLContext ctx, Condition condition, Optional<Map<Integer, Map<String, Map<String, List<ContractData>>>>> optContractDatas)
 			throws IOException {
 

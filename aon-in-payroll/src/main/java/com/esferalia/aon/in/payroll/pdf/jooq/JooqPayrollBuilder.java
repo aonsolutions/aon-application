@@ -263,23 +263,31 @@ public class JooqPayrollBuilder {
 						.on(WORKPLACE.ADDRESS.eq(RADDRESS.ID)).where(SALARY.ID.eq(salary.getId()))
 						.fetchOneInto(RADDRESS);
 
-				// ----- FOR MAIN ADDRESS -----
-				List<RAddress> raddessList = AON
-						.getRAddressStream(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
-								f -> f.getRegistryProperty().eq(registryAddress.getRegistry())
-										.and(f.getDomainProperty().eq(aonContext.getDomainId())))
-						.collect(Collectors.toList());
-
-				Optional<RAddress> mainRaddress = raddessList.stream()
-						.filter(rad -> rad != null && AonNumberUtils.equals(AonNumberUtils.toByte(0), rad.getType()))
-						.findFirst();
-
 				RAddress raddress = null;
+				
+				if(null != registryAddress) {
+					raddress = AON.getRAddress(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(), f -> f.getIdProperty().eq(registryAddress.getId()));
+				} 
+				
+				if(null == raddress || null == raddress.getId()) {
+					// ----- FOR MAIN ADDRESS -----
+					List<RAddress> raddessList = AON
+							.getRAddressStream(aonContext.getDomainName(), aonContext.getDomainId(), aonContext.getUser(),
+									f -> f.getRegistryProperty().eq(registryAddress.getRegistry())
+											.and(f.getDomainProperty().eq(aonContext.getDomainId())))
+							.collect(Collectors.toList());
 
-				if (raddessList != null && !raddessList.isEmpty()) {
-					raddress = mainRaddress.isPresent() ? mainRaddress.get() : raddessList.get(0);
+					Optional<RAddress> mainRaddress = raddessList.stream()
+							.filter(rad -> rad != null && AonNumberUtils.equals(AonNumberUtils.toByte(0), rad.getType()))
+							.findFirst();
+
+					
+
+					if (raddessList != null && !raddessList.isEmpty()) {
+						raddress = mainRaddress.isPresent() ? mainRaddress.get() : raddessList.get(0);
+					}
 				}
-
+				
 				// ----------------------------
 				/*
 				 * //----- FOR WORKPLACE ADDRESS -----

@@ -119,7 +119,18 @@ import * as GWT from "../../gwt/gwt.js";
       type: "sales",
       page: 1,
       per_page: 50,
-    })
+    }),
+    actions:[{
+      id: 'Info',
+      icon: 'info',
+      action: () => info(
+        MSG.INCOMES,
+        `<b>Facturas Emitidas:</b> Facturas que envías a tus clientes por los servicios prestados o por la venta de tus productos.<br><br>
+         <b>Facturas Proforma:</b> Borrador de factura en elaboración y que se pueden enviar al cliente como "PROFORMA" para que conozcan el coste del servicio o productos y las condiciones del mismo antes de emitir la factura definitiva para su evaluación y conformidad previa a la emisión de la factura definitiva.<br><br>
+         <b>Otros Ingresos:</b> Son aquellos ingresos que recibes que no provienen de tu actividad económica como por ejemplo subvenciones, intereses bancarios, etc.<br><br>
+         <b>Presupuestos:</b> Documento que detalla el coste del servicio o venta de productos que se va a realizar con un cliente.`
+    )
+    }]
   }
 
 
@@ -144,12 +155,25 @@ import * as GWT from "../../gwt/gwt.js";
       type: "purchase,expenses",
       page: 1,
       per_page: 50,
-    })
+    }),
+    actions:[{
+      id: 'Info2',
+      icon: 'info',
+      action: () => info(
+        MSG.EXPENSES,
+        `<b>Facturas Recibidas:</b> Facturas que te emiten tus proveedores por sus servicios prestados o compra de productos.<br><br>
+         <b>Borrador Fras. Recibidas:</b> Documentos de factura recibida en proceso de revisión y registro, que una vez acptado pasan a factura recibidas.<br><br>
+         <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a factura recibidas.<br><br>
+         <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a Fra. Simplificadas/Ticket.<br><br>
+         <b>Otros Gastos:</b> Son aquellos gastos que tienes por tu actividad, pero del cual no existe factura simplificada/ticket como seguros, tasas municipales, intereses de prestamos, cuotas de  suscripcion a un colegio profesional, etc.<br><br>
+         <b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
+    )
+    }]
   }
 
   export const INVOICE_TICKET = {
     id: CONSTANT.INVOICE_TICKET.initCap(),
-    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKET,
+    name: MSG.SIMPLIFIED_INVOICES + "/" + MSG.TICKETS,
     icon: MATERIAL_ICONS.RECEIPT,
     fn: () => invoiceList({
       status: "accounting",
@@ -206,7 +230,7 @@ import * as GWT from "../../gwt/gwt.js";
   
   export const RAWDOC_INBOX_TICKET_NEW = {
     id: CONSTANT.RAWDOC_INBOX_TICKET_NEW.initCap(),
-    name: MSG.DRAFT + " " + MSG.SIMPLIFIED_INVOICES+"/"+MSG.TICKET,
+    name: MSG.DRAFT + " " + MSG.SIMPLIFIED+"/"+MSG.TICKETS,
     icon: "edit_note",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "ticket" })
   }
@@ -223,7 +247,17 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.RAWDOC_PROCESSING.initCap(),
     name: MSG.PROCCESSING,
     icon: MATERIAL_ICONS.SCHEDULE,
-    fn: () => invoiceList({ status: CONSTANT.PROCESSING })
+    fn: () => invoiceList({ status: CONSTANT.PROCESSING }),
+    actions:[{
+      id: 'Info3',
+      icon: 'info',
+      action: () => info(
+        MSG.EXPENSES,
+        `<b>En Trámite:</b> Docmentos subidos al portal y que se están gestionando el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
+         <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
+         <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
+    )
+    }]
   }
 
   export const RAWDOC_REJECT = {
@@ -291,11 +325,11 @@ import * as GWT from "../../gwt/gwt.js";
     title: MSG.INCOMES,
     name: MSG.INCOMES,
     options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
-    // actions:[{
-    //   id: 'Info',
-    //   icon: 'info',
-    //   action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
-    // }],
+    actions:[{
+      id: 'Info',
+      icon: 'info',
+      action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
+    }]
   }
 
   export const MAIN_EXPENSES = {
@@ -362,7 +396,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const CHARGES_PAYMENTS = {
     id: CONSTANT.CHARGES_PAYMENTS.initCap(),
     name: MSG.CHARGES_AND_PAYMENTS,
-    icon: MATERIAL_ICONS.PAYMENT,
+    icon: MATERIAL_ICONS.EURO_SYMBOL,
     fn: () => gwtLoad(GWT.FINANCE)
   }
 
@@ -383,7 +417,7 @@ import * as GWT from "../../gwt/gwt.js";
   export const FISCAL_DRAFT = {
     id: "fiscalModelDraft",
     name: "Precálculo Impuestos",
-    icon: MATERIAL_ICONS.PAYMENT
+    icon: MATERIAL_ICONS.ACCOUNT_BALANCE
   }
 
   export const INVEST = {

@@ -622,48 +622,7 @@ export class AonNewMenu extends AonElement {
 		let welcome = this.getElement("aonCompanyTabFilter");
 
 		
-		if (app.cssIcon) {
-			const appColor = app.newColor || app.color;
-			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
-			aonIcon.icon =  app.cssIcon;
-			aonIcon.color = style?.color || appColor;
-			if (app.app == "accounting"){
-				aonIcon.size = "26px";
-			}else {
-				aonIcon.size = "32px";
-			}
-			div.appendChild(aonIcon);
-		} else if (app.cssSymbol) {
-			let icon = this.createElement(TAG.SPAN);
-			icon.id = `aonMenuListAppImgTop-${app.app}`;
-			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-			icon.innerHTML = app.cssSymbol;
-			if(app.newColor || app.color) {
-				icon.style.color = app.newColor || app.color;
-			}
-			icon.classList.add("aonNewMenuAppIcon");
-			div.appendChild(icon);
-		} else if (app.cssLogo) {
-			let img = this.createElement(TAG.IMG);
-			img.id = `aonMenuListAppImgTop-${app.app}`;
-			img.classList.add("aonNewMenuAppImg");
-			img.src = app.cssLogo;
-			img.title = app.title;
-			div.appendChild(img);
-		} else if (app.icon) {
-			const appColor = app.newColor || app.color;
-			let aonIcon = new AonIcon();
-			aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
-			aonIcon.icon = app.newIcon || app.icon;
-			aonIcon.color = style?.color || appColor;
-			if (app.app == "accounting"){
-				aonIcon.size = "26px";
-			}else {
-				aonIcon.size = "32px";
-			}
-			div.appendChild(aonIcon);
-		} else if (app.symbol) {
+		if (app.app == "invoice"|| app.app == "accounting" || app.app == "payroll"|| app.app == "fiscal"){
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -673,13 +632,67 @@ export class AonNewMenu extends AonElement {
 			}
 			icon.classList.add("aonNewMenuAppIcon");
 			div.appendChild(icon);
-		} else if (app.logo) {
-			let img = this.createElement(TAG.IMG);
-			img.id = `aonMenuListAppImgTop-${app.app}`;
-			img.classList.add("aonNewMenuAppImg");
-			img.src = app.logo;
-			img.title = app.title;
-			div.appendChild(img);
+		} 
+		else{
+			if (app.cssIcon) {
+				const appColor = app.newColor || app.color;
+				let aonIcon = new AonIcon();
+				aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+				aonIcon.icon =  app.cssIcon;
+				aonIcon.color = style?.color || appColor;
+				if (app.app == "accounting"){
+					aonIcon.size = "26px";
+				}else {
+					aonIcon.size = "32px";
+				}
+				div.appendChild(aonIcon);
+			} else if (app.cssSymbol) {
+				let icon = this.createElement(TAG.SPAN);
+				icon.id = `aonMenuListAppImgTop-${app.app}`;
+				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.innerHTML = app.cssSymbol;
+				if(app.newColor || app.color) {
+					icon.style.color = app.newColor || app.color;
+				}
+				icon.classList.add("aonNewMenuAppIcon");
+				div.appendChild(icon);
+			} else if (app.cssLogo) {
+				let img = this.createElement(TAG.IMG);
+				img.id = `aonMenuListAppImgTop-${app.app}`;
+				img.classList.add("aonNewMenuAppImg");
+				img.src = app.cssLogo;
+				img.title = app.title;
+				div.appendChild(img);
+			} else if (app.icon) {
+				const appColor = app.newColor || app.color;
+				let aonIcon = new AonIcon();
+				aonIcon.id = `aonMenuListAppImgTop-${app.app}`;
+				aonIcon.icon = app.newIcon || app.icon;
+				aonIcon.color = style?.color || appColor;
+				if (app.app == "accounting"){
+					aonIcon.size = "26px";
+				}else {
+					aonIcon.size = "32px";
+				}
+				div.appendChild(aonIcon);
+			} else if (app.symbol) {
+				let icon = this.createElement(TAG.SPAN);
+				icon.id = `aonMenuListAppImgTop-${app.app}`;
+				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.innerHTML = app.symbol;
+				if(app.newColor || app.color) {
+					icon.style.color = app.newColor || app.color;
+				}
+				icon.classList.add("aonNewMenuAppIcon");
+				div.appendChild(icon);
+			} else if (app.logo) {
+				let img = this.createElement(TAG.IMG);
+				img.id = `aonMenuListAppImgTop-${app.app}`;
+				img.classList.add("aonNewMenuAppImg");
+				img.src = app.logo;
+				img.title = app.title;
+				div.appendChild(img);
+			}
 		}
 
 		if (app.description) {
