@@ -351,7 +351,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			.forEach( mod303 -> {
 				Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 				map.computeIfAbsent(mod303.getPeriod(), k -> new LinkedList<>());
-				if ( isEffectiveReplacement(dec, mod303) ) {
+				if (fromMod390) {
+					map.get(mod303.getPeriod()).add( mod303 ); // Si es desde la generación del 390, se añaden todos, incluso las complementarias
+				}
+				else if ( isEffectiveReplacement(dec, mod303) ) {
 					map.get(mod303.getPeriod()).clear();
 					map.get(mod303.getPeriod()).add( mod303 );					
 				} else {

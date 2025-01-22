@@ -186,6 +186,15 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 								double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 								detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
 							}
+							
+							// Asignar tambien el importe a la administracion del modelo
+							switch (mod190.getAdministration()) {
+								case ALAVA -> detail.setArabaRetention(AonMathUtils.round(detail.getArabaRetention() + irpfQuota));
+								case BIZKAIA -> detail.setBizkaiaRetention(AonMathUtils.round(detail.getBizkaiaRetention() + irpfQuota));
+								case GIPUZKOA -> detail.setGipuzkoaRetention(AonMathUtils.round(detail.getGipuzkoaRetention() + irpfQuota));
+								case NAVARRA -> detail.setNavarraRetention(AonMathUtils.round(detail.getNavarraRetention() + irpfQuota));
+								default -> detail.setCommonRetention(AonMathUtils.round(detail.getCommonRetention() + irpfQuota));
+							}
 						}
 						
 						return isE01() || isE02() || isE03() || isE04();
