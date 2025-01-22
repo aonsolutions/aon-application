@@ -313,6 +313,7 @@ public class JooqPayrollBuilder {
 					String address3 = safeValue(raddress.getAddress3());
 
 					String zip = safeValue(raddress.getZip());
+					String geozone = safeValue(raddress.getGeozoneName());
 					String city = safeValue(raddress.getCity());
 
 					String firstLine = streetType + " " + address1 + " " + number + " " + address3;
@@ -321,26 +322,26 @@ public class JooqPayrollBuilder {
 						firstLine = streetType + " " + address1 + " " + number + " " + address2 + address3;
 					}
 
-					String sekandoRain = zip + " " + city;
+					String sekandoRain = zip + (null != geozone && geozone.length() > 0 ? ", " + geozone + ", " : ", ") + city;
 
 					if (add != null) {
-						if (!isEmpty(firstLine != null ? firstLine.trim() : "") && firstLine.length() < 45
-								&& sekandoRain.length() < 45) {
+						if (!isEmpty(firstLine != null ? firstLine.trim() : "") && firstLine.length() < 61
+								&& sekandoRain.length() < 61) {
 							if (!isEmpty(firstLine))
 								payrollBuilder.setAddress(firstLine);
 							if (!isEmpty(sekandoRain))
 								payrollBuilder.setAddress2(sekandoRain);
 						} else {
 
-							String[] address = separateString(add, 40);
+							String[] address = separateString(add, 60);
 							if (address != null && address.length > 1) {
 								payrollBuilder.setAddress(address[0] != null ? address[0].trim() : null);
 								String secline = "";
 								for (int i = 1; i < address.length; i++) {
 									secline += address[i];
 								}
-								if (secline.length() > 46)
-									secline = secline.substring(0, 45).concat("...");
+								if (secline.length() > 61)
+									secline = secline.substring(0, 60).concat("...");
 								payrollBuilder.setAddress2(secline);
 							} else {
 								payrollBuilder.setAddress(salary.getEnterpriseAddress());
