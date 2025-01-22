@@ -354,6 +354,7 @@ export const PRODUCT_NOT_EMPTY = "El producte no pot estar buit";
 export const PRODUCT_MUST_BE_SELECTED = "És obligatori seleccionar un producte";
 export const PRODUCTS = 'Productes';
 export const PROVINCE = 'Provincia';
+export const PROFORMA_INVOICES = "Esborrany/Proforma";
 
 // ----- Q
 
@@ -366,6 +367,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Rebuda';
+export const RECEIVED_INVOICES = "Rebudes";
 export const RECEIVEDS = 'Rebudes';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Obert recentment";

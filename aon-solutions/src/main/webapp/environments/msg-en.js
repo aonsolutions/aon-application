@@ -359,6 +359,7 @@ export const PRODUCT_NOT_EMPTY = "Product cannot be empty";
 export const PRODUCT_MUST_BE_SELECTED = "Product must be selected";
 export const PRODUCTS = 'Products';
 export const PROVINCE = 'Province';
+export const PROFORMA_INVOICES = "Draft/Proforma";
 
 // ----- Q
 
@@ -371,6 +372,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Received';
+export const RECEIVED_INVOICES = "Received";
 export const RECEIVEDS = 'Received';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Recently opened";
