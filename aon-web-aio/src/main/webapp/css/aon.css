@@ -1487,7 +1487,7 @@ margin-top: 20px;
 .aonDialog {
   display: none;
   position: fixed;
-  z-index: 3;
+  z-index: 4;
   padding-top: 100px;
   left: 0;
   top: 0;
@@ -1514,6 +1514,18 @@ margin-top: 20px;
   width: 80%;
   /* box-shadow: 2px 2px 5px 1px #ddd; */
 }
+
+.aonDialogMenuAppsOption {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.aonDialogMenuAppsContent{
+	width: 400px;
+	height: 300px;
+	overflow-y: scroll;  
+}
+
 
 .aonProgress,
 .aonProgress:before {

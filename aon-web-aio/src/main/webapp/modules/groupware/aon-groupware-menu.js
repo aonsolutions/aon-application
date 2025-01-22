@@ -12,11 +12,11 @@ export class AonGroupwareMenu extends AonSuiteMenu {
 
     constructor () {
         super();
+		this.expedientesInitialize()
     }
 
     connectedCallback () {
         this.clear();
-        this.expedientesInitialize()
         this.initialize();
         this.build();
         this.setTitle("Opciones de expedientes");
@@ -46,87 +46,91 @@ export class AonGroupwareMenu extends AonSuiteMenu {
             title: "Expediente", 
 			action: () => this.rootPanel(new JSF.AonJsfProject)
         }];
+        this.initOptions();
+    }
+
+    initOptions() {
         this.options = [{
             title: 'Expedientes',
-            options: [ {
+            options: [{
                 description: "Expedientes",
                 title: "Expedientes",
                 action: () => this.rootPanel(new JSF.AonJsfProject)
-            },{
+            }, {
                 description: "Tipo de Expediente",
                 title: "Tipo de Expediente",
                 action: () => this.rootPanel(new JSF.AonJsfProjectType)
-            },{
+            }, {
                 description: "Tipo de Actividad",
                 title: "Tipo de Actividad",
                 action: () => this.rootPanel(new JSF.AonJsfActivityType)
             }]
-        },{
+        }, {
             title: 'Procesos',
             options: [{
                 description: "Procesos",
                 title: "Procesos",
-				action: () => this.rootPanel(new JSF.AonJsfProcess)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfProcess)
+            }, {
                 description: "Tipos de Transiciones",
                 title: "Tipos de Transiciones",
-				action: () => this.rootPanel(new JSF.AonJsfProcessTransactionType)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfProcessTransactionType)
+            }, {
                 description: "Lanzador de procesos",
                 title: "Lanzador de procesos",
-				action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
+                action: () => this.rootPanel(new JSF.AonJsfProcessWizard)
             }]
-        },{
+        }, {
             title: 'Tareas',
             options: [{
                 description: "Bandeja de tareas",
                 title: "Bandeja de tareas",
                 action: () => this.rootPanel(new JSF.AonJsfTask)
-            },{
+            }, {
                 description: "Diagrama de Gantt",
                 title: "Diagrama de Gantt",
-				action: () => this.rootPanel(new JSF.AonJsfGantt)
+                action: () => this.rootPanel(new JSF.AonJsfGantt)
             }]
-        },{
+        }, {
             title: 'Campañas (Procesos Masivos)',
             options: [{
                 description: "Monitor de campañas",
                 title: "Monitor de campañas",
-				action: () => this.rootPanel(new JSF.AonJsfCampaign)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfCampaign)
+            }, {
                 description: "Tipos de campañas",
                 title: "Tipos de campañas",
-				action: () => this.rootPanel(new JSF.AonJsfCampaignType)
+                action: () => this.rootPanel(new JSF.AonJsfCampaignType)
             }]
-        },{
+        }, {
             title: 'Partes de Trabajo',
             options: [{
                 description: "Partes de Trabajo",
                 title: "Partes de Trabajo",
-				action: () => this.rootPanel(new JSF.AonJsfDailyTracking)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfDailyTracking)
+            }, {
                 description: "Informes",
                 title: "Informes",
-				action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfDailyTrackingReport)
+            }, {
                 description: "Tipos de Trabajos",
                 title: "Tipos de Trabajos",
-				action: () => this.rootPanel(new JSF.AonJsfJobType)
+                action: () => this.rootPanel(new JSF.AonJsfJobType)
             }]
-        },{
+        }, {
             title: 'Operarios',
             options: [{
                 description: "Operarios",
                 title: "Operarios",
-				action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfTaskHolder)
+            }, {
                 description: "Grupos de usuarios",
                 title: "Grupos de usuarios",
-				action: () => this.rootPanel(new JSF.AonJsfWorkgroup)
-            },{
+                action: () => this.rootPanel(new JSF.AonJsfWorkgroup)
+            }, {
                 description: "Perfiles de coste",
                 title: "Perfiles de coste",
-				action: () => this.rootPanel(new JSF.AonJsfCostProfile)
+                action: () => this.rootPanel(new JSF.AonJsfCostProfile)
             }]
         }];
     }

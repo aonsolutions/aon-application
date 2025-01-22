@@ -12,11 +12,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
 
 	constructor () {
 		super();
+		this.accountingInitialize()
 	}
 
 	connectedCallback () {
 		this.clear();
-		this.accountingInitialize()
 		this.initialize();
 		this.build();
 		this.setTitle("Opciones de contabilidad");
@@ -43,6 +43,11 @@ export class AonAccountingMenu extends AonSuiteMenu {
             title: "Apunte", 
             action: () => alert("description")
         }];
+		
+		this.initOptions();
+	}
+	
+	initOptions() {
 		this.options = [{
 			title: 'Apuntes contables',
 			options: [ {

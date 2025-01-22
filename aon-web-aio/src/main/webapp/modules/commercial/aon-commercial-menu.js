@@ -12,11 +12,11 @@ export class AonCommercialMenu extends AonSuiteMenu {
 
     constructor () {
         super();
+		this.comercialInitialize()
     }
 
     connectedCallback () {
         this.clear();
-        this.comercialInitialize()
         this.initialize();
         this.build();
         this.setTitle("Opciones comerciales");
