@@ -4636,6 +4636,7 @@ font-weight: 600;
     background-color: #f0f0f0;
     border-radius: 10px;
     margin: 5px;
+    width: 172px;
   }
 
   .aonWidgetNominaMobileTitulo{
@@ -4652,7 +4653,7 @@ font-weight: 600;
 
   .aonWidgetNominaMobileNomina{
     margin-top: 17px;
-    margin-left: 30px;
+    text-align: center;
     font-size: 1.6rem;
   }
 
@@ -4677,20 +4678,48 @@ font-weight: 600;
     margin-bottom: 5px;
   }
 
+  .aonWidgetSolicitudesMobileSegundaLinea{
+    display: flex;
+    margin-top: 17px;
+    justify-content: center;
+  }
+
+  .aonWidgetSolicitudesIconRecibidas{
+    color: red;
+    margin-top: 6px;
+    font-size: 25px;
+  }
+
+  .aonWidgetSolicitudesIconEnviadas{
+    color: #33A9A9;
+    margin-top: 6px;
+    font-size: 25px;
+  }
+
+  .aonWidgetFacturasIcon{
+    margin-right: -5px;
+  }
+
   .aonWidgetSolicitudesMobileLineaNumero{
     font-weight: bold;
     text-align: center;
     font-size: 1.6rem;
+    margin-top: 0px;
   }
-aon-superset iframe {
-	border:none;
-	width: 100%;
-	height: 100%;
-}
 
-.gwt-viz-container > div {
-	color: red;
-	display: flex;
-	justify-content: center;
-}
+  .aonMobileHomeNotificationDrag{
+    margin-bottom: 20px;
+  }
+
+  aon-superset iframe {
+    border:none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gwt-viz-container > div {
+    color: red;
+    display: flex;
+    justify-content: center;
+  }
 
