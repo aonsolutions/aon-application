@@ -1347,18 +1347,30 @@ export class AonNewMenu extends AonElement {
 				subMenu.options
 				.filter(option => !option.filter || option.filter())
 				.forEach(option => {
+					let name = (option.description || option.title )?.trim();
+					if ( name?.length === 0 )
+						return; 
+					let found = applicationsOptions.find( opt => opt.name.localeCompare(name) == 0 );
+					if ( found ) 
+						return;
 					applicationsOptions.push({
+						name,
 						icon: topMenuApp.symbol,
 						fn: () => { option.action(); },
-						name: option.title,
 					})
-				})
+				});
 			});
 		}
+		
+		applicationsOptions.sort((op1,op2) => op1?.name?.localeCompare(op2?.name) );
 
 		let aonMenuSearch = this.createElement(TAG.SPAN);
 		aonMenuSearch.id = this.AON_MENU_SEARCH;
 		aonMenuSearch.classList.add("aonMenuSearch");
+		aonMenuSearch.style.width = '484px';
+		aonMenuSearch.style.position = 'fixed';
+		aonMenuSearch.style.backgroundColor = '#fff';
+		
 
 		let  aonMenuSearchBox = new AonSearchBox();
 		aonMenuSearchBox.id = this.AON_MENU_SEARCH_BOX;
