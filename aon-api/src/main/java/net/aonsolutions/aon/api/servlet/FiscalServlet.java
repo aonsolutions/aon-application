@@ -631,7 +631,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			irpfParams.setFromDate(startDate);
 			irpfParams.setToDate(endDate);
 			
-			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummary(ctx, irpfParams);
+			IrpfSummary irpfSummary = IRPFDAO.getIRPFSummaryNotInAlcatraz(ctx, irpfParams);
 			
 			// IRPF PROFESIONAL
 			IrpfSummaryGroup professionalIRPFMap = irpfSummary.getMap().get(WithholdingTypeGroup.PROFESIONAL);

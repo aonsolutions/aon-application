@@ -750,12 +750,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			String startMonth = extraStartDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
 			else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
-			extra.setStartDate(startMonth + extraStartDateYear.getSelectedValue());
+			extra.setStartDate("01/" + startMonth + extraStartDateYear.getSelectedValue());
 			
 			String endMonth = extraEndDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
 			else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
-			extra.setEndDate(endMonth + extraEndDateYear.getSelectedValue());
+			extra.setEndDate(getMaxDayMonth(endMonth) + "/" + endMonth + extraEndDateYear.getSelectedValue());
 			extra.setIssueDate(extraIssueDate.getValue());
 		}
 		
@@ -768,6 +768,28 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			payment.setMonth(null);
 	}
 	
+	private String getMaxDayMonth(String endMonth) {
+		switch (endMonth) {
+		case "01":
+		case "03":
+		case "05":
+		case "07":
+		case "08":
+		case "10":
+		case "12":
+			return "31";
+		case "02": 
+			return "28";
+		case "04": 
+		case "06": 
+		case "09": 
+		case "11": 
+			return "30";
+		default:
+			return "30";
+		}
+	}
+
 	// ----------------------------------------- ToogleButton
 	
 	private void getEnableDisableButton(Button button, boolean disabled) {

@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class MarketingActionTarget extends Target implements Serializable {
 	
@@ -20,6 +21,7 @@ public class MarketingActionTarget extends Target implements Serializable {
 	private ProjectActivity projectActivity;
 	
 	private boolean customer = false;
+	private RegistryStatus customerStatus;
 	
 	private Integer surveyResponse;
 	private String comments;
@@ -136,5 +138,16 @@ public class MarketingActionTarget extends Target implements Serializable {
 	public boolean isCustomer() {
 		return customer;
 	}
+
+	public RegistryStatus getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public MarketingActionTarget setCustomerStatus(RegistryStatus customerStatus) {
+		this.customerStatus = customerStatus;
+		return this;
+	}
+	
+	
 	
 }

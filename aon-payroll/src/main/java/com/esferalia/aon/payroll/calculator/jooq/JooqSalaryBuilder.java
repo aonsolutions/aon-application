@@ -27,6 +27,7 @@ import java.util.Objects;
 import org.jooq.AggregateFunction;
 import org.jooq.DSLContext;
 import org.jooq.Identity;
+import org.jooq.InsertReturningStep;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.conf.ParamType;
@@ -56,7 +57,6 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -67,7 +67,8 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	private DSLContext dslContext;
 
-	private InsertSetMoreStep<SalaryRecord> insertMoreSalary;
+	private InsertSetStep<SalaryRecord> insertSalary;
+	
 	private InsertSetMoreStep<SalaryCostRecord> insertMoreCost;
 	private InsertSetMoreStep<SalaryDataRecord> insertMoreData;
 	private InsertSetMoreStep<SalaryBonusRecord> insertMoreBonus;
@@ -80,8 +81,9 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	private Variables variables;
 
-	private SalaryPaymentRecord prevPayment;
-	private SalaryDeductionRecord prevDeduction;
+	private SalaryRecord salaryRecord; 
+	private SalaryPaymentRecord prevPaymentRecord;
+	private SalaryDeductionRecord prevDeductionRecord;
 
 	public JooqSalaryBuilder(Connection connection) {
 		this(DSL.using(connection, JooqCommon.getDefaultSettings()));
@@ -90,10 +92,14 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	public JooqSalaryBuilder(DSLContext dslContext) {
 		this.dslContext = dslContext;
 		this.variables = new Variables(null);
-		this.prevPayment = new SalaryPaymentRecord();
-		this.prevDeduction = new SalaryDeductionRecord();
+		this.prevPaymentRecord = new SalaryPaymentRecord();
+		this.prevDeductionRecord = new SalaryDeductionRecord();
 	}
 
+	protected int getNextSalaryId() {
+		return (salaryId == -1 ? max(dslContext, SALARY.getIdentity()) : salaryId) + 1;
+	}
+	
 	@Override
 	public T getSalary() {
 		return null;
@@ -105,14 +111,19 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		insertVariables();
 		variables.clear();
 
-		this.prevPayment = new SalaryPaymentRecord();
-		this.prevDeduction = new SalaryDeductionRecord();
+		if ( insertSalary == null ) {
+			insertSalary = dslContext.insertInto(SALARY);
+		} else {
+			insertSalary = insertSalary.set(salaryRecord).newRecord();
+		}
+		
 
-		InsertSetStep<SalaryRecord> insertSalary = insertMoreSalary == null ? dslContext.insertInto(SALARY)
-				: insertMoreSalary.newRecord();
-
-		salaryId = (salaryId == -1 ? max(dslContext, SALARY.getIdentity()) : salaryId) + 1;
-		insertMoreSalary = insertSalary.set(SALARY.ID, salaryId);
+		this.salaryRecord = new SalaryRecord();
+		this.prevPaymentRecord = new SalaryPaymentRecord();
+		this.prevDeductionRecord = new SalaryDeductionRecord();
+		
+		salaryId = getNextSalaryId();
+		salaryRecord.set(SALARY.ID, salaryId);
 	}
 
 	@Override
@@ -125,12 +136,12 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	@Override
 	public void setCcc(String ccc) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CCC, ccc);
+		salaryRecord.set(SALARY.CCC, ccc);
 	}
 	
 	@Override
 	public void setRegime(String regime) {
-		//TODO: insertMoreSalary = insertMoreSalary.set(SALARY.SS_REGIME, SSRegimeType);	
+		//TODO: salaryRecord.set(SALARY.SS_REGIME, SSRegimeType);	
 	}
 	
 	@Override
@@ -140,23 +151,23 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	
 	@Override
 	public void setEnterpriseName(String enterpriseName) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.ENTERPRISE_NAME, enterpriseName);
+		salaryRecord.set(SALARY.ENTERPRISE_NAME, enterpriseName);
 	}
 
 	@Override
 	public void setEnterpriseAddress(String enterpriseAddress) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.ENTERPRISE_ADDRESS, enterpriseAddress);
+		salaryRecord.set(SALARY.ENTERPRISE_ADDRESS, enterpriseAddress);
 	}
 
 	@Override
 	public void setEnterpriseDocument(String enterpriseDocument) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.ENTERPRISE_DOCUMENT, enterpriseDocument);
+		salaryRecord.set(SALARY.ENTERPRISE_DOCUMENT, enterpriseDocument);
 
 	}
 
 	@Override
 	public void setRegistration(Integer registration) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.REGISTRATION, registration);
+		salaryRecord.set(SALARY.REGISTRATION, registration);
 	}
 	
 	@Override
@@ -171,155 +182,155 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	
 	@Override
 	public void setEmployeeName(String employeeName) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.EMPLOYEE_NAME, employeeName);
+		salaryRecord.set(SALARY.EMPLOYEE_NAME, employeeName);
 	}
 
 	@Override
 	public void setEmployeeDocument(String employeeDocument) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.EMPLOYEE_DOCUMENT, employeeDocument);
+		salaryRecord.set(SALARY.EMPLOYEE_DOCUMENT, employeeDocument);
 	}
 
 	@Override
 	public void setSocialSecurityNumber(String socialSecurityNumber) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.SOCIAL_SECURITY_NUMBER, socialSecurityNumber);
+		salaryRecord.set(SALARY.SOCIAL_SECURITY_NUMBER, socialSecurityNumber);
 	}
 
 	@Override
 	public void setCategory(String category) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CATEGORY, category);
+		salaryRecord.set(SALARY.CATEGORY, category);
 	}
 
 	@Override
 	public void setQuoteGroup(String quoteGroup) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.QUOTE_GROUP, quoteGroup);
+		salaryRecord.set(SALARY.QUOTE_GROUP, quoteGroup);
 	}
 
 	@Override
 	public void setSeniorityDate(Date seniorityDate) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.SENIORITY_DATE, toSqlDate(seniorityDate));
+		salaryRecord.set(SALARY.SENIORITY_DATE, toSqlDate(seniorityDate));
 	}
 
 	@Override
 	public void setType(SalaryType type) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TYPE, (byte) type.ordinal());
+		salaryRecord.set(SALARY.TYPE, (byte) type.ordinal());
 	}
 
 	@Override
 	public void setIssueDate(Date issueDate) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.ISSUE_DATE, toSqlDate(issueDate));
+		salaryRecord.set(SALARY.ISSUE_DATE, toSqlDate(issueDate));
 	}
 
 	@Override
 	public void setChargeDate(Date issueDate) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CHARGE_DATE, toSqlDate(issueDate));
+		salaryRecord.set(SALARY.CHARGE_DATE, toSqlDate(issueDate));
 
 	}
 
 	@Override
 	public void setStartDate(Date startDate) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.START_DATE, toSqlDate(startDate));
+		salaryRecord.set(SALARY.START_DATE, toSqlDate(startDate));
 
 	}
 
 	@Override
 	public void setEndDate(Date endDate) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.END_DATE, toSqlDate(endDate));
+		salaryRecord.set(SALARY.END_DATE, toSqlDate(endDate));
 	}
 
 	@Override
 	public void setTimeUnits(Integer timeUnits) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TIME_UNITS, timeUnits);
+		salaryRecord.set(SALARY.TIME_UNITS, timeUnits);
 
 	}
 
 	@Override
 	public void setItBase(Double itBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.IT_BASE, itBase != null ? itBase : 0.00);
+		salaryRecord.set(SALARY.IT_BASE, itBase != null ? itBase : 0.00);
 	}
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.RAW_CGC_BASE, rawCgcBase != null ? rawCgcBase : 0.00);
+		salaryRecord.set(SALARY.RAW_CGC_BASE, rawCgcBase != null ? rawCgcBase : 0.00);
 
 	}
 
 	@Override
 	public void setCgcBase(Double cgcBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CGC_BASE, cgcBase != null ? cgcBase : 0.00);
+		salaryRecord.set(SALARY.CGC_BASE, cgcBase != null ? cgcBase : 0.00);
 
 	}
 
 	@Override
 	public void setCgpBase(Double cgpBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CGP_BASE, cgpBase != null ? cgpBase : 0.00);
+		salaryRecord.set(SALARY.CGP_BASE, cgpBase != null ? cgpBase : 0.00);
 
 	}
 
 	@Override
 	public void setRemuneration(Double remuneration) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.REMUNERATION, remuneration);
+		salaryRecord.set(SALARY.REMUNERATION, remuneration);
 	}
 
 	@Override
 	public void setProExtBase(Double proExtBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.PRO_EXT_BASE, proExtBase != null ? proExtBase : 0.00);
+		salaryRecord.set(SALARY.PRO_EXT_BASE, proExtBase != null ? proExtBase : 0.00);
 	}
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.IRPF_BASE, irpfBase != null ? irpfBase : 0.00);
+		salaryRecord.set(SALARY.IRPF_BASE, irpfBase != null ? irpfBase : 0.00);
 	}
 
 	@Override
 	public void setMoneyIrpfBase(Double moneyIrpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.MONEY_IRPF_BASE, moneyIrpfBase != null ? moneyIrpfBase : 0.00);
+		salaryRecord.set(SALARY.MONEY_IRPF_BASE, moneyIrpfBase != null ? moneyIrpfBase : 0.00);
 	}
 
 	@Override
 	public void setInkindIrpfBase(Double inkindIrpfBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.INKIND_IRPF_BASE,
+		salaryRecord.set(SALARY.INKIND_IRPF_BASE,
 				inkindIrpfBase != null ? inkindIrpfBase : 0.00);
 	}
 
 	@Override
 	public void setHExtraBase(Double hExtraBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.HEXTRA_BASE, hExtraBase != null ? hExtraBase : 0.00);
+		salaryRecord.set(SALARY.HEXTRA_BASE, hExtraBase != null ? hExtraBase : 0.00);
 	}
 
 	@Override
 	public void setNonHExtraBase(Double nonHExtraBase) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.NON_HEXTRA_BASE, nonHExtraBase != null ? nonHExtraBase : 0.00);
+		salaryRecord.set(SALARY.NON_HEXTRA_BASE, nonHExtraBase != null ? nonHExtraBase : 0.00);
 	}
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_LIQUID, totalLiquid);
+		salaryRecord.set(SALARY.TOTAL_LIQUID, totalLiquid);
 	}
 
 	@Override
 	public void setTotalPayment(Double totalPayment) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_PAYMENT, totalPayment);
+		salaryRecord.set(SALARY.TOTAL_PAYMENT, totalPayment);
 
 	}
 
 	@Override
 	public void setTotalDeduction(Double totalDeduction) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_DEDUCTION, totalDeduction);
+		salaryRecord.set(SALARY.TOTAL_DEDUCTION, totalDeduction);
 	}
 
 	@Override
 	public void setTotalIrpf(Double totalIrpf) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_IRPF, round(totalIrpf));
+		salaryRecord.set(SALARY.TOTAL_IRPF, round(totalIrpf));
 	}
 
 	@Override
 	public void setTotalSS(Double socialSecurityContributions) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS, socialSecurityContributions);
+		salaryRecord.set(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS, socialSecurityContributions);
 	}
 
 	@Override
 	public void setTotalEnterprise(Double totalEnterprise) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.TOTAL_ENTERPRISE, totalEnterprise);
+		salaryRecord.set(SALARY.TOTAL_ENTERPRISE, totalEnterprise);
 	}
 
 	@Override
@@ -384,20 +395,20 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		putContext(context);
 
 		if (isSiblingOfPrevious(payment)) {
-			if (prevPayment.getIrpf() != null) {
-				tax += prevPayment.getIrpf();
+			if (prevPaymentRecord.getIrpf() != null) {
+				tax += prevPaymentRecord.getIrpf();
 			}
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.IRPF, tax != null ? tax : 0.00);
-			if (prevPayment.getQuote() != null) {
-				quote += prevPayment.getQuote();
+			if (prevPaymentRecord.getQuote() != null) {
+				quote += prevPaymentRecord.getQuote();
 			}
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote != null ? quote : 0.00);
-			if (prevPayment.getAmount() != null) {
-				amount += prevPayment.getAmount();
+			if (prevPaymentRecord.getAmount() != null) {
+				amount += prevPaymentRecord.getAmount();
 			}
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount != null ? amount : 0.00);
 			
-			if ( !Objects.equals(prevPayment.getDescription(), description)) {
+			if ( !Objects.equals(prevPaymentRecord.getDescription(), description)) {
 				try {
 					description = ExpressionContext.evalTemplate(payment.getDescription(), variables);
 					insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.DESCRIPTION, description);
@@ -422,12 +433,12 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.AMOUNT, amount != null ? amount : 0.00);
 		}
 
-		prevPayment.setIrpf(tax);
-		prevPayment.setQuote(quote);
-		prevPayment.setAmount(amount);
+		prevPaymentRecord.setIrpf(tax);
+		prevPaymentRecord.setQuote(quote);
+		prevPaymentRecord.setAmount(amount);
 		
 		if ( payment instanceof IContractPayment )
-			prevPayment.setId(((IContractPayment) payment).getId());
+			prevPaymentRecord.setId(((IContractPayment) payment).getId());
 
 	}
 
@@ -442,8 +453,8 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			Map<String, ITimedVariable<?>> context) {
 
 		if (isSiblingOfPrevious(deduction)) {
-			if (prevDeduction.getAmount() != null)
-				amount += prevDeduction.getAmount();
+			if (prevDeductionRecord.getAmount() != null)
+				amount += prevDeductionRecord.getAmount();
 			insertMoreDeduction = insertMoreDeduction.set(SALARY_DEDUCTION.AMOUNT, amount != null ? amount : 0.00);
 		} else {
 
@@ -463,10 +474,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMoreDeduction = insertMoreDeduction.set(SALARY_DEDUCTION.AMOUNT, amount != null ? amount : 0.00);
 		}
 
-		prevDeduction.setAmount(amount);
+		prevDeductionRecord.setAmount(amount);
 		
 		if ( deduction instanceof IContractDeduction )
-			prevDeduction.setId(((IContractDeduction) deduction).getId());
+			prevDeductionRecord.setId(((IContractDeduction) deduction).getId());
 
 		putContext(context);
 	}
@@ -493,8 +504,8 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		int salaries = 0;
 		insertVariables();
 
-		if (insertMoreSalary != null)
-			salaries = insertMoreSalary.execute();
+		if (insertSalary != null)
+			salaries = set(insertSalary, salaryRecord).execute();
 		if (insertMorePayment != null)
 			insertMorePayment.execute();
 		if (insertMoreDeduction != null)
@@ -509,13 +520,26 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMoreData.execute();
 		return salaries;
 	}
+	
+//	private Map<String, > getSalaryRecord(InsertSetMoreStep<SalaryRecord> insertSalary) {
+//		insertSalary.
+//		SalaryRecord salaryRecord = new SalaryRecord(); 
+//		insertSalary.getParams().forEach( (name,param) -> {
+//			Salary.SALARY.get
+//		});
+//		return salaryRecord;
+//	}
+
+	public DSLContext getDSLContext() {
+		return dslContext;
+	}
 
 	// ------------------------------------------------------------------------
 
 	protected String getSQL() {
 		String LN = "\r\n";
 		StringBuffer sql = new StringBuffer();
-		sql.append(insertMoreSalary.getSQL(ParamType.INLINED));
+		sql.append(set(insertSalary, salaryRecord).getSQL(ParamType.INLINED));
 		if (insertMorePayment != null)
 			sql.append(LN + insertMorePayment.getSQL(ParamType.INLINED));
 		if (insertMoreDeduction != null)
@@ -531,20 +555,24 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 		return sql.toString();
 	}
+	
+	protected  InsertReturningStep<SalaryRecord> set(InsertSetStep<SalaryRecord> insertSalary, SalaryRecord salaryRecord) {
+		return insertSalary.set(salaryRecord);
+	}
 
-	public DSLContext getDSLContext() {
-		return dslContext;
+	public SalaryRecord getSalaryRecord() {
+		return salaryRecord;
 	}
 
 	// ------------------------------------------------------------------------
 
 	protected void setDomain(Integer domainId) {
 		this.domainId = domainId;
-		insertMoreSalary = insertMoreSalary.set(SALARY.DOMAIN, domainId);
+		salaryRecord.set(SALARY.DOMAIN, domainId);
 	}
 
 	protected void setContract(Integer contractId) {
-		insertMoreSalary = insertMoreSalary.set(SALARY.CONTRACT, contractId);
+		salaryRecord.set(SALARY.CONTRACT, contractId);
 	}
 
 	private void putContext(Map<String, ITimedVariable<?>> ctx) {
@@ -602,17 +630,17 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	 */
 	private boolean isSiblingOfPrevious(IPayment payment) {
 		
-		return (prevPayment.getId() != null) 
+		return (prevPaymentRecord.getId() != null) 
 				&& (payment instanceof IContractPayment )
 				&& (((IContractPayment) payment).getId() != null)
-				&& ((IContractPayment) payment).getId().equals(prevPayment.getId());
+				&& ((IContractPayment) payment).getId().equals(prevPaymentRecord.getId());
 	}
 
 	private boolean isSiblingOfPrevious(IDeduction deduction) {
-		return (prevDeduction.getId() != null) 
+		return (prevDeductionRecord.getId() != null) 
 				&& (deduction instanceof IContractDeduction )
 				&& (((IContractDeduction) deduction).getId() != null)
-				&& ((IContractDeduction) deduction).getId().equals(prevDeduction.getId());
+				&& ((IContractDeduction) deduction).getId().equals(prevDeductionRecord.getId());
 	}
 
 	// ------------------------------------------------------------------------
@@ -647,6 +675,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	// ------------------------------------------------------------------------
+	
 
 	protected static java.sql.Date toSqlDate(Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
@@ -692,5 +721,53 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	// ------------------------------------------------------------------------
+	public static class  ReplaceJooqSalaryBuilder<T extends ISalary>  extends JooqSalaryBuilder<T> {
+			
+			private Integer domainId;
+			private Integer salaryId;
+		
+			public ReplaceJooqSalaryBuilder(Connection connection, Integer domainId, Integer salaryId ) {
+				super(connection);
+				this.domainId = domainId;
+				this.salaryId = salaryId;
+			}
 
+			public ReplaceJooqSalaryBuilder(DSLContext dslContext, Integer domainId, Integer salaryId ) {
+				super(dslContext);
+				this.domainId = domainId;
+				this.salaryId = salaryId;
+			}
+
+			@Override
+			public int execute() {
+				deleteSalaryDetails();
+				return super.execute();
+			}
+			
+			@Override
+			protected int getNextSalaryId() {
+				return salaryId != null ? salaryId : super.getNextSalaryId();
+			}
+			
+			@Override
+			protected InsertReturningStep<SalaryRecord> set(InsertSetStep<SalaryRecord> insertSalary,
+				SalaryRecord salaryRecord) {
+				return insertSalary
+				.set(salaryRecord)
+				.onDuplicateKeyUpdate()
+				.set(salaryRecord);
+			}
+			
+			private void deleteSalaryDetails() {
+				if ( salaryId != null ) {
+					getDSLContext().delete(SALARY_DATA).using(SALARY_DATA.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					getDSLContext().delete(SALARY_COST).using(SALARY_COST.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					getDSLContext().delete(SALARY_BONUS).using(SALARY_BONUS.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					getDSLContext().delete(SALARY_EMBARGO).using(SALARY_EMBARGO.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					getDSLContext().delete(SALARY_PAYMENT).using(SALARY_PAYMENT.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+					getDSLContext().delete(SALARY_DEDUCTION).using(SALARY_DEDUCTION.innerJoin(SALARY).onKey()).where(SALARY.ID.eq(salaryId)).and(SALARY.DOMAIN.eq(domainId)).execute();
+				}
+			}
+			
+	}
 }

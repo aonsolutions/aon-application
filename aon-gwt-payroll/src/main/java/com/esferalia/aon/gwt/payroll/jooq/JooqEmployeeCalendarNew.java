@@ -86,6 +86,7 @@ public class JooqEmployeeCalendarNew {
 		// DAY TYPES
 		varNames.add(ContextVariable.HOLIDAYS.getName());
 		varNames.add("LABORABLE");
+		varNames.add("DIAS_FESTIVOS");
 		varNames.add("NO_LABORABLE");
 		varNames.add("DIAS_EFECTIVOS");
 		
@@ -250,8 +251,7 @@ public class JooqEmployeeCalendarNew {
 		
 		return isAgrarianJourney(cccType);
 	}
-	
-	
+		
 	private static CalendarHours getCalendarHours(DSLContext dslContext, Integer contractId, Boolean isFullTime) {
 		
 		CalendarHours calendarHours = new CalendarHours();
@@ -311,7 +311,6 @@ public class JooqEmployeeCalendarNew {
 		return calendarHours;
 	}
 
-	
 	private static CalendarExtraHours getExtraHours(DSLContext dslContext, Integer contractId, Boolean isFullTime) {
 		CalendarExtraHours calendarExtraHours = new CalendarExtraHours();
 		List<DayHourExtra> dayHoursComplementary = new ArrayList<>();
@@ -345,7 +344,6 @@ public class JooqEmployeeCalendarNew {
 		return calendarExtraHours;
 	}
 	
-	
 	private static Map<java.util.Date, Double> getComplementaryHours(DSLContext dslContext, Integer contractId, Boolean isFullTime) {
 		Map<java.util.Date, Double> calendarComplementaryHours = new TreeMap<>();
 		
@@ -375,7 +373,6 @@ public class JooqEmployeeCalendarNew {
 		return calendarComplementaryHours;
 	}
 
-	
 	private static Byte[] getWorkingDays(DSLContext dslContext, Integer contractId) {
 		Byte[] workingDays = new Byte[7];
 		
@@ -514,7 +511,6 @@ public class JooqEmployeeCalendarNew {
 		
 		return workingDays;
 	}
-	
 	
 	private static void getWorkingDayByContractHour(DSLContext dslContext, Integer contractId, Boolean isFullTime, Byte[] workingDays) {
 		
@@ -929,6 +925,7 @@ public class JooqEmployeeCalendarNew {
 					,"DIAS_INACTIVIDAD"
 					,"CAUSA_INACTIVIDAD"
 					,"LABORABLE"
+					,"DIAS_FESTIVOS"
 			)).execute();
 		
 		ArrayList<CalendarDayType> dayTypeFixList = calendarDaysType.getFixUpdateList();
@@ -963,6 +960,17 @@ public class JooqEmployeeCalendarNew {
 				.set(CONTRACT_DATA.CONTRACT, contractId)
 				.set(CONTRACT_DATA.NAME, getNameByDayType(calendarDayType.getDayType()))
 				.set(CONTRACT_DATA.EXPRESSION, calendarDayType.getExpession())
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
+			
+			// Para que se muestre en el PDF las horas trabajadas en un dia festivo
+			if(calendarDayType.getDayType() == DayType.WORKINGDAY)
+				dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.NAME, "DIAS_FESTIVOS")
+				.set(CONTRACT_DATA.EXPRESSION, "0.00")
 				.set(CONTRACT_DATA.START_DATE, startDate)
 				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();

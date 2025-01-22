@@ -67,6 +67,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		getToolbar().add(widget);
 	}
 	
+	public void removeToolbarButton(Widget widget) {
+		getToolbar().remove(widget);
+	}
+	
 	public void addToolbarButtonStart(Widget widget) {
 		getToolbar().addStart(widget);
 	}
@@ -101,6 +105,11 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 	
 	public void hideSearchWidget() {
 		searchFilterComponent.hideSearchWidget();
+	}
+	
+	// Show only search button, hide text input
+	public void showSeachButton() {
+		searchFilterComponent.showSeachButton();
 	}
 	
 	public void addFilterWidget(Widget widget) {

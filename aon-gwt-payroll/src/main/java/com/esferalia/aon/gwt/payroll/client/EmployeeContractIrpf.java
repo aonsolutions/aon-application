@@ -3,285 +3,398 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
+import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeContractIrpf extends Composite {
+public class EmployeeContractIrpf extends AonCustomDockLayout {
 
-	// ----------------------------------------------- UiBinder 
+	// ----------------------------------------------- ContextMenu 
 	
-	private static EmployeeContractIrpfUiBinder uiBinder = GWT.create(EmployeeContractIrpfUiBinder.class);
+	class DownloandExcelCommand implements ScheduledCommand {
 
-	interface EmployeeContractIrpfUiBinder extends UiBinder<Widget, EmployeeContractIrpf> {}
-	
-	// ----------------------------------------------- UiField 
-	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String flexColumn();
-		String flex();
-		String width120();
-		String width90();
-		String width70();
-		String width50();
-		String width40();
-		String title();
-		String header();
-		String l00();
-		String m190();
+		@Override
+		public void execute() {
+			onDownloadExcel();
+		}
 	}
 	
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	class UploadExcelCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onUploadExcel();
+		}
+	}
 	
-	@UiField
-	ScrollPanel scrollPanel;
-	
-	@UiField
-	HTMLPanel mainPanel;
+	class ExcelContextMenu extends ContextMenu {
+
+		public ExcelContextMenu() {
+			addMenuItem("Descargar datos excel", new DownloandExcelCommand(), AON.CSS.aonIconExcel(), "downloadExcel");
+			addMenuItem("Carga datos excel", new UploadExcelCommand(), AON.CSS.aonIconExcel(), "uploadExcel");			
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+		
+	}
 	
 	// ----------------------------------------------- Variables 
 	
-//	private static NumberFormat df2 = NumberFormat.getFormat("###,##0.00");
+	private HTMLPanel container;
+	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private EmployeeContractIrpfObject employeeContractIrpfObject;
+	private ExcelContextMenu excelContextMenu;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton saveButton;
 	private ListBox yearLB;
+	private AonExpandButton excelButton;
+	
+	private ScrollPanel scrollPanel;
+	private SimplePanel containerTable;
+	private AonCustomTable tab;
+	
+	private MultiFileUpload msjFIEFileUpload;
+	
+	private static enum COLUMNS {
+		  MON(AonStringUtils.EMPTY					,"6rem"				,"font-weight: bold; text-align: center;")
+		, TYP("Tipo"								,"5rem"  			,"")
+		, IRF("% IRFP"								,"7rem"  			,"text-align: right;")
+		, BDN("Base Dineraria"						,"7rem"  			,"text-align: right;")
+		, IDN("IRPF Dineraria"						,"7rem"  			,"text-align: right;")
+		, BES("Base Especie"						,"7rem"  			,"text-align: right;")
+		, IES("IRPF Especie"						,"7rem"  			,"text-align: right;")
+		, TIR("Total IRPF"							,"7rem"  			,"text-align: right;")
+		, QUO("Cuota SS Trabajador"					,"9rem"  			,"text-align: right;")
+		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
+		;
+
+		String headerLabel;
+		String colWidth;
+		String cellStyleClass;
+
+		private COLUMNS(String headerLabel,String colWidth) {
+			this(headerLabel, colWidth, null);
+		}
+
+		private COLUMNS(String headerLabel,String colWidth,String cellStyleClass) {
+			this.headerLabel = headerLabel;
+			this.colWidth = colWidth;
+			this.cellStyleClass = cellStyleClass;
+		}
+		public String getColWidth() {
+			return colWidth;
+		}
+		public String getHeaderLabel() {
+			return headerLabel;
+		}
+		public String getCellStyleClass() {
+			return cellStyleClass;
+		}
+	}
+	
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	
+	private List<EmployeeIrpf> employeeIrpfList;
+	private Integer contractId;
+	private String ssNumber;
+	private String fullName;
+	private String document;
+	private Date contractStartDate;
 	
 	// ----------------------------------------------- Constructor 
 	
 	protected EmployeeContractIrpf() {
+		super("Impuesto sobre la Renta de las Personas Fisicas (IRPF)");
+		
+		excelContextMenu = new ExcelContextMenu();
+		
 		initializeToolbarPanel();
-		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.getElement().getStyle().setHeight(100, Unit.PCT);
-		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
+		container = new HTMLPanel("");
+		container.addStyleName(AON.CSS.aonFlexColumn());
 
-		saveButton.setEnabled(false);
+		container.add(messagePanel);
 		
-		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		scrollPanel = new ScrollPanel();
+		scrollPanel.setHeight("100%");
+		scrollPanel.getElement().getStyle().setProperty("display", "flex");
+		scrollPanel.getElement().getStyle().setProperty("justify-content", "center");
+		containerTable = new SimplePanel();
+		containerTable.getElement().getStyle().setProperty("padding", "0 1rem");
+		scrollPanel.setWidget(containerTable);
+		
+		container.add(scrollPanel);
+		
+		add(container);
+	}
+	
+	@Override
+	protected void onClearFilter() {}
+	
+	private void initializeToolbarPanel() {
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveButton.setEnabled(false);
+		saveButton.addClickHandler(e -> onSave());
+		addToolbarButton(saveButton);
+		
+		yearLB = new ListBox();
+		addToolbarButton(yearLB);
+		
+		excelButton = new AonExpandButton("Excel", AON.CSS.aonIconExcel()) {
+			
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				excelContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				excelContextMenu.show();
+			}
+			
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onDownloadExcel();
+			}
+		};
+		excelButton.setVisible(false);
+		addToolbarButton(excelButton);
+		
+		hideSearchWidget();
 	}
 		
 	// ----------------------------------------------- setEmployeeContractIrpfObject 
 	
-	public void setEmployeeContractIrpfObject(EmployeeContractIrpfObject employeeContractIrpfObject) {
-		this.employeeContractIrpfObject = employeeContractIrpfObject;
+	public void setEmployeeContractIrpfObject(Integer contractId, String fullName, String document, String ssNumber, Date contractStartDate) {
+		this.contractId = contractId;
+		this.ssNumber = ssNumber;
+		this.fullName = fullName;
+		this.document = document;
+		this.contractStartDate = contractStartDate;
+		this.employeeIrpfList = new ArrayList<>();
 		
 		initializeYearLB(yearLB);
+		
+		onSearch();
+	}
+	
+	private void onSearch() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo Impuesto sobre la Renta de las Personas Fisicas (IRPF) ...");
+		
 		Date auxDate = DateUtils.getDate(0, Integer.parseInt(yearLB.getSelectedValue()));
 		Date date = DateUtils.getFirstDayOfMonth(auxDate);
 		
-		this.employeeContractIrpfObject.getEmployeeIrpf(
-				date,
+		getEmployeeIrpfList(date,
 				r -> {
+					AonMessagePanel.hideMessage(messagePanel);
+					
 					initEmployeeIrpfTable();
-					String ssNumber = this.employeeContractIrpfObject.getSSNumber();
+					
 					if(AonStringUtils.isBlank(ssNumber)) {
 						this.yearLB.setEnabled(false);
 						this.saveButton.setEnabled(false);
-						showErrorMessage("Error n\u00FAmero Seguridad Social", "El contrato " + employeeContractIrpfObject.getFullName() + " no tiene definido el n\u00FAmero de la Seguridad Social. Def\u00EDnalo antes de rellas los IRPFs");
+						AonMessagePanel.showError(messagePanel, "El contrato " + fullName + " no tiene definido el n\u00FAmero de la Seguridad Social. Def\u00EDnalo antes de rellas los IRPFs");
 					}
 				},
 				t -> {});
 	}
-
-	protected abstract void showErrorMessage(String title, String message);
-
+	
 	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
 	
 	private void initEmployeeIrpfTable() {
-		HTMLPanel table = new HTMLPanel("");
-		table.addStyleName(style.flexColumn());
+		containerTable.clear();
+		tab = new AonCustomTable();
 		
-		// Header Row
-		HTMLPanel headerRow = new HTMLPanel("");
-		getHeaderRow(headerRow);
-		table.add(headerRow);
+		paintHeader();
+		containerTable.setWidget(tab);
 		
 		// Fill lines
 		for(int month = 0; month < 12; month++) {
-			HTMLPanel monthRow = new HTMLPanel("");
-			getMonthRow(table, monthRow, month);
+			getMonthRow(month);
 		}
 		
-		HTMLPanel accumulateRow = new HTMLPanel("");
-		getAccumulateRow(accumulateRow);
-		table.add(accumulateRow);
-			
-		// Add table to mainPanel
-		mainPanel.clear();
-		mainPanel.add(table);
+		getAccumulateRow();
 	}
 
-	public void getHeaderRow(HTMLPanel headerRow) {
-		headerRow.addStyleName(style.flex());
-		headerRow.addStyleName(style.header());
+	private void paintHeader() {
+		HTMLPanel header = tab.createHeader();
+		header.getElement().getStyle().setProperty("top", "0px");
 		
-		Label emptyLabel = new Label("");
-		emptyLabel.addStyleName(style.width90());
-		
-//		Label typeLabel = new Label("Tipo");
-//		typeLabel.addStyleName(style.width90());
-//		typeLabel.addStyleName(style.title());
-		
-		Label irpfPercentLabel = new Label("% IRPF");
-		irpfPercentLabel.addStyleName(style.width70());
-		irpfPercentLabel.addStyleName(style.title());
-		
-		Label moneyBaseLabel = new Label("Base Dineraria");
-		moneyBaseLabel.addStyleName(style.width90());
-		moneyBaseLabel.addStyleName(style.title());
-		
-		Label moneyQuoteLabel = new Label("IRPF Dineraria");
-		moneyQuoteLabel.addStyleName(style.width90());
-		moneyQuoteLabel.addStyleName(style.title());
-		
-		Label inkindBaseLabel = new Label("Base Especie");
-		inkindBaseLabel.addStyleName(style.width90());
-		inkindBaseLabel.addStyleName(style.title());
-		
-		Label inkindQuoteLabel = new Label("IRPF Especie");
-		inkindQuoteLabel.addStyleName(style.width90());
-		inkindQuoteLabel.addStyleName(style.title());
-		
-		Label totalIrpfLabel = new Label("Total IRPF");
-		totalIrpfLabel.addStyleName(style.width90());
-		totalIrpfLabel.addStyleName(style.title()); 
-		
-		Label employeeSSQuoteLabel = new Label("Cuota SS Trabajador");
-		employeeSSQuoteLabel.addStyleName(style.width120());
-		employeeSSQuoteLabel.addStyleName(style.title()); 
-		
-		Label actionLabel = new Label("");
-		actionLabel.addStyleName(style.width50());
-		
-		headerRow.add(emptyLabel);
-//		headerRow.add(typeLabel);
-		headerRow.add(irpfPercentLabel);
-		headerRow.add(moneyBaseLabel);
-		headerRow.add(moneyQuoteLabel);
-		headerRow.add(inkindBaseLabel);
-		headerRow.add(inkindQuoteLabel);
-		headerRow.add(totalIrpfLabel);
-		headerRow.add(employeeSSQuoteLabel);
-		headerRow.add(actionLabel);
+		for ( COLUMNS col : COLUMNS.values()) 
+			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
 	}
 	
-	private void getMonthRow(HTMLPanel table, HTMLPanel monthRow, int month) {
+	private void getMonthRow(int month) {
 		// Get date
 		final Date date = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, Integer.parseInt(yearLB.getSelectedValue())));
 		
 		// Get employeeIrpf by date
-		List<EmployeeIrpf> employeeIrpfList = this.employeeContractIrpfObject.getEmployeeIrpf(date);
+		List<EmployeeIrpf> employeeIrpfList = getEmployeeIrpf(date);
 		if(employeeIrpfList.isEmpty())
-			createFirstMonthRow(table, null, monthRow, month, date, true);
+			createFirstMonthRow(null, month, date, true);
 		else
 			for(int i=0; i<employeeIrpfList.size(); i++)
-				createFirstMonthRow(table, employeeIrpfList.get(i), i==0 ? monthRow : new HTMLPanel(""), month, date, i==0);
+				createFirstMonthRow(employeeIrpfList.get(i), month, date, i==0);
 	}
 	
-	private void createFirstMonthRow(HTMLPanel table, EmployeeIrpf employeeIrpf, HTMLPanel monthRow, int month, Date date, boolean firstLine) {
-		monthRow.addStyleName(style.flex());
-		
+	private void createFirstMonthRow(EmployeeIrpf employeeIrpf, int month, Date date, boolean firstLine) {
 		List<TextBox> valuesLabels = new ArrayList<>();
 		
-		Label monthLabel = new Label("");
-		if(firstLine)
-			monthLabel.setText(getStringMonth(month));
-		monthLabel.addStyleName(style.width90());
-		monthLabel.addStyleName(style.title());
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-//		Label typeLabel = new Label("");
-//		typeLabel.addStyleName(style.width90());
+		if(null != employeeIrpf && !employeeIrpf.isAlcatraz()  && AonStringUtils.equalsIgnoreCase("Manual", employeeIrpf.getSalaryType())) {
+			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton("Eliminar", AON.CSS.aonIconDelete());
+			deleteBtn.addStyleName(AON.CSS.aonCustomRowButtom());
+			deleteBtn.addClickHandler(e -> {
+				e.stopPropagation();
+				deleteBtn.setEnabled(false);
+				
+				AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Tramo IRPF",
+						new HTML("Se va a proceder a eliminar el tramo de IRPF <b>" + employeeIrpf.getSalaryType() + " (" + getStringMonth(month)  + ")" + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+				
+				deleteDialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						deleteBtn.setEnabled(true);
+					}
+					
+					@Override
+					public void onAccept() {
+						deleteEmployeeIrpf(employeeIrpf);
+						onSave();
+					}
+				});
+			});
+			buttonContainer.add(deleteBtn);
+		}
 		
-		HTMLPanel irpfPercentPanel = new HTMLPanel("");
-		irpfPercentPanel.addStyleName(style.width70());
+		if(null != employeeIrpf && employeeIrpf.isAlcatraz()) {
+			AonTableButton aeatButton = new AonTableButton(
+					"Mod111 (" + employeeIrpf.getAlcatrazYear() + ", " + employeeIrpf.getAlcatrazPeriod().getDescription() + ")", 
+					getAeatButton(employeeIrpf)
+			);
+			buttonContainer.add(aeatButton);
+		}
+		
+		HTMLPanel row = tab.createRow();
+		
+		Label monthLabel = new Label(firstLine ? getStringMonth(month) : "");
+		monthLabel.setTitle(getStringMonth(month));
+		tab.addInlineStyle(monthLabel, COLUMNS.MON.getCellStyleClass());
+		tab.addRow(row, monthLabel, COLUMNS.MON.getColWidth());
+		
+		tab.addRow(row, new Label(null != employeeIrpf ? employeeIrpf.getSalaryType() : ""), COLUMNS.TYP.getColWidth());
+		
+		HTMLPanel irpfPercentPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		irpfPercentPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox irpfPercentBox = new ExpressionBox();
-		irpfPercentBox.addStyleName(style.width40());
-		irpfPercentBox.addStyleName(AON.AON_TEXT_RIGHT);
-		valuesLabels.add(irpfPercentBox);
+		irpfPercentBox.setWidth("5rem");
+		irpfPercentBox.addStyleName(AON.CSS.aonTextRight());
 		irpfPercentPanel.add(irpfPercentBox);
+		valuesLabels.add(irpfPercentBox);
+		tab.addInlineStyle(irpfPercentPanel, COLUMNS.IRF.getCellStyleClass());
+		tab.addRow(row, irpfPercentPanel, COLUMNS.IRF.getColWidth());
 		
-		HTMLPanel moneyBasePanel = new HTMLPanel("");
-		moneyBasePanel.addStyleName(style.width90());
+		HTMLPanel moneyBasePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		moneyBasePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox moneyBaseBox = new ExpressionBox();
-		moneyBaseBox.addStyleName(style.width50());
-		moneyBaseBox.addStyleName(AON.AON_TEXT_RIGHT);
+		moneyBaseBox.setWidth("5rem");
+		moneyBaseBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(moneyBaseBox);
 		moneyBasePanel.add(moneyBaseBox);
+		tab.addInlineStyle(moneyBasePanel, COLUMNS.BDN.getCellStyleClass());
+		tab.addRow(row, moneyBasePanel, COLUMNS.BDN.getColWidth());
 		
-		HTMLPanel moneyQuotePanel = new HTMLPanel("");
-		moneyQuotePanel.addStyleName(style.width90());
+		HTMLPanel moneyQuotePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		moneyQuotePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox moneyQuoteBox = new ExpressionBox();
-		moneyQuoteBox.addStyleName(style.width50());
-		moneyQuoteBox.addStyleName(AON.AON_TEXT_RIGHT);
+		moneyQuoteBox.setWidth("5rem");
+		moneyQuoteBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(moneyQuoteBox);
 		moneyQuotePanel.add(moneyQuoteBox);
+		tab.addInlineStyle(moneyQuotePanel, COLUMNS.IDN.getCellStyleClass());
+		tab.addRow(row, moneyQuotePanel, COLUMNS.IDN.getColWidth());
 		
-		HTMLPanel inkindBasePanel = new HTMLPanel("");
-		inkindBasePanel.addStyleName(style.width90());
+		HTMLPanel inkindBasePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		inkindBasePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox inkindBaseBox = new ExpressionBox();
-		inkindBaseBox.addStyleName(style.width50());
-		inkindBaseBox.addStyleName(AON.AON_TEXT_RIGHT);
+		inkindBaseBox.setWidth("5rem");
+		inkindBaseBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(inkindBaseBox);
 		inkindBasePanel.add(inkindBaseBox);
+		tab.addInlineStyle(inkindBasePanel, COLUMNS.BES.getCellStyleClass());
+		tab.addRow(row, inkindBasePanel, COLUMNS.BES.getColWidth());
 		
-		HTMLPanel inkindQuotePanel = new HTMLPanel("");
-		inkindQuotePanel.addStyleName(style.width90());
+		HTMLPanel inkindQuotePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		inkindQuotePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox inkindQuoteBox = new ExpressionBox();
-		inkindQuoteBox.addStyleName(style.width50());
-		inkindQuoteBox.addStyleName(AON.AON_TEXT_RIGHT);
+		inkindQuoteBox.setWidth("5rem");
+		inkindQuoteBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(inkindQuoteBox);
 		inkindQuotePanel.add(inkindQuoteBox);
+		tab.addInlineStyle(inkindQuotePanel, COLUMNS.IES.getCellStyleClass());
+		tab.addRow(row, inkindQuotePanel, COLUMNS.IES.getColWidth());
 		
-		HTMLPanel totalIrpfBasePanel = new HTMLPanel("");
-		totalIrpfBasePanel.addStyleName(style.width90());
+		HTMLPanel totalIrpfBasePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		totalIrpfBasePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox totalIrpfBaseBox = new ExpressionBox();
-		totalIrpfBaseBox.addStyleName(style.width50());
-		totalIrpfBaseBox.addStyleName(AON.AON_TEXT_RIGHT);
+		totalIrpfBaseBox.setWidth("5rem");
+		totalIrpfBaseBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(totalIrpfBaseBox);
 		totalIrpfBasePanel.add(totalIrpfBaseBox);
+		tab.addInlineStyle(totalIrpfBasePanel, COLUMNS.TIR.getCellStyleClass());
+		tab.addRow(row, totalIrpfBasePanel, COLUMNS.TIR.getColWidth());
 		
-		HTMLPanel employeeSSQuoteBasePanel = new HTMLPanel("");
-		employeeSSQuoteBasePanel.addStyleName(style.width120());
+		HTMLPanel employeeSSQuoteBasePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		employeeSSQuoteBasePanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
 		TextBox employeeSSQuoteBaseBox = new ExpressionBox();
-		employeeSSQuoteBaseBox.addStyleName(style.width50());
-		employeeSSQuoteBaseBox.addStyleName(AON.AON_TEXT_RIGHT);
+		employeeSSQuoteBaseBox.setWidth("5rem");
+		employeeSSQuoteBaseBox.addStyleName(AON.CSS.aonTextRight());
 		valuesLabels.add(employeeSSQuoteBaseBox);
 		employeeSSQuoteBasePanel.add(employeeSSQuoteBaseBox);
+		tab.addInlineStyle(employeeSSQuoteBasePanel, COLUMNS.QUO.getCellStyleClass());
+		tab.addRow(row, employeeSSQuoteBasePanel, COLUMNS.QUO.getColWidth());
 		
-		HTMLPanel actionPanel = new HTMLPanel("");
-		actionPanel.addStyleName(style.width50());
+		tab.addRow(row, buttonContainer, COLUMNS.BUT.getColWidth());
 		
 		if(null != employeeIrpf) {
-//			typeLabel.setText(employeeIrpf.getSalaryType());
 			irpfPercentBox.setValue(format(employeeIrpf.getIrpfPercent()));
 			moneyBaseBox.setValue(format(employeeIrpf.getMoneyBase()));
 			moneyQuoteBox.setValue(format(employeeIrpf.getMoneyQuote()));
@@ -294,11 +407,11 @@ public abstract class EmployeeContractIrpf extends Composite {
 		
 			// Check styles
 			if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "L00")) {
-				employeeSSQuoteBaseBox.addStyleName(style.l00());
 				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un L00");
+				employeeSSQuoteBaseBox.getElement().getStyle().setColor("green");
 			} else if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "Manual")) {
-				employeeSSQuoteBaseBox.addStyleName(style.m190());
 				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un M190 (Manual)");
+				employeeSSQuoteBaseBox.getElement().getStyle().setColor("blue");
 			}
 		}
 		
@@ -396,79 +509,38 @@ public abstract class EmployeeContractIrpf extends Composite {
 		
 		totalIrpfBaseBox.addValueChangeHandler(e -> createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId()));
 		employeeSSQuoteBaseBox.addValueChangeHandler(e -> createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId()));
-		
-		// Add elements to monthRow
-		monthRow.add(monthLabel);
-//		monthRow.add(typeLabel);
-		monthRow.add(irpfPercentPanel);
-		monthRow.add(moneyBasePanel);
-		monthRow.add(moneyQuotePanel);
-		monthRow.add(inkindBasePanel);
-		monthRow.add(inkindQuotePanel);
-		monthRow.add(totalIrpfBasePanel);
-		monthRow.add(employeeSSQuoteBasePanel);
-		if(null != employeeIrpf && AonStringUtils.equalsIgnoreCase("Manual", employeeIrpf.getSalaryType())) {
-			AonToolbarSmallButton deleteBtn = new AonToolbarSmallButton("Eliminar", AON.CSS.aonIconDelete());
-			actionPanel.add(deleteBtn);
-			deleteBtn.addClickHandler(e -> {
-				employeeContractIrpfObject.deleteEmployeeIrpf(employeeIrpf);
-				initEmployeeIrpfTable();
-			});
-		}
-		monthRow.add(actionPanel);
-		table.add(monthRow);
 	}
+	
+	private String getAeatButton(EmployeeIrpf employeeIrpf) {
+		switch (employeeIrpf.getAlcatrazTerritory()) {
+			case ARABA:
+				return "aon-icon-araba";
+			case BIZKAIA:
+				return "aon-icon-bizkaia";
+			case GIPUZKOA:
+				return "aon-icon-gipuzkoa";
+			case NAVARRA:
+				return "aon-icon-navarra";
+			default:
+				return "aon-icon-aeat";
+		}
+	}
+	
+	private void getAccumulateRow() {
+		tab.createFooter();
 
-	public void getAccumulateRow(HTMLPanel accumulateRow) {
-		accumulateRow.addStyleName(style.flex());
-		accumulateRow.addStyleName(style.header());
+		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.MON.getColWidth());
+		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.TYP.getColWidth());
+		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.IRF.getColWidth());
 		
-		Label emptyLabel = new Label("");
-		emptyLabel.addStyleName(style.width90());
+		tab.addFooter(new Label(format(getAccumulateMoneyBase())), COLUMNS.BDN.getColWidth(), "text-align: right;");
+		tab.addFooter(new Label(format(getAccumulateMoneyQuote())), COLUMNS.IDN.getColWidth(), "text-align: right;");
+		tab.addFooter(new Label(format(getAccumulateInkindBase())), COLUMNS.BES.getColWidth(), "text-align: right;");
+		tab.addFooter(new Label(format(getAccumulateInkindQuote())), COLUMNS.IES.getColWidth(), "text-align: right;");
+		tab.addFooter(new Label(format(getAccumulateTotalIrpf())), COLUMNS.TIR.getColWidth(), "text-align: right;");
+		tab.addFooter(new Label(format(getAccumulateEmployeeSSQuote())), COLUMNS.QUO.getColWidth(), "text-align: right;");
 		
-//		Label typeLabel = new Label("");
-//		typeLabel.addStyleName(style.width90());
-		
-		Label irpfPercentLabel = new Label("");
-		irpfPercentLabel.addStyleName(style.width70());
-		
-		Label moneyBaseLabel = new Label(format(employeeContractIrpfObject.getAccumulateMoneyBase()));
-		moneyBaseLabel.addStyleName(style.width90());
-		moneyBaseLabel.addStyleName(style.title());
-		
-		Label moneyQuoteLabel = new Label(format(employeeContractIrpfObject.getAccumulateMoneyQuote()));
-		moneyQuoteLabel.addStyleName(style.width90());
-		moneyQuoteLabel.addStyleName(style.title());
-		
-		Label inkindBaseLabel = new Label(format(employeeContractIrpfObject.getAccumulateInkindBase()));
-		inkindBaseLabel.addStyleName(style.width90());
-		inkindBaseLabel.addStyleName(style.title());
-		
-		Label inkindQuoteLabel = new Label(format(employeeContractIrpfObject.getAccumulateInkindQuote()));
-		inkindQuoteLabel.addStyleName(style.width90());
-		inkindQuoteLabel.addStyleName(style.title());
-		
-		Label totalIrpfLabel = new Label(format(employeeContractIrpfObject.getAccumulateTotalIrpf()));
-		totalIrpfLabel.addStyleName(style.width90());
-		totalIrpfLabel.addStyleName(style.title()); 
-		
-		Label employeeSSQuoteLabel = new Label(format(employeeContractIrpfObject.getAccumulateEmployeeSSQuote()));
-		employeeSSQuoteLabel.addStyleName(style.width120());
-		employeeSSQuoteLabel.addStyleName(style.title()); 
-		
-		Label actionLabel = new Label("");
-		actionLabel.addStyleName(style.width50());
-		
-		accumulateRow.add(emptyLabel);
-//		accumulateRow.add(typeLabel);
-		accumulateRow.add(irpfPercentLabel);
-		accumulateRow.add(moneyBaseLabel);
-		accumulateRow.add(moneyQuoteLabel);
-		accumulateRow.add(inkindBaseLabel);
-		accumulateRow.add(inkindQuoteLabel);
-		accumulateRow.add(totalIrpfLabel);
-		accumulateRow.add(employeeSSQuoteLabel);
-		accumulateRow.add(actionLabel);
+		tab.addFooter(new Label(AonStringUtils.EMPTY), COLUMNS.BUT.getColWidth());
 	}
 	
 	// ----------------------------------------------- Auxiliar methods
@@ -518,7 +590,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 
 	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, TextBox moneyQuoteBox, TextBox inkindBaseBox, TextBox inkindQuoteBox, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
 		try{
-			this.employeeContractIrpfObject.createUpdateEmployeeIrpf(
+			createUpdateEmployeeIrpf(
 					date, 
 					parseDouble(moneyBaseBox.getValue()),
 					parseDouble(moneyQuoteBox.getValue()),
@@ -529,6 +601,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 					parseDouble(totalIrpfBaseBox.getValue()),
 					salaryId);	
 			initEmployeeIrpfTable();
+			saveButton.setEnabled(true);
 		} catch (Exception e) {
 			// Skip exception
 		}
@@ -536,7 +609,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 	
 	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, Double moneyQuote, TextBox inkindBaseBox, TextBox inkindQuoteBox, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
 		try{
-			this.employeeContractIrpfObject.createUpdateEmployeeIrpf(
+			createUpdateEmployeeIrpf(
 					date, 
 					parseDouble(moneyBaseBox.getValue()),
 					moneyQuote,
@@ -547,6 +620,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 					parseDouble(totalIrpfBaseBox.getValue()),
 					salaryId);	
 			initEmployeeIrpfTable();
+			saveButton.setEnabled(true);
 		} catch (Exception e) {
 			// Skip exception
 		}
@@ -554,7 +628,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 	
 	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, TextBox moneyQuoteBox, TextBox inkindBaseBox, Double inkindQuote, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
 		try{
-			this.employeeContractIrpfObject.createUpdateEmployeeIrpf(
+			createUpdateEmployeeIrpf(
 					date, 
 					parseDouble(moneyBaseBox.getValue()),
 					parseDouble(moneyQuoteBox.getValue()),
@@ -565,6 +639,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 					parseDouble(totalIrpfBaseBox.getValue()),
 					salaryId);	
 			initEmployeeIrpfTable();
+			saveButton.setEnabled(true);
 		} catch (Exception e) {
 			// Skip exception
 		}
@@ -605,7 +680,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 
 	public void initializeYearLB(ListBox yearLB) {
 		Integer year = DateUtils.getYear();
-		Integer contractStartYear = employeeContractIrpfObject.getContractStartYear();
+		Integer contractStartYear = DateUtils.getYear(contractStartDate);
 		
 		Integer yearAux = year;
 		yearAux++;
@@ -619,22 +694,22 @@ public abstract class EmployeeContractIrpf extends Composite {
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		
-		setSelectedValueLB(yearLB, year.toString());
+		Date februaryDate = DateUtils.getDate(1, DateUtils.getYear());
+		if(februaryDate.after(new Date())) {
+			year--;
+			setSelectedValueLB(yearLB, year.toString());
+		} else
+			setSelectedValueLB(yearLB, year.toString());
 	}
 	
 	private void changeYear() {
-		
-		Date auxDate = DateUtils.getDate(0, Integer.parseInt(yearLB.getSelectedValue()));
-		Date date = DateUtils.getFirstDayOfMonth(auxDate);
-		
-		this.employeeContractIrpfObject.setEmployeeIrpf(
-				s -> 
-					this.employeeContractIrpfObject.getEmployeeIrpf(
-							date, 
-							suc -> initEmployeeIrpfTable(), 
-							f -> {})
-				, 
-				f -> {});
+		AonMessagePanel.showLoading(messagePanel, "Guardando Impuesto sobre la Renta de las Personas Fisicas (IRPF) ...");
+		setEmployeeIrpf(
+				s -> {
+					saveButton.setEnabled(false);
+					onSearch();
+				}, 
+				f -> AonMessagePanel.showLoading(messagePanel, "Error guardando " + f.getMessage()));
 	}
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
@@ -649,20 +724,6 @@ public abstract class EmployeeContractIrpf extends Composite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 
-	// ----------------------------------------------- Toolbar
-	
-	private void initializeToolbarPanel() {
-		
-		this.toolbar = new AonToolbar("Irpf");
-		
-		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> onSave());
-		toolbar.add(saveButton);
-		
-		this.yearLB = new ListBox();
-		this.toolbar.add(this.yearLB);
-	}
-
 	// ----------------------------------------------- Toolbar.Methods
 
 	public void onSave() {
@@ -671,13 +732,225 @@ public abstract class EmployeeContractIrpf extends Composite {
 	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
-	public void hideToolbar(){
-		dockLayoutPanel.remove(toolbar);
-		mainPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
-	}
-	
 	public void setYearLB(ListBox yearLB) {
 		this.yearLB = yearLB;
+	}
+
+	public void onDownloadExcel() {
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "ContractIrpfExcel/");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_GET);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("login", Wnd.getCurrentUser()));
+		flowPanel.add(new Hidden("year", yearLB.getSelectedValue()));
+		flowPanel.add(new Hidden("ssNumber", ssNumber));
+		flowPanel.add(new Hidden("document", document));
+		flowPanel.add(new Hidden("fullName", fullName));
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> removeFromToolbar(formPanel));
+		
+		addToolbarButton(formPanel);
+		
+		formPanel.submit();
+	}
+
+	public void onUploadExcel() {
+		// FORM
+		FormPanel msjFIEFormPanel = new FormPanel();
+		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
+		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
+		msjFIEFormPanel.setAction(URL.encode(GWT.getModuleBaseURL() + "ContractIrpfExcel"));
+		
+		Hidden userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
+		Hidden domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+		
+		msjFIEFileUpload = new MultiFileUpload();
+		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
+		msjFIEFileUpload.setVisible(false);
+		msjFIEFileUpload.setAccept(".xls");
+		msjFIEFileUpload.addChangeHandler(e -> {
+			msjFIEFormPanel.submit();
+			
+		});
+		msjFIEFormPanel.addSubmitCompleteHandler(e -> removeFromToolbar(msjFIEFormPanel));
+		
+		FlowPanel formFlowPanel = new FlowPanel();
+		formFlowPanel.add(userNameHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(msjFIEFileUpload);
+		
+		msjFIEFormPanel.add(formFlowPanel);
+		addToolbarButton(msjFIEFormPanel);
+		
+		msjFIEFileUpload.click();
+	}
+	
+	private void removeFromToolbar(Widget widget) {
+		removeToolbarButton(widget);
+	}
+
+	public void onExpandClick(ClickEvent event) {
+		NativeEvent nativeEvent = event.getNativeEvent();
+		excelContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		excelContextMenu.show();
+	}
+
+	public String getYear() {
+		return yearLB.getSelectedValue();
+	}
+	
+	// ----------------------------------------------- DataBase
+	
+	private void getEmployeeIrpfList(Date date, Consumer<List<EmployeeIrpf>> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIrpf(ssNumber, document, date, new AsyncCallback<List<EmployeeIrpf>>() {
+			
+			@Override
+			public void onSuccess(List<EmployeeIrpf> employeeIrpfListDB) {
+				initEmployeeIrpfList(employeeIrpfListDB);
+				success.accept(employeeIrpfListDB);
+			}
+			
+			private void initEmployeeIrpfList(List<EmployeeIrpf> employeeIrpfListDB) {
+				employeeIrpfList.clear();
+				employeeIrpfList.addAll(employeeIrpfListDB);
+				employeeIrpfList.sort((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	private List<EmployeeIrpf> getEmployeeIrpf(Date date) {
+		DateUtils.resetTime(date);
+		List<EmployeeIrpf> result = new ArrayList<>();
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(DateUtils.equals(date, employeeIrpf.getDate()) && !employeeIrpf.isDelete())
+				result.add(employeeIrpf);
+		
+		return result;
+	}
+	
+	private void setEmployeeIrpf(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.setEmployeeIrpf(contractId, fullName, document, ssNumber, employeeIrpfList, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	private void createUpdateEmployeeIrpf(Date date, Double moneyBase, Double moneyQuote, Double inkindBase,
+			Double inkindQuote, Double irpfPercent, Double employeeSSQuote, Double totalIrpf, Integer salaryId) {
+		
+		EmployeeIrpf employeeIrpf = getEmployeeIrpf(date, salaryId);
+		
+		if(null == employeeIrpf) {
+			employeeIrpf = new EmployeeIrpf();
+			employeeIrpf.setNew(true);
+			employeeIrpf.setSalaryType("Manual");
+			employeeIrpfList.add(employeeIrpf);
+		}
+		
+		employeeIrpf.setDate(date)
+					.setMoneyBase(moneyBase)
+					.setMoneyQuote(moneyQuote)
+					.setInkindBase(inkindBase)
+					.setInkindQuote(inkindQuote)
+					.setIrpfPercent(irpfPercent)
+					.setEmployeeSSQuote(employeeSSQuote)
+					.setTotalIrpf(totalIrpf);
+	}
+
+	private EmployeeIrpf getEmployeeIrpf(Date date, Integer salaryId) {
+		if(salaryId == null) {
+			List<EmployeeIrpf> employeeIrpfListAux = getEmployeeIrpf(date);
+			return employeeIrpfListAux.isEmpty() ? null : employeeIrpfListAux.get(0);
+		}
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(salaryId == employeeIrpf.getSalaryId() && !employeeIrpf.isDelete())
+				return employeeIrpf;
+		
+		return null;
+	}
+
+	private void deleteEmployeeIrpf(EmployeeIrpf employeeIrpf) {
+		employeeIrpf.setDelete(true);
+	}
+	
+	private Double getAccumulateMoneyBase() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getMoneyBase() != null)
+				accumulate += employeeIrpf.getMoneyBase();
+		
+		return accumulate;
+	}
+
+	private Double getAccumulateMoneyQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getMoneyQuote() != null)
+				accumulate += employeeIrpf.getMoneyQuote();
+		
+		return accumulate;
+	}
+
+	private Double getAccumulateInkindBase() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getInkindBase() != null)
+				accumulate += employeeIrpf.getInkindBase();
+		
+		return accumulate;
+	}
+
+	private Double getAccumulateInkindQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getInkindQuote() != null)
+				accumulate += employeeIrpf.getInkindQuote();
+		
+		return accumulate;
+	}
+
+	private Double getAccumulateTotalIrpf() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getTotalIrpf() != null)
+				accumulate += employeeIrpf.getTotalIrpf();
+		
+		return accumulate;
+	}
+
+	private Double getAccumulateEmployeeSSQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getEmployeeSSQuote() != null)
+				accumulate += employeeIrpf.getEmployeeSSQuote();
+		
+		return accumulate;
 	}
 	
 }

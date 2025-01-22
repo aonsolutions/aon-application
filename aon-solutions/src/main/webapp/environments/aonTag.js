@@ -91,6 +91,12 @@ export const AON_ITEM_UPDATE ='aon-item-update';
 
 export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 
+// MODULES - EXAMPLE
+
+export const AON_EXAMPLE = 'aon-example';
+export const AON_EXAMPLE_LIST = 'aon-example-list';
+export const AON_EXAMPLE_OBJECT = 'aon-example-object';
+
 // MODULES - COMPANY
 
 export const AON_MODULE = 'aon-module';

@@ -420,6 +420,7 @@ export class AonApplication extends AonElement {
     });  
 
     let span = this.createElement(TAG.SPAN);
+	span.id = `aonSidenavTitle${data.id}Name`;
     span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
@@ -989,6 +990,18 @@ export class AonApplication extends AonElement {
     }
   }
 
+  /**
+   * 
+   * @param {String} id  
+   * @param {Number} title 
+   */
+  updateSidenavTitle(id, title){
+    let span = this.getElement(`aonSidenavTitle${id}Name`);
+    if(span){
+        span.innerHTML = title;
+    }
+  }
+
   addOption(name, icon, fn) {
     this.addToolbarOption(name, icon, fn);
   }
@@ -1153,7 +1166,7 @@ export class AonApplication extends AonElement {
       d.clear();
       d.type = "";
       d.setContentHTML(subtitle);
-      if (!this.isMobile()) d.width = '400px';
+      if (!this.isMobile()) d.width = '650px';
       d.setTitle(title);
       d.open();
       if(buttonTitle) {

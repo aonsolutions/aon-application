@@ -185,6 +185,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 	private SimpleLayoutPanel centerPanel;
 	private SalaryTable salaryTable;
 	
+	private List<SalaryInfo> selectPdfSalaries = new ArrayList<SalaryInfo>();
 	private FullViewer pdfViewer = new FullViewer();
 	
 	private DomainEnterprisesServiceAsync service = DomainEnterprisesServiceAsync.newInstance();
@@ -273,10 +274,12 @@ public class SalaryWidget extends AonCustomDockLayout {
 				sort.addItem("Tipo", "type");
 				sort.addItem("F. Inicio", "start");
 				sort.addItem("F. Fin", "end");
+				sort.setValue("start");
 				sort.getListBox().addChangeHandler(event -> onSearch());
 
 				asc.addItem("Ascendente", "true");
 				asc.addItem("Descendete", "false");
+				asc.setValue("false");
 				asc.getListBox().addChangeHandler(event -> onSearch());
 
 				addSortWidget(sort);
@@ -409,13 +412,19 @@ public class SalaryWidget extends AonCustomDockLayout {
 		List<Integer> salaryIds = new ArrayList<>();
 		Integer enterpriseId = null;
 		
+		this.selectPdfSalaries.clear();
+		
 		if(null != salary) {
 			salaryIds.add(salary.getId());
 			enterpriseId = salary.getEnterpriseId();
+			
+			this.selectPdfSalaries.add(salary);
 		} else {
 			for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++)
 				salaryIds.add(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
 			enterpriseId = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
+			
+			this.selectPdfSalaries.addAll(salaryTable.getSelectedSalaries());
 		}
 		
 		getPDFSalaries(enterpriseId, salaryIds,
@@ -584,12 +593,33 @@ public class SalaryWidget extends AonCustomDockLayout {
 	}
 	
 	private void onClosePDF() {
+		this.selectPdfSalaries.clear();
 		showSalary();
 	}
 	
 	public void loadSalaries() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo n\u00f3minas de los trabajadores...");
-		onSearch();
+		if(this.selectPdfSalaries != null && !this.selectPdfSalaries.isEmpty()) {
+			AonMessagePanel.showLoading(messagePanel, "Cargando n\u00f3mina(s)...");
+			
+			List<Integer> salaryIds = new ArrayList<>();
+			Integer enterpriseId = null;
+			
+			for(int i=0; i<selectPdfSalaries.size(); i++)
+				salaryIds.add(((SalaryInfo)selectPdfSalaries.toArray()[i]).getId());
+			enterpriseId = ((SalaryInfo)selectPdfSalaries.toArray()[0]).getEnterpriseId();
+			
+			getPDFSalaries(enterpriseId, salaryIds,
+					dataURI -> {
+						AonMessagePanel.hideMessage(messagePanel);
+						showPdf();
+						pdfViewer.open(dataURI);
+					},
+					f -> AonMessagePanel.hideMessage(messagePanel));
+		} else {
+			showSalary();
+			AonMessagePanel.showLoading(messagePanel, "Obteniendo n\u00f3minas de los trabajadores...");
+			onSearch();
+		}
 	}
 	
 	public void setEnterprisesManagement() {
@@ -598,16 +628,19 @@ public class SalaryWidget extends AonCustomDockLayout {
 	
 	public SalaryWidget setIsEnterprise() {
 		isEnterprise = true;
+		setSearchPlaceholder("Busque por CT / Tabajador...");
 		return this;
 	}
 	
 	public SalaryWidget setIsWorkplace() {
 		isWorkplace = true;
+		setSearchPlaceholder("Busque por Tabajador...");
 		return this;
 	}
 	
 	public SalaryWidget setIsEmployee() {
 		isEmployee = true;
+		showSeachButton();
 		return this;
 	}
 	
@@ -616,14 +649,17 @@ public class SalaryWidget extends AonCustomDockLayout {
 		return this;
 	}
 	
-	public SalaryWidget setContractId(Integer contractId, Date date) {
+	public SalaryWidget setContractId(Integer contractId, Date contractEndDate) {
 		this.contractId = contractId;
 		
-		if( date != null && (date.before(new Date()) || date.equals(new Date())) ) {
+		if( contractEndDate != null && (contractEndDate.before(new Date()) || contractEndDate.equals(new Date())) ) {
 			period.getListBox().setSelectedIndex(5);
 			
-			start.setValue(DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(DateUtils.copyDateOnly(date), -1)));
-			end.setValue(DateUtils.getLastDayOfMonth(date));
+			start.setValue(DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(DateUtils.copyDateOnly(contractEndDate), -12)));
+			end.setValue(DateUtils.getLastDayOfMonth(contractEndDate));
+		} else {
+			period.getListBox().setSelectedIndex(4);
+			updateDates();
 		}
 		
 		return this;
@@ -632,6 +668,10 @@ public class SalaryWidget extends AonCustomDockLayout {
 	public SalaryWidget setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
 		return this;
+	}
+
+	public void resetSelectPdfSalary() {
+		this.selectPdfSalaries = new ArrayList<SalaryInfo>();
 	}
 	
 	// DataBase methods

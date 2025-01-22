@@ -1,16 +1,15 @@
 import { AonElement } from '../../components/AonElement.js';
 
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import * as LS from '../../services/localStorageService.js';
-import {deleteDelivery, deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
+import { deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
 
 import * as ACTION from '../actions.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
-import { getDelivery } from '../../services/warehouseService.js';
-import { AonMobileDelivery } from './aon-mobile-delivery.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -158,22 +157,35 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		this.packaging.item.itemComposition.forEach((c, i) => {
 			table.addRow();
 			
-			let comp1 = createInput(this.COMPOSITION_ITEM + i, "Producto");
-			comp1.value = c.composition.description.isEmpty()
+			let span = this.createSpan();
+			span.innerHTML = c.composition.description.isEmpty()
 				? c.composition.product.code
-				: c.composition.description;
-			comp1.disabled = CONSTANT.TRUE;
-			table.addCell(comp1);
+				: c.composition.description
+			let td = table.addCell(span);
+			td.style.paddingBottom = '10px';
+			td.style.paddingRight = '10px';
 
-			let comp2 = createInput(this.COMPOSITION_QUANTITY + i, "Cantidad");
-			comp2.value = c.quantity;
-			comp2.disabled = CONSTANT.TRUE;
-			table.addCell(comp2);
+			let span2 = this.createSpan();
+			span2.innerHTML = c.quantity;
+			span2.style.fontWeight = 'bold';
+			let td2 = table.addCell(span2)
+			td2.style.paddingBottom = '10px';
+
+
+			let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
+			aonIconButton.icon = MATERIAL_ICONS.DO_NOT_DISTURB_ON; ;
+			aonIconButton.addEventListener(EVENT.CLICK, () => {
+				this.subtractDialog(c);
+			});
+			let td3 = table.addCell(aonIconButton);
+			td3.style.paddingBottom = '10px';
 		});
 	}
 
+	subtractDialog(composition) {
+		this.getApplication().development();
+	}
 	
-
 	buildTag(){
 
 	

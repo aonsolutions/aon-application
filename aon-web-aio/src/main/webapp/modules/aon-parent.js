@@ -24,6 +24,7 @@ export class AonParent extends AonElement {
 	PENDING_INVOICES;
 	REJECTED_INVOICES;
 	COMPANY_FILTER_TAB;
+	COMPANY_TITLE_SPAN;
 	
 	searchBoxTimeout;
 
@@ -41,6 +42,7 @@ export class AonParent extends AonElement {
 		this.PARENT = 'aonParent';
 		this.APPS_DIV = "appsDiv";
 		this.COMPANY_FILTER_TAB = "aonCompanyTabFilter";
+		this.COMPANY_TITLE_SPAN = "aonCompanySpanTitle";
 		this.ENTERPRISES = `${CONSTANT.ENTERPRISES.initCap()}All`;
 		this.INBOX_INVOICES = `${CONSTANT.INVOICES.initCap()}Inbox`;
 		this.PENDING_INVOICES = `${CONSTANT.INVOICES.initCap()}Pending`;
@@ -67,8 +69,9 @@ export class AonParent extends AonElement {
 		this.build();
 		this.buildSidenav();
 		this.select(filter, companies =>  { 
-			this.decorateTabs(companies); 
+			this.decorateTabs(companies);
 			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
+			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`); 
 		} );
 	}
 	
@@ -118,8 +121,8 @@ export class AonParent extends AonElement {
 		
 		this.clearSelectedTab(this.filter);		
 		//TODO: aonParent.startLoader();
-
-		getCompanies().then( companies => {
+		let limit = 100;
+		getCompanies({limit}).then( companies => {
 			let cps = companies.filter(r => r.id == LS.getDomainId());
 			if(cps.length > 0 && !cps[0].parent) {
 				this.companySelection(cps[0], companies.length == 1 );
@@ -149,7 +152,20 @@ export class AonParent extends AonElement {
 				let filteredCompanies = this.filterCompanies(companies, filter);
 				
 				this.buildCompanies(filteredCompanies.slice(0, 30), filter);
-				callback?.(companies);
+				
+				if ( companies.length == limit ){
+					getCompanies().then(companies => {
+						this.cleanCompanies();
+						let filteredCompanies = this.filterCompanies(companies, filter);
+						this.buildCompanies(filteredCompanies.slice(0, 30), filter);
+						callback?.(companies);
+					});
+				} 
+				else {
+					callback?.(companies);
+				}
+					
+				
 
 			}	
 		}, () => closeSession());
@@ -182,6 +198,8 @@ export class AonParent extends AonElement {
 				name: MSG.OFFICE
 			}
 		];	
+		let companyTitleSpan = this.getElement(this.COMPANY_TITLE_SPAN);
+		companyTitleSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 		for( let companyFilterTab of companyFilterTabs ){
 			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, { ...companyFilterTab, ...filter }));
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
@@ -252,10 +270,16 @@ export class AonParent extends AonElement {
 	}
 
 	getNotices(){
-		getUserNotice().then(notice =>{
+		getUserNotice()
+		.then(notice =>{
 			this.notice = notice;
 			this.updateCount();
-		});
+		})
+		.catch( err => {
+			this.notice = undefined;
+			this.updateCount();
+		})
+		;
 	}
 
 	updateCount(){
@@ -276,6 +300,7 @@ export class AonParent extends AonElement {
 		application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
 		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
 		application.updateSidenavCount(this.PENDING_INVOICES, pendingCount);
+		application.updateSidenavTitle(CONSTANT.INVOICES, `${MSG.ACTIVITY}`); 
 	}
 	
 	build() {
@@ -305,8 +330,10 @@ export class AonParent extends AonElement {
 		this.appendChild(userOption);
 	
 		let companyTitleSpan = this.createSpan();
+		companyTitleSpan.id = this.COMPANY_TITLE_SPAN;
 		companyTitleSpan.innerHTML = MSG.COMPANY_SELECTION;
 		companyTitleSpan.classList.add("aonCompanyTitleSpan");
+		companyTitleSpan.classList.add(CSS.AON_COMPANY_FILTER_LOADING);
 		companyTitleDiv.appendChild(companyTitleSpan);
 	
 		let companyFilterTabDiv = this.createDiv();
@@ -447,9 +474,9 @@ export class AonParent extends AonElement {
 	buildSidenav() {
 
 		let enterprisesOptions = {
-		  id: CONSTANT.ENTERPRISES.initCap(),
-		  name: MSG.ENTERPRISES.toUpperCase(),
+		  id: CONSTANT.ENTERPRISES,
 		  app: ClassicApps.AON_SOLUTIONS,
+		  name: `<span class="${CSS.AON_COMPANY_FILTER_LOADING}">${MSG.ENTERPRISES.toUpperCase()}</span>`,
 		  options: [{
 				id: this.ENTERPRISES,
 				name: MSG.ALL2,
@@ -465,9 +492,9 @@ export class AonParent extends AonElement {
 		this.getApplication().addSidenavOptions3(enterprisesOptions);
 
 		let invoiceOptions = {
-		  id: CONSTANT.INVOICES.initCap(),
-		  name: MSG.ACTIVITY.toUpperCase(),
+		  id: CONSTANT.INVOICES,
 		  app: Apps.INVOICE,
+		  name: `<span class="${CSS.AON_COMPANY_FILTER_LOADING}">${MSG.ACTIVITY.toUpperCase()}</span>`,
 		  options: [{
 			    id: this.INBOX_INVOICES,
 			    name: MSG.PENDING_INVOICES,
@@ -503,7 +530,7 @@ export class AonParent extends AonElement {
 		this.getApplication().addSidenavOptions3(invoiceOptions);
 		
 		let helpOptions = {
-		  id: CONSTANT.HELP.initCap(),
+		  id: CONSTANT.HELP,
 		  name: MSG.HELP.toUpperCase(),
 		  app: Apps.HOME,
 		  options: [{

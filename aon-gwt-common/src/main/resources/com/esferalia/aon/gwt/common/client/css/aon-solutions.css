@@ -1053,15 +1053,6 @@
 }
 
 /* Estilo para los botones de edicion de Table IVA */
-.aon_button_panel_IVA {
-	display: flex;
-  	align-items: center;
-  	position: absolute;
-  	top: 0px;
-  	left: 930px;
-}
-
-/* Estilo para los botones de edicion de Table IVA */
 .aon_button_panel_IRPF {
 	display: flex;
   	position: absolute;
@@ -1076,6 +1067,7 @@
     gap: 0.5rem;
     border-bottom: 1px solid #b9b8b8;
     width: 300px;
+    justify-content: end;
 }
 
 /* Estilo del contenido del PopupPanel */
@@ -1168,7 +1160,7 @@
   	margin-bottom: .5rem;
 }
 
-.aon_utility_option:hover, .aon_custom_text_box:hover{
+.aon_utility_option:hover, .aon_custom_text_box:hover, .aon_custom_text_area:hover{
 	background-color: #eaf1fb;
 }
 
@@ -1241,11 +1233,12 @@
 	/*border-bottom: 1px solid #b9b8b8 !important;*/
 }
 
-.aon_custom_text_box:focus{
+.aon_custom_text_box:focus, aon_custom_text_area:focus{
 	border-bottom: 1px solid #b9b8b8 !important;
 }
 
-.aon_custom_text_box:hover > .aon_custom_text_box_title{
+.aon_custom_text_box:hover > .aon_custom_text_box_title,
+.aon_custom_text_area:hover > .aon_custom_text_box_title{
 	color: #2152a5;
 }
 

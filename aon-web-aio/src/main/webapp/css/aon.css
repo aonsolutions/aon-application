@@ -1053,6 +1053,15 @@ background-color: var(--aonLightGray);
 	display: none;	
 }
 
+.aonCompanyFilterLoading {
+	padding-right: 24px;
+	background-repeat: no-repeat;
+	background-position-x: right;
+	background-position-y: center;
+	background-image: url("../html/pdfjs/images/loading.svg");
+}
+
+
 .aonSidenavDiv {
   padding-left: 25px;
 }

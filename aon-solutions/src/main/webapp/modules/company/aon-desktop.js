@@ -1013,35 +1013,67 @@ export class AonDesktop extends AonElement {
 		
 		let options = [];
 
-		// Borrador
-		let period;
-		let periodText;
-		let year;
+		// Borrador future
+		let periodFuture;
+		let periodTextFuture;
+		let yearFuture;
 		if(result[0].period == "T1") {
-			period = "T2";
-			periodText = "2º Trim.";
-			year = result[0].year;
+			periodFuture = "T2";
+			periodTextFuture = "2º Trim.";
+			yearFuture = result[0].year;
 		} else if(result[0].period == "T2") {
-			period = "T3";
-			periodText = "3º Trim.";
-			year = result[0].year;
+			periodFuture = "T3";
+			periodTextFuture = "3º Trim.";
+			yearFuture = result[0].year;
 		} else if(result[0].period == "T3") {
-			period = "T4";
-			periodText = "4º Trim.";
-			year = result[0].year;
+			periodFuture = "T4";
+			periodTextFuture = "4º Trim.";
+			yearFuture = result[0].year;
 		} else {
-			period = "T1";
-			periodText = "1º Trim.";
-			year = result[0].year + 1;
+			periodFuture = "T1";
+			periodTextFuture = "1º Trim.";
+			yearFuture = result[0].year + 1;
 		}
-		const periodOpt = {
-			name: periodText + " " + year + " (B)",
-			title: periodText + " " + year + " (Borrador)",
+		let periodOptFuture = {
+			name: periodTextFuture + " " + yearFuture + " (B)",
+			title: periodTextFuture + " " + yearFuture + " (Borrador)",
 			icon: MATERIAL_ICONS.EVENT,
 			backgroundColor: "#4472C4",
-			fn: () => aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+			fn: () => aonFiscalCard.filterEstimationTable({year: yearFuture, period: periodFuture, title: "Borrador " + periodTextFuture + " " + yearFuture})
 		};
-		options.push(periodOpt);
+		options.push(periodOptFuture);
+
+		// Borrador
+		let periodCurrent;
+		let periodTextCurrent;
+		let yearCurrent;
+		
+		if(result[0].period == "T1") {
+			periodCurrent = "T1";
+			periodTextCurrent = "1º Trim.";
+			yearCurrent = result[0].year;
+		} else if(result[0].period == "T2") {
+			periodCurrent = "T2";
+			periodTextCurrent = "2º Trim.";
+			yearCurrent = result[0].year;
+		} else if(result[0].period == "T3") {
+			periodCurrent = "T3";
+			periodTextCurrent = "3º Trim.";
+			yearCurrent = result[0].year;
+		} else {
+			periodCurrent = "T4";
+			periodTextCurrent = "4º Trim.";
+			yearCurrent = result[0].year;
+		}
+		
+		let periodOptCurrent = {
+			name: periodTextCurrent + " " + yearCurrent + " (B)",
+			title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
+			icon: MATERIAL_ICONS.EVENT,
+			backgroundColor: "#4472C4",
+			fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
+		};
+		options.push(periodOptCurrent);
 
 		// Filtros
 		for (let index = 0; index < 4; index++) {

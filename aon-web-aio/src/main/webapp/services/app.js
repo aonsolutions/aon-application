@@ -135,7 +135,7 @@ export const MANAGEMENT_MENU = {
 
 export const TREASURY_MENU = {
 	app: "treasuryMenu",
-	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
+	symbol: MATERIAL_ICONS.EURO_SYMBOL,
 	title: MSG.TREASURY,
 	description: MSG.TREASURY,
 	subtitle: "Treasury",
@@ -183,7 +183,7 @@ export const ACCOUNTING_MENU = {
 
 export const FISCAL_MENU = {
 	app: "fiscalMenu",
-	symbol: MATERIAL_ICONS.EURO_SYMBOL,
+	symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
 	title: MSG.FISCAL,
 	description: MSG.FISCAL,
 	subtitle: "Fiscal",

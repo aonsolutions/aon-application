@@ -130,6 +130,7 @@ export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ENTERPRISES = 'enterprises';
 export const ERROR = "error";
+export const EXAMPLE = "example";
 export const EXPENSES = "expenses";
 export const EXPORTED = "exported";
 
@@ -277,7 +278,9 @@ export const QUOTA = 'quota';
 export const RAWDOC_INBOX = 'rawdocInbox';
 export const RAWDOC_INBOX_ISSUED = 'rawdocInboxIssued';
 export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
+export const RAWDOC_INBOX_RECEIVED_NEW = 'rawdocInboxReceivedNew';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
+export const RAWDOC_INBOX_TICKET_NEW = 'rawdocInboxTicketNew';
 export const RAWDOC_PROCESSING = 'rawdocProcessing';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const RAWDOC_TRASH = 'rawdocTrash';

@@ -232,7 +232,6 @@ export class AonDelivery extends AonElement {
 
 		this.buildProductPackaging(table, table2);
 
-
 		let pendingCard = new AonCard();
 		pendingCard.id = this.id  + 'PendingCard';
 		pendingCard.title = 'Pendiente';
@@ -311,9 +310,11 @@ export class AonDelivery extends AonElement {
 					let saveButton = this.getElement(this.DELIVERY_SAVE_BUTTON)
 					saveButton.setDisabled(false);
 					if(!r.delivery || !r.delivery.id) {	
+						let quantity = i.quantity;
 						for(let j = 0; j < this.salesDetails.length; j++) {
 							if(this.salesDetails[j].item.product.id === i.composition.product.id) {
-								this.salesDetails[j].delivered = this.salesDetails[j].delivered + i.quantity;
+								this.salesDetails[j].delivered = this.salesDetails[j].delivered + quantity;
+								quantity = quantity - i.quantity;
 							}
 						}						
 					}

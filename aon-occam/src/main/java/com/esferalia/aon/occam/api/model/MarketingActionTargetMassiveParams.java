@@ -19,6 +19,9 @@ public class MarketingActionTargetMassiveParams implements Serializable{
 	private Integer projectActivity;
 	private Byte status;
 	private boolean customer = false;
+	private boolean customerActive = false;
+	private boolean customerInactive = false;
+	private boolean customerBloqued = false;
 	private Integer mkAction;
 	
 	private int limit;
@@ -102,6 +105,27 @@ public class MarketingActionTargetMassiveParams implements Serializable{
 	}
 	public MarketingActionTargetMassiveParams setCustomer(boolean customer) {
 		this.customer = customer;
+		return this;
+	}
+	public boolean isCustomerActive() {
+		return customerActive;
+	}
+	public MarketingActionTargetMassiveParams setCustomerActive(boolean customerActive) {
+		this.customerActive = customerActive;
+		return this;
+	}
+	public boolean isCustomerInactive() {
+		return customerInactive;
+	}
+	public MarketingActionTargetMassiveParams setCustomerInactive(boolean customerInactive) {
+		this.customerInactive = customerInactive;
+		return this;
+	}
+	public boolean isCustomerBloqued() {
+		return customerBloqued;
+	}
+	public MarketingActionTargetMassiveParams setCustomerBloqued(boolean customerBloqued) {
+		this.customerBloqued = customerBloqued;
 		return this;
 	}
 	public Integer getMkAction() {

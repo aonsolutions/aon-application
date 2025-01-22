@@ -53,11 +53,13 @@ enum Mod190File2023Araba {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindDeposit()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getInKindOutputDeposit()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getAccrualYear(), 4,0))
-	   ,(wr, mod190,detail) -> wr.append("0")
-	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 14))
+	   ,(wr, mod190,detail) -> wr.append("0")	   
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 5))
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getSpouseDocument(),9))  // NIF titular unidad de convivencia
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisability(), 1,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getContract(), 1,0))
-	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 2))
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getTitConvivencia(), 1,0))  // Titular unidad de convivencia 
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat('0', 1))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getApplicableReduction()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getDeducibleExpense()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCompensatoryPension()),13,2))
