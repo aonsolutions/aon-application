@@ -1363,13 +1363,30 @@ export class AonNewMenu extends AonElement {
 		}
 		
 		applicationsOptions.sort((op1,op2) => op1?.name?.localeCompare(op2?.name) );
+		let desktopApps = DESKTOP_APPS.filter( app => this.isSidenavApp(app) );
+		for ( let desktopApp of desktopApps ) {
+			let name = (desktopApp.description || desktopApp.title )?.trim();
+			if ( name?.length === 0 )
+				return; 
+			let size = 24;
+			let image = desktopApp.logo;
+			let icon = desktopApp.symbol;
+			let aonIcon = desktopApp.newIcon || desktopApp.icon;
+			let color = desktopApp.newColor || desktopApp.color;
+			applicationsOptions.unshift({
+				size,
+				name,
+				icon,
+				image,
+				color,
+				aonIcon,
+				fn : () => { this.appSelection(desktopApp); }
+			});
+		}
 
 		let aonMenuSearch = this.createElement(TAG.SPAN);
 		aonMenuSearch.id = this.AON_MENU_SEARCH;
 		aonMenuSearch.classList.add("aonMenuSearch");
-		aonMenuSearch.style.width = '484px';
-		aonMenuSearch.style.position = 'fixed';
-		aonMenuSearch.style.backgroundColor = '#fff';
 		
 
 		let  aonMenuSearchBox = new AonSearchBox();
@@ -1378,13 +1395,19 @@ export class AonNewMenu extends AonElement {
 		aonMenuSearchBox.addEventListener(EVENT.KEYUP, () => {
 			clearTimeout(this.searchTimeoutId);
 			this.searchTimeoutId = setTimeout( () => {
-				let pattern = aonMenuSearchBox.value?.toUpperCase();
+				let pattern = aonMenuSearchBox.value?.trim()?.toUpperCase()
+				.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+				
 				let aonMenuSearchDialog = this.getElement(this.AON_MENU_SEARCH_DIALOG);
 				let optionsLi = aonMenuSearchDialog.getContent().getElementsByTagName(TAG.LI);
 				for ( let i =0; i < optionsLi.length ; i++ ) {
 					let li = optionsLi.item(i);
-					let text = li.innerText?.toUpperCase();
-					if ( text?.includes(pattern) ){
+					
+					let text = Array.from(li.getElementsByTagName(TAG.SPAN))
+					.map(span => span.innerText?.trim()).join('').toLocaleUpperCase()
+					.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+					if ( pattern.length === 0 || text.includes(pattern) ){
 						li.style.removeProperty('display');
 					} else { 
 						li.style.display = 'none';
