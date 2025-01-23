@@ -1153,6 +1153,11 @@ public class ContrataEmployeeObject {
 	public void setEmployeeAddressCity(String city) {
 		employeeData.setAddressCity(city);
 	}
+	
+	public void setEmployeeAddressCity(String cityName, String cityCode) {
+		employeeData.setAddressCity(cityCode);
+		employeeData.setAddressCityDescription(cityName);
+	}
 
 	public void setEmployeeMobile(String mobile) {
 		employeeData.setMobile(mobile);

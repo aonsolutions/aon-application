@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -20,35 +21,20 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ContractEmployeeUI extends ResizeComposite {
+public abstract class ContractEmployeeUI extends ScrollPanel {
 
-	// ------------------------------------------------- UiBinder
-
-	private static ContractEmployeeUIBinder uiBinder = GWT.create(ContractEmployeeUIBinder.class);
-
-	interface ContractEmployeeUIBinder extends UiBinder<Widget, ContractEmployeeUI> {}
-	
 	// ------------------------------------------------- EmployeeImpl
 	
-	private class EmployeeImplementation extends Employee{
+	private class EmployeeImplementation extends EmployeeWidget{
 		
 		// TABLA DATOS CONTRATO
 		
@@ -305,8 +291,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 		
 		@Override
-		public void onEmployeeAddressMunicipalityChange(String addressMunicipality) {
-			contrataEmployeeObject.setEmployeeAddressCity(addressMunicipality);
+		public void onEmployeeAddressMunicipalityChange(String cityName, String cityCode) {
+			contrataEmployeeObject.setEmployeeAddressCity(cityName, cityCode);
 		}
 		
 		@Override
@@ -355,13 +341,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 
 	// ------------------------------------------------- UiFields
 
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {}
-	
-	@UiField(provided = true)
-	Employee employee;
+	EmployeeWidget employee;
 	
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -369,8 +349,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	// ------------------------------------------------- Constructor
 
 	protected ContractEmployeeUI() {
+		this.setHeight("100%");
 		employee = new EmployeeImplementation();
-		initWidget(uiBinder.createAndBindUi(this));
+		setWidget(employee);
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -502,10 +483,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.secondSurname.setValue(employeeData.getSecondSurName());
 		
 		employee.birthDate.setValue(employeeData.getBirthdate(), true);
-		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
-		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
+		employee.gender.setValue(String.valueOf(employeeData.getGender()));
+		employee.civilStatus.setValue(employeeData.getCivilStatus()+"");
 		
-		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
+		employee.streetType.setValue(employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressInfo.setValue(employeeData.getAddressInfo());
@@ -513,13 +494,13 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
-		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
+		employee.addressMunicipality.setValue(employeeData.getAddressCityDescription());
 
 		employee.mobile.setValue(employeeData.getMobile());
 		employee.phone.setValue(employeeData.getPhone());
 		employee.email.setValue(employeeData.getEmail());
 		
-		setSelectedValueLB(employee.payMethod, employeeData.getPaymethodId()+"");
+		employee.payMethod.setValue(employeeData.getPaymethodId()+"");
 		employee.account.setValue(employeeData.getAccount());
 		employee.bic.setValue(employeeData.getBic());
 		employee.reformatAccount(employee.account);
@@ -545,9 +526,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
-		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
-		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
-		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
+		employee.ssRegimeType.setValue(contractData.getSsRegimen()+"");
+		employee.mdTBTLB.setValue(contractData.getMdTBT()+"");
+		employee.workplace.setValue(contractData.getWorkplaceId()+"");
 		
 		employee.startDate.setValue(contractData.getStartDate());
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
@@ -557,48 +538,59 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.agreement.setValue(contrataEmployeeObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s-> {
-				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
+				employee.level.setValue(contractData.getAgreementLevelId()+"");
 				employee.category.setValue(contractData.getAgreementCategory());
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		employee.rlce.setValue(contractData.getRlce());
 		
-		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType);
+		employee.journeyType.setValue((null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
+//		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType);
 		
-		if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
-				!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
-			employee.journeyDuration.clear();
-			employee.journeyDuration.add(new Label(contractData.getContractJourneyDuration().getJourneyText()));
-		}
-			
 		Double partialityCoef = contractData.getPartialityCoef();
 		if( (null == partialityCoef || partialityCoef == 0.00)) {
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
 		}
 		employee.partialityCoef.setValue(contractData.getPartialityCoef());
+		
+		Boolean journeyTypeStr = Boolean.valueOf(employee.journeyType.getValue());
+		
+		if (Boolean.TRUE.equals(journeyTypeStr))
+			employee.showElementsFullTimeJourneyTypeContract();
+		else {
+			if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
+			!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+				employee.journeyDuration.clear();
+				AonCustomTextBox journeyDur = new AonCustomTextBox("Duraci\u00f3n de la jornada");
+				journeyDur.setValue(contractData.getContractJourneyDuration().getJourneyText());
+				journeyDur.setEnable(false);
+				employee.journeyDuration.add(journeyDur);
+				employee.showElementsPartialTimeContract();
+			} else
+				employee.showPartialTimeContract();
+		}
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {
 		if(contractData.getCccType() != null) {
 			employee.checkCCCType(contractData.getCccType());
-			setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
+			employee.activityCCC.setValue(contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		
 			if(contractData.getCccType() == (byte)7) {
 				employee.showMdCtzContract();
-				setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
+				employee.mdCTZLB.setValue(contractData.getMdctz());
 			} else
 				employee.hideMdCtzContract();
 		}
 		
-		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
-		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
+		employee.ssRegimeType.setValue(contractData.getSsRegimen()+"");
+		employee.mdTBTLB.setValue(contractData.getMdTBT()+"");
 		
-		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
+		employee.workplace.setValue(contractData.getWorkplaceId()+"");
 		
-		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
+		employee.contractTypeLB.setValue(contractData.getContractType());
 		employee.contractFireEventsWithOutValue();
 		
 		if(!isCompleteJourneyContract(contractData.getContractType())) {
@@ -609,14 +601,17 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
 			
 			if(null != contractData.getJourneyType()) {
-				setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
+				employee.journeyType.setValue(contractData.getJourneyType() == 0 ? "false" : "true");
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
 			}
 			
 			if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
 					!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
 				employee.journeyDuration.clear();
-				employee.journeyDuration.add(new Label(contractData.getContractJourneyDuration().getJourneyText()));
+				AonCustomTextBox journeyDur = new AonCustomTextBox("Duraci\u00f3n de la jornada");
+				journeyDur.setValue(contractData.getContractJourneyDuration().getJourneyText());
+				journeyDur.setEnable(false);
+				employee.journeyDuration.add(journeyDur);
 			}
 				
 			Double partialityCoef = contractData.getPartialityCoef();
@@ -631,7 +626,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 			if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
 				employee.showEmployeesColective();
-				setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective());
+				employee.employeesColective.setValue(contractData.getEmployeesColective());
 			} else {
 				employee.hideEmployeesColective();
 				contractData.setEmployeesColective(null);
@@ -640,7 +635,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
+		employee.modality.setValue(contractData.getContractModel()+"");
 		
 		employee.startDate.setValue(contractData.getStartDate());
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
@@ -650,16 +645,16 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.agreement.setValue(contrataEmployeeObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
-				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
+				employee.level.setValue(contractData.getAgreementLevelId()+"");
 				employee.category.setValue(contractData.getAgreementCategory());
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
+		employee.quoteGroup.setValue(contractData.getQuoteGroup());
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
-		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
-		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		employee.quoteGroupCotizB.setValue(contractData.getQuoteGroupIdxMonth());
+		employee.occupation.setValue(contractData.getOcupation());
+		employee.rlce.setValue(contractData.getRlce());
 		
 		CNO cno = employee.getCNOByCode(contractData.getCno());
 		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
@@ -695,7 +690,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	// ------------------------------------------------- Auxiliar Methods
 	
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		employee.level.clear();
+		employee.level.clearItems();
 		employee.level.addItem("-", "-1");
 		
 		contrataEmployeeObject.getAgreement(agreementId,  
@@ -713,7 +708,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		throwable -> {
 			contrataEmployeeObject.setContractAgreementId(null);
 			contrataEmployeeObject.setContractAgreementLevelId(null);
-			employee.category.setEnabled(false);
+			employee.category.setEnable(false);
 			employee.category.setValue("");
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category);
 			failure.accept(throwable);
@@ -764,15 +759,15 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 
 	public String getContractType() {
-		return this.employee.contractTypeLB.getSelectedValue();
+		return this.employee.contractTypeLB.getValue();
 	}
 
 	public String getQuoteGroup() {
-		return this.employee.quoteGroup.getSelectedValue();
+		return this.employee.quoteGroup.getValue();
 	}
 
 	public String getOccupation() {
-		return this.employee.occupation.getSelectedValue();
+		return this.employee.occupation.getValue();
 	}
 
 	public Double getPartialityCoef() {
