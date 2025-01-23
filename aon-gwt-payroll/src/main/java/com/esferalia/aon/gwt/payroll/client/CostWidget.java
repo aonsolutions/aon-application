@@ -35,8 +35,8 @@ import com.esferalia.aon.gwt.payroll.shared.RemunerationRecordService;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
-import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDProgess;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -234,13 +234,14 @@ public class CostWidget extends AonCustomDockLayout {
 	
 	private AonToolbarButton bidoqBtn;
 	
-	private AonCustomListBox period2 = new AonCustomListBox("Periodo");
+	private AonCustomListBox period = new AonCustomListBox("Periodo");
+	private AonCustomListBox period2 = new AonCustomListBox("Mensual");
+	private HTMLPanel datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private AonCustomListBox start = new AonCustomListBox("Desde");
+	private AonCustomListBox end = new AonCustomListBox("Hasta");
+	
 	private AonCustomListBox detail = new AonCustomListBox("Detalle");
 	private AonCustomListBox workplace = new AonCustomListBox("Centro Trabajo");
-	
-//	private AonCustomListBox period = new AonCustomListBox("Periodo");
-//	private AonCustomDateBox start = new AonCustomDateBox("Desde");
-//	private AonCustomDateBox end = new AonCustomDateBox("Hasta");
 	
 	private AonCustomMultiSelectBox salaryType = new AonCustomMultiSelectBox("Tipo Recibo");
 	
@@ -276,6 +277,25 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		addButtonsToolbar();
 		
+		period.addItem("Mensual");
+        period.addItem("Personalizado");
+		period.getListBox().setSelectedIndex(0);
+        period.addChangeHandler(e -> {
+        	period2.setVisible(period.getListBox().getSelectedIndex() == 0);
+        	datesPanel.setVisible(period.getListBox().getSelectedIndex() == 1);
+        	onSearch();
+        });
+		addFilterWidget(period);
+		
+		datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		datesPanel.addStyleName(AON.CSS.aonItemFlex());
+		start.addChangeHandler(e -> onSearch());
+		end.addChangeHandler(e -> onSearch());
+		datesPanel.add(start);
+		datesPanel.add(end);
+		datesPanel.setVisible(false);
+		addFilterWidget(datesPanel);
+		
 		addFilterWidget(period2);
 		period2.addChangeHandler(e -> onSearch());
 		
@@ -295,38 +315,15 @@ public class CostWidget extends AonCustomDockLayout {
 			onSearch();
 		});
 		
-//		period.addItem("Mes actual");
-//        period.addItem("\u00daltimos dos meses");
-//        period.addItem("\u00daltimo trimestre");
-//        period.addItem("\u00daltimo cuatrimestre");
-//        period.addItem("\u00daltimo a\u00f1o");
-//        period.addItem("Personalizado");
-//		period.getListBox().setSelectedIndex(1);
-//        period.addChangeHandler(e -> {
-//        	updateDates();
-//        	onSearch();
-//        });
-//		addFilterWidget(period);
-//		
-//		HTMLPanel datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
-//		datesPanel.addStyleName(AON.CSS.aonItemFlex());
-//		start.setValue(DateUtils.getFirstDayOfMonth(DateUtils.addMonths2Date(new Date(), -1)));
-//		end.setValue(DateUtils.getLastDayOfMonth());
-//		start.addValueChangeHandler(e -> onSearch());
-//		end.addValueChangeHandler(e -> onSearch());
-//		datesPanel.add(start);
-//		datesPanel.add(end);
-//		addFilterWidget(datesPanel);
-		
 		// salaryType
 		Set<String> salaryOptions = new LinkedHashSet<String>();
 		salaryOptions.add("Nomina");
 		salaryOptions.add("Extra");
 		salaryOptions.add("Finiquito");
 		salaryOptions.add("Atrasos");
-		salaryOptions.add("L00");
-		salaryOptions.add("L03");
-		salaryOptions.add("L13");
+//		salaryOptions.add("L00");
+//		salaryOptions.add("L03");
+//		salaryOptions.add("L13");
 		salaryType.setOptions(salaryOptions);
 		salaryType.addBlurHandler(new BlurHandler() {
             @Override
@@ -406,12 +403,16 @@ public class CostWidget extends AonCustomDockLayout {
 		salaryOptions.add("Extra");
 		salaryOptions.add("Finiquito");
 		salaryOptions.add("Atrasos");
-		salaryOptions.add("L00");
-		salaryOptions.add("L03");
-		salaryOptions.add("L13");
+//		salaryOptions.add("L00");
+//		salaryOptions.add("L03");
+//		salaryOptions.add("L13");
 		salaryType.setSelectedOptions(salaryOptions);
 		
+		period.getListBox().setSelectedIndex(0);
 		period2.getListBox().setSelectedIndex(0);
+		
+		start.getListBox().setSelectedIndex(0);
+		end.getListBox().setSelectedIndex(0);
 		
 		detail.setValue("false");
 		
@@ -419,7 +420,7 @@ public class CostWidget extends AonCustomDockLayout {
 			workplace.setValue("");
 			workplace.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
 		} else
-			period2.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
+			period.getListBox().fireEvent(new com.google.gwt.event.dom.client.ChangeEvent() {});
 	}
 
 //	private void updateDates() {
@@ -472,8 +473,8 @@ public class CostWidget extends AonCustomDockLayout {
 	}
 	
 	private void getWidgetParams() {
-		Date startDate = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
-		Date endDate = DateUtils.getLastDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		
 		this.params = new CostParams()
 //				.setStart(start.getValue())
@@ -484,9 +485,9 @@ public class CostWidget extends AonCustomDockLayout {
 				.setExtra(salaryType.getSelectedOptions().contains("Extra"))
 				.setSettle(salaryType.getSelectedOptions().contains("Finiquito"))
 				.setDelay(salaryType.getSelectedOptions().contains("Atrasos"))
-				.setL00(salaryType.getSelectedOptions().contains("L00"))
-				.setL03(salaryType.getSelectedOptions().contains("L03"))
-				.setL13(salaryType.getSelectedOptions().contains("L13"))
+//				.setL00(salaryType.getSelectedOptions().contains("L00"))
+//				.setL03(salaryType.getSelectedOptions().contains("L03"))
+//				.setL13(salaryType.getSelectedOptions().contains("L13"))
 				.setGroupByWorkplace(Boolean.valueOf(detail.getValue()))
 				
 				.setEnterprise(enterpriseId.getId())
@@ -571,7 +572,8 @@ public class CostWidget extends AonCustomDockLayout {
 	// ----------------------------------------------- Export Methods
 	
 	private void printExcel (ExcelType excelType) {
-		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_excel/");
 		
@@ -581,9 +583,15 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(CostExcelService.Params.MONTH.getName()
-				, String.valueOf(date.getMonth())));
+				, String.valueOf(startDate.getMonth())));
 		flowPanel.add(new Hidden(CostExcelService.Params.YEAR.getName()
-				, String.valueOf((date.getYear() + 1900))));
+				, String.valueOf((startDate.getYear() + 1900))));
+		
+		flowPanel.add(new Hidden(CostExcelService.Params.MONTH.getName() + "End"
+				, String.valueOf(endDate.getMonth())));
+		flowPanel.add(new Hidden(CostExcelService.Params.YEAR.getName()+ "End"
+				, String.valueOf((endDate.getYear() + 1900))));
+		
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.ENTERPRISE.getName()
 				, null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.WORKPLACE.getName()
@@ -608,15 +616,15 @@ public class CostWidget extends AonCustomDockLayout {
 			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.DELAY.ordinal())));
 
-		if (salaryType.getSelectedOptions().contains("L00"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L00.ordinal())));
-		if (salaryType.getSelectedOptions().contains("L13"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L13.ordinal())));
-		if (salaryType.getSelectedOptions().contains("L03"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L03.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L00"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L00.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L13"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L13.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L03"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L03.ordinal())));
 		
 		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
 		
@@ -637,7 +645,8 @@ public class CostWidget extends AonCustomDockLayout {
 	}
 	
 	private void printCSV () {
-		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_csv/");
 		
@@ -646,8 +655,10 @@ public class CostWidget extends AonCustomDockLayout {
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		
 		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden(Params.MONTH.getName(), String.valueOf(date.getMonth())));
-		flowPanel.add(new Hidden(Params.YEAR.getName(), String.valueOf((date.getYear() + 1900))));
+		flowPanel.add(new Hidden(Params.MONTH.getName(), String.valueOf(startDate.getMonth())));
+		flowPanel.add(new Hidden(Params.YEAR.getName(), String.valueOf((startDate.getYear() + 1900))));
+		flowPanel.add(new Hidden(Params.MONTH.getName() + "End", String.valueOf(endDate.getMonth())));
+		flowPanel.add(new Hidden(Params.YEAR.getName() + "End", String.valueOf((endDate.getYear() + 1900))));
 		flowPanel.add(new Hidden(Params.ENTERPRISE.getName(), null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(Params.WORKPLACE.getName(),null == this.workplaceId.getId() ? "" : String.valueOf(this.workplaceId.getId())));
 		flowPanel.add(new Hidden(Params.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
@@ -679,7 +690,8 @@ public class CostWidget extends AonCustomDockLayout {
 	}
 	
 	public void printPDF () {
-		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date startDate = getStartDate();
+		Date endDate = getEndDate();
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost_pdf/");
 		
@@ -689,9 +701,15 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.MONTH.getName()
-				, String.valueOf(date.getMonth())));
+				, String.valueOf(startDate.getMonth())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.YEAR.getName()
-				, String.valueOf((date.getYear() + 1900))));
+				, String.valueOf((startDate.getYear() + 1900))));
+		
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.MONTH.getName() + "End"
+				, String.valueOf(endDate.getMonth())));
+		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.YEAR.getName()+ "End"
+				, String.valueOf((endDate.getYear() + 1900))));
+		
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.ENTERPRISE.getName()
 				, null == this.enterpriseId.getId() ? "" : String.valueOf(this.enterpriseId.getId())));
 		flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.WORKPLACE.getName()
@@ -714,15 +732,15 @@ public class CostWidget extends AonCustomDockLayout {
 			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.DELAY.ordinal())));
 
-		if (salaryType.getSelectedOptions().contains("L00"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L00.ordinal())));
-		if (salaryType.getSelectedOptions().contains("L13"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L13.ordinal())));
-		if (salaryType.getSelectedOptions().contains("L03"))
-			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
-					, String.valueOf(Salary.Type.L03.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L00"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L00.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L13"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L13.ordinal())));
+//		if (salaryType.getSelectedOptions().contains("L03"))
+//			flowPanel.add(new Hidden(EnterprisePayrollPDFService.Params.FILTER.getName()
+//					, String.valueOf(Salary.Type.L03.ordinal())));
 		
 		flowPanel.add(new Hidden("groupByWorkplace", detail.getValue()));
 		
@@ -840,7 +858,7 @@ public class CostWidget extends AonCustomDockLayout {
 		
 		StringBuilder requestDataBuilder = new StringBuilder();
 		
-		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date date = getStartDate();
 		
 		requestDataBuilder
 		.append("&" + SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser());
@@ -980,7 +998,6 @@ public class CostWidget extends AonCustomDockLayout {
 	}
 
 	private void fillPeriods() {
-		period2.clearItems();
 		List<Date> dates = new ArrayList<>();
 		for (Cost cost : costs) {
 			Date date = DateUtils.getDate(cost.getMonth(), cost.getYear());
@@ -990,7 +1007,13 @@ public class CostWidget extends AonCustomDockLayout {
 		// Sort descending
 		Collections.sort(dates, Collections.reverseOrder());
 		
+		period2.clearItems();
+		start.clearItems();
+		end.clearItems();
+		
 		dates.forEach(date -> period2.addItem(DATE_FORMAT.format(date)));
+		dates.forEach(date -> start.addItem(DATE_FORMAT.format(date)));
+		dates.forEach(date -> end.addItem(DATE_FORMAT.format(date)));
 	}
 	
 	// ----------------------------------------------- Toolbar.Methods
@@ -1023,12 +1046,28 @@ public class CostWidget extends AonCustomDockLayout {
 		
 	}
 	
+	private Date getStartDate() {
+		if(period.getListBox().getSelectedIndex() == 0) {
+			return  DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		} else {
+			return  DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(start.getValue()));
+		}
+	}
+	
+	private Date getEndDate() {
+		if(period.getListBox().getSelectedIndex() == 0) {
+			return  DateUtils.getLastDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		} else {
+			return  DateUtils.getLastDayOfMonth(DATE_FORMAT.parse(end.getValue()));
+		}
+	}
+	
 	private void onPDF(ClickEvent e) {
 		printPDF();
 	}
 	
 	private void onBidoq(ClickEvent e) {
-		Date date = DateUtils.getFirstDayOfMonth(DATE_FORMAT.parse(period2.getValue()));
+		Date date = getStartDate();
 		
 		onPublish(this.enterpriseId, this.workplaceId, date.getMonth(), date.getYear() + 1900, "bidoq");
 	}

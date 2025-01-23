@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.util.Utilities;
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
@@ -84,6 +85,10 @@ public class CostPDFServlet extends HttpServlet {
 		
 		Integer month;
 		Integer year;
+		
+		Integer monthEnd;
+		Integer yearEnd;
+		
 		String domainName;
 		String user;
 		com.esferalia.aon.occam.api.model.type.SalaryType[] types;
@@ -112,6 +117,10 @@ public class CostPDFServlet extends HttpServlet {
 			
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
+			
+			monthEnd = Integer.parseInt(req.getParameter(MONTH.getName() + "End"));
+			yearEnd = Integer.parseInt(req.getParameter(YEAR.getName() + "End"));
+			
 			domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName())
 					: req.getServerName();
 			user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
@@ -127,8 +136,15 @@ public class CostPDFServlet extends HttpServlet {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-		Date endDate = calendar.getTime();
+		
+		Calendar calendarEnd = Calendar.getInstance();
+		calendarEnd.set(Calendar.YEAR, yearEnd);
+		calendarEnd.set(Calendar.MONTH, monthEnd);
+		calendarEnd.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendarEnd.set(Calendar.HOUR, 0);
+		calendarEnd.set(Calendar.MINUTE, 0);
+		calendarEnd.set(Calendar.SECOND, 0);
+		Date endDate = AonDateUtils.getMonthLastDay(calendarEnd.getTime());
 		
 		resp.setContentType(MimeType.PDF.getName());
 		String fileName = "Costes_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName + "_") + formatter.format(startDate) + "." + MimeType.PDF.getExtension();
