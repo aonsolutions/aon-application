@@ -376,7 +376,7 @@ export const QUOTA = 'Cuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
-export const RECEIVED_INVOICES = "Recibidas";
+export const RECEIVED_INVOICES = "Facturas Recibidas";
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recientes';
 export const RECENTLY_OPENED = "Abierto recientemente";
@@ -407,7 +407,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Facturas';
 export const RESUME_COSTS = "Resumen de costes";
-export const REVIEW = 'A Revisar';
+export const REVIEW = 'Revisar';
 
 // ----- S
 
