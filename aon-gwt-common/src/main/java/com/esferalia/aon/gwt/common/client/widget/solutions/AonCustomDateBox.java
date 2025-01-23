@@ -43,6 +43,10 @@ public class AonCustomDateBox extends HTMLPanel {
 	public void setValue(Date date) {
 		this.dateBox.setValue(date);
 	}
+	
+	public void setValue(Date date, boolean fireEvent) {
+		this.dateBox.setValue(date, fireEvent);
+	}
 
 	public Date getValue() {
 		return this.dateBox.getValue();
@@ -58,6 +62,22 @@ public class AonCustomDateBox extends HTMLPanel {
 	
 	public void addValueChangeHandler(ValueChangeHandler<Date> handler) {
 		this.dateBox.addValueChangeHandler(handler);
+	}
+
+	public void addError() {
+		addStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void removeError() {
+		removeStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void addWarning() {
+		addStyleName(AON.CSS.aonCustomWarning());
+	}
+
+	public void removeWarning() {
+		removeStyleName(AON.CSS.aonCustomWarning());
 	}
 
 }

@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
@@ -63,6 +64,10 @@ public class CostCSVServlet extends HttpServlet {
 		
 		Integer month;
 		Integer year;
+		
+		Integer monthEnd;
+		Integer yearEnd;
+		
 		String domainName;
 		String user;
 		Collection<Integer> types;
@@ -84,6 +89,8 @@ public class CostCSVServlet extends HttpServlet {
 			
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
+			monthEnd = Integer.parseInt(req.getParameter(MONTH.getName() + "End"));
+			yearEnd = Integer.parseInt(req.getParameter(YEAR.getName() + "End"));
 			domainName = req.getParameter(DOMAIN.getName()) != null && !req.getParameter(DOMAIN.getName()).isEmpty() ? req.getParameter(DOMAIN.getName()) : req.getServerName();
 			user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		}
@@ -96,6 +103,15 @@ public class CostCSVServlet extends HttpServlet {
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
+		
+		Calendar calendarEnd = Calendar.getInstance();
+		calendarEnd.set(Calendar.YEAR, yearEnd);
+		calendarEnd.set(Calendar.MONTH, monthEnd);
+		calendarEnd.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendarEnd.set(Calendar.HOUR, 0);
+		calendarEnd.set(Calendar.MINUTE, 0);
+		calendarEnd.set(Calendar.SECOND, 0);
+		Date endDate = AonDateUtils.getMonthLastDay(calendarEnd.getTime());
 		
 		resp.setContentType(MimeType.CSV.getName());
 		String fileName = "Costes_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName) + "_" + formatter.format(startDate) + "." + MimeType.CSV.getExtension();
@@ -112,7 +128,7 @@ public class CostCSVServlet extends HttpServlet {
 							.getEnterprise();
 				
 				Stream<com.esferalia.aon.in.payroll.csv.EnterprisePayrollCSV.EnterprisePayroll> stream =
-						EnterprisePayrollCSV.getEnterprisePayrolls(aonContext, month+1, year, enterpriseId, workplaceId);
+						EnterprisePayrollCSV.getEnterprisePayrolls(aonContext, startDate, endDate, enterpriseId, workplaceId);
 				
 				List<IEnterprisePayroll> list = stream
 						.filter(p -> types.contains(p.getSalaryType().ordinal()))

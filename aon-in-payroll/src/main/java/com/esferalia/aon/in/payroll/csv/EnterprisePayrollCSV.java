@@ -86,11 +86,19 @@ public class EnterprisePayrollCSV {
 	}
 	
 	
-	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
-			final int year, Integer enterpriseId, Integer workplaceId) {
-
-		Condition condition = DSL.year(SALARY.ISSUE_DATE).eq(year).and(DSL.month(SALARY.ISSUE_DATE).eq(month))
-				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
+	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+		Condition condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
+		
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
+		
 		if (workplaceId != null)
 			condition.and(WORKPLACE.ID.eq(workplaceId));
 

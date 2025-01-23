@@ -70,7 +70,6 @@ import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -180,8 +179,18 @@ public class AggregatedAnnualSummary {
 		
 		Date endDate = calendar.getTime();
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
-			Condition condition = SALARY.ISSUE_DATE.ge(new java.sql.Date(startDate.getTime()))
-					.and(SALARY.ISSUE_DATE.le(new java.sql.Date(endDate.getTime())));
+			Condition condition = SALARY.TYPE.le(AonNumberUtils.toByte(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.ordinal()));
+			
+			condition = condition.and(
+					(
+							SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					).or(
+							SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+							SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+					)
+			);
+			
 			if (enterpriseId.isPresent() && enterpriseId.get() > 0)
 				condition = condition.and(ENTERPRISE.REGISTRY.eq(enterpriseId.get()));
 			if (workplaceId.isPresent() && workplaceId.get() > 0)

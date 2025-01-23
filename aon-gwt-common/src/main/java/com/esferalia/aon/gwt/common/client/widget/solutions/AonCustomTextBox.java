@@ -68,4 +68,24 @@ public class AonCustomTextBox extends HTMLPanel {
 		textBox.addValueChangeHandler(valueChangeHandler);
 	}
 
+	public void addError() {
+		addStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void removeError() {
+		removeStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void addWarning() {
+		addStyleName(AON.CSS.aonCustomWarning());
+	}
+
+	public void removeWarning() {
+		removeStyleName(AON.CSS.aonCustomWarning());
+	}
+	
+	public void setMaxWidth(String maxWidth) {
+		getElement().getStyle().setProperty("max-width", maxWidth);
+	}
+
 }

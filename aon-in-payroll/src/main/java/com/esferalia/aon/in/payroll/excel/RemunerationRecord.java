@@ -1138,8 +1138,6 @@ public class RemunerationRecord {
 	 * @return RemunerationRecordData object containing the remuneration record's data
 	 */
 	public static RemunerationRecordData getData(String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate, List<RemunerationRecordCallback> callbacks) {
-		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
-		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		RemunerationRecordData remunerationRecordData = new RemunerationRecordData();
 		remunerationRecordData.setStartDate(startDate);
 		remunerationRecordData.setEndDate(endDate);
@@ -1147,15 +1145,30 @@ public class RemunerationRecord {
 
 		Condition condition = SALARY.DOMAIN.eq(aonContext.getDomainId())
 				.and(SALARY_PAYMENT.PAYMENT_CONCEPT.isNotNull().or(SALARY_PAYMENT.DESCRIPTION.isNotNull()))
-				.and(SALARY.START_DATE.ge(sqlStartDate))
-				.and(SALARY.END_DATE.le(sqlEndDate))
 				.and(SALARY.TYPE.le(AonNumberUtils.toByte(SalaryType.DELAY.ordinal())));
 				
+		condition = condition.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		Condition condition2 = SALARY.DOMAIN.eq(aonContext.getDomainId())
-				.and(SALARY.START_DATE.ge(sqlStartDate))
-				.and(SALARY.END_DATE.le(sqlEndDate))
 				.and(SALARY.TYPE.le(AonNumberUtils.toByte(SalaryType.DELAY.ordinal())));
+		
+		condition2 = condition2.and(
+				(
+						SALARY.TYPE.ne(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				).or(
+						SALARY.TYPE.eq(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY.value()).and(
+						SALARY.CHARGE_DATE.between(new java.sql.Date(startDate.getTime()), new java.sql.Date(endDate.getTime())))
+				)
+		);
 		
 		String enterpriseDomain = aonContext.getDomainName();
 		Integer enterpriseDomainId = aonContext.getDomainId();

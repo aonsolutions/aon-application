@@ -59,8 +59,9 @@ public class AonCustomCheckBox extends HTMLPanel {
 	public void addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
 		checkBox.addValueChangeHandler(handler);
 	}
-	
-	
-	
+
+	public void setMaxWidth(String maxWidth) {
+		getElement().getStyle().setProperty("max-width", maxWidth);
+	}
 
 }
