@@ -156,8 +156,7 @@ export class AonInvoicePanel extends AonElement {
     refresh.title = MSG.REFRESH;
 
     let reprocess = this.getElement("aonInvoiceToolbarHeaderToolSectionSyncButton");
-    reprocess.title = MSG.REPROCESS;
-
+    if(reprocess) reprocess.title = MSG.REPROCESS;
   }
 
   buildInvoiceToolbarOptions(acceptedInvoices, processing) {

@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG, EVENT } from '../environments/environments.js';
 import './aon-icon-button.js';
 import { AonIconButton } from './aon-icon-button.js';
 import * as LS from '../services/localStorageService.js';
@@ -92,6 +92,7 @@ export class AonSearchBox extends AonElement {
 		search.addEventListener('click', () => {
 
 		});
+		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { el: this }));
 	}
 }
 if(!window.customElements.get('aon-search-box')){

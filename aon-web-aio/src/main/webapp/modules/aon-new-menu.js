@@ -47,6 +47,7 @@ import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { Superset } from './superset/superset.js';
+import { AonSearchBox } from 'aonsolutions/components/aon-search-box.js';
 
 import { AonParent } from "./aon-parent.js";
 
@@ -54,6 +55,7 @@ import { AonParent } from "./aon-parent.js";
 import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
 
 import { getApplicationParameters } from 'aonsolutions/services/applicationParameterService.js';
+import { AonSuiteMenu } from './aon-suite-menu.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -71,6 +73,9 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_LEFTOP;
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
+	AON_MENU_SEARCH;
+	AON_MENU_SEARCH_BOX;
+	AON_MENU_SEARCH_DIALOG;
 	CLOSE;
 	
 	
@@ -130,6 +135,9 @@ export class AonNewMenu extends AonElement {
 		this.AON_MENU_LEFTOP = 'aonMenuLeftop';
 		this.AON_MENU_SIDENAV = 'aonMenuSidenav';
 		this.AON_MENU_APP_OPTIONS = 'aonMenuAppOptions';
+		this.AON_MENU_SEARCH = 'aonMenuSearch';
+		this.AON_MENU_SEARCH_BOX = 'aonMenuSearchBox';
+		this.AON_MENU_SEARCH_DIALOG = 'aonMenuSearchDialog';
 		this.CLOSE = true;
 	}
 
@@ -148,13 +156,6 @@ export class AonNewMenu extends AonElement {
 			;
 		});
 
-		
-		//if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
-		//	getDomainUserRoles({}).then(r => {
-		//		this.dur = new DomainUserRoles(r);
-		//		this.build();
-		//	});
-		//}
 	}
 	
 	rootPanelMenu(menu) {
@@ -244,47 +245,24 @@ export class AonNewMenu extends AonElement {
 				case HomeApps.HOME.app:
 					this.rootPanel(new AonDesktop());
 					break;
+				case HomeApps.APPLICATIONS.app:
+					this.showApplicationsDialog();
+					break;
 				case ACCOUNTING_MENU.app:
-					this.rootPanelMenu(new AonAccountingMenu());
-					break;
 				case COMMERCIAL_MENU.app:
-					this.rootPanelMenu(new AonCommercialMenu());
-					break;
 				case GROUPWARE_MENU.app:
-					this.rootPanelMenu(new AonGroupwareMenu());
-					break;
 				case MANAGEMENT_MENU.app:
-					this.rootPanelMenu(new AonManagementMenu());
-					break;
 				case TREASURY_MENU.app:
-					this.rootPanelMenu(new AonTreasuryMenu());
-					break;
 				case WAREHOUSE_MENU.app:
-					this.rootPanelMenu(new AonWarehouseMenu());
-					break;
 				case FISCAL_MENU.app:
-					this.rootPanelMenu(new AonFiscalMenu());
-					break;
 				case PAYROLL_MENU.app:
-					this.rootPanelMenu(new AonPayrollMenu());
-					break;
 				case MARKETING_MENU.app:
-					this.rootPanelMenu(new AonMarketingMenu());
-					break;
 				case CONFIGURATION_MENU.app:
-					this.rootPanelMenu(new AonConfigurationMenu());
-					break;
 				case ACADEMY.app:
-					this.rootPanelMenu(new AonAcademyMenu());
-					break;
 				case COMMERCE.app:
-					this.rootPanelMenu(new AonCommerceMenu());
-					break;
 				case GARAGE.app:
-					this.rootPanelMenu(new AonGarageMenu());
-					break;
 				case ENTERPRISE_MENU.app:
-					this.rootPanelMenu(new AonEnterpriseMenu());
+					this.rootPanelMenu( this.getAonSuiteMenu(app));
 					break;
 				case SUPERSET.app:
 					//"39aa7e93-a3a2-4bf2-b6c6-1297d00bd0e0"
@@ -318,6 +296,40 @@ export class AonNewMenu extends AonElement {
 	
 	}
 	
+	getAonSuiteMenu( app ) {
+		switch (app.app) {
+		case ACCOUNTING_MENU.app:
+			return new AonAccountingMenu();
+		case COMMERCIAL_MENU.app:
+			return new AonCommercialMenu();
+		case GROUPWARE_MENU.app:
+			return new AonGroupwareMenu();
+		case MANAGEMENT_MENU.app:
+			return new AonManagementMenu();
+		case TREASURY_MENU.app:
+			return new AonTreasuryMenu();
+		case WAREHOUSE_MENU.app:
+			return new AonWarehouseMenu();
+		case FISCAL_MENU.app:
+			return new AonFiscalMenu();
+		case PAYROLL_MENU.app:
+			return new AonPayrollMenu();
+		case MARKETING_MENU.app:
+			return new AonMarketingMenu();
+		case CONFIGURATION_MENU.app:
+			return new AonConfigurationMenu();
+		case ACADEMY.app:
+			return new AonAcademyMenu();
+		case COMMERCE.app:
+			return new AonCommerceMenu();
+		case GARAGE.app:
+			return new AonGarageMenu();
+		case ENTERPRISE_MENU.app:
+			return new AonEnterpriseMenu();
+		default : 
+		return new AonSuiteMenu();
+		}
+	}
 
 	build() {
 		let aonMenuLefttop = this.createElement(TAG.DIV);
@@ -350,6 +362,11 @@ export class AonNewMenu extends AonElement {
 		header.className = 'aonHeader aonHeaderStart';
 		let applications = this.getElement('applications');
 		applications.className = 'aonMenuLeftopStart';
+		
+		let aonSearchDialog = new  AonDialogMenu();
+		aonSearchDialog.id = this.AON_MENU_SEARCH_DIALOG;
+		this.appendChild(aonSearchDialog);
+		
 	}
 
 	buildMenuLeftop() {
@@ -1317,11 +1334,127 @@ export class AonNewMenu extends AonElement {
 					appParams.sort((a,b) => b.domain - a.domain );
 					resolve(appParams[0].value);
 				} else {
-					reject(new Error("Superset dashboard not found"));
+					//reject(new Error("Superset dashboard not found"));
 				}
 			})
-			.catch (reject) ;			
+			//.catch (reject) 
+			;			
 		});
+	}
+	
+	showApplicationsDialog() {
+		let el = this.getElement(HomeApps.APPLICATIONS.app);
+		let aonMenuSearchDialog = this.getElement(this.AON_MENU_SEARCH_DIALOG);
+		
+		let applicationsOptions = [];
+		
+		
+		let topMenuApps = TOP_MENU_APPS.filter( app => this.isApp(app) );
+		
+		for (let topMenuApp of topMenuApps) {
+			let aonSuiteMenu = this.getAonSuiteMenu(topMenuApp);
+			aonSuiteMenu.setDur(this.getDur());
+			aonSuiteMenu.getOptions()
+			.filter(subMenu => !subMenu.filter || subMenu.filter() )
+			.forEach(subMenu => {
+				subMenu.options
+				.filter(option => !option.filter || option.filter())
+				.forEach(option => {
+					let name = (option.description || option.title )?.trim();
+					if ( name?.length === 0 )
+						return; 
+					let found = applicationsOptions.find( opt => opt.name.localeCompare(name) == 0 );
+					if ( found ) 
+						return;
+					applicationsOptions.push({
+						name,
+						icon: topMenuApp.symbol,
+						fn: () => { option.action(); },
+					})
+				});
+			});
+		}
+		
+		applicationsOptions.sort((op1,op2) => op1?.name?.localeCompare(op2?.name) );
+		let desktopApps = DESKTOP_APPS.filter( app => this.isSidenavApp(app) );
+		for ( let desktopApp of desktopApps ) {
+			let name = (desktopApp.description || desktopApp.title )?.trim();
+			if ( name?.length === 0 )
+				return; 
+			let size = 24;
+			let image = desktopApp.logo;
+			let icon = desktopApp.symbol;
+			let aonIcon = desktopApp.newIcon || desktopApp.icon;
+			let color = desktopApp.newColor || desktopApp.color;
+			applicationsOptions.unshift({
+				size,
+				name,
+				icon,
+				image,
+				color,
+				aonIcon,
+				fn : () => { this.appSelection(desktopApp); }
+			});
+		}
+
+		let aonMenuSearch = this.createElement(TAG.SPAN);
+		aonMenuSearch.id = this.AON_MENU_SEARCH;
+		aonMenuSearch.classList.add("aonMenuSearch");
+		
+
+		let  aonMenuSearchBox = new AonSearchBox();
+		aonMenuSearchBox.id = this.AON_MENU_SEARCH_BOX;
+		aonMenuSearchBox.newTheme = this.newTheme;
+		aonMenuSearchBox.addEventListener(EVENT.KEYUP, () => {
+			clearTimeout(this.searchTimeoutId);
+			this.searchTimeoutId = setTimeout( () => {
+				let pattern = aonMenuSearchBox.value?.trim()?.toUpperCase()
+				.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+				
+				let aonMenuSearchDialog = this.getElement(this.AON_MENU_SEARCH_DIALOG);
+				let optionsLi = aonMenuSearchDialog.getContent().getElementsByTagName(TAG.LI);
+				for ( let i =0; i < optionsLi.length ; i++ ) {
+					let li = optionsLi.item(i);
+					
+					let text = Array.from(li.getElementsByTagName(TAG.SPAN))
+					.map(span => span.innerText?.trim()).join('').toLocaleUpperCase()
+					.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+					if ( pattern.length === 0 || text.includes(pattern) ){
+						li.style.removeProperty('display');
+					} else { 
+						li.style.display = 'none';
+					}
+				}
+			} , 1000 );
+			
+		});
+		aonMenuSearchBox.addEventListener(EVENT.BUILD, () => {
+			let aonMenuSearchBoxDiv = aonMenuSearchBox.firstChild;
+			aonMenuSearchBoxDiv.style.height = '32px';
+			aonMenuSearchBoxDiv.style.border = 'none';
+			aonMenuSearchBoxDiv.style.borderRadius = '4px';
+			aonMenuSearchBoxDiv.style.backgroundColor = "var(--aonSearchBar)";
+			aonMenuSearchBoxDiv.style.alignItems = 'center';
+			aonMenuSearchBoxDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12)';
+		});
+		
+		
+		aonMenuSearch.appendChild(aonMenuSearchBox);
+
+		
+		const top  = el.getBoundingClientRect().bottom ;
+		const left = el.getBoundingClientRect().left;
+		aonMenuSearchDialog.setMenuOptions(applicationsOptions, top, left);
+		
+		let aonMenuSearchDialogContent = aonMenuSearchDialog.getContent();
+		aonMenuSearchDialogContent.style.width = '500px';
+		aonMenuSearchDialogContent.style.padding = '6px';
+		aonMenuSearchDialogContent.classList.add(CSS.AON_DIALOG_MENU_APPS_CONTENT);
+		aonMenuSearchDialogContent.insertBefore( aonMenuSearch, aonMenuSearchDialogContent.firstChild );
+
+		aonMenuSearchDialog.open();
+				
 	}
 	
 }

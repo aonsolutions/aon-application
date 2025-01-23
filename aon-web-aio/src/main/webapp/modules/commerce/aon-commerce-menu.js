@@ -11,11 +11,11 @@ export class AonCommerceMenu extends AonSuiteMenu {
 
 	constructor () {
 		super();
+		this.accountingInitialize()
 	}
 
 	connectedCallback () {
 		this.clear();
-		this.accountingInitialize()
 		this.initialize();
 		this.build();
 		this.setTitle("Opciones de TPV");
@@ -39,6 +39,11 @@ export class AonCommerceMenu extends AonSuiteMenu {
             title: "Apunte", 
             action: () => alert("description")
         }];
+		
+		this.initOptions();
+	}
+	
+	initOptions() {
 		this.options = [{
 			title: 'TPV',
 			options: [ {
@@ -87,7 +92,6 @@ export class AonCommerceMenu extends AonSuiteMenu {
 			}]
 		}];
 	}
-
 	/*
 	build() {
         

@@ -710,6 +710,7 @@ export const TIMECONTROL = MSG.TIMECONTROL;
 export const TIMECTRL = MSG.TIMECTRL;
 export const TITULAR_DATA = MSG.TITULAR_DATA;
 export const TO = MSG.TO;
+export const TO_REVIEW = "A revisar";
 export const TO_TRASH = MSG.TO_TRASH;
 export const TODAY = MSG.TODAY;
 export const TOMORROW = MSG.TOMORROW;
