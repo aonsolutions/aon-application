@@ -1,7 +1,13 @@
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js"
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { PAYROLL } from "../../environments/msg-en.js";
 import { INCOMES } from "../../environments/msg.js";
 import * as GWT from "../../gwt/gwt.js";
+import * as JSF from "aio/modules/aon-jsf-app.js";
+
+  export const jsfOfferLoad = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new JSF.AonJsfOffer());
+  }
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
@@ -259,7 +265,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
     icon: MATERIAL_ICONS.CONTRACT,
-    fn: () => alert("EN DESARROLLO")
+    fn: () => jsfOfferLoad()
   }
 
   export const OTHER_EXPENSES = {
