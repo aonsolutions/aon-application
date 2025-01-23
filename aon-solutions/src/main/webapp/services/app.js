@@ -81,6 +81,7 @@ export const FISCAL = {
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
   // _icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
+  icon: AON_ICONS.AON_FISCAL,
   headerIcon: AON_ICONS.AON_NEW_FISCAL,
   symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
   logo: '/images/apps/aeat.png',
