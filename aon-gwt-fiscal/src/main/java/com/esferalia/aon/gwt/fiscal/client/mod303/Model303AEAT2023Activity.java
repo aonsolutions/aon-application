@@ -890,10 +890,10 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 					&& AonMathUtils.isZero(desk.getDeskDays())
 					&& (AonMathUtils.isNotZero(desk.getDeskCapacity())
 					 || AonMathUtils.isNotZero(desk.getDesks()) ) ) {
-						desk.setDeskDays( 365 );
+						desk.setDeskDays( isLeapYear(callback.getModel().getYear()) ? 366 : 365 );
 				}
 				double daysFactor = (callback.getModel().isLastPeriod())
-					?(desk.getDeskDays() / 365.0)
+					?(desk.getDeskDays() / (isLeapYear(callback.getModel().getYear()) ? 366.0 : 365.0) )
 					:1.0;
 				double factor = AonMathUtils.round(desk.getDeskCapacity() / 4.0);
 				double v = (desk.getDesks() * factor * daysFactor);
@@ -936,4 +936,9 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		}
 		
 	}
+	
+    public static boolean isLeapYear(int year) {    	
+        return ((year & 3) == 0) && ((year % 100) != 0 || (year % 400) == 0);
+    }
+	
 }
