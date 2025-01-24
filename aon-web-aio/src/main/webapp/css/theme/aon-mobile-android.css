@@ -131,9 +131,16 @@
 
 .aonAppTitle{
     text-align: center;
+    padding-left: 0px;
+    
 }
 
- #aonMobileSelectionIcon-console{
+[id^="aonMobileSelectionIcon"] {
+    display: block;
+}
+
+
+ /* #aonMobileSelectionIcon-console{
     margin-left: 30px;
 }
 
@@ -221,4 +228,4 @@
 
 #aonAppTitle-marketing{
     display: block;
-}
+} */
