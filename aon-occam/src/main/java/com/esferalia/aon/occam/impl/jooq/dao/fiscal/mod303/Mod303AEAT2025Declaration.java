@@ -13,14 +13,11 @@ import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInf
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.stream.IntStream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityDesk;
@@ -32,7 +29,6 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -44,7 +40,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2024T4Declaration extends Mod303AEAT {
+class Mod303AEAT2025Declaration extends Mod303AEAT {
 	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -61,29 +57,32 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		void copy(Mod303 prev, Mod303 current);
 	}
 
-	protected Mod303AEAT2024T4Declaration() {
+	protected Mod303AEAT2025Declaration() {
 
 	}
 	
+	// IVA DEVENGADO: SE DEJAN SOLO PORCENTAJES DE IVA 0%, 4%, 10% Y 21% Y REQ 1.75%, 0.50%, 1.4% Y 5.20%
+	// AUNQUE EN EL MODELO Y EL FORMULARIO DEL PORTAL DE PRUEBAS EXTERNAS, MANTIENE LAS CASILLAS, PERO NO SE PUEDEN CUMPLIMENTAR
+	
 	private static final double PERCENT0 = 0.0;
-	private static final double PERCENT2 = 2.0;
+//	private static final double PERCENT2 = 2.0;
 	private static final double PERCENT4 = 4.0;
-	private static final double PERCENT5 = 5.0;
-	private static final double PERCENT75 = 7.5;
+//	private static final double PERCENT5 = 5.0;
+//	private static final double PERCENT75 = 7.5;
 	private static final double PERCENT10 = 10.0;
 	private static final double PERCENT21 = 21.0;
 	
-	private static final double SURCHARGE_PERCENT_0 = 0;
-	private static final double SURCHARGE_PERCENT_026 = 0.26;
+//	private static final double SURCHARGE_PERCENT_0 = 0;
+//	private static final double SURCHARGE_PERCENT_026 = 0.26;
 	private static final double SURCHARGE_PERCENT_05 = 0.5;
-	private static final double SURCHARGE_PERCENT_062 = 0.62;
-	private static final double SURCHARGE_PERCENT_1 = 1;
+//	private static final double SURCHARGE_PERCENT_062 = 0.62;
+//	private static final double SURCHARGE_PERCENT_1 = 1;
 	private static final double SURCHARGE_PERCENT_14 = 1.4;
 	private static final double SURCHARGE_PERCENT_175 = 1.75;
 	private static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && (mod.getYear() == 2024 && (mod.getPeriod() == Period.M12 || mod.getPeriod() == Period.T4));		
+		return (mod.isAEAT() && mod.getYear() >= 2025);
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
@@ -125,7 +124,7 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		// ------------------------------------------------- IVA DEVENGADO
 		// ---------------------------------------------------------------
 
-		// Base imponible, porcentaje y cuota al tipo.0%
+		// Base imponible, porcentaje y cuota al IVA 0%
 		,
 		CT_C150(Mod303Key.CT_C150, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent0(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C150, mod, vat.getBase()), null, null, null),
@@ -133,17 +132,21 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		CT_C152(Mod303Key.CT_C152, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent0(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C152, mod, vat.getQuota()), null, null, null)
 		
-		// Base imponible, porcentaje y cuota al tipo.2%
-		,
-		CT_C165(Mod303Key.CT_C165, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(mod,vat)),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C165, mod, vat.getBase()), null, null, null),
-		CT_C166(Mod303Key.CT_C166, null, null, (ctx, mod) ->  
-			add(Mod303Key.CT_C166, mod, (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.T3)?0.0:PERCENT2 )
-			, null, null),
-		CT_C167(Mod303Key.CT_C167, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(mod,vat)),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C167, mod, vat.getQuota()), null, null, null)
+		// NO SE DEJA CUMPLIMENTAR A PARTIR DEL 2025 - Base imponible, porcentaje y cuota al tipo.2%
+//		,
+//		CT_C165(Mod303Key.CT_C165, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(mod,vat)),
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C165, mod, vat.getBase()), null, null, null),
+//		CT_C166(Mod303Key.CT_C166, null, null, (ctx, mod) ->  
+//			add(Mod303Key.CT_C166, mod, (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.T3)?0.0:PERCENT2 )
+//			, null, null),
+//		CT_C167(Mod303Key.CT_C167, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(mod,vat)),
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C167, mod, vat.getQuota()), null, null, null)
+		
+		, CT_C165(Mod303Key.CT_C165, null, null, null, "0.0", null)
+		, CT_C166(Mod303Key.CT_C166, null, null, null, "0.0", null)
+		, CT_C167(Mod303Key.CT_C167, null, null, null, "0.0", null)
 
-		// Base imponible, porcentaje y cuota al tipo.4%
+		// Base imponible, porcentaje y cuota al IVA 4%
 		,
 		CT_C01(Mod303Key.CT_C01, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent4(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C01, mod, vat.getBase()), null, null, null),
@@ -151,17 +154,21 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		CT_C03(Mod303Key.CT_C03, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent4(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C03, mod, vat.getQuota()), null, null, null)
 
-		// Base imponible, porcentaje y cuota al tipo.0%
-		,
-		CT_C153(Mod303Key.CT_C153, (mod, vat) -> c154Filter(mod,vat), 
-				(ctx, mod, vat) -> add(Mod303Key.CT_C153, mod, vat.getBase()), null, null, null),
-		CT_C154(Mod303Key.CT_C154, null, null
-				, (ctx, mod) -> add(Mod303Key.CT_C154, mod, (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.T3)?PERCENT5:PERCENT75 )
-				, null, null),
-		CT_C155(Mod303Key.CT_C155, (mod, vat) -> c154Filter(mod,vat),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C155, mod, vat.getQuota()), null, null, null)
+		// NO SE DEJA CUMPLIMENTAR A PARTIR DEL 2025 - Base imponible, porcentaje y cuota al tipo 7.5%
+//		,
+//		CT_C153(Mod303Key.CT_C153, (mod, vat) -> c154Filter(mod,vat), 
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C153, mod, vat.getBase()), null, null, null),
+//		CT_C154(Mod303Key.CT_C154, null, null
+//				, (ctx, mod) -> add(Mod303Key.CT_C154, mod, (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.T3)?PERCENT5:PERCENT75 )
+//				, null, null),
+//		CT_C155(Mod303Key.CT_C155, (mod, vat) -> c154Filter(mod,vat),
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C155, mod, vat.getQuota()), null, null, null)
+		
+		, CT_C153(Mod303Key.CT_C153, null, null, null, "0.0", null)
+		, CT_C154(Mod303Key.CT_C154, null, null, null, "0.0", null)
+		, CT_C155(Mod303Key.CT_C155, null, null, null, "0.0", null)
 
-		// Base imponible, porcentaje y cuota al tipo 10%.
+		// Base imponible, porcentaje y cuota al IVA 10%.
 		,
 		CT_C04(Mod303Key.CT_C04, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent10(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C04, mod, vat.getBase()), null, null, null),
@@ -169,7 +176,7 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		CT_C06(Mod303Key.CT_C06, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent10(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C06, mod, vat.getQuota()), null, null, null)
 
-		// Base imponible, porcentaje y cuota al tipo 21%.
+		// Base imponible, porcentaje y cuota al IVA 21%.
 		,
 		CT_C07(Mod303Key.CT_C07, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent21(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C07, mod, vat.getBase()), null, null, null),
@@ -199,7 +206,8 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		CT_C15(Mod303Key.CT_C15, (mod, vat) -> modificacionBasesYCuotasFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C15, mod, vat.getQuota()), null, null, null),
 
-//Base imponible [156]	Tipo % [157]	Cuota [158]		------>	1.75
+        // Recargo de equivalencia al 1.75%
+		
 		CT_C156(Mod303Key.CT_C156,
 				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_175(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C156, mod, vat.getBase()), null, null, null),
@@ -208,50 +216,44 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_175(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C158, mod, vat.getSurchargeQuota()), null, null, null),
 
-//Base imponible [168]	Tipo % [169]	Cuota [170]		15 enteros y 2 decimales. Nota 10
-//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
+		// Recargo de equivalencia al 0.50%
+		
 		CT_C168(Mod303Key.CT_C168,
-				(mod, vat) -> c169Filter(mod,vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_05(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C168, mod, vat.getBase()), null, null, null),
-		CT_C169(Mod303Key.CT_C169,
-				(mod, vat) -> c169Filter(mod,vat),
-				(ctx, mod, vat) -> greatherQuotaPercent(Mod303Key.CT_C169, mod, vat),
-				(ctx, mod) -> {
-					if (c169Filter(mod)) {
-						add(Mod303Key.CT_C169, mod, SURCHARGE_PERCENT_026);
-					}
-				}, 
-				null, null),
+		CT_C169(Mod303Key.CT_C169, null, null, (ctx, mod) -> add(Mod303Key.CT_C169, mod, SURCHARGE_PERCENT_05), null, null),
 		CT_C170(Mod303Key.CT_C170,
-				(mod, vat) -> c169Filter(mod,vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_05(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C170, mod, vat.getSurchargeQuota()), null, null, null),
 		
-//Base imponible [16]		Tipo % [17]		Cuota [18]		------>
-//		Constante "00500"								09 y 3T de 2024
-//		Constante "00750"								A partir de 10 y 4T de 2024 y ejercicios posteriores
+		// NO SE DEJA CUMPLIMENTAR A PARTIR DEL 2025 - Recargo de equivalencia al 1%		
 		
-		CT_C16(Mod303Key.CT_C16,
-				(mod, vat) -> c17Filter(mod,vat),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C16, mod, vat.getBase()), null, null, null),
-		CT_C17(Mod303Key.CT_C17,
-				(mod, vat) -> c17Filter(mod,vat),
-				(ctx, mod, vat) -> greatherQuotaPercent(Mod303Key.CT_C17, mod, vat)
-				, (ctx, mod) -> add(Mod303Key.CT_C17, mod,
-					(mod.getYear() > 2024 
-				  || mod.getYear() == 2024 && (
-						  	 mod.getPeriod() == Period.M10
-						  || mod.getPeriod() == Period.M11
-						  || mod.getPeriod() == Period.M12
-						  || mod.getPeriod() == Period.T4
-					  ))
-						?SURCHARGE_PERCENT_1
-						:0.0)
-				, null, null),
-		CT_C18(Mod303Key.CT_C18,
-				(mod, vat) -> c17Filter(mod,vat),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C18, mod, vat.getSurchargeQuota()), null, null, null),
+//		CT_C16(Mod303Key.CT_C16,
+//				(mod, vat) -> c17Filter(mod,vat),
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C16, mod, vat.getBase()), null, null, null),
+//		CT_C17(Mod303Key.CT_C17,
+//				(mod, vat) -> c17Filter(mod,vat),
+//				(ctx, mod, vat) -> greatherQuotaPercent(Mod303Key.CT_C17, mod, vat)
+//				, (ctx, mod) -> add(Mod303Key.CT_C17, mod,
+//					(mod.getYear() > 2024 
+//				  || mod.getYear() == 2024 && (
+//						  	 mod.getPeriod() == Period.M10
+//						  || mod.getPeriod() == Period.M11
+//						  || mod.getPeriod() == Period.M12
+//						  || mod.getPeriod() == Period.T4
+//					  ))
+//						?SURCHARGE_PERCENT_1
+//						:0.0)
+//				, null, null),
+//		CT_C18(Mod303Key.CT_C18,
+//				(mod, vat) -> c17Filter(mod,vat),
+//				(ctx, mod, vat) -> add(Mod303Key.CT_C18, mod, vat.getSurchargeQuota()), null, null, null),
+		
+		CT_C16(Mod303Key.CT_C16, null, null, null, "0.0", null),
+		CT_C17(Mod303Key.CT_C17, null, null, null, "0.0", null),
+		CT_C18(Mod303Key.CT_C18, null, null, null, "0.0", null),
 
-//Base imponible [19]		Tipo % [20]		Cuota [21]		------>	1.40
+		// Recargo de equivalencia al 1.40%
 		
 		CT_C19(Mod303Key.CT_C19,
 				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_140(vat),
@@ -261,7 +263,8 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent_140(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C21, mod, vat.getSurchargeQuota()), null, null, null),
 
-//Base imponible [22]		Tipo % [23]		Cuota [24]		------>	5.20
+		// Recargo de equivalencia al 5.20%	
+		
 		CT_C22(Mod303Key.CT_C22,
 				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent52(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C22, mod, vat.getBase()), null, null, null),
@@ -281,7 +284,8 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 
 		// Total cuota devengada
 		, CT_C27(Mod303Key.CT_C27, null, null, null,
-			"CT_C152+CT_C167+CT_C03+CT_C155+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C170+CT_C158+CT_C18+CT_C21+CT_C24+CT_C26", null)
+//			"CT_C152+CT_C167+CT_C03+CT_C155+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C170+CT_C158+CT_C18+CT_C21+CT_C24+CT_C26", null)
+			"CT_C152+CT_C03+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C170+CT_C158+CT_C21+CT_C24+CT_C26", null)		
 
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -2230,18 +2234,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		,CT_C123(Mod303Key.CT_C123)
 		//Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única.
 		,CT_C124(Mod303Key.CT_C124)
-/*
 
-		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el
-		// derecho a deducción
-		, CT_C61(Mod303Key.CT_C61, (mod, vat) -> ventasISPExtraComunitariasCanCeuServicios( vat, mod),
-				(ctx, mod, vat) -> add(Mod303Key.CT_C61, mod, vat.getBase()), null, null, null)
- */		
-
-		// Importes de las ventas a las que habiéndoles sido aplicado el régimen
-		// especial del criterio de caja hubieran
-		// resultado devengadas conforme a la regla general de devengo contenida en el
-		// art. 75 LIVA
+		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran
+		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
 		,CT_C62(Mod303Key.CT_C62 , (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
 			, null, null, null, null)
 		,CT_C63(Mod303Key.CT_C63 , (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime()
@@ -2465,164 +2460,164 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		return Mod303KeyDAO.values();
 	}
 
-	private static boolean c154Filter(Mod303 mod, VatContext vat) {
-		// Al cambiar el tipo de porcentaje a lo largo del ejercicio
-		// Si la declaración es complementaria y por diferencia hay que tener
-		// en cuenta que en los ejercicio anteriores donde ahora se aplica un 7.5% 
-		// se aplicaba un 5%
-		if (!mod.isComplementary()) {
-			return isCommonNationalSales(vat, mod)
-				&& (
-				// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75) ||
-				  (mod.getYear() == 2024
-				  && (mod.getPeriod() == Period.M10 
-				  ||  mod.getPeriod() == Period.M11 
-				  ||  mod.getPeriod() == Period.M12 
-				  ||  mod.getPeriod() == Period.T4)
-				  && (vat.getPercentage() == PERCENT75)
-				  )
-				 || (mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M09 
-				  ||  mod.getPeriod() == Period.T3)
-				  && (vat.getPercentage() == PERCENT5)
-				  )
-				);
-		} else {
-			return isCommonNationalSales(vat, mod)
-				&& (
-			// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75 || vat.getPercentage() == PERCENT5)) || 
-					(mod.getYear() == 2024 
-				  	&& (mod.getPeriod() == Period.M10 
-				  	||  mod.getPeriod() == Period.M11 
-				  	||  mod.getPeriod() == Period.M12 
-				  	||  mod.getPeriod() == Period.T4)
-				  	&& (vat.getPercentage() == PERCENT75 
-				  	 || vat.getPercentage() == PERCENT5)
-				  )
-				 || (mod.getYear() == 2024 
-				  	&& (mod.getPeriod() == Period.M09 
-				  	||  mod.getPeriod() == Period.T3)
-				  	&& (vat.getPercentage() == PERCENT5)
-				  )
-				);
-		}
-		
-		
-	}
+//	private static boolean c154Filter(Mod303 mod, VatContext vat) {
+//		// Al cambiar el tipo de porcentaje a lo largo del ejercicio
+//		// Si la declaración es complementaria y por diferencia hay que tener
+//		// en cuenta que en los ejercicio anteriores donde ahora se aplica un 7.5% 
+//		// se aplicaba un 5%
+//		if (!mod.isComplementary()) {
+//			return isCommonNationalSales(vat, mod)
+//				&& (
+//				// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75) ||
+//				  (mod.getYear() == 2024
+//				  && (mod.getPeriod() == Period.M10 
+//				  ||  mod.getPeriod() == Period.M11 
+//				  ||  mod.getPeriod() == Period.M12 
+//				  ||  mod.getPeriod() == Period.T4)
+//				  && (vat.getPercentage() == PERCENT75)
+//				  )
+//				 || (mod.getYear() == 2024 
+//				  && (mod.getPeriod() == Period.M09 
+//				  ||  mod.getPeriod() == Period.T3)
+//				  && (vat.getPercentage() == PERCENT5)
+//				  )
+//				);
+//		} else {
+//			return isCommonNationalSales(vat, mod)
+//				&& (
+//			// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75 || vat.getPercentage() == PERCENT5)) || 
+//					(mod.getYear() == 2024 
+//				  	&& (mod.getPeriod() == Period.M10 
+//				  	||  mod.getPeriod() == Period.M11 
+//				  	||  mod.getPeriod() == Period.M12 
+//				  	||  mod.getPeriod() == Period.T4)
+//				  	&& (vat.getPercentage() == PERCENT75 
+//				  	 || vat.getPercentage() == PERCENT5)
+//				  )
+//				 || (mod.getYear() == 2024 
+//				  	&& (mod.getPeriod() == Period.M09 
+//				  	||  mod.getPeriod() == Period.T3)
+//				  	&& (vat.getPercentage() == PERCENT5)
+//				  )
+//				);
+//		}
+//		
+//		
+//	}
 
-	private static boolean c169Filter(Mod303 mod, VatContext vat) {
-		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
-		return isCommonNationalSales(vat, mod) 
-			&& vat.isSurcharge()
-			&& (
-				(mod.getYear() > 2024 && vat.getSurchargePercent() == SURCHARGE_PERCENT_05) 
-			|| (mod.getYear() == 2024 
-		 	  && (mod.getPeriod() == Period.M10 
-			  ||  mod.getPeriod() == Period.M11 
-			  ||  mod.getPeriod() == Period.M12 
-			  ||  mod.getPeriod() == Period.T4)
-		 	  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_026
- 			   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05)
-			  )
-			);
-	}
+//	private static boolean c169Filter(Mod303 mod, VatContext vat) {
+//		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
+//		return isCommonNationalSales(vat, mod) 
+//			&& vat.isSurcharge()
+//			&& (
+//				(mod.getYear() > 2024 && vat.getSurchargePercent() == SURCHARGE_PERCENT_05) 
+//			|| (mod.getYear() == 2024 
+//		 	  && (mod.getPeriod() == Period.M10 
+//			  ||  mod.getPeriod() == Period.M11 
+//			  ||  mod.getPeriod() == Period.M12 
+//			  ||  mod.getPeriod() == Period.T4)
+//		 	  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_026
+// 			   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05)
+//			  )
+//			);
+//	}
 	
-	private static boolean c169Filter(Mod303 mod) {
-		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
-		return (
-			mod.getYear() > 2024 || 
-			(mod.getYear() == 2024 
-		 	  && (mod.getPeriod() == Period.M10 
-			  ||  mod.getPeriod() == Period.M11 
-			  ||  mod.getPeriod() == Period.M12 
-			  ||  mod.getPeriod() == Period.T4)
-		 	  )
-			);
-	}
-
-	private static boolean c17Filter(Mod303 mod, VatContext vat) {
-		//	Constante "00000", "00050" o "00062"	09 y 3T de 2024
-		//	Constante "00100"						A partir de 10 y 4T de 2024 y ejercicios posteriores
-		if (!mod.isComplementary()) {
-			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-				&& (
-//						mod.getYear() > 2024 || 
-					(mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M10 
-				  ||  mod.getPeriod() == Period.M11 
-				  ||  mod.getPeriod() == Period.M12 
-				  ||  mod.getPeriod() == Period.T4)
-				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
-				  )
-				 || (mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M09 
-				  ||  mod.getPeriod() == Period.T3)
-				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
-				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
-				  )
-				);
-		} else {
-			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-				&& (
-//						mod.getYear() > 2024 || 
-					(mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M10 
-				  ||  mod.getPeriod() == Period.M11 
-				  ||  mod.getPeriod() == Period.M12 
-				  ||  mod.getPeriod() == Period.T4)
-				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-//					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_05
-					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_062
-					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
-				  )
-				 || (mod.getYear() == 2024 
-				  && (mod.getPeriod() == Period.M09 
-				  ||  mod.getPeriod() == Period.T3)
-				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
-				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
-				  )
-				);
-		}
-	}
-
-
-	public static void greatherQuotaPercent(Mod303Key modkey, Mod303 mod, VatContext vat) {
-		if (modkey == Mod303Key.CT_C17
-		&& (
+//	private static boolean c169Filter(Mod303 mod) {
+//		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
+//		return (
 //			mod.getYear() > 2024 || 
-				(mod.getYear() == 2024
-		 && (mod.getPeriod() == Period.M10 
-			|| mod.getPeriod() == Period.M11
-			|| mod.getPeriod() == Period.M12
-			|| mod.getPeriod() == Period.T4
-			)))){
-			FiscalModelDetail detail = mod.ensureDetail(modkey);
-			detail.setAccumulatedAmount(SURCHARGE_PERCENT_1);
-			detail.setResultAmount( SURCHARGE_PERCENT_1 );	
-			detail.setAmount( SURCHARGE_PERCENT_1 );
-		} else {
-			HashMap<String, Double> map = mod.getTempMap();
-			String key = modkey.getValue() +  vat.getSurchargePercent();
-			Double value = map.computeIfAbsent(key, k -> Double.valueOf(0));
-			value = AonMathUtils.round(value + vat.getSurchargeQuota());
-			map.put( key, value);
-			Entry<String, Double> maxEntry = map.entrySet()
-				.stream()
-				.filter( k -> AonStringUtils.startsWith(k.getKey(), modkey.getValue()))
-				.max( (e1, e2) -> e1.getValue().compareTo(e2.getValue()))
-				.orElse(null);
-			if (maxEntry != null) {
-				String v = AonStringUtils.removeStart( maxEntry.getKey() , modkey.getValue());
-				double d = AonNumberUtils.todouble(v);
-				FiscalModelDetail detail = mod.ensureDetail(modkey);
-				detail.setAccumulatedAmount(d);
-				detail.setResultAmount( d );	
-				detail.setAmount( d );
-			}
-		}
-	}
+//			(mod.getYear() == 2024 
+//		 	  && (mod.getPeriod() == Period.M10 
+//			  ||  mod.getPeriod() == Period.M11 
+//			  ||  mod.getPeriod() == Period.M12 
+//			  ||  mod.getPeriod() == Period.T4)
+//		 	  )
+//			);
+//	}
+
+//	private static boolean c17Filter(Mod303 mod, VatContext vat) {
+//		//	Constante "00000", "00050" o "00062"	09 y 3T de 2024
+//		//	Constante "00100"						A partir de 10 y 4T de 2024 y ejercicios posteriores
+//		if (!mod.isComplementary()) {
+//			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
+//				&& (
+////						mod.getYear() > 2024 || 
+//					(mod.getYear() == 2024 
+//				  && (mod.getPeriod() == Period.M10 
+//				  ||  mod.getPeriod() == Period.M11 
+//				  ||  mod.getPeriod() == Period.M12 
+//				  ||  mod.getPeriod() == Period.T4)
+//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
+//				  )
+//				 || (mod.getYear() == 2024 
+//				  && (mod.getPeriod() == Period.M09 
+//				  ||  mod.getPeriod() == Period.T3)
+//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
+//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
+//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
+//				  )
+//				);
+//		} else {
+//			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
+//				&& (
+////						mod.getYear() > 2024 || 
+//					(mod.getYear() == 2024 
+//				  && (mod.getPeriod() == Period.M10 
+//				  ||  mod.getPeriod() == Period.M11 
+//				  ||  mod.getPeriod() == Period.M12 
+//				  ||  mod.getPeriod() == Period.T4)
+//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
+////					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_05
+//					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_062
+//					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
+//				  )
+//				 || (mod.getYear() == 2024 
+//				  && (mod.getPeriod() == Period.M09 
+//				  ||  mod.getPeriod() == Period.T3)
+//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
+//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
+//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
+//				  )
+//				);
+//		}
+//	}
+
+
+//	public static void greatherQuotaPercent(Mod303Key modkey, Mod303 mod, VatContext vat) {
+//		if (modkey == Mod303Key.CT_C17
+//		&& (
+////			mod.getYear() > 2024 || 
+//				(mod.getYear() == 2024
+//		 && (mod.getPeriod() == Period.M10 
+//			|| mod.getPeriod() == Period.M11
+//			|| mod.getPeriod() == Period.M12
+//			|| mod.getPeriod() == Period.T4
+//			)))){
+//			FiscalModelDetail detail = mod.ensureDetail(modkey);
+//			detail.setAccumulatedAmount(SURCHARGE_PERCENT_1);
+//			detail.setResultAmount( SURCHARGE_PERCENT_1 );	
+//			detail.setAmount( SURCHARGE_PERCENT_1 );
+//		} else {
+//			HashMap<String, Double> map = mod.getTempMap();
+//			String key = modkey.getValue() +  vat.getSurchargePercent();
+//			Double value = map.computeIfAbsent(key, k -> Double.valueOf(0));
+//			value = AonMathUtils.round(value + vat.getSurchargeQuota());
+//			map.put( key, value);
+//			Entry<String, Double> maxEntry = map.entrySet()
+//				.stream()
+//				.filter( k -> AonStringUtils.startsWith(k.getKey(), modkey.getValue()))
+//				.max( (e1, e2) -> e1.getValue().compareTo(e2.getValue()))
+//				.orElse(null);
+//			if (maxEntry != null) {
+//				String v = AonStringUtils.removeStart( maxEntry.getKey() , modkey.getValue());
+//				double d = AonNumberUtils.todouble(v);
+//				FiscalModelDetail detail = mod.ensureDetail(modkey);
+//				detail.setAccumulatedAmount(d);
+//				detail.setResultAmount( d );	
+//				detail.setAmount( d );
+//			}
+//		}
+//	}
 
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
@@ -2656,9 +2651,9 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		return vat.getPercentage() == PERCENT0;
 	}
 
-	private static boolean hasPercent2(Mod303 mod, VatContext vat) {
-		return vat.getPercentage() == PERCENT2;
-	}
+//	private static boolean hasPercent2(Mod303 mod, VatContext vat) {
+//		return vat.getPercentage() == PERCENT2;
+//	}
 
 	private static boolean hasPercent4(Mod303 mod, VatContext vat) {
 		return vat.getPercentage() == PERCENT4;
@@ -2674,6 +2669,10 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 
 	private static boolean hasSurchargePercent_175(VatContext vat) {
 		return vat.getSurchargePercent() == SURCHARGE_PERCENT_175;
+	}
+	
+	private static boolean hasSurchargePercent_05(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_05;
 	}
 	
 	private static boolean hasSurchargePercent_140(VatContext vat) {
@@ -2858,7 +2857,7 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 	}
 
 	private static Mod303ActivityDesk ensureDesk(Mod303 mod, int act, int idx) {
-		if (idx < 0 || idx > 6) throw new IllegalArgumentException("0, 1, 2, o 3");
+		if (idx < 0 || idx > 3) throw new IllegalArgumentException("0, 1, 2, o 3");
 		Mod303Activity a = ensureActivity(mod, act);
 		if (a.getDesks() == null) {
 			a.setDesks(new LinkedList<>());
