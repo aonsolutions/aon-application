@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -35,6 +37,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.impl.jooq.PayrollImpl;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PAYROLL {
 
@@ -154,6 +157,18 @@ public class PAYROLL {
 			}
 		}
 	}
+	
+	public static Stream<ContractExtendedData> getContractExtendedDataStream(String token, String schema, ContractExtendedDataFilter filter, Integer limit) {
+		AonToken aonToken = SECURITY.getAonToken(token);
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		if(!AonStringUtils.isBlank(domain)) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				return getPayroll().getContractExtendedDataStream(ctx, aonToken.getAuth(), filter, limit);
+			}
+		} 
+		return Stream.empty();
+	}
+	
 	
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(String domainName, Integer domainId, String login, ContractExtendedDataFilter filter, Integer page, Integer perPage) {
 		CloseableAONContext ctx = null;
