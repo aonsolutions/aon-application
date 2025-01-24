@@ -373,6 +373,8 @@ export class AonApplication extends AonElement {
       let button = new AonIconButton();
       button.icon = data.button.icon;
       button.id = div.id + data.button.id;
+      button.getIcon().style.fontSize = "20px";
+      button.getIcon().title = data.button.title;
       buttonDiv.appendChild(button);
       div.appendChild(buttonDiv);
       button.addEventListener(EVENT.CLICK, data.button.fn);
