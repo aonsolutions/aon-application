@@ -99,10 +99,14 @@ public class PdfMaker {
 		EnterprisePayrollTemplate.print(payroll, out, locale);
 	}
 	
-	
 	public static void printEnterprisePayroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale, Date startDate, Date endDate)
 			throws IOException, CanNotCreatePdfException {
 		EnterprisePayrollTemplate.print(payroll, out, locale, startDate, endDate, true);
+	}
+	
+	public static void printEnterprisePayroll(EnterprisePayroll payroll, OutputStream out, Optional<Locale> locale, Date startDate, Date endDate, boolean byPeriod)
+			throws IOException, CanNotCreatePdfException {
+		EnterprisePayrollTemplate.print(payroll, out, locale, startDate, endDate, byPeriod);
 	}
 
 	/**
