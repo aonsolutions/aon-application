@@ -117,6 +117,10 @@ public class AonCustomNumberBox extends HTMLPanel {
 	
 	public void hideNearBy() {
 		nearCB.setVisible(false);
+		
+		// Fix CSS
+		textBoxPanel.getElement().getStyle().setProperty("border-bottom", "none");
+		getElement().getStyle().setProperty("border-bottom", "1px solid rgb(185, 184, 184)");
 	}
 	
 	public void setValue(Double value) {
@@ -163,6 +167,14 @@ public class AonCustomNumberBox extends HTMLPanel {
 		numberBox.addValueChangeHandler(valueChangeHandler);
 		gtnumberBox.addValueChangeHandler(valueChangeHandler);
 		ltnumberBox.addValueChangeHandler(valueChangeHandler);
+	}
+	
+	public void setMaxWidth(String maxWidth) {
+		getElement().getStyle().setProperty("max-width", maxWidth);
+	}
+	
+	public void setMinWidth(String minWidth) {
+		getElement().getStyle().setProperty("min-width", minWidth);
 	}
 
 }

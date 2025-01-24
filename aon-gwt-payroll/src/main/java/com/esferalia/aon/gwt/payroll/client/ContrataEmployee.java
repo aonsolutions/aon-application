@@ -2769,9 +2769,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 				@Override
 				protected void updateOccupation(MismatchedOccupation mismatchedOccupation) {
-					if (contractEmployeeUI.employee.occupation.isEnabled()) {
-						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.occupation,
-								mismatchedOccupation.getSsOccupation());
+					if (contractEmployeeUI.employee.occupation.isEnable()) {
+						contractEmployeeUI.employee.occupation.setValue(mismatchedOccupation.getSsOccupation());
 						sistemaREDDialog.onClose();
 					} else
 						AonMessagePanel.showWarning(sistemaREDMessagePanel,
@@ -2780,9 +2779,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 				@Override
 				protected void updateQuoteGroup(MismatchedQuoteGroup mismatchedQuoteGroup) {
-					if (contractEmployeeUI.employee.quoteGroup.isEnabled()) {
-						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.quoteGroup,
-								mismatchedQuoteGroup.getSsQuoteGroup());
+					if (contractEmployeeUI.employee.quoteGroup.isEnable()) {
+						contractEmployeeUI.employee.quoteGroup.setValue(mismatchedQuoteGroup.getSsQuoteGroup());
 						sistemaREDDialog.onClose();
 					} else
 						AonMessagePanel.showWarning(sistemaREDMessagePanel,
@@ -2791,9 +2789,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 				@Override
 				protected void updateContractType(MismatchedContractType mismatchedContractType) {
-					if (contractEmployeeUI.employee.contractTypeLB.isEnabled()) {
-						contractEmployeeUI.setSelectedValueLBChange(contractEmployeeUI.employee.contractTypeLB,
-								mismatchedContractType.getSsContractType());
+					if (contractEmployeeUI.employee.contractTypeLB.isEnable()) {
+						contractEmployeeUI.employee.contractTypeLB.setValue(mismatchedContractType.getSsContractType());
 						sistemaREDDialog.onClose();
 					} else
 						AonMessagePanel.showWarning(sistemaREDMessagePanel,

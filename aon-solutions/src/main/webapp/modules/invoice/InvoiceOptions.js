@@ -1,7 +1,13 @@
-import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js"
+import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { PAYROLL } from "../../environments/msg-en.js";
 import { INCOMES } from "../../environments/msg.js";
 import * as GWT from "../../gwt/gwt.js";
+import * as JSF from "aio/modules/aon-jsf-app.js";
+
+  export const jsfOfferLoad = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new JSF.AonJsfOffer());
+  }
 
   export const gwtLoad = (option) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
@@ -112,25 +118,14 @@ import * as GWT from "../../gwt/gwt.js";
 
   export const INVOICE_ISSUED_BETA = {
     id: CONSTANT.INVOICE_ISSUED.initCap(),
-    name: MSG.ISSUEDS,
+    name: MSG.ISSUED_INVOICES,
     icon: MATERIAL_ICONS.UNARCHIVE,
     fn: () => invoiceList({
       status: "accounting",
       type: "sales",
       page: 1,
       per_page: 50,
-    }),
-    actions:[{
-      id: 'Info',
-      icon: 'info',
-      action: () => info(
-        MSG.INCOMES,
-        `<b>Facturas Emitidas:</b> Facturas que envías a tus clientes por los servicios prestados o por la venta de tus productos.<br><br>
-         <b>Facturas Proforma:</b> Borrador de factura en elaboración y que se pueden enviar al cliente como "PROFORMA" para que conozcan el coste del servicio o productos y las condiciones del mismo antes de emitir la factura definitiva para su evaluación y conformidad previa a la emisión de la factura definitiva.<br><br>
-         <b>Otros Ingresos:</b> Son aquellos ingresos que recibes que no provienen de tu actividad económica como por ejemplo subvenciones, intereses bancarios, etc.<br><br>
-         <b>Presupuestos:</b> Documento que detalla el coste del servicio o venta de productos que se va a realizar con un cliente.`
-    )
-    }]
+    })
   }
 
 
@@ -155,20 +150,7 @@ import * as GWT from "../../gwt/gwt.js";
       type: "purchase,expenses",
       page: 1,
       per_page: 50,
-    }),
-    actions:[{
-      id: 'Info2',
-      icon: 'info',
-      action: () => info(
-        MSG.EXPENSES,
-        `<b>Facturas Recibidas:</b> Facturas que te emiten tus proveedores por sus servicios prestados o compra de productos.<br><br>
-         <b>Borrador Fras. Recibidas:</b> Documentos de factura recibida en proceso de revisión y registro, que una vez acptado pasan a factura recibidas.<br><br>
-         <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a factura recibidas.<br><br>
-         <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a Fra. Simplificadas/Ticket.<br><br>
-         <b>Otros Gastos:</b> Son aquellos gastos que tienes por tu actividad, pero del cual no existe factura simplificada/ticket como seguros, tasas municipales, intereses de prestamos, cuotas de  suscripcion a un colegio profesional, etc.<br><br>
-         <b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
-    )
-    }]
+    })
   }
 
   export const INVOICE_TICKET = {
@@ -247,22 +229,12 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.RAWDOC_PROCESSING.initCap(),
     name: MSG.PROCCESSING,
     icon: MATERIAL_ICONS.SCHEDULE,
-    fn: () => invoiceList({ status: CONSTANT.PROCESSING }),
-    actions:[{
-      id: 'Info3',
-      icon: 'info',
-      action: () => info(
-        MSG.EXPENSES,
-        `<b>En Trámite:</b> Documentos subidos al portal y que se están gestionando por el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
-         <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
-         <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
-    )
-    }]
+    fn: () => invoiceList({ status: CONSTANT.PROCESSING })
   }
 
   export const RAWDOC_REJECT = {
     id: CONSTANT.RAWDOC_REJECT.initCap(),
-    name: MSG.REVIEW,
+    name: MSG.TO_REVIEW,
     icon: MATERIAL_ICONS.REPORT,
     fn: () => invoiceList( { status: CONSTANT.REJECTED })
   }
@@ -293,7 +265,7 @@ import * as GWT from "../../gwt/gwt.js";
     id: CONSTANT.OFFERS.initCap(),
     name: MSG.OFFERS,
     icon: MATERIAL_ICONS.CONTRACT,
-    fn: () => alert("EN DESARROLLO")
+    fn: () => jsfOfferLoad()
   }
 
   export const OTHER_EXPENSES = {
@@ -325,25 +297,55 @@ import * as GWT from "../../gwt/gwt.js";
     title: MSG.INCOMES,
     name: MSG.INCOMES,
     options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
-    actions:[{
-      id: 'Info',
+    button: {
+      id: CONSTANT.INCOMES.initCap() + 'Info',
       icon: 'info',
-      action: () => info(MSG.ISSUEDS, "Información sobre que se incluye en el apartado de Facturas recibidas")
-    }]
+      fn: () => info(
+          MSG.INCOMES,
+          `<b>Facturas Emitidas:</b> Facturas que envías a tus clientes por los servicios prestados o por la venta de tus productos.<br><br>
+           <b>Facturas Proforma:</b> Borrador de factura en elaboración y que se pueden enviar al cliente como "PROFORMA" para que conozcan el coste del servicio o productos y las condiciones del mismo antes de emitir la factura definitiva para su evaluación y conformidad previa a la emisión de la factura definitiva.<br><br>
+           <b>Otros Ingresos:</b> Son aquellos ingresos que recibes que no provienen de tu actividad económica como por ejemplo subvenciones, intereses bancarios, etc.<br><br>
+           <b>Presupuestos:</b> Documento que detalla el coste del servicio o venta de productos que se va a realizar con un cliente.`
+      )
+    }
   }
 
   export const MAIN_EXPENSES = {
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES, STAFF_EXPENSES]
+    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES, STAFF_EXPENSES],
+    button: {
+      id: CONSTANT.EXPENSES.initCap() + 'Info',
+      icon: 'info',
+      fn: () => info(
+        MSG.EXPENSES,
+        `<b>Facturas Recibidas:</b> Facturas que te emiten tus proveedores por sus servicios prestados o compra de productos.<br><br>
+         <b>Borrador Fras. Recibidas:</b> Documentos de factura recibida en proceso de revisión y registro, que una vez acptado pasan a factura recibidas.<br><br>
+         <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a factura recibidas.<br><br>
+         <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a Fra. Simplificadas/Ticket.<br><br>
+         <b>Otros Gastos:</b> Son aquellos gastos que tienes por tu actividad, pero del cual no existe factura simplificada/ticket como seguros, tasas municipales, intereses de prestamos, cuotas de  suscripcion a un colegio profesional, etc.<br><br>
+         <b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
+      )
+    }
+
   }
 
   export const MAIN_DOCUMENTS = {
     id: CONSTANT.DOCUMENT.initCap(),
     title: MSG.PENDING,
     name: MSG.PENDING,
-    options: [RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH]
+    options: [RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH],
+    button: {
+      id: CONSTANT.DOCUMENT.initCap() + 'Info',
+      icon: 'info',
+      fn: () => info(
+        MSG.PENDING,
+        `<b>En Trámite:</b> Docmentos subidos al portal y que se están gestionando el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
+         <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
+         <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
+      )
+    }
   }
 
   // ********************

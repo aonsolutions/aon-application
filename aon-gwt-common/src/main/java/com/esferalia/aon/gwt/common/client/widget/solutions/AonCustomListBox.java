@@ -71,4 +71,36 @@ public class AonCustomListBox extends HTMLPanel {
 		listBox.addChangeHandler(changeHandler);
 	}
 
+	public void setEnable(boolean enabled) {
+		listBox.setEnabled(enabled);
+	}
+	
+	public boolean isEnable() {
+		return listBox.isEnabled();
+	}
+
+	public void addError() {
+		addStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void removeError() {
+		removeStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void addWarning() {
+		addStyleName(AON.CSS.aonCustomWarning());
+	}
+
+	public void removeWarning() {
+		removeStyleName(AON.CSS.aonCustomWarning());
+	}
+	
+	public void setMaxWidth(String maxWidth) {
+		getElement().getStyle().setProperty("max-width", maxWidth);
+	}
+	
+	public void setMinWidth(String minWidth) {
+		getElement().getStyle().setProperty("min-width", minWidth);
+	}
+
 }

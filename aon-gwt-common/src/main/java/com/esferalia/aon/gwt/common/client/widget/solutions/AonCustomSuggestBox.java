@@ -39,6 +39,10 @@ public class AonCustomSuggestBox extends HTMLPanel {
 		this.suggestBox.setValue(value);
 	}
 
+	public void setValue(String value, boolean fireEvent) {
+		this.suggestBox.setValue(value, fireEvent);
+	}
+
 	public String getValue() {
 		return this.suggestBox.getValue();
 	}
@@ -57,6 +61,38 @@ public class AonCustomSuggestBox extends HTMLPanel {
 
 	public void showSuggestionList() {
 		this.suggestBox.showSuggestionList();
+	}
+
+	public void hideSuggestionList() {
+		this.suggestBox.hideSuggestionList();
+	}
+
+	public void setEnable(boolean enabled) {
+		suggestBox.setEnabled(enabled);
+	}
+
+	public void addError() {
+		addStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void removeError() {
+		removeStyleName(AON.CSS.aonCustomError());
+	}
+
+	public void addWarning() {
+		addStyleName(AON.CSS.aonCustomWarning());
+	}
+
+	public void removeWarning() {
+		removeStyleName(AON.CSS.aonCustomWarning());
+	}
+	
+	public void setMaxWidth(String maxWidth) {
+		getElement().getStyle().setProperty("max-width", maxWidth);
+	}
+	
+	public void setMinWidth(String minWidth) {
+		getElement().getStyle().setProperty("min-width", minWidth);
 	}
 
 }

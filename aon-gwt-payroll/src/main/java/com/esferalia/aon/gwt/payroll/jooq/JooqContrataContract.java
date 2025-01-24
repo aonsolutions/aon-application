@@ -168,6 +168,7 @@ public class JooqContrataContract {
 				employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 				employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 				employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
+				employeeData.setAddressCityDescription(raddressTable.get(RADDRESS.CITY));
 				employeeData.setAddressProvinces(raddressTable.get(RADDRESS.GEOZONE));
 			}
 			
@@ -1121,6 +1122,7 @@ public class JooqContrataContract {
 			employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 			employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 			employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
+			employeeData.setAddressCityDescription(raddressTable.get(RADDRESS.CITY));
 			employeeData.setAddressProvinces(raddressTable.get(RADDRESS.GEOZONE));
 		}
 		

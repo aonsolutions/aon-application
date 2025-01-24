@@ -369,7 +369,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Erhalten';
-export const RECEIVED_INVOICES = "Erhalten";
+export const RECEIVED_INVOICES = "Ausstehende Erhalten";
 export const RECEIVEDS = 'Erhält';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Vor kurzem eröffnet";

@@ -8174,7 +8174,7 @@ public class Municipalities {
 	
 	public String getZipByMunicipalityName(String municipality) {
 		for(Entry<String, String> e : municipalities.entrySet())
-			if(municipality.equals(e.getValue()))
+			if(AonStringUtils.equalsIgnoreCase(municipality, e.getValue()))
 				return e.getKey();
 		
 		return null;

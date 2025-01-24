@@ -123,7 +123,8 @@ public class AccountingOperationDAO {
 						.select(INVOICE_DETAIL_ACCOUNT.ID)
 						.from(INVOICE_DETAIL_ACCOUNT)
 						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID)
-						  .and(INVOICE_DETAIL_ACCOUNT.ACCOUNT.equal(OP_DETAIL_ACC_ID)))); 
+						  .and(INVOICE_DETAIL_ACCOUNT.ACCOUNT.equal(OP_DETAIL_ACC_ID))
+						  )); 
 		
 		// Agrupamos por:
 		// Listado IRPF: asiento + cuenta contable
