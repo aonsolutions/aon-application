@@ -717,7 +717,7 @@ export class AonHeader extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
 
-		if (app.app == "invoice"|| app.app == "accounting" || app.app == "payroll"|| app.app == "fiscal"){
+		if (app.symbol){
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);

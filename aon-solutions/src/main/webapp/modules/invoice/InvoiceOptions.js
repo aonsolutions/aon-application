@@ -253,7 +253,7 @@ import * as GWT from "../../gwt/gwt.js";
       icon: 'info',
       action: () => info(
         MSG.EXPENSES,
-        `<b>En Trámite:</b> Docmentos subidos al portal y que se están gestionando el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
+        `<b>En Trámite:</b> Documentos subidos al portal y que se están gestionando por el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
          <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
          <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
     )
