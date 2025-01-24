@@ -77,8 +77,8 @@ enum Mod190File2023Araba {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getArabaRetention()),13,2)) // DIPUTACIÓN FORAL DE ARABA/ÁLAVA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getGipuzkoaRetention()),13,2)) // DIPUTACIÓN FORAL DE GIPUZKOA.
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getBizkaiaRetention()),13,2)) // DIPUTACIÓN FORAL DE BIZKAIA.
-	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 113))
-	   
+	   ,(wr, mod190,detail) -> wr.append(mod190.getYear() >= 2024 ? "0" : " ")
+	   ,(wr, mod190,detail) -> wr.append(AonStringUtils.repeat(' ', 112))	   
 	   ,(wr, mod190,detail) -> wr.append("\r\n")
 	})
 	;
