@@ -1044,7 +1044,6 @@ export class AonNewMenu extends AonElement {
 		return `rgb(${r}, ${g}, ${b})`;
 	}
 
-	
 	isApp(app) {
 		if (OFFICE.app === app.app)
 			return this.getDur().isOffice();
@@ -1068,11 +1067,11 @@ export class AonNewMenu extends AonElement {
 		if (GROUPWARE_MENU.app === app.app)
 			return this.getDur().isGroupware();
 		if (ACCOUNTING_MENU.app === app.app)
-			return this.getDur().isAccounting();
+			return this.getDur().isAccountingManager();
 		if (FISCAL_MENU.app === app.app)
-			return this.getDur().isFiscal();
+			return this.getDur().isFiscalManager();
 		if (PAYROLL_MENU.app === app.app)
-			return this.getDur().isPayroll();
+			return this.getDur().isPayrollManager();
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
 		if (CONFIGURATION_MENU.app === app.app)
