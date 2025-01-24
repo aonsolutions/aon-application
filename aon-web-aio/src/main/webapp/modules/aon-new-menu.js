@@ -639,10 +639,11 @@ export class AonNewMenu extends AonElement {
 		let welcome = this.getElement("aonCompanyTabFilter");
 
 		
-		if (app.app == "invoice"|| app.app == "accounting" || app.app == "payroll"|| app.app == "fiscal"){
+		if (app.symbol){
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+			icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
 			icon.innerHTML = app.symbol;
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;
