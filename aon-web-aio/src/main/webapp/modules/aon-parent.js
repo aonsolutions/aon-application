@@ -26,8 +26,6 @@ export class AonParent extends AonElement {
 	COMPANY_FILTER_TAB;
 	COMPANY_TITLE_SPAN;
 	
-	searchBoxTimeout;
-
 	setFilter(filter){
 		this.filter = filter;
 	}
@@ -52,11 +50,6 @@ export class AonParent extends AonElement {
 
 	connectedCallback () {
 		this.init({id:'active', active: true, domainActive:true});
-		let searchBox = this.getElement('aonHeaderSearchBox');
-		searchBox.addEventListener(EVENT.KEYUP, () => {
-			clearTimeout(this.searchBoxTimeout); 
-			this.searchBoxTimeout = setTimeout(() => this.search(this), 1000);
-		});
 	}
 
 	init(filter) {
@@ -75,47 +68,6 @@ export class AonParent extends AonElement {
 		} );
 	}
 	
-	search(el) {
-		let searchBox = el.getElement('aonHeaderSearchBox');
-		let searchDialogMenu =  el.getApplication().getOptionDialog();
-		
-		getCompanies().then(companies => {
-			let searchCompanies = el.filterCompanies(companies, {...el.getFilter(),...{value:searchBox.value}});
-			
-			let searchOptions = [];
-			
-			if ( searchCompanies.length > 0 ) {
-				let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
-				searchOptions.push({
-					icon: MATERIAL_ICONS.BUSINESS,
-					name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
-				});
-			}
-			
-			searchCompanies.slice(0,10).forEach(company => {
-				searchOptions.push({
-					icon : this.getIcon(company),
-					name : `<span>${company.name}</span><span style="float:right;">${company.document}</span>`,
-					fn: () => {this.companySelection(company, false);},
-				});				
-			});
-			
-			searchDialogMenu.getContent().style.minWidth = `${searchBox.offsetWidth}px`; 
-			
-			const top  = searchBox.getBoundingClientRect().bottom ;
-			const left = searchBox.getBoundingClientRect().left;
-			searchDialogMenu.setMenuOptions(searchOptions, top, left);
-			searchDialogMenu.open();
-			
-/*			getContracts({ page:0, perPage:11, name: searchBox.value})
-			.then(contracts => {
-				contracts.forEach(contract => console.log( JSON.stringify(contract)));	
-			});
-*/			
-		});
-		
-		
-	}
 
 	select(filter, callback) {
 		
@@ -467,8 +419,7 @@ export class AonParent extends AonElement {
 			//TODO: this.getApplication().stopLoader();
 		});
 	
-		// Customers
-		
+
 	}
 
 	buildSidenav() {
@@ -638,76 +589,18 @@ export class AonParent extends AonElement {
 		return li;
 	}
 	
+	getAonHeader() {
+		return document.querySelector(TAG.AON_HEADER);
+	}
+	
 	getIcon(company) {
-		let icon = "business";
-		if(company.type === 'OFFICE') icon = 'work';
-		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
-		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
-		else if(!company.active) icon = 'domain_disabled';
-		
-		return icon;
+		return this.getAonHeader()?.getIcon(company);
 		
 	}
-
+	
 	companySelection(company, onlyOne) {
-		const BASE_ID = 'aonHeader';
-		localStorage.setItem('company', JSON.stringify(company));
-		LS.setDomainId(company.id);
-		LS.setDomainName(company.domain);
-		LS.setDomainLogin(company.login);
-		//localStorage.setItem("aon_domain_id", company.id);
-		//localStorage.setItem("aon_domain_name", company.domain);
-		localStorage.setItem("aon_domain_document", company.document);
-		localStorage.setItem("onlyOne", onlyOne);
-		
-		
-
-		if(!LS.isNewTheme() && (company.parentId || company.type !== 'CONSULTANCY')){
-			let aonShowMenu = this.getElement('aonShowMenu');
-			aonShowMenu.style.display = 'block';
-		}
-		let aonHeaderHelp = this.getElement(BASE_ID + 'Help');
-		// aonHeaderHelp.style.display = 'block';
-
-		// let aonHeaderSearch = this.getElement(BASE_ID + 'Search');
-		// aonHeaderSearch.style.display = 'none';
-
-		let aonHeaderHome = this.getElement(BASE_ID + 'Home');
-		if(!LS.isNewTheme()) {
-			aonHeaderHome.style.display = 'block';
-		}
-
-		let aonHeaderCompanyName = this.getElement(BASE_ID + 'CompanyName');
-		aonHeaderCompanyName.innerHTML = company.name;
-
-		let aonHeaderCompany = this.getElement(BASE_ID + 'Company');
-		aonHeaderCompany.style.display = 'block';
-
-		if(!onlyOne){ 
-			LS.setCompanySelected(true);
-			let aonHeaderCompanyList = this.getElement(BASE_ID + 'CompanyList');
-			aonHeaderCompanyList.style.display = 'block';
-			let aonHeaderCompanyListButton = this.getElement(BASE_ID + 'CompanyListButton');
-			aonHeaderCompanyListButton.style.display = 'block';
-		} else {
-			aonHeaderHome.style.right = '140px';
-			aonHeaderCompany.style.right = '180px';
-		}
-		
-		//this.clearElementById('aonMenu');
-		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init().then(() => aonMenu.open());
-
-		getUser().then(user => {
-			localStorage.setItem('aon_domain_login', user.login);
-
-			let aonDesktop = new AonDesktop();
-			aonDesktop.id = "aonDesktop";
-
-			this.rootPanel(aonDesktop);
-		});
+		this.getAonHeader()?.companySelection(company, onlyOne);
 	}
-
 
 	getCompaniesSchemas(){
 		getCompaniesBySchemas(this.getFilter())

@@ -619,4 +619,8 @@ public class VatContext implements Serializable {
 		return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
 	}
 	
+	public boolean isSpainDocumentCountry() {
+		return this.registryDocumentCountry == null || this.registryDocumentCountry == Country.ES; 
+	}
+	
 }

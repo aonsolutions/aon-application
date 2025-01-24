@@ -230,6 +230,9 @@ export const INBOX = 'Bandeja de Entrada';
 export const INCLUDE_COMPANY_DATA = 'Incluir Datos de Empresa';
 export const INCLUDE_LOGO = 'Incluir Logo';
 export const INFORMATION = 'Información';
+export const INFO_INCOMES = "Información Apartado de Ingresos";
+export const INFO_EXPENSES = "Información Apartado de Gastos";
+export const INFO_PENDING = "Información Apartado de Pendientes";
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
@@ -376,7 +379,7 @@ export const QUOTA = 'Cuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Recibida';
-export const RECEIVED_INVOICES = "Recibidas";
+export const RECEIVED_INVOICES = "Facturas Recibidas";
 export const RECEIVEDS = 'Recibidas';
 export const RECENTS = 'Recientes';
 export const RECENTLY_OPENED = "Abierto recientemente";
@@ -407,7 +410,7 @@ export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Facturas';
 export const RESUME_COSTS = "Resumen de costes";
-export const REVIEW = 'A Revisar';
+export const REVIEW = 'Revisar';
 
 // ----- S
 

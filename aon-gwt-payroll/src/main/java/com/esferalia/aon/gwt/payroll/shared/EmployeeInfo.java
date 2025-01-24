@@ -38,6 +38,7 @@ public class EmployeeInfo implements Serializable{
 	private String addressInfo;
 	private String addressZip;
 	private String addressCity;
+	private String city;
 	
 	//Geozone
 	private Integer addressProvinces;
@@ -272,6 +273,14 @@ public class EmployeeInfo implements Serializable{
 
 	public void setAddressCity(String addressCity) {
 		this.addressCity = addressCity;
+	}
+	
+	public String getAddressCityDescription() {
+		return city;
+	}
+	
+	public void setAddressCityDescription(String city) {
+		this.city = city;
 	}
 
 	public Integer getAddressProvinces() {

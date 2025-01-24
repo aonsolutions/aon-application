@@ -171,7 +171,7 @@ public class JooqEmployee {
 						.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 						.set(RADDRESS.NUMBER, AonStringUtils.isBlank(employeeData.getAddresNum()) ? "-" : employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+						.set(RADDRESS.CITY, employeeData.getAddressCityDescription())
 						.set(RADDRESS.MUNICIPALITY_CODE, AonStringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
 						.set(RADDRESS.GEOZONE, employeeData.getAddressProvinces())
 						.returning(RADDRESS.ID)
@@ -631,6 +631,7 @@ public class JooqEmployee {
 			employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 			employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 			employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
+			employeeData.setAddressCityDescription(raddressTable.get(RADDRESS.CITY));
 			employeeData.setAddressProvinces(raddressTable.get(RADDRESS.GEOZONE));
 		}
 		
@@ -1333,7 +1334,7 @@ public class JooqEmployee {
 						.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
+						.set(RADDRESS.CITY, employeeData.getAddressCityDescription())
 						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 						.set(RADDRESS.GEOZONE, employeeData.getAddressProvinces())
 						.returning(RADDRESS.ID, RADDRESS.GEOZONE)

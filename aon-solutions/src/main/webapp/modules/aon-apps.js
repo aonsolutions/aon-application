@@ -82,17 +82,25 @@ export class AonApps extends AonElement {
 
 				span.style.margin = '20px';
 
-				if(app.icon) {
-					span.innerHTML = `<aon-icon id="aonMobileSelectionIcon-${app.app}" icon="${app.icon}" color="${app.color}" size="28px"></aon-icon>`;
-				}  else if(app.symbol) {
+				if(app.symbol) {
 					let icon = this.createSpan();
 					icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 					icon.id = "aonMobileSelectionIcon-"+app.app;
 					icon.innerHTML = app.symbol;
-					icon.style.color = app.color;
+					if(app.app == "console")
+						icon.style.backgroundColor = "black";
+					else
+						icon.style.backgroundColor = app.color;
+					icon.style.color = "white";
+					icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
 					icon.style.paddingTop = '5px';
 					icon.style.paddingLeft = '4px';
+					icon.style.borderRadius = "5px";
+					icon.style.width = "32px";
+					icon.style.height = "32px";
 					span.appendChild(icon);
+				}  else if(app.icon) {
+					span.innerHTML = `<aon-icon id="aonMobileSelectionIcon-${app.app}" icon="${app.icon}" color="${app.color}" size="28px"></aon-icon>`;
 				} else {
 					let img = this.createElement(TAG.IMG);
 					img.id = "aonMobileSelectionImg-"+app.app;

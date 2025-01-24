@@ -18,12 +18,12 @@ export class AonFiscalMenu extends AonSuiteMenu {
 
     constructor () {
         super();
+		this.comercialInitialize();
     }
 
     async connectedCallback() {
         this.clear();
         await this.getAppParams(); 
-        this.comercialInitialize();
         this.initialize();
         this.build();
         this.setTitle("Opciones fiscales");
@@ -51,6 +51,9 @@ export class AonFiscalMenu extends AonSuiteMenu {
                     if (response == 3) this.isNavarra = true;
                     if (response == 4) this.isAEAT = true;
                 });
+			
+			this.allFalse = (!this.isAlava && !this.isBizk && !this.isGipu && !this.isNavarra && !this.isAEAT); 
+			
         } catch (e) {
             console.log("error getAppParams", e);
         }
@@ -58,10 +61,6 @@ export class AonFiscalMenu extends AonSuiteMenu {
        
 
     comercialInitialize() {
-        if(this.isAlava == false && this.isBizk == false && this.isGipu == false && this.isNavarra == false && this.isAEAT == false)
-            this.allFalse = true;
-        else
-            this.allFalse = false;
         this.AON_HEADER = 'aonHeader';
         this.ROOT_PANEL = 'rootPanel';
         this.RIGHT_PANEL = 'rightPanel';
@@ -81,65 +80,69 @@ export class AonFiscalMenu extends AonSuiteMenu {
             title: "Modelo 115",
             action : () => GWT.iLoad(GWT.MODEL_115)
         }];
+        this.initOptions();
+    }
+
+    initOptions() {
         this.options = [{
             title: 'IVA AEAT',
             visible: this.isAEAT,
-            options: [ {
+            options: [{
                 description: "Modelo 303 ",
                 title: "IVA Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
-            },{
+            }, {
                 description: "Modelo 349 ",
                 title: "Declaración recapitulativas de operaciones intracomunitarias",
                 action: () => GWT.iLoad(GWT.MODEL_349)
-            },{
+            }, {
                 description: "Modelo 390 ",
                 title: "Declaración resumen anual IVA",
                 action: () => GWT.iLoad(GWT.MODEL_390)
-            },{
+            }, {
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
-            },{
+            }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'IRPF AEAT',
             visible: this.isAEAT,
             options: [{
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, permios y determinadas ganancias patrimoniales e imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_111)
-            },{
+            }, {
                 description: "Modelo 115 ",
                 title: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
                 action: () => GWT.iLoad(GWT.MODEL_115)
-            },{
+            }, {
                 description: "Modelo 123 ",
                 title: "Retención e ingreso a cuenta sobre determinadas rendimientos del capital mobiliario o determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_123)
-            },{
+            }, {
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
                 action: () => GWT.iLoad(GWT.MODEL_180)
-            },{
+            }, {
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régimen de atribución de rentas",
                 action: () => GWT.iLoad(GWT.MODEL_184)
-            },{
+            }, {
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_190)
-            },{
+            }, {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientosdel capital mobiliario, IS e IRNR sobre determinadas rentas",
-                action: () =>  GWT.iLoad(GWT.MODEL_193)
+                action: () => GWT.iLoad(GWT.MODEL_193)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'AEAT',
             visible: this.isAEAT,
             options: [{
@@ -147,24 +150,24 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description2: " |Profes./Empresar.",
                 title: "IRPF. Pago fraccionado. Empresarios y profesionales en estimación directa",
                 action: () => GWT.iLoad(GWT.MODEL_130)
-            },{
+            }, {
                 description: "Modelo 131 ",
                 description2: " |Profes./Empresar.",
                 title: "Pago fraccionado. Empresarios y profesionales en estimación objetiva",
                 action: () => GWT.iLoad(GWT.MODEL_131)
-            },{
+            }, {
                 description: "Modelo 200 ",
                 description2: " |Sociedades",
                 title: "Impuesto sobre Sociedades",
                 action: () => GWT.iLoad(GWT.MODEL_200)
-            },{
+            }, {
                 description: "Modelo 202 ",
                 description2: " |Sociedades",
                 title: "Impuesto Sociedades. Pago fraccionado",
                 action: () => GWT.iLoad(GWT.MODEL_202)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'IVA Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
             options: [{
@@ -172,138 +175,138 @@ export class AonFiscalMenu extends AonSuiteMenu {
                 description2: " |320 Gipuzkoa",
                 title: "IVA. Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
-            },{
+            }, {
                 description: "Modelo 349 ",
                 tite: "Declaración recapitulativa de operaciones intracomunitarias",
                 action: () => GWT.iLoad(GWT.MODEL_349)
-            },{
+            }, {
                 description: "Modelo 390 ",
                 title: "Declaración resume anual IVA",
                 action: () => GWT.iLoad(GWT.MODEL_390)
-            },{
+            }, {
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
-            },{
+            }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'IRPF Forales',
             visible: this.isAlava || this.isGipu || this.isBizk,
             options: [{
                 description: "Modelo 110/111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_111)
-            },{
+            }, {
                 description: "Modelo 115 ",
                 tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanes",
                 action: () => GWT.iLoad(GWT.MODEL_115)
-            },{
+            }, {
                 description: "Modelo 123 ",
                 title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_123)
-            },{
+            }, {
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos procedentes del arrendamiento de inmuebles Urbanos",
                 action: () => GWT.iLoad(GWT.MODEL_180)
-            },{
+            }, {
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régimen de atribución de rentas",
                 action: () => GWT.iLoad(GWT.MODEL_184)
-            },{
+            }, {
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_190)
-            },{
+            }, {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_193)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'LROE Bizkaia',
             visible: this.isBizk,
             options: [{
                 description: "Modelo 140 ",
                 title: "Libro-registro de operaciones económicas de personas físicas",
                 action: () => GWT.iLoad(GWT.MODEL_140)
-            },{
+            }, {
                 description: "Modelo 240 ",
                 tite: "Libro-registro de operaciones económicas de sociedades",
                 action: () => GWT.iLoad(GWT.MODEL_240)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'IVA Navarra',
             visible: this.isNavarra,
             options: [{
                 description: "Modelo F69 ",
                 title: "Autoliquidación",
                 action: () => GWT.iLoad(GWT.MODEL_303)
-            },{
+            }, {
                 description: "Modelo 349 ",
                 tite: "Declaración recapitulativa de operaciones intracomunitarias",
                 action: () => GWT.iLoad(GWT.MODEL_349)
-            },{
+            }, {
                 description: "Modelo 111 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_111)
-            },{
+            }, {
                 description: "Modelo 347 ",
                 title: "Declaración anual operaciones con terceras personas",
                 action: () => GWT.iLoad(GWT.MODEL_347)
-            },{
+            }, {
                 description: "Declaración SII ",
                 title: "Suministro Inmediato de Información",
                 action: () => GWT.iLoad(GWT.MODEL_SII)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'IRPF Navarra',
             visible: this.isNavarra,
             options: [{
                 description: "Modelo 745/715 ",
                 title: "Retenciones e ingresos a cuenta sobre rendimientos del trabajo y actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_111)
-            },{
+            }, {
                 description: "Modelo 759/760 ",
                 tite: "Retenciones e ingresos a cuenta sobre determinadas rentas o rendimientos procedentes del arrendamiento de inmuebles urbanos",
                 action: () => GWT.iLoad(GWT.MODEL_115)
-            },{
+            }, {
                 description: "Modelo 716 ",
                 title: "Retención e ingreso a cuenta sobre determinados rendimientos del capital mobiliario o determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_123)
-            },{
+            }, {
                 description: "Modelo 180 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimiento procedentes de arrendamiento de inmuebles Urbanos",
                 action: () => GWT.iLoad(GWT.MODEL_180)
-            },{
+            }, {
                 description: "Modelo 184 ",
                 title: "Declaración anual. Entidades en régmien de atribución de rentas",
                 action: () => GWT.iLoad(GWT.MODEL_184)
-            },{
+            }, {
                 description: "Modelo 190 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta",
                 action: () => GWT.iLoad(GWT.MODEL_190)
-            },{
+            }, {
                 description: "Modelo 193 ",
                 title: "Resumen anual de retenciones e ingresos a cuenta. Rendimientos del capital mobiliario, IS e IRNR sobre determinadas rentas",
                 action: () => GWT.iLoad(GWT.MODEL_193)
             }],
-			filter: () => this.isNotDomainManagementAvailable()		
-        },{
+            filter: () => this.isNotDomainManagementAvailable()
+        }, {
             title: 'Matriz de empresas y modelos fiscales',
             visible: true,
             options: [{
                 title: "Matriz de empresas y modelos fiscales",
-				description: "Matriz de empresas y modelos fiscales",
+                description: "Matriz de empresas y modelos fiscales",
                 action: () => GWT.iLoad(GWT.MODEL_MATRIX)
             }],
-			filter: () => this.isDomainManagementAvailable()		
-		}];
+            filter: () => this.isDomainManagementAvailable()
+        }];
     }
     /*
     build() {

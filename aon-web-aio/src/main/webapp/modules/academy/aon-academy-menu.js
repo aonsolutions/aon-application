@@ -11,11 +11,11 @@ export class AonAcademyMenu extends AonSuiteMenu {
 
 	constructor () {
 		super();
+		this.accountingInitialize()
 	}
 
 	connectedCallback () {
 		this.clear();
-		this.accountingInitialize()
 		this.initialize();
 		this.build();
 		this.setTitle("Opciones de academia");

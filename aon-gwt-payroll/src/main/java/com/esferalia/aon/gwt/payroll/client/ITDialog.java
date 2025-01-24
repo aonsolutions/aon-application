@@ -2169,7 +2169,7 @@ public abstract class ITDialog extends AonCustomDialog {
 				
 				Label daysL = new Label("D\u00EDas: ");
 				daysL.addStyleName(style.subTitle());
-				Label daysValue = new Label(getDayStr(data.getSettleQuoteDays()));
+				Label daysValue = new Label(isPartial ? getNaturalDays(data.getStartDate()) : (null == data.getSettleQuoteDays() ? "" : AonStringUtils.leftPad(data.getSettleQuoteDays().toString(), 2, '0')) );
 				
 				Label cgcL = new Label("CGC: ");
 				cgcL.addStyleName(style.subTitle());
@@ -2195,7 +2195,7 @@ public abstract class ITDialog extends AonCustomDialog {
 
 				base+= cgp ? data.getBaseUnemployment() : data.getBaseCgc();
 				baseCp+= data.getBaseUnemployment();
-				quoteDay+=data.getSettleQuoteDays();
+				quoteDay += (isPartial ? Integer.parseInt( getNaturalDays(data.getStartDate()) ) : data.getSettleQuoteDays());
 				
 				if((isPartial && quoteDay>=84) || (!isPartial && quoteDay>=28)) {
 					break; 
@@ -2216,19 +2216,18 @@ public abstract class ITDialog extends AonCustomDialog {
         }
 	}
 	
-	private String getMonthStr(Date date) {
-		Integer month = DateUtils.getMonth(date) +1;
-		if(month > 0 && month <=9) 
-			return "0"+month;
+	private String getNaturalDays(Date date) {
+		if(null == date) return AonStringUtils.EMPTY;
 		
-		return month.toString();
+		Date lastDayOfMonth = DateUtils.getLastDayOfMonth(date);
+		return AonStringUtils.leftPad(lastDayOfMonth.getDate() + "", 2, '0');
 	}
-	
-	private String getDayStr(Integer day) {
-		if(day > 0 && day <=9) 
-			return "0"+day;
+
+	private String getMonthStr(Date date) {
+		if(null == date) return AonStringUtils.EMPTY;
 		
-		return day.toString();
+		Integer month = DateUtils.getMonth(date) + 1;
+		return AonStringUtils.leftPad(month.toString(), 2, '0');
 	}
 
     private void sendItPart() {

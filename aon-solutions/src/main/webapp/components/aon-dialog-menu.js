@@ -332,6 +332,7 @@ export class AonDialogMenu extends AonElement {
 				}
 				if(item.image) {
 					let img = document.createElement('img');
+					img.style.maxWidth = `${item.size || 24}px`;
 					img.src = item.image;
 					li.appendChild(img);
 				} else if(item.aonIcon) {
@@ -339,7 +340,8 @@ export class AonDialogMenu extends AonElement {
 					ai.style.verticalAlign = 'middle';
 					let aonIcon = new AonIcon();
 					aonIcon.icon = item.aonIcon;
-					aonIcon.size = 15;
+					aonIcon.size = item.size || 15;
+					aonIcon.color = item.color;
 					ai.appendChild(aonIcon);
 					li.appendChild(ai);
 				} else if(item.icon){

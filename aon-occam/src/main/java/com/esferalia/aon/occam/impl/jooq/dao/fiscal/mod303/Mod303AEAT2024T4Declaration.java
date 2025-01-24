@@ -2223,11 +2223,11 @@ class Mod303AEAT2024T4Declaration extends Mod303AEAT {
 		, CT_C60(Mod303Key.CT_C60,
 			(mod, vat) -> ventasExtraComunitariasCanCeuBienes(vat, mod),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C60, mod, vat.getBase()), null, null, null)
-		//Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 123).
-		,CT_C120(Mod303Key.CT_C120, (mod, vat) -> ventasExtraComunitariasCanCeuServicios( vat, mod),
+		//Operaciones no sujetas por reglas de localización (excepto las incluidas en la casilla 123). (se añaden tambien las ventas ISP de clientes no españoles)
+		,CT_C120(Mod303Key.CT_C120, (mod, vat) -> ventasExtraComunitariasCanCeuServicios(vat, mod) || (ventasISP(vat, mod) && !vat.isSpainDocumentCountry()),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C120, mod, vat.getBase()), null, null, null)
-		// Operaciones sujetas con inversión del sujeto pasivo
-		,CT_C122(Mod303Key.CT_C122, (mod, vat) -> ventasISP( vat, mod),
+		// Operaciones sujetas con inversión del sujeto pasivo (solo las ventas ISP de clientes españoles)
+		,CT_C122(Mod303Key.CT_C122, (mod, vat) -> (ventasISP(vat, mod) && vat.isSpainDocumentCountry()),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C122, mod, vat.getBase()), null, null, null)
 		//Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única.
 		,CT_C123(Mod303Key.CT_C123)

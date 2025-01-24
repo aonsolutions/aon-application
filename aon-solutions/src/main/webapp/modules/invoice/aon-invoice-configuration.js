@@ -35,7 +35,7 @@ export class AonInvoiceConfiguration extends AonElement {
 			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()},
             { title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
         ];
-        if(this.getDur().isInvofox()) this.options.push({title: 'OCR', fn: () => this.buildOcrConfiguration()})
+        if(this.getDur().isInvofox() && this.isConsole()) this.options.push({title: 'OCR', fn: () => this.buildOcrConfiguration()})
         if(!LS.isAonSolutions() && !this.configuration.print.active){
             this.options = [{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}];
         }

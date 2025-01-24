@@ -1,4 +1,5 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
+import { AonApplication } from 'aonsolutions/components/aon-application.js';
 import { MSG, CSS, EVENT, TAG, CONSTANT } from 'aonsolutions/environments/environments.js'; 
 import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
 import { AonButton } from 'aonsolutions/components/aon-button.js';
@@ -56,13 +57,22 @@ export class AonSuiteMenu extends AonElement {
         this.CONF_BUTTON = this.id + 'ConfButton';
         this.DROPDOWN_BUTTON = this.id + "DropDownButton";
         this.OPTIONS = this.id + "Options";
+
+		let aonApplication = new AonApplication();
+		aonApplication.setAttribute("sidenav_width", "0px");
+		this.createApplication('AonSuiteMenu', "", aonApplication);
+	}
+	
+	initOptions(){
+		this.options = [];
 	}
 
 	build() {
 
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
-        this.appendChild(divFlex);
+        //this.appendChild(divFlex);
+		this.getApplication().setContent(divFlex);
 
         let sideMenu = this.createDiv();
         sideMenu.id = this.SIDE_MENU;
@@ -391,6 +401,13 @@ export class AonSuiteMenu extends AonElement {
     
         return li;
     }
+	
+	getOptions(){
+		if ( !this.options?.length ){
+			this.initOptions();
+		}
+		return this.options;
+	}
 
     getContent(){
         return this.getElement(this.CONTENT);

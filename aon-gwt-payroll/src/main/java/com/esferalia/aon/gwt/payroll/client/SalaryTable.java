@@ -426,18 +426,17 @@ public abstract class SalaryTable extends ScrollPanel {
 		tab.addRow(row, new Label(salary.getStartDate() == null ? "" : formatDate.format(salary.getStartDate())), ENT_WORK_COL.STD.getColWidth());
 		tab.addRow(row, new Label(salary.getEndDate() == null ? "" : formatDate.format(salary.getEndDate())), ENT_WORK_COL.END.getColWidth());
 		
-		
-		Label totalPayment = new Label(salary.getTotalPayment() + " \u20ac");
+		Label totalPayment = new Label(formatToEuro(salary.getTotalPayment()));
 		totalPayment.setTitle(salary.getTotalPayment() + " \u20ac");
 		tab.addInlineStyle(totalPayment, ENT_WORK_COL.BRU.getCellStyleClass());
 		tab.addRow(row, totalPayment, ENT_WORK_COL.BRU.getColWidth());
 		
-		Label totalDecuction = new Label(salary.getTotalDecuction() + " \u20ac");
+		Label totalDecuction = new Label(formatToEuro(salary.getTotalDecuction()));
 		totalDecuction.setTitle(salary.getTotalDecuction() + " \u20ac");
 		tab.addInlineStyle(totalDecuction, ENT_WORK_COL.NET.getCellStyleClass());
 		tab.addRow(row, totalDecuction, ENT_WORK_COL.NET.getColWidth());
 		
-		Label totalLiquid = new Label(salary.getTotalLiquid() + " \u20ac");
+		Label totalLiquid = new Label(formatToEuro(salary.getTotalLiquid()));
 		totalLiquid.setTitle(salary.getTotalLiquid() + " \u20ac");
 		tab.addInlineStyle(totalLiquid, ENT_WORK_COL.LIQ.getCellStyleClass());
 		tab.addRow(row, totalLiquid, ENT_WORK_COL.LIQ.getColWidth());
@@ -447,6 +446,16 @@ public abstract class SalaryTable extends ScrollPanel {
 		rowSalaries.put(salary.getId(), salary);
 		selectedItems.put(salary.getId(), checkButton);
 	}
+	
+	private static String formatToEuro(double value) {
+        // Round to two decimal places
+        long scaledValue = Math.round(value * 100); // Scale to avoid floating-point precision issues
+        long integerPart = scaledValue / 100;      // Extract integer part
+        long decimalPart = scaledValue % 100;      // Extract decimal part
+
+        // Format the result
+        return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart + " \u20ac";
+    }
 	
 	private String getAeatButton(SalaryInfo salary) {
 		switch (salary.getAlcatrazTerritory()) {
