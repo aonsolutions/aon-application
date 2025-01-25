@@ -61,10 +61,10 @@
 		startModule(gwtOption.module, gwtOption.entryPoint, rootPanel);
 	}
 
-	export const iLoad = (gwtOption, rootPanel) => {
+	export const iLoad = (gwtOption, rootPanel, params = {}) => {
 		iStartModule(gwtOption.module, gwtOption.entryPoint, gwtOption.subEntryPoint, rootPanel, document => {
 			gwtOption.javaScripts?.forEach( (script) =>  addScript(document, "text/javascript", script))				
-		});
+		}, params);
 	}
 	
 	const addScript = (document, type,  src) => {
@@ -121,10 +121,12 @@
 		}
 	}
 
-	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize) => {
+	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize, params = {}) => {
 		let panel = rootPanel || 'rootPanel';
 		localStorage.removeItem('rootPanel');
 
+		let queryString = Object.keys( params ).map( key => `${key}=${params[key]}`).join('&');
+		
 		localStorage.setItem('aon_solutions', true);
 		removeRootPanel(panel);
 		if (window.document.createElement && window.document.getElementsByTagName) {
@@ -186,7 +188,7 @@
 					    if (document.createElement && document.getElementsByTagName) {
 					      var script = document.createElement('script');
 					      script.type = 'text/javascript';
-					      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}';
+					      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}&${queryString}';
 						  script.defer = true;
 						  document.head.appendChild(script);
 						  triggerModuleStart();
