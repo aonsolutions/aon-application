@@ -89,6 +89,7 @@ public class EnterprisePayroll {
 							ssEn.getCcc(),
 							ssEn.getStartDate(),
 							ssEn.getEndDate(),
+							ssEn.getIssueDate(),
 							ssEn.getEmpleadoSS().orElse(null), 
 							ssEn.getTipo().orElse(null), 
 							0.00, 
