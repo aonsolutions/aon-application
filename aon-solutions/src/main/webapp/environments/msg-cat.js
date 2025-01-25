@@ -165,6 +165,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EDIT_WAREHOUSE = 'Editar Magatzem';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleat';
+export const EMPLOYEES = 'Empleats';
 export const END_DATE = 'Data Fin';
 export const ENGLISH = 'Anglès';
 export const ENTERPRISE = 'Empresa';

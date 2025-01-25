@@ -263,6 +263,7 @@ export const ELABORATIONS = "Elaboraciones"
 export const EMAIL = MSG.EMAIL;
 export const EMAIL_VERIFICATION = 'Verificación de Email';
 export const EMPLOYEE = MSG.EMPLOYEE;
+export const EMPLOYEES = MSG.EMPLOYEES;
 export const END_DATE = MSG.END_DATE;
 export const ENGLISH = MSG.ENGLISH;
 export const ENTERPRISE = MSG.ENTERPRISE;

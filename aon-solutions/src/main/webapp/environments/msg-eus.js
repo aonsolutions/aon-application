@@ -166,6 +166,7 @@ export const EDIT_TAG = 'Etiketa Aldatu';
 export const EDIT_WAREHOUSE = 'Biltegia Aldatu';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Langile';
+export const EMPLOYEES = 'Langileak';
 export const END_DATE = 'Amaiera-data';
 export const ENGLISH = 'Ingelesa';
 export const ENTERPRISE = 'Enpresa';
