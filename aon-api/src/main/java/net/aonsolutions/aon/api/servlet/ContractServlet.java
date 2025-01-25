@@ -81,18 +81,20 @@ public class ContractServlet extends AonApiHttpServlet {
 		JSONObject params = api.getData();
 		JSONArray array = new JSONArray();
 		List<String> schemas = AONContext.getSchemas();
+		int limit = params.optInt(IJsonNames.LIMIT, Integer.MAX_VALUE);
 		for (String schema: schemas) {
 			PAYROLL.getContractExtendedDataStream(
 					token, 
 					schema, 
 					props -> buildFilter(props, api, props.getDomainProperty().isNotNull()), 
-					params.optInt(IJsonNames.LIMIT, Integer.MAX_VALUE))
+					limit)
 			.forEach(contract -> {
 				JSONObject contractJSONObject = ContractExtendedDataJSON.toJSON(contract);
 				contractJSONObject.put(IJsonNames.COMPANY, contract.getDomainName());
 				array.put(contractJSONObject);
 			});
-			;
+			if ( array.length() >= limit  )
+				break;
 		}
 		return array;
 	}
