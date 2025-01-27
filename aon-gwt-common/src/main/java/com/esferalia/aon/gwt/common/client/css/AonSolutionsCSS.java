@@ -1457,5 +1457,11 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_button_dialog")
 	String aonButtonDialog();
+	
+	@ClassName("aon_custom_error")
+	String aonCustomError();
+	
+	@ClassName("aon_custom_warning")
+	String aonCustomWarning();
 }
 

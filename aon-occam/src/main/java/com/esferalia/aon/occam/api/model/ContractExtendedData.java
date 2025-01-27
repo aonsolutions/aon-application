@@ -8,6 +8,7 @@ public class ContractExtendedData extends Contract {
 	private static final long serialVersionUID = 1L;
 	Double grossSalaryLastMonth;
 	Double totalMarksLastMonth;
+	String domainName;
 	String personName;
 	String contractType;
 	String workplaceName;
@@ -52,6 +53,16 @@ public class ContractExtendedData extends Contract {
 		return this;
 	}
 	
+	public ContractExtendedData setPersonDocument(String personDocument) {
+		super.setPersonDocument(personDocument);
+		return this;
+	}
+	
+	public ContractExtendedData setPersonSsNumber(String personSsNumber) {
+		super.setPersonSsNumber(personSsNumber);
+		return this;
+	}
+	
 	public Double getTotalMarksLastMonth() {
 		return totalMarksLastMonth;
 	}
@@ -70,6 +81,15 @@ public class ContractExtendedData extends Contract {
 	@Override
 	public ContractExtendedData setDomain(Integer value) {
 		super.setDomain(value);
+		return this;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+	
+	public ContractExtendedData setDomainName(String domainName) {
+		this.domainName = domainName;
 		return this;
 	}
 

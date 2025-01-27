@@ -165,6 +165,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EDIT_WAREHOUSE = 'Editar Magatzem';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleat';
+export const EMPLOYEES = 'Empleats';
 export const END_DATE = 'Data Fin';
 export const ENGLISH = 'Anglès';
 export const ENTERPRISE = 'Empresa';
@@ -225,6 +226,9 @@ export const INBOX = `Safata d'Entrada`;
 export const INCLUDE_COMPANY_DATA = `Incloure Dades d'Empresa`;
 export const INCLUDE_LOGO = 'Incloure Logo';
 export const INFORMATION = 'Informació';
+export const INFO_INCOMES = "Informació Apartat d'Ingressos";
+export const INFO_EXPENSES = "Informació Apartat de Despeses";
+export const INFO_PENDING = "Informació Apartat de Arracades";
 export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptes Factura';
@@ -354,6 +358,7 @@ export const PRODUCT_NOT_EMPTY = "El producte no pot estar buit";
 export const PRODUCT_MUST_BE_SELECTED = "És obligatori seleccionar un producte";
 export const PRODUCTS = 'Productes';
 export const PROVINCE = 'Provincia';
+export const PROFORMA_INVOICES = "Esborrany/Proforma";
 
 // ----- Q
 
@@ -366,6 +371,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Rebuda';
+export const RECEIVED_INVOICES = "Factures Rebudes";
 export const RECEIVEDS = 'Rebudes';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Obert recentment";

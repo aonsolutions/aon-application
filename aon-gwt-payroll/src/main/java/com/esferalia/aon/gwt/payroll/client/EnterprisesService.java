@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -471,6 +472,11 @@ public interface EnterprisesService extends RemoteService {
 	List<SalaryInfo> getSalaries(String domain, String user, SalaryParams params) throws IllegalArgumentException;
 	
 	void deleteSalary(String domain, String user, Integer id) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Costs
+	
+	String getCostReceiptHTML(String domain, CostParams params) throws IllegalArgumentException;
+		
 	
 	// ------------------------------------------------ Utils
 	

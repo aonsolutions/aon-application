@@ -16,8 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -40,7 +40,6 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -84,11 +83,11 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param workplaceId
 	 * @param types Salary types that will be displayed
 	 */
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, String user, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
 		generateEnterprisePayroll(outputStream, domain, null, user, startDate, endDate, enterpriseId, workplaceId, types);
 	}
 	
-	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+	public static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
 		Condition condition;
 		if (workplaceId != null && workplaceId != 0)
 			condition = WORKPLACE.ID.eq(workplaceId);
@@ -109,7 +108,7 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		condition = condition.and(SALARY.TYPE.in(typeInts));
 		
-		generateEnterprisePayroll(outputStream, domain, domainId, user, condition, startDate, enterpriseId, workplaceId);
+		generateEnterprisePayroll(outputStream, domain, domainId, user, condition, startDate, endDate, enterpriseId, workplaceId);
 	}
 	
 	public static void generateEnterprisePayrollByEmployee (OutputStream outputStream, String domain, Integer domainId, String user, Date startDate, Date endDate, int enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[], Person ...persons) {
@@ -211,7 +210,7 @@ public class JooqEnterpriseSalaryBuilder {
 			}
 			
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, null);
-			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, false);
 		} catch (CanNotCreatePdfException e) {			
 		} catch (IOException e) {}
 		
@@ -310,13 +309,96 @@ public class JooqEnterpriseSalaryBuilder {
 			}
 			
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, null);
-			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, true);
 		} catch (CanNotCreatePdfException e) {			
 		} catch (IOException e) {}
 		
 		
 	}
-	
+
+	public static void generateEnterprisePayrollByPeriod (OutputStream outputStream, String domain, String user, Integer domainId,  Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId, com.esferalia.aon.occam.api.model.type.SalaryType types[]) {
+		Condition condition;
+		if (workplaceId != null && workplaceId != 0)
+			condition = WORKPLACE.ID.eq(workplaceId);
+		else
+			condition = ENTERPRISE.REGISTRY.eq(enterpriseId);
+		condition = condition.and(SALARY.ISSUE_DATE.between(new java.sql.Date(startDate.getTime())
+				, new java.sql.Date(endDate.getTime())));
+		
+		Collection<Integer> typeInts = Arrays.stream(types)
+				.map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal)
+				.collect(Collectors.toList());
+		
+		condition = condition.and(SALARY.TYPE.in(typeInts));
+		
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
+			DSLContext ctx = aonContext.getDslContext();
+			
+			
+			Byte[] enumBytes = new Byte[types != null ? types.length : 0];
+			int index = 0;
+			for (com.esferalia.aon.occam.api.model.type.SalaryType type : types) {
+				enumBytes[index++] = type.value();
+			}
+			
+			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = getContractDataByWorkplace(aonContext, startDate, endDate, enterpriseId, workplaceId);
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = 
+					getEnterprisePayrollsByPeriod(ctx, condition.and(SALARY.TYPE.in(enumBytes)), Optional.ofNullable(contractDatas));
+			
+			String enterpriseName = "";
+			if (null == enterpriseId || enterpriseId <= 0) {
+				if (workplaceId != null && workplaceId > 0) {
+					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+							, aonContext.getDomainId()
+							, aonContext.getUser()
+							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+				} else {
+					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
+					if (optEnterprise.isPresent()) {
+						enterpriseId = optEnterprise.get().getRegistry();
+					}
+				}
+			}
+			
+			try {				
+				AtomicInteger entId = new AtomicInteger(enterpriseId);
+				enterpriseName = AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), user, r -> r.getIdProperty().eq(entId.get())).getName();
+			} catch (Exception e) {
+				enterpriseName = "";
+			}
+			
+			
+			
+			Attach attach1 = AON.getAttach(
+					aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+					.and(f.getDomainProperty().eq(aonContext.getDomainId()))
+					, AttachType.REGISTRY
+					);
+			
+			byte[] byteLogo = attach1.getData();
+			
+			InputStream logo = null;
+			
+			try {
+				logo = new ByteArrayInputStream(byteLogo);
+			} catch (NullPointerException e) {
+			}
+			String subheader = "Empresa: ";
+			if (enterpriseName != null) {
+				subheader = subheader.concat(enterpriseName);
+			}
+			
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, null);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, true);
+		} catch (CanNotCreatePdfException e) {			
+		} catch (IOException e) {}
+		
+		
+	}
 	
 	/**
 	 * Method to generate the PDF enterprise payroll and place it into the OutputStream passed as parameter
@@ -360,6 +442,68 @@ public class JooqEnterpriseSalaryBuilder {
 	 * @param enterpriseId
 	 * @param workplaceId
 	 */
+	private static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Condition condition, Date startDate, Date endDate, Integer enterpriseId, Integer workplaceId) {
+		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
+			DSLContext ctx = aonContext.getDslContext();
+			
+			Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = getContractDataByWorkplace(aonContext, startDate, endDate, enterpriseId, workplaceId);
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> map =
+					getEnterprisePayrolls(ctx, condition.and(SALARY.TYPE.in(LIQUIDATIONS)));
+			
+			Map<String, Map<String, EnterprisePayrollEntry>> payrolls = 
+					getEnterprisePayrolls(ctx, condition.and(SALARY.TYPE.notIn(LIQUIDATIONS)), Optional.ofNullable(contractDatas));
+			
+			String enterpriseName = "";
+			if (enterpriseId == null || enterpriseId == 0) {
+				if (workplaceId != null && workplaceId > 0) {
+					enterpriseId = AON.getWorkplace(aonContext.getDomainName()
+							, aonContext.getDomainId()
+							, aonContext.getUser()
+							, d -> d.getIdProperty().eq(workplaceId)).getEnterprise();
+				} else {
+					Optional<EnterpriseRecord> optEnterprise = ctx.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchStreamInto(ENTERPRISE).filter(Objects::nonNull).findFirst();
+					if (optEnterprise.isPresent()) {
+						enterpriseId = optEnterprise.get().getRegistry();
+					}
+				}
+			}
+			
+			try {
+				AtomicInteger entId = new AtomicInteger(enterpriseId);
+				enterpriseName = AON.getRegistry(aonContext.getDomainName(), aonContext.getDomainId(), user, r -> r.getIdProperty().eq(entId.get())).getName();
+			} catch (Exception e) {
+				enterpriseName = "";
+			}
+			
+			Attach attach1 = AON.getAttach(
+					aonContext.getDomainName()
+					, aonContext.getDomainId()
+					, aonContext.getUser(),
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())
+							.and(f.getDomainProperty().eq(aonContext.getDomainId()))
+					, AttachType.REGISTRY
+					);
+			
+			byte[] byteLogo = attach1.getData();
+			
+			InputStream logo = null;
+			
+			try {
+				logo = new ByteArrayInputStream(byteLogo);
+			} catch (NullPointerException e) {
+			}
+			String subheader = "Empresa: ";
+			if (enterpriseName != null) {
+				subheader = subheader.concat(enterpriseName);
+			}
+			
+			EnterprisePayroll enterprisePayroll = new EnterprisePayroll(logo, startDate, null, subheader, payrolls, map);
+			PdfMaker.printEnterprisePayroll(enterprisePayroll, outputStream, Optional.of(new Locale("es")), startDate, endDate, false);
+		} catch (CanNotCreatePdfException e) {			
+		} catch (IOException e) {}
+	}
+	
 	private static void generateEnterprisePayroll (OutputStream outputStream, String domain, Integer domainId, String user, Condition condition, Date month, Integer enterpriseId, Integer workplaceId) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, user)) {
 			DSLContext ctx = aonContext.getDslContext();
@@ -556,6 +700,7 @@ public class JooqEnterpriseSalaryBuilder {
 			throws IOException {
 		return getEnterprisePayrolls(ctx, condition, Optional.empty());
 	}
+	
 	private static Map<String, Map<String, EnterprisePayrollEntry>> getEnterprisePayrolls(DSLContext ctx, Condition condition, Optional<Map<Integer, Map<String, Map<String, List<ContractData>>>>> optContractDatas)
 			throws IOException {
 
@@ -643,7 +788,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
 		.and(SALARY.TYPE.lt((byte)7))
-		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.TYPE)
+		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.ISSUE_DATE, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
 			SalaryType salaryType = typeOf(r.get(SALARY.TYPE), SalaryType.class);
@@ -669,6 +814,7 @@ public class JooqEnterpriseSalaryBuilder {
 					, r.get(SALARY.CCC)
 					, r.get(SALARY.START_DATE)
 					, r.get(SALARY.END_DATE)
+					, r.get(SALARY.ISSUE_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
 					, salaryType.getName(LOCALE_ES)
 					, r.get(SALARY.TOTAL_PAYMENT)
@@ -863,6 +1009,7 @@ public class JooqEnterpriseSalaryBuilder {
 					, r.get(SALARY.CCC)
 					, r.get(SALARY.START_DATE)
 					, r.get(SALARY.END_DATE)
+					, r.get(SALARY.ISSUE_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
 					, salaryType.getName(ES) 
 					, r.get(SALARY.TOTAL_PAYMENT)
@@ -1016,7 +1163,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.innerJoin(WORKPLACE).onKey()
 		.innerJoin(ENTERPRISE).onKey()
 		.where(condition)
-		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.TYPE)
+		.orderBy(SALARY.EMPLOYEE_NAME, SALARY.ISSUE_DATE, SALARY.TYPE)
 		.fetchStream()
 		.forEach(r -> {
 			SalaryType salaryType = typeOf(r.get(SALARY.TYPE), SalaryType.class);
@@ -1040,6 +1187,7 @@ public class JooqEnterpriseSalaryBuilder {
 					, r.get(SALARY.CCC)
 					, r.get(SALARY.START_DATE)
 					, r.get(SALARY.END_DATE)
+					, r.get(SALARY.ISSUE_DATE)
 					, r.get(SALARY.EMPLOYEE_NAME)
 					, salaryType.getName(LOCALE_ES)
 					, r.get(SALARY.TOTAL_PAYMENT)
@@ -1065,8 +1213,8 @@ public class JooqEnterpriseSalaryBuilder {
 			} catch (NullPointerException e) {}
 			
 			Double employeeSS = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-			String key  = getMonthYearKey(r.get(SALARY.END_DATE));
-			String name = getMonthYearName(r.get(SALARY.END_DATE));
+			String key  = getMonthYearKey(r.get(SALARY.ISSUE_DATE));
+			String name = getMonthYearName(r.get(SALARY.ISSUE_DATE));
 			
 			entry.setEmpleado(Optional.ofNullable(name));
 			entry.setDevengado(Optional.ofNullable(r.get(SALARY.TOTAL_PAYMENT)));
@@ -1146,20 +1294,36 @@ public class JooqEnterpriseSalaryBuilder {
 		}
 	}
 	
-	private static String getMonthYearName(Date endDate) {
-		if (endDate == null)
+	private static String getMonthYearName(Date date) {
+		if (date == null)
 			return "FECHA INDEFINIDA";
-		Locale esLocale = new Locale("es", "ES");
-		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", esLocale);
-		return df.format(endDate).toUpperCase(esLocale);
+		
+		LocalDate localDate = LocalDate.of(
+				date.getYear() + 1900, 
+				date.getMonth() + 1,   
+				date.getDate()         
+	        );
+		
+		Locale locale = new Locale("es", "ES");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM 'de' yyyy", locale);
+		
+		return localDate.format(formatter).toUpperCase(locale);
 	}
 	
-	private static String getMonthYearKey(Date endDate) {
-		if (endDate == null)
+	private static String getMonthYearKey(Date date) {
+		if (date == null)
 			return "FECHA INDEFINIDA";
-		Locale esLocale = new Locale("es", "ES");
-		DateFormat df = new SimpleDateFormat("YYYY_MM", esLocale);
-		return df.format(endDate).toUpperCase(esLocale);
+		
+		LocalDate localDate = LocalDate.of(
+				date.getYear() + 1900, 
+				date.getMonth() + 1,   
+				date.getDate()         
+	        );
+		
+		Locale locale = new Locale("es", "ES");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM", locale);
+		
+		return localDate.format(formatter).toUpperCase(locale);
 	}
 	
 	@SafeVarargs

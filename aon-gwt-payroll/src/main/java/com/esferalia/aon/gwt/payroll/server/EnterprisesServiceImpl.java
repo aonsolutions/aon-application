@@ -114,6 +114,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -156,6 +157,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSettlementBuilder;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
@@ -186,6 +188,7 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DeductionType.Visitor;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Pair;
@@ -5079,6 +5082,44 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JooqPayrollSalaries.deleteSalaries(connection, domainId, salaryIds);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------ Costs
+	
+	@Override
+	public String getCostReceiptHTML(String domain, CostParams params) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			
+			List<com.esferalia.aon.occam.api.model.type.SalaryType> salaryTypes = new ArrayList<>();
+			if(params.isSalary()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
+			if(params.isExtra()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.EXTRA);
+			if(params.isSettle()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.SETTLE);
+			if(params.isDelay()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY);
+			if(params.isL00()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L00);
+			if(params.isL03()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L03);
+			if(params.isL13()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L13);
+			
+			ByteArrayOutputStream oos = new ByteArrayOutputStream();
+
+			if(params.isGroupByWorkplace())
+				JooqEnterpriseSalaryBuilder.generateEnterprisePayrollByPeriod(oos, domain, "", domainId, params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
+			else
+				JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
+			
+			byte bytes[] = oos.toByteArray();
+						
+			InputStream data = new ByteArrayInputStream(bytes);
+
+			StringWriter writer = new StringWriter();
+
+			encodeURIComponent(MimeType.PDF.getName(), data, writer);
+
+			return writer.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	

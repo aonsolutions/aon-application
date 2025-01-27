@@ -166,6 +166,7 @@ export const EDIT_TAG = 'Etiketa Aldatu';
 export const EDIT_WAREHOUSE = 'Biltegia Aldatu';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Langile';
+export const EMPLOYEES = 'Langileak';
 export const END_DATE = 'Amaiera-data';
 export const ENGLISH = 'Ingelesa';
 export const ENTERPRISE = 'Enpresa';
@@ -226,6 +227,9 @@ export const INBOX = 'Sarrera-Ontzia';
 export const INCLUDE_COMPANY_DATA = 'Sartu Enpresaren Datuak';
 export const INCLUDE_LOGO = 'Sartu Logoa';
 export const INFORMATION = 'Informazioa';
+export const INFO_INCOMES = "Informazio Errentaren Atala";
+export const INFO_EXPENSES = "Gastuen Atala Informazioa";
+export const INFO_PENDING = "Informazio Belarritakoen Atala";
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
@@ -357,6 +361,7 @@ export const PRODUCT_NOT_EMPTY = "Produktua ezin da hutsik geratu";
 export const PRODUCT_MUST_BE_SELECTED = "Produktu bat aukeratzea derrigorrezkoa da";
 export const PRODUCTS = 'Produktuak';
 export const PROVINCE = 'Probintzia';
+export const PROFORMA_INVOICES = "Zirriborroa/Proforma";
 
 // ----- Q
 
@@ -369,6 +374,7 @@ export const QUOTA = 'Kuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Jasotakoa';
+export const RECEIVED_INVOICES = "Jasotako Fakturak";
 export const RECEIVEDS = 'Jasotakoak';
 export const RECENTS = 'Berriak';
 export const RECENTLY_OPENED = "Berriki irekia";

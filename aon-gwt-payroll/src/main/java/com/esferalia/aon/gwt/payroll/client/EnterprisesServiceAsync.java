@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.CostParams;
 import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -337,6 +338,10 @@ public interface EnterprisesServiceAsync {
 
 	void deleteSalary(String domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 
+	// ------------------------------------------------ Costs
+	
+	void getCostReceiptHTML(String domain, CostParams params, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
 	// ------------------------------------------------ Utils
 	
 	void getScopes(String currentDomainName, String currentUser, AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException;

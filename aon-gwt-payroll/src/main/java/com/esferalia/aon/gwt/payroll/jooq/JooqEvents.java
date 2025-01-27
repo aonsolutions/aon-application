@@ -307,6 +307,7 @@ public class JooqEvents {
 			String addressNum = null;
 			String addressZip = null;
 			String addressCity = null;
+			String cityCode = null;
 			Integer geozoneId = null;
 			
 			if(null != raddressRecords && !raddressRecords.isEmpty()) {
@@ -316,6 +317,7 @@ public class JooqEvents {
 				addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
 				addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
 				addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+				cityCode = raddressRecords.get(0).get(RADDRESS.MUNICIPALITY_CODE);
 				geozoneId = raddressRecords.get(0).get(RADDRESS.GEOZONE);
 			}
 			
@@ -403,7 +405,8 @@ public class JooqEvents {
 			employee.setAddress(address);
 			employee.setAddresNum(addressNum);
 			employee.setAddressZip(addressZip);
-			employee.setAddressCity(addressCity);
+			employee.setAddressCity(cityCode);
+			employee.setAddressCityDescription(addressCity);
 			employee.setAddressProvinces(geozoneId);
 			
 			employee.setMobileId(mobileId);

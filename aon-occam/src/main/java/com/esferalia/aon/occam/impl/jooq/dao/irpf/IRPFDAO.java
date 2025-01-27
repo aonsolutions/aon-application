@@ -27,6 +27,7 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -158,6 +159,40 @@ public class IRPFDAO {
 		;		
 	}
 	
+	private static SelectOnConditionStep<? extends Record> getInvoiceIrpfBreakdownSelect(final AONContext ctx) {
+		return ctx.getDslContext().select( INVOICE.ID
+			,INVOICE.TYPE
+			,INVOICE.SERIES
+			,INVOICE.NUMBER
+			,INVOICE.REFERENCE_CODE
+			,INVOICE.ISSUE_DATE
+			,INVOICE.TAX_DATE
+			,INVOICE.RDOCUMENT
+			,INVOICE.RDOCUMENT_TYPE
+			,INVOICE.RDOCUMENT_COUNTRY
+			,INVOICE.RNAME
+			,INVOICE_NUMDOC_TYPE
+			,ENTERPRISE_ACTIVITY.ID
+			,ENTERPRISE_ACTIVITY.DESCRIPTION
+			,ENTERPRISE_ACTIVITY.RETENTION_REGIME
+			,IAE.EPIGRAPH
+			,INVOICE_TAX.WITHHOLDING_TYPE
+			,INVOICE_TAX.BASE
+			,INVOICE_TAX.PERCENTAGE
+			,INVOICE_TAX.QUOTA
+			,INVOICE_TAX.DEDUCTIBLE_PERCENT
+			,INVOICE_TAX.DEDUCTIBLE_QUOTA
+			,ALCATRAZ.INVOICE
+		)
+		.from(INVOICE)
+		.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+		.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+		.leftOuterJoin(ENTERPRISE_ACTIVITY).on(INVOICE.ACTIVITY.equal(ENTERPRISE_ACTIVITY.ID))
+		.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+		.leftJoin(ALCATRAZ).on(INVOICE.ID.eq(ALCATRAZ.INVOICE))
+		;		
+	}
+	
 	private static Field<?>[] getOrderBy( IRPFParams params ) {
 		if ( params.getGroupedBy() == IRPFParamsGroupedBy.REGISTRY) {
 			return new Field<?>[] {INVOICE.REGISTRY,INVOICE.ID };
@@ -213,12 +248,39 @@ public class IRPFDAO {
 		return stream;
 	}
 	
+	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdownNotInAlcatraz(final AONContext ctx, IRPFParams params) {
+		Stream<IrpfBreakdown> stream = getInvoiceIrpfBreakdownSelect(ctx)
+				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.and(ALCATRAZ.INVOICE.isNull())
+				.orderBy( getOrderBy(params) )
+				.fetch()
+				.stream()
+				.map( new IrpfInvoiceBreakdownFiller() ); 
+		
+		if (params.getGroupedBy() == IRPFParamsGroupedBy.INVOICE) {
+			return stream
+				.collect( new InvoiceCollector(params) )
+				.values()
+				.stream()
+				;
+		} else  if (params.getGroupedBy() == IRPFParamsGroupedBy.REGISTRY) {
+			return stream
+				.collect( new NifCollector(params) )
+				.values()
+				.stream()
+				;
+		}
+		return stream;
+	}
+	
 	public static Stream<IrpfBreakdown> getInvoicesIrpfBreakdown(final AONContext ctx, IRPFParams params, InvoiceFilter invoiceFilter) {
 		Condition condition = parseCondition(ctx, invoiceFilter);
 		
-		Stream<IrpfBreakdown> stream = getInvoiceIrpBreakdownSelect(ctx)
+		Stream<IrpfBreakdown> stream = getInvoiceIrpfBreakdownSelect(ctx)
 				.where(IRPF_PROPERTIES.getConditions(p -> getIRPFFilter(p, params)))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+				.and(ALCATRAZ.INVOICE.isNull())
 				.and(condition)
 				.orderBy( INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.RNAME )
 				.limit(invoiceFilter.getPerPage())
@@ -647,6 +709,13 @@ public class IRPFDAO {
 		IrpfSummary summary = new IrpfSummary();
 		params.setGroupedBy(null);
 		getInvoicesIrpfBreakdown(ctx, params).forEach(summary::add);
+		return summary;
+	}
+	
+	public static IrpfSummary getIRPFSummaryNotInAlcatraz(AONContext ctx, IRPFParams params) {
+		IrpfSummary summary = new IrpfSummary();
+		params.setGroupedBy(null);
+		getInvoicesIrpfBreakdownNotInAlcatraz(ctx, params).forEach(summary::add);
 		return summary;
 	}
 	

@@ -11,17 +11,17 @@ export class AonGarageMenu extends AonSuiteMenu {
 
 	constructor () {
 		super();
+		this.garageInitialize()
 	}
 
 	connectedCallback () {
 		this.clear();
-		this.accountingInitialize()
 		this.initialize();
 		this.build();
 		this.setTitle("Opciones de taller");
 	}
 
-	accountingInitialize() {
+	garageInitialize() {
 		this.AON_MENU = 'aonMenu';
 		this.AON_HEADER = 'aonHeader';
 		this.ROOT_PANEL = 'rootPanel';
@@ -39,61 +39,65 @@ export class AonGarageMenu extends AonSuiteMenu {
             title: "Apunte", 
             action: () => alert("description")
         }];
-		this.options = [{
-			title: 'Órdenes de reparación',
-			options: [ {
-				description:"Órdenes de Reparación",
-				title:"Órdenes de Reparación",
-				action: () => alert("Órdenes de Reparación")
-			},{
-				description: "Operarios",
-				title: "Operarios",
-				action: () => alert("Operarios")
-			}]
-		},{
-			title: 'Presupuestos',
-			options: [{
-				description: "Modelos",
-				title: "Modelos",
-				action: () => alert("Modelos")
-			},{
-				description: "Clientes Potenciales",
-				title: "Clientes Potenciales",
-				action: () => alert("Clientes Potenciales")
-			},{
-				description: "Agentes Comerciales",
-				title: "Agentes Comerciales",
-				action: () => alert("Agentes Comerciales")
-			},{
-				description: "Condiciones Comerciales",
-				title: "Condiciones Comerciales",
-				action: () => alert("Condiciones Comerciales")
-			}]
-		},{
-			title: 'General',
-			options: [{
-				description: "Marcas",
-				title: "Marcas",
-				action: () => alert("Marcas")
-			},{
-				description: "Modelos",
-				title: "Modelos",
-				action: () => alert("Modelos")
-			},{
-				description: "Vehículos",
-				title: "Vehículos",
-				action: () => alert("Vehículos")
-			}]
-		},{
-			title: 'Informes',
-			options: [{
-				description: "Vehículos y Titulares",
-				title: "Vehículos y Titulares",
-				action: () => alert("Vehículos y Titulares")
-			}]
-		}];
+		this.initOptions();
 	}
 
+
+    initOptions() {
+        this.options = [{
+            title: 'Órdenes de reparación',
+            options: [{
+                description: "Órdenes de Reparación",
+                title: "Órdenes de Reparación",
+                action: () => alert("Órdenes de Reparación")
+            }, {
+                description: "Operarios",
+                title: "Operarios",
+                action: () => alert("Operarios")
+            }]
+        }, {
+            title: 'Presupuestos',
+            options: [{
+                description: "Modelos",
+                title: "Modelos",
+                action: () => alert("Modelos")
+            }, {
+                description: "Clientes Potenciales",
+                title: "Clientes Potenciales",
+                action: () => alert("Clientes Potenciales")
+            }, {
+                description: "Agentes Comerciales",
+                title: "Agentes Comerciales",
+                action: () => alert("Agentes Comerciales")
+            }, {
+                description: "Condiciones Comerciales",
+                title: "Condiciones Comerciales",
+                action: () => alert("Condiciones Comerciales")
+            }]
+        }, {
+            title: 'General',
+            options: [{
+                description: "Marcas",
+                title: "Marcas",
+                action: () => alert("Marcas")
+            }, {
+                description: "Modelos",
+                title: "Modelos",
+                action: () => alert("Modelos")
+            }, {
+                description: "Vehículos",
+                title: "Vehículos",
+                action: () => alert("Vehículos")
+            }]
+        }, {
+            title: 'Informes',
+            options: [{
+                description: "Vehículos y Titulares",
+                title: "Vehículos y Titulares",
+                action: () => alert("Vehículos y Titulares")
+            }]
+        }];
+    }
 	/*
 	build() {
         

@@ -623,6 +623,7 @@ public final class IJsonNames {
 	public static final String SURCHARGE_QUOTA_EDITED = "surchargeQuotaEdited";
 	public static final String SURNAME = "surname";
 	public static final String SEARCH = "search";
+	public static final String SS_NUMBER = "ssNumber";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TABLE = "table";
 	public static final String TARIFF = "tariff";

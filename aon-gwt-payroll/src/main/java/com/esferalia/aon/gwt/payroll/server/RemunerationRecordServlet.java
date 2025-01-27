@@ -5,22 +5,25 @@ import static com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryServic
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.esferalia.aon.in.payroll.excel.RemunerationRecord;
+import com.esferalia.aon.in.payroll.excel.RemunerationRecord.RemunerationRecordCallback;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
-import org.json.JSONArray;
-
-import com.esferalia.aon.in.payroll.excel.RemunerationRecord;
-import com.esferalia.aon.in.payroll.excel.RemunerationRecord.RemunerationRecordCallback;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RemunerationRecord", 
@@ -29,7 +32,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 			"/aon_gwt_payroll/remuneration_record/*" 
 	})
 public class RemunerationRecordServlet extends HttpServlet {
-	
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy");
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException{
@@ -49,10 +52,26 @@ public class RemunerationRecordServlet extends HttpServlet {
 		String domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName()) : req.getServerName();
 		String user = req.getParameter(USER.getName()) != null ? req.getParameter(USER.getName()) : "";
 		String enterpriseIdStr = req.getParameter("enterpriseId");
+		
+		String enterpriseName = req.getParameter("enterpriseName");
+		String workplaceName = req.getParameter("workplaceName");
+		
 		String yearStr = req.getParameter("year");
 		Integer year = yearStr != null && !yearStr.isEmpty() ? Integer.parseInt(yearStr) : null;
-		Integer enterpriseId = enterpriseIdStr != null && !enterpriseIdStr.isEmpty() ? Integer.parseInt(enterpriseIdStr) : null;
+		Integer enterpriseId = AonStringUtils.isNotBlank(enterpriseIdStr) ? Integer.parseInt(enterpriseIdStr) : null;
 		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		Date startDate = calendar.getTime();
+		
+		resp.setContentType(MimeType.MS_EXCEL.getName());
+		String fileName = "Registro_Retributivo_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName) + "_" + formatter.format(startDate) + "." + MimeType.MS_EXCEL_2007.getExtension();
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 		
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 			JSONObject json = new JSONObject();

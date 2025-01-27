@@ -123,6 +123,7 @@ public class JsOperationIrpfGridPanel extends FlowPanel implements HasSelectionH
 				.addCell(new Label())
 				.addCell(new Label())
 				.addCell(new Label(AON.MSG.total()),AON.CSS.aonTextRight(),AON.CSS.aonBold(),AON.CSS.aonTextUppercase())
+				.addCell(new Label())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumBase)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumQuota)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 				.addCell(new Label(AON.CURRENCY_FORMAT.format(sumTotal)),AON.CSS.aonTextRight(),AON.CSS.aonBold())

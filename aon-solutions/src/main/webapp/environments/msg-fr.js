@@ -168,6 +168,7 @@ export const EDIT_TAG = 'Editar Etiqueta';
 export const EDIT_WAREHOUSE = 'Editar Almacén';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleado';
+export const EMPLOYEES = 'Empleados';
 export const END_DATE = 'Fecha Fin';
 export const ENGLISH = 'Inglés';
 export const ENTERPRISE = 'Empresa';
@@ -229,6 +230,9 @@ export const INBOX = 'Bandeja de Entrada';
 export const INCLUDE_COMPANY_DATA = 'Incluir Datos de Empresa';
 export const INCLUDE_LOGO = 'Incluir Logo';
 export const INFORMATION = 'Información';
+export const INFO_INCOMES = "Section des revenus d'information";
+export const INFO_EXPENSES = "Informations sur la section des dépenses";
+export const INFO_PENDING = "Section Boucles d'oreilles";
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
@@ -361,6 +365,7 @@ export const PRODUCT_NOT_EMPTY = "El producto no puede estar vacío";
 export const PRODUCT_MUST_BE_SELECTED = "Es obligatorio seleccionar un producto";
 export const PRODUCTS = 'Productos';
 export const PROVINCE = 'Provincia';
+export const PROFORMA_INVOICES = "Brouillon/Pro forma";
 
 // ----- Q
 
@@ -373,6 +378,7 @@ export const QUOTA = 'Cuota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Reçue';
+export const RECEIVED_INVOICES = "Reçus";
 export const RECEIVEDS = 'Reçus';
 export const RECENTS = 'Recientes';
 export const RECENTLY_OPENED = "Récemment ouvert";

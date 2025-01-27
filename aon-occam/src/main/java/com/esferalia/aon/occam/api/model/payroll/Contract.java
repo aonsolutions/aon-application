@@ -30,7 +30,7 @@ public class Contract implements Serializable{
 	ContractStatus ssStatus;
 	String personDocument;
 	String personSsNumber;
-		
+
 	public Contract() {
 	
 	}
@@ -52,7 +52,7 @@ public class Contract implements Serializable{
 		this.domain = domain;
 		return this;
 	}
-
+	
 	public Integer getPerson() {
 		return person;
 	}

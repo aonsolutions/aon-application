@@ -166,6 +166,7 @@ export const EDIT_TAG = 'Edit Tag';
 export const EDIT_WAREHOUSE = 'Edit Warehouse';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Employee';
+export const EMPLOYEES = 'Employees';
 export const END_DATE = 'End Date';
 export const ENGLISH = 'English';
 export const ENTERPRISE = 'Enterprise';
@@ -227,6 +228,9 @@ export const INBOX = 'Inbox';
 export const INCLUDE_COMPANY_DATA = 'Include Company Data';
 export const INCLUDE_LOGO = 'Include Logo';
 export const INFORMATION = 'Information';
+export const INFO_INCOMES = "Abschnitt „Informationseinkommen“.";
+export const INFO_EXPENSES = "Informationen zum Abschnitt „Ausgaben“.";
+export const INFO_PENDING = "Informationen zum Abschnitt „Ohrringe“.";
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Rechnung';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
@@ -356,6 +360,7 @@ export const PRODUCT_NOT_EMPTY = "Das Produkt darf nicht leer sein";
 export const PRODUCT_MUST_BE_SELECTED = "Produkt muss ausgewählt werden";
 export const PRODUCTS = 'Products';
 export const PROVINCE = 'Province';
+export const PROFORMA_INVOICES = "Entwurf/Proforma";
 
 // ----- Q
 
@@ -368,6 +373,7 @@ export const QUOTA = 'Quota';
 
 export const RADIO = "Radio";
 export const RECEIVED = 'Erhalten';
+export const RECEIVED_INVOICES = "Ausstehende Erhalten";
 export const RECEIVEDS = 'Erhält';
 export const RECENTS = 'Recents';
 export const RECENTLY_OPENED = "Vor kurzem eröffnet";

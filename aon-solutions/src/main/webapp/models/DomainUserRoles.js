@@ -321,7 +321,6 @@ export class DomainUserRoles {
   }
 
   isPayroll() {
-    
 		return (this.hasPayroll() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentPayroll()))
       && (this.isAdmin() || this.hasRole(Role.PAYROLL));
 	}
