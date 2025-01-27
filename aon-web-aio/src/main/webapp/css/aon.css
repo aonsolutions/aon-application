@@ -4637,7 +4637,7 @@ font-weight: 600;
   .aonDivWidgetsMobile{
     padding-right: 5px;
     padding-left: 5px;
-    margin-top: 50px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(2,1fr);
     gap: 10px;

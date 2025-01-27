@@ -54,7 +54,10 @@ export class AonApps extends AonElement {
 	}
 
 	build() {
-		this.appendChild(this.buildTitle('APLICACIONES DISPONIBLES'));
+		//this.appendChild(this.buildTitle('APLICACIONES DISPONIBLES'));
+		let title = this.buildTitle('Aplicaciones');
+		title.id = "tituloAplicaciones";
+		this.appendChild(title);
 
 		let ul = this.createElement(TAG.UL);
 		ul.id = "aonMobileAppSelection";
@@ -135,7 +138,8 @@ export class AonApps extends AonElement {
 	buildTitle(title) {
 		let div = this.createElement(TAG.DIV);
 		div.style.color = 'gray';
-		div.style.padding = '20px';
+		div.style.paddingLeft = '20px';
+		div.style.paddingTop = '20px';
 		div.innerHTML = title;
 		return div;
 	}

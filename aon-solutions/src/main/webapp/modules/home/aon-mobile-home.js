@@ -19,6 +19,7 @@ import { AonInvoice } from '../invoice/aon-invoice.js';
 import { AonIcon } from '../../components/aon-icon.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { formatNumber, sortBy } from '../../services/utils.js';
+import { AonApps } from '../aon-apps.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -64,11 +65,17 @@ export class AonMobileHome extends AonElement {
     async build() {
         let divGeneral = this.createElement(TAG.DIV);
         divGeneral.id = this.DIV_GENERAL;
+
+        let tituloNotis = this.buildTitle("Notificaciones");
+        divGeneral.appendChild(tituloNotis);
     
         let notificationDrag = new AonDragLeftNotification();
         notificationDrag.id = this.NOTIFICATION_DRAGLEFT;
         notificationDrag.className = "aonMobileHomeNotificationDrag";
         divGeneral.appendChild(notificationDrag);
+
+        let tituloWidgets = this.buildTitle("Información");
+        divGeneral.appendChild(tituloWidgets);
     
         let divWidgets = this.createElement(TAG.DIV);
         divWidgets.id = this.DIV_WIDGETS;
@@ -95,6 +102,10 @@ export class AonMobileHome extends AonElement {
         }
     
         divGeneral.appendChild(divWidgets);    
+
+        let apps = new AonApps();
+        divGeneral.appendChild(apps);
+
         this.appendChild(divGeneral);
     }
 
@@ -254,7 +265,7 @@ export class AonMobileHome extends AonElement {
             };
             this.rootPanel(aonMessenger);
         });
-        
+
         if(enviadas == 0)
             widgetSolicitudesEnviadas = null;
 
@@ -378,6 +389,15 @@ export class AonMobileHome extends AonElement {
             return this.BANKS;
         }
     }
+
+    buildTitle(title) {
+		let div = this.createElement(TAG.DIV);
+		div.style.color = 'gray';
+        div.style.paddingLeft = "20px";
+        div.style.paddingTop = "20px";
+		div.innerHTML = title;
+		return div;
+	}
 
     getTotal(banks){
         let total = banks.reduce((t, bank) => t + bank.balance, 0);
