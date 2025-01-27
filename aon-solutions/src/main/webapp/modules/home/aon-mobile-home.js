@@ -82,34 +82,21 @@ export class AonMobileHome extends AonElement {
             { id: this.WIDGET_FACTURAS_PENDIENTES, builder: this.widgetFacturasPendientes },
             { id: this.WIDGET_BANKS, builder: this.widgetBanks },
         ];
-    
-        widgetOrder.forEach((widget) => {
-            const placeholder = this.createElement(TAG.DIV);
-            placeholder.id = widget.id;
-            placeholder.className = "widgetPlaceholder";
-            divWidgets.appendChild(placeholder);
-        });
-    
-        widgetOrder.forEach((widget) => {
-            widget.builder.call(this).then((builtWidget) => {
-                const placeholder = this.getElement(widget.id);
-                placeholder.replaceWith(builtWidget);
-    
-                if (widget.id === this.WIDGET_TC) {
-                    let container = this.getElement("aonDragLeftContainer");
-                    if (container) container.style.marginTop = "25px";
-    
-                    let time = this.getElement("aonSignTime");
-                    if (time) time.style.marginTop = "5px";
+
+        for (const widget of widgetOrder) {
+            try {
+                const builtWidget = await widget.builder.call(this);
+                if (builtWidget) {
+                    divWidgets.appendChild(builtWidget);
                 }
-            });
-        });
+            } catch (error) {
+                console.log(`Widget ${widget.id} no está disponible`);
+            }
+        }
     
-        divGeneral.appendChild(divWidgets);
-    
+        divGeneral.appendChild(divWidgets);    
         this.appendChild(divGeneral);
     }
-    
 
     async widgetTimeControl() {
         let widgetTC = this.createElement(TAG.DIV);
@@ -220,6 +207,9 @@ export class AonMobileHome extends AonElement {
             this.rootPanel(aonMessenger);
         });
 
+        if(requestCount == 0)
+            widgetSolicitudesRecibidas = null;
+
         return widgetSolicitudesRecibidas;
     }
 
@@ -264,6 +254,9 @@ export class AonMobileHome extends AonElement {
             };
             this.rootPanel(aonMessenger);
         });
+        
+        if(enviadas == 0)
+            widgetSolicitudesEnviadas = null;
 
         return widgetSolicitudesEnviadas;
     }
@@ -320,6 +313,9 @@ export class AonMobileHome extends AonElement {
             this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
         });
 
+        if(requestCount == 0)
+            widgetFacturasPendientes = null;
+
         return widgetFacturasPendientes;
     }
 
@@ -354,6 +350,9 @@ export class AonMobileHome extends AonElement {
     
         widgetBanks.appendChild(titulo);    
         widgetBanks.appendChild(total);
+
+        if(banks.length == 0)
+            widgetBanks = null;
     
         return widgetBanks;
     }  

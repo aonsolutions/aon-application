@@ -118,6 +118,7 @@
     grid-template-columns: repeat(4,1fr);  
     font-size: 10px;
     padding: 0px;
+    margin-left: 16px;
 }
 
 .fixLi{
@@ -132,11 +133,19 @@
 .aonAppTitle{
     text-align: center;
     padding-left: 0px;
-    
+    width: 60px;
 }
 
 [id^="aonMobileSelectionIcon"] {
     display: block;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 13px !important;
+    align-content: center ;
+    text-align: center;
+    font-size: 30px;
+    padding-left: 0px !important;
+    padding-top: 0px !important;
 }
 
 
