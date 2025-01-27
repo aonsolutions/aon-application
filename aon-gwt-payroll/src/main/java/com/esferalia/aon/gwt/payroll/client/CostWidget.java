@@ -236,6 +236,8 @@ public class CostWidget extends AonCustomDockLayout {
 	
 	private AonCustomListBox period = new AonCustomListBox("Tipo Periodo");
 	private AonCustomListBox period2 = new AonCustomListBox("Periodo");
+	
+	private HTMLPanel datesPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	private AonCustomListBox start = new AonCustomListBox("Desde");
 	private AonCustomListBox end = new AonCustomListBox("Hasta");
 	
@@ -272,7 +274,7 @@ public class CostWidget extends AonCustomDockLayout {
 		params = new CostParams();
 		
 		hideToolbarFilterMessages();
-		showSeachButton();
+//		showSeachButton();
 		
 		addButtonsToolbar();
 		
@@ -281,20 +283,31 @@ public class CostWidget extends AonCustomDockLayout {
 		period.getListBox().setSelectedIndex(0);
         period.addChangeHandler(e -> {
         	period2.setVisible(period.getListBox().getSelectedIndex() == 0);
-        	start.setVisible(period.getListBox().getSelectedIndex() == 1);
-        	end.setVisible(period.getListBox().getSelectedIndex() == 1);
+        	datesPanel.setVisible(period.getListBox().getSelectedIndex() == 1);
+//        	start.setVisible(period.getListBox().getSelectedIndex() == 1);
+//        	end.setVisible(period.getListBox().getSelectedIndex() == 1);
         	onSearch();
         });
 		addFilterWidget(period);
 		
+		datesPanel.addStyleName(AON.CSS.aonItemFlex());
+		
 		start.addChangeHandler(e -> onSearch());
 		end.addChangeHandler(e -> onSearch());
-		start.setVisible(false);
-		end.setVisible(false);
-		addFilterWidget(start);
-		addFilterWidget(end);
 		
-		addFilterWidget(period2);
+//		start.setVisible(false);
+//		end.setVisible(false);
+//		addFilterWidget(start);
+//		addFilterWidget(end);
+		
+		datesPanel.add(start);
+		datesPanel.add(end);
+		datesPanel.setVisible(false);
+		
+
+		insertWidgetAfterSearchButton(datesPanel);
+		insertWidgetAfterSearchButton(period2);
+//		addFilterWidget(period2);
 		period2.addChangeHandler(e -> onSearch());
 		
 		detail.clearItems();
