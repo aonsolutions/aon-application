@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser } from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts } from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -22,6 +22,8 @@ import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonNotificationIcon } from './notification/aon-notification-icon.js';
 import { AonParent } from 'aonparent';
 import { AonDesktop } from './company/aon-desktop.js';
+
+import * as GWT from '../gwt/gwt.js';
 
 export class AonHeader extends AonElement {
 
@@ -729,7 +731,7 @@ export class AonHeader extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonHeaderAppDiv");
 
-		if (app.app == "invoice"|| app.app == "accounting" || app.app == "payroll"|| app.app == "fiscal"){
+		if (app.symbol){
 			let icon = this.createElement(TAG.SPAN);
 			icon.id = `aonMenuListAppImgTop-${app.app}`;
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
@@ -901,14 +903,50 @@ export class AonHeader extends AonElement {
 				});				
 			});
 			
-			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth}px`; 
+			searchOptions.push({
+				icon: MATERIAL_ICONS.GROUP,
+				name: `<span id="${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees" style="font-weight: bold; cursor: default" class="${CSS.AON_COMPANY_FILTER_LOADING}" >${MSG.EMPLOYEES}</span>`,
+			});
+
+			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
 			
 			const top  = aonHeaderSearchBox.getBoundingClientRect().bottom ;
 			const left = aonHeaderSearchBox.getBoundingClientRect().left;
 			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left);
 			aonHeaderSearchDialogMenu.open();
 			
+			let firstDayOfMonth = new Date(); 
+			firstDayOfMonth.setUTCHours(0,0,0,0);
+			
+			getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, name: aonHeaderSearchBoxValue, limit: 26 })
+			.then(contracts => {
+				
+				let searchOptions = [];
+				contracts.slice(0,10)
+				.map( contract => {
+					contract.company = companies.find( company => company.domain == contract.domain );  
+					return contract;
+				})
+				.filter( contract => contract.company)
+				.forEach(contract => {
+					searchOptions.push({
+						icon : MATERIAL_ICONS.PERSON,
+						name : `<span>${contract.name}</span><span style="float:right;">${contract.company.name}</span>`,
+						fn: () => {
+							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name})} );
+						},
+					});				
+				});
+				aonHeaderSearchDialogMenu.addMenuOptions(searchOptions);
+				
+				let employeesSpan = aonHeaderSearchDialogMenu.getElement(`${this.AON_HEADER_SEARCH_DIALOG_MENU}Employees`);
+				employeesSpan.innerText = `${contracts.length > 25 ? '>': ''} ${contracts.length} ${MSG.EMPLOYEES}`;
+				employeesSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+					
+			}).catch(error => console.log(error));
+			
 		});
+		
 		
 		
 	}
@@ -924,7 +962,13 @@ export class AonHeader extends AonElement {
 		
 	}
 	
-	companySelection(company, onlyOne) {
+	showDesktop() {
+		let aonDesktop = new AonDesktop();
+		aonDesktop.id = "aonDesktop";
+		this.rootPanel(aonDesktop);
+	}
+	
+	companySelection(company, onlyOne, callback = () => { this.showDesktop(); } ) {
 		localStorage.setItem('company', JSON.stringify(company));
 		LS.setDomainId(company.id);
 		LS.setDomainName(company.domain);
@@ -964,11 +1008,7 @@ export class AonHeader extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-
-			let aonDesktop = new AonDesktop();
-			aonDesktop.id = "aonDesktop";
-
-			this.rootPanel(aonDesktop);
+			callback();				
 		});
 	}
 

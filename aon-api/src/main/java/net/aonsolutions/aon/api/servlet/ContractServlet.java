@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -10,9 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.AonCompany;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
@@ -28,6 +33,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	public static final String CONTRACT_LIST = "/";
 	public static final String CONTRACT_BY_ID = "/:id";
+	public static final String ALL_CONTRACT_LIST = "/all";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -45,6 +51,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			Object object = new AonRouting(api)
 				.addRoute(CONTRACT_LIST, ContractServlet::getContractList)
+				.addRoute(ALL_CONTRACT_LIST, ContractServlet::getAllContractList)
 				.addRoute(CONTRACT_BY_ID, ContractServlet::getContractById)
 				.apply();
 			
@@ -61,25 +68,53 @@ public class ContractServlet extends AonApiHttpServlet {
 		PAYROLL.getContractExtendedDataStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 				f -> buildFilter(f, api),
 				params.optInt(IJsonNames.PAGE), 
-				params.optInt(IJsonNames.PER_PAGE)).forEach(element -> {
+				params.optInt(IJsonNames.PER_PAGE))
+				.forEach(element -> {
 					array.put(ContractExtendedDataJSON.toJSON(element));
 				});
 		return array;
 	}
+
+	private static JSONArray getAllContractList(AonApiData api) {
+		LOGGER.info("GET ALL LIST METHOD");
+		String token = api.getToken();
+		JSONObject params = api.getData();
+		JSONArray array = new JSONArray();
+		List<String> schemas = AONContext.getSchemas();
+		int limit = params.optInt(IJsonNames.LIMIT, Integer.MAX_VALUE);
+		for (String schema: schemas) {
+			PAYROLL.getContractExtendedDataStream(
+					token, 
+					schema, 
+					props -> buildFilter(props, api, props.getDomainProperty().isNotNull()), 
+					limit)
+			.forEach(contract -> {
+				JSONObject contractJSONObject = ContractExtendedDataJSON.toJSON(contract);
+				contractJSONObject.put(IJsonNames.COMPANY, contract.getDomainName());
+				array.put(contractJSONObject);
+			});
+			if ( array.length() >= limit  )
+				break;
+		}
+		return array;
+	}
 	
 	private static Filter buildFilter(ContractExtendedDataProperties properties, AonApiData api) {
+		return buildFilter(properties, api, properties.getDomainProperty().eq(api.getDomain().getId()) );
+	}
+	
+	private static Filter buildFilter(ContractExtendedDataProperties properties, AonApiData api, Filter filter) {
 		JSONObject params = api.getData();
-		Filter filter = properties.getDomainProperty().eq(api.getDomain().getId());
 		String name = JsonUtils.getString(params, IJsonNames.NAME);
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
-		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
-		if(name != null) {
-			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
-		}
+		Integer workplace = JsonUtils.getInteger(params, IJsonNames.WORKPLACE);
 		if(workplace != null) {
 			filter = filter.and(properties.getWorkplaceProperty().eq(workplace));
+		}
+		if(name != null) {
+			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
 		}
 		if(status != null) {			
 			if(Boolean.TRUE.equals(status)) {
@@ -101,7 +136,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		}
 		return filter;
 	}
-	
+
 	private static JSONObject getContractById(AonApiData api) {
 		LOGGER.info("GET BY ID METHOD");
 		return new JSONObject();

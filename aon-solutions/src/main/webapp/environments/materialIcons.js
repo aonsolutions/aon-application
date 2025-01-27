@@ -221,6 +221,7 @@ export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';
 export const PERSON_ADD_ALT = 'person_add_alt';
 export const PHONE = 'phone';
+export const PINBOARD = 'pinboard';
 export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';
 export const PRECISION_MANUFACTURING = 'precision_manufacturing';
 export const PRINT = 'print';
@@ -258,6 +259,7 @@ export const SECURITY = 'security';
 export const SEND = 'send';
 export const SETTINGS = 'settings';
 export const SHOPPING_BAG = 'shopping_bag';
+export const SPEAKER_NOTES = 'speaker_notes';
 export const STICKY_NOTE = 'sticky_note_2';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SUPPORT_AGENT = "support_agent";
@@ -270,6 +272,7 @@ export const SYNC_ALT = 'sync_alt';
 export const TUNE = 'tune';
 export const THUNDERSTORM = 'thunderstorm';
 export const TROLLEY = 'trolley';
+export const TERMINAL = 'terminal';
 
 // ----- U
 

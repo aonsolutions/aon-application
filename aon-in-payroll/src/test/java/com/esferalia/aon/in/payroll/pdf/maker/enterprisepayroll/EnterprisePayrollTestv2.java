@@ -1,8 +1,6 @@
 package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll;
 
 import static com.esferalia.aon.in.payroll.pdf.maker.PdfMaker.printEnterprisePayroll;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -22,7 +20,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.Enterprise
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry.EnterpriseEntryType;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.github.javafaker.Faker;
 
@@ -61,6 +58,7 @@ public class EnterprisePayrollTestv2 {
 						f.number().digits(11),
 						AonDateUtils.getFirstDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
 						"Nómina",
 						f.number().randomDouble(2, 0, 99999),
@@ -88,6 +86,7 @@ public class EnterprisePayrollTestv2 {
 						f.number().digits(11),
 						AonDateUtils.getFirstDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
 						"Nómina",
 						f.number().randomDouble(2, 0, 99999),
@@ -114,6 +113,7 @@ public class EnterprisePayrollTestv2 {
 						f.number().digits(12),
 						f.number().digits(11),
 						AonDateUtils.getFirstDayOfMonth(new Date()),
+						AonDateUtils.getLastDayOfMonth(new Date()),
 						AonDateUtils.getLastDayOfMonth(new Date()),
 						f.name().fullName(), 
 						"Nómina",
@@ -169,6 +169,7 @@ public class EnterprisePayrollTestv2 {
 					FAKER.number().digits(11),
 					AonDateUtils.getFirstDayOfMonth(new Date()),
 					AonDateUtils.getLastDayOfMonth(new Date()),
+					AonDateUtils.getLastDayOfMonth(new Date()),
 					FAKER.name().fullName(), 
 					"Nómina",
 					FAKER.number().randomDouble(2, 0, 99999),
@@ -209,7 +210,7 @@ public class EnterprisePayrollTestv2 {
 
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "Nómina",
 						null, null, null, null, null, null, 9999.99, 9.99, 9999.99);
 
 				categoria1.put(cat, e);
@@ -219,7 +220,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "cet " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.AON_SYSTEM, null, null, null, null, null, null, "Nómina",
 						null, null, null, null, null, null, 9999.99, 9.999,9999.99);
 
 				categoria1.put(cat, e);
@@ -229,7 +230,7 @@ public class EnterprisePayrollTestv2 {
 			
 			for (int i = 0; i < 4; i++) {
 				String cat = "Categoria " + i;
-				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, null, null, null, null, "Nómina",
+				EnterprisePayrollEntry e = new EnterprisePayrollEntry(EnterpriseEntryType.SEG_SOCIAL, null, null, null, null, null, null, "Nómina",
 						null, null, null, null, null, null, 29999.99, null,9999.99);
 
 				categoria3.put(cat, e);

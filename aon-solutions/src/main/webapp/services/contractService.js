@@ -24,3 +24,5 @@ export const getConvenios = async (data) => {
 
     return convenios;
 }
+
+export const getAllContracts = (data) => get(`${API_URL}/contract-api/all`, data );

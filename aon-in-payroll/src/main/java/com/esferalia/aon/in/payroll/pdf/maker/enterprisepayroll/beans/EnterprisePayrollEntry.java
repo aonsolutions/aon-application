@@ -2,7 +2,6 @@ package com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,6 +32,8 @@ public class EnterprisePayrollEntry {
 	Date startDate;
 	@DataField
 	Date endDate;
+	@DataField
+	Date issueDate;
 	
 	@DataField
 	boolean mergedSS;
@@ -96,13 +97,15 @@ public class EnterprisePayrollEntry {
 			String naf, 
 			String ccc, 
 			Date startDate, 
-			Date endDate
+			Date endDate,
+			Date issueDate
 	) 
 	{
 		this.naf			= naf;
 		this.ccc			= ccc;
 		this.startDate		= startDate;
 		this.endDate		= endDate;
+		this.issueDate		= issueDate;
 		
 		this.mergedSS			= false;
 		
@@ -141,6 +144,7 @@ public class EnterprisePayrollEntry {
 			String ccc,
 			Date startDate,
 			Date endDate,
+			Date issueDate,
 			String empleado, 
 			String tipo, 
 			Double devengado, 
@@ -154,7 +158,7 @@ public class EnterprisePayrollEntry {
 			Double bonificaciones
 	) {
 		
-		this(naf, ccc, startDate, endDate);
+		this(naf, ccc, startDate, endDate, issueDate);
 
 		if (type == EnterpriseEntryType.AON_SYSTEM)
 		{
@@ -220,6 +224,10 @@ public class EnterprisePayrollEntry {
 	
 	public Date getEndDate() {
 		return endDate;
+	}
+	
+	public Date getIssueDate() {
+		return issueDate;
 	}
 	
 	public boolean isMergedSS() {

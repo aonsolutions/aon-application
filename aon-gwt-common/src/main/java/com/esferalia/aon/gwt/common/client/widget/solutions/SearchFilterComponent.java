@@ -99,6 +99,10 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         HTMLPanel buttonPanel = new HTMLPanel("");
         buttonPanel.setStyleName(AON.CSS.aonDisplayFlexEnd());
         
+        AonCustomButton closeButton = new AonCustomButton(AON.CSS.aonIconClose(), "Cerrar");
+        closeButton.addDomHandler(e -> searchMenuPopup.hide(), ClickEvent.getType()); 
+        buttonPanel.add(closeButton);
+        
         AonCustomButton clearButton = new AonCustomButton(AON.CSS.aonIconClear(), "Limpiar");
         clearButton.addDomHandler(e -> fireClearFilter(), ClickEvent.getType()); 
         buttonPanel.add(clearButton);

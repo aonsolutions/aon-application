@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -54,11 +56,18 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private ColManager		  	mg;
 	private byte[]	  			logoB;
 	private String				periodStr;
+	private Date				start;
+	private Date				end;
 	private boolean 			byPeriod;
 
 	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language)
 			throws CanNotCreatePdfException {
 		print(payroll, out, language, null, null, false);
+	}
+	
+	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language, Date startDate, Date endDate)
+			throws CanNotCreatePdfException {
+		print(payroll, out, language, startDate, endDate, false);
 	}
 	
 	public static void print(EnterprisePayroll payroll, OutputStream out, Optional<Locale> language, Date startDate, Date endDate, boolean byPeriod)
@@ -80,6 +89,8 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			template.setDefaults(HELVETICA, 10f, BLACK, GRAY);
 			template.newPage(HORIZONTAL);
 			
+			template.start = startDate;
+			template.end = endDate;
 			template.byPeriod = byPeriod;
 			template.periodStr = null;
 			if (startDate != null && endDate != null) {
@@ -130,6 +141,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private static String getAppropiatePeriodString(Date startDate, Date endDate) {
 		if (startDate == null || endDate == null)
 			return "";
+		
 		Calendar cal1 = Calendar.getInstance();
 		cal1.setTime(startDate);
 		Calendar cal2 = Calendar.getInstance();
@@ -418,7 +430,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private static void drawEntryAonSs(EnterprisePayrollTemplate t, EnterprisePayrollEntry e, PdfTable table)
 			throws IOException {
 		String empleado		  = e.getEmpleado().orElse(null);
-		String tipo			  = e.getTipo().orElse(null);
+		String tipo			  = getTipo(t, e);
 		Double devengado	  = e.getDevengado().orElse(null);
 		Double ssTrab		  = e.getSsTrab().orElse(null);
 		Double irpf			  = e.getIrpf().orElse(null);
@@ -497,6 +509,51 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		t.y(table.y());
 	}
 	
+	private static String getTipo(EnterprisePayrollTemplate t, EnterprisePayrollEntry e) {
+		Date startDate = t.start;
+		Date endDate = t.end;
+		
+		if (startDate == null || endDate == null)
+			return "";
+		
+		Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(startDate);
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(endDate);
+		
+		boolean sameYear = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+		boolean sameMonth = cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+		boolean fromStartToEnd = cal1.get(Calendar.DAY_OF_MONTH) == 1 && cal2.get(Calendar.DAY_OF_MONTH) == cal2.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		Locale locale = new Locale("es", "ES");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy", locale);
+
+		if (sameYear && sameMonth && fromStartToEnd) {
+			return e.getTipo().orElse(null);
+		} else if(!t.byPeriod) {
+			 LocalDate issueDate = LocalDate.of(e.getIssueDate().getYear() + 1900, e.getIssueDate().getMonth() + 1, e.getIssueDate().getDate());
+			return getShortTipy(e.getTipo()) + " " +  issueDate.format(formatter);			
+		}
+		
+		return e.getTipo().orElse(null);
+	}
+
+	private static String getShortTipy(Optional<String> optional) {
+		if(optional.isEmpty()) return "N/DF";
+		switch (optional.get()) {
+			case "N\u00f3mina": 
+				return "Nom.";
+			case "Extra": 
+				return "Extra";
+			case "Atraso": 
+				return "Atra.";
+			case "Finiquito": 
+				return "Finiq.";
+			default:
+				return "N/DF";
+		}
+	}
+
 	private static java.awt.Color getColor(Double aon, Double ss) {
 		if ( ss == null )
 			return BLACK;
@@ -516,7 +573,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 	private static void drawEntryOnlyAon(EnterprisePayrollTemplate t, EnterprisePayrollEntry e, PdfTable table)
 			throws IOException {
 		String empleado	   = e.getEmpleado().orElse(null);
-		String tipo		   = e.getTipo().orElse(null);
+		String tipo		   = getTipo(t, e);
 		Double devengado   = e.getDevengado().orElse(null);
 		Double ssTrab	   = e.getSsTrab().orElse(null);
 		Double irpf		   = e.getIrpf().orElse(null);
@@ -606,7 +663,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			throws IOException {
 
 		String empleadoSS		= e.getEmpleadoSS().orElse(null);
-		String tipoSS			= e.getTipoSS().orElse(null);
+		String tipoSS			= getTipo(t, e);
 		Double devengadoSS		= e.getDevengadoSS().orElse(null);
 		Double ssTrabSS			= e.getSsTrabSS().orElse(null);
 		Double irpfSS			= e.getIrpfSS().orElse(null);

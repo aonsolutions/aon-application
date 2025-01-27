@@ -17,6 +17,7 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
@@ -36,11 +37,13 @@ import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.jooq.*;
 import org.jooq.impl.*;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
@@ -86,12 +89,26 @@ public class ContractDAO {
 			.innerJoin(ENTERPRISE_CCC).onKey()
 			, filter).fetch().stream().map(new ContractFiller());		
 	}
+
+	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, byte[] auth, ContractExtendedDataFilter filter, Integer limit){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		Condition domainsCondition = DOMAIN.ID.in(domains).or(DOMAIN.PARENT.in(domains));
+		Condition userScopesDomain = DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes));
+		return getContractExtendedDataStream(ctx, filter, 1, limit, domainsCondition, userScopesDomain);
+	}
 	
-	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
+	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage, Condition ...customConditions){
 		ctx.checkRead();
+		
+		Condition[] filterConditions = CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter);
+		Condition[] allConditions = Stream.concat(Arrays.stream(filterConditions), Arrays.stream(customConditions))
+				.toArray(Condition[]::new);
+		
 		Field<Integer> dateMiliseconds = DSL.field("UNIX_TIMESTAMP(date)", Integer.class);		
 		Table<?> registryTable = REGISTRY.as("registryTable");
 		return ctx.getDslContext()
+				.select(DOMAIN.fields())
 				.select(CONTRACT.fields())
 				.select(REGISTRY.fields())
 				.select(WORKPLACE.DESCRIPTION)
@@ -121,8 +138,9 @@ public class ContractDAO {
 //				.select(CONTRACT_DATA.EXPRESSION.as(CONTRACT_TYPE))
 				.from(CONTRACT)
 				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
-				.innerJoin(WORKPLACE).onKey()
-				.having(CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter))
+				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+				.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
+				.having(allConditions)
 				.orderBy(PERSON_FULL_NAME.asc())
 				.limit(perPage).offset(perPage * (page -1))
 				.fetch().stream().map(new ContractExtendedDataFiller());

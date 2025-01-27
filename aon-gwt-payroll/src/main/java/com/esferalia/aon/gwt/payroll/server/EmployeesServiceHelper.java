@@ -2374,6 +2374,7 @@ public class EmployeesServiceHelper {
 				salary.getCcc(),
 				salary.getStartDate(),
 				salary.getEndDate(),
+				salary.getIssueDate(),
 				salary.getEmployeeName(),
 				salary.getType().getName(new Locale("es")),
 				salary.getTotalPayment(),

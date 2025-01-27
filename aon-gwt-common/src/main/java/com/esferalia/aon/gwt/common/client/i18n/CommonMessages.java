@@ -1556,7 +1556,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃÂ¼edades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antig\u00FCedades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")

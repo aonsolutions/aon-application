@@ -7,10 +7,22 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 public class Model303ScriptProvider {
 
 	private enum Model303Script {
+		AEAT_2024_SCRIPT {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isAEAT() && mod303.getYear() >= 2024;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032024AEATPrintScript.values();
+			}
+		}
+		,
 		AEAT_2023_SCRIPT {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isAEAT() && mod303.getYear() >= 2023;
+				return mod303.isAEAT() && mod303.getYear() == 2023;
 			}
 	
 			@Override
