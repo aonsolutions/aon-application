@@ -13,6 +13,7 @@ public interface IEnterprisePayroll {
 	
 	public String getEmployee();
 	public String getEmployeeNaf();
+	public String getEmployeeCategory();
 	public String getCcc();
 	public String getWorkplace();
 	public SalaryType getSalaryType();
