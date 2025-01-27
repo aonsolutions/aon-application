@@ -167,6 +167,12 @@ export const MAIN_CONTRATA = {
   entryPoint: 'MainContrata'
 };
 
+export const MAIN_COST = {
+  title: 'Costes',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCostModule'
+};
+
 export const MAIN_IT = {
   title: 'IT',
   module: GWT_PAYROLL,

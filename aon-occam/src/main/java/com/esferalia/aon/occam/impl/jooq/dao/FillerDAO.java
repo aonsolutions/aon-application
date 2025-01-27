@@ -605,7 +605,10 @@ public class FillerDAO {
 					.setStartDate(r.getValue(CONTRACT.START_DATE))
 					.setEndDate(r.getValue(CONTRACT.END_DATE))
 					.setContractType(r.getValue(ContractDAO.CONTRACT_TYPE))
-					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME));
+					.setPersonName(r.getValue(ContractDAO.PERSON_FULL_NAME))
+					.setDomainName(r.getValue(DOMAIN.NAME))
+					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
+					;
 		}
 	}
 	

@@ -17,6 +17,10 @@ public class ContractExtendedDataJSON {
 		json.put(IJsonNames.NAME, data.getPersonName());
 		json.put(IJsonNames.TYPE, data.getContractType() != null ? data.getContractType().replace("\"", "") : ""); 
 		json.put(IJsonNames.AMOUNT, data.getGrossSalaryLastMonth());
+		json.put(IJsonNames.DOMAIN, data.getDomainName());
+		json.put(IJsonNames.DOCUMENT, data.getPersonDocument());
+		json.put(IJsonNames.SS_NUMBER, data.getPersonSsNumber());
+		
 		json.put("time", data.getTotalMarksLastMonth());
 		return json;
 	}

@@ -166,6 +166,7 @@ export const EDIT_TAG = 'Edit Tag';
 export const EDIT_WAREHOUSE = 'Edit Warehouse';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Employee';
+export const EMPLOYEES = 'Employees';
 export const END_DATE = 'End Date';
 export const ENGLISH = 'English';
 export const ENTERPRISE = 'Enterprise';
