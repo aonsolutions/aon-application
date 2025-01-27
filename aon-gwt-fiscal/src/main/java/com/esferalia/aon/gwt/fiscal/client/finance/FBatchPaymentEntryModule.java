@@ -1126,7 +1126,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 			amount.setTitle(infoTitle);
 		}
 		
-		if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+		if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
 			issueDate.addStyleName(AON.CSS.aonColorOrange());
 			titular.addStyleName(AON.CSS.aonColorOrange());
 			amount.addStyleName(AON.CSS.aonColorOrange());
@@ -1192,7 +1192,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 					? "La cuenta bacanria asociada al titular no es correcta"
 					: AonStringUtils.isBlank(finance.getBic()) ? "No existe BIC asociado al titular" : "";
 		else if (!finance.hasSalary()) return "Este vencimiento tiene asociada una nomina inexistente";
-		else if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid())
+		else if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid())
 			return "El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada";
 		else return AonStringUtils.EMPTY;
 	}
@@ -1511,7 +1511,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 		Label amount = new Label(AON.FMT.format(finance.getAmount()) + " \u20ac");
 		amount.addStyleName(AON.CSS.aonTextRight());
 		
-		if(finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+		if(finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
 			issueDate.addStyleName(AON.CSS.aonColorOrange());
 			titular.addStyleName(AON.CSS.aonColorOrange());
 			amount.addStyleName(AON.CSS.aonColorOrange());
@@ -1535,7 +1535,7 @@ public abstract class FBatchPaymentEntryModule extends SimpleLayoutPanel {
 				finance.isPending() || finance.isBatched() ? removeButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col,
-				finance.isPending() || finance.isBatched() || finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label());
+				finance.isPending() || finance.isBatched() || finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid() ? checkButton : new Label());
 		++col;
 		selectedFinanceTable.setWidget(row, col, issueDate);
 		++col;
