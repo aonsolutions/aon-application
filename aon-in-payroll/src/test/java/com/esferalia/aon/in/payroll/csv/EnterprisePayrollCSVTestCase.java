@@ -23,6 +23,8 @@ public class EnterprisePayrollCSVTestCase {
 		
 		@JsonProperty("Empleado")
 		private String employee;
+		@JsonProperty("Categoria Profesional")
+		private String employeeCategory;
 		@JsonProperty("Centro de trabajo")
 		private String workplace;
 		@JsonProperty("Tipo")
@@ -94,6 +96,11 @@ public class EnterprisePayrollCSVTestCase {
 		@Override
 		public String getEmployee() {
 			return employee;
+		}
+		
+		@Override
+		public String getEmployeeCategory() {
+			return employeeCategory;
 		}
 
 		@Override

@@ -23,6 +23,7 @@ public class EnterprisePayrollExcelTestCase {
 	public static class EnterprisePayroll implements IEnterprisePayroll {
 		private Integer employeeId;
 		private String employee;
+		private String employeeCategory;
 		private String workplace;
 		private SalaryType salaryType;
 
@@ -61,6 +62,11 @@ public class EnterprisePayrollExcelTestCase {
 		@Override
 		public String getEmployee() {
 			return employee;
+		}
+		
+		@Override
+		public String getEmployeeCategory() {
+			return employeeCategory;
 		}
 
 		@Override
