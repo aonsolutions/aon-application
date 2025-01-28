@@ -79,6 +79,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.google.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
@@ -193,6 +194,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	// @formatter:off
 	private static final String MAIN_SQL = "SELECT * " + " FROM contract"
+			+ " LEFT JOIN domain ON (contract.domain = domain.id)"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
 			+ " LEFT JOIN agreement_level ON (contract.agreement_level = agreement_level.id)"
@@ -550,10 +552,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		private CCCType cccType;
 		private SSRegimeType ssRegime;
+		private Integer domain;
+		private Integer parentDomain;
 
-		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime) {
+
+		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime, Integer domain , Integer parentDomain ) {
 			this.cccType = cccType;
 			this.ssRegime = ssRegime;
+			this.domain = domain;
+			this.parentDomain = parentDomain;
 		}
 
 		public CCCType getCCC() {
@@ -563,7 +570,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public SSRegimeType getSSRegime() {
 			return ssRegime;
 		};
-
+		
+		public Integer getDomain() {
+			return domain;
+		}
+		
+		public Integer getParentDomain() {
+			return parentDomain;
+		}
 	}
 
 	protected static class GuarenteeException extends SalaryException {
@@ -1468,9 +1482,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	public ExpressionContext getSystemExpressionContext() {
 		try {
-			return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime()));
+			return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getDomain(), getParentDomain()));
 		} catch (Exception e) {
-			return getCccExpressionContexts().get(new CCCContextKey(null, null));
+			return getCccExpressionContexts().get(new CCCContextKey(null, null, null, null ));
 			// TODO: This is very simple, too much
 		}
 	}
@@ -2553,6 +2567,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Integer getDomain() {
 		Object value = getObject(SQLConstants.CONTRACT, ContractColumns.DOMAIN);
+		return value == null ? null : (Integer) value;
+	}
+
+	private Integer getParentDomain() {
+		Object value = getObject(SQLConstants.DOMAIN, DomainColumns.PARENT);
 		return value == null ? null : (Integer) value;
 	}
 
@@ -6272,7 +6291,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private ExpressionContext getCCCExpressionContext() {
-		return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime()));
+		return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getDomain(), getParentDomain()));
 	}
 
 	private List<Period> getPeriods(ExpressionContext ctx, String varName) {
