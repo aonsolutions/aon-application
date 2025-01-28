@@ -161,9 +161,7 @@ export class AonMobileParent extends AonElement {
 	  this.getElement(aonHeader.COMPANY_LIST).style.display = 'block';
       getUser().then(user => {
         localStorage.setItem('aon_domain_login', user.login);
-        this.rootPanel(UA.isAndroidApp() 
-			? new AonMobileHome()
-			: new AonMobileDesktop());
+        this.rootPanel(new AonMobileHome());
       });
     }
 

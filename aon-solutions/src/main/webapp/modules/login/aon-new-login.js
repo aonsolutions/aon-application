@@ -452,9 +452,7 @@ export class AonNewLogin extends AonElement {
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);
       if(UA.isMobile()){
-        this.rootPanel(UA.isAndroidApp() 
-        ? new AonMobileHome()
-        : new AonMobileDesktop());
+        this.rootPanel(new AonMobileHome());
       } else {
         this.rootPanel(new AonDesktop());
         let portal = LS.isLeftMenu();

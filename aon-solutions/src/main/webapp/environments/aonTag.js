@@ -89,6 +89,7 @@ export const AON_IBAN = 'aon-iban';
 export const AON_TEXTAREA ='aon-textarea';
 export const AON_ITEM_UPDATE ='aon-item-update';
 export const AON_HEADER ='aon-header';
+export const AON_MOBILE_HEADER ='aon-mobile-header';
 
 export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 
