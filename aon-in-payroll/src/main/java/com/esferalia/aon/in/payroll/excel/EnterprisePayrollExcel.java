@@ -96,6 +96,7 @@ public class EnterprisePayrollExcel {
 		
 			DEFAULT_HEADER = new LinkedHashMap<>();
 			DEFAULT_HEADER.put("employee", "NOMBRE");
+			DEFAULT_HEADER.put("employeeCategory", "CATEGORIA PROFESIONAL");
 			DEFAULT_HEADER.put("type", "TIPO");
 			DEFAULT_HEADER.put("raw", "BRUTO");
 			DEFAULT_HEADER.put("enterpriseSS", "COTIZAC.");
@@ -264,6 +265,7 @@ public class EnterprisePayrollExcel {
 		
 			DEFAULT_HEADER_SUMMARY = new LinkedHashMap<>();
 			DEFAULT_HEADER_SUMMARY.put("employee", "NOMBRE");
+			DEFAULT_HEADER_SUMMARY.put("employeeCategory", "CATEGORIA PROFESIONAL");
 			DEFAULT_HEADER_SUMMARY.put("type", "TIPO");
 			DEFAULT_HEADER_SUMMARY.put("raw", "BRUTO");
 			DEFAULT_HEADER_SUMMARY.put("enterpriseSS", "COTIZAC.");
@@ -1349,8 +1351,8 @@ public class EnterprisePayrollExcel {
 
 		totalsHeader.put("employee", "CENTRO DE TRABAJO");
 		
-		final int completeLength = 37;
-		final int summaryLength = 12;
+		final int completeLength = 38;
+		final int summaryLength = 13;
 		
 		totals = initializeTotalsSheet(header, enterpriseName, dateString, excelType, wb, stylesMap, completeLength,
 				summaryLength, totals, workplaces, totalsHeader);
@@ -1444,9 +1446,9 @@ public class EnterprisePayrollExcel {
 				ArrayList<Integer> importantCells = new ArrayList<>(3);
 				
 				
-				int empFirstCell = excelType.isWithType() ? 3 : 2;
-				int entFirstCell = excelType.isWithType() ? 2 : 1;
-				int tgssCell = excelType.isWithType() ? 4 : 3;
+				int empFirstCell = excelType.isWithType() ? 4 : 3;
+				int entFirstCell = excelType.isWithType() ? 3 : 2;
+				int tgssCell = excelType.isWithType() ? 5 : 4;
 				int entQuoteFirstCell;
 				int empQuoteFirstCell;
 				
@@ -1496,6 +1498,7 @@ public class EnterprisePayrollExcel {
 					
 					entQuoteFirstCell= tgssCell+2;
 					empQuoteFirstCell = entQuoteFirstCell+1;
+					
 					if (excelType.isComplete()) {
 						if (!checks.isCgcEnterprise())
 						finalHeader.remove("cgcEnterprise");
@@ -1634,8 +1637,12 @@ public class EnterprisePayrollExcel {
 					}
 					//EMPLOYEE NAME
 					writeEmployee(stylesMap, row, column++, payroll, excelType);
+					
 					//SALARY TYPE
 					if (excelType.isWithType()) {						
+						//EMPLOYEE NAME
+						writeEmployeeCategory(stylesMap, row, column++, payroll, excelType);
+						
 						writeSalaryType(
 								isDiff
 								, stylesMap
@@ -1991,6 +1998,8 @@ public class EnterprisePayrollExcel {
 		cell.setCellValue("TOTALES:");
 		cell = row.createCell(1);
 		cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+		cell = row.createCell(2);
+		cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 		cell = row.createCell(row.getLastCellNum());
 		cell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
 	}
@@ -2039,6 +2048,9 @@ public class EnterprisePayrollExcel {
 		cell.setCellType(CellType.STRING);
 		cell.setCellValue("TOTALES SS:");
 		cell = row.createCell(1);
+		cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
+		cell = row.createCell(row.getLastCellNum());
+		cell = row.createCell(2);
 		cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 		cell = row.createCell(row.getLastCellNum());
 		cell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_LEFT_CELL_STYLE));
@@ -2228,6 +2240,7 @@ public class EnterprisePayrollExcel {
 			enterprisePayroll.endDate = s.getEndDate();
 			
 			enterprisePayroll.employee = s.getEmployeeName();
+			enterprisePayroll.employeeCategory = s.getEmployeeCategory();
 			enterprisePayroll.employeeNaf = s.getEmployeeSSNumber();
 			enterprisePayroll.ccc = s.getEnterpriseCCC();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
@@ -2399,7 +2412,7 @@ public class EnterprisePayrollExcel {
 				Cell cell = row.createCell(cellCount++);
 				cell.setCellType(CellType.STRING);
 				String value = itHead.next();
-				if (AonStringUtils.containsIgnoreCase(value, "join") || AonStringUtils.containsIgnoreCase(value, "type"))
+				if (AonStringUtils.containsIgnoreCase(value, "join") || AonStringUtils.containsIgnoreCase(value, "type") || AonStringUtils.containsIgnoreCase(value, "employeeCategory"))
 					cell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				else {
 					cell.setCellValue(totalsHeader.get(value));
@@ -2410,21 +2423,21 @@ public class EnterprisePayrollExcel {
 			
 			int lastCell = row.getLastCellNum() - 1;
 			row = totals.createRow(1);
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 2, 4));
-			Cell epCell = row.createCell(2, CellType.STRING);
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 3, 5));
+			Cell epCell = row.createCell(3, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPRESA");
 			
-			Cell jointCell = row.createCell(5, CellType.STRING);
+			Cell jointCell = row.createCell(6, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 6, 10));
-			epCell = row.createCell(6, CellType.STRING);
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 7, 11));
+			epCell = row.createCell(7, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPLEADO");
 			
-			jointCell = row.createCell(11, CellType.STRING);
+			jointCell = row.createCell(12, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
 			epCell = row.createCell(summaryLength, CellType.STRING);
@@ -2432,19 +2445,19 @@ public class EnterprisePayrollExcel {
 			epCell.setCellValue("TGSS");
 			
 			if (excelType.isComplete()) {
-				jointCell = row.createCell(13, CellType.STRING);
+				jointCell = row.createCell(14, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 14, 22));
-				Cell entCell = row.createCell(14, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 15, 23));
+				Cell entCell = row.createCell(15, CellType.STRING);
 				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				entCell.setCellValue("COTIZACIÓN EMPRESA");
 				
-				jointCell = row.createCell(23, CellType.STRING);
+				jointCell = row.createCell(24, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 24, lastCell));
-				epCell= row.createCell(24, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 25, lastCell));
+				epCell= row.createCell(25, CellType.STRING);
 				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				epCell.setCellValue("COTIZACIÓN EMPLEADO");
 			}
@@ -2498,9 +2511,9 @@ public class EnterprisePayrollExcel {
 			
 			
 			int lastCell = row.getLastCellNum() - 1;
-			row = totals.createRow(1);
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 0, 1));
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 3, 5));
+			row = totals.createRow(2);
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 4, 6));
 			Cell epCell = row.createCell(3, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPRESA");
@@ -2508,7 +2521,7 @@ public class EnterprisePayrollExcel {
 			Cell jointCell = row.createCell(6, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 7, 11));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 8, 12));
 			epCell = row.createCell(7, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPLEADO");
@@ -2530,7 +2543,7 @@ public class EnterprisePayrollExcel {
 				jointCell = row.createCell(14, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 15, 23));
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 16, 24));
 				Cell entCell = row.createCell(15, CellType.STRING);
 				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				entCell.setCellValue("COTIZACIÓN EMPRESA");
@@ -2538,7 +2551,7 @@ public class EnterprisePayrollExcel {
 				jointCell = row.createCell(24, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 25, lastCell));
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 26, lastCell));
 				epCell= row.createCell(25, CellType.STRING);
 				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				epCell.setCellValue("COTIZACIÓN EMPLEADO");
@@ -2804,23 +2817,23 @@ public class EnterprisePayrollExcel {
 		
 		row = sheet.createRow(sheet.getLastRowNum() + 1);
 		
-		int ind = 1;
+		int ind = 2;
 		
 		int totalssInd = getKeyIndex(header, "totalSS");
 		int fundaeInd = getKeyIndex(header, FUNDAE);
 		
 		if (completeWorkplace) {
+			Cell totalCell = row.createCell(3);
+			totalCell.setCellType(CellType.STRING);
+			totalCell.setCellValue("TOTALES:");
+			totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
+			ind = 4;
+		} else if (excelType.isWithType()) {			
 			Cell totalCell = row.createCell(2);
 			totalCell.setCellType(CellType.STRING);
 			totalCell.setCellValue("TOTALES:");
 			totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			ind = 3;
-		} else if (excelType.isWithType()) {			
-			Cell totalCell = row.createCell(1);
-			totalCell.setCellType(CellType.STRING);
-			totalCell.setCellValue("TOTALES:");
-			totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
-			ind = 2;
 		} else {
 			Cell firstTotalsCell = row.createCell(0);
 			firstTotalsCell.setCellStyle(stylesMap.get(PayrollCellStyle.BORDER_RIGHT_CELL_STYLE));
@@ -2874,7 +2887,7 @@ public class EnterprisePayrollExcel {
 		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
 		row = sheet.createRow(sheet.getLastRowNum() + 1);
 		
-		Cell totalCell = row.createCell(1);
+		Cell totalCell = row.createCell(2);
 		totalCell.setCellType(CellType.STRING);
 		totalCell.setCellValue("SUBTOTAL S.S.:");
 		totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
@@ -2884,7 +2897,7 @@ public class EnterprisePayrollExcel {
 		int totalssInd = getKeyIndex(header, "totalSS");
 		int fundaeInd = getKeyIndex(header, FUNDAE);
 		
-		for (int i = 2; i < lastColumn; i++) {
+		for (int i = 3; i < lastColumn; i++) {
 				CellStyle style = stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE);
 				StringBuilder fsb = new StringBuilder("0");
 				for (Integer r : ssRows) {
@@ -2948,12 +2961,11 @@ public class EnterprisePayrollExcel {
 			tCell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE));
 
 			
-			int column = excelType.isWithType() ? 2 : 1;
-			int cell = 2;
+			int column = excelType.isWithType() ? 3 : 2;
+			int cell = 3;
 			
 			Cell jCell = row.createCell(1, CellType.STRING);
 			jCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
-			
 			
 			//------EMPRESA------
 			column = addTotalsFormulaCell(checks.isRaw(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
@@ -3270,7 +3282,11 @@ public class EnterprisePayrollExcel {
 				otherCell.setCellType(CellType.BLANK);
 				otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
 				
-				int cellInd = 3;
+				otherCell = row.createCell(3);
+				otherCell.setCellType(CellType.BLANK);
+				otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.FORMULA_CELL_STYLE));
+				
+				int cellInd = 4;
 				for (; cellInd<COMPLETE_TOTALS_HEADER.size(); cellInd++) {
 					List<String> hList = new LinkedList<>();
 					hList.addAll(COMPLETE_TOTALS_HEADER.keySet());
@@ -3353,13 +3369,13 @@ public class EnterprisePayrollExcel {
 		
 		row = totals.createRow(totals.getLastRowNum() + 1);
 		
-		int ind = 2;
+		int ind = 3;
 		
 		Cell totalCell = row.createCell(ind);
 		totalCell.setCellType(CellType.STRING);
 		totalCell.setCellValue("TOTALES:");
 		totalCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
-		ind = 3;
+		ind = 4;
 		
 		
 		ArrayList<Integer> joints = new ArrayList<>();
@@ -3564,6 +3580,14 @@ public class EnterprisePayrollExcel {
 				
 		}
 	}
+	
+	private static void writeEmployeeCategory(Map<PayrollCellStyle, CellStyle> stylesMap, Row row, int column, IEnterprisePayroll payroll, ExcelType excelType) {
+		Cell cell = row.createCell(column);
+		if(payroll.getOriginalPayroll() == null) {			
+			cell.setCellValue(payroll.getEmployeeCategory());
+			cell.setCellStyle(stylesMap.get(PayrollCellStyle.STRING_CELL_STYLE_WHITE_BACK));
+		}
+	}
 
 	private static void createDoubleCell(Row row, int column, Double value, CellStyle doubleCellStyle) {
 		Cell cell = row.createCell(column);
@@ -3626,6 +3650,7 @@ public class EnterprisePayrollExcel {
 		protected Date endDate;
 		
 		protected String employee;
+		protected String employeeCategory;
 		protected String employeeNaf;
 		protected String ccc;
 		protected String workplace;
@@ -3673,6 +3698,11 @@ public class EnterprisePayrollExcel {
 		@Override
 		public String getEmployee() {
 			return employee;
+		}
+		
+		@Override
+		public String getEmployeeCategory() {
+			return employeeCategory;
 		}
 
 		@Override
@@ -3890,6 +3920,7 @@ public class EnterprisePayrollExcel {
 			cloned.endDate = this.endDate;
 			
 			cloned.employee = this.employee;
+			cloned.employeeCategory = this.employeeCategory;
 			cloned.employeeNaf = this.employeeNaf;
 			cloned.ccc = this.ccc;
 			cloned.workplace = this.workplace;
