@@ -26,6 +26,7 @@ import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 import { AonUploadToast } from "../components/aon-upload-toast.js";
 import { AonMobileHome } from "./home/aon-mobile-home.js";
 import { AonMobileDesktop } from "./company/aon-mobile-desktop.js";
+import { AonMobileProfile } from "./user/aon-mobile-profile.js";
 
 export class AonMobileMenu extends AonElement {
 
@@ -164,11 +165,11 @@ export class AonMobileMenu extends AonElement {
       fn: () => this.home()
     });
 
-    this.addMenuButton({
-      name: 'Apps',
-      icon: 'apps',
-      fn: () => this.apps()
-    });
+    // this.addMenuButton({
+    //   name: 'Apps',
+    //   icon: 'apps',
+    //   fn: () => this.apps()
+    // });
 
    this.addMenuButton({
       icon: MATERIAL_ICONS.ADD,
@@ -180,16 +181,22 @@ export class AonMobileMenu extends AonElement {
       }
     });
 
-    this.addMenuButton({
-      name: 'Notification',
-      icon: 'notifications',
-      fn: () => this.notification()
-    });
+    // this.addMenuButton({
+    //   name: 'Notification',
+    //   icon: 'notifications',
+    //   fn: () => this.notification()
+    // });
+
+    // this.addMenuButton({
+    //   name: 'Exit',
+    //   icon: MATERIAL_ICONS.LOGOUT,
+    //   fn: () => this.closeSession()
+    // });
 
     this.addMenuButton({
-      name: 'Exit',
-      icon: MATERIAL_ICONS.LOGOUT,
-      fn: () => this.closeSession()
+      name: 'User',
+      icon: MATERIAL_ICONS.PERSON,
+      fn: () => this.user()
     });
   }
 
@@ -199,7 +206,7 @@ export class AonMobileMenu extends AonElement {
     if(!span){
       span = this.createElement(TAG.SPAN);
       let menu = this.getElement(`${this.id}Sidenav`);
-      let n = (window.innerWidth / 5 - 40) / 2;
+      let n = (window.innerWidth / 3 - 40) / 2;
       span.id = idSpan;
       menu.appendChild(span);
 
@@ -237,9 +244,7 @@ export class AonMobileMenu extends AonElement {
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyIn();
-      this.rootPanel(UA.isAndroidApp() 
-        ? new AonMobileHome()
-        : new AonMobileDesktop());
+      this.rootPanel(new AonMobileHome());
     } else {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyOut();
@@ -255,6 +260,12 @@ export class AonMobileMenu extends AonElement {
     } else {
       alert("selecciona una empresa.")
     }
+  }
+
+  user() {
+  	const aonMobileProfile = new AonMobileProfile();
+		aonMobileProfile.id = CONSTANT.AON_MOBILE_PROFILE;
+	  this.rootPanel(aonMobileProfile);
   }
 
   newButtons() {

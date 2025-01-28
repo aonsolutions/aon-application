@@ -439,9 +439,7 @@ export class AonLogin extends AonElement {
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);
-      this.rootPanel(UA.isAndroidApp() 
-          ? new AonMobileHome()
-          : new AonMobileDesktop());
+      this.rootPanel(new AonMobileHome());
     });
   }
 

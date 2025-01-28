@@ -139,12 +139,10 @@ export class AonModule extends AonElement {
 			aonMenu.init();
 		} else aonHeader.companyIn(onlyOne);
 
-		if(UA.isAndroidApp()) {
+		if(this.isMobile()) {
 			this.rootPanel(new AonMobileHome());
 		} else {
-			this.rootPanelHtml(this.isMobile()
-			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-			: '<aon-desktop id="aonDesktop"></aon-desktop>');
+			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
 		}
 	}
 

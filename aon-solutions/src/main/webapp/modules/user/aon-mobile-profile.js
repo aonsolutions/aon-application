@@ -84,7 +84,7 @@ export class AonMobileProfile extends AonElement {
         this.buildOption('fingerprint', user.document);
         this.buildOption('smartphone', user.phone);
         this.buildOption('password', 'Cambiar Contraseña', () => this.editPassword());
-        // this.addCloseSessionButton();
+        this.buildOption('logout', 'Cerrar Sesión', () => this.closeSession());
     }
 
     buildOption(icon, value, fn) {
@@ -158,39 +158,20 @@ export class AonMobileProfile extends AonElement {
 		d.open();
 	}
 
-    // addCloseSessionButton() {
-    //     let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
-    //     span.id = this.id + "FloatSpan";
-    //     span.style.position = "fixed";
-    //     let n = (window.innerWidth / 5 - 40) / 2;
-    //     span.style.right = n + 'px';
-    //     span.style.bottom = this.isSab() ? "80px" : "70px";
-    //     let aonIconButton = new AonIconButton();
-
-    //     aonIconButton.icon = 'input';
-    //     aonIconButton.id = this.id + "CloseSessionButton";
-    //     aonIconButton.title = 'Cerrar Sesión';
-    //     aonIconButton.color = 'white'
-    //     aonIconButton.background = 'red';
-    //     aonIconButton.style.opacity = '0.5';
-    //     aonIconButton.noHover = true;
-    //     span.appendChild(aonIconButton);
-    //     this.appendChild(span);
-    //     aonIconButton.addEventListener(EVENT.CLICK, () => this.closeSession());
-    // }
-
-    // closeSession() {
-    //     let d = new AonDialog();
-    //     this.appendChild(d);
-    //     d.clear();
-    // 	if(!this.isMobile()) d.width = '400px';
-    // 	d.setTitle('Cerrar Sesión');
-   	//  	d.setContentHTML(`Estás seguro de cerrar sesión`);
-    // 	d.addAcceptAction(() => {
-    //         closeSession();
-    // 	});
-    // 	d.open();
-    // }
+    closeSession() {
+        const idDialog = "dialogCloseSesion";
+        let d = this.getElement(idDialog);
+        if(!d){
+          d = new AonDialog();
+          d.id = idDialog;
+          document.body.appendChild(d);
+        }
+        d.clear();
+        d.setTitle(MSG.CLOSE_SESSION);
+        d.setContentHTML(`Estás seguro de cerrar sesión`);
+        d.addAcceptAction(() => closeSession());
+        d.open();
+    }
 
     uploadAvatar() {
         this.getElement(this.INPUT_FILE).click();
