@@ -297,7 +297,6 @@ export class AonDialogMenu extends AonElement {
 		if(this.isMobile()) {
 			this.addButtons(options);
 		} else {
-			let dialog = this.getDialog();
 			let content = this.getContent();
 
   			content.style.top = top + 'px' || '90px';
@@ -309,7 +308,7 @@ export class AonDialogMenu extends AonElement {
 			ul.className = CSS.AON_UL;
 			ul.style.padding = '0px';
 			content.appendChild(ul);
-			options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i )); });
+			options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
 		}
 	}
 
@@ -377,6 +376,7 @@ export class AonDialogMenu extends AonElement {
 	}
 	
 	buildLi(item, i) {
+		let dialog = this.getDialog();
 		let li = document.createElement('li');
 		if(item.id) li.id = item.id;
 		li.className = 'aonAppLi';
