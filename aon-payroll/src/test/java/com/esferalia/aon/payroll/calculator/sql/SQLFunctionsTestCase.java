@@ -613,7 +613,7 @@ public class SQLFunctionsTestCase extends
 	
 		startDate = getToday();
 		endDate = getLastDayOfMonth(startDate);
-		addData(aonContext, contract.getDomain(), category, startDate, endDate, 			
+		addData(aonContext, category.getDomain(), category, startDate, endDate, 			
 			new HashMap<String, String>() {
 			{
 				put(MONTH_DAYS.getName(), "99.00");
