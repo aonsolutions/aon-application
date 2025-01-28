@@ -28,8 +28,10 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketTaggingRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.Tagging;
+import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -181,6 +183,13 @@ public class S3 {
 		}
 	}
 	
+	public static List<S3Object> listObjects(String bucket, String prefix) {
+		try(S3Client client = getClient()) {
+			return client.listObjectsV2Paginator(builder -> builder.bucket(bucket).prefix(prefix)).stream()
+					.flatMap(objects -> objects.contents().stream()).toList();
+		} 
+	}
+
 	// ----- UPLOAD OBJECT
 	
 	public static String upload(String bucket, File file) {

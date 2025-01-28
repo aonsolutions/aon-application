@@ -425,8 +425,9 @@ export class AonDialogMenu extends AonElement {
 		} else if(item.icon){
 			let ic = document.createElement('i');
 			ic.className = item.icon_class || 'material-icons';
+			ic.style.color = item.color ;
 			ic.style.verticalAlign = 'middle';
-			ic.style.fontSize = '16px';
+			ic.style.fontSize = `${item.size || 16}px`;
 			ic.innerHTML = item.icon;
 			li.appendChild(ic);
 		}
