@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
@@ -506,7 +507,8 @@ public class Up2Date {
 			
 			// SalaryHoursFixIII.SALARYHOURSFIXIII
 			
-			MEI2025Rollback.MEI2025ROLLBACK
+			// MEI2025Rollback.MEI2025ROLLBACK,
+			RemakeTakaraFix.REMAKETAKARAFIX
 	};
 
 	// ------------------------------------------------------------------------
