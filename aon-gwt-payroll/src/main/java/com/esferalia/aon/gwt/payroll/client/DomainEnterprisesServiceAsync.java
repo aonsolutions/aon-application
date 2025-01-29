@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -104,6 +105,18 @@ public class DomainEnterprisesServiceAsync {
 
 	public void savePaymentConcept(Payment payment, AsyncCallback<Payment> callback) {
 		enterprisesServiceAsync.savePaymentConcept(getCurrentDomainName(), payment, callback);
+	}
+
+	public void getSystemVariables(Integer domainId, AsyncCallback<List<SystemVariable>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSystemVariables(getCurrentDomainName(), getCurrentUser(), domainId, asyncCallback);
+	}
+
+	public void createSystemVariable(Integer domainId, SystemVariable systemVariable, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.createSystemVariable(getCurrentDomainName(), getCurrentUser(), domainId, systemVariable, asyncCallback);
+	}
+
+	public void updateSystemVariables(Integer domainId, List<SystemVariable> systemVariables, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.updateSystemVariables(getCurrentDomainName(), getCurrentUser(),  domainId, systemVariables, asyncCallback);
 	}
 
 	public void saveDeductionConcept(Deduction deduction, AsyncCallback<Deduction> callback) {

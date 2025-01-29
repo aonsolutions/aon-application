@@ -11,8 +11,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.payroll.client.Variables.Variable;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
-import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -26,13 +26,13 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ContractVariableDialog extends AonCustomDialog {
+public abstract class VariableDialog extends AonCustomDialog {
 	
 	// ------------------------------------------------- UIBinder
 	
-	interface Certifica2DialogUIBinder extends UiBinder<Widget, ContractVariableDialog> {}
+	interface VariableDialogUIBinder extends UiBinder<Widget, VariableDialog> {}
 
-	private static final Certifica2DialogUIBinder binder = GWT.create(Certifica2DialogUIBinder.class);
+	private static final VariableDialogUIBinder binder = GWT.create(VariableDialogUIBinder.class);
 	
 	// ------------------------------------------------- UIFileds
 	
@@ -59,20 +59,20 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	
 	// ------------------------------------------------- Variables
 	
-	private ContractVariable contractVariable;
+	private Date startDate;
+	private Date endDate;
 	
-	private Date contractStartDate;
-	private Date contractEndDate;
+	private Variable<?> variable;
 	
 	// ------------------------------------------------- Constructor
 	
-	protected ContractVariableDialog(ContractVariable selectedContractVariable, Date contractStartDate, Date contractEndDate) {
+	protected VariableDialog(Variable<?> selectedVariable, Date startDate, Date endDate) {
 		setCaption("Variables contrato");
 		setWidget(binder.createAndBindUi(this));
-		this.contractVariable = selectedContractVariable;
+		this.variable = selectedVariable;
 		
-		this.contractStartDate = contractStartDate;
-		this.contractEndDate = contractEndDate;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		
 		initializeView();
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.variableType);
@@ -81,58 +81,52 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor Methods
 	
 	private void initializeView() {
-		initListBox();
+		initListBox(this.variableType);
 		initHandlers();
 		getButtonsPanel();
-		if(null != this.contractVariable)
+		if(null != this.variable)
 			fillContractVariable();
 		showDialog();
-	}
-
-	private void initListBox() {
-		this.variableType.clear();
-		this.variableType.addItem("Contract Data", "CONTRACT_DATA");
-		this.variableType.addItem("Contract Info", "CONTRACT_INFO");
 	}
 
 	private void initHandlers() {
 		variableType.addChangeHandler(e -> {
 			checkIfExistContractVariable();
-			contractVariable.setVariableType(VariableType.valueOf(variableType.getSelectedValue()));
+			variable.setVariableType(getVariableType(variableType.getSelectedValue()));
 		});
 		
 		variableName.addValueChangeHandler(e -> {
 			checkIfExistContractVariable();
-			contractVariable.setDescription(e.getValue());
+			variable.setDescription(e.getValue());
 		});
 		
 		variableValue.addValueChangeHandler(e -> {
 			checkIfExistContractVariable();
-			contractVariable.setExpression(e.getValue());
+			variable.setExpression(e.getValue());
 		});
 		
 		startDateBx.addValueChangeHandler(e -> {
 			checkIfExistContractVariable();
-			contractVariable.setStartDate(e.getValue());
+			variable.setStartDate(e.getValue());
 		});
 		
 		endDateBx.addValueChangeHandler(e -> {
 			checkIfExistContractVariable();
-			contractVariable.setEndDate(e.getValue());
+			variable.setEndDate(e.getValue());
 		});
 	}
 
 	private void checkIfExistContractVariable() {
-		if(null == this.contractVariable)
-			this.contractVariable = new ContractVariable();
+		if(null == this.variable)
+			this.variable = newVariable();
 	}
 
 	private void fillContractVariable() {
-		setSelectedValueLB(variableType, contractVariable.getVariableType().name());
-		this.variableName.setValue(contractVariable.getDescription());
-		this.variableValue.setValue(contractVariable.getExpression());
-		this.startDateBx.setValue(contractVariable.getStartDate());
-		this.endDateBx.setValue(contractVariable.getEndDate());
+		setSelectedValueLB(variableType, variable.getVariableType().name());
+		this.variableName.setValue(variable.getDescription());
+		this.variableValue.setValue(variable.getExpression());
+		this.startDateBx.setValue(variable.getStartDate());
+		this.endDateBx.setValue(variable.getEndDate());
 	}
 
 	// ------------------------------------------------- Auxiliar Methods
@@ -179,7 +173,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		Map<String, String> saveMessage = canSave();
 		if(saveMessage.isEmpty()) {
 			
-			if(null != startDateBx.getValue() && startDateBx.getValue().before(contractStartDate)) {
+			if(null != startDateBx.getValue() && startDateBx.getValue().before(startDate)) {
 				AonDialog warningDialog = new AonDialog("Fecha inicio", new HTMLPanel("La fecha de inicio de la variable es anterior a la fecha de inicio del contrato. \u00BFDesea continuar igualmente?"));
 				warningDialog.confirm(new AonAcceptDialogCallback() {
 					
@@ -192,13 +186,13 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 					@Override
 					public void onAccept() {
 						checkContractVariableValue();
-						onAcceptDialog(contractVariable);
+						onAcceptDialog(variable);
 						hide();
 					}
 				});
 			}
 			
-			else if(null != endDateBx.getValue() && null != contractEndDate && endDateBx.getValue().after(contractEndDate)) {
+			else if(null != endDateBx.getValue() && null != endDate && endDateBx.getValue().after(endDate)) {
 				AonDialog warningDialog = new AonDialog("Fecha fin", new HTMLPanel("La fecha fin de la variable es posterior a la fecha fin del contrato. \u00BFDesea continuar igualmente?"));
 				warningDialog.confirm(new AonAcceptDialogCallback() {
 					
@@ -211,7 +205,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 					@Override
 					public void onAccept() {
 						checkContractVariableValue();
-						onAcceptDialog(contractVariable);
+						onAcceptDialog(variable);
 						hide();
 					}
 				});
@@ -219,7 +213,7 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 			
 			else {
 				checkContractVariableValue();
-				onAcceptDialog(contractVariable);
+				onAcceptDialog(variable);
 				hide();
 			}
 			
@@ -236,11 +230,11 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 		quoteVariables.add("GRUPO_COTIZACION");
 		quoteVariables.add("OPCION_CONTRATO");
 		
-		if( quoteVariables.contains(contractVariable.getDescription()) && 
-			AonStringUtils.isNotBlank(contractVariable.getExpression()) && 
-			!contractVariable.getExpression().contains("\"")) {
+		if( quoteVariables.contains(variable.getDescription()) && 
+			AonStringUtils.isNotBlank(variable.getExpression()) && 
+			!variable.getExpression().contains("\"")) {
 			
-			contractVariable.setExpression("\"" + contractVariable.getExpression() + "\"");
+			variable.setExpression("\"" + variable.getExpression() + "\"");
 		}
 	}
 
@@ -257,7 +251,13 @@ public abstract class ContractVariableDialog extends AonCustomDialog {
 	}
 	
 	// ------------------------------------------------- AbstractMethods
+	protected abstract void initListBox(ListBox variableTypeListBox);
 	
-	protected abstract void onAcceptDialog(ContractVariable createVariable);
+	protected abstract Variable<?> newVariable();
+	
+	protected abstract void onAcceptDialog(Variable<?> variable);
+	
+	protected abstract <T extends Enum<?>> T getVariableType(String value) ;
+
 	
 }

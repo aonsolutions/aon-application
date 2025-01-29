@@ -13,7 +13,7 @@
 			<aon:AonToolbar ui:field="toolbar" />
 		</g:north>
 		<g:center>
-			<c:DataGrid ui:field="contractVariablesDG" />
+			<c:DataGrid ui:field="variablesDG" />
 		</g:center>
 	</g:DockLayoutPanel>
 	
