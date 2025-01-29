@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -1281,5 +1282,28 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getScopes(domainName, currentUser, callback);
 	}
-
+	
+	// ------------------------------------------------ Variables
+	
+	@Override
+	public void getSystemVariables(String currentDomainName, String currentUser, Integer domainId,
+			AsyncCallback<List<SystemVariable>> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSystemVariables(currentDomainName, currentUser, domainId, asyncCallback);
+	}
+	
+	@Override
+	public void updateSystemVariables(String currentDomainName, String currentUser, Integer domainId,
+			List<SystemVariable> systemVariables, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.updateSystemVariables(currentDomainName, currentUser, domainId, systemVariables, asyncCallback);
+	}
+	
+	@Override
+	public void createSystemVariable(String currentDomainName, String currentUser, Integer domainId,
+			SystemVariable systemVariable, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.createSystemVariable(currentDomainName, currentUser, domainId, systemVariable, asyncCallback);
+	}
+	
 }

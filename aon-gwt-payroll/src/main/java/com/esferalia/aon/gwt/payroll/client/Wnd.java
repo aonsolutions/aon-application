@@ -33,6 +33,11 @@ public class Wnd {
 		return $wnd.getCurrentUser();
 	}-*/;
 
+	public static native int getCurrentDomain()
+	/*-{
+		return $wnd.getCurrentDomain();
+	}-*/;
+
 	public static native String getCurrentDomainNameURL()
 	/*-{
 		return $wnd.getCurrentDomainNameURL();

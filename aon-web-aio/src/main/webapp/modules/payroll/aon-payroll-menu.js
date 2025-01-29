@@ -182,7 +182,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        description: "Festivos",
 		        title: "Festivos",
 		        action: () => alert("description")
-		    }/*,{
+		    },{
+		        description: "Variables Calculo Entorno",
+		        title: "Variables Calculo Entorno",
+		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES)
+			}/*,{
 		        description: "Variables Calculo Trabajadores",
 		        title: "Variables Calculo Trabajadores",
 		        action: () => alert("description")

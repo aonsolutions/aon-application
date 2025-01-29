@@ -32,6 +32,14 @@ public class SQLAgreementContextFactory implements
 		LRUCacheFactory<AgreementContextKey, ExpressionContext> {
 
 	// @formatter:off
+	private static final String DOMAIN_DATA_SQL = "SELECT * "
+			+ " FROM `system_data`" + " WHERE domain = ? "
+			+ " AND start_date <= ? "
+			+ " ORDER BY start_date"
+			;
+	// @formatter:on
+
+	// @formatter:off
 	private static final String AGREEMENT_DATA_SQL = "SELECT * "
 			+ " FROM `agreement_data`" + " WHERE domain = ? "
 			+ " AND agreement = ? " + " AND start_date <= ? "
@@ -57,7 +65,8 @@ public class SQLAgreementContextFactory implements
 	private Date endDate;
 	private Date startDate;
 
-	private PreparedStatement dataStmts[];
+	private PreparedStatement[] dataStmts;
+	private PreparedStatement domainDataStmt;
 	private PreparedStatement agreementDataStmt;
 	private PreparedStatement agreementLevelDataStmt;
 	private PreparedStatement isAgreementDomainStmt;
@@ -109,9 +118,15 @@ public class SQLAgreementContextFactory implements
 			agreementDataStmt.setInt(1, agreementKey.getDomain());
 			agreementDataStmt.setInt(2, agreementKey.getId());
 			
-			Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> redefined = 
+			domainDataStmt.setInt(1, agreementKey.getDomain());
+
+			Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> agreementData = 
 					loadData(agreementDataStmt, expressionCtx);
-			agreementDataRedefined.put(agreementKey, redefined);
+			agreementDataRedefined.put(agreementKey, agreementData);
+
+			Map<String, Pair<ITimedVariable<?>, ITimedVariable<?>>> domainData = 
+					loadData(domainDataStmt, expressionCtx);
+			agreementDataRedefined.put(agreementKey, domainData);
 
 			return expressionCtx;
 		} catch (SQLException e) {
@@ -284,25 +299,30 @@ public class SQLAgreementContextFactory implements
 
 	private void initAgreementStmt(Connection connection, Date startDate,
 			Date endDate, OrderByList orderByList) throws SQLException {
-		dataStmts = new PreparedStatement[3];
+		dataStmts = new PreparedStatement[4];
 
 		String agreementDataSql = SQLContractSalaryCalculatorContext.orderBy(
 				AGREEMENT_DATA_SQL, orderByList);
-
 		agreementDataStmt = connection.prepareStatement(agreementDataSql);
 		agreementDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
 		dataStmts[0] = agreementDataStmt;
+
+		String domainDataSql = SQLContractSalaryCalculatorContext.orderBy(
+				DOMAIN_DATA_SQL, orderByList);
+		domainDataStmt = connection.prepareStatement(domainDataSql);
+		domainDataStmt.setDate(2, new java.sql.Date(endDate.getTime()));
+		dataStmts[1] = domainDataStmt;
 
 		String agreementLevelDataSql = SQLContractSalaryCalculatorContext
 				.orderBy(AGREEMENT_LEVEL_DATA_SQL, orderByList);
 		agreementLevelDataStmt = connection
 				.prepareStatement(agreementLevelDataSql);
 		agreementLevelDataStmt.setDate(3, new java.sql.Date(endDate.getTime()));
-		dataStmts[1] = agreementLevelDataStmt;
+		dataStmts[2] = agreementLevelDataStmt;
 
 		isAgreementDomainStmt = connection
 				.prepareStatement(IS_AGREEMENT_DOMAIN_SQL);
-		dataStmts[2] = isAgreementDomainStmt;
+		dataStmts[3] = isAgreementDomainStmt;
 	}
 
 	private Long getMonthDays(Date startDate, Date endDate) {
