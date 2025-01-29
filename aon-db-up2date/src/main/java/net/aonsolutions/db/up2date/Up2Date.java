@@ -506,7 +506,8 @@ public class Up2Date {
 			
 			// SalaryHoursFixIII.SALARYHOURSFIXIII
 			
-			MEI2025Rollback.MEI2025ROLLBACK
+			// MEI2025Rollback.MEI2025ROLLBACK
+			MEI2025Insert.MEI2025INSERT
 	};
 
 	// ------------------------------------------------------------------------
