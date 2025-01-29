@@ -8,6 +8,8 @@ import { changePassword, getAuth, insertAvatar } from '../../services/authServic
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
 // import { AonDialog } from '../../components/aon-dialog.js';
+import {closeSession } from  '../../services/service.js';
+
 
 export class AonMobileProfile extends AonElement {
 
