@@ -86,8 +86,8 @@ public class CostPDFServlet extends HttpServlet {
 		Integer month;
 		Integer year;
 		
-		Integer monthEnd;
-		Integer yearEnd;
+		Integer monthEnd = null;
+		Integer yearEnd = null;
 		
 		String domainName;
 		String user;
@@ -118,8 +118,10 @@ public class CostPDFServlet extends HttpServlet {
 			month = Integer.parseInt(req.getParameter(MONTH.getName()));
 			year = Integer.parseInt(req.getParameter(YEAR.getName()));
 			
-			monthEnd = Integer.parseInt(req.getParameter(MONTH.getName() + "End"));
-			yearEnd = Integer.parseInt(req.getParameter(YEAR.getName() + "End"));
+			try {
+				monthEnd = Integer.parseInt(req.getParameter(MONTH.getName() + "End"));
+				yearEnd = Integer.parseInt(req.getParameter(YEAR.getName() + "End"));
+			} catch (Exception e) {}
 			
 			domainName = req.getParameter(DOMAIN.getName()) != null ? req.getParameter(DOMAIN.getName())
 					: req.getServerName();
@@ -137,19 +139,23 @@ public class CostPDFServlet extends HttpServlet {
 		calendar.set(Calendar.SECOND, 0);
 		Date startDate = calendar.getTime();
 		
-		Calendar calendarEnd = Calendar.getInstance();
-		calendarEnd.set(Calendar.YEAR, yearEnd);
-		calendarEnd.set(Calendar.MONTH, monthEnd);
-		calendarEnd.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
-		calendarEnd.set(Calendar.HOUR, 0);
-		calendarEnd.set(Calendar.MINUTE, 0);
-		calendarEnd.set(Calendar.SECOND, 0);
-		Date endDate = AonDateUtils.getMonthLastDay(calendarEnd.getTime());
+		Date endDate;
+		if(null == yearEnd) {
+			endDate = AonDateUtils.getMonthLastDay(startDate);
+		} else {
+			Calendar calendarEnd = Calendar.getInstance();
+			calendarEnd.set(Calendar.YEAR, yearEnd);
+			calendarEnd.set(Calendar.MONTH, monthEnd);
+			calendarEnd.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+			calendarEnd.set(Calendar.HOUR, 0);
+			calendarEnd.set(Calendar.MINUTE, 0);
+			calendarEnd.set(Calendar.SECOND, 0);
+			endDate = AonDateUtils.getMonthLastDay(calendarEnd.getTime());
+		}
 		
 		resp.setContentType(MimeType.PDF.getName());
 		String fileName = "Costes_" + enterpriseName + "_" + (AonStringUtils.isBlank(workplaceName) ? "" : workplaceName + "_") + formatter.format(startDate) + "." + MimeType.PDF.getExtension();
 		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
-
 
 		if(groupByWorkplace) {
 			try {

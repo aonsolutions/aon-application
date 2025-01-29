@@ -60,6 +60,7 @@ import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -907,7 +908,7 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		}); 
 		
-		table.addRow(row, ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? checkButton : new Label() ), ( !isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? COLS.CHK.getColWidth() : "1rem" ));
+		table.addRow(row, ( !isPayroll || (finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? checkButton : new Label() ), ( !isPayroll || (finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? COLS.CHK.getColWidth() : "1rem" ));
 		
 		Label dueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
 		table.addRow(row, dueDate, COLS.DDT.getColWidth());
@@ -942,7 +943,7 @@ public class FinanceModule extends MainEntryPoint {
 		regName.setTitle(rname);
 		table.addInlineStyle(regName, COLS.AUTO.getCellStyleClass());
 		
-		if(isPayroll && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
+		if(isPayroll && null != finance.getSalaryTotalLiquid() && finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) != finance.getSalaryTotalLiquid()) {
 			regName.addStyleName(AON.CSS.aonColorOrange());
 			regName.setTitle("El importe de este vencimiento no coincide con el importe de la n\u00f3nmina asociada");
 		} else if(isPayroll && !finance.hasSalary()) {
@@ -1105,7 +1106,7 @@ public class FinanceModule extends MainEntryPoint {
 		// *******															 *******
 		// *************************************************************************
 		AonTableButton settleButton = null;
-		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || (finance.hasSalary() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()))) {
+		if (finance.isFullPending() && finance.getId() != null && (!isPayroll || (finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()))) {
 			settleButton = new AonTableButton(AON.MSG.toSettle(), AON.CSS.aonIconFinanceSettle() );
 			settleButton.addClickHandler(new ClickHandler() {
 				
