@@ -3,22 +3,18 @@ import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotic
 import { AonElement } from '../../components/AonElement';
 import '../invoice/aon-invoice-panel.js';
 import * as LS from '../../services/localStorageService.js';
+import * as UTILS from '../accounting/AccountingUtils.js'
 import { AonDragLeftNotification } from './aon-dragleft-notification.js';
 import { AonSignMobile } from '../timecontrol/aon-sign-mobile.js';
-import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { getTaskHolder } from '../../services/service.js';
 import { getAuth } from '../../services/service.js';
-import { MESSENGER_VIEWS, TASK_STATUS } from '../messenger/MessengerEnums.js';
-import { AonMessengerChat } from '../messenger/aon-messeger-chat.js';
-import { AonMessengerList } from '../messenger/aon-messenger-list.js';
+import { getAccounting, getPeriods } from '../../services/accountingService.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
-import { AonPayrollList } from '../laboral/payroll/aon-payroll-list.js';
-import { AonInvoice } from '../invoice/aon-invoice.js';
 import { AonIcon } from '../../components/aon-icon.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
-import { formatNumber, sortBy } from '../../services/utils.js';
+import { formatNumber, isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 
 export class AonMobileHome extends AonElement {
@@ -32,6 +28,25 @@ export class AonMobileHome extends AonElement {
     WIDGET_SOLICITUDES_ENVIADAS;
     WIDGET_FACTURAS_PENDIENTES;
     WIDGET_BANKS;
+    WIDGET_INGRESOS;
+    WIDGET_GASTOS;
+    selectedElement;
+    selectedPeriod
+    accounts;
+    arrIncome;
+    arrOutgoings;
+    outgoings;
+    selAccounts;
+    ACCOUNTS;
+    accounts;
+    PERIODS;
+    params = {
+        domain: localStorage.getItem("aon_domain_id"),
+        domainName: localStorage.getItem("aon_domain_name"),
+        user: "",
+        level: 5,
+        byMonth: true,
+      };
     BANKS = [];
     taskHolder;
 
@@ -59,10 +74,44 @@ export class AonMobileHome extends AonElement {
         this.WIDGET_SOLICITUDES_ENVIADAS = this.id + "WidgetSolicitudesEnviadas";
         this.WIDGET_FACTURAS_PENDIENTES = this.id + "WidgetFacturasPendientes";
         this.WIDGET_BANKS = this.id + "WidgetBanks";
+        this.WIDGET_INGRESOS = this.id + "WidgetIngresos";
+        this.WIDGET_GASTOS = this.id + "WidgetGastos";
         this.taskHolder = {};
 	}
 
     async build() {
+
+        if (!this.params.domain || !this.params.domainName) {
+              try {
+                let company = JSON.parse(localStorage.getItem("company"));
+                this.params.domain = company.id;
+        
+                this.params.domainName = company.domain;
+              } catch (error) {
+                console.log(error);
+              }
+            }
+        
+        this.PERIODS = await getPeriods(this.params).catch((error) => {
+            console.log(error);
+            return [];
+        });
+
+        let lastDateTime = Math.max.apply(
+            null,
+            this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
+          );
+      
+          let lastPeriod = this.PERIODS.find(
+            (p) => new Date(p.initiationDate).getTime() == lastDateTime
+          );
+      
+          this.selectedPeriod = lastPeriod;
+
+        this.accounts = await this.getData();
+        if(this.accounts)
+            this.calculateYearlyData(this.accounts);
+
         let divGeneral = this.createElement(TAG.DIV);
         divGeneral.id = this.DIV_GENERAL;
 
@@ -82,22 +131,24 @@ export class AonMobileHome extends AonElement {
         divWidgets.className = "aonDivWidgetsMobile";
     
         const widgetOrder = [
-            { id: this.WIDGET_TC, builder: this.widgetTimeControl },
-            { id: this.WIDGET_NOMINA, builder: this.widgetNomina },
-            { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: this.widgetSolicitudesRecbidas },
-            { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: this.widgetSolicitudesEnviadas },
-            { id: this.WIDGET_FACTURAS_PENDIENTES, builder: this.widgetFacturasPendientes },
-            { id: this.WIDGET_BANKS, builder: this.widgetBanks },
+            { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol()},
+            { id: this.WIDGET_NOMINA, builder: this.widgetNomina, show: this.getDur().isPayroll()},
+            { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: this.widgetSolicitudesRecbidas, show: this.getDur().isMessenger() },
+            { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: this.widgetSolicitudesEnviadas, show: this.getDur().isMessenger() },
+            { id: this.WIDGET_FACTURAS_PENDIENTES, builder: this.widgetFacturasPendientes, show: this.getDur().isInvoice() },
+            { id: this.WIDGET_BANKS, builder: this.widgetBanks, show: this.getDur().isAccounting() },
+            { id: this.WIDGET_INGRESOS, builder: this.widgetIngresos, show: this.getDur().isAccounting() },
+            { id: this.WIDGET_GASTOS, builder: this.widgetGastos, show: this.getDur().isAccounting() },
         ];
 
         for (const widget of widgetOrder) {
             try {
-                const builtWidget = await widget.builder.call(this);
-                if (builtWidget) {
-                    divWidgets.appendChild(builtWidget);
+                if (widget.show) {
+                    const builtWidget = await widget.builder.call(this);
+                    if(builtWidget) divWidgets.appendChild(builtWidget);
                 }
             } catch (error) {
-                console.log(`Widget ${widget.id} no está disponible`);
+                console.log(`Widget ${widget.id} no está disponible:` + error);
             }
         }
     
@@ -368,6 +419,68 @@ export class AonMobileHome extends AonElement {
         return widgetBanks;
     }  
 
+    async widgetIngresos() {
+        const widgetIngresos = this.createElement(TAG.DIV);
+        widgetIngresos.id = this.WIDGET_INGRESOS;
+        widgetIngresos.className = "aonWidgetNominaMobile";
+    
+        let titulo = this.createElement(TAG.DIV);
+        titulo.className = "aonWidgetNominaMobileTitulo";
+
+        let nominaTitulo = this.createElement(TAG.SPAN);
+        nominaTitulo.innerHTML = "Ingresos";
+        nominaTitulo.style.fontWeight = "bold";
+        titulo.appendChild(nominaTitulo);
+
+        let fecha = this.createElement(TAG.SPAN);
+        fecha.innerHTML = new Date().getFullYear();
+        fecha.className = "aonWidgetNominaMobileFecha";
+        titulo.appendChild(fecha); 
+    
+        let nomina = this.createElement(TAG.DIV);
+        nomina.innerHTML = `${this.income.toFixed(2)}€`;
+        nomina.className = "aonWidgetNominaMobileNomina";
+    
+        widgetIngresos.appendChild(titulo);    
+        widgetIngresos.appendChild(nomina);
+
+        if(this.income == 0)
+            widgetIngresos = null;
+    
+        return widgetIngresos;
+    }  
+
+    async widgetGastos() {
+        const widgetVentas = this.createElement(TAG.DIV);
+        widgetVentas.id = this.WIDGET_NOMINA;
+        widgetVentas.className = "aonWidgetNominaMobile";
+    
+        let titulo = this.createElement(TAG.DIV);
+        titulo.className = "aonWidgetNominaMobileTitulo";
+
+        let nominaTitulo = this.createElement(TAG.SPAN);
+        nominaTitulo.innerHTML = "Gastos";
+        nominaTitulo.style.fontWeight = "bold";
+        titulo.appendChild(nominaTitulo);
+
+        let fecha = this.createElement(TAG.SPAN);
+        fecha.innerHTML = new Date().getFullYear();
+        fecha.className = "aonWidgetNominaMobileFecha";
+        titulo.appendChild(fecha); 
+    
+        let nomina = this.createElement(TAG.DIV);
+        nomina.innerHTML = `${this.outgoings.toFixed(2)}€`;
+        nomina.className = "aonWidgetNominaMobileNomina";
+    
+        widgetVentas.appendChild(titulo);    
+        widgetVentas.appendChild(nomina);
+
+        if(this.outgoings == 0)
+            widgetVentas = null;
+    
+        return widgetVentas;
+    }  
+
     async getCompanyBanks() {
         let company = JSON.parse(localStorage.getItem("company"));
         if(!this.BANKS.length){
@@ -398,6 +511,87 @@ export class AonMobileHome extends AonElement {
 		div.innerHTML = title;
 		return div;
 	}
+
+     calculateYearlyData(accountsData) {
+        let accounts = accountsData.intervals || [];
+        this.selectedElement = accounts.filter((acc) =>
+          /31\/12\/d*/.test(acc.interval.fromDate)
+        )[0];
+    
+        accounts = UTILS.getOnly6and7(accounts);
+    
+        if (accounts.length > 1) {
+          this.selAccounts = this.selectedElement.statements.filter(
+            (state) =>
+              state.account &&
+              state.account.code &&
+              (state.account.code.substring(0, 1) == "6" ||
+                state.account.code.substring(0, 1) == "7")
+          );
+    
+          this.arrIncome = this.selAccounts
+            .filter(
+              (a) =>
+                a.account.code != null &&
+                a.account.code.length > 2 &&
+                a.account.code.substring(0, 1) == "7"
+            )
+            .sort((a, b) => b.credit - b.debit - (a.credit - a.debit));
+    
+          this.income =
+            this.arrIncome.length != 0
+              ? this.arrIncome
+                  .map((a) => a.credit - a.debit)
+                  .reduce((a, b) => a + b)
+              : 0;
+    
+          this.arrOutgoings = this.selAccounts
+            .filter(
+              (a) =>
+                a.account.code != null &&
+                a.account.code.length > 2 &&
+                Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
+                Number.parseInt(a.account.code.substring(0, 2)) <= 67
+            )
+            .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
+    
+          this.outgoings =
+            this.arrOutgoings.length != 0
+              ? this.arrOutgoings
+                  .map((a) => a.debit - a.credit)
+                  .reduce((a, b) => a + b)
+              : 0;
+        }
+    }
+
+     async getData() {
+    
+        if (this.filter) {
+          this.selectedPeriod = this.PERIODS.find(
+            (p) => p.name == this.filter.year
+          );
+          this.params.level = this.filter.detail;
+        }
+        console.log(this.selectedPeriod);
+    
+        if (!isEmptyObject(this.PERIODS)) {
+          if (this.PERIODS && this.PERIODS.length > 0) {
+            this.params.period = this.selectedPeriod.id;
+    
+            this.params.fromDate = this.selectedPeriod.initiationDate;
+            this.params.toDate = this.selectedPeriod.deadline;
+          }
+    
+          if(!this.params.fromDate) { return []; }
+    
+          this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
+            this.showError(err);
+            return null;
+          });
+        }
+    
+        return this.ACCOUNTS;
+    }
 
     getTotal(banks){
         let total = banks.reduce((t, bank) => t + bank.balance, 0);
