@@ -42,6 +42,7 @@ public class SQLAgreementSalaryCalculatorContext extends SQLContractSalaryCalcul
 
 	// @formatter:off
 	private static final String MAIN_SQL = "SELECT * " + " FROM %s"
+			+ " LEFT JOIN domain ON (contract.domain = domain.id)"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
 			+ " LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
 			+ " LEFT JOIN agreement_level ON (contract.agreement_level = agreement_level.id)"

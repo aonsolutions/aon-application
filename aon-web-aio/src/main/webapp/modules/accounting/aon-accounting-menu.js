@@ -1,5 +1,6 @@
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, TAG } from 'aonsolutions/environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
+import { AonInvoiceRecord } from 'aonsolutions/modules/invoice/aon-invoice-record.js';
 import * as GWT from 'aonsolutions/gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 
@@ -63,18 +64,26 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				title: "Asientos de explotación, cierre y apertura",
 				action: () => this.rootPanel(new JSF.AonJsfEndPeriodEntries),
 			},{
-				description: "Contabilización de Facturas",
+				description: "Contabilización de Facturas y Documentos Pendientes",
 				title: "Contabilización de Facturas",
-				action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder),
-			},{
+				action: () => this.rootPanel(new AonInvoiceRecord()),
+			},
+			// {
+			// 	description: "Contabilización de Facturas",
+			// 	title: "Contabilización de Facturas",
+			// 	action: () => this.rootPanel(new JSF.AonJsfInvoiceRecorder),
+			// },
+			{
 				description: "Contabilización de Cobros y Pagos realizados",
 				title: "Contabilización de Cobros y Pagos realizados",
 				action: () => this.rootPanel(new JSF.AonJsfFinanceTrackingEntry),
-			},{
-				description: "Documentos Pendientes",
-				title: "Documentos Pendientes",
-				action: () => GWT.iLoad(GWT.RAWDOC),
-			}],
+			}
+			// ,{
+			// 	description: "Documentos Pendientes",
+			// 	title: "Documentos Pendientes",
+			// 	action: () => GWT.iLoad(GWT.RAWDOC),
+			// }
+			],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Listados Contables',

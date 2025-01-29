@@ -285,6 +285,19 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected static final void addDomainData(AONContext aonContext, Integer domain, Date startDate, Date endDate,
+			Map<String, String> datas) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+
+		for (Map.Entry<String, String> data : datas.entrySet()) {
+			aonContext.getDslContext().insertInto(SYSTEM_DATA).set(SYSTEM_DATA.DOMAIN, domain)
+					.set(SYSTEM_DATA.START_DATE, startDate).set(SYSTEM_DATA.END_DATE, endDate)
+					.set(SYSTEM_DATA.NAME, data.getKey()).set(SYSTEM_DATA.EXPRESSION, data.getValue()).execute();
+
+		}
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
+
 	protected final void cleanSystemCosts(AONContext aonContext) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
 
@@ -1220,6 +1233,20 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
+	public static final PaymentConceptRecord addConcept(AONContext aonContext, String code, PaymentType type, String expression) {
+		DomainRecord domain = newDomain(aonContext);
+		return aonContext.getDslContext()
+				.insertInto(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, domain.getId())
+				.set(PAYMENT_CONCEPT.CODE, code)
+				.set(PAYMENT_CONCEPT.TYPE, (byte) type.ordinal())
+				.set(PAYMENT_CONCEPT.DESCRIPTION, code)
+				.set(PAYMENT_CONCEPT.EXPRESSION, expression)
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
+				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P").returning()
+				.fetchOne();
+
+	}
 
 	public static final void addPayment(AONContext aonContext, ContractRecord contract, PaymentConceptRecord concept,
 			String expression) {
