@@ -3178,7 +3178,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				CCC ccc = new CCC();
 				ccc.setId(rs.getInt(EnterpriseCccColumns.ID));
 				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE + "." + GeozoneColumns.CODE));
-				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC));
+				ccc.setCode(CCC.getCode(rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC)));
 				ccc.setRegime(JooqEnterprise
 						.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.TYPE))
 						.getCode());
@@ -5466,10 +5466,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Object id = rs.getObject(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID));
 			if (id == null)
 				return;
-
 			ccc = new CCC();
 			ccc.setId(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID)));
-			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));
+			ccc.setCode(CCC.getCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC))));
 			ccc.setGeozone(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.GEOZONE)));
 			ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.TYPE)))
 					.getCode());
