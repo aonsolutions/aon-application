@@ -20,6 +20,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -574,6 +575,19 @@ abstract class Model193Base extends DockLayoutPanel {
 			markAsDirty();
 		});
 		table.setWidget(6, 1, replaced);
+		
+		// Naturaleza del declarante
+		if ((getModel().getYear()) >= 2024) {
+			table.setWidget(7, 0, new InlineLabel("Naturaleza del declarante"));
+			table.getCellFormatter().setStyleName(7,0, AON.CSS.aonTableLabel());
+			CheckBox nature = new CheckBox();
+			nature.setValue(getModel().isNature());
+			nature.addClickHandler(event -> {
+				getModel().setNature(nature.getValue());
+				markAsDirty();
+			});
+			table.setWidget(7, 1, nature);
+		}
 		
 		declarationScrollPanel.setWidget(table);
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
