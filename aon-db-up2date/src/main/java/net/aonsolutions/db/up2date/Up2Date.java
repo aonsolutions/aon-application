@@ -32,6 +32,7 @@ import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIII;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
+import net.aonsolutions.db.up2date.user.AlterUserAddIndexAuth;
 
 public class Up2Date {
 
@@ -509,7 +510,8 @@ public class Up2Date {
 			
 			// MEI2025Rollback.MEI2025ROLLBACK
 			MEI2025Insert.MEI2025INSERT,
-			RemakeTakaraFix.REMAKETAKARAFIX
+			RemakeTakaraFix.REMAKETAKARAFIX,
+			AlterUserAddIndexAuth.ALTER_USER_ADD_INDEX_AUTH
 	};
 
 	// ------------------------------------------------------------------------
