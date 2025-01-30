@@ -67,7 +67,7 @@ public abstract class VariableDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 	
 	protected VariableDialog(Variable<?> selectedVariable, Date startDate, Date endDate) {
-		setCaption("Variables contrato");
+		setCaption("Variables");
 		setWidget(binder.createAndBindUi(this));
 		this.variable = selectedVariable;
 		
