@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
+import net.aonsolutions.db.up2date.management.AlterInvoiceAddIndexDomainStatus;
 import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
@@ -511,7 +512,8 @@ public class Up2Date {
 			// MEI2025Rollback.MEI2025ROLLBACK
 			MEI2025Insert.MEI2025INSERT,
 			RemakeTakaraFix.REMAKETAKARAFIX,
-			AlterUserAddIndexAuth.ALTER_USER_ADD_INDEX_AUTH
+			AlterUserAddIndexAuth.ALTER_USER_ADD_INDEX_AUTH,
+			AlterInvoiceAddIndexDomainStatus.ALTER_INVOICE_ADD_INDEX_DOMAIN_STATUS
 	};
 
 	// ------------------------------------------------------------------------
