@@ -16,36 +16,27 @@ import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303ARABA2024T3Declaration extends Mod303ARABA {
+class Mod303ARABA2025Declaration extends Mod303ARABA {
 	
-	protected Mod303ARABA2024T3Declaration() {
+	protected Mod303ARABA2025Declaration() {
 		
 	}
-	public static final double PERCENT_21 = 21.0;
-	public static final double PERCENT_10 = 10.0;
-	public static final double PERCENT_75 = 7.5;
-	public static final double PERCENT_5 = 5.0;
-	public static final double PERCENT_4 = 4.0;
-	public static final double PERCENT_2 = 2.0;
-	public static final double PERCENT_0 = 0.0;
 	
-	public static final double SURCHARGE_PERCENT_52 = 5.2;
-	public static final double SURCHARGE_PERCENT_175 = 1.75;
-	public static final double SURCHARGE_PERCENT_14 = 1.4;
-	public static final double SURCHARGE_PERCENT_062 = 0.62;
+	public static final double PERCENT_0 = 0.0;	
+	public static final double PERCENT_4 = 4.0;
+	public static final double PERCENT_10 = 10.0;	
+	public static final double PERCENT_21 = 21.0;
+	
 	public static final double SURCHARGE_PERCENT_05 = 0.5;
-	public static final double SURCHARGE_PERCENT_1 = 1;
-	public static final double SURCHARGE_PERCENT_026 = 0.26;
-	public static final double SURCHARGE_PERCENT_0 = 0;
+	public static final double SURCHARGE_PERCENT_14 = 1.4;
+	public static final double SURCHARGE_PERCENT_175 = 1.75;
+	public static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isAraba() 
 			&& mod.getPeriod() != Period.T4
 			&& mod.getPeriod() != Period.M12
-			&& (mod.getYear() == 2024 && ( mod.getPeriod() == Period.M09 
-			 					    	|| mod.getPeriod() == Period.M10 
-			 							|| mod.getPeriod() == Period.M11 
-			 							|| mod.getPeriod() == Period.T3 ))
+			&& mod.getYear() >= 2025		   
 		;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -82,13 +73,6 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 		,AR_C003	(Mod303Key.AR_C003,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C003,mod,vat.getQuota()))
 		
-		// Base imponible, porcentaje y cuota al 5%
-		,AR_C201	(Mod303Key.AR_C201,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C201,mod,vat.getBase()))
-		,AR_C202	(Mod303Key.AR_C202,null,null,(ctx,mod) -> add(Mod303Key.AR_C202,mod,PERCENT_5))
-		,AR_C203	(Mod303Key.AR_C203,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C203,mod,vat.getQuota()))
-
 		// Base imponible, porcentaje y cuota al 10%
 		,AR_C204	(Mod303Key.AR_C204,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			 ,(ctx,mod,vat) -> add(Mod303Key.AR_C204,mod,vat.getBase()))
@@ -115,7 +99,7 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 		,AR_C373	(Mod303Key.AR_C373,(mod,vat) -> operacionesISPFilter(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C373,mod,vat.getQuota()))
 		
-		// Recargo equivalencia al 0%, 0.5% y 0.62%.
+		// Recargo equivalencia al 0.5%
 		,AR_C010	(Mod303Key.AR_C010,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C010,mod,vat.getBase()))
 		,AR_C011	(Mod303Key.AR_C011,null,null,(ctx,mod) -> add(Mod303Key.AR_C011,mod,SURCHARGE_PERCENT_05))
@@ -156,13 +140,6 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 		,AR_C021	(Mod303Key.AR_C021,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && (hasPercent4(vat) || hasPercent0(vat))	
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C021,mod,vat.getQuota()))
 		
-		// Adquisiciones intracomunitarias al 5%		
-		,AR_C231	(Mod303Key.AR_C231,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C231,mod,vat.getBase()))
-		,AR_C232	(Mod303Key.AR_C232,null,null,(ctx,mod) -> add(Mod303Key.AR_C232,mod,PERCENT_5))
-		,AR_C233	(Mod303Key.AR_C233,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.AR_C233,mod,vat.getQuota()))
-
 		// Adquisiciones intracomunitarias al 10%		
 		,AR_C222	(Mod303Key.AR_C222,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification() && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C222,mod,vat.getBase()))
@@ -185,7 +162,7 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 		
 		// TOTAL CUOTA DEVENGADA
 		,AR_C028	(Mod303Key.AR_C028,null,null,null,
-				"AR_C212+AR_C003+AR_C203+AR_C206+AR_C209+AR_C371+AR_C373+AR_C012+AR_C215+AR_C218+AR_C221+AR_C375+AR_C021+AR_C233+AR_C224+AR_C227+AR_C377",null)
+				"AR_C212+AR_C003+AR_C206+AR_C209+AR_C371+AR_C373+AR_C012+AR_C215+AR_C221+AR_C218+AR_C375+AR_C021+AR_C224+AR_C227+AR_C377",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -421,11 +398,6 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 	private static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4;	
 	}
-	private static boolean hasPercent5(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_5
-			|| vat.getPercentage() ==  PERCENT_2
-			|| vat.getPercentage() ==  PERCENT_75; 	
-	}
 	private static boolean hasPercent10(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_10; 	
 	}
@@ -433,13 +405,7 @@ class Mod303ARABA2024T3Declaration extends Mod303ARABA {
 		return vat.getPercentage() ==  PERCENT_21; 	
 	}
 	private static boolean hasSurchargePercent05(VatContext vat) {
-		return 
-			   vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_026
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_062
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_1
-		;
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05;
 	}
 	private static boolean hasSurchargePercent14(VatContext vat) {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14; 

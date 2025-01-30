@@ -57,6 +57,11 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
 		}
+
+		,ARABA_2025{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2025Declaration();}
+		}
 		,ARABA_2024_T3{
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2024T3Declaration();}
