@@ -148,7 +148,7 @@ export class AonMobileHome extends AonElement {
                     if(builtWidget) divWidgets.appendChild(builtWidget);
                 }
             } catch (error) {
-                console.log(`Widget ${widget.id} no está disponible:` + error);
+                //console.log(`Widget ${widget.id} no está disponible:` + error);
             }
         }
     
@@ -486,14 +486,11 @@ export class AonMobileHome extends AonElement {
         if(!this.BANKS.length){
             try {
             const banks = await getBanks({id: company.registry});
-
             if(banks){
                 this.BANKS = sortBy(banks,'alias')
                 .filter((bank) => bank.active == true);
             }
-            
             return this.BANKS;
-
             } catch (error) {
             console.error(error);
             this.showError(error);
@@ -512,7 +509,7 @@ export class AonMobileHome extends AonElement {
 		return div;
 	}
 
-     calculateYearlyData(accountsData) {
+    calculateYearlyData(accountsData) {
         let accounts = accountsData.intervals || [];
         this.selectedElement = accounts.filter((acc) =>
           /31\/12\/d*/.test(acc.interval.fromDate)
@@ -564,32 +561,30 @@ export class AonMobileHome extends AonElement {
         }
     }
 
-     async getData() {
-    
+    async getData() {
         if (this.filter) {
-          this.selectedPeriod = this.PERIODS.find(
+            this.selectedPeriod = this.PERIODS.find(
             (p) => p.name == this.filter.year
-          );
-          this.params.level = this.filter.detail;
+            );
+            this.params.level = this.filter.detail;
         }
         console.log(this.selectedPeriod);
-    
+
         if (!isEmptyObject(this.PERIODS)) {
-          if (this.PERIODS && this.PERIODS.length > 0) {
+            if (this.PERIODS && this.PERIODS.length > 0) {
             this.params.period = this.selectedPeriod.id;
-    
+
             this.params.fromDate = this.selectedPeriod.initiationDate;
             this.params.toDate = this.selectedPeriod.deadline;
-          }
-    
-          if(!this.params.fromDate) { return []; }
-    
-          this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
+            }
+
+            if(!this.params.fromDate) { return []; }
+
+            this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
             this.showError(err);
             return null;
-          });
+            });
         }
-    
         return this.ACCOUNTS;
     }
 
@@ -640,29 +635,6 @@ export class AonMobileHome extends AonElement {
             console.error("Error obteniendo el último salario:", error);
             return null;
         }
-    }
-
-    async getRecibidas() {
-        let filterCount = {};
-    
-        let taskHolder = await getTaskHolder({ workgroups: true });
-        let id = taskHolder.id;
-        let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
-    
-        let auth = await getAuth();
-        let email = auth.email;
-    
-        filterCount.email = email;
-        filterCount.taskHolder = id;
-        filterCount.workgroups = workgroups;
-    
-        let count = await getTaskCount(filterCount);
-    
-        let recibidas = count.task_holder !== undefined && count.task_holder !== null
-            ? count.task_holder + ""
-            : "0";
-    
-        return recibidas;
     }
     
     async getEnviadas() {
