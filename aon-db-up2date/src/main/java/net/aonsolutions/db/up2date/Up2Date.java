@@ -511,9 +511,9 @@ public class Up2Date {
 			
 			// MEI2025Rollback.MEI2025ROLLBACK
 			MEI2025Insert.MEI2025INSERT,
-			RemakeTakaraFix.REMAKETAKARAFIX,
-			AlterUserAddIndexAuth.ALTER_USER_ADD_INDEX_AUTH,
-			AlterInvoiceAddIndexDomainStatus.ALTER_INVOICE_ADD_INDEX_DOMAIN_STATUS
+			RemakeTakaraFix.REMAKETAKARAFIX
+			//AlterUserAddIndexAuth.ALTER_USER_ADD_INDEX_AUTH,
+			//AlterInvoiceAddIndexDomainStatus.ALTER_INVOICE_ADD_INDEX_DOMAIN_STATUS
 	};
 
 	// ------------------------------------------------------------------------
