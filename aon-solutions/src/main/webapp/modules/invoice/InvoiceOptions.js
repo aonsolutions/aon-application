@@ -299,6 +299,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
+      title: MSG.INFO_INCOMES,
       icon: 'info',
       fn: () => info(
           MSG.INCOMES,
@@ -317,6 +318,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES, STAFF_EXPENSES],
     button: {
       id: CONSTANT.EXPENSES.initCap() + 'Info',
+      title: MSG.INFO_EXPENSES,
       icon: 'info',
       fn: () => info(
         MSG.EXPENSES,
@@ -338,10 +340,11 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     options: [RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH],
     button: {
       id: CONSTANT.DOCUMENT.initCap() + 'Info',
+      title: MSG.INFO_PENDING,
       icon: 'info',
       fn: () => info(
         MSG.PENDING,
-        `<b>En Trámite:</b> Docmentos subidos al portal y que se están gestionando el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
+        `<b>En Trámite:</b> Documentos subidos al portal y que se están gestionando por el contable o asesor. Una vez tramitados los veras en Facturas.<br><br>
          <b>A revisar:</b> Documentos subidos al portal, de los cuales existen alguna duda pendiente de aclaración para poder procesalos correctamente.<br><br>
          <b>Papelera:</b> Documentos rechazados que no se van a contabilizar por diferentes causas (titular erroneo, factura duplicada, no afectos a la actividad, documento ilegible, etc.).Estos documentos se eliminarán automáticamente transcurridos 30 DIAS.<br><br>`
       )

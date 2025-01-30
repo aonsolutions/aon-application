@@ -6,6 +6,7 @@ import { AonIconButton } from './aon-icon-button.js';
 
 export class AonDialogMenu extends AonElement {
 
+	LIST;
 	DIALOG;
 	TITLE;
 	CONTENT;
@@ -58,6 +59,7 @@ export class AonDialogMenu extends AonElement {
 			this.START_TOP = 0;
 			this.Y_DRAG = 0;
 		}
+		this.LIST = this.DIALOG + 'List';
 	}
   
 	build() {
@@ -220,6 +222,10 @@ export class AonDialogMenu extends AonElement {
 		if(title) this.getTitle().innerHTML = title;
 	}
 
+	getList() {
+		return this.getElement(this.LIST);
+	}
+
 	getContent(){
 		return  this.getElement(this.CONTENT);
 	}
@@ -281,12 +287,16 @@ export class AonDialogMenu extends AonElement {
 			content.insertBefore(p, content.firstElementChild);
 		} else content.appendChild(p);
 	}
+	
+	addMenuOptions(options) {
+		let ul = this.getList();
+		options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i )); });
+	}
 
 	setMenuOptions(options, top, left) {
 		if(this.isMobile()) {
 			this.addButtons(options);
 		} else {
-			let dialog = this.getDialog();
 			let content = this.getContent();
 
   			content.style.top = top + 'px' || '90px';
@@ -294,76 +304,11 @@ export class AonDialogMenu extends AonElement {
 
 			content.innerHTML = '';
 			let ul = document.createElement(TAG.UL);
+			ul.id = this.LIST;
 			ul.className = CSS.AON_UL;
 			ul.style.padding = '0px';
 			content.appendChild(ul);
-			options.forEach((item, i) => {
-				let li = document.createElement('li');
-				if(item.id) li.id = item.id;
-				li.className = 'aonAppLi';
-				li.style.padding = '10px';
-				li.style.cursor = 'pointer';
-				ul.appendChild(li);
-
-				if(item.options) {
-					let d = new AonDialogMenu(dialog);
-					d.id = 'newDialog';
-					this.appendChild(d);
-					li.addEventListener(EVENT.MOUSEOVER, () => {
-						const rect = li.getBoundingClientRect();
-						d.setMenuOptions(item.options, rect.top, rect.right);
-						d.getContent().addEventListener(EVENT.MOUSELEAVE, (e) => {
-							// out of submenu but inside option
-							if ( !this.isElementAt(e, li) ){
-								d.clear();
-								
-							}
-						});
-						d.open();
-					});
-
-					li.addEventListener(EVENT.MOUSELEAVE, (e) => {
-						// out of option but inside submenu 
-						if ( !this.isElementAt(e, d.getContent() ) ){
-							d.clear();
-						}
-					});
-
-				}
-				if(item.image) {
-					let img = document.createElement('img');
-					img.style.maxWidth = `${item.size || 24}px`;
-					img.src = item.image;
-					li.appendChild(img);
-				} else if(item.aonIcon) {
-					let ai = document.createElement(TAG.SPAN);
-					ai.style.verticalAlign = 'middle';
-					let aonIcon = new AonIcon();
-					aonIcon.icon = item.aonIcon;
-					aonIcon.size = item.size || 15;
-					aonIcon.color = item.color;
-					ai.appendChild(aonIcon);
-					li.appendChild(ai);
-				} else if(item.icon){
-					let ic = document.createElement('i');
-					ic.className = item.icon_class || 'material-icons';
-					ic.style.verticalAlign = 'middle';
-					ic.style.fontSize = '16px';
-					ic.innerHTML = item.icon;
-					li.appendChild(ic);
-				}
-
-				let span = document.createElement(TAG.SPAN);
-				span.style.marginLeft = '5px';
-				span.style.fontSize = '13px';
-				span.innerHTML = item.name;
-				span.title     = item.name;
-				li.appendChild(span);
-				li.addEventListener(EVENT.CLICK, (ev) => {
-					this.close();
-					item.fn(ev);
-				});
-			});
+			options.forEach((item, i) => { ul.appendChild(this.buildLi(item, i)); });
 		}
 	}
 
@@ -429,6 +374,77 @@ export class AonDialogMenu extends AonElement {
 		}		
 		return false;
 	}
+	
+	buildLi(item, i) {
+		let dialog = this.getDialog();
+		let li = document.createElement('li');
+		if(item.id) li.id = item.id;
+		li.className = 'aonAppLi';
+		li.style.padding = '10px';
+		li.style.cursor = 'pointer';
+
+		if(item.options) {
+			let d = new AonDialogMenu(dialog);
+			d.id = 'newDialog';
+			this.appendChild(d);
+			li.addEventListener(EVENT.MOUSEOVER, () => {
+				const rect = li.getBoundingClientRect();
+				d.setMenuOptions(item.options, rect.top, rect.right);
+				d.getContent().addEventListener(EVENT.MOUSELEAVE, (e) => {
+					// out of submenu but inside option
+					if ( !this.isElementAt(e, li) ){
+						d.clear();
+						
+					}
+				});
+				d.open();
+			});
+
+			li.addEventListener(EVENT.MOUSELEAVE, (e) => {
+				// out of option but inside submenu 
+				if ( !this.isElementAt(e, d.getContent() ) ){
+					d.clear();
+				}
+			});
+
+		}
+		if(item.image) {
+			let img = document.createElement('img');
+			img.style.maxWidth = `${item.size || 24}px`;
+			img.src = item.image;
+			li.appendChild(img);
+		} else if(item.aonIcon) {
+			let ai = document.createElement(TAG.SPAN);
+			ai.style.verticalAlign = 'middle';
+			let aonIcon = new AonIcon();
+			aonIcon.icon = item.aonIcon;
+			aonIcon.size = item.size || 15;
+			aonIcon.color = item.color;
+			ai.appendChild(aonIcon);
+			li.appendChild(ai);
+		} else if(item.icon){
+			let ic = document.createElement('i');
+			ic.className = item.icon_class || 'material-icons';
+			ic.style.color = item.color ;
+			ic.style.verticalAlign = 'middle';
+			ic.style.fontSize = `${item.size || 16}px`;
+			ic.innerHTML = item.icon;
+			li.appendChild(ic);
+		}
+
+		let span = document.createElement(TAG.SPAN);
+		span.style.marginLeft = '5px';
+		span.style.fontSize = '13px';
+		span.innerHTML = item.name;
+		span.title     = item.name;
+		li.appendChild(span);
+		li.addEventListener(EVENT.CLICK, (ev) => {
+			this.close();
+			item.fn(ev);
+		});
+		
+		return li;
+	} 
 
 }
 if(!window.customElements.get('aon-dialog-menu')){

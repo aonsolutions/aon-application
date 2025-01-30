@@ -167,6 +167,12 @@ export const MAIN_CONTRATA = {
   entryPoint: 'MainContrata'
 };
 
+export const MAIN_COST = {
+  title: 'Costes',
+  module: GWT_PAYROLL,
+  entryPoint: 'MainCostModule'
+};
+
 export const MAIN_IT = {
   title: 'IT',
   module: GWT_PAYROLL,
@@ -235,6 +241,12 @@ export const CONTRACT_VARIABLES = {
   title: 'Contract Variables',
   module: GWT_PAYROLL,
   entryPoint: 'ContractVariablesModule'
+};
+
+export const DOMAIN_VARIABLES = {
+  title: 'Domain Variables',
+  module: GWT_PAYROLL,
+  entryPoint: 'DomainVariablesModule'
 };
 
 export const MAIN_DIGITAL_CERTIFICATES = {

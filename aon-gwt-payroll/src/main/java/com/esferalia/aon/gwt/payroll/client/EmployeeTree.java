@@ -2320,7 +2320,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeContractVariables().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			EmployeeContractVariablesObject employeeContractVariablesObject = 
 					contractVariablesMap.computeIfAbsent(salaryDraft.getEmployeeId(), this::newEmployeeContractVariablesObject );
-			getEmployeeContractVariables().setEmployeeContractVariablesObject(employeeContractVariablesObject);
+			getEmployeeContractVariables().setVariablesObject(employeeContractVariablesObject);
 		}
 
 		void onEmployeeSelected() {
@@ -2471,6 +2471,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private class EnterpriseTabLayoutPanel extends CustomTabLayoutPanel {
 		
 		private Enterprise enterprise;
+		private DomainSystemVariablesObject domainSystemVariablesObject;
 		
 		public EnterpriseTabLayoutPanel() {
 			add("Empresa", getEnterpriseDraft(), this::onEnterpriseSelected);
@@ -2479,6 +2480,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("N\u00f3minas", getEnterpriseSalary(), this::onSalariesSelected);
 			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
 			add("Partes IT", getEnterpriseIT(), this::onITsSelected);
+			add("Variables de C\u00e1lculo", getDomainSystemVariables(), this::onVariablesSelected);
 		}
 		
 		void onITsSelected() {
@@ -2509,6 +2511,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			this.enterprise = enterprise;
 		}
 		
+		void onVariablesSelected() {
+			getDomainSystemVariables().setToolbarTitle(getTitle(enterprise));
+			
+			if (domainSystemVariablesObject == null) {
+				Date startDate = DateUtils.addYears2Date(DateUtils.getFirstDayOfYear(), -1);
+				Date endDate = DateUtils.addYears2Date(DateUtils.getLastDayOfYear(new Date()), 1);
+				domainSystemVariablesObject = new DomainSystemVariablesObject(enterprise.getDomain(), startDate,
+						endDate);
+			}
+			getDomainSystemVariables().setVariablesObject(domainSystemVariablesObject);
+		}
+		
+		private String getTitle(Enterprise enterprise) {
+			return AonStringUtils.lowerCase(enterprise.getName());
+		}
 	}
 
 	private static EmployeeTree singlenton;
@@ -2566,6 +2583,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Mod145 mod145;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
+	private DomainSystemVariables domainSystemVariables; 
 	private SalaryWidget employeeSalary;
 	private com.esferalia.aon.gwt.payroll.client.CategoryDraft categoryDraft;
 	private AgreementPreview agreementPreview;
@@ -3475,6 +3493,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		return cccCretaDetail;
+	}
+
+	private DomainSystemVariables getDomainSystemVariables() {
+		if (domainSystemVariables == null) {
+			domainSystemVariables = new DomainSystemVariables() ;
+		}
+		return domainSystemVariables;
 	}
 
 	private EmployeeContractVariables getEmployeeContractVariables() {

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -239,6 +238,8 @@ public class EnterprisePayrollCSV {
 		
 		@JsonProperty("Empleado")
 		private String employee;
+		@JsonProperty("Categoria")
+		private String employeeCategory;
 		@JsonProperty("Centro")
 		private String workplace;
 		private SalaryType salaryType;
@@ -314,6 +315,11 @@ public class EnterprisePayrollCSV {
 		@Override
 		public String getEmployee() {
 			return employee;
+		}
+		
+		@Override
+		public String getEmployeeCategory() {
+			return employeeCategory;
 		}
 
 		@Override

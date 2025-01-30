@@ -172,7 +172,7 @@ public class JooqEmployee {
 						.set(RADDRESS.NUMBER, AonStringUtils.isBlank(employeeData.getAddresNum()) ? "-" : employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
 						.set(RADDRESS.CITY, employeeData.getAddressCityDescription())
-						.set(RADDRESS.MUNICIPALITY_CODE, AonStringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
+						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 						.set(RADDRESS.GEOZONE, employeeData.getAddressProvinces())
 						.returning(RADDRESS.ID)
 						.fetchOne();
@@ -1349,8 +1349,8 @@ public class JooqEmployee {
 						.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
 						.set(RADDRESS.NUMBER, employeeData.getAddresNum())
 						.set(RADDRESS.ZIP, employeeData.getAddressZip())
-						.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
-						.set(RADDRESS.MUNICIPALITY_CODE, AonStringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
+						.set(RADDRESS.CITY,  employeeData.getAddressCityDescription())
+						.set(RADDRESS.MUNICIPALITY_CODE, employeeData.getAddressCity())
 						.set(RADDRESS.GEOZONE, employeeData.getAddressProvinces())
 						.where(RADDRESS.ID.eq(rAddressId))
 						.execute();

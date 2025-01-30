@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
@@ -26,6 +27,7 @@ import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
+import net.aonsolutions.db.up2date.tgss.MEI2025Rollback;
 import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIII;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
@@ -503,9 +505,11 @@ public class Up2Date {
 			// Holidays2025Insert.HOLIDAYS2025INSERT
 			// BasesMax2025Update.BASESMAX2025UPDATE
 			
-			SalaryHoursFixIII.SALARYHOURSFIXIII
+			// SalaryHoursFixIII.SALARYHOURSFIXIII
 			
-
+			// MEI2025Rollback.MEI2025ROLLBACK
+			MEI2025Insert.MEI2025INSERT,
+			RemakeTakaraFix.REMAKETAKARAFIX
 	};
 
 	// ------------------------------------------------------------------------

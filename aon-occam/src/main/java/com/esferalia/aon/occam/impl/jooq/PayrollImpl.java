@@ -122,6 +122,13 @@ public class PayrollImpl implements IPayroll {
 			ContractDAO.getContractStream(ctx, filter));
 	}
 	
+	@Override
+	public Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, byte[] auth,
+			ContractExtendedDataFilter filter, Integer limit) {
+		return ctx.getDslContext().transactionResult(configuration ->
+		ContractDAO.getContractExtendedDataStream(ctx, auth, filter, limit));
+	}
+	
 	public Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage){
 		return ctx.getDslContext().transactionResult(configuration ->
 		ContractDAO.getContractExtendedDataStream(ctx, filter, page, perPage));

@@ -1,7 +1,5 @@
 package com.esferalia.aon.in.payroll.aws.lambda;
 
-import static solutions.aon.aws.s3.S3EventObject.getS3EventObjects;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,7 +14,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import net.aonsolutions.aon.api.AonTGSS;
 import solutions.aon.aws.s3.S3;
-import solutions.aon.aws.s3.S3EventObject;
+import solutions.aon.aws.s3.S3UploadEventObject;
 
 public class S3RequestHandler implements RequestHandler<Object, String> {
 
@@ -40,7 +38,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 
     @Override
     public String handleRequest(Object input, Context context) {
-	List<S3EventObject> s3EventObjects = getS3EventObjects(input);
+	List<S3UploadEventObject> s3EventObjects = S3UploadEventObject.getS3UploadEventObjects(input);
 	
 
 	s3EventObjects.forEach( S3RequestHandler::handleS3EventObject );
@@ -48,11 +46,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	return "That's all folks :-)";
     }
     
-    static void handleS3EventObject(S3EventObject s3EventObject) {
+    static void handleS3EventObject(S3UploadEventObject s3UploadEventObject) {
 	try {
-	    String userLogin = s3EventObject.getUser();
-	    String domainName = s3EventObject.getDomain();
-	    URL url = S3.getURL(s3EventObject.getBucket(), s3EventObject.getKey());
+	    String userLogin = s3UploadEventObject.getUser();
+	    String domainName = s3UploadEventObject.getDomain();
+	    URL url = S3.getURL(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
 	    
 	    AonTGSS.loadIvlccc(domainName, userLogin, url.toExternalForm());
 
@@ -67,19 +65,19 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	} 
     }
 
-    static JSONObject getTask(S3EventObject s3EventObject) throws URISyntaxException, IOException, InterruptedException {
-	String loadTaskKey = getLoadTaskKey(s3EventObject);
+    static JSONObject getTask(S3UploadEventObject s3UploadEventObject) throws URISyntaxException, IOException, InterruptedException {
+	String loadTaskKey = getLoadTaskKey(s3UploadEventObject);
 	JSONObject loadTaskJSON = newLoadTask(LOAD_TASK_WAIT_ID);
 	try {
 	    String loadTaskId  = LOAD_TASK_WAIT_ID;
 	    while (LOAD_TASK_WAIT_ID.equals(loadTaskId)) {
-		Thread.sleep(Math.min(s3EventObject.getOrder() * 1000L, MAX_SLEEP_TIME)); 
-		loadTaskJSON = getLoadTask(s3EventObject.getBucket(), loadTaskKey);
+		Thread.sleep(Math.min(s3UploadEventObject.getOrder() * 1000L, MAX_SLEEP_TIME)); 
+		loadTaskJSON = getLoadTask(s3UploadEventObject.getBucket(), loadTaskKey);
 		loadTaskId = getLoadTaskId(loadTaskJSON);
 	    }
 	} catch (NoSuchLoadTaskException e) {
 	    // Write semaphore, if present other lambdas must wait.  
-	    setLoadTask(s3EventObject.getBucket(), loadTaskKey, loadTaskJSON);
+	    setLoadTask(s3UploadEventObject.getBucket(), loadTaskKey, loadTaskJSON);
 	    
 //	    Task task = new Task()
 //		    .setTitle(format(TITLE, companyName))
@@ -120,8 +118,8 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
 
-    static String getLoadTaskKey(S3EventObject s3Object) {
-	return s3Object.getPrefix() + "/" + s3Object.getDomain() + "/" + s3Object.getDocument() + "/" + s3Object.getUser() + "/" + s3Object.getJob() + "/" + "loadtask";
+    static String getLoadTaskKey(S3UploadEventObject s3UploadEventObject) {
+	return s3UploadEventObject.getPrefix() + "/" + s3UploadEventObject.getDomain() + "/" + s3UploadEventObject.getDocument() + "/" + s3UploadEventObject.getUser() + "/" + s3UploadEventObject.getJob() + "/" + "loadtask";
     }
     
     

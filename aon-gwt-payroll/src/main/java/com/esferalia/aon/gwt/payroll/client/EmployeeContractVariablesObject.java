@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.Variables.VariablesObject;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
-import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariableType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EmployeeContractVariablesObject {
+public class EmployeeContractVariablesObject implements VariablesObject<ContractVariable> {
 	
 	// ----------------------------------------------- Variables 
 	
@@ -37,7 +38,8 @@ public class EmployeeContractVariablesObject {
 
 	// ----------------------------------------------- DataBase.Methods
 	
-	public void getContractVariables(Consumer<List<ContractVariable>> success, Consumer<Throwable> failure) {
+	@Override
+	public void getVariables(Consumer<List<ContractVariable>> success, Consumer<Throwable> failure) {
 		employeesService.getContractVariables(this.contractId, new AsyncCallback<List<ContractVariable>>() {
 			@Override
 			public void onSuccess(List<ContractVariable> result) {
@@ -52,7 +54,8 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 	
-	public void createContractVariable(ContractVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
+	@Override
+	public void createVariable(ContractVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.createContractVariable(this.contractId, contractVariable, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
@@ -66,7 +69,8 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 	
-	public void updateContractVariables(Consumer<Void> success, Consumer<Throwable> failure) {
+	@Override
+	public void updateVariables(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.updateContractVariables(this.contractVariables, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
@@ -80,18 +84,19 @@ public class EmployeeContractVariablesObject {
 		});
 	}
 
-	public List<ContractVariable> getContractVariables(String yearValue, String monthValue, String variableTypeValue) {
+	@Override
+	public List<ContractVariable> getVariables(String yearValue, String monthValue, String variableTypeValue) {
 		this.contractVariablesFiltered.clear();
 		
 		// Se filtra solo por tipo de variable sin fechas
 		if(AonStringUtils.isBlank(yearValue)) {
-			VariableType variableType = getVariableType(variableTypeValue);
+			ContractVariableType contractVariableType = getVariableType(variableTypeValue);
 			
 			for(ContractVariable contractVariable : contractVariables) {
 				if(contractVariable.getId() < 0)
 					continue;
 				
-				if(null == variableType || variableType.equals(contractVariable.getVariableType()))
+				if(null == contractVariableType || contractVariableType.equals(contractVariable.getVariableType()))
 					this.contractVariablesFiltered.add(contractVariable);
 			}
 		// Se filtra por tipo de variable y fechas
@@ -107,7 +112,7 @@ public class EmployeeContractVariablesObject {
 				endDate = DateUtils.getLastDayOfMonth(startDate);
 			}
 			
-			VariableType variableType = getVariableType(variableTypeValue);
+			ContractVariableType contractVariableType = getVariableType(variableTypeValue);
 			
 			for(ContractVariable contractVariable : contractVariables) {
 				if(contractVariable.getId() < 0)
@@ -116,7 +121,7 @@ public class EmployeeContractVariablesObject {
 				if(	(isInPeriod(startDate, endDate, contractVariable.getStartDate(), contractVariable.getEndDate()) ||
 					(null != contractVariable.getEndDate() && isInPeriod(startDate, endDate, contractVariable.getEndDate(), contractVariable.getEndDate())) ||
 					(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate(), contractVariable.getEndDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
-					&& (null == variableType || variableType.equals(contractVariable.getVariableType())))
+					&& (null == contractVariableType || contractVariableType.equals(contractVariable.getVariableType())))
 					
 					this.contractVariablesFiltered.add(contractVariable);
 			}
@@ -128,12 +133,12 @@ public class EmployeeContractVariablesObject {
 		return this.contractVariablesFiltered;
 	}
 
-	private VariableType getVariableType(String variableTypeValue) {
+	private ContractVariableType getVariableType(String variableTypeValue) {
 		switch (variableTypeValue) {
 		case "0":
-			return VariableType.CONTRACT_DATA;
+			return ContractVariableType.CONTRACT_DATA;
 		case "1":
-			return VariableType.CONTRACT_INFO;
+			return ContractVariableType.CONTRACT_INFO;
 		default:
 			return null;
 		}
@@ -146,7 +151,8 @@ public class EmployeeContractVariablesObject {
 				(DateUtils.isBeforeOrEquals(varStart, start) && DateUtils.isAfterOrEquals(varEnd, end));
 	}
 
-	public void deleteContractVariable(ContractVariable contractVariableDelete) {
+	@Override
+	public void deleteVariable(ContractVariable contractVariableDelete) {
 		for(ContractVariable contractVariable : this.contractVariables){
 			if(contractVariable.getId().equals(contractVariableDelete.getId())) {
 				Integer id = contractVariable.getId();
@@ -157,11 +163,13 @@ public class EmployeeContractVariablesObject {
 	
 	// ----------------------------------------------- Getter
 	
-	public Date getContractStartDate() {
+	@Override
+	public Date getStartDate() {
 		return this.contractStartDate;
 	}
 	
-	public Date getContractEndDate() {
+	@Override
+	public Date getEndDate() {
 		return this.contractEndDate;
 	}
 	

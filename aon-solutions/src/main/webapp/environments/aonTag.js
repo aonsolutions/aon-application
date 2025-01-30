@@ -112,6 +112,7 @@ export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
 export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 export const AON_INVOICE_CLOSING_LIST = 'aon-invoice-closing-list';
+export const AON_INVOICE_RECORD = 'aon-invoice-record';
 
 // MODULES - USER
 

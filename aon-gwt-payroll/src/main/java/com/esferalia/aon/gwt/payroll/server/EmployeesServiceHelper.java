@@ -1607,7 +1607,7 @@ public class EmployeesServiceHelper {
 				ISQLContractSalaryCalculatorContext.NEWER);
 
 		Supplier<ExpressionContext> systemCtxSupplier = () -> systemCtxFactory
-				.create(new CCCContextKey(CCCType.PRINCIPAL, SSRegimeType.GENERAL));
+				.create(new CCCContextKey(CCCType.PRINCIPAL, SSRegimeType.GENERAL, null));
 
 		SQLAgreementContextFactory agreementCtxFactory = new SQLAgreementContextFactory(
 				conn, systemCtxSupplier, start, end,
@@ -2374,6 +2374,7 @@ public class EmployeesServiceHelper {
 				salary.getCcc(),
 				salary.getStartDate(),
 				salary.getEndDate(),
+				salary.getIssueDate(),
 				salary.getEmployeeName(),
 				salary.getType().getName(new Locale("es")),
 				salary.getTotalPayment(),

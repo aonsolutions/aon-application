@@ -107,8 +107,8 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		    },{
 		        description: "Listado de costes",
 		        title: "Listado de costes",
-		        action: () => alert("description"),
-				filter: () => this.isDomainManagementAvailable()
+		        action: () => GWT.iLoad(GWT.MAIN_COST)
+				//filter: () => this.isDomainManagementAvailable()
 		    },{
 		        description: "Resumen de actividad",
 		        title: "Resumen de actividad",
@@ -182,7 +182,11 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        description: "Festivos",
 		        title: "Festivos",
 		        action: () => alert("description")
-		    }/*,{
+		    },{
+		        description: "Variables Calculo Entorno",
+		        title: "Variables Calculo Entorno",
+		        action: () => GWT.iLoad(GWT.DOMAIN_VARIABLES)
+			}/*,{
 		        description: "Variables Calculo Trabajadores",
 		        title: "Variables Calculo Trabajadores",
 		        action: () => alert("description")

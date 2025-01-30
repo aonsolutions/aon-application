@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -70,6 +71,7 @@ import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -482,5 +484,12 @@ public interface EnterprisesService extends RemoteService {
 	
 	Map<Integer, String> getScopes(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
+	// ------------------------------------------------ Variables
+
+	List<SystemVariable> getSystemVariables(String currentDomainName, String currentUser, Integer domainId) throws IllegalArgumentException ;
+
+	void createSystemVariable(String currentDomainName, String currentUser, Integer domainId, SystemVariable systemVariable) throws IllegalArgumentException ;
+	
+	void updateSystemVariables(String currentDomainName, String currentUser, Integer domainId, List<SystemVariable> systemVariables) throws IllegalArgumentException ;
 
 }

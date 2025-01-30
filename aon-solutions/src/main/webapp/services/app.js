@@ -5,6 +5,7 @@ import * as LS from  "./localStorageService.js";
 
 import * as DocumentalOptions from  "../modules/documental/DocumentalOptions.js";
 import * as InvoiceOptions from  "../modules/invoice/InvoiceOptions.js";
+import { MATERIAL } from "../environments/constants.js";
 
 export const TIMECONTROL = {
   app: CONSTANT.TIMECONTROL,
@@ -12,6 +13,7 @@ export const TIMECONTROL = {
   description: MSG.TIMECTRL,
   tag: MSG_ES.TIMECONTROL,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
+  symbol: MATERIAL_ICONS.ALARM,
   newIcon: AON_ICONS.AON_NEW_TIMECONTROL,
   color: "var(--aonTimecontrol)",
   backgroundColor: "rgba(209, 195, 109, .2)",
@@ -255,6 +257,7 @@ export const DOCUMENTAL = {
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
+  symbol: MATERIAL_ICONS.FOLDER_OPEN,
   newIcon: AON_ICONS.AON_NEW_DOCUMENTAL,
   color: "var(--aonDocumental)",
   // newColor: "var(--aonDocumental)",
@@ -292,7 +295,7 @@ export const WAREHOUSE = {
   tag: MSG_ES.WAREHOUSE,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_WAREHOUSE : AON_ICONS.AON_WAREHOUSE,
   newIcon: AON_ICONS.AON_NEW_WAREHOUSE,
-  symbol: MATERIAL_ICONS.INVENTORY_2,
+  symbol: MATERIAL_ICONS.TROLLEY,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
   hover: 'aonSidenavHover',
@@ -362,6 +365,7 @@ export const MESSENGER = {
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
+  symbol: MATERIAL_ICONS.SPEAKER_NOTES,
   newIcon: AON_ICONS.AON_NEW_MESSENGER,
   color: "var(--aonMessenger)",
   // newColor: "va    r(--aonMessenger)",
@@ -408,6 +412,7 @@ export const NOTES = {
   title: MSG.NOTES,
   description: MSG.NOTES,
   icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_NOTES : AON_ICONS.AON_NOTES,
+  symbol: MATERIAL_ICONS.PINBOARD,
   newIcon: AON_ICONS.AON_NEW_NOTES,
   color: "var(--aonNote)",
   backgroundColor: "rgba(255, 192, 0, .2)",
@@ -541,6 +546,7 @@ export const CONSOLE = {
   app: CONSTANT.CONSOLE,
   icon: AON_ICONS.AON_APP,
   title: MSG.CONSOLE,
+  symbol: MATERIAL_ICONS.TERMINAL,
   color: COLORS.AON_BLACK,
   backgroundColor: "rgba(0, 0, 0, .2)",
   hover: 'aonSidenavHover',

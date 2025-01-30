@@ -88,6 +88,7 @@ public class MEI2025Insert implements Update {
 			.where(SYSTEM_DATA.DOMAIN.eq(0))
 			.and(SYSTEM_DATA.START_DATE.eq(startOf2024Date))
 			.and(SYSTEM_DATA.NAME.in(PORCENTAJE_MEI, PORCENTAJE_MEI_E))
+			.execute()
 			;
 			
 			// INSERT 2025

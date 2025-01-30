@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -98,6 +99,10 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         // Buttons
         HTMLPanel buttonPanel = new HTMLPanel("");
         buttonPanel.setStyleName(AON.CSS.aonDisplayFlexEnd());
+        
+        AonCustomButton closeButton = new AonCustomButton(AON.CSS.aonIconClose(), "Cerrar");
+        closeButton.addDomHandler(e -> searchMenuPopup.hide(), ClickEvent.getType()); 
+        buttonPanel.add(closeButton);
         
         AonCustomButton clearButton = new AonCustomButton(AON.CSS.aonIconClear(), "Limpiar");
         clearButton.addDomHandler(e -> fireClearFilter(), ClickEvent.getType()); 
@@ -229,6 +234,17 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 		searchButton.setVisible(false);
 		searchTextBox.setVisible(false);
 		this.getElement().getStyle().setProperty("border", "none");
+	}
+	
+	public void insertWidgetAfterSearchButton(Widget newWidget) {
+		searchTextBox.setVisible(false);
+		
+	    // Obtener el contenedor DOM del HTMLPanel
+	    Element parentElement = this.getElement();
+	    this.insert(newWidget, parentElement,  getWidgetIndex(filterButton), true);
+
+	    // Opcional: Ajustar estilos del contenedor
+	    this.getElement().getStyle().setProperty("border", "none");
 	}
 
 	public void hideSearchWidget() {
