@@ -61,7 +61,7 @@ export const openFile = (file) => {
 }
 
 export const changeStatusBarColor = (ionicData, color, dark) => {
-    let data = {action: 'changeStatusBarColor', color, dark: dark || false};
+    let data = {action: 'changeStatusBarColor', color, dark};
     if(UA.isAndroidApp()) {
         window.Android.changeStatusBarColor(JSON.stringify(data));
     } else if (UA.isIosApp()) {
@@ -74,7 +74,7 @@ export const changeStatusBarColor = (ionicData, color, dark) => {
 export const changeUrl = (ionicData, url) => {
     let data = {action: 'changeUrl', url};
     if(UA.isAndroidApp()) {
-        window.Android.changeStatusBarColor(JSON.stringify(data));
+        window.Android.changeUrl(JSON.stringify(data));
     } else if (UA.isIosApp()) {
         window.webkit.messageHandlers.doStuffMessageHandler.postMessage(data);
     } else if(UA.isAppMobile()) {
