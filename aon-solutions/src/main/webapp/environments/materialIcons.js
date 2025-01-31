@@ -107,6 +107,7 @@ export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
 export const CONTRACT = 'contract';
 export const CREDIT_CARD = 'credit_card';
+export const CONTENT_COPY = 'content_copy';
 
 // ----- D
 

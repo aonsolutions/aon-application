@@ -23,6 +23,7 @@ export const MOUSELEAVE = 'mouseleave';
 export const MOUSEOVER = 'mouseover';
 export const MOUSEMOVE = 'mousemove';
 export const MOUSEDOWN = 'mousedown';
+export const MOUSEOUT = 'mouseout';
 export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const RESUME_APP = 'resumeApp';
 export const RESET_FILTER = 'resetFilter';
