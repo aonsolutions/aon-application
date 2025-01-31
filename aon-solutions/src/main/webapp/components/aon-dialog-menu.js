@@ -436,7 +436,7 @@ export class AonDialogMenu extends AonElement {
 		span.style.marginLeft = '5px';
 		span.style.fontSize = '13px';
 		span.innerHTML = item.name;
-		span.title     = item.name;
+		span.title     = item.title || item.name;
 		li.appendChild(span);
 		li.addEventListener(EVENT.CLICK, (ev) => {
 			this.close();
