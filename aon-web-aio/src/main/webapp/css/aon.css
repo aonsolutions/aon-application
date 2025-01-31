@@ -4569,15 +4569,178 @@ font-weight: 600;
 	padding: 0;
 }
 
-aon-superset iframe {
-	border:none;
-	width: 100%;
-	height: 100%;
-}
+ .aonDragLeftContainer { 
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    max-width: 100%;
+ }
 
-.gwt-viz-container > div {
-	color: red;
-	display: flex;
-	justify-content: center;
-}
+ .aonDragLeftInnerContainer {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 100%;
+    max-width: 100%;
+ }
+
+ .aonDragLeftCard {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+ }
+
+ .aonDragLeftDotsContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+ }
+
+ .aonDragLeftDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    transition: background-color 0.3s;
+ }
+
+ .aonDragLeftNotificationDiv {
+    padding: 10px;
+    margin: 10px 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+ }
+
+ .aonDragLeftNotificationDivTitle {
+    font-weight: bold;
+    display: block;
+    margin-left: 35px;
+  }
+
+  .aonDragLeftNotificationDivContent{
+    display: flex;
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+
+  .aonDragLeftNotificationDivBody{
+    max-height: 40px;
+    display: block;
+  }
+
+  .aonDragLeftNotificationDivDate{
+    font-size: 12px;
+    color: #888;
+    margin-left: 35px;
+  }
+
+  .aonDivWidgetsMobile{
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+    width: 100%;
+  }
+
+  .aonWidgetTCMobile{
+    height: 100px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin-left: 5px !important;
+    margin: 5px;
+  }
+
+  .aonWidgetNominaMobile{
+    height: 100px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin: 5px;
+    width: 172px;
+  }
+
+  .aonWidgetNominaMobileTitulo{
+    text-align: center;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  .aonWidgetNominaMobileFecha{
+    margin-left: 5px;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .aonWidgetNominaMobileNomina{
+    margin-top: 17px;
+    text-align: center;
+    font-size: 1.6rem;
+  }
+
+  .aonWidgetSolicitudesMobile{
+    height: 100px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin: 5px;
+  }
+
+  .aonWidgetSolicitudesMobileTitulo{
+    margin-top: 5px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .aonWidgetSolicitudesMobileLineaRecibidas{
+    display: flex;
+    margin-left: 20px;
+    margin-bottom: 5px;
+  }
+
+  .aonWidgetSolicitudesMobileSegundaLinea{
+    display: flex;
+    margin-top: 17px;
+    justify-content: center;
+  }
+
+  .aonWidgetSolicitudesIconRecibidas{
+    color: red;
+    margin-top: 6px;
+    font-size: 25px;
+  }
+
+  .aonWidgetSolicitudesIconEnviadas{
+    color: #33A9A9;
+    margin-top: 6px;
+    font-size: 25px;
+  }
+
+  .aonWidgetFacturasIcon{
+    margin-right: -5px;
+  }
+
+  .aonWidgetSolicitudesMobileLineaNumero{
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.6rem;
+    margin-top: 0px;
+  }
+
+  .aonMobileHomeNotificationDrag{
+    margin-bottom: 20px;
+  }
+
+  aon-superset iframe {
+    border:none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gwt-viz-container > div {
+    color: red;
+    display: flex;
+    justify-content: center;
+  }
 

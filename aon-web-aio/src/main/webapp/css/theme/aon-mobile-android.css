@@ -1,0 +1,240 @@
+:root{
+    --favicon: ../faviconColors.png;
+}
+
+.rootPanel {
+  z-index: 3;   
+  background-color: #fafafa;
+}
+
+.aonLoginForm{
+    margin-top: 50px;
+}
+
+#divCompanyLogoForm {
+    display:none;
+}
+
+.aonCardUploadToast {
+    width: 100%;
+    bottom: 60px;
+    right: 0px;
+}
+
+#aonWarehouseMobileSidenavContentElaborationList{
+    display: grid !important;
+    grid-template-columns: repeat(2,1fr)  !important;
+    gap: 10px  !important;
+    list-style-type: none  !important;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList,
+#aonWarehouseMobileSidenavContentElaboration,
+#aonWarehouseMobileSideNavContentPackaging,
+#aonWarehouseMobileSideNavContentDelivery,
+#aonWarehouseMobileSideNavContentTags {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 15px;
+    background-color: transparent;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList:hover,
+#aonWarehouseMobileSidenavContentElaboration:hover,
+#aonWarehouseMobileSideNavContentPackaging:hover,
+#aonWarehouseMobileSideNavContentDelivery:hover,
+#aonWarehouseMobileSideNavContentTags:hover {
+    background-color: #e6e6e6;
+    transform: scale(1.05);
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemIcon,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemIcon,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemIcon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#aonWarehouseMobileSideNavContentElaborationList .aonMenuItemSpanTags,
+#aonWarehouseMobileSidenavContentElaboration .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentPackaging .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentDelivery .aonMenuItemSpanTags,
+#aonWarehouseMobileSideNavContentTags .aonMenuItemSpanTags {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+    display: block;
+    max-width: 80px;
+    word-wrap: break-word;
+}
+
+#aonWarehouseMobileSidenavContentElaborationicon,
+#aonWarehouseMobileSidenavContentPackagingicon,
+#aonWarehouseMobileSidenavContentDeliveryicon,
+#aonWarehouseMobileSidenavContentTagsicon {
+    font-size: 50px;
+}
+
+#aonMenuItemSpanElaboration,
+#aonMenuItemSpanPackaging,
+#aonMenuItemSpanDelivery,
+#aonMenuItemSpanTags {
+    font-size: 14px;
+}
+
+#aonWarehouseMobileSidenavContentElaborationList{
+    margin-left: -30px;
+}
+
+#aonSidenavTitleElaboration{
+    margin-left: -170px !important;
+}
+
+#aonWarehouseMobileSidenavContentTags{
+    margin-bottom: 30px;
+}
+
+#aonWarehouseMobileSidenavContentPackagingicon{
+    margin-top: 5px;
+}
+
+/***************/
+.aonListGroupItem{
+    border-bottom: none;
+}
+
+#aonMobileAppSelection{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);  
+    font-size: 10px;
+    padding: 0px;
+    margin-left: 16px;
+}
+
+.fixLi{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    margin-left: -10px;
+}
+
+.aonAppTitle{
+    text-align: center;
+    padding-left: 0px;
+    width: 60px;
+}
+
+[id^="aonMobileSelectionIcon"] {
+    display: block;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 13px !important;
+    align-content: center ;
+    text-align: center;
+    font-size: 30px;
+    padding-left: 0px !important;
+    padding-top: 0px !important;
+}
+
+
+ /* #aonMobileSelectionIcon-console{
+    margin-left: 30px;
+}
+
+#aonAppTitle-console{
+    margin-left: 3px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-accounting{
+    margin-left: 36px;
+} 
+
+#aonAppTitle-accounting{
+    margin-left: -3px;
+    display: block;
+}
+
+#aonMobileSelectionImg-fiscal{
+    margin-left: 40px;
+}
+
+#aonAppTitle-fiscal{
+    margin-left: 20px;
+    margin-top: 3px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-payroll{
+    margin-left: 26px;
+}
+
+#aonAppTitle-payroll{
+    margin-top: 2px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-invoice{
+    margin-left: 32px;
+}
+
+#aonAppTitle-invoice{
+    margin-left: 3px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-documental{
+    margin-left: 30px;
+}
+
+#aonAppTitle-documental{
+    margin-left: -8px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-timecontrol{
+    margin-left: 40px;
+}
+
+#aonAppTitle-timecontrol{
+    margin-left: 6px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-messenger{
+    margin-left: 20px;
+}
+
+#aonAppTitle-messenger{
+    margin-left: -12px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-warehouse{
+    margin-left: 25px;
+}
+
+#aonAppTitle-warehouse{
+    margin-left: -3px;
+    display: block;
+}
+
+#aonMobileSelectionIcon-marketing{
+    margin-left: 32px;
+}
+
+#aonAppTitle-marketing{
+    display: block;
+} */

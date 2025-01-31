@@ -25,6 +25,7 @@ export const PORTAL_CHECKED = "portalChecked"
 
 export const THEME = 'aonTheme';
 export const AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
+export const AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
 export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
