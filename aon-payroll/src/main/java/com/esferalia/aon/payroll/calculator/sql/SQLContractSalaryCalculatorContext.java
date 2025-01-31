@@ -550,17 +550,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public static class CCCContextKey {
 
+		private Integer domain;
 		private CCCType cccType;
 		private SSRegimeType ssRegime;
-		private Integer domain;
-		private Integer parentDomain;
 
 
-		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime, Integer domain , Integer parentDomain ) {
+		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime, Integer domain ) {
+			this.domain = domain;
 			this.cccType = cccType;
 			this.ssRegime = ssRegime;
-			this.domain = domain;
-			this.parentDomain = parentDomain;
 		}
 
 		public CCCType getCCC() {
@@ -575,9 +573,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return domain;
 		}
 		
-		public Integer getParentDomain() {
-			return parentDomain;
-		}
 	}
 
 	protected static class GuarenteeException extends SalaryException {
@@ -1482,9 +1477,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@Override
 	public ExpressionContext getSystemExpressionContext() {
 		try {
-			return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getDomain(), getParentDomain()));
+			return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getParentDomain()));
 		} catch (Exception e) {
-			return getCccExpressionContexts().get(new CCCContextKey(null, null, null, null ));
+			return getCccExpressionContexts().get(new CCCContextKey(null, null, null));
 			// TODO: This is very simple, too much
 		}
 	}
@@ -2594,8 +2589,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
 
 		Integer enterpriseDomain = getEnterpriseDomain();
-		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain, agreementId,
-				agreementLevelId);
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain, Integer.MIN_VALUE,
+				Integer.MIN_VALUE);
 		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
 
 		ExpressionContext ctx = new ExpressionContext(agreementCtx);
@@ -6291,7 +6286,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private ExpressionContext getCCCExpressionContext() {
-		return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getDomain(), getParentDomain()));
+		return getCccExpressionContexts().get(new CCCContextKey(getCCCType(), getSSRegime(), getParentDomain()));
 	}
 
 	private List<Period> getPeriods(ExpressionContext ctx, String varName) {

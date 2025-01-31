@@ -7,6 +7,8 @@ import { AonMobileHome } from '../home/aon-mobile-home.js';
 import { AonMobileDesktop } from './aon-mobile-desktop.js';
 import * as UA  from '../../services/userAgentService.js';
 
+import * as LS from '../../services/localStorageService.js';
+
 export class AonMobileParent extends AonElement {
 
   	companies;
@@ -28,9 +30,18 @@ export class AonMobileParent extends AonElement {
     }
 
   	init(filter) {
-  		getCompanies().then( companies => {
-      		this.build(companies.filter(f => this.companyFilter(f, filter)));
-      }, () => closeSession());
+		getCompanies().then( companies => {
+			let cps = companies.filter(r => r.id == LS.getDomainId());
+			if(cps.length > 0 && !cps[0].parent) {
+				this.companySelection(cps[0], companies.length == 1 );
+			} else if ( LS.getCompany() ) {
+				this.companySelection(LS.getCompany(), companies.length == 1 );
+			} else if(companies.length === 1) {
+				this.companySelection(companies[0], true);
+			} else {
+				this.build(companies.filter(f => this.companyFilter(f, filter)));
+			}
+		}, () => closeSession());
     }
 
   	companyFilter(f, q) {
