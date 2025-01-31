@@ -183,6 +183,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.RETENTION_TOTAL, mod193.getRetentionTotal())
 				.set(FS_MODEL193.DEPOSIT_RETENTION_TOTAL, mod193.getDepositRetentionTotal())
 				.set(FS_MODEL193.EXPENSES_TOTAL, mod193.getExpensesTotal())
+				.set(FS_MODEL193.NATURE,AonEnumUtils.getByte(mod193.isNature()))
 				.returning(FS_MODEL193.ID).fetchOne();
 		mod193.setId(rec.getId());
 		if (generateDetails) {
@@ -213,6 +214,7 @@ public class Mod193DAO {
 				.set(FS_MODEL193.RETENTION_TOTAL, mod193.getRetentionTotal())
 				.set(FS_MODEL193.DEPOSIT_RETENTION_TOTAL, mod193.getDepositRetentionTotal())
 				.set(FS_MODEL193.EXPENSES_TOTAL, mod193.getExpensesTotal())
+				.set(FS_MODEL193.NATURE,AonEnumUtils.getByte(mod193.isNature()))
 				.where(FS_MODEL193.ID.equal(mod193.getId())).execute();
 		return mod193;
 	}
@@ -402,6 +404,7 @@ public class Mod193DAO {
 				.setRetentionTotal(rec.getValue(FS_MODEL193.RETENTION_TOTAL))
 				.setDepositRetentionTotal(rec.getValue(FS_MODEL193.DEPOSIT_RETENTION_TOTAL))
 				.setExpensesTotal(rec.getValue(FS_MODEL193.EXPENSES_TOTAL))
+				.setNature(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL193.NATURE)))
 				.setComments(rec.getValue(FS_MODEL193.COMMENTS));
 		}
 	}

@@ -28,6 +28,9 @@ import { changeUrl } from '../../services/actionService.js';
 
 
 import * as UA from '../../services/userAgentService.js';
+import { AonMobileHome } from "../home/aon-mobile-home.js";
+import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
+import { AonDesktop } from "../company/aon-desktop.js";
 
 export class AonNewLogin extends AonElement {
   tag;
@@ -448,11 +451,14 @@ export class AonNewLogin extends AonElement {
 
     getUser().then(user => {
       localStorage.setItem('aon_domain_login', user.login);
-      this.rootPanelHtml(this.isMobile()
-          ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-          : '<aon-desktop id="aonDesktop"></aon-desktop>');
-		  let portal = LS.isLeftMenu();
-		  LS.setPortalChecked(portal);
+      if(UA.isMobile()){
+        this.rootPanel(new AonMobileHome());
+      } else {
+        this.rootPanel(new AonDesktop());
+        let portal = LS.isLeftMenu();
+        LS.setPortalChecked(portal);
+      }
+
     });
   }
 

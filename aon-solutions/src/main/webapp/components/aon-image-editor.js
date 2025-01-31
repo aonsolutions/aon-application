@@ -10,7 +10,6 @@ export class AonImageEditor extends AonElement {
     
     IMAGE;
     cropper;
-
     image;
 
     get id() {
@@ -39,7 +38,7 @@ export class AonImageEditor extends AonElement {
         this.appendChild(imageContainer);
 
         let cropperContainer = this.createDiv("cropper-container", "aonImageEditorCropperContainer");
-        cropperContainer.innerHTML = '<img id="image" />'
+        cropperContainer.innerHTML = '<img id="image" />';
         imageContainer.appendChild(cropperContainer);
 
         let resultContainer = this.createDiv("result-container", "aonImageEditorResultContainer");
@@ -89,7 +88,7 @@ export class AonImageEditor extends AonElement {
 
             this.cropper = new Cropper(imageElement, {
                 viewMode: 2,
-                autoCropArea: 0.5,
+                autoCropArea: 1,  
                 movable: true,
                 zoomable: true,
                 rotatable: true,
@@ -105,7 +104,13 @@ export class AonImageEditor extends AonElement {
                 minCropBoxWidth: 50,
                 minCropBoxHeight: 50,
                 ready() {
-                    // Ajusta el tamaño del cropBoxData si es necesario
+                    const cropBoxData = this.cropper.getCropBoxData();
+                    this.cropper.setCropBoxData({
+                        left: 0,
+                        top: 0,
+                        width: cropBoxData.width,
+                        height: cropBoxData.height
+                    });
                 }
             });
         };
@@ -113,15 +118,6 @@ export class AonImageEditor extends AonElement {
 
     cropImage() {
         if (this.cropper) {
-
-            // const cropBoxData = this.cropper.getCropBoxData();
-            // const canvas = this.cropper.getCroppedCanvas({
-            //     width: cropBoxData.width,
-            //     height: cropBoxData.height,
-            // });
-
-
-
             const canvas = this.cropper.getCroppedCanvas({
                 minWidth: 256,
                 minHeight: 256,
@@ -134,7 +130,7 @@ export class AonImageEditor extends AonElement {
            
             canvas.toBlob((blob) => {
                 let file = new File([blob], `${ramdomString(10)}.jpg`, { type: "image/jpeg" });
-                this.dispatchEvent(new CustomEvent(EVENT.CROPPER, {detail:file}));
+                this.dispatchEvent(new CustomEvent(EVENT.CROPPER, { detail: file }));
             }, 'image/jpeg', 1);
 
             this.closeCropper();
