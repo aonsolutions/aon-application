@@ -70,6 +70,11 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
 		}
+		
+		,BIZKAIA_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2025Declaration();}
+		}
 		,BIZKAIA_2024_T4 {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303BIZKAIA2024T3Declaration();}
@@ -78,6 +83,7 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303BIZKAIA2023Declaration();}
 		}
+		
 		,GIPUZKOA_2024_T3 {
 			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2024T3Declaration();}

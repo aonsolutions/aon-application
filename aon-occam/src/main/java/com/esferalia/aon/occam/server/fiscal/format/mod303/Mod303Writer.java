@@ -55,8 +55,11 @@ public class Mod303Writer {
 		,ARABA_2025		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2025), Mod303WriterARABA2025::new)
 		,ARABA_2023		(mod303 -> (mod303.isAraba() && mod303.getYear() >= 2023 && mod303.getYear() <= 2024), Mod303WriterARABA2023::new)
 		
+		,BIZKAIA_2025	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2025)	, Mod303WriterBIZKAIA2025::new)
+		,BIZKAIA_2023	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2023 && mod303.getYear() <= 2024)	, Mod303WriterBIZKAIA2023::new)
+		
 		,GIPUZKOA_2023	(mod303 -> (mod303.isGipuzkoa() && mod303.getYear() >= 2023), Mod303WriterGIPUZKOA2023::new)
-		,BIZKAIA_2023	(mod303 -> (mod303.isBizkaia() && mod303.getYear() >= 2023) 	, Mod303WriterBIZKAIA2023::new)
+		
 		
 		// ejercicios anteriores
 		,AEAT_2023		(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2023), Mod303WriterAEAT2023::new)

@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -14,34 +13,23 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
+class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 	
-	protected Mod303BIZKAIA2024T3Declaration() {
+	protected Mod303BIZKAIA2025Declaration() {
 				
 	}
 	public static final double PERCENT_21 = 21.0;
 	public static final double PERCENT_10 = 10.0;
-	public static final double PERCENT_75 = 7.5;
-	public static final double PERCENT_5 = 5.0;
 	public static final double PERCENT_4 = 4.0;
-	public static final double PERCENT_2 = 2.0;
 	public static final double PERCENT_0 = 0.0;
 	
 	public static final double SURCHARGE_PERCENT_52 = 5.2;
 	public static final double SURCHARGE_PERCENT_175 = 1.75;
 	public static final double SURCHARGE_PERCENT_14 = 1.4;
-	public static final double SURCHARGE_PERCENT_062 = 0.62;
-	public static final double SURCHARGE_PERCENT_05 = 0.5;
-	public static final double SURCHARGE_PERCENT_1 = 1;
-	public static final double SURCHARGE_PERCENT_026 = 0.26;
-	public static final double SURCHARGE_PERCENT_0 = 1;
+	public static final double SURCHARGE_PERCENT_05 = 0.5;	
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isBizkaia() 
-			&& mod.getPeriod() != Period.T4
-			&& mod.getPeriod() != Period.M12
-			&& (mod.getYear() == 2024 && (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.M10 || mod.getPeriod() == Period.M11 || mod.getPeriod() == Period.T3))
-		;
+		return mod.isBizkaia() && mod.getYear() >= 2025;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -87,11 +75,11 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C004(Mod303Key.BZ_C004,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C004,mod,vat.getQuota()))
 		// Base imponible, porcentaje y cuota al 5%
-		,BZ_C110(Mod303Key.BZ_C110,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C110,mod,vat.getBase()))
-		,BZ_X110(Mod303Key.BZ_X110,null,null,(ctx,mod) -> add(Mod303Key.BZ_X110,mod,PERCENT_5))
-		,BZ_C111(Mod303Key.BZ_C111,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C111,mod,vat.getQuota()))
+//		,BZ_C110(Mod303Key.BZ_C110,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C110,mod,vat.getBase()))
+//		,BZ_X110(Mod303Key.BZ_X110,null,null,(ctx,mod) -> add(Mod303Key.BZ_X110,mod,PERCENT_5))
+//		,BZ_C111(Mod303Key.BZ_C111,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C111,mod,vat.getQuota()))
 		// Base imponible, porcentaje y cuota al 10%
 		,BZ_C005	(Mod303Key.BZ_C005,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C005,mod,vat.getBase()))
@@ -104,7 +92,7 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_X007	(Mod303Key.BZ_X007,null,null,(ctx,mod) -> add(Mod303Key.BZ_X007,mod,PERCENT_21))
 		,BZ_C008	(Mod303Key.BZ_C008,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C008,mod,vat.getQuota()))
-		// Recargo equivalencia al 0%, 0.5% y 0.62%
+		// Recargo equivalencia al 0.5%
 		,BZ_C009	(Mod303Key.BZ_C009,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C009,mod,vat.getBase()))
 		,BZ_X009	(Mod303Key.BZ_X009,null,null,(ctx,mod) -> add(Mod303Key.BZ_X009,mod,SURCHARGE_PERCENT_05))
@@ -147,7 +135,7 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C046	(Mod303Key.BZ_C046)
 		,BZ_C047	(Mod303Key.BZ_C047)
 		// Total cuota devengada
-		,BZ_C023	(Mod303Key.BZ_C023,null,null,null,"BZ_C049+BZ_C004+BZ_C111+BZ_C006+BZ_C008+BZ_C010+BZ_C012+BZ_C014+BZ_C016+BZ_C018+BZ_C020+BZ_C022+BZ_C047",null)
+		,BZ_C023	(Mod303Key.BZ_C023,null,null,null,"BZ_C049+BZ_C004+BZ_C006+BZ_C008+BZ_C010+BZ_C012+BZ_C014+BZ_C016+BZ_C018+BZ_C020+BZ_C022+BZ_C047",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -243,13 +231,13 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C052	(Mod303Key.BZ_C052,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C052,mod,vat))
 		// Compras de bienes corrientes al 5%
-		,BZ_C112	(Mod303Key.BZ_C112,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C112,mod,vat.getBase()))
-		,BZ_X112	(Mod303Key.BZ_X112,null,null,(ctx,mod) -> add(Mod303Key.BZ_X112,mod,PERCENT_5))
-		,BZ_C113	(Mod303Key.BZ_C113,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C113,mod,vat.getQuota()))
-		,BZ_C114	(Mod303Key.BZ_C114,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C114,mod,vat))
+//		,BZ_C112	(Mod303Key.BZ_C112,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C112,mod,vat.getBase()))
+//		,BZ_X112	(Mod303Key.BZ_X112,null,null,(ctx,mod) -> add(Mod303Key.BZ_X112,mod,PERCENT_5))
+//		,BZ_C113	(Mod303Key.BZ_C113,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C113,mod,vat.getQuota()))
+//		,BZ_C114	(Mod303Key.BZ_C114,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C114,mod,vat))
 		// Compras de bienes corrientes al 10%
 		,BZ_C053	(Mod303Key.BZ_C053,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent10(vat) 
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C053,mod,vat.getBase()))
@@ -281,9 +269,9 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C064	(Mod303Key.BZ_C064,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasOtherPercent(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C064,mod,vat))
 		// Compras de bienes corrientes TOTAL
-		,BZ_C065	(Mod303Key.BZ_C065,null,null,null,"BZ_C050+BZ_C112+BZ_C053+BZ_C056+BZ_C059+BZ_C062",null)
-		,BZ_C066	(Mod303Key.BZ_C066,null,null,null,"BZ_C051+BZ_C113+BZ_C054+BZ_C057+BZ_C060+BZ_C063",null)
-		,BZ_C067	(Mod303Key.BZ_C067,null,null,null,"BZ_C052+BZ_C114+BZ_C055+BZ_C058+BZ_C061+BZ_C064",null)
+		,BZ_C065	(Mod303Key.BZ_C065,null,null,null,"BZ_C050+BZ_C053+BZ_C056+BZ_C059+BZ_C062",null)
+		,BZ_C066	(Mod303Key.BZ_C066,null,null,null,"BZ_C051+BZ_C054+BZ_C057+BZ_C060+BZ_C063",null)
+		,BZ_C067	(Mod303Key.BZ_C067,null,null,null,"BZ_C052+BZ_C055+BZ_C058+BZ_C061+BZ_C064",null)
 		
 		// Gastos al 4%		
 		,BZ_C068	(Mod303Key.BZ_C068,(mod,vat) -> isExpenses(vat) && hasPercent4(vat)
@@ -294,13 +282,13 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C070	(Mod303Key.BZ_C070,(mod,vat) -> isExpenses(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C070,mod,vat))
 		// Gastos al 5%
-		,BZ_C115	(Mod303Key.BZ_C115,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C115,mod,vat.getBase()))
-		,BZ_X115	(Mod303Key.BZ_X115,null,null,(ctx,mod) -> add(Mod303Key.BZ_X115,mod,PERCENT_5))
-		,BZ_C116	(Mod303Key.BZ_C116,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.BZ_C116,mod,vat.getQuota()))
-		,BZ_C117	(Mod303Key.BZ_C117,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C117,mod,vat))
+//		,BZ_C115	(Mod303Key.BZ_C115,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C115,mod,vat.getBase()))
+//		,BZ_X115	(Mod303Key.BZ_X115,null,null,(ctx,mod) -> add(Mod303Key.BZ_X115,mod,PERCENT_5))
+//		,BZ_C116	(Mod303Key.BZ_C116,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.BZ_C116,mod,vat.getQuota()))
+//		,BZ_C117	(Mod303Key.BZ_C117,(mod,vat) -> isExpenses(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C117,mod,vat))
 		// Gastos al 10%
 		,BZ_C071	(Mod303Key.BZ_C071,(mod,vat) -> isExpenses(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C071,mod,vat.getBase()))
@@ -325,9 +313,9 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 		,BZ_C079	(Mod303Key.BZ_C079,(mod,vat) -> isExpenses(vat) && hasOtherExpensesPercent(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C079,mod,vat))
 		// Gastos TOTAL
-		,BZ_C080	(Mod303Key.BZ_C080,null,null,null,"BZ_C068+BZ_C115+BZ_C071+BZ_C074+BZ_C077",null)
-		,BZ_C081	(Mod303Key.BZ_C081,null,null,null,"BZ_C069+BZ_C116+BZ_C072+BZ_C075+BZ_C078",null)
-		,BZ_C082	(Mod303Key.BZ_C082,null,null,null,"BZ_C070+BZ_C117+BZ_C073+BZ_C076+BZ_C079",null)
+		,BZ_C080	(Mod303Key.BZ_C080,null,null,null,"BZ_C068+BZ_C071+BZ_C074+BZ_C077",null)
+		,BZ_C081	(Mod303Key.BZ_C081,null,null,null,"BZ_C069+BZ_C072+BZ_C075+BZ_C078",null)
+		,BZ_C082	(Mod303Key.BZ_C082,null,null,null,"BZ_C070+BZ_C073+BZ_C076+BZ_C079",null)
 		
 		// Bienes de inversión al 4%
 		,BZ_C083	(Mod303Key.BZ_C083,(mod,vat) -> isInvestment(vat) && hasPercent4(vat)
@@ -534,11 +522,6 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 	private static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4;	
 	}
-	private static boolean hasPercent5(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_5
-			|| vat.getPercentage() ==  PERCENT_2
-			|| vat.getPercentage() ==  PERCENT_75; 	
-	}
 	private static boolean hasPercent10(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_10; 	
 	}
@@ -548,13 +531,11 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 	private static boolean hasOtherPercent(VatContext vat) {
 		return vat.getPercentage() !=  PERCENT_0 
 			&& vat.getPercentage() !=  PERCENT_4
-			&& vat.getPercentage() !=  PERCENT_5
 			&& vat.getPercentage() !=  PERCENT_10 
 			&& vat.getPercentage() !=  PERCENT_21; 	
 	}
 	private static boolean hasOtherExpensesPercent(VatContext vat) {
 		return vat.getPercentage() !=  PERCENT_4
-			&& vat.getPercentage() !=  PERCENT_5
 			&& vat.getPercentage() !=  PERCENT_10 
 			&& vat.getPercentage() !=  PERCENT_21; 	
 	}
@@ -564,11 +545,7 @@ class Mod303BIZKAIA2024T3Declaration extends Mod303BIZKAIA {
 			&& vat.getPercentage() !=  PERCENT_21; 	
 	}
 	private static boolean hasSurchargePercent05(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_062
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_1
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_026;
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05;
 	}
 	private static boolean hasSurchargePercent14(VatContext vat) {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14; 
