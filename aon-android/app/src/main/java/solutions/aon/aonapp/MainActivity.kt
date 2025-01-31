@@ -25,7 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import solutions.aon.aonapp.ui.theme.Camara2Theme
 
-const val PAGE_URL = "http://192.168.2.45:8080/beta"
+const val PAGE_URL = "https://aon.solutions"
 
 class MainActivity : ComponentActivity() {
     private val aonJs: AonJs by lazy { AonJs(null, this) }
