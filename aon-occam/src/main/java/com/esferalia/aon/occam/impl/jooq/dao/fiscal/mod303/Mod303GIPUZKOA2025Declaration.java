@@ -23,7 +23,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -34,36 +33,26 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
+class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 	
-	protected Mod303GIPUZKOA2024T3Declaration() {
+	protected Mod303GIPUZKOA2025Declaration() {
 		
 	}
 	
 	public static final double PERCENT_21 = 21.0;
 	public static final double PERCENT_10 = 10.0;
-	public static final double PERCENT_75 = 7.5;
-	public static final double PERCENT_5 = 5.0;
 	public static final double PERCENT_4 = 4.0;
-	public static final double PERCENT_2 = 2.0;
 	public static final double PERCENT_0 = 0.0;
 	
 	public static final double SURCHARGE_PERCENT_52 = 5.2;
 	public static final double SURCHARGE_PERCENT_175 = 1.75;
 	public static final double SURCHARGE_PERCENT_14 = 1.4;
-	public static final double SURCHARGE_PERCENT_062 = 0.62;
 	public static final double SURCHARGE_PERCENT_05 = 0.5;
-	public static final double SURCHARGE_PERCENT_1 = 1;
-	public static final double SURCHARGE_PERCENT_026 = 0.26;
-	public static final double SURCHARGE_PERCENT_0 = 0;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() 
-			&& mod.getPeriod() != Period.T4
-			&& mod.getPeriod() != Period.M12
-			&& (mod.getYear() == 2024 && (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.M10 || mod.getPeriod() == Period.M11 || mod.getPeriod() == Period.T3))
-		;
+		return mod.isGipuzkoa() && mod.getYear() >= 2025;
 	}
+	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
 		 ,Mod303Key.GP_C020
@@ -74,7 +63,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 	
 	private enum Mod303KeyDAO implements IMod303KeyDAO {
 		 GP_I000	(Mod303Key.GP_I000
-			 ,null,null,Mod303GIPUZKOA2024T3Declaration::addDeponentDocument,null,null)
+			 ,null,null,Mod303GIPUZKOA2025Declaration::addDeponentDocument,null,null)
 		,GP_A001	(Mod303Key.GP_A001)
 		,GP_A002	(Mod303Key.GP_A002)
 		,CM_003		(Mod303Key.CM_003)
@@ -98,11 +87,11 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C005,mod,vat.getQuota()))
 		
 		// Base imponible, porcentaje y cuota al 5%
-		,GP_C055(Mod303Key.GP_C055,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			 ,(ctx,mod,vat) -> add(Mod303Key.GP_C055,mod,vat.getBase()))
-		,GP_X055(Mod303Key.GP_X055,null,null,(ctx,mod) -> add(Mod303Key.GP_X055,mod,PERCENT_5))
-		,GP_C056(Mod303Key.GP_C056,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C056,mod,vat.getQuota()))
+//		,GP_C055(Mod303Key.GP_C055,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			 ,(ctx,mod,vat) -> add(Mod303Key.GP_C055,mod,vat.getBase()))
+//		,GP_X055(Mod303Key.GP_X055,null,null,(ctx,mod) -> add(Mod303Key.GP_X055,mod,PERCENT_5))
+//		,GP_C056(Mod303Key.GP_C056,(mod,vat) -> isCommonNationalSales(vat) && hasPercent5(vat)
+//			,(ctx,mod,vat) -> add(Mod303Key.GP_C056,mod,vat.getQuota()))
 
 		// Base imponible, porcentaje y cuota al 4%.
 		,GP_C006(Mod303Key.GP_C006,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
@@ -135,7 +124,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 		,GP_C009(Mod303Key.GP_C009,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C009,mod,vat.getSurchargeQuota()))
 		
-		// Recargo equivalencia al 5.2%.
+		// Recargo equivalencia al 1.75%.
 		,GP_C058(Mod303Key.GP_C058,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent175(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C058,mod,vat.getBase()))
 		,GP_X058(Mod303Key.GP_X008,null,null,(ctx,mod) -> add(Mod303Key.GP_X058,mod,SURCHARGE_PERCENT_175))
@@ -149,7 +138,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 		,GP_C011(Mod303Key.GP_C011,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C011,mod,vat.getSurchargeQuota()))
 		
-		// Recargo equivalencia al 0.5% y 0.62%.
+		// Recargo equivalencia al 0.5%
 		,GP_C012(Mod303Key.GP_C012,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C012,mod,vat.getBase()))
 		,GP_X012(Mod303Key.GP_X012,null,null,(ctx,mod) -> add(Mod303Key.GP_X012,mod,SURCHARGE_PERCENT_05))
@@ -187,7 +176,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 			,null,null,null)
 		
 		// TOTAL CUOTA DEVENGADA
-		,GP_C016(Mod303Key.GP_C016,null,null,null,"GP_C003+GP_C005+GP_C056+GP_C007+GP_C040+GP_C009+GP_C059+GP_C011+GP_C013+GP_C042+GP_C015+GP_C044",null)
+		,GP_C016(Mod303Key.GP_C016,null,null,null,"GP_C003+GP_C005+GP_C007+GP_C040+GP_C009+GP_C059+GP_C011+GP_C013+GP_C042+GP_C015+GP_C044",null)
 		
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -394,6 +383,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 	public boolean hasSimplifiedRegime() {
 		return false;
 	}
+	
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
@@ -406,11 +396,6 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 	}
 	private static boolean hasPercent10(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_10; 	
-	}
-	private static boolean hasPercent5(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT_5
-			|| vat.getPercentage() ==  PERCENT_2
-			|| vat.getPercentage() ==  PERCENT_75; 	
 	}
 	private static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4; 	
@@ -428,11 +413,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14; 
 	}
 	private static boolean hasSurchargePercent05(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_062
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_1
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_026
-			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0;
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05;
 	}
 	
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
