@@ -97,11 +97,15 @@ public abstract class Mod303Declaration {
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2023Declaration();}
 		}
 		
-		,NAVARRA_2024_T3{
+		,NAVARRA_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2025Declaration();}
+		}
+		,NAVARRA_2024_T3 {
 			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303NAVARRA2024T3Declaration();}
 		}
-		,NAVARRA_2023{
+		,NAVARRA_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303NAVARRA2023Declaration();}
 		}
