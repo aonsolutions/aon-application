@@ -76,6 +76,9 @@ public class LROE140_1_2 extends LROE140 {
 		if(invoice.getEpigraph().equals("183320")) invoice.setEpigraph("183321");
 		if(invoice.getEpigraph().equals("183310")) invoice.setEpigraph("183311");
 		if(invoice.getEpigraph().equals("184950")) invoice.setEpigraph("1849501"); // o 1849502 ??
+		if(invoice.getEpigraph().equals("192210") || invoice.getEpigraph().equals("192220") )
+			invoice.setEpigraph("192200");
+		
 		detalleRenta.setEpigrafe(invoice.getEpigraph());
 		detalleRenta.setIngresoAComputarIRPFDiferenteBaseImpoIVA(SiNoEnum.N);
 		//detalleRenta.setImporteIngresoIRPF();

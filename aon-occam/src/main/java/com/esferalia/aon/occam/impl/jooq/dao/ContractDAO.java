@@ -40,10 +40,14 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.jooq.*;
-import org.jooq.impl.*;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Result;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Timecontrol;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ContractExtendedData;
@@ -95,9 +99,37 @@ public class ContractDAO {
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		Condition domainsCondition = DOMAIN.ID.in(domains).or(DOMAIN.PARENT.in(domains));
 		Condition userScopesDomain = DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes));
-		return getContractExtendedDataStream(ctx, filter, 1, limit, domainsCondition, userScopesDomain);
+
+		Condition[] filterConditions = CONTRACT_EXTENDED_DATA_PROPERTIES.getConditions(filter);
+		
+		Condition[] allConditions = Stream
+				.concat(Arrays.stream(filterConditions),
+						Arrays.stream(new Condition[] { domainsCondition, userScopesDomain }))
+				.toArray(Condition[]::new);
+		
+		return ctx.getDslContext()
+				.select(DOMAIN.fields())
+				.select(CONTRACT.fields())
+				.select(REGISTRY.fields())
+				.select(WORKPLACE.DESCRIPTION)
+				.select(REGISTRY.NAME.as(PERSON_FULL_NAME))
+				.select(DSL.inline(0d).as(SALARY_CGC_BASE))
+				.select(DSL.inline(0d).as(MARK_TOTAL_TIME)
+						)
+				.select(DSL.inline("000").as(CONTRACT_TYPE)
+						)
+				.from(CONTRACT)
+				.innerJoin(REGISTRY).on(CONTRACT.PERSON.eq(REGISTRY.ID))
+				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+				.innerJoin(DOMAIN).on(CONTRACT.DOMAIN.eq(DOMAIN.ID))
+				.having(allConditions)
+				.limit(limit).offset(0)
+				.fetch().stream().map(new ContractExtendedDataFiller());
+		
+		//return getContractExtendedDataStream(ctx, filter, 1, limit, domainsCondition, userScopesDomain);
 	}
 	
+
 	public static Stream<ContractExtendedData> getContractExtendedDataStream(AONContext ctx, ContractExtendedDataFilter filter, Integer page, Integer perPage, Condition ...customConditions){
 		ctx.checkRead();
 		
