@@ -2380,45 +2380,43 @@
 				</aon:div>
 			</aon:panelGroup>
 				<aon:panelGroup>
-					<aon:if test="#{domainSwitcher.betaEnabled}" >
-						<h:outputLink 
-							id="new_aon"
-							target="_blank" 
-							style="color: #002469;"
-							styleClass="aon-top-menu-item"
-							value="/beta?aonMenuTopnav=true&amp;aonMenuSidenav=true"
-						>
-							<aon:outputText
-							value="open_in_new"  
+					<h:outputLink 
+						id="new_aon"
+						target="_blank" 
+						style="color: #002469;"
+						styleClass="aon-top-menu-item"
+						value="/beta?aonMenuTopnav=true&amp;aonMenuSidenav=true"
+					>
+						<aon:outputText
+						value="open_in_new"  
+						styleClass="material-icons" 
+						style="position:absolute; font-size:24px; transform: translateY(-2px); " 
+						/>
+						<aon:outputText
+						value="Nuevo Diseño" 
+						style="padding-left: 24px; white-space: nowrap;" 
+						/>
+					</h:outputLink>
+					<!--
+					By now we open a new window with new design.  
+					<aon:commandLink 
+						id="new_aon"
+						action="start" 
+						immediate="true"
+						style="color: #777;"
+						styleClass="aon-top-menu-item"
+						actionListener="#{userUtils.enableNewAONTheme}" >
+						<aon:outputText
+							value="toggle_off"  
 							styleClass="material-icons" 
-							style="position:absolute; font-size:24px; transform: translateY(-2px); " 
+							style="position:absolute; font-size:38px; transform: translateY(-10px); " 
 							/>
-							<aon:outputText
-							value="Nuevo Diseño" 
-							style="padding-left: 24px; white-space: nowrap;" 
-							/>
-						</h:outputLink>
-						<!--
-						By now we open a new window with new design.  
-						<aon:commandLink 
-							id="new_aon"
-							action="start" 
-							immediate="true"
-							style="color: #777;"
-							styleClass="aon-top-menu-item"
-							actionListener="#{userUtils.enableNewAONTheme}" >
-							<aon:outputText
-								value="toggle_off"  
-								styleClass="material-icons" 
-								style="position:absolute; font-size:38px; transform: translateY(-10px); " 
-								/>
-							<aon:outputText
-							value="Nuevo Diseño" 
-							style="padding-left: 38px; white-space: nowrap;" 
-							/>
-						</aon:commandLink>
-						-->
-					</aon:if>
+						<aon:outputText
+						value="Nuevo Diseño" 
+						style="padding-left: 38px; white-space: nowrap;" 
+						/>
+					</aon:commandLink>
+					-->
 				</aon:panelGroup>
 			
 			<aon:panelGroup style="text-align:left; display:flex" >
