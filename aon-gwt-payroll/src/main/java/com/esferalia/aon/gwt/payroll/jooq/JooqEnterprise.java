@@ -235,8 +235,8 @@ public class JooqEnterprise {
 		.fetchStreamInto(ENTERPRISE_CCC)
 		.map( r -> {
 			CCC ccc = new CCC();
-			ccc.setCode(CCC.getCode(r.getCcc()));
-			ccc.setGeozone(CCC.getGeozone(r.getCcc()));
+			ccc.setCode(r.getCcc());
+			ccc.setGeozone(r.getCcc());
 			ccc.setRegime(getSSRegime(r.getType()).getCode());
 			return ccc;
 		})
