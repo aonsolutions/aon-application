@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CCC implements Serializable, HasId<Integer>{
 
@@ -75,13 +74,5 @@ public class CCC implements Serializable, HasId<Integer>{
 		this.type = type;
 	}
 	
-	public static String getCode(String ccc) {
-		return ( AonStringUtils.length(ccc) >= 11 ) ? AonStringUtils.substring(ccc, 2): ccc; 
-	}
-
-	public static String getGeozone(String ccc) {
-		return ( AonStringUtils.length(ccc) >= 11 ) ? AonStringUtils.substring(ccc, 0,2): null; 
-	}
-
 	
 }
