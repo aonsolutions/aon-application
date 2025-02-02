@@ -11,6 +11,7 @@ import { changeStatusBarColor } from '../services/actionService.js';
 
 import * as LS from '../services/localStorageService.js';
 import * as UA from '../services/userAgentService.js';
+import { AonMobileParent } from './company/aon-mobile-parent.js';
 
 export class AonMobileHeader extends AonElement {
 
@@ -98,7 +99,9 @@ export class AonMobileHeader extends AonElement {
 		companyListButton.addEventListener(EVENT.CLICK, () => {
 			if(!companyListButton.isDisabled()) {
 				this.companyOut();
-				this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');
+				let mobileParent = new AonMobileParent();
+				mobileParent.id = 'aonParent';
+				this.rootPanel(mobileParent);
 			}
 		});
 		if(!this.isParent()) companyListButton.color = 'white';

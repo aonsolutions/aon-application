@@ -13,6 +13,7 @@ export class AonMobileParent extends AonElement {
 
   	companies;
   	selected;
+	selection; // boolean
 
   	constructor () {
   		super();
@@ -32,9 +33,9 @@ export class AonMobileParent extends AonElement {
   	init(filter) {
 		getCompanies().then( companies => {
 			let cps = companies.filter(r => r.id == LS.getDomainId());
-			if(cps.length > 0 && !cps[0].parent) {
+			if(this.selection && cps.length > 0 && !cps[0].parent) {
 				this.companySelection(cps[0], companies.length == 1 );
-			} else if ( LS.getCompany() ) {
+			} else if (this.selection && LS.getCompany() ) {
 				this.companySelection(LS.getCompany(), companies.length == 1 );
 			} else if(companies.length === 1) {
 				this.companySelection(companies[0], true);
