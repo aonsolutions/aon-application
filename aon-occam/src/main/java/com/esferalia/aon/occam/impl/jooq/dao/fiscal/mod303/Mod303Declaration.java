@@ -41,7 +41,11 @@ public abstract class Mod303Declaration {
 	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
 	private enum Declarations {
-		 AEAT_2024_T4 {
+		 AEAT_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2025Declaration();}
+		}
+		,AEAT_2024_T4 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2024T4Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2024T4Declaration();}
 		}
@@ -53,6 +57,11 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
 		}
+
+		,ARABA_2025{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2025Declaration();}
+		}
 		,ARABA_2024_T3{
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2024T3Declaration();}
@@ -60,6 +69,11 @@ public abstract class Mod303Declaration {
 		,ARABA_2023{
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
+		}
+		
+		,BIZKAIA_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2025Declaration();}
 		}
 		,BIZKAIA_2024_T4 {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2024T3Declaration.accept(mod);}
@@ -69,6 +83,11 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303BIZKAIA2023Declaration();}
 		}
+		
+		,GIPUZKOA_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2025Declaration();}
+		}		
 		,GIPUZKOA_2024_T3 {
 			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2024T3Declaration();}
@@ -77,15 +96,21 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2023Declaration();}
 		}
-		,NAVARRA_2024_T3{
+		
+		,NAVARRA_2025 {
+			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2025Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303NAVARRA2025Declaration();}
+		}
+		,NAVARRA_2024_T3 {
 			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2024T3Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303NAVARRA2024T3Declaration();}
 		}
-		,NAVARRA_2023{
+		,NAVARRA_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303NAVARRA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303NAVARRA2023Declaration();}
 		}
-		 // Ejercicios Anteriores
+		
+		// Ejercicios Anteriores
 		,AEAT_2022 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}

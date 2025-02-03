@@ -106,7 +106,8 @@ class Model303NAVARRA2022 extends Model303Base {
 
 					@Override
 					public String getDownloadFileAction() {
-						return Model303Base.MODEL303_FILE;
+						// Solo está preparado el fichero de los trimestrales (F69)
+						return getModel().getPeriod().isQuarterPeriod() ? Model303Base.MODEL303_FILE : null;
 					}
 
 					@Override
