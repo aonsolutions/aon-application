@@ -1213,7 +1213,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 	}
 
 	@Test
-	public void testOverrideRegime() throws SQLException, AonException {
+	public void testOverrideRegimeI() throws SQLException, AonException {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -1257,7 +1257,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		aonContext, 
 		domain.getId(), 
 		"66666666M");
-
+		
 		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
 		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
 		ContractRecord contract = newContract(
@@ -1287,11 +1287,106 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		
 		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
-		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));		
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
+		
+		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "8.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(8.6, r.getValue()));		
+		
+	}
 
-		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "7.6"));
+	@Test
+	public void testOverrideRegimeII() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		DomainRecord parentDomain = 
+		newDomain(aonContext);
+		DomainRecord domain = 
+		newDomain(aonContext, parentDomain.getId());
+
+		ScopeRecord scope = 
+		newScope(aonContext, domain.getId());
+		
+		EnterpriseActivityRecord enterpriseActivity = 
+		newEnterpriseActivity(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				SSRegimeType.GENERAL);
+
+		EnterpriseCccRecord enterpriseCcc = 
+		newEnterpriseCcc(
+				aonContext, 
+				domain.getId(), 
+				scope.getId(), 
+				enterpriseActivity.getId(), 
+				CCCType.PRINCIPAL, 
+				ccc);
+		
+		WorkplaceRecord workplace = 
+		newWorkplace(
+		aonContext, 
+		domain.getId(), 
+		scope.getId(), 
+		enterpriseActivity.getEnterprise());
+		
+		RegistryRecord person = 
+		newPerson(
+		aonContext, 
+		domain.getId(), 
+		"66666666M");
+		
+		AgreementRecord agreement =  newAgreement(aonContext);
+		
+		AgreementLevelCategoryRecord category = newAgreementCategory(
+				aonContext, 
+				agreement,
+				"NIVEL-I", 
+				"CATEGORIA 1");
+
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
+		ContractRecord contract = newContract(
+				aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.PRINCIPAL, 
+				firstDayOfMonth, 
+				null,
+				Collections.emptyMap(), 
+				new String[] {}, 
+				new String[] {}, 
+				category,
+				domain.getId(), 			//domainId, 
+				person.getId(),				//personId, 
+				workplace.getId(),			//workplaceId, 
+				enterpriseCcc.getId(),		//enterpriseCccId,
+				enterpriseActivity.getId()	//enterpriseActivityId
+				);
+
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "4.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+				.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(4.6, r.getValue()));		
+		
+		addCCCData(aonContext, CCCType.PRINCIPAL, contract.getStartDate(), contract.getEndDate(), Collections.singletonMap("PORCENTAJE_CGC", "5.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(5.6, r.getValue()));		
+		
+		addDomainData(aonContext, parentDomain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "6.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(6.6, r.getValue()));
+		
+		addData(aonContext, category, firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "7.6"));
 		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
 		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(7.6, r.getValue()));		
+
+		addDomainData(aonContext, domain.getId(), firstDayOfMonth, lastDayOfMonth, Collections.singletonMap("PORCENTAJE_CGC", "8.6"));
+		getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, contract)
+		.getExpressionContext().eval("PORCENTAJE_CGC", firstDayOfMonth, lastDayOfMonth).forEach( r -> org.junit.Assert.assertEquals(8.6, r.getValue()));		
 		
 	}
 	// ------------------------------------------------------------------------

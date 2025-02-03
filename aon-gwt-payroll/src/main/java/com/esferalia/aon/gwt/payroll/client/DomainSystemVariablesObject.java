@@ -1,50 +1,49 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Variables.VariablesObject;
-import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
-import com.esferalia.aon.gwt.payroll.shared.ContractVariableType;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariableType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class EmployeeContractVariablesObject implements VariablesObject<ContractVariable> {
+public class DomainSystemVariablesObject implements VariablesObject<SystemVariable> {
 	
 	// ----------------------------------------------- Variables 
 	
-	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	
-	private List<ContractVariable> contractVariables;
-	private List<ContractVariable> contractVariablesFiltered;
+	private List<SystemVariable> systemVariables;
+	private List<SystemVariable> systemVariablesFiltered;
 	
-	private Integer contractId;
-	private Date contractStartDate;
-	private Date contractEndDate;
+	private Integer domainId;
+	private Date startDate;
+	private Date endDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractVariablesObject(Integer contractId, Date contractStartDate, Date contractEndDate) {
-		this.contractId = contractId;
-		this.contractStartDate =  contractStartDate;
-		this.contractEndDate = contractEndDate;
-		this.contractVariables = new ArrayList<>();
-		this.contractVariablesFiltered = new ArrayList<>();
+	public DomainSystemVariablesObject(Integer domainId, Date startDate, Date endDate) {
+		this.domainId = domainId;
+		this.startDate =  startDate;
+		this.endDate = endDate;
+		this.systemVariables = new ArrayList<>();
+		this.systemVariablesFiltered = new ArrayList<>();
 	}
 
 	// ----------------------------------------------- DataBase.Methods
 	
 	@Override
-	public void getVariables(Consumer<List<ContractVariable>> success, Consumer<Throwable> failure) {
-		employeesService.getContractVariables(this.contractId, new AsyncCallback<List<ContractVariable>>() {
+	public void getVariables(Consumer<List<SystemVariable>> success, Consumer<Throwable> failure) {
+		enterprisesService.getSystemVariables(this.domainId, new AsyncCallback<List<SystemVariable>>() {
 			@Override
-			public void onSuccess(List<ContractVariable> result) {
-				contractVariables = result;
-				success.accept(contractVariables);
+			public void onSuccess(List<SystemVariable> result) {
+				systemVariables = result;
+				success.accept(systemVariables);
 			}
 
 			@Override
@@ -55,8 +54,8 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 	}
 	
 	@Override
-	public void createVariable(ContractVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.createContractVariable(this.contractId, contractVariable, new AsyncCallback<Void>() {
+	public void createVariable(SystemVariable contractVariable, Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.createSystemVariable(this.domainId, contractVariable, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);
@@ -71,7 +70,7 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 	
 	@Override
 	public void updateVariables(Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.updateContractVariables(this.contractVariables, new AsyncCallback<Void>() {
+		enterprisesService.updateSystemVariables(this.domainId, this.systemVariables, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);
@@ -85,19 +84,19 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 	}
 
 	@Override
-	public List<ContractVariable> getVariables(String yearValue, String monthValue, String variableTypeValue) {
-		this.contractVariablesFiltered.clear();
+	public List<SystemVariable> getVariables(String yearValue, String monthValue, String variableTypeValue) {
+		this.systemVariablesFiltered.clear();
 		
 		// Se filtra solo por tipo de variable sin fechas
 		if(AonStringUtils.isBlank(yearValue)) {
-			ContractVariableType contractVariableType = getVariableType(variableTypeValue);
+			SystemVariableType contractVariableType = getVariableType(variableTypeValue);
 			
-			for(ContractVariable contractVariable : contractVariables) {
+			for(SystemVariable contractVariable : systemVariables) {
 				if(contractVariable.getId() < 0)
 					continue;
 				
 				if(null == contractVariableType || contractVariableType.equals(contractVariable.getVariableType()))
-					this.contractVariablesFiltered.add(contractVariable);
+					this.systemVariablesFiltered.add(contractVariable);
 			}
 		// Se filtra por tipo de variable y fechas
 		} else {
@@ -112,9 +111,9 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 				endDate = DateUtils.getLastDayOfMonth(startDate);
 			}
 			
-			ContractVariableType contractVariableType = getVariableType(variableTypeValue);
+			SystemVariableType contractVariableType = getVariableType(variableTypeValue);
 			
-			for(ContractVariable contractVariable : contractVariables) {
+			for(SystemVariable contractVariable : systemVariables) {
 				if(contractVariable.getId() < 0)
 					continue;
 				
@@ -123,22 +122,19 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 					(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate(), contractVariable.getEndDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
 					&& (null == contractVariableType || contractVariableType.equals(contractVariable.getVariableType())))
 					
-					this.contractVariablesFiltered.add(contractVariable);
+					this.systemVariablesFiltered.add(contractVariable);
 			}
 		}
 		
-		this.contractVariablesFiltered.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
-//		Collections.reverse(this.contractVariablesFiltered);
+		this.systemVariablesFiltered.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
 		
-		return this.contractVariablesFiltered;
+		return this.systemVariablesFiltered;
 	}
 
-	private ContractVariableType getVariableType(String variableTypeValue) {
+	private SystemVariableType getVariableType(String variableTypeValue) {
 		switch (variableTypeValue) {
 		case "0":
-			return ContractVariableType.CONTRACT_DATA;
-		case "1":
-			return ContractVariableType.CONTRACT_INFO;
+			return SystemVariableType.SYSTEM_DATA;
 		default:
 			return null;
 		}
@@ -152,11 +148,11 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 	}
 
 	@Override
-	public void deleteVariable(ContractVariable contractVariableDelete) {
-		for(ContractVariable contractVariable : this.contractVariables){
-			if(contractVariable.getId().equals(contractVariableDelete.getId())) {
-				Integer id = contractVariable.getId();
-				contractVariable.setId(id * -1);
+	public void deleteVariable(SystemVariable systemVariableDelete) {
+		for(SystemVariable systemVariable : this.systemVariables){
+			if(systemVariable.getId().equals(systemVariableDelete.getId())) {
+				Integer id = systemVariable.getId();
+				systemVariable.setId(id * -1);
 			}
 		}
 	}
@@ -165,12 +161,12 @@ public class EmployeeContractVariablesObject implements VariablesObject<Contract
 	
 	@Override
 	public Date getStartDate() {
-		return this.contractStartDate;
+		return this.startDate;
 	}
 	
 	@Override
 	public Date getEndDate() {
-		return this.contractEndDate;
+		return this.endDate;
 	}
 	
 }

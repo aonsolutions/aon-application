@@ -15,7 +15,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
-import com.esferalia.aon.gwt.payroll.shared.ContractVariable.VariableType;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariableType;
 
 public class JooqEmployeeContractVariables {
 
@@ -84,7 +84,7 @@ public class JooqEmployeeContractVariables {
 				ContractVariable contractVariable = new ContractVariable();
 				
 				contractVariable.setId(contractDataRecord.get(CONTRACT_DATA.ID))
-								.setVariableType(VariableType.CONTRACT_DATA)
+								.setVariableType(ContractVariableType.CONTRACT_DATA)
 								.setDescription(contractDataRecord.get(CONTRACT_DATA.NAME))
 								.setExpression(contractDataRecord.get(CONTRACT_DATA.EXPRESSION))
 								.setStartDate(contractDataRecord.get(CONTRACT_DATA.START_DATE))
@@ -111,7 +111,7 @@ public class JooqEmployeeContractVariables {
 				ContractVariable contractVariable = new ContractVariable();
 				
 				contractVariable.setId(contractInfoRecord.get(CONTRACT_INFO.ID))
-								.setVariableType(VariableType.CONTRACT_INFO)
+								.setVariableType(ContractVariableType.CONTRACT_INFO)
 								.setDescription(contractInfoRecord.get(CONTRACT_INFO.NAME))
 								.setExpression(contractInfoRecord.get(CONTRACT_INFO.EXPRESSION))
 								.setStartDate(contractInfoRecord.get(CONTRACT_INFO.START_DATE))
@@ -126,8 +126,8 @@ public class JooqEmployeeContractVariables {
 
 	private static void updateContractVariables(DSLContext dslContext, List<ContractVariable> contractVariables) {
 		for(ContractVariable contractVariable : contractVariables) {
-			VariableType variableType = contractVariable.getVariableType();
-			switch (variableType) {
+			ContractVariableType contractVariableType = contractVariable.getVariableType();
+			switch (contractVariableType) {
 				case CONTRACT_DATA:
 					updateDeleteContractData(dslContext, contractVariable);
 					break;
@@ -175,8 +175,8 @@ public class JooqEmployeeContractVariables {
 
 	
 	private static void createContractVariable(DSLContext dslContext, Integer domainId, Integer contractId, ContractVariable contractVariable) {
-		VariableType variableType = contractVariable.getVariableType();
-		switch (variableType) {
+		ContractVariableType contractVariableType = contractVariable.getVariableType();
+		switch (contractVariableType) {
 			case CONTRACT_DATA:
 				createContractData(dslContext, domainId, contractId, contractVariable);
 				break;

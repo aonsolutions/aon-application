@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
@@ -345,5 +346,14 @@ public interface EnterprisesServiceAsync {
 	// ------------------------------------------------ Utils
 	
 	void getScopes(String currentDomainName, String currentUser, AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException;
+	
+	
+	// ------------------------------------------------ Variables
+
+	void getSystemVariables(String currentDomainName, String currentUser, Integer domainId, AsyncCallback<List<SystemVariable>> asyncCallback ) throws IllegalArgumentException ;
+
+	void createSystemVariable(String currentDomainName, String currentUser, Integer domainId, SystemVariable systemVariable, AsyncCallback<Void> asyncCallback ) throws IllegalArgumentException ;
+	
+	void updateSystemVariables(String currentDomainName, String currentUser, Integer domainId, List<SystemVariable> systemVariables, AsyncCallback<Void> asyncCallback  ) throws IllegalArgumentException ;
 
 }

@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -663,12 +664,15 @@ public class JooqPayrollBuilder {
 					payrollBuilder.setCosts(costMap);
 				}
 
-				double[] atEp = new double[] { 0 };
+				//double[] atEp = new double[] { 0 };
+				
+				Map<String, Double> atEpMap = new HashMap<>();
+				
 
 				// SETTING PERCENTAGES
 				{
 					data.keySet().stream().filter(k -> AonStringUtils.containsIgnoreCase(k, "PORCENTAJE")
-							|| AonStringUtils.containsIgnoreCase(k, "TARIFA")).forEach(costName -> {
+							|| AonStringUtils.containsIgnoreCase(k, "TARIFA")).sorted().forEach(costName -> {
 								ContextData cd = data.get(costName).get(0);
 
 								if (data.get(costName) != null) {
@@ -690,11 +694,13 @@ public class JooqPayrollBuilder {
 											|| containsIgnoreCase(costName, "PORCENTAJE_IT")) {
 
 										if (cd.getExpression() != null) {
-											atEp[0] += Double.parseDouble(cd.getExpression());
-											costBuilder.setAtEpType(Optional.ofNullable(atEp[0]));
+											//atEp[0] += Double.parseDouble(cd.getExpression());
+											//costBuilder.setAtEpType(Optional.ofNullable(atEp[0]));
+											atEpMap.put(costName, Double.parseDouble(cd.getExpression()));
 
-										} else
-											costBuilder.setAtEpType(Optional.of(-1.00));
+										} else {
+											//costBuilder.setAtEpType(Optional.of(-1.00));
+										}
 									} else if (containsIgnoreCase(costName, "PORCENTAJE_DESMPL_E")) {
 										if (cd.getExpression() != null)
 											costBuilder.setUnemploymentType(
@@ -728,6 +734,12 @@ public class JooqPayrollBuilder {
 									}
 								}
 							});
+					costBuilder.setAtEpType(Optional.of(-1.00));
+					if ( !atEpMap.isEmpty() ) {
+						Double it =  atEpMap.getOrDefault("PORCENTAJE_IT", atEpMap.getOrDefault("TARIFA_IT", 0.00));
+						Double ims =  atEpMap.getOrDefault("PORCENTAJE_IMS", atEpMap.getOrDefault("TARIFA_IMS", 0.00));
+						costBuilder.setAtEpType(Optional.of(it + ims));
+					}
 				}
 
 				// SETTING BASES

@@ -6,21 +6,21 @@ import java.util.Date;
 import com.esferalia.aon.gwt.payroll.client.Variables.Variable;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class ContractVariable implements Serializable , Variable<ContractVariableType> {
+public class SystemVariable implements Serializable , Variable<SystemVariableType> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public static final ProvidesKey<ContractVariable> KEY_PROVIDER = item -> item == null ? null : item.getId();
+	public static final ProvidesKey<SystemVariable> KEY_PROVIDER = item -> item == null ? null : item.getId();
 		
 	private Integer id;
-	private ContractVariableType contractVariableType;
-	private String description;
-	private String expression;
 	private Date startDate;
 	private Date endDate;
 	private boolean hasChange;
+	private String expression;
+	private String description;
+	private SystemVariableType systemVariableType;
 	
-	public ContractVariable() {
+	public SystemVariable() {
 		super();
 	}
 	
@@ -29,20 +29,20 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 		return id;
 	}
 
-	public ContractVariable setId(Integer id) {
+	public SystemVariable setId(Integer id) {
 		this.id = id;
 		return this;
 	}
 	
 
 	@Override
-	public ContractVariableType getVariableType() {
-		return contractVariableType;
+	public SystemVariableType getVariableType() {
+		return systemVariableType;
 	}
 
 	@Override
-	public ContractVariable setVariableType(ContractVariableType contractVariableType) {
-		this.contractVariableType = contractVariableType;
+	public SystemVariable setVariableType(SystemVariableType systemVariableType) {
+		this.systemVariableType = systemVariableType;
 		return this;
 	}
 
@@ -52,7 +52,7 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 	}
 
 	@Override
-	public ContractVariable setDescription(String description) {
+	public SystemVariable setDescription(String description) {
 		this.description = description;
 		return this;
 	}
@@ -63,7 +63,7 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 	}
 
 	@Override
-	public ContractVariable setExpression(String expression) {
+	public SystemVariable setExpression(String expression) {
 		this.expression = expression;
 		return this;
 	}
@@ -74,7 +74,7 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 	}
 
 	@Override
-	public ContractVariable setStartDate(Date startDate) {
+	public SystemVariable setStartDate(Date startDate) {
 		this.startDate = startDate;
 		return this;
 	}
@@ -85,7 +85,7 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 	}
 
 	@Override
-	public ContractVariable setEndDate(Date endDate) {
+	public SystemVariable setEndDate(Date endDate) {
 		this.endDate = endDate;
 		return this;
 	}
@@ -96,7 +96,7 @@ public class ContractVariable implements Serializable , Variable<ContractVariabl
 	}
 
 	@Override
-	public ContractVariable setHasChange(boolean hasChange) {
+	public SystemVariable setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
 		return this;
 	}

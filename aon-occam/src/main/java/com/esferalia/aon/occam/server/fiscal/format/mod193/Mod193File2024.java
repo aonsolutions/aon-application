@@ -45,8 +45,8 @@ enum Mod193File2024 {
 			   mod193.getExpenses()
 			   .stream()
 			   .mapToDouble( exp -> AonMathUtils.round(exp.getExpenses()))
-			   .sum(),15,2))
-	   ,(wr, mod193,detail) -> wr.append(" ")
+			   .sum(),15,2))  // Gastor
+	   ,(wr, mod193,detail) -> wr.append(mod193.isNature()?"S":" ")  // Naturaleza del declarante
 	   ,(wr, mod193,detail) -> wr.append(AonStringUtils.repeat(' ', 252))		
 	   ,(wr, mod193,detail) -> wr.append(AonStringUtils.repeat(' ', 13))
 	   ,(wr, mod193,detail) -> wr.append("\r\n")
@@ -80,7 +80,7 @@ enum Mod193File2024 {
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getRetention()),13,2))
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getPenalization()),11,2))
 	   ,(wr, mod193,detail) -> wr.append(AonStringUtils.repeat(' ', 15))
-	   ,(wr, mod193,detail) -> wr.append(detail.isDeclarantNature()?"S":" ")
+	   ,(wr, mod193,detail) -> wr.append(mod193.isNature()?"S":" ")
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.dateZero(detail.getLoanStartDate()))
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.dateZero(detail.getLoanDueDate()))
 	   ,(wr, mod193,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getCompensation()),12,2))

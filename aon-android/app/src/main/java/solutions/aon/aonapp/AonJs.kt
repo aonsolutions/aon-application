@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.json.JSONObject
-import solutions.aon.camara2.R
 import java.io.File
 
 class AonJs(private val webView: WebView?, private val context: Context) : ComponentActivity() {
@@ -217,7 +216,7 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     private fun printPDF(filePath: String) {
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
         try {
-            val jobName = "${context.getString(R.string.app_name)} Document"
+            val jobName = "Document"
             val printAdapter = PdfPrintDocumentAdapter(filePath)
             printManager.print(
                 jobName,

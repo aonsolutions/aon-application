@@ -5466,7 +5466,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Object id = rs.getObject(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID));
 			if (id == null)
 				return;
-
 			ccc = new CCC();
 			ccc.setId(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID)));
 			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));

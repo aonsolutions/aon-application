@@ -77,15 +77,17 @@ export class AonModule extends AonElement {
 					 companyListButton.setDisabled(false);
 					 companyListButton.color = 'white';
 				});
+			} else if(this.isMobile()) {
+				let mobileParent = new AonMobileParent();
+				mobileParent.selection = true;
+				this.rootPanel(mobileParent);
 			} else {
 				getCompanies().then(companies => {
 					if(companies.length === 1){
 						this.companySelection(companies[0], true);
 					} else {
 						this.getElement(this.AON_HOME).showMenu(false);
-						this.rootPanel(this.isMobile()
-							? new AonMobileParent()
-							: new AonParent());
+						this.rootPanel(new AonParent());
 					}
 				});
 			}
