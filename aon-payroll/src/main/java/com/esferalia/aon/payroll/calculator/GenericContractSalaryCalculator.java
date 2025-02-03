@@ -269,11 +269,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 
 		protected boolean isContextVariableName(String surname) {
-			return Arrays
-			.stream( ContextVariable.values())
-			.filter(v -> v.isInternal())
-			.map( v -> v.getName())
-			.anyMatch( n -> AonStringUtils.equals(n,surname));
+			return Arrays.stream(ContextVariable.values()).filter(v -> v.isInternal() || v == ADDITIONAL_HOURS)
+					.map(v -> v.getName()).anyMatch(n -> AonStringUtils.equals(n, surname));
 		}
 		
 	}
