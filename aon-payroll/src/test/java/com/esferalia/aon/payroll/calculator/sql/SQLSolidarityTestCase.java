@@ -168,11 +168,13 @@ public class SQLSolidarityTestCase extends AbstractSQLTestCase {
 		.peek( data -> assertEquals(startDate, data.getStartDate()) )
 		.toList();
 		
+//		salary.getSalaryDatas().stream().sorted((d1, d2) -> d1.getName().compareTo(d2.getName()))
+//				.forEach(d -> System.out.println(d.getName() + "=" + d.getExpression()));
 		
 		double dailyBase = 8500.00 / monthDays ;
 		assertEquals(1, base499.size());
 		assertEquals(
-				(dailyBase  * 30.00  )
+				(dailyBase * ( monthDays -1 /*it day*/ )  )
 				- ( 4720.5 / 30.00 * monthDays ) 
 				- Double.parseDouble(base497.get(0).getExpression()) 
 				- Double.parseDouble(base498.get(0).getExpression())

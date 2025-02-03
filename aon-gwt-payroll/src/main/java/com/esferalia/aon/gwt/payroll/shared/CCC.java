@@ -74,4 +74,5 @@ public class CCC implements Serializable, HasId<Integer>{
 		this.type = type;
 	}
 	
+	
 }

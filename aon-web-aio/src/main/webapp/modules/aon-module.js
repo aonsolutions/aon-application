@@ -65,9 +65,11 @@ export class AonModule extends AonElement {
 		await this.checkLogin();
 		if(LS.getToken()){
 			this.buildHome();
-			this.rootPanel(this.isMobile()
-				? new AonMobileParent()
-				: new AonParent());
+			if(this.isMobile()) {
+				let mobileParent = new AonMobileParent();
+				mobileParent.selection = true;
+				this.rootPanel(mobileParent);
+			} else this.rootPanel(new AonParent());
 		} else {
 			this.buildLogin();
 		}

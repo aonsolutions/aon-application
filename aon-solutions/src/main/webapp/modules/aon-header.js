@@ -879,7 +879,7 @@ export class AonHeader extends AonElement {
 				const document = company?.document?.toUpperCase().includes(aonHeaderSearchBoxValue.toUpperCase());
 				return document || name;
 			});
-			
+		
 			let searchOptions = [];
 			
 			if ( searchCompanies.length > 0 ) {
@@ -890,12 +890,14 @@ export class AonHeader extends AonElement {
 				});
 			}
 			
-			searchCompanies.slice(0,10).forEach(company => {
+			searchCompanies.slice(0, 10).forEach(company => {
 				searchOptions.push({
-					icon : aonHeader.getIcon(company),
-					name : `<span>${company.name}</span><span style="float:right;">${company.document}</span>`,
-					fn: () => {aonHeader.companySelection(company);},
-				});				
+					id: `Company${company.id}`,
+					icon: aonHeader.getIcon(company),
+					name: `<span>${company.name}</span><span style="float:right;">${company.document}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+					title: `${company.domain}`,
+					fn: () => { aonHeader.companySelection(company); },
+				});
 			});
 			
 			searchOptions.push({
@@ -909,6 +911,9 @@ export class AonHeader extends AonElement {
 			const left = aonHeaderSearchBox.getBoundingClientRect().left;
 			aonHeaderSearchDialogMenu.setMenuOptions(searchOptions, top, left);
 			aonHeaderSearchDialogMenu.open();
+			
+			// Copy & Paste of company domain URL.
+			this.setupDomainUrlCopy(searchOptions);
 			
 			let firstDayOfMonth = new Date(); 
 			firstDayOfMonth.setUTCHours(0,0,0,0);
@@ -946,6 +951,53 @@ export class AonHeader extends AonElement {
 		
 	}
 	
+	setupDomainUrlCopy(searchOptions) {
+		searchOptions.filter(option => option.id).forEach(option => {
+			this.getElement(option.id).addEventListener(EVENT.MOUSEOVER, () => {
+				this.getElement(`${option.id}Copy`).style.removeProperty('display');
+			});
+			this.getElement(option.id).addEventListener(EVENT.MOUSEOUT, () => {
+				this.getElement(`${option.id}Copy`).style.display = 'none';
+			});
+			this.getElement(`${option.id}Copy`).addEventListener(EVENT.CLICK, (event) => {
+				event.stopPropagation();
+				this.copyToClipboard(option.title).then(() => {
+					this.showToast({ message: MSG.COPIED_TO_CLIPBOARD });
+				}, err => {
+					this.showError(err);
+				})
+			});
+		});
+	}
+	
+	copyToClipboard(textToCopy) {
+	    // Navigator clipboard api needs a secure context (https)
+	    if (navigator.clipboard && window.isSecureContext) {
+	        return navigator.clipboard.writeText(textToCopy);
+	    } else {
+			return new Promise((resolve, reject) => {
+				// Use the 'out of viewport hidden text area' trick
+				const textArea = document.createElement(TAG.TEXTAREA);
+				textArea.value = textToCopy;
+				    
+				// Move textarea out of the viewport so it's not visible
+				textArea.style.position = "absolute";
+				textArea.style.left = "-999999px";
+				    
+				document.body.prepend(textArea);
+				textArea.select();
+
+				try {
+					document.execCommand('copy');
+					resolve();						
+				} catch (error) {
+					reject(error);						
+				} finally {
+				    textArea.remove();
+				}
+			});  
+	    }
+	}	
 	getIcon(company) {
 		let icon = "business";
 		if(company.type === 'OFFICE') icon = 'work';
