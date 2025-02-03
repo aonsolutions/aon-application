@@ -26,7 +26,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
@@ -602,7 +601,7 @@ public abstract class ContractEmployeeUI extends ScrollPanel {
 			
 			if(null != contractData.getJourneyType()) {
 				employee.journeyType.setValue(contractData.getJourneyType() == 0 ? "false" : "true");
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType.getListBox()); 
 			}
 			
 			if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
@@ -651,7 +650,7 @@ public abstract class ContractEmployeeUI extends ScrollPanel {
 		}
 		
 		employee.quoteGroup.setValue(contractData.getQuoteGroup());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup.getListBox());
 		employee.quoteGroupCotizB.setValue(contractData.getQuoteGroupIdxMonth());
 		employee.occupation.setValue(contractData.getOcupation());
 		employee.rlce.setValue(contractData.getRlce());
@@ -710,27 +709,9 @@ public abstract class ContractEmployeeUI extends ScrollPanel {
 			contrataEmployeeObject.setContractAgreementLevelId(null);
 			employee.category.setEnable(false);
 			employee.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category.getTextBox());
 			failure.accept(throwable);
 		});
-	}
-	
-	private  void setSelectedValueLB(ListBox lBox, String str) {
-	    String text = str;
-	    int indexToFind = 0;
-	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
-	            indexToFind = i;
-	            break;
-	        }
-	    }
-	    lBox.setSelectedIndex(indexToFind);
-	}
-	
-	
-	public void setSelectedValueLBChange(ListBox lBox, String str) {
-		setSelectedValueLB(lBox, str);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), lBox); 
 	}
 	
 	private void showHideContractOtherData(Integer contractType) {
