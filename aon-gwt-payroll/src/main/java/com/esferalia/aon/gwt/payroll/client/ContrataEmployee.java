@@ -55,6 +55,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -131,7 +132,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ContractSpecificDataImpl
 
-	public class ContractSpecificDataImpl extends ContractSpecificData {
+	public class ContractSpecificDataImpl extends ContractSpecificDataWidget {
 
 		@Override
 		protected void showErrorMessage(String title, String message) {
@@ -177,7 +178,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ContractOtherDataImpl
 
-	public class ContractOtherDataImpl extends ContractOtherData {
+	public class ContractOtherDataImpl extends ContractOtherDataWidget {
 
 		@Override
 		protected void showErrorMessage(String title, String message) {
@@ -196,8 +197,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		protected void onContractPDF() {
-			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> {
-			});
+			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> showError("Error Contrato PDF", f.getMessage()));
 		}
 	}
 
@@ -1209,14 +1209,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private ContractEmployeeUI contractEmployeeUI;
 
 	@UiField
-	HTMLPanel specificDataPanelNew;
+	ScrollPanel specificDataPanelNew;
 
-	private ContractSpecificData contractSpecificData;
+	private ContractSpecificDataWidget contractSpecificData;
 
 	@UiField
-	HTMLPanel otherDataPanelNew;
+	ScrollPanel otherDataPanelNew;
 
-	private ContractOtherData contractOtherData;
+	private ContractOtherDataWidget contractOtherData;
 
 	@UiField
 	HTMLPanel clausesPanelNew;
@@ -1254,8 +1254,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		employeePanelNew.add(contractEmployeeUI);
-		specificDataPanelNew.add(contractSpecificData);
-		otherDataPanelNew.add(contractOtherData);
+		specificDataPanelNew.setWidget(contractSpecificData);
+		otherDataPanelNew.setWidget(contractOtherData);
 		clausesPanelNew.add(contractClauseUI);
 		documentsPanelNew.add(contractAttachUI);
 
@@ -1366,8 +1366,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			});
 			break;
 		case 1:
-			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(),
-					hasCertificateSEPE, finish);
+			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), finish);
 			break;
 		case 2:
 			contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
