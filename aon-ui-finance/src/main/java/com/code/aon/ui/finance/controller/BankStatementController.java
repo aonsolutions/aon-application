@@ -120,6 +120,42 @@ public class BankStatementController extends BasicController implements IFinance
 	private Map<Integer, String> errors;
 	private AccountEntryFinanceWriter writer;
 	private ArrayList<BankStatement> bankStatementChecks= new ArrayList<BankStatement>();
+	private String breakdownOption;
+	private String selectOption;
+	private String cancelOption;
+	private String seeOption;
+    
+	public String getBreakdownOption() {
+		return breakdownOption;
+	}
+	
+	public void setBreakdownOption(String breakdownOption) {
+		this.breakdownOption = breakdownOption;
+	}
+	
+	public String getSelectOption() {
+		return selectOption;
+	}
+	
+	public void setSelectOption(String selectOption) {
+		this.selectOption = selectOption;
+	}
+	
+	public String getCancelOption() {
+		return cancelOption;
+	}
+	
+	public void setCancelOption(String cancelOption) {
+		this.cancelOption = cancelOption;
+	}
+	
+	public String getSeeOption() {
+		return seeOption;
+	}
+	
+	public void setSeeOption(String seeOption) {
+		this.seeOption = seeOption;
+	} 
 	
 	public RegistryBank getRegistryBank() {
 		return registryBank;
@@ -221,6 +257,24 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 		super.onEditSearch(event);
 	}
+	
+	public void onSeeOption(ActionEvent event) throws ManagerBeanException {
+		if(getSeeOption().equals("BankStatement-seePending")) {
+			this.onSeePending(null);
+		}else if(getSeeOption().equals("BankStatement-seeChecked")) {
+			this.onSeeChecked(null);
+		}else if(getSeeOption().equals("BankStatement-seeExact")) {
+			this.onSeeExact(null);
+		}else if(getSeeOption().equals("BankStatement-seeApproximate")) {
+			this.onSeeApproximate(null);
+		}else if(getSeeOption().equals("BankStatement-seeAmbiguous")) {
+			this.onSeeAmbiguous(null);
+		}else if(getSeeOption().equals("BankStatement-seeRecorded")) {
+			this.onSeeRecorded(null);
+		}else {
+			this.onSeeAll(null);
+		}
+	}
 
 	public void onSeeAll(ActionEvent event) throws ManagerBeanException {
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
@@ -280,6 +334,32 @@ public class BankStatementController extends BasicController implements IFinance
 		searchBankStatements(getRegistryBank());
 	}
 
+	
+	public void onSelectOption(ActionEvent event) throws ManagerBeanException {
+		if(getSelectOption() == null) {
+			this.onSelectNothing(null);
+		}else if(getSelectOption().equals("BankStatement-selectPending")) {
+			this.onSelectPending(null);
+		}else if(getSelectOption().equals("BankStatement-selectChecked")) {
+			this.onSelectChecked(null);
+		}else if(getSelectOption().equals("BankStatement-selectExact")) {
+			this.onSelectExact(null);
+		}else if(getSelectOption().equals("BankStatement-selectApproximate")) {
+			this.onSelectApproximate(null);
+		}else if(getSelectOption().equals("BankStatement-selectAmbiguous")) {
+			this.onSelectAmbiguous(null);
+		}else if(getSelectOption().equals("BankStatement-selectRecorded")) {
+			this.onSelectRecorded(null);
+		}else if(getSelectOption().equals("BankStatement-selectCurrentPage")) {
+			this.onSelectCurrentPage(null);
+		}else {
+			this.onSelectNothing(null);
+		}
+	}
+	
+	private void onSelectNothing(ActionEvent event) throws ManagerBeanException {
+		clearCheckedBankStatement();		
+	}
 	public void onSelectPending(ActionEvent event) throws ManagerBeanException {
 		clearCheckedBankStatement();
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
@@ -351,8 +431,26 @@ public class BankStatementController extends BasicController implements IFinance
 			setBankStatementRowChecked(statement, true);
 		}
 	}
+	
+	public void onBreakdownOption(ActionEvent event) throws ManagerBeanException {
+		if(getBreakdownOption() == null) {
+			this.onBreakdownNone(null);
+		}else if(getBreakdownOption().equals("BankStatement-breakdownSelected")) {
+			this.onBreakdownSelected(null);
+		}else if(getBreakdownOption().equals("BankStatement-breakdownCurrentPage")) {
+			this.onBreakdownCurrentPage(null);
+		}else {
+			this.onBreakdownNone(null);
+		}
+	}
 
 	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowBankStatementLink(false);
+			statement.setShowAccountEntry(false);
+		}
 		for (BankStatement statement : getCheckedBankStatement()) {
 			statement.setShowBankStatementLink(true);
 			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator());
@@ -371,11 +469,6 @@ public class BankStatementController extends BasicController implements IFinance
 
 	@SuppressWarnings("unchecked")
 	public void onBreakdownNone(ActionEvent event) throws ManagerBeanException {
-		for (BankStatement statement : getCheckedBankStatement()) {
-			statement.setShowBankStatementLink(false);
-			statement.setShowAccountEntry(false);
-		}
-
 		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			BankStatement statement = (BankStatement)iterator.next();
@@ -383,7 +476,30 @@ public class BankStatementController extends BasicController implements IFinance
 			statement.setShowAccountEntry(false);
 		}
 	}
-
+	
+	
+	public void onCancelOption(ActionEvent event) throws ManagerBeanException {
+		if(getCancelOption() == null) {
+			this.onCancelNothing(null);
+		}else if(getCancelOption().equals("BankStatement-cancelAll")) {
+			this.onCancelAll(null);
+		}else if(getCancelOption().equals("BankStatement-cancelSelected")) {
+			this.onCancelSelected(null);
+		}else if(getCancelOption().equals("BankStatement-cancelExact")) {
+			this.onCancelExact(null);
+		}else if(getCancelOption().equals("BankStatement-cancelApproximate")) {
+			this.onCancelApproximate(null);
+		}else if(getCancelOption().equals("BankStatement-cancelAmbiguous")) {
+			this.onCancelAmbiguous(null);
+		}else {
+			this.onCancelNothing(null);
+		}
+	}
+	
+	
+	private void onCancelNothing(ActionEvent event) throws ManagerBeanException {
+		searchBankStatements();
+	}
 	public void onCancelAll(ActionEvent event) throws ManagerBeanException {
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
