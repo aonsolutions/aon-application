@@ -9,6 +9,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIAScript
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022BIZKAIASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025BIZKAIAScript;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -68,7 +70,10 @@ class Model303BIZKAIA2023 extends Model303Base {
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3032023BIZKAIAAdditionalDataScript.values(),10);
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3032025BIZKAIAAdditionalDataScript.values(),10);
+		else		
+			paintDeclaration(table,Model3032023BIZKAIAAdditionalDataScript.values(),10);
 	}
 
 	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
@@ -117,7 +122,10 @@ class Model303BIZKAIA2023 extends Model303Base {
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032023BIZKAIAScript.values(),8);
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3032025BIZKAIAScript.values(),8);
+		else			
+			paintDeclaration(table,Model3032023BIZKAIAScript.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();

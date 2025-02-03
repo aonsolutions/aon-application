@@ -19,9 +19,8 @@
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="import-Popup"
-						value="#{bundle.aon_import}"
 						title="#{bundle.aon_import}"
-						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+						styleClass="aon-finding-toolbar-item rich-fileupload-ico-add"
 						actionListener="#{controller.onImportFileShow}"
 						action="bankStatement_list">
 						<f:setPropertyActionListener target="#{controller.showImportFileWindow}"

@@ -868,11 +868,17 @@
 		border-radius: 6px 0px 0px 6px;    	
 	}
 	
-		.aon-dataTable > tbody > tr > td:last-child,
+	.aon-dataTable > tbody > tr > td:last-child,
 	.aon-editDataTable > tbody > tr > td:last-child,
 	.aon-editDataTable > tfoot > tr > td:last-child{
 		border-right: 1px solid #ddd;    	
-		border-radius: 0px 6px 6px 0px;    	
+		border-radius: 0px 6px 6px 0px;
+	}
+	
+	.aon-editDataTable > tfoot > tr > td:last-child {
+		display:flex;    	
+		align-items: center;
+  		justify-content: center;
 	}
 
 	.aon-dataTable > th,
@@ -1475,6 +1481,7 @@
 	}
 	
 	.aon-icon-task-assume {
+		padding-left: 26px;
 		background-size: 24px;
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M160-200v-440 440Zm32 28q-26 0-43-17t-17-43v-376q0-26 17-43t43-17h180v-48q0-26 17-43t43-17h96q26 0 43 17t17 43v48h180q26 0 43 17t17 43v167q-7-4-13.5-7t-14.5-6v-154q0-14-9-23t-23-9H192q-14 0-23 9t-9 23v376q0 14 9 23t23 9h303q2 8 3.5 14.5T502-172H192Zm208-496h160v-48q0-14-9-23t-23-9h-96q-14 0-23 9t-9 23v48ZM720-92q-62 0-105-43t-43-105q0-62 43-105t105-43q62 0 105 43t43 105q0 62-43 105T720-92Zm14-154v-108h-28v120l80 80 20-20-72-72Z"/&gt;&lt;/svg&gt;') ;
 	}
@@ -1545,7 +1552,11 @@
 	input.aon-finding-toolbar-item.aon-icon-invoice,
 	input.aon-finding-toolbar-item.aon-icon-new,
 	input.aon-finding-toolbar-item.aon-icon-import-excel-trans,
-	input.aon-finding-toolbar-item.aon-icon-export-excel-trans
+	input.aon-finding-toolbar-item.aon-icon-export-excel-trans,
+	input.aon-finding-toolbar-item.rich-fileupload-ico-add,
+	input.aon-finding-toolbar-item.aon-icon-filter,
+	input.aon-finding-toolbar-item.aon-icon-filter-off,
+	input.aon-finding-toolbar-item.aon-icon-close
 	{
 	    width:32px;
 		height:32px;
@@ -1556,6 +1567,14 @@
 	    background-color: transparent;
 	    background-position: center center;	
     }
+    
+	input.aon-finding-toolbar-item.aon-icon-attach-file,
+	input.aon-finding-toolbar-item.aon-icon-task-assume,
+	input.aon-finding-toolbar-item.aon-icon-task-liberate {
+		width:120px;
+		height:32px;
+		border-radius: 15px;
+	}
     
 	input.aon-finding-toolbar-item.aon-icon-accept[value='Send'],
 	input.aon-finding-toolbar-item.aon-icon-accept[value='Enviar'] {
@@ -1619,7 +1638,15 @@
 	.aon-finding-toolbar-item.aon-icon-invoice:hover,
 	.aon-finding-toolbar-item.aon-icon-webmail2:hover,
 	.aon-finding-toolbar-item.aon-icon-import-excel-trans:hover,
-	.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover{
+	.aon-finding-toolbar-item.aon-icon-export-excel-trans:hover,
+	.aon-finding-toolbar-item.rich-fileupload-ico-add:hover,
+	.aon-finding-toolbar-item.aon-icon-filter:hover,
+	.aon-finding-toolbar-item.aon-icon-filter-off:hover,
+	.aon-finding-toolbar-item.aon-icon-attach-file:hover,
+	.aon-finding-toolbar-item.aon-icon-task-assume:hover,
+	.aon-finding-toolbar-item.aon-icon-task-liberate:hover,
+	.aon-finding-toolbar-item.aon-icon-close:hover
+	{
 		background-color: #eee
 	}
 	
@@ -1816,6 +1843,14 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-upload.svg']}) ;
 	}
 	
+	.aon-icon-filter {
+		background-image: url(#{aonResource.resolve['/images/aon-icon-filter.svg']}) ;
+	}
+	
+	.aon-icon-filter-off {
+		background-image: url(#{aonResource.resolve['/images/aon-icon-filter-off.svg']}) ;
+	}
+	           
 	.aon-spin-control-element {
 		font-size:12px;
 	}
@@ -3083,6 +3118,28 @@
 	  background: none;
 	  border: #808080 1px solid;
 	}
+	
+	[id*="bankStatementCommandContainer"].aon-group {
+		margin: 1em 0 1em 0 !important;	
+	}
+	
+	.aon-width-100 {
+		width: 100%;
+	}
+	
+	.aon-margin-right-10{
+		margin-right: 10px;
+	}
+	
+	.aon-margin-right-20{
+		margin-right: 20px;
+	}
+	
+	.aon-padding-1rem {
+		padding: 1rem;
+	}
+
+	
 	</style>
 
 	<script type="text/javascript">

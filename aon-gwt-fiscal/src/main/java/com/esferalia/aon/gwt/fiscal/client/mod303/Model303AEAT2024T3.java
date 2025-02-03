@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifie
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifiedRegimeScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATGeneralRegimeScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -147,7 +148,10 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032024T3AEATGeneralRegimeScript1.values(),8);
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3032025AEATGeneralRegimeScript1.values(),8);
+		else
+			paintDeclaration(table,Model3032024T3AEATGeneralRegimeScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
