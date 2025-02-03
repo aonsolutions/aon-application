@@ -190,7 +190,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
 
   export const RAWDOC_INBOX_RECEIVED_NEW = {
     id: CONSTANT.RAWDOC_INBOX_RECEIVED_NEW.initCap(),
-    name: MSG.DRAFT + " " + MSG.RECEIVED_INVOICES,
+    name: MSG.DRAFT + " F." + MSG.RECEIVEDS,
     icon: "edit_document",
     fn: () => invoiceList({ status: CONSTANT.INBOX, type: "recibida" })
   }
@@ -509,7 +509,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
   // ********************    
 
   export const getOptions = (beta) => {
-    return beta ? [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT] : [INVOICES, MANAGEMENT];
+    return [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT] ;
   }
 
   export const getNewOptions = () => {
