@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
@@ -50,7 +51,7 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 	public static final double SURCHARGE_PERCENT_05 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() && mod.getYear() >= 2025;
+		return mod.isGipuzkoa() && mod.getPeriod() != Period.T4	&& mod.getPeriod() != Period.M12 && mod.getYear() >= 2025;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

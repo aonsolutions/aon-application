@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -29,7 +30,7 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 	public static final double SURCHARGE_PERCENT_05 = 0.5;	
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isBizkaia() && mod.getYear() >= 2025;
+		return mod.isBizkaia() && mod.getPeriod() != Period.T4 && mod.getPeriod() != Period.M12 && mod.getYear() >= 2025;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

@@ -60,12 +60,12 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATGeneralRe
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATPrintScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABAPrintScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOAPrintScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATGeneralRegimeScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025BIZKAIAScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -135,7 +136,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022GIPUZKOAAdditionalDataScript.values() );
 			test( mod303,Model3032022GIPUZKOAResultScript.values() );
 			test( mod303,Model3032022GIPUZKOARScript1.values() );
-			test( mod303,Model3032023GIPUZKOARScript1.values() );
+			test( mod303,Model3032025GIPUZKOARScript1.values() );
 			test( mod303,Model3032023GIPUZKOAPrintScript.values() );
 		}
 	}
@@ -165,8 +166,8 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022BIZKAIAScript1.values() );
 			test( mod303,Model3032022BIZKAIAScript2.values() );
 			test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
-			test( mod303,Model3032023BIZKAIAScript.values() );
-			test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
+			test( mod303,Model3032025BIZKAIAScript.values() );
+			test( mod303,Model3032025BIZKAIAAdditionalDataScript.values() );
 		}			
 	}
 	
@@ -199,7 +200,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022ARABAResultScript.values() );
 			test( mod303,Model3032022ARABARScript1.values() );
 			test( mod303,Model3032022ARABAScript2.values() );
-			test( mod303,Model3032023ARABARScript1.values() );
+			test( mod303,Model3032025ARABARScript1.values() );
 			test( mod303,Model3032023ARABAPrintScript.values() );
 		}
 	}
@@ -217,6 +218,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	
 	
 	private void test( Mod303 mod303, IModelScript<Mod303Key>[] scripts) {
+		System.out.println(FiscalTestSuite.toString(mod303));
 		for (IModelScript<Mod303Key> script : scripts) {
 			try {
 				if (script != null) {
