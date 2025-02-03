@@ -164,11 +164,11 @@
 							  	</g:tab>
 							  	<g:tab>
 							    	<g:header size='7'>Datos SEPE</g:header>
-							    	<g:HTMLPanel ui:field="specificDataPanelNew" />
+							    	<g:ScrollPanel ui:field="specificDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
 							  		<g:header size='7'>Datos Contrato</g:header>
-							    	<g:HTMLPanel ui:field="otherDataPanelNew" />
+							    	<g:ScrollPanel ui:field="otherDataPanelNew" styleName="{style.widthAll} {style.heightAll}" />
 							  	</g:tab>
 							  	<g:tab>
 							  		<g:header size='7'>Clausulas</g:header>
