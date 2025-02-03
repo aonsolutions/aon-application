@@ -52,6 +52,7 @@ public class EmployeeDialogObject {
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
+		this.contractData.setSsRegimen((byte)0);
 		
 		this.workplaces = new ArrayList<>();
 		this.payMethodsMap = new HashMap<>();
@@ -145,7 +146,9 @@ public class EmployeeDialogObject {
 	public void resetEmptyInfo() {
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
+		
 		this.contractData = new ContractInfo();
+		this.contractData.setSsRegimen((byte)0);
 		this.contractData.setWorkplaceId(null == workplace ? null : workplace.getId());
 	}
 
@@ -457,8 +460,9 @@ public class EmployeeDialogObject {
 		employeeData.setAddressProvinces(geozoneId);
 	}
 
-	public void setEmployeeAddressCity(String city) {
-		employeeData.setAddressCity(city);
+	public void setEmployeeAddressCity(String cityName, String cityCode) {
+		employeeData.setAddressCity(cityCode);
+		employeeData.setAddressCityDescription(cityName);
 	}
 	
 	public void setEmployeeMobile(String mobile) {

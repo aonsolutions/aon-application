@@ -52,7 +52,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -62,6 +61,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 	private AonCustomCard contractDataTable;
 	
 	AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
+	
+	AonTableButton clearEmployee = new AonTableButton("Resetear", AON.CSS.aonIconClear());
 	AonCustomSuggestBox document = new AonCustomSuggestBox("Documento");
 	AonCustomSuggestBox nationality = new AonCustomSuggestBox("Nacionalidad");
 	AonCustomSuggestBox securitySocialNum = new AonCustomSuggestBox("NAF");
@@ -79,8 +80,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 	
 	AonCustomListBox contractTypeLB = new AonCustomListBox("TC2");
 	AonCustomTextBox contractTypeFreelance = new AonCustomTextBox("TC2");
-	AonCustomCheckBox quoteGroupCotizB = new AonCustomCheckBox("I. Cotizaci\u00f3nn Mensual");
 	AonCustomListBox modality = new AonCustomListBox("Modalidad TC2");
+	AonCustomCheckBox quoteGroupCotizB = new AonCustomCheckBox("I. Cotizaci\u00f3nn Mensual");
 
 	AonCustomDateBox startDate = new AonCustomDateBox("F. Inicio");
 	AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
@@ -143,7 +144,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 		addStyleName(AON.CSS.aonItemFlex());
 		addStyleName(AON.CSS.aonFlexColumn());
 		getElement().getStyle().setProperty("gap", "1rem");
-		getElement().getStyle().setProperty("margin-top", "1rem");
+		getElement().getStyle().setProperty("margin", "1rem 0");
 		
 		this.contractType = new ContractType();
 		this.municipalities = new Municipalities();
@@ -233,8 +234,11 @@ public abstract class EmployeeWidget extends FlowPanel {
 		documentType.setEnable(false);
 		documentType.setMaxWidth("8rem");
 		
-		((TextBox) securitySocialNum.getSuggestBox().getTextBox()).setMaxLength(12);
-		((TextBox) document.getSuggestBox().getTextBox()).setMaxLength(9);
+		clearEmployee.setVisible(false);
+		document.addButton(clearEmployee);
+		
+		securitySocialNum.setMaxLength(12);
+		document.setMaxLength(9);
 		
 		row1.add(document);
 		row1.add(documentType);
@@ -286,13 +290,20 @@ public abstract class EmployeeWidget extends FlowPanel {
 		
 		contractTypeFreelance.setEnable(false);
 		
+		HTMLPanel row20 = new HTMLPanel(AonStringUtils.EMPTY);
+		row20.addStyleName(AON.CSS.aonItemFlex());
+		row20.setWidth("100%");
+		
+		row20.add(contractTypePanel);
+		table.add(row20);
+		
 		HTMLPanel row5 = new HTMLPanel(AonStringUtils.EMPTY);
 		row5.addStyleName(AON.CSS.aonItemFlex());
 		row5.setWidth("100%");
 		
 		quoteGroupCotizB.setMaxWidth("10rem");
+		quoteGroupCotizB.getElement().getStyle().setDisplay(Display.NONE);
 		
-		row5.add(contractTypePanel);
 		row5.add(modality);
 		row5.add(quoteGroupCotizB);
 		table.add(row5);
@@ -426,10 +437,14 @@ public abstract class EmployeeWidget extends FlowPanel {
 	
 	private void addContractDataTableHadlers() {
 		
+		clearEmployee.addClickHandler(e -> onClearEmployeeClick());
+		
 		document.getSuggestBox().addSelectionHandler(e -> {
 			String documentValue = this.document.getValue().trim();
-			if (AonStringUtils.isNotBlank(documentValue))
+			if (AonStringUtils.isNotBlank(documentValue)) {
 				onEmployeeDocumentSuggestionChange(documentValue);
+				clearEmployee.setVisible(true);
+			}
 		});
 		document.getSuggestBox().addValueChangeHandler(e -> {
 			String documentValue = this.document.getValue().trim();
@@ -443,8 +458,10 @@ public abstract class EmployeeWidget extends FlowPanel {
 					this.document.addError();
 
 				onEmployeeDocumentChange(documentValue, documentTypeValue);
-			} else
+			} else {
 				this.document.removeError();
+				clearEmployee.setVisible(false);
+			}
 		});
 		
 		nationality.getSuggestBox().addSelectionHandler(e -> {
@@ -511,7 +528,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 			if (ssRegimeValue == (byte) 3) {
 				showElementsFreelancerTable();
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.journeyType);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.journeyType.getListBox());
 			} else
 				this.hideElementsFreelancerTable();
 
@@ -645,7 +662,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 		
 		level.addChangeHandler(e -> {
 			Integer agreementLevelId = Integer.parseInt(this.level.getValue());
-			String levelDescription = this.level.getValue().split("- ")[1];
+			String levelDescription = this.level.getListBox().getSelectedItemText().split("- ")[1];
 			this.category.setValue(levelDescription);
 			onContractAgreementLevelChange(agreementLevelId);
 			onContractCategoryChange(levelDescription);
@@ -762,7 +779,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 			if (addressZipValue.length() == 5) {
 				String zip = this.addressZip.getValue().substring(0, 2);
 				addressProvince.setValue(zip);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince.getListBox());
 			}
 		});
 		
@@ -771,6 +788,11 @@ public abstract class EmployeeWidget extends FlowPanel {
 			Integer geozoneId = getProvincesGeozone(provinceCode);
 			updateMunicipalities();
 			onEmployeeAddressProvinceChange(geozoneId);
+		});
+		
+		addressMunicipality.getSuggestBox().addSelectionHandler(e -> {
+			String cityCode = municipalities.getZipByMunicipalityName(addressMunicipality.getValue());
+			onEmployeeAddressMunicipalityChange(addressMunicipality.getValue(), cityCode);
 		});
 		
 		addressMunicipality.getSuggestBox().addValueChangeHandler(e -> {
@@ -976,7 +998,6 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 	private void initDisplayElements() {
 		activityCCC.getElement().getStyle().clearDisplay();
-		activityCCC.getElement().getStyle().clearDisplay();
 
 		this.contractTypeLB.getElement().getStyle().clearDisplay();
 		this.contractTypeFreelance.getElement().getStyle().setDisplay(Display.NONE);
@@ -991,6 +1012,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 		journeyType.getElement().getStyle().setDisplay(Display.NONE);
 		journeyDuration.getElement().getStyle().setDisplay(Display.NONE);
+		partialityCoef.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------- Auxiliar Methods
@@ -1026,7 +1048,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 	private Integer getProvincesGeozone(String provinceCode) {
 		for (com.esferalia.aon.gwt.payroll.shared.Country country : countries)
 			for (Geozone province : country.getProvinces())
-				if (AonStringUtils.equalsIgnoreCase(province.getCode(), provinceCode))
+				if (AonStringUtils.equalsIgnoreCase(province.getCode(), provinceCode.substring(0, 2)))
 					return province.getId();
 
 		return null;
@@ -1044,19 +1066,19 @@ public abstract class EmployeeWidget extends FlowPanel {
 	public void fillDefaultFields() {
 		// SS REGIME
 		ssRegimeType.getListBox().setSelectedIndex(0);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), ssRegimeType);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), ssRegimeType.getListBox());
 
 		// GENDER
 		gender.getListBox().setSelectedIndex(0);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gender);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), gender.getListBox());
 
 		// CIVIL STATUS
 		civilStatus.getListBox().setSelectedIndex(5);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), civilStatus);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), civilStatus.getListBox());
 
 		// STREET_TYPE
 		streetType.getListBox().setSelectedIndex(14); // Calle
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), streetType);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), streetType.getListBox());
 	}
 
 	// ------------------------------------------------- Initialize SuggestBox
@@ -1269,7 +1291,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 	public void hideMdCtzContract() {
 		mdCTZLB.getElement().getStyle().setDisplay(Display.NONE);
 		this.mdCTZLB.getListBox().setSelectedIndex(0);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB.getListBox());
 
 	}
 
@@ -1462,7 +1484,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 	}
 
 	public void updateModality(Integer contractTypeInt) {
-		this.modality.clear();
+		this.modality.clearItems();
 		this.modality.addItem("-", "-1");
 
 		List<ModelRecord> contractTypeModels = this.contractType.getModelsContractType(contractTypeInt);

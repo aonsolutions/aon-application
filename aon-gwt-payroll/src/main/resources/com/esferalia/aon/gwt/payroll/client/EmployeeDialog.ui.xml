@@ -9,6 +9,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: .5rem;
+			min-width: 60rem;
 		}
 	
 		.buttonsPanel{
@@ -21,7 +22,7 @@
 
 	<g:HTMLPanel styleName="{style.form}">
 		<g:HTMLPanel ui:field="messageContainer" />
-		<a:Employee ui:field="employee"/>
+		<a:EmployeeWidget ui:field="employee"/>
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
 	</g:HTMLPanel>
 
