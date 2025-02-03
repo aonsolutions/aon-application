@@ -5,11 +5,13 @@ import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
+import * as UA  from '../services/userAgentService.js';
 import './company/aon-mobile-parent.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
 import { AonParent } from 'aonparent';
 import { AonMobileParent } from './company/aon-mobile-parent.js';
+import { AonMobileHome } from './home/aon-mobile-home.js';
 
 export class AonModule extends AonElement {
 
@@ -75,15 +77,17 @@ export class AonModule extends AonElement {
 					 companyListButton.setDisabled(false);
 					 companyListButton.color = 'white';
 				});
+			} else if(this.isMobile()) {
+				let mobileParent = new AonMobileParent();
+				mobileParent.selection = true;
+				this.rootPanel(mobileParent);
 			} else {
 				getCompanies().then(companies => {
 					if(companies.length === 1){
 						this.companySelection(companies[0], true);
 					} else {
 						this.getElement(this.AON_HOME).showMenu(false);
-						this.rootPanel(this.isMobile()
-							? new AonMobileParent()
-							: new AonParent());
+						this.rootPanel(new AonParent());
 					}
 				});
 			}
@@ -137,9 +141,11 @@ export class AonModule extends AonElement {
 			aonMenu.init();
 		} else aonHeader.companyIn(onlyOne);
 
-		this.rootPanelHtml(this.isMobile()
-			? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-			: '<aon-desktop id="aonDesktop"></aon-desktop>');
+		if(this.isMobile()) {
+			this.rootPanel(new AonMobileHome());
+		} else {
+			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+		}
 	}
 
 	async orientationLocked(){

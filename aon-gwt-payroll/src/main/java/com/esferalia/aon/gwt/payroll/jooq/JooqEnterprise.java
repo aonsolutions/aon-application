@@ -236,6 +236,7 @@ public class JooqEnterprise {
 		.map( r -> {
 			CCC ccc = new CCC();
 			ccc.setCode(r.getCcc());
+			ccc.setGeozone(r.getCcc());
 			ccc.setRegime(getSSRegime(r.getType()).getCode());
 			return ccc;
 		})

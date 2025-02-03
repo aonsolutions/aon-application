@@ -2,7 +2,7 @@ import { AonElement } from '../components/AonElement.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonHeader } from './aon-header.js';
 import { AonMenu } from './aon-menu.js';
-import { AonNewMobileHeader } from './aon-new-mobile-header.js';
+import { AonMobileHeader } from './aon-mobile-header.js';
 import { AonMobileMenu } from './aon-mobile-menu.js';
 
 import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
@@ -78,7 +78,7 @@ export class AonHome extends AonElement {
 	}
 
 	buildMobile() {
-		let aonMobileHeader = new AonNewMobileHeader();
+		let aonMobileHeader = new AonMobileHeader();
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
 

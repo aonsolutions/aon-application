@@ -11,7 +11,7 @@ import { AonNotificationPanel } from './aon-notification-panel.js';
 import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
 import { clearAuth } from 'aonsolutions/services/service.js';
 
-import { AonNewMobileHeader } from 'aonsolutions/modules/aon-new-mobile-header.js';
+import { AonMobileHeader } from 'aonsolutions/modules/aon-mobile-header.js';
 import { AonMobileMenu } from 'aonsolutions/modules/aon-mobile-menu.js';
 
 export class AonHome extends AonElement {
@@ -55,7 +55,7 @@ export class AonHome extends AonElement {
 	}
 
 	buildMobile() {
-		let aonMobileHeader = new AonNewMobileHeader();
+		let aonMobileHeader = new AonMobileHeader();
 		aonMobileHeader.id = this.AON_HEADER;
 		this.appendChild(aonMobileHeader);
 

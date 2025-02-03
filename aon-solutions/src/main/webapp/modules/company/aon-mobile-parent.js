@@ -3,11 +3,17 @@ import {closeSession, getCompanies, getUser} from  '../../services/service.js';
 import { CSS, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import '../../components/aon-application.js';
+import { AonMobileHome } from '../home/aon-mobile-home.js';
+import { AonMobileDesktop } from './aon-mobile-desktop.js';
+import * as UA  from '../../services/userAgentService.js';
+
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMobileParent extends AonElement {
 
   	companies;
   	selected;
+	selection; // boolean
 
   	constructor () {
   		super();
@@ -25,9 +31,18 @@ export class AonMobileParent extends AonElement {
     }
 
   	init(filter) {
-  		getCompanies().then( companies => {
-      		this.build(companies.filter(f => this.companyFilter(f, filter)));
-      }, () => closeSession());
+		getCompanies().then( companies => {
+			let cps = companies.filter(r => r.id == LS.getDomainId());
+			if(this.selection && cps.length > 0 && !cps[0].parent) {
+				this.companySelection(cps[0], companies.length == 1 );
+			} else if (this.selection && LS.getCompany() ) {
+				this.companySelection(LS.getCompany(), companies.length == 1 );
+			} else if(companies.length === 1) {
+				this.companySelection(companies[0], true);
+			} else {
+				this.build(companies.filter(f => this.companyFilter(f, filter)));
+			}
+		}, () => closeSession());
     }
 
   	companyFilter(f, q) {
@@ -158,9 +173,7 @@ export class AonMobileParent extends AonElement {
 	  this.getElement(aonHeader.COMPANY_LIST).style.display = 'block';
       getUser().then(user => {
         localStorage.setItem('aon_domain_login', user.login);
-        this.rootPanelHtml(this.isMobile()
-            ? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-            : '<aon-desktop id="aonDesktop"></aon-desktop>');  
+        this.rootPanel(new AonMobileHome());
       });
     }
 

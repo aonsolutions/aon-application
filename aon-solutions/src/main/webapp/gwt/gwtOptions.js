@@ -243,6 +243,12 @@ export const CONTRACT_VARIABLES = {
   entryPoint: 'ContractVariablesModule'
 };
 
+export const DOMAIN_VARIABLES = {
+  title: 'Domain Variables',
+  module: GWT_PAYROLL,
+  entryPoint: 'DomainVariablesModule'
+};
+
 export const MAIN_DIGITAL_CERTIFICATES = {
   module: GWT_PAYROLL,
   entryPoint: 'MainCertificates'

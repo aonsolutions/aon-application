@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.json.JSONObject
-import solutions.aon.camara2.R
 import java.io.File
 
 class AonJs(private val webView: WebView?, private val context: Context) : ComponentActivity() {
@@ -73,7 +72,7 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
         val base64 = CameraActivity.imgBase64
         if(base64 != null){
             val base64JSON = JSONObject()
-            base64JSON.put("photo",base64)
+            base64JSON.put("content",base64)
             mainActivity?.runOnUiThread {
                 Log.v("TAG", "Foto: $base64")
                 webView?.evaluateJavascript("receiveImage(${base64JSON})", null)
@@ -98,13 +97,13 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
             Thread.sleep(100)
             waitBarcode()
         }
-
     }
 
     @JavascriptInterface
     fun openFile(data:String) {
         val json = JSONObject(data)
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.renfe.com/content/dam/renfe/es/General/PDF-y-otros/Ejemplo-de-descarga-pdf.pdf"))
+        val url = json.getString("url")
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         context.startActivity(intent)
     }
 
@@ -112,9 +111,10 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     fun printFile(data: String) {
         val downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val json = JSONObject(data)
-        //val url = json.getString("url")
-        val url = "https://www.industrialhama.com/wp-content/uploads/2018/06/Ejemplo-pdf.pdf"
-        val title = "prueba"
+        val url = json.getString("url")
+        val title = json.getString("title")
+        //val url = "https://www.industrialhama.com/wp-content/uploads/2018/06/Ejemplo-pdf.pdf"
+        // val title = "prueba"
         val fileName = "$title.pdf"
         downloadFile(context,url,title,title)
         Thread.sleep(1000)
@@ -126,15 +126,14 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     fun downloadFile(data:String) {
         val json = JSONObject(data)
         val title = json.getString("title")
+        val url = json.getString("url")
         Log.v("TAG", "download file")
-        downloadFile(context, "https://www.industrialhama.com/wp-content/uploads/2018/06/Ejemplo-pdf.pdf", title, title)
+        downloadFile(context, url, title, title)
 
-        // Verificar si el archivo está descargado
         val fileName = "$title.pdf"
         val downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val file = File(downloadsDirectory, fileName)
 
-        // Esperar hasta que el archivo esté descargado
         while (!file.exists()) {
 
         }
@@ -181,7 +180,8 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     fun changeStatusBarColor(data: String) {
         val json = JSONObject(data)
         val color = json.getString("color")
-        mainActivity?.changeStatusBarColorHex(color)
+        val dark = json.getBoolean("dark")
+        mainActivity?.changeStatusBarColorHex(color,dark)
         Log.v("TAG",isDarkModeActivated(context).toString())
     }
 
@@ -190,8 +190,8 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
             .setTitle(title)
             .setDescription(description)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$title.pdf") // Especifica el directorio de descarga y el nombre del archivo
-            .setAllowedOverMetered(true) // Permitir descargas en conexiones de datos móviles
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$title.pdf")
+            .setAllowedOverMetered(true)
 
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadManager.enqueue(request)
@@ -216,7 +216,7 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     private fun printPDF(filePath: String) {
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
         try {
-            val jobName = "${context.getString(R.string.app_name)} Document"
+            val jobName = "Document"
             val printAdapter = PdfPrintDocumentAdapter(filePath)
             printManager.print(
                 jobName,

@@ -76,9 +76,11 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContractClauses;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractOtherInfo;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractSEPE;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
+import com.esferalia.aon.gwt.payroll.jooq.JooqDomainSystemVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -150,6 +152,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
+import com.esferalia.aon.gwt.payroll.shared.SystemVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -5134,5 +5137,39 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
-
+	
+	
+	// ------------------------------------------------ Variables
+	
+	@Override
+	public List<SystemVariable> getSystemVariables(String domainName, String user, Integer domainId)
+			throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqDomainSystemVariables.getSystemVariables(connection, domainId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void updateSystemVariables(String domainName, String user, Integer domainId,
+			List<SystemVariable> systemVariables) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqDomainSystemVariables.updateSystemVariables(connection, systemVariables);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void createSystemVariable(String domainName, String user, Integer domainId,
+			SystemVariable systemVariable) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqDomainSystemVariables.createSystemVariable(connection, domainId, systemVariable);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	
 }

@@ -8,11 +8,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "solutions.aon.aonapp"
+        applicationId = "aon.solutions"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 20001
+        versionName = "2.0.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -87,4 +87,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.19.0")
 
     implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.compose.material:material-icons-extended:1.7.4")
 }

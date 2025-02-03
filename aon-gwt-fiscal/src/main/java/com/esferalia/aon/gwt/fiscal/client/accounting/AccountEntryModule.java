@@ -558,7 +558,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		boolean canRemove = false;
 		boolean canEdit = false;
 		
-		boolean guest = getOptions().getConfiguration().getUser().hasGuestRole() && !getOptions().getConfiguration().getUser().hasAdminRole(); 
+		boolean guest = getOptions().isAccountingGuest(); 
 		if (!guest) {
 			canRemove = (!isNew() && (wizardContent.isUpdatable() || wizardContent.isRemovable()));
 			canEdit = (isNew() || (!isNew() && wizardContent.isUpdatable()));

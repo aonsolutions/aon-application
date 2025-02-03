@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -424,6 +425,7 @@ public class Invoice2tbai {
 			detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
 			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
 			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+					&& !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType())
 					&& (!exempt || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
 				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
@@ -484,6 +486,16 @@ public class Invoice2tbai {
 			detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
 			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
 			
+			double noSujetaOtros = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+					&& VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+				.mapToDouble(InvoiceBreakdown::getBase).sum();
+			if(noSujetaOtros > 0) {
+				DetalleNoSujeta detalleNoSujetaOtros = new DetalleNoSujeta();
+				detalleNoSujetaOtros.setCausa(CausaNoSujetaType.OT);
+				detalleNoSujetaOtros.setImporte(doubleToString(AonMathUtils.round(noSujetaOtros)));
+				noSujeta.getDetalleNoSujeta().add(detalleNoSujetaOtros);
+			}
+			
 			if((invoice.isNational() && Country.ES.equals(invoice.getRegistryDocumentCountry()))
 					|| (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))
 					|| (invoice.isCanCeuMel() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
@@ -510,7 +522,7 @@ public class Invoice2tbai {
 		}
 		
 		factura.setTipoDesglose(desglose);
-			
+		
 		return factura; 	
 	}
 	

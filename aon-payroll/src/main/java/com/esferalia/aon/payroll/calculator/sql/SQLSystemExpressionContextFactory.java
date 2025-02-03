@@ -52,7 +52,7 @@ public class SQLSystemExpressionContextFactory implements
 	private static final String SYSTEM_DATA_SQL = "SELECT * "
 			+ " FROM `system_data`" + " WHERE start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )"
-			+ " AND domain IN (0,?,?,?,?) " 
+			+ " AND domain IN (0,?,?,?) " 
 			+ " ORDER BY ABS(`domain`) ASC, start_date ASC";
 
 	private static Long getYearDays(Date startDate, Date endDate) {
@@ -120,10 +120,6 @@ public class SQLSystemExpressionContextFactory implements
 			else	
 				stmt.setNull(5, Types.INTEGER);
 			
-			if (key.getParentDomain() != null )
-				stmt.setInt(6, key.getParentDomain());
-			else	
-				stmt.setNull(6, Types.INTEGER);
 
 			rs = stmt.executeQuery();
 			while (rs.next()) {
