@@ -315,9 +315,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createUpdateSepeInfo() {
 		comunicationCard = new AonCustomCard("Comunicaci\u00f3n Sepe");
-		comunicationCard.getElement().getStyle().setProperty("max-width", "33rem");
-		comunicationCard.getElement().getStyle().setProperty("min-height", "8rem");
-		comunicationCard.getElement().getStyle().setProperty("width", "100%");
+		comunicationCard.addStyleName(AON.CSS.aonContractSmallCard());
 		comunicationCard.add(createComunicationData());
 		addComunicationDataHadlers();
 	}
@@ -343,9 +341,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createUpdateTransformSepeInfo() {
 		comunicationTransformCard = new AonCustomCard("Comunicaci\u00f3n Transformaci\u00f3n Sepe");
-		comunicationTransformCard.getElement().getStyle().setProperty("max-width", "67rem");
-		comunicationTransformCard.getElement().getStyle().setProperty("min-height", "8rem");
-		comunicationTransformCard.getElement().getStyle().setProperty("width", "100%");
+		comunicationTransformCard.addStyleName(AON.CSS.aonContractMediumCard());
 		comunicationTransformCard.add(createComunicationTransformData());
 		addComunicationTransformDataHadlers();
 
@@ -373,9 +369,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createUpdateExtensionSepeInfo() {
 		comunicationExtensionCard = new AonCustomCard("Comunicaci\u00f3n Pr\u00f3rroga Sepe");
-		comunicationExtensionCard.getElement().getStyle().setProperty("max-width", "67rem");
-		comunicationExtensionCard.getElement().getStyle().setProperty("min-height", "8rem");
-		comunicationExtensionCard.getElement().getStyle().setProperty("width", "100%");
+		comunicationExtensionCard.addStyleName(AON.CSS.aonContractMediumCard());
 		comunicationExtensionCard.add(createComunicationExtensionData());
 		addComunicationExtensionDataHadlers();
 
@@ -434,9 +428,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createOtherDataCard() {
 		otherDataCard = new AonCustomCard("Otros datos contrato");
-		otherDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		otherDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		otherDataCard.getElement().getStyle().setProperty("width", "100%");
+		otherDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		otherDataCard.add(createOtherData());
 		addOtherDataHandlers();
 
@@ -605,9 +597,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createSpecificDataCard() {
 		specificDataCard = new AonCustomCard("Datos especificos");
-		specificDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		specificDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		specificDataCard.getElement().getStyle().setProperty("width", "100%");
+		specificDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		specificDataCard.add(createSpecificData());
 		addSpecificDataHandlers();
 
@@ -740,9 +730,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createWorkProgramDataCard() {
 		workProgramDataCard = new AonCustomCard("Datos Programa de Empleo");
-		workProgramDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		workProgramDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		workProgramDataCard.getElement().getStyle().setProperty("width", "100%");
+		workProgramDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		workProgramDataCard.add(createWorkProgramData());
 		addWorkProgramDataHandlers();
 
@@ -786,9 +774,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createTemporalWorkEnterpriseDataCard() {
 		temporalWorkEnterpriseDataCard = new AonCustomCard("Empresa de Trabajo Temporal");
-		temporalWorkEnterpriseDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		temporalWorkEnterpriseDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		temporalWorkEnterpriseDataCard.getElement().getStyle().setProperty("width", "100%");
+		temporalWorkEnterpriseDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		temporalWorkEnterpriseDataCard.add(createTemporalWorkEnterpriseData());
 		addTemporalWorkEnterpriseDataHandlers();
 
@@ -827,9 +813,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createContractReliefDataCard() {
 		contractReliefDataCard = new AonCustomCard("Contrato Relevo");
-		contractReliefDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		contractReliefDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		contractReliefDataCard.getElement().getStyle().setProperty("width", "100%");
+		contractReliefDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		contractReliefDataCard.add(createContractReliefData());
 		addContractReliefDataHandlers();
 
@@ -870,9 +854,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createOfferWorkDataCard() {
 		offerWorkDataCard = new AonCustomCard("Datos Oferta de Trabajo");
-		offerWorkDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		offerWorkDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		offerWorkDataCard.getElement().getStyle().setProperty("width", "100%");
+		offerWorkDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		offerWorkDataCard.add(createOfferWorkData());
 		addOfferWorkDataHandlers();
 
@@ -900,9 +882,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createWorkshopSchoolDataCard() {
 		workshopSchoolDataCard = new AonCustomCard("Escuelas Taller");
-		workshopSchoolDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		workshopSchoolDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		workshopSchoolDataCard.getElement().getStyle().setProperty("width", "100%");
+		workshopSchoolDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		workshopSchoolDataCard.add(createWorkshopSchoolData());
 		addWorkshopSchoolDataHandlers();
 
@@ -938,9 +918,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createDisabilityDataCard() {
 		disabilityDataCard = new AonCustomCard("Discapacidad");
-		disabilityDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		disabilityDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		disabilityDataCard.getElement().getStyle().setProperty("width", "100%");
+		disabilityDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		disabilityDataCard.add(createDisabilityData());
 		addDisabilityDataHandlers();
 
@@ -985,9 +963,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createOlder52DataCard() {
 		older52DataCard = new AonCustomCard("Mayores de 52 a\u00f1os (Ley 45/2002)");
-		older52DataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		older52DataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		older52DataCard.getElement().getStyle().setProperty("width", "100%");
+		older52DataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		older52DataCard.add(createOlder52Data());
 		addOlder52DataHandlers();
 
@@ -1018,9 +994,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createAnnexedDataCard() {
 		annexedDataCard = new AonCustomCard("Anexo gestion colect. de contrataciones en origen");
-		annexedDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		annexedDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		annexedDataCard.getElement().getStyle().setProperty("width", "100%");
+		annexedDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		annexedDataCard.add(creatAnnexedData());
 		addAnnexedDataHandlers();
 
@@ -1054,9 +1028,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createCampaignsDataCard() {
 		campaignsDataCard = new AonCustomCard("Campa\u00f1as");
-		campaignsDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		campaignsDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		campaignsDataCard.getElement().getStyle().setProperty("width", "100%");
+		campaignsDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		campaignsDataCard.add(creatCampaignsData());
 		addCampaignsDataHandlers();
 
@@ -1091,9 +1063,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createInvestDataCard() {
 		investDataCard = new AonCustomCard("Investigaci\u00f3n");
-		investDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		investDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		investDataCard.getElement().getStyle().setProperty("width", "100%");
+		investDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		investDataCard.add(createInvestData());
 		addInvestDataHandlers();
 
@@ -1141,9 +1111,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createInterimCauseDataCard() {
 		interimCauseDataCard = new AonCustomCard("Causa de interinidad");
-		interimCauseDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		interimCauseDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		interimCauseDataCard.getElement().getStyle().setProperty("width", "100%");
+		interimCauseDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		interimCauseDataCard.add(createInterimCauseData());
 		addInterimCauseDataHandlers();
 
@@ -1186,9 +1154,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createEntrepreneurSupportDataCard() {
 		entrepreneurSupportDataCard = new AonCustomCard("Apoyo emprendedores");
-		entrepreneurSupportDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		entrepreneurSupportDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		entrepreneurSupportDataCard.getElement().getStyle().setProperty("width", "100%");
+		entrepreneurSupportDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		entrepreneurSupportDataCard.add(createEntrepreneurSupportData());
 		addEntrepreneurSupportDataHandlers();
 
@@ -1404,9 +1370,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createPromotionMeasuresDataCard() {
 		promotionMeasuresDataCard = new AonCustomCard("Medidas fomento");
-		promotionMeasuresDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		promotionMeasuresDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		promotionMeasuresDataCard.getElement().getStyle().setProperty("width", "100%");
+		promotionMeasuresDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		promotionMeasuresDataCard.add(createPromotionMeasuresData());
 		addPromotionMeasuresDataHandlers();
 
@@ -1434,9 +1398,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createQuoteReductionsDataCard() {
 		quoteReductionsDataCard = new AonCustomCard("Reducci\u00f3n de cuotas");
-		quoteReductionsDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		quoteReductionsDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		quoteReductionsDataCard.getElement().getStyle().setProperty("width", "100%");
+		quoteReductionsDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		quoteReductionsDataCard.add(createQuoteReductionsData());
 		addQuoteReductionsDataHandlers();
 
@@ -1502,9 +1464,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private void createBonusDataCard() {
 		bonusDataCard = new AonCustomCard("Bonificaci\u00f3n");
-		bonusDataCard.getElement().getStyle().setProperty("max-width", "67rem");
-		bonusDataCard.getElement().getStyle().setProperty("min-height", "8rem");
-		bonusDataCard.getElement().getStyle().setProperty("width", "100%");
+		bonusDataCard.addStyleName(AON.CSS.aonContractMediumCard());
 		bonusDataCard.add(createBonusData());
 		addBonusDataHandlers();
 
@@ -1554,9 +1514,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 	private AonCustomCard createCard(String title, Widget content) {
 		AonCustomCard card = new AonCustomCard(title);
-		card.getElement().getStyle().setProperty("max-width", "33rem");
-		card.getElement().getStyle().setProperty("min-height", "8rem");
-		card.getElement().getStyle().setProperty("width", "100%");
+		card.addStyleName(AON.CSS.aonContractSmallCard());
 		card.add(content);
 		return card;
 	}

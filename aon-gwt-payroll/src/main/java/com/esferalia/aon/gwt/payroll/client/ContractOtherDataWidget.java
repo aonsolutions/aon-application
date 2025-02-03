@@ -384,9 +384,7 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 
 	private void initializeIndefiniteCards() {
 		indefiniteTable = new AonCustomCard("Otros datos del contrato");
-		indefiniteTable.getElement().getStyle().setProperty("max-width", "67rem");
-		indefiniteTable.getElement().getStyle().setProperty("min-height", "8rem");
-		indefiniteTable.getElement().getStyle().setProperty("width", "100%");
+		indefiniteTable.addStyleName(AON.CSS.aonContractMediumCard());
 		indefiniteTable.add(createIndefiniteDataTable());
 		addIndefiniteDataTableHadlers();
 		
@@ -592,9 +590,7 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 	
 	private void initializeFormationCards() {
 		formationTable = new AonCustomCard("Otros datos del contrato");
-		formationTable.getElement().getStyle().setProperty("max-width", "67rem");
-		formationTable.getElement().getStyle().setProperty("min-height", "8rem");
-		formationTable.getElement().getStyle().setProperty("width", "100%");
+		formationTable.addStyleName(AON.CSS.aonContractMediumCard());
 		formationTable.add(createFormationDataTable());
 		addFormationDataTableHadlers();
 		
@@ -667,9 +663,7 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 
 	private void initializePracticeCards() {
 		practiceTable = new AonCustomCard("Otros datos del contrato");
-		practiceTable.getElement().getStyle().setProperty("max-width", "67rem");
-		practiceTable.getElement().getStyle().setProperty("min-height", "8rem");
-		practiceTable.getElement().getStyle().setProperty("width", "100%");
+		practiceTable.addStyleName(AON.CSS.aonContractMediumCard());
 		practiceTable.add(createPracticeDataTable());
 		addPracticeDataTableHadlers();
 		
@@ -794,9 +788,7 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 
 	private void initializeTemporalCards() {
 		temporalTable = new AonCustomCard("Otros datos del contrato");
-		temporalTable.getElement().getStyle().setProperty("max-width", "67rem");
-		temporalTable.getElement().getStyle().setProperty("min-height", "8rem");
-		temporalTable.getElement().getStyle().setProperty("width", "100%");
+		temporalTable.addStyleName(AON.CSS.aonContractMediumCard());
 		temporalTable.add(createTemporalDataTable());
 		addTemporalDataTableHadlers();
 		
@@ -1017,9 +1009,7 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 	
     private AonCustomCard createCard(String title, Widget content) {
         AonCustomCard card = new AonCustomCard(title);
-        card.getElement().getStyle().setProperty("max-width", "33rem");
-        card.getElement().getStyle().setProperty("min-height", "8rem");
-        card.getElement().getStyle().setProperty("width", "100%");
+        card.addStyleName(AON.CSS.aonContractSmallCard());
         card.add(content);
         return card;
     }
