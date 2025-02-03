@@ -1904,7 +1904,7 @@ public class InvoiceDAO {
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
 		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		//com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 		AggregateFunction<Integer> COUNT = DSL.count(INVOICE.ID);
 		
 		InvoiceUserData invoiceUserData = new InvoiceUserData();
@@ -1913,8 +1913,8 @@ public class InvoiceDAO {
 			.select(domain.NAME, INVOICE.DOMAIN, INVOICE.STATUS, COUNT)
 			.from(INVOICE)
 			.join(domain).on(INVOICE.DOMAIN.eq(domain.ID))
-			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
-			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			//.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
+			//.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
 			.where(domain.ID.in(domains)
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))

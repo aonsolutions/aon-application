@@ -79,11 +79,11 @@ public class DomainJSON {
 			if(null != userJson) {
 				User user = new User()
 					.setId(JsonUtils.getInteger(userJson, IJsonNames.ID))
-					.setDomain(JsonUtils.getInteger(userJson, IJsonNames.DOMAIN))
 					.setType(UserType.valueOf(JsonUtils.getString(userJson, IJsonNames.TYPE)))
 					.setName(JsonUtils.getString(userJson, IJsonNames.NAME))
 					.setLogin(JsonUtils.getString(userJson, IJsonNames.LOGIN))
 					.setActive(JsonUtils.getBoolean(userJson, IJsonNames.ACTIVE))
+					.setDomain(new Domain().setId(JsonUtils.getInteger(userJson, IJsonNames.DOMAIN)))
 					;
 				
 				if(JsonUtils.getBoolean(userJson, IJsonNames.PORTAL))

@@ -81,7 +81,7 @@ public class RegisterServlet extends AonApiHttpServlet{
 			user = new User()
 				.setAuth(auth)
 				.setActive(true)
-				.setDomain(domain.getId())
+				.setDomain(domain)
 				.setLogin(login)
 				.setName(login)
 				.setEnterprise(cp.getId());

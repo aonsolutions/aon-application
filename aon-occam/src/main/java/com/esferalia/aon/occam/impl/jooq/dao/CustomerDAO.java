@@ -23,6 +23,7 @@ import  org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -133,6 +134,7 @@ public class CustomerDAO {
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
+//	        .leftOuterJoin(Rmedia.RMEDIA).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
 	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}
@@ -218,7 +220,7 @@ public class CustomerDAO {
 		Condition condition = CUSTOMER.DOMAIN.eq(domain);
 		
 		User user = SecurityDAO.getUser(ctx);
-		if(user.getDomain() == ctx.getDomainId()) {
+		if(user.getDomain().getId() == ctx.getDomainId()) {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}

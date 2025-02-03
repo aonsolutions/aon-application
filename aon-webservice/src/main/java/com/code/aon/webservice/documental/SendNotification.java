@@ -95,7 +95,7 @@ public class SendNotification {
 	
 	
 	private static String getContent(Domain domain, User user, Attach attach, LinkedList<String> to, Boolean isNew) {
-		Domain userDomain = AON.getDomain(domain.getName(), user.getDomain(), user.getLogin());
+		Domain userDomain = AON.getDomain(domain.getName(), user.getDomain().getId(), user.getLogin());
 		String msg = "<div style='margin-left: -30px;'>"
 				+"<div style='margin: 7px 15px 14px 30px;line-height: 18px;font-size: 13px;box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.075);'>";
 		msg = msg + "<p> El usuario <b>"+ (user.getName() != null ? user.getName() : user.getLogin()) +"</b> de la empresa <b>" + userDomain.getDescription() +

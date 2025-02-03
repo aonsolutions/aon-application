@@ -2110,14 +2110,14 @@ public class CretaServlet extends HttpServlet
 
 	private static Attach getAttach(String domainName, Integer domainId, String login, RegistryAttachmentType type, String md5) {
 
-		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+		Integer userDomainId = AON.getUser(domainName, domainId, login).getDomain().getId();
 
 		return  AON.getAttach(
 				domainName, 
 				domainId, 
 				login,
 				p -> 
-				p.getDomainProperty().in(new Integer[]{domainId, userDomain})
+				p.getDomainProperty().in(new Integer[]{domainId, userDomainId})
 				.and(p.getTypeProperty().eq((byte)type.ordinal()))
 				.and(p.getDescriptionProperty().eq(md5)), 
 				AttachType.REGISTRY
@@ -2127,14 +2127,14 @@ public class CretaServlet extends HttpServlet
 	
 	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
 		
-		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+		Integer userDomainId = AON.getUser(domainName, domainId, login).getDomain().getId();
 		
 		return  AON.getAttachList(
 				domainName, 
 				domainId, 
 				login,    
 				p -> 
-					p.getDomainProperty().in(new Integer[]{domainId, userDomain})
+					p.getDomainProperty().in(new Integer[]{domainId, userDomainId})
 					.and(p.getTypeProperty().eq((byte)type.ordinal()))
 					.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
 					.and(cccs.stream().map(ccc -> p.getDataProperty().like(("%"+ccc.substring(2)+"%").getBytes())).reduce((f1,f2)->f1.or(f2)).orElse(null))

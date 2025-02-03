@@ -223,6 +223,7 @@ public class SecurityDAO {
 			.fetch().stream().map(r -> r.getValue(USER_SCOPE.SCOPE)).toArray(Integer[]::new);
 	}
 
+
 	public static byte[] unHexUuid(AONContext ctx, String uuid) {
 		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
 	}
@@ -352,9 +353,9 @@ public class SecurityDAO {
 		if (record != null) {
 			user = new User();
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
@@ -386,7 +387,7 @@ public class SecurityDAO {
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -403,7 +404,7 @@ public class SecurityDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -496,7 +497,9 @@ public class SecurityDAO {
 	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
 		return ctx.getDslContext().select()
-		.from(USER).join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
+		.from(USER)
+		.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID))
+		.join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
 		.where(MAIL_ACCOUNT.EMAIL.eq(email))
 		.fetch().stream().map(new UserFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -637,9 +640,9 @@ public class SecurityDAO {
 		User user = new User();
 		if (record != null) {
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
@@ -761,8 +764,8 @@ public class SecurityDAO {
 			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
-		int dom = user.getDomain();
-		if ( user.getDomain() == ctx.getDomainId()) {
+		int userDomainId = user.getDomain().getId();
+		if ( user.getDomain().getId() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
 				.select(USER_SCOPE.SCOPE)
@@ -782,7 +785,7 @@ public class SecurityDAO {
 		// Comprabamos si es un usuario del dominio padre.
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		int par = domain.getParentId();
-		if ( dom == par ) {
+		if ( userDomainId == par ) {
 			// Se trata de un usuario del dominio padre, por 
 			// lo que tiene acceso a todos los scopes, se devuelve 
 			// NULL, por lo que no hay que cruzar la tabla user_scope.
@@ -1566,7 +1569,7 @@ public class SecurityDAO {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain())
+				p.getDomainProperty().eq(user.getDomain().getId())
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()

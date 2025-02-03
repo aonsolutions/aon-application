@@ -11,6 +11,7 @@ import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -83,7 +84,7 @@ public class UserDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -99,7 +100,7 @@ public class UserDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -151,10 +152,10 @@ public class UserDAO {
 		public static User build(Record r) {
 			return new User()
 				.setId(r.getValue(USER.ID))
-				.setDomain(r.getValue(USER.DOMAIN))
 				.setType(UserType.safeValueOf(getValue(r, USER.TYPE)))
 				.setName(r.getValue(USER.NAME))
 				.setLogin(r.getValue(USER.LOGIN))
+				.setDomain(new Domain().setId(r.getValue(USER.DOMAIN)))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(USER.ACTIVE)))
 				.setRegistry(checkField(r, REGISTRY.ID)
 				        ? RegistryFiller.build(r)
