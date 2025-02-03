@@ -269,8 +269,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 
 		protected boolean isContextVariableName(String surname) {
-			return Arrays.stream( new ContextVariable[] {
-			ADDITIONAL_HOURS})
+			return Arrays
+			.stream( ContextVariable.values())
+			.filter(v -> v.isInternal())
 			.map( v -> v.getName())
 			.anyMatch( n -> AonStringUtils.equals(n,surname));
 		}
@@ -1145,7 +1146,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (CompileException e) {
 					onCompileError(contractDeduction, getSyntaxExpressionErrorMessage(contractDeduction));
 
+				} catch ( ScriptRuntimeException e ) {
+					onCompileError(contractDeduction, e.getMessage());
 				}
+
 			}
 			
 			for (IContractDeduction contractDeduction : undefContractDeductions) {
@@ -1318,15 +1322,18 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					total += cost;
 					
 				} catch (RemoveException | RemoveVariableError e) {
-				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
+					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
-				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
+					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
-				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
+					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
+				} catch (ScriptRuntimeException e) {
+					onCompileError(contractCost, e.getMessage());
+					addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				}
 
 			}
@@ -1476,6 +1483,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			onRemove(contractBonus);
 		} catch (CompileException e) {
 			onCompileError(contractBonus, getSyntaxExpressionErrorMessage(contractBonus));
+		} catch (ScriptRuntimeException e) {
+			onCompileError(contractBonus, e.getMessage());
 		}
 		return bonus;
 	}
