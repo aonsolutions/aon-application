@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -1539,7 +1540,7 @@ public class SecurityDAO {
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
 				: new LinkedList<>();	
 		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = 
-			userId != null  && domain.getParentId() != null && user.getDomain().equals(domain.getParentId())
+			userId != null  && domain.getParentId() != null && Objects.equals(user.getDomain().getId(),domain.getParentId())
 				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	

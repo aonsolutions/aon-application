@@ -278,7 +278,7 @@ public class User implements Serializable {
 	}
 	
 	public boolean isEmpty() {
-		return getId() == null && getDomain() == null
+		return getId() == null && getDomain().getId() == null
 				&& getLogin() == null;
 	}
 }

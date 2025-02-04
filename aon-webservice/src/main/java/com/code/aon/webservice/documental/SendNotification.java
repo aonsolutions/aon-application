@@ -40,7 +40,7 @@ public class SendNotification {
 		
 		List<User> users = AON.getUsers(attach.getDomain().getId(), attach.getDomain().getName(), user.getLogin());
 		
-		if(user.getDomain().equals(attach.getDomain().getParentId())) {
+		if(java.util.Objects.equals(user.getDomain().getId(),attach.getDomain().getParentId())) {
 			Company c = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(attach.getDomain().getId()));
 			RegistryMedia rm = AON.getRMedia(domain.getName(), domain.getId(), user.getLogin(), f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq((byte) 4)));
 			if(rm.getValue() != null) {

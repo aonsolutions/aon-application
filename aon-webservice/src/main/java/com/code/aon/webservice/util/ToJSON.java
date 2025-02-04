@@ -588,7 +588,7 @@ public class ToJSON {
 		return new JSONObject()
 			.put(MSG.ID, user.getId())
 			.put(MSG.NAME, user.getName())
-			.put(MSG.DOMAIN, user.getDomain())
+			.put(MSG.DOMAIN, user.getDomain().getId())
 			.put(MSG.LOGIN, user.getLogin());		
 	}
 	
