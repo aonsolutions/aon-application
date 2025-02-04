@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -17,7 +16,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = -5850188463638573104L;
 	
 	private Integer id;
-	private Domain domain;
+	private Integer domain;
 	private UserType type;
 	private String name;
 	private String login;
@@ -42,13 +41,10 @@ public class User implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public Domain getDomain() {
-	    if(domain == null) {
-	        return new Domain();
-	    }
+	public Integer getDomain() {
 		return domain;
 	}
-	public User setDomain(Domain domain) {
+	public User setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}

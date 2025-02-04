@@ -337,7 +337,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					users.stream()	
 						.forEach( u -> {
 							Label topLevel = new Label();
-							if (AonNumberUtils.notEquals(domain.getId(),u.getDomain().getId())) {
+							if (AonNumberUtils.notEquals(domain.getId(),u.getDomain())) {
 								topLevel.setStyleName(AON.CSS.aonTabIcon());
 								topLevel.addStyleName(AON.CSS.aonIconLevelTop());
 							}

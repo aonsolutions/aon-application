@@ -851,7 +851,7 @@ public class ActionTargetServlet extends AonApiHttpServlet {
 	private static User createUser(Company company, Auth auth, String login, String name) {
 		Domain domain = company.getDomain();
 
-		User user = new User().setAuth(auth).setActive(true).setDomain(domain).setLogin(company.getDocument())
+		User user = new User().setAuth(auth).setActive(true).setDomain(domain.getId()).setLogin(company.getDocument())
 				.setName(AonStringUtils.isNotBlank(name) ? name : company.getDocument()).setShared(false)
 				.setEnterprise(company.getId()).setToolbar(UserToolbar.GOOGLE);
 

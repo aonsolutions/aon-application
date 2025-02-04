@@ -3,7 +3,6 @@ import static com.esferalia.aon.occam.api.model.attachment.AttachType.REGISTRY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
 
-import java.io.Closeable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -20,7 +19,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -89,22 +87,49 @@ public class UserServlet extends AonApiHttpServlet {
 		try {
 			AonApiData api = initialize(req);
 		
-			Object object = new AonRouting(api)
-				.addRoute("/", UserServlet::getDomainUsers)
-				.addRoute("/list", UserServlet::getUsers)
-				.addRoute("/info", UserServlet::getDomainUser)
-				.addRoute("/roles", UserServlet::getUserRoles)
-				.addRoute("/notice", UserServlet::getUserNotice) 
-				.addRoute("/:email", UserServlet::getUserByEmail)
-				.apply();
-			
-			response(req, resp, object);
+			switch (api.getPath()) {
+			case "/":
+				response(req, resp, getDomainUsers(api));
+				break;
+			case "/roles":
+				response(req, resp, getUserRoles(api.getDomain(), JsonUtils.getInteger(api.getData(), IJsonNames.USER)));
+				break;
+			case "/list":
+				response(req, resp, getUsers(api));
+				break;
+			case "/notice":
+				List<String> schemas = AONContext.getSchemas();
+				RawdocUserData rawdocUserData = new RawdocUserData();
+				for(String schema : schemas) {
+					rawdocUserData.append(AON.getRawdocUserData(api.getToken(), schema));
+				}
+				InvoiceUserData invoiceUserData = new InvoiceUserData();
+				for(String schema : schemas) {
+					invoiceUserData.append(AON.getInvoiceUserData(api.getToken(), schema));
+				}
+				
+				JSONObject noticeJson = rawdocUserData.toJSON();
 
+				JSONObject invoiceJson = noticeJson.optJSONObject(RawdocNature.INVOICE.name().toLowerCase());
+				if ( invoiceJson == null ) {
+					invoiceJson = new JSONObject(); 
+					noticeJson.put (RawdocNature.INVOICE.name().toLowerCase(), invoiceJson);
+				}
+				invoiceUserData.toJSON().toMap().forEach( invoiceJson::put);
+
+				response(req, resp, noticeJson);
+				
+				break;
+			case "/info":
+				response(req, resp, getDomainUser(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
-
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
@@ -173,7 +198,7 @@ public class UserServlet extends AonApiHttpServlet {
 		User user = new User()
 				.setActive(true)
 				.setType(UserType.SERVICE)
-				.setDomain(api.getDomain())
+				.setDomain(api.getDomain().getId())
 				.setLogin(name)
 				.setName(name)
 				.setToolbar(UserToolbar.AON_SOLUTIONS);
@@ -201,7 +226,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private static JSONArray getUsers(AonApiData api) {
+	private JSONArray getUsers(AonApiData api) {
 		Integer page = JsonUtils.getInteger(api.getData(), IJsonNames.PAGE);
 		Integer perPage = JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE);
 		return UserJSON.toJSON(
@@ -212,7 +237,7 @@ public class UserServlet extends AonApiHttpServlet {
 			);
 	}
 	
-	private static JSONArray getDomainUsers(AonApiData api) {
+	private JSONArray getDomainUsers(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
 		.map(user -> {
@@ -234,7 +259,7 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put(IJsonNames.SURNAME, auth.getSurname() != null ? auth.getSurname() : "");
 				json.put(IJsonNames.DOCUMENT, auth.getDocument() != null ? auth.getDocument() : "");
 				json.put(IJsonNames.PHONE, auth.getPhone() != null ? auth.getPhone() : "");
-				json.put(IJsonNames.ROLES, getUserRoles(api, r.getId()));
+				json.put(IJsonNames.ROLES, getUserRoles(api.getDomain(), r.getId()));
 				json.put(IJsonNames.PORTAL, r.isPortal());
 				json.put(IJsonNames.SHARED, r.isShared());
 				json.put(IJsonNames.LOGIN, r.getLogin());
@@ -245,7 +270,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return jsArray;
 	}
 	
-	private static Filter userFilter(AonApiData api, UserProperties f) {
+	private Filter userFilter(AonApiData api, UserProperties f) {
 		JSONObject params = api.getData();
 		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
@@ -307,7 +332,7 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 	
 	
-	private static JSONObject getDomainUser(AonApiData api) {
+	private JSONObject getDomainUser(AonApiData api) {
 		Integer userId = api.getData().opt("user") != null ? api.getData().optInt("user",0) : null;
 		User user = new User();
 		if(userId != null && userId != 0 ) {
@@ -354,20 +379,14 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}
 	
-	private static JSONArray getUserRoles(AonApiData api) {
-		Integer userId = JsonUtils.getInteger(api.getData(), IJsonNames.USER);
-		return getUserRoles(api, userId);
-	}
-	
-	private static JSONArray getUserRoles(AonApiData api, Integer userId) {
-		Domain domain = api.getDomain();
+	private JSONArray getUserRoles(Domain domain, Integer userId) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(userId)).collect(Collectors.toCollection(LinkedList::new));
 		JSONArray userAppRoles = new JSONArray();
 		roles.stream().forEach(uar -> userAppRoles.put(uar.getRole().name()));
 		return userAppRoles;
 	}
-
-	private static JSONObject setUserAppRole(AonApiData api, User user){
+	
+	private JSONObject setUserAppRole(AonApiData api, User user){
 		Domain domain = api.getDomain();
 		String login = api.getUser().getLogin();
 		Integer userId = user != null && user.getId() != null 
@@ -400,52 +419,6 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private static JSONObject getUserNotice(AonApiData api) throws JSONException {
-		List<String> schemas = AONContext.getSchemas();
-		RawdocUserData rawdocUserData = new RawdocUserData();
-		for(String schema : schemas) {
-			long start = System.currentTimeMillis();
-			rawdocUserData.append(AON.getRawdocUserData(api.getToken(), schema));
-			long stop = System.currentTimeMillis();
-			System.out.println("getRawdocUserData(" + schema + ") " + (stop -start) + "ms");
-		}
-		InvoiceUserData invoiceUserData = new InvoiceUserData();
-		for(String schema : schemas) {
-			long start = System.currentTimeMillis();
-			invoiceUserData.append(AON.getInvoiceUserData(api.getToken(), schema));
-			long stop = System.currentTimeMillis();
-			System.out.println("getInvoiceUserData(" + schema + ") " + (stop -start) + "ms");
-		}
-		
-		JSONObject noticeJson = rawdocUserData.toJSON();
-
-		JSONObject invoiceJson = noticeJson.optJSONObject(RawdocNature.INVOICE.name().toLowerCase());
-		if ( invoiceJson == null ) {
-			invoiceJson = new JSONObject(); 
-			noticeJson.put (RawdocNature.INVOICE.name().toLowerCase(), invoiceJson);
-		}
-		invoiceUserData.toJSON().toMap().forEach( invoiceJson::put);
-		return noticeJson;
-	}
-
-	private static JSONArray getUserByEmail(AonApiData api) throws JSONException {
-		JSONArray jsonArray = new JSONArray();
-		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
-		String login = api.getUser().getLogin();
-		String email = vars.getString(IJsonNames.EMAIL);
-		for (String schema : AONContext.getSchemas()) {
-			String domain = AONContext.getSchemaFirstDomain(schema);
-			
-			if ( AonStringUtils.isBlank(domain) ) 
-				continue;
-			
-			try (CloseableAONContext aonContext = AONContext.getAONContext(domain, login)) {
-				AON.getUsersByEmail(aonContext, email).stream().map(UserServlet::userToJSON).forEach(jsonArray::put);
-			}
-		}
-		return jsonArray;
-	}
-
 	private JSONObject saveTaskHolder(AonApiData api, User user) {
 		Integer userId = user != null && user.getId() != null 
 				? user.getId() : JsonUtils.getInteger(api.getData(), IJsonNames.ID);
@@ -562,7 +535,7 @@ public class UserServlet extends AonApiHttpServlet {
 				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				js.put("roles", getUserRoles(api, user.getId()));
+				js.put("roles", getUserRoles(api.getDomain(), user.getId()));
 				js.put("portal", user.isPortal());
 				js.put("shared", user.isShared());
 				js.put("login", user.getLogin());
@@ -611,8 +584,8 @@ public class UserServlet extends AonApiHttpServlet {
 		User user = new User()
 			.setAuth(auth)
 			.setActive(true)
+			.setDomain(domain.getId())
 			.setLogin(login)
-			.setDomain(domain)
 			.setName(json.opt("name") != null ? json.getString("name") : login)
 			.setShared(json.optBoolean("shared"))
 			.setEnterprise(cp.getId())
@@ -667,17 +640,13 @@ public class UserServlet extends AonApiHttpServlet {
 		return user;
 	}
 	
-	private static String ramdonLogin() {
+	private String ramdonLogin() {
 		Random rnd = new Random();
 		Integer i = rnd.nextInt(100000000-10000000+1)+10000000;
 		return i.toString();	
 	}
 	
-	private static JSONObject userToJSON(User user) {
-		return userToJSON(user, new JSONObject());
-	}	
-
-	private static JSONObject userToJSON(User user, JSONObject json) {
+	private JSONObject userToJSON(User user, JSONObject json) {
 		json.put("id", user.getId());
 		json.put("name", user.getName());
 		json.put("surname", "");
@@ -687,7 +656,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private static void sendAuthCreateInfoMail(AonApiData api, Auth auth, String email, String password, Company cp) {
+	private void sendAuthCreateInfoMail(AonApiData api, Auth auth, String email, String password, Company cp) {
 		Domain parent = api.getDur().getDomain().isParent()
 			? api.getDur().getDomain() : api.getDur().getParentDomain(); 
 		
@@ -757,7 +726,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private static String authCreateInfoContent(AonApiData api, User user, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
+	private String authCreateInfoContent(AonApiData api, User user, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());

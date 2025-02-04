@@ -245,11 +245,11 @@ public class BookingJSON {
 			if(null != userJson) {
 				User user = new User()
 					.setId(JsonGWTUtils.getInteger(userJson, IJsonNames.ID))
+					.setDomain(JsonGWTUtils.getInteger(userJson, IJsonNames.DOMAIN))
 					.setType(UserType.valueOf(JsonGWTUtils.getString(userJson, IJsonNames.TYPE)))
 					.setName(JsonGWTUtils.getString(userJson, IJsonNames.NAME))
 					.setLogin(JsonGWTUtils.getString(userJson, IJsonNames.LOGIN))
 					.setActive(JsonGWTUtils.getBoolean(userJson, IJsonNames.ACTIVE))
-					.setDomain(new Domain().setId(JsonGWTUtils.getInteger(userJson, IJsonNames.DOMAIN)))
 					;
 				
 				if(JsonGWTUtils.getBoolean(userJson, IJsonNames.PORTAL))

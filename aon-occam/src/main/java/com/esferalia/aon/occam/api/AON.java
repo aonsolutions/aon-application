@@ -516,11 +516,7 @@ public class AON {
 	// ******************************** SECURITY **
 	// ********************************************
 	
-	public static List<User> getUsersByEmail(AONContext aonContext, String email) {
-		return getSecurity().getUsersByEmail(aonContext, email);
-	}
-
-	public static List<User> getUsersByEmail(String domainName, Integer domainId, String userName, String email) {
+	public static LinkedList<User> getUsersByEmail(String domainName, Integer domainId, String userName, String email) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);			

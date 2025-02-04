@@ -26,8 +26,8 @@ public class AonAuth {
 
 
 	
-	 public static Auth getAuth(String email, String apiDomain) throws URISyntaxException, IOException, InterruptedException {
-		 String response = Aon.get(apiDomain, ":-)", "/ms/api/auth/", Collections.singletonMap(IJsonNames.EMAIL, email));
+	 public static Auth getAuth(String email, String auth) throws URISyntaxException, IOException, InterruptedException {
+		 String response = Aon.get(auth, ":-)", "/ms/api/auth/", Collections.singletonMap(IJsonNames.EMAIL, email));
 		 JSONObject responseJSON = new JSONObject(response);
 		 return AuthJSON.fromJSON(responseJSON);
 	 }
