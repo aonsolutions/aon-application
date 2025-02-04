@@ -271,13 +271,6 @@ public class ContrataEmployeeObject {
 		success.accept(employeeCalendarDraftObject);
 	}
 	
-	// ------------------------------------------------- Database Methods (Mod145)
-	
-	public void getMod145Object(Consumer<Mod145Object> success) {
-		Mod145Object mod145Object = new Mod145Object(contractData.getContractId(), employeeData.getDomain());
-		success.accept(mod145Object);
-	}
-	
 	// ------------------------------------------------- Database Methods (CheckStatus)
 	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
