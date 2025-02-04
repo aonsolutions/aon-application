@@ -1469,5 +1469,8 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_contract_medium_card")
 	String aonContractMediumCard();
+	
+	@ClassName("aon_contract_large_card")
+	String aonContractLargeCard();
 }
 

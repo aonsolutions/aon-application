@@ -2243,7 +2243,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
         private Map<Integer, ContractBonusObject> contractBonusMap ;  
         private Map<Integer, SSPECObject> ssPECMap ;  
-        private Map<Integer, Mod145Object> mod145Map ;  
 		private Map<Integer, CategoryDraftObject> contractCategoriesMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
 		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
@@ -2251,7 +2250,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public EmployeeTabLayoutPanel() {
 			contractBonusMap = new HashMap<>();
 			ssPECMap = new HashMap<>();
-			mod145Map = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
 			contractCategoriesMap = new HashMap<>();
@@ -2293,13 +2291,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void onMod145Selected() {
-			getMod145().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			Mod145Object mod145Object = mod145Map.get(salaryDraft.getEmployeeId());
-			if(null == mod145Object) {
-				mod145Object = new Mod145Object(salaryDraft.getEmployeeId(), enterprise.getDomain());
-				mod145Map.put(salaryDraft.getEmployeeId(), mod145Object);
-			}
-			getMod145().setMod145Object(mod145Object);
+			getMod145().setMod145Object(enterprise.getDomain(), salaryDraft.getEmployeeId());
 		}
 
 		void onSalariesSelected() {
@@ -2580,7 +2572,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private ContractBonusUI employeeSSBonus;
 	private SSPECDraft ssPECDraft;
-	private Mod145 mod145;
+	private Mod145Widget mod145;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
 	private DomainSystemVariables domainSystemVariables; 
@@ -3626,59 +3618,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return ssPECDraft;
 	}
 	
-	private Mod145 getMod145() {
-		FullViewer viewer = new FullViewer();
-		
+	private Mod145Widget getMod145() {
 		if (mod145 == null)
-			mod145 = new Mod145() {
-				
-				@Override
-				protected void showWarningMessage(String title, String message) {
-					EmployeeTree.this.showWarningMessage(new HashMap<String, String>(){{ put(title, message); }});
-				}
-				
-				@Override
-				protected void showSuccessMessage(String title, String message) {
-					EmployeeTree.this.showSuccessMessage(new HashMap<String, String>(){{ put(title, message); }});
-				}
-				
-				@Override
-				protected void showErrorMessage(String title, String message) {
-					EmployeeTree.this.showErrorMessage(new HashMap<String, String>(){{ put(title, message); }});
-				}
-				
-				@Override
-				protected void showLoadingMessage(String message) {
-					EmployeeTree.this.showLoadingMessage(message);
-				}
-				
-				@Override
-				protected void createViewer() {
-					DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
-					
-					AonToolbar tb = new AonToolbar("Mod145");
-					AonToolbarButton closePDF = new AonToolbarButton("Cerrar PDF Mod145", AON.CSS.aonIconBack());
-					closePDF.addClickHandler(e -> {
-						employeeDetail.setWidget(getEmployeePanel());
-						getEmployeePanel().selectWidget(getMod145());
-						Mod145Object mod145Object = new Mod145Object(getMod145().getContractId(), enterprise.getDomain());
-						getMod145().setMod145Object(mod145Object);
-					});
-					tb.add(closePDF);
-					
-					dock.addNorth(tb, AonToolbar.HEIGTH);
-					dock.add(viewer);
-					employeeDetail.setWidget(dock);
-				}
-				
-				@Override
-				protected void printPDF(String dataURI) {
-					EmployeeTree.this.hideMessagePanel();
-					viewer.open(dataURI);
-				}
-			};
-			
-		mod145.addMainMT();
+			mod145 = new Mod145Widget();
 			
 		return mod145;
 	}
