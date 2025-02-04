@@ -927,7 +927,7 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		Filter filter;
 		if(domain.getParentId() != null) {
-			if(!java.util.Objects.equals(user.getDomain().getId(),domain.getParentId())) {
+			if(!user.getDomain().equals(domain.getParentId())) {
 				filter = (f.getDomainProperty().eq(domain.getId()).or(
 						f.getDomainProperty().eq(domain.getParentId())
 						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))

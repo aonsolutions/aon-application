@@ -118,7 +118,7 @@ public class AonToken implements Serializable{
 			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, domain)
 			.put(IJsonNames.USER, user.getId())
 			.put(IJsonNames.LOGIN, user.getLogin())
-			.put(IJsonNames.DOMAIN, user.getDomain().getId());
+			.put(IJsonNames.DOMAIN, user.getDomain());
 		return build(tokenObject, expireDate);
 	}
 	

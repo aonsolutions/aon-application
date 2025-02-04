@@ -525,7 +525,7 @@ class SecurityHandler {
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.DOMAIN, user.getDomain())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -542,7 +542,7 @@ class SecurityHandler {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.DOMAIN, user.getDomain())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -1434,7 +1434,7 @@ class SecurityHandler {
 			.insertInto(REGISTRY)
 			.set(REGISTRY.TYPE, (byte) 0)	
 			.set(REGISTRY.NAME, user.getName())	
-			.set(REGISTRY.DOMAIN, user.getDomain().getId())
+			.set(REGISTRY.DOMAIN, user.getDomain())
 			.returning(REGISTRY.ID)
 			.fetchOne()
 			.getId()
@@ -1458,7 +1458,7 @@ class SecurityHandler {
 		
 		dslContext
 		.insertInto(RADDINFO)
-		.set(RADDINFO.DOMAIN, user.getDomain().getId())
+		.set(RADDINFO.DOMAIN, user.getDomain())
 		.set(RADDINFO.REGISTRY, user.getRegistry())
 		.set(RADDINFO.ATTRIBUTE, DIGITAL_CERTIFICATE_PASSWORD)
 		.set(RADDINFO.VALUE, certificate.getPassword())
@@ -1468,7 +1468,7 @@ class SecurityHandler {
 
 		dslContext
 		.insertInto(RATTACH)
-		.set(RATTACH.DOMAIN, user.getDomain().getId())
+		.set(RATTACH.DOMAIN, user.getDomain())
 		.set(RATTACH.REGISTRY, user.getRegistry())
 		.set(RATTACH.TYPE, DIGITAL_CERTIFICATE.value())
 		.set(RATTACH.MIMETYPE, MimeType.PKCS12.value())
@@ -1532,7 +1532,7 @@ class SecurityHandler {
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new)) 
 				: new LinkedList<>();	
 		LinkedList<com.esferalia.aon.occam.api.model.aonsolutions.AonRole> parentDomainUserRoles = 
-			userId != null  && domain.getParentId() != null && Objects.equals(user.getDomain().getId(),domain.getParentId())
+			userId != null  && domain.getParentId() != null && user.getDomain().equals(domain.getParentId())
 				? getUserAppRoleStream(ctx, f -> f.getDomainProperty().eq(domain.getParentId()).and(f.getUserIdProperty().eq(userId)))
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	
@@ -1560,7 +1560,7 @@ class SecurityHandler {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain().getId())
+				p.getDomainProperty().eq(user.getDomain())
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()

@@ -3,7 +3,6 @@ package net.aonsolutions.aon.api.servlet.documental;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
@@ -165,7 +164,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		Integer[] scopes = null;
 		try {
 			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
-			if(Objects.equals(api.getUser().getDomain().getId(), api.getDomain().getParentId())) {
+			if(api.getUser().getDomain().equals(api.getDomain().getParentId())) {
 				Integer[] scopes2 = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 						r -> r.getDomainProperty().eq(api.getDomain().getId())).map(r -> r.getId()).toArray(Integer[]::new);
 				

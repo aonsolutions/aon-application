@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -38,7 +37,7 @@ public class TaskHolderAutoComplete {
 	public static BiConsumer<AONContext, TaskHolder> COMPLETE_REGISTRY = (ctx, taskHolder) -> {
 		if (taskHolder.getId() == null && taskHolder.getUserId() != null) {
 			User user = SecurityDAO.getUser(ctx, taskHolder.getUserId());
-			if(!user.getRegistry().isEmpty() && Objects.equals( user.getDomain().getId(), taskHolder.getDomain().getId())) {
+			if(!user.getRegistry().isEmpty() && user.getDomain().equals(taskHolder.getDomain().getId())) {
 				Registry registry = RegistryDAO.get(ctx, user.getRegistry().getId());
 				taskHolder
 				.copy(registry)

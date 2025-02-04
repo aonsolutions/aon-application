@@ -66,7 +66,7 @@ public class UserJSON {
 	public static JSONObject toJSON(User user) {
 		JSONObject json = !user.getAuth().isEmpty() ? AuthJSON.toJSON(user.getAuth()) : new JSONObject();
 
-		return json.put(IJsonNames.ID, user.getId()).put(IJsonNames.DOMAIN, user.getDomain().getId())
+		return json.put(IJsonNames.ID, user.getId()).put(IJsonNames.DOMAIN, user.getDomain())
 				.put(IJsonNames.TYPE, user.getType().name())
 				.put(IJsonNames.NAME,
 						AonStringUtils.isBlank(user.getAuth().getName()) ? user.getName() : user.getAuth().getName())
