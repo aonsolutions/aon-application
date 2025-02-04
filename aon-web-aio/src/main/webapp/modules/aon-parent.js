@@ -188,33 +188,33 @@ export class AonParent extends AonElement {
 			if(filter.value) {
 				const document = company?.document?.toUpperCase().includes(filter.value.toUpperCase());
 				const name = company?.name?.toUpperCase().includes(filter.value.toUpperCase());
-				value &= document || name;
+				value &&= document || name;
 			}
 	
 			if(filter.active) {
-				value &= company.active && (company.parentId || company.type !== 'CONSULTANCY');
+				value &&= company.active && (company.parentId || company.type !== 'CONSULTANCY') ;
 			}
 	
 			if(filter.inactive) {
-				value &= !company.active;
+				value &&= !company.active;
 			}
 	
 			if(filter.shared) {
-				value &= company.shared;
+				value &&= company.shared;
 			}
 	
 			if(filter.entorno) {
-				value &= !company.parentId && company.type === 'CONSULTANCY';
+				value &&= !company.parentId && company.type === 'CONSULTANCY';
 			}
 	
 			if(filter.despacho) {
-				value &= company.type === 'OFFICE';
+				value &&= company.type === 'OFFICE';
 			}
 	
 			if(filter.ids) {
 				let found = filter.ids.find(id => company.id == id ) ;
 				console.log( found );
-				value &= found !== undefined;
+				value &&= found !== undefined;
 			}
 		}
 
@@ -567,8 +567,8 @@ export class AonParent extends AonElement {
 		nameSpan.innerHTML = company.name;
 
 		let docSpan = this.createElement(TAG.SPAN);
-		docSpan.className = 'aonLiSpanSubtitle';
-		docSpan.innerHTML = company.document;
+		docSpan.className = 'aonLiSpanSubtitle'  ;
+		docSpan.innerHTML = company.document || `<span class='${CSS.AON_INPUT_BOX_LABEL_SPAN_WARNING}' >Por favor, introduzca un CIF/NIF/Documento válido.</span>`;
 
 		companySpan.appendChild(iconI);
 		companySpan.appendChild(nameSpan);
