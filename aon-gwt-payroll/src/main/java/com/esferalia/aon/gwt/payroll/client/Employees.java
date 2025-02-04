@@ -934,7 +934,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	protected <T extends HasTreeItems> void addActivityCCCItem(T activityItem, CCC ccc) {
-		TreeItem cccItem = addImageItem(activityItem, ccc.getRegime() + ccc.getGeozone() + ccc.getCode(), images.segsocial());
+		TreeItem cccItem = addImageItem(activityItem, ccc.toString(), images.segsocial());
 		cccItem.setUserObject(ccc);
 	}
 
