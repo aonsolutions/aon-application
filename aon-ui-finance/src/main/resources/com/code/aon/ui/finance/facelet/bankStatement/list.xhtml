@@ -345,7 +345,7 @@
 										</aon:column>
 
 										<aon:column alias="BankStatement.operationDate"
-											styleClass="aon-editDataTable-textColumn aon-width-100">
+											styleClass="aon-editDataTable-textColumn">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
@@ -411,7 +411,7 @@
 										</aon:column>
 
 										<aon:column alias="BankStatement.description"
-											styleClass="aon-editDataTable-textColumn aon-width-auto">
+											styleClass="aon-editDataTable-textColumn aon-width-100">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_concept}" />
 											</f:facet>
@@ -498,7 +498,7 @@
 									<ui:define name="endFormListContent">
 										<aon:div>
 											<aon:commandButton id="BankStatement-addLink"
-												value="&#160;" styleClass="aon-icon-attach-file aon-noborder aon-margin-right-20 aon-width-half"
+												value="&#160;" styleClass="aon-icon-attach-file aon-noborder aon-margin-right-20 aon-width-13"
 												title="#{bundle.finance_bank_statement_check_manual}"
 												rendered="#{!to.recorded}"
 												actionListener="#{controller.onAddLinkShow}"
@@ -507,13 +507,13 @@
 													value="#{true}" />
 											</aon:commandButton>
 											<aon:commandButton id="BankStatement-showLink"
-												value="&#160;" styleClass="aon-icon-tree-root aon-noborder aon-width-half aon-padding-1rem"
+												value="&#160;" styleClass="aon-icon-tree-root aon-noborder aon-padding-1rem"
 												title="#{bundle.finance_tobreakdown}"
 												rendered="#{(to.checked and !to.showBankStatementLink) or (to.recorded and !to.showAccountEntry)}" 
 												actionListener="#{controller.onShowBankStatementLink}"
 												reRender="#{dataTableId}" />
 											<aon:commandButton id="BankStatement-hideLink"
-												value="&#160;" styleClass="aon-icon-index aon-noborder aon-width-half aon-padding-1rem"
+												value="&#160;" styleClass="aon-icon-index aon-noborder aon-padding-1rem"
 												title="#{bundle.finance_hide}"
 												rendered="#{(to.checked and to.showBankStatementLink) or (to.recorded and to.showAccountEntry)}" 
 												actionListener="#{controller.onHideBankStatementLink}"
@@ -539,7 +539,7 @@
 													oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 											</aon:if>
 											<aon:div style="display:inline; cursor:pointer;" rendered="#{!empty to.comments}">
-												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red" 
+												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red aon-margin-right-10" 
 													style="padding-left:10px" />
 												<rich:toolTip direction="bottom-left">
 													<aon:outputText value="#{to.comments}" />
