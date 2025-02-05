@@ -41,7 +41,7 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 
 			@Override
 			protected boolean accept(Mod303 mod303) {
-				return mod303.getYear() >= 2023;
+				return mod303.getYear() == 2023 || mod303.getYear() == 2024;
 			}
 
 			@Override
