@@ -42,6 +42,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.jooq.tools.json.ParseException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
@@ -613,7 +614,7 @@ public class ModelAdmonUtils {
 			
 			@Override 
 			public void visitM369() {
-				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA
+				// EL MODELO 369 NO PERMITE LA PRESENTACION DIRECTA, NI VALIDACION/BORRADOR
 			}
 
 		});
@@ -1540,5 +1541,99 @@ public class ModelAdmonUtils {
 		return model;
 		
 	}
+	
+	//	SERVALIDOS: NUEVO SERVICIO DE VALIDACION Y BORRADOR AEAT A PARTIR DE 2025
+	//	URL de acceso al servicio https://prewww2.aeat.es/wlpl/PFTW-PICW/ServValiDos
+	//	Al servicio se le pasará por el método POST del protocolo HTTP un documento en
+	//	formato JSON con los siguientes contenidos:			
+	//	MODELO MMM (tres dígitos del modelo a validar e imprimir, por ejemplo 111)
+	//	EJERCICIO AAAA (cuatro dígitos indicando el ejercicio, por ejemplo 2021)
+	//	PERIODO PP (dos caracteres indicando el periodo, ejemplo 0A)
+	//	FIC Fichero plano completo de la declaración acorde al Diseño de Registro
+	//	IDI Idioma en el que se solicita generar el Justificante en formato PDF (ES, EN, GL, VA, CA)
+	//	SINVL Si se desea no realizar el proceso de validación y obtener directamente el documento de la declaración correspondiente (sin validar) en
+	//			formato PDF, se deberá enviar otra variable llamada "SINVL" sin	necesidad de informar ningún valor. Para que el proceso de impresión
+	//			sea coherente, el fichero debe estar bien formado, ya que no se aplica validación sobre su contenido.			
+	public static void serValiDos(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model ) {
+		
+		try {
+			System.out.println("SerValiDos: " + model.getModel() + " " + model.getYear() + " " + model.getPeriod());
+			String period = model.getPeriod().getName();
+			if ( model.getModel() == FiscalModelType.M202) {
+				if ( model.getPeriod() == Period.T1) period = "1P";
+				else if ( model.getPeriod() == Period.T2) period = "2P";
+				else if ( model.getPeriod() == Period.T3) period = "3P";
+			}
+			if ( model.getModel() == FiscalModelType.M390) {
+				period = "0A";	
+			}
+			
+			byte[] fileContent = getModelFile(model);
+			
+			JSONObject params = new JSONObject();
+			params.put("MODELO", FiscalModelUtils.getModelName(model));
+			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
+			params.put("PERIODO", period);
+			params.put("FIC", ModelAdmonUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));			
+			params.put("IDI", "ES");
+			
+			String url = "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServValiDos";
 
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient );				 
+			} else {
+				String ct = ModelAdmonUtils.getContentTypeHeader(response);
+				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
+					JSONObject json = new JSONObject(new String(response.body()));
+					AEATResponse aeatResponse = new AEATResponse();
+					JSONObject jsonRespuesta = json.optJSONObject("respuesta");
+					if (jsonRespuesta.has("pdf")) {
+						// Respuesta correcta, devuelve JSON que contiene el PDF de la declaración en base64
+						JSONArray jsonPdf = jsonRespuesta.optJSONArray("pdf");						
+						if (jsonPdf != null && jsonPdf.length() > 0) {
+							giveBase64Back(resp, Base64.getDecoder().decode(jsonPdf.getString(0)), MimeType.PDF);
+						} else {
+							ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (PDF)");
+						}
+					} else if (jsonRespuesta.has("errores")) {
+						// Respuesta con errores, obtenemos los mensajes de error
+						JSONArray jsonErrores = jsonRespuesta.optJSONArray("errores");
+						if (jsonErrores != null) {
+							for (int i = 0; i < jsonErrores.length(); i++ ) {
+								aeatResponse.addError(jsonErrores.getString(i));
+							}
+						}
+						manageWrongResponse(resp, aeatResponse, aeatParams);
+					} else {
+						ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria. (JSON)");
+					}					
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+						ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);					  
+				} else {					 					
+						ModelAdmonUtils.giveExceptionBack(resp, "No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+				}
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (AonCoreException | IOException e) {
+				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+		}
+		
+	}
+	
 }
