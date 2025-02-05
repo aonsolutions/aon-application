@@ -481,10 +481,12 @@ public class Invoice2tbai {
 					.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
 					.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
 			NoSujetaType noSujeta = new NoSujetaType();
-			DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
-			detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
-			detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
-			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
+			if(totalSuplidos > 0) {
+				DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
+				detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
+				detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
+				noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
+			}
 			
 			double noSujetaOtros = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
 						&&  !exempt && f.getPercentage() == 0 && !invoice.isIsp())
@@ -502,19 +504,22 @@ public class Invoice2tbai {
 				DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
 				if(sujeta.getExenta() != null || sujeta.getNoExenta() != null)
 					desgloseFactura.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) desgloseFactura.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					desgloseFactura.setNoSujeta(noSujeta);
 				desglose.setDesgloseFactura(desgloseFactura);
 			} else if(invoice.isService()){
 				PrestacionServicios serv = new PrestacionServicios();
 				serv.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) serv.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					serv.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 				desgloseFactura.setPrestacionServicios(serv);
 				desglose.setDesgloseTipoOperacion(desgloseFactura);
 			} else {
 				Entrega entrega = new Entrega();
 				entrega.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) entrega.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					entrega.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 				desgloseFactura.setEntrega(entrega);
 				desglose.setDesgloseTipoOperacion(desgloseFactura);
