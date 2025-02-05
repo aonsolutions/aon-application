@@ -4,10 +4,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class AonCustomSuggestBox extends HTMLPanel {
 
 	private static final String EMPTY_STRING = "";
+	private HTMLPanel suggestBoxPanel = new HTMLPanel(EMPTY_STRING);
 	private SuggestBox suggestBox;
 	
 	public AonCustomSuggestBox(String title) {
@@ -26,9 +28,14 @@ public class AonCustomSuggestBox extends HTMLPanel {
 	}
 
 	private void createInput() {
+		suggestBoxPanel.addStyleName(AON.CSS.aonItemFlex());
+		suggestBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
+		suggestBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		
 		suggestBox = new SuggestBox();
 		suggestBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
-		add(suggestBox);
+		suggestBoxPanel.add(suggestBox);
+		add(suggestBoxPanel);
 	}
 	
 	public SuggestBox getSuggestBox() {
@@ -69,6 +76,14 @@ public class AonCustomSuggestBox extends HTMLPanel {
 
 	public void setEnable(boolean enabled) {
 		suggestBox.setEnabled(enabled);
+	}
+	
+	public void addButton(AonTableButton button) {
+		suggestBoxPanel.add(button);
+	}
+
+	public void setMaxLength(int maxLength) {
+		((TextBox) getSuggestBox().getTextBox()).setMaxLength(maxLength);
 	}
 
 	public void addError() {

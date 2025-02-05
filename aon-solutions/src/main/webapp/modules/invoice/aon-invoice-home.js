@@ -142,11 +142,10 @@ export class AonInvoiceHome extends AonElement {
 			invoiceResumeCard.message = "Resumen Facturación";
 			invoiceResumeCard.setApp(Apps.INVOICE);
 			cardPanel.appendChild(invoiceResumeCard);
-			invoiceResumeCard.setContent(
-				this.isBeta ? this.buildNewInvoiceResumeCard() : this.buildInvoiceResumeCard());
+			invoiceResumeCard.setContent(this.buildNewInvoiceResumeCard());
 
 			invoiceResumeCard.firstChild.style.marginLeft = '0';
-			invoiceResumeCard.firstChild.style.minHeight = this.isBeta() ? "460px" : "420px";
+			invoiceResumeCard.firstChild.style.minHeight = "460px";
 			invoiceResumeCard.firstChild.children.item(1).style.height = "315px";
 			invoiceResumeCard.firstChild.style.margin = '0';
 		}
