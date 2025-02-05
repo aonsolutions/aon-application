@@ -251,7 +251,7 @@ public class BookingCheckDAO {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
 		
 		User user = SecurityDAO.getUser(ctx);
-		if(user.getDomain() == ctx.getDomainId()) {
+		if(user.getDomain().getId() == ctx.getDomainId()) {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
@@ -321,7 +321,7 @@ public class BookingCheckDAO {
 		Condition condition = RITEM.DOMAIN.eq(customerFeeParams.getDomain());
 		
 		User user = SecurityDAO.getUser(ctx);
-		if(user.getDomain() == ctx.getDomainId()) {
+		if(user.getDomain().getId() == ctx.getDomainId()) {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
