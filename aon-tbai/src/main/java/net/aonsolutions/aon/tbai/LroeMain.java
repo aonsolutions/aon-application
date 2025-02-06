@@ -19,7 +19,7 @@ public class LroeMain {
 			if(FiscalModelType.M140.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE140_2_1 lroe = new LROE140_2_1();
 				info = lroe.buildInfo(OperacionEnum.A_00);
-				response = lroe.alta(ic.getTbaiConfiguration(), ic.getPerson(), ic.getInvoice());
+				response = lroe.alta(ic);
 			} else if(FiscalModelType.M240.equals(ic.getModel()) && InvoiceCommunicationOperation.REGISTER.equals(ic.getOperation())) {
 				LROE240_2 lroe = new LROE240_2();
 				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));

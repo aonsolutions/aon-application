@@ -65,6 +65,7 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gasto
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_anulacionpeticion_v1_0_0.LROEPF140GastosConFacturaAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultapeticion_v1_0_0.LROEPF140GastosConFacturaConsultaPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pf_140_2_1_gastos_confactura_consultarespuesta_v1_0_0.LROEPF140GastosConFacturaConsultaRespuesta;
+import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeData;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
@@ -75,15 +76,13 @@ public class LROE140_2_1 extends LROE140 {
 
 	private static final String CAPITULO = "2";
 	private static final String SUBCAPITULO = "2.1";
-	
-	private LROEPF140GastosConFacturaAltaModifPeticion build(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices, LROEInfo info) {
+
+	private LROEPF140GastosConFacturaAltaModifPeticion build(InvoiceCommunication ic, List<Invoice> invoices, LROEInfo info) {
 		LROEPF140GastosConFacturaAltaModifPeticion lroe =  new LROEPF140GastosConFacturaAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(ic, info));
 
 		GastosConFacturaType gastos = new GastosConFacturaType();
-		invoices.stream().forEach(invoice -> {
-			gastos.getGasto().add(buildGasto(tbaiConfiguration, invoice));
-		});
+		invoices.stream().forEach(invoice -> gastos.getGasto().add(buildGasto(ic.getTbaiConfiguration(), invoice)));
 		lroe.setGastos(gastos);
 		return lroe;
 	}
@@ -269,19 +268,21 @@ public class LROE140_2_1 extends LROE140 {
 		return concept;
 	}
 
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
+	
+	public LROEResponse alta(InvoiceCommunication ic) {
+		Invoice invoice = ic.getInvoice();
 		LinkedList<Invoice> invoices = new LinkedList<>();
 		invoices.add(invoice);
 		boolean mod = invoice.getInvoiceInfo().getStatus().isAccepted() || invoice.getInvoiceInfo().getStatus().isAcceptedWithErrors();
-		return alta(tbaiConfiguration, person, invoices, mod);
+		return alta(ic, invoices, mod);
 	}
-	
-	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices, boolean mod) {
+
+	public LROEResponse alta(InvoiceCommunication ic, List<Invoice> invoices, boolean mod) {
 		try {
 			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, 
 					mod ? OperacionEnum.M_00 : OperacionEnum.A_00);
-			info.setEjercicio(getEjercicio(tbaiConfiguration, invoices.get(0)));
-			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(tbaiConfiguration, person, invoices, info); 
+			info.setEjercicio(getEjercicio(ic.getTbaiConfiguration(), invoices.get(0)));
+			final LROEPF140GastosConFacturaAltaModifPeticion p140 = build(ic, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140GastosConFacturaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
 
@@ -290,11 +291,11 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] xml = bos.toByteArray();
-			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoices.get(0), info, xml);
+			DataRequest dataRequest = LroeData.saveRequest(ic.getDomain(), new User().setLogin(""), invoices.get(0), info, xml);
 			Document doc = getDocument(xml);
 			System.out.println(toString(doc));
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(ic.getTbaiConfiguration(), buildJSON(ic, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

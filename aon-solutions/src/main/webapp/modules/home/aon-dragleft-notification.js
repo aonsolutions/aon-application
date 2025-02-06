@@ -30,6 +30,14 @@ export class AonDragLeftNotification extends AonDragLeft {
     return response || [];
   }
 
+  async hasNotifications() {
+    const notifications = await this.getNotifications();
+    if(notifications.lengh == 0)
+      return false
+    else if (notifications.length>0)
+      return true;
+  }
+
   createNotificationCard(res, index) {
     const card = this.createDiv(`notification-card-${index}`);
     card.className = "aonDragLeftCard";
