@@ -954,8 +954,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 
-	// ------------------------------------------------- ScheduledCommand
-	// (ContractAttach)
+	// ------------------------------------------------- ScheduledCommand (ContractAttach)
 
 	class ExportContractCommand implements ScheduledCommand {
 
@@ -2423,11 +2422,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				loadWindowTimer(su -> {
 				});
 			}
-
-			@Override
-			protected void fireError(Map<String, String> errorMap) {
-				AonMessagePanel.showError(messageContainer, errorMap);
-			}
 		};
 	}
 
@@ -2441,11 +2435,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					checkButtonsToolbar();
 					checkStatus(contrataEmployeeObject);
 				});
-			}
-
-			@Override
-			protected void fireError(Map<String, String> errorMap) {
-				AonMessagePanel.showError(messageContainer, errorMap);
 			}
 		};
 	}
