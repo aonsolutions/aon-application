@@ -590,7 +590,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			new Certifica2Dialog(contrataEmployeeObject.getContractId());
+			new Certifica2WidgetDialog(contrataEmployeeObject.getContractId());
 		}
 	}
 
