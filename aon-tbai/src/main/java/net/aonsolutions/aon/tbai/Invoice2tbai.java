@@ -478,10 +478,10 @@ public class Invoice2tbai {
 				sujeta.setExenta(exenta);
 			
 			Double totalSuplidos = invoice.getDetails().stream()
-					.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
-					.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
+				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
+				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
 			NoSujetaType noSujeta = new NoSujetaType();
-			if(totalSuplidos > 0) {
+			if(totalSuplidos != 0) {
 				DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
 				detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
 				detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
@@ -491,7 +491,7 @@ public class Invoice2tbai {
 			double noSujetaOtros = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
 						&&  !exempt && f.getPercentage() == 0 && !invoice.isIsp())
 				.mapToDouble(InvoiceBreakdown::getBase).sum();
-			if(noSujetaOtros > 0) {
+			if(noSujetaOtros != 0) {
 				DetalleNoSujeta detalleNoSujetaOtros = new DetalleNoSujeta();
 				detalleNoSujetaOtros.setCausa(CausaNoSujetaType.OT);
 				detalleNoSujetaOtros.setImporte(doubleToString(AonMathUtils.round(noSujetaOtros)));

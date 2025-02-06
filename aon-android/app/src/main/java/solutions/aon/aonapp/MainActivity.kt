@@ -28,6 +28,7 @@ import solutions.aon.aonapp.ui.theme.Camara2Theme
 const val PAGE_URL = "https://aon.solutions"
 
 class MainActivity : ComponentActivity() {
+
     private val aonJs: AonJs by lazy { AonJs(null, this) }
     private val locationPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -89,6 +90,7 @@ class MainActivity : ComponentActivity() {
                     settings.domStorageEnabled = true
                     settings.databaseEnabled = true
                     settings.cacheMode = WebSettings.LOAD_DEFAULT
+                    settings.textZoom = 100
 
                     WebView.setWebContentsDebuggingEnabled(true)
                 }
@@ -97,7 +99,10 @@ class MainActivity : ComponentActivity() {
                 it.addJavascriptInterface(AonJs(it, it.context).apply {
                     setMainActivity(mainActivity)
                 }, "Android")
-                it.loadUrl(PAGE_URL)
+
+                val preferences = getSharedPreferences("preferences", MODE_PRIVATE)
+                val url = preferences.getString("url", PAGE_URL)
+                if(url != null) it.loadUrl(url)
             }
         )
     }
@@ -122,6 +127,14 @@ class MainActivity : ComponentActivity() {
 
 
         }
+    }
+
+    fun changeUrl(url: String) {
+        val preferences = getSharedPreferences("preferences", MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putString("url", url)
+        editor.apply()
+        Log.v("TAG", url)
     }
 
 }
