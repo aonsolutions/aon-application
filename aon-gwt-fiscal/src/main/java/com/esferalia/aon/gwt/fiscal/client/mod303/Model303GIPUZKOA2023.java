@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022GIPUZKOAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -80,7 +81,10 @@ class Model303GIPUZKOA2023 extends Model303Base {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032023GIPUZKOARScript1.values(),8);
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3032025GIPUZKOARScript1.values(),8);
+		else
+			paintDeclaration(table,Model3032023GIPUZKOARScript1.values(),8);
 		container.add(table);
 		generalRegimeScrollPanel.setWidget(container);
 		tabPanel.add(generalRegimeScrollPanel, AON.MSG.generalRegime());

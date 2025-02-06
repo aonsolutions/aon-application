@@ -212,7 +212,7 @@ public class CCCInfo implements Serializable{
 	
 	@Override
 	public String toString() {
-		return enterpriseDesciption + " (" + activityDescription + " -> " + cccAccount + ")";
+		return enterpriseDesciption + " (" + activityDescription + " -> [ " + typeStr + "] " + cccAccount + ")";
 	}
 	
 }

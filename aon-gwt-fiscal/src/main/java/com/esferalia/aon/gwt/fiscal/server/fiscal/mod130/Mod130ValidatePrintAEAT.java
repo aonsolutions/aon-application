@@ -13,12 +13,6 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -29,6 +23,12 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Mod130 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod130ValidatePrintAEAT" })
 public class Mod130ValidatePrintAEAT extends HttpServlet {
@@ -41,7 +41,7 @@ public class Mod130ValidatePrintAEAT extends HttpServlet {
 
 			@Override
 			protected boolean accept(Mod130 mod130) {
-				return true;
+				return mod130.getYear() <= 2024;
 			}
 
 			@Override
@@ -86,22 +86,26 @@ public class Mod130ValidatePrintAEAT extends HttpServlet {
 			if (mod130 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
-			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod130);
-			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create( aeatURL.getUrl() ))
-				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod130)))
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
-				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.build();
-			HttpClient httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_2)
-	            .connectTimeout(Duration.ofSeconds(10))
-	            .build();
-			HttpResponse<byte[]> response = httpClient
-				.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			String headerValue = ModelAdmonUtils.getContentTypeHeader( response );  
-			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
-			ModelAdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+			if (mod130.getYear() >= 2025) {
+				ModelAdmonUtils.serValiDos(resp, aeatParams, mod130);
+			} else {
+				AeatUrl aeatURL = AeatUrl.getAeatUrl(mod130);
+				HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create( aeatURL.getUrl() ))
+					.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod130)))
+					.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+					.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+					.build();
+				HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(10))
+		            .build();
+				HttpResponse<byte[]> response = httpClient
+					.send(request, HttpResponse.BodyHandlers.ofByteArray());
+				String headerValue = ModelAdmonUtils.getContentTypeHeader( response );  
+				boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
+				ModelAdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+			}
 		} catch (InterruptedException e) {	
 			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
 		    // Restore interrupted state...

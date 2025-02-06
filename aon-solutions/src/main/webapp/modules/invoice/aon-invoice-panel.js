@@ -338,13 +338,13 @@ export class AonInvoicePanel extends AonElement {
     getRawdocCount({}).then((r) => {
       this.counterActive = true;
   
-      let invoiceIssued = this.isBeta() ? OPTION.INVOICE_ISSUED_BETA : OPTION.INVOICE_ISSUED;
+      let invoiceIssued = OPTION.INVOICE_ISSUED_BETA;
       if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
         addCounter(invoiceIssued, r.invoice.emitida);
       }
       this.updateCounterSpan(invoiceIssued);
 
-      let invoiceReceived = this.isBeta() ? OPTION.INVOICE_RECEIVED_BETA : OPTION.INVOICE_RECEIVED;
+      let invoiceReceived = OPTION.INVOICE_RECEIVED_BETA;
       if (r.invoice && r.invoice.recibida && r.invoice.recibida > 0) {
         addCounter(invoiceReceived, r.invoice.recibida);
       }
@@ -361,19 +361,19 @@ export class AonInvoicePanel extends AonElement {
       this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0) {
-        addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.rawdoc.inbox.OUTPUT);
+        addCounter(OPTION.PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
       }
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
+      this.updateCounterSpan(OPTION.PROFORMA_INVOICES);
 
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0) {
-        addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.rawdoc.inbox.INPUT);
+        addCounter(OPTION.RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
       }
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
+      this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED_NEW);
 
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0) {
-        addCounter(OPTION.RAWDOC_INBOX_TICKET, r.rawdoc.inbox.TICKET);
+        addCounter(OPTION.RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
       }
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
+      this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET_NEW);
 
       if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
         addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
@@ -483,18 +483,18 @@ export class AonInvoicePanel extends AonElement {
     let pendingRecordNumber = this.getElement("pendingRecordNumber");
     if (pendingRecordNumber) pendingRecordNumber.innerHTML = total;
 
-    let pendingIssuedCounter = getCounter()[OPTION.RAWDOC_INBOX_ISSUED.id] || 0;
+    let pendingIssuedCounter = getCounter()[OPTION.PROFORMA_INVOICES.id] || 0;
     let pendingIssuedNumber = this.getElement("pendingIssuedNumber");
     if (pendingIssuedNumber)
       pendingIssuedNumber.innerHTML = pendingIssuedCounter;
 
     let pendingReceivedCounter =
-      getCounter()[OPTION.RAWDOC_INBOX_RECEIVED.id] || 0;
+      getCounter()[OPTION.RAWDOC_INBOX_RECEIVED_NEW.id] || 0;
     let pendingReceivedNumber = this.getElement("pendingReceivedNumber");
     if (pendingReceivedNumber)
       pendingReceivedNumber.innerHTML = pendingReceivedCounter;
 
-    let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET.id] || 0;
+    let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET_NEW.id] || 0;
     let pendingTicketNumber = this.getElement("pendingTicketNumber");
     if (pendingTicketNumber)
       pendingTicketNumber.innerHTML = pendingTicketCounter;

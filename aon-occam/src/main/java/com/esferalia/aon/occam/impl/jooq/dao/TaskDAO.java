@@ -366,7 +366,7 @@ public class TaskDAO {
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
 		 
-		return taskMaps.keySet().stream().sorted((e1, e2) -> e1.getCreationDate().compareTo(e2.getCreationDate()));
+		return taskMaps.keySet().stream().sorted((e1, e2) -> AonDateUtils.compare(e1.getCreationDate(),e2.getCreationDate()));
 	}
 	
 	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
@@ -390,7 +390,7 @@ public class TaskDAO {
 		
 		setParent(ctx, tasks);
 
-		return taskMaps.keySet().stream().sorted((e1, e2) -> e1.getCreationDate().compareTo(e2.getCreationDate()));
+		return taskMaps.keySet().stream().sorted((e1, e2) -> AonDateUtils.compare(e1.getCreationDate(),e2.getCreationDate()));
 	}
 	
 	private static SelectSelectStep<Record> getFields(DSLContext ctx) {
