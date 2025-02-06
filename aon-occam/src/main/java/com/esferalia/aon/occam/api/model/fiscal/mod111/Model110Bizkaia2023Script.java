@@ -19,7 +19,7 @@ enum Model110Bizkaia2023Script implements IModelScript<Mod111Key> {
 	,R02 ("Retribuciones de las personas a que se refiere el apartado anterior de empresas o entidades que tributen en proporci\u00F3n al volumen de operaciones (previa aplicaci\u00F3n del porcentaje)"
 			,new Mod111Key[]{Mod111Key.BZ_C03,Mod111Key.BZ_C14,Mod111Key.BZ_C25},NONE)
 	,R03 ("Rendimientos de trabajo en per\u00EDodos inferiores al a\u00F1o, trabajos de temporada o trabajos circunstanciales"
-			,new Mod111Key[]{Mod111Key.BZ_C04,Mod111Key.BZ_C15,Mod111Key.BZ_C26},NONE)
+			,new Mod111Key[]{Mod111Key.BZ_C04,Mod111Key.BZ_C15,Mod111Key.BZ_C26},MODEL_SALARY_IRPF_BREAKDOWN,MODEL_INVOICE_IRPF_BREAKDOWN)
 	,R04 ("Prestaciones por desempleo"
 			,new Mod111Key[]{Mod111Key.BZ_C05,Mod111Key.BZ_C16,Mod111Key.BZ_C27},NONE)
 	,R05 ("Pensiones y haberes pasivos"
