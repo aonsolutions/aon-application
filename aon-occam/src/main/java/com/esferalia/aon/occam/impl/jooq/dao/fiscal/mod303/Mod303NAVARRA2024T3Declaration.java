@@ -58,15 +58,7 @@ class Mod303NAVARRA2024T3Declaration extends Mod303NAVARRA {
 	
 	public static boolean accept(Mod303 mod) {
 		return mod.isNavarra() 
-			&& (mod.getYear() > 2024
-			|| (mod.getYear() == 2024
-			&& (mod.getPeriod() == Period.M09 
- 			 || mod.getPeriod() == Period.M10 
-			 || mod.getPeriod() == Period.M11   
-			 || mod.getPeriod() == Period.M12
-			 || mod.getPeriod() == Period.T3
-			 || mod.getPeriod() == Period.T4)
-		   ))
+			&& (mod.getYear() == 2024 && (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.M10 || mod.getPeriod() == Period.M11 || mod.getPeriod() == Period.M12 || mod.getPeriod() == Period.T3 || mod.getPeriod() == Period.T4))
 		;
 	}
 	

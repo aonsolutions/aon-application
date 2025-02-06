@@ -171,6 +171,7 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     fun changeUrl(data: String) {
         val json = JSONObject(data)
         val url = json.getString("url")
+        mainActivity?.changeUrl(url)
         mainActivity?.runOnUiThread{
             webView?.loadUrl(url)
         }

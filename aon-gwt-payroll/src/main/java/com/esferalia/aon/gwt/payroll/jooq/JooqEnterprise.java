@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.Trio;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -294,7 +295,7 @@ public class JooqEnterprise {
 			.fetch();
 		
 		
-		List<Pair<Integer, String>> visitedCCCs = new ArrayList<>();
+		List<Trio<Integer, Byte, String>> visitedCCCs = new ArrayList<>();
 		
 		for(Record enterprise : enterpriseCCCActivities) {
 			Integer enterpriseActivityId = enterprise.get(ENTERPRISE_ACTIVITY.ID);
@@ -307,8 +308,8 @@ public class JooqEnterprise {
 			
 			String completeCCCAccount = regime + cccCode;
 			
-			if(containsCCCDomain(visitedCCCs, enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), completeCCCAccount)) continue;
-			visitedCCCs.add(new Pair<Integer, String>(enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), completeCCCAccount));
+			if(containsCCCDomain(visitedCCCs, enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), type, completeCCCAccount)) continue;
+			visitedCCCs.add(new Trio<Integer, Byte, String>(enterprise.get(ENTERPRISE_ACTIVITY.DOMAIN), type, completeCCCAccount));
 			
 			// ---------------------------------- Has CRA emited
 			
@@ -361,9 +362,9 @@ public class JooqEnterprise {
 		return enterprisesCCCInfo;
 	}
 
-	private static boolean containsCCCDomain(List<Pair<Integer, String>> visitedCCCs, Integer domain, String completeCCCAccount) {
-		for(Pair<Integer, String> pair : visitedCCCs){
-			if(pair.getFirst().equals(domain) && AonStringUtils.equalsIgnoreCase(completeCCCAccount, pair.getSecond()))
+	private static boolean containsCCCDomain(List<Trio<Integer, Byte, String>> visitedCCCs, Integer domain, Byte type, String completeCCCAccount) {
+		for(Trio<Integer, Byte, String> pair : visitedCCCs){
+			if(pair.getFirst().equals(domain) && pair.getSecond() == type && AonStringUtils.equalsIgnoreCase(completeCCCAccount, pair.getThird()))
 				return true;
 		}
 		return false;

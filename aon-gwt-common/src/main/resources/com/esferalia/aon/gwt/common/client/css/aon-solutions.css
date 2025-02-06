@@ -2414,3 +2414,21 @@
   	background-color: rgba(255, 165, 0, 0.27)
   	;
 }
+
+.aon_contract_small_card {
+	max-width: 33rem;
+    min-height: 5rem;
+    width: 100%;
+}
+
+.aon_contract_medium_card {
+	max-width: 69rem;
+    min-height: 5rem;
+    width: 100%;
+}
+
+.aon_contract_large_card {
+	max-width: 75rem;
+    min-height: 5rem;
+    width: 100%;
+}

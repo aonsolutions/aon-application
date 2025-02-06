@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAAddition
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022ARABAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025ARABARScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -144,7 +145,10 @@ class Model303ARABA2023 extends Model303Base {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3032023ARABARScript1.values(),8);
+		if (getModel().getYear() >= 2025)
+			paintDeclaration(table,Model3032025ARABARScript1.values(),8);
+		else 
+			paintDeclaration(table,Model3032023ARABARScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();

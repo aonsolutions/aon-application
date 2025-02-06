@@ -26,20 +26,21 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeDialog extends AonCustomDialog {
 	
-	private class EmployeeImplementation extends Employee{
+	private class EmployeeImplementation extends EmployeeWidget{
 		
 		// TABLA DATOS CONTRATO
 		
 		@Override
 		public void onClearEmployeeClick() {
 			employeeDialogObject.resetEmptyInfo();
-			this.resetEmployeeInfo();
+			this.initializeView();
 			this.unblockVariablesExistingContract();
+			
+			hideEmployeeTable();
 		}
 		
 		@Override
@@ -309,12 +310,12 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		@Override
 		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
 			employeeDialogObject.setEmployeeAddressProvince(geozoneId);
-			employeeDialogObject.setEmployeeAddressCity(null);
+			employeeDialogObject.setEmployeeAddressCity(null, null);
 		}
-
+		
 		@Override
-		public void onEmployeeAddressMunicipalityChange(String addressMunicipality) {
-			employeeDialogObject.setEmployeeAddressCity(addressMunicipality);
+		public void onEmployeeAddressMunicipalityChange(String cityName, String cityCode) {
+			employeeDialogObject.setEmployeeAddressCity(cityName, cityCode);
 		}
 		
 		@Override
@@ -380,7 +381,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
-	Employee employee;
+	EmployeeWidget employee;
 	
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -390,6 +391,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private EmployeeDialogObject employeeDialogObject;
+	private Boolean hideEmployeePanel;
 	
 	private Button acceptBtnDialog;
 	
@@ -398,13 +400,12 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	protected EmployeeDialog(Boolean hideEmployeePanel) {
 		employee = new EmployeeImplementation();
 		
+		this.hideEmployeePanel = hideEmployeePanel;
+		
 		setCaption("Trabajador");
 		setWidget(binder.createAndBindUi(this));
 		
 		getButtonsPanel();
-		
-		if(Boolean.TRUE.equals(hideEmployeePanel))
-			employee.hideEmployeeTable();
 	}
 	
 	// ------------------------------------------------- Abstract Methods
@@ -438,6 +439,10 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		initPayMethods();
 		fillDefaultFields();
 		initFocus();
+		
+		if(Boolean.TRUE.equals(hideEmployeePanel))
+			employee.hideEmployeeTable();
+		
 		showDialog();
 	}
 	
@@ -478,12 +483,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.fillDefaultFields();
 		
 		//WORKPLACE
-		setSelectedValueLB(employee.workplace, this.employeeDialogObject.getWorkplaceId()+"");
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
-		
-		//AGREEMENT
-//		setSelectedValueLB(employee.agreement, this.employeeDialogObject.getWorkplaceAgreement()+"");
-//		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.agreement);
+		employee.workplace.setValue(null == this.employeeDialogObject.getWorkplaceId() ? "" : this.employeeDialogObject.getWorkplaceId().toString());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace.getListBox());
 	}
 	
 	private void initFocus() {
@@ -514,23 +515,23 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.secondSurname.setValue(employeeData.getSecondSurName());
 		
 		employee.birthDate.setValue(employeeData.getBirthdate());
-		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
-		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
+		employee.gender.setValue(String.valueOf(employeeData.getGender()));
+		employee.civilStatus.setValue(null == employeeData.getCivilStatus() ? "" : employeeData.getCivilStatus().toString());
 		
-		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
+		employee.streetType.setValue(employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
 		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
-		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
+		employee.addressMunicipality.setValue(employeeData.getAddressCity());
 
 		employee.mobile.setValue(employeeData.getMobile());
 		employee.phone.setValue(employeeData.getPhone());
 		employee.email.setValue(employeeData.getEmail());
 		
-		setSelectedValueLB(employee.payMethod, employeeData.getPaymethodId()+"");
+		employee.payMethod.setValue(null == employeeData.getPaymethodId() ? "" : employeeData.getPaymethodId().toString());
 		employee.account.setValue(employeeData.getAccount());
 		employee.bic.setValue(employeeData.getBic());
 		employee.reformatAccount(employee.account);
@@ -550,8 +551,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
-		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
-		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
+		employee.ssRegimeType.setValue(null == contractData.getSsRegimen() ? "" : contractData.getSsRegimen().toString());
+		employee.workplace.setValue(null == contractData.getWorkplaceId() ? "" : contractData.getWorkplaceId().toString());
 		
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
@@ -559,28 +560,27 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.agreement.setValue(employeeDialogObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
-				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
+				employee.level.setValue(null == contractData.getAgreementLevelId() ? "" : contractData.getAgreementLevelId().toString());
 				employee.category.setValue(contractData.getAgreementCategory());
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.journeyType, contractData.getJourneyType()+"");
+		employee.journeyType.setValue(null == contractData.getJourneyType() ? "" : contractData.getJourneyType().toString());
 	}
 	
 	private void fillContractTable(ContractInfo contractData) {	
-		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
-		
-		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
+		employee.ssRegimeType.setValue(null == contractData.getSsRegimen() ? "" : contractData.getSsRegimen().toString());
+		employee.activityCCC.setValue(contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		
 		if(contractData.getCccType() == (byte)7) {
 			employee.showMdCtzContract();
-			setSelectedValueLB(employee.mdCTZLB, contractData.getMdctz());
+			employee.mdCTZLB.setValue(contractData.getMdctz());
 		} else
 			employee.hideMdCtzContract();
 		
-		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
+		employee.workplace.setValue(null == contractData.getWorkplaceId() ? "" : contractData.getWorkplaceId().toString());
 		
-		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
+		employee.contractTypeLB.setValue(contractData.getContractType());
 		
 		Integer contractTypeInt =  Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
@@ -593,14 +593,14 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		if(AonNumberUtils.equals(contractTypeInt, 402) || AonNumberUtils.equals(contractTypeInt, 502)) {
 			employee.showEmployeesColective();
-			setSelectedValueLB(employee.employeesColective, contractData.getEmployeesColective()+"");
+			employee.employeesColective.setValue(contractData.getEmployeesColective());
 		} else {
 			employee.hideEmployeesColective();
 			contractData.setEmployeesColective(null);
 		}
 		
 		employee.updateModality(contractTypeInt);
-		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
+		employee.modality.setValue(null == contractData.getContractModel() ? "" : contractData.getContractModel().toString());
 		
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
@@ -608,23 +608,23 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.agreement.setValue(employeeDialogObject.getAgreementDescription());
 		if(null != agreementId) {
 			getAgreementLevels(agreementId, s -> {
-				setSelectedValueLB(employee.level, contractData.getAgreementLevelId()+"");
+				employee.level.setValue(null == contractData.getAgreementLevelId() ? "" : contractData.getAgreementLevelId().toString());
 				employee.category.setValue(contractData.getAgreementCategory());
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup);
-		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
-		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		employee.quoteGroup.setValue(contractData.getQuoteGroup());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.quoteGroup.getListBox());
+		employee.quoteGroupCotizB.setValue(contractData.getQuoteGroupIdxMonth());
+		employee.occupation.setValue(contractData.getOcupation());
+		employee.rlce.setValue(contractData.getRlce());
 		employee.partialityCoef.setValue(contractData.getPartialityCoef());
 	}
 	
 	// ------------------------------------------------- Auxiliar Methods
 	
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		employee.level.clear();
+		employee.level.clearItems();
 		employee.level.addItem("-", "-1");
 		
 		employeeDialogObject.getAgreement(agreementId,  
@@ -639,23 +639,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		throwable -> {
 			employeeDialogObject.setContractAgreementId(null);
 			employeeDialogObject.setContractAgreementLevelId(null);
-			employee.category.setEnabled(false);
+			employee.category.setEnable(false);
 			employee.category.setValue("");
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.category.getTextBox());
 			failure.accept(throwable);
 		});
-	}
-	
-	private void setSelectedValueLB(ListBox lBox, String str) {
-	    String text = str;
-	    int indexToFind = 0;
-	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
-	            indexToFind = i;
-	            break;
-	        }
-	    }
-	    lBox.setSelectedIndex(indexToFind);
 	}
 	
 	// ------------------------------------------------- Buttons panel
@@ -696,7 +684,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			
 							onAccept(contractId);
 						 }, 
-					t -> {}
+					t -> AonMessagePanel.showError(messageContainer, t.getMessage())
 			);
 		} else
 			acceptBtnDialog.setEnabled(true);

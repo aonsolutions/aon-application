@@ -55,6 +55,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -131,7 +132,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ContractSpecificDataImpl
 
-	public class ContractSpecificDataImpl extends ContractSpecificData {
+	public class ContractSpecificDataImpl extends ContractSpecificDataWidget {
 
 		@Override
 		protected void showErrorMessage(String title, String message) {
@@ -177,7 +178,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// ------------------------------------------------- ContractOtherDataImpl
 
-	public class ContractOtherDataImpl extends ContractOtherData {
+	public class ContractOtherDataImpl extends ContractOtherDataWidget {
 
 		@Override
 		protected void showErrorMessage(String title, String message) {
@@ -196,8 +197,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		protected void onContractPDF() {
-			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> {
-			});
+			contrataEmployeeObject.setContractOtherInfo(s -> onExportContractPDF(), f -> showError("Error Contrato PDF", f.getMessage()));
 		}
 	}
 
@@ -366,48 +366,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void onHideMessage() {
 			hideMessage();
 		}
-	}
-
-	// ------------------------------------------------- Mod145
-
-	public class Mod145Impl extends Mod145 {
-
-		@Override
-		protected void showErrorMessage(String title, String message) {
-			showError(title, message);
-		}
-
-		@Override
-		protected void showSuccessMessage(String title, String message) {
-			showSuccess(title, message);
-		}
-
-		@Override
-		protected void showWarningMessage(String title, String message) {
-			showWarning(title, message);
-		}
-
-		@Override
-		protected void showLoadingMessage(String message) {
-			showLoading(message);
-		}
-
-		@Override
-		protected void createViewer() {
-			// Nothing to do here
-		}
-
-		@Override
-		protected void printPDF(String dataURIIn) {
-			showPdf();
-			hideMessage();
-			dataURI = dataURIIn;
-			pdfViewer.open(dataURI);
-			idcDateListBox.setVisible(false);
-			idcMonthListBox.setVisible(false);
-			saveDocument.setVisible(false);
-		}
-
 	}
 
 	// ------------------------------------------------- ScheduledCommand (TGSS)
@@ -1125,7 +1083,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	EmployeeContractIrpf employeeContractIrpf;
 
 	@UiField(provided = true)
-	Mod145 mod145;
+	Mod145Widget mod145;
 
 	@UiField
 	FullViewer pdfViewer;
@@ -1186,9 +1144,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private HTMLPanel employeeCalendarButtons;
 	private ListBox calendarYaerLB;
 
-	// Mod145
-	private HTMLPanel mod145Buttons;
-
 	// PDF
 	private HTMLPanel pdfButtons;
 
@@ -1209,14 +1164,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private ContractEmployeeUI contractEmployeeUI;
 
 	@UiField
-	HTMLPanel specificDataPanelNew;
+	ScrollPanel specificDataPanelNew;
 
-	private ContractSpecificData contractSpecificData;
+	private ContractSpecificDataWidget contractSpecificData;
 
 	@UiField
-	HTMLPanel otherDataPanelNew;
+	ScrollPanel otherDataPanelNew;
 
-	private ContractOtherData contractOtherData;
+	private ContractOtherDataWidget contractOtherData;
 
 	@UiField
 	HTMLPanel clausesPanelNew;
@@ -1245,8 +1200,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		employeeContractIrpf = new EmployeeContractIrpf();
 
-		mod145 = new Mod145Impl();
-		mod145.hideToolbar();
+		mod145 = new Mod145Widget();
 
 		this.toolbar = new AonToolbar("Contrato");
 
@@ -1254,8 +1208,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		employeePanelNew.add(contractEmployeeUI);
-		specificDataPanelNew.add(contractSpecificData);
-		otherDataPanelNew.add(contractOtherData);
+		specificDataPanelNew.setWidget(contractSpecificData);
+		otherDataPanelNew.setWidget(contractOtherData);
 		clausesPanelNew.add(contractClauseUI);
 		documentsPanelNew.add(contractAttachUI);
 
@@ -1366,8 +1320,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			});
 			break;
 		case 1:
-			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(),
-					hasCertificateSEPE, finish);
+			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), finish);
 			break;
 		case 2:
 			contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
@@ -1418,7 +1371,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			finish.accept(null);
 			break;
 		case 8:
-			contrataEmployeeObject.getMod145Object(mod145Object -> mod145.setMod145Object(mod145Object));
+			mod145.setMod145Object(
+					contrataEmployeeObject.getContractEmployeeInfo().getEmployeeInfo().getDomain(), 
+					contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractId());
 			finish.accept(null);
 			break;
 		default:
@@ -1516,7 +1471,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(true);
 	}
@@ -1623,7 +1577,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1635,7 +1588,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1647,7 +1599,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1659,7 +1610,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(true);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1671,7 +1621,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(true);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1683,7 +1632,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1695,7 +1643,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(true);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1707,7 +1654,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(false);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1719,7 +1665,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeClauseButtons.setVisible(false);
 		employeeAttachButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
-		mod145Buttons.setVisible(true);
 
 		pdfButtons.setVisible(false);
 	}
@@ -1763,20 +1708,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeAttachButtons = initEmployeeAttachButtons();
 		toolbar.add(employeeAttachButtons);
 
-		// EmployeeSalary
-
-//		employeeSalaryButtons = initEmployeeSalaryButtons();
-//		toolbar.add(employeeSalaryButtons);
-
 		// EmployeeCalendar
 
 		employeeCalendarButtons = initEmployeeCalendarButtons();
 		toolbar.add(employeeCalendarButtons);
-
-		// Mod145
-
-		mod145Buttons = initMod145Buttons();
-		toolbar.add(mod145Buttons);
 
 		previusContract = new AonToolbarButton("Anterior Agente Comercial", AON.CSS.aonIconLeft());
 		previusContract.addClickHandler(e -> {
@@ -2664,47 +2599,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		calendarYaerLB = new ListBox();
 		hPanel.add(calendarYaerLB);
-
-		return hPanel;
-	}
-
-	// ------------------------------------------------- Mod145Buttons
-
-	private HTMLPanel initMod145Buttons() {
-		HTMLPanel hPanel = new HTMLPanel("");
-		hPanel.addStyleName(style.flex());
-
-		AonToolbarButton addMod145Button = new AonToolbarButton(AON.MSG.newAction() + " Mod145", AON.CSS.aonIconAdd());
-		addMod145Button.addClickHandler(e -> mod145.onAdd());
-		mod145.setAddButton(addMod145Button);
-		hPanel.add(addMod145Button);
-
-		AonToolbarButton cancelMod145Button = new AonToolbarButton(AON.MSG.cancelAction() + " Mod145",
-				AON.CSS.aonIconCancel());
-		cancelMod145Button.addClickHandler(e -> mod145.onCancel());
-		mod145.setCancelButton(cancelMod145Button);
-		hPanel.add(cancelMod145Button);
-
-		AonToolbarButton saveMod145Button = new AonToolbarButton(AON.MSG.saveAction() + " Mod145",
-				AON.CSS.aonIconSave());
-		saveMod145Button.addClickHandler(e -> mod145.onSave());
-		mod145.setSaveButton(saveMod145Button);
-		hPanel.add(saveMod145Button);
-
-		ListBox mod145Dates = new ListBox();
-		mod145.setMod145DatesLB(mod145Dates);
-		hPanel.add(mod145Dates);
-
-		AonToolbarButton deleteMod145Button = new AonToolbarButton(AON.MSG.deleteAction() + " Mod145",
-				AON.CSS.aonIconDelete());
-		deleteMod145Button.addClickHandler(e -> mod145.onDelete());
-		mod145.setDeleteButton(deleteMod145Button);
-		hPanel.add(deleteMod145Button);
-
-		AonToolbarButton pdfMod145Button = new AonToolbarButton(AON.MSG.printPDF() + " Mod145", AON.CSS.aonIconPdf());
-		pdfMod145Button.addClickHandler(e -> mod145.onPrintPDF());
-		mod145.setPrintPDFButton(pdfMod145Button);
-		hPanel.add(pdfMod145Button);
 
 		return hPanel;
 	}

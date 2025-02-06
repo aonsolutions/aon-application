@@ -732,7 +732,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isPartialityCoefContract() {
-//		Window.alert("isPartialityCoefContract : " + !AonNumberUtils.equals(partialityCoefOriginal, partialityCoef.getValue()));
+//		Window.alert("partialityCoefOriginal : " + partialityCoefOriginal + "\npartialityCoef.getValue() : " + partialityCoef.getValue() + "\nisPartialityCoefContract : " + !AonNumberUtils.equals(partialityCoefOriginal, partialityCoef.getValue()));
 		return !AonNumberUtils.equals(partialityCoefOriginal, partialityCoef.getValue());
 	}
 	

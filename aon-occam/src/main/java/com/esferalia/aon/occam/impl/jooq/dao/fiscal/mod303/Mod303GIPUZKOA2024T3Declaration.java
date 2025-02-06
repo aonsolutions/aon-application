@@ -61,13 +61,7 @@ class Mod303GIPUZKOA2024T3Declaration extends Mod303GIPUZKOA {
 		return mod.isGipuzkoa() 
 			&& mod.getPeriod() != Period.T4
 			&& mod.getPeriod() != Period.M12
-			&& (mod.getYear() > 2024
-			|| (mod.getYear() == 2024
-			&& (mod.getPeriod() == Period.M09 
-			 || mod.getPeriod() == Period.M10 
-			 || mod.getPeriod() == Period.M11   
-			 || mod.getPeriod() == Period.T3)
-		   ))
+			&& (mod.getYear() == 2024 && (mod.getPeriod() == Period.M09 || mod.getPeriod() == Period.M10 || mod.getPeriod() == Period.M11 || mod.getPeriod() == Period.T3))
 		;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

@@ -3981,6 +3981,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
 		
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
 				new HashMap<String,String>(){

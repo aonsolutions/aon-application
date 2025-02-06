@@ -411,8 +411,17 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
-			XmlPage xmlPage = webClient.getPage(BASE_URI);
-			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
+			HtmlPage htmlPage = null;
+			XmlPage xmlPage = null;
+			
+			Page page = webClient.getPage(BASE_URI);
+			if(page instanceof XmlPage)
+				htmlPage = HtmlUnitToolkit.transformXmlPage((XmlPage) page);
+			else if(page instanceof HtmlPage)
+				htmlPage = (HtmlPage) page;
+			
+//			XmlPage xmlPage = webClient.getPage(BASE_URI);
+//			HtmlPage htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			

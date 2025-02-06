@@ -53,7 +53,7 @@ public class BOEPyGAsocAbbreviateScript extends BalanceScript {
 	  	  ,CEA20(1,HEADER1, "20." ,"Impuestos sobre beneficios.","sap({6300,6301,633,638})",null)
  	  ,CEA4	(0,TOTAL0,"A.4)" ,"Variaci\u00F3n de patrimonio neto reconocida en el excedente del ejercicio (A.3+20)",null,"CEA3+CEA20")
  	  
- 	  ,CEB	(0,HEADER0,"B)" ,"Ingresos y gastos imputados directamente al patrimonio neto",null,"CEA3+CEA18")
+ 	  ,CEB	(0,HEADER0,"B)" ,"Ingresos y gastos imputados directamente al patrimonio neto",null,null)
 	  	  ,CEB01(1,HEADER1, "1." ,"Subvenciones recibidas.","sap({940,9420})",null)
  	  	  ,CEB02(1,HEADER1, "2." ,"Donaciones y legados recibidos.","sap({941,9421})",null)
  	  	  ,CEB03(1,HEADER1, "3." ,"Otros ingresos y gastos.","sap({800,89,900,991,992,810,910,85,95})",null) 	  	  

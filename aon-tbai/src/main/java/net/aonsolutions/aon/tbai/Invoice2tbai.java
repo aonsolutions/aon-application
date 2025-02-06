@@ -425,8 +425,7 @@ public class Invoice2tbai {
 			detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
 			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
 			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
-					&& !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType())
-					&& (!exempt || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
+					&& ((!exempt && f.getPercentage() > 0) || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
 				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 				}
@@ -457,7 +456,8 @@ public class Invoice2tbai {
 			}
 		
 			ExentaType exenta = new ExentaType();
-			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) &&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
+			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+					&&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
 				DetalleExentaType detalleExenta = new DetalleExentaType();
 				detalleExenta.setBaseImponible(doubleToString(AonMathUtils.round(r.getBase())));
 				detalleExenta.setCausaExencion(CausaExencionType.E_6);
@@ -478,18 +478,20 @@ public class Invoice2tbai {
 				sujeta.setExenta(exenta);
 			
 			Double totalSuplidos = invoice.getDetails().stream()
-					.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
-					.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
+				.filter(f -> f.isPrepayment() || f.getInvoiceTaxes().isEmpty())
+				.mapToDouble(r -> r.getQuantity() * r.getPrice()).sum();
 			NoSujetaType noSujeta = new NoSujetaType();
-			DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
-			detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
-			detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
-			noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
+			if(totalSuplidos != 0) {
+				DetalleNoSujeta detalleNoSujeta = new DetalleNoSujeta();
+				detalleNoSujeta.setCausa(CausaNoSujetaType.VT);
+				detalleNoSujeta.setImporte(doubleToString(AonMathUtils.round(totalSuplidos)));
+				noSujeta.getDetalleNoSujeta().add(detalleNoSujeta);
+			}
 			
 			double noSujetaOtros = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
-					&& VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+						&&  !exempt && f.getPercentage() == 0 && !invoice.isIsp())
 				.mapToDouble(InvoiceBreakdown::getBase).sum();
-			if(noSujetaOtros > 0) {
+			if(noSujetaOtros != 0) {
 				DetalleNoSujeta detalleNoSujetaOtros = new DetalleNoSujeta();
 				detalleNoSujetaOtros.setCausa(CausaNoSujetaType.OT);
 				detalleNoSujetaOtros.setImporte(doubleToString(AonMathUtils.round(noSujetaOtros)));
@@ -502,19 +504,22 @@ public class Invoice2tbai {
 				DesgloseFacturaType desgloseFactura = new DesgloseFacturaType();
 				if(sujeta.getExenta() != null || sujeta.getNoExenta() != null)
 					desgloseFactura.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) desgloseFactura.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					desgloseFactura.setNoSujeta(noSujeta);
 				desglose.setDesgloseFactura(desgloseFactura);
 			} else if(invoice.isService()){
 				PrestacionServicios serv = new PrestacionServicios();
 				serv.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) serv.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					serv.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 				desgloseFactura.setPrestacionServicios(serv);
 				desglose.setDesgloseTipoOperacion(desgloseFactura);
 			} else {
 				Entrega entrega = new Entrega();
 				entrega.setSujeta(sujeta);
-				if(totalSuplidos > 0.0) entrega.setNoSujeta(noSujeta);
+				if(!noSujeta.getDetalleNoSujeta().isEmpty())
+					entrega.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
 				desgloseFactura.setEntrega(entrega);
 				desglose.setDesgloseTipoOperacion(desgloseFactura);

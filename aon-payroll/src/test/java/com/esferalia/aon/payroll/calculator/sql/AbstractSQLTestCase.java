@@ -518,6 +518,13 @@ public abstract class AbstractSQLTestCase {
 		return new Date(calendar.getTimeInMillis());
 	}
 
+	public static Date set(Date date, int field, int value) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(field, value);
+		return new Date(calendar.getTimeInMillis());
+	}
+
 	public static Date getToday() {
 		Calendar calendar = Calendar.getInstance();
 		calendar = DateUtils.truncate(calendar, DAY_OF_MONTH);
