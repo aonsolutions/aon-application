@@ -18,6 +18,8 @@ export class AonSignMobile extends AonElement {
   TIME;
   TIME_ID;
   // TOTAL_HOUR;
+  showInfo = true;
+
   get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -321,15 +323,18 @@ export class AonSignMobile extends AonElement {
           textStatus = MSG.ENTRY.toLowerCase();
           break;
       }
-      const id = 'lastTimeUser';
-      const div = this.getElement(id) || this.createElement(TAG.DIV);
-      div.id = id;
-      div.style.color = "grey";
-      div.style.cursor = "default";
-      div.style.fontSize  = ".8rem";
-      div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
-      content.appendChild(div);
-      this.totalHourWeek();
+
+      if(this.showInfo) {
+        const id = 'lastTimeUser';
+        const div = this.getElement(id) || this.createElement(TAG.DIV);
+        div.id = id;
+        div.style.color = "grey";
+        div.style.cursor = "default";
+        div.style.fontSize  = ".8rem";
+        div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
+        content.appendChild(div);
+        this.totalHourWeek();
+      }
     }
   }
 
