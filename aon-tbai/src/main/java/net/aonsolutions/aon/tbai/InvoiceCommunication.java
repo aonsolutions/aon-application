@@ -3,6 +3,7 @@ package net.aonsolutions.aon.tbai;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
@@ -16,6 +17,8 @@ public class InvoiceCommunication {
 	private FiscalModelType model;
 	private InvoiceCommunicationType type;
 	private InvoiceCommunicationOperation operation;
+	
+	private Domain domain;
 	private Company company;
 	private Person person;
 	
@@ -45,6 +48,16 @@ public class InvoiceCommunication {
 		this.operation = operation;
 		return this;
 	}
+	
+	public Domain getDomain() {
+		return domain;
+	}
+	
+	public InvoiceCommunication setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+	
 	public Company getCompany() {
 		return company;
 	}

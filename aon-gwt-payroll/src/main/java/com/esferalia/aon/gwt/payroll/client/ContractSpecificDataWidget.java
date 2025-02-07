@@ -23,9 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -607,7 +605,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 	private Widget createSpecificData() {
 		FlowPanel table = createFlexColumnPanel();
 		
-		List<Widget> widgets = new ArrayList();
+		List<Widget> widgets = new ArrayList<>();
 		widgets.add(workProgramDataCB);
 		widgets.add(temporalWorkEnterpriseCB);
 		widgets.add(disabilityCB);
@@ -651,6 +649,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		workProgramDataCB.addValueChangeHandler(e -> {
 			showHideElement(workProgramDataCard, Boolean.TRUE.equals(workProgramDataCB.getValue()));
 			contractSpecificData.setWorkProgramData(workProgramDataCB.getValue());
+			contractSpecificData.setWorkProgram(workProgramDataCB.getValue() ? workProgramLB.getValue() : null);
 		});
 
 		temporalWorkEnterpriseCB.addValueChangeHandler(e -> {
@@ -661,6 +660,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		contractReliefCB.addValueChangeHandler(e -> {
 			showHideElement(contractReliefDataCard, Boolean.TRUE.equals(contractReliefCB.getValue()));
 			contractSpecificData.setContractRelief(contractReliefCB.getValue());
+			contractSpecificData.setReliefEmployee(contractReliefCB.getValue() ? reliefEmployeeLB.getValue() : null);
 		});
 
 		offerWorkDataCB.addValueChangeHandler(e -> {
@@ -671,11 +671,14 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		workshopSchoolCB.addValueChangeHandler(e -> {
 			showHideElement(workProgramDataCard, Boolean.TRUE.equals(workshopSchoolCB.getValue()));
 			contractSpecificData.setWorkshopSchoolB(workshopSchoolCB.getValue());
+			contractSpecificData.setWorkshopSchool(workshopSchoolCB.getValue() ? workshopSchoolLB.getValue() : null);
 		});
 
 		disabilityCB.addValueChangeHandler(e -> {
 			showHideElement(disabilityDataCard, Boolean.TRUE.equals(disabilityCB.getValue()));
 			contractSpecificData.setDisabilityB(disabilityCB.getValue());
+			contractSpecificData.setDisability(disabilityCB.getValue() ? disabilityLB.getValue() : null);
+			contractSpecificData.setBonusColective(disabilityCB.getValue() ? bonusColectiveDisabilityLB.getValue() : null);
 		});
 
 		older52CB.addValueChangeHandler(e -> {
@@ -696,20 +699,20 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		investCB.addValueChangeHandler(e -> {
 			showHideElement(investDataCard, Boolean.TRUE.equals(investCB.getValue()));
 			contractSpecificData.setInvest(investCB.getValue());
+			contractSpecificData.setEmployer(investCB.getValue() ? employerLB.getValue() : null);
+			contractSpecificData.setEmployee(investCB.getValue() ? employeeLB.getValue() : null);
 		});
 
 		interimCauseCB.addValueChangeHandler(e -> {
 			showHideElement(interimCauseDataCard, Boolean.TRUE.equals(interimCauseCB.getValue()));
 			contractSpecificData.setIsSustitucionCause(interimCauseCB.getValue());
-			if (!interimCauseCB.getValue())
-				contractSpecificData.setSustitucionCause(null);
-			else
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), interimCauseLB.getListBox());
+			contractSpecificData.setSustitucionCause(interimCauseCB.getValue() ? interimCauseLB.getValue() : null);
 		});
 
 		entrepreneurSupportCB.addValueChangeHandler(e -> {
 			showHideElement(entrepreneurSupportDataCard, Boolean.TRUE.equals(entrepreneurSupportCB.getValue()));
 			contractSpecificData.setEntrepreneurSupport(entrepreneurSupportCB.getValue());
+			contractSpecificData.setBonusColective(entrepreneurSupportCB.getValue() ? bonusColectiveLB.getValue() : null);
 		});
 
 		promotionMeasuresCB.addValueChangeHandler(e -> {
@@ -720,6 +723,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		quoteReductionsCB.addValueChangeHandler(e -> {
 			showHideElement(quoteReductionsDataCard, Boolean.TRUE.equals(quoteReductionsCB.getValue()));
 			contractSpecificData.setQuoteReductions(quoteReductionsCB.getValue());
+			contractSpecificData.setReductionColective(quoteReductionsCB.getValue() ? reductionColectiveLB.getValue() : null);
+			contractSpecificData.setQuoteReduction(quoteReductionsCB.getValue() ? Boolean.parseBoolean(quoteReductionLB.getValue()) : null);
+			
 		});
 
 		bonusCB.addValueChangeHandler(e -> {

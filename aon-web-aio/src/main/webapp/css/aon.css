@@ -4637,8 +4637,8 @@ font-weight: 600;
   }
 
   .aonDivWidgetsMobile{
-    padding-right: 5px;
-    padding-left: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
     margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(2,1fr);
@@ -4650,16 +4650,14 @@ font-weight: 600;
     height: 100px;
     background-color: #f0f0f0;
     border-radius: 10px;
-    margin-left: 5px !important;
-    margin: 5px;
+    width: 100%;
   }
 
   .aonWidgetNominaMobile{
     height: 100px;
     background-color: #f0f0f0;
     border-radius: 10px;
-    margin: 5px;
-    width: 172px;
+    width: 100%;
   }
 
   .aonWidgetNominaMobileTitulo{
@@ -4675,7 +4673,7 @@ font-weight: 600;
   }
 
   .aonWidgetNominaMobileNomina{
-    margin-top: 17px;
+    margin-top: 10px;
     text-align: center;
     font-size: 1.6rem;
   }
@@ -4684,7 +4682,7 @@ font-weight: 600;
     height: 100px;
     background-color: #f0f0f0;
     border-radius: 10px;
-    margin: 5px;
+    width: 100%;
   }
 
   .aonWidgetSolicitudesMobileTitulo{
@@ -4719,6 +4717,12 @@ font-weight: 600;
     font-size: 25px;
   }
 
+  .aonWidgetSolicitudesIconPendientes{
+    color: var(--aonInvoice);
+    margin-top: 6px;
+    font-size: 25px;
+  }
+
   .aonWidgetFacturasIcon{
     margin-right: -5px;
   }
@@ -4728,6 +4732,7 @@ font-weight: 600;
     text-align: center;
     font-size: 1.6rem;
     margin-top: 0px;
+    margin-left: 5px;
   }
 
   .aonMobileHomeNotificationDrag{

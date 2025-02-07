@@ -211,6 +211,13 @@ public class CONSOLE {
 		}
 	}
 
+	public static LinkedList<ConsoleTableRow> getTableRows(ConsoleTableRow row) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
+			return getConsole().getTableRows(ctx,row)
+				.collect(Collectors.toCollection( LinkedList::new));
+		}
+	}
+
 	public static ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
 			return getConsole().getTableRowMetadata(ctx,row);

@@ -22,17 +22,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -83,13 +78,11 @@ import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
-import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Period;
 
 public class SistemaRED2AON {
@@ -1203,12 +1196,13 @@ public class SistemaRED2AON {
 			return null;
 		});
 
-        return EmployeeParse.IdcToEmployeeOccam(
-    		SistemaRED.getIDC(
-				new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-                regime, ccc, naf, startDate
-            )
-        );
+        return null == startDate ? new Employee() :
+        	EmployeeParse.IdcToEmployeeOccam(
+	    		SistemaRED.getIDC(
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+	                regime, ccc, naf, startDate
+	            )
+	        );
 	}
 	
 

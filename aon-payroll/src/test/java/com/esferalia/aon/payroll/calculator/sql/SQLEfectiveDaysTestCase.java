@@ -535,6 +535,100 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testHolidays() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+
+		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		HolidayRecord holiday = newHoliday(aonContext, contract.getDomain());
+		
+		
+		addHolidays(aonContext, contract.getDomain(), holiday.getId(), set(startDate, Calendar.DAY_OF_MONTH, 20 ) );
+
+		
+		CalendarRecord calendar = newCalendar(aonContext, contract.getDomain(), holiday.getId() 
+				,DayType.WORKING_DAY
+				,DayType.WORKING_DAY
+				,DayType.WORKING_DAY
+				,DayType.WORKING_DAY
+				,DayType.WORKING_DAY
+				,DayType.WORKING_DAY
+				,DayType.NOT_WORKING_DAY
+				);
+		updatePayrollWorkplace(aonContext, contract.getDomain(), contract.getWorkplace(), calendar.getId());
+		
+		addData(aonContext, contract, startDate, set(startDate, Calendar.DAY_OF_MONTH, 24), ContextVariable.PARTIAL_FACTOR, 0.25);
+		addData(aonContext, contract, set(startDate, Calendar.DAY_OF_MONTH, 25), null, ContextVariable.PARTIAL_FACTOR, 0.50);
+
+		addData(aonContext, contract, startDate, null, ContextVariable.MONDAY_HOURS, 2d);
+		addData(aonContext, contract, startDate, null, ContextVariable.TUESDAY_HOURS, 2d);
+		addData(aonContext, contract, startDate, null, ContextVariable.WEDNESDAY_HOURS, 2d);
+		addData(aonContext, contract, startDate, null, ContextVariable.THURSDAY_HOURS, 2d);
+		//addData(aonContext, contract, startDate, null, ContextVariable.FRIDAY_HOURS, 0d);
+		//addData(aonContext, contract, startDate, null, ContextVariable.SATURDAY_HOURS, 0d);
+		//addData(aonContext, contract, startDate, null, ContextVariable.SUNDAY_HOURS, 0d);
+		
+		addData(aonContext, contract, startDate, set(startDate, Calendar.DAY_OF_MONTH, 6), ContextVariable.HOLIDAYS, 6d);
+
+		double actualDays = 0.00;
+		Calendar day = Calendar.getInstance();
+		day.setTime(startDate);
+		while ( day.getTime().compareTo(endDate)<= 0 ){
+			int dayOfMonth = day.get(Calendar.DAY_OF_MONTH);
+			int dayOfWeek = day.get(Calendar.DAY_OF_WEEK);
+			if ( dayOfMonth == 1)
+				;
+			else if ( dayOfMonth == 2)
+				;
+			else if ( dayOfMonth == 3)
+				;
+			else if ( dayOfMonth == 4)
+				;
+			else if ( dayOfMonth == 5)
+				;
+			else if ( dayOfMonth == 6)
+				;
+			else if ( dayOfMonth == 20)
+				;
+			else if ( dayOfWeek == Calendar.FRIDAY  )
+				;
+			else if ( dayOfWeek == Calendar.SUNDAY  )
+				;
+			else if ( dayOfWeek == Calendar.SATURDAY  )
+				;
+			else { 
+				actualDays ++;
+				System.out.println(day.getTime());
+			}
+			day.add(Calendar.DAY_OF_MONTH, 1);
+		}
+
+
+		ISQLContractSalaryCalculatorContext ctx =
+		getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		List<ITimedResult<Double>> results = ctx.getExpressionContext().eval(ContextVariable.ACTUAL_DAYS.getName(), startDate, endDate, Double.class);
+		
+		
+		double ctxActualDays = 0;
+		for ( ITimedResult<Double> result: results )
+			ctxActualDays += result.getValue();
+		
+		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+
+	}
+
 	// ------------------------------------------------------------------------
 	
 	private HolidayRecord newHoliday(AONContext aonContext, Integer domain) {

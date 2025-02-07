@@ -97,17 +97,19 @@ export class AonMobileHome extends AonElement {
             return [];
         });
 
-        let lastDateTime = Math.max.apply(
-            null,
-            this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
-          );
-      
-          let lastPeriod = this.PERIODS.find(
-            (p) => new Date(p.initiationDate).getTime() == lastDateTime
-          );
-      
-          this.selectedPeriod = lastPeriod;
-
+        let currentYear = new Date().getFullYear();
+        let currentYearPeriods = this.PERIODS.filter((p) => 
+            new Date(p.initiationDate).getFullYear() === currentYear
+        );      
+        let selectedPeriod = currentYearPeriods.length > 0 
+            ? currentYearPeriods.reduce((latest, p) => 
+                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+            ) 
+            : this.PERIODS.reduce((latest, p) => 
+                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+            );  
+        this.selectedPeriod = selectedPeriod;
+        
         this.accounts = await this.getData();
         if(this.accounts)
             this.calculateYearlyData(this.accounts);
@@ -115,16 +117,22 @@ export class AonMobileHome extends AonElement {
         let divGeneral = this.createElement(TAG.DIV);
         divGeneral.id = this.DIV_GENERAL;
 
-        let tituloNotis = this.buildTitle("Notificaciones");
-        divGeneral.appendChild(tituloNotis);
-    
         let notificationDrag = new AonDragLeftNotification();
         notificationDrag.id = this.NOTIFICATION_DRAGLEFT;
         notificationDrag.className = "aonMobileHomeNotificationDrag";
+    
+        const hasNotifs = await notificationDrag.hasNotifications(); 
+        console.log("NOTIFICATIONS: " + hasNotifs);
+
+        if (hasNotifs) {
+            let tituloNotis = this.buildTitle("Notificaciones");
+            divGeneral.appendChild(tituloNotis);
+        }
+
         divGeneral.appendChild(notificationDrag);
 
         let tituloWidgets = this.buildTitle("Información");
-        divGeneral.appendChild(tituloWidgets);
+        divGeneral.appendChild(tituloWidgets); 
     
         let divWidgets = this.createElement(TAG.DIV);
         divWidgets.id = this.DIV_WIDGETS;
@@ -148,7 +156,7 @@ export class AonMobileHome extends AonElement {
                     if(builtWidget) divWidgets.appendChild(builtWidget);
                 }
             } catch (error) {
-                console.log(`Widget ${widget.id} no está disponible:` + error);
+                //console.log(`Widget ${widget.id} no está disponible:` + error);
             }
         }
     
@@ -166,6 +174,7 @@ export class AonMobileHome extends AonElement {
         widgetTC.className = "aonWidgetTCMobile";
 
         let aonSign = new AonSignMobile();
+        aonSign.showInfo = false;
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
         widgetTC.appendChild(aonSign);
@@ -173,253 +182,240 @@ export class AonMobileHome extends AonElement {
         return widgetTC;
     }
 
-    async widgetNomina() {
+    widgetNomina() {
         const widgetNomina = this.createElement(TAG.DIV);
         widgetNomina.id = this.WIDGET_NOMINA;
         widgetNomina.className = "aonWidgetNominaMobile";
     
-        const ultimoSalario = await this.obtenerDatosNominas();
-        let salario = ultimoSalario.totalLiquid;
-        let date = ultimoSalario.date; 
-        let filter = ultimoSalario.filter; 
-    
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetNominaMobileTitulo";
-
+    
         let nominaTitulo = this.createElement(TAG.SPAN);
         nominaTitulo.innerHTML = "Nómina";
         nominaTitulo.style.fontWeight = "bold";
         titulo.appendChild(nominaTitulo);
-
+    
         let fecha = this.createElement(TAG.SPAN);
-        fecha.innerHTML = date;
         fecha.className = "aonWidgetNominaMobileFecha";
-        titulo.appendChild(fecha); 
+        titulo.appendChild(fecha);
     
         let nomina = this.createElement(TAG.DIV);
-
-        let salarioNumerico = parseFloat(salario.toString().replace(/[^\d.-]/g, ""));
-        if (isNaN(salarioNumerico)) {
-            salarioNumerico = 0; 
-        }
-    
-        let salarioFormateado = this.formatCurrency(salarioNumerico);
-        nomina.innerHTML = `${salarioFormateado}€`;
         nomina.className = "aonWidgetNominaMobileNomina";
-
-        widgetNomina.addEventListener('click', async () => {
+        nomina.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
+    
+        widgetNomina.appendChild(titulo);
+        widgetNomina.appendChild(nomina);
+    
+        this.obtenerDatosNominas()
+            .then(ultimoSalario => {
+                if (!ultimoSalario || !ultimoSalario.totalLiquid || !ultimoSalario.date) {
+                   widgetNomina.remove();
+                }
+    
+                let salario = ultimoSalario.totalLiquid;
+                let date = ultimoSalario.date; 
+    
+                let salarioNumerico = parseFloat(salario.toString().replace(/[^\d.-]/g, ""));
+                if (isNaN(salarioNumerico)) {
+                    salarioNumerico = 0; 
+                }
+                let salarioFormateado = this.formatCurrency(salarioNumerico);
+    
+                fecha.innerHTML = date;
+                nomina.innerHTML = `${salarioFormateado}€`;
+                nomina.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+            })
+            .catch(error => {
+                console.error("Error obteniendo datos de nómina:", error);
+                nomina.innerHTML = "0";
+            });
+    
+        widgetNomina.addEventListener('click', () => {
             this.rootPanel(new AonLaboral());
         });
     
-        widgetNomina.appendChild(titulo);    
-        widgetNomina.appendChild(nomina);
-    
         return widgetNomina;
-    }  
-
-    async widgetSolicitudesRecbidas() {
+    }
+    
+    widgetSolicitudesRecbidas() {
         const widgetSolicitudesRecibidas = this.createElement(TAG.DIV);
         widgetSolicitudesRecibidas.id = this.WIDGET_SOLICITUDES_RECIBIDAS;
         widgetSolicitudesRecibidas.className = "aonWidgetSolicitudesMobile";
-
+    
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetSolicitudesMobileTitulo";
         widgetSolicitudesRecibidas.appendChild(titulo);
-
-        let notice = undefined;
-			if(localStorage.getItem('company')) {
-				if(!this.getDur().isEmployee()){
-					notice = await getDomainNotice();
-				}
-			} else {
-				await this.buildCompany();
-				if(!this.getDur().isEmployee()) {
-					notice = await getUserNotice();
-				}
-			}
-
-        let requestCount = 0;
-
-        if(notice.solicitudes && notice.solicitudes.task_holder) {
-            requestCount = notice.solicitudes.task_holder;
-        }
-
-        let textoRecibidas = this.createElement(TAG.SPAN)
+    
+        let textoRecibidas = this.createElement(TAG.SPAN);
         textoRecibidas.innerHTML = "Solicitudes Recibidas";
         titulo.appendChild(textoRecibidas);
-
+    
         let segundaLinea = this.createElement(TAG.DIV);
         segundaLinea.className = "aonWidgetSolicitudesMobileSegundaLinea";
         widgetSolicitudesRecibidas.appendChild(segundaLinea);
-
+    
         let icon = this.createElement(TAG.I);
         icon.className = CSS.MATERIAL_ICONS;
         icon.innerHTML = "move_to_inbox";
         icon.classList.add("aonWidgetSolicitudesIconRecibidas");
         segundaLinea.appendChild(icon);
-
+    
         let numeroRecibidas = this.createElement(TAG.DIV);
-        numeroRecibidas.innerHTML = " "+requestCount;
         numeroRecibidas.className = "aonWidgetSolicitudesMobileLineaNumero";
+        numeroRecibidas.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
         segundaLinea.appendChild(numeroRecibidas);
-
+    
+        let requestPromise = localStorage.getItem('company')
+            ? (!this.getDur().isEmployee() ? getDomainNotice() : Promise.resolve(null))
+            : this.buildCompany().then(() => !this.getDur().isEmployee() ? getUserNotice() : null);
+    
+        requestPromise.then(notice => {
+            numeroRecibidas.innerHTML = notice && notice.solicitudes && notice.solicitudes.task_holder
+                    ? " " + notice.solicitudes.task_holder : " 0";
+            numeroRecibidas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+        }).catch(e => {
+            numeroRecibidas.innerHTML = " 0";
+            numeroRecibidas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+        });
+    
         widgetSolicitudesRecibidas.addEventListener('click', () => {
             let aonMessenger = new AonMessenger();
             aonMessenger._filter.task_holder = this.taskHolder.id;
             this.rootPanel(aonMessenger);
         });
-
-        if(requestCount == 0)
-            widgetSolicitudesRecibidas = null;
-
+    
         return widgetSolicitudesRecibidas;
     }
-
-
-    async widgetSolicitudesEnviadas() {
+    
+    widgetSolicitudesEnviadas() {
         const widgetSolicitudesEnviadas = this.createElement(TAG.DIV);
         widgetSolicitudesEnviadas.id = this.WIDGET_SOLICITUDES_ENVIADAS;
         widgetSolicitudesEnviadas.className = "aonWidgetSolicitudesMobile";
-
+    
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetSolicitudesMobileTitulo";
         widgetSolicitudesEnviadas.appendChild(titulo);
-
-        let textoEnviadas = this.createElement(TAG.SPAN)
+    
+        let textoEnviadas = this.createElement(TAG.SPAN);
         textoEnviadas.innerHTML = "Solicitudes Enviadas";
         titulo.appendChild(textoEnviadas);
-
+    
         let segundaLinea = this.createElement(TAG.DIV);
         segundaLinea.className = "aonWidgetSolicitudesMobileSegundaLinea";
         widgetSolicitudesEnviadas.appendChild(segundaLinea);
-
+    
         let icon = this.createElement(TAG.I);
         icon.className = CSS.MATERIAL_ICONS;
         icon.innerHTML = "outbox";
         icon.classList.add("aonWidgetSolicitudesIconEnviadas");
         segundaLinea.appendChild(icon);
-
-        let enviadas = await this.getEnviadas();
-
+    
         let numeroEnviadas = this.createElement(TAG.DIV);
-        numeroEnviadas.innerHTML = enviadas;
         numeroEnviadas.className = "aonWidgetSolicitudesMobileLineaNumero";
+        numeroEnviadas.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
         segundaLinea.appendChild(numeroEnviadas);
-        let taskHolder =  await getTaskHolder({ workgroups: true });
-
-        widgetSolicitudesEnviadas.addEventListener('click', () => {
-            let aonMessenger = new AonMessenger();
-            aonMessenger.TASK_HOLDER =  taskHolder;
-            aonMessenger._filter = {
-                sender: taskHolder.id,
-                task_holder: undefined
-            };
-            this.rootPanel(aonMessenger);
+    
+        this.getEnviadas().then(enviadas => {
+            if (!enviadas) {
+                return null;
+            }
+            numeroEnviadas.innerHTML = enviadas;
+            numeroEnviadas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
         });
-
-        if(enviadas == 0)
-            widgetSolicitudesEnviadas = null;
-
+    
         return widgetSolicitudesEnviadas;
     }
-
-    async widgetFacturasPendientes() {
+    
+    widgetFacturasPendientes() {
         const widgetFacturasPendientes = this.createElement(TAG.DIV);
         widgetFacturasPendientes.id = this.WIDGET_FACTURAS_PENDIENTES;
         widgetFacturasPendientes.className = "aonWidgetSolicitudesMobile";
-
+    
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetSolicitudesMobileTitulo";
         widgetFacturasPendientes.appendChild(titulo);
-
-        let notice = undefined;
-			if(localStorage.getItem('company')) {
-				if(!this.getDur().isEmployee()){
-					notice = await getDomainNotice();
-				}
-			} else {
-				await this.buildCompany();
-				if(!this.getDur().isEmployee()) {
-					notice = await getUserNotice();
-				}
-			}
-
-        let requestCount = 0;
-
-        if(notice.invoice && notice.invoice.inbox.count) {
-            requestCount = notice.invoice.inbox.count;
-        }
-
-        let textoFacturas = this.createElement(TAG.SPAN)
+    
+        let textoFacturas = this.createElement(TAG.SPAN);
         textoFacturas.innerHTML = "Facturas Pendientes";
         titulo.appendChild(textoFacturas);
-
+    
         let segundaLinea = this.createElement(TAG.DIV);
         segundaLinea.className = "aonWidgetSolicitudesMobileSegundaLinea";
         widgetFacturasPendientes.appendChild(segundaLinea);
-
+    
         let icon = new AonIcon();
-        icon.icon = "aon_new_invoice";
-        icon.color = "var(--aonInvoice)";
-        icon.size = "33px";
-        icon.className = "aonWidgetFacturasIcon";
+        icon.className = CSS.MATERIAL_ICONS;
+        icon.innerHTML = "monitoring";
+        icon.classList.add("aonWidgetSolicitudesIconPendientes");
         segundaLinea.appendChild(icon);
-
+    
         let numeroFacturas = this.createElement(TAG.DIV);
-        numeroFacturas.innerHTML = " "+requestCount;
         numeroFacturas.className = "aonWidgetSolicitudesMobileLineaNumero";
-        numeroFacturas.style.marginTop = "-1px";
+        numeroFacturas.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
         segundaLinea.appendChild(numeroFacturas);
+    
+        let requestPromise = localStorage.getItem('company')
+            ? (!this.getDur().isEmployee() ? getDomainNotice() : Promise.resolve(null))
+            : this.buildCompany().then(() => !this.getDur().isEmployee() ? getUserNotice() : null);
 
+        requestPromise.then(notice => {
+            numeroFacturas.innerHTML = notice && notice.invoice && notice.invoice.inbox.count
+                    ? " " + notice.invoice.inbox.count : " 0";
+                    numeroFacturas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+        }).catch(e => {
+            numeroFacturas.innerHTML = " 0";
+            numeroFacturas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+        });
+    
         widgetFacturasPendientes.addEventListener('click', () => {
             this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
         });
-
-        if(requestCount == 0)
-            widgetFacturasPendientes = null;
-
+    
         return widgetFacturasPendientes;
-    }
+    }    
 
-    async widgetBanks() {
-        const widgetBanks = this.createElement(TAG.DIV);
+    widgetBanks() {
+        let widgetBanks = this.createElement(TAG.DIV);
         widgetBanks.id = this.WIDGET_BANKS;
         widgetBanks.className = "aonWidgetNominaMobile";
     
-        let banks = await this.getCompanyBanks();
-    
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetNominaMobileTitulo";
-
+    
         let bancosTitulo = this.createElement(TAG.SPAN);
         bancosTitulo.innerHTML = "Bancos";
         bancosTitulo.style.fontWeight = "bold";
         titulo.appendChild(bancosTitulo);
-
+    
         let bancos = this.createElement(TAG.SPAN);
-        bancos.innerHTML = "("+banks.length+")";
+        bancos.innerHTML = "(...)"; 
         bancos.className = "aonWidgetNominaMobileFecha";
-        titulo.appendChild(bancos); 
+        titulo.appendChild(bancos);
     
         let total = this.createDiv();
-        total.innerHTML = `${this.getTotal(banks)}`;
+        total.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`; 
         total.className = "aonWidgetNominaMobileNomina";
         total.style.marginTop = "10px";
-
-        widgetBanks.addEventListener('click', async () => {
-            this.rootPanel(new AonAccounting());
+    
+        widgetBanks.appendChild(titulo);
+        widgetBanks.appendChild(total);
+    
+        this.getCompanyBanks().then((banks) => {
+            if (banks.length == 0) {
+                widgetBanks.remove();
+            }
+            let totalBanks = this.getTotal(banks);
+            if (totalBanks > 1000000) 
+                total.style.fontSize = "1.3rem";
+            bancos.innerHTML = `(${banks.length})`;
+            total.innerHTML = totalBanks+"€"; 
         });
     
-        widgetBanks.appendChild(titulo);    
-        widgetBanks.appendChild(total);
-
-        if(banks.length == 0)
-            widgetBanks = null;
-    
         return widgetBanks;
-    }  
+    }
+    
 
-    async widgetIngresos() {
+    widgetIngresos() {
         const widgetIngresos = this.createElement(TAG.DIV);
         widgetIngresos.id = this.WIDGET_INGRESOS;
         widgetIngresos.className = "aonWidgetNominaMobile";
@@ -438,19 +434,21 @@ export class AonMobileHome extends AonElement {
         titulo.appendChild(fecha); 
     
         let nomina = this.createElement(TAG.DIV);
-        nomina.innerHTML = `${this.income.toFixed(2)}€`;
+        nomina.innerHTML = `${this.formatCurrency(this.income)}€`;
+        if (this.income > 1000000)
+            nomina.style.fontSize = "1.3rem";        
         nomina.className = "aonWidgetNominaMobileNomina";
     
         widgetIngresos.appendChild(titulo);    
         widgetIngresos.appendChild(nomina);
 
         if(this.income == 0)
-            widgetIngresos = null;
+            nomina.innerHTML == "0";
     
         return widgetIngresos;
     }  
 
-    async widgetGastos() {
+    widgetGastos() {
         const widgetVentas = this.createElement(TAG.DIV);
         widgetVentas.id = this.WIDGET_NOMINA;
         widgetVentas.className = "aonWidgetNominaMobile";
@@ -469,31 +467,31 @@ export class AonMobileHome extends AonElement {
         titulo.appendChild(fecha); 
     
         let nomina = this.createElement(TAG.DIV);
-        nomina.innerHTML = `${this.outgoings.toFixed(2)}€`;
+        nomina.innerHTML = `${this.formatCurrency(this.outgoings)}€`;
+        if (this.outgoings > 1000000) 
+            nomina.style.fontSize = "1.3rem";
         nomina.className = "aonWidgetNominaMobileNomina";
     
         widgetVentas.appendChild(titulo);    
         widgetVentas.appendChild(nomina);
 
         if(this.outgoings == 0)
-            widgetVentas = null;
+            nomina.innerHTML = "0";
     
         return widgetVentas;
     }  
+    
 
     async getCompanyBanks() {
         let company = JSON.parse(localStorage.getItem("company"));
         if(!this.BANKS.length){
             try {
             const banks = await getBanks({id: company.registry});
-
             if(banks){
                 this.BANKS = sortBy(banks,'alias')
                 .filter((bank) => bank.active == true);
             }
-            
             return this.BANKS;
-
             } catch (error) {
             console.error(error);
             this.showError(error);
@@ -512,7 +510,7 @@ export class AonMobileHome extends AonElement {
 		return div;
 	}
 
-     calculateYearlyData(accountsData) {
+    calculateYearlyData(accountsData) {
         let accounts = accountsData.intervals || [];
         this.selectedElement = accounts.filter((acc) =>
           /31\/12\/d*/.test(acc.interval.fromDate)
@@ -564,38 +562,36 @@ export class AonMobileHome extends AonElement {
         }
     }
 
-     async getData() {
-    
+    async getData() {
         if (this.filter) {
-          this.selectedPeriod = this.PERIODS.find(
+            this.selectedPeriod = this.PERIODS.find(
             (p) => p.name == this.filter.year
-          );
-          this.params.level = this.filter.detail;
+            );
+            this.params.level = this.filter.detail;
         }
         console.log(this.selectedPeriod);
-    
+
         if (!isEmptyObject(this.PERIODS)) {
-          if (this.PERIODS && this.PERIODS.length > 0) {
+            if (this.PERIODS && this.PERIODS.length > 0) {
             this.params.period = this.selectedPeriod.id;
-    
+
             this.params.fromDate = this.selectedPeriod.initiationDate;
             this.params.toDate = this.selectedPeriod.deadline;
-          }
-    
-          if(!this.params.fromDate) { return []; }
-    
-          this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
+            }
+
+            if(!this.params.fromDate) { return []; }
+
+            this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
             this.showError(err);
             return null;
-          });
+            });
         }
-    
         return this.ACCOUNTS;
     }
 
     getTotal(banks){
         let total = banks.reduce((t, bank) => t + bank.balance, 0);
-        return total > 0 ? formatNumber(total, 0, "EUR") : "No disponible";
+        return total > 0 ? this.formatCurrency(total) : "0";
     }
 
     getWorkgroupsStr(workgroups) {
@@ -641,29 +637,6 @@ export class AonMobileHome extends AonElement {
             return null;
         }
     }
-
-    async getRecibidas() {
-        let filterCount = {};
-    
-        let taskHolder = await getTaskHolder({ workgroups: true });
-        let id = taskHolder.id;
-        let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
-    
-        let auth = await getAuth();
-        let email = auth.email;
-    
-        filterCount.email = email;
-        filterCount.taskHolder = id;
-        filterCount.workgroups = workgroups;
-    
-        let count = await getTaskCount(filterCount);
-    
-        let recibidas = count.task_holder !== undefined && count.task_holder !== null
-            ? count.task_holder + ""
-            : "0";
-    
-        return recibidas;
-    }
     
     async getEnviadas() {
         let filterCount = {};
@@ -689,10 +662,14 @@ export class AonMobileHome extends AonElement {
     }
      
     formatCurrency(valor) {
-        const partes = valor.toFixed(2).split("."); 
-        const parteEnteraConMiles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
-        return `${parteEnteraConMiles},${partes[1]}`; 
+        if (isNaN(valor) || valor === null || valor === undefined) {
+            return "0";
+        }
+        const partes = Number(valor).toFixed(2).split(".");
+        const parteEnteraConMiles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return `${parteEnteraConMiles},${partes[1]}`;
     }
+    
 
     getDur() {
 		return this.dur;

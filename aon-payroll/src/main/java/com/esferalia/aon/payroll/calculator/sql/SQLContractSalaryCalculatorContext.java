@@ -3598,35 +3598,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private boolean isNotWorkingDay(Calendar day) {
-	    Date date = day.getTime();
-	    ITimedVariable<?> nonWorking = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
-	    if (nonWorking != null ) {
-		Period period = nonWorking.getPeriod();
-		Object value = nonWorking.getValue(period);
-		int days = (int) Double.parseDouble(value.toString());
-		if ( days > 0 ) {
-		    return true;
+		Date date = day.getTime();
+		ITimedVariable<?> nonWorkings = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
+		if (nonWorkings == null)
+			return false;
+
+		try {
+			Period period = nonWorkings.getPeriod();
+			Object value = nonWorkings.getValue(period);
+			int days = (int) Double.parseDouble(value.toString());
+
+			Calendar nonWorking = Calendar.getInstance();
+			nonWorking.setTime(period.getStart());
+			nonWorking.add(Calendar.DAY_OF_MONTH, days);
+
+			return day.compareTo(nonWorking) <= 0;
+
+		} catch (Error e) {
+			return false;
 		}
-	    }
-		
-	    ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
-	    ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
-	    if (hours == null) {
-		return false;
-	    }
-
-	    try {
-		Period period = hours.getPeriod();
-		Object value = hours.getValue(period);
-		if ( value == null )
-		    return true;
-			
-		return Double.parseDouble(value.toString()) == -1;
-
-	    } catch (Error e) {
-		return false;
-	    }
 	}
+
 
 	private boolean isWorkingDay(Calendar day) {
 		Date date = day.getTime();
@@ -3686,12 +3678,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			DayType type = calendar.getDayType(day);
 			
 			Double dayHours = getDayHours(day);
-
-			if ( DayType.HOLIDAY != type && dayHours != null && dayHours > 0.00 ) {
+			
+			
+			if ( dayHours != null && dayHours < 0 ) {
+				// < 0 == NO_LABORABLE
+			} else if ( isHoliday(day)  ) {
+				// It's  DIAS_VACACIONES
+			} else if ( isNotWorkingDay(day) ) {
+				// It's  NO_LABORABLE
+			} else if (leaveLoader.isLeaveDay(day)) {
+				// It's  DIAS_IT ( DIAS_ENFERME..., DIAS_MATER... )
+			} else if (!hasDaysHours && isActualDay(type, day) ) {
 				days++;
-			} else if (!hasDaysHours && isActualDay(type, day) && !leaveLoader.isLeaveDay(day) && !isHoliday(day) && !isNotWorkingDay(day)) {
+			} else if ( DayType.HOLIDAY != type && dayHours != null && dayHours > 0.00 ) {
 				days++;
-			}
+			} 
 			day.add(Calendar.DATE, 1);
 		}
 		return days;
@@ -3721,7 +3722,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			this.contractExpressionContext.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class)
 			.stream()
 			.map(ITimedResult::getValue)
-			.filter(Objects::nonNull)
+			.map(value -> value == null ? -1 : value )
 			.collect(Collectors.summingDouble(Number::doubleValue));
 		} catch (ExpressionException e) {
 			return null;
