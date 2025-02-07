@@ -27,6 +27,7 @@ public interface IConsole {
 	public Stream<User> availableUsers(AONContext ctx, Integer domainId);
 	public String[] getAonTables();		
 	public ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow row);
+	public Stream<ConsoleTableRow> getTableRows(AONContext ctx, ConsoleTableRow row);
 	public ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow row);
 	public ConsoleTableRow update(AONContext ctx, ConsoleTableRow row, ConsoleTableField field);
 	public Boolean delete(AONContext ctx, ConsoleTableRow row);

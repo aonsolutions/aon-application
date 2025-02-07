@@ -67,6 +67,11 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
+	public Stream<ConsoleTableRow> getTableRows(AONContext ctx, ConsoleTableRow row) {
+		return ConsoleDAO.getTableRows(ctx, row);
+	}
+
+	@Override
 	public ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow row) {
 		return ConsoleDAO.getTableRowMetadata(ctx, row);
 	}

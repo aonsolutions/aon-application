@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -39,7 +41,7 @@ class ConsoleRowQuery extends DockLayoutPanel {
 	}
 	
 	private void search(ConsoleTableRow crt) {
-		ConsoleModule.CONSOLE_SERVICE.getTableRow(crt ,new AsyncCallback<ConsoleTableRow>() {
+		ConsoleModule.CONSOLE_SERVICE.getTableRows(crt ,new AsyncCallback<LinkedList<ConsoleTableRow>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Label label = new Label( caught.getMessage() );
@@ -51,8 +53,8 @@ class ConsoleRowQuery extends DockLayoutPanel {
 			}
 
 			@Override
-			public void onSuccess(ConsoleTableRow tableRow) {
-				if (tableRow == null) {
+			public void onSuccess(LinkedList<ConsoleTableRow> rows) {
+				if (rows == null) {
 					Label label = new Label("Fila no encontrada");
 					label.setStyleName(AON.CSS.aonMargin());
 					label.addStyleName(AON.CSS.aonBorder());
@@ -60,7 +62,7 @@ class ConsoleRowQuery extends DockLayoutPanel {
 					label.addStyleName(AON.CSS.aonTextCenter());
 					container.setWidget( label );
 				} else {
-					container.setWidget( new ConsoleRowCompositeQueryViewer(tableRow) );
+					container.setWidget( new ConsoleRowCompositeQueryViewer( rows ) );
 				}
 			}
 
