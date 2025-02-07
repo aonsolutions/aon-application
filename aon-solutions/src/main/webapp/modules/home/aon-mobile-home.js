@@ -97,17 +97,19 @@ export class AonMobileHome extends AonElement {
             return [];
         });
 
-        let lastDateTime = Math.max.apply(
-            null,
-            this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
-          );
-      
-          let lastPeriod = this.PERIODS.find(
-            (p) => new Date(p.initiationDate).getTime() == lastDateTime
-          );
-      
-          this.selectedPeriod = lastPeriod;
-
+        let currentYear = new Date().getFullYear();
+        let currentYearPeriods = this.PERIODS.filter((p) => 
+            new Date(p.initiationDate).getFullYear() === currentYear
+        );      
+        let selectedPeriod = currentYearPeriods.length > 0 
+            ? currentYearPeriods.reduce((latest, p) => 
+                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+            ) 
+            : this.PERIODS.reduce((latest, p) => 
+                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+            );  
+        this.selectedPeriod = selectedPeriod;
+        
         this.accounts = await this.getData();
         if(this.accounts)
             this.calculateYearlyData(this.accounts);
@@ -164,10 +166,6 @@ export class AonMobileHome extends AonElement {
         divGeneral.appendChild(apps);
 
         this.appendChild(divGeneral);
-
-        let last = this.getElement("lastTimeUser");
-        if(last)
-            last.style.display = "none";
     }
 
     async widgetTimeControl() {
@@ -176,6 +174,7 @@ export class AonMobileHome extends AonElement {
         widgetTC.className = "aonWidgetTCMobile";
 
         let aonSign = new AonSignMobile();
+        aonSign.showInfo = false;
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
         widgetTC.appendChild(aonSign);
@@ -389,12 +388,12 @@ export class AonMobileHome extends AonElement {
         titulo.appendChild(bancosTitulo);
     
         let bancos = this.createElement(TAG.SPAN);
-        bancos.innerHTML = "(...)"; // Mientras carga
+        bancos.innerHTML = "(...)"; 
         bancos.className = "aonWidgetNominaMobileFecha";
         titulo.appendChild(bancos);
     
         let total = this.createDiv();
-        total.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`; // Usamos la clase de carga correcta
+        total.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`; 
         total.className = "aonWidgetNominaMobileNomina";
         total.style.marginTop = "10px";
     
