@@ -87,7 +87,6 @@ import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Period;
 
 public class SistemaRED2AON {
@@ -950,8 +949,13 @@ public class SistemaRED2AON {
 			return null;
 		});
 
-		return EmployeeParse.IdcToEmployeeOccam(SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()),
-				certificate.getPassword(), certificate.getType(), regime, ccc, naf, startDate));
+    return null == startDate ? new Employee() :
+      EmployeeParse.IdcToEmployeeOccam(
+      SistemaRED.getIDC(
+      new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+              regime, ccc, naf, startDate
+          )
+      );
 	}
 	
 	

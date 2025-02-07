@@ -4,65 +4,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.occam.api.model.type.ContractType;
-import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ContractTransformDialog extends AonCustomDialog {
 	
-	// ------------------------------------------------- UIBinder
+	private HTMLPanel container = new HTMLPanel("");
+	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	interface Certifica2DialogUIBinder extends UiBinder<Widget, ContractTransformDialog> {}
-
-	private static final Certifica2DialogUIBinder binder = GWT.create(Certifica2DialogUIBinder.class);
+	private AonCustomTextBox contractIde = new AonCustomTextBox("IDE Contrato");
+	private AonCustomListBox tc2 = new AonCustomListBox("Tipo contrato (TC2)");
+	private AonCustomDateBox startDateBx = new AonCustomDateBox("Fecha inicio");
+	private AonCustomCheckBox discontinuosInd = new AonCustomCheckBox("Indicador discontinuidad");
+	private AonCustomSuggestBox cno = new AonCustomSuggestBox("C.N.O.");
 	
-	// ------------------------------------------------- UIFileds
-	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {}
-	
-	@UiField
-	TextBox contractIde;
-	
-	@UiField
-	ListBox tc2;
-	
-	@UiField
-	DateBoxEx startDateBx;
-	
-	@UiField
-	Button discontinuosInd;
-	
-	@UiField
-	SuggestBox cno;
-	
-	@UiField
-	HTMLPanel buttonsPanel;
+	private HTMLPanel buttonsPanel = new HTMLPanel("");
 	
 	// ------------------------------------------------- Variables
 	
@@ -79,13 +53,69 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 	protected ContractTransformDialog(EmployeeContractInfo contractEmployeeInfoIn) {
 		
 		setCaption("Transformaci\u00F3n");
-		
-		setWidget(binder.createAndBindUi(this));
-		
-		this.showCloseButton(true);
+		showCloseButton(true);
 		
 		contractEmployeeInfo = contractEmployeeInfoIn;
 		
+		getCNOs(end -> {
+			initializeCNOSuggestions();
+			
+			initializeView();
+			getButtonsPanel();
+			
+			showDialog();
+		});
+	}
+	
+	private void initializeCNOSuggestions() {
+		List<String> cnoEntries = new ArrayList<String>();
+		cnoMap.entrySet().forEach(entry -> cnoEntries.add(entry.getKey() + " - " + entry.getValue().getTitle()));
+		
+		List<String> cnoSuggest = new ArrayList<>();
+		for(String cnoStr : cnoEntries) cnoSuggest.add(cnoStr);
+		
+		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) cno.getSuggestBox().getSuggestOracle();
+		orclIbans.addAll(cnoSuggest);
+		cno.setAutoSelectEnabled(true);
+	}
+	
+	private void initializeView() {
+		container.addStyleName(AON.CSS.aonItemFlex());
+		container.addStyleName(AON.CSS.aonFlexColumn());
+		container.getElement().getStyle().setProperty("padding", "1rem");
+		
+		container.add(messagePanel);
+		
+		contractIde.setValue(contractEmployeeInfo.getContractInfo().getSepeId());
+		container.add(contractIde);
+		
+		initContractType();
+		container.add(tc2);
+		
+		startDateBx.addValueChangeHandler(e -> acceptDialog.setEnabled(null != e.getValue()));
+		container.add(startDateBx);
+		
+		container.add(discontinuosInd);
+		
+		CNO cnoObj = cnoMap.get(contractEmployeeInfo.getContractSpecificData().getCno());
+		if(null != cnoObj) cno.setValue(cnoObj.getCode() + " - " + cnoObj.getTitle());
+		container.add(cno);
+	}
+	
+	private void getButtonsPanel() {
+		buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		acceptDialog = new Button();
+		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptDialog.setText("Aceptar");
+		acceptDialog.setEnabled(false);
+		acceptDialog.addClickHandler(e -> onAcceptDialog());
+		
+		buttonsPanel.add(acceptDialog);
+		container.add(buttonsPanel);
+	}
+
+	private void getCNOs(Consumer<Map<String, CNO>> consumer) {
 		impl.getCNOs(new AsyncCallback<Map<String, CNO>>() {
 
 			@Override
@@ -96,116 +126,47 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 			@Override
 			public void onSuccess(Map<String, CNO> result) {
 				cnoMap = result;
-				
-				List<String> cnoEntry = new ArrayList<>();
-				for(Entry<String, CNO> entry : cnoMap.entrySet())
-					cnoEntry.add(entry.getKey() + " - " + entry.getValue().getTitle());
-				
-				List<String> cnoSuggest = new ArrayList<>();
-				for(String cnoStr : cnoEntry)
-					cnoSuggest.add(cnoStr);
-				
-				MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) cno.getSuggestOracle();
-				orclIbans.addAll(cnoSuggest);
-				cno.setAutoSelectEnabled(true);
-				
-				getButtonsPanel();
-				initializeView();
-				showDialog();
-			}});	
+				consumer.accept(result);
+			}
+		});	
 	}
 	
-	// ------------------------------------------------- UIHandlers
-	
-	@UiHandler("discontinuosInd")
-	void onDiscontinuosIndClick(ClickEvent event) {
-		Boolean oldValue = isActiveToggleButton(discontinuosInd);
-		Boolean value = !oldValue;
-		getEnableDisableButton(discontinuosInd, value);
-	}
-	
-	// ------------------------------------------------- InitializeView
-	
-	private void initializeView() {
-		this.contractIde.setValue(contractEmployeeInfo.getContractInfo().getSepeId());
-		getEnableDisableButton(discontinuosInd, false);
-		initContractType();
-		initCNO();
-		
-		acceptDialog.setEnabled(false);
-		startDateBx.addValueChangeHandler(e -> acceptDialog.setEnabled(null != e.getValue()));
-	}
-
-	private void initCNO() {
-		String codeCNO = contractEmployeeInfo.getContractSpecificData().getCno();
-		CNO cnoObj = cnoMap.get(codeCNO);
-		if(null != cnoObj)
-			cno.setText(codeCNO + " - " + cnoObj.getTitle());
-	}
-
 	private void initContractType() {
 		// TIPO DE CONTRATO
 		ContractType contractType = new ContractType();
-		tc2.addItem("-", "-1");
-		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet()) {
-			if(entry.getKey() < 400 && entry.getKey() % 10 == 9)
-				tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
-		}
-	}
-	
-	// ------------------------------------------------- ToggleButton
-	
-	private void getEnableDisableButton(Button button, boolean disabled) {
-		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE);
-		button.removeStyleName(AON.AON_NO_MARGIN);
-		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
 		
-		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
-		button.setStyleName(AON.AON_NO_MARGIN, true);
-		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		tc2.clearItems();
+		tc2.addItem("-", "-1");
+		
+		contractType.getContractTypes().entrySet().stream()
+			.filter(entry -> entry.getKey() < 400 && entry.getKey() % 10 == 9)
+			.forEach(entry -> tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0')));
+		
 	}
 	
-	private boolean isActiveToggleButton(Button button) {
-		return AonStringUtils.containsIgnoreCase(button.getStyleName(), AON.AON_ICON_ENABLE);
-	}
-
 	// ------------------------------------------------- Auxiliar Methods
 	
 	public void showDialog() {
 		Scheduler.get().scheduleDeferred(() -> {
+			setWidget(container);
 			center();
 			show();
 		});
 	}
-	
-	private String getCNO() {
-		String cnoStr = cno.getValue();
-		String cnoValue = "";
-		if(!AonStringUtils.isBlank(cnoStr))
-			cnoValue = cnoStr.split(" -")[0];
-		return cnoValue;
-	}
 
 	// ------------------------------------------------- ButtonsPanel
 	
-	private void getButtonsPanel() {
-		acceptDialog = new Button();
-		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptDialog.setText("Aceptar");
-		acceptDialog.addClickHandler(e -> onAcceptDialog());
-		
-		buttonsPanel.add(acceptDialog);
-	}
-	
 	private void onAcceptDialog() {
+		acceptDialog.setEnabled(false);
+		
 		ContractTransform contractTransform = new ContractTransform();
 		contractTransform.setContractId(contractEmployeeInfo.getContractInfo().getContractId())
 						 .setDomainId(contractEmployeeInfo.getEmployeeInfo().getDomain())
-						 .setTc2(tc2.getSelectedValue())
+						 .setTc2(tc2.getValue())
 						 .setContractStartDate(startDateBx.getValue())
 						 .setSepeId(contractIde.getValue())
-						 .setDiscontinuosInd(isActiveToggleButton(discontinuosInd))
-						 .setCno(getCNO());
+						 .setDiscontinuosInd(discontinuosInd.getValue())
+						 .setCno(AonStringUtils.isBlank(cno.getValue()) ? "" : cno.getValue().split(" -")[0]);
 		
 		employeesService.contractTransform(contractTransform, new AsyncCallback<Void>() {
 			
@@ -217,10 +178,8 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Map<String, String> errorMap = new HashMap<>();
-				errorMap.put("Error pr\u00F3rroga", "No se ha podido realizar la pr\u00F3rroga correctamente");
-				fireError(errorMap);
-				hide();
+				AonMessagePanel.showError(messagePanel, "Error pr\u00F3rroga : " + caught.getMessage());
+				acceptDialog.setEnabled(true);
 			}
 		});
 	}
@@ -228,5 +187,4 @@ public abstract class ContractTransformDialog extends AonCustomDialog {
 	// ------------------------------------------------- Abstract Methods
 	
 	protected abstract void onTransformDone();
-	protected abstract void fireError(Map<String, String> errorMap);
 }

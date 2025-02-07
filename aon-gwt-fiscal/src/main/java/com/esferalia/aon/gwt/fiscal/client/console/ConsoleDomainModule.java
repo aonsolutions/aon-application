@@ -39,10 +39,12 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -561,12 +563,17 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					, innerCallback::onMultipleDelete);
 			}
 		});
+		toolbar.add(deleteButton);
 		
 		extractButton.setEnabled(false);
 		extractButton.addClickHandler(e -> duplicateDomain());
-		
-		toolbar.add(deleteButton);
 		toolbar.add(extractButton);
+		
+		
+		AonToolbarButton testButton = new AonToolbarButton( "TEST CONEXION", AON.CSS.aonIconTune());
+		testButton.addClickHandler(event -> testConnections());
+		toolbar.add(testButton);
+
 		runningLabel.setVisible(false);
 		runningLabel.setStyleName(AON.CSS.aonMarginLeft());
 		runningLabel.addStyleName(AON.CSS.aonColorWhite());
@@ -755,5 +762,39 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		}
 	}
 	
+	// ************************************** [TEST CONNECTIONS]
+	private void testConnections() {
+		String tabLabel = "TESTS";
+		AonConsoleProgress tabWidget = (AonConsoleProgress) tabLayout.getWidget(tabLabel);
+		if (tabWidget != null) {
+			tabWidget.reset();
+		} else {
+			tabWidget = new AonConsoleProgress( filterPanel.isAdvancedMode() );
+			AonCloseTab closeTab = new AonCloseTab(tabLabel, true);
+			closeTab.addCloseHandler(e -> {
+				tabLayout.remove(tabLabel);
+				if ( tabLayout.getWidgetCount() == 0) {
+					closeFootPanel();
+				}
+			});
+			tabLayout.add(tabWidget, closeTab, tabLabel);
+		}
+		tabLayout.selectTab(tabWidget);
+		openFootPanelIfNeeded();
+		AonConsoleProgress tWidget = tabWidget;
+		ConsoleModule.CONSOLE_SERVICE.testConnections(new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String text) {
+				tWidget.add( new HTMLPanel(text ) );
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert( "Error interno: " + caught.getMessage());
+				
+			}
+		});
+	}
 }
 

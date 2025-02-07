@@ -8,6 +8,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
+import net.aonsolutions.aon.tbai.InvoiceCommunication;
 
 public class LROE140 extends LROE {
 	
@@ -19,6 +20,22 @@ public class LROE140 extends LROE {
 	private final static String TEST_SURNAME1_140 = "Vux9anjAES"; 
 	private final static String TEST_SURNAME2_140 = "EMPTmw3fmi";
 	
+	protected Cabecera140Type buildCabecera(InvoiceCommunication ic, LROEInfo info) {
+		Cabecera140Type cabecera = new Cabecera140Type();
+		cabecera.setModelo(info.getModelo());
+		NIFPersonaType nif = new NIFPersonaType();
+		nif.setNIF(!ic.getPerson().isEmpty() ? ic.getPerson().getDocument() : ic.getCompany().getDocument());
+		nif.setApellidosNombreRazonSocial(!ic.getPerson().isEmpty() ? ic.getPerson().getName() : ic.getCompany().getName());
+		cabecera.setObligadoTributario(nif);
+		cabecera.setEjercicio(info.getEjercicio());
+		cabecera.setCapitulo(info.getCapitulo());
+		cabecera.setSubcapitulo(info.getSubcapitulo());
+		cabecera.setOperacion(info.getOperacion());
+		cabecera.setVersion(info.getVersion());
+		return cabecera;
+	}
+	
+	@Deprecated
 	protected Cabecera140Type buildCabecera(Person person, LROEInfo info) {
 		Cabecera140Type cabecera = new Cabecera140Type();
 		cabecera.setModelo(info.getModelo());
@@ -34,6 +51,27 @@ public class LROE140 extends LROE {
 		return cabecera;
 	}
 	
+	protected JSONObject buildJSON(InvoiceCommunication ic, LROEInfo info) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.CON, "LROE");
+		json.put(IJsonNames.APA, info.getSubcapitulo());
+		JSONObject json2 = new JSONObject();
+		json2.put(IJsonNames.NIF, !ic.getPerson().isEmpty() ? ic.getPerson().getDocument().replace(" ", "") : ic.getCompany().getDocument().replace(" ", "")); 
+		json2.put(IJsonNames.NRS, !ic.getPerson().isEmpty() && AonStringUtils.isNotBlank(ic.getPerson().getFirstName()) 
+				? ic.getPerson().getFirstName() : ic.getCompany().getName());
+		if(!ic.getPerson().isEmpty() && AonStringUtils.isNotBlank(ic.getPerson().getFirstSurname())) json2.put(IJsonNames.AP1, ic.getPerson().getFirstSurname()); 
+		if(!ic.getPerson().isEmpty() && AonStringUtils.isNotBlank(ic.getPerson().getSecondSurname())) json2.put(IJsonNames.AP2, ic.getPerson().getSecondSurname());
+		json.put(IJsonNames.INTE, json2);
+
+		JSONObject drs = new JSONObject();
+		drs.put(IJsonNames.MODE, info.getModelo());
+				
+		drs.put(IJsonNames.EJER, info.getEjercicio());
+		json.put(IJsonNames.DRS, drs);
+		return json;
+	}
+	
+	@Deprecated
 	protected JSONObject buildJSON(Person person, LROEInfo info) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, "LROE");

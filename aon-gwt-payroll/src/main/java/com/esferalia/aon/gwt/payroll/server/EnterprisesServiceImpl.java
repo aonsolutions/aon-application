@@ -2480,7 +2480,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			// For already PrevMov register in Aon
 			Date endDate = new Date(AonDateUtils.addMonths(today, 1).getTime());
 			
-			List<Employee> aonEmployees = getCCCEmployees(connection, today, endDate, cccIds);
+			List<Employee> aonEmployees = cccIds.isEmpty() ? new ArrayList<Employee>() : getCCCEmployees(connection, today, endDate, cccIds);
 			aonEmployees.forEach(e -> System.out.println(e.getName() + ", document : " + e.getDocument() + ", naf : " + e.getSocialSecurity() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
 
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();

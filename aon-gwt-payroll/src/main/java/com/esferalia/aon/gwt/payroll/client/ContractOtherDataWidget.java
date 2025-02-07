@@ -415,10 +415,6 @@ public abstract class ContractOtherDataWidget extends FlowPanel {
 		table.add(createRow(overnightRegimeTB, quoteReductionTCB));
 		table.add(createRow(sepeOfficeCOTB, quoteReductionFDB));
 		
-		enterpriseAgentNameTB.setValue("");
-		enterpriseAgentSurnameTB.setValue("");
-		enterpriseAgentNIFTB.setValue("");
-		enterpriseAgentPositionTB.setValue("");
 		minorAgentTB.setValue("");
 		minorAgentNIFTB.setValue("");
 		minorAgentQualityOfTB.setValue("");

@@ -1,29 +1,55 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
+import java.util.LinkedList;
+
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleRowQueryViewer.AonConsoleRowViewerCallback;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 class ConsoleRowCompositeQueryViewer extends SimpleLayoutPanel {
 	
-	private final AonTabLayoutPanel tab;
+	private final AonTabLayoutPanel tab = new AonTabLayoutPanel(30, Unit.PX);
 	
 	ConsoleRowCompositeQueryViewer(ConsoleTableRow tableRow) {
-		tab = new AonTabLayoutPanel(30, Unit.PX); 
+		show(tableRow);
+	}
+	
+	ConsoleRowCompositeQueryViewer(LinkedList<ConsoleTableRow> rows) {
+		if (AonCollectionUtils.isEmpty(rows)) {
+			Label label = new Label("Fila no encontrada");
+			label.setStyleName(AON.CSS.aonMargin());
+			label.addStyleName(AON.CSS.aonBorder());
+			label.addStyleName(AON.CSS.aonBold());
+			label.addStyleName(AON.CSS.aonTextCenter());
+			setWidget( label );
+		} else  if (AonCollectionUtils.size(rows) == 1) {
+			show(rows.get(0));
+		} else {
+			setWidget( tab );
+			String tabLabel = "Lista de " + rows.get(0).getTable();
+			tab.add(new ConsoleRowQueryList( rows, new AonConsoleRowCompositeViewerCallback() )
+					,new AonCloseTab(tabLabel, false)
+					,tabLabel);
+		}
+	}
+
+	private void show(ConsoleTableRow tableRow) {
 		setWidget( tab);
 		String tabLabel = tableRow.getTable() + " (" + tableRow.getId() + ")";
 		tab.add(new ConsoleRowQueryViewer( tableRow, new AonConsoleRowCompositeViewerCallback() )
 				,new AonCloseTab(tabLabel, false)
 				,tabLabel);
-		
 	}
-	
+
 	class AonConsoleRowCompositeViewerCallback implements AonConsoleRowViewerCallback {
 
 		@Override

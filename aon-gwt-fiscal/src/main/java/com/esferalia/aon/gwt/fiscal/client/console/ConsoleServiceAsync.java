@@ -23,7 +23,10 @@ public interface ConsoleServiceAsync {
 	void availableUsers(Occam occam, Integer domainId, AsyncCallback<LinkedList<User>> callback);
 	void getAonTables(AsyncCallback<String[]> asyncCallback);
 	void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
+	void getTableRows(ConsoleTableRow row, AsyncCallback<LinkedList<ConsoleTableRow>> callback);
 	void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
 	void update(ConsoleTableRow row, ConsoleTableField field, AsyncCallback<ConsoleTableRow> callback);
 	void delete(ConsoleTableRow row, AsyncCallback<Boolean> callback);
+	
+	void testConnections(AsyncCallback<String> callback);
 }

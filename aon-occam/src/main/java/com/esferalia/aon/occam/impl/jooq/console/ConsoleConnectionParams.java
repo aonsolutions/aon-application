@@ -4,15 +4,24 @@ import org.jooq.Schema;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 
 
 public class ConsoleConnectionParams {
 	
+	private ConsoleSchema consoleSchema;
 	private String schemaName;
 	private Schema schema;
 	private AONContext ctx;
 	private Domain domain;
 	
+	public ConsoleSchema getConsoleSchema() {
+		return consoleSchema;
+	}
+	public ConsoleConnectionParams setConsoleSchema(ConsoleSchema consoleSchema) {
+		this.consoleSchema = consoleSchema;
+		return this;
+	}
 	public String getSchemaName() {
 		return schemaName;
 	}

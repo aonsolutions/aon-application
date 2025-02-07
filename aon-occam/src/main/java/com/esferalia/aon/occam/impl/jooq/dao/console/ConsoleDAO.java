@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -52,6 +52,7 @@ import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -63,7 +64,9 @@ public class ConsoleDAO {
 
 	private static final String INFORMATION_SCHEMA = "information_schema";
 	private static final String MYSQL = "mysql";
+	private static final String SYS = "sys";
 	private static final String PERFORMANCE_SCHEMA = "performance_schema";
+	private static final String DOMAINEXTRACT_SCHEMA = "domainextract-aonsolutions-net";
 	
 	protected ConsoleDAO() {
 	}
@@ -118,7 +121,7 @@ public class ConsoleDAO {
 		
 	}
 	
-	public static Stream<Schema> getSchemas(AONContext ctx) {
+	private static Stream<Schema> getSchemas(AONContext ctx) {
 		return  ctx.getDslContext()
 			.meta()
 			.getSchemas()
@@ -129,8 +132,10 @@ public class ConsoleDAO {
 		return getSchemas(ctx)
 			.filter(schema -> !INFORMATION_SCHEMA.equals(schema.getName()))
 			.filter(schema -> !MYSQL.equals(schema.getName()))
+			.filter(schema -> !SYS.equals(schema.getName()))
 			.filter(schema -> !PERFORMANCE_SCHEMA.equals(schema.getName()))
-			;			
+			.filter(schema -> !DOMAINEXTRACT_SCHEMA.equals(schema.getName()))
+		;			
 	}
 
 	public static Domain changeActive(AONContext ctx, Integer domainId, boolean active) {
@@ -290,38 +295,45 @@ public class ConsoleDAO {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).field("domain");
 	}
 	
+	public static Stream<ConsoleTableRow> getTableRows(AONContext ctx, ConsoleTableRow params) {
+		return getTableRowsStream(ctx, params, 50);
+	}
+
 	public static ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow params) {
+		return getTableRowsStream(ctx, params, 1)
+			.findFirst()
+			.orElse(null);
+	}
+	
+	private static Stream<ConsoleTableRow> getTableRowsStream(AONContext ctx, ConsoleTableRow params, int limit) {
 		try {
 			ConsoleTableRow tableRow = getTableRowMetadata( ctx, params );
 			Table<?> table = AON_MASTER.getTable(params.getTable());
-			List<Field<?>> selectedFields = new LinkedList<>();
-			tableRow.getFields()
-				.values()
-				.stream()
+			List<Field<?>> selectedFields = AonCollectionUtils.stream( tableRow.getFields().values())
 				.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
-				.forEach( f -> selectedFields.add(table.field( f.getColumn() ) ));
-			Optional<Record> rec = ctx.getDslContext().select( selectedFields )
+				.map( f -> table.field( f.getColumn() ))
+				.collect(Collectors.toCollection(LinkedList::new));
+			return ctx.getDslContext().select( selectedFields )
 				.from(table)
 				.where( getConditions(params))
-				.limit(1)
+				.limit(limit)
 				.stream()
-				.findFirst();
-			if (rec.isPresent()) {
-				Field<?> pkField = getPkField(params.getTable());
-				tableRow.setId( (Integer) rec.get().getValue(pkField) );
-				selectedFields	
-					.stream()
-					.forEach( field -> tableRow.getField( field.getName() ).setValue( toString(
-							tableRow.getField( field.getName() ).getType(),
-							rec.get().getValue(field)) ));
-				return tableRow; 
-			} 
-			return null;
+				.map( r -> {
+					ConsoleTableRow tr = getTableRowMetadata( ctx, params );
+					Field<?> pkField = getPkField(params.getTable());
+					tr.setId( (Integer) r.getValue(pkField) );
+					selectedFields	
+						.stream()
+						.forEach( field -> tr.getField( field.getName() ).setValue( toString(
+								tr.getField( field.getName() ).getType(),
+								r.getValue(field)) ));
+					return tr; 
+				});
 		} catch (Exception e) {
 			throw new AonCoreException( "Error:" + e.getMessage() );
 		}
 	}
-	
+
 	private static ConsoleTableFieldType getConsoleTableFieldType(Field<?> field) {
 		if (field.getDataType() == null ) return null;
 		if (field.getDataType().getSQLDataType().isString()) return ConsoleTableFieldType.STRING;
@@ -388,7 +400,11 @@ public class ConsoleDAO {
 			
 		Table<?> table = AON_MASTER.getTable(params.getTable());
 		Arrays.stream( table.fields() )
-			.map( field -> new ConsoleTableField().setColumn( field.getName() ).setType( getConsoleTableFieldType(field)))
+			.map( field -> new ConsoleTableField()
+					.setColumn( field.getName() )
+					.setType( getConsoleTableFieldType(field))
+					.setLength( field.getDataType().length() )
+				)
 			.forEach( tableRow::add );
 		table
 			.getPrimaryKey()
