@@ -80,12 +80,18 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			.stream()
 			.forEach( field -> grid.addRow()
 				.addCell( new Label(field.getColumn()) , AON.CSS.aonTableLabel())
-				.addCell( getTextBox(field))
+				.addCell( getTextBoxForForm(tableRow, callback, field))
 		);
 		return grid;
 	}
 	
-	private Widget getTextBox(ConsoleTableField field ) {
+	static Widget getTextBoxForForm(ConsoleTableRow tr, AonConsoleRowViewerCallback cbk, ConsoleTableField field ) {
+		return getTextBox(tr, cbk, field, true);	
+	}
+	static Widget getTextBoxForList(ConsoleTableRow tr, AonConsoleRowViewerCallback cbk, ConsoleTableField field ) {
+		return getTextBox(tr, cbk, field, false);
+	}
+	static Widget getTextBox(ConsoleTableRow tr, AonConsoleRowViewerCallback cbk, ConsoleTableField field , boolean isForm) {
 		FlowPanel valuePanel = new FlowPanel();
 		valuePanel.setStyleName(AON.CSS.aonDisplayFlex());
 		
@@ -98,7 +104,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			private void change( String newValue, Consumer<String> onFailureCallback ) {
 				AonConfirmDialog.showConfirm(MODIFICACION
 						,MODIFICAR_EL_DATO_EN_BD
-						, () -> ConsoleModule.CONSOLE_SERVICE.update(tableRow, field.setNewValue( newValue ) , new AsyncCallback<ConsoleTableRow>() {
+						, () -> ConsoleModule.CONSOLE_SERVICE.update(tr, field.setNewValue( newValue ) , new AsyncCallback<ConsoleTableRow>() {
 							@Override
 							public void onSuccess(ConsoleTableRow result) {
 								String style;
@@ -125,16 +131,20 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 						}
 				));
 			}
+			
 			private void styleWidget(Widget w) {
-				w.addStyleName( AON.CSS.aonWidthAll());
-				w.addStyleName( AON.CSS.aonBorderNone());
-				w.addStyleName( AON.CSS.aonFlexGrow1());
+				if (isForm) {
+					w.addStyleName( AON.CSS.aonWidthAll());
+					w.addStyleName( AON.CSS.aonBorderNone());
+					w.addStyleName( AON.CSS.aonFlexGrow1());
+				} 
 			}
 			
 			@Override
 			public Widget visitString() {
 				AonTextBox text = new AonTextBox();
 				text.setEnabled( !field.isPrimaryKey() );
+				field.getLength().ifPresent( l -> text.setVisibleLength( l ) );
 				styleWidget(text);
 				text.setValue( Objects.toString(field.getValue(), null));
 				text.addValueChangeHandler(e -> change(text.getValue(), v -> text.setValue( Objects.toString(v , null))));
@@ -222,11 +232,11 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 		if (field.isForeignKey()) {
 			String title = "Clave refenrencial: " + field.getForeignTable() + "." + field.getForeignColumn();
 			AonTableButton fkButton = new AonTableButton(title, AON.CSS.aonIconRedo());
-			if (callback != null) {
+			if (cbk != null) {
 				fkButton.addClickHandler( e ->
-					callback.onLink( 
+					cbk.onLink( 
 						new ConsoleTableRow()
-							.setSchema( tableRow.getSchema() )
+							.setSchema( tr.getSchema() )
 							.setTable( field.getForeignTable() )
 							.setId( AonNumberUtils.toInteger(field.getValue() ))
 					));

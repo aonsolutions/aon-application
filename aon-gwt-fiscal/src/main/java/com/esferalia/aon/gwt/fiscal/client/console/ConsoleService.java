@@ -26,7 +26,10 @@ public interface ConsoleService extends RemoteService {
 	LinkedList<User> availableUsers(Occam occam, Integer domainId) throws AonCoreException;
 	String[] getAonTables() throws AonCoreException;
 	ConsoleTableRow getTableRow(ConsoleTableRow row) throws AonCoreException;
+	LinkedList<ConsoleTableRow> getTableRows(ConsoleTableRow row) throws AonCoreException;
 	ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) throws AonCoreException;
 	ConsoleTableRow update(ConsoleTableRow row, ConsoleTableField field) throws AonCoreException;
 	Boolean delete(ConsoleTableRow row) throws AonCoreException;
+	
+	String testConnections();	
 }

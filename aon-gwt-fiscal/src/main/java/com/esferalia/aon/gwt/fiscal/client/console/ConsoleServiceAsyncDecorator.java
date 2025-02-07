@@ -70,6 +70,12 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
+	public void getTableRows(ConsoleTableRow row, AsyncCallback<LinkedList<ConsoleTableRow>> callback) {
+		AON.start();
+		fsa.getTableRows(row, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback) {
 		AON.start();
 		fsa.getTableRowMetadata(row, new AsyncCallbackWrapper<>(callback));
@@ -91,5 +97,11 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	public void delete(ConsoleTableRow row, AsyncCallback<Boolean> callback) {
 		AON.start();
 		fsa.delete(row, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void testConnections(AsyncCallback<String> callback) {
+		AON.start();
+		fsa.testConnections(new AsyncCallbackWrapper<>(callback));
 	}
 }

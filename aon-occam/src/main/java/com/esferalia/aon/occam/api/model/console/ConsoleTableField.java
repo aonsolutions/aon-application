@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.console;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public class ConsoleTableField implements Serializable {
 	
@@ -8,6 +9,7 @@ public class ConsoleTableField implements Serializable {
 	
 	private String column;
 	private ConsoleTableFieldType type;
+	private Integer length;
 	private String value;
 	private boolean primaryKey;
 	private boolean foreignKey;
@@ -89,5 +91,12 @@ public class ConsoleTableField implements Serializable {
 	public ConsoleTableField setQueryValue(String queryValue) {
 		this.queryValue = queryValue;
 		return this;
+	}
+	public Optional<Integer> getLength() {
+		return Optional.ofNullable(length);
+	}
+	public ConsoleTableField setLength(int length) {
+		this.length = length;
+		return this; 
 	}
 }

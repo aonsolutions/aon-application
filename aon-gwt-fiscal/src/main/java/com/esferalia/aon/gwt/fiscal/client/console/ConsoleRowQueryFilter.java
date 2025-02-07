@@ -121,8 +121,13 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 						.filter( key -> getRowMetadata().getField(key).getType() != ConsoleTableFieldType.BINARY)
 						.forEach( key -> {
 							AonTextBox box = new AonTextBox();
+							String keyType = AonStringUtils.substring(getRowMetadata().getField(key).getType().name(),0,3);
 							box.addValueChangeHandler( e -> getRowMetadata().getField(key).setQueryValue( box.getValue()) );
-							tab.addLabelWidgetRow(key, box);
+							tab.addRow()
+								.addCell(new Label(keyType), AON.CSS.aonWidth20())
+								.addCell(new Label(key), AON.CSS.aonTableLabel(), AON.CSS.aonWidth150())
+								.addCell(box, AON.CSS.aonWidthAuto())
+							;
 						});
 				}
 			}

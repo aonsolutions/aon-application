@@ -1,22 +1,32 @@
 package com.esferalia.aon.gwt.fiscal.server.console;
 
+
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleService;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.j2html.tags.specialized.DivTag;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
+import static com.esferalia.aon.watson.j2html.TagCreator.*;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
 public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet implements ConsoleService {
@@ -64,6 +74,11 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 	
 	@Override
+	public LinkedList<ConsoleTableRow> getTableRows(ConsoleTableRow row) throws AonCoreException {
+		return CONSOLE.getTableRows(row);
+	}
+
+	@Override
 	public ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) throws AonCoreException {
 		return CONSOLE.getTableRowMetadata(row);
 	}
@@ -82,5 +97,20 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	public Boolean delete(ConsoleTableRow row) throws AonCoreException {
 		return CONSOLE.delete(row);
 	}
-	
+
+	@Override
+	public String testConnections() {
+		List<ConsoleSchema> css = Arrays.asList(ConsoleSchema.values());
+		return div(
+			each( css , cs -> {
+				String result = "";
+				try (CloseableAONContext ctx = AONContext.getAONContext(cs.getDomainName(), cs.getUser())) {
+					result = "OK";
+				} catch (Exception e) {
+					result = "ERROR " + e.getMessage();
+				}
+				return div( "Testing ...: " + cs.getSchema()  + " --> " + result);
+			}) 
+		).render();
+	}
 }
