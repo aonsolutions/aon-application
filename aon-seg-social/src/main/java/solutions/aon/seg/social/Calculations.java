@@ -55,14 +55,28 @@ class Calculations {
 	    HtmlPage fill(HtmlPage htmlPage) throws IOException, SegSocialException;
 	}
 
-    @FunctionalInterface
     static interface CalcCallback {
+	    boolean filter(String liquidation, String naf);
 	    void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs);
 	}
     
-    private static void trace(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs) {
+    static class TraceCalcCallback implements CalcCallback {
+        private static final CalcCallback INSTANCE = new TraceCalcCallback();
+        
+        private TraceCalcCallback() {
+		}
+
+        @Override
+    	public boolean filter(String liquidation, String naf) {
+    		return true;
+    	}
     	
+        @Override
+    	public void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs) {
+
+    	}
     }
+    
 
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationQueryByCCC(
 			final InputStream certificateInputStream,
@@ -84,7 +98,7 @@ class Calculations {
 				dateTo, 
 				liqType, 
 				liqOrigin, 
-				Calculations::trace
+				TraceCalcCallback.INSTANCE
 				);
 	}
 
@@ -132,6 +146,16 @@ class Calculations {
 						htmlPage=formDatos.getInputByValue("Consultar").click();
 						DomNode nafElement = htmlPage.querySelector("abbr[title='Número de afiliación a la Seguridad Social']").getNextSibling();
 						String naf = Toolkit.removeWeirdCharacters(nafElement.getVisibleText());
+
+						if ( !callback.filter(liquidationType, naf)) {
+							htmlPage = htmlPage.getElementByName("SPM.ACC.ATRAS").click();
+							
+							htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+							formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+							listRadiosWorkers=formDatos.getRadioButtonsByName("NAF");
+							continue;
+						}
+						
 						htmlPage = htmlPage.getElementById("SPM.ACC.RELACION_TRAMOS").click();
 						
 						List<DomElement> radios = htmlPage.getElementsByName("TRAMO");
@@ -295,7 +319,7 @@ class Calculations {
 			    numLiquidation,
 			    authorized,
 			    nafs,
-			    Calculations::trace
+				TraceCalcCallback.INSTANCE
 				);
 		
 	}
@@ -346,7 +370,7 @@ class Calculations {
 				liqOrigin, 
 				authorized, 
 				nafs,
-				Calculations::trace);
+				TraceCalcCallback.INSTANCE);
 	}
 
 	public static Map<String, Map<String,Map<Period, Map<String, Calc>>>> workersCalculationByCCCandNAFS(
@@ -433,6 +457,10 @@ class Calculations {
 					htmlPage = htmlPage.getElementByName("SPM.ACC.CONSULTA_TRABAJADORES").click();
 					
 					for(String naf : nafs) {
+						
+						if ( !callback.filter(liquidationType, naf) ) 
+							continue;
+						
 						HtmlForm nafForm = (HtmlForm) htmlPage.getElementById("idFormularioSeleccionPorNAF");
 						
 						if ( nafForm != null ) {
@@ -478,27 +506,34 @@ class Calculations {
 							
 							LinkedHashMap<String, Calc> employeeCalcs = new LinkedHashMap<>();
 							
-							trList.forEach(trNode -> {
-								HtmlTableRow tr = (HtmlTableRow) trNode;
-								List<HtmlTableCell> cells = tr.getCells();
-								
-								String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
-								
-								Double base = getDoubleValue(cells.get(1));
-								Double enterprise = getDoubleValue(cells.get(2));
-								Double employee = getDoubleValue(cells.get(3));
-								Double total = getDoubleValue(cells.get(4));
-								
-								Calc calc = new Calc()
-										.setBase(base)
-										.setTotal(total)
-										.setEmployee(employee)
-										.setEnterprise(enterprise)
-										;
-								
-								employeeCalcs.put(description, calc);
-								
-							});
+							try {
+								trList.forEach(trNode -> {
+									HtmlTableRow tr = (HtmlTableRow) trNode;
+									List<HtmlTableCell> cells = tr.getCells();
+									
+									String description = Toolkit.removeWeirdCharacters(cells.get(0).getVisibleText());
+									
+									Double base = getDoubleValue(cells.get(1));
+									Double enterprise = getDoubleValue(cells.get(2));
+									Double employee = getDoubleValue(cells.get(3));
+									Double total = getDoubleValue(cells.get(4));
+									
+									Calc calc = new Calc()
+											.setBase(base)
+											.setTotal(total)
+											.setEmployee(employee)
+											.setEnterprise(enterprise)
+											;
+									
+									employeeCalcs.put(description, calc);
+									
+								});
+							} catch ( IndexOutOfBoundsException noEmployeeCalcsAvailable) {
+								htmlPage = htmlPage.getElementById("paginaVolver").click();
+								liqForm = (HtmlForm) htmlPage.getElementById("idFormularioSeleccionLiquidaciones");
+								continue;
+							}
+							
 							
 							periods.put(null, employeeCalcs);
 

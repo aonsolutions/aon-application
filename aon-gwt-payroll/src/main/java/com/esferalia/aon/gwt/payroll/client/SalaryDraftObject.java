@@ -523,6 +523,8 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		requestDataBuilder
 		.append("&" + SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL());
 		requestDataBuilder
+		.append("&" + SistemaREDService.Parameter.FORCE.name() + "=true");
+		requestDataBuilder
 		.append("&" + SistemaREDService.Parameter.NAF.name() + "=" + getEmployeeSS() );
 		requestDataBuilder
 		.append("&" + SistemaREDService.Parameter.DATE.name() + "=" + "01" + "/" + AonStringUtils.leftPad(Integer.toString(month), 2 , "0") + "/" + year);
