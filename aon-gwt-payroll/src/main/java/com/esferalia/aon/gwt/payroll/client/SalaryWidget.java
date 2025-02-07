@@ -650,6 +650,10 @@ public class SalaryWidget extends AonCustomDockLayout {
 	}
 	
 	public SalaryWidget setContractId(Integer contractId, Date contractEndDate) {
+		// If new contract selected clear selectPdfSalaries
+		if(null != this.contractId && !this.contractId.equals(contractId))
+			selectPdfSalaries.clear();
+		
 		this.contractId = contractId;
 		
 		if( contractEndDate != null && (contractEndDate.before(new Date()) || contractEndDate.equals(new Date())) ) {
