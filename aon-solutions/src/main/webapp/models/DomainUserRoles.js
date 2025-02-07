@@ -322,7 +322,7 @@ export class DomainUserRoles {
 
   isPayroll() {
 		return (this.hasPayroll() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentPayroll()))
-      && (this.isAdmin() || this.hasRole(Role.PAYROLL));
+      && (this.isAdmin() || this.hasRole(Role.PAYROLL) || this.hasOldRole(Role.PAYROLL));
 	}
 
 	isPayrollPortal() {
@@ -332,7 +332,7 @@ export class DomainUserRoles {
 
   isPayrollManager() {
 		return (this.hasPayroll() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentPayroll()))
-      && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER));
+      && (this.isAdmin() || this.hasRole(Role.PAYROLL_MANAGER) || this.hasOldRole(Role.PAYROLL));
 	}
 
   // DOCUMENTAL

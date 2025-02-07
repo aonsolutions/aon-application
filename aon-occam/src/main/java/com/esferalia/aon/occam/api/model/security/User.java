@@ -59,6 +59,11 @@ public class User implements Serializable {
 	//	return d0m41n;
 	//}
 
+	public User setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+
 	public User setDomain(Integer domainId) {
 		this.domain = new Domain().setId(domainId);
 		return this;
