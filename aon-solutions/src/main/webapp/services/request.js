@@ -23,6 +23,15 @@ export const getDefaultSessionData = () => {
     }
 }
 
+export const getParentSessionData = (data) => {
+  return {
+    session_id: LS.getToken(),
+    domain_name: data.parentName,
+    domain_id: data.parentId,
+    domain_login: LS.getDomainLogin()
+  }
+}
+
 export const getProSessionData = () => {
   return {
     session_id: 'AONd95770f269e711eb94390242ac130002',
