@@ -41,7 +41,7 @@ public class Model111ScriptProvider {
 	
 			@Override
 			IModelScript<Mod111Key>[] getScript() {
-				return Model111Bizkaia2022Script.values();
+				return Model111Bizkaia2023Script.values();
 			}
 		}
 		,GIPUZKOA_2023_SCRIPT {

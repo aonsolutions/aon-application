@@ -60,6 +60,8 @@ public class AonFiscalFileUtils {
 		return AonStringUtils.leftPad(AonStringUtils.trimToEmpty(text), size,'0');
 	}
 	public static String text(String text, int size) {
+		if (text != null)
+			text = text.replace("\u00A0", " "); // Espacio no separable, se sustituye por un espacio normal
 		return AonStringUtils.substring(
 			AonStringUtils.rightPad(
 			AonStringUtils.upperCase(

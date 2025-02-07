@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.irpf;
 
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
@@ -11,7 +12,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -27,7 +27,6 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -474,7 +473,9 @@ public class IRPFDAO {
 				,SALARY.MONEY_IRPF_BASE
 				,SALARY.INKIND_IRPF_BASE
 				,SALARY.TOTAL_IRPF
-				,CONTRACT_DATA.EXPRESSION)
+				,CONTRACT_DATA.EXPRESSION
+				,CONTRACT.START_DATE
+				,CONTRACT.END_DATE)
 			.from(SALARY)
 			.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 			.join(REGISTRY).on(REGISTRY.ID.equal(CONTRACT.PERSON))
@@ -672,6 +673,15 @@ public class IRPFDAO {
 			double base = rec.getValue(SALARY.IRPF_BASE);
 			double quota = rec.getValue(SALARY.TOTAL_IRPF);
 			double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
+			
+			// Comprobar si contrato inferior a un año (se usa en modelos 110/111 de Bizkaia)
+			boolean lessOneYearContract = false;
+			if (rec.getValue(CONTRACT.START_DATE) != null && rec.getValue(CONTRACT.END_DATE) != null) {
+				if (AonDateUtils.getDaysBetweenDates(rec.getValue(CONTRACT.START_DATE), rec.getValue(CONTRACT.END_DATE)) < 365)
+					lessOneYearContract = true;
+			}
+			br.setLessOneYearContract(lessOneYearContract);
+				
 			if (AonMathUtils.isZero(inKindBase)) {
 				br.setInKind(false)
 					.setBase(AonMathUtils.round( base))

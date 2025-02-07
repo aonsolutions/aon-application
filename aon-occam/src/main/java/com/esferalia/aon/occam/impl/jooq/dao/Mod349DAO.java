@@ -803,23 +803,30 @@ public class Mod349DAO {
 					// para poder guardarlo posteriormente como rectificacion en el modelo 349
 					int rectificateYear = 0;
 					Period rectificatePeriod = null;
-					if (vat.isInsidePeriod() && vat.getRectificationType() != null && (vat.getRectificationType() == RectificationType.NORMAL_RECTIFIER || vat.getRectificationType() == RectificationType.SPECIAL_RECTIFIER) && vat.getRectificateInvoiceTaxDate() != null) {
+					if (vat.getRectificationType() != null && (vat.getRectificationType() == RectificationType.NORMAL_RECTIFIER || vat.getRectificationType() == RectificationType.SPECIAL_RECTIFIER) && vat.getRectificateInvoiceTaxDate() != null) {
 						// Buscar posible periodo donde se declaro la factura rectificada (mensual, trimestral), segun su fecha de IVA, si es distinto del que se esta declarando, si el periodo es el mismo no se crea linea para la rectificacion en el modelo 349
 						rectificateYear = AonDateUtils.getYear(vat.getRectificateInvoiceTaxDate());
-						// Primero probamos con posible periodo mensual
-						rectificatePeriod = Period.getMonthlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
-						
-						Double oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());						
-						if (oldDeclaredAmount == null) {
-							// Si no se encuentra periodo mensual, probamos con posible periodo trimestral
-							rectificatePeriod = Period.getQuarterlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
-							oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());								
-						}
-						
-						// Se ha encontrado una declaracion en el periodo de la factura rectificada, se guarda para crear posteriormente la linea de rectificacion en el modelo 349
-						if (oldDeclaredAmount != null && (rectificateYear != mod349.getYear() || rectificatePeriod != mod349.getPeriod())) {
-							vat.setRectificateYear(rectificateYear);
-							vat.setRectificatePeriod(rectificatePeriod);							
+						if (vat.isInsidePeriod()) {
+							// Primero probamos con posible periodo mensual
+							rectificatePeriod = Period.getMonthlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
+							
+							Double oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());						
+							if (oldDeclaredAmount == null) {
+								// Si no se encuentra periodo mensual, probamos con posible periodo trimestral
+								rectificatePeriod = Period.getQuarterlyPeriod(AonDateUtils.getMonth(vat.getRectificateInvoiceTaxDate()));
+								oldDeclaredAmount = getOldDeclaredAmount(ctx, mod349, rectificateYear, rectificatePeriod, getMod349Key(vat.getInvoiceType(), vat.isService()), vat.getRegistryDocumentCountry(), vat.getRegistryDocument());								
+							}
+							
+							// Se ha encontrado una declaracion en el periodo de la factura rectificada, se guarda para crear posteriormente la linea de rectificacion en el modelo 349
+							if (oldDeclaredAmount != null && (rectificateYear != mod349.getYear() || rectificatePeriod != mod349.getPeriod())) {
+								vat.setRectificateYear(rectificateYear);
+								vat.setRectificatePeriod(rectificatePeriod);							
+							}							
+						} else if (rectificateYear != mod349.getYear()) {
+							// Si es una factura rectificativa de un ejercicio anterior y no es del periodo que se declara, no se tiene en cuenta, para que no se acumule
+							vat.setBase(0.0);
+							vat.setQuota(0.0);
+							vat.setDeductibleQuota(0.0);
 						}
 					}
 					

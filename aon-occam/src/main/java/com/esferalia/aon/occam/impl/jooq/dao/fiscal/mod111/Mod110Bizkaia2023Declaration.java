@@ -18,15 +18,15 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
 		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
 		,BZ_C01 (Mod111Key.BZ_C01,false
-			, (mod,br) ->  isSalaryRetention(mod,br)
+			, (mod,br) ->  isSalaryRetention(mod,br) && !br.isLessOneYearContract()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C12 (Mod111Key.BZ_C12,true
-			, (mod,br) ->  isSalaryRetention(mod,br)
+			, (mod,br) ->  isSalaryRetention(mod,br) && !br.isLessOneYearContract()
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C12,mod,br)
 			,null,null,null)
 		,BZ_C23 (Mod111Key.BZ_C23,true
-			, (mod,br) ->  isSalaryRetention(mod,br)
+			, (mod,br) ->  isSalaryRetention(mod,br) && !br.isLessOneYearContract()
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C23,mod,br)
 			,null,null,null)
 		,BZ_C02 (Mod111Key.BZ_C02,false,null,null,null,null,null)
@@ -35,9 +35,24 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 		,BZ_C03 (Mod111Key.BZ_C03,false,null,null,null,null,null)
 		,BZ_C14 (Mod111Key.BZ_C14,true ,null,null,null,null,null)
 		,BZ_C25 (Mod111Key.BZ_C25,true ,null,null,null,null,null)
-		,BZ_C04 (Mod111Key.BZ_C04,false,null,null,null,null,null)
-		,BZ_C15 (Mod111Key.BZ_C15,true ,null,null,null,null,null)
-		,BZ_C26 (Mod111Key.BZ_C26,true ,null,null,null,null,null)
+		
+//		,BZ_C04 (Mod111Key.BZ_C04,false,null,null,null,null,null)
+//		,BZ_C15 (Mod111Key.BZ_C15,true ,null,null,null,null,null)
+//		,BZ_C26 (Mod111Key.BZ_C26,true ,null,null,null,null,null)
+
+		,BZ_C04 (Mod111Key.BZ_C04,false
+			, (mod,br) ->  isSalaryRetention(mod,br) && br.isLessOneYearContract()
+			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C04,mod,docs,pdocs,br)
+			,null,null,null)
+		,BZ_C15 (Mod111Key.BZ_C15,true
+			, (mod,br) ->  isSalaryRetention(mod,br) && br.isLessOneYearContract()
+			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C15,mod,br)
+			,null,null,null)
+		,BZ_C26 (Mod111Key.BZ_C26,true
+			, (mod,br) ->  isSalaryRetention(mod,br) && br.isLessOneYearContract()
+			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C26,mod,br)
+			,null,null,null)
+		
 		,BZ_C05 (Mod111Key.BZ_C05,false,null,null,null,null,null)
 		,BZ_C16 (Mod111Key.BZ_C16,true ,null,null,null,null,null)
 		,BZ_C27 (Mod111Key.BZ_C27,true ,null,null,null,null,null)
