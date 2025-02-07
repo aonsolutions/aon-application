@@ -57,11 +57,8 @@ import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary;
-import com.esferalia.aon.occam.api.model.SalaryFilter;
-import com.esferalia.aon.occam.api.model.SalaryProperties;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
@@ -87,6 +84,7 @@ import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.SistemaRED.Regime;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Period;
 
 public class SistemaRED2AON {
