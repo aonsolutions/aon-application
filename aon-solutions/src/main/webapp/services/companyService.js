@@ -1,4 +1,4 @@
-import { request, put, get, getDefaultSessionData} from "./request.js";
+import { request, put, get, getDefaultSessionData, getParentSessionData } from "./request.js";
 import { API } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -17,6 +17,8 @@ export const clearCompany = () => companies = undefined;
 export const clearDurum = () => durum = undefined;
 
 export const getDomainCompanies = (filter) => get(API.COMPANY, filter);
+
+export const getParentCompany = (data) => get(API.COMPANY_ONE, data, getParentSessionData(data));
 
 export const getCompanies = (data = { limit: 2147483647 }) => {
 	return new Promise((resolve, reject) => {
