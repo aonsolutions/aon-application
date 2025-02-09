@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -91,11 +92,19 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		container.add(targetTable);
 		
 		newSchemaBox.clear();
-		newSchemaBox.addItem(AonStringUtils.EMPTY);
-		int i = 1;
-		for (String sch : callback.getSchemas()) {
-			newSchemaBox.addItem(sch);
-			if (AonStringUtils.equals(sch, callback.getSchema())) {
+// newSchemaBox.addItem(AonStringUtils.EMPTY);
+//		int i = 1;
+//		for (String sch : callback.getSchemas()) {
+//			newSchemaBox.addItem(sch);
+//			if (AonStringUtils.equals(sch, callback.getSchema())) {
+//				newSchemaBox.setSelectedIndex(i);
+//			}
+//			i++;
+//		}
+		int i = 0;
+		for (ConsoleSchema sch : ConsoleSchema.values()) {
+			newSchemaBox.addItem(sch.name(), sch.getSchema());
+			if (AonStringUtils.equals(sch.getSchema(), callback.getSchema())) {
 				newSchemaBox.setSelectedIndex(i);
 			}
 			i++;
@@ -192,7 +201,8 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 	}
 
 	private void manageMustFlatten(ConsoleDomainTableCallback callback) {
-		if (!AonStringUtils.equals(callback.getSchema(), newSchemaBox.getSelectedValue())) {
+		ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaBox.getSelectedValue());
+		if (!AonStringUtils.equals(callback.getSchema(), cs.getSchema())) {
 			mustFlatten.setEnabled(false);
 			mustFlatten.setValue(domain.getParentId() != null && domain.isEnableHeredity());
 		} else {

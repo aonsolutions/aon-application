@@ -144,7 +144,9 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			public Widget visitString() {
 				AonTextBox text = new AonTextBox();
 				text.setEnabled( !field.isPrimaryKey() );
-				field.getLength().ifPresent( l -> text.setVisibleLength( l ) );
+				field.getLength()
+					.filter(l -> l>0 )
+					.ifPresent( l -> text.setVisibleLength( l>40?40:l ) );
 				styleWidget(text);
 				text.setValue( Objects.toString(field.getValue(), null));
 				text.addValueChangeHandler(e -> change(text.getValue(), v -> text.setValue( Objects.toString(v , null))));
