@@ -669,6 +669,10 @@ public class ConnectSaleInvoiceWriter {
 	
 	private String obtainSalesNumber(Invoice invoice) {
 		List<InvoiceDetail> list = invoice.getDetailList().stream()
+				.filter(to -> {
+					InvoiceDetail id = (InvoiceDetail) to;
+					return id.getSourceId() != null;
+				})
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
 		if (!list.isEmpty()) {
 			InvoiceDetail detail = list.get(0);
