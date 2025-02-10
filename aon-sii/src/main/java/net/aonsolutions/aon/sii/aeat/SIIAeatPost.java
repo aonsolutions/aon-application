@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
@@ -70,7 +71,7 @@ public class SIIAeatPost extends SIIPost{
 	
 	// -------------------- FACTURAS EMITIDAS
 	
-	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, 
+	public JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice, 
 			LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 		System.out.println("SII. suministroFacturasEmitidas");
 		JSONArray array = new JSONArray();
@@ -78,7 +79,7 @@ public class SIIAeatPost extends SIIPost{
 	   	byte[] requestXml = null;
 		byte[] responseXml = null;
 		
-		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
+		SuministroLRFacturasEmitidas suministro = FacturasEmitidas.getInstance().suministroFacturasEmitidas(domain, login, company, invoice, list, type.isModificacion(), terceros);
 		String sumStr = marshal(SuministroLRFacturasEmitidas.class, suministro); 
 		System.out.println("SII. before POST!");
 		String response = post(uri, sumStr);	    	
@@ -86,7 +87,7 @@ public class SIIAeatPost extends SIIPost{
 	    for (RespuestaExpedidaType r : respuesta.getRespuestaLinea()) {
 	    	Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
-    			return suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, list, SendType.MOD_EMITIDAS);
+    			return suministroFacturasEmitidas(domain, login, company, invoice, contextList, terceros, uri, list, SendType.MOD_EMITIDAS);
     		} else {
     			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
 	    			correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),
@@ -99,7 +100,7 @@ public class SIIAeatPost extends SIIPost{
 
 	   	String status = respuesta.getRespuestaLinea().stream().map(m -> m.getEstadoRegistro().value()).findFirst().orElse("Incorrecto");
 	   	
-	   	SIIDB.getInstance().insertSuministro(domain, login, invoiceId, requestXml, responseXml, status, contextList, type);
+	   	SIIDB.getInstance().insertSuministro(domain, login, invoice.getId(), requestXml, responseXml, status, contextList, type);
 	   	
 	   	return array;
 	}
