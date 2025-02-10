@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.KeyStore;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,9 +22,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Certificate;
+import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -107,6 +110,14 @@ public class SIIServlet extends HttpServlet{
 					.setData(attach.getData())
 					.setPassword(pass)
 					.setType(CertificateType.AEAT.name()));
+			try {
+				CertificateInfo certificateInfo = AON.getCertificateInfo(attach.getData(), pass);
+				if(certificateInfo.getToDate() != null && certificateInfo.getToDate().before(new Date())) {
+					throw new ServletException("El certificado está caducado.");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			try{
 				SIIManager manager = SIIManager.getInstance(siiConfiguration);
 
@@ -127,7 +138,8 @@ public class SIIServlet extends HttpServlet{
 					}
 				} else if(option.contains("fe_") || option.contains("fr_")){
 					if(isSuministro(action) && invoice.isSales()){
-						object = manager.suministroFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
+						com.esferalia.aon.occam.api.model.finance.Invoice inv = AON_SOLUTIONS.getInvoice(domainName, domain.getId(), login, ids[0]);
+						object = manager.suministroFacturasEmitidas(domain, login, company, inv, contextList, terceros);
 					} else if(isBaja(action) && invoice.isSales() ){
 						object = manager.bajaFacturasEmitidas(domain, login, company, ids[0], contextList, terceros);
 					} else if(isSuministro(action) && !invoice.isSales()){

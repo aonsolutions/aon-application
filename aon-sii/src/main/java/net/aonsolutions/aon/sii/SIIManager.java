@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
@@ -47,8 +48,8 @@ public class SIIManager {
 
 	// -------------------- FACTURAS EMITIDAS
 
-	protected byte[] getSuministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) {
-    	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
+	protected byte[] getSuministroFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) {		
+		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
     			|| "AceptadoConErrores".equals(v.getSiiStatus())
     			|| "Anulada".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
@@ -57,41 +58,41 @@ public class SIIManager {
 
     	if(getSiiConfiguration().isAraba()) {
 			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
 			}
 
 			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.araba.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
 			}
 		} else if(getSiiConfiguration().isGipuzkoa()) {
 			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
 			}
 
 			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.gipuzkoa.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
 			}
 		} else if(getSiiConfiguration().isBizkaia()) {
 			if(newList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
 			}
 
 			if(modList.size() > 0){
-				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
+				return net.aonsolutions.aon.sii.bizkaia.FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice.getId(), newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
 			}
 		} else {
 			if(newList.size() > 0){
-				return FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
+				return FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice, newList, SendType.ALTA_EMITIDAS.isModificacion(), terceros);
 			}
 
 			if(modList.size() > 0){
-				return FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoiceId, newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
+				return FacturasEmitidas.getInstance().getSuministroFacturasEmitidas(domain, login, company, invoice, newList, SendType.MOD_EMITIDAS.isModificacion(), terceros);
 			}
 		}
 		return null;
 	}
 	
-	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	protected JSONArray suministroFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getSiiConfiguration(), SIIType.FACTURAS_EMITIDAS);
     	LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
     			|| "AceptadoConErrores".equals(v.getSiiStatus())
@@ -102,35 +103,35 @@ public class SIIManager {
 
 		if(getSiiConfiguration().isAraba()) {
 			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
+				return SIIArabaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
 
 			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
+				return SIIArabaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
 		} else if(getSiiConfiguration().isGipuzkoa()) {
 			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
+				return SIIGipuzkoaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
 
 			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
+				return SIIGipuzkoaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
 		} else if(getSiiConfiguration().isBizkaia()) {
 			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
+				return SIIBizkaiaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
 
 			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
+				return SIIBizkaiaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
 		} else { //if(getSiiConfiguration().isCommonTerritory() || getSiiConfiguration().isNafarroa()) {
 			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
+				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
 
 			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
+				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoice, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
 		}
 		return new JSONArray();

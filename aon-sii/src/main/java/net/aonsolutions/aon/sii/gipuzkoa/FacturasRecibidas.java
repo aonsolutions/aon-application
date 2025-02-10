@@ -470,7 +470,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		idFactura.setIDEmisorFactura(emisor);
 		factura.setIDFactura(idFactura);
 
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 
 		baja.getRegistroLRBajaRecibidas().add(factura);
 
