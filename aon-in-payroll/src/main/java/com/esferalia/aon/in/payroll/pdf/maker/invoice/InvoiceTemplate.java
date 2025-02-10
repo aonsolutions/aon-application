@@ -1882,14 +1882,8 @@ public class InvoiceTemplate {
 
 				x += 80;
 				
-				String name = "OTRO";
 				
-				if (detail != null && detail.getItem() != null && detail.getItem().getProduct() != null && detail.getItem().getProduct().getType() != null) {
-					
-					name = AonStringUtils.trimToEmpty(detail.getItem().getProduct().getType().getName());
-				}
-				
-				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), name, theme.getTextColor(), regularFont, 7, -12, i + TAX_TYPE);
+				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), "Suplidos", theme.getTextColor(), regularFont, 7, -12, i + TAX_TYPE);
 				x += 60;
 				
 				drawTextRight(contents, new PDRectangle(x, y, 49, 15), total, theme.getTextColor(), regularFont, 7, 5, -12, i + TAX_QUOTE);
