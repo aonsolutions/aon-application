@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 class ConsoleRowQuery extends DockLayoutPanel {
 	
+	private static final double WIDTH = 400;
+	
 	public interface AonConsoleRowQueryCallback {
 		void onExit();
 	}	
@@ -31,7 +33,7 @@ class ConsoleRowQuery extends DockLayoutPanel {
 		addNorth( getToolbar(), AonToolbar.HEIGTH);
 		filterPanel = new ConsoleRowQueryFilter( params );
 		
-		addWest( filterPanel, ConsoleRowQueryFilter.WIDTH);
+		addWest( filterPanel, WIDTH);
 		
 		container = new SimpleLayoutPanel();
 		container.setStyleName(AON.CSS.aonMarginBottom());

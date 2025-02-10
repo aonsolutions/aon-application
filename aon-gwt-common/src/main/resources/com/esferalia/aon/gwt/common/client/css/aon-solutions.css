@@ -2000,6 +2000,32 @@
 	padding-left: 15px !important;
 }
 
+.aon_input_key {
+	background-image: iconKey;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 2px 3px;
+	background-size: 10px auto;
+	background-color: transparent;
+	background-position: 2px 3px;
+	width: auto;
+	height: auto;
+	padding-left: 15px !important;
+}
+
+.aon_input_link {
+	background-image: iconLink;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 2px 3px;
+	background-size: 10px auto;
+	background-color: transparent;
+	background-position: 2px 3px;
+	width: auto;
+	height: auto;
+	padding-left: 15px !important;
+}
+
 .aon_filter_panel {
 	padding: .5rem;
 	background-color: #f6f8fc;

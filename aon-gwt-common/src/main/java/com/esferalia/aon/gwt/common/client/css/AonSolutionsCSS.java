@@ -1310,6 +1310,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_input_calc")
 	String aonInputCalc();
 	
+	@ClassName("aon_input_key")
+	String aonInputKey();
+
+	@ClassName("aon_input_link")
+	String aonInputLink();
+
 	@ClassName("aon_filter_panel")
 	String aonFilterPanel();
 

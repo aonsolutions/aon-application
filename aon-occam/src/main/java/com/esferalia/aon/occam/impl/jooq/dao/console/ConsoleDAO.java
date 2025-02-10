@@ -404,6 +404,7 @@ public class ConsoleDAO {
 					.setColumn( field.getName() )
 					.setType( getConsoleTableFieldType(field))
 					.setLength( field.getDataType().length() )
+					.setComment( field.getComment() )
 				)
 			.forEach( tableRow::add );
 		table
@@ -477,31 +478,42 @@ public class ConsoleDAO {
 	}
 	
 	public static Boolean delete(AONContext ctx, ConsoleTableRow row) {
-		validate(row);
-		Table<?> table = AON_MASTER.getTable(row.getTable());
-		TableField<?, Integer> pkField = getPkField(row.getTable());
-		int count = ctx.getDslContext().delete(table)
-			.where(pkField.eq(row.getId()))
-			.execute();
-		return (count>0);
+		try {
+			validate(row);
+			Table<?> table = AON_MASTER.getTable(row.getTable());
+			TableField<?, Integer> pkField = getPkField(row.getTable());
+			int count = ctx.getDslContext().delete(table)
+				.where(pkField.eq(row.getId()))
+				.execute();
+			return (count>0);
+		} catch (Exception e) {
+			throw new AonCoreException("No se pudo borrar la fila. Causa: " + e.getMessage(), e);
+		}
 	}
 	
 	public static ConsoleTableRow update(AONContext ctx, ConsoleTableRow row, ConsoleTableField field) {
-		validate(row);
-		validate(field);
-		Table<?> table = AON_MASTER.getTable(row.getTable());
-		TableField<?, Integer> pkField = getPkField(row.getTable());
-		Field<?> updatableField = table.field( field.getColumn() );
-		UpdateConditionStep<?> sentence = updateField( ctx.getDslContext().update(table) 
-			, updatableField
-			, fromString( field.getType(), field.getNewValue()))
-			.where(pkField.eq(row.getId()));
-		
-		System.out.println( sentence.getSQL(ParamType.INLINED) ); 
-		
-		sentence.execute();
-		ConsoleTableRow result = getTableRow(ctx,row); 	
-		return result;
+		try {
+			validate(row);
+			validate(field);
+			Table<?> table = AON_MASTER.getTable(row.getTable());
+			TableField<?, Integer> pkField = getPkField(row.getTable());
+			Field<?> updatableField = table.field( field.getColumn() );
+			UpdateConditionStep<?> sentence = updateField( ctx.getDslContext().update(table) 
+				, updatableField
+				, fromString( field.getType(), field.getNewValue()))
+				.where(pkField.eq(row.getId()));
+			
+			System.out.println( sentence.getSQL(ParamType.INLINED) ); 
+			
+			sentence.execute();
+			if ( AonStringUtils.equals(pkField.getName(),updatableField.getName())) {
+				row.setId( AonNumberUtils.toInteger( field.getNewValue() ));
+			}
+			ConsoleTableRow result = getTableRow(ctx,row); 	
+			return result;
+		} catch (Exception e) {
+			throw new AonCoreException("No se pudo modificar la fila. Causa: " + e.getMessage(), e);
+		}
 	}
 	
 	private static <T> UpdateSetMoreStep<?> updateField(UpdateSetFirstStep<?> update, Field<T> field, Object value) {
