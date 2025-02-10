@@ -272,5 +272,41 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 	}
 	
+	public double calculateC111(double casilla69, double casilla70, double casilla71) {
+		
+        // CALCULO DE LA CASILLA 111 A PARTIR DE 09 O 3T DE 2024, SI RESULTADO NEGATIVO Y ES RECTIFICATIVA
+        // ESTO ME DICEN EN LA AEAT DESARROLLADORES:
+        // Respecto a la casilla 111 en el formulario de presentación del 303 esta en la pantalla de presentación como "Importe de la rectificación".
+        // Sólo tiene valor si es una autoliquidación rectificativa, la casilla 70 tiene contenido y la casilla 71 menor que cero
+        // Además es una casilla calculada de la siguiente forma:
+        // - Si (69) <= 0 y 70 <= -71 --> (111) = (70)
+        // - Si (69) <= 0 y 70 >  -71 --> (111) = (70) - (69) - (109) = -71
+        // - Si (69) > 0 --> (111) = (70) - (69) - (109) = -71 
+
+        double casilla111 = 0;
+        if (this.mod303.isComplementary() && casilla70 != 0 && casilla71 < 0)
+        {
+            // Si (69) <= 0 y 70 <= -71 --> (111) = (70)
+            // Si (69) <= 0 y 70 >  -71 --> (111) = (70) - (69) - (109)= -71
+            if (casilla69 <= 0)
+            {
+                if (casilla70 <= Math.abs(casilla71))
+                    casilla111 = casilla70;
+                else
+                    casilla111 = Math.abs(casilla71);
+            }
+            // Si (69) > 0 --> (111) = (70) - (69) - (109) = -71 
+            else
+            {
+                casilla111 = Math.abs(casilla71);
+            }
+        }
+        else
+        {
+            casilla111 = 0;
+        }
+        return casilla111;        
+    }	
+	
 }
 

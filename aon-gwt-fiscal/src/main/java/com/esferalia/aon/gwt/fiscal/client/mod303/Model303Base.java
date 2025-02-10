@@ -93,7 +93,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected static final boolean HAS_INFO = true;
 	protected static final boolean HAS_NOT_INFO = false;
 	
-	private static final int MAX_LABEL_LENGTH = 100;
+	//private static final int MAX_LABEL_LENGTH = 100;
+	private static final int MAX_LABEL_LENGTH = 150;
 	
 	private Mod303 md303;
 	private Model303Callback callback;
