@@ -60,7 +60,7 @@ public class UserJSON {
 		
 		return json
 			.put(IJsonNames.ID, user.getId())
-			.put(IJsonNames.DOMAIN, user.getDomain())
+			.put(IJsonNames.DOMAIN, user.getDomain().getId())
 			.put(IJsonNames.TYPE, user.getType().name())
 			.put(IJsonNames.NAME, AonStringUtils.isBlank(user.getAuth().getName())
 					? user.getName()

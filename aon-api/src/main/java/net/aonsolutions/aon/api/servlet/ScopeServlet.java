@@ -89,7 +89,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getScopes(AonApiData api) {
 		if(!api.getDomain().isParent() && api.getDomain().isEnableHeredity()) {
-			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
+			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), 
 						f -> f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId()))));
 			} else {
@@ -101,7 +101,7 @@ public class ScopeServlet extends AonApiHttpServlet {
 				return array;
 			}
 		} else {
-			if(api.getUser().getDomain().equals(api.getDomain().getId())) {
+			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
 				return ScopeJSON.toJSON(AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())));

@@ -26,6 +26,7 @@ public interface SistemaREDService {
 		PASSWORD,
 		START_DATE,
 		END_DATE,
+		FORCE,
 	}
 	
 	public static class JsSistemaREDProgess extends JavaScriptObject {

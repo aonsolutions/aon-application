@@ -280,7 +280,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		list.toArray(arr);
 		
 		AON.getAttachStream(domain.getName(), domain.getId(), login, 
-				f -> f.getDomainProperty().in(domain.getParentId() != null && user.getDomain().equals(domain.getParentId())? ds : d)
+				f -> f.getDomainProperty().in(domain.getParentId() != null && user.getDomain().getId().equals(domain.getParentId())? ds : d)
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()).and(f.getAttachModuleProperty().in(arr))
 				.page(1)
 				.perPage(30)
@@ -395,7 +395,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
 		JSONArray array = new JSONArray();
 		if(!domain.isParent() && domain.isEnableHeredity()) {
-			if(user.getDomain().equals(domain.getId())) {
+			if(user.getDomain().getId().equals(domain.getId())) {
 				AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), 
 						f -> f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
@@ -406,7 +406,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 					.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
 			}
 		} else {
-			if(user.getDomain().equals(domain.getId())) {
+			if(user.getDomain().getId().equals(domain.getId())) {
 				AON.getUserScopeStream(domain.getName(), domain.getId(), login, user.getId(), f -> f.getDomainProperty().eq(domain.getId()))
 				.forEach(s -> array.put(ToJSON.scopeToJSON(s)));
 			} else {
