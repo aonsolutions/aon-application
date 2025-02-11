@@ -38,7 +38,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
@@ -59,6 +65,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -263,5 +270,24 @@ public interface CommonService extends RemoteService {
 	Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException;
 	List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException;
 	List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException;
+	
+	// **************************************************
+	// **************************************** [PRODUCT]
+	// **************************************************
+	
+	List<Product> getProducts(ProductParams params) throws AonCoreException;
+	Product getProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	void deleteProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException;
+	Product saveProduct(String domainName, Integer domain, String user, Product product) throws AonCoreException;
+	Product createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item) throws AonCoreException;
+	
+	Item getItem(String domainName, Integer domain, String user, Integer productId) throws AonCoreException;
+	Item saveItem(String domainName, int domain, String user, Item item) throws AonCoreException;
+	List<ProductCategory> getProductCategories(String domainName, Integer domain, String user) throws AonCoreException;
+	List<Tax> getTaxTypes(String domainName, Integer domain, String user, TaxType taxType) throws AonCoreException;
+	List<ProductTag> getProductTags(String domainName, Integer domain, String user, Integer productId) throws AonCoreException;
+	List<Tag> getTags(String domainName, Integer domain, String user) throws AonCoreException;
+	void saveProductTags(String domainName, int domain, String user, Integer id, List<ProductTag> productTags) throws AonCoreException;
+
 	
 }

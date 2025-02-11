@@ -425,6 +425,7 @@ export const SEPA_FILES = 'Ficheiros SEPA';
 export const SERIE = 'Serie';
 export const SERVICE = 'Servizo';
 export const SERVICES = 'Servizos';
+export const SERVICES_AON = 'Servizos Aon';
 export const SETTING = 'Configuración'; 
 export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';

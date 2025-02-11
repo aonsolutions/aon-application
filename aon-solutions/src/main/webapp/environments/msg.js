@@ -652,6 +652,7 @@ export const SERVICE = MSG.SERVICE;
 export const SERVICE_ACCOUNT = 'Cuenta de Servicio'// TODO MSG.SERVICE_ACCOUNT;
 export const SERVICE_ACCOUNTS = 'Cuentas de Servicio'// TODO MSG.SERVICE_ACCOUNT;
 export const SERVICES = MSG.SERVICES;
+export const SERVICES_AON = MSG.SERVICES_AON;
 export const SETTING = MSG.SETTING;
 export const SHARED = MSG.SHARED;
 export const SHEET = 'Hoja';

@@ -470,6 +470,13 @@ export const BOOKING_PANEL = {
   entryPoint: 'BookingPanel'
 }
 
+export const PRODUCT_MODULE = {
+  title: MSG.PRODUCTS,
+  name: MSG.PRODUCTS,
+  module: GWT_FISCAL,
+  entryPoint: 'ProductModule'
+}
+
 export const BOOKING_RESUME = {
   title: MSG.BOOKING_RESUME,
   name: MSG.BOOKING_RESUME,
