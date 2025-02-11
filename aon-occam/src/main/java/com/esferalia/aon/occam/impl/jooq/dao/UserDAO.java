@@ -155,7 +155,8 @@ public class UserDAO {
 		public static User build(Record r) {
 			return new User()
 				.setId(r.getValue(USER.ID))
-				.setDomain(DomainFiller.build(r))
+				.setDomain( ( checkField(r, REGISTRY.ID) && r.get(USER.DOMAIN).equals(r.get(DOMAIN.ID)))
+					?  DomainFiller.build(r) : new com.esferalia.aon.occam.api.model.Domain().setId(r.get(USER.DOMAIN)))
 				.setType(UserType.safeValueOf(getValue(r, USER.TYPE)))
 				.setName(r.getValue(USER.NAME))
 				.setLogin(r.getValue(USER.LOGIN))
