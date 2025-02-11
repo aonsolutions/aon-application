@@ -46,7 +46,6 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
-			// fromCtx = AONContext.getAONContext(domainParams.getSchema());
 			fromCtx = AONContext.getUnpooledAONContext(domainParams.getSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(domainParams.getSchema())
@@ -63,9 +62,7 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 					.setDescription(domainParams.getDescription())
 				);
 			
-			// toCtx = AONContext.getAONContext(newSchemaName);
 			ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaName);
-			
 			toCtx = AONContext.getUnpooledAONContext(cs.getSchema());
 			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(cs.getSchema())

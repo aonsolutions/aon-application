@@ -13,6 +13,7 @@ public class ConsoleTableField implements Serializable {
 	private String value;
 	private boolean primaryKey;
 	private boolean foreignKey;
+	private String comment;
 	
 	private String foreignTable;
 	private String foreignColumn;
@@ -97,6 +98,14 @@ public class ConsoleTableField implements Serializable {
 	}
 	public ConsoleTableField setLength(int length) {
 		this.length = length;
+		return this; 
+	}
+	
+	public Optional<String> getComment() {
+		return Optional.ofNullable(comment);
+	}
+	public ConsoleTableField setComment(String comment) {
+		this.comment = comment;
 		return this; 
 	}
 }

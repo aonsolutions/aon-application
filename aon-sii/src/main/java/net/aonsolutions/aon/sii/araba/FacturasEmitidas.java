@@ -205,7 +205,7 @@ public class FacturasEmitidas extends SIIBuilt{
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 			IDFacturaExpedidaType idFactura = new IDFacturaExpedidaType();
 			
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -559,7 +559,7 @@ public class FacturasEmitidas extends SIIBuilt{
 		idFactura.setIDEmisorFactura(emisor);
 		factura.setIDFactura(idFactura);
 			
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		
 		baja.getRegistroLRBajaExpedidas().add(factura);
 		
