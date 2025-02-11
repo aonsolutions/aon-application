@@ -266,10 +266,14 @@ public class FacturasEmitidas extends SIIBuilt {
 		}
 		
 		// Regimen importacion IOSS
-		if(invoice.isSales() && invoice.isVatImportationAvailable() && invoice.isVatImportation() && invoice.isVatImportationAmountValid()) {
+//		if(invoice.isSales() && invoice.isVatImportationAvailable() && invoice.isVatImportation() && invoice.isVatImportationAmountValid()) {
+//			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._17.getName());
+//		}
+		// Regimenes especiales ventanilla única
+		if(invoice.isSales() && (invoice.isVatUnion() || invoice.isVatUnionExternal() || invoice.isVatImportation())) {
 			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._17.getName());
 		}
-		
+
 		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
