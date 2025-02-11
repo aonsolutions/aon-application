@@ -16,6 +16,8 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 
 public interface IProduct2 {
@@ -26,7 +28,9 @@ public interface IProduct2 {
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
+	public LinkedList<Product> getProductList(AONContext ctx, ProductParams params);
 	public Product saveProduct(AONContext ctx, Product product);
+	public Product createProduct(AONContext ctx, Product product, List<ProductTag> productTags, Item item);
 	public void deleteProduct(AONContext ctx, Integer id);
 
 	// ITEM

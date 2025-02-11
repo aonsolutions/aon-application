@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
+import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.ProductType;
@@ -37,6 +40,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryF
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO.TaxFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class ProductDAO {
@@ -113,10 +117,65 @@ public class ProductDAO {
 		return query.fetch().stream().map(new ProductFiller());
 	}
 	
-	
-	
 	public static LinkedList<Product> getList(AONContext ctx, ProductFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static LinkedList<Product> getList(AONContext ctx, ProductParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext()
+		.select()
+		.from(PRODUCT)
+		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+		.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
+		.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
+		.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
+		.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "code"))
+				select.orderBy(PRODUCT.CODE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PRODUCT.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
+				select.orderBy(PCATEGORY.NAME);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "code"))
+				select.orderBy(PRODUCT.CODE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PRODUCT.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
+				select.orderBy(PCATEGORY.NAME.desc());
+		}
+		
+		LinkedList<Product> products = select.limit(params.getOffset(), params.getLimit())
+				.fetch()
+				.stream()
+				.map(new ProductFiller())
+				.collect(Collectors.toCollection(LinkedList::new));
+		
+		System.out.println("Products size : " + products.size() + ", offset : " + params.getOffset() + ", limit : " +  params.getLimit());
+			
+		return products;
+	}
+	
+	private static Condition paramsToCondition(AONContext ctx, ProductParams params) {
+		Condition condition = PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(
+						PRODUCT.NAME.like("%" + params.getDescription() + "%")
+						.or(PRODUCT.CODE.like("%" + params.getDescription() + "%"))
+			);
+		
+		if(null != params.getCategory())
+			condition = condition.and(PRODUCT.CATEGORY.eq(params.getCategory()));
+		
+		if(null != params.getType())
+			condition = condition.and(PRODUCT.TYPE.eq(params.getType().value()));
+		
+		return condition;
 	}
 
 	public static Product get(AONContext ctx, ProductFilter filter) {
@@ -208,6 +267,17 @@ public class ProductDAO {
 	
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
+		
+		ctx.getDslContext()
+			.delete(ITEM)
+			.where(ITEM.PRODUCT.equal(id))
+			.execute();
+		
+		ctx.getDslContext()
+			.delete(PRODUCT_TAG)
+			.where(PRODUCT_TAG.PRODUCT.equal(id))
+			.execute();
+		
 		ctx.getDslContext()
 			.delete(PRODUCT)
 			.where(PRODUCT.ID.equal(id))

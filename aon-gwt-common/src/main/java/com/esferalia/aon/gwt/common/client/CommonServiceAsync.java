@@ -39,7 +39,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
@@ -60,6 +66,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -261,5 +268,22 @@ public interface CommonServiceAsync {
 	void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> asyncCallback) throws AonCoreException;
-
+	
+	// **************************************************
+	// **************************************** [PRODUCT]
+	// **************************************************
+	
+	void getProducts(ProductParams params, AsyncCallback<List<Product>> asyncCallback) throws AonCoreException;
+	void getProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void deleteProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveProduct(String domainName, Integer domain, String user, Product product, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item, AsyncCallback<Product> asyncCallback) throws AonCoreException;
+	void getItem(String domainName, Integer domain, String user, Integer productId, AsyncCallback<Item> asyncCallback) throws AonCoreException;
+	void saveItem(String domainName, int domain, String user, Item item, AsyncCallback<Item> asyncCallback) throws AonCoreException;
+	void getProductCategories(String domainName, Integer domain, String user, AsyncCallback<List<ProductCategory>> asyncCallback) throws AonCoreException;
+	void getTaxTypes(String domainName, Integer domain, String user, TaxType taxType, AsyncCallback<List<Tax>> asyncCallback) throws AonCoreException;
+	void getProductTags(String domainName, Integer domain, String user, Integer productId, AsyncCallback<List<ProductTag>> asyncCallback) throws AonCoreException;
+	void getTags(String domainName, Integer domain, String user, AsyncCallback<List<Tag>> asyncCallback) throws AonCoreException;
+	void saveProductTags(String domainName, int domain, String user, Integer id, List<ProductTag> productTags, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
 }
