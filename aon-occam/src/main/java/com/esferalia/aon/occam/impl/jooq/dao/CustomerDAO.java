@@ -218,7 +218,7 @@ public class CustomerDAO {
 		Condition condition = CUSTOMER.DOMAIN.eq(domain);
 		
 		User user = SecurityDAO.getUser(ctx);
-		if(user.getDomain() == ctx.getDomainId()) {
+		if(user.getDomain().getId() == ctx.getDomainId()) {
 			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}

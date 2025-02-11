@@ -51,6 +51,15 @@ class ConsoleRowCompositeQueryViewer extends SimpleLayoutPanel {
 	}
 
 	class AonConsoleRowCompositeViewerCallback implements AonConsoleRowViewerCallback {
+		@Override
+		public void deleted(ConsoleTableRow row) {
+			if (row == null) {
+				AonMessageDialog.error("Fila no encontrada");
+			} else {
+				String tabLabel = row.getTable() + " (" + row.getId() + ")";
+				tab.remove(tabLabel);
+			}
+		}
 
 		@Override
 		public void onLink(ConsoleTableRow row) {

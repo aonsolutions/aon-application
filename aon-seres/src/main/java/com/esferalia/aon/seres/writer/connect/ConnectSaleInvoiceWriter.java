@@ -669,27 +669,39 @@ public class ConnectSaleInvoiceWriter {
 	
 	private String obtainSalesNumber(Invoice invoice) {
 		List<InvoiceDetail> list = invoice.getDetailList().stream()
+				.filter(to -> {
+					InvoiceDetail id = (InvoiceDetail) to;
+					return id.getSourceId() != null;
+				})
 				.map(to -> ((InvoiceDetail) to)).collect(Collectors.toList());
 		if (!list.isEmpty()) {
-			InvoiceDetail detail = list.get(0);
-			return obtainSalesNumber(detail);
+			return obtainSalesNumber(list);
 		}
 		return null;
 	}
 
+	private String obtainSalesNumber(List<InvoiceDetail> list) {
+		String salesNumber = null;
+		for (InvoiceDetail invoiceDetail : list) {
+			if(salesNumber == null) {
+				salesNumber = obtainSalesNumber(invoiceDetail);
+			}				
+		}
+		return salesNumber;
+	}
+	
 	private String obtainSalesNumber(InvoiceDetail invoiceDetail) {
 		try {
-			if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+			String salesNumber = null;
+			if(invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				if (deliveryDetail != null && deliveryDetail.getId()!=null) {
-					if (deliveryDetail.getSalesDetail()!=null) {
-						SalesDetail salesDetail = deliveryDetail.getSalesDetail();
-						return salesDetail.getSales().getPurchaseReference();
-					}
-				}
-				return null;
+				if (deliveryDetail != null && deliveryDetail.getId()!=null && deliveryDetail.getSalesDetail()!=null) {
+					SalesDetail salesDetail = deliveryDetail.getSalesDetail();
+					salesNumber = salesDetail.getSales().getPurchaseReference();
+				}				
 			}
+			return salesNumber;
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage());
 		}

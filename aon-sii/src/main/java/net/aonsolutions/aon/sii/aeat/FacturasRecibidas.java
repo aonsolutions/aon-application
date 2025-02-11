@@ -479,7 +479,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		idFactura.setIDEmisorFactura(emisor);
 		factura.setIDFactura(idFactura);
 
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 
 		baja.getRegistroLRBajaRecibidas().add(factura);
 
@@ -714,23 +714,5 @@ public class FacturasRecibidas extends SIIBuilt {
 		vnif.setNombre(name);
 		return NIFPost.getInstance(cert, pass).vnifV1(vnif);
 		*/
-	}
-	
-	public static byte[] writeXml(JAXBContext ctx, Object object) throws JAXBException, IOException{		
-		Marshaller marshaller = ctx.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		marshaller.marshal(object, baos);
-		baos.close();
-
-		return baos.toByteArray();
-	}
-
-	public static Object readXml(JAXBContext ctx, byte[] xmlFile) throws JAXBException{
-		Unmarshaller unmarshaller = ctx.createUnmarshaller();
-	
-		InputStream input = new ByteArrayInputStream(xmlFile);
-		return unmarshaller.unmarshal(input);
 	}
 }

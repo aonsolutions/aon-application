@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -9,29 +10,35 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 
 class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeHandlers<ConsoleTableRow>{
 	
-	public static final double WIDTH = 400;
+	private static final String BEGIN_STRONG = "<strong>";
+	private static final String END_STRONG = "</strong>";
+	
 	private final DomainParams params;
 	
-	private final ListBox tableBox;
+	private final SuggestBox tableBox;
 	private final AonDisplayTable tableTab;
 	private final AonDisplayTable tab;
-	private ConsoleTableRow rowMetadata;	
+	private ConsoleTableRow rowMetadata;
+	private String[] tables = null;
 	
 	ConsoleRowQueryFilter(DomainParams params) {
 		this.params = params;
@@ -47,17 +54,28 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 		FlowPanel container = new FlowPanel();
 		scroll.setWidget( container );
 
-		Label schemaLabel = new Label( params.getSchema() );
+		Label schemaLabel = new Label( "Esquema: " + params.getSchema() );
 		schemaLabel.setStyleName( AON.CSS.aonBold());
 		schemaLabel.addStyleName( AON.CSS.aonTextCenter());
 		schemaLabel.addStyleName( AON.CSS.aonTextUnderline());
+		schemaLabel.addStyleName( AON.CSS.aonMarginBottom());
 		container.add( schemaLabel );
 		
 		tableTab = new AonDisplayTable();
 		container.add( tableTab );
-		tableBox = new ListBox();
-		tableBox.addChangeHandler( e -> tableChanged());
-		tableBox.addItem("");
+		tableBox = new SuggestBox(new MultiWordSuggestOracle() {
+			@Override
+			public void requestSuggestions(final Request request,final Callback callback) {
+				callback.onSuggestionsReady(request, 
+					new Response( AonCollectionUtils
+						.stream(tables)
+						.filter(t -> AonStringUtils.contains(t,request.getQuery()))
+						.map(t -> new MultiWordSuggestion(t, decorate(t, request.getQuery())))
+						.collect(Collectors.toCollection(LinkedList::new)))
+				);
+			}
+		});
+		tableBox.addSelectionHandler(e -> tableChanged());
 		tableTab.addLabelWidgetRow("Tabla", tableBox);
 		
 		FlowPanel buttons = new FlowPanel();
@@ -74,7 +92,7 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 
 		tab = new AonDisplayTable();
 		container.add( tab );
-	
+		
 		ConsoleModule.CONSOLE_SERVICE.getAonTables(new AsyncCallback<String[]>() {
 
 			@Override
@@ -84,12 +102,11 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 
 			@Override
 			public void onSuccess(String[] tables) {
-				tableBox.clear();
-				tableBox.addItem("");
-				Arrays.stream(tables).forEach( tableBox::addItem );
+				ConsoleRowQueryFilter.this.tables = tables;
 			}
 			
 		});
+
 	}
 	
 	private ConsoleTableRow getRowMetadata() {
@@ -103,7 +120,7 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 		tab.clear();
 		ConsoleTableRow ctr = new ConsoleTableRow()
 			.setSchema( params.getSchema() )
-			.setTable( tableBox.getSelectedValue() )
+			.setTable( tableBox.getValue() )
 			.setDomain( params.getId());
 		ConsoleModule.CONSOLE_SERVICE.getTableRowMetadata(ctr, new AsyncCallback<ConsoleTableRow>() {
 
@@ -123,9 +140,11 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 							AonTextBox box = new AonTextBox();
 							String keyType = AonStringUtils.substring(getRowMetadata().getField(key).getType().name(),0,3);
 							box.addValueChangeHandler( e -> getRowMetadata().getField(key).setQueryValue( box.getValue()) );
+							Label keyLabel = new Label(key);
+							getRowMetadata().getField(key).getComment().ifPresent( c -> keyLabel.setTitle(c) );
 							tab.addRow()
 								.addCell(new Label(keyType), AON.CSS.aonWidth20())
-								.addCell(new Label(key), AON.CSS.aonTableLabel(), AON.CSS.aonWidth150())
+								.addCell(keyLabel, AON.CSS.aonTableLabel(), AON.CSS.aonWidth150())
 								.addCell(box, AON.CSS.aonWidthAuto())
 							;
 						});
@@ -136,7 +155,7 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 	}
 
 	private void fire() {
-		if ( AonStringUtils.isEmpty( tableBox.getSelectedValue() ) ) {
+		if ( AonStringUtils.isEmpty( tableBox.getValue() ) ) {
 			tableBox.setFocus(true);
 			tableBox.addStyleName(AON.CSS.aonInputError());
 			new Timer() {
@@ -154,5 +173,24 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ConsoleTableRow> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	private static String decorate(String text, String query) {
+		int i = AonStringUtils.indexOfIgnoreCase(text, query);
+		SafeHtmlBuilder bld = new SafeHtmlBuilder();
+		bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
+				+ AonStringUtils.SPACE
+				+ "\" >");
+		if (i != -1) {
+			bld.appendEscaped(AonStringUtils.substring(text, 0, i));
+			bld.appendHtmlConstant(BEGIN_STRONG);
+			bld.appendEscaped(AonStringUtils.substring(text, i, (i + AonStringUtils.length(query) )));
+			bld.appendHtmlConstant(END_STRONG);
+			bld.appendEscaped(AonStringUtils.substring(text, (i + AonStringUtils.length(query) )));
+		} else {
+			bld.appendEscaped(text);
+		}
+		bld.appendHtmlConstant("</span>");
+		return bld.toSafeHtml().asString(); 
 	}
 }

@@ -492,7 +492,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		
 		AON.saveBooking(api.getDomain(), api.getUser(), newBooking);
 		
-		boolean console = api.getUser() != null && api.getUser().getDomain() != null && api.getUser().getDomain() == 0;
+		boolean console = api.getUser() != null && api.getUser().getDomain().getId() != null && api.getUser().getDomain().getId() == 0;
 		Domain parentDomain = AON.getDomain(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin());
 		
 		boolean isDifferentBooking = isDifferentBooking(oldBooking, newBooking);

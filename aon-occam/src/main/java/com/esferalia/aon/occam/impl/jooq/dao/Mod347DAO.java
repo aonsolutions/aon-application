@@ -751,8 +751,8 @@ public class Mod347DAO {
 				.peek( vat -> {					
 					// Las compras y gastos, se ponen todas como compras
 					vat.setInvoiceType( vat.getInvoiceType() == InvoiceType.SALES ? InvoiceType.SALES : InvoiceType.PURCHASE);
-					// Ventas ISP, se ponen como Nacionales, por que no hay que marcar ISP en las ventas en el 347, solo en las compras
-					if (vat.getInvoiceType() == InvoiceType.SALES && vat.getTransaction() == InvoiceTransactionType.OTHER_ISP) {
+					// Ventas se ponen como Nacionales, por que no hay que marcar ISP en las ventas en el 347, solo en las compras
+					if (vat.getInvoiceType() == InvoiceType.SALES) {
 						vat.setTransaction( InvoiceTransactionType.NATIONAL);
 					}
 					// Compras extracomunitarias de servicios se tratan como si fueran ISP

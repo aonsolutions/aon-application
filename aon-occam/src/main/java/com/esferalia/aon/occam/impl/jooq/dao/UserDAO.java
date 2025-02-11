@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Auth.AUTH;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Options;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
@@ -38,6 +41,7 @@ public class UserDAO {
 	private static SelectConditionStep<Record> select(AONContext ctx, UserFilter filter) {
 		return ctx.getDslContext().select()
 			.from(USER)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
 			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
 			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
 			.where(USER_PROPERTIES.getConditions(filter));
@@ -83,7 +87,7 @@ public class UserDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -99,7 +103,7 @@ public class UserDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.DOMAIN, user.getDomain().getId())
 			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -151,7 +155,8 @@ public class UserDAO {
 		public static User build(Record r) {
 			return new User()
 				.setId(r.getValue(USER.ID))
-				.setDomain(r.getValue(USER.DOMAIN))
+				.setDomain( ( checkField(r, REGISTRY.ID) && r.get(USER.DOMAIN).equals(r.get(DOMAIN.ID)))
+					?  DomainFiller.build(r) : new com.esferalia.aon.occam.api.model.Domain().setId(r.get(USER.DOMAIN)))
 				.setType(UserType.safeValueOf(getValue(r, USER.TYPE)))
 				.setName(r.getValue(USER.NAME))
 				.setLogin(r.getValue(USER.LOGIN))
@@ -165,7 +170,8 @@ public class UserDAO {
 				.setShared(AonEnumUtils.getBoolean(r.getValue(USER.SHARED)))
 				.setToolbar(UserToolbar.safeValueOf(r.getValue(USER.TOOLBAR)))
 				.setEnterprise(r.getValue(USER.ENTERPRISE))
-				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION));
+				.setExpirationDate(getValue(r, USER.PASSWORDEXPIRATION))
+				;
 		}		
 	}
 	

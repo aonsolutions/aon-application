@@ -181,11 +181,11 @@ public class DBCatalogue {
 	}
 	
 	public static Boolean isParentUser(Domain domain, User user) {
-		if(user.getDomain() == null){
+		if(user.getDomain().getId() == null){
 			user = AON.getUser(domain.getName(), domain.getId(), user.getLogin());
 		}
 		Domain domainAux = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
-		return domainAux.getParentId() != null && domainAux.getParentId().equals(user.getDomain());
+		return domainAux.getParentId() != null && domainAux.getParentId().equals(user.getDomain().getId());
 	}
 	
 }

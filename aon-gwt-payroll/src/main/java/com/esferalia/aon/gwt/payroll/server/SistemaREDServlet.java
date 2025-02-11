@@ -179,10 +179,12 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	private void doCalcs(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException, SegSocialException {
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		boolean force = getBooleanParameter(req, Parameter.FORCE.name());
 
 		Date month = getDateParameter(req);
 		java.sql.Date startDate = new java.sql.Date(AonDateUtils.getFirstDayOfMonth(month).getTime());
 		java.sql.Date endDate = new java.sql.Date(AonDateUtils.getLastDayOfMonth(month).getTime() );
+
 		
 		List<CCC> cccs = Collections.emptyList();
 
@@ -199,42 +201,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 		}
 		
-		CalcsCallback calcsCallback = new CalcsCallback() {
-			int cccEmployees = 0;
-			int saveEmployees = 0;
-
-			void progress(Salary salary) {
-				try {
-					if ( saveEmployees > 1) {
-						resp.getWriter().print(',');
-					}
-					resp.getWriter().printf(
-							"{"
-							+ "'progress': %d, "
-							+ "'total': %d, "
-							+ "'employeeName': '%s'"
-							+ "}", 
-							saveEmployees,
-							cccEmployees,
-							salary.getEmployeeName()
-							);
-					resp.getWriter().flush();
-				} catch (IOException e) {
-				}
-			}
-			
-			@Override
-			public void accept(Salary salary) {
-				AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary));
-				this.saveEmployees += 1;
-				progress(salary);
-			}
-			
-			@Override
-			public void start(int cccEmployees) {
-				this.cccEmployees += cccEmployees;
-			}
-		};
 		
 		cccs = cccs.stream()
 		.collect(Collectors.groupingBy(ccc -> ccc.getRegime() + ccc.getCode(), Collectors.reducing((ccc1, ccc2 ) -> ccc1 ))).values().stream()
@@ -243,6 +209,58 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		resp.getWriter().print("[");
 		for ( CCC ccc: cccs ) {
 			
+			CalcsCallback calcsCallback = new CalcsCallback() {
+				int cccEmployees = 0;
+				int saveEmployees = 0;
+
+				void progress(Salary salary) {
+					try {
+						if ( saveEmployees > 1) {
+							resp.getWriter().print(',');
+						}
+						resp.getWriter().printf(
+								"{"
+								+ "'progress': %d, "
+								+ "'total': %d, "
+								+ "'employeeName': '%s'"
+								+ "}", 
+								saveEmployees,
+								cccEmployees,
+								salary.getEmployeeName()
+								);
+						resp.getWriter().flush();
+					} catch (IOException e) {
+					}
+				}
+				
+				@Override
+				public void accept(Salary salary) {
+					AON.saveSalaries(domainName, userLogin, domainId, Collections.singleton(salary));
+					this.saveEmployees += 1;
+					progress(salary);
+				}
+				
+				@Override
+				public void start(int cccEmployees) {
+					this.cccEmployees += cccEmployees;
+				}
+				
+				@Override
+				public boolean filter(LiquidationType liquidationType, String naf) {
+					if ( force )
+						return true;
+					
+					List<Salary> liquidations = SistemaRED2AON.getLiquidations(domainName, userLogin, liquidationType, ccc.getCode(), naf, startDate, endDate);
+					liquidations.forEach( salary -> {
+						saveEmployees += 1;
+						progress(salary);
+					});
+					
+					return liquidations.isEmpty();
+					
+				}
+			};
+
 			try {
 				
 				SistemaRED2AON.addCalcs(userLogin, 
@@ -631,6 +649,11 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}		
 	}
 	
+	protected static boolean getBooleanParameter(HttpServletRequest req, String name) {
+		String parameter = req.getParameter(name);			
+		return Boolean.parseBoolean(parameter);
+	}
+
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
 		addBonus(userLogin, domainName, domainId, userId, new Date(), regime, ccc, nafs);

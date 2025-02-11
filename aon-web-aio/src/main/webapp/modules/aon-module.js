@@ -80,6 +80,7 @@ export class AonModule extends AonElement {
 		let user = urlParams.get('user');
 		let password = urlParams.get('password');
 		let token = urlParams.get('token');
+		let check = urlParams.get('check');
 		if(user && password) {
 			const data = {
 				username: user,
@@ -92,11 +93,28 @@ export class AonModule extends AonElement {
 				alert(e);
 			}
 			window.location = window.location.origin;
-		}
-
-		if(token) {
-			LS.setToken(token);
+			
+		} else if( token ) {
+			//LS.setToken(token);
+			try {
+				const data = {
+					token,
+				};
+				await login(data);
+			} catch (e) {
+				alert(e);
+			}
 			window.location = window.location.origin;
+		} else if ( check && LS.getToken() ) {
+			try {
+				const data = {
+					token : LS.getToken(),
+				};
+				await login(data);
+			} catch (e) {
+				alert(e);
+			}
+			//window.location = window.location.origin;
 		}
 	} 
 	
