@@ -139,42 +139,44 @@ export class AonDocumental extends AonElement {
     }
 
     addTypeOptions() {
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
-        let typeOptions = [{
-            name: MSG.ENTERPRISE,
-            icon: MATERIAL_ICONS.BUSINESS,
+      if(!this.isBeta()) {
+        if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+          let typeOptions = [{
+              name: MSG.ENTERPRISE,
+              icon: MATERIAL_ICONS.BUSINESS,
+              fn: () => {
+                this._filter.category = undefined;
+                this._filter.tag = undefined;
+                this._filter.type = 'enterprise';
+                this.aonDocumentalList();
+              }
+          },{
+            name: MSG.EMPLOYEE,
+            icon: MATERIAL_ICONS.PERSON,
             fn: () => {
               this._filter.category = undefined;
               this._filter.tag = undefined;
-              this._filter.type = 'enterprise';
+              this._filter.type = 'employee';
               this.aonDocumentalList();
             }
-        },{
-          name: MSG.EMPLOYEE,
-          icon: MATERIAL_ICONS.PERSON,
-          fn: () => {
-            this._filter.category = undefined;
-            this._filter.tag = undefined;
-            this._filter.type = 'employee';
-            this.aonDocumentalList();
+          }];
+          if(this.getDur().isDocumentalManager()) {
+            typeOptions.push({
+              name: MSG.ASESOR,
+              icon: 'work',
+              fn: () => {
+                this._filter.category = undefined;
+                this._filter.tag = undefined;
+                this._filter.type = 'asesor';
+                this.aonDocumentalList();
+              }
+            });
           }
-        }];
-        if(this.getDur().isDocumentalManager()) {
-          typeOptions.push({
-            name: MSG.ASESOR,
-            icon: 'work',
-            fn: () => {
-              this._filter.category = undefined;
-              this._filter.tag = undefined;
-              this._filter.type = 'asesor';
-              this.aonDocumentalList();
-            }
-          });
+          let application = this.getApplication();
+          let data = DocumentalSidenav.TYPES;
+          data.options = typeOptions;
+          application.addSidenavOptions3(data);
         }
-        let application = this.getApplication();
-        let data = DocumentalSidenav.TYPES;
-        data.options = typeOptions;
-        application.addSidenavOptions3(data);
       }
     }
 
@@ -182,48 +184,62 @@ export class AonDocumental extends AonElement {
       let application = this.getApplication();
       let data = DocumentalSidenav.CATEGORIES;
       data.options = [];
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
-        application.addSidenavOptions3(data, () => this.createCategory());
-      } else application.addSidenavOptions3(data);
+    
+      if (!this.isBeta()) {
+        if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+          application.addSidenavOptions3(data, () => this.createCategory());
+        } else {
+          application.addSidenavOptions3(data);
+        }
+      }
       this.loadCategories();
     }
 
     loadCategories() {
       let application = this.getApplication();
-      getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
+      getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
         this._categories = categories.map(c => {
           return {
             value: c.id,
             name: c.name
-          }
+          };
         });
-        this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
-        categories.forEach((item, i) => {
+        // Si no es beta, agregamos las categorías bajo el apartado categorías
+        if (!this.isBeta()) {
+          this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
+        }
+        categories.forEach(item => {
           let option = {
             name: item.name,
-            icon: 'label',
+            icon: !this.isBeta() ? 'label' : 'insert_drive_file',
             fn: () => {
               this._filter.tag = undefined;
               this._filter.category = item.id;
               this.aonDocumentalList();
             }
           };
-          if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
-            option.actions = [{
+          // Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
+          if (this.isBeta()) {
+            application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
+          } else {
+            // Si no es beta, agregamos las opciones de eliminar y editar las categorías
+            if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+              option.actions = [{
                 id: 'Delete',
                 icon: 'delete',
                 action: () => this.deleteCategory(item)
-              },{
+              }, {
                 id: 'Edit',
                 icon: 'edit',
                 action: () => this.editCategory(item)
-              }
-            ];
+              }];
+            }
+            application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
           }
-          application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
         });
       });
     }
+    
 
     loadScopes() {
       getScopes().then( scopes => {
@@ -291,13 +307,15 @@ export class AonDocumental extends AonElement {
     }
 
     addTagOptions() {
-      let application = this.getApplication();
-      let data = DocumentalSidenav.TAGS;
-      data.options = [];
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
-        application.addSidenavOptions3(data, () => this.createTag());
-      } else application.addSidenavOptions3(data);
-      this.loadTags();
+      if(!this.isBeta()){
+        let application = this.getApplication();
+        let data = DocumentalSidenav.TAGS;
+        data.options = [];
+        if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+          application.addSidenavOptions3(data, () => this.createTag());
+        } else application.addSidenavOptions3(data);
+        this.loadTags();
+      }
     }
 
     loadTags() {
