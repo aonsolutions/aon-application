@@ -135,7 +135,7 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 				
 			LROperacionIntracomunitariaType opIntracomunitaria = new LROperacionIntracomunitariaType();
 				
-			opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+			opIntracomunitaria.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 				
 			IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 			idFactura.setFechaExpedicionFacturaEmisor(AonDateUtils.format(vat.getIssueDate(), "dd-MM-yyyy"));
@@ -230,7 +230,7 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 			
 			factura.setIDFactura(idFactura);
 			
-			factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+			factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 			
 			baja.getRegistroLRBajaDetOperacionIntracomunitaria().add(factura);
 			

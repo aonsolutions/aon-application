@@ -469,12 +469,12 @@ export class AonInvoice extends AonElement {
 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
-		if(!this.getInvoice().file && !this.invoice.isEmitida()){
-			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
-		} else {
+		if(this.getInvoice().file){
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile());
-		}
-
+		} else if(this.getInvoice().isRawdoc() && !this.invoice.isEmitida()) {
+			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
+		} 
+		
 		if(this.getInvoice().isTbai()) {
 			invoiceToolbar.addButtonTitle(ACTION.TICKETBAI, () => open(this.getInvoice().getTbaiUrl()));
 		}

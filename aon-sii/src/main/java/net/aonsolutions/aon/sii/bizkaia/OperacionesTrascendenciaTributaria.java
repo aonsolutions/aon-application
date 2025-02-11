@@ -96,7 +96,7 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 
 		LRCobrosMetalicoType metalico = new LRCobrosMetalicoType();
 
-		metalico.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		metalico.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		if(vat.isIntracommunity()) {
 			metalico.setContraparte(contraparteIntracomunitario(vat));
 		} else metalico.setContraparte(contraparte(vat));
@@ -153,7 +153,7 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 
 		LROperacionesSegurosType seguros = new LROperacionesSegurosType();
 
-		seguros.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		seguros.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		if(vat.isIntracommunity()) {
 			seguros.setContraparte(contraparteIntracomunitario(vat));
 		} else seguros.setContraparte(contraparte(vat));
@@ -213,7 +213,7 @@ public class OperacionesTrascendenciaTributaria extends SIIBuilt {
 
 		LRAgenciasViajesType agencias = new LRAgenciasViajesType();
 
-		agencias.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		agencias.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 		if(vat.isIntracommunity()) {
 			agencias.setContraparte(contraparteIntracomunitario(vat));
 		} else agencias.setContraparte(contraparte(vat));

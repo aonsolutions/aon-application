@@ -458,7 +458,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		    json.put(IJsonNames.URL, url);
 		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
-		} else {
+			return json;
+		} else if(invoice.isSales()){
 			JSONObject data = new JSONObject();
 			data.put(IConstants.DOMAIN_NAME, domain.getName());
 			data.put(IConstants.DOMAIN_ID, domain.getId());
@@ -472,8 +473,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		    json.put(IJsonNames.URL, url);
 		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+			return json;
 		}
-		return json;
+		return null;
+
 	}
 	
 	private static JSONArray getInvoices(AonApiData api, InvoiceFilter filter) {

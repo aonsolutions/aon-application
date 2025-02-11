@@ -172,12 +172,12 @@ public class InvoiceFiscalDAO {
 				
 				@Override 
 				public void visitVatUnionExternal() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION_EXTERNAL, false );
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION_EXTERNAL, invoice.isVatUnionExternal());
 				}
 				
 				@Override 
 				public void visitVatUnion() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION, false );
+					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_UNION, invoice.isVatUnion());
 				}
 				
 				@Override

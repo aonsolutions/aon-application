@@ -95,7 +95,14 @@ public enum ClaveRegimenEspecialOTrascendenciaEmitidasType {
     /**
      *	Primer sementre 2017 y otras facturas anteriores a la inclusión en el SII.
      */
-    _16;
+    _16,
+    /**
+     * Operación acogida a alguno de los regímenes previstos en el Capítulo XI del Título IX (OSS e IOSS)												
+     */
+    _17
+    ;
+	
+	
 
 	public String getName(){
 		return this.toString().substring(1);

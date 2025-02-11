@@ -337,7 +337,7 @@ public class CertificateController implements Serializable {
 		
 		Filter filter;
 		if(domain.getParentId() != null) {
-			if(!user.getDomain().equals(domain.getParentId())) {
+			if(!user.getDomain().getId().equals(domain.getParentId())) {
 				filter = (f.getDomainProperty().eq(domain.getId()).or(
 						f.getDomainProperty().eq(domain.getParentId())
 						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))

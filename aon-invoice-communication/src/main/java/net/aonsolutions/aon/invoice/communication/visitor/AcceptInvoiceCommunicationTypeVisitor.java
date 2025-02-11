@@ -56,6 +56,7 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		else {
 			Company company = getCompany();
 			InvoiceCommunication ic = new InvoiceCommunication()
+					.setDomain(company.getDomain())
 					.setCompany(company)
 					.setInvoice(getInvoice())
 					.setOperation(InvoiceCommunicationOperation.REGISTER)

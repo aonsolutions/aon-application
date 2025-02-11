@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.UnpooledCloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDomainIsolate;
@@ -45,7 +46,6 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
-			// fromCtx = AONContext.getAONContext(domainParams.getSchema());
 			fromCtx = AONContext.getUnpooledAONContext(domainParams.getSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(domainParams.getSchema())
@@ -62,16 +62,16 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 					.setDescription(domainParams.getDescription())
 				);
 			
-			// toCtx = AONContext.getAONContext(newSchemaName);
-			toCtx = AONContext.getUnpooledAONContext(newSchemaName);
+			ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaName);
+			toCtx = AONContext.getUnpooledAONContext(cs.getSchema());
 			Schema toSchema = toCtx.getDslContext().meta()
-				.getSchemas(newSchemaName)
+				.getSchemas(cs.getSchema())
 				.stream()
 				.findFirst()
 				.orElse(null);
 			ConsoleConnectionParams toParams = new ConsoleConnectionParams()
 				.setAONContext(toCtx)
-				.setSchemaName( newSchemaName )
+				.setSchemaName( cs.getSchema() )
 				.setSchema(toSchema)
 				.setDomain(new Domain().setName(newDomainName));	
 

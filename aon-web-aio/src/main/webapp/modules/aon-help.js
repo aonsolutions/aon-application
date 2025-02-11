@@ -1,9 +1,11 @@
 import { AonElement } from 'aonsolutions/components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
 import { AonCard } from 'aonsolutions/components/aon-card.js';
-import {  getManifest} from "aonsolutions/services/service.js";
+import { getManifest, getDomainUserRoles} from "aonsolutions/services/service.js";
 import { AonSwitch } from "aonsolutions/components/aon-switch.js";
 import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
+import { getParentCompany } from 'aonsolutions/services/companyService.js';
+import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
 import * as LS from 'aonsolutions/services/localStorageService.js';
 export class AonHelp extends AonElement {
 
@@ -24,7 +26,10 @@ export class AonHelp extends AonElement {
 
 	connectedCallback() {
 		this.initialize();
-		this.build();
+		getDomainUserRoles({}).then(r => {
+			this.dur = new DomainUserRoles(r);
+		    this.build();
+		});
 	}
 
 	initialize() {
@@ -81,36 +86,67 @@ export class AonHelp extends AonElement {
 			setSupport(data).then(r => {})
 		});
 
+    	if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
+			let rightPanelAboutContactCard = new AonCard();
+			rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
+			rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
+			rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
+			helpContent.appendChild(rightPanelAboutContactCard);
 
-		let rightPanelAboutContactCard = new AonCard();
-		rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
-		rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
-		rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
-		helpContent.appendChild(rightPanelAboutContactCard);
+			let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
+			cardDiv.className = "aonCard rightPanelcardDiv";
 
-		let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
-		cardDiv.className = "aonCard rightPanelcardDiv";
+			let divGeneral = this.createDiv();
+			divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
+			divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
+			divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
+			divGeneral.appendChild(this.buildSupportData("administración@aonSolutions.es", "Facturación, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
+			rightPanelAboutContactCard.setContent(divGeneral);
 
-		let divGeneral = this.createDiv();
-		divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
-		divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
-		divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
-		divGeneral.appendChild(this.buildSupportData("administración@aonSolutions.es", "Facturación, cobros y pago", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_ADMIN_EMAIL));
-		rightPanelAboutContactCard.setContent(divGeneral);
+			let rightPanelAboutScheduleCard = new AonCard();
+			rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
+			rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
+			rightPanelAboutScheduleCard.className = "rightPanelAboutScheduleCard";
+			helpContent.appendChild(rightPanelAboutScheduleCard);
 
-		let rightPanelAboutScheduleCard = new AonCard();
-		rightPanelAboutScheduleCard.id = this.SCHEDULE_CONTACT_CARD;
-		rightPanelAboutScheduleCard.title = MSG.SCHEDULE;
-		rightPanelAboutScheduleCard.className = "rightPanelAboutScheduleCard";
-		helpContent.appendChild(rightPanelAboutScheduleCard);
+			let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
+			cardDiv.className = "aonCard rightPanelCardDiv";
 
-		let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
-		cardDiv.className = "aonCard rightPanelCardDiv";
+			let divGeneral2 = this.createDiv();
+			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
+			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
+			rightPanelAboutScheduleCard.setContent(divGeneral2);
+		}else if(this.dur.getParentDomain() != null){
+			let domain = this.dur.getDomain();
+			let parentDomain = this.dur.getParentDomain();
+			let parentId = parentDomain.id;
+			let parentName = parentDomain.name;
+			console.log(domain);				
+			getParentCompany({parentId, parentName}).then(r =>{		
+				let name = r.name;
+				let phoneData = r.media.find(item => item.media === "fixed_phone");
+				let phone = phoneData ? phoneData.value : "Teléfono no encontrado";
+				let emailData = r.media.find(item => item.media === "email");
+				let email = emailData ? emailData.value : "Email no encontrado";
+				
+				let rightPanelAboutContactCard = new AonCard();
+				rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
+				rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
+				rightPanelAboutContactCard.className = "rightPanelAboutContactCard";
+				helpContent.appendChild(rightPanelAboutContactCard);
 
-		let divGeneral2 = this.createDiv();
-		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
-		divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
-		rightPanelAboutScheduleCard.setContent(divGeneral2);
+				let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
+				cardDiv.className = "aonCard rightPanelcardDiv";
+												
+				let divGeneral = this.createDiv();
+				divGeneral.appendChild(this.buildSupportData(name, MSG.COMPANY, MATERIAL_ICONS.BUSINESS));
+				divGeneral.appendChild(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
+				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL));
+				rightPanelAboutContactCard.setContent(divGeneral);
+				
+				
+			});
+		}
 		
 		getManifest().then(
 		  (manifest) => {
@@ -152,7 +188,11 @@ export class AonHelp extends AonElement {
 
 		let span = this.createDiv();
 		span.className = `${CSS.AON_CARD_TEXT} ${className}`;
-		//span.innerHTML = value;
+		
+		if(className==null){
+			span.innerHTML = value;
+		}
+		
 		div.appendChild(span);
 
 		this.cont = this.cont + 1;

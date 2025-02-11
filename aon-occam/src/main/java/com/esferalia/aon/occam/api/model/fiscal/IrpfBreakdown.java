@@ -45,6 +45,7 @@ public class IrpfBreakdown implements Serializable {
 	private String city;
 	private Double participationPercent;
 	private double participationQuota;
+	private boolean lessOneYearContract; // Contrato inferior a un año (Se usa en la generación del modelo 110/111 de Bizkaia)
 	
 	public Integer getActivity() {
 		return activity;
@@ -296,6 +297,15 @@ public class IrpfBreakdown implements Serializable {
 		this.participationQuota = participationQuota;
 		return this;
 	}
+	
+	public boolean isLessOneYearContract() {
+		return lessOneYearContract;
+	}
+	public IrpfBreakdown setLessOneYearContract(boolean lessOneYearContract) {
+		this.lessOneYearContract = lessOneYearContract;
+		return this;
+	}
+	
 	// -------------------------------	
 	public String getDocumentNumber() {
 		return FinanceUtil.getDocumentNumber(getInvoiceType(), getSeries(), getNumber());
