@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
-import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
@@ -53,6 +52,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ItemAddInfoFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ItemAddInfoPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -183,6 +183,7 @@ public class ProductOldDAO {
 		ctx.checkRead();
 		return ctx.getDslContext().select()
 			.from(PRODUCT_TAG)
+			.join(TAG).on(TAG.ID.eq(PRODUCT_TAG.TAG))
 			.where(PRODUCT_TAG_PROPERTIES.getConditions(filter))
 			.fetch()
 			.stream()
@@ -948,7 +949,7 @@ public class ProductOldDAO {
 					.setId(r.getValue(PRODUCT_TAG.ID))
 					.setDomain(r.getValue(PRODUCT_TAG.DOMAIN))
 					.setProduct(r.getValue(PRODUCT_TAG.PRODUCT))
-					.setTag(new Tag().setId(r.getValue(PRODUCT_TAG.TAG)));
+					.setTag(TagFiller.build(r));
 		}
 	}
 	

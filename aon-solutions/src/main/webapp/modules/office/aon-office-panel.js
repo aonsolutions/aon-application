@@ -25,6 +25,7 @@ import * as GWT from "../../gwt/gwt.js";
 import { AonTarget } from "../registry/target/aon-target.js";
 import { AonWorkgroup } from "../configuration/groups/aon-workgroup.js";
 
+
 export class AonOfficePanel extends AonElement {
   projectTypes;
   workgroups;
@@ -127,6 +128,19 @@ export class AonOfficePanel extends AonElement {
 
   buildSidenav() {
     const application = this.getApplication();
+
+    let servicesOptions = [];
+
+    // Servicios Aon
+
+    if(this.isSig()){
+      const { ServiceOptions } = OfficeEnums;
+
+      let service = ServiceOptions.AON_SERVICE;
+      service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
+      servicesOptions.push(service);
+      application.addSidenavOptions(MSG.BOOKING, servicesOptions);
+    }
 
     const { OfficeViews, OfficeOptions } = OfficeEnums;
 
@@ -505,9 +519,19 @@ export class AonOfficePanel extends AonElement {
     return this.taskHolders;
   }
 
+  clearToolbar() {
+    let aonOffice = this.getApplication();
+    let toolbar = this.getElement(aonOffice.TOOLBAR);
+    toolbar.removeButtons();
+  }
+
   showView(view, data = undefined, filter = undefined) {
     const officeViews = OfficeEnums.OfficeViews;
+    const { ServiceOptions } = OfficeEnums;
+    
     const application = this.getApplication();
+    application.startLoader();
+    
     this.removeActionFolder();
     
     return new Promise(async (resolve) => {
@@ -515,6 +539,11 @@ export class AonOfficePanel extends AonElement {
       switch (view) {
         case BOOKING_PANEL.id:
           GWT.iLoad(GWT.BOOKING_PANEL, this.getApplication().CONTENT);
+          break;
+        case ServiceOptions.AON_SERVICE.id:
+          this.clearToolbar();
+          application.closeSidenav();
+          GWT.iLoad(GWT.PRODUCT_MODULE, this.getApplication().CONTENT);
           break;
         case LINK_DOMAINS.id:
           aonView = new AonLinkDomains();
@@ -600,7 +629,9 @@ export class AonOfficePanel extends AonElement {
           aonView.buildToolbar();
         }
       }
-
+      
+      application.stopLoader();
+      
       resolve(aonView);
     });
   }

@@ -186,11 +186,14 @@ public class FacturasEmitidas extends SIIBuilt {
 		boolean exempt = (activity.getVatRegime() != null && activity.getVatRegime().isExempt()) 
 				|| vat.isIntracommunity() || vat.isExtracommunity() || vat.isCanCeuMel();
 		
-		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment()) 
+		// Régimen especial de la Unión, se debe pasar como no sujeta por reglas de localizacion y solo la base imponible sin el IVA del pais miembro 
+		boolean oss = invoice.isVatUnion();
+		
+		Double exenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0 && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss) 
 				.mapToDouble(f -> f.getBase()).sum();
-		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() ))
+		Double noSujeta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) || f.isPrepayment() || oss))
 				.mapToDouble(f -> f.getBase()).sum();
-		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment())
+		LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0)  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()) && !f.isPrepayment() && !oss )
 				.map(f -> new VatData().setBase(f.getBase())
 						.setPercentage(f.getPercentage())
 						.setQuota(f.getQuota())
@@ -266,10 +269,14 @@ public class FacturasEmitidas extends SIIBuilt {
 		}
 		
 		// Regimen importacion IOSS
-		if(invoice.isSales() && invoice.isVatImportationAvailable() && invoice.isVatImportation() && invoice.isVatImportationAmountValid()) {
+//		if(invoice.isSales() && invoice.isVatImportationAvailable() && invoice.isVatImportation() && invoice.isVatImportationAmountValid()) {
+//			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._17.getName());
+//		}
+		// Regimenes especiales ventanilla única
+		if(invoice.isSales() && (invoice.isVatUnion() || invoice.isVatUnionExternal() || invoice.isVatImportation())) {
 			fet.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaEmitidasType._17.getName());
 		}
-		
+
 		ApplicationParameter ap = AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_MODEL_CFG_SII);
     	Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
@@ -360,14 +367,17 @@ public class FacturasEmitidas extends SIIBuilt {
 		});
 		
 		if(!fet.getTipoFactura().equals(ClaveTipoFacturaType.F_2) && !fet.getTipoFactura().equals(ClaveTipoFacturaType.F_4) 
-			&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity() || isNDocument(vat.getRegistryDocument()))){
+			&& (vat.isService() || vat.isIntracommunity() || vat.isExtracommunity() || isNDocument(vat.getRegistryDocument()) || oss)){
 			TipoConDesgloseType tcdt = new TipoConDesgloseType();
 			
-			if(vat.isService() && !vat.isIntracommunity()){
+			if(vat.isService() && (!vat.isIntracommunity() || oss)){
 				TipoSinDesglosePrestacionType prestacion = new TipoSinDesglosePrestacionType();
 				if(!noSujeta.equals(0.0)) {
 					NoSujetaType nst3 = new NoSujetaType();
-					nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
+					if (oss)
+						nst3.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
+					else
+						nst3.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); 
 					//	nst3.setImporteTAIReglasLocalizacion(""); // TODO
 					prestacion.setNoSujeta(nst3);
 				}
@@ -417,14 +427,14 @@ public class FacturasEmitidas extends SIIBuilt {
 							: TipoOperacionSujetaNoExentaType.S_1);
 					st3.setNoExenta(noExenta3);
 				}
-				if(st3.getExenta() != null || st3.getNoExenta() != null)
+				if ((st3.getExenta() != null || st3.getNoExenta() != null) && !oss)
 					prestacion.setSujeta(st3);
 				tcdt.setPrestacionServicios(prestacion);
 			} else {
 				TipoSinDesgloseType entrega = new TipoSinDesgloseType();
 				if(!noSujeta.equals(0.0)) {
 					NoSujetaType nst2 = new NoSujetaType();
-					if(vat.isIntracommunity() && vat.isOtherISP()){
+					if ((vat.isIntracommunity() && vat.isOtherISP()) || oss) {
 						nst2.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta)));
 					} else nst2.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
 					// // TODO
@@ -466,7 +476,7 @@ public class FacturasEmitidas extends SIIBuilt {
 							: TipoOperacionSujetaNoExentaType.S_1);
 					st2.setNoExenta(noExenta2); // TODO
 				}
-				if(st2.getExenta() != null || st2.getNoExenta() != null)
+				if((st2.getExenta() != null || st2.getNoExenta() != null) && !oss)
 					entrega.setSujeta(st2);
 				tcdt.setEntrega(entrega);
 			}				
@@ -475,7 +485,10 @@ public class FacturasEmitidas extends SIIBuilt {
 			TipoSinDesgloseType tsdt = new TipoSinDesgloseType();
 			if(!noSujeta.equals(0.0)) {
 				NoSujetaType nst = new NoSujetaType();
-				nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
+				if (oss)
+					nst.setImporteTAIReglasLocalizacion(Double.toString(AonMathUtils.round(noSujeta))); 
+				else
+					nst.setImportePorArticulos714Otros(Double.toString(AonMathUtils.round(noSujeta))); // TODO
 				//	nst.setImporteTAIReglasLocalizacion(""); // TODO
 				tsdt.setNoSujeta(nst);
 			}

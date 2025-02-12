@@ -1,6 +1,11 @@
 package com.esferalia.aon.occam.api.model.product;
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.office.Tag;
-public class ProductTag {
+public class ProductTag implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
 	Integer id;
 	Integer domain;
 	Integer product;

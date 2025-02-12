@@ -23,6 +23,8 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
+import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.MarketingAction;
@@ -34,6 +36,7 @@ import com.esferalia.aon.occam.api.model.MarketingCampaign;
 import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
@@ -52,7 +55,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
@@ -73,6 +82,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -709,4 +719,80 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return sellersWorkloadFees;
 	}
 	
+	// **************************************************
+	// **************************************** [PRODUCT]
+	// **************************************************
+
+	@Override
+	public List<Product> getProducts(ProductParams params) throws AonCoreException {
+		return AON.getProductList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+	}
+	
+	@Override
+	public Product getProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		return AON.getProduct(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(id));
+	}
+	
+	@Override
+	public void deleteProduct(String domainName, Integer domain, String user, Integer id) throws AonCoreException {
+		AON.deleteProduct(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public Product saveProduct(String domainName, Integer domain, String user, Product product) throws AonCoreException {
+		return AON.saveProduct(new Domain().setName(domainName).setId(domain), user, product);
+	}
+	
+	@Override
+	public Product createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item) throws AonCoreException {
+		return AON.createProduct(new Domain().setName(domainName).setId(domain), user, product, productTags, item);
+	}
+
+	@Override
+	public Item getItem(String domainName, Integer domain, String user, Integer productId) throws AonCoreException {
+		return AON.getItem(new Domain().setName(domainName).setId(domain), user, f -> f.getProductProperty().eq(productId), new Options().setFull(true));
+	}
+	
+	@Override
+	public Item saveItem(String domainName, int domain, String user, Item item) throws AonCoreException {
+		return AON.saveItem(new Domain().setName(domainName).setId(domain), user, item);
+	}
+	
+	@Override
+	public List<ProductCategory> getProductCategories(String domainName, Integer domain, String user) throws AonCoreException {
+		return AON.getProductCategoryList(domainName, domain, user, f -> f.getDomainProperty().eq(domain));
+	}
+	
+	@Override
+	public List<Tax> getTaxTypes(String domainName, Integer domain, String user, TaxType taxType) throws AonCoreException {
+		TaxFilter filter = f -> f.getDomainProperty().eq(domain).and(f.getTaxTypeProperty().eq(taxType.value()));
+		return AON.getTaxStream(domainName, domain, user, filter).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<ProductTag> getProductTags(String domainName, Integer domain, String user, Integer productId) throws AonCoreException {
+		ProductTagFilter filter = f -> f.getDomainProperty().eq(domain);
+		if(null != productId) filter = f -> f.getDomainProperty().eq(domain).and(f.getProductProperty().eq(productId));
+		List<ProductTag> productTags = AON.getProductTagStream(domainName, domain, user, filter).collect(Collectors.toList());
+		return productTags;
+	}
+	
+	@Override
+	public List<Tag> getTags(String domainName, Integer domain, String user) throws AonCoreException {
+		List<Tag> tags = AON.getTagList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getTypeProperty().eq((byte)1)));;
+		return tags;
+	}
+	
+	@Override
+	public void saveProductTags(String domainName, int domain, String user, Integer productId, List<ProductTag> productTags) throws AonCoreException {
+		AON.deleteProductTag(
+				new Domain().setName(domainName).setId(domain), 
+				user,
+				AON.getProductTagStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getProductProperty().eq(productId)))
+		);
+		
+		AON.insertProductTag(new Domain().setName(domainName).setId(domain), user, productTags.stream());
+		
+	}
+
 }

@@ -469,9 +469,9 @@ export class AonInvoice extends AonElement {
 
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
-		if(this.getInvoice().file){
+		if(this.getInvoice().file || this.invoice.isEmitida() ){
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile());
-		} else if(this.getInvoice().isRawdoc() && !this.invoice.isEmitida()) {
+		} else {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
 		
