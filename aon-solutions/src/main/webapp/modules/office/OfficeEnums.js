@@ -21,6 +21,12 @@ const AON_WORKGROUP_LIST = {
     icon: MATERIAL_ICONS.GROUPS
 }
 
+const AON_SERVICE = {
+    id: 'sideNavService',
+    name: MSG.SERVICES_AON,
+    icon: MATERIAL_ICONS.SHOPPING_BAG
+}
+
 
 const OfficeViews = {
     AON_CUSTOMER: "aonCustomerOffice",
@@ -50,6 +56,10 @@ const OfficeOptions = {
     AON_TASK_HOLDER,
     AON_WORKGROUP_LIST
 };
+
+const ServiceOptions = {
+    AON_SERVICE
+}
 
 
 const getButtonsStatus = () => {
@@ -129,6 +139,7 @@ export const OfficeEnums = {
     OfficeViews,
     OfficeOptions,
     OfficeSidenav,
-    CustomerFilter
+    CustomerFilter,
+    ServiceOptions
 }
 

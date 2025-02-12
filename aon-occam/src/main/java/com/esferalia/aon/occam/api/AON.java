@@ -243,6 +243,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
@@ -1440,6 +1441,12 @@ public class AON {
 			Stream<ProductTag> pts) {
 		getProduct().insertProductTag(ctx, pts);
 	}
+	
+	public static void insertProductTag(Domain domain, String login, Stream<ProductTag> pts) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			getProduct().insertProductTag(ctx, pts);
+		}
+	}
 
 	public static void updateProductTag(AONContext ctx, ProductTag pt) {
 		getProduct().updateProductTag(ctx, pt);
@@ -1452,6 +1459,12 @@ public class AON {
 	public static void deleteProductTag(AONContext ctx, 
 			Stream<ProductTag> pts) {
 		getProduct().deleteProductTag(ctx, pts);
+	}
+	
+	public static void deleteProductTag(Domain domain, String login, Stream<ProductTag> pts) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			getProduct().deleteProductTag(ctx, pts);
+		}
 	}
 
 	// ------------------------------------ NEW PRODUCT
@@ -1474,6 +1487,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Product> getProductList(Domain domain, String login, ProductParams params) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductList(ctx, params);
+		}
+	}
+	
 	public static Product saveProduct(Domain domain, String login, Product product) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().saveProduct(ctx, product);
@@ -1482,7 +1501,13 @@ public class AON {
 	
 	public static void deleteProduct(Domain domain, String login, Integer productId) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
-			getNewProduct().deleteItem(ctx, productId);
+			getNewProduct().deleteProduct(ctx, productId);
+		}
+	}
+	
+	public static Product createProduct(Domain domain, String login, Product product, List<ProductTag> productTags, Item item) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().createProduct(ctx, product, productTags, item);
 		}
 	}
 	

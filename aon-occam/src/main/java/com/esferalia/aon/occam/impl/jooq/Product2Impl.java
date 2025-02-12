@@ -18,10 +18,13 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetItemDAO;
 
 public class Product2Impl implements IProduct2{
@@ -45,7 +48,6 @@ public class Product2Impl implements IProduct2{
 			ProductDAO.getStream(ctx, filter, page, perPage));
 	}
 	
-	
 	@Override
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
@@ -53,9 +55,33 @@ public class Product2Impl implements IProduct2{
 	}
 	
 	@Override
+	public LinkedList<Product> getProductList(AONContext ctx, ProductParams params) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getList(ctx, params));
+	}
+	
+	@Override
 	public Product saveProduct(AONContext ctx, Product product) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.save(ctx, product));
+	}
+	
+	@Override
+	public Product createProduct(AONContext ctx, Product product, List<ProductTag> productTags, Item item) {
+		return ctx.getDslContext().transactionResult( configuration -> {
+			// Product
+			Product newProduct = ProductDAO.save(ctx, product);
+			
+			// Product Tags
+			productTags.forEach(productTag -> productTag.setProduct(newProduct.getId()));
+			ProductOldDAO.insertProductTag(ctx, productTags.stream());
+			
+			// Item
+			item.setProduct(newProduct);
+			ItemDAO.save(ctx, item);
+			
+			return newProduct;
+		});
 	}
 	
 	@Override

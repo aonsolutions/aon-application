@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum DomainType {
@@ -53,5 +56,9 @@ public enum DomainType {
 	public static String getName( DomainType type) {
 		if (type == null) return null;
 		return type.getName();
+	}
+	
+	public static List<DomainType> getValues() {
+		return Arrays.asList(values());
 	}
 }
