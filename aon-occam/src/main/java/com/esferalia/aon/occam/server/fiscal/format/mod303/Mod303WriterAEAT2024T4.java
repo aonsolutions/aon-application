@@ -37,7 +37,7 @@ class Mod303WriterAEAT2024T4 implements IMod303Writer{
 		,T30301000 (mod303 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30301000>")
 		   ,(wr, mod) -> wr.append(" ")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
+		   ,(wr, mod) -> wr.append(mod.getDeclarationResult() < 0 && mod.isComplementary() && Math.abs(mod.getDeclarationResult()) - mod.getAmount(Mod303Key.CT_C111) == 0.0 ? "N": AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFullName(),80))  // Apellidos y Nombre o Razón Social
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
