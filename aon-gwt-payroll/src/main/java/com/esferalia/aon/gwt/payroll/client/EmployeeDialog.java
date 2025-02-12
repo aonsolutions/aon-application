@@ -439,16 +439,15 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		initPayMethods();
 		fillDefaultFields();
 		initFocus();
-		
-		if(Boolean.TRUE.equals(hideEmployeePanel))
-			employee.hideEmployeeTable();
-		
 		showDialog();
 	}
 	
 	public void showDialog() {
 		// Show center
 		Scheduler.get().scheduleDeferred(() -> {
+			if(Boolean.TRUE.equals(hideEmployeePanel))
+				employee.hideEmployeeTable();
+			
 			center();
 			show();
 		});

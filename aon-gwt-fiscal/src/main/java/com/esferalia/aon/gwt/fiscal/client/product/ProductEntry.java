@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.DomainType;
@@ -37,6 +38,8 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -65,19 +68,19 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
-	private AonCustomCard generalCard = new AonCustomCard("Informaci\u00f3n General");
+	private AonCustomCard generalCard = new AonCustomCard("Datos Comerciales");
 	private ProductStatusSelect status;
-	private AonCustomTextBox code = new AonCustomTextBox("C\u00f3digo");
+	private AonCustomTextBox code = new AonCustomTextBox("C\u00f3digo Comercial");
 	private AonCustomTextBox barcode = new AonCustomTextBox("C\u00f3digo Barras");
 	private AonCustomTextBox name = new AonCustomTextBox("Descripci\u00f3n");
 	private AonCustomNumberBox price = new AonCustomNumberBox("Precio");
 	private AonCustomListBox iva = new AonCustomListBox("IVA");
 	private AonCustomNumberBox pvp = new AonCustomNumberBox("P.V.P.");
 	
-	private AonCustomCard aditionalCard = new AonCustomCard("Informaci\u00f3n Adicional");
+	private AonCustomCard aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n");
+	private ProductConsoleSelect console;
 	private AonCustomListBox app = new AonCustomListBox("Servicio");
 	private AonCustomMultiSelectBox domainType = new AonCustomMultiSelectBox("Tipo Dominio");
-	private AonCustomCheckBox console = new AonCustomCheckBox("Console");
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
 	private AonCustomCheckBox composite = new AonCustomCheckBox("Pack");
@@ -206,18 +209,25 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		status = new ProductStatusSelect(product.getStatus());
 		
-		generalCard = new AonCustomCard("Informaci\u00f3n General", status);
+		generalCard = new AonCustomCard("Datos Comerciales", status);
 		generalCard.setToolbarWidgetShown();
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
+		generalCard.getElement().getStyle().setProperty("min-width", "24rem");
 		generalCard.add(table);
 		
 		code.setValue(product.getCode());
 		code.addValueChangeHandler(e -> product.setCode(code.getValue()));
 		
-		barcode.setEnable(false);
-		barcode.setValue(item.getBarcode());
+		category.clearItems();
+		category.addItem("-", "");
+		getProductCategories(productCategories -> {
+			productCategories.forEach(productCategory -> category.addItem(productCategory.getName(), productCategory.getId().toString()));
+			category.setValue(null == product.getCategory() || null == product.getCategory().getId() ? "" : product.getCategory().getId().toString());
+		});
+		category.addChangeHandler(e -> product.setCategory(AonStringUtils.isBlank(category.getValue()) ? null : productCategories.stream().filter(pc -> pc.getId().equals(Integer.parseInt(category.getValue()))).findFirst().get()));
 		
-		table.add(createRow(code, barcode));
+		
+		table.add(createRow(code, category));
 		
 		name.setValue(product.getName());
 		name.addValueChangeHandler(e -> {
@@ -226,14 +236,6 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		});
 		
 		table.add(createRow(name, null));
-		
-		app.clearItems();
-		app.addItem("-", "00");
-		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
-		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
-		app.addChangeHandler(e -> createBarCode());
-		
-		table.add(createRow(app, null));
 		
 		price.hideNearBy();
 		price.setValue(item.getPrice());
@@ -265,25 +267,38 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomCard createAditionalCard() {
 		FlowPanel table = createFlexColumnPanel();
 		
-		aditionalCard = new AonCustomCard("Informaci\u00f3n Adicional");
-		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
-		aditionalCard.add(table);
+		console = new ProductConsoleSelect(isConsole() ? ProductConsole.CONSOLE : ProductConsole.SELF_CONTRACT);
+		console.addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+            	createBarCode();
+            }
+        });
 		
-		domainType.setOptions(DomainType.getValues().stream().map(domainType -> domainType.getName()).collect(Collectors.toSet()));
+		aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n", console);
+		aditionalCard.setToolbarWidgetShown();
+		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
+		aditionalCard.getElement().getStyle().setProperty("min-width", "24rem");
+		aditionalCard.add(table);
+		app.clearItems();
+		app.addItem("-", "00");
+		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
+		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
+		app.addChangeHandler(e -> createBarCode());
+		
+		barcode.setEnable(false);
+		barcode.setValue(item.getBarcode());
+		
+		table.add(createRow(app, barcode));
+		
+		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
 		domainType.setSelectedOptions(getSelectedDomainTypes());
 		domainType.addBlurHandler(e -> createBarCode());
 		
 		table.add(createRow(domainType, null));
 		
-		category.clearItems();
-		category.addItem("-", "");
-		getProductCategories(productCategories -> {
-			productCategories.forEach(productCategory -> category.addItem(productCategory.getName(), productCategory.getId().toString()));
-			category.setValue(null == product.getCategory() || null == product.getCategory().getId() ? "" : product.getCategory().getId().toString());
-		});
-		category.addChangeHandler(e -> product.setCategory(AonStringUtils.isBlank(category.getValue()) ? null : productCategories.stream().filter(pc -> pc.getId().equals(Integer.parseInt(category.getValue()))).findFirst().get()));
-		
 		// TAGS
+		tags.getElement().getStyle().setProperty("max-width", "90%");
 		getTags(aviableTags -> {
 			tags.setOptions(aviableTags.stream().map(aviableTag -> aviableTag.getName()).collect(Collectors.toSet()));
 			
@@ -293,26 +308,11 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			});
 		});
 		
-		table.add(createRow(category, tags));
-		
-		console.setValue(isConsole());
-		console.addValueChangeHandler(e -> {
-			if(!console.getValue() && domainType.getSelectedOptions().contains("Administraci\u00F3n")) {
-				Set<String> selectedOptions = domainType.getSelectedOptions();
-				selectedOptions.remove("Administraci\u00F3n");
-				domainType.setSelectedOptions(selectedOptions);
-			} else if(console.getValue() && !domainType.getSelectedOptions().contains("Administraci\u00F3n")) {
-				Set<String> selectedOptions = domainType.getSelectedOptions();
-				selectedOptions.add("Administraci\u00F3n");
-				domainType.setSelectedOptions(selectedOptions);
-			}
-			createBarCode();
-		});
-		
+		composite.setWidth("3rem");
 		composite.setValue(null == product.getComposition() ? false : product.getComposition());
 		composite.addValueChangeHandler(e -> product.setComposition(composite.getValue()));
 		
-		table.add(createRow(console, composite));
+		table.add(createRow(tags, composite));
 		
 		return aditionalCard;
 	}
@@ -324,7 +324,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 4, 5))) domainTypes.add("Garaje");
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 5, 6))) domainTypes.add("Academ\u00EDa");
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 6, 7))) domainTypes.add("Hotel");
-		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 7, 8))) domainTypes.add("Administraci\u00F3n");
+//		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 7, 8))) domainTypes.add("Administraci\u00F3n");
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 8, 9))) domainTypes.add("Despacho");
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 9, 10))) domainTypes.add("Gen\u00E9rico");
 		if(AonStringUtils.equalsIgnoreCase("1", AonStringUtils.substring(item.getBarcode(), 10, 11))) domainTypes.add("Comercio");
@@ -355,7 +355,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		barCode += domainType.getSelectedOptions().contains("Garaje") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Academ\u00EDa") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Hotel") ? "1" : "0";
-		barCode += console.getValue() || domainType.getSelectedOptions().contains("Administraci\u00F3n") ? "1" : "0";
+		barCode += console.getValue() == ProductConsole.CONSOLE ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Despacho") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Gen\u00E9rico") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Comercio") ? "1" : "0";
