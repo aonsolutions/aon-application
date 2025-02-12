@@ -1199,7 +1199,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 	// ------------------------------------------------- Show/hide employee table
 
 	public void hideEmployeeTable() {
-		employeeDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		if(null != employeeDataTable)
+			employeeDataTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	// ------------------------------------------------- Show/hide methods
