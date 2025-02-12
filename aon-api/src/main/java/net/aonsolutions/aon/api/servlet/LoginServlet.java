@@ -1,6 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -99,10 +102,11 @@ public class LoginServlet extends AonApiHttpServlet{
 			AonToken aonToken= AonToken.parse(jsonToken);
 			if ( AonStringUtils.isBlank(aonToken.getUuid()) ) {
 				String userLogin = jsonToken.getString(IJsonNames.LOGIN);
-				Integer domainId = jsonToken.getInt(IJsonNames.DOMAIN);
+				Integer domainId = jsonToken.getInt(IJsonNames.DOMAIN); // relax , really user's  domain id, See AonToken
 				String domainName = jsonToken.getString(IJsonNames.SCHEMA_FIRST_DOMAIN);
 				Domain domain = AON.getDomain(domainName, domainId, userLogin, f -> f.getNameProperty().eq(domainName));
-				User user = AON.getUser( domain, userLogin, f -> f.getLoginProperty().eq(userLogin));
+				User user = AON.getUser(domain, userLogin, f -> f.getLoginProperty().eq(userLogin)
+						.and(f.getDomainProperty().in(arrayOf(domainId /*, domain.getId(), domain.getParentId()*/))));
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 					token = AonToken.build(auth, null);
@@ -122,7 +126,10 @@ public class LoginServlet extends AonApiHttpServlet{
 				) {
 				String aux = username;
 				Domain domain = AON.getDomain(domainName, 0, aux, f -> f.getNameProperty().eq(domainName));
-				User user = AON.getUser(domain, aux, f -> f.getLoginProperty().eq(aux));
+				
+				User user = AON.getUser(domain, username, f -> f.getLoginProperty().eq(aux)
+						.and(f.getDomainProperty().in(arrayOf(domain.getId(), domain.getParentId()))));
+				
 				if(user.getId() != null) {
 					String pass = SECURITY.getUserPassword(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 					String userPass = Utils.createPasswordHash(login, password);
@@ -188,6 +195,10 @@ public class LoginServlet extends AonApiHttpServlet{
 		auth = AON_SOLUTIONS.insertAuth( user.getDomain().getName(), user.getDomain().getId(), auth );
 		AON_SOLUTIONS.assignAuthToUser(user.getDomain().getName(), user.getDomain().getId(), user, auth.getAuth());
 		return auth;
+	}
+	
+	private static Integer[] arrayOf( Integer ...ts ) {
+		return Arrays.stream(ts).filter(Objects::nonNull).toArray(Integer[]::new);
 	}
 	
 
