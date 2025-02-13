@@ -4,6 +4,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_B
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_CTA_ESP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_PPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -211,6 +212,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		GUARENTEED,
 		
 		COMPENSATION_CAUSE.getName(),
+		
+		BASE_PPE.getName(),
 		
 	};
 	
