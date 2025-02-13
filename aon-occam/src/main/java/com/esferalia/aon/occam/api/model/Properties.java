@@ -1784,6 +1784,16 @@ public interface Properties {
 		Property<Byte> getActiveProperty();
 		
 	}
+
+	public interface ItemTariffProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getItemProperty();
+		Property<Integer> getTariffProperty();
+		Property<Byte> getTypeProperty();
+		Property<Double> getProfitPercentProperty();
+		Property<Double> getPriceProperty();
+	}
 	
 	public interface RattachTagProperties {
 		Property<Integer> getIdProperty();

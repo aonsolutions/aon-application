@@ -39,11 +39,14 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -64,6 +67,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -288,6 +292,18 @@ public interface CommonService extends RemoteService {
 	List<ProductTag> getProductTags(String domainName, Integer domain, String user, Integer productId) throws AonCoreException;
 	List<Tag> getTags(String domainName, Integer domain, String user) throws AonCoreException;
 	void saveProductTags(String domainName, int domain, String user, Integer id, List<ProductTag> productTags) throws AonCoreException;
+	
+	List<Tariff> getTariffs(String domainName, int domain, String user) throws AonCoreException;
+	List<ItemTariff> getItemTariffs(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	void deleteItemTariff(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	ItemTariff saveItemTariff(String domainName, int domain, String user, ItemTariff itemTariff) throws AonCoreException;
+	
+	List<Item> getItems(String domainName, int domain, String user, ProductType productType) throws AonCoreException;
+	List<ItemComposition> getItemCompositions(String domainName, int domain, String user, Integer itemId) throws AonCoreException;
+	void deleteItemComposition(String domainName, int domain, String user, Integer idk) throws AonCoreException;
+	void deleteItemCompositions(String domainName, int domain, String user, List<Integer> itemCompositions)throws AonCoreException;
+	ItemComposition saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition) throws AonCoreException;
+	List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException;
 
 	
 }
