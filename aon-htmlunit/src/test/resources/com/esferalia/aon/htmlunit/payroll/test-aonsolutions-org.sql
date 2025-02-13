@@ -6517,7 +6517,7 @@ CREATE TABLE `fs_vat` (
   CONSTRAINT `FK_FS_VAT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Iva';
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+ 
 --
 -- Dumping data for table `fs_vat`
 --
@@ -8853,10 +8853,14 @@ CREATE TABLE `note` (
   `owner` int DEFAULT NULL COMMENT 'Destinatario de la Nota',
   `note` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Texto de la Nota',
   `note_tag` varchar(17) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre de la etiqueta',
+  `archive` tinyint DEFAULT '0' COMMENT 'Indica si la nota esta o no archivada',
+  `tag` int DEFAULT NULL COMMENT 'Identificador de la etiqueta',
   PRIMARY KEY (`id`),
   KEY `IDX_NOTE_USER` (`owner`),
   KEY `IDX_NOTE_DOMAIN` (`domain`),
+  KEY `IDX_NOTE_TAG` (`tag`),
   CONSTRAINT `FK_NOTE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NOTE_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`),
   CONSTRAINT `FK_NOTE_USER` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -14890,4 +14894,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-31 18:15:08
+-- Dump completed on 2025-02-04 10:52:00
