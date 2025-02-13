@@ -2655,20 +2655,22 @@ export class AonInvoice extends AonElement {
 
 			this.clearElement(fileDiv);
 
-			let json = {
-				id: this.getInvoice().id,
-				source: this.getInvoice().isRawdoc() ? 'rawdoc' : 'invoice',
-				domain_id: LS.getDomainId(),
-				domain_name: LS.getDomainName(),
-				login: LS.getDomainLogin()
-			};
-
 			let viewer = new AonViewer();
-			viewer.type = !this.getInvoice().file || this.getInvoice().isEmitida()
-				? 'application/pdf' : this.getInvoice().file.content_type;
-			viewer.file = !this.getInvoice().file || this.getInvoice().isEmitida()
-			 	? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
-			 	: this.getInvoice().file.path;
+			if (this.getInvoice().file) {
+				viewer.type = this.getInvoice().file.content_type;
+				viewer.file = this.getInvoice().file.path;
+			} else {
+				let json = {
+					id: this.getInvoice().id,
+					source: this.getInvoice().isRawdoc() ? 'rawdoc' : 'invoice',
+					domain_id: LS.getDomainId(),
+					domain_name: LS.getDomainName(),
+					login: LS.getDomainLogin()
+				};
+				viewer.type = 'application/pdf';
+				viewer.file = '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json));
+			}
+			
 			viewer.width = fileDiv.offsetWidth;
 			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			viewer.addEventListener(EVENT.PRINT_IMAGE, () => { getInvofoxTextContent(this.getInvoice().insight.invofoxId).then(t => viewer.printImageTextLayer(t)); } );
