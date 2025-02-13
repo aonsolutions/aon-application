@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
@@ -24,27 +26,31 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.fiscal.client.product.ItemCompositionPanel.ItemCompositionCallback;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ProductEntry extends AonCustomDockLayout {
@@ -84,6 +90,16 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
 	private AonCustomCheckBox composite = new AonCustomCheckBox("Pack");
+	
+	private FlowPanel tariffRow = new FlowPanel();
+	
+	private AonCustomCard tariffCard = new AonCustomCard("Tarifas");
+	private SimpleLayoutPanel tariffCenterPanelCard;
+	private ItemTariffTable itemTariffTable;
+	
+	private AonCustomCard compositeCard = new AonCustomCard("Pack Productos");
+	private SimpleLayoutPanel compositeCenterPanelCard = new SimpleLayoutPanel();;
+	private CompositeItemTable compositeItemTable;
 	
 	private RegistryModuleOptions options;
 	
@@ -179,9 +195,13 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			
 			remove(container);
 			
+			tariffRow.clear();
+			if(tariffRow.getWidgetCount() > 1) tariffRow.remove(1);
+			
 			container = new HTMLPanel(EMPTY_STRING);
 			container.addStyleName(AON.CSS.aonItemFlex());
 			container.addStyleName(AON.CSS.aonFlexColumn());
+			container.getElement().getStyle().setProperty("padding", "0 1rem");
 			
 			messagePanel.addStyleName(AON.CSS.aonWidthAll());
 			
@@ -190,14 +210,21 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			FlowPanel cardsRow = createRow(createGeneralCard(), createAditionalCard());
 			cardsRow.getElement().getStyle().setProperty("align-items", "start");
 			
-			container.getElement().getStyle().setProperty("padding", "0 1rem");
+			tariffRow = createRow(createTariffCard(), product.isComposition() ? createCompositeCard() : null);
+			tariffRow.getElement().getStyle().setProperty("align-items", "start");
+			
 			container.add(cardsRow);
+			container.add(tariffRow);
 			
 			add(container);
 			
 			Scheduler.get().scheduleDeferred(new Command() {
 		        public void execute() {
 		        	name.setFocus(true);
+		        	
+		        	int alturaRestante = calcularAlturaRestante(tariffCenterPanelCard);
+		        	tariffCenterPanelCard.setHeight(alturaRestante + "px");
+		        	compositeCenterPanelCard.setHeight(alturaRestante + "px");
 		        }
 		    });
 			
@@ -212,7 +239,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		generalCard = new AonCustomCard("Datos Comerciales", status);
 		generalCard.setToolbarWidgetShown();
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
-		generalCard.getElement().getStyle().setProperty("min-width", "24rem");
+		generalCard.getElement().getStyle().setProperty("min-width", "36rem");
 		generalCard.add(table);
 		
 		code.setValue(product.getCode());
@@ -268,26 +295,22 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		FlowPanel table = createFlexColumnPanel();
 		
 		console = new ProductConsoleSelect(isConsole() ? ProductConsole.CONSOLE : ProductConsole.SELF_CONTRACT);
-		console.addBlurHandler(new BlurHandler() {
-            @Override
-            public void onBlur(BlurEvent event) {
-            	createBarCode();
-            }
-        });
+		console.addBlurHandler(e -> createBarCode());
 		
 		aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n", console);
 		aditionalCard.setToolbarWidgetShown();
 		aditionalCard.addStyleName(AON.CSS.aonWidthAll());
-		aditionalCard.getElement().getStyle().setProperty("min-width", "24rem");
+		aditionalCard.getElement().getStyle().setProperty("min-width", "36rem");
 		aditionalCard.add(table);
+		
 		app.clearItems();
-		app.addItem("-", "00");
+		app.addItem("-", "--");
 		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
 		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
 		app.addChangeHandler(e -> createBarCode());
 		
 		barcode.setEnable(false);
-		barcode.setValue(item.getBarcode());
+		barcode.setValue(formatBarCode(item.getBarcode()));
 		
 		table.add(createRow(app, barcode));
 		
@@ -308,13 +331,109 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			});
 		});
 		
+		composite = new AonCustomCheckBox("Pack");
 		composite.setWidth("3rem");
 		composite.setValue(null == product.getComposition() ? false : product.getComposition());
-		composite.addValueChangeHandler(e -> product.setComposition(composite.getValue()));
+		composite.addValueChangeHandler(e -> {
+			product.setComposition(composite.getValue());
+			
+			if(!composite.getValue()) {
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Producto Compuesto",
+						new HTML("Se va a proceder a eliminar los productos compuestos.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+				
+				dialog.confirm(new AonAcceptDialogCallback() {
+
+					@Override
+					public void onCancel() {}
+
+					@Override
+					public void onAccept() {
+						compositeItemTable.deleteCompositions(end -> 
+							getItemCompositions(e -> saveProduct())
+						);
+					}
+				});
+			} else
+				saveProduct();
+		});
 		
 		table.add(createRow(tags, composite));
 		
 		return aditionalCard;
+	}
+	
+	private Widget createTariffCard() {
+		tariffCard = new AonCustomCard("Tarifas");
+		tariffCard.addStyleName(AON.CSS.aonWidthAll());
+		tariffCard.getElement().getStyle().setProperty("min-width", "36rem");
+		
+		tariffCenterPanelCard = new SimpleLayoutPanel();
+		
+		itemTariffTable  = new ItemTariffTable(options, product, item) {
+			
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+		};
+		
+		tariffCenterPanelCard.setWidget(itemTariffTable);
+		
+		tariffCard.add(tariffCenterPanelCard);
+		
+		return tariffCard;
+	}
+
+	private Widget createCompositeCard() {
+		AonTableButton newComposition = new AonTableButton("Nuevo producto", AON.CSS.aonIconAdd());
+		newComposition.addClickHandler(e -> onUCreateItemComposition());
+		
+		compositeCard = new AonCustomCard("Pack Productos", newComposition);
+		compositeCard.addStyleName(AON.CSS.aonWidthAll());
+		compositeCard.getElement().getStyle().setProperty("min-width", "36rem");
+		
+		compositeItemTable  = new CompositeItemTable(options, product, item) {
+			
+			@Override
+			protected void onShowErrorMessage(String errorMessage) {
+				AonMessagePanel.showError(messagePanel, errorMessage);
+			}
+		};
+		
+		compositeCenterPanelCard.setWidget(compositeItemTable);
+		
+		compositeCard.add(compositeCenterPanelCard);
+		
+		return compositeCard;
+	}
+	
+	private void onUCreateItemComposition() {
+		getItems(itemList -> 
+			getItemCompositions(itemCompositions -> {
+				AonCustomDialog dialog = new AonCustomDialog();
+				dialog.showCloseButton(true);
+				dialog.setCaption("Item Compuesto");
+				
+				ItemCompositionPanel itemTariffPanel = new ItemCompositionPanel(options, itemList, itemCompositions, item, new ItemCompositionCallback() {
+					
+					@Override
+					public void onAccept(ItemComposition itemComposition) {
+						dialog.hide();
+						compositeItemTable.onSearch();
+					}
+				});
+				
+				dialog.add( itemTariffPanel );
+				dialog.showLoadedCB(new AonCustomDialogCallback() {
+					
+					@Override
+					public void onEnd() {
+						dialog.center();
+						dialog.show();
+					}
+				});
+			})
+		);
 	}
 
 	private Set<String> getSelectedDomainTypes() {
@@ -361,10 +480,15 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		barCode += domainType.getSelectedOptions().contains("Comercio") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Kit Digital") ? "1" : "0";
 		
-		barcode.setValue(barCode);
+		barcode.setValue(formatBarCode(barCode));
 		item.setBarcode(barCode);
 		
 		return barCode;
+	}
+
+	private String formatBarCode(String barCode) {
+		return AonStringUtils.isBlank(barCode) ? "XX / YYYYYYYYYY" 
+				: AonStringUtils.substring(barCode, 0, 2) + " / " +  AonStringUtils.substring(barCode, 2, barCode.length() - 1);
 	}
 
 	private FlowPanel createFlexColumnPanel() {
@@ -398,6 +522,20 @@ public abstract class ProductEntry extends AonCustomDockLayout {
         panel.setWidth("100%");
         return panel;
     }
+	
+	private int calcularAlturaRestante(Widget widget) {
+		// Posicin del widget desde el inicio del documento
+	    int posicionWidget = widget.getElement().getAbsoluteTop();
+
+	    // Altura del viewport
+	    int alturaViewport = Window.getClientHeight();
+
+	    // Scroll actual (en caso de que la pgina tenga desplazamiento)
+	    int scrollActual = Window.getScrollTop();
+
+	    // Altura restante
+	    return alturaViewport + scrollActual - posicionWidget - 85;
+	}
 	
 	private List<ProductTag> getProductTags() {
 		Set<String> selectedTags = tags.getSelectedOptions();
@@ -456,6 +594,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 							public void onSuccess(Item itemDB) {
 								item = itemDB;
 								AonMessagePanel.showSuccess(messagePanel, "Producto " + product.getName()+ " guardado correctamente");
+								
+								setProduct(product.getId());
 							}
 						});
 					}
@@ -574,6 +714,36 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error obteniendo producto: " + caught.getMessage());
+			}
+		});
+	}
+
+	private void getItems(Consumer<List<Item>> success) {
+		commonService.getItems(options.getDomainName(), options.getDomain(), options.getUser(), ProductType.AUXILIARY, new AsyncCallback<List<Item>>() {
+			
+			@Override
+			public void onSuccess(List<Item> itemsDb) {
+				success.accept(itemsDb);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo items : " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void getItemCompositions(Consumer<List<ItemComposition>> success) {
+		commonService.getItemCompositions(options.getDomainName(), options.getDomain(), options.getUser(), item.getId(), new AsyncCallback<List<ItemComposition>>() {
+			
+			@Override
+			public void onSuccess(List<ItemComposition> itemCompositionsDb) {
+				success.accept(itemCompositionsDb);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo item compuesto : " + caught.getMessage());
 			}
 		});
 	}

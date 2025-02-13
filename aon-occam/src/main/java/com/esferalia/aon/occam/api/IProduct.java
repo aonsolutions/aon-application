@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
@@ -51,6 +52,10 @@ public interface IProduct {
 	// ITEM COMPOSITION
 	public Stream<ItemComposition> getItemCompositionStream(AONContext ctx, ItemCompositionFilter filter);
 	public List<ItemComposition> getItemCompositionList(AONContext ctx, ItemCompositionFilter filter);
+	public void deletItemComposition(CloseableAONContext ctx, Integer id);
+	public void deletItemCompositions(CloseableAONContext ctx, List<Integer> ids);
+	public ItemComposition saveItemComposition(CloseableAONContext ctx, ItemComposition itemComposition);
+	public List<ItemComposition> saveItemCompositions(CloseableAONContext ctx, List<ItemComposition> itemCompositions);
 	
 	// BRAND
 	

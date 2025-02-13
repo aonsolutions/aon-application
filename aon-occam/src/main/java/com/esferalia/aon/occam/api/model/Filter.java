@@ -702,6 +702,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ItemTariffFilter{
+		Filter filter(ItemTariffProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface RattachTagFilter{
 		Filter filter(RattachTagProperties properties);
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
@@ -184,6 +185,26 @@ public class ProductImpl implements IProduct{
 	public List<ItemComposition> getItemCompositionList(AONContext ctx, ItemCompositionFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			ItemCompositionDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public void deletItemComposition(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> ItemCompositionDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public void deletItemCompositions(CloseableAONContext ctx, List<Integer> ids) {
+		ctx.getDslContext().transaction(configuration -> ItemCompositionDAO.delete(ctx, ids));
+	}
+
+	@Override
+	public ItemComposition saveItemComposition(CloseableAONContext ctx, ItemComposition itemComposition) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemCompositionDAO.save(ctx, itemComposition));
+	}
+
+	@Override
+	public List<ItemComposition> saveItemCompositions(CloseableAONContext ctx, List<ItemComposition> itemCompositions) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemCompositionDAO.save(ctx, itemCompositions));
 	}
 	
 //	@Override

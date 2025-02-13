@@ -56,11 +56,14 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -81,6 +84,7 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
@@ -793,6 +797,60 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		AON.insertProductTag(new Domain().setName(domainName).setId(domain), user, productTags.stream());
 		
+	}
+	
+	@Override
+	public List<Tariff> getTariffs(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getTariffStream(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<ItemTariff> getItemTariffs(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		return AON.getItemTariffStream(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(id))).collect(Collectors.toList());
+	}
+	
+	@Override
+	public void deleteItemTariff(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteItemTariff(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public ItemTariff saveItemTariff(String domainName, int domain, String user, ItemTariff itemTariff) throws AonCoreException {
+		return AON.saveItemTariff(new Domain().setName(domainName).setId(domain), user, itemTariff);
+	}
+	
+	@Override
+	public List<Item> getItems(String domainName, int domain, String user, ProductType productType) throws AonCoreException {
+		return AON.getItemStream(
+				new Domain().setName(domainName).setId(domain), 
+				user, 
+				f -> f.getDomainProperty().eq(domain).and(f.getProductTypeProperty().eq((byte)productType.ordinal()))				
+		).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<ItemComposition> getItemCompositions(String domainName, int domain, String user, Integer itemId) throws AonCoreException {
+		return AON.getItemCompositionStream(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(itemId))).collect(Collectors.toList());
+	}
+	
+	@Override
+	public void deleteItemComposition(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deletItemComposition(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public void deleteItemCompositions(String domainName, int domain, String user, List<Integer> itemCompositions)throws AonCoreException {
+		AON.deletItemCompositions(new Domain().setName(domainName).setId(domain), user, itemCompositions);
+	}
+
+	@Override
+	public ItemComposition saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition) throws AonCoreException {
+		return AON.saveItemComposition(new Domain().setName(domainName).setId(domain), user, itemComposition);
+	}
+	
+	@Override
+	public List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException {
+		return AON.saveItemCompositions(new Domain().setName(domainName).setId(domain), user, itemCompositions);
 	}
 
 }

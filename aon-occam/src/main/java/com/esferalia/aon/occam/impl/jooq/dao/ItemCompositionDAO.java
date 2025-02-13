@@ -68,6 +68,11 @@ public class ItemCompositionDAO {
 		return select(ctx, filter).limit(1).fetch().stream().map(new ItemCompositionFiller()).findFirst().orElse(new ItemComposition());
 	}
 	
+	public static  List<ItemComposition> save(AONContext ctx, List<ItemComposition> itemCompositions) {
+		itemCompositions.forEach(itemComposition -> save(ctx, itemComposition));
+		return itemCompositions;
+	}
+	
 	public static ItemComposition save(AONContext ctx, ItemComposition itemComposition) {
 		return itemComposition.getId() != null
 				? update(ctx, itemComposition)
@@ -103,6 +108,11 @@ public class ItemCompositionDAO {
 		return itemComposition;
 	}
 
+	public static void delete(AONContext ctx, List<Integer> ids) {
+		ctx.checkWrite();
+		ids.forEach(id -> delete(ctx, f -> f.getIdProperty().eq(id)));
+	}
+	
 	public static void delete(AONContext ctx, ItemCompositionFilter filter) {
 		ctx.checkWrite();
 		ctx.getDslContext()

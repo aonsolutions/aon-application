@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -71,11 +72,43 @@ public class ProductConsoleSelect extends HTMLPanel {
 			statusContextMenu = new StatusContextMenu();
 			
 			addDomHandler(event -> {
-				NativeEvent nativeEvent = event.getNativeEvent();
-				statusContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-				statusContextMenu.getElement().getStyle().setProperty("z-index", "2");
-				statusContextMenu.show();
+			    NativeEvent nativeEvent = event.getNativeEvent();
+			    int clickX = nativeEvent.getClientX();
+			    int clickY = nativeEvent.getClientY();
+
+			    // Tamaño del viewport (ventana)
+			    int viewportWidth = Window.getClientWidth();
+			    int viewportHeight = Window.getClientHeight();
+
+			    // Dimensiones del menú
+			    statusContextMenu.show(); // Necesario para calcular dimensiones reales
+			    int menuWidth = statusContextMenu.getOffsetWidth();
+			    int menuHeight = statusContextMenu.getOffsetHeight();
+
+			    // Ajustar posición X
+			    int positionX = clickX;
+			    if (clickX + menuWidth > viewportWidth) {
+			        positionX = Math.max(0, clickX - menuWidth); // Si no cabe, mover hacia la izquierda
+			    }
+
+			    // Ajustar posición Y
+			    int positionY = clickY;
+			    if (clickY + menuHeight > viewportHeight) {
+			        positionY = Math.max(0, clickY - menuHeight); // Si no cabe, mover hacia arriba
+			    }
+
+			    // Establecer la posición final del menú
+			    statusContextMenu.setPopupPosition(positionX, positionY);
+			    statusContextMenu.getElement().getStyle().setProperty("z-index", "2");
 			}, ClickEvent.getType());
+
+			
+//			addDomHandler(event -> {
+//				NativeEvent nativeEvent = event.getNativeEvent();
+//				statusContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+//				statusContextMenu.getElement().getStyle().setProperty("z-index", "2");
+//				statusContextMenu.show();
+//			}, ClickEvent.getType());
 			
 			addStatusInput();
 			

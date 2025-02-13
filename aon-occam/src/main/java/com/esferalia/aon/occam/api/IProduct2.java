@@ -7,17 +7,21 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.TariffFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 
 public interface IProduct2 {
@@ -56,6 +60,13 @@ public interface IProduct2 {
 	public void assignInvestAsset2Invoice(AONContext ctx, Integer investAssetId, Invoice invoice);
 	public List<InvestAsset> getInvestAssetList(CloseableAONContext ctx, InvestAssetParams params);
 	public InvestAsset getInvestAsset(CloseableAONContext ctx, Integer id);
+	
+	// TARIFF / ITEM TARIFF
+	
+	public Stream<Tariff> getTariffStream(CloseableAONContext ctx, TariffFilter filter);
+	public Stream<ItemTariff> getItemTariffStream(CloseableAONContext ctx, ItemTariffFilter filter);
+	public void deleteItemTariff(CloseableAONContext ctx, Integer id);
+	public ItemTariff saveItemTariff(CloseableAONContext ctx, ItemTariff itemTariff);
 
 	
 }
