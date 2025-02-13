@@ -181,7 +181,7 @@ export class AonMobileHeader extends AonElement {
 	home() {
 		if(LS.getCompany()) {
 			this.companyIn();
-			this.rootPanelHtml('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
+			this.rootPanelHtml('<aon-mobile-home id="aonMobileHome"></aon-mobile-home>');
 		} else {
 			this.companyOut();
 			this.rootPanelHtml('<aon-mobile-parent id="aonParent"></aon-mobile-parent>');

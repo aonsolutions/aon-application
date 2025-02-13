@@ -11,11 +11,13 @@ import { AonEventList } from "./time-control/event/aon-event-list.js";
 import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
-import { MSG } from "../../environments/environments.js";
+import { MSG,TAG,CSS } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
 import 'aoncss';
 import { AonSign } from "./aon-sign.js";
+import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
+import { getPosition } from "../../services/maps.js";
 
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
@@ -54,7 +56,10 @@ export class AonTimecontrol extends AonElement {
     this.filterInit();
     this.paintView();
     this.buildToolbar();
-    this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+    if(this.isMobile())
+      this.showView(SIGNIN_VIEWS.AON_STATISTICS);
+    else
+      this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
   filterInit(){
@@ -135,8 +140,7 @@ export class AonTimecontrol extends AonElement {
     
     this.applicationEl.addSidenavOptions3(data2);
 
-
-    if(this.getDur().isTimecontrol() && LS.isNewTheme()) {
+    if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
 			getTimeControl().then(r => {
 		    let data3 = {
           id: "signing",
@@ -148,8 +152,8 @@ export class AonTimecontrol extends AonElement {
         let aonSign = new AonSign();
         this.applicationEl.addSidenavWidget2(data3, aonSign);
 				aonSign.buildSignin(r);
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.timeControlStatus(r);
+        let aonHeader = this.getElement('aonHeader');
+        aonHeader.timeControlStatus(r);
 			});
 		}
   }
@@ -161,6 +165,8 @@ export class AonTimecontrol extends AonElement {
 
   async setDataFilter(data){
     try {
+      if(this.isMobile())
+        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       this.DATE_TMP =  null;
       if(data && data.period){
         data = {...data, ...getPeriod(data.period)};
@@ -235,6 +241,9 @@ export class AonTimecontrol extends AonElement {
               if(data.add){ aonView.add = data.add;}
             } 
             break;
+          case SIGNIN_VIEWS.AON_STATISTICS:
+             this.buildTimeControl();
+              break;
         }
         if(aonView){
           aonView.id = view;
@@ -273,6 +282,44 @@ export class AonTimecontrol extends AonElement {
 		return this.TASK_HOLDER_ENTERPRISE;
 	}
   
+  async buildTimeControl() {
+      getPosition().then(console.log).catch(console.error); // GET POSITION
+
+      const r = await getTimeControl();
+
+      let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+      div3.id = this.TIMECONTROL_SIGN;
+      if(this.isMobile()){
+        div3.style.borderTop = '1px solid #ddd';
+        this.clearElement(div3);
+        div3.appendChild(this.createTitleTime());
+      }
+
+      let staticsDiv = this.createElement(TAG.DIV);
+      staticsDiv.style.height = "15rem";
+      staticsDiv.style.minWidth = "10rem";
+      staticsDiv.style.maxWidth = "20rem";
+      staticsDiv.style.margin = "0 auto";
+
+      staticsDiv.appendChild(new AonStatistics());
+
+      div3.appendChild(staticsDiv);
+      let aonSign = new AonSign();
+      aonSign.setTimeControl(r);
+      div3.appendChild(aonSign);
+      this.applicationEl.setContent(div3);
+  }
+
+  createTitleTime(){
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.AON_SIDENAV_TITLE;
+    div.innerHTML = 'CONTROL HORARIO';
+    div.style.textAlign = "left";
+    div.style.marginLeft = "0";
+    div.style.paddingLeft = "10";
+    return div;
+  }
+
   isEmployee(){
     return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }
