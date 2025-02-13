@@ -1159,67 +1159,99 @@ export class AonInvoice extends AonElement {
 		div.className = CSS.AON_FLEX;
 		table.addCell(div, '4');
 
-		if(this.invoice.isEmitida() && !this.isInvofoxInvoice()) {
-			// ----- SERIE
-			let serieSpan = this.createTableSpan("20%", "2px");
-			div.appendChild(serieSpan);
+		// ----- SERIE
+		let serieSpan = this.createTableSpan("20%", "2px");
+		div.appendChild(serieSpan);
 
-			let serie = createSuggestion(this.SERIE, MSG.SERIE);
-			serieSpan.appendChild(serie);
-			serie.setMaxlength(5);
-			serie.addEventListener(EVENT.AON_KEYUP, (e) => {
-				serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
-					name: r.description,
-					value: r.description,
-					item: r};}));
-			});
-			serie.readonly = this.invoice.isReadonly();
-			serie.value = this.invoice.serie;
-			serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
-			serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
+		let serie = createSuggestion(this.SERIE, MSG.SERIE);
+		serieSpan.appendChild(serie);
+		serie.setMaxlength(5);
+		serie.addEventListener(EVENT.AON_KEYUP, (e) => {
+			serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
+				name: r.description,
+				value: r.description,
+				item: r};}));
+		});
+		serie.readonly = this.invoice.isReadonly();
+		serie.value = this.invoice.serie;
+		serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
+		serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
-			// ----- NUMBER
+		// ----- NUMBER
 
-			let numberSpan = this.createTableSpan("30%", "2px");
-			div.appendChild(numberSpan);
+		let numberSpan = this.createTableSpan("30%", "2px");
+		div.appendChild(numberSpan);
 
-			let number = createInput(this.NUMBER, MSG.NUMBER);
-			if(this.invoice.number > -1)
-				number.value = this.invoice.number;
-			number.readonly = CONSTANT.READONLY;
-			number.disabled = CONSTANT.TRUE;
-			numberSpan.appendChild(number);
-			if(this.invoice.isInbox()) {
-				if(this.invoice.isThirdPart()) {
-					number.setReadonly(false);
-					number.setDisabled(false);
-				} else {
-					getSalesSeries({}).then(r => {
-						this.series = r;
-						let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
-						number.setReadonly(!enabled );
-						number.setDisabled(!enabled );					
-					});
-				}
-
-				number.addEventListener(EVENT.CHANGE, () => {
-					this.invoice.number = number.value;
-					if(this.autosave) this.save();
+		let number = createInput(this.NUMBER, MSG.NUMBER);
+		if(this.invoice.number > -1)
+			number.value = this.invoice.number;
+		number.readonly = CONSTANT.READONLY;
+		number.disabled = CONSTANT.TRUE;
+		numberSpan.appendChild(number);
+		if(this.invoice.isInbox()) {
+			if(this.invoice.isThirdPart()) {
+				number.setReadonly(false);
+				number.setDisabled(false);
+			} else {
+				getSalesSeries({}).then(r => {
+					this.series = r;
+					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
+					number.setReadonly(!enabled );
+					number.setDisabled(!enabled );					
 				});
 			}
-		} else {
-			// ----- REFERENCE
-			let referenceSpan = this.createTableSpan("45%", "2px");
-			div.appendChild(referenceSpan);
 
-			let reference = createInput(this.REFERENCE, MSG.REFERENCE);
-			reference.value = this.invoice.reference;
-			reference.readonly = this.invoice.isReadonly();
-			reference.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setReference(reference.value);
+			number.addEventListener(EVENT.CHANGE, () => {
+				this.invoice.number = number.value;
 				if(this.autosave) this.save();
 			});
-			referenceSpan.appendChild(reference);
+		}
+
+		// ----- REFERENCE
+		let referenceSpan = this.createTableSpan("45%", "2px");
+		div.appendChild(referenceSpan);
+
+		let reference = createInput(this.REFERENCE, MSG.REFERENCE);
+		reference.value = this.invoice.reference;
+		reference.readonly = this.invoice.isReadonly();
+		reference.addEventListener(EVENT.CHANGE, () => {
+			this.invoice.setReference(reference.value);
+			if(this.autosave) this.save();
+		});
+		referenceSpan.appendChild(reference);
+
+		let switchReference  = new AonIconButton();
+		switchReference.icon = MATERIAL_ICONS.EDIT;
+		switchReference.style.alignContent = "center";
+		switchReference.addEventListener(EVENT.CLICK, () => {
+			if (referenceSpan.style.display == 'block') {
+				serieSpan.style.display = 'block';
+				numberSpan.style.display = 'block';
+				referenceSpan.style.display = 'none';
+			} else {
+				serieSpan.style.display = 'none';
+				numberSpan.style.display = 'none';
+				referenceSpan.style.display = 'block';
+			}
+		});
+		div.appendChild(switchReference);
+
+		if(this.invoice.isEmitida()) {
+			serieSpan.style.display = 'block';
+			numberSpan.style.display = 'block';
+			referenceSpan.style.display = 'none';
+			switchReference.style.display = 'none';
+			if (this.isInvofoxInvoice()) {
+				serieSpan.style.display = 'none';
+				numberSpan.style.display = 'none';
+				referenceSpan.style.display = 'block';
+				switchReference.style.display = 'block';
+			}
+		} else {
+			serieSpan.style.display = 'none';
+			numberSpan.style.display = 'none';
+			referenceSpan.style.display = 'block';
+			switchReference.style.display = 'none';
 		}
 
 		// ----- DATE
