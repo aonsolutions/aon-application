@@ -44,7 +44,7 @@ public class LoginServlet extends AonApiHttpServlet{
 			login = strs[0];
 			username = strs[1];
 		}
-		Boolean ok = false;
+		boolean ok = false;
 		Auth auth = new Auth();
 	    if(Utils.isEmail(username)) {
 	       	List<String> schemas = AONContext.getSchemas();
@@ -101,12 +101,15 @@ public class LoginServlet extends AonApiHttpServlet{
 				
 			AonToken aonToken= AonToken.parse(jsonToken);
 			if ( AonStringUtils.isBlank(aonToken.getUuid()) ) {
-				String userLogin = jsonToken.getString(IJsonNames.LOGIN);
-				Integer domainId = jsonToken.getInt(IJsonNames.DOMAIN); // relax , really user's  domain id, See AonToken
-				String domainName = jsonToken.getString(IJsonNames.SCHEMA_FIRST_DOMAIN);
-				Domain domain = AON.getDomain(domainName, domainId, userLogin, f -> f.getNameProperty().eq(domainName));
-				User user = AON.getUser(domain, userLogin, f -> f.getLoginProperty().eq(userLogin)
-						.and(f.getDomainProperty().in(arrayOf(domainId /*, domain.getId(), domain.getParentId()*/))));
+				
+				String tokenLogin = jsonToken.getString(IJsonNames.LOGIN);
+				Integer tokenDomainId = jsonToken.getInt(IJsonNames.DOMAIN); // relax , really user's  domain id, See AonToken
+				String tokenDomainName = jsonToken.getString(IJsonNames.SCHEMA_FIRST_DOMAIN);
+				
+				Domain tokenDomain = AON.getDomain(tokenDomainName, tokenDomainId, tokenLogin, f -> f.getIdProperty().eq(tokenDomainId));
+				
+				User user = AON.getUser(tokenDomain, tokenLogin, f -> f.getLoginProperty().eq(tokenLogin)
+						.and(f.getDomainProperty().in(arrayOf(tokenDomainId /*, domain.getId(), domain.getParentId()*/))));
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 					token = AonToken.build(auth, null);
@@ -114,9 +117,19 @@ public class LoginServlet extends AonApiHttpServlet{
 					auth = newAuthForUser(user);
 					token = AonToken.build(auth, null);
 				} 
+				ok = true;
+			} else {
+				String domainName = req.getServerName();
+				Domain domain = AON_SOLUTIONS.getDomain(domainName);
+				if ( domain != null && Objects.equals(domain.getName(), domainName )) {
+					User user = AON_SOLUTIONS.getUser(domain, token);
+					ok = user != null && Objects.equals(user.getAuth().getUuid(), aonToken.getUuid());
+					token = ok ? token /*AonToken.build(user.getAuth().getUuid(), null)*/ : null;
+				} else {
+					ok = true;
+				}
 			}
 
-			ok = true;
 		} else {
 			String domainName = req.getServerName();
 			if(AonStringUtils.isNotBlank(domainName) 
