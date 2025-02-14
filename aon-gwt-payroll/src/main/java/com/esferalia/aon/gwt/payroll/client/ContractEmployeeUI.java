@@ -332,10 +332,11 @@ public abstract class ContractEmployeeUI extends ScrollPanel {
 		}
 
 		@Override
-		public void onUploadDni() {
-			// TODO Auto-generated method stub
-			
-		}
+		public void onUploadDni() {}
+		
+		@Override
+		public void onLoadEnd() {}
+		
 	}
 
 	// ------------------------------------------------- UiFields
