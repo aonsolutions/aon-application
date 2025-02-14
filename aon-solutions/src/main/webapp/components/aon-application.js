@@ -295,6 +295,7 @@ export class AonApplication extends AonElement {
     let span = this.createElement(TAG.SPAN);
 		span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="40px"></aon-icon>`;
 		let span2 = this.createElement(TAG.SPAN);
+    span2.id = 'aonSideNavMobileTitle'+app.app;
 		span2.className = 'aonAppTitle';
     span2.style.fontSize = '18px';
     span2.innerHTML = app.title;

@@ -105,7 +105,7 @@ export class AonSign extends AonElement {
       select.value = this._taskHolders[0].id
     }
 
-    if(!this.getElement(this.TIME)){
+    if(!this.getElement(this.TIME)||this.isMobile()){
       let time = this.createElement(TAG.DIV);
       time.style.fontSize = '1.6rem';
       time.id = this.TIME;

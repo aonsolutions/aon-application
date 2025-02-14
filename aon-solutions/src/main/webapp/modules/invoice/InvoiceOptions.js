@@ -323,9 +323,9 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
       fn: () => info(
         MSG.EXPENSES,
         `<b>Facturas Recibidas:</b> Facturas que te emiten tus proveedores por sus servicios prestados o compra de productos.<br><br>
-         <b>Borrador Fras. Recibidas:</b> Documentos de factura recibida en proceso de revisión y registro, que una vez acptado pasan a factura recibidas.<br><br>
-         <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a factura recibidas.<br><br>
-         <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez acptado pasa a Fra. Simplificadas/Ticket.<br><br>
+         <b>Borrador Fras. Recibidas:</b> Documentos de factura recibida en proceso de revisión y registro, que una vez aceptado pasan a factura recibidas.<br><br>
+         <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket.<br><br>
+         <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez aceptado pasa a Fra. Simplificadas/Ticket.<br><br>
          <b>Otros Gastos:</b> Son aquellos gastos que tienes por tu actividad, pero del cual no existe factura simplificada/ticket como seguros, tasas municipales, intereses de prestamos, cuotas de  suscripcion a un colegio profesional, etc.<br><br>
          <b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
       )

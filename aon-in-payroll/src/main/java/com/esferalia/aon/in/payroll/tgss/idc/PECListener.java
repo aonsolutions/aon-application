@@ -285,6 +285,8 @@ class PECListener  implements IdcParserListener {
 				newRemoveCost(ContextVariable.FOGASA_ENTERPRISE),
 				newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE)
 				) );
+			put("13", collection(
+					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));
 			put("12", collection(
 					newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE),
 					newRemoveCost(ContextVariable.FOGASA_ENTERPRISE)));

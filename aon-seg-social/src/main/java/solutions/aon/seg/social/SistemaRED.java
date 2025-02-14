@@ -380,7 +380,7 @@ public class SistemaRED {
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try {
-			return ServicioRED.getIDCDatesPOST(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
+			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
 					ccc, nss);
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
@@ -393,8 +393,8 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDCDates(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
-//		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
+//		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
+		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
 	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
