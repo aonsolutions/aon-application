@@ -247,7 +247,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 
 			packaging.seh1lList = new ArrayList<>();
 			Integer line = i + 1;
-			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, null, codes));
+			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, quantity, codes));
 			list.add(packaging);
 		}
 		
@@ -379,7 +379,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			double q = 0.0;
 			double packUnits = detail.getItem().getPackUnits();
 			if(quantity ==null) {
-				q = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerPackage());
+				q = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
 			} else {
 				q = packUnits * quantity;
 			}
@@ -459,14 +459,27 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
 		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
-		double quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerPackage());
-		String packageUnit = obtainPackageUnit(detail.getItem(), detail.getQuantity(), quantity, codes.getCustomerPackage());
-		double unitQuantity = obtainUnitQuantity(detail.getItem(), packageUnit);
+		double quantity = 0.0;
+		double packUnits = detail.getItem().getPackUnits();
+		if(packageQuantity==null) {
+			quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
+		} else {
+			quantity = packUnits * packageQuantity;
+		}
 
-		seh1l.setCantidadEnviada_12_(quantity);
-		seh1l.setUnidadDeMedidaCantidadEnviada(StringUtils.substring(packageUnit, 0, 3).toUpperCase());
-		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(unitQuantity);
-		
+		if(detail.getItem().getPackFormatTag().getName().equals(detail.getItem().getPackUnitsTag().getName())){
+			seh1l.setCantidadEnviada_12_(quantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
+			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null){
+				seh1l.setUnidadDeMedidaCantidadEnviada(
+						StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
+			}
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
+		} else {
+			seh1l.setCantidadEnviada_12_(quantity);
+			seh1l.setUnidadDeMedidaCantidadEnviada(null);
+			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
+		}
+
 //		Date fechaCaducidad = detail.getItem().getExpireDate() != null
 //				? detail.getItem().getExpireDate()
 //				: detail.getItem().getSerialDate();
@@ -494,12 +507,13 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setNumeroDeLineaReferencia3(null);
 		seh1l.setDiferenciaEnCantidadPedida_21_(null);
 		seh1l.setCodigoDiscrepancia(null);
-		
-		// TODO CHEQUEAR UNIDAD DE STOCK CON MEASUREMENT.
-		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(detail.getQuantity());
-		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(detail.getQuantity());
-		seh1l.setUnidadDeMedidaPeso("KGM");
-		
+		seh1l.setPesoTotalNetoDeLaLinea_AAI_AAF_(quantity * detail.getItem().getPackMeasurement());
+		seh1l.setPesoTotalBrutoDeLaLinea_AAI_AAB_(quantity * detail.getItem().getPackMeasurement());
+		if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null) {
+			String packMeasurement = detail.getItem().getPackMeasurementTag().getName();
+			if("KG".equalsIgnoreCase(packMeasurement)) packMeasurement = "KGM";
+			seh1l.setUnidadDeMedidaPeso(StringUtils.substring(packMeasurement, 0, 3).toUpperCase());
+		}
 		seh1l.setDimensionDeTemperatura1_TC_(null);
 		seh1l.setDimensionDeTemperatura2(null);
 		seh1l.setUnidadDeMedidaParaLaTemperatura(null);
@@ -556,7 +570,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		double quantity = 0.0;
 		double packUnits = item.getPackUnits();
 		if(packageQuantity == null) {
-			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerPackage());
+			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerEdiCode());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
@@ -787,29 +801,28 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private Double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
-		double itemPackMeasurement = item.getPackMeasurement();
-		double itemPackUnits = item.getPackUnits();
-
-		if(item.getPackUnitsTag() != null && !item.getPackUnitsTag().isEmpty() && customerPackingTag.equals(item.getPackUnitsTag().getName())) {
-			return quantity / itemPackMeasurement;
-		} else if(item.getPackFormatTag() != null && !item.getPackFormatTag().isEmpty() && customerPackingTag.equals(item.getPackFormatTag().getName())) {
-			return (quantity / itemPackMeasurement) / itemPackUnits;
-		} else return quantity;	
-	}
-	
-	private String obtainPackageUnit(Item item, double quantity, double quantity2, String customerPackingTag) {
-		if(quantity == quantity2) return item.getStockUnitTag().getName();
-		else return customerPackingTag;
-	}
-	
-	private double obtainUnitQuantity(Item item, String customerPackingTag) {
-		if(item.getPackFormatTag() != null && !item.getPackFormatTag().isEmpty() && customerPackingTag.equals(item.getPackFormatTag().getName())) {
-			return 1;
-		} else if(item.getPackUnitsTag() != null && !item.getPackUnitsTag().isEmpty() && customerPackingTag.equals(item.getPackUnitsTag().getName())) {
-			return item.getPackUnits();
-		} else if(item.getPackMeasurementTag() != null && !item.getPackMeasurementTag().isEmpty() && customerPackingTag.equals(item.getPackMeasurementTag().getName())) {
-			return item.getPackUnits() * item.getPackMeasurement();
-		} else return 1;
+		if(customerPackingTag!=null){
+			Item oldItem = getItem(item.getId());
+			Tag itemPackFormatTag = oldItem.getPackFormatTag();
+			Tag itemPackMeasurementTag = oldItem.getPackMeasurementTag();
+			Tag itemPackingTag = oldItem.getPackUnitsTag();
+			double itemPackMeasurement = oldItem.getPackMeasurement();
+			double itemPackUnits = oldItem.getPackUnits();
+			if (customerPackingTag != null && itemPackingTag != null
+					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {
+					return quantity;
+				} else if (customerPackingTag.equals(
+						itemPackingTag.getName())) {
+					return quantity / itemPackMeasurement;
+				} else if (customerPackingTag.equals(
+						itemPackFormatTag.getName())) {
+					return (quantity / itemPackMeasurement) / itemPackUnits;
+				}
+			}
+			return quantity;
+		}
+		return null;
 	}
 	
 	// //////////////////////////////////////////////////////////////////////
