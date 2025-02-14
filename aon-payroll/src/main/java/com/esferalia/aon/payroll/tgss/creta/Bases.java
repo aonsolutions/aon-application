@@ -2305,6 +2305,7 @@ public class Bases {
 			
 			put("301", new AbstractCCretaData() {
 				
+				DistributeCCretaData __ppeData = new DistributeCCretaData("__PPE");
 				DistributeCCretaData ppeData = new DistributeCCretaData(BASE_PPE.getName());
 				NonNegativeCCretaData cgcData = new NonNegativeCCretaData(CGC_BASE.getName());
 				
@@ -2330,7 +2331,16 @@ public class Bases {
 				@Override
 				protected Double get(Salary salary, Fecha desde, Fecha hasta)
 						throws NoSuchVariableException, UnMatchedVariableException {
-					return cgcData.get(salary, desde, hasta) - ppeData.get(salary, desde, hasta);
+					Double cgc = cgcData.get(salary, desde, hasta);
+					
+					Double ppe ; 
+					try {
+						ppe = ppeData.get(salary, desde, hasta);
+					} catch (NoSuchVariableException | UnMatchedVariableException e ) {
+						ppe = __ppeData.get(salary, desde, hasta);
+					}
+					
+					return cgc - ppe;
 				}
 
 				@Override
