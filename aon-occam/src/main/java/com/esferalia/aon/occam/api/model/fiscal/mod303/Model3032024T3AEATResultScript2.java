@@ -10,8 +10,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 public enum Model3032024T3AEATResultScript2 implements IModelScript<Mod303Key> {
 	
 	 RES01 ("Rectificaci\u00F3n",null,TITLE)
-	,RES02 ("Importe a devolver como consecuencia de la rectificaci\u00F3n" 
-			,new Mod303Key[]{Mod303Key.CT_C111},COMPUTE)	
+	,RES02 ("Importe a devolver como consecuencia de la rectificaci\u00F3n", new Mod303Key[]{Mod303Key.CT_C111}, COMPUTE)	
 	;
 	
 	private String label;

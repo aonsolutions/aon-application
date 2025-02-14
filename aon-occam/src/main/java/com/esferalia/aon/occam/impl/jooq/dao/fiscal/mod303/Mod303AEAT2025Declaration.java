@@ -2910,6 +2910,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 					setSomething(true);
 					sum(fm.getAmount(Mod303Key.CT_C87));
 					sum(fm.getDeclarationResult());
+					sum(fm.getAmount(Mod303Key.CT_C111));
 					return new StringBuilder().append("<tr>")
 						.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border+width500) )
 							.append(fm.getModelFullName())
@@ -2925,11 +2926,19 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 					.append("</tr>")
 					.append("<tr>")
 						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
-							.append("Resultado de la liquidaci\u00F3n " +
+							.append("Resultado " +
 								AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> "(" + t.getDescription() + ")"))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
 							.append(DEC2.format(fm.getDeclarationResult()))
+						.append("</td>")
+					.append("</tr>")					
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+							.append("Importe a devolver a consecuencia de la rectificación ")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+							.append(DEC2.format(fm.getAmount(Mod303Key.CT_C111)))
 						.append("</td>")
 					.append("</tr>")
 					.toString();
