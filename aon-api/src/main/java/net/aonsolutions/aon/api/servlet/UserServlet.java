@@ -665,6 +665,7 @@ public class UserServlet extends AonApiHttpServlet {
 		String replyTo = AON_REPLY_TO;
 		String alias = AON_ALIAS;
 		String subject = AON_SUBJECT;
+		
 		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
 			logoUrl = getLogoUrl(api);
 			from = getFromMessage(api);		
@@ -694,12 +695,19 @@ public class UserServlet extends AonApiHttpServlet {
 		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
 			RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
 					f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+			
 			if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
 				from = emailMedia.getValue();
+			
+			if(AonStringUtils.isBlank(from))
+				from = parentDomain.getOwner();
+			
 		}
+		
 		if(AonStringUtils.isBlank(from)) {
 			from = AON_FROM;
 		}
+		
 		return from;
 	}
 	
