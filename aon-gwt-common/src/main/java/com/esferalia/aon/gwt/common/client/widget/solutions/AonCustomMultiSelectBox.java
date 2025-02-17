@@ -27,8 +27,6 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 	private Set<String> selectedOptions = new LinkedHashSet<String>();
 	private Map<String, CheckBox> valuesCB = new HashMap<>();
 	
-//	private boolean hasFocus = false;
-	
 	public AonCustomMultiSelectBox(String title) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
