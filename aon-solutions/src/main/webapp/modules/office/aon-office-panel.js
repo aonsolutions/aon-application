@@ -120,10 +120,14 @@ export class AonOfficePanel extends AonElement {
     this.createApplication(this.id, MSG.OFFICE, new AonApplication());
     this.buildSidenav();
 
-    this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST, undefined, {
-      ...this.getFilterCustomers(),
-      page: 1,
-    });
+    const { OfficeOptions } = OfficeEnums;
+    let customerSideNavOpt = this.getElement("aonOfficePanelSidenavsideNavcustomer");
+    customerSideNavOpt.click();
+
+    // this.showView(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST, undefined, {
+    //   ...this.getFilterCustomers(),
+    //   page: 1,
+    // });
   }
 
   buildSidenav() {
