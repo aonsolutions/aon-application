@@ -120,9 +120,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.mchange.util.AssertException;
 
@@ -145,7 +143,6 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
-import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
@@ -8550,6 +8547,97 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", "47205");
 	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", "188820");
 
+    }
+
+    @Test
+    public void testCretaSolidaridad2ContractsI()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	var dni = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0, 10);
+	var nss = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0, 12);
+	var ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	Date startDateI = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDateI = set(startDateI, Calendar.DAY_OF_MONTH, 10);
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, startDateI);
+	
+	ContractRecord contractI = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL, startDateI, endDateI, (AgreementLevelCategoryRecord) null, dni, nss);
+
+	int monthDays = get(getLastDayOfMonth(startDateI), Calendar.DAY_OF_MONTH);
+	Date startDateII = set(startDateI, Calendar.DAY_OF_MONTH, monthDays - 9);
+
+	ContractRecord contractII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL, startDateII, null, (AgreementLevelCategoryRecord) null, dni, nss);
+	addPayment(aonContext, contractII, "75000.00 * DIAS_TRABAJADOS / DIAS_MES");
+	
+	Date endDateII =  getLastDayOfMonth(startDateI);
+	
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = getBases(connection, startDateI, getLastDayOfMonth(startDateI), ccc, contractI, contractII);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = 
+	bases.getLiquidacion().get(0)
+	.getLiquidacionMes().get(0)
+	.getTrabajadores().getTrabajador().get(0)
+	.getTramos().getTramo().get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", (double) (47205 * 10 / 30) );
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", (double) (188820 * 10 / 30 ));
+
+    }
+
+    @Test
+    public void testCretaSolidaridad2ContractsII()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+	cleanSystemPayments(aonContext);
+
+	var dni = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0, 10);
+	var nss = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0, 12);
+	var ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+
+	Date startDateI = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDateI = set(startDateI, Calendar.DAY_OF_MONTH, 10);
+	SQLSolidarityTestCase.addSolidarityBases(aonContext, startDateI);
+	
+	ContractRecord contractI = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL, startDateI, endDateI, (AgreementLevelCategoryRecord) null, dni, nss);
+
+	int monthDays = get(getLastDayOfMonth(startDateI), Calendar.DAY_OF_MONTH);
+	Date startDateII = set(startDateI, Calendar.DAY_OF_MONTH, monthDays - 9);
+
+	ContractRecord contractII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL, startDateII, null, (AgreementLevelCategoryRecord) null, dni, nss);
+	addPayment(aonContext, contractII, "75000.00 * DIAS_TRABAJADOS / DIAS_MES");
+	
+	Date endDateII =  getLastDayOfMonth(startDateI);
+	
+	
+	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos = getTrabajadoresTramos(
+			connection, startDateI, endDateII, ccc, "L00", contractI, contractII);
+	
+	
+	Tramo trabajadoresYTramosTramoII = trabajadoresYTramos.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo().get(1);
+	for ( String codigo : new String[] {"497", "498", "499"} ) {
+		trabajadoresYTramosTramoII.getDatosTramo().getDatoSolicitado()
+		.add(new DatoSolicitadoBuilder().setTipo("C").setCodigo(codigo).setObligatorio(false).create());
+	}
+	
+	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getBases(connection, trabajadoresYTramos);
+	
+	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0);
+	
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497", (double) (47205 * 10 / 30) );
+	assertDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498", (double) (188820 * 10 / 30 ));
+
+	tramo = tramos.get(1);
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "497");
+	assertNoDato(tramo.getDatosTramo().getDatoSolicitado(), "C", "498");
     }
 
     private <T> void validate(Class<T> clazz, T t) throws JAXBException, SAXException {
