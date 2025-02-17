@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO.TaxFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.ProductDeleteValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -187,6 +188,7 @@ public class ProductDAO {
 	public static Product save(AONContext ctx, Product product) {
 		if(!product.getCategory().isEmpty())
 			ProductCategoryDAO.save(ctx, product.getCategory());
+	
 		ProductAutoComplete.autoComplete(ctx, product);
 		ProductValidation.validate(ctx, product);
 		Product existProduct = get(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getCodeProperty().eq(product.getCode())));
@@ -266,6 +268,9 @@ public class ProductDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		
+		ProductDeleteValidation.validate(ctx, id);
+		
 		ctx.checkWrite();
 		
 		ctx.getDslContext()
