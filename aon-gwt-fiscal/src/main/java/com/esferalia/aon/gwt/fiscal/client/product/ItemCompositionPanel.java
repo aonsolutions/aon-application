@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.product;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -113,14 +114,19 @@ public class ItemCompositionPanel  extends HTMLPanel {
 		row.setStyleName(AON.CSS.aonItemFlex());
 		
 		if(itemComposition.getId() == null) {
-			products.setOptions(
-					itemList.stream()
-					.filter(itemIt -> 
-						!itemIt.getId().equals(item.getId()) && 
-						itemCompositions.stream().
-							filter(itemComposition -> itemComposition.getComposition().getId() == itemIt.getId().intValue() || itemComposition.getCompositionItemId() == itemIt.getId().intValue()).collect(Collectors.toList()).size() == 0)
-					.map(item -> item.getDescription()).
-					collect(Collectors.toSet()));
+			
+			Set<String> optionsSet = itemList.stream()
+					.filter(itemIt -> { 
+						return !itemIt.getId().equals(item.getId()) && 
+								( itemCompositions.isEmpty() ||
+								  itemCompositions.stream()
+										.filter(itemComposition -> itemComposition.getComposition().getId() == itemIt.getId().intValue() || itemComposition.getCompositionItemId() == itemIt.getId().intValue())
+										.collect(Collectors.toList()).size() == 0);
+				})
+				.map(item -> item.getProduct().getName())
+				.collect(Collectors.toSet());
+			
+			products.setOptions(optionsSet);
 			products.addBlurHandler(e -> {
 				okButton.setVisible(true);
 			});
@@ -175,7 +181,7 @@ public class ItemCompositionPanel  extends HTMLPanel {
     				List<ItemComposition> itemCompositions = new ArrayList<ItemComposition>();
     				for(int i=0; i < products.getSelectedOptions().size(); i++) {
     					String productSelected = products.getSelectedOptions().stream().collect(Collectors.toList()).get(i);
-    					Optional<Item> itemOpt = itemList.stream().filter(item -> AonStringUtils.equalsIgnoreCase(item.getDescription(), productSelected)).findFirst();
+    					Optional<Item> itemOpt = itemList.stream().filter(item -> AonStringUtils.equalsIgnoreCase(item.getProduct().getName(), productSelected)).findFirst();
     					itemCompositions.add(
     							new ItemComposition()
     								.setDomain(item.getDomain().getId())

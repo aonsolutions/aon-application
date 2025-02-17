@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.OnSearchEvent;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -33,6 +35,8 @@ public abstract class SearchFilterComponent extends HTMLPanel {
     private HTMLPanel utilitiesBody = new HTMLPanel("");
     
     private Integer zIndex = 3;
+    
+    private final HandlerManager handlerManager = new HandlerManager(this);
 
     // Constructor
     public SearchFilterComponent() {
@@ -42,6 +46,15 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         
         searchTextBox.setStyleName(AON.CSS.aonCustomTextBoxInputNoBorder());
 		searchTextBox.getElement().getStyle().setProperty("min-width", "14rem");
+		
+		searchTextBox.addKeyUpHandler(e -> {
+			String value = searchTextBox.getValue();
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+				fireOnSearch();
+			} else if(AonStringUtils.isBlank(value)) {
+				fireOnSearch();
+			}
+		});
 
         // Agrega los botones al contenedor
         this.add(searchButton);
@@ -260,5 +273,13 @@ public abstract class SearchFilterComponent extends HTMLPanel {
 	public void setPopupHeight(String height) {
         if(AonStringUtils.isNotBlank(height)) popupContent.setHeight(height);
 	}
+	
+	private void fireOnSearch() {
+		handlerManager.fireEvent(new OnSearchEvent());
+    }
+
+    public void addOnSearchHandler(OnSearchEvent.Handler handler) {
+    	handlerManager.addHandler(OnSearchEvent.TYPE, handler);
+    }
 	
 }

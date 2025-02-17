@@ -72,6 +72,8 @@ public abstract class ProductList extends AonCustomDockLayout {
 
 	private List<ProductCategory> productCategories;
 	
+	private boolean fetchingData = false;
+	
 	private static enum COLS {
 		  COD(AON.MSG.code()						,"15rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -112,14 +114,15 @@ public abstract class ProductList extends AonCustomDockLayout {
 		
 		hideToolbarFilterMessages();
 		setSearchPlaceholder("Busque por c\u00f3digo / Descripci\u00f3n ...");
-		addKeyUpHandler(e -> {
-			String value = getSearchTextBox().getValue();
-			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
-				onSearch();
-			} else if(AonStringUtils.isBlank(value)) {
-				onSearch();
-			}
-		});
+		addOnSearchHandler(e -> {if(!fetchingData) onSearch();});
+//		addKeyUpHandler(e -> {
+//			String value = getSearchTextBox().getValue();
+//			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+//				onSearch();
+//			} else if(AonStringUtils.isBlank(value)) {
+//				onSearch();
+//			}
+//		});
 		
 		category.clearItems();
 		category.addItem( "Todas", "");
@@ -246,6 +249,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 	}
 	
 	private void onSearchData() {
+		fetchingData = true;
 		enableMoreData();
 		searchData();
 	}
@@ -314,7 +318,7 @@ public abstract class ProductList extends AonCustomDockLayout {
 				disableMoreData();
 			}
 			enableSearch();
-			
+			fetchingData = false;
 		});
 	}
 	

@@ -1,116 +1,52 @@
 <html>
-<head>
-	<style>
-	
-		.diva {
-			background-color: #f1f1f1;
-			padding-top: 20px;
-			padding-bottom: 20px;
-		}
-	
-		
-		.divb {
-			margin: 0px auto;
-			max-width: 600px;
-			background-color: white;
-			border-radius: 5px;
-		}
-		
-		.tableA {
-			width: 100%;
-			padding-top: 10px;
-		}
-		
-		.table {
-			border: 1px solid #bbb;
-			border-radius: 5px;
-			width: 565px;
-		    margin: 15px;
-		}
-		
-		
-		.text {
-			font-size: 14px;
-		    margin: 20px;
-		}
-		
-		.label {
-			font-size: 12px;
-			margin-bottom: 0px;
-			color: rgba(0,0,0,.54);
-		}
-		
-		.aon-button {
-			display: inline-block;
-    		border: none;
-    		padding: 1rem 2rem;
-    		margin: 0;
-    		text-decoration: none;
-   		 	background: #002469;
-   		 	color: #ffffff;
-    		font-size: 1rem;
-    		cursor: pointer;
-    		text-align: center;
-    		transition: background 250ms ease-in-out, transform 150ms ease;
-    		-webkit-appearance: none;
-    		-moz-appearance: none;
-    		outline: none !important;
-    		box-shadow: 0px 2px 4px rgb(0 0 0 / 15%);
-		    border-radius: 6px;
-		    font-weight: bold;
-		}
-	</style>
-</head>
-<body>
-
-	<div class="diva">
-		<div class="divb">
-			<table class="tableA">
-				<tr>
-					<td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;" ><img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="300px"></a></td>
-					<td></td>
-				</tr>
-				
-	
-				<tr>
-    				<td>
-        				<hr>
-    				</td>
-				</tr>
-				
-				<tr>
-    				<td>
-    					<p> Hola $name, </p>
-    					<p>
-    					Ha solicitado una autenticación sin contraseña. Para autenticarse, deberá hacer clic en el siguiente enlace antes de $expireDate .
-						</p>
-						<p>	
-	    				<a href="$magicLink" class="aon-button"> Iniciar Sesión sin Contraseña </a> 
-	    				</p>
-	    				<p>
-	    				Si no fue usted, puede ignorar esta alerta. Si sospecha de alguna actividad inusual en su cuenta, comuníquese con soporte.
-	    				</p>
-						<p>
-						El equipo de Aon Solutions.
-   						</p>
-    				</td>
-				</tr>
-				
-				<tr>
-    				<td>
-        				<hr>
-    				</td>
-				</tr>
-				
-				<tr class="label">
-					<td>
-						<div style="text-align:center; margin: 0 0 1em 0;" >Copyright 2022 AON SOLUTIONS, S.L.</div>
-						<div style="text-align:center" >Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a este correo.</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-
+<head></head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 10px 0; color: #333;">
+    <table align="center" width="100%"; padding: 20px;">
+        <tr>
+            <td align="center">
+                <table style="max-width: 650px; width: 100%; background-color: rgba(241, 240, 232, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 10px 15px;" cellpadding="0" cellspacing="0">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+                        </td>
+                    </tr>
+                    <!-- Title -->
+                    <tr>
+                        <td align="center" style="padding: 0 20px;">
+                            <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Magic Link</h2>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="font-size: 14px; color: #555; line-height: 1.6; padding: 20px;">
+                            <p style="margin: 0 0 10px;">Estimado usuario,</p>
+                            <p style="margin: 0 0 10px;">Gracias por contactarnos para establecer una nueva contraseña. A continuación, te explicamos cómo hacerlo de forma sencilla.</p>
+                            <p style="margin: 0 0 10px;">Al hacer clic en el enlace adjunto, accederás a tu área de clientes. Este enlace expira $expireDate</p>
+                            
+                            <p style="margin: 0 0 15px; text-align: center;">
+	                            <a href="$magicLink" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+	                                Magic Link
+	                            </a>
+	                        </p>
+                            
+                            <p style="margin: 0 0 10px;">Una vez dentro, te recomendamos que vayas a la configuración de tu usuario. Para hacerlo, dirígete a la parte superior derecha de la pantalla y pulsa el icono de usuario. Al pulsarlo verás un desplegable con los datos de tu empresa y debajo encontrarás el texto "Configuración".</p>
+                            <p style="margin: 0 0 10px;">Haciendo click sobre el texto "Configuración" podrás establecer tu nueva contraseña pulsando el icono con forma de lápiz.</p>
+                            <p style="margin: 0 0 10px;">Esto te permitirá editar tu contraseña actual y crear una que consideres conveniente. Así, podrás iniciar sesión fácilmente con tu nueva contraseña en el futuro.</p>
+                            <p style="margin: 0 0 10px;">En el caso que tengas alguna duda o pregunta, no dudes en contactarnos.</p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="font-size: 12px; color: #888; padding: 20px;">
+                            <p style="margin: 0;">Si tienes alguna duda, por favor contacta con soporte: 
+                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$contact">$contact</a>.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
