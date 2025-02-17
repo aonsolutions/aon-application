@@ -115,7 +115,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			initialize(model, callback );
 		});
 		
-		complementary.setText(AON.MSG.complementary());
+		complementary.setText(AON.MSG.complementary()+"/Rectificativa");
 		complementary.addClickHandler(event -> {
 			model.setComplementary(complementary.getValue());
 			replacement.setEnabled(!complementary.getValue());
