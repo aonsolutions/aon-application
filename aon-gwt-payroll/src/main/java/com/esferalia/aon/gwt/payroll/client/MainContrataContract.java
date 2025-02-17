@@ -455,7 +455,8 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	private void onNewContract() {
-		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
+		new EmployeeDialog(true) {
+			
 			@Override
 			protected void onAccept(Integer contractId) {
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
@@ -475,12 +476,16 @@ public class MainContrataContract extends MainEntryPoint {
 						0,
 						s -> deckPanel.showWidget(1));
 			}
-		};
 
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null);
-		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
-		employeeDialog.setModal(true);
-		employeeDialog.setAnimationEnabled(true);
+			@Override
+			protected void onLoaded() {
+				EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null);
+				setEmployeeDialogObject(employeeDialogObject);
+				setModal(true);
+				setAnimationEnabled(true);
+			}
+			
+		};
 	}
 	
 	public Integer getContractListPosition(Integer contractId) {
