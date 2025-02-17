@@ -270,6 +270,39 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
+    public void testCretaPPEBase() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+	
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "03");
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; 0.00", "100.00");
+		
+	
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+	
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos 
+		= getTrabajadoresTramos(connection, startDate, endDate, ccc, contract);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+		org.junit.Assert.assertEquals(1, bases.size());
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "601");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301");
+		double baseCgc = getDato(bases.get(0).getDatosTramo().getDato(), "C", "500");
+		assertDato(bases.get(0).getDatosTramo().getDato(), "C", "301", baseCgc - 100.00 * 100);
+		
+    }
+
+    @Test
     public void testCretaPPEIT() throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);

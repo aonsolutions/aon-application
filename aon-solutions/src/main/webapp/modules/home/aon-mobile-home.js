@@ -101,13 +101,18 @@ export class AonMobileHome extends AonElement {
         let currentYearPeriods = this.PERIODS.filter((p) => 
             new Date(p.initiationDate).getFullYear() === currentYear
         );      
-        let selectedPeriod = currentYearPeriods.length > 0 
-            ? currentYearPeriods.reduce((latest, p) => 
+        let selectedPeriod = null; 
+
+        if (currentYearPeriods.length > 0) {
+            selectedPeriod = currentYearPeriods.reduce((latest, p) => 
                 new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            ) 
-            : this.PERIODS.reduce((latest, p) => 
+            );
+        } else if (this.PERIODS.length > 0) {
+            selectedPeriod = this.PERIODS.reduce((latest, p) => 
                 new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            );  
+            );
+        }
+        
         this.selectedPeriod = selectedPeriod;
         
         this.accounts = await this.getData();

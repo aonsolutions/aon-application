@@ -2297,7 +2297,8 @@ public class TrabajadoresTramos {
 		
 		boolean jornadasReales = getContextData(ContextVariable.DO_DAYS.getName(), salary, startDate, endDate,  0.00) > 0.00;
 		
-		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00;
+		boolean ppe = getSumContextData(ContextVariable.BASE_PPE.getName(), salary, startDate, endDate)  > 0.00  || 
+				getSumContextData("__PPE", salary, startDate, endDate)  > 0.00;
 		
 		boolean unpaid = getSumContextData(ContextVariable.UNPAID_BASE.getName(), salary, startDate, endDate)  > 0.00;
 

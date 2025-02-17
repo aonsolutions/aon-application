@@ -2853,6 +2853,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("ims_cost", cgpBase*0.70/100.00);
 		click("costsCheck-input");
 		
+		draft("JUBILACION, PARCIAL");
+		calculate(Calendar.JANUARY,2025);
+		assertValue("cgpBaseLabel", 1184.00 * 2 );
+		assertValue("cgcBaseLabel", 1184.00 * 2);
 	}
 
 	// -------------------------------------------------------------------------
