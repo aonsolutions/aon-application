@@ -345,6 +345,7 @@ public class TrabajadoresTramos {
 							return new ContextVariable [] { NO_HOLIDAYS };
 						}
 
+						
 						@Override
 						public ContextVariable [] visitL91() {
 							return new ContextVariable [] { CGC_BASE, CGP_BASE };
