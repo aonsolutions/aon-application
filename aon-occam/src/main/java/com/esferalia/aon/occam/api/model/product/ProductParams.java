@@ -17,6 +17,9 @@ public class ProductParams implements Serializable{
 	private Integer category;
 	private ProductType type;
 	
+	private ProductStatus status;
+	private Boolean productComposition;
+	
 	private int limit;
 	private int offset;
 
@@ -64,6 +67,20 @@ public class ProductParams implements Serializable{
 	}
 	public ProductParams setType(ProductType type) {
 		this.type = type;
+		return this;
+	}
+	public ProductStatus getStatus() {
+		return status;
+	}
+	public ProductParams setStatus(ProductStatus status) {
+		this.status = status;
+		return this;
+	}
+	public Boolean getProductComposition() {
+		return productComposition;
+	}
+	public ProductParams setProductComposition(Boolean productComposition) {
+		this.productComposition = productComposition;
 		return this;
 	}
 	public int getLimit() {

@@ -141,6 +141,10 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME);
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PRODUCT.COMPOSITION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(PRODUCT.STATUS);
 		} else {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
 				select.orderBy(PRODUCT.CODE.desc());
@@ -148,6 +152,10 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PRODUCT.COMPOSITION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(PRODUCT.STATUS.desc());
 		}
 		
 		LinkedList<Product> products = select.limit(params.getOffset(), params.getLimit())
@@ -175,6 +183,12 @@ public class ProductDAO {
 		
 		if(null != params.getType())
 			condition = condition.and(PRODUCT.TYPE.eq(params.getType().value()));
+		
+		if(null != params.getStatus())
+			condition = condition.and(PRODUCT.STATUS.eq(params.getStatus().value()));
+		
+		if(null != params.getProductComposition())
+			condition = condition.and(PRODUCT.COMPOSITION.eq(params.getProductComposition() ? (byte) 1 : 0));
 		
 		return condition;
 	}

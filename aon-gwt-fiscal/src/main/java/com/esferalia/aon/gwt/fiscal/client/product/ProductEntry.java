@@ -376,10 +376,10 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		addStatusPanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		AonTableButton newComposition = new AonTableButton("Nuevo producto", AON.CSS.aonIconAdd());
-		newComposition.addClickHandler(e -> onUCreateItemComposition());
+		newComposition.addClickHandler(e -> onCreateItemComposition());
 		addStatusPanel.add(newComposition);
 		
-		productComposition = new ProductCompositionSelect(product.isCompositionPrice() ? ProductComposition.DIVISIBLE : ProductComposition.COMPOSITION);
+		productComposition = new ProductCompositionSelect(product.isCompositionPrice() ? ProductComposition.DIVISIBLE : ProductComposition.COMPLETE);
 		productComposition.addBlurHandler(e -> product.setCompositionPrice(productComposition.getValue() == ProductComposition.DIVISIBLE));
 		addStatusPanel.add(productComposition);
 		
@@ -403,7 +403,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		return compositeCard;
 	}
 	
-	private void onUCreateItemComposition() {
+	private void onCreateItemComposition() {
 		getItems(itemList -> 
 			getItemCompositions(itemCompositions -> {
 				AonCustomDialog dialog = new AonCustomDialog();

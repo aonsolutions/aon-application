@@ -23,7 +23,7 @@ public class ProductCompositionSelect extends HTMLPanel {
 	
 			@Override
 			public void execute() {
-				productComposition = ProductComposition.COMPOSITION;
+				productComposition = ProductComposition.COMPLETE;
 				addStatusInput();
 			}
 		}
@@ -41,7 +41,7 @@ public class ProductCompositionSelect extends HTMLPanel {
 
 			public StatusContextMenu() {
 
-				addMenuItem(ProductComposition.COMPOSITION.getDescription(), new CompositionCommand(), AON.CSS.aonIconCircleGreen(), "composition");
+				addMenuItem(ProductComposition.COMPLETE.getDescription(), new CompositionCommand(), AON.CSS.aonIconCircleGreen(), "composition");
 				addMenuItem(ProductComposition.DIVISIBLE.getDescription(), new DivisibleCommand(), AON.CSS.aonIconCircleRed(), "divisible");
 			}
 			
@@ -110,10 +110,10 @@ public class ProductCompositionSelect extends HTMLPanel {
 			clear();
 			
 			HTMLPanel circleStatus = new HTMLPanel(EMPTY_STRING);
-			circleStatus.setStyleName(productComposition == ProductComposition.COMPOSITION ? AON.AON_CIRCLE_GREEN : AON.AON_CIRCLE_RED);
+			circleStatus.setStyleName(productComposition == ProductComposition.COMPLETE ? AON.AON_CIRCLE_GREEN : AON.AON_CIRCLE_RED);
 			add(circleStatus);
 			
-			Label status = new Label(productComposition == ProductComposition.COMPOSITION ? ProductComposition.COMPOSITION.getDescription() : ProductComposition.DIVISIBLE.getDescription());
+			Label status = new Label(productComposition == ProductComposition.COMPLETE ? ProductComposition.COMPLETE.getDescription() : ProductComposition.DIVISIBLE.getDescription());
 			add(status);
 			
 			AonToolbarSmallButton arrowDown = new AonToolbarSmallButton("", AON.CSS.aonIconDown());
