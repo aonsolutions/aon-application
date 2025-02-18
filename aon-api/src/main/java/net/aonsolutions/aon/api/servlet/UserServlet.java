@@ -688,9 +688,9 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 
 	private static String getFromMessage(AonApiData api) {
-		Domain parentDomain = api.getDur().getDomain().isParent() 
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
-		String from = null;
+//		Domain parentDomain = api.getDur().getDomain().isParent()  ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
+		String from = AON_FROM;
 
 		// TODO: vista personalizada / email verificada, averiguar como se verifica
 //		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
@@ -702,16 +702,11 @@ public class UserServlet extends AonApiHttpServlet {
 //			
 //		}
 		
-		if(AonStringUtils.isBlank(from)) {
-			from = AON_FROM;
-		}
-		
 		return from;
 	}
 	
 	private static String getReplayTo(AonApiData api) {
-		Domain parentDomain = api.getDur().getDomain().isParent() 
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
 		
 		String from = null;
 		
@@ -721,9 +716,9 @@ public class UserServlet extends AonApiHttpServlet {
 		if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
 			from = emailMedia.getValue();
 		
-		if(AonStringUtils.isBlank(from)) {
-			from = parentDomain.getOwner();
-		}
+//		if(AonStringUtils.isBlank(from)) {
+//			from = parentDomain.getOwner();
+//		}
 		
 		if(AonStringUtils.isBlank(from)) {
 			from = AON_REPLY_TO;
@@ -819,8 +814,8 @@ public class UserServlet extends AonApiHttpServlet {
 
 	private static String getLogoUrl(AonApiData api) {
 		String logoUrl = AON_LOGO;
-		Domain parentDomain = api.getDur().getDomain().isParent()
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany(parentDomain, api.getUser(), f -> f.getDomainProperty().eq(parentDomain.getId()));
 

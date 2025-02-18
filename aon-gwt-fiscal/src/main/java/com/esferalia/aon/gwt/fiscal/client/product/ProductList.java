@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -50,6 +51,8 @@ public abstract class ProductList extends AonCustomDockLayout {
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
+	private AonCustomListBox type = new AonCustomListBox("Tipo");
+	private AonCustomListBox status = new AonCustomListBox("Estado");
 	
 	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
 	private AonCustomListBox asc = new AonCustomListBox("Orden");
@@ -78,8 +81,12 @@ public abstract class ProductList extends AonCustomDockLayout {
 		  COD(AON.MSG.code()						,"15rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DES(AON.MSG.description()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, CAT(AON.MSG.category()					,"15rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, STA("Estado"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PCK("Tipo"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") // Pack o servicio
 		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
+		
+		// Añadir al filtro
 
 		String headerLabel;
 		String colWidth;
@@ -114,15 +121,23 @@ public abstract class ProductList extends AonCustomDockLayout {
 		
 		hideToolbarFilterMessages();
 		setSearchPlaceholder("Busque por c\u00f3digo / Descripci\u00f3n ...");
-		addOnSearchHandler(e -> {if(!fetchingData) onSearch();});
-//		addKeyUpHandler(e -> {
-//			String value = getSearchTextBox().getValue();
-//			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
-//				onSearch();
-//			} else if(AonStringUtils.isBlank(value)) {
-//				onSearch();
-//			}
-//		});
+		addOnSearchHandler(e -> { if(!fetchingData) onSearch(); });
+		
+		type.clearItems();
+		type.addItem("-", "");
+		type.addItem("Servicion Aon", "false");
+		type.addItem("Pack", "true");
+		type.getListBox().addChangeHandler(event -> onSearch());
+		
+		addFilterWidget(type);
+		
+		status.clearItems();
+		status.addItem("-", "");
+		status.addItem(ProductStatus.ACTIVE.getDescription(), ProductStatus.ACTIVE.ordinal() + "");
+		status.addItem(ProductStatus.DISCONTINUED.getDescription(), ProductStatus.DISCONTINUED.ordinal() + "");
+		status.getListBox().addChangeHandler(event -> onSearch());
+		
+		addFilterWidget(status);
 		
 		category.clearItems();
 		category.addItem( "Todas", "");
@@ -136,6 +151,8 @@ public abstract class ProductList extends AonCustomDockLayout {
 		sort.addItem("C\u00f3digo", "code");
 		sort.addItem("Nombre", "name");
 		sort.addItem("Categor\u00eda", "category");
+		sort.addItem("Tipo", "type");
+		sort.addItem("Estado", "status");
 		sort.getListBox().addChangeHandler(event -> onSearch());
 		
 		asc.addItem("Ascendente", "true");
@@ -223,6 +240,8 @@ public abstract class ProductList extends AonCustomDockLayout {
 			.setUser(options.getUser())
 			.setType(ProductType.AUXILIARY)
 			.setDescription(getSearchTextBox().getValue())
+			.setProductComposition(AonStringUtils.isBlank(type.getValue()) ? null : Boolean.parseBoolean(type.getValue()))
+			.setStatus(AonStringUtils.isBlank(status.getValue()) ? null : ProductStatus.safeValueOf(Byte.parseByte(status.getValue())))
 			.setCategory(AonStringUtils.isBlank(category.getValue()) ? null : Integer.parseInt(category.getValue()))
 			.setOrderBy(sort.getValue())
 			.setAsc(Boolean.parseBoolean(asc.getValue()))
@@ -361,6 +380,10 @@ public abstract class ProductList extends AonCustomDockLayout {
 		tab.addRow(row, description, COLS.DES.getColWidth());
 		
 		tab.addRow(row, new Label(null == product.getCategory() ? "" : product.getCategory().getName()), COLS.CAT.getColWidth());
+		
+		tab.addRow(row, new Label(null == product.getStatus() ? "" : product.getStatus().getDescription()), COLS.STA.getColWidth());
+		
+		tab.addRow(row, new Label(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio")), COLS.PCK.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public enum ProductComposition implements Serializable {
 	
-	DIVISIBLE("Pack Divisible"),
-    COMPOSITION("Pack Compuesto");
+	DIVISIBLE("Divisible"),
+	COMPLETE("Completo");
 	
 	private String description;
 	
