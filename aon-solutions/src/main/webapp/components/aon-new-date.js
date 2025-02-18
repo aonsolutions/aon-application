@@ -341,9 +341,11 @@ export class AonNewDate extends AonNewInput {
 
   setDate(date) {
     let input = this.getElement(this.INPUT);
-    this.date = (date instanceof Date)
-      ? date : AonDateUtils.parse(date);
-    if(input) input.value = AonDateUtils.formatDate(this.date, '/');
+    if ( date ) {
+      this.date = (date instanceof Date)
+        ? date : AonDateUtils.parse(date);
+    }
+    if (input) input.value = AonDateUtils.formatDate(this.date, '/');
     let datepickerDays = this.getElement(this.DATEPICKER_DAYS);    
     if(datepickerDays) this.buildCalendar();
     if(input && datepickerDays) this.dispatchEvent(new CustomEvent(EVENT.CHANGE, {detail: this.date}));
