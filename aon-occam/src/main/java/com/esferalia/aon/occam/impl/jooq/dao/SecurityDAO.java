@@ -496,10 +496,7 @@ public class SecurityDAO {
 	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
 		return ctx.getDslContext().select()
-		.from(USER)
-		.join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
-		.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID))
-		.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
+		.from(USER).join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
 		.where(MAIL_ACCOUNT.EMAIL.eq(email))
 		.fetch().stream().map(new UserFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
