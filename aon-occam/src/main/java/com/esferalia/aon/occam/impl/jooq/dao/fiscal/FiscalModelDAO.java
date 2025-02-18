@@ -556,7 +556,7 @@ public class FiscalModelDAO {
 
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
 		if (fiscalModel.getDeclarationResultType() != null && 
-			fiscalModel.getDeclarationResultType().mustCreateFinance()) {
+			(fiscalModel.getDeclarationResultType().mustCreateFinance() || fiscalModel.isAeatRectification())) {
 			Creditor creditor = getCreditor(ctx,fiscalModel);
 			String concept = "Mod." + FiscalModelUtils.getModelName(fiscalModel) 
 				+ " - " + fiscalModel.getYear() 
@@ -613,7 +613,7 @@ public class FiscalModelDAO {
 
 	protected static <T extends FiscalModel> T finish(AONContext ctx,T fm) {
 		fm.setStatus(FiscalStatus.FINISHED);
-		if (fm.getDeclarationResultType() != null && fm.getDeclarationResultType().mustCreateFinance()) {
+		if (fm.getDeclarationResultType() != null && (fm.getDeclarationResultType().mustCreateFinance() || fm.isAeatRectification())) {
 			if (fm.getFinance().getRegistry() == null || fm.getFinance().getRegistry().getId() == null) {
 				throw new AonCoreException("Acreedor no v\u00E1lido.");
 			}

@@ -255,7 +255,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 							.put("testEnvironment", testEnvironment)  // Entorno de pruebas de la AEAT
 							.put("nrc", model.getNrc())
 							.put("plazos", model.getPlazos())							
-							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))							
+							.put("fechaPlazo", AonDateUtils.format(AonDateUtils.parse(model.getFechaPlazo()), "yyyy-MM-dd"))
+							.put("isAeatRectification", model.isAeatRectification())  // Indica si hay importe a devolver como consecuencia de la rectificación. Por ahora solo se usa en el M303 de la AEAT
+							.put("amountRectification", model.isAeatRectification() ? model.getAmount("303-CTA111") : 0.0)  // Importe casilla 111 modelo 303
 							);
 					
 				}
@@ -1450,6 +1452,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				Integer certi = JsonUtils.getInteger(params, "certi");  				
 				int presModelAuto = reject || declarationType == FiscalModelDeclarationType.DEFERRAL ? 0 : JsonUtils.getInt(params, "presModelAuto");  // Presentación automática del modelo (solo si no ha sido Rechazado por el Cliente y No es aplazamiento)				
 				boolean test = JsonUtils.getboolean(params, "testEnvironment");  // Entorno de pruebas
+				boolean isAeatRectification = JsonUtils.getboolean(params, "isAeatRectification");  // Indica si hay importe a devolver como consecuencia de la rectificación. Por ahora solo se usa en el M303 de la AEAT
 				
 				int plazos = AonNumberUtils.toint(JsonUtils.getInteger(params, "plazos"));
 				Date fechaPlazo = JsonUtils.getDate(params, "fechaPlazo");
@@ -1466,8 +1469,8 @@ public class FiscalServlet extends AonApiHttpServlet{
 					throw new AonApiException("ERROR: Debe indicar NRC.");
 				}
 				
-				// Comprobar si hay presentación autómatica, es domiciliación o devolución y no se ha indicado IBAN
-				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK) && AonStringUtils.isBlank(iban)) {
+				// Comprobar si hay presentación autómatica, es domiciliación o devolución o rectificacion AEAT (mod 303) y no se ha indicado IBAN
+				if (presModelAuto == 1 && (declarationType == FiscalModelDeclarationType.BANK || declarationType == FiscalModelDeclarationType.PAYBACK || isAeatRectification) && AonStringUtils.isBlank(iban)) {
 					throw new AonApiException("ERROR: Debe indicar IBAN.");
 				}
 				
