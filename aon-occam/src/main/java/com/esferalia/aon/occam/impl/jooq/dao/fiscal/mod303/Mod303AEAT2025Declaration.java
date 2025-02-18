@@ -2290,9 +2290,11 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// Administración del Estado
 		// y a las Diputaciones Forales. Resultado de la Regularización anual.
 		, CT_C68(Mod303Key.CT_C68)
+		
+		, CT_C108(Mod303Key.CT_C108)
 
 		// Resultado
-		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68", null)
+		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68+CT_C108", null)
 
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
@@ -2307,6 +2309,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		)
 		,CT_C109(Mod303Key.CT_C109)
 		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109", null)
+		
+		,CT_C111(Mod303Key.CT_C111, null, null, null, "calculateC111(CT_C69,CT_C70,CT_C71)", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
 		, CT_U2D(Mod303Key.CT_U2D), CT_U2C(Mod303Key.CT_U2C), CT_U2E(Mod303Key.CT_U2E)
@@ -2906,6 +2910,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 					setSomething(true);
 					sum(fm.getAmount(Mod303Key.CT_C87));
 					sum(fm.getDeclarationResult());
+					sum(fm.getAmount(Mod303Key.CT_C111));
 					return new StringBuilder().append("<tr>")
 						.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border+width500) )
 							.append(fm.getModelFullName())
@@ -2921,11 +2926,19 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 					.append("</tr>")
 					.append("<tr>")
 						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
-							.append("Resultado de la liquidaci\u00F3n " +
+							.append("Resultado " +
 								AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> "(" + t.getDescription() + ")"))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
 							.append(DEC2.format(fm.getDeclarationResult()))
+						.append("</td>")
+					.append("</tr>")					
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+							.append("Importe a devolver a consecuencia de la rectificación ")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+							.append(DEC2.format(fm.getAmount(Mod303Key.CT_C111)))
 						.append("</td>")
 					.append("</tr>")
 					.toString();

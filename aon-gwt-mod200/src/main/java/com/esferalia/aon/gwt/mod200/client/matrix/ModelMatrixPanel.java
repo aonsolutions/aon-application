@@ -268,7 +268,7 @@ public class ModelMatrixPanel extends FlowPanel {
 					cloned.setDeclarationResult(model.getResult());
 					cloned.setDeclarationResultType(FiscalModelDeclarationType.safeNameOf(model.getDeclarationResultType()));
 					cloned.setIban(model.getIban());
-					cloned.setNrc(model.getNrc());
+					cloned.setNrc(model.getNrc());					
 					
 					paintViewModelCell(options, cell, cloned );
 					
@@ -295,7 +295,7 @@ public class ModelMatrixPanel extends FlowPanel {
 											ibanNrcLabel.setText("FALTA NRC");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
 											checkBoxEnabled = false;
-										} else if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.BANK || cloned.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) {
+										} else if (cloned.getDeclarationResultType() == FiscalModelDeclarationType.BANK || cloned.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK || model.isAeatRectification()) {
 											ibanNrcLabel.setText("FALTA IBAN");
 											ibanNrcLabel.addStyleName(AON.CSS.aonColorRed());
 											checkBoxEnabled = false;
@@ -685,6 +685,7 @@ public class ModelMatrixPanel extends FlowPanel {
 			.setStatus( fm.getStatus() )
 			.setDomain(fm.getDomain())
 			.setDomainName(fm.getDomainName())
+			
 			;
 	}
 

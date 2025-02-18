@@ -35,6 +35,7 @@ public final class IJsonNames {
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
+	public static final String AEAT_RECTIFICATION = "aeatRectification";
 	public static final String ALIAS = "alias";
 	public static final String ALLOW_CONCURRENT = "allowConcurrent";
 	public static final String AMORTIZATION_DESCRIPTION = "amortizationDescription";

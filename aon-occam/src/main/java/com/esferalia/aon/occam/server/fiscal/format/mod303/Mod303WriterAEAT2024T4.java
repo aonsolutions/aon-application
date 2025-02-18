@@ -37,7 +37,7 @@ class Mod303WriterAEAT2024T4 implements IMod303Writer{
 		,T30301000 (mod303 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T30301000>")
 		   ,(wr, mod) -> wr.append(" ")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
+		   ,(wr, mod) -> wr.append(mod.getDeclarationResult() < 0 && mod.isComplementary() && Math.abs(mod.getDeclarationResult()) - mod.getAmount(Mod303Key.CT_C111) == 0.0 ? "N": AonFiscalFileUtils.text(mod.getDeclarationResultType().getValue(), 1))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFullName(),80))  // Apellidos y Nombre o Razón Social
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
@@ -556,20 +556,15 @@ class Mod303WriterAEAT2024T4 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C109),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C71),17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isWithoutActivity()?"X":" ",1))  // Sin actividad
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isComplementary()?"X":" ",1))  // Declaración complementaria
-			   ,(wr, mod) -> wr.append(mod.isComplementary()
-					   ?AonFiscalFileUtils.unsigned(mod.getReplacedNumber(), 13,0)
-						:AonStringUtils.repeat(' ', 13))
-			   
-			   
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(" ",1))  
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(0.0,17,2))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(0.0,17,2))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 120))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(" ",1))
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(" ",1))
-			   
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 443))			// Reservado para la AEAT
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.isComplementary()?"X":" ",1))    // Autoliquidación rectificativa
+			   ,(wr, mod) -> wr.append(mod.isComplementary() ? AonFiscalFileUtils.unsigned(mod.getReplacedNumber(),13,0) : AonStringUtils.repeat(' ', 13)) // Rectificativa - Número justificante identificativo de la autoliquidación anterior
+			   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_R00)==1?"X":" ")                            // Rectificativa - Como consecuencia de la presentación de la autoliquidación rectificativa solicito dar de baja/modificar la domiciliación efectuada
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C108),17,2))  // Rectificativa - Exclusivamente para determinados supuestos de autoliquidación rectificativa por discrepancia de criterio administrativo que no deban incluirse en otras casillas. Otros ajustes [108] 
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_C111),17,2))    // Rectificativa - Rectificación - Importe [111]   
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 120))                                       // Reservado para la AEAT
+			   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_R01)==1?"X":" ")                            // Rectificativa - Motivo de la rectificación: Rectificaciones (excepto incluidas en el motivo siguiente)
+			   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_R02)==1?"X":" ")                            // Rectificativa - Motivo de la rectificación: Discrepancia criterio administrativo
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 443))		                                  // Reservado para la AEAT
 			   ,(wr, mod) -> wr.append("</T30303000>")
 		})
 		
@@ -703,8 +698,7 @@ class Mod303WriterAEAT2024T4 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 35))					 	// Devolución - Dirección del Banco/ Bank address
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 30))					 	// Devolución - Ciudad/City
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 2))					 	// Devolución - Código País/Country code
-		   ,(wr, mod) -> wr.append(														// Devolución - Marca SEPA
-				   mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK?"1":"0")				
+		   ,(wr, mod) -> wr.append(mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK || mod.getAmount(Mod303Key.CT_C111) > 0.0 ? "1" : "0")  // Devolución - Marca SEPA				
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 617))						// Reservado	
 		   ,(wr, mod) -> wr.append("</T303DID00>")
 		})

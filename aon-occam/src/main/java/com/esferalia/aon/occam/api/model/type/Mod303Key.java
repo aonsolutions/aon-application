@@ -47,6 +47,10 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A13("303-CTA13",false,null,"Sujeto pasivo acogido voluntariamente al SII")
 	,CT_A14("303-CTA14",false,null,"Sujeto pasivo exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390")
 	
+	,CT_R00("303-CTR00",false,null,"Como consecuencia de la presentaci\u00F3n de la autoliquidaci\u00F3n rectificativa solicito dar de baja/modificar la domiciliaci\u00F3n efectuada")
+	,CT_R01("303-CTR01",false,null,"Motivo de la rectificaci\u00F3n: Rectificaciones (excepto incluidas en el motivo siguiente)")
+	,CT_R02("303-CTR02",false,null,"Motivo de la rectificaci\u00F3n: Discrepancia criterio administrativo")
+	
 	,CT_C150("303-CTC150",true ,"150","R\u00E9gimen general - Base imponible")
 	,CT_C151("303-CTC151",false,"151","R\u00E9gimen general - Tipo %")
 	,CT_C152("303-CTC152",true ,"152","R\u00E9gimen general - Cuota")
@@ -600,6 +604,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C70("303-CTA70",false,"70","Resultados a ingresar de anteriores autoliquidaciones o liquidaciones administrativas correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
 	,CT_C109("303-CTA109",false,"109","Devoluciones acordadas por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de anteriores autoliquidaciones correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
 	,CT_C71("303-CTA71",false,"71","Resultado de la liquidaci\u00F3n")
+	
+	,CT_C111("303-CTA111",false,"111","Importe a devolver como consecuencia de la rectificaci\u00F3n")
 	
 	,CT_U1D("303-CTU1D",false,null,"A - Ep\u00EDgrafe IAE - Descripci\u00F3n")
 	,CT_U1C("303-CTU1C",false,null,"B - Clave - Principal")
