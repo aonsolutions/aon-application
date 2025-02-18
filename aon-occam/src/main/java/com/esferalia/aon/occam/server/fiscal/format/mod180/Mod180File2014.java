@@ -77,8 +77,8 @@ enum Mod180File2014 {
 			   detail.getComplement(),40))
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.text(detail.getCity(),30))	// LOCALIDAD O POBLACIÓN
 	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.text(detail.getTown(),30))	// MUNICIPIO
-	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.text(						// CÓDIGO DE MUNICIPIO
-		 detail.getTownCode(),5))
+	   ,(line, mod180,detail) -> line.append(AonFiscalFileUtils.unsigned(					// CÓDIGO DE MUNICIPIO
+		 detail.getTownCode(),5,0))
 	   ,(line, mod180,detail) -> line.append(												// CÓDIGO PROVINCIA
 			   AonFiscalFileUtils.unsigned(detail.getProvinceCode(),2,0))
 	   ,(line, mod180,detail) -> line.append(												// CÓDIGO POSTAL
