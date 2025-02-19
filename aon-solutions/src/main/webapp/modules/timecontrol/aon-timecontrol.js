@@ -18,6 +18,7 @@ import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
 import { getPosition } from "../../services/maps.js";
+import { AonApps } from "../aon-apps.js";
 
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
@@ -308,7 +309,63 @@ export class AonTimecontrol extends AonElement {
       aonSign.setTimeControl(r);
       div3.appendChild(aonSign);
       this.applicationEl.setContent(div3);
+      if(this.isMobile()){
+        const {YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
+        let div = this.getElement("aonSigninContent");
+        const apps = [
+          {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
+          {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
+          {title: "Semana pasada", fn: () => this.setDataFilter({period:LAST_WEEK.id})},
+          {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
+        ]
+        div.appendChild(this.createApps(apps));
+      }
   }
+
+  createApps(apps) {
+    let ul = this.createElement(TAG.UL);
+    ul.id = "aonMobileAppSelection";
+    ul.classList.add(CSS.AON_UL, CSS.AON_LIST_GROUP);
+
+    apps.forEach(({ title, fn }) => {
+        let li = this.createElement(TAG.LI);
+        li.id = "aonMobileTcApp-" + title;
+        li.classList.add(CSS.AON_LIST_GROUP_ITEM, CSS.AON_APP_LI, "fixLi");
+        li.style.borderRight = "0px";
+        li.style.borderLeft = "0px";
+        li.style.cursor = "pointer";
+
+        li.addEventListener("click", fn);
+
+        let span = this.createElement(TAG.SPAN);
+        span.style.margin = "20px";
+
+        let icon = this.createElement(TAG.SPAN); 
+        icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+        icon.id = "aonMobileSelectionIcon-" + title;
+        icon.innerHTML = "today"; 
+        icon.style.backgroundColor = "var(--aonTimecontrol)";
+        icon.style.color = "white";
+        icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
+        icon.style.paddingTop = "5px";
+        icon.style.paddingLeft = "4px";
+        icon.style.borderRadius = "5px";
+        icon.style.width = "32px";
+        icon.style.height = "32px";
+
+        let span2 = this.createElement(TAG.SPAN);
+        span2.id = "aonMobileTcTitle-" + title;
+        span2.className = "aonAppTitle";
+        span2.innerHTML = title;
+
+        span.appendChild(icon);
+        span.appendChild(span2);
+        li.appendChild(span);
+        ul.appendChild(li);
+    });
+
+    return ul;
+}
 
   createTitleTime(){
     let div = this.createElement(TAG.DIV);
