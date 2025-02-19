@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
@@ -768,8 +769,11 @@ public class JsonParser {
 		DomainParams params = new DomainParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(domainParams);
+		
 		String schema = (String) jsonParams.get(IRequestParamsNames.SCHEMA);
-		params.setSchema(schema);
+		if (AonStringUtils.isNotBlank(schema)) {
+			params.setDbSchema(schema);
+		}
 		
 		Long id = (Long) jsonParams.get(IRequestParamsNames.ID);
 		if (id!= null) {
@@ -841,9 +845,12 @@ public class JsonParser {
 			params.setToExpirationDate(FORMATTER.parse(toExpirationDate));			
 		}
 		
-		Long offset = (Long) jsonParams.get(IRequestParamsNames.OFFSET);
-		if (offset!= null) {
-			params.setOffset(offset.intValue());	
+		JSONArray schemasOffsets = (JSONArray) jsonParams.get(IRequestParamsNames.SCHEMAS_OFFSETS);
+		if (schemasOffsets != null && schemasOffsets.size() > 0) {
+			for ( int i = 0; i < schemasOffsets.size(); i++) {
+				Object v = schemasOffsets.get(i);
+				params.setOffset( ConsoleSchema.values()[i], ((Long) v).intValue());
+			}
 		}
 
 		Long limit = (Long) jsonParams.get(IRequestParamsNames.LIMIT);

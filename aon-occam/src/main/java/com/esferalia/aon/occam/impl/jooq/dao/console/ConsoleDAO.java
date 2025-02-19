@@ -12,13 +12,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.Record;
+import org.jooq.Named;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Schema;
@@ -27,7 +27,6 @@ import org.jooq.TableField;
 import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetFirstStep;
 import org.jooq.UpdateSetMoreStep;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
@@ -35,9 +34,11 @@ import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.jooq.AonMaster;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -45,19 +46,20 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Filler;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 
 public class ConsoleDAO {
+
+	private static final Logger LOGGER = Logger.getLogger( ConsoleDAO.class.getName());
 	
 	private static final Field<Integer> USER_COUNT = DSL.count().as("userCount");
 	private static final Field<Integer> USER_COUNT_DOMAIN = USER.DOMAIN.as("userCountDomain");
@@ -68,57 +70,86 @@ public class ConsoleDAO {
 	private static final String PERFORMANCE_SCHEMA = "performance_schema";
 	private static final String DOMAINEXTRACT_SCHEMA = "domainextract-aonsolutions-net";
 	
-	protected ConsoleDAO() {
+	private ConsoleDAO() {
 	}
 	
-	public static Stream<ConsoleDomain> getDomains(AONContext ctx, DomainParams params) {
-		com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
-		Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
-		Field<Integer> childCountField = DSL.count().as("childCount");
-		BigDecimal one = new BigDecimal(1);
-		BigDecimal zero = new BigDecimal(0);
-		Field<BigDecimal> childActiveCountIf  = DSL.if_(domainChild.ACTIVE.eq((byte)1), one , zero);
-		Field<BigDecimal> childActiveCount = DSL.sum(childActiveCountIf).as("childActiveCount");
-		
-		Table<Record3<Integer,Integer,BigDecimal>> childCount = 
-			ctx.getDslContext().select(childCountParent,childCountField,childActiveCount)
-				.from(domainChild)
-				.where( domainChild.PARENT.isNotNull() )
-				.groupBy(domainChild.PARENT)
-				.asTable()
-				.as("childCount");
-		
-		Table<Record2<Integer,Integer>> userCount = ctx.getDslContext().select(USER_COUNT_DOMAIN,USER_COUNT)
-				.from(USER)
-				.where( USER.ACTIVE.eq((byte) 1) )
-				.groupBy(USER_COUNT_DOMAIN)
-				.asTable()
-				.as("userCount");
-		
-		return ctx.getDslContext().select()
-			.from(DOMAIN)
-			.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
-			.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
-			.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
-			.where( getFilter(params) )
-			.offset(params.getOffset())
+	public static Stream<ConsoleDomain> getDomains(DomainParams params) {
+		MutableInt i = new MutableInt(0);
+		System.out.println( "Limit ..:  " + params.getLimit());
+		return ((AonStringUtils.isEmpty( params.getDbSchema() ))
+				?AonCollectionUtils.stream( ConsoleSchema.values() ).flatMap( cs -> getDomainStream(cs, params) )
+				:getDomains(params.getDbSchema(), params))
+			.map(cd -> {
+				System.out.println( i.getValue() + " " + cd.getName());
+				i.increment();
+				return cd;
+			})
 			.limit(params.getLimit())
-			.fetch()
-			.stream()
-			.map(rec -> new Pair<>(rec, new ConsoleDomainFiller().apply(rec) ) )
-			.map( pair -> {pair.getRight().setDefinedUsers( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(USER_COUNT)) );
-				return pair;
-			})
-			.map( pair -> {
-				pair.getRight().setChildCount( AonNumberUtils.zeroIfNull(pair.getLeft().getValue(childCountField)) );
-				BigDecimal activeCount = pair.getLeft().getValue(childActiveCount);
-				pair.getRight().setActiveChildCount( activeCount==null?0:activeCount.intValue()  );
-				return pair.getRight();
-			})
-			;
+			;	
+	}
+	
+	private static Stream<ConsoleDomain> getDomains(String schema, DomainParams params) {
+		return ConsoleSchema.safeValueOf( schema )
+			.map( sc -> getDomainStream(sc, params) )	
+			.orElse(Stream.empty());
+	}
+	
+	private static Stream<ConsoleDomain> getDomainStream(ConsoleSchema cs, DomainParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(cs.getSchema())) {
+			System.out.println( " reading " + cs.getSchema() + " offset: " + params.getOffset( cs ));
+			com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
+			Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
+			Field<Integer> childCountField = DSL.count().as("childCount");
+			BigDecimal one = new BigDecimal(1);
+			BigDecimal zero = new BigDecimal(0);
+			Field<BigDecimal> childActiveCountIf  = DSL.if_(domainChild.ACTIVE.eq((byte)1), one , zero);
+			Field<BigDecimal> childActiveCount = DSL.sum(childActiveCountIf).as("childActiveCount");
 			
+			Table<Record3<Integer,Integer,BigDecimal>> childCount = 
+				ctx.getDslContext().select(childCountParent,childCountField,childActiveCount)
+					.from(domainChild)
+					.where( domainChild.PARENT.isNotNull() )
+					.groupBy(domainChild.PARENT)
+					.asTable()
+					.as("childCount");
 			
-		
+			Table<Record2<Integer,Integer>> userCount = 
+				ctx.getDslContext().select(USER_COUNT_DOMAIN,USER_COUNT)
+					.from(USER)
+					.where( USER.ACTIVE.eq((byte) 1) )
+					.groupBy(USER_COUNT_DOMAIN)
+					.asTable()
+					.as("userCount");
+			
+			return ctx.getDslContext().select()
+				.from(DOMAIN)
+				.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
+				.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
+				.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
+				.where( getFilter(params) )
+				.offset(params.getOffset( cs ))
+				.limit(params.getLimit())
+				.fetch()
+				.stream()
+				.map( rec -> {
+					ConsoleDomain consoleDomain = new ConsoleDomain();
+					DomainFiller.fillDomain(rec, consoleDomain,  DOMAIN);
+					BigDecimal activeCount = rec.getValue(childActiveCount);
+					consoleDomain
+						.setSchema( cs.getSchema() )
+						.setRemoteAccessEnabled( rec.getValue(APP_PARAM.ID) != null)
+						.setChildCount( AonNumberUtils.zeroIfNull(rec.getValue(childCountField)) )
+						.setActiveChildCount( activeCount==null?0:activeCount.intValue()  )
+						.setDefinedUsers( AonNumberUtils.zeroIfNull(rec.getValue(USER_COUNT)) )
+					;	
+					return consoleDomain; 
+				});
+		} catch (Exception e) {
+			String msg = "Schema " + cs.getSchema() + " [Exception: "+ e.getMessage() +"]";
+			System.out.println( msg );
+			LOGGER.severe( msg );
+			return Stream.empty();
+		}
 	}
 	
 	private static Stream<Schema> getSchemas(AONContext ctx) {
@@ -226,27 +257,6 @@ public class ConsoleDAO {
 		return c;
 	}
 	
-	public static class ConsoleDomainFiller extends Filler implements Function<Record, ConsoleDomain> {
-		@Override
-		public ConsoleDomain apply(Record r) {
-			return build(r);
-		}
-		
-		public static ConsoleDomain build(Record r) {
-			return buildConsoleDomain(r, DOMAIN);
-		}
-		
-		public static ConsoleDomain buildConsoleDomain(Record r, com.esferalia.aon.jooq.tables.Domain domain) {
-			ConsoleDomain consoleDomain = new ConsoleDomain();
-			DomainFiller.fillDomain(r, consoleDomain, domain);
-			return consoleDomain
-				.setChildCount(0)
-				.setActiveChildCount(0)
-				.setRemoteAccessEnabled( getValue(r, APP_PARAM.ID) != null)
-			;	
-		}
-	}
-
 	public static boolean isRemoteAccessEnabled(AONContext ctx, Integer domainId) {
 		return AppParamDAO.getApplicationParameterStream(ctx
 				, p -> p.getDomainProperty().eq(domainId)
@@ -307,7 +317,7 @@ public class ConsoleDAO {
 	
 	private static Stream<ConsoleTableRow> getTableRowsStream(AONContext ctx, ConsoleTableRow params, int limit) {
 		try {
-			ConsoleTableRow tableRow = getTableRowMetadata( ctx, params );
+			ConsoleTableRow tableRow = getTableRowMetadata( params );
 			Table<?> table = AON_MASTER.getTable(params.getTable());
 			List<Field<?>> selectedFields = AonCollectionUtils.stream( tableRow.getFields().values())
 				.filter( f -> f.getType() != ConsoleTableFieldType.BINARY)
@@ -319,7 +329,7 @@ public class ConsoleDAO {
 				.limit(limit)
 				.stream()
 				.map( r -> {
-					ConsoleTableRow tr = getTableRowMetadata( ctx, params );
+					ConsoleTableRow tr = getTableRowMetadata( params );
 					Field<?> pkField = getPkField(params.getTable());
 					tr.setId( (Integer) r.getValue(pkField) );
 					selectedFields	
@@ -387,11 +397,11 @@ public class ConsoleDAO {
 	public static String[] getAonTables() {
 		return AonMaster.AON_MASTER.getTables()
 			.stream()
-			.map( table -> table.getName() )
+			.map( Named::getName ) 
 			.toArray(tableName -> new String[tableName]);
 	}
 
-	public static ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow params) {
+	public static ConsoleTableRow getTableRowMetadata(ConsoleTableRow params) {
 		ConsoleTableRow tableRow = new ConsoleTableRow()
 				.setSchema(params.getSchema())
 				.setTable( params.getTable() )
@@ -443,7 +453,6 @@ public class ConsoleDAO {
 				.stream()
 				.filter( f -> AonStringUtils.isNotEmpty( f.getQueryValue() ))
 				.forEach( f -> renderer.put(AON_MASTER.getTable(params.getTable()).field( f.getColumn() ), f.getQueryValue() ) );
-			;
 			try {
 				c = renderer.getCondition();
 			} catch (ExpressionException e) {
@@ -502,15 +511,11 @@ public class ConsoleDAO {
 				, updatableField
 				, fromString( field.getType(), field.getNewValue()))
 				.where(pkField.eq(row.getId()));
-			
-			System.out.println( sentence.getSQL(ParamType.INLINED) ); 
-			
 			sentence.execute();
 			if ( AonStringUtils.equals(pkField.getName(),updatableField.getName())) {
 				row.setId( AonNumberUtils.toInteger( field.getNewValue() ));
 			}
-			ConsoleTableRow result = getTableRow(ctx,row); 	
-			return result;
+			return getTableRow(ctx,row);
 		} catch (Exception e) {
 			throw new AonCoreException("No se pudo modificar la fila. Causa: " + e.getMessage(), e);
 		}

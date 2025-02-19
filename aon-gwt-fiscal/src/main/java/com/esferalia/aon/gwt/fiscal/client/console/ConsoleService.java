@@ -19,10 +19,10 @@ public interface ConsoleService extends RemoteService {
 
 	String[] getSchemas(Occam occam) throws AonCoreException;
 	LinkedList<ConsoleDomain> getDomains(DomainParams params) throws AonCoreException;
-	Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException;
-	Domain changeActive(DomainParams params, Integer domainId, boolean active) throws AonCoreException;
-	Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) throws AonCoreException;
-	Boolean switchRemoteAccess(DomainParams params, Integer domainId) throws AonCoreException;
+	Boolean deleteDomain(String schema, Integer domainId) throws AonCoreException;
+	Domain changeActive(String schema, Integer domainId, boolean active) throws AonCoreException;
+	Domain changeExpirationDate(String schema, Integer domainId, Date expireDate) throws AonCoreException;
+	Boolean switchRemoteAccess(String schema, Integer domainId) throws AonCoreException;
 	LinkedList<User> availableUsers(Occam occam, Integer domainId) throws AonCoreException;
 	String[] getAonTables() throws AonCoreException;
 	ConsoleTableRow getTableRow(ConsoleTableRow row) throws AonCoreException;

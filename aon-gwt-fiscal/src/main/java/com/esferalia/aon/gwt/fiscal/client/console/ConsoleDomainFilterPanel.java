@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainTypeBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -265,16 +264,16 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	}
 
 	private void fire(final ConsoleModuleOptions opt) {
-		if (AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
-			AonMessageDialog.error("Rellene el campo \"esquema\" para realizar una b\u00FAsqueda");
-		} else {
+//		if (AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
+//			AonMessageDialog.error("Rellene el campo \"esquema\" para realizar una b\u00FAsqueda");
+//		} else {
 			ValueChangeEvent.<DomainParams>fire( ConsoleDomainFilterPanel.this, getParams( opt ) ); 
-		}
+//		}
 	}
 	
 	DomainParams getParams(ConsoleModuleOptions opt) {
 		DomainParams params = new DomainParams()
-			.setSchema(schemaBox.getSelectedValue())
+			.setDbSchema(schemaBox.getSelectedValue())
 			.setQuery(queryBox.getValue())
 			.setFromLastAccess(fromLastAccessBox.getValue())
 			.setToLastAccess(toLastAccessBox.getValue())

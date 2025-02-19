@@ -46,15 +46,15 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
-			fromCtx = AONContext.getUnpooledAONContext(domainParams.getSchema());
+			fromCtx = AONContext.getUnpooledAONContext(domainParams.getDbSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
-				.getSchemas(domainParams.getSchema())
+				.getSchemas(domainParams.getDbSchema())
 				.stream()
 				.findFirst()
 				.orElse(null);
 			ConsoleConnectionParams fromParams = new ConsoleConnectionParams()
 				.setAONContext(fromCtx)
-				.setSchemaName(domainParams.getSchema())
+				.setSchemaName(domainParams.getDbSchema())
 				.setSchema(fromSchema)
 				.setDomain(new Domain()
 					.setId(domainParams.getId())
@@ -62,7 +62,8 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 					.setDescription(domainParams.getDescription())
 				);
 			
-			ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaName);
+			ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaName)
+				.orElseThrow(() -> new IllegalArgumentException("No schema found!"));
 			toCtx = AONContext.getUnpooledAONContext(cs.getSchema());
 			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(cs.getSchema())
