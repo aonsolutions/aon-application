@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -47,7 +48,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -67,6 +67,10 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -301,5 +305,24 @@ public interface CommonServiceAsync {
 	void deleteItemCompositions(String domainName, int domain, String user, List<Integer> itemCompositions, AsyncCallback<Void> asyncCallback)throws AonCoreException;
 	void saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition, AsyncCallback<ItemComposition> asyncCallback) throws AonCoreException;
 	void saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions, AsyncCallback<List<ItemComposition>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ***************************************** [TARIFF]
+	// **************************************************
+
+	void getTariffs(TariffParams params, AsyncCallback<List<Tariff>> asyncCallback) throws AonCoreException;
+	void getTariff(String domainName, int domain, String user, Integer tariffId, AsyncCallback<Tariff> asyncCallback) throws AonCoreException;
+	void deleteTariff(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	void saveTariff(String domainName, int domain, String user, Tariff tariff, AsyncCallback<Tariff> asyncCallback) throws AonCoreException;
+	
+	void getTariffAddInfoList(String domainName, int domain, String user, Integer tariffId, AsyncCallback<List<TariffAddInfo>> asyncCallback) throws AonCoreException;
+	void saveTariffAddInfo(String domainName, int domain, String user, TariffAddInfo tariffAddInfo, AsyncCallback<TariffAddInfo> asyncCallback) throws AonCoreException;
+	void deleteTariffAddInfo(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getTariffCatalgueList(String domainName, int domain, String user, Integer tariffId, AsyncCallback<List<TariffCatalogue>> asyncCallback) throws AonCoreException;
+	void saveTariffCatalogue(String domainName, int domain, String user, TariffCatalogue tariffCatalogue, AsyncCallback<TariffCatalogue> asyncCallback) throws AonCoreException;
+	void deleteTariffCatalogue(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> asyncCallback) throws AonCoreException;
 	
 }

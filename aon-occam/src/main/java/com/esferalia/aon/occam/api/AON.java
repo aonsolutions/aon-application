@@ -98,6 +98,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.Commission;
 import com.esferalia.aon.occam.api.model.commission.CommissionCategory;
 import com.esferalia.aon.occam.api.model.commission.CommissionItem;
@@ -150,7 +151,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -196,6 +196,10 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
 import com.esferalia.aon.occam.api.model.task.TaskEvent;
@@ -8712,6 +8716,24 @@ public class AON {
 			return getNewProduct().getTariffStream(ctx, filter);
 		}
 	}
+	
+	public static List<Tariff> getTariffList(Domain domain, String user, TariffParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getTariffList(ctx, params);
+		}
+	}
+
+	public static void deleteTariff(Domain domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getNewProduct().deleteTariff(ctx, id);
+		}
+	}
+
+	public static Tariff saveTariff(Domain domain, String user, Tariff tariff) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().saveTariff(ctx, tariff);
+		}
+	}
 
 	public static Stream<ItemTariff> getItemTariffStream(Domain domain, String user, ItemTariffFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
@@ -8722,6 +8744,48 @@ public class AON {
 	public static void deleteItemTariff(Domain domain, String user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getNewProduct().deleteItemTariff(ctx, id);
+		}
+	}
+
+	public static List<TariffAddInfo> getTariffAddInfoList(Domain domain, String user, Integer tariffId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getTariffAddInfoList(ctx, tariffId);
+		}
+	}
+
+	public static TariffAddInfo saveTariffAddInfo(Domain domain, String user, TariffAddInfo tariffAddInfo) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().saveTariffAddInfo(ctx, tariffAddInfo);
+		}
+	}
+
+	public static void deleteTariffAddInfo(Domain domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getNewProduct().deleteTariffAddInfo(ctx, id);
+		}
+	}
+
+	public static List<TariffCatalogue> getTariffCatalgueList(Domain domain, String user, Integer tariffId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getTariffCatalgueList(ctx, tariffId);
+		}
+	}
+
+	public static TariffCatalogue saveTariffCatalogue(Domain domain, String user, TariffCatalogue tariffCatalogue) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().saveTariffCatalogue(ctx, tariffCatalogue);
+		}
+	}
+
+	public static void deleteTariffCatalogue(Domain domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getNewProduct().deleteTariffCatalogue(ctx, id);
+		}
+	}
+
+	public static List<Catalogue> getCatalogueList(Domain domain, String user, CatalogueFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getCatalogueList(ctx, filter);
 		}
 	}
 }
