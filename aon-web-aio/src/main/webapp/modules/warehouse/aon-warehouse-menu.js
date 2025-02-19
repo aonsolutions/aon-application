@@ -54,8 +54,8 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 title: "Entradas (Albaranes de Compra)",
                 action: () => this.rootPanel(new JSF.AonJsfIncome)
             }, {
-                description: "Salidas (Albaranes de Compra)",
-                title: "Salidas (Albaranes de Compra)",
+                description: "Salidas (Albaranes de Venta)",
+                title: "Salidas (Albaranes de Venta)",
                 action: () => this.rootPanel(new JSF.AonJsfDelivery)
             }, {
                 description: "Traspasos entre almacenes",
