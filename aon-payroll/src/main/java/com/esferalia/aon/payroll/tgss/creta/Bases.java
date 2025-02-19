@@ -1390,9 +1390,14 @@ public class Bases {
 
 		String getComment();
 
+
 		void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cb);
 
+		default void add(Salary salary, int order, Tramo<?> tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, BasesCallback... cb) {
+			add(salary, tramo, datoSolicitado, tramoBuilder, cb);
+		}
 	}
 
 	private static abstract class AbstractCCretaData implements CretaData {
@@ -1579,25 +1584,57 @@ public class Bases {
 		}
 	}
 	
-	private static class AnyNonNegativeCCretaData extends CCretaData {
+	private static class CollectNonNegativeCCretaData extends CCretaData {
 		
-		
-		
-		public AnyNonNegativeCCretaData(String variable) {
+		public CollectNonNegativeCCretaData(String variable) {
 			super(variable);
+		}
+		
+		
+		@Override
+		public void add(Salary salary, int order, Tramo<?> tramo, DatoSolicitado datoSolicitado,
+				TramoBuilder tramoBuilder, BasesCallback... cb) {
+			if ( order == 0 ) {
+				super.add(salary, order, tramo, datoSolicitado, tramoBuilder, cb);
+			}
+		}
+		
+		@Override
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder,
+				BasesCallback... cbs) {
+			super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
 		}
 
 		@Override
 		public Double get(Salary salary, Fecha desde, Fecha hasta) 
 				throws NoSuchVariableException ,UnMatchedVariableException {
-			try {
-				return super.get(salary, desde, hasta);
-			} catch ( UnMatchedVariableException  e ) {
-				ContextData contextData = e.getContextData();
-				return CCretaData.get(variable, salary, new Period(contextData.getStartDate(), contextData.getEndDate()));
-			}
+			return CollectNonNegativeCCretaData.get(variable, salary);
 		}
 
+		protected static Double get(String variable,
+				Salary salary) throws NoSuchVariableException {
+			List<ContextData> datas = salary.getContextData()
+					.get(variable);
+			if (datas == null || datas.isEmpty())
+				throw new NoSuchVariableException(variable);
+
+			double ret = 0.00;
+			boolean found = false;
+
+			for (ContextData data : datas) {
+
+				if ( 0.00 >= ExpressionContext.eval(data.getExpression(), Double.class) ) 
+					continue;
+
+				found = true;
+				ret += ExpressionContext.eval(data.getExpression(),Double.class) ;
+			}
+
+			if (!found)
+				throw new NoSuchVariableException(variable);
+
+			return ret;
+		}
 	}
 	
 	private static class NonNegativeCCretaData extends CCretaData {
@@ -2182,9 +2219,9 @@ public class Bases {
 			put("636", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			put("637", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 
-			put("497", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_FIRST.getName()));
-			put("498", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_SECOND.getName()));
-			put("499", new AnyNonNegativeCCretaData(SOLIDARITY_BASE_THIRD.getName()));
+			put("497", new CollectNonNegativeCCretaData(SOLIDARITY_BASE_FIRST.getName()));
+			put("498", new CollectNonNegativeCCretaData(SOLIDARITY_BASE_SECOND.getName()));
+			put("499", new CollectNonNegativeCCretaData(SOLIDARITY_BASE_THIRD.getName()));
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
@@ -2558,8 +2595,13 @@ public class Bases {
 		}
 
 		trabajadorBuilder.setNaf(trabajador.getNaf());
-		for (Tramo<D> tramo : trabajador.getTramos().getTramo()) {
-
+		List<Tramo<D>> tramos = trabajador.getTramos().getTramo();
+		Collections.sort(tramos, (t1, t2) -> toDate(t1.getFechaDesde()).compareTo(toDate(t2.getFechaDesde())));
+		//for (Tramo<D> tramo : trabajador.getTramos().getTramo()) {
+		for (int i = 0; i < tramos.size(); i++) {
+			
+			Tramo<D> tramo = tramos.get(i);
+			
 			try {
 				checkTramo(tramo, salary, cbs);
 			} catch (Throwable t) {
@@ -2603,7 +2645,7 @@ public class Bases {
 					continue;
 				}
 
-				data.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				data.add(salary, i, tramo, datoSolicitado, tramoBuilder, cbs);
 				
 			}
 			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo basesTramo = tramoBuilder.create();

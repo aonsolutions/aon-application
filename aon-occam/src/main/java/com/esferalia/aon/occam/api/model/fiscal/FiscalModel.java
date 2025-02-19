@@ -694,6 +694,11 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public FiscalModel setFechaPlazo(String d) {
 		ensureDetail("FECHAPLAZO").setDescription(d);
 		return this;
+	}
+	
+	// Indica si hay importe a devolver como consecuencia de la rectificación. Por ahora solo se usa en el M303 de la AEAT
+	public boolean isAeatRectification() {
+		return (isAEAT() && getModel() == FiscalModelType.M303 && isComplementary() && getAmount("303-CTA111") > 0);
 	}	
 	
 }

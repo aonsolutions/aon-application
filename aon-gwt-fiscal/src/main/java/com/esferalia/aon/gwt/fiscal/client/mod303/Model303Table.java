@@ -109,7 +109,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter())
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter())
 		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter())
-		, CMP("C"					, 20 ,AON.CSS.aonTextCenter())
+		, CMP("C/R"					, 20 ,AON.CSS.aonTextCenter())
 		, SST("S"					, 20 ,AON.CSS.aonTextCenter())
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())
@@ -168,7 +168,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			admon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod303.getAdministration()) );
 			
 			InlineLabel comp = new InlineLabel();
-			comp.setTitle( AON.MSG.complementary());
+			comp.setTitle( AON.MSG.complementary()+"/Rectificativa");
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod303.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
 			

@@ -30,5 +30,6 @@ public class JsFiscalMenuItem extends JavaScriptObject {
 	public final native String getDeclarationResultType() /*-{return this.type;	}-*/;
 	public final native String getIban() /*-{return this.iban;	}-*/;
 	public final native String getNrc() /*-{return this.nrc;	}-*/;
+	public final native boolean isAeatRectification() /*-{return this.aeatRectification; }-*/;
 	
 }

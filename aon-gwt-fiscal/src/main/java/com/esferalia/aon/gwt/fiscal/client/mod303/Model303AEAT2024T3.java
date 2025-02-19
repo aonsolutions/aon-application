@@ -17,8 +17,9 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATAdditiona
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATGeneralRegimeScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifiedRegime4TScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATSimplifiedRegimeScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATGeneralRegimeScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032024T3AEATResultScript2;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032025AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -65,6 +66,9 @@ class Model303AEAT2024T3 extends Model303AEAT {
 	private ListBox a14;
 	private ListBox a11;
 	private AonTextBox previousReceiptBox;
+	private CheckBox r00;
+	private CheckBox r01;
+	private CheckBox r02;
 
 	private static final int GENERAL_REGIME_TAB = 2;
 	private static final int SIMPLIFIED_REGIME_TAB = 3;
@@ -225,7 +229,7 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3032023AEATResultScript.values(),3);
+		paintDeclaration(table,Model3032024T3AEATResultScript.values(),3);
 		if (getModel().isLastPeriod() && AonMathUtils.isNotZero(getModel().getAmount(Mod303Key.CT_C110))) {
 			Widget c78 = table.getWidget(7, 0);
 			AonDisplayTable fp78 = new AonDisplayTable();
@@ -264,8 +268,13 @@ class Model303AEAT2024T3 extends Model303AEAT {
 				.addCell(l780, AON.CSS.aonTextCenter(),AON.CSS.aonNowrap(),AON.CSS.aonBold(),AON.CSS.aonWidth80());
 			fp78.addRow()
 				.addCell(c78, AON.CSS.aonWidthAuto())
-				.addCell(fp  , AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
+				.addCell(fp , AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
 			table.setWidget(7, 0, fp78);
+		}
+		if (getModel().isComplementary()) {
+			paintEmptyRow(table);
+			paintEmptyRow(table);
+			paintScript(table,Model3032024T3AEATResultScript2.values(),3);
 		}
 		
 	}
@@ -421,6 +430,10 @@ class Model303AEAT2024T3 extends Model303AEAT {
 
 		// Complementaria: Numero justificante de la declaración anterior
 		if (getModel().isComplementary()) {
+			paintEmptyRow(table);
+			paintEmptyRow(table);
+			row = table.getRowCount();
+			paintLabel(table, row, "Autoliquidaci\u00F3n Rectificativa:", true);
 			row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt());
 			
@@ -436,6 +449,10 @@ class Model303AEAT2024T3 extends Model303AEAT {
 				markAsDirty();
 			});
 			table.setWidget(row, 1, previousReceiptBox);
+			
+			r00 = paintCheck(Mod303Key.CT_R00,table);	// Rectificativa - Como consecuencia de la presentación de la autoliquidación rectificativa solicito dar de baja/modificar la domiciliación efectuada
+			r01 = paintCheck(Mod303Key.CT_R01,table);	// Rectificativa - Motivo de la rectificación: Rectificaciones (excepto incluidas en el motivo siguiente)
+			r02 = paintCheck(Mod303Key.CT_R02,table);	// Rectificativa - Motivo de la rectificación: Discrepancia criterio administrativo
 		}	
 		
 		container.add(addGroupPanel("", table));
@@ -937,6 +954,9 @@ class Model303AEAT2024T3 extends Model303AEAT {
 		enable(a14);
 		enable(a11);
 		enable(previousReceiptBox);
+		enable(r00);
+		enable(r01);
+		enable(r02);
 		enable(receiptBox);
 		if (receiptBox != null) {
 			receiptBox.setValue( getModel().getNumber() );

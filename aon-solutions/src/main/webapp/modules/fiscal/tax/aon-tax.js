@@ -295,6 +295,38 @@ export class AonTax extends AonElement {
     divOne.appendChild(divTextTwo);
     div.appendChild(divOne);
     
+    if (resp.isAeatRectification) {
+	    const divAeatRectificationOne = this.createElement(TAG.DIV);
+	    divAeatRectificationOne.className = "aonFlexBetween colorGrey aonFontWeight-700";
+	    divAeatRectificationOne.style.margin = "10px 0";
+	
+	    const divAeatRectificationOneTextOne = this.createElement(TAG.DIV);
+	    divAeatRectificationOneTextOne.textContent = "Importe a compensar o a devolver";
+	    divAeatRectificationOne.appendChild(divAeatRectificationOneTextOne);
+	
+	    const divAeatRectificationOneTextTwo = this.createElement(TAG.DIV);
+	    divAeatRectificationOneTextTwo.style.textAlign = "end";
+	    divAeatRectificationOneTextTwo.style.color = "black";
+	    divAeatRectificationOneTextTwo.textContent = formatNumber(Math.abs(resp.result)-resp.amountRectification, 2, "EUR");
+	    divAeatRectificationOne.appendChild(divAeatRectificationOneTextTwo);
+	    div.appendChild(divAeatRectificationOne);
+	    
+	    const divAeatRectificationTwo = this.createElement(TAG.DIV);
+	    divAeatRectificationTwo.className = "aonFlexBetween colorGrey aonFontWeight-700";
+	    divAeatRectificationTwo.style.margin = "10px 0";
+	
+	    const divAeatRectificationTwoTextOne = this.createElement(TAG.DIV);
+	    divAeatRectificationTwoTextOne.textContent = "Importe a devolver por la rectificación";
+	    divAeatRectificationTwo.appendChild(divAeatRectificationTwoTextOne);
+	
+	    const divAeatRectificationTwoTextTwo = this.createElement(TAG.DIV);
+	    divAeatRectificationTwoTextTwo.style.textAlign = "end";
+	    divAeatRectificationTwoTextTwo.style.color = "black";
+	    divAeatRectificationTwoTextTwo.textContent = formatNumber(resp.amountRectification, 2, "EUR");
+	    divAeatRectificationTwo.appendChild(divAeatRectificationTwoTextTwo);
+	    div.appendChild(divAeatRectificationTwo);
+	}
+    
     // Esto no aparece en los modelos 303, 130 y 131, a ingresar, pues se deja elegir el tipo de ingreso que se quiere hacer (para poder indicar aplazamiento) 
     if ((resp.model != "IVA" && resp.model != "130" && resp.model != "131") || resp.result <= 0)
 	    if(resp.typeText){
@@ -571,7 +603,11 @@ export class AonTax extends AonElement {
           aplazamientoHidden = false;
           certiHidden = true;
         break;        
-      }      
+      } 
+      // Si rectificación AEAT (modelo 303 con casilla 111 mayor de cero), se pide tambien el IBAN, aunque sea a compensar
+      if (resp.isAeatRectification) {
+		ibanHidden = false;     
+      }
     }
     
     iban.hidden = ibanHidden;

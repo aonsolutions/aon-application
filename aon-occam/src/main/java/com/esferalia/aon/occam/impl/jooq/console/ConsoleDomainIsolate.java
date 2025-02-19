@@ -7,11 +7,14 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.BankStatementLink.BANK_STATEMENT_LINK;
+import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApplication.DOMAIN_APPLICATION;
 import static com.esferalia.aon.jooq.tables.Fbatch.FBATCH;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -21,6 +24,10 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,12 +39,14 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.jooq.AggregateFunction;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.Keys;
@@ -49,6 +58,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.server.DomainValidator;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -71,6 +81,7 @@ public class ConsoleDomainIsolate {
 				throw new AonCoreException(msg);
 			}
 			
+			checkNewDomainName(processId, params);
 			if (params.isValidate()) {
 				ConsoleDomainCheckIntegrity.check(processId, params, true);
 				if (!params.hasErrors()) {
@@ -85,6 +96,16 @@ public class ConsoleDomainIsolate {
 		
 	}
 
+	private static void checkNewDomainName(String processId, ConsoleParams params) {
+		DomainValidator domainValidator = DomainValidator.getInstance(true);
+		if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
+			String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
+			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
+			throw new AonCoreException(msg);
+		}
+	}
+
+
 	private static void isolateDomain(String processId, ConsoleParams params) {
 		ConsoleIDsTableInfo idsTableInfo = new ConsoleIDsTableInfo();
 		try {
@@ -97,12 +118,6 @@ public class ConsoleDomainIsolate {
 			params.getFromConnection().setDomain(fullDomain);
 			
 			params.setScript( new LinkedHashMap<>() );
-			DomainValidator domainValidator = DomainValidator.getInstance(true);
-			if (!domainValidator.isValid(params.getToConnection().getDomainName())) {
-				String msg = MessageFormat.format("[ERROR]: El nuevo nombre de dominio [{0}], no es válido", params.getToConnection().getDomainName());
-				ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.error(processId, msg));
-				throw new AonCoreException(msg);
-			}
 			
 			params.getToDslContext().transaction(conf -> {
 				checkProductIndex( params );
@@ -131,8 +146,6 @@ public class ConsoleDomainIsolate {
 			
 			params.setTotalCount( params.getTotalCount() +  2);
 			
-			
-			
 			ConsoleUtils.disableForeignKeys(params);
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Start transaction"));
 
@@ -148,10 +161,12 @@ public class ConsoleDomainIsolate {
 				createTempTable(processId,params);
 				logMainProgress(processId, params);
 				
+				
 				insertId(params, DOMAIN,
 					params.getFromConnection().getDomain().getId(),
 					params.getToConnection().getDomain().getId());
 
+				checkPayrollTables(processId, params);
 				
 				if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 					passHeritableTables( processId, params );
@@ -181,6 +196,11 @@ public class ConsoleDomainIsolate {
 				if (params.getFromConnection().getDomain().isEnableHeredity() && params.mustFlatten()) {
 					fixTaskHolder(processId, params );
 					logMainProgress(processId, params);
+				}
+				if (params.getFromConnection().getConsoleSchema() != params.getToConnection().getConsoleSchema()) {
+					fixPaymentConcept(processId, params );
+					fixDeductionConcept(processId, params );
+					fixBonusConcept(processId, params );
 				}
 				createLoginUser(processId,params);
 				logMainProgress(processId, params);
@@ -630,7 +650,7 @@ public class ConsoleDomainIsolate {
 		return (TableField<T, String>) fkField;
 	}
 
-	private static Integer getNewId(ConsoleParams params, Table<?> table, Integer fkOldId) {
+	private static Optional<Integer> getNewId(ConsoleParams params, Table<?> table, Integer fkOldId) {
 		return params.getIdsTableInfo().getCtx().getDslContext()
 			.select(params.getIdsTableInfo().getNewIdColumn())
 			.from(params.getIdsTableInfo().getTable())
@@ -639,8 +659,7 @@ public class ConsoleDomainIsolate {
 			.fetch()
 			.stream()
 			.map(r -> r.getValue(params.getIdsTableInfo().getNewIdColumn()))
-			.findFirst()
-			.orElse(null);
+			.findFirst();
 	}
 	
 	private static void duplicateRow(String processId, ConsoleParams params, ScriptTable scriptTable, Record rec) {
@@ -696,6 +715,13 @@ public class ConsoleDomainIsolate {
 				.returning(pkField)
 				.fetchOne()
 				.getValue(pkField);
+			if (pkOldId < 0) {
+				int pkDeletedNewId = (pkNewId * -1);
+				params.getToDslContext().update(table)
+					.set(pkField,pkDeletedNewId)
+					.where(pkField.eq(pkNewId));
+				pkNewId = pkDeletedNewId;
+			}
 		} else {
 			params.getToDslContext().insertInto(table)
 				.set(rec)
@@ -717,28 +743,30 @@ public class ConsoleDomainIsolate {
 	private static Record duplicateOtherForeignKey( ConsoleParams params, ForeignKey<Record, ?> fk, Record rec) {
 		Table<?> toTable = fk.getKey().getTable();
 		if (hasDomain(toTable))  {
-			TableField<?, String> fkStringField = null;
+			TableField<?, String> fkStringFieldTmp = null;
 			String fkOldStringId = null;
-			TableField<?, Integer> fkIntegerField = null;
+			TableField<?, Integer> fkIntegerFieldTmp = null;
 			Integer fkOldIntegerId = null;
 			boolean isStringFK = fk.getFields().get(0).getDataType().isString();
 			if (isStringFK) {
-				fkStringField = getFKStringField( fk );
-				fkOldStringId = rec.getValue(fkStringField);
+				fkStringFieldTmp = getFKStringField( fk );
+				fkOldStringId = rec.getValue(fkStringFieldTmp);
 				fkOldIntegerId = AonNumberUtils.toInteger(fkOldStringId);
 			} else {
-				fkIntegerField = getFKIntegerField( fk );
-				fkOldIntegerId = rec.getValue(fkIntegerField);
+				fkIntegerFieldTmp = getFKIntegerField( fk );
+				fkOldIntegerId = rec.getValue(fkIntegerFieldTmp);
 			}
+			TableField<?, String> fkStringField = fkStringFieldTmp;
+			TableField<?, Integer> fkIntegerField = fkIntegerFieldTmp;
 			if (fkOldIntegerId != null) {
-				Integer fkNewId = getNewId(params, toTable, fkOldIntegerId);
-				if ( fkNewId != null) {
-					if (isStringFK) {
-						rec.setValue(fkStringField, AonNumberUtils.toString( fkNewId ));
-					} else {
-						rec.setValue(fkIntegerField, fkNewId);
-					}
-				}
+				getNewId(params, toTable, fkOldIntegerId)
+					.ifPresent( fkNewId -> {
+						if (isStringFK) {
+							rec.setValue(fkStringField, AonNumberUtils.toString( fkNewId ));
+						} else {
+							rec.setValue(fkIntegerField, fkNewId);
+						}
+					});
 			}
 		}
 		return rec;
@@ -831,4 +859,149 @@ public class ConsoleDomainIsolate {
 		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Perfil de usuario en la aplicación insertada correctamente"));
 	}
     
+	public static void main(String[] args) throws IOException {
+		FileInputStream input = new FileInputStream("/home/ecastellano/TRABAJO/aon_tables.txt");
+		InputStreamReader r = new InputStreamReader(input);
+		LineNumberReader reader = new LineNumberReader( r );
+		while (reader.ready()) {
+			String table = reader.readLine();
+			System.out.println( 
+					"select count(*) from "
+					+ table 
+					+ " where domain = 25323;");
+			
+		}
+		reader.close();
+		
+	}
+
+	private static void fixPaymentConcept(String processId, ConsoleParams params) {
+		// TODO Auto-generated method stub
+	}
+	private static void fixDeductionConcept(String processId, ConsoleParams params) {
+		// TODO Auto-generated method stub
+	}
+	private static void fixBonusConcept(String processId, ConsoleParams params) {
+		// TODO Auto-generated method stub
+	}
+	private static void checkPayrollTables(String processId, ConsoleParams params) {
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId,"Start Check Payroll tables"));		
+		AonCollectionUtils.stream(params.getFromConnection().getSchema().getTables())
+			.map( t -> params.getScript().get( t.getName()))
+			.filter( t -> t != null)
+			.flatMap( t -> AonCollectionUtils.stream(t.getReferences())
+		    	.filter( r -> 
+		    		   AonStringUtils.equals(r.getKey().getTable().getName(),PAYMENT_CONCEPT.getName())
+	    			|| AonStringUtils.equals(r.getKey().getTable().getName(),DEDUCTION_CONCEPT.getName())
+	    			|| AonStringUtils.equals(r.getKey().getTable().getName(),BONUS_CONCEPT.getName())
+    			)
+			)
+			.forEach( fk -> {
+				@SuppressWarnings("unchecked")
+				Field<Integer> fkField = (Field<Integer>) fk.getFields().get(0);
+				params.getFromDslContext()
+					.select( fk.getKey().getTable().fields()  )
+					.from(fk.getTable().asTable())
+					.innerJoin( fk.getKey().getTable() ).on( getPrimaryKey(params, fk.getKey().getTable()).eq( fkField ) ) 
+					.where(getDomainField(fk.getKey().getTable()).equal(0))
+					.and( getDomainField(fk.getTable().asTable()).equal(params.getFromDomain().getId()) )
+					.groupBy( fkField )
+					.fetch()
+					.stream()
+					.forEach( r -> checkIfExistsInNewSchema( params, fk.getKey().getTable(), r ))
+				;
+			})
+			;
+		ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.message(processId, "Check Payroll tables. OK!"));
+	}
+
+	private static void checkIfExistsInNewSchema(ConsoleParams params, Table<?> table, Record r) {
+		Condition c = getDomainField( table ).equal(0);
+		Integer oldIdTmp = null;
+		if (AonStringUtils.equals(table.getName(),PAYMENT_CONCEPT.getName())) {
+			oldIdTmp = r.getValue(PAYMENT_CONCEPT.ID);
+			String code = r.getValue(PAYMENT_CONCEPT.CODE);
+			if (code == null) {
+				c = c.and( PAYMENT_CONCEPT.CODE.isNull() );
+			} else {
+				c = c.and( PAYMENT_CONCEPT.CODE.eq( code ));
+			}
+			
+			String expr = r.getValue(PAYMENT_CONCEPT.EXPRESSION );
+			if (expr == null) {
+				c = c.and( PAYMENT_CONCEPT.EXPRESSION.isNull() );
+			} else {
+				c = c.and( PAYMENT_CONCEPT.EXPRESSION.eq( expr ));
+			}
+
+			String desc = r.getValue(PAYMENT_CONCEPT.DESCRIPTION);
+			if (desc == null) {
+				c = c.and( PAYMENT_CONCEPT.DESCRIPTION.isNull() );
+			} else {
+				c = c.and( PAYMENT_CONCEPT.DESCRIPTION.eq( desc ));
+			}
+		}
+		else if (AonStringUtils.equals(table.getName(),DEDUCTION_CONCEPT.getName())) {
+			oldIdTmp = r.getValue(DEDUCTION_CONCEPT.ID);
+			String code = r.getValue(DEDUCTION_CONCEPT.CODE);
+			if (code == null) {
+				c = c.and( DEDUCTION_CONCEPT.CODE.isNull() );
+			} else {
+				c = c.and( DEDUCTION_CONCEPT.CODE.eq( code ));
+			}
+			
+			String expr = r.getValue(DEDUCTION_CONCEPT.EXPRESSION );
+			if (expr == null) {
+				c = c.and( DEDUCTION_CONCEPT.EXPRESSION.isNull() );
+			} else {
+				c = c.and( DEDUCTION_CONCEPT.EXPRESSION.eq( expr ));
+			}
+
+			String desc = r.getValue(DEDUCTION_CONCEPT.DESCRIPTION);
+			if (desc == null) {
+				c = c.and( DEDUCTION_CONCEPT.DESCRIPTION.isNull() );
+			} else {
+				c = c.and( DEDUCTION_CONCEPT.DESCRIPTION.eq( desc ));
+			}
+		}
+		else if (AonStringUtils.equals(table.getName(),BONUS_CONCEPT.getName())) {
+			oldIdTmp = r.getValue(BONUS_CONCEPT.ID);
+			String expr = r.getValue(BONUS_CONCEPT.EXPRESSION );
+			if (expr == null) {
+				c = c.and( BONUS_CONCEPT.EXPRESSION.isNull() );
+			} else {
+				c = c.and( BONUS_CONCEPT.EXPRESSION.eq( expr ));
+			}
+
+			String desc = r.getValue(BONUS_CONCEPT.DESCRIPTION);
+			if (desc == null) {
+				c = c.and( BONUS_CONCEPT.DESCRIPTION.isNull() );
+			} else {
+				c = c.and( BONUS_CONCEPT.DESCRIPTION.eq( desc ));
+			}
+		}
+		Field<Integer> IdField = getPrimaryKey(params, table);
+		System.out.println( "\t" +
+			params.getFromDslContext()
+				.select( IdField  )
+				.from( table )
+				.where( c )
+				.getSQL( ParamType.INLINED )
+		);
+		Integer oldId = oldIdTmp;
+		params.getFromDslContext()
+			.select( IdField  )
+			.from( table )
+			.where( c )
+			.fetch()
+			.stream()
+			.map( re -> re.getValue(IdField))
+			.findFirst()
+			.ifPresent( id -> {
+				if (getNewId(params,table, oldId).isEmpty()) {
+					insertId(params, table, oldId ,id); 
+				}
+			})
+		;
+	}
 }
