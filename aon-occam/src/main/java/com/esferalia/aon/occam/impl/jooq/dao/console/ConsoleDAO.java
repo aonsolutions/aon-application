@@ -50,7 +50,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -74,16 +73,9 @@ public class ConsoleDAO {
 	}
 	
 	public static Stream<ConsoleDomain> getDomains(DomainParams params) {
-		MutableInt i = new MutableInt(0);
-		System.out.println( "Limit ..:  " + params.getLimit());
 		return ((AonStringUtils.isEmpty( params.getDbSchema() ))
 				?AonCollectionUtils.stream( ConsoleSchema.values() ).flatMap( cs -> getDomainStream(cs, params) )
 				:getDomains(params.getDbSchema(), params))
-			.map(cd -> {
-				System.out.println( i.getValue() + " " + cd.getName());
-				i.increment();
-				return cd;
-			})
 			.limit(params.getLimit())
 			;	
 	}
@@ -96,7 +88,6 @@ public class ConsoleDAO {
 	
 	private static Stream<ConsoleDomain> getDomainStream(ConsoleSchema cs, DomainParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(cs.getSchema())) {
-			System.out.println( " reading " + cs.getSchema() + " offset: " + params.getOffset( cs ));
 			com.esferalia.aon.jooq.tables.Domain domainChild = DOMAIN.as("domainChild");
 			Field<Integer> childCountParent = domainChild.PARENT.as("childCountParent");
 			Field<Integer> childCountField = DSL.count().as("childCount");
@@ -146,7 +137,6 @@ public class ConsoleDAO {
 				});
 		} catch (Exception e) {
 			String msg = "Schema " + cs.getSchema() + " [Exception: "+ e.getMessage() +"]";
-			System.out.println( msg );
 			LOGGER.severe( msg );
 			return Stream.empty();
 		}
