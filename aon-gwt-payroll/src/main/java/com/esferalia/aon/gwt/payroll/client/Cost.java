@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
 import com.esferalia.aon.gwt.payroll.shared.CostExcelService;
@@ -835,7 +834,7 @@ public class Cost extends ResizeComposite {
 		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
-		String printURL = URL.encode(GWT.getModuleBaseURL() + "seg-social/" + SistemaREDServlet.CALCS);
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "seg-social/" + SistemaREDService.CALCS);
 		
 		FormPanel formPanel = new FormPanel();
 		formPanel.setAction(printURL);
@@ -890,7 +889,7 @@ public class Cost extends ResizeComposite {
 		// Send request to server and catch any errors.
 		
 		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDServlet.CALCS);
+		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDService.CALCS);
 		xhr.setRequestHeader("Content-type",
 				"application/x-www-form-urlencoded");
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {

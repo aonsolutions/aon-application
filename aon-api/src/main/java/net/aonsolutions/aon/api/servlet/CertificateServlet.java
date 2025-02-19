@@ -51,7 +51,7 @@ public class CertificateServlet extends AonApiHttpServlet {
 		
 		Filter filter;
 		if(api.getDomain().getParentId() != null) {
-			if(!api.getUser().getDomain().equals(api.getDomain().getParentId())) {
+			if(!api.getUser().getDomain().getId().equals(api.getDomain().getParentId())) {
 				filter = (f.getDomainProperty().eq(api.getDomain().getId()).or(
 						f.getDomainProperty().eq(api.getDomain().getParentId())
 						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))

@@ -665,10 +665,11 @@ public class UserServlet extends AonApiHttpServlet {
 		String replyTo = AON_REPLY_TO;
 		String alias = AON_ALIAS;
 		String subject = AON_SUBJECT;
+		
 		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
 			logoUrl = getLogoUrl(api);
 			from = getFromMessage(api);		
-			replyTo = AON_FROM.equals(from) ? AON_REPLY_TO : from;
+			replyTo = getReplayTo(api);
 			alias = formatUT8B(cp.getName());
 			subject = formatUT8B("USUARIO | " + cp.getName().toUpperCase());
 		}
@@ -687,19 +688,42 @@ public class UserServlet extends AonApiHttpServlet {
 	}
 
 	private static String getFromMessage(AonApiData api) {
-		Domain parentDomain = api.getDur().getDomain().isParent() 
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
-		String from = null;
+//		Domain parentDomain = api.getDur().getDomain().isParent()  ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
+		String from = AON_FROM;
 
-		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
-			RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
-					f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
-			if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
-				from = emailMedia.getValue();
-		}
+		// TODO: vista personalizada / email verificada, averiguar como se verifica
+//		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
+//			RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
+//					f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+//			
+//			if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+//				from = emailMedia.getValue();
+//			
+//		}
+		
+		return from;
+	}
+	
+	private static String getReplayTo(AonApiData api) {
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
+		String from = null;
+		
+		RegistryMedia emailMedia = AON.getRegistryMedia(api.getDomain(), api.getUser(),
+				f -> f.getDomainProperty().eq(parentDomain.getId()).and(f.getMediaProperty().eq((byte) 4)));
+		
+		if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+			from = emailMedia.getValue();
+		
+//		if(AonStringUtils.isBlank(from)) {
+//			from = parentDomain.getOwner();
+//		}
+		
 		if(AonStringUtils.isBlank(from)) {
-			from = AON_FROM;
+			from = AON_REPLY_TO;
 		}
+		
 		return from;
 	}
 	
@@ -790,8 +814,8 @@ public class UserServlet extends AonApiHttpServlet {
 
 	private static String getLogoUrl(AonApiData api) {
 		String logoUrl = AON_LOGO;
-		Domain parentDomain = api.getDur().getDomain().isParent()
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany(parentDomain, api.getUser(), f -> f.getDomainProperty().eq(parentDomain.getId()));
 

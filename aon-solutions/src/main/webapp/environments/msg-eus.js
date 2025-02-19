@@ -424,6 +424,7 @@ export const SEPA_FILES = 'SEPA Fitxategiak';
 export const SERIE = 'Serie';
 export const SERVICE = 'Zerbitzu';
 export const SERVICES = 'Zerbitzuak';
+export const SERVICES_AON = 'Zerbitzuak Aon';
 export const SETTING = 'Konfigurazioa';
 export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';

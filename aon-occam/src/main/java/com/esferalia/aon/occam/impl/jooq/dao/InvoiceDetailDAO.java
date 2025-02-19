@@ -245,7 +245,8 @@ public class InvoiceDetailDAO {
 							? InvestAssetFiller.build(r) 
 							: new InvestAsset().setId(getValue(r, INVOICE_DETAIL.INVEST_ASSET)))
 					.setSource(InvoiceSource.safeValueOf(getValue(r, INVOICE_DETAIL.SOURCE)))
-					.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID));
+					.setSourceId(getValue(r, INVOICE_DETAIL.SOURCE_ID))
+					.setPrepayment(getBoolean(r, INVOICE_DETAIL.PREPAYMENT));
 		}
 	}
 }

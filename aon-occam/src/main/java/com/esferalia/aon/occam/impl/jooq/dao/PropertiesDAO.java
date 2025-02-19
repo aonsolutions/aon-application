@@ -30,6 +30,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceInfo.INVOICE_INFO;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
+import static com.esferalia.aon.jooq.tables.ItemTariff.ITEM_TARIFF;
 import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
 import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
@@ -93,6 +94,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
@@ -142,6 +144,7 @@ import com.esferalia.aon.occam.api.model.Properties.InventoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoiceDetailCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.IrpfDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemAddInfoProperties;
+import com.esferalia.aon.occam.api.model.Properties.ItemTariffProperties;
 import com.esferalia.aon.occam.api.model.Properties.LocationProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailTemplateProperties;
 import com.esferalia.aon.occam.api.model.Properties.NotificationProperties;
@@ -1578,6 +1581,29 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.PURCHASE);}
 		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<Double>(TARIFF.DISCOUNT);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.ACTIVE);}
+	}
+	
+	protected static class ItemTariffPropertiesDAO implements ItemTariffProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, ItemTariffFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ItemTariffFilter filter) {
+			if (filter==null) return new Condition[0]; 
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM_TARIFF.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM_TARIFF.DOMAIN);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM_TARIFF.ITEM);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM_TARIFF.TARIFF);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM_TARIFF.TYPE);}
+		@Override public Property<Double> getProfitPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM_TARIFF.PROFIT_PERCENT);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM_TARIFF.PRICE);}
 	}
 
 }

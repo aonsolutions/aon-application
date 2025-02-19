@@ -423,6 +423,7 @@ export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';
 export const SERVICE = 'Service';
 export const SERVICES = 'Services';
+export const SERVICES_AON = 'Aon Services';
 export const SETTING = 'Einstellung';
 export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod180;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
 import static com.esferalia.aon.jooq.tables.FsModel180Detail.FS_MODEL180_DETAIL;
+import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
@@ -18,15 +19,19 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
+import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -365,20 +370,21 @@ public class Mod180DAO {
 				.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
 				.when(INVOICE_TAX.QUOTA.equal(0.0), invoiceTaxSum));
 		
-		ctx.getDslContext().select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp,maxPercent)
+		ctx.getDslContext().select(INVOICE.RDOCUMENT,INVOICE.RNAME,INVOICE_DETAIL.INVEST_ASSET,INVEST_ASSET.PROPERTIES,minRegistry,sumBase,quotaOp,maxPercent)
 		.from(INVOICE)
 		.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 		.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+		.leftJoin(INVEST_ASSET).on(INVEST_ASSET.ID.equal(INVOICE_DETAIL.INVEST_ASSET))
 		.where(INVOICE.DOMAIN.equal(mod180.getDomain()))
 			.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // No Ventas
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
 			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.RENTING.value() ))	// IRPF de Alquiler
 			.and(INVOICE.ISSUE_DATE.between(firstDay, lastDay))
-		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME)
+		.groupBy(INVOICE.RDOCUMENT,INVOICE.RNAME,INVOICE_DETAIL.INVEST_ASSET)
 		.fetch()
 		.stream()
 		.map(rec -> {
-			return new Mod180Detail()
+			Mod180Detail mod180Detail = new Mod180Detail()
 				.setDomain(mod180.getDomain())
 				.setMod180(mod180.getId())
 				.setDocument(rec.getValue(INVOICE.RDOCUMENT))
@@ -388,8 +394,64 @@ public class Mod180DAO {
 				.setRetention(rec.getValue(quotaOp).doubleValue())
 				.setPercent(rec.getValue(maxPercent))
 				.setProvince( RegistryAddressDAO.getMainAddressProvince(ctx, rec.getValue(minRegistry)) );
-			})
-		.forEach(detail -> insertDetail(ctx,detail));
+			
+			// Datos del bien afecto
+			String properties = rec.getValue(INVEST_ASSET.PROPERTIES);
+			if (AonStringUtils.isNotBlank(properties)) {				
+				JSONObject jsonObject = new JSONObject(properties);
+
+				String cadasdralReference = jsonObject.optString("catastral");
+				String provinceCode = jsonObject.optString("province");
+				Province province = Province.safeValueOf(provinceCode);
+				
+				// Situación del inmueble
+				// 1-Inmueble con referencia catastral situado en cualquier punto del territorio español, excepto País Vasco y Navarra.
+				// 2-Inmueble con referencia catastral situado en la Comunidad Autónoma del País Vasco
+				// 3-Inmueble con referencia catastral situado en la Comunidad Foral de Navarra.
+				// 4-Inmueble en cualquiera de las situaciones anteriores, pero sin referencia catastral.
+				String location = "4"; 
+				if (AonStringUtils.isNotBlank(cadasdralReference)) {
+					switch (province) {
+						case ARABA, BIZKAIA, GIPUZKOA -> location = "2"; 
+						case NAVARRA -> location = "3"; 
+						default -> location = "1";  					
+					}
+				}
+				
+				// Tipo de VIA: En los bienes está el código AEAT y en el modelo 180 el código INE
+				String streetTypeIneCode = "";
+				StreetType streetType =	StreetType.getForAeatCode(jsonObject.optString("streetType"), AonLanguage.SPANISH);
+				if (streetType != null)
+					streetTypeIneCode = streetType.getIneCode();
+				
+				// Puerta y Complemento, se ponen según los valores de Letra y Mano del domicilio del bien
+				String letter = jsonObject.optString("letter");
+				String hand = jsonObject.optString("hand");
+				String door = "";
+				String complement = "";
+				if (AonStringUtils.isNotBlank(letter) && AonStringUtils.isNotBlank(hand)) {
+					door = letter;
+					complement = hand;
+				} else if (AonStringUtils.isNotBlank(letter)) {
+					door = letter;
+				} else if (AonStringUtils.isNotBlank(hand)) {
+					door = hand;
+				}
+				
+				mod180Detail.setLocation(location)
+							.setCadasdralReference(cadasdralReference)
+							.setStreetType(streetTypeIneCode)
+							.setStreetName(jsonObject.optString("address"))  
+							.setNumber(jsonObject.optString("number"))     
+							.setFloor(jsonObject.optString("floor")) 
+							.setDoor(door)  
+							.setComplement(complement)  
+							.setTown(jsonObject.optString("municipality"))  
+							.setProvinceCode(provinceCode)  
+							.setZip(jsonObject.optString("zip"));  
+			}
+			return mod180Detail;
+		}).forEach(detail -> insertDetail(ctx,detail));
 	}
 
 	public static Mod180 initialize(AONContext ctx, int year) {
@@ -542,5 +604,47 @@ public class Mod180DAO {
 		}
 		return mod;
 	}
+	
+	
+//////////PARSE PROPERTIES
+	
+//private String parsePropertiesJSON(String properties, String fieldName) {
+//	
+//	if(null == investAsset || AonStringUtils.isBlank(investAsset.getProperties()))
+//		return null;
+//	
+//	// Parse the JSON string into a JSONValue
+//// JSONValue jsonValue = JSONParser.parseStrict(investAsset.getProperties());
+//
+// // Convert the JSONValue into a JSONObject
+//// JSONObject jsonObject = jsonValue.isObject();
+// JSONObject jsonObject = new JSONObject(investAsset.getProperties());
+// 
+//// if(null == jsonObject) return null;
+// 
+// return jsonObject.optString(fieldName);
+// 
+//// JSONValue fieldNameValue = jsonObject.get(fieldName);
+// 
+//// return null == fieldNameValue ? null : fieldNameValue.isString().stringValue();
+//}
+
+//private Double parsePropertiesNumberJSON(InvestAsset investAsset, String fieldName) {
+//	if(null == investAsset || AonStringUtils.isBlank(investAsset.getProperties()))
+//		return null;
+//	
+//	// Parse the JSON string into a JSONValue
+// JSONValue jsonValue = JSONParser.parseStrict(investAsset.getProperties());
+//
+// // Convert the JSONValue into a JSONObject
+// JSONObject jsonObject = jsonValue.isObject();
+// 
+// if(null == jsonObject) return null;
+// 
+// JSONValue fieldNameValue = jsonObject.get(fieldName);
+// 
+// return null == fieldNameValue ? null : fieldNameValue.isNumber().doubleValue();
+//}
+	
 	
 }

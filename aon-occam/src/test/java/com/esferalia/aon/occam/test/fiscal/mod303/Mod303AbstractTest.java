@@ -111,7 +111,7 @@ public abstract class Mod303AbstractTest extends AbstractOccamTest {
 		mod303 = MODEL303.initializeForFinish(getOccam(), mod303);
 		double result0 = mod303.getDeclarationResult();
 		assertNotNull("Mod303. Tipo resultado NULL",mod303.getDeclarationResultType());
-		boolean finance = mod303.getDeclarationResultType().mustCreateFinance(); 
+		boolean finance = mod303.getDeclarationResultType().mustCreateFinance() || mod303.isAeatRectification(); 
 		MODEL303.markAsFinished(getOccam(), mod303);
 		Mod303 mod303Bis = MODEL303.get(getOccam(), mod303.getId());
 		assertEquals("Status not FINISHED", FiscalStatus.FINISHED, mod303Bis.getStatus());

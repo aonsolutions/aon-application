@@ -421,6 +421,7 @@ export const SEPA_FILES = 'Fitxers SEPA';
 export const SERIE = 'Sèrie';
 export const SERVICE = 'Servei';
 export const SERVICES = 'Serveis';
+export const SERVICES_AON = 'Serveis Aon';
 export const SETTING = 'Configuració';
 export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';

@@ -153,7 +153,7 @@ public class DomainUserRoles implements Serializable {
 	}
 
 	public boolean isParentUser(){
-		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain());
+		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain().getId());
 	}
 	
 	public boolean isEnterpriseChild() {

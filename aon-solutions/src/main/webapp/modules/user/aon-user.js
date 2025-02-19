@@ -529,7 +529,11 @@ export class AonUser extends AonElement {
 		d.setTitle(MSG.SEND);
 		d.setContentHTML('Al notificar los datos de usuario se generará una nueva contraseña.');
 		d.addAcceptAction(() => {
-			sendUserInfoEmail(this.user);
+			sendUserInfoEmail(this.user).then(() => {
+				this.showToast({message: "Se ha enviado un mail a " + this.user.email + " con la contraseña nueva", type: CONSTANT.SUCCESS, delay: 3000});
+			  }, err => {
+				this.showError(err);
+			  });
 		});
 		d.open();
 	}

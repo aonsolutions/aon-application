@@ -4,14 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.htmlunit.FailingHttpStatusCodeException;
 
+import solutions.aon.seg.social.Calculations.CalcCallback;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Calc;
@@ -84,6 +87,11 @@ public class SistemaRED {
 
 		public String getValue() {
 			return value;
+		}
+
+		public static LiquidationType typeOf(String value) {
+			return Arrays.stream(LiquidationType.values()).filter(type -> type.value.equalsIgnoreCase(value))
+					.findFirst().orElse(null);
 		}
 	}
 
@@ -224,8 +232,8 @@ public class SistemaRED {
 		}
 	}
 
-    @FunctionalInterface
     public static interface CalcsCallback {
+	    boolean filter(String liquidation, String naf);
 	    void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs);
 	}
 	
@@ -372,7 +380,7 @@ public class SistemaRED {
 	public static Collection<Idc> getIDC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try {
-			return ServicioRED.getIDCDatesPOST(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
+			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen,
 					ccc, nss);
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
@@ -385,8 +393,8 @@ public class SistemaRED {
 
 	public static Collection<Idc> getIDCDates(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
-//		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
+//		return ServicioRED.getIDCDatesPOST(certificateData, certificatePassword, certificateType, regimen, ccc, nss);
+		return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType, nss, regimen, ccc);
 	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
@@ -477,7 +485,7 @@ public class SistemaRED {
 			String[] nafs, CalcsCallback callback) throws SegSocialException {
 	        	try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 	        		return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword,
-	        				certificateType, numLiquidation, authorized, nafs, callback::accept);
+	        				certificateType, numLiquidation, authorized, nafs, SistemaRED.getCalcCallback(callback));
 	        	} catch (IOException e) {
 	        		throw new SegSocialException(e);
 	        	}
@@ -503,7 +511,7 @@ public class SistemaRED {
 			String[] nafs, CalcsCallback callback) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			return Calculations.workersCalculationByCCCandNAFS(certificateInputStream, certificatePassword,
-					certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs, callback::accept);
+					certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin, authorized, nafs, SistemaRED.getCalcCallback(callback));
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -872,6 +880,21 @@ public class SistemaRED {
 
 	public static byte[] getAssignedCCCsPDF(ByteArrayInputStream certificateInputStream, String certificatePassword, String certificateType, String autorizationCode) throws SegSocialException, IOException {
 		return SistemaREDCCC.getAssignedCCCsPDF(certificateInputStream, certificatePassword, certificateType, autorizationCode);
+	}
+	
+	private static CalcCallback getCalcCallback(CalcsCallback calcsCallback) {
+		return new CalcCallback() {
+			
+			@Override
+			public boolean filter(String liquidation, String naf) {
+				return calcsCallback.filter(liquidation, naf);
+			}
+			
+			@Override
+			public void accept(String liquidation, String naf, Map<Period, Map<String, Calc>> calcs) {
+				calcsCallback.accept(liquidation, naf, calcs);
+			}
+		};
 	}
 
 }

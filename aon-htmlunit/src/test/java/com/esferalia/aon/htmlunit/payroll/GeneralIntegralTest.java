@@ -480,6 +480,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 1080.00);
 		calculate(Calendar.JANUARY,2024);
 		assertValue("totalPaymentLabel", 1134.00);
+		calculate(Calendar.JANUARY,2025);
+		assertValue("totalPaymentLabel", 1184.00);
 
 		draft("INDICADOR, PÚBLICO DE RENTA DE EFECTOS MÚLTIPLES");
 		calculate(Calendar.JANUARY,2019);
@@ -2851,6 +2853,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("ims_cost", cgpBase*0.70/100.00);
 		click("costsCheck-input");
 		
+		draft("JUBILACION, PARCIAL");
+		calculate(Calendar.JANUARY,2025);
+		assertValue("cgpBaseLabel", 1184.00 * 2 );
+		assertValue("cgcBaseLabel", 1184.00 * 2);
 	}
 
 	// -------------------------------------------------------------------------

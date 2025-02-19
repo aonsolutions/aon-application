@@ -363,8 +363,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void onUploadDni() {
-			
+		public void onUploadDni() {}
+		
+		@Override
+		public void onLoadEnd() {
+			onLoaded();
 		}
 		
 	}	
@@ -417,6 +420,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 
 	protected abstract void onAccept(Integer contractId);
+	protected abstract void onLoaded();
 	
 	// ------------------------------------------------- setEmployeeDialogObject
 	
@@ -439,16 +443,15 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		initPayMethods();
 		fillDefaultFields();
 		initFocus();
-		
-		if(Boolean.TRUE.equals(hideEmployeePanel))
-			employee.hideEmployeeTable();
-		
 		showDialog();
 	}
 	
 	public void showDialog() {
 		// Show center
 		Scheduler.get().scheduleDeferred(() -> {
+			if(Boolean.TRUE.equals(hideEmployeePanel))
+				employee.hideEmployeeTable();
+			
 			center();
 			show();
 		});

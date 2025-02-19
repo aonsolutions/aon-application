@@ -38,7 +38,16 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
@@ -58,7 +67,9 @@ import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -730,6 +741,142 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSellersWorkloadFeesIds(params, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// **************************************** [PRODUCT]
+	// **************************************************
+
+	@Override
+	public void getProducts(ProductParams params, AsyncCallback<List<Product>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProducts(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Product> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProduct(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteProduct(String domainName, Integer domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteProduct(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveProduct(String domainName, Integer domain, String user, Product product, AsyncCallback<Product> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveProduct(domainName, domain, user, product, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createProduct(String domainName, Integer domain, String user, Product product, List<ProductTag> productTags, Item item, AsyncCallback<Product> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.createProduct(domainName, domain, user, product, productTags, item, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getItem(String domainName, Integer domain, String user, Integer productId, AsyncCallback<Item> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getItem(domainName, domain, user, productId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveItem(String domainName, int domain, String user, Item item, AsyncCallback<Item> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveItem(domainName, domain, user, item, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProductCategories(String domainName, Integer domain, String user, AsyncCallback<List<ProductCategory>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProductCategories(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaxTypes(String domainName, Integer domain, String user, TaxType taxType, AsyncCallback<List<Tax>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaxTypes(domainName, domain, user, taxType, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProductTags(String domainName, Integer domain, String user, Integer productId, AsyncCallback<List<ProductTag>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProductTags(domainName, domain, user, productId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTags(String domainName, Integer domain, String user, AsyncCallback<List<Tag>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTags(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveProductTags(String domainName, int domain, String user, Integer productId, List<ProductTag> productTags, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveProductTags(domainName, domain, user, productId, productTags, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTariffs(String domainName, int domain, String user, AsyncCallback<List<Tariff>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTariffs(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getItemTariffs(String domainName, int domain, String user, Integer id, AsyncCallback<List<ItemTariff>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getItemTariffs(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteItemTariff(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteItemTariff(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveItemTariff(String domainName, int domain, String user, ItemTariff itemTariff, AsyncCallback<ItemTariff> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveItemTariff(domainName, domain, user, itemTariff, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getItems(String domainName, int domain, String user, ProductType productType, AsyncCallback<List<Item>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getItems(domainName, domain, user, productType, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getItemCompositions(String domainName, int domain, String user, Integer itemId, AsyncCallback<List<ItemComposition>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getItemCompositions(domainName, domain, user, itemId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteItemComposition(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteItemComposition(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void deleteItemCompositions(String domainName, int domain, String user, List<Integer> itemCompositions, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteItemCompositions(domainName, domain, user, itemCompositions, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition, AsyncCallback<ItemComposition> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveItemComposition(domainName, domain, user, itemComposition, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions, AsyncCallback<List<ItemComposition>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveItemCompositions(domainName, domain, user, itemCompositions, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

@@ -12,63 +12,83 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableFieldType;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class ConsoleRowQueryViewer extends SimpleLayoutPanel {
+class ConsoleRowQueryViewer extends DockLayoutPanel  {
+	
+	protected static final int KEY_PLUS = 171;
 	
 	public interface AonConsoleRowViewerCallback {
 		void onLink( ConsoleTableRow row );
+
+		void deleted(ConsoleTableRow tableRow);
 	}
 
 	private static final String MODIFICAR_EL_DATO_EN_BD = "Modificar el dato en BD?";
 	private static final String MODIFICACION = "MODIFICACI\u00D3n";
-	private final ConsoleTableRow tableRow;
-	private final AonConsoleRowViewerCallback callback;
 	
 	ConsoleRowQueryViewer(ConsoleTableRow tableRow) {
 		this(tableRow, null);
 	}
 
 	ConsoleRowQueryViewer(ConsoleTableRow tableRow,AonConsoleRowViewerCallback callback) {
-		this.tableRow = tableRow;
-		this.callback = callback;
+		super(Unit.PX);
+		
+		AonToolbar toolbar = new AonToolbar( "Tabla: " + tableRow.getTable() );
+		AonToolbarButton deleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(e -> delete(tableRow, callback));
+		toolbar.add(deleteButton);
+		
+		addNorth(toolbar, AonToolbar.HEIGTH);
 		
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
-		setWidget( scroll);
 		FlowPanel container = new FlowPanel();
 		container.setStyleName(AON.CSS.aonMarginBottom());
 		scroll.setWidget( container );
+		container.add(getGrid(tableRow, callback));
+		add( scroll);
 		
-		FlowPanel header = new FlowPanel();
-		header.setStyleName(AON.CSS.aonMarginBottom());
-		String msg = "Tabla: " + tableRow.getTable();
-		Label headerLabel = new Label(msg);
-		headerLabel.setStyleName(AON.CSS.aonBold());
-		headerLabel.addStyleName(AON.CSS.aonFontLarger());
-		headerLabel.addStyleName(AON.CSS.aonTextCenter());
-		headerLabel.addStyleName(AON.CSS.aonBorderBottom());
-		header.add(headerLabel);
-		
-		container.add(header);
-		container.add(getGrid());
 	}
 	
-	private Widget getGrid() {
+	private void delete(ConsoleTableRow tableRow, AonConsoleRowViewerCallback callback) {
+		AonConfirmDialog.showConfirm(MODIFICACION
+				,AON.MSG.confirmDeleteAction()
+				, () -> ConsoleModule.CONSOLE_SERVICE.delete(tableRow, new AsyncCallback<Boolean>() {
+					@Override
+					public void onSuccess(Boolean result) {
+						callback.deleted( tableRow );
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessageDialog.error(caught.getMessage());
+					}
+				}
+		));
+	}
+
+	private Widget getGrid(ConsoleTableRow tableRow, AonConsoleRowViewerCallback callback) {
 		AonDisplayGrid grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonBlockCenter());
 		grid.getElement().getStyle().setProperty("min-width", "400px");
@@ -143,7 +163,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			@Override
 			public Widget visitString() {
 				AonTextBox text = new AonTextBox();
-				text.setEnabled( !field.isPrimaryKey() );
+//				text.setEnabled( !field.isPrimaryKey() );
 				field.getLength()
 					.filter(l -> l>0 )
 					.ifPresent( l -> text.setVisibleLength( l>40?40:l ) );
@@ -159,7 +179,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			@Override 
 			public Widget visitInteger() {
 				AonIntegerBox text = new AonIntegerBox();
-				text.setEnabled( !field.isPrimaryKey() );
+//				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( AonNumberUtils.toInteger( field.getValue() ) );
 				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),AonNumberUtils::toInteger) );
@@ -174,7 +194,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			@Override
 			public Widget visitDouble() {
 				AonDoubleBox text = new AonDoubleBox();
-				text.setEnabled( !field.isPrimaryKey() );
+//				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( AonNumberUtils.toDouble( field.getValue() ) );
 				text.addValueChangeHandler(e -> change( AonNumberUtils.toString(text.getValue()),AonNumberUtils::toInteger) );
@@ -191,7 +211,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			@Override
 			public Widget visitDate() {
 				AonDateBox text = new AonDateBox();
-				text.setEnabled( !field.isPrimaryKey() );
+//				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( parse(field.getValue()));
 				text.addValueChangeHandler(e -> change( format( text.getValue()),this::parse));
@@ -208,7 +228,7 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 			@Override
 			public Widget visitTimestamp() {
 				AonDateBox text = new AonDateBox();
-				text.setEnabled( !field.isPrimaryKey() );
+//				text.setEnabled( !field.isPrimaryKey() );
 				styleWidget(text);
 				text.setValue( parseDateTime(field.getValue()));
 				text.addValueChangeHandler(e -> change( formatDateTime( text.getValue()),this::parseDateTime));
@@ -226,27 +246,35 @@ class ConsoleRowQueryViewer extends SimpleLayoutPanel {
 		valuePanel.add( response );
 		
 		if (field.isPrimaryKey()) {
-			final Label idLabel = new Label();
-			idLabel.setStyleName(AON.CSS.aonIconLabel() );
-			idLabel.addStyleName(AON.CSS.aonIconKey() );
-			valuePanel.add( idLabel );	
+			valueWidget.addStyleName(AON.CSS.aonInputKey() );
+//			final Label idLabel = new Label();
+//			idLabel.setStyleName(AON.CSS.aonIconLabel() );
+//			idLabel.addStyleName(AON.CSS.aonIconKey() );
+//			valuePanel.add( idLabel );	
 		} 
 		if (field.isForeignKey()) {
-			String title = "Clave refenrencial: " + field.getForeignTable() + "." + field.getForeignColumn();
-			AonTableButton fkButton = new AonTableButton(title, AON.CSS.aonIconRedo());
+			valueWidget.setTitle("Clave refenrencial: " + field.getForeignTable() + "." + field.getForeignColumn());
+			valueWidget.addStyleName(AON.CSS.aonInputLink() );
 			if (cbk != null) {
-				fkButton.addClickHandler( e ->
-					cbk.onLink( 
-						new ConsoleTableRow()
-							.setSchema( tr.getSchema() )
-							.setTable( field.getForeignTable() )
-							.setId( AonNumberUtils.toInteger(field.getValue() ))
-					));
+				if (valueWidget instanceof HasAllKeyHandlers) {
+					HasAllKeyHandlers keyWidget = (HasAllKeyHandlers) valueWidget;
+					keyWidget.addKeyUpHandler( new KeyUpHandler() {
+						@Override
+						public void onKeyUp(KeyUpEvent event) {
+							if ((event.isControlKeyDown() && event.getNativeKeyCode() == KeyCodes.KEY_F3)
+									|| event.getNativeKeyCode() == KeyCodes.KEY_NUM_PLUS
+									|| (!event.isShiftKeyDown() && event.getNativeKeyCode() == KEY_PLUS)) {
+								cbk.onLink( 
+										new ConsoleTableRow()
+										.setSchema( tr.getSchema() )
+										.setTable( field.getForeignTable() )
+										.setId( AonNumberUtils.toInteger(field.getValue() ))
+										);					
+							}
+						}
+					});
+				}
 			}
-			
-			valuePanel.add( fkButton );
-			
-			
 		}
 		
 		return valuePanel;

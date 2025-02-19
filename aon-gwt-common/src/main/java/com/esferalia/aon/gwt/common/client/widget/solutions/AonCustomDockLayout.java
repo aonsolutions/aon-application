@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.shared.OnSearchEvent;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -103,6 +104,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		searchFilterComponent.addKeyUpHandler(handler);
 	}
 	
+	public void addOnSearchHandler(OnSearchEvent.Handler handler) {
+		searchFilterComponent.addOnSearchHandler(handler);
+	}
+	
 	public void hideSearchWidget() {
 		searchFilterComponent.hideSearchWidget();
 	}
@@ -156,6 +161,8 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		toolbar.getMessagePanel().getElement().getStyle().setDisplay(Display.NONE);
 		toolbar.getFilterPanel().getElement().getStyle().setDisplay(Display.NONE);
 	}
+	
+	
 	
 	protected abstract void onClearFilter();
 

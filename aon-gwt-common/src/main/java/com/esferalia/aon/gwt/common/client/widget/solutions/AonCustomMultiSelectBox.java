@@ -27,8 +27,6 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 	private Set<String> selectedOptions = new LinkedHashSet<String>();
 	private Map<String, CheckBox> valuesCB = new HashMap<>();
 	
-//	private boolean hasFocus = false;
-	
 	public AonCustomMultiSelectBox(String title) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
@@ -51,10 +49,11 @@ public class AonCustomMultiSelectBox extends HTMLPanel {
 		customListBox.addDomHandler(e -> onOptionsOpen(), ClickEvent.getType());
 		
 		selectionLabel = new Label("Seleccione un valor");
-		selectionLabel.getElement().getStyle().setProperty("width", "14rem");
+		selectionLabel.getElement().getStyle().setProperty("min-width:", "5rem");
 		selectionLabel.getElement().getStyle().setProperty("white-space", "nowrap");
 		selectionLabel.getElement().getStyle().setProperty("overflow", "hidden");
 		selectionLabel.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+		selectionLabel.getElement().getStyle().setProperty("text-overflow", "-moz-available");
 		customListBox.add(selectionLabel);
 		
 		AonTableButton downBtn = new AonTableButton("", AON.CSS.aonIconDown());

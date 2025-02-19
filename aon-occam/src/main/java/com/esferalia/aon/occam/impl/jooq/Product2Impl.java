@@ -9,20 +9,29 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.TariffFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
+import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemTariffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetItemDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 
 public class Product2Impl implements IProduct2{
 	// ------------------------------------- PRODUCT
@@ -45,7 +54,6 @@ public class Product2Impl implements IProduct2{
 			ProductDAO.getStream(ctx, filter, page, perPage));
 	}
 	
-	
 	@Override
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
@@ -53,9 +61,33 @@ public class Product2Impl implements IProduct2{
 	}
 	
 	@Override
+	public LinkedList<Product> getProductList(AONContext ctx, ProductParams params) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getList(ctx, params));
+	}
+	
+	@Override
 	public Product saveProduct(AONContext ctx, Product product) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.save(ctx, product));
+	}
+	
+	@Override
+	public Product createProduct(AONContext ctx, Product product, List<ProductTag> productTags, Item item) {
+		return ctx.getDslContext().transactionResult( configuration -> {
+			// Product
+			Product newProduct = ProductDAO.save(ctx, product);
+			
+			// Product Tags
+			productTags.forEach(productTag -> productTag.setProduct(newProduct.getId()));
+			ProductOldDAO.insertProductTag(ctx, productTags.stream());
+			
+			// Item
+			item.setProduct(newProduct);
+			ItemDAO.save(ctx, item);
+			
+			return newProduct;
+		});
 	}
 	
 	@Override
@@ -175,6 +207,28 @@ public class Product2Impl implements IProduct2{
 	public InvestAsset getInvestAsset(CloseableAONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		InvestAssetDAO.getInvestAsset(ctx, id));
+	}
+	
+	// ------------------------------------- TARIFF / ITEM TARIFF
+
+	@Override
+	public Stream<Tariff> getTariffStream(CloseableAONContext ctx, TariffFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<ItemTariff> getItemTariffStream(CloseableAONContext ctx, ItemTariffFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemTariffDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public void deleteItemTariff(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> ItemTariffDAO.delete(ctx, id));
+	}
+
+	@Override
+	public ItemTariff saveItemTariff(CloseableAONContext ctx, ItemTariff itemTariff) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemTariffDAO.save(ctx, itemTariff));
 	}
 
 }

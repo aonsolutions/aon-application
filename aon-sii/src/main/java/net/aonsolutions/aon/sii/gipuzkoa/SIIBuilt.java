@@ -2,7 +2,6 @@ package net.aonsolutions.aon.sii.gipuzkoa;
 
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import https.egoitza_gipuzkoa_eus.ogasuna.sii.ficheros.suministroinformacion.RegistroSii.PeriodoLiquidacion;
@@ -15,9 +14,9 @@ public class SIIBuilt {
 	 * @param invoice
 	 * @return PeriodoImpositivo
 	 */
-	protected PeriodoLiquidacion periodoLiquidacion(VatContext vat, Boolean anual){
-		Integer year = AonDateUtils.getYear(vat.getTaxDate());
-		Integer month = AonDateUtils.getMonth(vat.getTaxDate()) + 1;
+	protected PeriodoLiquidacion periodoLiquidacion(Date taxDate, Boolean anual){
+		Integer year = AonDateUtils.getYear(taxDate);
+		Integer month = AonDateUtils.getMonth(taxDate) + 1;
 		String p = month.toString();
 		if(month < 10){
 			p = "0" + p;

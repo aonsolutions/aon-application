@@ -2110,7 +2110,7 @@ public class CretaServlet extends HttpServlet
 
 	private static Attach getAttach(String domainName, Integer domainId, String login, RegistryAttachmentType type, String md5) {
 
-		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain().getId();
 
 		return  AON.getAttach(
 				domainName, 
@@ -2127,7 +2127,7 @@ public class CretaServlet extends HttpServlet
 	
 	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
 		
-		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain();
+		Integer userDomain = AON.getUser(domainName, domainId, login).getDomain().getId();
 		
 		return  AON.getAttachList(
 				domainName, 

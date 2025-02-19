@@ -238,7 +238,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	}
 	
-	private Collection<Employee> getMovements(AonApiData api) throws SegSocialException {
+	private Collection<Employee> getMovements(AonApiData api) throws SegSocialException, IOException {
 		Domain domain = api.getDomain();
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 

@@ -165,6 +165,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 						cnoMap = cnoMapIn;
 						
 						initializeView();
+						
+						onLoadEnd();
 					}
 
 					@Override
@@ -181,6 +183,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 		});
 		
 	}
+
+	public abstract void onLoadEnd();
 	
 	public void initializeView() {
 		initializeCards();
@@ -1119,6 +1123,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 	public void initActivitiesCCC(Map<Integer, String> activities, Map<Integer, CCCInfo> cccs) {
 		// ACTIVITY - CCC
+		activityCCC.clearItems();
 		activityCCC.addItem("-", "-1");
 		if (null != activities)
 			for (Entry<Integer, String> entry : activities.entrySet())
@@ -1132,6 +1137,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 	public void initWorkplaces(List<Workplace> workplaces) {
 		// WORKPLACE
+		workplace.clearItems();
 		workplace.addItem("-", "-1");
 		for (Workplace workplaceInfo : workplaces)
 			workplace.addItem(workplaceInfo.getDescription(), workplaceInfo.getId().toString());
@@ -1139,6 +1145,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 	public void initContractType() {
 		// TIPO DE CONTRATO
+		contractTypeLB.clearItems();
 		contractTypeLB.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
 			contractTypeLB.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(),
@@ -1199,7 +1206,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 	// ------------------------------------------------- Show/hide employee table
 
 	public void hideEmployeeTable() {
-		employeeDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		if(null != employeeDataTable)
+			employeeDataTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	// ------------------------------------------------- Show/hide methods

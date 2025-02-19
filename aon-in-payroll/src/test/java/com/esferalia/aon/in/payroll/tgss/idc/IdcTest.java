@@ -23,6 +23,7 @@ import static java.util.Calendar.SEPTEMBER;
 import static java.util.Calendar.YEAR;
 import static net.aonsolutions.core.tgss.creta.jaxb.Utils.marshal;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -6660,6 +6661,35 @@ public class IdcTest extends AbstractSQLTestCase {
 			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
 
 			assertEquals(cgpBase  * (1.50 ) / 100.00 , salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdc0913() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idc0913.pdf")) {
+			Collection<PEC> ssPECs = Idc.getSSPECs(is);
+			//04 INCREMENTO DE TIPOS 0,05   05 DESEMPLEO - C.OBRERA 11-07-2023
+			//04 INCREMENTO DE TIPOS 1,20   02 F.C.E. POR DESEMPLEO 11-07-2023
+			//09 EXCLUSIONES         100,00 13 FOGASA - CUOTA TOTAL 11-07-2023
+			
+			ssPECs.stream().forEach( sspec -> System.out.println(sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2023");
+
+			Salary salary = calculate(ssPECs, Collections.emptyList(), date );
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				System.out.println(cost.getDescription() + " = " + cost.getCostConcept() + ", " + cost.getAmount() );
+				if ( "FOGASA_E".equals(cost.getCostConcept())) { 
+					fail(cost.getDescription());
+				}
+			}
 		}
 	}
 

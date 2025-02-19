@@ -52,103 +52,7 @@ import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.FBatchParams;
-import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
-import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
-import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
-import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
-import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
-import com.esferalia.aon.occam.api.model.Filter.CarrierPackingFilter;
-import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
-import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
-import com.esferalia.aon.occam.api.model.Filter.CommissionCategoryFilter;
-import com.esferalia.aon.occam.api.model.Filter.CommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
-import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
-import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
-import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
-import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
-import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
-import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
-import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
-import com.esferalia.aon.occam.api.model.Filter.DeliveryInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.DepartmentFilter;
-import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
-import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
-import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
-import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
-import com.esferalia.aon.occam.api.model.Filter.EnterpriseDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
-import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
-import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
-import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceCommunicationTrackingFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceDetailCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.ItemCompositionFilter;
-import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
-import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
-import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
-import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
-import com.esferalia.aon.occam.api.model.Filter.PayrollWorkplaceFilter;
-import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProjectActivityFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
-import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
-import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
-import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
-import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
-import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
-import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
-import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
-import com.esferalia.aon.occam.api.model.Filter.SegmentFilter;
-import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
-import com.esferalia.aon.occam.api.model.Filter.SeriesFilter;
-import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
-import com.esferalia.aon.occam.api.model.Filter.StockFilter;
-import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
-import com.esferalia.aon.occam.api.model.Filter.TagFilter;
-import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
-import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
-import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
-import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
-import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
+import com.esferalia.aon.occam.api.model.Filter.*;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -239,11 +143,14 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
+import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -1440,6 +1347,12 @@ public class AON {
 			Stream<ProductTag> pts) {
 		getProduct().insertProductTag(ctx, pts);
 	}
+	
+	public static void insertProductTag(Domain domain, String login, Stream<ProductTag> pts) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			getProduct().insertProductTag(ctx, pts);
+		}
+	}
 
 	public static void updateProductTag(AONContext ctx, ProductTag pt) {
 		getProduct().updateProductTag(ctx, pt);
@@ -1452,6 +1365,12 @@ public class AON {
 	public static void deleteProductTag(AONContext ctx, 
 			Stream<ProductTag> pts) {
 		getProduct().deleteProductTag(ctx, pts);
+	}
+	
+	public static void deleteProductTag(Domain domain, String login, Stream<ProductTag> pts) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			getProduct().deleteProductTag(ctx, pts);
+		}
 	}
 
 	// ------------------------------------ NEW PRODUCT
@@ -1474,6 +1393,12 @@ public class AON {
 		}
 	}
 	
+	public static LinkedList<Product> getProductList(Domain domain, String login, ProductParams params) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductList(ctx, params);
+		}
+	}
+	
 	public static Product saveProduct(Domain domain, String login, Product product) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			return getNewProduct().saveProduct(ctx, product);
@@ -1482,7 +1407,13 @@ public class AON {
 	
 	public static void deleteProduct(Domain domain, String login, Integer productId) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
-			getNewProduct().deleteItem(ctx, productId);
+			getNewProduct().deleteProduct(ctx, productId);
+		}
+	}
+	
+	public static Product createProduct(Domain domain, String login, Product product, List<ProductTag> productTags, Item item) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().createProduct(ctx, product, productTags, item);
 		}
 	}
 	
@@ -1622,6 +1553,37 @@ public class AON {
 			return getProduct().getItemCompositionList(ctx, f -> f.getItemProperty().eq(itemId));
 		}
 	}
+
+	public static void deletItemComposition(Domain domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getProduct().deletItemComposition(ctx, id);
+		}
+	}
+	
+	public static void deletItemCompositions(Domain domain, String user, List<Integer> ids) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getProduct().deletItemCompositions(ctx, ids);
+		}
+	}
+
+	public static ItemComposition saveItemComposition(Domain domain, String user, ItemComposition itemComposition) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getProduct().saveItemComposition(ctx, itemComposition);
+		}
+	}
+
+	public static List<ItemComposition> saveItemCompositions(Domain domain, String user, List<ItemComposition> itemCompositions) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getProduct().saveItemCompositions(ctx, itemCompositions);
+		}
+	}
+	
+	public static ItemTariff saveItemTariff(Domain domain, String user, ItemTariff itemTariff) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().saveItemTariff(ctx, itemTariff);
+		}
+	}
+	
 
 	@Deprecated
 	public static OldItem insertItem(String domainName, Integer domainId, String login, OldItem i) {
@@ -8740,6 +8702,26 @@ public class AON {
 	public static void saveInvoiceClosing(Domain domain, User user, InvoiceBatch invoiceBatch) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getFinance().saveInvoiceClosing(ctx, invoiceBatch);
+		}
+	}
+	
+	// TARIFF / ITEM TARIFF
+
+	public static Stream<Tariff> getTariffStream(Domain domain, String user, TariffFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getTariffStream(ctx, filter);
+		}
+	}
+
+	public static Stream<ItemTariff> getItemTariffStream(Domain domain, String user, ItemTariffFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getNewProduct().getItemTariffStream(ctx, filter);
+		}
+	}
+
+	public static void deleteItemTariff(Domain domain, String user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getNewProduct().deleteItemTariff(ctx, id);
 		}
 	}
 }

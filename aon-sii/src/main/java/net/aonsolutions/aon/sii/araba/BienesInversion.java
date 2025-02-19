@@ -123,6 +123,7 @@ public class BienesInversion extends SIIBuilt {
 			Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
 		SuministroLRBienesInversion suministro = new SuministroLRBienesInversion();
 
+		
 		// CABECERA
 		suministro.setCabecera(cabecera(company, mod, terceros));
 
@@ -132,7 +133,7 @@ public class BienesInversion extends SIIBuilt {
 
 		LRBienesInversionType bien = new LRBienesInversionType();
 
-		bien.setPeriodoLiquidacion(periodoLiquidacion(vat, true));
+		bien.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), true));
 
 		IDFacturaComunitariaType idFactura = new IDFacturaComunitariaType();
 
@@ -194,7 +195,7 @@ public class BienesInversion extends SIIBuilt {
 		idFactura.setIDEmisorFactura(emisor);
 		factura.setIDFactura(idFactura);
 
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), false));
 
 		baja.getRegistroLRBajaBienesInversion().add(factura);
 

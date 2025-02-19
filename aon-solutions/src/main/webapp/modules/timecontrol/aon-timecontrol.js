@@ -11,11 +11,14 @@ import { AonEventList } from "./time-control/event/aon-event-list.js";
 import { AonEventDetailList } from "./time-control/event/aon-event-detail-list.js";
 import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
-import { MSG } from "../../environments/environments.js";
+import { MSG,TAG,CSS } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
 import 'aoncss';
 import { AonSign } from "./aon-sign.js";
+import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
+import { getPosition } from "../../services/maps.js";
+import { AonApps } from "../aon-apps.js";
 
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
@@ -54,7 +57,10 @@ export class AonTimecontrol extends AonElement {
     this.filterInit();
     this.paintView();
     this.buildToolbar();
-    this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
+    if(this.isMobile())
+      this.showView(SIGNIN_VIEWS.AON_STATISTICS);
+    else
+      this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
   }
 
   filterInit(){
@@ -135,8 +141,7 @@ export class AonTimecontrol extends AonElement {
     
     this.applicationEl.addSidenavOptions3(data2);
 
-
-    if(this.getDur().isTimecontrol() && LS.isNewTheme()) {
+    if(this.getDur().isTimecontrol() && LS.isNewTheme() && !this.isMobile()) {
 			getTimeControl().then(r => {
 		    let data3 = {
           id: "signing",
@@ -148,8 +153,8 @@ export class AonTimecontrol extends AonElement {
         let aonSign = new AonSign();
         this.applicationEl.addSidenavWidget2(data3, aonSign);
 				aonSign.buildSignin(r);
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.timeControlStatus(r);
+        let aonHeader = this.getElement('aonHeader');
+        aonHeader.timeControlStatus(r);
 			});
 		}
   }
@@ -161,6 +166,8 @@ export class AonTimecontrol extends AonElement {
 
   async setDataFilter(data){
     try {
+      if(this.isMobile())
+        this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST);
       this.DATE_TMP =  null;
       if(data && data.period){
         data = {...data, ...getPeriod(data.period)};
@@ -235,6 +242,9 @@ export class AonTimecontrol extends AonElement {
               if(data.add){ aonView.add = data.add;}
             } 
             break;
+          case SIGNIN_VIEWS.AON_STATISTICS:
+             this.buildTimeControl();
+              break;
         }
         if(aonView){
           aonView.id = view;
@@ -273,6 +283,100 @@ export class AonTimecontrol extends AonElement {
 		return this.TASK_HOLDER_ENTERPRISE;
 	}
   
+  async buildTimeControl() {
+      getPosition().then(console.log).catch(console.error); // GET POSITION
+
+      const r = await getTimeControl();
+
+      let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+      div3.id = this.TIMECONTROL_SIGN;
+      if(this.isMobile()){
+        div3.style.borderTop = '1px solid #ddd';
+        this.clearElement(div3);
+        div3.appendChild(this.createTitleTime());
+      }
+
+      let staticsDiv = this.createElement(TAG.DIV);
+      staticsDiv.style.height = "15rem";
+      staticsDiv.style.minWidth = "10rem";
+      staticsDiv.style.maxWidth = "20rem";
+      staticsDiv.style.margin = "0 auto";
+
+      staticsDiv.appendChild(new AonStatistics());
+
+      div3.appendChild(staticsDiv);
+      let aonSign = new AonSign();
+      aonSign.setTimeControl(r);
+      div3.appendChild(aonSign);
+      this.applicationEl.setContent(div3);
+      if(this.isMobile()){
+        const {YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
+        let div = this.getElement("aonSigninContent");
+        const apps = [
+          {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
+          {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
+          {title: "Semana pasada", fn: () => this.setDataFilter({period:LAST_WEEK.id})},
+          {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
+        ]
+        div.appendChild(this.createApps(apps));
+      }
+  }
+
+  createApps(apps) {
+    let ul = this.createElement(TAG.UL);
+    ul.id = "aonMobileAppSelection";
+    ul.classList.add(CSS.AON_UL, CSS.AON_LIST_GROUP);
+
+    apps.forEach(({ title, fn }) => {
+        let li = this.createElement(TAG.LI);
+        li.id = "aonMobileTcApp-" + title;
+        li.classList.add(CSS.AON_LIST_GROUP_ITEM, CSS.AON_APP_LI, "fixLi");
+        li.style.borderRight = "0px";
+        li.style.borderLeft = "0px";
+        li.style.cursor = "pointer";
+
+        li.addEventListener("click", fn);
+
+        let span = this.createElement(TAG.SPAN);
+        span.style.margin = "20px";
+
+        let icon = this.createElement(TAG.SPAN); 
+        icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+        icon.id = "aonMobileSelectionIcon-" + title;
+        icon.innerHTML = "today"; 
+        icon.style.backgroundColor = "var(--aonTimecontrol)";
+        icon.style.color = "white";
+        icon.style.fontVariationSettings = "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24";
+        icon.style.paddingTop = "5px";
+        icon.style.paddingLeft = "4px";
+        icon.style.borderRadius = "5px";
+        icon.style.width = "32px";
+        icon.style.height = "32px";
+
+        let span2 = this.createElement(TAG.SPAN);
+        span2.id = "aonMobileTcTitle-" + title;
+        span2.className = "aonAppTitle";
+        span2.innerHTML = title;
+
+        span.appendChild(icon);
+        span.appendChild(span2);
+        li.appendChild(span);
+        ul.appendChild(li);
+    });
+
+    return ul;
+}
+
+  createTitleTime(){
+    let div = this.createElement(TAG.DIV);
+    div.className = CSS.AON_SIDENAV_TITLE;
+    div.innerHTML = 'CONTROL HORARIO';
+    div.style.textAlign = "left";
+    div.style.marginLeft = "0";
+    div.style.paddingLeft = "10";
+    return div;
+  }
+
   isEmployee(){
     return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }

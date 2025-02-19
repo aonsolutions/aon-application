@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.ItemCompositionF
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.ItemValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -231,6 +232,9 @@ public class ItemDAO {
 		
 		ctx.checkWrite();
 		ItemAutoComplete.autoComplete(ctx, item);
+		
+		ItemValidation.validate(ctx, item);
+
 		return item.getId() != null 
 			? update(ctx, item)
 			: insert(ctx, item);		

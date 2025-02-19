@@ -118,6 +118,12 @@ public enum FiscalMenuItemJSON {
 			return json;
 		}
 	},
+	AEAT_RECTIFICATION{
+		@Override
+		public JSONObject to(IFiscalModel model, JSONObject json) {
+			return json.put(IJsonNames.AEAT_RECTIFICATION, model.isAeatRectification());
+		}
+	},
 	;
 
 	public abstract JSONObject to(IFiscalModel model, JSONObject json);

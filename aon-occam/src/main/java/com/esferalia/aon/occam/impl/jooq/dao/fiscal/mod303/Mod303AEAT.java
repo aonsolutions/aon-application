@@ -61,9 +61,7 @@ abstract class Mod303AEAT extends Mod303Declaration {
 	protected static double getPendingCompesateAmounts(AONContext ctx, Mod303 mod) {
 		return Mod303DAO.getLastPeriodEffectiveModels(ctx, mod)
 			.mapToDouble(fm ->
-				AonMathUtils.round(
-					(fm.isToCompensate()? AonMathUtils.absRounded(fm.getDeclarationResult()):0.0) 
-					+ fm.getAmount(Mod303Key.CT_C87))
+				AonMathUtils.round((fm.isToCompensate() ? AonMathUtils.absRounded(fm.getDeclarationResult()) - fm.getAmount(Mod303Key.CT_C111) : 0.0 ) + fm.getAmount(Mod303Key.CT_C87))
 			)
 			.findFirst()
 			.orElse(0.0);

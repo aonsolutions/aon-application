@@ -4,8 +4,14 @@ import java.io.Serializable;
 
 public enum ProductStatus implements Serializable {
 	
-	ACTIVE,
-    DISCONTINUED;
+	ACTIVE("Activo"),
+    DISCONTINUED("Descatalogado");
+	
+	private String description;
+	
+	private ProductStatus(String description) {
+		this.description = description;
+	}
 
 	public byte value(){
 		return (byte) this.ordinal();
@@ -13,6 +19,10 @@ public enum ProductStatus implements Serializable {
 	
     public String getName() {
 	    return this.toString();
+	}
+    
+    public String getDescription() {
+	    return this.description;
 	}
     
 	public static ProductStatus safeValueOf( Byte i ) {

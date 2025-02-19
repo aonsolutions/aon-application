@@ -11,6 +11,8 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DomainUserRolesController implements Serializable {
@@ -115,9 +117,8 @@ public class DomainUserRolesController implements Serializable {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
 		User user = UserUtils.getInstance().getLoggedUser();
-		this.dur = SECURITY.getDomainUserRoles(domainName, domainId, user.getLogin(), user.getId());			
-		this.token = AonToken.build(getDur().getUser().getAuth(),
-			AonDateUtils.addDays(new Date(), 1));
+		this.dur = SECURITY.getDomainUserRoles(domainName, domainId, user.getLogin(), user.getId());
+		this.token = null;
 	}
 	
 	

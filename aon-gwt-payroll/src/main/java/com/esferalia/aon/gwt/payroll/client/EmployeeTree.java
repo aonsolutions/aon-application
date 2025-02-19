@@ -214,14 +214,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		@Override
 		public void execute() {
-			EmployeeDialog employeeDialog = new EmployeeDialog(true) {
+			new EmployeeDialog(true) {
 				@Override
-				protected void onAccept(Integer contractId) {
+				protected void onAccept(Integer contractId) {}
+				
+				@Override
+				protected void onLoaded() {
+					EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace);
+					setEmployeeDialogObject(employeeDialogObject);
+					workplaceContextMenu.hide();
 				}
 			};
-			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace);
-			employeeDialog.setEmployeeDialogObject(employeeDialogObject);
-			workplaceContextMenu.hide();
 		}
 	}
 
@@ -4158,12 +4161,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showNewContract() {
-		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
+		new EmployeeDialog(true) {
 			@Override
 			protected void onAccept(Integer contractId) {}
+			
+			@Override
+			protected void onLoaded() {
+				EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace);
+				setEmployeeDialogObject(employeeDialogObject);
+			}
 		};
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace);
-		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
+		
 	}
 
 	protected static void invokeRefreshWorkplace() {

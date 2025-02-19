@@ -172,6 +172,8 @@ export const AON_INVOICE_CONFIGURATION = 'aon-invoice-configuration';
 export const AON_INVOICE_COMMUNICATION = 'aon-invoice-communication';
 export const AON_INVOICE_PRINT = 'aon-invoice-print';
 
+export const AON_SERVICE_PRODUCT = 'aon-service-product';
+
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';
