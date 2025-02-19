@@ -2265,9 +2265,11 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		// Administración del Estado
 		// y a las Diputaciones Forales. Resultado de la regularización anual.
 		, CT_C68(Mod303Key.CT_C68)
+		
+		, CT_C108(Mod303Key.CT_C108)
 
 		// Resultado
-		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68", null)
+		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68+CT_C108", null)
 
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
@@ -2282,6 +2284,8 @@ class Mod303AEAT2024T3Declaration extends Mod303AEAT {
 		)
 		,CT_C109(Mod303Key.CT_C109)
 		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109", null)
+		
+		,CT_C111(Mod303Key.CT_C111, null, null, null, "calculateC111(CT_C69,CT_C70,CT_C71)", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
 		, CT_U2D(Mod303Key.CT_U2D), CT_U2C(Mod303Key.CT_U2C), CT_U2E(Mod303Key.CT_U2E)

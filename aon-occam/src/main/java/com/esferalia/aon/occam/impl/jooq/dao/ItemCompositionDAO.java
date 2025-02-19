@@ -57,7 +57,7 @@ public class ItemCompositionDAO {
 	}
 	
 	public static Stream<ItemComposition> getStream(AONContext ctx, ItemCompositionFilter filter){
-		return select(ctx, filter).fetch().stream().map(new ItemCompositionFiller());
+		return select(ctx, filter).orderBy(ITEM_COMPOSITION.SEQUENCE).fetch().stream().map(new ItemCompositionFiller());
 	}
 
 	public static List<ItemComposition> getList(AONContext ctx, ItemCompositionFilter filter) {

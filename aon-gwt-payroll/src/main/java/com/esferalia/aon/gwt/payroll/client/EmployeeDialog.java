@@ -363,8 +363,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void onUploadDni() {
-			
+		public void onUploadDni() {}
+		
+		@Override
+		public void onLoadEnd() {
+			onLoaded();
 		}
 		
 	}	
@@ -417,6 +420,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 
 	protected abstract void onAccept(Integer contractId);
+	protected abstract void onLoaded();
 	
 	// ------------------------------------------------- setEmployeeDialogObject
 	

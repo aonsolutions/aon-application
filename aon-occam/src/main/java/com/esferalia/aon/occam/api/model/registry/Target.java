@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Advertising;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 

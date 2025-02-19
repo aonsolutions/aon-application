@@ -266,12 +266,16 @@
 											action="brand-configuration"
 											value="#{bundle.product_brand_module}" />
 									</aon:div>
+									
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tariff-configuration"
-											action="tariff_list-configuration"
-											actionListener="#{tariff.onSearch}"
-											value="#{bundle.product_tariff_module2}" />
+										<aon:commandLink id="tariff-module" 
+											action="gwt_tariff_module"
+											title="Tarifas"
+											value="Tarifas" 
+											target="gwt">
+										</aon:commandLink>
 									</aon:div>
+									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="catalogue-configuration"
 											action="catalogue_search-configuration"
@@ -428,6 +432,30 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
+					<!--
+						OLD OPTIONS 
+					-->
+					<aon:if test="#{!userUtils.newAONTheme}">				
+						<aon:panelGroup>
+							<aon:panelGrid id="old_options_cofiguration"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="ANTIGUAS OPCIONES (OBSOLETAS)" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-configuration"
+											action="tariff_list-configuration"
+											actionListener="#{tariff.onSearch}"
+											value="#{bundle.product_tariff_module2}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</aon:if>
+					
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>

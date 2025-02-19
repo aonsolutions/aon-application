@@ -158,5 +158,10 @@ public interface IFiscalModel extends Serializable {
 		return this;
 	}
 	
+	// -----------------------
+	
+	public default boolean isAeatRectification() {
+		return false;
+	}	
 	
 }

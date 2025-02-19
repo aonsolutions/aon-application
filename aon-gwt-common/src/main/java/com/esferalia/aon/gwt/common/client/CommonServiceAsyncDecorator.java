@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -46,7 +47,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -66,6 +66,10 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -877,6 +881,76 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions, AsyncCallback<List<ItemComposition>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.saveItemCompositions(domainName, domain, user, itemCompositions, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ***************************************** [TARIFF]
+	// **************************************************
+
+	@Override
+	public void getTariffs(TariffParams params, AsyncCallback<List<Tariff>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTariffs(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTariff(String domainName, int domain, String user, Integer tariffId, AsyncCallback<Tariff> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTariff(domainName, domain, user, tariffId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTariff(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTariff(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTariff(String domainName, int domain, String user, Tariff tariff, AsyncCallback<Tariff> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTariff(domainName, domain, user, tariff, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTariffAddInfoList(String domainName, int domain, String user, Integer tariffId, AsyncCallback<List<TariffAddInfo>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTariffAddInfoList(domainName, domain, user, tariffId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTariffAddInfo(String domainName, int domain, String user, TariffAddInfo tariffAddInfo, AsyncCallback<TariffAddInfo> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTariffAddInfo(domainName, domain, user, tariffAddInfo, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTariffAddInfo(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTariffAddInfo(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTariffCatalgueList(String domainName, int domain, String user, Integer tariffId, AsyncCallback<List<TariffCatalogue>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTariffCatalgueList(domainName, domain, user, tariffId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveTariffCatalogue(String domainName, int domain, String user, TariffCatalogue tariffCatalogue, AsyncCallback<TariffCatalogue> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveTariffCatalogue(domainName, domain, user, tariffCatalogue, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteTariffCatalogue(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteTariffCatalogue(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCatalogueList(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

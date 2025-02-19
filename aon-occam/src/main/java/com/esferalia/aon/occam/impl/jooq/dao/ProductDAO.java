@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO.TaxFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.ProductDeleteValidation;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -140,6 +141,10 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME);
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PRODUCT.COMPOSITION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(PRODUCT.STATUS);
 		} else {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
 				select.orderBy(PRODUCT.CODE.desc());
@@ -147,6 +152,10 @@ public class ProductDAO {
 				select.orderBy(PRODUCT.NAME.desc());
 			else if(AonStringUtils.equals(params.getOrderBy(), "category"))
 				select.orderBy(PCATEGORY.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PRODUCT.COMPOSITION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(PRODUCT.STATUS.desc());
 		}
 		
 		LinkedList<Product> products = select.limit(params.getOffset(), params.getLimit())
@@ -175,6 +184,12 @@ public class ProductDAO {
 		if(null != params.getType())
 			condition = condition.and(PRODUCT.TYPE.eq(params.getType().value()));
 		
+		if(null != params.getStatus())
+			condition = condition.and(PRODUCT.STATUS.eq(params.getStatus().value()));
+		
+		if(null != params.getProductComposition())
+			condition = condition.and(PRODUCT.COMPOSITION.eq(params.getProductComposition() ? (byte) 1 : 0));
+		
 		return condition;
 	}
 
@@ -187,6 +202,7 @@ public class ProductDAO {
 	public static Product save(AONContext ctx, Product product) {
 		if(!product.getCategory().isEmpty())
 			ProductCategoryDAO.save(ctx, product.getCategory());
+	
 		ProductAutoComplete.autoComplete(ctx, product);
 		ProductValidation.validate(ctx, product);
 		Product existProduct = get(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId()).and(f.getCodeProperty().eq(product.getCode())));
@@ -266,6 +282,9 @@ public class ProductDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		
+		ProductDeleteValidation.validate(ctx, id);
+		
 		ctx.checkWrite();
 		
 		ctx.getDslContext()

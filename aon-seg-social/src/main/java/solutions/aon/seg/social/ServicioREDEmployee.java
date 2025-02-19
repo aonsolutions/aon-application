@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.exception.StatusCodeException.HandleStatusCodeException;
 import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 
@@ -15,9 +16,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import javax.net.ssl.SSLContext;
+import javax.xml.transform.TransformerException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -27,12 +30,21 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class ServicioREDEmployee extends ServicioREDRegeXML{
@@ -85,7 +97,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 				params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
 				params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6202"));
 				params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-				params.add(new BasicNameValuePair("btn_Sub2205801004", "Pág.+Ant."));
+				params.add(new BasicNameValuePair("btn_Sub2205801004", "P?.+Ant."));
 				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
 				checkOldSsError(body);
@@ -132,130 +144,128 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	 */
 	public static Collection<Employee> getTotalEmployees(byte[] certificateData,
 			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
-			throws SegSocialException {
+			throws SegSocialException, IOException {
 		InvalidCertificateException.checkCertificate(certificateData, certificatePassword);
 		return getTotalEmployees(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, cccs);
 	}
 	
 	private static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Map<String, Set<String>> cccs) /*cccs -> Map<REGIME, Set<CCC>>*/
-			throws SegSocialException {
+			throws SegSocialException, IOException {
 		if (cccs == null) {
 			return Collections.emptyList();
 		}
-		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
-		String link = "";
-		String sessionId = "";
 		
-		List<String> errors = new ArrayList<>();
+		byte[] certificateData = certificateInputStream.readAllBytes();
 		
-		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateData, certificatePassword, certificateType)) {
+			
 			List<Employee> employees = new LinkedList<>();
-			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
-			checkOldSsError(body);
-			link = Toolkit.getLink(body);
-			sessionId = Toolkit.getSessionId(body);
+			
+			webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setJavaScriptEnabled(true);
+            
+			webClient.getOptions().setUseInsecureSSL(true);
+			webClient.getOptions().setRedirectEnabled(true);
+			
+			HtmlPage page =  webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+//			HtmlPage page = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
 			for (Entry<String, Set<String>> entry : cccs.entrySet()) {
 				
 				String regime = entry.getKey();
 				Set<String> cccSet = entry.getValue();
 				
-				for (String ccc : cccSet) {
-					if (ccc == null)
-						continue;
-					try {
-						String txtSDFTESO62 = ccc != null && ccc.length() > 2 ? ccc.substring(0, 2) : "";
-						String txtSDFNUM62 = ccc != null && ccc.length() > 2 ? ccc.substring(2) : "";
-						
-						HttpPost httpPost = new HttpPost(link);
-						List<NameValuePair> params = new ArrayList<>();
-						params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
-						params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6201"));
-						params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-						params.add(new BasicNameValuePair("txt_SDFREG62_ayuda", regime));
-						params.add(new BasicNameValuePair("txt_SDFTESO62", txtSDFTESO62));
-						params.add(new BasicNameValuePair("txt_SDFNUM62", txtSDFNUM62));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_1", "1"));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_1", "1"));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_2", "1"));
-						params.add(new BasicNameValuePair("btn_Sub2207601004", IServicioRedConstants.CONTINUE));
-						httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
-						body = Toolkit.getBodyPOST(httpClient, httpPost);
-						checkOldSsError(body, 3543);
-						
-						if (!(Toolkit.getDIL(body) != null && Toolkit.getDIL(body).contains("3543"))) {
-							link = Toolkit.getLink(body);
-							sessionId = Toolkit.getSessionId(body);
-							
-							employees.addAll(ServicioREDRegeXML.getEmployeesFromTable(httpClient, body, link, sessionId, regime, ccc));
-							httpPost = new HttpPost(link);
-							params = new ArrayList<>();
-							params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
-							params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6202"));
-							params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-							params.add(new BasicNameValuePair("btn_Sub2205801004", "Pág.+Ant."));
-							httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
-							body = Toolkit.getBodyPOST(httpClient, httpPost);
-							checkOldSsError(body);
-							link = Toolkit.getLink(body);
-							sessionId = Toolkit.getSessionId(body);	
-						}
-						
-						httpPost = new HttpPost(link);
-						params = new ArrayList<>();
-						params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
-						params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6201"));
-						params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-						params.add(new BasicNameValuePair("txt_SDFREG62_ayuda", regime));
-						params.add(new BasicNameValuePair("txt_SDFTESO62", txtSDFTESO62));
-						params.add(new BasicNameValuePair("txt_SDFNUM62", txtSDFNUM62));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_1", "1"));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_2", "1"));
-						params.add(new BasicNameValuePair("chk_chkgrupo1_2", "1"));
-						params.add(new BasicNameValuePair("btn_Sub2207601004", IServicioRedConstants.CONTINUE));
-						httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
-						body = Toolkit.getBodyPOST(httpClient, httpPost);
-						checkOldSsError(body, 3543);
-						if (!(Toolkit.getDIL(body) != null && Toolkit.getDIL(body).contains("3543"))) {
-							link = Toolkit.getLink(body);
-							sessionId = Toolkit.getSessionId(body);
-							
-							List<Employee> formerEmployees = ServicioREDRegeXML.getEmployeesFromTable(httpClient, body, link, sessionId, regime, ccc);
-							employees.addAll(formerEmployees);
-							
-							httpPost = new HttpPost(link);
-							params = new ArrayList<>();
-							params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
-							params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6202"));
-							params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-							params.add(new BasicNameValuePair("btn_Sub2205801004", "Pág.+Ant."));
-							httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
-							body = Toolkit.getBodyPOST(httpClient, httpPost);
-							checkOldSsError(body);
-							link = Toolkit.getLink(body);
-							sessionId = Toolkit.getSessionId(body);	
-							
-						}
-					} catch (InvalidDataException e) {
-		                if(e.getMessage()!=null) {
-		                  	errors.add(e.getMessage());
-		                }
-						continue;
-					}
+				for(String ccc : cccSet) {
+					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValue(regime);
+					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValueAttribute(regime);
+					
+					((HtmlInput)page.getElementById("SDFTESO62")).setValue(ccc.substring(0, 2));
+					((HtmlInput)page.getElementById("SDFTESO62")).setValueAttribute(ccc.substring(0, 2));
+					
+					((HtmlInput)page.getElementById("SDFNUM62")).setValue(ccc.substring(2));
+					((HtmlInput)page.getElementById("SDFNUM62")).setValueAttribute(ccc.substring(2));
+					
+					((HtmlInput)page.getElementById("chkgrupo1_1")).click();
+					
+					page = ((HtmlInput)page.getElementById("Sub2207601004")).click();
+					
+					getEmployeesTable(page, employees, regime, ccc);
+					
+					// Search again
+					page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				}
-			}
-			
-			if(employees.isEmpty() && !errors.isEmpty()) {
-	        	throw new SegSocialException(errors.get(0));
-	        }
+				
+			};
 			
 			return employees;
-		} catch (IOException e) {
-			throw new InvalidCertificateException();
+			
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+			throw new SegSocialException(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
 		}
 	}
 	
+	private static void getEmployeesTable(HtmlPage page, List<Employee> employees, String regime, String ccc) throws IOException, TransformerException {
+		HtmlLabel noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
+		
+		do {
+		
+			noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
+			
+			HtmlTable table = (HtmlTable) page.getElementById("Sub1000112079");
+			
+			for (int i = 1; i < table.getRowCount(); i++) { 
+                HtmlTableRow row = table.getRow(i);
+
+                // Obtener valores de cada celda
+                String nss = removeSpaces(getLabelValue(row.getCell(0)));
+                
+                if(null == nss || nss.isEmpty()) continue;
+                
+                String name = getLabelValue(row.getCell(1));
+                Date date = parseDateWithDashes(getLabelValue(row.getCell(2)));
+                String situation = !getLabelValue(row.getCell(3)).isEmpty() ? getLabelValue(row.getCell(3)) : "AL";
+                String ipf = Toolkit.removeExtraZeros(removeSpaces(getLabelValue(row.getCell(4))));
+
+                // Construir el objeto EmployeeBuilder
+                EmployeeBuilder builder = new EmployeeBuilder();
+                builder.setNss(nss)
+                       .setName(name)
+                       .setFra(date)
+                       .setSituation(situation)
+                       .setIpf(ipf)
+                       .setCtaCti(ccc)
+                       .setRegime(regime);
+
+                if (!situation.contains("AL")) {
+                    builder.setFrb(date);
+                }
+  
+                // Agregar a la lista si no existe
+                if(employees.stream().filter(employee -> employee.getNss().equals(nss)).collect(Collectors.toList()).size() == 0)
+                	employees.add(builder.build());
+            }
+			
+			page = ((HtmlInput)page.getElementById("Sub2207801001")).click();
+		
+		} while (!noMoreDataLabel.getTextContent().contains("NO EXISTEN MAS AFILIADOS"));
+	}
+
+	private static String getLabelValue(HtmlTableCell cell) {
+		DomElement span = cell.getFirstElementChild();
+        if (span != null) {
+            DomElement label = span.getFirstElementChild();
+            if (label instanceof HtmlLabel) {
+                return label.asNormalizedText();
+            }
+        }
+        return "";
+	}
+
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc)
 					throws SegSocialException {
@@ -268,7 +278,7 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	}
 	
 	/**
-	 * Se han eliminado los parámetros "regimen" y "ccc" respecto al método original hecho con HTMLUnit, ya que estos no se utilizaban.
+	 * Se han eliminado los par?etros "regimen" y "ccc" respecto al m?odo original hecho con HTMLUnit, ya que estos no se utilizaban.
 	 **/
 	public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String nss) throws SegSocialException, IOException {

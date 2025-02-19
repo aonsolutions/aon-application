@@ -31,6 +31,7 @@ public class AonCustomCard extends HTMLPanel {
 		toolbarPanel.getElement().getStyle().setProperty("align-items", "center");
 		toolbarPanel.getElement().getStyle().setProperty("justify-content", "space-between");
 		toolbarPanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
+		toolbarPanel.getElement().getStyle().setProperty("height", "2.5rem");
 		
 		HTMLPanel titlePanel = new HTMLPanel(EMPTY_STRING);
 		titlePanel.getElement().getStyle().setProperty("display", "flex");

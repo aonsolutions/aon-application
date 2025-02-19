@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
+import com.esferalia.aon.occam.api.model.product.ProductComposition;
 import com.esferalia.aon.occam.api.model.product.ProductConsole;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -43,7 +44,6 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -98,6 +98,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private ItemTariffTable itemTariffTable;
 	
 	private AonCustomCard compositeCard = new AonCustomCard("Pack Productos");
+	private ProductCompositionSelect productComposition;
 	private SimpleLayoutPanel compositeCenterPanelCard = new SimpleLayoutPanel();;
 	private CompositeItemTable compositeItemTable;
 	
@@ -140,31 +141,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		backButton.addClickHandler(e -> onBackClick());
 		addToolbarButton(backButton);
 		
-		AonTableButton button;
-		button = new AonTableButton("Borrar Producto", AON.CSS.aonIconDelete());
-		button.addStyleName(AON.CSS.aonCustomRowButtom());
-		button.addClickHandler(event -> {
+		AonTableButton deleteButton = new AonTableButton("Borrar Producto", AON.CSS.aonIconDelete());
+		deleteButton.addClickHandler(event -> {
 			event.stopPropagation();
-			button.setEnabled(false);
-			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Producto",
-					new HTML("Se va a proceder a eliminar el producto <b>" + product.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-			
-			dialog.confirm(new AonAcceptDialogCallback() {
-
-				@Override
-				public void onCancel() {
-					button.setEnabled(true);
-				}
-
-				@Override
-				public void onAccept() {
-					delete(product.getId());
-				}
-			});
-		});
-		
-		AonToolbarButton deleteButton = new AonToolbarButton( "Borrar Agente Comercial", AON.CSS.aonIconDelete());
-		deleteButton.addClickHandler(e -> {
 			deleteButton.setEnabled(false);
 			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Producto",
 					new HTML("Se va a proceder a eliminar el producto <b>" + product.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
@@ -181,7 +160,6 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 					delete(product.getId());
 				}
 			});
-			
 		});
 		addToolbarButton(deleteButton);
 		
@@ -242,8 +220,10 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		generalCard.getElement().getStyle().setProperty("min-width", "36rem");
 		generalCard.add(table);
 		
+		code.getElement().getStyle().setProperty("text-transform", "uppercase");
+		code.getTextBox().setMaxLength(15);
 		code.setValue(product.getCode());
-		code.addValueChangeHandler(e -> product.setCode(code.getValue()));
+		code.addValueChangeHandler(e -> product.setCode(code.getValue().trim().toUpperCase()));
 		
 		category.clearItems();
 		category.addItem("-", "");
@@ -304,7 +284,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		aditionalCard.add(table);
 		
 		app.clearItems();
-		app.addItem("-", "--");
+		app.addItem("-", "");
 		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
 		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
 		app.addChangeHandler(e -> createBarCode());
@@ -338,21 +318,28 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 			product.setComposition(composite.getValue());
 			
 			if(!composite.getValue()) {
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Producto Compuesto",
-						new HTML("Se va a proceder a eliminar los productos compuestos.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 				
-				dialog.confirm(new AonAcceptDialogCallback() {
+				getItemCompositions(itemCompositions -> {
+					if(itemCompositions.isEmpty()) saveProduct();
+					else {
+						AonDialog dialog = new AonDialog("Eliminaci\u00f3n Producto Compuesto",
+								new HTML("Se va a proceder a eliminar los productos compuestos.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+						
+						dialog.confirm(new AonAcceptDialogCallback() {
 
-					@Override
-					public void onCancel() {}
+							@Override
+							public void onCancel() {}
 
-					@Override
-					public void onAccept() {
-						compositeItemTable.deleteCompositions(end -> 
-							getItemCompositions(e -> saveProduct())
-						);
+							@Override
+							public void onAccept() {
+								compositeItemTable.deleteCompositions(end -> 
+									getItemCompositions(e -> saveProduct())
+								);
+							}
+						});
 					}
 				});
+				
 			} else
 				saveProduct();
 		});
@@ -385,12 +372,21 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	}
 
 	private Widget createCompositeCard() {
-		AonTableButton newComposition = new AonTableButton("Nuevo producto", AON.CSS.aonIconAdd());
-		newComposition.addClickHandler(e -> onUCreateItemComposition());
+		FlowPanel addStatusPanel = new FlowPanel();
+		addStatusPanel.addStyleName(AON.CSS.aonItemFlex());
 		
-		compositeCard = new AonCustomCard("Pack Productos", newComposition);
+		AonTableButton newComposition = new AonTableButton("Nuevo producto", AON.CSS.aonIconAdd());
+		newComposition.addClickHandler(e -> onCreateItemComposition());
+		addStatusPanel.add(newComposition);
+		
+		productComposition = new ProductCompositionSelect(product.isCompositionPrice() ? ProductComposition.DIVISIBLE : ProductComposition.COMPLETE);
+		productComposition.addBlurHandler(e -> product.setCompositionPrice(productComposition.getValue() == ProductComposition.DIVISIBLE));
+		addStatusPanel.add(productComposition);
+		
+		compositeCard = new AonCustomCard("Pack Productos", addStatusPanel);
 		compositeCard.addStyleName(AON.CSS.aonWidthAll());
 		compositeCard.getElement().getStyle().setProperty("min-width", "36rem");
+		compositeCard.setToolbarWidgetShown();
 		
 		compositeItemTable  = new CompositeItemTable(options, product, item) {
 			
@@ -407,7 +403,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		return compositeCard;
 	}
 	
-	private void onUCreateItemComposition() {
+	private void onCreateItemComposition() {
 		getItems(itemList -> 
 			getItemCompositions(itemCompositions -> {
 				AonCustomDialog dialog = new AonCustomDialog();
@@ -468,6 +464,13 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 
 	private String createBarCode() {
 		String barCode = app.getValue();
+		
+		if(AonStringUtils.isBlank(barCode)) {
+			barcode.setValue(null);
+			item.setBarcode(null);
+			
+			return "";
+		}
 	
 		barCode += domainType.getSelectedOptions().contains("Empresa") ? "1" : "0";
 		barCode += domainType.getSelectedOptions().contains("Asesor\u00EDa") ? "1" : "0";
@@ -487,7 +490,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	}
 
 	private String formatBarCode(String barCode) {
-		return AonStringUtils.isBlank(barCode) ? "XX / YYYYYYYYYY" 
+		return AonStringUtils.isBlank(barCode) ? "" 
 				: AonStringUtils.substring(barCode, 0, 2) + " / " +  AonStringUtils.substring(barCode, 2, barCode.length() - 1);
 	}
 
@@ -562,51 +565,53 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		product.setStatus(status.getValue());
 		item.setStatus(status.getValue());
 		
-		AonMessagePanel.showLoading(messagePanel, "Guardando producto " + product.getName());
+		AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
 		
-		commonService.saveProduct(options.getDomainName(), options.getDomain(), options.getUser(), product, new AsyncCallback<Product>() {
-			
+		commonService.saveItem(options.getDomainName(), options.getDomain(), options.getUser(), item, new AsyncCallback<Item>() {
+
 			@Override
-			public void onSuccess(Product productDB) {
-				product = productDB;
-				
-				AonMessagePanel.showLoading(messagePanel, "Guardando etiquetas producto " + product.getName());
-				
-				commonService.saveProductTags(options.getDomainName(), options.getDomain(), options.getUser(), product.getId(), getProductTags(), new AsyncCallback<Void>() {
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error guardado item: " + caught.getMessage());
+			}
 
+			@Override
+			public void onSuccess(Item itemDB) {
+				item = itemDB;
+				
+				AonMessagePanel.showLoading(messagePanel, "Guardando producto " + product.getName());
+				
+				commonService.saveProduct(options.getDomainName(), options.getDomain(), options.getUser(), product, new AsyncCallback<Product>() {
+					
 					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error guardado etiquetas producto: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(Void arg0) {
-						AonMessagePanel.showLoading(messagePanel, "Guardando item producto " + product.getName());
+					public void onSuccess(Product productDB) {
+						product = productDB;
 						
-						commonService.saveItem(options.getDomainName(), options.getDomain(), options.getUser(), item, new AsyncCallback<Item>() {
+						AonMessagePanel.showLoading(messagePanel, "Guardando etiquetas producto " + product.getName());
+						
+						commonService.saveProductTags(options.getDomainName(), options.getDomain(), options.getUser(), product.getId(), getProductTags(), new AsyncCallback<Void>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								AonMessagePanel.showError(messagePanel, "Error guardado item: " + caught.getMessage());
+								AonMessagePanel.showError(messagePanel, "Error guardado etiquetas producto: " + caught.getMessage());
 							}
 
 							@Override
-							public void onSuccess(Item itemDB) {
-								item = itemDB;
+							public void onSuccess(Void arg0) {
+								
 								AonMessagePanel.showSuccess(messagePanel, "Producto " + product.getName()+ " guardado correctamente");
 								
 								setProduct(product.getId());
 							}
+							
 						});
+						
 					}
 					
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error guardado producto: " + caught.getMessage());
+					}
 				});
-				
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error guardado producto: " + caught.getMessage());
 			}
 		});
 	}
