@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -46,7 +47,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -66,12 +66,15 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -305,5 +308,23 @@ public interface CommonService extends RemoteService {
 	ItemComposition saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition) throws AonCoreException;
 	List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException;
 
+	// **************************************************
+	// ***************************************** [TARIFF]
+	// **************************************************
+
+	List<Tariff> getTariffs(TariffParams params) throws AonCoreException;
+	Tariff getTariff(String domainName, int domain, String user, Integer tariffId) throws AonCoreException;
+	void deleteTariff(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	Tariff saveTariff(String domainName, int domain, String user, Tariff tariff) throws AonCoreException;
 	
+	List<TariffAddInfo> getTariffAddInfoList(String domainName, int domain, String user, Integer tariffId) throws AonCoreException;
+	TariffAddInfo saveTariffAddInfo(String domainName, int domain, String user, TariffAddInfo tariffAddInfo) throws AonCoreException;
+	void deleteTariffAddInfo(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	
+	List<TariffCatalogue> getTariffCatalgueList(String domainName, int domain, String user, Integer tariffId) throws AonCoreException;
+	TariffCatalogue saveTariffCatalogue(String domainName, int domain, String user, TariffCatalogue tariffCatalogue) throws AonCoreException;
+	void deleteTariffCatalogue(String domainName, int domain, String user, Integer id) throws AonCoreException;
+	
+	List<Catalogue> getCatalogueList(String domainName, int domain, String user) throws AonCoreException;
+
 }
