@@ -450,8 +450,43 @@ export class AonDocumental extends AonElement {
     }
 
     addDocumentalFile() {
-      let el = this.getElement(this.INPUTFILE);
-      el.click();
+      if (this.isBeta()) {
+        // Si es beta, primero abrimos el modal
+        let d = document.getElementById(this.getApplication().DIALOG);
+        d.clear();
+        if (!this.isMobile()) d.width = '400px';
+        d.setTitle(MSG.UPLOAD_FILE);
+        d.setContent(uploadOption(this.getDur()));
+        d.addAcceptAction(async () => {
+          let data = {
+            category: document.getElementById("aonDocumentalUploadCategory").value,
+            scope: document.getElementById("aonDocumentalUploadScope").value,
+            tag: document.getElementById("aonDocumentalUploadTag").value,
+            type: document.getElementById("aonDocumentalUploadType").value
+          };
+          let uploadToast = this.getElement('aonUploadToast');
+          if (!uploadToast) {
+            uploadToast = new AonUploadToast();
+            this.appendChild(uploadToast);
+          }
+          let input = document.createElement("input");
+          input.type = "file";
+          input.name = "file";
+          input.multiple = true;
+
+          input.addEventListener(EVENT.CHANGE, () => {
+            for (let file of input.files) {
+              uploadToast.addFile("documental", file, data, () => this.aonDocumentalList());
+            }
+          });
+          input.click();
+        });
+        d.open();
+      } else {
+        // Si no es beta, abrimos directamente el selector de archivos
+        let el = this.getElement(this.INPUTFILE);
+        el.click();
+      }
     }
 
     upload(files) {
