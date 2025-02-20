@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.api.model.seres;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum SeresPath {
@@ -47,6 +50,13 @@ public enum SeresPath {
 		return null;
 	}
 	
+	public static List<SeresPath> getReceptionOrders() {
+		List<SeresPath> list = new LinkedList<>();
+		list.add(SeresPath.RECEPCION_ORDERS_D01B);
+		list.add(SeresPath.RECEPCION_ORDERS_D93A);
+		list.add(SeresPath.RECEPCION_ORDERS_D96A);
+		return list;
+	}
 	
 }
 
