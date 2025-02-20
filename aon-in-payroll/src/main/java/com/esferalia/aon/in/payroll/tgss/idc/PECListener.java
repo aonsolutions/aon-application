@@ -350,7 +350,17 @@ class PECListener  implements IdcParserListener {
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("03", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
-			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE_E=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE_E : 0.00); BONF_SEPE_E=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE_E, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE_E', TOTAL_BONF_SEPE_E + BONF_SEPE_E ) ; BONF_SEPE_E", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
+			put("16",  String.format(Locale.ROOT,
+					"TOTAL_BONF_SEPE_E=(isdef TOTAL_BONF_SEPE_E ? TOTAL_BONF_SEPE_E : 0.00); "
+					+ "TOTAL_DIAS_BONF_SEPE_E=(isdef TOTAL_DIAS_BONF_SEPE_E ? TOTAL_DIAS_BONF_SEPE_E: 0.00) + DIAS_COTIZADOS;"
+					+ "LEFT_BONF_SEPE_E = %%2$.2f - TOTAL_BONF_SEPE_E;"
+					+ "BONF_SEPE_E=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : TOTAL_DIAS_BONF_SEPE_E >= %2$s ? LEFT_BONF_SEPE_E : MIN( LEFT_BONF_SEPE_E, ROUND(%%2$.2f/30.00, 2)*%3$s) ));"
+					+ "SELF.addVariable('TOTAL_DIAS_BONF_SEPE_E', TOTAL_DIAS_BONF_SEPE_E); "
+					+ "SELF.addVariable('TOTAL_BONF_SEPE_E',TOTAL_BONF_SEPE_E + BONF_SEPE_E); "
+					+ "BONF_SEPE_E", 
+					ContextVariable.SALARY_DAYS , 
+					ContextVariable.MONTH_DAYS, 
+					ContextVariable.QUOTE_DAYS)); 																	// 
 			put("15", String.format(Locale.ROOT,"(%%s) * %%.2f / 100.00 * %1$s",ContextVariable.ERE_FACTOR_FORCE_OFF, ContextVariable.ERE_FACTOR_FORCE, ContextVariable.ERE_FACTOR )); 	// EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL
 			put("37", "( %s ) * %.2f / 100.00");
 			put("41", "( %s ) * %.2f / 100.00");
