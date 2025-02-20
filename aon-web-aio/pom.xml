@@ -51,25 +51,6 @@
       
       	    </manifestEntries>
           </archive>
-
-          <webResources>
-            <resource>
-              <!-- this is relative to the pom.xml directory -->
-              <directory>../aon-solutions/src/main/webapp</directory>
-              <!-- the list has a default value of ** -->
-              <includes>
-                <include>**/*.js</include>
-                <include>**/*.css</include>
-                <include>**/*.jpg</include>
-                <include>**/*.png</include>
-              </includes>
-              <excludes>
-                <exclude>dist/app.min.js</exclude>
-                <exclude>dist/app.min.css</exclude>
-              </excludes>
-
-            </resource>
-          </webResources>
  
         </configuration>
         <executions>

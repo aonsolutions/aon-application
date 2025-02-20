@@ -1,9 +1,9 @@
-import {AonElement} from 'aonsolutions/components/AonElement.js';
+import {AonElement} from '../components/AonElement.js';
 
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
-import { AonIcon } from 'aonsolutions/components/aon-icon.js';
-import { AonApplication } from 'aonsolutions/components/aon-application.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { AonIcon } from '../components/aon-icon.js';
+import { AonApplication } from '../components/aon-application.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonNewDesktop extends AonElement {
 	

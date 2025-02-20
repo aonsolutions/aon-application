@@ -1,10 +1,10 @@
 import { embedDashboard } from "@superset-ui/embedded-sdk";
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { CONSTANT, EVENT, MSG, TAG } from 'aonsolutions/environments/environments.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonElement } from '../../components/AonElement.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import * as LS from '../../services/localStorageService.js';
 
-import { API } from "aonsolutions/environments/environments.js";
-import { request, put, get, getDefaultSessionData} from "aonsolutions/services/request.js";
+import { API } from "../../environments/environments.js";
+import { request, put, get, getDefaultSessionData} from "../../services/request.js";
 //
 
 export class Superset extends AonElement {
