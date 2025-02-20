@@ -156,7 +156,7 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C042,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
-		// Adquisiciones intracomunitarias al primer tipo.		
+		// Adquisiciones intracomunitarias		
 		,GP_C014(Mod303Key.GP_C014
 			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C014,mod,vat.getBase())
@@ -168,11 +168,11 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
 		,GP_C043(Mod303Key.GP_C043
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C043,mod,vat.getBase())
 			,null,null,null)
 		,GP_C044(Mod303Key.GP_C044
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C044,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -196,9 +196,9 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C020,mod,vat))
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes
-		,GP_C021(Mod303Key.GP_C021,(mod,vat) -> adqIntracomunitariasFilter(vat)
+		,GP_C021(Mod303Key.GP_C021,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C021,mod,vat.getBase()))
-		,GP_C022(Mod303Key.GP_C022,(mod,vat) -> adqIntracomunitariasFilter(vat)
+		,GP_C022(Mod303Key.GP_C022,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.GP_C022,mod,vat))
 		
 		// Rectificación de deducciones
@@ -252,15 +252,21 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C030,mod,vat.getBase()))
 		
 		// Total exportaciones y operaciones asimiladas
-		,GP_C031(Mod303Key.GP_C031,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())
+		,GP_C031(Mod303Key.GP_C031,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()) && !vat.isSalesOSS()
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C031,mod,vat.getBase()))
 		
 		// Operaciones no sujetas o con inversión del sujeto pasivo que originan el derecho a deducción
-		,GP_C051(Mod303Key.GP_C051)
+		,GP_C051(Mod303Key.GP_C051)		
 		,GP_C052(Mod303Key.GP_C052,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()  
 			,(ctx,mod,vat) -> add(Mod303Key.GP_C052,mod,vat.getBase()))
-		,GP_C053(Mod303Key.GP_C053)
-		,GP_C054(Mod303Key.GP_C054)
+		
+		// OSS. Operaciones no sujetas por reglas de localización acogidas a la OSS
+		,GP_C053(Mod303Key.GP_C053,(mod,vat) -> (vat.isSalesOSS() && !vat.isSpainDocumentCountry())  
+				,(ctx,mod,vat) -> add(Mod303Key.GP_C053,mod,vat.getBase()))
+		
+		// OSS. Operaciones sujetas y acogidas a la OSS
+		,GP_C054(Mod303Key.GP_C054,(mod,vat) -> (vat.isSalesOSS() && vat.isSpainDocumentCountry())  
+				,(ctx,mod,vat) -> add(Mod303Key.GP_C054,mod,vat.getBase()))
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
@@ -390,7 +396,7 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 	//	-----------------------------------------------------------------------
 	private static boolean isCommonNationalSales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isNational() && vat.isSales() && !vat.isRectification();
+			&& vat.isNational() && vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 	private static boolean hasPercent21(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_21;	
@@ -419,7 +425,7 @@ class Mod303GIPUZKOA2025Declaration extends Mod303GIPUZKOA {
 	
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat));		
+			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat) || adqIntracomunitariasFilter(vat)) && !vat.isSalesOSS();		
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()

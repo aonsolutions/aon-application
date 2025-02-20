@@ -363,19 +363,26 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 		// ---------------------------------------------------------------
 		
 		,BZ_C104	(Mod303Key.BZ_C104
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales()) && !vat.isSalesOSS()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C104,mod,vat.getBase()))
 		,BZ_C105	(Mod303Key.BZ_C105
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C105,mod,vat.getBase()))
 		,BZ_C106	(Mod303Key.BZ_C106
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales())
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isService() && (vat.isCanCeuMelSales() || vat.isExtracommunitySales()) && !vat.isSalesOSS()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C106,mod,vat.getBase()))
 		,BZ_C107	(Mod303Key.BZ_C107
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C107,mod,vat.getBase()))
-		,BZ_C108 (Mod303Key.BZ_C108)
-		,BZ_C109 (Mod303Key.BZ_C109)
+		
+		// Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única
+		,BZ_C108	(Mod303Key.BZ_C108
+				,(mod,vat) -> (vat.isSalesOSS() && !vat.isSpainDocumentCountry())
+				,(ctx,mod,vat) -> add(Mod303Key.BZ_C108,mod,vat.getBase()))
+		// Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única
+		,BZ_C109	(Mod303Key.BZ_C109
+				,(mod,vat) -> (vat.isSalesOSS() && vat.isSpainDocumentCountry())
+				,(ctx,mod,vat) -> add(Mod303Key.BZ_C109,mod,vat.getBase()))
 		;
 		
 		private Mod303Key key;
@@ -515,7 +522,7 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 	}
 	private static boolean isCommonNationalSales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isNational() && vat.isSales() && !vat.isRectification();
+			&& vat.isNational() && vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 	private static boolean hasPercent0(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_0;	
@@ -583,7 +590,8 @@ class Mod303BIZKAIA2025Declaration extends Mod303BIZKAIA {
 		return vat.isRectification() 
 			&& vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
-			&& (vat.isNationalSales());
+			&& (vat.isNationalSales())
+			&& !vat.isSalesOSS();
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
