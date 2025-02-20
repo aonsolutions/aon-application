@@ -455,14 +455,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
-		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
+		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
 		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
 		double quantity = 0.0;
 		double packUnits = detail.getItem().getPackUnits();
 		if(packageQuantity==null) {
-			quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
+			quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerPackage());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
@@ -570,7 +570,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		double quantity = 0.0;
 		double packUnits = item.getPackUnits();
 		if(packageQuantity == null) {
-			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerEdiCode());
+			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerPackage());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
@@ -713,8 +713,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private List<DeliveryDetail> getDetailList(Integer deliveryId) {
-		return AON.getDeliveryDetailStream(domainName, domainId, login, f -> f.getDelivery().eq(deliveryId))
-				.collect(Collectors.toList());
+		return AON.getDeliveryDetailStream(domainName, domainId, login, f -> f.getDelivery().eq(deliveryId)).toList();
 	}
 	
 	private Workplace getWorkPlace(Integer workplaceId) {
@@ -766,19 +765,33 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		return null;
 	}
-	
-	
+
 	private String obtainPurchaseReference(Delivery delivery) {
-		List<DeliveryDetail> list = getDetailList(delivery.getId()).stream()
-				.map(to -> ((DeliveryDetail) to)).collect(Collectors.toList());
+		List<DeliveryDetail> list = getDetailList(delivery.getId());
 		if (!list.isEmpty()) {
-			DeliveryDetail detail = list.get(0);
-			if (detail.getSalesDetail() != null) {
-				Sales sales = getSalesDetail(detail.getSalesDetail()).getSales();
-				return sales.getPurchaseReference();
-			}
+			return obtainSalesNumber(list);
 		}
 		return null;
+	}
+	
+	private String obtainSalesNumber(List<DeliveryDetail> list) {
+		String salesNumber = null;
+		for (DeliveryDetail invoiceDetail : list) {
+			if(salesNumber == null) {
+				salesNumber = obtainSalesNumber(invoiceDetail);
+			}				
+		}
+		return salesNumber;
+	}
+	
+	private String obtainSalesNumber(DeliveryDetail deliveryDetail) {
+		String salesNumber = null;
+		if (deliveryDetail != null && deliveryDetail.getId()!=null && deliveryDetail.getSalesDetail()!=null) {
+			SalesDetail detail = getSalesDetail(deliveryDetail.getSalesDetail());
+			if(detail != null && detail.getSales() != null)
+				salesNumber = detail.getSales().getPurchaseReference();
+		}
+		return salesNumber;
 	}
 
 	private com.esferalia.aon.occam.api.model.registry.RegistryItem obtainProductCustomerCode(Item item, Integer customerId) {

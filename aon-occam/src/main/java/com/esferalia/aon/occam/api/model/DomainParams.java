@@ -3,11 +3,13 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+
 public class DomainParams implements Serializable {
 
 	private static final long serialVersionUID = -8674079205943551908L;
 	
-	private String schema;
+	private String dbSchema;
 	private Integer id;
 	private String query;
 	private String name;
@@ -28,14 +30,18 @@ public class DomainParams implements Serializable {
 	private boolean mustFlatten;
 	
 	private int limit = 50;
-	private int offset;
+	private int[] schemasOffsets = new int[ConsoleSchema.values().length];
+//	private int offset;
 	
-
-	public String getSchema() {
-		return schema;
+	public DomainParams() {
+		initializeOffsets();
 	}
-	public DomainParams setSchema(String schema) {
-		this.schema = schema;
+
+	public String getDbSchema() {
+		return dbSchema;
+	}
+	public DomainParams setDbSchema(String dbSchema) {
+		this.dbSchema = dbSchema;
 		return this;
 	}
 	
@@ -172,14 +178,35 @@ public class DomainParams implements Serializable {
 		this.limit = limit;
 		return this;
 	}
-	
-	public int getOffset() {
-		return offset;
+	public int[] getSchemasOffsets() {
+		return schemasOffsets;
 	}
-	public DomainParams setOffset(int offset) {
-		this.offset = offset;
+	public DomainParams setSchemasOffsets(int[] schemasOffsets) {
+		this.schemasOffsets = schemasOffsets;
 		return this;
 	}
+	public int getOffset( ConsoleSchema cs ) {
+		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
+		return schemasOffsets[ cs.ordinal() ]; 
+	}
+	public int setOffset( ConsoleSchema cs, int offset ) {
+		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
+		schemasOffsets[ cs.ordinal() ] = offset;
+		return schemasOffsets[ cs.ordinal() ]; 
+	}
+	public void initializeOffsets( ) {
+		this.schemasOffsets = new int[ConsoleSchema.values().length];
+		for ( int i = 0; i < schemasOffsets.length; i++ ) schemasOffsets[i] = 0;
+	}
+	public int addOffset( ConsoleSchema cs ) {
+		return addOffset(cs, 1);
+	}
+	public int addOffset( ConsoleSchema cs, int increment ) {
+		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
+		schemasOffsets[ cs.ordinal() ] = schemasOffsets[ cs.ordinal() ] + increment;
+		return schemasOffsets[ cs.ordinal() ]; 
+	}
+	
 	public boolean isAdvancedMode() {
 		return advancedMode;
 	}

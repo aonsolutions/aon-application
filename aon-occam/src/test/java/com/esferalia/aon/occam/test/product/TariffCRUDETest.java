@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;

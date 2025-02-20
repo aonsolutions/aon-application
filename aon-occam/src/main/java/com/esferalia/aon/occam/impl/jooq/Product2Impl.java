@@ -2,11 +2,13 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
+import com.esferalia.aon.occam.api.model.Filter.CatalogueFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
@@ -18,13 +20,18 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
+import com.esferalia.aon.occam.impl.jooq.dao.CatalogueDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemTariffDAO;
@@ -217,6 +224,21 @@ public class Product2Impl implements IProduct2{
 	}
 
 	@Override
+	public List<Tariff> getTariffList(CloseableAONContext ctx, TariffParams params) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.getTariffList(ctx, params));
+	}
+
+	@Override
+	public void deleteTariff(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> TariffDAO.delete(ctx, id));
+	}
+
+	@Override
+	public Tariff saveTariff(CloseableAONContext ctx, Tariff tariff) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.save(ctx, tariff));
+	}
+
+	@Override
 	public Stream<ItemTariff> getItemTariffStream(CloseableAONContext ctx, ItemTariffFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> ItemTariffDAO.getStream(ctx, filter));
 	}
@@ -229,6 +251,41 @@ public class Product2Impl implements IProduct2{
 	@Override
 	public ItemTariff saveItemTariff(CloseableAONContext ctx, ItemTariff itemTariff) {
 		return ctx.getDslContext().transactionResult(configuration -> ItemTariffDAO.save(ctx, itemTariff));
+	}
+
+	@Override
+	public List<TariffAddInfo> getTariffAddInfoList(CloseableAONContext ctx, Integer tariffId) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.getTariffAddInfoList(ctx, tariffId));
+	}
+
+	@Override
+	public TariffAddInfo saveTariffAddInfo(CloseableAONContext ctx, TariffAddInfo tariffAddInfo) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.saveTariffAddInfo(ctx, tariffAddInfo));
+	}
+
+	@Override
+	public void deleteTariffAddInfo(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> TariffDAO.deleteTariffAddInfo(ctx, id));
+	}
+
+	@Override
+	public List<TariffCatalogue> getTariffCatalgueList(CloseableAONContext ctx, Integer tariffId) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.getTariffCatalgueList(ctx, tariffId));
+	}
+
+	@Override
+	public TariffCatalogue saveTariffCatalogue(CloseableAONContext ctx, TariffCatalogue tariffCatalogue) {
+		return ctx.getDslContext().transactionResult(configuration -> TariffDAO.saveTariffCatalogue(ctx, tariffCatalogue));
+	}
+
+	@Override
+	public void deleteTariffCatalogue(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> TariffDAO.deleteTariffCatalogue(ctx, id));
+	}
+
+	@Override
+	public List<Catalogue> getCatalogueList(CloseableAONContext ctx, CatalogueFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> CatalogueDAO.getStream(ctx, filter).collect(Collectors.toList()));
 	}
 
 }

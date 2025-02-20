@@ -4,7 +4,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainTypeBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -29,6 +29,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private static final String ALL = "-- TODOS --";
 	
 	private ListBox schemaBox;
+	private AonIntegerBox idBox;
 	private AonTextBox queryBox;
 	private AonDomainBox parentBox;
 	private ListBox orphanBox;
@@ -108,6 +109,10 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 
 	private void defineFields(ConsoleModuleOptions opt) {
 		schemaBox = new ListBox();
+		
+		idBox = new AonIntegerBox();
+		idBox.setVisibleLength(6);
+		idBox .addValueChangeHandler(e -> fire(opt));
 		
 		queryBox = new AonTextBox();
 		queryBox.setVisibleLength(40);
@@ -190,6 +195,8 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		rowTable1.addRow()
 			.addCell(new Label("Esquema"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth80())
 			.addCell(schemaBox)
+			.addCell(new Label("ID"),AON.CSS.aonSearchPanelLabel(),AON.CSS.aonWidth30())
+			.addCell(idBox)
 			.addCell(new Label(AON.MSG.description()),AON.CSS.aonSearchPanelLabel())
 			.addCell(queryBox)
 			.addCell(new Label("Dominio padre"),AON.CSS.aonSearchPanelLabel())
@@ -248,9 +255,7 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private void checkAdvanced(final ConsoleModuleOptions opt) {
 		advancedMode = ("40ns0lut10ns".equals(advancedModePassword.getValue()));
 		refreshAdvancedModePanel();
-		if (!AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
-			fire(opt);
-		}
+		fire(opt);
 	}
 
 	private void refreshAdvancedModePanel() {
@@ -265,16 +270,13 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	}
 
 	private void fire(final ConsoleModuleOptions opt) {
-		if (AonStringUtils.isEmpty( schemaBox.getSelectedValue() ) ) {
-			AonMessageDialog.error("Rellene el campo \"esquema\" para realizar una b\u00FAsqueda");
-		} else {
-			ValueChangeEvent.<DomainParams>fire( ConsoleDomainFilterPanel.this, getParams( opt ) ); 
-		}
+		ValueChangeEvent.<DomainParams>fire( ConsoleDomainFilterPanel.this, getParams( opt ) ); 
 	}
 	
 	DomainParams getParams(ConsoleModuleOptions opt) {
 		DomainParams params = new DomainParams()
-			.setSchema(schemaBox.getSelectedValue())
+			.setDbSchema(schemaBox.getSelectedValue())
+			.setId(idBox.getValue())
 			.setQuery(queryBox.getValue())
 			.setFromLastAccess(fromLastAccessBox.getValue())
 			.setToLastAccess(toLastAccessBox.getValue())

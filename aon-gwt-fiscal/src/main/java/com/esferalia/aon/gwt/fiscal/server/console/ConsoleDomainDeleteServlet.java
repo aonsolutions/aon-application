@@ -40,10 +40,10 @@ public class ConsoleDomainDeleteServlet extends ConsoleAbstractServlet {
 		DomainParams domainParams = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
-			try (CloseableAONContext ctx = AONContext.getAONContext(domainParams.getSchema())) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domainParams.getDbSchema())) {
 				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 					.setAONContext(ctx)
-					.setSchemaName(domainParams.getSchema())
+					.setSchemaName(domainParams.getDbSchema())
 					.setDomain(new Domain().setId(domainParams.getId()));
 				consoleParams.setFromConnection(conParams);
 				ConsoleDeleteDomain.delete(consoleParams);

@@ -39,6 +39,7 @@ public class ConsoleDomainJSON {
 			.setRemoteAccessEnabled(JsonUtils.getboolean(json,IJsonNames.REMOTE_ACCESS_ENABLED))
 			;
 		consoleDomain.setId(JsonUtils.getInteger(json,IJsonNames.ID));
+		consoleDomain.setSchema(JsonUtils.getString(json,IJsonNames.SCHEMA));
 		consoleDomain.setName(JsonUtils.getString(json, IJsonNames.NAME));
 		consoleDomain.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION));
 		consoleDomain.setOwner(JsonUtils.getString(json, IJsonNames.OWNER));
@@ -77,6 +78,7 @@ public class ConsoleDomainJSON {
 		if(domain == null) return new JSONObject();
 		return new JSONObject()
 			.putOpt(IJsonNames.ID, domain.getId())
+			.putOpt(IJsonNames.SCHEMA, domain.getSchema())
 			.putOpt(IJsonNames.NAME, domain.getName())
 			.putOpt(IJsonNames.DESCRIPTION, domain.getDescription())
 			.putOpt(IJsonNames.OWNER, domain.getOwner())

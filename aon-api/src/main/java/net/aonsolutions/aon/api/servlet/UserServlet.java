@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -80,6 +81,8 @@ public class UserServlet extends AonApiHttpServlet {
 	private static final String AON_REPLY_TO = "asignacion@aonsolutions.es";
 	private static final String AON_ALIAS = "AON SOLUTIONS S.L.";
 	private static final String AON_SUBJECT = "USUARIO | AON SOLUTIONS";
+	
+	private static final String AON_BOOKING_BCCC = "booking@aonsolutions.es";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -656,7 +659,7 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private void sendAuthCreateInfoMail(AonApiData api, Auth auth, String email, String password, Company cp) {
+	private String sendAuthCreateInfoMail(AonApiData api, Auth auth, String email, String password, Company cp) {
 		Domain parent = api.getDur().getDomain().isParent()
 			? api.getDur().getDomain() : api.getDur().getParentDomain(); 
 		
@@ -682,15 +685,18 @@ public class UserServlet extends AonApiHttpServlet {
 			.setReplyTo(replyTo)
 			.setTo(email)
 			.setSubject(subject)
+			.setBcc(AON_BOOKING_BCCC)
 			.setBody(authCreateInfoContent(api, user, auth.getFullname(), email, password, from, logoUrl, parent));
 
 		SES.sendEmail(msg);
+		
+		return from;
 	}
 
 	private static String getFromMessage(AonApiData api) {
-		Domain parentDomain = api.getDur().getDomain().isParent() 
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
-		String from = null;
+//		Domain parentDomain = api.getDur().getDomain().isParent()  ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
+		String from = AON_FROM;
 
 		// TODO: vista personalizada / email verificada, averiguar como se verifica
 //		if(api.getDur().hasCustomView() || api.getDur().hasParentCustomView()) {
@@ -702,16 +708,11 @@ public class UserServlet extends AonApiHttpServlet {
 //			
 //		}
 		
-		if(AonStringUtils.isBlank(from)) {
-			from = AON_FROM;
-		}
-		
 		return from;
 	}
 	
 	private static String getReplayTo(AonApiData api) {
-		Domain parentDomain = api.getDur().getDomain().isParent() 
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
 		
 		String from = null;
 		
@@ -721,9 +722,9 @@ public class UserServlet extends AonApiHttpServlet {
 		if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
 			from = emailMedia.getValue();
 		
-		if(AonStringUtils.isBlank(from)) {
-			from = parentDomain.getOwner();
-		}
+//		if(AonStringUtils.isBlank(from)) {
+//			from = parentDomain.getOwner();
+//		}
 		
 		if(AonStringUtils.isBlank(from)) {
 			from = AON_REPLY_TO;
@@ -741,18 +742,24 @@ public class UserServlet extends AonApiHttpServlet {
     }
 	
 	private JSONObject sendAuthInfoMail(AonApiData api) {
-		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> f.getDomainProperty().eq(api.getDomain().getId()));
-		String email = api.getData().optString("email");
-		Auth auth = AON_SOLUTIONS.getAuth(email);
-		
-		String password = Utils.generatePassword();
-		String pass = Utils.createPasswordHash(auth.getEmail(), password);
-		auth.setPassword(pass);
-		AON_SOLUTIONS.updateAuthPassword(auth);
-		
-		sendAuthCreateInfoMail(api, auth, email, password, cp);
-		return new JSONObject();
+		try {
+			Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> f.getDomainProperty().eq(api.getDomain().getId()));
+			
+			String email = api.getData().optString("email");
+			Auth auth = AON_SOLUTIONS.getAuth(email);
+			
+			String password = Utils.generatePassword();
+			String pass = Utils.createPasswordHash(auth.getEmail(), password);
+			auth.setPassword(pass);
+			AON_SOLUTIONS.updateAuthPassword(auth);
+			
+			String fromEmail = sendAuthCreateInfoMail(api, auth, email, password, cp);
+			return new JSONObject().put("fromEmail", fromEmail);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
+		}
 	}
 	
 	private String authCreateInfoContent(AonApiData api, User user, String fullName, String email, String password, String from, String logo, Domain parentDomain) {
@@ -819,8 +826,8 @@ public class UserServlet extends AonApiHttpServlet {
 
 	private static String getLogoUrl(AonApiData api) {
 		String logoUrl = AON_LOGO;
-		Domain parentDomain = api.getDur().getDomain().isParent()
-			? api.getDur().getDomain() : api.getDur().getParentDomain();
+		Domain parentDomain = api.getDur().getDomain().isParent() ? api.getDur().getDomain() : api.getDur().getParentDomain();
+		
 		try (CloseableAONContext aonContext = AONContext.getAONContext(parentDomain.getName(), api.getUser().getLogin())) {
 			Company company = AON.getCompany(parentDomain, api.getUser(), f -> f.getDomainProperty().eq(parentDomain.getId()));
 

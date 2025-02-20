@@ -35,27 +35,27 @@ public class ConsoleServiceAsyncDecorator implements ConsoleServiceAsync {
 	}
 	
 	@Override
-	public void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback) {
+	public void deleteDomain(String schema, Integer domainId, AsyncCallback<Boolean> callback) {
 		AON.start();
-		fsa.deleteDomain(params, domainId, new AsyncCallbackWrapper<>(callback));
+		fsa.deleteDomain(schema, domainId, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void changeActive(DomainParams params, Integer domainId, boolean active, AsyncCallback<Domain> callback) {
+	public void changeActive(String schema, Integer domainId, boolean active, AsyncCallback<Domain> callback) {
 		AON.start();
-		fsa.changeActive(params, domainId, active, new AsyncCallbackWrapper<>(callback));
+		fsa.changeActive(schema, domainId, active, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback) {
+	public void changeExpirationDate(String schema, Integer domainId, Date expireDate, AsyncCallback<Domain> callback) {
 		AON.start();
-		fsa.changeExpirationDate(params, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
+		fsa.changeExpirationDate(schema, domainId, expireDate, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void switchRemoteAccess(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback) {
+	public void switchRemoteAccess(String schema, Integer domainId, AsyncCallback<Boolean> callback) {
 		AON.start();
-		fsa.switchRemoteAccess(params, domainId, new AsyncCallbackWrapper<>(callback));
+		fsa.switchRemoteAccess(schema, domainId, new AsyncCallbackWrapper<>(callback));
 	}
 	@Override
 	public void availableUsers(Occam occam, Integer domainId, AsyncCallback<LinkedList<User>> callback) {

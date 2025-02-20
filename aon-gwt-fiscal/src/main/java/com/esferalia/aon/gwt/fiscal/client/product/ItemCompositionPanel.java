@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
@@ -22,6 +22,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ItemCompositionPanel  extends HTMLPanel {
@@ -56,10 +57,10 @@ public class ItemCompositionPanel  extends HTMLPanel {
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
 	
-	private AonCustomMultiSelectBox products = new AonCustomMultiSelectBox("Productos");
+	private AonCustomIntegerBox order = new AonCustomIntegerBox("Orden");
+	private AonCustomSuggestBox products = new AonCustomSuggestBox("Productos");
 	private AonCustomTextBox product = new AonCustomTextBox("Producto");
-	private AonCustomNumberBox order = new AonCustomNumberBox("Orden");
-	private AonCustomNumberBox quantity = new AonCustomNumberBox("Cantidad");
+	private AonCustomIntegerBox quantity = new AonCustomIntegerBox("Cantidad");
 	
 	private Button okButton;
 	
@@ -113,6 +114,13 @@ public class ItemCompositionPanel  extends HTMLPanel {
 		HTMLPanel row = new HTMLPanel(EMPTY_STRING);
 		row.setStyleName(AON.CSS.aonItemFlex());
 		
+		order.setWidth("5rem");
+		order.hideNearBy();
+		order.setValue(itemComposition.getId() == null ?  (itemCompositions.size() + 1) : itemComposition.getSequence());
+		order.addValueChangeHandler(e -> okButton.setVisible(true));
+		
+		row.add(order);
+		
 		if(itemComposition.getId() == null) {
 			
 			Set<String> optionsSet = itemList.stream()
@@ -126,10 +134,15 @@ public class ItemCompositionPanel  extends HTMLPanel {
 				.map(item -> item.getProduct().getName())
 				.collect(Collectors.toSet());
 			
-			products.setOptions(optionsSet);
-			products.addBlurHandler(e -> {
-				okButton.setVisible(true);
-			});
+			List<String> productsSuggestions = new ArrayList<>();
+			optionsSet.forEach(option -> productsSuggestions.add(option + ""));
+			MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) products.getSuggestBox().getSuggestOracle();
+			orclDocuments.addAll(productsSuggestions);
+			
+			products.setPlaceHolder("Descripci\u00f3n producto ...");
+			products.setAutoSelectEnabled(true);
+			products.getSuggestBox().addSelectionHandler(e -> okButton.setVisible(true));
+			
 			row.add(products);
 			
 		} else {
@@ -138,24 +151,14 @@ public class ItemCompositionPanel  extends HTMLPanel {
 			row.add(product);
 		}
 		
-		container.add(row);
-		
-		// Second Row
-		HTMLPanel row2 = new HTMLPanel(EMPTY_STRING);
-		row2.setStyleName(AON.CSS.aonItemFlex());
-		
-		order.hideNearBy();
-		quantity.hideNearBy();
-		
-		order.setValue(itemComposition.getId() == null ?  ((double)itemCompositions.size() + 1) : (double) itemComposition.getSequence());
-		quantity.setValue(itemComposition.getId() == null ?  1 : itemComposition.getQuantity());
-		
-		order.addValueChangeHandler(e -> okButton.setVisible(true));
+		quantity.setWidth("5rem");
+		quantity.hideNearBy();	
+		quantity.setValue(itemComposition.getId() == null ?  1 : (int) itemComposition.getQuantity());
 		quantity.addValueChangeHandler(e -> okButton.setVisible(true));
 		
-		row2.add(order);
-		row2.add(quantity);
-		container.add(row2);
+		row.add(quantity);
+		
+		container.add(row);
 		
 		// Buttons
 		container.add(createButtonsPanel());
@@ -174,25 +177,22 @@ public class ItemCompositionPanel  extends HTMLPanel {
     		okButton.setEnabled(false);
     		
     		if(null == itemComposition.getId()) {
-    			if(products.getSelectedOptions().isEmpty()) {
+    			if(AonStringUtils.isBlank(products.getValue())) {
     				AonMessagePanel.showWarning(messagePanel, "Debe seleccionar al menos un producto");
     				okButton.setEnabled(true);
     			} else {
     				List<ItemComposition> itemCompositions = new ArrayList<ItemComposition>();
-    				for(int i=0; i < products.getSelectedOptions().size(); i++) {
-    					String productSelected = products.getSelectedOptions().stream().collect(Collectors.toList()).get(i);
-    					Optional<Item> itemOpt = itemList.stream().filter(item -> AonStringUtils.equalsIgnoreCase(item.getProduct().getName(), productSelected)).findFirst();
-    					itemCompositions.add(
-    							new ItemComposition()
-    								.setDomain(item.getDomain().getId())
-    								.setItemId(item.getId())
-    								.setComposition(itemOpt.get())
-    								.setCompositionItemId(itemOpt.get().getId())
-    								.setSequence(order.getValue().intValue() + i)
-    								.setQuantity(quantity.getValue())
-    								.setDescription(itemOpt.get().getProduct().getName())
-    					);
-    				}
+    				Optional<Item> itemOpt = itemList.stream().filter(item -> AonStringUtils.equalsIgnoreCase(item.getProduct().getName(), products.getValue())).findFirst();
+					itemCompositions.add(
+							new ItemComposition()
+								.setDomain(item.getDomain().getId())
+								.setItemId(item.getId())
+								.setComposition(itemOpt.get())
+								.setCompositionItemId(itemOpt.get().getId())
+								.setSequence(order.getValue())
+								.setQuantity(quantity.getValue())
+								.setDescription(itemOpt.get().getProduct().getName())
+					);
     				
     				commonService.saveItemCompositions(options.getDomainName(), options.getDomain(), options.getUser(), itemCompositions, new AsyncCallback<List<ItemComposition>>() {
         				
