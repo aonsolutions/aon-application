@@ -94,9 +94,9 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C371,mod,vat.getQuota()))
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
-		,AR_C372	(Mod303Key.AR_C372,(mod,vat) -> operacionesISPFilter(vat)
+		,AR_C372	(Mod303Key.AR_C372,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C372,mod,vat.getBase()))
-		,AR_C373	(Mod303Key.AR_C373,(mod,vat) -> operacionesISPFilter(vat)
+		,AR_C373	(Mod303Key.AR_C373,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C373,mod,vat.getQuota()))
 		
 		// Recargo equivalencia al 0.5%
