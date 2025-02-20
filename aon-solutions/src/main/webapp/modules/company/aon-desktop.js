@@ -167,14 +167,15 @@ export class AonDesktop extends AonElement {
 					domain_name: attach.getDomain().getName(),
 					id: attach.getId()
 				};
-				let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+				let url = location.origin + 'ms/api/file/' + btoa(JSON.stringify(data));
 
 				let img = this.createElement(TAG.IMG);
 				img.id = this.id + 'LogoImg';
 				img.style.maxHeight = '60px';
 				img.style.maxWidth = '100%';
 				img.style.borderRadius = '10px';
-				img.src = url;
+				img.style.backgroundImage = `url(${url})`;
+				img.style.backgroundSize = 'contain';
 				divLogo.appendChild(img);
 			}
 		});
@@ -189,10 +190,10 @@ export class AonDesktop extends AonElement {
 						domain_name: attach.getDomain().getName(),
 						id: attach.getId()
 					};
-					let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
-	
+					let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
 					let headerLogo = this.getElement('aonLogo');
-					headerLogo.src = url;
+					headerLogo.style.backgroundImage = `url(${url})`;
+					headerLogo.style.backgroundSize = 'contain';
 				}
 			});
 		}

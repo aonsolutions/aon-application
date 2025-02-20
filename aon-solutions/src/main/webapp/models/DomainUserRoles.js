@@ -25,6 +25,8 @@ export class DomainUserRoles {
   domainPayer;
   trial;
 
+  customCss;
+
   constructor(data) {
     this.domain = new Domain(data.domain);
     this.parentDomain = new Domain(data.parentDomain);
@@ -44,6 +46,11 @@ export class DomainUserRoles {
     this.domainPayer = data.domainPayer;
 
     this.trial = data.trial;
+    this.customCss = data.customCss;
+  }
+
+  getCustomCss() {
+    return this.customCss;
   }
 
   checkUsers() {
@@ -709,7 +716,7 @@ export class DomainUserRoles {
   }
   
   hasCustomView() {
-    return this.hasApp(App.CUSTOM_VIEW);
+    return this.hasApp(App.CUSTOM_VIEW) || this.hasParentApp(App.CUSTOM_VIEW);
   }
 
   isEmptyDomain() {

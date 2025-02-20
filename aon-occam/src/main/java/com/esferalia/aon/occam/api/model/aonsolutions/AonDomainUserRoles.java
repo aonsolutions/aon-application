@@ -42,6 +42,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		JSONArray oldDomainModules = new JSONArray();
 		JSONArray oldParentDomainModules = new JSONArray();
 		JSONArray oldUserRoles = new JSONArray();
+		String customCss = "/css/theme/customView.css";
 
 		getDomainApps().forEach(r -> domainApps.put(r.name()));
 		getParentDomainApps().forEach(r -> parentDomainApps.put(r.name()));
@@ -69,6 +70,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 		json.put("parentDomainUserRoles", parentDomainUserRoles);
 		json.put("domainPayer", isDomainPayer());
 		json.put("trial", isTrial());
+		json.put("customCss", customCss);
 
 		json.put("oldUserRoles", oldUserRoles);
 		return json;

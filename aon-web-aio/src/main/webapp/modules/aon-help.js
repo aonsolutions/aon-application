@@ -117,11 +117,9 @@ export class AonHelp extends AonElement {
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
 			rightPanelAboutScheduleCard.setContent(divGeneral2);
 		}else if(this.dur.getParentDomain() != null){
-			let domain = this.dur.getDomain();
 			let parentDomain = this.dur.getParentDomain();
 			let parentId = parentDomain.id;
 			let parentName = parentDomain.name;
-			console.log(domain);				
 			getParentCompany({parentId, parentName}).then(r =>{		
 				let name = r.name;
 				let phoneData = r.media.find(item => item.media === "fixed_phone");
