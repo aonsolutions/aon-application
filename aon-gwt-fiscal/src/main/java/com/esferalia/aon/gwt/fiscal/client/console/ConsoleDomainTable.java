@@ -36,15 +36,15 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void showInfo(String message);
 		public boolean isAdvancedMode();
 		public void onMultipleDelete();
-		public void onDelete(Integer domainId, String descrption, AsyncCallback<Boolean> cbk);
+		public void onDelete(String domainSchema, Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk);
 		public void onDuplicate(DomainParams origin, DomainParams target);
-		public void onInfo(Integer domainId);
-		public void onChangeActive(Integer domainId, boolean active, AsyncCallback<Domain> cbk);
-		public void onChangeExpirationDate(Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
-		public void onValidate(Integer domainId, String name, String descrption, AsyncCallback<Boolean> cbk);
-		public void onSwitchRemoteAccess(Integer integer, AsyncCallback<Boolean> cbk);
+		public void onInfo(JsConsoleDomain domain);
+		public void onChangeActive(String schema, Integer domainId, boolean active, AsyncCallback<Domain> cbk);
+		public void onChangeExpirationDate(String schema, Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
+		public void onValidate(Integer domainId, String name, String tabLabel, AsyncCallback<Boolean> cbk);
+		public void onSwitchRemoteAccess(String schema, Integer integer, AsyncCallback<Boolean> cbk);
 		public void onAvailableUsers(JsConsoleDomain domain, AsyncCallback<LinkedList<User>> cbk);
-		public void onEditDomain( Integer domainId, String descrption );
+		public void onEditDomain( JsConsoleDomain domain);
 		public void onUtilitiesDomain( JsConsoleDomain domain );
 	}
 	
@@ -59,6 +59,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		this.addHeaderRow()
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label("#"),AON.CSS.aonWidth20())
+			.addCell(new Label("SCH"),AON.CSS.aonWidth30())
 			.addCell(new Label("ID"),AON.CSS.aonWidth20())
 			.addCell(new Label(AON.MSG.type()),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())
 			.addCell(new Label("Act."),AON.CSS.aonWidth20())

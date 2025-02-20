@@ -14,7 +14,7 @@
                     <!-- Title -->
                     <tr>
                         <td align="center" style="padding: 0 20px;">
-                            <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Magic Link</h2>
+                            <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Acceso sin contraseña</h2>
                         </td>
                     </tr>
                     <!-- Body -->
@@ -26,7 +26,7 @@
                             
                             <p style="margin: 0 0 15px; text-align: center;">
 	                            <a href="$magicLink" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
-	                                Magic Link
+	                                Acceder
 	                            </a>
 	                        </p>
                             

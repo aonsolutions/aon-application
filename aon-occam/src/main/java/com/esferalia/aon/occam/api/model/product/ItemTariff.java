@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.product;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+
 public class ItemTariff implements Serializable {
 	
 	private static final long serialVersionUID = 1699629262657144964L;

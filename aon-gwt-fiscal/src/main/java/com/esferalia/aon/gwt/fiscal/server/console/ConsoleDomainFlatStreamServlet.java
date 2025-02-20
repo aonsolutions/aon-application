@@ -37,7 +37,6 @@ public class ConsoleDomainFlatStreamServlet extends HttpServlet {
 		try {
 			String domainParams = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
 			DomainParams params = JsonParser.parseDomainParams(domainParams);
-			LOGGER.log(Level.INFO, "Console Domain Flat [{0},{1}]",new Object[] {params.getOffset(),params.getLimit()});
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter out = resp.getWriter();
 			final MutableBoolean first = new MutableBoolean(true);

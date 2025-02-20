@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.product;
+package com.esferalia.aon.occam.api.model.tariff;
 
 import java.io.Serializable;
 

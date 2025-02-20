@@ -42,10 +42,11 @@ public class ProductAutoComplete {
 			ctx.log().info("\t saving product: autocomplete composition: " + false);
 			product.setComposition(false);
 		}
-		if(product.isComposition() && product.isCompositionPrice()) {
-			ctx.log().info("\t saving product: autocomplete compositionPrice: " + false);
-			product.setCompositionPrice(false);	
-		}
+		
+//		if(product.isComposition() && product.isCompositionPrice()) {
+//			ctx.log().info("\t saving product: autocomplete compositionPrice: " + false);
+//			product.setCompositionPrice(false);	
+//		}
 	};
 	
 	public static final BiConsumer<AONContext, Product> COMPLETE_STATUS = (ctx, product) -> {

@@ -1,19 +1,20 @@
 package com.esferalia.aon.gwt.fiscal.server.console;
 
 
+import static com.esferalia.aon.watson.j2html.TagCreator.div;
+import static com.esferalia.aon.watson.j2html.TagCreator.each;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleService;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.CONSOLE;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
@@ -23,10 +24,8 @@ import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.j2html.tags.specialized.DivTag;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 
-import static com.esferalia.aon.watson.j2html.TagCreator.*;
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Aon MS Console Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Console" })
 public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet implements ConsoleService {
@@ -45,23 +44,23 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	}
 	
 	@Override
-	public Boolean deleteDomain(DomainParams params, Integer domainId) throws AonCoreException {
-		return CONSOLE.deleteDomain(params, domainId);
+	public Boolean deleteDomain(String schema, Integer domainId) throws AonCoreException {
+		return CONSOLE.deleteDomain(schema, domainId);
 	}
 	
 	@Override
-	public Domain changeActive(DomainParams params, Integer domainId, boolean active) throws AonCoreException {
-		return CONSOLE.changeActive(params, domainId, active);
+	public Domain changeActive(String schema, Integer domainId, boolean active) throws AonCoreException {
+		return CONSOLE.changeActive(schema, domainId, active);
 	}
 	
 	@Override
-	public Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate ) throws AonCoreException {
-		return CONSOLE.changeExpirationDate(params, domainId, expireDate);
+	public Domain changeExpirationDate(String schema, Integer domainId, Date expireDate ) throws AonCoreException {
+		return CONSOLE.changeExpirationDate(schema, domainId, expireDate);
 	}
 	
 	@Override
-	public Boolean switchRemoteAccess(DomainParams params, Integer domainId) {
-		return CONSOLE.switchRemoteAccess(params, domainId);
+	public Boolean switchRemoteAccess(String schema, Integer domainId) {
+		return CONSOLE.switchRemoteAccess(schema, domainId);
 	}
 	@Override
 	public LinkedList<User> availableUsers(Occam occam, Integer domainId) throws AonCoreException {
