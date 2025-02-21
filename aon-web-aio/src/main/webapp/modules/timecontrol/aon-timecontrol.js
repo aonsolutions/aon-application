@@ -284,7 +284,7 @@ export class AonTimecontrol extends AonElement {
 	}
   
   async buildTimeControl() {
-      getPosition().then(console.log).catch(console.error); // GET POSITION
+      getPosition().then(console.log).catch(console.error);
 
       const r = await getTimeControl();
 
