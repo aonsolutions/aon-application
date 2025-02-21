@@ -15,6 +15,10 @@
     display:none;
 }
 
+.aonMobileSubContent{
+    overflow-y: visible !important;
+}
+
 .aonCardUploadToast {
     width: 100%;
     bottom: 60px;
