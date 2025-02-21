@@ -325,6 +325,7 @@ export class AonEventList extends AonElement {
     divName.style.textOverflow = "ellipsis";
     divName.style.overflow = "hidden";
     divName.style.marginRight = "14px";
+    divName.style.paddingRight = "14px";
     divName.innerText = taskHolder.name;
     div.appendChild(divName);
 
