@@ -207,12 +207,14 @@
     <module>aon-stat</module>
     <!-- WEB MODULES -->
     <module>aon-web-aio</module>
+    <!--  
     <module>aon-solutions</module>
+    -->
     <module>aon-tedi</module>
     <module>tedi-api</module>
     <!-- AWS API Gateway & Lambda 
 		<module>aon-rest-api</module>
-		-->
+    -->
     <module>aon-aws</module>
     <module>aon.accounting.report</module>
     <!-- TRASPASO DSI NOMINAS 
