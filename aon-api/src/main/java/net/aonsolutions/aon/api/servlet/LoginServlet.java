@@ -1,5 +1,4 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +37,7 @@ public class LoginServlet extends AonApiHttpServlet{
 		String token = json.optString("token");
 		String username = json.optString("username");
 		String password = json.optString("password");
+		password = password.trim();
 		String login = "";
 		if(username.contains("=")) {
 			String[] strs = username.split("=");
