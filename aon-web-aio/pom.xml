@@ -1017,6 +1017,7 @@
       <version>3.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
+   <!--
    <dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon-solutions</artifactId>
@@ -1024,5 +1025,7 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+   -->
+
   </dependencies>
 </project>
