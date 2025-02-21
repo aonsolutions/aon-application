@@ -1,9 +1,9 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { AonAvatar } from 'aonsolutions/components/aon-avatar.js';
-import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { closeSession, getAuth } from 'aonsolutions/services/service.js';
-import { AonConfiguration } from 'aonsolutions/modules/configuration/aon-configuration.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonElement } from '../components/AonElement.js';
+import { AonAvatar } from '../components/aon-avatar.js';
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
+import { closeSession, getAuth } from '../services/service.js';
+import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
 
