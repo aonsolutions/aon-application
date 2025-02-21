@@ -56,7 +56,6 @@ public class TariffModule extends MainEntryPoint {
 			}
 		
 		};
-			
 		deckLayoutPanel.add(tariffList);
 		deckLayoutPanel.add(tariffEntry);
 		deckLayoutPanel.showWidget(tariffList);

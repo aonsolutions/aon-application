@@ -10,7 +10,6 @@ import "../company/aon-mobile-desktop.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
-import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
@@ -29,7 +28,6 @@ import { changeUrl } from '../../services/actionService.js';
 
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";
-import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
 import { AonDesktop } from "../company/aon-desktop.js";
 
 export class AonNewLogin extends AonElement {
@@ -44,12 +42,12 @@ export class AonNewLogin extends AonElement {
     this.companyLogo = companyLogo || this.createElement(TAG.SPAN);
   }
 
-  initialize() {
-	
-  }
+  initialize() {}
 
   build() {
-    this.className = CSS.AON_LOGIN;
+    this.style.display = "flex";
+    this.style.height = "100vh";
+    this.style.flexDirection = "column";
 
     // Toolbar
     let toolbar = this.createElement(TAG.DIV);
@@ -61,49 +59,56 @@ export class AonNewLogin extends AonElement {
 	  divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
-    //let logoToolbar = this.createElement(TAG.IMG);
-    //logoToolbar.id = 'aonLoginLogoImgToolbar';
-    //logoToolbar.style.height = '25px';
-    //divLogoToolbar.appendChild(logoToolbar);
+    let divLanguage = this.createElement(TAG.DIV);
+    divLanguage.id = 'aonLoginLanguageDivToolbar';
+    toolbar.appendChild(divLanguage);
 
-    // if(!this.isMobile()) {
-      let divLanguage = this.createElement(TAG.DIV);
-      divLanguage.id = 'aonLoginLanguageDivToolbar';
-      toolbar.appendChild(divLanguage);
+    let languageButton = new AonIconButton();
+    languageButton.id = "aonLoginLanguageButton";
+    languageButton.icon = MATERIAL_ICONS.LANGUAGE;
+    languageButton.title = MSG.SELECT_LANGUAGE;
+    if(LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
+    languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
+    divLanguage.appendChild(languageButton);
 
-      let languageButton = new AonIconButton();
-      languageButton.id = "aonLoginLanguageButton";
-      languageButton.icon = MATERIAL_ICONS.LANGUAGE;
-      languageButton.title = MSG.SELECT_LANGUAGE;
-      if(LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
-      languageButton.addEventListener(EVENT.CLICK, () => this.languageDialog());
-      divLanguage.appendChild(languageButton);
-
-      let spanLanguage = this.createElement(TAG.SPAN);
-      spanLanguage.id = 'aonLoginLanguageSpanToolbar';
-      spanLanguage.innerHTML = this.getLanguageText();
-      //spanLanguage.addEventListener(EVENT.MOUSEOVER, () => this.languageDialog());
-      divLanguage.appendChild(spanLanguage);
-    // }
+    let spanLanguage = this.createElement(TAG.SPAN);
+    spanLanguage.id = 'aonLoginLanguageSpanToolbar';
+    spanLanguage.innerHTML = this.getLanguageText();
+    divLanguage.appendChild(spanLanguage);
 
     // Content
-    let divForm = this.createElement(TAG.DIV);
-    divForm.id = "divForm";
-    divForm.className = CSS.AON_LOGIN_FORM;
-    this.appendChild(divForm);
+    this.createLoginPanel();
+  }
+
+  createLoginPanel(){
+    let magicLinkContent = this.getElement("magicLinkContent");
+    if(magicLinkContent) this.removeChild(magicLinkContent);
+
+    let loginContent = this.createElement(TAG.DIV);
+    loginContent.id = "loginContent";
+    loginContent.className = CSS.AON_FLEX_COLUMN;
+    loginContent.style.height = "100%"
+    loginContent.style.justifyContent = "center";
+    
+    let loginDivForm = this.createElement(TAG.DIV);
+    loginDivForm.id = "loginDivForm";
+    loginDivForm.className = CSS.AON_LOGIN_FORM;
+    loginContent.appendChild(loginDivForm);
 
     let divCompanyLogoForm = this.createElement(TAG.DIV);
     divCompanyLogoForm.id = "divCompanyLogoForm";
     divCompanyLogoForm.className = CSS.AON_LOGIN_FORM;
     divCompanyLogoForm.style.marginBottom = "2rem";
 	  divCompanyLogoForm.appendChild(this.companyLogo);
-    divForm.appendChild(divCompanyLogoForm);
+    loginDivForm.appendChild(divCompanyLogoForm);
 
     let divTitleForm = this.createElement(TAG.DIV);
     divTitleForm.id = "divTitleForm";
-    divTitleForm.className = CSS.AON_LOGIN_FORM;
+    divTitleForm.style.display = "flex";
+    divTitleForm.style.flexDirection = "column";
+    divTitleForm.style.alignItems = "center";
     divTitleForm.style.marginBottom = "2rem";
-    divForm.appendChild(divTitleForm);
+    loginDivForm.appendChild(divTitleForm);
 
     let h1 = this.createElement(TAG.H1);
     h1.className = CSS.AON_LOGIN_TITLE;
@@ -118,23 +123,23 @@ export class AonNewLogin extends AonElement {
     // Form
     let divFormContent = this.createElement(TAG.DIV);
     divFormContent.classList.add(CSS.AON_LOGIN_FORM_CONTENT);
-    divForm.appendChild(divFormContent);
+    loginDivForm.appendChild(divFormContent);
 
     let aonLoader = new AonLoader();
     aonLoader.id = 'aonLoginLoader';
     aonLoader.style.display = 'none';
     divFormContent.appendChild(aonLoader);
 
+    if(this.userInput && this.userInput.innerHTML) this.userInput.innerHTML = "";
     let userInput = this.createAonElement(this.userInput, 'aonLoginUser', MSG.USER);
     userInput.setRequired(true);
-    userInput.addEventListener(EVENT.KEYUP, () => {
-      this.getElement('aonLoginMagicLink').disabled = !userInput.value.includes('@'); 
-    })
+    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(userInput);
 
     let passwordInput = createInput('aonLoginPassword', MSG.PASSWORD);
     passwordInput.setRequired(true);
     passwordInput.type = 'password';
+    passwordInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(passwordInput);
 
     // Buttons
@@ -148,6 +153,7 @@ export class AonNewLogin extends AonElement {
 			}
 		);
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
+    signIn.addEventListener(EVENT.CLICK, () => this.signin());
     divFormContent.appendChild(signIn);
 
     let dividerButtons = this.createElement(TAG.DIV);
@@ -163,20 +169,13 @@ export class AonNewLogin extends AonElement {
     magicLinkButton.className = CSS.AON_MAGIC_BUTTON;
     magicLinkButton.title = MSG.MAGIC_LINK;
     magicLinkButton.innerHTML = MSG.SIGN_IN_WITHOUT_PASSWORD.toUpperCase();
-    magicLinkButton.disabled = true;
-    magicLinkButton.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    magicLinkButton.addEventListener(EVENT.CLICK, () => this.createMagicLinkPanel());
     if(!LS.isDarkBetaTheme())
       magicLinkButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
     magicLinkButton.addEventListener("mouseout", () => signIn.className = CSS.AON_LOGIN_BUTTON);
     divFormContent.appendChild(magicLinkButton);
 
-    // // Form Aon Version
-    // let divInfo = this.createElement(TAG.DIV);
-	  // divInfo.className = CSS.AON_LOGIN_INFO;
-    // divInfo.innerHTML = `
-    //   <div id="aonManifest"></div>`;
-    // divFormContent.appendChild(divInfo);
-
+    // Moviles
     let divMobiles = this.createElement(TAG.DIV);
     divMobiles.id = 'logosMobiles';
     divMobiles.classList.add("aonNewLoginDivMobiles");
@@ -184,18 +183,134 @@ export class AonNewLogin extends AonElement {
 
     let dialog = new AonDialog();
     dialog.id = "aonDialogLogin";
-    this.appendChild(dialog);
+    loginContent.appendChild(dialog);
 
     let toast = new AonToast();
     toast.id = "aonLoginToast";
-    this.appendChild(toast);
+    loginContent.appendChild(toast);
+
+    this.appendChild(loginContent);
+  }
+
+  createMagicLinkPanel(){
+    let loginContent = this.getElement("loginContent");
+    if(loginContent){
+      aonLoginUser
+      this.removeChild(loginContent);
+    } 
+
+    let magicLinkContent = this.createElement(TAG.DIV);
+    magicLinkContent.id = "magicLinkContent";
+    magicLinkContent.className = CSS.AON_FLEX_COLUMN;
+    magicLinkContent.style.height = "100%"
+    magicLinkContent.style.justifyContent = "center";
+    
+    let magicLinkDivForm = this.createElement(TAG.DIV);
+    magicLinkDivForm.id = "magicLinkDivForm";
+    magicLinkDivForm.className = CSS.AON_LOGIN_FORM;
+    magicLinkContent.appendChild(magicLinkDivForm);
+
+    let divCompanyLogoForm = this.createElement(TAG.DIV);
+    divCompanyLogoForm.id = "divCompanyLogoForm";
+    divCompanyLogoForm.className = CSS.AON_LOGIN_FORM;
+    divCompanyLogoForm.style.marginBottom = "2rem";
+	  divCompanyLogoForm.appendChild(this.companyLogo);
+    magicLinkDivForm.appendChild(divCompanyLogoForm);
+
+    let divTitleForm = this.createElement(TAG.DIV);
+    divTitleForm.id = "divTitleForm";
+    divTitleForm.style.display = "flex";
+    divTitleForm.style.flexDirection = "column";
+    divTitleForm.style.alignItems = "center";
+    divTitleForm.style.marginBottom = "2rem";
+    magicLinkDivForm.appendChild(divTitleForm);
+
+    let h1 = this.createElement(TAG.H1);
+    h1.className = CSS.AON_LOGIN_TITLE;
+    h1.innerHTML = "Acceso sin contraseña";
+    divTitleForm.appendChild(h1);
+
+    let h2 = this.createElement(TAG.H1);
+    h2.className = CSS.AON_LOGIN_SUB_TITLE;
+    h2.innerHTML = "Introduzca su mail de acceso";
+    divTitleForm.appendChild(h2);
+
+    // Form
+    let divFormContent = this.createElement(TAG.DIV);
+    divFormContent.classList.add(CSS.AON_LOGIN_FORM_CONTENT);
+    magicLinkDivForm.appendChild(divFormContent);
+
+    let aonLoader = new AonLoader();
+    aonLoader.id = 'aonLoginLoader';
+    aonLoader.style.display = 'none';
+    divFormContent.appendChild(aonLoader);
+
+    if(this.userInput && this.userInput.innerHTML) this.userInput.innerHTML = "";
+    let userInput = this.createAonElement(this.userInput, 'aonMagicLinkUser', MSG.EMAIL);
+    userInput.setRequired(true);
+    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
+    divFormContent.appendChild(userInput);
+
+    // Buttons
+    let signIn = this.createElement(TAG.BUTTON);
+    signIn.id = 'aonMagicLinkSignin';
+    signIn.className = CSS.AON_LOGIN_BUTTON;
+    getManifest().then(
+		  (manifest) => {
+				let version = MSG.VERSION + ": " + manifest.build_date;
+        signIn.title = version;
+			}
+		);
+    signIn.innerHTML = MSG.ACCESS.toUpperCase();
+    signIn.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    divFormContent.appendChild(signIn);
+
+    let dividerButtons = this.createElement(TAG.DIV);
+    dividerButtons.className = CSS.AON_DIVIDER_BUTTONS;
+    let dividerSpan = this.createElement(TAG.SPAN);
+    dividerSpan.className = CSS.AON_DIVIDER_SPAN,
+    dividerSpan.innerHTML = MSG.OR_ACCESS;
+    dividerButtons.appendChild(dividerSpan);
+    divFormContent.appendChild(dividerButtons);
+
+    let backButton = this.createElement(TAG.BUTTON);
+    backButton.id = 'backButton';
+    backButton.className = CSS.AON_MAGIC_BUTTON;
+    backButton.title = MSG.BACK;
+    backButton.innerHTML = "Con Contraseña".toUpperCase();
+    backButton.addEventListener(EVENT.CLICK, () => this.createLoginPanel());
+    if(!LS.isDarkBetaTheme())
+      backButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
+    backButton.addEventListener("mouseout", () => signIn.className = CSS.AON_LOGIN_BUTTON);
+    divFormContent.appendChild(backButton);
+
+    // Moviles
+    let divMobiles = this.createElement(TAG.DIV);
+    divMobiles.id = 'logosMobiles';
+    divMobiles.classList.add("aonNewLoginDivMobiles");
+    divFormContent.appendChild(divMobiles);
+
+    let dialog = new AonDialog();
+    dialog.id = "aonDialogLogin";
+    magicLinkContent.appendChild(dialog);
+
+    let toast = new AonToast();
+    toast.id = "aonLoginToast";
+    magicLinkContent.appendChild(toast);
+
+    this.appendChild(magicLinkContent);
   }
 
   magicLink(value) {
     let loader = this.getElement("aonLoginLoader");
     loader.style.display = '';
     loader.start();
-    magicLink(value).then(()=> {
+    
+    let data = {
+      "email" : value,
+      "url" : window.location.href
+    }
+    magicLink(data).then(()=> {
       loader.stop();
       let toast = this.getElement('aonLoginToast');
       toast.start({type:'success', message:'El mensaje se ha enviado correctamente.'});
@@ -297,21 +412,18 @@ export class AonNewLogin extends AonElement {
     }
   
     let aonManifest = this.getElement("aonManifest");
-    getManifest().then(
-      (manifest) => (aonManifest.innerHTML = MSG.VERSION + ": " + manifest.build_date)
-    );
+    if(aonManifest){
+      getManifest().then(
+        (manifest) => (aonManifest.innerHTML = MSG.VERSION + ": " + manifest.build_date)
+      );
+    }
   
     let username = this.getElement("aonLoginUser");
-    username.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
-    let password = this.getElement("aonLoginPassword");
-    password.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
-  
-    let signin = this.getElement("aonLoginSignin");
-    signin.addEventListener(EVENT.CLICK, () => this.signin());
-    
-    if(!this.isMobile()) username.focus();
+    let useremail = this.getElement("aonMagicLinkUser");
+
+    if(username) username.focus();
+    else if(useremail) useremail.focus();
   }
-  
 
   buildAppLogo(){
     const div  = this.getElement('logosMobiles');
@@ -334,38 +446,6 @@ export class AonNewLogin extends AonElement {
     imgAppStore.style.filter = "grayscale(100%)";
     appStore.appendChild(imgAppStore);
     div.appendChild(appStore);
-  }
-
-  aonDialogLoginMagicLink() {
-    let dialog = this.getElement("aonDialogLogin");
-    if (!this.isMobile()) dialog.width = '400px';
-    dialog.setTitle("MAGIC LINK");
-    let form = this.createElement("form");
-    form.action = "#";
-    let aonInput = new AonInput();
-    aonInput.id = "aonLoginMagicLinkEmail";
-    aonInput.description = "Email";
-    aonInput.autocomplete = "on";
-    form.appendChild(aonInput);
-    dialog.setContent(form);
-    
-    dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? magicLink(aonInput.value) : null);
-    dialog.open();
-  }
-
-  aonDialogLoginRemember() {
-    let dialog = this.getElement("aonDialogLogin");
-    dialog.setTitle(MSG.RECOVER_PASSWORD);
-    let form = this.createElement("form");
-    form.action = "#";
-    let aonInput = new AonInput();
-    aonInput.id = "aonLoginRememberEmail";
-    aonInput.description = "Email";
-    aonInput.autocomplete = "on";
-    form.appendChild(aonInput);
-    dialog.setContent(form);
-    
-    dialog.addAcceptAction(() => aonInput.value && aonInput.value.length>3 ? rememberPassword(aonInput.value) : null);
   }
 
   buildLogo() {
@@ -406,7 +486,7 @@ export class AonNewLogin extends AonElement {
         LS.removeDomain();
         this.getModule().buildHome();
         this.getModule().startLoading();
-		let limit = 100;
+		    let limit = 100;
         getCompanies({limit}).then(companies => {
           this.getModule().stopLoading();
           
@@ -465,8 +545,9 @@ export class AonNewLogin extends AonElement {
   onEnter(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
-      this.getElement("aonLoginSignin").click();
-
+      let aonLoginSignin = this.getElement("aonLoginSignin");
+      if(aonLoginSignin) this.getElement("aonLoginSignin").click();
+      else this.getElement("aonMagicLinkSignin").click();
     }
   }
   

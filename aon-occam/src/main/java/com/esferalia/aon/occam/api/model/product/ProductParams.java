@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.product;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 
 public class ProductParams implements Serializable{
@@ -19,6 +20,8 @@ public class ProductParams implements Serializable{
 	
 	private ProductStatus status;
 	private Boolean productComposition;
+	
+	private DomainType domainType;
 	
 	private int limit;
 	private int offset;
@@ -81,6 +84,13 @@ public class ProductParams implements Serializable{
 	}
 	public ProductParams setProductComposition(Boolean productComposition) {
 		this.productComposition = productComposition;
+		return this;
+	}
+	public DomainType getDomainType() {
+		return domainType;
+	}
+	public ProductParams setDomainType(DomainType domainType) {
+		this.domainType = domainType;
 		return this;
 	}
 	public int getLimit() {

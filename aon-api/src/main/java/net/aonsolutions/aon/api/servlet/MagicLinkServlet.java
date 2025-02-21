@@ -60,26 +60,29 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 	}	
 	
 	private void magicLink(JSONObject json, String url) {
-		String email = JsonUtils.getString(json, IJsonNames.EMAIL);
+		JSONObject data = JsonUtils.getJSONObject(json, "data");
+		String email = JsonUtils.getString(data, IJsonNames.EMAIL);
+		String urlNew = JsonUtils.getString(data, IJsonNames.URL);
 		if(Utils.isEmail(email)) {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			
-			if(auth.isEmpty()) throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage());
+			if(auth.isEmpty()) throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage() + " Compruebe el email.");
 			
 			Date expireDate = AonDateUtils.addDays(new Date(), 1);
 			String token = AonToken.build(auth, expireDate);
-			String magicLink = "https://" + url + "?token=" + token; 
+			String magicLink = urlNew + "?token=" + token; 
+//			String magicLink = "https://" + url + "?token=" + token; 
 			
 			sendGmail(auth, magicLink, expireDate);
 				
-		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage());
+		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage() + " Compruebe el email.");
 	}
 	
 	public void sendGmail(Auth auth, String magicLink, Date expireDate) {
 		SESMessage msg = new SESMessage()
 			.setTo(auth.getEmail())
 			.setFrom(AON_FROM)
-			.setSubject("MAGIC LINK | " + "AON SOLUTIONS")
+			.setSubject("SOLICITUD ACCESO | " + "AON SOLUTIONS")
 			.setBody(getContent(auth, magicLink, expireDate));
 		SES.sendEmail(msg);
 	}
