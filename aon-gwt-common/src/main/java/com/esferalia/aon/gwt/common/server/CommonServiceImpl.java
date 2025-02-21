@@ -733,7 +733,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Product> getProducts(ProductParams params) throws AonCoreException {
-		return AON.getProductList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		List<Product> products = AON.getProductList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		return products;
 	}
 	
 	@Override
@@ -863,7 +864,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Tariff> getTariffs(TariffParams params) throws AonCoreException {
-		return AON.getTariffList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		List<Tariff> tariffs = AON.getTariffList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		return tariffs;
 	}
 	
 	@Override
