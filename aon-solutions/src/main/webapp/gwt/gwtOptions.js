@@ -574,3 +574,9 @@ export const MARKETING_CAMPAIGN = {
   entryPoint: 'MarketingCampaign'
 };
 
+export const TARIFF_MODULE = {
+  title: 'Tarifas',
+  module: GWT_FISCAL,
+  entryPoint: 'TariffModule'
+};
+

@@ -116,7 +116,7 @@ public class ContractAttachPanel extends SimplePanel {
 			descriptionHidden.setValue(attach.getDescription());
 			typeHidden.setValue(attach.getType() + "");
 			securityHidden.setValue(attach.getConfidential() + "");
-			scopeHidden.setValue(attach.getScope() + "");
+			scopeHidden.setValue(null == attach.getScope() ? "" : attach.getScope().toString());
 			mimeTypeHidden.setValue(null == attach.getMimeType() ? "" : attach.getMimeType().getExtension());	
 		}
 		
@@ -182,6 +182,7 @@ public class ContractAttachPanel extends SimplePanel {
 		
 		// Scope ListBox
 		scope.clearItems();
+		scope.addItem("-", "");
 		for(Entry<Integer, String> entry : this.scopes.entrySet())
 			scope.addItem(entry.getValue(), entry.getKey().toString());
 		scope.setValue(null == attach.getScope() ? "" : attach.getScope().toString());

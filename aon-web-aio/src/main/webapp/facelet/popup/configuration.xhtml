@@ -312,12 +312,10 @@
 									</aon:div>
 				
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tariff-module-popup" 
-											action="gwt_tariff_module"
-											title="Tarifas"
-											value="Tarifas" 
-											target="gwt">
-										</aon:commandLink>
+										<aon:commandLink id="tariff-configuration"
+											action="tariff_list-configuration"
+											actionListener="#{tariff.onSearch}"
+											value="#{bundle.product_tariff_module2}" />
 									</aon:div>
 									
 									<aon:div styleClass="aon-direct-access-list-element">

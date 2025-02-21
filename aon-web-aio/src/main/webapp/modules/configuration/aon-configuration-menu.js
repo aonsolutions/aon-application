@@ -166,7 +166,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             }, {
                 description: "Tarifas",
                 title: "Tarifas",
-                action: () => this.rootPanel(new JSF.AonJsfTariff())
+                action: () => GWT.iLoad(GWT.TARIFF_MODULE)
+               // action: () => this.rootPanel(new JSF.AonJsfTariff())
             }, {
                 description: "Catálogos",
                 title: "Catálogos",
