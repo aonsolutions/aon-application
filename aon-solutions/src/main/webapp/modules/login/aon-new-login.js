@@ -277,7 +277,7 @@ export class AonNewLogin extends AonElement {
     backButton.id = 'backButton';
     backButton.className = CSS.AON_MAGIC_BUTTON;
     backButton.title = MSG.BACK;
-    backButton.innerHTML = MSG.BACK.toUpperCase();
+    backButton.innerHTML = "Con Contraseña".toUpperCase();
     backButton.addEventListener(EVENT.CLICK, () => this.createLoginPanel());
     if(!LS.isDarkBetaTheme())
       backButton.addEventListener(EVENT.MOUSEOVER, () => signIn.className = "aonMagicButtonHover");
