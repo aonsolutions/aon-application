@@ -1,6 +1,6 @@
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 
 export class AonWarehouseMenu extends AonSuiteMenu {
@@ -54,8 +54,8 @@ export class AonWarehouseMenu extends AonSuiteMenu {
                 title: "Entradas (Albaranes de Compra)",
                 action: () => this.rootPanel(new JSF.AonJsfIncome)
             }, {
-                description: "Salidas (Albaranes de Compra)",
-                title: "Salidas (Albaranes de Compra)",
+                description: "Salidas (Albaranes de Venta)",
+                title: "Salidas (Albaranes de Venta)",
                 action: () => this.rootPanel(new JSF.AonJsfDelivery)
             }, {
                 description: "Traspasos entre almacenes",

@@ -1,35 +1,35 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
+import { AonElement } from '../components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET } from '../services/app.js';
-import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "aonsolutions/services/app.js";
+import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU} from "../services/app.js"
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from 'aonsolutions/environments/environments.js';
-import { AonDocumental } from 'aonsolutions/modules/documental/aon-documental.js';
-import 'aonsolutions/modules/project/aon-project-panel.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
-import { AonMessenger } from 'aonsolutions/modules/messenger/aon-messenger.js';
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
-import { AonUploadToast } from "aonsolutions/components/aon-upload-toast.js";
-import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
-import { AonFiscal } from 'aonsolutions/modules/fiscal/aon-fiscal.js';
-import { AonTimecontrol } from 'aonsolutions/modules/timecontrol/aon-timecontrol.js';
-import { AonLaboral } from 'aonsolutions/modules/laboral/aon-laboral.js';
-import { AonComunica } from 'aonsolutions/modules/laboral/aon-comunica.js';
-import { AonAccounting } from 'aonsolutions/modules/accounting/aon-accounting.js';
-import { AonIcon } from 'aonsolutions/components/aon-icon.js';
-import { AonNote } from 'aonsolutions/modules/note/aon-note.js';
-import { AonInvoicePanel } from 'aonsolutions/modules/invoice/aon-invoice-panel.js';
-import { AonOfficePanel } from 'aonsolutions/modules/office/aon-office-panel.js';
-import { AonConsole } from 'aonsolutions/modules/console/aon-console.js';
-import { AonAppMenu } from 'aonsolutions/modules/aon-app-menu.js';
-import { AonNotes } from 'aonsolutions/modules/note/aon-notes.js';
-import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
-import { AonWarehouse } from 'aonsolutions/modules/warehouse/aon-warehouse.js';
-//import { AonMarketing } from 'aonsolutions/modules/marketing/aon-marketing.js';
-import * as OPTION from 'aonsolutions/modules/invoice/InvoiceOptions.js';
-import { TASK_SOURCE } from 'aonsolutions/modules/messenger/MessengerEnums.js';
-import { uploadDocuments } from "aonsolutions/modules/documental/DocumentalUtils.js";
+import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { AonDocumental } from '../modules/documental/aon-documental.js';
+import '../modules/project/aon-project-panel.js';
+import * as GWT from '../gwt/gwt.js';
+import * as LS from '../services/localStorageService.js';
+import { AonMessenger } from '../modules/messenger/aon-messenger.js';
+import { AonIconButton } from '../components/aon-icon-button.js';
+import { AonUploadToast } from "../components/aon-upload-toast.js";
+import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { AonFiscal } from '../modules/fiscal/aon-fiscal.js';
+import { AonTimecontrol } from '../modules/timecontrol/aon-timecontrol.js';
+import { AonLaboral } from '../modules/laboral/aon-laboral.js';
+import { AonComunica } from '../modules/laboral/aon-comunica.js';
+import { AonAccounting } from '../modules/accounting/aon-accounting.js';
+import { AonIcon } from '../components/aon-icon.js';
+import { AonNote } from '../modules/note/aon-note.js';
+import { AonInvoicePanel } from '../modules/invoice/aon-invoice-panel.js';
+import { AonOfficePanel } from '../modules/office/aon-office-panel.js';
+import { AonConsole } from '../modules/console/aon-console.js';
+import { AonAppMenu } from '../modules/aon-app-menu.js';
+import { AonNotes } from '../modules/note/aon-notes.js';
+import { AonDesktop } from '../modules/company/aon-desktop.js';
+import { AonWarehouse } from '../modules/warehouse/aon-warehouse.js';
+//import { AonMarketing } from '../modules/marketing/aon-marketing.js';
+import * as OPTION from '../modules/invoice/InvoiceOptions.js';
+import { TASK_SOURCE } from '../modules/messenger/MessengerEnums.js';
+import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
@@ -47,14 +47,14 @@ import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { Superset } from './superset/superset.js';
-import { AonSearchBox } from 'aonsolutions/components/aon-search-box.js';
+import { AonSearchBox } from '../components/aon-search-box.js';
 
 import { AonParent } from "./aon-parent.js";
 
 
-import { generateJobId } from 'aonsolutions/modules/invoice/InvoiceUtils.js';
+import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
-import { getApplicationParameters } from 'aonsolutions/services/applicationParameterService.js';
+import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!

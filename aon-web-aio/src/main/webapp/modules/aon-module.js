@@ -1,16 +1,16 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { login } from 'aonsolutions/services/service.js';
+import { AonElement } from '../components/AonElement.js';
+import { login } from '../services/service.js';
 
 import { AonHome } from './aon-home.js';
-import { TAG } from 'aonsolutions/environments/environments.js'; 
-import * as LS  from 'aonsolutions/services/localStorageService.js';
-import 'aonsolutions/modules/company/aon-mobile-parent.js';
-import { AonLoader } from 'aonsolutions/components/aon-loader.js';
-import { AonNewLogin } from 'aonsolutions/modules/login/aon-new-login.js';
+import { TAG } from '../environments/environments.js'; 
+import * as LS  from '../services/localStorageService.js';
+import './company/aon-mobile-parent.js';
+import { AonLoader } from '../components/aon-loader.js';
+import { AonNewLogin } from './login/aon-new-login.js';
 
-import { AonNewInput } from "aonsolutions/components/aon-new-input.js";
+import { AonNewInput } from "../components/aon-new-input.js";
 import { AonParent } from 'aonparent';
-import { AonMobileParent } from 'aonsolutions/modules/company/aon-mobile-parent.js';
+import { AonMobileParent } from './company/aon-mobile-parent.js';
 
 
 export class AonModule extends AonElement {

@@ -34,8 +34,8 @@ public class ConsoleImpl implements IConsole {
 	}
 	
 	@Override
-	public Stream<ConsoleDomain> getDomains(AONContext ctx, DomainParams params ) {
-		return ConsoleDAO.getDomains(ctx, params);
+	public Stream<ConsoleDomain> getDomains(DomainParams params ) {
+		return ConsoleDAO.getDomains(params);
 	}
 	
 	@Override
@@ -72,8 +72,8 @@ public class ConsoleImpl implements IConsole {
 	}
 
 	@Override
-	public ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow row) {
-		return ConsoleDAO.getTableRowMetadata(ctx, row);
+	public ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) {
+		return ConsoleDAO.getTableRowMetadata(row);
 	}
 
 	@Override

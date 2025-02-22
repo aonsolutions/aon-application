@@ -2299,15 +2299,15 @@ public class Bases {
 					);
 			
 			put("603", new FirstGreaterThanZeroCompositeCCretaData()
-					.add(FREE_BASES) 		
 					.add(CGP_BASE)
+					.add(FREE_BASES) 		
 					.add(ERE_BASES )
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			put("613", new NonNegativeCompositeCCretaData()
+					.add(CGP_BASE)
 					.add(FREE_BASES) 		
 					.add(ERE_BASES)
-					.add(CGP_BASE)
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			

@@ -54,7 +54,7 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 		FlowPanel container = new FlowPanel();
 		scroll.setWidget( container );
 
-		Label schemaLabel = new Label( "Esquema: " + params.getSchema() );
+		Label schemaLabel = new Label( "Esquema: " + params.getDbSchema() );
 		schemaLabel.setStyleName( AON.CSS.aonBold());
 		schemaLabel.addStyleName( AON.CSS.aonTextCenter());
 		schemaLabel.addStyleName( AON.CSS.aonTextUnderline());
@@ -119,7 +119,7 @@ class ConsoleRowQueryFilter extends SimpleLayoutPanel implements HasValueChangeH
 	private void tableChanged() {
 		tab.clear();
 		ConsoleTableRow ctr = new ConsoleTableRow()
-			.setSchema( params.getSchema() )
+			.setSchema( params.getDbSchema() )
 			.setTable( tableBox.getValue() )
 			.setDomain( params.getId());
 		ConsoleModule.CONSOLE_SERVICE.getTableRowMetadata(ctr, new AsyncCallback<ConsoleTableRow>() {

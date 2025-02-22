@@ -2177,7 +2177,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			salary.getSalaryBonus().forEach(d -> System.out.println(
 					d.getBonusConcept() + " : " + d.getAmount() + ", " + d.getType() + "," + d.getDescription()));
 
-			assertEquals(totalCost - 1.67 * 7.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost - /*50.00 / 30.00*/ 1.67 * 7.00, salary.getTotalEnterprise(), DELTA);
 
 			salary.getSalaryCosts().stream().filter(c -> c.getType() == DeductionType.FOGASA)
 					.forEach(c -> Assert.fail(c.getType().name()));
@@ -2553,16 +2553,17 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			});
 
-			Salary salary = calculate(ssPecs, datas, new String[] { "320.43" }, february21, february28);
+			Salary salary = calculate(ssPecs, datas, new String[] { "320.43" , "X=SUM(DIAS_COTIZADOS);TRACE('COT=%s', X)"}, february21, february28);
 
 			salary.getSalaryCosts().forEach(
 					c -> System.out.println("COST :" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
 
+			double totalCost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
 			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
-			assertEquals(91.12, totalBonus, DELTA);
+			assertEquals(/*341.66 / 30.00*/ 11.39 * 8, totalBonus, DELTA);
 
-			assertEquals(9.48, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost - totalBonus, salary.getTotalEnterprise(), DELTA);
 
 		}
 	}
@@ -6690,6 +6691,95 @@ public class IdcTest extends AbstractSQLTestCase {
 					fail(cost.getDescription());
 				}
 			}
+		}
+	}
+
+	@Test
+	public void testIdc12818I() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idc128,18.pdf")) {
+			Collection<PEC> ssPECs = Idc.getSSPECs(is);
+			//16 BON.P.F.EMPL.CUANTIA 	128,18		01 CUOTA EMPRESARIAL 	27-06-2024 	26-06-2027
+			//29 IT.CC.COLAB.EXCL.15D 	100,00		57 CUOTA TOTAL			09-01-2025	13-01-2025
+			
+						
+			ssPECs.stream().forEach( sspec -> System.out.println(sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date startItDate = new SimpleDateFormat("dd-MM-yyyy").parse("09-01-2025");
+			Date endItDate = new SimpleDateFormat("dd-MM-yyyy").parse("13-01-2025");
+
+			
+		    Connection connection = getConnection();
+		    AONContext aonContext = new AONContext(connection);
+			ContractRecord contract = newContract(aonContext, 
+					getFirstDayOfYear(toSQL(startItDate)), ssPECs, Collections.emptyList(), new String [] {"7500.00 * DIAS_TRABAJADOS / DIAS_MES "});
+			setData(aonContext, contract, ContextVariable.PARTIAL_FACTOR.getName(), "0.875");
+			
+			addIT(aonContext, contract, LeaveType.COMMON_DISEASE, toSQL(startItDate), toSQL(endItDate), null);
+			
+			
+			java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(toSQL(startItDate));
+			java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(startDate);
+			
+			Salary salary = new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ) {
+				public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, java.util.Map<String,com.esferalia.aon.salary.expression.ITimedVariable<?>> context) {
+//					System.out.println(description + " = " + amount + ", " + startDate);
+					super.addBonus(amount, description, startDate, endDate, bonus, context);
+				};
+			}).calculate( getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+			
+			
+			salary.getSalaryBonus().forEach(bonus -> System.out.println(bonus.getDescription() + " = " + bonus.getAmount()));
+			
+			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(SalaryBonus::getAmount));
+			
+			assertEquals(0.0, 128.18 - totalBonus,  DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdc12818II() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idc128,18.pdf")) {
+			Collection<PEC> ssPECs = Idc.getSSPECs(is);
+			//16 BON.P.F.EMPL.CUANTIA 	128,18		01 CUOTA EMPRESARIAL 	27-06-2024 	26-06-2027
+			//29 IT.CC.COLAB.EXCL.15D 	100,00		57 CUOTA TOTAL			09-01-2025	13-01-2025
+			
+						
+			ssPECs.stream().forEach( sspec -> System.out.println(sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date startItDate = new SimpleDateFormat("dd-MM-yyyy").parse("09-01-2025");
+			Date endItDate = new SimpleDateFormat("dd-MM-yyyy").parse("13-01-2025");
+
+			
+		    Connection connection = getConnection();
+		    AONContext aonContext = new AONContext(connection);
+			ContractRecord contract = newContract(aonContext, 
+					getFirstDayOfYear(toSQL(startItDate)), ssPECs, Collections.emptyList(), new String [] {"7500.00 * DIAS_TRABAJADOS / DIAS_MES "});
+			
+			addIT(aonContext, contract, LeaveType.COMMON_DISEASE, toSQL(startItDate), toSQL(endItDate), null);
+			
+			
+			java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(toSQL(startItDate));
+			java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(startDate);
+			
+			Salary salary = new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ) {
+				public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, java.util.Map<String,com.esferalia.aon.salary.expression.ITimedVariable<?>> context) {
+//					System.out.println(description + " = " + amount + ", " + startDate);
+					super.addBonus(amount, description, startDate, endDate, bonus, context);
+				};
+			}).calculate( getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+			
+			
+			salary.getSalaryBonus().forEach(bonus -> System.out.println(bonus.getDescription() + " = " + bonus.getAmount()));
+			
+			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(SalaryBonus::getAmount));
+			
+			assertEquals(0.0, 128.18 - totalBonus,  DELTA);
+			
 		}
 	}
 
