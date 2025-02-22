@@ -22,10 +22,15 @@ export const login = (data) => {
 };
 
 export const closeSession = () => {
+  LS.remove(LS.AON_SESSION_ID);
+  LS.remove(LS.AON_DOMAIN_ID);
+  LS.remove(LS.AON_DOMAIN_LOGIN);
+  LS.remove(LS.AON_DOMAIN_NAME);
   LS.closeSession();
   clear();
-  let module = document.querySelector(TAG.AON_MODULE);
-  module.buildLogin();
+  window.location =`${window.location.origin}${window.location.pathname}`;
+  //let module = document.querySelector(TAG.AON_MODULE);
+  //module.buildLogin();
 };
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});

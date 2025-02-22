@@ -68,7 +68,7 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 			
 			if(auth.isEmpty()) throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage() + " Compruebe el email.");
 			
-			Date expireDate = AonDateUtils.addDays(new Date(), 1);
+			Date expireDate = AonDateUtils.addMinutes(new Date(), 15);
 			String token = AonToken.build(auth, expireDate);
 			String magicLink = urlNew + "?token=" + token; 
 //			String magicLink = "https://" + url + "?token=" + token; 
