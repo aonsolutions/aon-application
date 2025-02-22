@@ -191,7 +191,8 @@ export class AonDialogMenu extends AonElement {
 			this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
 			setTimeout(()=>	{
 				this.getDialog().style.display = "none";
-				this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
+				if(this.getElement('aonMobileMenuSidenav'))
+					this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
 				this.clear();
 			}, 400);
 		} else {
