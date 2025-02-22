@@ -115,7 +115,6 @@ export class AonNewLogin extends AonElement {
       MSG.USER
     );
     userInput.setRequired(true);
-    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(userInput);
 
     let passwordInput = createInput("aonLoginPassword", MSG.PASSWORD);
@@ -203,7 +202,6 @@ export class AonNewLogin extends AonElement {
       MSG.EMAIL
     );
     userInput.setRequired(true);
-    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(userInput);
 
     // Buttons
@@ -211,7 +209,10 @@ export class AonNewLogin extends AonElement {
     signIn.id = "aonMagicLinkSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
     signIn.innerHTML = MSG.ACCESS.toUpperCase();
-    signIn.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    signIn.addEventListener(EVENT.CLICK, (event) => {
+		event.preventDefault();
+		this.magicLink(userInput.value);
+	});
     divFormContent.appendChild(signIn);
 
     getManifest().then((manifest) => {
