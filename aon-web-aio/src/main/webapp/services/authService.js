@@ -30,7 +30,7 @@ export const closeSession = () => {
 
 export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
 
-export const magicLink = (email) => post(`${API_URL}/magicLink`, {email});
+export const magicLink = (data) => post(`${API_URL}/magicLink`, {data});
 
 export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 

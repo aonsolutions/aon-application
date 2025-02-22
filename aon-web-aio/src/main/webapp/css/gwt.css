@@ -402,6 +402,10 @@
 	background-color: #f1f1f1;
 }
 
+.aon_toolbar_button_container .aon_custom_text_box:hover {
+	background-color: transparent;
+}
+
 .aon_icon_info {
 	background-size: 24px;
 }

@@ -51,7 +51,7 @@ export class AonToast extends AonElement {
 			styles:{
 				backgroundColor: "#333",
 				color:" #fff",
-				borderRadius: "2px",
+				borderRadius: ".2rem",
 				padding: "16px",
 				fontSize: "17px",
 				wordWrap: "break-word",
