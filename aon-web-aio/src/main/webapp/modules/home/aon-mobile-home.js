@@ -49,6 +49,9 @@ export class AonMobileHome extends AonElement {
       };
     BANKS = [];
     taskHolder;
+    _list;
+    TASK_HOLDER;
+    _filter;
 
 	constructor () {
 		super();
@@ -77,6 +80,8 @@ export class AonMobileHome extends AonElement {
         this.WIDGET_INGRESOS = this.id + "WidgetIngresos";
         this.WIDGET_GASTOS = this.id + "WidgetGastos";
         this.taskHolder = {};
+        this._list=[];
+        this.TASK_HOLDER = {};
 	}
 
     async build() {
