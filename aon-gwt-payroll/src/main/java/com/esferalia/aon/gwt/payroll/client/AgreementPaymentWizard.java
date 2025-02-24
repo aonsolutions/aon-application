@@ -603,7 +603,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		payments = Collections.emptyList();
 
 		ProvidesKey<Payment> keyProvider = HasIdKeyProvider.getKeyProvider();
-		paymentsDataGrid = new CustomDataGrid<>(10, keyProvider);
+		paymentsDataGrid = new CustomDataGrid<>(100, keyProvider);
 
 		paymentsDataGrid.setAutoHeaderRefreshDisabled(true);
 
@@ -634,7 +634,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentsDataGrid.addColumn(nameColumn);
 
 		paymentsDataGrid.addStyleName(AON.AON_WIDTH_ALL);
-		paymentsDataGrid.getElement().getStyle().setPropertyPx("minHeight", 95);
+		paymentsDataGrid.getElement().getStyle().setPropertyPx("minHeight", 185);
 		paymentsDataGrid.setWidth("100%");
 
 		new ListDataProvider<Payment>(Collections.emptyList()).addDataDisplay(paymentsDataGrid);
@@ -1962,17 +1962,17 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 
 		for (Payment paymentIt : availablePayments) {
 			if (availablePaymentsResult.isEmpty()
-					|| !availablePaymentsContainsType(paymentIt.getName(), availablePaymentsResult))
+					|| !availablePaymentsContainsType(paymentIt.getId(), availablePaymentsResult))
 				availablePaymentsResult.add(paymentIt);
 		}
 
 		return availablePaymentsResult;
 	}
 
-	private boolean availablePaymentsContainsType(String searchName, List<Payment> availablePaymentsResult) {
+	private boolean availablePaymentsContainsType(Integer paymentId, List<Payment> availablePaymentsResult) {
 
 		for (Payment paymentIt : availablePaymentsResult) {
-			if (AonStringUtils.equalsIgnoreCase(paymentIt.getName(), searchName))
+			if (paymentIt.getId().equals(paymentId))
 				return true;
 		}
 

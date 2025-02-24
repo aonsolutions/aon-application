@@ -21,12 +21,14 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -47,6 +49,8 @@ public interface ISecurity {
 	
 	public User getUser(AONContext ctx, UserFilter filter, Options...options);
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter, Options...options);
+	
+	public User getUserToken(CloseableAONContext ctx, Domain domain, AonToken aonToken);
 
 	public User save(AONContext ctx, User user);
 	public User insertUser(AONContext ctx, User user);

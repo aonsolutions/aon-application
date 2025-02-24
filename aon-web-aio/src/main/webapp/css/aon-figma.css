@@ -286,6 +286,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 50%;
+  max-width: 35rem;
 }
 
 .aonLoginTitle {
@@ -296,6 +298,8 @@
   margin-top: 0;
   font-weight: 600;
   letter-spacing: 0.44px;
+  text-align: center;
+  width: 100%;
 }
 
 .aonLoginFormContent {
@@ -305,20 +309,20 @@
   border: solid 0.05rem #d2d2d6;
   border-radius: 0.2rem;
   padding: 1rem;
-  width: 35%;
+  width: 100%;
 }
 
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (max-width: 768px) {
-  .aonLoginFormContent{
+  .aonLoginForm{
     width: 90%;
   }
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 769px) and (max-width: 992px) {
-  .aonLoginFormContent{
+  .aonLoginForm{
     width: 60%;
   }
 }

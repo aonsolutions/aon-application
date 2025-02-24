@@ -191,7 +191,8 @@ export class AonDialogMenu extends AonElement {
 			this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
 			setTimeout(()=>	{
 				this.getDialog().style.display = "none";
-				this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
+				if(this.getElement('aonMobileMenuSidenav'))
+					this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
 				this.clear();
 			}, 400);
 		} else {
@@ -298,6 +299,7 @@ export class AonDialogMenu extends AonElement {
 			this.addButtons(options);
 		} else {
 			let content = this.getContent();
+			this.clear();
 
   			content.style.top = top + 'px' || '90px';
 			content.style.left = (left > (window.innerWidth/2) ? left - 180 : left)+'px' ;
@@ -387,6 +389,8 @@ export class AonDialogMenu extends AonElement {
 			let d = new AonDialogMenu(dialog);
 			d.id = 'newDialog';
 			this.appendChild(d);
+			d.clear();
+						
 			li.addEventListener(EVENT.MOUSEOVER, () => {
 				const rect = li.getBoundingClientRect();
 				d.setMenuOptions(item.options, rect.top, rect.right);

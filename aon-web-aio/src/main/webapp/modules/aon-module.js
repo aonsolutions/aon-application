@@ -81,6 +81,7 @@ export class AonModule extends AonElement {
 		let password = urlParams.get('password');
 		let token = urlParams.get('token');
 		let beta = location.pathname === '/beta';
+		
 		if(user && password) {
 			const data = {
 				username: user,
@@ -103,8 +104,8 @@ export class AonModule extends AonElement {
 				await login(data);
 			} catch (e) {
 				alert(e);
-			}
-			window.location = window.location.origin;
+				window.location =`${window.location.origin}${window.location.pathname}`;
+			};
 		} else if ( beta && LS.getToken() ) {
 			try {
 				const data = {
@@ -115,7 +116,7 @@ export class AonModule extends AonElement {
 				LS.removeToken();
 				window.location =`${window.location.origin}${window.location.pathname}`;
 			}
-		}
+		} 
 	} 
 	
 	newCompanyLogoDiv() {

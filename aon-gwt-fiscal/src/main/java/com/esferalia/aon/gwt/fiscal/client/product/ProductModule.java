@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -20,6 +21,7 @@ public class ProductModule extends MainEntryPoint {
 	private DeckLayoutPanel deckLayoutPanel;
 	private ProductList productList;
 	private ProductEntry productEntry;
+	private TariffCatalogue tariffCatalogue;
 	
 	@Override
 	public void onModuleLoad() {
@@ -54,11 +56,27 @@ public class ProductModule extends MainEntryPoint {
 			protected void onProductSelect(Product product) {
 				showSelectedProduct(product);
 			}
+			
+			@Override
+			protected void onCatalogueShow() {
+				showTariffCatalogue();
+			}
 		
 		};
+		
+		tariffCatalogue = new TariffCatalogue(options) {
+
+			@Override
+			protected void onBackClick() {
+				showProductList();
+			}
+			
+		};
+			
 			
 		deckLayoutPanel.add(productList);
 		deckLayoutPanel.add(productEntry);
+		deckLayoutPanel.add(tariffCatalogue);
 		deckLayoutPanel.showWidget(productList);
 		
 		options.getParentWidget().add(deckLayoutPanel);
@@ -72,6 +90,11 @@ public class ProductModule extends MainEntryPoint {
 	private void showSelectedProduct(Product product) {
 		deckLayoutPanel.showWidget(productEntry);
 		productEntry.setProduct(product.getId());
+	}
+	
+	private void showTariffCatalogue() {
+		deckLayoutPanel.showWidget(tariffCatalogue);
+		tariffCatalogue.onSearch();
 	}
 	
 }
