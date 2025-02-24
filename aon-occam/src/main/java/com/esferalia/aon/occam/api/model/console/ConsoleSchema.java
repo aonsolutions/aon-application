@@ -18,6 +18,9 @@ public enum ConsoleSchema {
 	,UDAPA			("UDAPA"	,"grupo-udapa-aonsolutions-net","console-udapa.aonsolutions.net","jgarcia")
 	,DEMO			("DEMO"		,"demo-aonsolutions-net","console-demos.aonsolutions.net","jgarcia")
 	
+	,SUITE_SNS		("SUITE_SNS","suite-aonsolutions-org","console.aonsolutions.org","jgarcia")
+	,DEMOS_SNS		("DEMOS_SNS","demos-aonsolutions-org","console-demos.aonsolutions.org","jgarcia")
+	
 	// -------------------------------------------
 	// BASES DE DATOS DE DESARROLLO EN MI MÒAQUINA
 	// -------------------------------------------
