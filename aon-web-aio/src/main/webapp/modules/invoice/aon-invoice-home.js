@@ -233,7 +233,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let invoiceName = this.createDiv();
 		invoiceName.id = 'invoiceName';
-		invoiceName.innerHTML = "Facturas";
+		invoiceName.innerHTML = "Facturas (" + new Date().getFullYear() + ")";
 		invoiceName.classList.add("aonInvoiceHomePendingName");
 		invoiceNameRow.appendChild(invoiceName);
 
@@ -371,7 +371,6 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceivedDiv.classList.add("aonInvoiceHomePendingReceivedDiv");
 		pendingReceivedDiv.overflow = 'hidden';
 		pendingCounterRow.appendChild(pendingReceivedDiv);
-
 
 		pendingReceivedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.INBOX, type: 'recibida'},
