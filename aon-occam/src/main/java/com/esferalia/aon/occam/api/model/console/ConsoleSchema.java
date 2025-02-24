@@ -17,6 +17,7 @@ public enum ConsoleSchema {
 	,ETL			("ETL"		,"etl.aonsolutions.net","console-etl.aonsolutions.net","jgarcia")
 	,UDAPA			("UDAPA"	,"grupo-udapa-aonsolutions-net","console-udapa.aonsolutions.net","jgarcia")
 	,DEMO			("DEMO"		,"demo-aonsolutions-net","console-demos.aonsolutions.net","jgarcia")
+	,SNAPSHOT		("SNAPSHOT" ,"sig-grupo-esferalia","console.aonsolutions.org","jgarcia")
 	
 	// -------------------------------------------
 	// BASES DE DATOS DE DESARROLLO EN MI MÒAQUINA
