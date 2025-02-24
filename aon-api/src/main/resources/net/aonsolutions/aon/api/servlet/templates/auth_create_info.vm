@@ -27,7 +27,7 @@
                                 <a href="$enterpriseUrl" style="color: #007bff; text-decoration: none;">$enterpriseName</a>
                             </p>
                             <p style="margin: 0 0 10px;">
-                                <strong style="color: #333;">Usuario:</strong> <span><a style="color: #007bff; text-decoration: none;" href="mailto:$email">$email</a></span>
+                                <strong style="color: #333;">Usuario:</strong> <span><a style="color: #007bff; text-decoration: none;">$email</a></span>
                             </p>
                             <p style="margin: 0 0 10px;">
                                 <strong style="color: #333;">Contraseña:</strong> 

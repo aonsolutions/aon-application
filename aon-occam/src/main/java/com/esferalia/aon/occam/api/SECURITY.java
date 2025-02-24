@@ -51,11 +51,14 @@ public class SECURITY {
 	}
 	
 	public static byte[] hexStringToByteArray(String hex) {
-	    int l = hex.length();
-	    byte[] data = new byte[l / 2];
-	    for (int i = 0; i < l; i += 2) {
+		if (hex.startsWith("0x") || hex.startsWith("0X")) {
+	        hex = hex.substring(2);
+	    }
+	    int len = hex.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
 	        data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
-	                + Character.digit(hex.charAt(i + 1), 16));
+	                             + Character.digit(hex.charAt(i+1), 16));
 	    }
 	    return data;
 	}
@@ -69,9 +72,10 @@ public class SECURITY {
 	public static JSONObject decodeJWT(String token, String secret) {
 		Algorithm algorithm = Algorithm.HMAC256(secret);
 		DecodedJWT jwt = JWT.require(algorithm).build().verify(token);	
+		Date currrentDate = new Date();
 		return new JSONObject(jwt.getSubject())
 				.put("expired", jwt.getExpiresAt() != null
-					&& jwt.getExpiresAt().before(new Date()));
+					&& jwt.getExpiresAt().before(currrentDate));
 	}
 	
 	public static AuthDevice saveAuthDevice(Domain domain, String login, AuthDevice ad) {

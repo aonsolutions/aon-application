@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.ISecurity;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -116,6 +118,13 @@ public class SecurityImpl implements ISecurity {
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter, Options... options) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> UserDAO.getStream(ctx, filter, options));
+	}
+	
+
+	@Override
+	public User getUserToken(CloseableAONContext ctx, Domain domain, AonToken aonToken) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> UserDAO.get(ctx, domain, aonToken));
 	}
 	
 	@Override

@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Field;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -412,9 +415,8 @@ public class AON_SOLUTIONS {
 	
 	public static User getUser(Domain domain, String token) {
 		AonToken aonToken = SECURITY.getAonToken(token);
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
-			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){	
+			return getSecurity().getUserToken(ctx, domain, aonToken);
 		}
 	}
 	
