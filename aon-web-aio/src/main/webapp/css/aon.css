@@ -251,7 +251,10 @@ color: var(--aonSearchButton);
   font-weight: 400 !important;
   font-size: 14px !important;
   line-height: normal !important;
-  height: 100%;
+  
+  /*height: 100%;*/
+  height: 100vh;
+  
   overflow: hidden;
   color: rgb(66, 66, 66);
   text-rendering: optimizeLegibility;
@@ -665,28 +668,15 @@ h1 {
   white-space: nowrap;
 }
 
-.aonHeader {
-  margin: 0 !important;
-  color: #5f6368;
-  height: 48px;
+.aonHeader, .aonHeaderBeta {
+  height: 3rem; 
   width: 100%;
+ 
   display: flex;
   justify-content: space-between;
-  padding: 0 1rem;
-  position: relative;
-  top: 0%;
   align-items: center;
-  border-bottom: none;
-}
-
-.aonHeaderBeta {
-  margin: 0 !important;
-  color: #5f6368;
-  height: 48px;
-  width: 100%;
-  display: flex;
-  /*justify-content: space-between;*/
-  padding: 0 1rem;
+  
+  padding-right: 1rem;
 }
 
 .aonHeaderButton {
@@ -2197,9 +2187,12 @@ border-bottom: 1px solid rgb(221, 221, 221);
   background-position: center;
   background-repeat: no-repeat;
   background-image: url("../assets/aon-white-logo.svg");
-  position: relative;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  height: 2.5rem;
+  width: 10rem;
 }
-
 
 .aonHeaderButtons{
   display: flex;
@@ -2213,12 +2206,9 @@ border-bottom: 1px solid rgb(221, 221, 221);
 }      
 
 .aonHeaderAppDiv{
-  padding: 1px;
-display: flex;
-align-items: center;
-  height: 32px;
-flex-direction: row;
-background-color: transparent;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
 }
 
 .aonHeaderAppIcon{
@@ -2464,14 +2454,6 @@ size: 32px;
       min-width: 22rem;
   }
 
-  .aonNewLogo{
-    max-width: 10rem;
-  }
- 
-  .aonHeaderButtons{
-    margin-left: 2rem;
-  }
-
   .noteCard{
     max-width: 21rem;
   }
@@ -2480,13 +2462,7 @@ size: 32px;
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 /* @media only screen and (min-width: 1200px) {} */
 @media only screen and (min-width: 1000px) {
-  .aonNewLogo{
-    max-width: 12rem;
-  }
- 
-  .aonHeaderButtons{
-    margin-left: 4.5rem;
-  }
+  
 }
 
 .lds-ring {
@@ -3269,9 +3245,8 @@ color: var(--aonWhite);
 }
 
 #applications {
-  color: white;
-  width: 64px;
-  margin-left: 4px;
+  color: #fff;
+  width: 4.5rem;
 }
 
 #applications:hover{

@@ -1,6 +1,6 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
-import * as LS  from 'aonsolutions/services/localStorageService.js';
+import { AonElement } from '../components/AonElement.js';
+import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
+import * as LS  from '../services/localStorageService.js';
 
 export class AonJsfApp extends AonElement {
 	

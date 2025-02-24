@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as JSF from '../aon-jsf-app.js';
 

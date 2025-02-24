@@ -391,8 +391,8 @@ public abstract class TariffList extends AonCustomDockLayout {
 		COMMON_SERVICE.getTariffs(params, new AsyncCallback<List<Tariff>>() {
 			
 			@Override
-			public void onSuccess(List<Tariff> products) {
-				success.accept(products);
+			public void onSuccess(List<Tariff> tariffsDb) {
+				success.accept(tariffsDb);
 			}
 			
 			@Override

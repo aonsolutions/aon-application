@@ -1,10 +1,10 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { MSG, CONSTANT, CSS, EVENT, TAG } from "aonsolutions/environments/environments.js";
-import { AonSwitch } from "aonsolutions/components/aon-switch.js";
-import { AonCard } from 'aonsolutions/components/aon-card.js';
-import { Language } from 'aonsolutions/models/Language.js';
+import { AonElement } from '../components/AonElement.js';
+import { MSG, CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
+import { AonSwitch } from "../components/aon-switch.js";
+import { AonCard } from '../components/aon-card.js';
+import { Language } from '../models/Language.js';
 import { loadTheme } from '..';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonConfig extends AonElement {
   

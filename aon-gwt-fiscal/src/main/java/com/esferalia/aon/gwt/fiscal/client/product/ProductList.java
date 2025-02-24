@@ -201,6 +201,10 @@ public abstract class ProductList extends AonCustomDockLayout {
 		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Servicio Aon", AON.CSS.aonIconAdd());
 		newButton.addClickHandler(e -> showProductDialog());
 		addToolbarButton(newButton);
+		
+		AonToolbarButton catalogue = new AonToolbarButton( "Cat\u00e1logo", AON.CSS.aonIconCatalogue());
+		catalogue.addClickHandler(e -> onCatalogueShow());
+		addToolbarButton(catalogue);
 	}
 	
 	private void showProductDialog() {
@@ -436,5 +440,6 @@ public abstract class ProductList extends AonCustomDockLayout {
 	}
 	
 	protected abstract void onProductSelect(Product product);
+	protected abstract void onCatalogueShow();
 	
 }

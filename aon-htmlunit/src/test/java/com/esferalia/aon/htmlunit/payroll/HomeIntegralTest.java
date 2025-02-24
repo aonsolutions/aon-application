@@ -220,6 +220,9 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", cgpBase*0.2/100.00);
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.7/100.00)*0.80);
+		calculate(Calendar.JANUARY, 2025);
+		assertNotElement("solidarity");
+		assertNotElement("solidarity_cost");
 		
 		
 		draft("TRAMO, 2");
