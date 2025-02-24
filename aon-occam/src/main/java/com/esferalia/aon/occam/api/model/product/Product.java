@@ -40,6 +40,8 @@ public class Product implements Serializable{
 	String modificationUser;
 	Date modificationDate;
 	
+	Item item;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -348,5 +350,16 @@ public class Product implements Serializable{
 	public Product setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
-	}	
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public Product setItem(Item item) {
+		this.item = item;
+		return this;
+	}
+	
+	
 }

@@ -72,6 +72,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_add")
 	String aonIconAdd();
 	
+	@ClassName("aon_icon_catalogue")
+	String aonIconCatalogue();
+	
 	@ClassName("aon_icon_move_group")
 	String aonIconMoveGroup();
 

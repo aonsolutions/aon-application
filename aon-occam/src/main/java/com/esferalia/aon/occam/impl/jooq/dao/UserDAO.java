@@ -11,11 +11,12 @@ import java.util.stream.Stream;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
@@ -50,6 +51,21 @@ public class UserDAO {
 	public static User get(AONContext ctx, UserFilter filter, Options...options) {
 		User user = select(ctx, filter).limit(1).fetch()
 			.stream().map(new UserFiller()).findFirst().orElse(new User());
+		user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
+		return user;
+	}
+	
+	public static User get(CloseableAONContext ctx, com.esferalia.aon.occam.api.model.Domain domain, AonToken aonToken) {
+		User user = ctx.getDslContext().select()
+				.from(USER)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+				.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
+				.where(USER.DOMAIN.eq(domain.getId()).or(DOMAIN.PARENT.eq(domain.getId())))
+				.and(USER.AUTH.eq(aonToken.getAuth()).or(USER.LOGIN.eq(aonToken.getUuid())))
+				.fetch()
+				.stream().map(new UserFiller()).findFirst().orElse(new User());
+		
 		user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
 		return user;
 	}
