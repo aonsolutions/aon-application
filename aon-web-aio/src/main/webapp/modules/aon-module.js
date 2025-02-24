@@ -34,7 +34,7 @@ export class AonModule extends AonElement {
 		this.AON_MODULE_LOADER = 'aonModuleLoader';
 	}
 
-	buildLogin(){
+	async buildLogin(){
 		this.clear();
 		let login = new AonNewLogin(new AonNewInput(), this.newCompanyLogoDiv());
 		login.id = this.AON_LOGIN;
@@ -71,7 +71,7 @@ export class AonModule extends AonElement {
 				this.rootPanel(mobileParent);
 			} else this.rootPanel(new AonParent());
 		} else {
-			this.buildLogin();
+			await this.buildLogin();
 		}
 	}
 
@@ -82,29 +82,25 @@ export class AonModule extends AonElement {
 		let token = urlParams.get('token');
 		let beta = location.pathname === '/beta';
 		
-		if(user && password) {
-			const data = {
-				username: user,
-				password: password,
-			};
-
+	 	if(user && password) {
 			try {
+				const data = {
+					username: user,
+					password: password,
+				};
 				await login(data);
 			} catch (e) {
-				alert(e);
+				this.redirectCleaning();
 			}
-			window.location = window.location.origin;
 			
 		} else if( token ) {
-			//LS.setToken(token);
 			try {
 				const data = {
 					token,
 				};
 				await login(data);
 			} catch (e) {
-				alert(e);
-				window.location =`${window.location.origin}${window.location.pathname}`;
+				this.redirectCleaning();
 			};
 		} else if ( beta && LS.getToken() ) {
 			try {
@@ -113,11 +109,17 @@ export class AonModule extends AonElement {
 				};
 				await login(data);
 			} catch (e) {
-				LS.removeToken();
-				window.location =`${window.location.origin}${window.location.pathname}`;
+				this.redirectCleaning();
 			}
-		} 
+		} else {
+			console.log("No credentials found =(")
+		}
 	} 
+	
+	redirectCleaning(){
+	    LS.closeSession();
+	    window.location =`${window.location.origin}${window.location.pathname}`;
+	}
 	
 	newCompanyLogoDiv() {
 		let divCompanyLogo = this.createElement(TAG.DIV);

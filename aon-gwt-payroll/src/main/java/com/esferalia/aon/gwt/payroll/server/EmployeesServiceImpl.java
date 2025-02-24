@@ -7825,24 +7825,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Date endDate) {
 
 		List<Certifica2Info> certs = new ArrayList<>();
+		List<Integer> visitedMonth = new ArrayList<Integer>();
+		
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
 			String naf = itEmployee.getEmployeeInfo().getSsNumber();
 
-			AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
+			List<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
 				f -> f.getCCCProperty().eq(ccc)
 					.and(f.getSSProperty().eq(naf))
 					.and(f.getStartDateProperty().ge(startDate))
 					.and(f.getEndDateProperty().le(endDate))
-					.and(
-						f.getIsSalaryProperty().eq(true)
-//						.or(f.getIsDelayProperty().eq(true))
-						.or(f.getIsSettlementProperty().eq(true))
-					)
+					.and(f.getTypeProperty().eq((byte)0))
 			)
 			.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
-			.forEach(salary -> {				
+			.collect(Collectors.toList());
+			
+			List<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
+					f -> f.getCCCProperty().eq(ccc)
+						.and(f.getSSProperty().eq(naf))
+						.and(f.getEndDateProperty().between(startDate, endDate))
+						.and(f.getTypeProperty().eq((byte)3))
+				)
+				.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
+				.collect(Collectors.toList());
+			
+			salaries.forEach(salary -> {				
 				salary.getContextData()
 				.entrySet()
 				.stream()
@@ -7855,20 +7864,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					Date start = dt.getStartDate();
 					Date end = dt.getEndDate();
 					
-					Double baseCgc   = salary.getContextData("BASE_CGC", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-					Double baseCgp   = salary.getContextData("BASE_CGP", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-					Double quoteDays = salary.getContextData("DIAS_COTIZADOS", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+					if(!visitedMonth(visitedMonth, start)) {
+						Double baseCgc   = salary.getContextData("BASE_CGC", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+						Double baseCgp   = salary.getContextData("BASE_CGP", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+						Double quoteDays = salary.getContextData("DIAS_COTIZADOS", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
 
-					if (quoteDays != null && quoteDays > 0) {
-						Certifica2Info cert = new Certifica2Info();
-						cert.setStartDate(start);
-						cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
-						cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
-						cert.setSettleQuoteDays(quoteDays.intValue());
-						certs.add(cert);
+						if (quoteDays != null && quoteDays > 0) {
+							Optional<com.esferalia.aon.occam.api.model.Salary> delayOpt = delays.stream()
+								.filter(delay -> (delay.getStartDate().before(start) || delay.getStartDate().equals(start)) && (delay.getEndDate().after(end) || delay.getEndDate().equals(end)))
+								.findFirst();
+							
+							Certifica2Info cert = new Certifica2Info();
+							if(delayOpt.isEmpty()) {
+								cert.setStartDate(start);
+								cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
+								cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
+								cert.setSettleQuoteDays(quoteDays.intValue());
+								certs.add(cert);
+							} else {
+								Double delayBaseCgc  = delayOpt.get().getContextData("BASE_CGC", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+								Double delayBaseCgp  = delayOpt.get().getContextData("BASE_CGP", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+								
+								Double totalBaseCgc  = (baseCgc != null ? baseCgc : 0.00) + (delayBaseCgc != null ? delayBaseCgc : 0.00);
+								Double totalBaseCgp  = (baseCgp != null ? baseCgp : 0.00) + (delayBaseCgp != null ? delayBaseCgp : 0.00);
+								
+								cert.setStartDate(start);
+								cert.setBaseCgc(totalBaseCgc);
+								cert.setBaseUnemployment(totalBaseCgp);
+								cert.setSettleQuoteDays(quoteDays.intValue());
+								certs.add(cert);
+							}
+							
+							System.out.println("startDate: "+ dt.getStartDate() +" endDate: "+ dt.getEndDate() +" value: "+dt.getExpression() + " baseCgc : " + cert.getBaseCgc() + " baseCpc : " + cert.getBaseUnemployment());
+						}
 					}
-					
-					System.out.println("startDate:"+dt.getStartDate()+" endDate:"+dt.getEndDate()+" value:"+dt.getExpression());
 				});
 			});
 		} catch (SQLException e) {
@@ -7878,6 +7907,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return certs;
 	}
 	
+	private boolean visitedMonth(List<Integer> visitedMonth, Date date) {
+		if(!visitedMonth.isEmpty() && visitedMonth.contains(date.getMonth())) return true;
+		visitedMonth.add(date.getMonth());
+		return false;
+	}
+
 	private static Throwable getRootCause(Throwable throwable) {
 		Throwable cause = throwable;
 		while ( cause.getCause() != null )
