@@ -57,6 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -1311,7 +1312,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					}
 
 					// ContextDrescriptor
-					ContextDescriptor contextDescriptor = getContext(connection, context, startDate, endDate);
+					ContextDescriptor contextDescriptor = getContext(connection, context, startDate, endDate, Collections.emptyList());
 
 //					ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
 //							startDate, endDate, domainID, parentDomainID);
@@ -4109,8 +4110,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = EmployeesServiceHelper.getSalaryCalculatorContext(conn,
 					draft, null);
-
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			
+			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate(), draft.getContext() );
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -4127,7 +4128,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	protected static ContextDescriptor getContext(Connection conn, IContractSalaryCalculatorContext calculatorCtx,
-			Date startDate, Date endDate) {
+			Date startDate, Date endDate, List<Variable> context) {
 		try {
 
 			ExpressionContext expressionContext = notNull(calculatorCtx.getExpressionContext(),
@@ -4149,7 +4150,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				for (ITimedVariable<Object> var : vars) {
 					try {
-						value = var.getValue(var.getPeriod());
+						value = getValue(context, varName, var);
 					} catch (Throwable e) {
 
 					}
@@ -4220,6 +4221,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	private static Object getValue(List<Variable> context, String name, ITimedVariable<Object> var) {
+		return context.stream()
+				.filter(v -> Objects.equals(name, v.getName()))
+				.filter(v -> var.getPeriod().intersects(new com.esferalia.aon.salary.expression.Period(v.getStartDate(), v.getEndDate())))
+				.map(Variable::getValue).findFirst().orElseGet(() -> var.getValue(var.getPeriod()));
+	}
+
 	protected static ContextDescriptor getDraftContext(String domain, AgreementDraft draft, int levelId) {
 		Connection conn = null;
 		try {
@@ -4227,7 +4235,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, draft, levelId);
 
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate(), Collections.emptyList());
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -4252,7 +4260,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, startDate, levelId);
 
-			return getContext(conn, calculatorCtx, startDate, endDate);
+			return getContext(conn, calculatorCtx, startDate, endDate, Collections.emptyList());
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
