@@ -208,7 +208,7 @@ export class AonNewLogin extends AonElement {
     let signIn = this.createElement(TAG.BUTTON);
     signIn.id = "aonMagicLinkSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
-    signIn.innerHTML = "CORREO DE ACCESO";
+    signIn.innerHTML = "RECIBIR CORREO DE ACCESO";
     signIn.addEventListener(EVENT.CLICK, (event) => {
 		event.preventDefault();
 		this.magicLink(userInput.value);
@@ -220,13 +220,13 @@ export class AonNewLogin extends AonElement {
       signIn.title = version;
     });
 
-    this.createDivider(divFormContent, "VOLVER");
+    this.createDivider(divFormContent, "O");
 
     let backButton = this.createElement(TAG.BUTTON);
     backButton.id = "backButton";
     backButton.className = CSS.AON_MAGIC_BUTTON;
     backButton.title = MSG.BACK;
-    backButton.innerHTML = "Pantalla Inicio Sesi\u00f3n".toUpperCase();
+    backButton.innerHTML = "Volver Pantalla Inicio Sesi\u00f3n".toUpperCase();
     backButton.addEventListener(EVENT.CLICK, () => this.createLoginPanel());
     if (!LS.isDarkBetaTheme())
       backButton.addEventListener(
