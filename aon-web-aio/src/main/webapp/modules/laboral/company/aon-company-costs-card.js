@@ -90,7 +90,7 @@ const paintCompanyCostPieChart = async () => {
       startDate = new Date(data[0].startDate);
       endDate   = new Date(data[0].endDate);
       
-      const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) - parseFloat(key.bonuses)),0); 
+      const sumEnterpriseSs = data.reduce((sum,key)=> sum + (parseFloat(key.enterpriseSS) /*- parseFloat(key.bonuses)*/),0); 
       const sumEmployeeSs = data.reduce((sum,key)=>sum + (parseFloat(key.employeeSS) + parseFloat(key.otherDeductions)), 0); 
       const importIrpf = data.reduce((sum,key)=>sum + parseFloat(key.irpf), 0); 
       const totalLiquid = data.reduce((sum,key)=>sum + parseFloat(key.liquid), 0); 

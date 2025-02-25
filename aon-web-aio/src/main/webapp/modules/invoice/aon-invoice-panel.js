@@ -330,9 +330,6 @@ export class AonInvoicePanel extends AonElement {
       this.counterActive = false;
       clearCounter();
       this.invoiceCounter();
-      if (this.getDur().isInvofox()) {
-        this.invofoxCounter();
-      }
     }
   }
 
@@ -340,132 +337,67 @@ export class AonInvoicePanel extends AonElement {
     getRawdocCount({}).then((r) => {
       this.counterActive = true;
   
-      let invoiceIssued = OPTION.INVOICE_ISSUED_BETA;
+      // FACTURAS EMITIDAS 
       if (r.invoice && r.invoice.emitida && r.invoice.emitida > 0) {
-        addCounter(invoiceIssued, r.invoice.emitida);
+        addCounter(OPTION.INVOICE_ISSUED_BETA, r.invoice.emitida);
       }
-      this.updateCounterSpan(invoiceIssued);
+      this.updateCounterSpan(OPTION.INVOICE_ISSUED_BETA);
 
-      let invoiceReceived = OPTION.INVOICE_RECEIVED_BETA;
+      // FACTURAS RECIBIDAS
       if (r.invoice && r.invoice.recibida && r.invoice.recibida > 0) {
-        addCounter(invoiceReceived, r.invoice.recibida);
+        addCounter(OPTION.INVOICE_RECEIVED_BETA, r.invoice.recibida);
       }
-      this.updateCounterSpan(invoiceReceived);
+      this.updateCounterSpan(OPTION.INVOICE_RECEIVED_BETA);
 
+      // FACTURAS SIMPLIFICADAS / TICKETS
       if (r.invoice && r.invoice.ticket && r.invoice.ticket > 0) {
         addCounter(OPTION.INVOICE_TICKET, r.invoice.ticket);
       }
       this.updateCounterSpan(OPTION.INVOICE_TICKET);
 
-      if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0) {
-        addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
-      }
-      this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
+      // if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.count && r.rawdoc.inbox.count > 0) {
+      //   addCounter(OPTION.INVOICE_PENDINGS, r.rawdoc.inbox.count);
+      // }
+      // this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
 
+      // BORRADOR/PROFORMAS
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.OUTPUT && r.rawdoc.inbox.OUTPUT > 0) {
         addCounter(OPTION.PROFORMA_INVOICES, r.rawdoc.inbox.OUTPUT);
       }
       this.updateCounterSpan(OPTION.PROFORMA_INVOICES);
 
+      // BORRADOR FACTURAS RECIBIDAS
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.INPUT && r.rawdoc.inbox.INPUT > 0) {
         addCounter(OPTION.RAWDOC_INBOX_RECEIVED_NEW, r.rawdoc.inbox.INPUT);
       }
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED_NEW);
 
+      // BORRADOR FACTURAS SIMPLIFICADAS / TICKETS
       if (r && r.rawdoc && r.rawdoc.inbox && r.rawdoc.inbox.TICKET && r.rawdoc.inbox.TICKET > 0) {
         addCounter(OPTION.RAWDOC_INBOX_TICKET_NEW, r.rawdoc.inbox.TICKET);
       }
       this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET_NEW);
 
+      // EN TRAMITE
       if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
         addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
 
+      // A REVISAR
       if (r && r.rawdoc && r.rawdoc.rejected && r.rawdoc.rejected.count && r.rawdoc.rejected.count > 0) {
         addCounter(OPTION.RAWDOC_REJECT, r.rawdoc.rejected.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_REJECT);
 
+      // PAPELERA
       if (r && r.rawdoc && r.rawdoc.draft && r.rawdoc.draft.count && r.rawdoc.draft.count > 0) {
         addCounter(OPTION.RAWDOC_TRASH, r.rawdoc.draft.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_TRASH);
+
       this.updateCounterHome();
     });
-  }
-
-  invofoxCounter() {
-    let issuedFilter = {
-      publicStatus: ["approved", "pendingCorrection"],
-      type: ["invoice", "ticket"],
-      companyActsLike: "issuer",
-    };
-    getInvofoxCount(issuedFilter).then((r) => {
-      this.counterActive = true;
-      if (r && r.count && r.count > 0) {
-        addCounter(OPTION.INVOICE_PENDINGS, r.count);
-        addCounter(OPTION.RAWDOC_INBOX_ISSUED, r.count);
-      }
-      this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_ISSUED);
-      this.updateCounterHome();
-    }).catch( e => this.counterActive = true);
-
-    let receivedFilter = {
-      publicStatus: ["approved", "pendingCorrection"],
-      type: ["invoice"],
-      companyActsLike: "ne+issuer",
-    };
-    getInvofoxCount(receivedFilter).then((r) => {
-      this.counterActive = true;
-      if (r && r.count && r.count > 0) {
-        addCounter(OPTION.INVOICE_PENDINGS, r.count);
-        addCounter(OPTION.RAWDOC_INBOX_RECEIVED, r.count);
-      }
-      this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_RECEIVED);
-      this.updateCounterHome();
-    }).catch( e => this.counterActive = true);
-
-    let ticketFilter = {
-      publicStatus: ["approved", "pendingCorrection"],
-      type: ["ticket"],
-      companyActsLike: "ne+issuer",
-    };
-    getInvofoxCount(ticketFilter).then((r) => {
-      this.counterActive = true;
-      if (r && r.count && r.count > 0) {
-        addCounter(OPTION.INVOICE_PENDINGS, r.count);
-        addCounter(OPTION.RAWDOC_INBOX_TICKET, r.count);
-      }
-      this.updateCounterSpan(OPTION.INVOICE_PENDINGS);
-      this.updateCounterSpan(OPTION.RAWDOC_INBOX_TICKET);
-      this.updateCounterHome();
-    }).catch( e => this.counterActive = true);
-
-    let rejectedFilter = {
-      publicStatus: ["pendingDecission", "rejected"],
-      type: ["invoice", "ticket"],
-    };
-    getInvofoxCount(rejectedFilter).then((r) => {
-      this.counterActive = true;
-      if (r && r.count && r.count > 0) {
-        addCounter(OPTION.RAWDOC_REJECT, r.count);
-      }
-      this.updateCounterSpan(OPTION.RAWDOC_REJECT);
-      this.updateCounterHome();
-    }).catch( e => this.counterActive = true);
-
-    let trashFilter = { publicStatus: ["discarded"] };
-    getInvofoxCount(trashFilter).then((r) => {
-      this.counterActive = true;
-      if (r && r.count && r.count > 0) {
-        addCounter(OPTION.RAWDOC_TRASH, r.count);
-      }
-      this.updateCounterSpan(OPTION.RAWDOC_TRASH);
-      this.updateCounterHome();
-    }).catch( e => this.counterActive = true);
   }
 
   updateCounterSpan(option) {
@@ -478,36 +410,37 @@ export class AonInvoicePanel extends AonElement {
   }
 
   updateCounterHome() {
-    let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
-    let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
+    let issued = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
+    let invoiceIssuedNumber = this.getElement("invoiceIssuedNumber");
+    if(invoiceIssuedNumber) invoiceIssuedNumber.innerHTML = issued;
+
+    let received = getCounter()[OPTION.INVOICE_RECEIVED_BETA.id] || 0;
+    let invoiceReceivedNumber = this.getElement("invoiceReceivedNumber");
+    if(invoiceReceivedNumber) invoiceReceivedNumber.innerHTML = received;
+
     let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
-    let total = issued + received + ticket;
-    let pendingRecordNumber = this.getElement("pendingRecordNumber");
-    if (pendingRecordNumber) pendingRecordNumber.innerHTML = total;
+    let invoiceTicketNumber = this.getElement("invoiceTicketNumber");
+    if(invoiceTicketNumber) invoiceTicketNumber.innerHTML = ticket;
 
     let pendingIssuedCounter = getCounter()[OPTION.PROFORMA_INVOICES.id] || 0;
     let pendingIssuedNumber = this.getElement("pendingIssuedNumber");
-    if (pendingIssuedNumber)
-      pendingIssuedNumber.innerHTML = pendingIssuedCounter;
+    if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
 
-    let pendingReceivedCounter =
-      getCounter()[OPTION.RAWDOC_INBOX_RECEIVED_NEW.id] || 0;
+    let pendingReceivedCounter = getCounter()[OPTION.RAWDOC_INBOX_RECEIVED_NEW.id] || 0;
     let pendingReceivedNumber = this.getElement("pendingReceivedNumber");
-    if (pendingReceivedNumber)
-      pendingReceivedNumber.innerHTML = pendingReceivedCounter;
+    if(pendingReceivedNumber) pendingReceivedNumber.innerHTML = pendingReceivedCounter;
 
     let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET_NEW.id] || 0;
     let pendingTicketNumber = this.getElement("pendingTicketNumber");
-    if (pendingTicketNumber)
-      pendingTicketNumber.innerHTML = pendingTicketCounter;
+    if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
 
     let rejectedCounter = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
     let rejectedNumber = this.getElement("rejectedNumber");
-    if (rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
+    if(rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
 
     let trash = getCounter()[OPTION.RAWDOC_TRASH.id] || 0;
     let trashNumber = this.getElement("trashNumber");
-    if (trashNumber) trashNumber.innerHTML = trash;
+    if(trashNumber) trashNumber.innerHTML = trash;
   }
 
   search(detail) {

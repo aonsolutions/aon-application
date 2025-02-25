@@ -2594,9 +2594,17 @@ export class AonInvoice extends AonElement {
 	save(msg) {
 		msg = msg || MSG.SAVED_DATA;
 		insertInvoice(this.getInvoice()).then(r => {
+			if(!this.getInvoice().id) 
+				this.updateCounter(this.getNewFrom(), undefined, 1);
 			this.getInvoice().id = r.id;
 			this.showMessage(msg);
 		}).catch(e => this.showError(e));
+	}
+
+	getNewFrom() {
+		if(this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
+		else if(this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;	
 	}
 
 	back() {
@@ -2862,7 +2870,6 @@ export class AonInvoice extends AonElement {
 			this.build();
 			this.save();
 			this.updateCounter(this.getRejectFromOption(), OPTION.RAWDOC_REJECT, 1);
-			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -3138,7 +3145,6 @@ export class AonInvoice extends AonElement {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
 		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
 		if(!this.getInvoice().isRejected() && !invofoxRejected)
-			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		// if(this.isInvofoxInvoice()) {
 		// 	this.setInvofoxState(CONSTANT.DISCARDED);
 		// } else {
@@ -3149,13 +3155,11 @@ export class AonInvoice extends AonElement {
 	}
 
 	getTrashFromOption() {
-		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
+		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) 
 			return OPTION.RAWDOC_REJECT;
-		} else if(this.getInvoice().isEmitida()) {
-			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_ISSUED : OPTION.INVOICE_ISSUED;
-		} else if(this.getInvoice().isTicket()) {
-			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_TICKET : OPTION.INVOICE_TICKET;
-		} else return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_RECEIVED : OPTION.INVOICE_RECEIVED;
+		else if(this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
+		else if(this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	trashPendingInvoice() {
@@ -3181,6 +3185,7 @@ export class AonInvoice extends AonElement {
 				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
+					this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
 				}).catch(e => this.showError(e));
@@ -3188,12 +3193,21 @@ export class AonInvoice extends AonElement {
 			d.open();
 		} else {
 			deleteInvoice(data).then(() => {
+				this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
 				this.showMessage(MSG.DELETED_DATA);
 				this.back();
 			}).catch(e => this.showError(e));
 		}
 	}
 
+	getTrashPendingFromOption() {
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.INVOICE_ISSUED_BETA;
+		} else if (this.getInvoice().isTicket()){
+			return OPTION.INVOICE_TICKET;
+		} else return OPTION.INVOICE_RECEIVED_BETA;
+	}
+	
 	restoreInvoice() {
 		// if (this.isInvofoxInvoice()) {
 		// 	this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
@@ -3202,7 +3216,6 @@ export class AonInvoice extends AonElement {
 			this.save(MSG.RESTORED_DATA);
 		// }		
 		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
-		this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, 1);
 		this.reload();
 	}
 
@@ -3214,10 +3227,10 @@ export class AonInvoice extends AonElement {
 	
 	getRestoreToOption() {
 		if(this.getInvoice().isEmitida()) {
-			return OPTION.RAWDOC_INBOX_ISSUED;
+			return OPTION.PROFORMA_INVOICES;
 		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED;
+			return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		} else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	removeInvoice() {
