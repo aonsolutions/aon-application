@@ -811,7 +811,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<ItemTariff> getItemTariffs(String domainName, int domain, String user, Integer id) throws AonCoreException {
-		return AON.getItemTariffStream(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(id))).collect(Collectors.toList());
+		List<ItemTariff> itemTariffs = AON.getItemTariffStream(new Domain().setName(domainName).setId(domain), user, null != id ? f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(id)) : f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		return itemTariffs;
 	}
 	
 	@Override
