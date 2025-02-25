@@ -172,7 +172,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     
     static byte[] imageToPdf(byte[] image) throws IOException, CanNotCreatePdfException {
 		Map<String, String> metadata = new HashMap<String, String>();
-		metadata.put("ref_homologation", "000000");
+		metadata.put("ref_homologation", "RGE405069592024");
 		metadata.put("software_name", "Aon Solutions");
 		metadata.put("software_version", "9.23");
 		metadata.put("timestamp", AonDateUtils.format(new Date(), "hh:mm dd/MM/yyyy"));

@@ -51,12 +51,6 @@ export const downloadFacturae = (data) =>
     openFileUrl(`${API_URL}/face?id=${data.id}&domainName=${data.domainName}&domainId=${data.domainId}&cert=${data.cert}&legalLiterals=${data.legalLiterals}`);
 export const getTbaiHistory = (invoice) => post(`${API_URL}/tbai/history`, {invoice});
 
-export const getInvofoxDocuments = (data) => get(`${API_URL}/invofox`, data);
-export const getInvofoxCount = (data) => get(`${API_URL}/invofox/count`, data);
-
-export const getInvofoxDocument = (id) => get(`${API_URL}/invofox/document`, {id: id});
-export const saveInvofoxDocument = (data) => put(`${API_URL}/invofox/document`, data);
-
 export const getInvofoxTextContent = (id) => get(`${API_URL}/invofox/text_content`, {id: id});
 export const getInvofoxConfiguration = (data) => get(`${API_URL}/invofox/configuration`, data);
 export const saveInvofoxConfiguration = (data) => put(`${API_URL}/invofox/configuration`, data);

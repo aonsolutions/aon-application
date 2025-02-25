@@ -1,4 +1,6 @@
-import { mobileAction, MOBILE_ACTION } from "./mobileService.js";
+import { getPositionMobile } from "./actionService.js";
+import { MOBILE_ACTION } from "./mobileService.js";
+import * as UA from './userAgentService.js';
 
 let position;
 
@@ -9,8 +11,8 @@ export const getPosition = async () => {
 
   setPosition(undefined);
 
-  const isApp = await mobileAction({ action: MOBILE_ACTION.SET_POSITION, times:2 });
-  if (isApp) {
+  if(UA.isApp()) {
+    getPositionMobile({ action: MOBILE_ACTION.SET_POSITION, times:2 }, setPosition);
     result = await sleepPosition();
   } else {
     result = await getCurrentPosition().then(successCallback).catch((err) => ({code:(err.code || null), message:err.message}));
