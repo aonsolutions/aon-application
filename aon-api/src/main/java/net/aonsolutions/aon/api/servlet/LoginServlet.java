@@ -106,10 +106,14 @@ public class LoginServlet extends AonApiHttpServlet{
 				jsonToken = SECURITY.decodeJWT(token, AonSecret.getAonSecret());
 			} catch (Exception e) {
 				error(req, resp, e.getMessage());
+				return;
 			}
 				
 			AonToken aonToken= AonToken.parse(jsonToken);
-			if(aonToken.isExpired()) error(req, resp, "Token expirado");
+			if(aonToken.isExpired()) { 
+				error(req, resp, "Token expirado");
+				return;
+			}
 			if ( AonStringUtils.isBlank(aonToken.getUuid()) ) {
 				String tokenLogin = jsonToken.getString(IJsonNames.LOGIN);
 				Integer tokenDomainId = jsonToken.getInt(IJsonNames.DOMAIN); // relax , really user's  domain id, See AonToken
@@ -191,7 +195,7 @@ public class LoginServlet extends AonApiHttpServlet{
 	private void error (HttpServletRequest req, HttpServletResponse resp, String message) {
 		resp.setStatus(401);
 		JSONObject object = new JSONObject();
-		object.put("Error", message);
+		object.put("message", message);
     	resp.setContentType("application/json;charset=UTF-8");
     	response(req, resp, object);
 	}

@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.fiscal.client.product.ProductCatalogue;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
@@ -37,8 +38,6 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 		// ------------------------------------------------- Variables
 		
 		private final String EMPTY_STRING = "";
-		
-//		private DockLayoutPanel sellerEntryPanel;
 
 		private AonCustomListBox domainType = new AonCustomListBox("Tipo Dominio");
 		private AonCustomListBox tariff = new AonCustomListBox("Tarifa");
@@ -50,6 +49,7 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 		private TabLayoutPanel tablayoutPanel;
 		
 		private TariffCatalogueList tariffCatalogueList;
+		private ProductCatalogue productCatalogue;
 
 		private RegistryModuleOptions options;
 		private List<Tariff> tariffs;
@@ -67,7 +67,7 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 				createToolbar();
 				
 				tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
-				tablayoutPanel.setHeight((Window.getClientHeight() - 180) + "px");
+				tablayoutPanel.setHeight((Window.getClientHeight() - 130) + "px");
 				tablayoutPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 			
 				container = new HTMLPanel(EMPTY_STRING);
@@ -81,6 +81,14 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 				tariffCatalogueList = new TariffCatalogueList(options, this.tariffs);
 				tablayoutPanel.add(tariffCatalogueList, "Tarifas");
 				tablayoutPanel.selectTab(0);
+				
+				productCatalogue = new ProductCatalogue(options);
+				tablayoutPanel.add(productCatalogue, "Cat\u00e1logo");
+				
+				tablayoutPanel.addSelectionHandler(e -> {
+					tariff.setVisible(tablayoutPanel.getSelectedIndex() != 0);
+					onSearch();
+				});
 				
 				container.add(tablayoutPanel);
 				
@@ -101,16 +109,19 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 			domainType.addChangeHandler(e -> onSearch());
 			addToolbarButton(domainType);
 			
-//			tariff.clearItems();
-//			tariffs.forEach(tariffIt -> tariff.addItem(tariffIt.getName(), tariffIt.getId().toString()));
-//			tariff.addChangeHandler(e -> onSearch());
-//			addToolbarButton(tariff);
+			tariff.clearItems();
+			tariffs.forEach(tariffIt -> tariff.addItem(tariffIt.getName(), tariffIt.getId().toString()));
+			tariff.addChangeHandler(e -> onSearch());
+			tariff.setVisible(false);
+			addToolbarButton(tariff);
 		}
 		
 		public void onSearch() {
 			if(tablayoutPanel.getSelectedIndex() == 0) {
 				tariffCatalogueList.onSearch(DomainType.safeValueOf(Byte.parseByte(domainType.getValue())));
-			}
+			} else if(tablayoutPanel.getSelectedIndex() == 1) {
+				productCatalogue.onSearch(DomainType.safeValueOf(Byte.parseByte(domainType.getValue())), tariffs.stream().filter(tariffIt -> tariffIt.getId().equals(Integer.parseInt(tariff.getValue()))).findFirst().get());
+			} 
 		}
 		
 		private void getTariffs(Consumer<List<Tariff>> success) {

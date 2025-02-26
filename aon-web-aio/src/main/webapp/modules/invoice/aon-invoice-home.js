@@ -142,7 +142,7 @@ export class AonInvoiceHome extends AonElement {
 			invoiceResumeCard.message = "Resumen Facturación";
 			invoiceResumeCard.setApp(Apps.INVOICE);
 			cardPanel.appendChild(invoiceResumeCard);
-			invoiceResumeCard.setContent(this.buildNewInvoiceResumeCard());
+			invoiceResumeCard.setContent(this.buildInvoiceResumeCard());
 
 			invoiceResumeCard.firstChild.style.marginLeft = '0';
 			invoiceResumeCard.firstChild.style.minHeight = "460px";
@@ -215,7 +215,7 @@ export class AonInvoiceHome extends AonElement {
 		this.updateCounterHome();
 	}
 
-	buildNewInvoiceResumeCard() {
+	buildInvoiceResumeCard() {
 		let div = this.createDiv();
 		div.classList.add("aonInvoiceHomeDiv");
 
@@ -233,7 +233,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let invoiceName = this.createDiv();
 		invoiceName.id = 'invoiceName';
-		invoiceName.innerHTML = "Facturas";
+		invoiceName.innerHTML = "Facturas (" + new Date().getFullYear() + ")";
 		invoiceName.classList.add("aonInvoiceHomePendingName");
 		invoiceNameRow.appendChild(invoiceName);
 
@@ -256,7 +256,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let invoiceIssuedNumber = this.createDiv();
 		invoiceIssuedNumber.id = 'invoiceIssuedNumber';
-		invoiceIssuedNumber.innerHTML = '0';
+		invoiceIssuedNumber.innerHTML = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
 		invoiceIssuedNumber.classList.add("aonInvoiceHomePendingIssuedNumber");
 		invoiceIssuedNumber.style.color = 'var(--aonGreen)';
 		invoiceIssuedDiv.appendChild(invoiceIssuedNumber);
@@ -282,7 +282,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let invoiceReceivedNumber = this.createDiv();
 		invoiceReceivedNumber.id = 'invoiceReceivedNumber';
-		invoiceReceivedNumber.innerHTML = '0';
+		invoiceReceivedNumber.innerHTML = getCounter()[OPTION.INVOICE_RECEIVED_BETA.id] || 0;
 		invoiceReceivedNumber.classList.add("aonInvoiceHomePendingReceivedNumber");
 		invoiceReceivedNumber.style.color = 'var(--aonGreen)';
 		invoiceReceivedDiv.appendChild(invoiceReceivedNumber);
@@ -307,7 +307,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let invoiceTicketNumber = this.createDiv();
 		invoiceTicketNumber.id = 'invoiceTicketNumber';
-		invoiceTicketNumber.innerHTML = '0';
+		invoiceTicketNumber.innerHTML = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
 		invoiceTicketNumber.classList.add("aonInvoiceHomePendingTicketNumber");
 		invoiceTicketNumber.style.color = 'var(--aonGreen)';
 		invoiceTicketDiv.appendChild(invoiceTicketNumber);
@@ -354,7 +354,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingIssuedNumber = this.createDiv();
 		pendingIssuedNumber.id = 'pendingIssuedNumber';
-		pendingIssuedNumber.innerHTML = '0';
+		pendingIssuedNumber.innerHTML = getCounter()[OPTION.PROFORMA_INVOICES.id] || 0;
 		pendingIssuedNumber.classList.add("aonInvoiceHomePendingIssuedNumber");
 		pendingIssuedDiv.appendChild(pendingIssuedNumber);
 
@@ -372,7 +372,6 @@ export class AonInvoiceHome extends AonElement {
 		pendingReceivedDiv.overflow = 'hidden';
 		pendingCounterRow.appendChild(pendingReceivedDiv);
 
-
 		pendingReceivedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
 			{status: CONSTANT.INBOX, type: 'recibida'},
 			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'ne+issuer'}
@@ -380,7 +379,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingReceivedNumber = this.createDiv();
 		pendingReceivedNumber.id = 'pendingReceivedNumber';
-		pendingReceivedNumber.innerHTML = '0';
+		pendingReceivedNumber.innerHTML = getCounter()[OPTION.RAWDOC_INBOX_RECEIVED_NEW.id] || 0;
 		pendingReceivedNumber.classList.add("aonInvoiceHomePendingReceivedNumber");
 		pendingReceivedDiv.appendChild(pendingReceivedNumber);
 
@@ -404,7 +403,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let pendingTicketNumber = this.createDiv();
 		pendingTicketNumber.id = 'pendingTicketNumber';
-		pendingTicketNumber.innerHTML = '0';
+		pendingTicketNumber.innerHTML = getCounter()[OPTION.RAWDOC_INBOX_TICKET_NEW.id] || 0;
 		pendingTicketNumber.classList.add("aonInvoiceHomePendingTicketNumber");
 		pendingTicketDiv.appendChild(pendingTicketNumber);
 
@@ -432,7 +431,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let rejectedNumber = this.createDiv();
 		rejectedNumber.id = 'rejectedNumber';
-		rejectedNumber.innerHTML = '0';
+		rejectedNumber.innerHTML = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
 		rejectedNumber.classList.add("aonInvoiceHomeRejectedNumber");
 		rejectedDiv.appendChild(rejectedNumber);
 
@@ -457,7 +456,7 @@ export class AonInvoiceHome extends AonElement {
 
 		let trashNumber = this.createDiv();
 		trashNumber.id = 'trashNumber';
-		trashNumber.innerHTML = '0';
+		trashNumber.innerHTML = getCounter()[OPTION.RAWDOC_TRASH.id] || 0;
 		trashNumber.classList.add("aonInvoiceHomeTrashNumber");
 		trashDiv.appendChild(trashNumber);
 
@@ -470,185 +469,6 @@ export class AonInvoiceHome extends AonElement {
 		return div;
 	}
 
-	buildInvoiceResumeCard() {
-		let div = this.createDiv();
-		div.classList.add("aonInvoiceHomeDiv");
-
-		let pendingRecordsDiv = this.createDiv();
-		pendingRecordsDiv.id = 'pendingRecords';
-		pendingRecordsDiv.classList.add("aonInvoiceHomePendingRecordsDiv");
-		pendingRecordsDiv.overflow = 'hidden';
-
-		pendingRecordsDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status:'accounting', recorded: 'PENDING', page:1, per_page: 50}
-		));
-
-		div.appendChild(pendingRecordsDiv);
-
-		let pendingRecordNumber = this.createDiv();
-		pendingRecordNumber.id = 'pendingRecordNumber';
-		pendingRecordNumber.innerHTML = '0';
-		pendingRecordNumber.classList.add("aonInvoiceHomePendingRecordNumber");
-
-		pendingRecordsDiv.appendChild(pendingRecordNumber);
-
-		let pendingRecordName = this.createDiv();
-		pendingRecordName.id = 'pendingRecordName';
-		pendingRecordName.innerHTML = "Pendientes de Contabilizar";
-		pendingRecordName.classList.add("aonInvoiceHomePendingRecordName");
-		pendingRecordsDiv.appendChild(pendingRecordName);
-
-		// PENDING
-		let pendingDiv = this.createDiv();
-		pendingDiv.id = 'pending';
-		pendingDiv.classList.add("aonInvoiceHomePendingDiv");
-		pendingDiv.overflow = 'hidden';
-		div.appendChild(pendingDiv);
-
-		let pendingNameRow = this.createDiv();
-		pendingNameRow.classList.add("aonInvoiceHomePendingNameRow");
-		pendingDiv.appendChild(pendingNameRow);
-	
-
-		let pendingName = this.createDiv();
-		pendingName.id = 'pendingName';
-		pendingName.innerHTML = MSG.PENDING_DOCUMENTS;
-		pendingName.classList.add("aonInvoiceHomePendingName");
-		pendingNameRow.appendChild(pendingName);
-
-		let pendingCounterRow = this.createDiv();
-		pendingCounterRow.classList.add("aonInvoiceHomePendingCounterRow");
-		pendingDiv.appendChild(pendingCounterRow);
-
-		// PENDING OUTPUT
-		let pendingIssuedDiv = this.createDiv();
-		pendingIssuedDiv.id = 'pendingIssued';
-		pendingIssuedDiv.classList.add("aonInvoiceHomePendingIssuedDiv");
-		pendingIssuedDiv.overflow = 'hidden';
-		pendingCounterRow.appendChild(pendingIssuedDiv);
-
-		pendingIssuedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: 'emitida'},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice', 'ticket'], companyActsLike:'issuer'}
-		));
-
-		let pendingIssuedNumber = this.createDiv();
-		pendingIssuedNumber.id = 'pendingIssuedNumber';
-		pendingIssuedNumber.innerHTML = '0';
-		pendingIssuedNumber.classList.add("aonInvoiceHomePendingIssuedNumber");
-		pendingIssuedDiv.appendChild(pendingIssuedNumber);
-
-
-		let pendingIssuedName = this.createDiv();
-		pendingIssuedName.id = 'pendingIssuedName';
-		pendingIssuedName.innerHTML = MSG.ISSUEDS;
-		pendingIssuedName.classList.add("aonInvoiceHomePendingIssuedName");
-		pendingIssuedDiv.appendChild(pendingIssuedName);
-
-		// PENDING RECEIVED
-		let pendingReceivedDiv = this.createDiv();
-		pendingReceivedDiv.id = 'pendingReceived';
-		pendingReceivedDiv.classList.add("aonInvoiceHomePendingReceivedDiv");
-		pendingReceivedDiv.overflow = 'hidden';
-		pendingCounterRow.appendChild(pendingReceivedDiv);
-
-
-		pendingReceivedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: 'recibida'},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['invoice'], companyActsLike:'ne+issuer'}
-		));
-
-		let pendingReceivedNumber = this.createDiv();
-		pendingReceivedNumber.id = 'pendingReceivedNumber';
-		pendingReceivedNumber.innerHTML = '0';
-		pendingReceivedNumber.classList.add("aonInvoiceHomePendingReceivedNumber");
-		pendingReceivedDiv.appendChild(pendingReceivedNumber);
-
-		let pendingReceivedName = this.createDiv();
-		pendingReceivedName.id = 'pendingReceivedName';
-		pendingReceivedName.innerHTML = MSG.RECEIVEDS;
-		pendingReceivedName.classList.add("aonInvoiceHomePendingReceivedName");
-		pendingReceivedDiv.appendChild(pendingReceivedName);
-
-		// PENDING TICKETS
-		let pendingTicketDiv = this.createDiv();
-		pendingTicketDiv.id = 'pendingTicket';
-		pendingTicketDiv.classList.add("aonInvoiceHomePendingTicketDiv");
-		pendingTicketDiv.overflow = 'hidden';
-		pendingCounterRow.appendChild(pendingTicketDiv);
-
-		pendingTicketDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.INBOX, type: 'ticket'},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:['approved', 'pendingCorrection'], type:['ticket'], companyActsLike:'ne+issuer'}
-		));
-
-		let pendingTicketNumber = this.createDiv();
-		pendingTicketNumber.id = 'pendingTicketNumber';
-		pendingTicketNumber.innerHTML = '0';
-		pendingTicketNumber.classList.add("aonInvoiceHomePendingTicketNumber");
-		pendingTicketDiv.appendChild(pendingTicketNumber);
-
-		let pendingTicketName = this.createDiv();
-		pendingTicketName.id = 'pendingTicketName';
-		pendingTicketName.innerHTML = MSG.TICKETS;
-		pendingTicketName.classList.add("aonInvoiceHomePendingTicketName");
-		pendingTicketDiv.appendChild(pendingTicketName);
-
-		// REJECTED / TRASH
-
-		let rejectedDiv = this.createDiv();
-		rejectedDiv.id = 'pendingRevision';
-		rejectedDiv.classList.add("aonInvoiceHomeRejectedDiv");
-		rejectedDiv.overflow = 'hidden';
-
-		rejectedDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.REJECTED},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50
-				, publicStatus:[CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED], type: ['invoice', 'ticket']}
-		));
-
-
-		div.appendChild(rejectedDiv);
-
-		let rejectedNumber = this.createDiv();
-		rejectedNumber.id = 'rejectedNumber';
-		rejectedNumber.innerHTML = '0';
-		rejectedNumber.classList.add("aonInvoiceHomeRejectedNumber");
-		rejectedDiv.appendChild(rejectedNumber);
-
-		let rejectedName = this.createDiv();
-		rejectedName.id = 'rejectedName';
-		rejectedName.innerHTML = MSG.REJECTEDS;
-		rejectedName.classList.add("aonInvoiceHomeRejectedName");
-		rejectedDiv.appendChild(rejectedName);
-
-		// TRASH
-		let trashDiv = this.createDiv();
-		trashDiv.id = 'trash';
-		trashDiv.classList.add("aonInvoiceHomeTrashDiv");
-		trashDiv.overflow = 'hidden';
-
-		trashDiv.addEventListener(EVENT.CLICK, () => this.aonInvoiceList(
-			{status: CONSTANT.DRAFT},
-			{status: CONSTANT.OCR_INBOX, page: 0, perPage: 50, publicStatus:[CONSTANT.DISCARDED]}
-		));
-
-		div.appendChild(trashDiv);
-
-		let trashNumber = this.createDiv();
-		trashNumber.id = 'trashNumber';
-		trashNumber.innerHTML = '0';
-		trashNumber.classList.add("aonInvoiceHomeTrashNumber");
-		trashDiv.appendChild(trashNumber);
-
-		let trashName = this.createDiv();
-		trashName.id = 'trashName';
-		trashName.innerHTML = MSG.IN_TRASH;
-		trashName.classList.add("aonInvoiceHomeTrashName");
-		trashDiv.appendChild(trashName);
-		
-		return div;
-	}
 
 	updateCounterHome() {
 		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;

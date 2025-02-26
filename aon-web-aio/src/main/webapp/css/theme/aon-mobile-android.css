@@ -7,6 +7,11 @@
   background-color: #fafafa;
 }
 
+
+.aonLoginForm {
+    margin-top: 600px;
+}
+
 #divCompanyLogoForm {
     display:none;
 }

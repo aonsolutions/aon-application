@@ -215,7 +215,9 @@ export class AonMobilePackage extends AonElement {
 		d.setTitle(MSG.DELETE);
 		d.setContentHTML('Estás seguro de eliminar el Envase');
 		d.addAcceptAction(() => deleteElaborationPackage(this.packaging.id)
-			.then(() => {}));
+			.then(() => {})
+			.catch(e => this.showError(e))
+		);
 		d.open();
 	}
 
