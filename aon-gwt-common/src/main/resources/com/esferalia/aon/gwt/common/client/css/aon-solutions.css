@@ -1050,6 +1050,20 @@
 	gap: .5rem
 }
 
+.aon_packs_catalogue_panel{
+	display: flex;
+  	overflow-x: auto; 
+  	scroll-snap-type: x mandatory;
+  	-webkit-overflow-scrolling: touch;
+  	gap: 1rem;
+  	justify-content: start; /* IMPORTANTE: Mantiene el desbordamiento horizontal */
+  	align-items: start;
+}
+
+.aon_packs_catalogue_panel > * {
+  flex: 0 0 auto; /* Evita que las tarjetas se redimensionen */
+}
+
 .aon_position_relative{
 	position: relative;
 }

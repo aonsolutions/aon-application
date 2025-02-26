@@ -111,17 +111,19 @@ public class ProductCatalogue extends HTMLPanel {
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);
-		tableScrollPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		tableContainer.add(tableScrollPanel);
 	}
 
 	private void createPacks(HTMLPanel cataloguePanel, List<Product> packsProducts) {
+		HTMLPanel centerPacksCataloguePanel = new HTMLPanel("");
+		centerPacksCataloguePanel.setWidth("100%");
+		centerPacksCataloguePanel.getElement().getStyle().setProperty("display", "flex");
+		centerPacksCataloguePanel.getElement().getStyle().setProperty("justify-content", "center");
+		
 		HTMLPanel packsCataloguePanel = new HTMLPanel("");
-		packsCataloguePanel.addStyleName(AON.CSS.aonItemFlex());
-		packsCataloguePanel.getElement().getStyle().setProperty("justify-content", "center");
-		packsCataloguePanel.getElement().getStyle().setProperty("align-items", "start");
-		packsCataloguePanel.getElement().getStyle().setProperty("gap", "1rem");
-		cataloguePanel.add(packsCataloguePanel);
+		packsCataloguePanel.addStyleName(AON.CSS.aonPacksCataloguePanel());
+		centerPacksCataloguePanel.add(packsCataloguePanel);
+		cataloguePanel.add(centerPacksCataloguePanel);
 		
 		getItemTariff(null, itemTariffAll -> {
 			List<ItemTariff> itemTariffs = itemTariffAll.stream().filter(itemTariffIt -> itemTariffIt.getTariff().getId().equals(tariff.getId())).collect(Collectors.toList());
@@ -131,9 +133,6 @@ public class ProductCatalogue extends HTMLPanel {
 			}));
 			createProductCard(packsCataloguePanel, packsProducts, 0);
 		});
-		
-//		packsProducts.sort(Comparator.comparingDouble(p -> p.getItem().getPrice()));
-//		createProductCard(packsCataloguePanel, packsProducts, 0);
 	}
 	
 	private void createProductCard(HTMLPanel packsCataloguePanel, List<Product> packsProducts, int index) {
