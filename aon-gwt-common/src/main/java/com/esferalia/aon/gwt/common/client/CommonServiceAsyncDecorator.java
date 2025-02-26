@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -882,7 +883,18 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.saveItemCompositions(domainName, domain, user, itemCompositions, new AsyncCallbackWrapper<>(callback));
 	}
-	
+
+	@Override
+	public void getItemAddInfos(String domainName, int domain, String user, Integer itemId, AsyncCallback<List<ItemAddInfo>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getItemAddInfos(domainName, domain, user, itemId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveItemAddInfos(String domainName, int domain, String user, List<ItemAddInfo> itemAddInfoList, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveItemAddInfos(domainName, domain, user, itemAddInfoList, new AsyncCallbackWrapper<>(callback));
+	}
 	// **************************************************
 	// ***************************************** [TARIFF]
 	// **************************************************

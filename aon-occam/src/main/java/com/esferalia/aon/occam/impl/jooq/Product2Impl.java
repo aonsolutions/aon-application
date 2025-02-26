@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IProduct2;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -33,6 +35,7 @@ import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.impl.jooq.dao.CatalogueDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ItemAddInfoDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemTariffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
@@ -169,6 +172,23 @@ public class Product2Impl implements IProduct2{
 	public void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable) {
 		ctx.getDslContext().transaction( configuration -> 
 			TargetItemDAO.updateAllTargetItem(ctx, filter, disable));
+	}
+	
+	// ------------------------------------- ITEM ADD INFO
+
+	@Override
+	public Stream<ItemAddInfo> getItemAddInfoStream(CloseableAONContext ctx, ItemAddInfoFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemAddInfoDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public void saveItemAddInfo(CloseableAONContext ctx, ItemAddInfo itemAddInfo) {
+		ctx.getDslContext().transaction( configuration -> ItemAddInfoDAO.save(ctx, itemAddInfo));
+	}
+
+	@Override
+	public void deleteItemAddInfo(CloseableAONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> ItemAddInfoDAO.delete(ctx, id));
 	}
 
 	// ------------------------------------- INVEST ASSET

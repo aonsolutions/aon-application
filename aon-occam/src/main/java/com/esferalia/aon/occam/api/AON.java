@@ -1660,13 +1660,20 @@ public class AON {
 	}
 	
 	public static Stream<ItemAddInfo> getItemAddInfoStream(String domainName, Integer domainId, String login, ItemAddInfoFilter filter){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProduct().getItemAddInfoStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getNewProduct().getItemAddInfoStream(ctx, filter);
+		}
+	}
+	
+	public static void saveItemAddInfo(String domainName, Integer domainId, String login, ItemAddInfo itemAddInfo){
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getNewProduct().saveItemAddInfo(ctx, itemAddInfo);
+		}
+	}
+	
+	public static void deleteItemAddInfo(String domainName, Integer domainId, String login, Integer id){
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getNewProduct().deleteItemAddInfo(ctx, id);
 		}
 	}
 	

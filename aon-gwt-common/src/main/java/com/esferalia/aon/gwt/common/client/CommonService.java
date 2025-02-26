@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -307,6 +308,10 @@ public interface CommonService extends RemoteService {
 	void deleteItemCompositions(String domainName, int domain, String user, List<Integer> itemCompositions)throws AonCoreException;
 	ItemComposition saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition) throws AonCoreException;
 	List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException;
+	
+	List<ItemAddInfo> getItemAddInfos(String domainName, int domain, String user, Integer itemId) throws AonCoreException;
+	void saveItemAddInfos(String domainName, int domain, String user, List<ItemAddInfo> itemAddInfoList) throws AonCoreException;
+	
 
 	// **************************************************
 	// ***************************************** [TARIFF]

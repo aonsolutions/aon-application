@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -857,6 +858,22 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException {
 		return AON.saveItemCompositions(new Domain().setName(domainName).setId(domain), user, itemCompositions);
+	}
+	
+	@Override
+	public List<ItemAddInfo> getItemAddInfos(String domainName, int domain, String user, Integer itemId) throws AonCoreException {
+		List<ItemAddInfo> addInfoList = AON.getItemAddInfoStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(itemId))).collect(Collectors.toList());
+		return addInfoList;
+	}
+	
+	@Override
+	public void saveItemAddInfos(String domainName, int domain, String user, List<ItemAddInfo> itemAddInfoList) throws AonCoreException {
+		itemAddInfoList.forEach(itemAddInfo -> {
+			if(AonStringUtils.isBlank(itemAddInfo.getValue()) && null != itemAddInfo.getId())
+				AON.deleteItemAddInfo(domainName, domain, user, itemAddInfo.getId());
+			else
+				AON.saveItemAddInfo(domainName, domain, user, itemAddInfo);
+		});
 	}
 	
 	// **************************************************
