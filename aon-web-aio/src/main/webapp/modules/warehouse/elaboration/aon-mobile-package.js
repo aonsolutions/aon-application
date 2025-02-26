@@ -16,6 +16,8 @@ import {openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { deleteElaborationPackage } from '../../../services/warehouseService.js';
+import { getPackages, removePackage } from './PackagesCache.js';
+import { AonMobilePackageList } from './aon-mobile-package-list.js';
 
 export class AonMobilePackage extends AonElement {
 
@@ -215,7 +217,16 @@ export class AonMobilePackage extends AonElement {
 		d.setTitle(MSG.DELETE);
 		d.setContentHTML('Estás seguro de eliminar el Envase');
 		d.addAcceptAction(() => deleteElaborationPackage(this.packaging.id)
-			.then(() => {})
+			.then(() => {
+				removePackage();
+				let packageList = new AonMobilePackageList();
+				packageList.setToolbar(this.ELABORATION_TOOLBAR);
+				packageList.setPackages(getPackages());
+
+				let div = this.getElement('aonPackageDiv');
+				this.clearElement(div);
+				div.appendChild(packageList);
+			})
 			.catch(e => this.showError(e))
 		);
 		d.open();
