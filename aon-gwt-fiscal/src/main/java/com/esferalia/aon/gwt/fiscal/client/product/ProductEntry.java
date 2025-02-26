@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.product;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,11 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomNumberBox;
@@ -31,6 +34,7 @@ import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -44,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -68,6 +73,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- Variables
 	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private final String EMPTY_STRING = "";
 	
 	private HTMLPanel container;
@@ -82,6 +89,8 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomNumberBox price = new AonCustomNumberBox("Precio");
 	private AonCustomListBox iva = new AonCustomListBox("IVA");
 	private AonCustomNumberBox pvp = new AonCustomNumberBox("P.V.P.");
+	private AonCustomIntegerBox limit = new AonCustomIntegerBox("L\u00edmite"); // LIMIT_MAX
+	private AonCustomCheckBox limitOverflow = new AonCustomCheckBox("Bloqueo Tras L\u00edmite"); // LIMIT_LOCK_OVERFLOW
 	
 	private AonCustomCard aditionalCard = new AonCustomCard("Datos Contrataci\u00f3n");
 	private ProductConsoleSelect console;
@@ -90,6 +99,9 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private AonCustomListBox category = new AonCustomListBox("Categor\u00eda");
 	private AonCustomMultiSelectBox tags = new AonCustomMultiSelectBox("Etiquetas");
 	private AonCustomCheckBox composite = new AonCustomCheckBox("Pack");
+	private AonCustomIntegerBox trial = new AonCustomIntegerBox("D\u00edas Prueba"); // TRIAL_LIMIT_DAYS
+	private AonCustomDateBox trialLimit = new AonCustomDateBox("Fecha L\u00edmite Prueba"); // TRIAL_LIMIT_DATE
+	private AonCustomCheckBox trialOverflow = new AonCustomCheckBox("Bloqueo Tras Prueba");  // TRIAL_LIMIT_LOCK_OVERFLOW
 	
 	private FlowPanel tariffRow = new FlowPanel();
 	
@@ -108,6 +120,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 	private Item item;
 	private List<Tax> taxes;
 	private List<ProductCategory> productCategories;
+	private List<ItemAddInfo> itemAddInfo;
 	
 	// Tags
 	private List<Tag> tagList;
@@ -268,6 +281,44 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		
 		table.add(createRow(price, iva, pvp));
 		
+		limit.hideNearBy();
+		limit.addValueChangeHandler(e -> {
+			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_MAX")).findFirst();
+			if(itemAddInfoOpt.isEmpty()) {
+				itemAddInfo.add(
+					new ItemAddInfo()
+						.setDomain(product.getDomain().getId())
+						.setProduct(product.getId())
+						.setItem(item.getId())
+						.setAttribute("LIMIT_MAX")
+						.setValue(null == limit.getValue() ? null : limit.getValue().toString())
+						.setDate(new Date())
+				);
+			} else itemAddInfoOpt.get().setValue(null == limit.getValue() ? null : limit.getValue().toString());
+		});
+		Optional<ItemAddInfo> limitOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_MAX")).findFirst();
+		limit.setValue(limitOpt.isEmpty() ? null : Integer.parseInt(limitOpt.get().getValue()));
+		
+		limitOverflow.setWidth("10rem");
+		limitOverflow.addValueChangeHandler(e -> {
+			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
+			if(itemAddInfoOpt.isEmpty()) {
+				itemAddInfo.add(
+					new ItemAddInfo()
+						.setDomain(product.getDomain().getId())
+						.setProduct(product.getId())
+						.setItem(item.getId())
+						.setAttribute("LIMIT_LOCK_OVERFLOW")
+						.setValue(!limitOverflow.getValue() ? null : Boolean.toString(limitOverflow.getValue()))
+						.setDate(new Date())
+				);
+			} else itemAddInfoOpt.get().setValue(!limitOverflow.getValue() ? null : Boolean.toString(limitOverflow.getValue()));
+		});
+		Optional<ItemAddInfo> limitOverflowOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "LIMIT_LOCK_OVERFLOW")).findFirst();
+		limitOverflow.setValue(limitOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(limitOverflowOpt.get().getValue()));
+		
+		table.add(createRow(limit, limitOverflow));
+		
 		return generalCard;
 	}
 
@@ -345,6 +396,62 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		});
 		
 		table.add(createRow(tags, composite));
+		
+		trial.hideNearBy();
+		trial.addValueChangeHandler(e -> {
+			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_DAYS")).findFirst();
+			if(itemAddInfoOpt.isEmpty()) {
+				itemAddInfo.add(
+					new ItemAddInfo()
+						.setDomain(product.getDomain().getId())
+						.setProduct(product.getId())
+						.setItem(item.getId())
+						.setAttribute("TRIAL_LIMIT_DAYS")
+						.setValue(null == trial.getValue() ? null : trial.getValue().toString())
+						.setDate(new Date())
+				);
+			} else itemAddInfoOpt.get().setValue(null == trial.getValue() ? null : trial.getValue().toString());
+		});
+		Optional<ItemAddInfo> trialOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_DAYS")).findFirst();
+		trial.setValue(trialOpt.isEmpty() ? null : Integer.parseInt(trialOpt.get().getValue()));
+		
+		trialLimit.addValueChangeHandler(e -> {
+			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_DATE")).findFirst();
+			if(itemAddInfoOpt.isEmpty()) {
+				itemAddInfo.add(
+					new ItemAddInfo()
+						.setDomain(product.getDomain().getId())
+						.setProduct(product.getId())
+						.setItem(item.getId())
+						.setAttribute("TRIAL_LIMIT_DATE")
+						.setValue(null == trialLimit.getValue() ? null : formatDate.format(trialLimit.getValue()))
+						.setDate(new Date())
+				);
+			} else itemAddInfoOpt.get().setValue(null == trialLimit.getValue() ? null : formatDate.format(trialLimit.getValue()));
+		});
+		Optional<ItemAddInfo> trialLimitOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_DATE")).findFirst();
+		trialLimit.setValue(trialLimitOpt.isEmpty() ? null :formatDate.parse(trialLimitOpt.get().getValue()));
+		
+		trialOverflow.setWidth("21rem");
+		trialOverflow.addValueChangeHandler(e -> {
+			Optional<ItemAddInfo> itemAddInfoOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_LOCK_OVERFLOW")).findFirst();
+			if(itemAddInfoOpt.isEmpty()) {
+				itemAddInfo.add(
+					new ItemAddInfo()
+						.setDomain(product.getDomain().getId())
+						.setProduct(product.getId())
+						.setItem(item.getId())
+						.setAttribute("TRIAL_LIMIT_LOCK_OVERFLOW")
+						.setValue(!limitOverflow.getValue() ? null : Boolean.toString(trialOverflow.getValue()))
+						.setDate(new Date())
+				);
+			} else itemAddInfoOpt.get().setValue(!trialOverflow.getValue() ? null : Boolean.toString(trialOverflow.getValue()));
+		});
+		Optional<ItemAddInfo> trialOverflowOpt = itemAddInfo.stream().filter(i -> AonStringUtils.equalsIgnoreCase(i.getAttribute(), "TRIAL_LIMIT_LOCK_OVERFLOW")).findFirst();
+		trialOverflow.setValue(trialOverflowOpt.isEmpty() ? false : Boolean.parseBoolean(trialOverflowOpt.get().getValue()));
+		
+		
+		table.add(createRow(trial, trialLimit, trialOverflow));
 		
 		return aditionalCard;
 	}
@@ -598,9 +705,24 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 							@Override
 							public void onSuccess(Void arg0) {
 								
-								AonMessagePanel.showSuccess(messagePanel, "Producto " + product.getName()+ " guardado correctamente");
+								AonMessagePanel.showLoading(messagePanel, "Guardando item producto addInfo " + product.getName());
 								
-								setProduct(product.getId());
+								commonService.saveItemAddInfos(options.getDomainName(), options.getDomain(), options.getUser(), itemAddInfo, new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessagePanel.showError(messagePanel, "Error guardado item producto addInfo: " + caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Void arg0) {
+										
+										AonMessagePanel.showSuccess(messagePanel, "Producto " + product.getName()+ " guardado correctamente");
+										
+										setProduct(product.getId());
+									}
+									
+								});
 							}
 							
 						});
@@ -633,7 +755,20 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 					@Override
 					public void onSuccess(Item itemDb) {
 						item = itemDb;
-						success.accept(product);
+						
+						commonService.getItemAddInfos(options.getDomainName(), options.getDomain(), options.getUser(), item.getId(), new AsyncCallback<List<ItemAddInfo>>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error obteniendo item addInfo: " + caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(List<ItemAddInfo> itemAddInfoDb) {
+								itemAddInfo = itemAddInfoDb;
+								success.accept(product);
+							}}
+						);	
 					}}
 				);		
 			}
