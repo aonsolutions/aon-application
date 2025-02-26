@@ -99,6 +99,14 @@ public class Model369 extends MainEntryPoint {
 			breakdownPanel.setWidget(panel);
 			breakdownPanel.scrollToTop();
 		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
 
 		@Override
 		public void cleanInfoPanel() {

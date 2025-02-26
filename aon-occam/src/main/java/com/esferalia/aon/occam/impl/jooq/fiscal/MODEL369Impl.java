@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL369;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
+import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod369.Mod369DAO;
 
@@ -46,6 +47,11 @@ public class MODEL369Impl implements IMODEL369 {
 	public Mod369 changeStatus(AONContext ctx, Mod369 mod369, FiscalStatus newStatus) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod369DAO.changeStatusMod369(ctx, mod369, newStatus));		
+	}
+	
+	@Override
+	public String getInfo(AONContext ctx, Mod369 mod369, Mod369Detail mod369Detail, byte detailType) {
+		return Mod369DAO.getInfo(ctx, mod369, mod369Detail, detailType);
 	}
 
 }

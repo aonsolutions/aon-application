@@ -3,8 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod369;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
+import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -20,5 +22,7 @@ public interface Model369Service extends RemoteService {
 	Mod369 initialize(Occam occam, Integer year, Period period) throws AonCoreException;
 	Mod369 saveComments(Occam occam, Mod369 mod369) throws AonCoreException;
 	Mod369 changeStatus(Occam occam, Mod369 mod369, FiscalStatus newStatus) throws AonCoreException;
+	String getInfo(Occam occam, Mod369 mod369, Mod369Detail mod369Detail, byte detailType) throws AonCoreException;
+	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	
 }

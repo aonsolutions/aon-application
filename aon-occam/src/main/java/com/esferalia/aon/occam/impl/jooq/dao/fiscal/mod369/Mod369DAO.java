@@ -1,35 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod369;
 
-import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel369.FS_MODEL369;
 import static com.esferalia.aon.jooq.tables.FsModel369Detail.FS_MODEL369_DETAIL;
-import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
-import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
-import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Field;
-import org.jooq.GroupField;
 import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
 
 import com.esferalia.aon.jooq.tables.records.FsModel369Record;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.VatContextJSON;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -40,15 +33,15 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod369DetailOther;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369PayType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369Regime;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369VatType;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
-import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -57,12 +50,13 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 public class Mod369DAO {
 	
 	private static final byte ZERO_BYTE = 0;
-	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
-	private static final String MODEL_INVOICE = "modelInvoice";
-	private static final Field<BigDecimal> SUM_BASE = DSL.sum(INVOICE_TAX.BASE);
-	private static final Field<BigDecimal> SUM_QUOTA = DSL.sum(DSL.decode()
-			.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
-			.when(INVOICE_TAX.QUOTA.equal(0.0), DSL.round((INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100),2)));
+	private static final byte ONE_BYTE = 1;
+//	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
+//	private static final String MODEL_INVOICE = "modelInvoice";
+//	private static final Field<BigDecimal> SUM_BASE = DSL.sum(INVOICE_TAX.BASE);
+//	private static final Field<BigDecimal> SUM_QUOTA = DSL.sum(DSL.decode()
+//			.when(INVOICE_TAX.QUOTA.notEqual(0.0), INVOICE_TAX.QUOTA)
+//			.when(INVOICE_TAX.QUOTA.equal(0.0), DSL.round((INVOICE_TAX.BASE.mul(INVOICE_TAX.PERCENTAGE)).div(100),2)));
 	
 	private Mod369DAO() {
 	}
@@ -239,7 +233,10 @@ public class Mod369DAO {
 			.returning(FS_MODEL369.ID)
 			.fetchOne();
 		mod369.setId(rec.getId());
-		insertDetailsFromInvoice(ctx, mod369);
+		// A partir del ejercicio 2025, los registros de detalle se crean de forma automática desde las facturas
+		if (mod369.getYear() >= 2025) {
+			insertDetailsFromInvoice(ctx, mod369);
+		}
 		return mod369;
 	}
 
@@ -502,6 +499,11 @@ public class Mod369DAO {
 				.setVatType(Mod369VatType.safeValueOf(rec.getValue(FS_MODEL369_DETAIL.VAT_TYPE)))
 				.setBase(rec.getValue(FS_MODEL369_DETAIL.BASE))
 				.setQuota(rec.getValue(FS_MODEL369_DETAIL.QUOTA))
+				// FALTA - DATOS ORIGINALES PARA SABER SI LA LINEA ES MANUAL, FALTA AÑADIR LOS CAMPOS
+				.setOriginalCountry(Country.safeValueOf(rec.getValue(FS_MODEL369_DETAIL.COUNTRY)))
+				.setOriginalVatPercent(rec.getValue(FS_MODEL369_DETAIL.VAT_PERCENT))
+				.setOriginalBase(rec.getValue(FS_MODEL369_DETAIL.BASE))
+				.setOriginalQuota(rec.getValue(FS_MODEL369_DETAIL.QUOTA))
 				;
 		}
 		
@@ -713,99 +715,185 @@ public class Mod369DAO {
 		return new FiscalModel()
 		         	.setId(mod369.getFsModel())
 		         	.setDomain(mod369.getDomain())
-		         	.setModel(mod369.getModel());
-		
+		         	.setModel(mod369.getModel())
+		         	.setYear(mod369.getYear())
+		         	.setPeriod(mod369.getPeriod())
+		         	.setAdministration(mod369.getAdministration());		
 	}
+	
+//	private static void insertDetailsFromInvoiceOld(AONContext ctx, final Mod369 mod369) {
+//		
+//		Field<?>[] selectFields;
+//		GroupField[] groupByFields;		
+//		if (mod369.getRegime() == Mod369Regime.UNION ) {
+//			// Régimen de la Unión
+//			selectFields = new Field[] { INVOICE.SERVICE,INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE,SUM_BASE,SUM_QUOTA };
+//			groupByFields = new GroupField[]{ INVOICE.SERVICE,INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE };
+//		} else {
+//			// Regimen Exterior a la Unión y Régimen de Importación
+//			selectFields = new Field[] { INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE,SUM_BASE,SUM_QUOTA };
+//			groupByFields = new GroupField[]{ INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE };
+//		}
+//		
+//		// CREAR LOS REGISTRO DE DETALLE
+//		
+//		getCommonSelect(ctx, mod369, selectFields)
+//			.groupBy(groupByFields)
+//			.fetch()
+//			.stream()
+//			.forEach(rec -> {
+//				// Régimen de la Unión (modalidad 0 y 1), Régimen Exterior a la Unión y Régimen de Importación
+//				// Las modalidades 2 y 3 del Régimen de la Unión, no están soportadas actualmente en las facturas
+//				Mod369Detail mod369Detail = new Mod369Detail()
+//					.setDomain(mod369.getDomain())
+//					.setMod369(mod369.getId())
+//					.setCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+//					.setVatPercent(rec.getValue(INVOICE_TAX.PERCENTAGE).doubleValue())
+//					.setVatType(rec.getValue(INVOICE_TAX.PERCENTAGE).doubleValue() < 15.0 ? Mod369VatType.REDUCED : Mod369VatType.STANDARD) // Según normativa europea el tipo de IVA normal en la Union Europea no puede ser inferior al 15%
+//					.setBase(rec.getValue(SUM_BASE).doubleValue())
+//					.setQuota(rec.getValue(SUM_QUOTA).doubleValue());
+//				
+//				byte detailType = 0;
+//				if (mod369.getRegime() == Mod369Regime.UNION && !AonEnumUtils.getBoolean(rec.getValue(INVOICE.SERVICE))) {
+//					detailType = 1;
+//				}			
+//				insertDetail(ctx, mod369Detail, detailType);
+//			});
+//		
+//		// CREAR LOS REGISTROS DE LAS FACTURAS VINCULADAS EN ALCATRAZ
+//		
+//		Set<Alcatraz> alcatrazInvoices = new HashSet<>();
+//		
+//		getCommonSelect(ctx, mod369, new Field[] { INVOICE.ID })
+//			.fetch()
+//			.stream()
+//			.forEach(rec -> {
+//				// Solo a partir del ejercicio 2025 se empiezan a vincular las facturas con este modelo
+//				if (mod369.getYear() >= 2025)			
+//					alcatrazInvoices.add( new Alcatraz().setInvoice(rec.getValue(INVOICE.ID)) );			
+//			});
+//		
+//		// Grabar en alcatraz las facturas vinculadas al modelo que se está generando
+//		AlcatrazDAO.deleteFiscalModel(ctx, getFiscalModel(mod369));
+//		AlcatrazDAO.saveModelInvoices(ctx, getFiscalModel(mod369), alcatrazInvoices); 
+//
+//	}
+	
+//	private static SelectConditionStep<Record> getCommonSelect(AONContext ctx, final Mod369 mod369, Field<?>[] selectFields) {
+//		
+//		// FALTA - FECHAS DEL PERIODO O DESDE EL INICIO DEL EJERCICIO HASTA EL FINAL DEL PERIODO, POR AHORA DESDE EL INICIO DEL EJERCICIO
+//		//         TENER EN CUENTA QUE LA PRIMERA VEZ QUE SE GENERE UN M369 NO ESTARA VINCULADO A NINGUNA FACTURA EN ALCATRAZ 
+//		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod369.getYear()));  // FiscalUtils.getPeriodStart(mod349);
+//		java.sql.Date lastDay = AonDateUtils.toSql(FiscalUtils.getPeriodEnd(mod369));
+//		
+//		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select(ALCATRAZ_INVOICE_ID)
+//				.from(ALCATRAZ)
+//				.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+//				.where(FS_MODEL.DOMAIN.eq(mod369.getDomain()))
+//				.and(ALCATRAZ.FINANCE.isNull())
+//				.and(ALCATRAZ.FINANCE_TRACKING.isNull())
+//				.and(FS_MODEL.YEAR.eq(mod369.getYear()))
+//				.and(FS_MODEL.MODEL.eq(mod369.getModel().getValue()))
+//				.asTable(MODEL_INVOICE);
+//		
+//		return ctx.getDslContext().select(selectFields)
+//			.from(INVOICE)
+//			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+//			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+//			.join(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
+//			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))  // Facturas que no estén vinculadas con ningún otro modelo 369 del ejercicio
+//			.where(INVOICE.DOMAIN.equal(mod369.getDomain()))
+//				.and(INVOICE.TYPE.equal(InvoiceType.SALES.value()))    // Ventas
+//				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))  // IVA
+//				.and(INVOICE_FISCAL.VAT_UNION.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.UNION)))             // Régimen de la Union
+//				.and(INVOICE_FISCAL.VAT_UNION_EXTERNAL.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.OUTSIDE)))  // Régimen Exterior a la Union
+//				.and(INVOICE_FISCAL.VAT_IMPORTATION.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.IMPORT)))      // Régimen de Importación
+//				.and(INVOICE.TAX_DATE.between(firstDay, lastDay));
+//		
+//	}
 	
 	private static void insertDetailsFromInvoice(AONContext ctx, final Mod369 mod369) {
 		
-		Field<?>[] selectFields;
-		GroupField[] groupByFields;		
-		if (mod369.getRegime() == Mod369Regime.UNION ) {
-			// Régimen de la Unión
-			selectFields = new Field[] { INVOICE.SERVICE,INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE,SUM_BASE,SUM_QUOTA };
-			groupByFields = new GroupField[]{ INVOICE.SERVICE,INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE };
-		} else {
-			// Regimen Exterior a la Unión y Régimen de Importación
-			selectFields = new Field[] { INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE,SUM_BASE,SUM_QUOTA };
-			groupByFields = new GroupField[]{ INVOICE.RDOCUMENT_COUNTRY,INVOICE_TAX.PERCENTAGE };
-		}
+		// FALTA - POSIBILIDAD DE CUMPLIMENTAR ALGUNOS DATOS DE LA CABECERA DEL MODELO, DE FORMA AUTOMATICA
+		// FALTA - LEER LAS FACTURAS SIEMPRE DESDE PRINCIPIO DE AÑO, O SIEMPRE EXCEPTO EL MES DE FEBRERO, QUE SE SUPONE QUE PUEDEN HABER HECHO ALGUN M369 EN ENERO
 		
-		// CREAR LOS REGISTRO DE DETALLE
+		// Guardaremos los ids de las facturas, para que después de crear los registros en Mod369Detail, creemos los registros en Alcatraz
+		Set<Alcatraz> alcatrazInvoices = new HashSet<>();
 		
-		getCommonSelect(ctx, mod369, selectFields)
-			.groupBy(groupByFields)
-			.fetch()
-			.stream()
-			.forEach(rec -> {
+		// Leer las facturas no vinculadas a ningún modelo 369 del ejercicio y administración, desde el inicio del ejercicio 
+		VATDAO.getNotInModelVatBreakdown(ctx, getFiscalModel(mod369).setGenerateFromYearStart(true))
+			.filter( vat -> vat.getInvoiceType() == InvoiceType.SALES )  // Sólo ventas 
+			.filter( vat -> (mod369.getRegime() == Mod369Regime.UNION && vat.isVatUnion()) || (mod369.getRegime() == Mod369Regime.OUTSIDE && vat.isVatUnionExternal()) || (mod369.getRegime() == Mod369Regime.IMPORT && vat.isVatImportation()) )  // Sólo del Régimen del modelo
+			.peek(vat -> {
+				// Régimen Exterior a la Unión y Régimen de Importación, no se separan por servicio
+				if (mod369.getRegime() != Mod369Regime.UNION && vat.isService()) {
+					vat.setService(false);
+				}
+				
+				// Guardar la factura, para añadirla a Alcatraz: Solo a partir del ejercicio 2025 se empiezan a vincular las facturas con este modelo
+				if (mod369.getYear() >= 2025)			
+					alcatrazInvoices.add( new Alcatraz().setInvoice(vat.getInvoice()) );
+			})
+			.collect(Collectors.toMap( // Agrupar por servicio, pais y porcentaje de IVA, sumando base y cuota
+                    item -> Arrays.asList(item.isService(), item.getRegistryDocumentCountry(), item.getPercentage()),
+                    item -> item,
+                    (existing, replacement) -> {
+                        existing.setBase(existing.getBase() + replacement.getBase());
+                        existing.setQuota(existing.getQuota() + replacement.getQuota());
+                        return existing;
+                    }
+                ))
+			.forEach((key, value) -> {
 				// Régimen de la Unión (modalidad 0 y 1), Régimen Exterior a la Unión y Régimen de Importación
 				// Las modalidades 2 y 3 del Régimen de la Unión, no están soportadas actualmente en las facturas
 				Mod369Detail mod369Detail = new Mod369Detail()
 					.setDomain(mod369.getDomain())
 					.setMod369(mod369.getId())
-					.setCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-					.setVatPercent(rec.getValue(INVOICE_TAX.PERCENTAGE).doubleValue())
-					.setVatType(rec.getValue(INVOICE_TAX.PERCENTAGE).doubleValue() < 15.0 ? Mod369VatType.REDUCED : Mod369VatType.STANDARD) // Según normativa europea el tipo de IVA normal en la Union Europea no puede ser inferior al 15%
-					.setBase(rec.getValue(SUM_BASE).doubleValue())
-					.setQuota(rec.getValue(SUM_QUOTA).doubleValue());
+					.setCountry(value.getRegistryDocumentCountry())
+					.setVatPercent(value.getPercentage())
+					.setVatType(value.getPercentage() < 15.0 ? Mod369VatType.REDUCED : Mod369VatType.STANDARD) // Según normativa europea el tipo de IVA normal en la Union Europea no puede ser inferior al 15%
+					.setBase(value.getBase())
+					.setQuota(value.getQuota())
+					.setOriginalCountry(value.getRegistryDocumentCountry())
+					.setOriginalVatPercent(value.getPercentage())
+					.setOriginalBase(value.getBase())
+					.setOriginalQuota(value.getQuota());
 				
 				byte detailType = 0;
-				if (mod369.getRegime() == Mod369Regime.UNION && !AonEnumUtils.getBoolean(rec.getValue(INVOICE.SERVICE))) {
+				if (mod369.getRegime() == Mod369Regime.UNION && !value.isService()) {
 					detailType = 1;
 				}			
 				insertDetail(ctx, mod369Detail, detailType);
-			});
-		
-		// CREAR LOS REGISTROS DE LAS FACTURAS VINCULADAS EN ALCATRAZ
-		
-		Set<Alcatraz> alcatrazInvoices = new HashSet<>();
-		
-		getCommonSelect(ctx, mod369, new Field[] { INVOICE.ID })
-			.fetch()
-			.stream()
-			.forEach(rec -> {
-				// Solo a partir del ejercicio 2025 se empiezan a vincular las facturas con este modelo
-				if (mod369.getYear() >= 2025)			
-					alcatrazInvoices.add( new Alcatraz().setInvoice(rec.getValue(INVOICE.ID)) );			
-			});
+	        });
 		
 		// Grabar en alcatraz las facturas vinculadas al modelo que se está generando
 		AlcatrazDAO.deleteFiscalModel(ctx, getFiscalModel(mod369));
 		AlcatrazDAO.saveModelInvoices(ctx, getFiscalModel(mod369), alcatrazInvoices); 
 
+	}	
+
+	public static String getInfo(AONContext ctx, Mod369 mod369, Mod369Detail mod369Detail, byte detailType) {
+		return Objects.requireNonNullElse(
+				getModelInvoicesInfo(ctx, mod369, mod369Detail, detailType)
+					.map( VatContextJSON::toJSON)
+					.collect(JSONArray::new,JSONArray::put,JSONArray::put)
+					,new JSONArray()).toString();
 	}
 	
-	private static SelectConditionStep<Record> getCommonSelect(AONContext ctx, final Mod369 mod369, Field<?>[] selectFields) {
-		
-		// FALTA - FECHAS DEL PERIODO O DESDE EL INICIO DEL EJERCICIO HASTA EL FINAL DEL PERIODO, POR AHORA DESDE EL INICIO DEL EJERCICIO
-		//         TENER EN CUENTA QUE LA PRIMERA VEZ QUE SE GENERE UN M369 NO ESTARA VINCULADO A NINGUNA FACTURA EN ALCATRAZ 
-		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod369.getYear()));  // FiscalUtils.getPeriodStart(mod349);
-		java.sql.Date lastDay = AonDateUtils.toSql(FiscalUtils.getPeriodEnd(mod369));
-		
-		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select(ALCATRAZ_INVOICE_ID)
-				.from(ALCATRAZ)
-				.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
-				.where(FS_MODEL.DOMAIN.eq(mod369.getDomain()))
-				.and(ALCATRAZ.FINANCE.isNull())
-				.and(ALCATRAZ.FINANCE_TRACKING.isNull())
-				.and(FS_MODEL.YEAR.eq(mod369.getYear()))
-				.and(FS_MODEL.MODEL.eq(mod369.getModel().getValue()))
-				.asTable(MODEL_INVOICE);
-		
-		return ctx.getDslContext().select(selectFields)
-			.from(INVOICE)
-			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-			.join(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
-			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))  // Facturas que no estén vinculadas con ningún otro modelo 369 del ejercicio
-			.where(INVOICE.DOMAIN.equal(mod369.getDomain()))
-				.and(INVOICE.TYPE.equal(InvoiceType.SALES.value()))    // Ventas
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))  // IVA
-				.and(INVOICE_FISCAL.VAT_UNION.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.UNION)))             // Régimen de la Union
-				.and(INVOICE_FISCAL.VAT_UNION_EXTERNAL.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.OUTSIDE)))  // Régimen Exterior a la Union
-				.and(INVOICE_FISCAL.VAT_IMPORTATION.equal(AonEnumUtils.getByte(mod369.getRegime() == Mod369Regime.IMPORT)))      // Régimen de Importación
-				.and(INVOICE.TAX_DATE.between(firstDay, lastDay));
-		
+	private static Stream<VatContext> getModelInvoicesInfo(AONContext ctx, Mod369 mod369, Mod369Detail mod369Detail, byte detailType) {
+		if (mod369Detail.isManual() ) {
+			return VATDAO.getVatBreakdown(ctx, getFiscalModel(mod369))
+					.filter( vat -> vat.getInvoiceType() == InvoiceType.SALES )
+					.filter( vat -> (mod369.getRegime() == Mod369Regime.UNION && vat.isVatUnion()) || (mod369.getRegime() == Mod369Regime.OUTSIDE && vat.isVatUnionExternal()) || (mod369.getRegime() == Mod369Regime.IMPORT && vat.isVatImportation()) )
+					.filter( vat -> (mod369.getRegime() != Mod369Regime.UNION) || (detailType == ZERO_BYTE && vat.isService()) || (detailType == ONE_BYTE && !vat.isService()) )  // Prestaciones de Servicio o Entrega de bienes (solo Régimen de la Unión)
+					.filter( vat -> vat.getRegistryDocumentCountry() == mod369Detail.getCountry() ) // País
+					.filter( vat -> vat.getPercentage() == mod369Detail.getVatPercent() ); // Porcentaje de IVA
+		} else {		
+			return VATDAO.getModelVatBreakdown(ctx, getFiscalModel(mod369))
+					.filter( vat -> (mod369.getRegime() != Mod369Regime.UNION) || (detailType == ZERO_BYTE && vat.isService()) || (detailType == ONE_BYTE && !vat.isService()) )  // Prestaciones de Servicio o Entrega de bienes (solo Régimen de la Unión)
+					.filter( vat -> vat.getRegistryDocumentCountry() == mod369Detail.getCountry() ) // País
+					.filter( vat -> vat.getPercentage() == mod369Detail.getVatPercent() ); // Porcentaje de IVA
+		}
 	}
 	
 }

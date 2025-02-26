@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -21,9 +22,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod369.Model369.Model369Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
@@ -35,7 +40,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod369VatType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -747,6 +756,13 @@ abstract class Model369Base extends DockLayoutPanel {
 				markAsDirty();
 			});
 			
+			// Boton info facturas vinculadas a la línea
+			AonTableButton infoRowButton =  new AonTableButton("Ver desglose del IVA en facturas",AON.CSS.aonIconHelp());
+			infoRowButton.addClickHandler(event -> {
+				byte detailType = (byte) (details == getModel().getDetails4() ? 1 : 0);
+				showInvoiceVatBreakdownInfo(infoRowButton, details.get(idx), detailType);
+			});
+		
 			// No se borran las líneas en pantalla, simplemente se dejan inactivas, con posibilidad de restaurarla
 			if (details.get(idx).isDeleted()) {
 				countryList.setEnabled(false);
@@ -756,13 +772,25 @@ abstract class Model369Base extends DockLayoutPanel {
 				quota.setEnabled(false);
 			}			
 
-			tab2.addRow()
+			AonDisplayTableRow row = tab2.addRow()
 				.addCell(countryList)
 				.addCell(percent)
 				.addCell(vatTypeList)
 				.addCell(base)
 				.addCell(quota)
-				.addCell(deleteRowButton);
+				.addCell(deleteRowButton)
+				.addCell(infoRowButton);
+
+			if (details.get(idx).isManual()) {
+				InlineLabel adjLabel = new InlineLabel();
+				adjLabel.addStyleName(AON.CSS.aonIconLabel());
+				adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
+				adjLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
+				adjLabel.setSize("18px", "18px");
+				adjLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
+				row.addCell(adjLabel);				
+			}
+			
 		}
 		
 		// Botón añadir linea
@@ -1208,6 +1236,75 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		return dockLayoutPanel;
 		
+	}
+	
+	private void showInvoiceVatBreakdownInfo(AonTableButton button, Mod369Detail mod369Detail, byte detailType) {
+		button.setEnabled(false);
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model369.SERVICE.getInfo(callback.getOptions().getOccam(), getModel(), mod369Detail, detailType, new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				popup.hide();
+				callback.showError(AON.MSG.errorMessage());
+				button.setEnabled(true);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				popup.hide();
+				JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel();
+				grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+				grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+				if (mod369Detail.isManual()) {
+					grid.setRemarks("L\u00EDnea introducida o modificada manualmente. Se muestran los datos relativos al periodo que abarca el modelo.");
+				}
+				
+				// Régimen, Prestaciones de Servicios/Entregas de Bienes, País, Porcentaje de IVA
+				grid.setSubTitle(AonStringUtils.join(
+						getModel().getRegime().getDescription(),	
+						getModel().getRegime() == Mod369Regime.UNION ? detailType == 0 ? " - Prestaciones de Servicios" : " - Entregas de Bienes" : "",
+						" - Pa\u00EDs: ",
+						mod369Detail.getCountry() == null ? "<NO ESPECIFICADO>" : mod369Detail.getCountry().getName(),
+						" - Porcentaje de IVA: ",
+						mod369Detail.getVatPercent(),
+						"%"
+						));
+
+				JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+				JsArray<JsVatContext> array = arrayObject.cast();
+				grid.render(array);
+				callback.showInfoPanelWidget(grid);
+				button.setEnabled(true);
+			}
+		});
+	}
+	
+	private void showInvoice(JsVatContext vt) {
+		int invoiceId = vt.getInvoice();
+		Model369.SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId, new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
 	}
 	
 }
