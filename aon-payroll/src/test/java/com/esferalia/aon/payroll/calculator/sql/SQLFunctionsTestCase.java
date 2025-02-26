@@ -545,6 +545,44 @@ public class SQLFunctionsTestCase extends
 	}
 
 	@Test
+	public void testSystemFunctionAtContractData() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, getToday(),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), "666.00");
+						put("SYS_DIAS_MES", String.format("%s('%s')", SYSTEM, MONTH_DAYS));
+					}
+				});
+		
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+
+		// First of month of contract, 99% will be partial
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, start, end, end, criteria);
+		ctx.next();
+		
+		ctx.getExpressionContext().eval("SYS_DIAS_MES", getToday(), end, Double.class)
+		.stream()
+		.forEach(result-> Assert.assertEquals(String.format("%s('%s')", SYSTEM, MONTH_DAYS), (double) getMax(end, DAY_OF_MONTH), result.getValue()));
+		
+
+		ctx.getExpressionContext().eval(String.format("%s", MONTH_DAYS), getToday(), end, Double.class)
+		.stream()
+		.forEach(result-> Assert.assertEquals(String.format("%s", MONTH_DAYS), 666.00, result.getValue()));
+	}
+
+	@Test
 	public void testAgreementFunction() throws ExpressionException, SQLException {
 
 		Connection connection = getConnection();

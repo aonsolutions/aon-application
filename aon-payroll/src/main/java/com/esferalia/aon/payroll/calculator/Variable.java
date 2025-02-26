@@ -8,4 +8,5 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Variable {
 	ContextVariable value();
+	String string() default "0"; 
 }

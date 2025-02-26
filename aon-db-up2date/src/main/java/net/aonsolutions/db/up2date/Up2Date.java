@@ -28,7 +28,11 @@ import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.payroll.PartialRetirementInsert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
+import net.aonsolutions.db.up2date.tgss.BasesMin2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
+import net.aonsolutions.db.up2date.tgss.FellowsBases2025Update;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2025Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2025Update;
 import net.aonsolutions.db.up2date.tgss.HomeSolidarityRemove;
 import net.aonsolutions.db.up2date.tgss.MEI2025Rollback;
 import net.aonsolutions.db.up2date.tgss.SMI2025Update;
@@ -36,6 +40,9 @@ import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIII;
 import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2025Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2024Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2025Update;
 import net.aonsolutions.db.up2date.user.AlterUserAddIndexAuth;
 
 public class Up2Date {
@@ -520,7 +527,14 @@ public class Up2Date {
 			
 			// SMI2025Update.SMI2025UPDATE,
 			// PartialRetirementInsert.PARTIAL_RETIREMENT_INSERT
-			HomeSolidarityRemove.HOME_SOLIDARITY_REMOVE
+			// HomeSolidarityRemove.HOME_SOLIDARITY_REMOVE
+			
+			BasesMin2025Update.BASESMIN2025UPDATE,
+			HomeBases2025Update.HOMEBASES2025UPDATE,
+			FellowsBases2025Update.FELLOWSBASES2025UPDATE,
+			TrainningBases2025Update.TRAINNINGBASES2025UPDATE,
+			FellowsPercentages2025Update.FELLOWSPERCENTAGES2024UPDATE,
+			TrainingPercentages2025Update.TRAINNINGPERCENTAGES2025UPDATE,
 			
 	};
 
