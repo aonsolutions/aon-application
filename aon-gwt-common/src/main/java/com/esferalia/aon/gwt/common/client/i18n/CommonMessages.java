@@ -2633,6 +2633,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Servicio")
 	String service();
+	
+	@DefaultMessage("R\u00E9gimen de la Uni\u00F3n")
+	String vatUnionRegime();
+
+	@DefaultMessage("R\u00E9gimen Exterior a la Uni\u00F3n")
+	String vatUnionExternalRegime();
 
 	@DefaultMessage("R\u00E9gimen de importaci\u00F3n")
 	String vatImportationRegime();

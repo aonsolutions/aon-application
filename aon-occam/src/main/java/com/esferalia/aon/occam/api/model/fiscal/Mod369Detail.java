@@ -164,7 +164,6 @@ public class Mod369Detail implements Serializable {
 	
 	// Línea de detalle introducida o modificada manualmente
 	public boolean isManual() {
-		// FALTA - TODO Auto-generated method stub
 		return (this.originalCountry == null && this.originalVatPercent == 0.0 && this.originalBase == 0.0 && this.originalQuota == 0.0) ||   // Línea introducida manualmente (los datos originales están vacios)          
 		       (this.country != this.originalCountry || this.vatPercent != this.originalVatPercent || this.base != this.originalBase || this.quota != this.originalQuota);   // Línea modificada manualmente (alguno de los datos originales son distintos de los actuales)
 	}

@@ -139,6 +139,12 @@ public class JsVatContext extends JavaScriptObject {
 	public final native double getProrrateQuota() /*-{
 		return this.prorrateQuota;
 	}-*/;
+	public final native boolean isVatUnion() /*-{
+		return this.vatUnion;
+	}-*/;
+	public final native boolean isVatUnionExternal() /*-{
+		return this.vatUnionExternal;
+	}-*/;
 	public final native boolean isVatImportation() /*-{
 		return this.vatImportation;
 	}-*/;

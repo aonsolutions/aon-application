@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -96,6 +96,17 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 		if (invoice.isInvestment()) {
 			attributesPanel.add(new AttributeLabel(AON.MSG.investAsset()));
 		}
+		
+		if (invoice.isVatUnion()) {
+			attributesPanel.add(new AttributeLabel(AON.MSG.vatUnionRegime()));
+		}
+		if (invoice.isVatUnionExternal()) {
+			attributesPanel.add(new AttributeLabel(AON.MSG.vatUnionExternalRegime()));
+		}
+		if (invoice.isVatImportation()) {
+			attributesPanel.add(new AttributeLabel(AON.MSG.vatImportationRegime()));
+		}
+		
 		return attributesPanel;
 	}
 	
@@ -111,7 +122,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			+ invoice.getRegistryDocument();
 		String numberLabel = invoice.isSales()?"N/Fra":"S/Fra";
 		String numberValue = invoice.isSales()
-				?( invoice.getSeries() + "/" + invoice.getNumber() )
+				?(invoice.getSeries() == null ? "" + invoice.getNumber() : invoice.getSeries() + "/" + invoice.getNumber())
 				:(invoice.getReferenceCode());
 		tab.addRow()
 			.addCell( new Label(AON.MSG.titular()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth120())

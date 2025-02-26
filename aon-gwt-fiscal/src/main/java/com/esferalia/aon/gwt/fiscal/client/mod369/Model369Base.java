@@ -756,12 +756,6 @@ abstract class Model369Base extends DockLayoutPanel {
 				markAsDirty();
 			});
 			
-			// Boton info facturas vinculadas a la línea
-			AonTableButton infoRowButton =  new AonTableButton("Ver desglose del IVA en facturas",AON.CSS.aonIconHelp());
-			infoRowButton.addClickHandler(event -> {
-				byte detailType = (byte) (details == getModel().getDetails4() ? 1 : 0);
-				showInvoiceVatBreakdownInfo(infoRowButton, details.get(idx), detailType);
-			});
 		
 			// No se borran las líneas en pantalla, simplemente se dejan inactivas, con posibilidad de restaurarla
 			if (details.get(idx).isDeleted()) {
@@ -778,17 +772,28 @@ abstract class Model369Base extends DockLayoutPanel {
 				.addCell(vatTypeList)
 				.addCell(base)
 				.addCell(quota)
-				.addCell(deleteRowButton)
-				.addCell(infoRowButton);
-
-			if (details.get(idx).isManual()) {
-				InlineLabel adjLabel = new InlineLabel();
-				adjLabel.addStyleName(AON.CSS.aonIconLabel());
-				adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
-				adjLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
-				adjLabel.setSize("18px", "18px");
-				adjLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
-				row.addCell(adjLabel);				
+				.addCell(deleteRowButton);
+			
+			// A partir del 2025 se muestra información de las facturas vinculadas a determinadas líneas de detalle, y si se ha creado o modificado manualmente 
+			if (getModel().getYear() >= 2025) {
+				// Boton info facturas vinculadas a la línea
+				AonTableButton infoRowButton =  new AonTableButton("Ver desglose del IVA en facturas",AON.CSS.aonIconHelp());
+				infoRowButton.addClickHandler(event -> {
+					byte detailType = (byte) (details == getModel().getDetails4() ? 1 : 0);
+					showInvoiceVatBreakdownInfo(infoRowButton, details.get(idx), detailType);
+				});
+				row.addCell(infoRowButton);
+				
+				// Indicar si la línea se ha creado o modificado manualmente
+				if (details.get(idx).isManual()) {
+					InlineLabel adjLabel = new InlineLabel();
+					adjLabel.addStyleName(AON.CSS.aonIconLabel());
+					adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
+					adjLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
+					adjLabel.setSize("18px", "18px");
+					adjLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
+					row.addCell(adjLabel);				
+				}
 			}
 			
 		}

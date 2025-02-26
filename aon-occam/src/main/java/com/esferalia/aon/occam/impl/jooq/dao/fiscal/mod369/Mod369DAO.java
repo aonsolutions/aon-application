@@ -74,7 +74,8 @@ public class Mod369DAO {
 			.where(FS_MODEL369.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
 			.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
 			.orderBy(FS_MODEL369.YEAR.desc()
-					,FS_MODEL369.NAME.asc()
+					,FS_MODEL369.PERIOD.desc()
+//					,FS_MODEL369.NAME.asc()
 					,FS_MODEL369.REGIME.asc())
 			.fetch()
 			.stream()
@@ -90,7 +91,8 @@ public class Mod369DAO {
 			.join(DOMAIN).on(FS_MODEL369.DOMAIN.equal(DOMAIN.ID))
 			.where(FS_MODEL369.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
 			.orderBy(FS_MODEL369.YEAR.desc()
-					,FS_MODEL369.NAME.asc()
+					,FS_MODEL369.PERIOD.desc()
+//					,FS_MODEL369.NAME.asc()
 					,FS_MODEL369.REGIME.asc())
 			.fetch()
 			.stream()
@@ -201,7 +203,7 @@ public class Mod369DAO {
 	}
 
 	private static Mod369 insert(AONContext ctx, Mod369 mod369) {
-		validate(ctx, mod369);
+		validateAndComplete(ctx, mod369);
 		mod369.setCreationUser(ctx.getUser());
 		mod369.setCreationDate(new Timestamp(System.currentTimeMillis()));
 		mod369.setFsModel(saveFsModel(ctx, mod369)); 
@@ -404,11 +406,11 @@ public class Mod369DAO {
 			.execute();
 	}
 	
-	private static void validate(AONContext ctx, Mod369 mod369) {
+	private static void validateAndComplete(AONContext ctx, Mod369 mod369) {
 		
 		// Comprobar que esta cumplimentado ejercicio, periodo y régimen
 		if (mod369.getYear() == 0 || mod369.getPeriod() == null || mod369.getRegime() == null)
-			throw new AonCoreException("Debe cumplimentar Ejercicio y Periodo.");
+			throw new AonCoreException("Debe cumplimentar R\u00E9gimen, Ejercicio y Periodo.");
 		
 		// Se comprueba que no exista ya una declaracion, para el periodo y regimen indicado
 		if (ctx.getDslContext().selectOne()
@@ -423,6 +425,25 @@ public class Mod369DAO {
 			.findFirst()
 			.isPresent()) 
 			throw new AonCoreException(AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod369.getModel().getName()));
+		
+		// Para Régimen Exterior a la Unión y Régimen de Importación, se completan algunos campos, con los valores del último creado
+		if (mod369.getRegime() != Mod369Regime.UNION) {
+			ctx.getDslContext().select(FS_MODEL369.OPERATOR_NUMBER, FS_MODEL369.INTERMEDIARY, FS_MODEL369.INTERMEDIARY_NUMBER)
+			.from(FS_MODEL369)
+			.where(FS_MODEL369.DOMAIN.equal(mod369.getDomain())
+					.and(FS_MODEL369.REGIME.equal(mod369.getRegime().value()))
+					.and(FS_MODEL369.ADMINISTRATION.equal(mod369.getAdministration().value())))
+			.orderBy(FS_MODEL369.YEAR.desc(),FS_MODEL369.PERIOD.desc())
+			.fetch()
+			.stream()
+			.findFirst()
+			.ifPresent(rec -> {
+				mod369.setOperatorNumber(rec.get(FS_MODEL369.OPERATOR_NUMBER));
+				mod369.setIntermediary(AonEnumUtils.getBoolean(rec.get(FS_MODEL369.INTERMEDIARY)));
+				mod369.setIntermediaryNumber(rec.get(FS_MODEL369.INTERMEDIARY_NUMBER));
+			});
+		}
+		
 	}
 
 	public static void delete(AONContext ctx, Mod369 mod369) {
@@ -814,14 +835,11 @@ public class Mod369DAO {
 	
 	private static void insertDetailsFromInvoice(AONContext ctx, final Mod369 mod369) {
 		
-		// FALTA - POSIBILIDAD DE CUMPLIMENTAR ALGUNOS DATOS DE LA CABECERA DEL MODELO, DE FORMA AUTOMATICA
-		// FALTA - LEER LAS FACTURAS SIEMPRE DESDE PRINCIPIO DE AÑO, O SIEMPRE EXCEPTO EL MES DE FEBRERO, QUE SE SUPONE QUE PUEDEN HABER HECHO ALGUN M369 EN ENERO
-		
 		// Guardaremos los ids de las facturas, para que después de crear los registros en Mod369Detail, creemos los registros en Alcatraz
 		Set<Alcatraz> alcatrazInvoices = new HashSet<>();
 		
-		// Leer las facturas no vinculadas a ningún modelo 369 del ejercicio y administración, desde el inicio del ejercicio 
-		VATDAO.getNotInModelVatBreakdown(ctx, getFiscalModel(mod369).setGenerateFromYearStart(true))
+		// Leer las facturas no vinculadas a ningún modelo 369 del ejercicio y administración, del periodo correspondiente 
+		VATDAO.getNotInModelVatBreakdown(ctx, getFiscalModel(mod369))
 			.filter( vat -> vat.getInvoiceType() == InvoiceType.SALES )  // Sólo ventas 
 			.filter( vat -> (mod369.getRegime() == Mod369Regime.UNION && vat.isVatUnion()) || (mod369.getRegime() == Mod369Regime.OUTSIDE && vat.isVatUnionExternal()) || (mod369.getRegime() == Mod369Regime.IMPORT && vat.isVatImportation()) )  // Sólo del Régimen del modelo
 			.peek(vat -> {
