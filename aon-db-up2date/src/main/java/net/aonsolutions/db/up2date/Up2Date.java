@@ -28,6 +28,7 @@ import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.payroll.PartialRetirementInsert;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
+import net.aonsolutions.db.up2date.tgss.BasesMin2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
 import net.aonsolutions.db.up2date.tgss.HomeSolidarityRemove;
 import net.aonsolutions.db.up2date.tgss.MEI2025Rollback;
@@ -520,7 +521,9 @@ public class Up2Date {
 			
 			// SMI2025Update.SMI2025UPDATE,
 			// PartialRetirementInsert.PARTIAL_RETIREMENT_INSERT
-			HomeSolidarityRemove.HOME_SOLIDARITY_REMOVE
+			// HomeSolidarityRemove.HOME_SOLIDARITY_REMOVE
+			
+			BasesMin2025Update.BASESMIN2025UPDATE
 			
 	};
 
