@@ -2,6 +2,7 @@ import { AonMobileList } from '../../../components/aon-mobile-list.js';
 import { EVENT, MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
 import { getItems } from '../../../services/productService.js';
 import { AonMobilePackage } from './aon-mobile-package.js';
+import { addPackages, initializePackages, setIndex, setPackages } from './PackagesCache.js';
 
 export class AonMobilePackageList extends AonMobileList {
 
@@ -52,6 +53,7 @@ export class AonMobilePackageList extends AonMobileList {
         if(!this.packages && this.filter.page) {
             this.filter.page = this.filter.page + 1;
             getItems(this.filter).then(items => {
+                addPackages(items);
                 if(items.length == 0)
                     this.more = false;
                 items.forEach((item, i) => this.addItemRow(item, i));
@@ -62,8 +64,10 @@ export class AonMobilePackageList extends AonMobileList {
     init(searchValue) {
         this.build();
         if(!this.packages) {
+            initializePackages();
             if(searchValue) this.filter.value = searchValue;
             getItems(this.filter).then(items => {
+                addPackages(items);
                 if(items.length == 0){   
                     this.empty();
                 }
@@ -97,6 +101,7 @@ export class AonMobilePackageList extends AonMobileList {
     }
 
     aonPackage(packaging, i) {
+        setIndex(i);
         let aonPackage = new AonMobilePackage();
         aonPackage.setElaborationToolbar(this.TOOLBAR);
         aonPackage.setPackaging(packaging);
@@ -106,7 +111,9 @@ export class AonMobilePackageList extends AonMobileList {
     }
 
     setPackages(packages){
+        initializePackages();
         this.packages = packages;
+        setPackages(this.packages);
         this.more = false;
     }
 
