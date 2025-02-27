@@ -132,6 +132,7 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	protected void markAsDirty() {
 		setDirty(true);
+		callback.cleanAndCloseInfoPanel();
 	}
 	private boolean isDirty() {
 		return this.dirty;
@@ -684,6 +685,14 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		for (int i = 0; i < details.size(); i++) {
 			final int idx = i;
+			
+			InlineLabel manualLabel = new InlineLabel();
+			manualLabel.addStyleName(AON.CSS.aonIconLabel());
+			manualLabel.addStyleName(AON.CSS.aonIconRedWrench());
+			manualLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
+			manualLabel.setSize("18px", "18px");
+			manualLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
+			manualLabel.setVisible(details.get(idx).isManual());
 
 			// País de consumo
 			Mod369CountryListBox countryList = new Mod369CountryListBox();
@@ -694,6 +703,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			countryList.addChangeHandler(event -> {
 				details.get(idx).setCountry(countryList.getValue());
 				paintResultPanel(dockResultPanel);
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();				
 			});
 			
@@ -706,6 +716,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			percent.addValueChangeHandler(event -> {
 				if (percent.getValue() == null) percent.setValue(0.0,false);
 				details.get(idx).setVatPercent(percent.getValue());
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});			
 			
@@ -730,6 +741,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			base.addValueChangeHandler(event -> {
 				if (base.getValue() == null) base.setValue(0.0,false);
 				details.get(idx).setBase(base.getValue());
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});
 			
@@ -743,19 +755,20 @@ abstract class Model369Base extends DockLayoutPanel {
 				if (quota.getValue() == null) quota.setValue(0.0,false);
 				details.get(idx).setQuota(quota.getValue());
 				paintResultPanel(dockResultPanel);
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});			
 			
 			// Boton borrar/restaurar linea
 			AonTableButton deleteRowButton = details.get(idx).isDeleted() ? new AonTableButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore()) : new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteRowButton.setEnabled(getModel().isEditable());
+			deleteRowButton.setTabIndex(-2);
 			deleteRowButton.addClickHandler(event -> {
 				details.get(idx).setDeleted(!details.get(idx).isDeleted());
 				paintDetailsPanel(panel, details, title);
 				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});
-			
 		
 			// No se borran las líneas en pantalla, simplemente se dejan inactivas, con posibilidad de restaurarla
 			if (details.get(idx).isDeleted()) {
@@ -778,6 +791,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			if (getModel().getYear() >= 2025) {
 				// Boton info facturas vinculadas a la línea
 				AonTableButton infoRowButton =  new AonTableButton("Ver desglose del IVA en facturas",AON.CSS.aonIconHelp());
+				infoRowButton.setTabIndex(-2);
 				infoRowButton.addClickHandler(event -> {
 					byte detailType = (byte) (details == getModel().getDetails4() ? 1 : 0);
 					showInvoiceVatBreakdownInfo(infoRowButton, details.get(idx), detailType);
@@ -785,15 +799,7 @@ abstract class Model369Base extends DockLayoutPanel {
 				row.addCell(infoRowButton);
 				
 				// Indicar si la línea se ha creado o modificado manualmente
-				if (details.get(idx).isManual()) {
-					InlineLabel adjLabel = new InlineLabel();
-					adjLabel.addStyleName(AON.CSS.aonIconLabel());
-					adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
-					adjLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
-					adjLabel.setSize("18px", "18px");
-					adjLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
-					row.addCell(adjLabel);				
-				}
+				row.addCell(manualLabel);				
 			}
 			
 		}
@@ -803,6 +809,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		addButton.addStyleName(AON.CSS.aonMarginTop());
 		addButton.addStyleName(AON.CSS.aonMarginLeft());
 		addButton.setEnabled(getModel().isEditable());
+		addButton.setTabIndex(-2);
 		addButton.addClickHandler(event -> {
 			details.add((new Mod369Detail()).setVatType(Mod369VatType.STANDARD));
 			paintDetailsPanel(panel, details, title);

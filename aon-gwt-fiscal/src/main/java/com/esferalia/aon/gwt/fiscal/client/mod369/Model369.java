@@ -110,11 +110,17 @@ public class Model369 extends MainEntryPoint {
 
 		@Override
 		public void cleanInfoPanel() {
-			Widget w = breakdownPanel.getWidget();
-			if (w != null) {
-				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-			}
+//			Widget w = breakdownPanel.getWidget();
+//			if (w != null) {
+//				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+//			}
+			cleanBreakdownPanel();
 		}
+		
+		public void cleanAndCloseInfoPanel() {
+			cleanAndClose();
+		}
+		
 		public Integer getSelectedTab() {
 			return Model369.this.getSelectedTab();
 		}
