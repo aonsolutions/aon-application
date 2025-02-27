@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Filter.CatalogueFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
+import com.esferalia.aon.occam.api.model.Filter.ItemAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemTariffFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.InvestAssetParams;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
@@ -55,6 +57,12 @@ public interface IProduct2 {
 	public void deleteRItem(AONContext ctx, RegistryItemFilter filter);
 	public void updateRItemQuantity(AONContext ctx, String quantity, RegistryItemFilter filter);
 	public void updateAllTargetItem(AONContext ctx, InvoiceFilter filter, boolean disable);
+	
+	// ITEM ADD INFO
+	
+	public Stream<ItemAddInfo> getItemAddInfoStream(CloseableAONContext ctx, ItemAddInfoFilter filter);
+	public void saveItemAddInfo(CloseableAONContext ctx, ItemAddInfo itemAddInfo);
+	public void deleteItemAddInfo(CloseableAONContext ctx, Integer id);
 	
 	// INVEST ASSET
 	

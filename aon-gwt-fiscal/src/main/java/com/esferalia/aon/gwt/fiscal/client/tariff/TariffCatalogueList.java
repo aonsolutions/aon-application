@@ -124,7 +124,6 @@ public class TariffCatalogueList extends HTMLPanel {
 	
 	private void searchDataList() {
 		getList(products -> {
-			
 			if (products.isEmpty()) {
 				FlowPanel line = new FlowPanel();
 				InlineLabel label = new InlineLabel(AON.MSG.noData());
@@ -138,35 +137,37 @@ public class TariffCatalogueList extends HTMLPanel {
 	}
 	
 	private void paintRow(List<Product> products, int index) {
-		Product product = products.get(index);
-		
-		getItemTariff(product.getItem().getId(), itemTariffs -> {
-			HTMLPanel row = tab.createRow();
+		if(index < products.size()) {
+			Product product = products.get(index);
 			
-			for(TariffCatalogueColumn col : initializeTariffCatalogueColumns) {
-				if(AonStringUtils.equalsIgnoreCase(col.getDescription(), AON.MSG.code())) {
-					Label code = new Label(product.getCode());
-					code.setTitle(product.getCode());
-					tab.addInlineStyle(code, col.getStyle());
-					tab.addRow(row, code, col.getWidth());
-				} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), AON.MSG.description())) {
-					Label description = new Label(product.getName());
-					description.setTitle(product.getName());
-					tab.addInlineStyle(description, col.getStyle());
-					tab.addRow(row, description, col.getWidth());
-				} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
-					tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
-				} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
-					tab.addRow(row, new Label(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio")), col.getWidth());
-				}else {
-					Optional<ItemTariff> itemTariffOpt = itemTariffs.stream().filter(itemTariff -> itemTariff.getItem().equals(product.getItem().getId()) && AonStringUtils.equalsIgnoreCase(itemTariff.getTariff().getCode(), col.getDescription())).findFirst();
-					Tariff tariffObj = tariffs.stream().filter(tariffIt -> AonStringUtils.equalsIgnoreCase(tariffIt.getCode(), col.getDescription())).findFirst().get();
-					tab.addRow(row, new Label(formaDouble(getNeto(itemTariffOpt.isEmpty() ? tariffObj.getDiscount() : itemTariffOpt.get().getProfitPercent(), product.getItem().getPrice())) + " \u20ac"), col.getWidth());
+			getItemTariff(product.getItem().getId(), itemTariffs -> {
+				HTMLPanel row = tab.createRow();
+				
+				for(TariffCatalogueColumn col : initializeTariffCatalogueColumns) {
+					if(AonStringUtils.equalsIgnoreCase(col.getDescription(), AON.MSG.code())) {
+						Label code = new Label(product.getCode());
+						code.setTitle(product.getCode());
+						tab.addInlineStyle(code, col.getStyle());
+						tab.addRow(row, code, col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), AON.MSG.description())) {
+						Label description = new Label(product.getName());
+						description.setTitle(product.getName());
+						tab.addInlineStyle(description, col.getStyle());
+						tab.addRow(row, description, col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Precio")) {
+						tab.addRow(row, new Label(formaDouble(product.getItem().getPrice()) + " \u20ac"), col.getWidth());
+					} else if(AonStringUtils.equalsIgnoreCase(col.getDescription(), "Tipo")){
+						tab.addRow(row, new Label(null == product.getComposition() ? "" : (product.getComposition() ? "Pack" : "Servicio")), col.getWidth());
+					}else {
+						Optional<ItemTariff> itemTariffOpt = itemTariffs.stream().filter(itemTariff -> itemTariff.getItem().equals(product.getItem().getId()) && AonStringUtils.equalsIgnoreCase(itemTariff.getTariff().getCode(), col.getDescription())).findFirst();
+						Tariff tariffObj = tariffs.stream().filter(tariffIt -> AonStringUtils.equalsIgnoreCase(tariffIt.getCode(), col.getDescription())).findFirst().get();
+						tab.addRow(row, new Label(formaDouble(getNeto(itemTariffOpt.isEmpty() ? tariffObj.getDiscount() : itemTariffOpt.get().getProfitPercent(), product.getItem().getPrice())) + " \u20ac"), col.getWidth());
+					}
 				}
-			}
-			
-			paintRow(products, index + 1);
-		});
+				
+				paintRow(products, index + 1);
+			});
+		}
 	}
 	
 	private double getNeto(double percent, double price) {

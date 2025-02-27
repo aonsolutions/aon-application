@@ -1212,6 +1212,7 @@ export class AonInvoice extends AonElement {
 		let reference = createInput(this.REFERENCE, MSG.REFERENCE);
 		reference.value = this.invoice.reference;
 		reference.readonly = this.invoice.isReadonly();
+		reference.disabled = this.invoice.isReadonly();	
 		reference.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setReference(reference.value);
 			if(this.autosave) this.save();
@@ -1240,10 +1241,15 @@ export class AonInvoice extends AonElement {
 			referenceSpan.style.display = 'none';
 			switchReference.style.display = 'none';
 			if (this.isInvofoxInvoice()) {
+				this.getInvoice().number = undefined;
 				serieSpan.style.display = 'none';
 				numberSpan.style.display = 'none';
 				referenceSpan.style.display = 'block';
 				switchReference.style.display = 'block';
+			} else if(!this.invoice.isRawdoc()) {
+				serieSpan.style.display = 'none';
+				numberSpan.style.display = 'none';
+				referenceSpan.style.display = 'block';
 			}
 		} else {
 			serieSpan.style.display = 'none';
