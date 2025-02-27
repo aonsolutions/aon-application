@@ -1867,11 +1867,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
 		if (messageMap.isEmpty())
 			contrataEmployeeObject.setEmployeeContract(s -> {
-				showSuccess("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName()
-						+ " ha sido actualizado correctamente");
+				
 				loadWindow(su -> {
 					checkButtonsToolbar();
-					checkStatus(contrataEmployeeObject);
+					
+					AonMessagePanel.showSuccess(messageContainer, "El contrato " + contrataEmployeeObject.getEmployeeFullName()
+					+ " ha sido actualizado correctamente");
+					
+					Timer wait4 = new Timer() {
+						@Override public void run() { checkStatus(contrataEmployeeObject); }
+					};
+					
+					wait4.schedule(2500);
+					
 				});
 			}, f -> {
 			});

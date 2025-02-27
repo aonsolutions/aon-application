@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
@@ -53,6 +54,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 
 public abstract class EmployeeWidget extends FlowPanel {
@@ -137,6 +139,12 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 	private List<Agreement> agreements;
 	private Map<String, CNO> cnoMap;
+	
+	private boolean selectionAgreementInProgress = false;
+	
+	private HandlerRegistration selectionHandlerAgreement;
+	private HandlerRegistration valueChangeHandlerAgreement;
+	private HandlerRegistration keyUpHandlerAgreement;
 
 	// ------------------------------------------------- Constructor
 
@@ -440,7 +448,6 @@ public abstract class EmployeeWidget extends FlowPanel {
 	}
 	
 	private void addContractDataTableHadlers() {
-		
 		clearEmployee.addClickHandler(e -> onClearEmployeeClick());
 		
 		document.getSuggestBox().addSelectionHandler(e -> {
@@ -643,20 +650,37 @@ public abstract class EmployeeWidget extends FlowPanel {
 			onContractSeniorityDateChange(seniorityDateValue);
 		});
 		
-		agreement.getSuggestBox().addSelectionHandler(e -> {
-			String agreementDescription = agreement.getValue();
+		if(null != selectionHandlerAgreement) selectionHandlerAgreement.removeHandler();
+		if(null != valueChangeHandlerAgreement) valueChangeHandlerAgreement.removeHandler();
+		if(null != keyUpHandlerAgreement) keyUpHandlerAgreement.removeHandler();
+		
+		selectionHandlerAgreement = agreement.getSuggestBox().addSelectionHandler(e -> {
+			selectionAgreementInProgress = true;
+
+		    String agreementDescription = agreement.getValue();
 			for (Agreement agreementIt : this.agreements)
 				if (AonStringUtils.equalsIgnoreCase(agreementIt.getDescription(), agreementDescription))
 					onContractAgreementChange(agreementIt.getId(), agreementIt.getSSNumber());
+			isAgreementAndLevelSelected();
+
+		    Scheduler.get().scheduleDeferred(() -> selectionAgreementInProgress = false);
 		});
 
-		agreement.getSuggestBox().addValueChangeHandler(e -> {
-			String agreementDescription = agreement.getValue();
-			if (AonStringUtils.isBlank(agreementDescription))
+		valueChangeHandlerAgreement = agreement.getSuggestBox().addValueChangeHandler(e -> {
+		    if (selectionAgreementInProgress) {
+		    	return;
+		    }
+
+		    String agreementDescription = agreement.getValue();
+			if (AonStringUtils.isBlank(agreementDescription)) {
 				onContractAgreementChange(null, null);
+				level.clearItems();
+				level.addItem("-", "-1");
+				isAgreementAndLevelSelected();
+			}
 		});
 		
-		agreement.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
+		keyUpHandlerAgreement = agreement.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
 			if (e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				agreement.getSuggestBox().setText("");
 				agreement.showSuggestionList();
@@ -670,6 +694,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 			this.category.setValue(levelDescription);
 			onContractAgreementLevelChange(agreementLevelId);
 			onContractCategoryChange(levelDescription);
+			isAgreementAndLevelSelected();
 		});
 		
 		category.addValueChangeHandler(e -> {
@@ -1554,6 +1579,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 				messageMap.put("Nombre", "Campo obligatorio");
 			if (!isWokplaceSelected())
 				messageMap.put("Centro de trabajo", "Campo obligatorio");
+			if (!isAgreementAndLevelSelected())
+				messageMap.put("Convenio", "Para poder asigar un convenio se debe seleccionar un nivel/categoria");
 		} else {
 			if (!isNotNameBlank())
 				messageMap.put("Nombre", "Campo obligatorio");
@@ -1660,13 +1687,15 @@ public abstract class EmployeeWidget extends FlowPanel {
 	private boolean isAgreementAndLevelSelected() {
 		String agreementValue = agreement.getValue();
 		if (AonStringUtils.isBlank(agreementValue)) {
+			level.removeWarning();
 			return true;
 		} else {
 			String agreementLevelValue = level.getValue();
 			if (AonStringUtils.equalsIgnoreCase(agreementLevelValue, "-1")) {
-				level.addError();
+				level.addWarning();;
 				return false;
 			} else
+				level.removeWarning();
 				return true;
 		}
 	}

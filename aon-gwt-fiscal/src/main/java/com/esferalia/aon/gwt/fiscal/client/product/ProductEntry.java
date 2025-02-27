@@ -343,25 +343,6 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		barcode.setEnable(false);
 		barcode.setValue(formatBarCode(item.getBarcode()));
 		
-		table.add(createRow(app, barcode));
-		
-		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
-		domainType.setSelectedOptions(getSelectedDomainTypes());
-		domainType.addBlurHandler(e -> createBarCode());
-		
-		table.add(createRow(domainType, null));
-		
-		// TAGS
-		tags.getElement().getStyle().setProperty("max-width", "90%");
-		getTags(aviableTags -> {
-			tags.setOptions(aviableTags.stream().map(aviableTag -> aviableTag.getName()).collect(Collectors.toSet()));
-			
-			getProductTags(product.getId(), productTags -> {
-				Set<String> selectedProductTags = productTags.stream().map(productTag -> productTag.getTag().getName()).collect(Collectors.toSet());
-				tags.setSelectedOptions(selectedProductTags);
-			});
-		});
-		
 		composite = new AonCustomCheckBox("Pack");
 		composite.setWidth("3rem");
 		composite.setValue(null == product.getComposition() ? false : product.getComposition());
@@ -395,7 +376,26 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 				saveProduct();
 		});
 		
-		table.add(createRow(tags, composite));
+		table.add(createRow(app, barcode, composite));
+		
+		domainType.setOptions(DomainType.getValues().stream().filter(domainType -> domainType != DomainType.ADMIN).map(domainType -> domainType.getName()).collect(Collectors.toSet()));
+		domainType.setSelectedOptions(getSelectedDomainTypes());
+		domainType.addBlurHandler(e -> createBarCode());
+		
+		table.add(createRow(domainType, null));
+		
+		// TAGS
+		tags.getElement().getStyle().setProperty("max-width", "90%");
+		getTags(aviableTags -> {
+			tags.setOptions(aviableTags.stream().map(aviableTag -> aviableTag.getName()).collect(Collectors.toSet()));
+			
+			getProductTags(product.getId(), productTags -> {
+				Set<String> selectedProductTags = productTags.stream().map(productTag -> productTag.getTag().getName()).collect(Collectors.toSet());
+				tags.setSelectedOptions(selectedProductTags);
+			});
+		});
+		
+		table.add(createRow(tags, null));
 		
 		trial.hideNearBy();
 		trial.addValueChangeHandler(e -> {
