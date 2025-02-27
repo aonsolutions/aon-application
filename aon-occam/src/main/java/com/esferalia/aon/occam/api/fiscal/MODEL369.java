@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
+import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL369Impl;
 
@@ -60,5 +61,11 @@ public class MODEL369 {
 			return getImpl().changeStatus(ctx, mod369, newStatus);
 		}
 	}
+
+	public static String getInfo(Occam occam, Mod369 mod369, Mod369Detail mod369Detail, byte detailType) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+				return getImpl().getInfo(ctx, mod369, mod369Detail, detailType);
+			}
+		}
 
 }

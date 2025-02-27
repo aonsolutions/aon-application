@@ -30,7 +30,9 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 			,AON.CSS.aonWidth30()	
 			,AON.CSS.aonWidth30()	
 			,AON.CSS.aonWidth30()	
-			,AON.CSS.aonWidth30()	
+			,AON.CSS.aonWidth30()
+			,AON.CSS.aonWidth30()
+			,AON.CSS.aonWidth30()
 			,AON.CSS.aonWidth30()	
 			,AON.CSS.aonWidth80()
 			,AON.CSS.aonWidth100()
@@ -141,6 +143,10 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		rectifiedLabel.setTitle(AON.MSG.rectified());
 		Label accrualLabel = new Label("C");
 		accrualLabel.setTitle(AON.MSG.vatAccrualPayment());
+		Label unionLabel = new Label("U");
+		unionLabel.setTitle(AON.MSG.vatUnionRegime());
+		Label unionExternalLabel = new Label("E");
+		unionExternalLabel.setTitle(AON.MSG.vatUnionExternalRegime());		
 		Label importationLabel = new Label("M");
 		importationLabel.setTitle(AON.MSG.vatImportationRegime());
 		Label duaLabel = new Label("D");
@@ -154,6 +160,8 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 			.addCell(farmerLabel,COLUMN_LENGTHS[i++])
 			.addCell(rectifiedLabel,COLUMN_LENGTHS[i++])
 			.addCell(accrualLabel,COLUMN_LENGTHS[i++])
+			.addCell(unionLabel,COLUMN_LENGTHS[i++])
+			.addCell(unionExternalLabel,COLUMN_LENGTHS[i++])
 			.addCell(importationLabel,COLUMN_LENGTHS[i++])
 			.addCell(duaLabel,COLUMN_LENGTHS[i++])
 			.addCell(new Label("Epigr."),COLUMN_LENGTHS[i++])
@@ -231,19 +239,21 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		row
 			.addCell(new Label(ensure(invoiceType,invoiceType::getAbbrDescription)),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(invoiceTransactionType,invoiceTransactionType::getTediName)),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.isService()			, "S", AON.MSG.service() ),COLUMN_LENGTHS[i++])	
-			.addCell(new AonBooleanLabel(vc.isInvestment()		, "I", AON.MSG.investment() ),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.isFarmerRegime()	, "A", AON.MSG.farmerRegime() ),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.isRectification()	, "R", AON.MSG.rectifiedInvoice()),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.isVatAccrualRegime(), "C", AON.MSG.vatAccrualPayment()),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.isVatImportation()	, "M", AON.MSG.vatImportationRegime()),COLUMN_LENGTHS[i++])
-			.addCell(new AonBooleanLabel(vc.hasDuaLinked()		, "D", AON.MSG.DUALinked()),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isService()			, "S", AON.MSG.service() ),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])	
+			.addCell(new AonBooleanLabel(vc.isInvestment()		, "I", AON.MSG.investment() ),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isFarmerRegime()	, "A", AON.MSG.farmerRegime() ),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isRectification()	, "R", AON.MSG.rectifiedInvoice()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isVatAccrualRegime(), "C", AON.MSG.vatAccrualPayment()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isVatUnion()		, "U", AON.MSG.vatUnionRegime()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isVatUnionExternal(), "E", AON.MSG.vatUnionExternalRegime()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.isVatImportation()	, "M", AON.MSG.vatImportationRegime()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(new AonBooleanLabel(vc.hasDuaLinked()		, "D", AON.MSG.DUALinked()),AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vc.getEpigraph(), vc::getEpigraph, AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vc.getDocumentNumber(), vc::getDocumentNumber, AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vc.getRegistryDocument(), vc::getRegistryDocument, AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vc.getRegistryName(), () -> AonStringUtils.abbreviate(vc.getRegistryName(),25), AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
-			.addCell(issueDateLabel,COLUMN_LENGTHS[i++])
-			.addCell(taxDateLabel,COLUMN_LENGTHS[i++])
+			.addCell(issueDateLabel,AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
+			.addCell(taxDateLabel,AON.CSS.aonTextCenter(),COLUMN_LENGTHS[i++])
 			.addCell(new Label(ensure(vatDeductionType.getAbbr(), vatDeductionType::getAbbr, AonStringUtils.EMPTY)),COLUMN_LENGTHS[i++])
 			.addCell(new AonDoubleLabel(vc.getBase()),AON.CSS.aonTextRight(),COLUMN_LENGTHS[i++])
 			.addCell(new AonDoubleLabel(vc.getPercentage()),AON.CSS.aonTextRight(),COLUMN_LENGTHS[i++])
