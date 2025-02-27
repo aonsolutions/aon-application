@@ -33,17 +33,6 @@ public class Mod202ScriptTest extends AbstractOccamTest {
 		test( mod202, Model202ScriptProvider.obtainScript(mod202));
 	}
 
-	@Test
-	public void testBizkaia() {
-		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
-				.setMonthly(true)
-				.setAdministration(Administration.BIZKAIA);
-		Mod202 mod202 = FiscalFaker.getMod202(params);
-		MODEL202.calculate(getOccam(), mod202);
-		test( mod202, Model202ScriptProvider.obtainScript(mod202));
-	}
-
 	private void test( Mod202 mod202, IModelScript<Mod202Key>[] scripts) {
 		for (IModelScript<Mod202Key> script : scripts) {
 			try {

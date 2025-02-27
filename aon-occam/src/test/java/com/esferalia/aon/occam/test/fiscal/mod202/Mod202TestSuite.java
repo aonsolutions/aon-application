@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.test.fiscal.mod111.Mod111RoundedAmountsTest;
 	Mod202ExpressionsTest.class,
 	Mod202ScriptTest.class,
 	
+	Mod202ReopenTest.class,
 	Mod202Delete.class,
 	Mod202Insert.class,
 	Mod111RoundedAmountsTest.class,
