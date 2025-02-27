@@ -1051,17 +1051,29 @@
 }
 
 .aon_packs_catalogue_panel{
+	/* 
+	
+	-- Horizontal Scroll
+	
 	display: flex;
   	overflow-x: auto; 
   	scroll-snap-type: x mandatory;
   	-webkit-overflow-scrolling: touch;
   	gap: 1rem;
-  	justify-content: start; /* IMPORTANTE: Mantiene el desbordamiento horizontal */
+  	justify-content: start; // IMPORTANTE: Mantiene el desbordamiento horizontal //
   	align-items: start;
+  	
+  	*/
+  	
+  	display: flex;
+  	gap: 1rem;
+  	justify-content: center;
+  	align-items: start;
+  	flex-wrap: wrap;
 }
 
 .aon_packs_catalogue_panel > * {
-  flex: 0 0 auto; /* Evita que las tarjetas se redimensionen */
+  /* flex: 0 0 auto; Evita que las tarjetas se redimensionen */
 }
 
 .aon_position_relative{
@@ -1125,7 +1137,7 @@
 .aon_custom_row{
 	cursor: pointer;
 	border-bottom: 1px solid #ddd;
-	min-height: 2.5rem;
+	min-height: 3rem;
 	padding: 0 1rem;
 	gap: 0;
 }
