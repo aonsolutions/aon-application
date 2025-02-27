@@ -131,6 +131,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
@@ -1252,7 +1253,9 @@ public class FiscalServlet extends AonApiHttpServlet{
 			TreeMap<Double, IrpfSummaryPercent> map = null == irpfSummaryGroup ? null : irpfSummaryGroup.getMap().get(withholdingType).getMap();
 			
 			LinkedHashSet<Integer> profesionalInvoicesIds = new LinkedHashSet<>();
-			map.values().stream().forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+			if (map != null) {
+				AonCollectionUtils.stream(map.values()).forEach(irpfSummaryPercent -> profesionalInvoicesIds.addAll( irpfSummaryPercent.getInvoices() ));
+			}
 			List<Integer> invoiceIdsArr = new ArrayList<>(profesionalInvoicesIds);
 			
 			invoices = AON.getFullInvoiceList(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), invoiceIdsArr);
@@ -1541,7 +1544,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 				model = Mod131DAO.get(ctx, id);	
 				break;
 			case M202:
-				model = Mod202DAO.getMod202(ctx, id);
+				model = Mod202DAO.get(ctx, id);
 				break;
 			case M303:
 				model = Mod303DAO.get(ctx, id);

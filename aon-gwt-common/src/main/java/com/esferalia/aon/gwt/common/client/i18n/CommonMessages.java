@@ -2009,6 +2009,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Liquidaci\u00F3n")
 	String liquidacion();
 	
+	@DefaultMessage("Informaci\u00F3n adicional")
+	String additionalInfo();
+	
 	@DefaultMessage("Resultado de la cuenta de p\u00E9rdidas y ganancias")
 	String liquidation1Label1();
 
@@ -4253,6 +4256,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Facturas que afectan a la confecci\u00f3n del modelo {0}")
 	String modelRelatedInvoices(String modelFullName);
 	
+	@DefaultMessage("Asientos contables que afectan a la confecci\u00f3n del modelo {0}")
+	String modelRelatedEntries(String modelFullName);
+
 	@DefaultMessage("Se procede a generar un fichero con los datos contables, para poder realizar su importaci\u00F3n en el programa de ayuda de la Agencia Tributaria. \u00BFDesea continuar?")	
 	String confirmAccountingFileMod200();
 	

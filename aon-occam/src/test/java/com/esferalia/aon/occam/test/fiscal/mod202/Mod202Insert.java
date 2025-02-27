@@ -26,9 +26,9 @@ public class Mod202Insert extends AbstractOccamTest {
 				mod202.setDomain(DOMAIN_ID);
 				mod202.setYear(AonDateUtils.getYear(now));
 				mod202.setPeriod( p );
-				mod202 = MODEL202.initializeMod202(getOccam(), mod202);
+				mod202 = MODEL202.initialize(getOccam(), mod202);
 				mod202.setAdministration(admon);
-				mod202 = MODEL202.createMod202(getOccam(), mod202);
+				mod202 = MODEL202.create(getOccam(), mod202);
 				MODEL202.save(getOccam(), mod202);
 			}
 		}

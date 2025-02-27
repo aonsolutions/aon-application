@@ -4,22 +4,22 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.mod202.Model202ScriptProvider;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.shared.mod202.Model202ScriptProvider;
-import com.esferalia.aon.occam.api.fiscal.MODEL202;
-import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @WebServlet(name = "Mod202 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model202Print" })
 public class Mod202Print extends HttpServlet {
@@ -39,7 +39,7 @@ public class Mod202Print extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod202 mod202 = MODEL202.getMod202(occam,id);
+			Mod202 mod202 = MODEL202.get(occam,id);
 
 			Mod202ExcelAction action = new Mod202ExcelAction(mod202);
 			action.initialize(FiscalModelUtils.getModelName(mod202));

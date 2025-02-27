@@ -1,15 +1,15 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod202;
+package com.esferalia.aon.occam.api.model.fiscal.mod202;
 
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.ACT_ACCOUNT;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.CORPORATE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public enum Model2022023AEATScript implements IModelScript<Mod202Key> {
 	
@@ -54,53 +54,53 @@ public enum Model2022023AEATScript implements IModelScript<Mod202Key> {
 	,R21 (Mod202Key.X00.getDescription(),new Mod202Key[]{Mod202Key.X00},NONE)
 	
 	,R22 ("A) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.2 LIS",null,TITLE)
-	,R23 (Mod202Key.C01.getDescription(),new Mod202Key[]{Mod202Key.C01},CORPORATE)
+	,R23 (Mod202Key.C01.getDescription(),new Mod202Key[]{Mod202Key.C01},COMPUTE_KEY)
 	,R24 (Mod202Key.C02.getDescription(),new Mod202Key[]{Mod202Key.C02},NONE)
-	,R25 (Mod202Key.C03.getDescription(),new Mod202Key[]{Mod202Key.C03},COMPUTE)
+	,R25 (Mod202Key.C03.getDescription(),new Mod202Key[]{Mod202Key.C03},COMPUTE_KEY)
 	
 	,R26 ("B) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.3 LIS",null,TITLE)
-	,R27 (Mod202Key.C04.getDescription(),new Mod202Key[]{Mod202Key.C04},ACT_ACCOUNT)
+	,R27 (Mod202Key.C04.getDescription(),new Mod202Key[]{Mod202Key.C04},COMPUTE_KEY,ACT_ACCOUNT)
 	,R28 ("Correcciones al resultado contable",null,NONE)
 	,R29 ("Correcci\u00F3n por Impuesto sobre Sociedades",new Mod202Key[]{Mod202Key.C05,Mod202Key.C06},NONE)
 	,R30 (Mod202Key.C37.getDescription(),new Mod202Key[]{Mod202Key.C37},NONE)
 	,R31 ("Resto correcciones al resultado contable, excepto comp. BI negativa ej. ant."
 			,new Mod202Key[]{Mod202Key.C07,Mod202Key.C08},NONE)
-	,R32 ("TOTAL",new Mod202Key[]{Mod202Key.C38,Mod202Key.C39},COMPUTE)
-	,R33 (Mod202Key.C13.getDescription(),new Mod202Key[]{Mod202Key.C13},COMPUTE)
+	,R32 ("TOTAL",new Mod202Key[]{Mod202Key.C38,Mod202Key.C39},COMPUTE_KEY)
+	,R33 (Mod202Key.C13.getDescription(),new Mod202Key[]{Mod202Key.C13},COMPUTE_KEY)
 	,R34 (Mod202Key.C44.getDescription(),new Mod202Key[]{Mod202Key.C44},NONE)
 	,R35 (Mod202Key.C14.getDescription(),new Mod202Key[]{Mod202Key.C14},NONE)
 	,R36 ("Reserva de nivelaci\u00F3n (art. 105 LIS) (s\u00F3lo entidades que cumplan los requisitos"
 		+ "del art. 101 LIS y apliquen tipo gravamen art. 29.1, 1 er p\u00E1rrafo LIS)"
 			,new Mod202Key[]{Mod202Key.C45,Mod202Key.C46},NONE)
 	,R37 ("B.1) Caso general (entidades con porcentaje \u00FAnico)",null,TITLE)
-	,R38 (Mod202Key.C16.getDescription(),new Mod202Key[]{Mod202Key.C16},COMPUTE)
-	,R39 (Mod202Key.C17.getDescription(),new Mod202Key[]{Mod202Key.C17},COMPUTE)
+	,R38 (Mod202Key.C16.getDescription(),new Mod202Key[]{Mod202Key.C16},COMPUTE_KEY)
+	,R39 (Mod202Key.C17.getDescription(),new Mod202Key[]{Mod202Key.C17},COMPUTE_KEY)
 	
 	,R40 (Mod202Key.C47.getDescription(),new Mod202Key[]{Mod202Key.C47},NONE)
 	,R41 (Mod202Key.C40.getDescription(),new Mod202Key[]{Mod202Key.C40},NONE)
 	,R42 ("Reserva de nivelaci\u00F3n (art. 105 LIS) convertido en cuotas (s\u00F3lo entidades que cumplan"
 		+ "los requisitos del art. 101 LIS y apliquen tipo gravamen art. 29.1, 1 er p\u00E1rrafo LIS)"
 			,new Mod202Key[]{Mod202Key.C48,Mod202Key.C49},NONE)
-	,R43 (Mod202Key.C18.getDescription(),new Mod202Key[]{Mod202Key.C18},COMPUTE)
-	
+	,R43 (Mod202Key.C18.getDescription(),new Mod202Key[]{Mod202Key.C18},COMPUTE_KEY)
+	 
 	,R44 ("B.2) Casos espec\u00EDficos (entidades con m\u00E1s de un porcentaje)",null,TITLE)
-	,R45 (Mod202Key.C19.getDescription(),new Mod202Key[]{Mod202Key.C19,null,null},COMPUTE)
-	,R46 (Mod202Key.C20.getDescription(),new Mod202Key[]{Mod202Key.C20,Mod202Key.C21,Mod202Key.C22},COMPUTE)
-	,R47 (Mod202Key.C23.getDescription(),new Mod202Key[]{Mod202Key.C23,Mod202Key.C24,Mod202Key.C25},COMPUTE)
+	,R45 (Mod202Key.C19.getDescription(),new Mod202Key[]{Mod202Key.C19,null,null},COMPUTE_KEY)
+	,R46 (Mod202Key.C20.getDescription(),new Mod202Key[]{Mod202Key.C20,Mod202Key.C21,Mod202Key.C22},COMPUTE_KEY)
+	,R47 (Mod202Key.C23.getDescription(),new Mod202Key[]{Mod202Key.C23,Mod202Key.C24,Mod202Key.C25},COMPUTE_KEY)
 	,R48 (Mod202Key.C50.getDescription(),new Mod202Key[]{Mod202Key.C50},NONE)
 	,R49 (Mod202Key.C42.getDescription(),new Mod202Key[]{Mod202Key.C42},NONE)
 	,R50 ("Reserva de nivelaci\u00F3n (art. 105 LIS) (s\u00F3lo entidades que cumplan los "
 		+ "requisitos del art. 101 LIS y apliquen tipo gravamen art. 29.1, 1 er p\u00E1rrafo LIS)"
 				,new Mod202Key[]{Mod202Key.C51,Mod202Key.C52},NONE)
-	,R51 (Mod202Key.C26.getDescription(),new Mod202Key[]{Mod202Key.C26},COMPUTE)
+	,R51 (Mod202Key.C26.getDescription(),new Mod202Key[]{Mod202Key.C26},COMPUTE_KEY)
 	,R52 (Mod202Key.C27.getDescription(),new Mod202Key[]{Mod202Key.C27},NONE)
 	,R53 (Mod202Key.C28.getDescription(),new Mod202Key[]{Mod202Key.C28},NONE)
 	,R54 (Mod202Key.C29.getDescription(),new Mod202Key[]{Mod202Key.C29},NONE)
 	,R55 (Mod202Key.C30.getDescription(),new Mod202Key[]{Mod202Key.C30},NONE)
 	,R56 (Mod202Key.C31.getDescription(),new Mod202Key[]{Mod202Key.C31},NONE)
-	,R57 (Mod202Key.C32.getDescription(),new Mod202Key[]{Mod202Key.C32},COMPUTE)
+	,R57 (Mod202Key.C32.getDescription(),new Mod202Key[]{Mod202Key.C32},COMPUTE_KEY)
 	,R58 (Mod202Key.C33.getDescription(),new Mod202Key[]{Mod202Key.C33},NONE)
-	,R59 (Mod202Key.C34.getDescription(),new Mod202Key[]{Mod202Key.C34},COMPUTE)
+	,R59 (Mod202Key.C34.getDescription(),new Mod202Key[]{Mod202Key.C34},COMPUTE_KEY)
 	
 	,R60 ("Informaci\u00F3n adicional",null,TITLE)
 	,R61 (Mod202Key.A01.getDescription(),new Mod202Key[]{Mod202Key.A01},NONE)
@@ -138,7 +138,20 @@ public enum Model2022023AEATScript implements IModelScript<Mod202Key> {
 	}
 	@Override
 	public boolean isEnabled() {
-		return getInfoKeys()[0] != COMPUTE && getInfoKeys()[0] != TITLE;
+		return getInfoKeys()[0] != TITLE
+			&& this != R25
+			&& this != R32
+			&& this != R33			
+			&& this != R38			
+			&& this != R39
+			&& this != R43 
+			&& this != R45
+			&& (this == R46 && AonCollectionUtils.isNotEmpty(getKeys()) && getKeys()[0] != Mod202Key.C20) 
+			&& this != R47
+			&& this != R51
+			&& this != R57 
+			&& this != R59
+		;
 	}
 	@Override
 	public boolean isTitle() {

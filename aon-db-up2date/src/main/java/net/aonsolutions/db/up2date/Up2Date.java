@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod369Detail2025;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
+import net.aonsolutions.db.up2date.fiscal.RefreshMod202Result;
 import net.aonsolutions.db.up2date.management.AlterInvoiceAddIndexDomainStatus;
 import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
@@ -537,7 +538,8 @@ public class Up2Date {
 			FellowsPercentages2025Update.FELLOWSPERCENTAGES2024UPDATE,
 			TrainingPercentages2025Update.TRAINNINGPERCENTAGES2025UPDATE,
 			
-			AlterFsMod369Detail2025.ALTER_FS_MODEL_369_DETAIL_2025
+			AlterFsMod369Detail2025.ALTER_FS_MODEL_369_DETAIL_2025,
+			RefreshMod202Result.REFRESH_MOD202_RESULT
 			
 	};
 

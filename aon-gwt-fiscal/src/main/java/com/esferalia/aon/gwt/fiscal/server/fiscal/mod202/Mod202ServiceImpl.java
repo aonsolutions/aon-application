@@ -25,7 +25,7 @@ public class Mod202ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public Mod202 getMod202(Occam occam,int id) throws AonCoreException {
-		return MODEL202.getMod202(occam, id);
+		return MODEL202.get(occam, id);
 	}
 
 	@Override
@@ -45,12 +45,12 @@ public class Mod202ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod202 initialize(Occam occam, Mod202 mod202) {
-		return MODEL202.initializeMod202(occam, mod202);
+		return MODEL202.initialize(occam, mod202);
 	}
 
 	@Override
 	public void delete(Occam occam, Mod202 mod202) {
-		MODEL202.deleteMod202(occam, mod202);
+		MODEL202.delete(occam, mod202);
 	}
 	@Override
 	public Mod202 saveComments(Occam occam, Mod202 mod202) {
@@ -83,15 +83,12 @@ public class Mod202ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public Mod202 create(Occam occam, Mod202 mod202) {
-		return MODEL202.createMod202(occam, mod202);
+		return MODEL202.create(occam, mod202);
 	}
-	@Override
-	public Mod202 reset(Occam occam, Mod202 mod202) {
-		return MODEL202.resetMod202(occam, mod202);
-	}
+
 	@Override
 	public String getInfo(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return MODEL202.getMod202Info(occam, mod202, script, infoKey);
+		return MODEL202.getInfo(occam, mod202, script, infoKey);
 	}
 	
 }

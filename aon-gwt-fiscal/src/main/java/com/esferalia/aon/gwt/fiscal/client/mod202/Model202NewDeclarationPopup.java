@@ -11,6 +11,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
+@Deprecated
 public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Model202ModuleOptions>{
 
 	private class PeriodListBox extends ListBox {

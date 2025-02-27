@@ -790,7 +790,7 @@ public class Mod2002017DAO  {
 			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
 			
 			.forEach( mod -> {
-				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
+				Mod202 mod202 = Mod202DAO.get(ctx, mod.getId());		
 				Mod2002017Key key = null;
 				if (mod202.getPeriod() == Period.T1) {
 					key = Mod2002017Key.BN601;

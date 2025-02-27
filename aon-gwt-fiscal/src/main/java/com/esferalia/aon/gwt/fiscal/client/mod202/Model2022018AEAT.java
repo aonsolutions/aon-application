@@ -6,10 +6,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202.Model202Callback;
-import com.esferalia.aon.gwt.fiscal.shared.mod202.Model2022018AEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022018AEATScript;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -23,14 +22,14 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 public class Model2022018AEAT extends Model202Base {
 	
 	
-	public Model2022018AEAT(Mod202 mod202,Model202Callback callback) {
-		super(mod202, callback);
+	public Model2022018AEAT(Model202Callback callback) {
+		super(callback);
 	}
 	
 	@Override
-	protected void paintLiquidationTab(TabLayoutPanel tabPanel) {
-		super.paintLiquidationTab(tabPanel);
-		final FiscalModelDetail detail = getModel().ensureDetail(Mod202Key.X00);
+	protected void paintLiquidationTab(Model202Callback callback, TabLayoutPanel tabPanel) {
+		super.paintLiquidationTab(callback, tabPanel);
+		final FiscalModelDetail detail = callback.getModel().ensureDetail(Mod202Key.X00);
 		int x00 = (int) detail.getAmount();
 		if (x00 < 0 || x00 > 2) x00 = 0;
 		calculationMethodChanged(x00);
@@ -83,7 +82,7 @@ public class Model2022018AEAT extends Model202Base {
 	
 	private void paintCNAERow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
 		int row = table.getRowCount();
-		CNAE2009 cn = getModel().getCnae();
+		CNAE2009 cn = callback.getModel().getCnae();
 		table.setWidget(row, 0,new Label(script.getLabel()));
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
@@ -103,11 +102,11 @@ public class Model2022018AEAT extends Model202Base {
 		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();
 		cnae2009Panel.addSelectionHandler(event -> {
 			CNAE2009 selected = event.getSelectedItem();
-			getModel().setCnae(selected);
+			callback.getModel().setCnae(selected);
 			cnaeBox.setValue( selected.getCode());
 			cnaeLabel.setText( selected.getDescription() );
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
 		cnaePanel.add(cnaeButton);
@@ -124,11 +123,11 @@ public class Model2022018AEAT extends Model202Base {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
 		final AonDateBox dateBox = new AonDateBox();
-		dateBox.setValue(getModel().getInitialDate());
+		dateBox.setValue(callback.getModel().getInitialDate());
 		dateBox.addValueChangeHandler( event -> {
-			getModel().setInitialDate(dateBox.getValue());
+			callback.getModel().setInitialDate(dateBox.getValue());
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 1, dateBox );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
@@ -139,11 +138,11 @@ public class Model2022018AEAT extends Model202Base {
 		final Mod202Key key = script.getKeys()[0]; 
 		final CheckBox check = new CheckBox();
 		check.setText(script.getLabel());
-		check.setValue(getModel().getAmount(key) == 1);
+		check.setValue(callback.getModel().getAmount(key) == 1);
 		check.addClickHandler(event -> {
-			getModel().putAmount(key,check.getValue().booleanValue()?1.0:0.0);
+			callback.getModel().putAmount(key,check.getValue().booleanValue()?1.0:0.0);
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 0, check );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
@@ -162,11 +161,11 @@ public class Model2022018AEAT extends Model202Base {
 		final AonTextBox textBox = new AonTextBox();
 		textBox.setMaxLength(5);
 		textBox.setVisibleLength(6);
-		textBox.setValue(getModel().getDescription(key));
+		textBox.setValue(callback.getModel().getDescription(key));
 		textBox.addValueChangeHandler( event -> {
-			getModel().putDescription(key,textBox.getValue());
+			callback.getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 1, textBox );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
@@ -185,13 +184,13 @@ public class Model2022018AEAT extends Model202Base {
 		r19Box.addItem("- Igual/sup. 10 mill. \u20AC e inferior a 20 mill. \u20AC","1");
 		r19Box.addItem("- Igual/sup. 20 mill. \u20AC e inferior a 60 mill. \u20AC","2");
 		r19Box.addItem("- Igual/sup. 60 mill. \u20AC.","3");
-		int value = (int) getModel().getAmount(key);
+		int value = (int) callback.getModel().getAmount(key);
 		if (value < 0 || value > 4) value = 0;
 		r19Box.setSelectedIndex(value);
 		r19Box.addChangeHandler( event -> {
-			getModel().putAmount(key,r19Box.getSelectedIndex());		
+			callback.getModel().putAmount(key,r19Box.getSelectedIndex());		
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 1, r19Box );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
@@ -209,14 +208,14 @@ public class Model2022018AEAT extends Model202Base {
 		r21Box.addItem(AON.MSG.calculation0(), "0");
 		r21Box.addItem(AON.MSG.calculation1(), "1");
 		r21Box.addItem(AON.MSG.calculation2(), "2");
-		int value = (int) getModel().getAmount(key);
+		int value = (int) callback.getModel().getAmount(key);
 		if (value < 0 || value > 2) value = 0;
 		r21Box.setSelectedIndex(value);
 		r21Box.addChangeHandler( event -> {
-			getModel().putAmount(Mod202Key.X00,r21Box.getSelectedIndex());
+			callback.getModel().putAmount(Mod202Key.X00,r21Box.getSelectedIndex());
 			calculationMethodChanged(r21Box.getSelectedIndex());
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 1, r21Box );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
@@ -232,11 +231,11 @@ public class Model2022018AEAT extends Model202Base {
 		final AonTextBox textBox = new AonTextBox();
 		textBox.setMaxLength(22);
 		textBox.setVisibleLength(15);
-		textBox.setValue(getModel().getDescription(key));
+		textBox.setValue(callback.getModel().getDescription(key));
 		textBox.addValueChangeHandler( event -> {
-			getModel().putDescription(key,textBox.getValue());
+			callback.getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );
-			markAsDirty();
+			markAsDirty(callback);
 		});
 		table.setWidget(row, 1, textBox );
 	}
