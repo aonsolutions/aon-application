@@ -120,8 +120,24 @@ export class AonNewLogin extends AonElement {
     let passwordInput = createInput("aonLoginPassword", MSG.PASSWORD);
     passwordInput.setRequired(true);
     passwordInput.type = "password";
-    passwordInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(passwordInput);
+    
+    userInput.addEventListener('keydown', (event) => {
+	    if (event.key === 'Enter') {
+			const username = this.getElement("aonLoginUser").value;
+    		const password = this.getElement("aonLoginPassword").value;
+   
+   			if(username.length == 0 || password.length == 0) return;
+	        this.signin();
+    	}
+    });
+    
+    passwordInput.addEventListener('keydown', (event) => {
+	    if (event.key === 'Enter') {
+	        if(userInput.value.length == 0 || passwordInput.value.length == 0) return;
+	        this.signin();
+    	}
+    });
 
     // Buttons
     let signIn = this.createElement(TAG.BUTTON);
@@ -203,6 +219,13 @@ export class AonNewLogin extends AonElement {
     );
     userInput.setRequired(true);
     divFormContent.appendChild(userInput);
+    
+     userInput.addEventListener('keydown', (event) => {
+	    if (event.key === 'Enter') {
+	        if(userInput.value.length == 0) return;
+	        this.magicLink(userInput.value);
+    	}
+    });
 
     // Buttons
     let signIn = this.createElement(TAG.BUTTON);
@@ -545,15 +568,6 @@ export class AonNewLogin extends AonElement {
         LS.setPortalChecked(portal);
       }
     });
-  }
-
-  onEnter(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      let aonLoginSignin = this.getElement("aonLoginSignin");
-      if (aonLoginSignin) this.getElement("aonLoginSignin").click();
-      else this.getElement("aonMagicLinkSignin").click();
-    }
   }
   
 }
