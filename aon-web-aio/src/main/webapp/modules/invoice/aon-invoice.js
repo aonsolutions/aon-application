@@ -1212,7 +1212,6 @@ export class AonInvoice extends AonElement {
 		let reference = createInput(this.REFERENCE, MSG.REFERENCE);
 		reference.value = this.invoice.reference;
 		reference.readonly = this.invoice.isReadonly();
-		reference.disabled = this.invoice.isReadonly();	
 		reference.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setReference(reference.value);
 			if(this.autosave) this.save();

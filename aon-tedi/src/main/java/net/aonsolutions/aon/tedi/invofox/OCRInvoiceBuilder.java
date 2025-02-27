@@ -122,6 +122,7 @@ public class OCRInvoiceBuilder {
 				setVat(new InvoiceTax()
 					.setDomain(getDetail().getDomain())
 					.setTaxType(TaxType.VAT)
+					.setDeductiblePercent(100)
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT));
 			}
 			return vat;
