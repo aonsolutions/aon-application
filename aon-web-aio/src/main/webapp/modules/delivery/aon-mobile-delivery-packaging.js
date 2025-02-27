@@ -210,8 +210,13 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		};
 
 		let fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
-
-		openFileUrl(fileUrl, 'application/pdf');
+		if(UA.isAndroidApp()) {
+			let file = {
+				url: fileUrl,
+				title: this.packaging.item.serialNumber
+			};
+			printFile(file);
+		} else openFileUrl(fileUrl, 'application/pdf');
 	}
 
 	deleteFromDelivery() {

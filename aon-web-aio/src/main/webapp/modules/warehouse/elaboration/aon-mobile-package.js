@@ -19,6 +19,10 @@ import { deleteElaborationPackage } from '../../../services/warehouseService.js'
 import { getPackages, removePackage } from './PackagesCache.js';
 import { AonMobilePackageList } from './aon-mobile-package-list.js';
 
+import * as UA from '../../../services/userAgentService.js';
+import { printFile } from '../../../services/actionService.js';
+
+
 export class AonMobilePackage extends AonElement {
 
 	PACKAGE_CARD;
@@ -206,7 +210,13 @@ export class AonMobilePackage extends AonElement {
 	}
 
 	print() {
-		openFileUrl(this.fileUrl, 'application/pdf');
+		if(UA.isAndroidApp()) {
+			let file = {
+				url: this.fileUrl,
+				title: this.packaging.item.serialNumber
+			};
+			printFile(file);
+		} else openFileUrl(this.fileUrl, 'application/pdf');
 	}
 
 	delete() {
