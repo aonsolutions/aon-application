@@ -115,6 +115,7 @@ public class TariffCatalogueList extends HTMLPanel {
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(AON.MSG.description(), "-moz-available" , "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Tipo" , "5rem" , ""));
 		initializeTariffCatalogueColumns.add(new TariffCatalogueColumn("Precio" , "5rem" , ""));
+		tariffs.sort(Comparator.comparing(Tariff::getCode));
 		tariffs.forEach(tariff -> initializeTariffCatalogueColumns.add(new TariffCatalogueColumn(tariff.getCode(), "5rem" , "")));
 		
 		tab.createHeader();
