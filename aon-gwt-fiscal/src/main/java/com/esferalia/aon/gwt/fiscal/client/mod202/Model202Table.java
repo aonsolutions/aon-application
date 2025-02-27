@@ -194,12 +194,16 @@ class Model202Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod202.getStatus()) );
 			row.add( statusCell );
 			
+			InlineLabel declarationResult = new InlineLabel();
+			if (mod202.getDeclarationResult() != null) {
+				declarationResult.setText(AON.FMT.format(mod202.getDeclarationResult()));
+			}
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod202.getDocument()))
 				.addCell( new InlineLabel(mod202.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod202.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod202.getDeclarationType() == null ? "" : mod202.getDeclarationType().getDescription()))
+				.addCell( declarationResult, AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod202.getDeclarationResultType() == null ? "" : mod202.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod202.getFinance() != null && mod202.getFinance().getFinanceStatus() != null)
 							?mod202.getFinance().getFinanceStatus().getDescription()

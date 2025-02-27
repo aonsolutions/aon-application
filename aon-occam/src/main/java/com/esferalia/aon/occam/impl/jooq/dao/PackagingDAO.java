@@ -810,7 +810,7 @@ public class PackagingDAO {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return init + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		return init + AonStringUtils.leftPad(Integer.toString(AonDateUtils.getDayOfYear(new Date())), 3, "0");
 	}
 	
 	private static Date calculateSerialDate(String barcode) {

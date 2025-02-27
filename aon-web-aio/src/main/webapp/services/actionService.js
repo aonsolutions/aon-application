@@ -14,7 +14,7 @@ export const openCamera = (ionicData, callback) => {
     }
 }
 
-export const getPosition = (ionicData, callback) => {
+export const getPositionMobile = (ionicData, callback) => {
     window.receivePosition = callback;
     let data = {action: 'getPosition'};
     if(UA.isAndroidApp()) {

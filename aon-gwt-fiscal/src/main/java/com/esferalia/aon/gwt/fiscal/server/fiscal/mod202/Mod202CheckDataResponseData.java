@@ -28,7 +28,7 @@ public class Mod202CheckDataResponseData extends HttpServlet {
 					.setDomainName(params.getDomainName())
 					.setDomain(params.getDomainId())
 					.setUser(params.getUser());
-			Mod202 mod202 = MODEL202.getMod202(occam, params.getMod());
+			Mod202 mod202 = MODEL202.get(occam, params.getMod());
 			if (mod202 == null) {
 				ModelAdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );
 			}

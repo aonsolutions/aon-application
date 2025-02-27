@@ -1,9 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, saveInvofoxDocument, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount, 
-	getInvofoxDocument} from '../../services/service.js';
+	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
 import { getCompany } from '../../services/companyService.js';
 	 import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -222,7 +221,6 @@ export class AonInvoice extends AonElement {
 
 		window.reloadInvoice = (invoiceId) => {
 			if(invoiceId) {
-				// this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				getInvoice(invoiceId).then((inv) => {
 					this.invoice = new Invoice(inv);
 					this.reload();
@@ -1242,10 +1240,15 @@ export class AonInvoice extends AonElement {
 			referenceSpan.style.display = 'none';
 			switchReference.style.display = 'none';
 			if (this.isInvofoxInvoice()) {
+				this.getInvoice().number = undefined;
 				serieSpan.style.display = 'none';
 				numberSpan.style.display = 'none';
 				referenceSpan.style.display = 'block';
 				switchReference.style.display = 'block';
+			} else if(!this.invoice.isRawdoc()) {
+				serieSpan.style.display = 'none';
+				numberSpan.style.display = 'none';
+				referenceSpan.style.display = 'block';
 			}
 		} else {
 			serieSpan.style.display = 'none';
@@ -2594,9 +2597,17 @@ export class AonInvoice extends AonElement {
 	save(msg) {
 		msg = msg || MSG.SAVED_DATA;
 		insertInvoice(this.getInvoice()).then(r => {
+			if(!this.getInvoice().id) 
+				this.updateCounter(this.getNewFrom(), undefined, 1);
 			this.getInvoice().id = r.id;
 			this.showMessage(msg);
 		}).catch(e => this.showError(e));
+	}
+
+	getNewFrom() {
+		if(this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
+		else if(this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;	
 	}
 
 	back() {
@@ -2693,12 +2704,7 @@ export class AonInvoice extends AonElement {
 
 	changeInvoice(invoice) {
 		let inv = new Invoice(invoice);
-		if(invoice.invofox) {
-			getInvofoxDocument(invoice.id).then( doc => {
-				let aip = document.querySelector('aon-invoice-panel');
-				aip.aonInvoice(invoice.type, doc);
-			}); 
-		} else if(invoice && inv && !inv.isRawdoc()){
+		if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
 				let aip = document.querySelector('aon-invoice-panel');
 				aip.aonInvoice(invoice.type, inv);
@@ -2771,7 +2777,6 @@ export class AonInvoice extends AonElement {
 			this.accept = false;
 			acceptInvoice(this.getInvoice())
 			.then(r => {
-				// this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.EXPORTED);
 				this.updateCounter(this.getAcceptFromOption(), this.getAcceptToOption(), 1);
 				this.invoice = new Invoice(r);
 				this.getApplication().stopLoader(); 
@@ -2786,7 +2791,7 @@ export class AonInvoice extends AonElement {
 	
 	getAcceptFromOption() {
 		if(this.getInvoice().isEmitida()) {
-			return OPTION.RAWDOC_INBOX_ISSUED;
+			return OPTION.PROFORMA_INVOICES;
 		} else if(this.getInvoice().isTicket()) {
 			return OPTION.RAWDOC_INBOX_TICKET;
 		} else return OPTION.RAWDOC_INBOX_RECEIVED;
@@ -2794,20 +2799,10 @@ export class AonInvoice extends AonElement {
 
 	getAcceptToOption() {
 		if(this.getInvoice().isEmitida()) {
-			return OPTION.INVOICE_ISSUED;
+			return OPTION.INVOICE_ISSUED_BETA;
 		} else if(this.getInvoice().isTicket()) {
 			return OPTION.INVOICE_TICKET;
-		} else return OPTION.INVOICE_RECEIVED;
-	}
-
-	setInvofoxState(publicState) {
-		try {
-			this.getInvoice().status = CONSTANT.OCR + publicState;
-			let invofoxDocumentId = this.getInvofoxDocumentId();
-			saveInvofoxDocument({_id: invofoxDocumentId , publicState: publicState});
-		}  catch ( e ){
-			
-		}
+		} else return OPTION.INVOICE_RECEIVED_BETA;
 	}
 
 	recordInvoice() {
@@ -2830,14 +2825,6 @@ export class AonInvoice extends AonElement {
 	}
 
 	rejectInvoice() {
-		// if ( this.isInvofoxInvoice() ) {
-		// 	this.setInvofoxState(CONSTANT.PENDING_DECISSION);
-		// 	this.updateCounter(this.getAcceptFromOption(), OPTION.RAWDOC_REJECT, 1);
-		// 	this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
-		// 	this.reload();
-		// 	return;
-		// }
-			
 		let d = this.getApplication().getDialog();
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
@@ -2862,7 +2849,6 @@ export class AonInvoice extends AonElement {
 			this.build();
 			this.save();
 			this.updateCounter(this.getRejectFromOption(), OPTION.RAWDOC_REJECT, 1);
-			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -3138,24 +3124,17 @@ export class AonInvoice extends AonElement {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
 		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
 		if(!this.getInvoice().isRejected() && !invofoxRejected)
-			this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, -1);
-		// if(this.isInvofoxInvoice()) {
-		// 	this.setInvofoxState(CONSTANT.DISCARDED);
-		// } else {
 		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
-		// }
 		this.reload();
 	}
 
 	getTrashFromOption() {
-		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
+		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) 
 			return OPTION.RAWDOC_REJECT;
-		} else if(this.getInvoice().isEmitida()) {
-			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_ISSUED : OPTION.INVOICE_ISSUED;
-		} else if(this.getInvoice().isTicket()) {
-			return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_TICKET : OPTION.INVOICE_TICKET;
-		} else return this.getInvoice().isRawdoc() || this.isInvofoxInvoice() ? OPTION.RAWDOC_INBOX_RECEIVED : OPTION.INVOICE_RECEIVED;
+		else if(this.getInvoice().isEmitida()) return OPTION.PROFORMA_INVOICES;
+		else if(this.getInvoice().isTicket()) return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	trashPendingInvoice() {
@@ -3181,6 +3160,7 @@ export class AonInvoice extends AonElement {
 				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
+					this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
 				}).catch(e => this.showError(e));
@@ -3188,21 +3168,25 @@ export class AonInvoice extends AonElement {
 			d.open();
 		} else {
 			deleteInvoice(data).then(() => {
+				this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
 				this.showMessage(MSG.DELETED_DATA);
 				this.back();
 			}).catch(e => this.showError(e));
 		}
 	}
 
+	getTrashPendingFromOption() {
+		if(this.getInvoice().isEmitida()) {
+			return OPTION.INVOICE_ISSUED_BETA;
+		} else if (this.getInvoice().isTicket()){
+			return OPTION.INVOICE_TICKET;
+		} else return OPTION.INVOICE_RECEIVED_BETA;
+	}
+	
 	restoreInvoice() {
-		// if (this.isInvofoxInvoice()) {
-		// 	this.setInvofoxState(CONSTANT.PENDING_CORRECTION);
-		// } else {
-			this.getInvoice().status = CONSTANT.INBOX;
-			this.save(MSG.RESTORED_DATA);
-		// }		
+		this.getInvoice().status = CONSTANT.INBOX;
+		this.save(MSG.RESTORED_DATA);
 		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
-		this.updateCounter(OPTION.INVOICE_PENDINGS, undefined, 1);
 		this.reload();
 	}
 
@@ -3214,10 +3198,10 @@ export class AonInvoice extends AonElement {
 	
 	getRestoreToOption() {
 		if(this.getInvoice().isEmitida()) {
-			return OPTION.RAWDOC_INBOX_ISSUED;
+			return OPTION.PROFORMA_INVOICES;
 		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED;
+			return OPTION.RAWDOC_INBOX_TICKET_NEW;
+		} else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	removeInvoice() {
@@ -3242,7 +3226,6 @@ export class AonInvoice extends AonElement {
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML(MSG.DELETE_CONFIRM);
 		d.addAcceptAction(() => {
-			this.isInvofoxInvoice() && this.setInvofoxState(CONSTANT.ERROR);
 			this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1);
 			this.back();
 		});

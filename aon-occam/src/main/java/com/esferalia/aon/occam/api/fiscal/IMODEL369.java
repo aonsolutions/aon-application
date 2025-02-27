@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
+import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
 import com.esferalia.aon.occam.api.model.type.Period;
 
 public interface IMODEL369 {
@@ -16,5 +17,6 @@ public interface IMODEL369 {
 	public void delete(AONContext ctx,Mod369 mod369);
 	public Mod369 saveComments(AONContext ctx, Mod369 mod369);
 	public Mod369 changeStatus(AONContext ctx, Mod369 mod369, FiscalStatus newStatus);
+	public String getInfo(AONContext ctx, Mod369 mod369, Mod369Detail mod369Detail, byte detailType);
 	
 }

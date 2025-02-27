@@ -304,7 +304,13 @@ export class AonMobilePackaging extends AonElement {
 
 	print() {
 		//this.getElement(this.VIEWER).printDocument();
-		openFileUrl(this.fileUrl, 'application/pdf');
+		if(UA.isAndroidApp()) {
+			let file = {
+				url: this.fileUrl,
+				title: this.packaging.item.serialNumber
+			};
+			printFile(file);
+		} else openFileUrl(this.fileUrl, 'application/pdf');
 	}
 
 	back() {

@@ -115,7 +115,6 @@ export class AonNewLogin extends AonElement {
       MSG.USER
     );
     userInput.setRequired(true);
-    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(userInput);
 
     let passwordInput = createInput("aonLoginPassword", MSG.PASSWORD);
@@ -137,7 +136,7 @@ export class AonNewLogin extends AonElement {
       signIn.title = version;
     });
 
-    this.createDivider(divFormContent);
+    this.createDivider(divFormContent, MSG.OR_ACCESS);
 
     let magicLinkButton = this.createElement(TAG.BUTTON);
     magicLinkButton.id = "aonLoginMagicLink";
@@ -203,15 +202,17 @@ export class AonNewLogin extends AonElement {
       MSG.EMAIL
     );
     userInput.setRequired(true);
-    userInput.addEventListener(EVENT.KEYUP, (event) => this.onEnter(event));
     divFormContent.appendChild(userInput);
 
     // Buttons
     let signIn = this.createElement(TAG.BUTTON);
     signIn.id = "aonMagicLinkSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
-    signIn.innerHTML = MSG.ACCESS.toUpperCase();
-    signIn.addEventListener(EVENT.CLICK, () => this.magicLink(userInput.value));
+    signIn.innerHTML = "RECIBIR CORREO DE ACCESO";
+    signIn.addEventListener(EVENT.CLICK, (event) => {
+		event.preventDefault();
+		this.magicLink(userInput.value);
+	});
     divFormContent.appendChild(signIn);
 
     getManifest().then((manifest) => {
@@ -219,13 +220,13 @@ export class AonNewLogin extends AonElement {
       signIn.title = version;
     });
 
-    this.createDivider(divFormContent);
+    this.createDivider(divFormContent, "O");
 
     let backButton = this.createElement(TAG.BUTTON);
     backButton.id = "backButton";
     backButton.className = CSS.AON_MAGIC_BUTTON;
     backButton.title = MSG.BACK;
-    backButton.innerHTML = "Con Contraseña".toUpperCase();
+    backButton.innerHTML = "Volver Pantalla Inicio Sesi\u00f3n".toUpperCase();
     backButton.addEventListener(EVENT.CLICK, () => this.createLoginPanel());
     if (!LS.isDarkBetaTheme())
       backButton.addEventListener(
@@ -274,12 +275,12 @@ export class AonNewLogin extends AonElement {
     parent.appendChild(aonLoader);
   }
 
-  createDivider(parent) {
+  createDivider(parent, text) {
     let dividerButtons = this.createElement(TAG.DIV);
     dividerButtons.className = CSS.AON_DIVIDER_BUTTONS;
     let dividerSpan = this.createElement(TAG.SPAN);
-    (dividerSpan.className = CSS.AON_DIVIDER_SPAN),
-      (dividerSpan.innerHTML = MSG.OR_ACCESS);
+    dividerSpan.className = CSS.AON_DIVIDER_SPAN;
+    dividerSpan.innerHTML = text;
     dividerButtons.appendChild(dividerSpan);
     parent.appendChild(dividerButtons);
   }

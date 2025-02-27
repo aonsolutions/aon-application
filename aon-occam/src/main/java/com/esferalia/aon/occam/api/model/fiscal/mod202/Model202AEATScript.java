@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod202;
+package com.esferalia.aon.occam.api.model.fiscal.mod202;
 
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.ACT_ACCOUNT;
@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 
-public enum Model2022018AEATScript implements IModelScript<Mod202Key> {
+public enum Model202AEATScript implements IModelScript<Mod202Key> {
 	
 	// Á --> \u00C1 á --> \u00E1 
 	// É --> \u00C9 é --> \u00E9 
@@ -22,19 +22,14 @@ public enum Model2022018AEATScript implements IModelScript<Mod202Key> {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
+
 	
-	 C01 ( Mod202Key.X15.getDescription(),new Mod202Key[]{Mod202Key.X15},NONE)
-	,C02 ( Mod202Key.X16.getDescription(),new Mod202Key[]{Mod202Key.X16},NONE)
-	,C03 ( Mod202Key.X17.getDescription(),new Mod202Key[]{Mod202Key.X17},NONE)
-	,C04 ( Mod202Key.X18.getDescription(),new Mod202Key[]{Mod202Key.X18},NONE)
-	
-	,R00 ("Devengo",null,TITLE)
+	 R00 ("Devengo",null,TITLE)
 	,R01 (Mod202Key.P02.getDescription(),new Mod202Key[]{Mod202Key.P02},NONE)
 	,R02 (Mod202Key.P03.getDescription(),new Mod202Key[]{Mod202Key.P03},NONE)
 	,R03 ("Datos adicionales",null,TITLE)
 	,R04 ( Mod202Key.X01.getDescription(),new Mod202Key[]{Mod202Key.X01},NONE)
 	,R05 ( Mod202Key.X02.getDescription(),new Mod202Key[]{Mod202Key.X02},NONE)
-	,C05 ( Mod202Key.X19.getDescription(),new Mod202Key[]{Mod202Key.X19},NONE)
 	,R06 ( Mod202Key.X04.getDescription(),new Mod202Key[]{Mod202Key.X04},NONE)
 	,R07 ( Mod202Key.X12.getDescription(),new Mod202Key[]{Mod202Key.X12},NONE)
 	,R08 ( Mod202Key.X06.getDescription(),new Mod202Key[]{Mod202Key.X06},NONE)
@@ -121,7 +116,7 @@ public enum Model2022018AEATScript implements IModelScript<Mod202Key> {
 	private Mod202Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model2022018AEATScript(String label, Mod202Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model202AEATScript(String label, Mod202Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -150,15 +145,10 @@ public enum Model2022018AEATScript implements IModelScript<Mod202Key> {
 	
 	@Override
 	public boolean hasGraphicParticularity() {
-		return (this == C01 
-			|| this == C02
-			|| this == C03
-			|| this == C04
-			|| this == R01
+		return (this == R01
 			|| this == R02
 			|| this == R04
 			|| this == R05
-			|| this == C05
 			|| this == R06
 			|| this == R07
 			|| this == R08

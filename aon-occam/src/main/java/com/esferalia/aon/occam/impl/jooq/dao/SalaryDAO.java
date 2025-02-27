@@ -1186,6 +1186,11 @@ public class SalaryDAO {
 			return new FilterDAO.DatePropertyDAO(SALARY.ISSUE_DATE);
 		}
 		
+		@Override
+		public Property<Byte> getTypeProperty() {
+			return new FilterDAO.PropertyDAO<Byte>(SALARY.TYPE);
+		}
+		
 	}
 
 	private static class BackIterator<T> implements Iterator<T> {

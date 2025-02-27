@@ -99,14 +99,28 @@ public class Model369 extends MainEntryPoint {
 			breakdownPanel.setWidget(panel);
 			breakdownPanel.scrollToTop();
 		}
+		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
 
 		@Override
 		public void cleanInfoPanel() {
-			Widget w = breakdownPanel.getWidget();
-			if (w != null) {
-				breakdownPanel.remove( breakdownPanel.getWidget() ); 
-			}
+//			Widget w = breakdownPanel.getWidget();
+//			if (w != null) {
+//				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+//			}
+			cleanBreakdownPanel();
 		}
+		
+		public void cleanAndCloseInfoPanel() {
+			cleanAndClose();
+		}
+		
 		public Integer getSelectedTab() {
 			return Model369.this.getSelectedTab();
 		}

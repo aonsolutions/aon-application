@@ -54,10 +54,8 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-    // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
-	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
-	let themeUrl = UA.isMobile() 
-        ? LS.AON_MOBILE_ANDROID 
+   	let themeUrl = UA.isMobile() 
+        ? (UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME) 
         : getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;
 
 	return new Promise((resolve, reject) => {

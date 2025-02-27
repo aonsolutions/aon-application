@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
@@ -236,6 +238,11 @@ public class FiscalFaker {
 	public static Mod131 getMod131( FiscalFakerParams params) {
 		return getFiscalModel(params,Mod131::new,
 			(m) -> MODEL131.initialize( params.getOccam(), m));
+	}
+
+	public static Mod202 getMod202( FiscalFakerParams params) {
+		return getFiscalModel(params,Mod202::new,
+			(m) -> MODEL202.initialize( params.getOccam(), m));
 	}
 
 	public static Mod303 getMod303( FiscalFakerParams params) {
