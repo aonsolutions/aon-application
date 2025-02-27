@@ -166,7 +166,7 @@
 /* .aon-EmployeeTree-Employees */
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem,
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
-	min-width: 260px;
+	min-width:225px;
 	position: relative;
 	padding: 4px 4px 4px 4px;
 	background-color: #fafafa;
