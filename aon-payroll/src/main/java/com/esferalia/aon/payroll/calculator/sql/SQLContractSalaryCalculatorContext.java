@@ -888,7 +888,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					return guarentee;
 
 			}
-			return super.guarantee(guarentee);
+			return guarentee; // super.guarantee(guarentee);
 
 		}
 
