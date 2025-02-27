@@ -27,6 +27,8 @@ import net.aonsolutions.db.up2date.management.AlterInvoiceAddIndexDomainStatus;
 import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.payroll.PartialRetirementInsert;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2025Update;
+import net.aonsolutions.db.up2date.tgss.Artist2025Update;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2025Update;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
@@ -529,13 +531,15 @@ public class Up2Date {
 			// PartialRetirementInsert.PARTIAL_RETIREMENT_INSERT
 			// HomeSolidarityRemove.HOME_SOLIDARITY_REMOVE
 			
-			BasesMin2025Update.BASESMIN2025UPDATE,
-			HomeBases2025Update.HOMEBASES2025UPDATE,
-			FellowsBases2025Update.FELLOWSBASES2025UPDATE,
-			TrainningBases2025Update.TRAINNINGBASES2025UPDATE,
-			FellowsPercentages2025Update.FELLOWSPERCENTAGES2024UPDATE,
-			TrainingPercentages2025Update.TRAINNINGPERCENTAGES2025UPDATE,
+			// BasesMin2025Update.BASESMIN2025UPDATE,
+			// HomeBases2025Update.HOMEBASES2025UPDATE,
+			// FellowsBases2025Update.FELLOWSBASES2025UPDATE,
+			// TrainningBases2025Update.TRAINNINGBASES2025UPDATE,
+			// FellowsPercentages2025Update.FELLOWSPERCENTAGES2024UPDATE,
+			// TrainingPercentages2025Update.TRAINNINGPERCENTAGES2025UPDATE,
 			
+			Artist2025Update.ARTIST2025UPDATE,
+			AgriculturalBases2025Update.AGRICULTURALBASES2025UPDATE
 	};
 
 	// ------------------------------------------------------------------------
