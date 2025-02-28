@@ -7,20 +7,30 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductCatalogue;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public abstract class TariffCatalogue extends AonCustomDockLayout {
@@ -34,6 +44,32 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 				commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 			}
 		}
+		
+		// ------------------------------------------------- ContextMenu
+		
+		class ExcelExportommand implements ScheduledCommand {
+
+			@Override
+			public void execute() {
+				onExcelClick(null);
+			}
+
+		}
+
+		class ExcelContextMenu extends ContextMenu {
+
+			public ExcelContextMenu() {
+				addMenuItem("Tarifas Completas", new ExcelExportommand(), AON.CSS.aonIconExcel(), "excelExport");
+			}
+
+			private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+				MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+				item.ensureDebugId(debugId);
+				return item;
+			}
+
+		}
+
 		
 		// ------------------------------------------------- Variables
 		
@@ -53,6 +89,9 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 
 		private RegistryModuleOptions options;
 		private List<Tariff> tariffs;
+		private AonExpandButton excelExpandBtn;
+		
+		private ExcelContextMenu excelContextMenu = new ExcelContextMenu();
 		
 		public TariffCatalogue(RegistryModuleOptions options) {
 			super("Cat\u00e1logo");
@@ -87,6 +126,7 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 				
 				tablayoutPanel.addSelectionHandler(e -> {
 					tariff.setVisible(tablayoutPanel.getSelectedIndex() != 0);
+					excelExpandBtn.setVisible(tablayoutPanel.getSelectedIndex() == 0);
 					onSearch();
 				});
 				
@@ -114,6 +154,42 @@ public abstract class TariffCatalogue extends AonCustomDockLayout {
 			tariff.addChangeHandler(e -> onSearch());
 			tariff.setVisible(false);
 			addToolbarButton(tariff);
+			
+			excelExpandBtn = new AonExpandButton("Excel", AON.CSS.aonIconExcel()){
+
+				@Override public void onDefaultClick(ClickEvent evet) { onExcelClick(domainType.getValue()); }
+
+				@Override
+				public void onExpandClick(ClickEvent event) {
+					NativeEvent nativeEvent = event.getNativeEvent();
+					excelContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+					excelContextMenu.show();
+				}};
+				
+			addToolbarButton(excelExpandBtn);
+		}
+		
+		private void onExcelClick(String domainType) {
+			FormPanel diskForm = new FormPanel("_blank");
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + "ms/api/tariffCatalogue/");
+			diskForm.addSubmitCompleteHandler(e -> removeToolbarButton(diskForm));
+			
+			Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID, Integer.toString( options.getDomain() ));
+			Hidden domainNameHidden = new Hidden(IRequestParamsNames.DOMAIN_NAME, options.getDomainName());
+			Hidden userHidden = new Hidden(IRequestParamsNames.USER, options.getUser());
+			Hidden domainTypehHidden = new Hidden("domainType", domainType);
+
+			FlowPanel formFlowPanel = new FlowPanel();
+			diskForm.add(formFlowPanel);
+			formFlowPanel.add(domainTypehHidden);
+			formFlowPanel.add(domainIdHidden);
+			formFlowPanel.add(domainNameHidden);
+			formFlowPanel.add(userHidden);
+			
+			addToolbarButton(diskForm);
+			
+			diskForm.submit();
 		}
 		
 		public void onSearch() {

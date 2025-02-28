@@ -8,6 +8,9 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.tariff.TariffCatalogue;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
@@ -38,6 +41,7 @@ public class ProductModule extends MainEntryPoint {
 	
 	public void moduleLoad() {
 		AON.ensureInjected();
+		ensureGwtSelector();
 		
 		deckLayoutPanel = new DeckLayoutPanel();
 		
@@ -95,6 +99,15 @@ public class ProductModule extends MainEntryPoint {
 	private void showTariffCatalogue() {
 		deckLayoutPanel.showWidget(tariffCatalogue);
 		tariffCatalogue.onSearch();
+	}
+	
+	private void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
 	}
 	
 }
