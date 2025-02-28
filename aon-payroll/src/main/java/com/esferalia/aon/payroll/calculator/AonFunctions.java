@@ -133,7 +133,12 @@ public class AonFunctions {
 			Variable variable = method.getAnnotation(Variable.class);
 			if ( variable != null ) {
 				ContextVariable contextVariable = variable.value();
-				MethodStub methodStub = new MethodStub(method);
+				MethodStub methodStub = new MethodStub(method) {
+					@Override
+					public String toString() {
+						return variable.string();
+					}
+				};
 				context.setVariable(contextVariable, methodStub, startDate, endDate);
 			}
 		}

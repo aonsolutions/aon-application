@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, getInvofoxCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -422,7 +422,7 @@ export class AonInvoicePanel extends AonElement {
   updateCounterHome() {
     let issued = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
     let invoiceIssuedNumber = this.getElement("invoiceIssuedNumber");
-    if(invoiceIssuedNumber) invoiceIssuedNumber.innerHTML = issued;
+    if(invoiceIssuedNumber) invoiceIssuedNumber.innerHTML = issued;  
 
     let received = getCounter()[OPTION.INVOICE_RECEIVED_BETA.id] || 0;
     let invoiceReceivedNumber = this.getElement("invoiceReceivedNumber");
@@ -833,8 +833,8 @@ export class AonInvoicePanel extends AonElement {
 
   refreshInvoicePanel() {
     this.buildInvoiceToolbarOptions();
-    this.buildCounter();
     this.aonInvoiceHome();
+    this.buildCounter();
   }
 
   refreshProcessing() {

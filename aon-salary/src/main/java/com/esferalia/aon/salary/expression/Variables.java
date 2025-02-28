@@ -461,8 +461,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 
-	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end)
-			throws UndefinedVariablesException {
+	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end)			{
 		List<PeriodMap> list = new LinkedList<PeriodMap>();
 
 		List<Period> periods = new LinkedList<Period>();

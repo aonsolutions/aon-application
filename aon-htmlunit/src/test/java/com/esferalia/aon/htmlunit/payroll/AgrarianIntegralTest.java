@@ -43,6 +43,9 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE, 2024);
 		assertValue("cgcBaseLabel", 57.52 * 10);
 		assertValue("cgpBaseLabel", 57.52 * 10);
+		calculate(Calendar.JUNE, 2025);
+		assertValue("cgcBaseLabel", 60.05 * 10);
+		assertValue("cgpBaseLabel", 60.05 * 10);
 
 		draft("BASE MÍNIMA, MENSUAL ( GRUPO 01 )");
 		calculate(Calendar.JUNE, 2023);
@@ -51,6 +54,8 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 		draft("BASE MÍNIMA, MENSUAL ( GRUPO 01 )");
 		calculate(Calendar.JUNE, 2024);
 		assertValue("cgcBaseLabel", 1847.40);
+		calculate(Calendar.JUNE, 2025);
+		assertValue("cgcBaseLabel", 1929.00);
 	}
 
 	@Test

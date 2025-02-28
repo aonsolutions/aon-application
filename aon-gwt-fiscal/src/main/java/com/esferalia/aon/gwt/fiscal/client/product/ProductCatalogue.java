@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.product;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
@@ -109,21 +111,28 @@ public class ProductCatalogue extends HTMLPanel {
 		}
 		
 		tableScrollPanel = new ScrollPanel(cataloguePanel);
-		tableScrollPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 		tableContainer.add(tableScrollPanel);
 	}
 
 	private void createPacks(HTMLPanel cataloguePanel, List<Product> packsProducts) {
+		HTMLPanel centerPacksCataloguePanel = new HTMLPanel("");
+		centerPacksCataloguePanel.setWidth("100%");
+		centerPacksCataloguePanel.getElement().getStyle().setProperty("display", "flex");
+		centerPacksCataloguePanel.getElement().getStyle().setProperty("justify-content", "center");
+		
 		HTMLPanel packsCataloguePanel = new HTMLPanel("");
-		packsCataloguePanel.addStyleName(AON.CSS.aonItemFlex());
-		packsCataloguePanel.getElement().getStyle().setProperty("justify-content", "center");
-		packsCataloguePanel.getElement().getStyle().setProperty("align-items", "start");
-		packsCataloguePanel.getElement().getStyle().setProperty("gap", "1rem");
+		packsCataloguePanel.addStyleName(AON.CSS.aonPacksCataloguePanel());
+		centerPacksCataloguePanel.add(packsCataloguePanel);
+		cataloguePanel.add(centerPacksCataloguePanel);
 		
-		packsProducts.sort(Comparator.comparingDouble(p -> p.getItem().getPrice()));
-		createProductCard(packsCataloguePanel, packsProducts, 0);
-		
-		cataloguePanel.add(packsCataloguePanel);
+		getItemTariff(null, itemTariffAll -> {
+			List<ItemTariff> itemTariffs = itemTariffAll.stream().filter(itemTariffIt -> itemTariffIt.getTariff().getId().equals(tariff.getId())).collect(Collectors.toList());
+			packsProducts.sort(Comparator.comparingDouble(p -> { 
+				Optional<ItemTariff> itOpt = itemTariffs.stream().filter(it -> it.getItem().equals(p.getItem().getId())).findFirst();
+				return itOpt.isEmpty() ? p.getItem().getPrice() : (p.getItem().getPrice() - (p.getItem().getPrice() * itOpt.get().getProfitPercent() / 100));
+			}));
+			createProductCard(packsCataloguePanel, packsProducts, 0);
+		});
 	}
 	
 	private void createProductCard(HTMLPanel packsCataloguePanel, List<Product> packsProducts, int index) {
@@ -135,11 +144,18 @@ public class ProductCatalogue extends HTMLPanel {
 	    Product packProduct = packsProducts.get(index);
 	    getItemCompositions(packProduct.getItem().getId(), itemCompositions -> {
 	        // Crear la carta después de obtener itemCompositions
-	        CataloguePackCard card = new CataloguePackCard(packProduct, tariff, itemCompositions);
-	        packsCataloguePanel.add(card);
+	    	
+	    	getItemTariff(packProduct.getItem().getId(), itemTariff -> {
+	    		CataloguePackCard card;
+	    		if(itemTariff.isEmpty())
+	    			card = new CataloguePackCard(packProduct, tariff, itemCompositions);
+	    		else
+	    			card = new CataloguePackCard(packProduct, itemTariff.get(), itemCompositions);
+		        packsCataloguePanel.add(card);
 
-	        // Procesar el siguiente pack
-	        createProductCard(packsCataloguePanel, packsProducts, index + 1);
+		        // Procesar el siguiente pack
+		        createProductCard(packsCataloguePanel, packsProducts, index + 1);
+			});	
 	    });
 	}
 
@@ -150,49 +166,70 @@ public class ProductCatalogue extends HTMLPanel {
 		servicesPanel.setWidth("100%");;
 		
 		aonServices.forEach(aonService -> {
-			HTMLPanel servicePanel = new HTMLPanel("");
-			servicePanel.addStyleName(AON.CSS.aonItemFlex());
-			servicePanel.setWidth("100%");
-			servicePanel.getElement().getStyle().setProperty("justify-content", "space-between");
-			servicePanel.getElement().getStyle().setProperty("padding", "1rem");
-			servicePanel.getElement().getStyle().setProperty("border", "1px solid #ebebeb");
-			servicePanel.getElement().getStyle().setProperty("border-radius", "0.5rem");
-			
-			HTMLPanel codeNamePanel = new HTMLPanel("");
-			codeNamePanel.addStyleName(AON.CSS.aonItemFlex());
-			
-			Label code = new Label(aonService.getCode());
-			code.setWidth("10rem");
-			codeNamePanel.add(code);
-			
-			Label name = new Label(aonService.getName());
-			name.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			codeNamePanel.add(name);
-			
-			servicePanel.add(codeNamePanel);
-			
-			HTMLPanel pricePanel = new HTMLPanel("");
-			pricePanel.addStyleName(AON.CSS.aonItemFlex());
-			
-			Label price = new Label(formaDouble(aonService.getItem().getPrice()) + " \u20ac");
-			
-			if(tariff.getDiscount() != 0.00) {
-				Label newPrice = new Label(formaDouble(getTariffPrice(aonService.getItem().getPrice(), tariff.getDiscount())) + " \u20ac");
-				newPrice.getElement().getStyle().setProperty("font-size", "1rem");
-				newPrice.getElement().getStyle().setColor("#0ea90e");
-				pricePanel.add(newPrice);
+			getItemTariff(aonService.getItem().getId(), itemTariff -> {
+				HTMLPanel servicePanel = new HTMLPanel("");
+				servicePanel.addStyleName(AON.CSS.aonItemFlex());
+				servicePanel.setWidth("100%");
+				servicePanel.getElement().getStyle().setProperty("justify-content", "space-between");
+				servicePanel.getElement().getStyle().setProperty("padding", "1rem");
+				servicePanel.getElement().getStyle().setProperty("border", "1px solid #ebebeb");
+				servicePanel.getElement().getStyle().setProperty("border-radius", "0.5rem");
 				
-				price.getElement().getStyle().setColor("#848484");
-				price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
-			} else {
-				price.getElement().getStyle().setProperty("font-size", "1rem");
-			}
-			
-			pricePanel.add(price);
-			
-			servicePanel.add(pricePanel);
-			
-			servicesPanel.add(servicePanel);
+				HTMLPanel codeNamePanel = new HTMLPanel("");
+				codeNamePanel.addStyleName(AON.CSS.aonItemFlex());
+				
+				Label code = new Label(aonService.getCode());
+				code.setWidth("10rem");
+				codeNamePanel.add(code);
+				
+				Label name = new Label(aonService.getName());
+				name.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				codeNamePanel.add(name);
+				
+				servicePanel.add(codeNamePanel);
+				
+				HTMLPanel pricePanel = new HTMLPanel("");
+				pricePanel.addStyleName(AON.CSS.aonItemFlex());
+				pricePanel.getElement().getStyle().setProperty("flex-direction", "row-reverse");
+				
+				Label price = new Label(formaDouble(aonService.getItem().getPrice()) + " \u20ac");
+				
+				if(itemTariff.isEmpty()) {
+					if(tariff.getDiscount() != 0.00) {
+						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), tariff.getDiscount());
+						Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : (formaDouble(tariffPrice) + " \u20ac"));
+						newPrice.getElement().getStyle().setProperty("font-size", "1rem");
+						newPrice.getElement().getStyle().setColor("#0ea90e");
+						pricePanel.add(newPrice);
+						
+						price.getElement().getStyle().setColor("#848484");
+						price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+					} else {
+						price.getElement().getStyle().setProperty("font-size", "1rem");
+					}
+				} else {
+					if(itemTariff.get().getProfitPercent() != 0.00) {
+						double tariffPrice = getTariffPrice(aonService.getItem().getPrice(), itemTariff.get().getProfitPercent());
+						Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : (formaDouble(tariffPrice) + " \u20ac"));
+						newPrice.getElement().getStyle().setProperty("font-size", "1rem");
+						newPrice.getElement().getStyle().setColor("#0ea90e");
+						pricePanel.add(newPrice);
+						
+						price.getElement().getStyle().setColor("#848484");
+						price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+					} else {
+						price.getElement().getStyle().setProperty("font-size", "1rem");
+					}
+				}
+				
+				
+				
+				pricePanel.add(price);
+				
+				servicePanel.add(pricePanel);
+				
+				servicesPanel.add(servicePanel);
+			});
 		});
 		
 		cataloguePanel.add(servicesPanel);
@@ -250,6 +287,22 @@ public class ProductCatalogue extends HTMLPanel {
 			@Override
 			public void onFailure(Throwable caught) {
 				AonMessagePanel.showError(messagePanel, "Error obteniendo item compuesto : " + caught.getMessage());
+			}
+		});
+	}
+	
+	private void getItemTariff(Integer itemId, Consumer<Optional<ItemTariff>> success) {
+		COMMON_SERVICE.getItemTariffs(options.getDomainName(), options.getDomain(), options.getUser(), itemId, new AsyncCallback<List<ItemTariff>>() {
+			
+			@Override
+			public void onSuccess(List<ItemTariff> itemTariffsDb) {
+				Optional<ItemTariff> itemTariff = itemTariffsDb.stream().filter(itTariff -> itTariff.getTariff().getId().equals(tariff.getId())).findFirst();
+				success.accept(itemTariff);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo tarifas producto: " + caught.getMessage());
 			}
 		});
 	}

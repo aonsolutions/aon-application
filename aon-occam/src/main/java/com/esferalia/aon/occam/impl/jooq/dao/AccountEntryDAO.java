@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
+import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -45,7 +45,6 @@ import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AutoConcept;
@@ -54,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
+import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
@@ -584,7 +584,7 @@ public class AccountEntryDAO {
 	}
 
 	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
+		entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
 			
 			@Override
 			public void visitTax(AccountEntry entry) {
@@ -672,11 +672,24 @@ public class AccountEntryDAO {
 					InvoiceDAO.delete(ctx, invoiceId);
 				}
 			}
+			@Override public void visitOpening(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitClosing(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOperating(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitManual(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalary(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoan(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitStockVariation(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsurance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoanFee(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherIncomes(AccountEntry entry) { /* Nothing */ }
 		});	
 	}
 
 	private static void afterRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
+		entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
 			
 			@Override
 			public void visitOpening(AccountEntry entry) {
@@ -720,6 +733,30 @@ public class AccountEntryDAO {
 					AccountPeriodDAO.active(ctx,entry.getPeriod());
 				}
 			}
+
+			@Override public void visitManual(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalesInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitPurchaseInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenseInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitInvestmentInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalary(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitTax(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoan(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitPayment(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitCollection(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitStockVariation(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitAmortization(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsurance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoanFee(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitReturnedPayment(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitReturnedCollection(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitFinance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherIncomes(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLeasing(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLeasingFee(AccountEntry entry) { /* Nothing */ }
 		});
 	}
 

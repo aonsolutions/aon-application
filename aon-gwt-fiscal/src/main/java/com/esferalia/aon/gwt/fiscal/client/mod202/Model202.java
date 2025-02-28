@@ -59,6 +59,19 @@ public class Model202 extends MainEntryPoint {
 	
 	protected class Model202Callback implements IFiscalModelCallback<Mod202,Model202ModuleOptions> {
 		
+		private Mod202 mod202;
+		
+		Model202Callback ( Mod202 mod202 ) {
+			setModel( mod202 );
+		}
+		public Mod202 getModel() {
+			return this.mod202;
+		}
+		
+		void setModel(Mod202 mod202) {
+			this.mod202 = mod202;
+		}
+
 		@Override
 		public void showError(String msg) {
 			showErrorMessage(msg);
@@ -70,13 +83,17 @@ public class Model202 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
-			breakdownPanel.scrollToTop();
+			showInfoPanelWidget(new HTMLPanel(htmlText));
 		}
 		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();
@@ -99,7 +116,7 @@ public class Model202 extends MainEntryPoint {
 		public void onCancel(Mod202 model) {
 			cleanInfoPanel();
 			declarationContainer.setWidget(model202Table);
-			model202Table.refresh( new Model202Callback() );
+			model202Table.refresh( new Model202Callback(model) );
 			tabLayout.selectTab(INFORMATION_TAB);
 			closeFootPanel();
 		}
@@ -122,7 +139,7 @@ public class Model202 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m202);
+					showNewDeclarationPanel(m202);
 				}
 
 
@@ -180,7 +197,7 @@ public class Model202 extends MainEntryPoint {
 
 		splitLayoutPanel.add(declarationContainer);
 
-		model202Table = new Model202Table( new Model202Callback() );
+		model202Table = new Model202Table( new Model202Callback( null ) );
 		model202Table.addSelectionHandler( this::onSelectionChange );
 		declarationContainer.setWidget(model202Table);
 
@@ -190,7 +207,7 @@ public class Model202 extends MainEntryPoint {
 		} else if (getOptions().getNewModel() != null ) {
 			newModel(getOptions().getNewModel()); 
 		} else {
-			model202Table.refresh( new Model202Callback() );
+			model202Table.refresh( new Model202Callback( null ) );
 		}
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler(event -> openFootPanelIfNeeded());
@@ -253,7 +270,7 @@ public class Model202 extends MainEntryPoint {
 			public void onSuccess(Mod202 m202) {
 				tabLayout.selectTab(INFORMATION_TAB);
 				closeFootPanel();
-				showNewDeclarationPopup( m202 );
+				showNewDeclarationPanel( m202 );
 			}
 
 			@Override
@@ -263,16 +280,27 @@ public class Model202 extends MainEntryPoint {
 		});
 	}
 	
-	enum Mod202Declarations {
-		AEAT_2023 {
+	enum Model202Declarations {
+		AEAT_2025 {
 			@Override
 			public boolean accept(Mod202 mod202) {
-				return mod202.isAEAT() && mod202.getYear() >= 2023;
+				return mod202.isAEAT() && mod202.getYear() >= 2025;
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
-				return new Model2022023AEAT(mod202, cbk);
+			public Widget getDeclarationWidget(Model202Callback cbk) {
+				return new Model2022025AEAT(cbk);
+			}
+		},
+		AEAT_2023 {
+			@Override
+			public boolean accept(Mod202 mod202) {
+				return mod202.isAEAT() && mod202.getYear() >= 2023 && mod202.getYear() < 2025;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Model202Callback cbk) {
+				return new Model2022023AEAT(cbk);
 			}
 		},
 		AEAT_2018 {
@@ -285,8 +313,8 @@ public class Model202 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
-				return new Model2022018AEAT(mod202, cbk);
+			public Widget getDeclarationWidget(Model202Callback cbk) {
+				return new Model2022018AEAT(cbk);
 			}
 		},
 		AEAT {
@@ -297,21 +325,21 @@ public class Model202 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
-				return new Model202AEAT(mod202, cbk);
+			public Widget getDeclarationWidget(Model202Callback cbk) {
+				return new Model202AEAT(cbk);
 			}
 		},
 		;
 		public abstract boolean accept(Mod202 mod202);
-		public abstract Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk);
+		public abstract Widget getDeclarationWidget(Model202Callback cbk);
 	}
 	
 	private void select(Mod202 selected) {
 		aonLayout.hideErrorPanel();
 		Widget declaration = null;
-		for (Mod202Declarations dec : Mod202Declarations.values()) {
+		for (Model202Declarations dec : Model202Declarations.values()) {
 			if (dec.accept(selected)) {
-				declaration = dec.getDeclarationWidget(selected, new Model202Callback());
+				declaration = dec.getDeclarationWidget(new Model202Callback(selected));
 			}
 		}
 		if (declaration != null) {
@@ -340,36 +368,27 @@ public class Model202 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod202 mod202) {
-		Model202NewDeclarationPopup newDialog = new Model202NewDeclarationPopup(mod202,
-			new Model202Callback() {
+	private void showNewDeclarationPanel( Mod202 mod202) {
+		Model202NewDeclarationPanel newDeclarationPanel = new Model202NewDeclarationPanel(new Model202Callback(mod202) { 
+			@Override
+			public void onAccept(Mod202 mod202) {
+				SERVICE.create(getOptions().getOccam(),mod202,
+					new AsyncCallback<Mod202>() {
+						@Override
+						public void onSuccess(Mod202 m202) {
+							select(m202);
+						}
 
-				@Override
-				public void onAccept(Mod202 mod202) {
-					SERVICE.create(getOptions().getOccam(),mod202,
-							new AsyncCallback<Mod202>() {
-								@Override
-								public void onSuccess(Mod202 m202) {
-									select(m202);
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-				}
-				@Override
-				public void onCancel(Mod202 model) {
-					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-						getOptions().getExternalCallback().onExit(model);
-					}						
-				}
-
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
 			}
-		); 
-		newDialog.center();
-		newDialog.show();
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 	private void showErrorMessage(String msg) {

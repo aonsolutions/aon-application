@@ -1,7 +1,10 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202;
 
+import java.util.LinkedList;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.ModelMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -10,24 +13,25 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	public static final String X08_1 = "202-X08-1";
 	public static final String X08_2 = "202-X08-2";
 	
-	public int year;
+	protected Mod202 mod202;
+	protected final LinkedList<Mod202Key> keys = new LinkedList<>();
 	
-	public boolean isMethodA() {
-		Double x00 = (Double) get(Mod202Key.X00.toString());
-		return x00 == 0;
+	public Mod202MVELContext(final Mod202 mod202) {
+		this.mod202 = mod202;
+		for (String keyValue : mod202.getMap().keySet()) {
+			Mod202Key mod202Key = Mod202Key.getKey(keyValue);
+			if (mod202Key != null) {
+				FiscalModelDetail detail = mod202.getMap().get(keyValue);
+				put(mod202Key.toString(), detail==null?0.0:detail.getAmount());
+			}
+		}
 	}
-	public boolean isMethodB() {
-		Double x00 = (Double) get(Mod202Key.X00.toString());
-		return x00 != 0;
-	}
-	public boolean isMethodB1() {
-		Double x00 = (Double) get(Mod202Key.X00.toString());
-		return x00 == 1;
-	}
-	public boolean isMethodB2() {
-		Double x00 = (Double) get(Mod202Key.X00.toString());
-		return x00 == 2;
-	}
+	
+	public boolean isMethodA() 	{ return mod202.isMethodA();}
+	public boolean isMethodB() 	{ return mod202.isMethodB();}
+	public boolean isMethodB1() { return mod202.isMethodB1();}
+	public boolean isMethodB2() { return mod202.isMethodB2();}
+
 	public boolean isX09Empty() {
 		Double x09 = (Double) get(Mod202Key.X09.toString());
 		return x09 == 0;
@@ -53,7 +57,7 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	public double computeC17() {
 		double x08 = getPercent();
 		double c17;		
-		if (!isX04Empty() &&  year >= 2017  ) {
+		if (!isX04Empty() &&  mod202.getYear() >= 2017  ) {
 			// A partir del 2017 si está marcado lo de las entidades navieras, el porcentaje es del 25%
 			c17 = 25;
 		} 
@@ -92,4 +96,21 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 		}
 		return c24;
 	}
+	
+	public double computeC32() {
+		if ( isMethodA() ) return 0;
+		double c18 = (Double) get(Mod202Key.C18.toString());
+		double c26 = (Double) get(Mod202Key.C26.toString());
+		double c27 = (Double) get(Mod202Key.C27.toString());
+		double c28 = (Double) get(Mod202Key.C28.toString());
+		double c29 = (Double) get(Mod202Key.C29.toString());
+		double c30 = (Double) get(Mod202Key.C30.toString());
+		double c31 = (Double) get(Mod202Key.C31.toString());
+		double prevResult = isMethodB1()?c18:c26;
+		double c32 = ((prevResult-c27-c28)*c29/100)-c30-c31;
+		if ( c32 < 0 ) c32 = 0.0;
+		return c32;
+	}
+	
+	
 }

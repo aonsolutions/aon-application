@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
@@ -21,9 +22,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod369.Model369.Model369Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369;
 import com.esferalia.aon.occam.api.model.fiscal.Mod369Detail;
@@ -35,7 +40,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod369VatType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -123,6 +132,7 @@ abstract class Model369Base extends DockLayoutPanel {
 	
 	protected void markAsDirty() {
 		setDirty(true);
+		callback.cleanAndCloseInfoPanel();
 	}
 	private boolean isDirty() {
 		return this.dirty;
@@ -675,6 +685,14 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		for (int i = 0; i < details.size(); i++) {
 			final int idx = i;
+			
+			InlineLabel manualLabel = new InlineLabel();
+			manualLabel.addStyleName(AON.CSS.aonIconLabel());
+			manualLabel.addStyleName(AON.CSS.aonIconRedWrench());
+			manualLabel.setTitle("L\u00EDnea introducida o modificada manualmente");
+			manualLabel.setSize("18px", "18px");
+			manualLabel.getElement().getStyle().setProperty("background-size", "18px 18px");
+			manualLabel.setVisible(details.get(idx).isManual());
 
 			// País de consumo
 			Mod369CountryListBox countryList = new Mod369CountryListBox();
@@ -685,6 +703,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			countryList.addChangeHandler(event -> {
 				details.get(idx).setCountry(countryList.getValue());
 				paintResultPanel(dockResultPanel);
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();				
 			});
 			
@@ -697,6 +716,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			percent.addValueChangeHandler(event -> {
 				if (percent.getValue() == null) percent.setValue(0.0,false);
 				details.get(idx).setVatPercent(percent.getValue());
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});			
 			
@@ -721,6 +741,7 @@ abstract class Model369Base extends DockLayoutPanel {
 			base.addValueChangeHandler(event -> {
 				if (base.getValue() == null) base.setValue(0.0,false);
 				details.get(idx).setBase(base.getValue());
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});
 			
@@ -734,19 +755,21 @@ abstract class Model369Base extends DockLayoutPanel {
 				if (quota.getValue() == null) quota.setValue(0.0,false);
 				details.get(idx).setQuota(quota.getValue());
 				paintResultPanel(dockResultPanel);
+				manualLabel.setVisible(details.get(idx).isManual());
 				markAsDirty();
 			});			
 			
 			// Boton borrar/restaurar linea
 			AonTableButton deleteRowButton = details.get(idx).isDeleted() ? new AonTableButton(AON.MSG.restoreAction(),AON.CSS.aonIconRestore()) : new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 			deleteRowButton.setEnabled(getModel().isEditable());
+			deleteRowButton.setTabIndex(-2);
 			deleteRowButton.addClickHandler(event -> {
 				details.get(idx).setDeleted(!details.get(idx).isDeleted());
 				paintDetailsPanel(panel, details, title);
 				paintResultPanel(dockResultPanel);
 				markAsDirty();
 			});
-			
+		
 			// No se borran las líneas en pantalla, simplemente se dejan inactivas, con posibilidad de restaurarla
 			if (details.get(idx).isDeleted()) {
 				countryList.setEnabled(false);
@@ -756,13 +779,29 @@ abstract class Model369Base extends DockLayoutPanel {
 				quota.setEnabled(false);
 			}			
 
-			tab2.addRow()
+			AonDisplayTableRow row = tab2.addRow()
 				.addCell(countryList)
 				.addCell(percent)
 				.addCell(vatTypeList)
 				.addCell(base)
 				.addCell(quota)
 				.addCell(deleteRowButton);
+			
+			// A partir del 2025 se muestra información de las facturas vinculadas a determinadas líneas de detalle, y si se ha creado o modificado manualmente 
+			if (getModel().getYear() >= 2025) {
+				// Boton info facturas vinculadas a la línea
+				AonTableButton infoRowButton =  new AonTableButton("Ver desglose del IVA en facturas",AON.CSS.aonIconHelp());
+				infoRowButton.setTabIndex(-2);
+				infoRowButton.addClickHandler(event -> {
+					byte detailType = (byte) (details == getModel().getDetails4() ? 1 : 0);
+					showInvoiceVatBreakdownInfo(infoRowButton, details.get(idx), detailType);
+				});
+				row.addCell(infoRowButton);
+				
+				// Indicar si la línea se ha creado o modificado manualmente
+				row.addCell(manualLabel);				
+			}
+			
 		}
 		
 		// Botón añadir linea
@@ -770,6 +809,7 @@ abstract class Model369Base extends DockLayoutPanel {
 		addButton.addStyleName(AON.CSS.aonMarginTop());
 		addButton.addStyleName(AON.CSS.aonMarginLeft());
 		addButton.setEnabled(getModel().isEditable());
+		addButton.setTabIndex(-2);
 		addButton.addClickHandler(event -> {
 			details.add((new Mod369Detail()).setVatType(Mod369VatType.STANDARD));
 			paintDetailsPanel(panel, details, title);
@@ -1208,6 +1248,75 @@ abstract class Model369Base extends DockLayoutPanel {
 		
 		return dockLayoutPanel;
 		
+	}
+	
+	private void showInvoiceVatBreakdownInfo(AonTableButton button, Mod369Detail mod369Detail, byte detailType) {
+		button.setEnabled(false);
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model369.SERVICE.getInfo(callback.getOptions().getOccam(), getModel(), mod369Detail, detailType, new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				popup.hide();
+				callback.showError(AON.MSG.errorMessage());
+				button.setEnabled(true);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				popup.hide();
+				JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel();
+				grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+				grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+				if (mod369Detail.isManual()) {
+					grid.setRemarks("L\u00EDnea introducida o modificada manualmente. Se muestran los datos relativos al periodo que abarca el modelo.");
+				}
+				
+				// Régimen, Prestaciones de Servicios/Entregas de Bienes, País, Porcentaje de IVA
+				grid.setSubTitle(AonStringUtils.join(
+						getModel().getRegime().getDescription(),	
+						getModel().getRegime() == Mod369Regime.UNION ? detailType == 0 ? " - Prestaciones de Servicios" : " - Entregas de Bienes" : "",
+						" - Pa\u00EDs: ",
+						mod369Detail.getCountry() == null ? "<NO ESPECIFICADO>" : mod369Detail.getCountry().getName(),
+						" - Porcentaje de IVA: ",
+						mod369Detail.getVatPercent(),
+						"%"
+						));
+
+				JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+				JsArray<JsVatContext> array = arrayObject.cast();
+				grid.render(array);
+				callback.showInfoPanelWidget(grid);
+				button.setEnabled(true);
+			}
+		});
+	}
+	
+	private void showInvoice(JsVatContext vt) {
+		int invoiceId = vt.getInvoice();
+		Model369.SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId, new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
 	}
 	
 }

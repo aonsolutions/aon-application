@@ -5,6 +5,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -26,9 +27,10 @@ public class Mod202Insert extends AbstractOccamTest {
 				mod202.setDomain(DOMAIN_ID);
 				mod202.setYear(AonDateUtils.getYear(now));
 				mod202.setPeriod( p );
-				mod202 = MODEL202.initializeMod202(getOccam(), mod202);
 				mod202.setAdministration(admon);
-				mod202 = MODEL202.createMod202(getOccam(), mod202);
+				mod202.setStatus( FiscalStatus.PENDING );
+				mod202 = MODEL202.initialize(getOccam(), mod202);
+				mod202 = MODEL202.create(getOccam(), mod202);
 				MODEL202.save(getOccam(), mod202);
 			}
 		}

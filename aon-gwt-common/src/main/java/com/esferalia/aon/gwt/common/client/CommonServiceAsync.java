@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -306,6 +307,9 @@ public interface CommonServiceAsync {
 	void saveItemComposition(String domainName, int domain, String user, ItemComposition itemComposition, AsyncCallback<ItemComposition> asyncCallback) throws AonCoreException;
 	void saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions, AsyncCallback<List<ItemComposition>> asyncCallback) throws AonCoreException;
 	
+	void getItemAddInfos(String domainName, int domain, String user, Integer itemId, AsyncCallback<List<ItemAddInfo>> asyncCallback) throws AonCoreException;
+	void saveItemAddInfos(String domainName, int domain, String user, List<ItemAddInfo> itemAddInfoList, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
 	// **************************************************
 	// ***************************************** [TARIFF]
 	// **************************************************
@@ -324,5 +328,6 @@ public interface CommonServiceAsync {
 	void deleteTariffCatalogue(String domainName, int domain, String user, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
 	void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> asyncCallback) throws AonCoreException;
+	
 	
 }

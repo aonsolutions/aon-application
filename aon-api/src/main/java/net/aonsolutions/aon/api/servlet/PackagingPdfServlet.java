@@ -88,7 +88,7 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 //			String ean128 = "(01)" + barcode + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + item.getSerialNumber();
 
 			String boxQ = toParChar(Integer.toString(boxQuantity.intValue()));
-			String serialNumber = toParChar(item.getSerialNumber());
+			String serialNumber = item.getSerialNumber();
 			String ean128 = "(02)" + barcode + "(37)" + boxQ + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + serialNumber ;
 			String sscc = container.getSerialNumber();
 				

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
+import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -21,6 +22,7 @@ public class CataloguePackCard extends HTMLPanel {
 	
 	private Product packProduct;
 	private Tariff tariff;
+	private ItemTariff itemTariff;
 	private List<ItemComposition> itemCompositions;
 	
 	public CataloguePackCard(Product packProduct, Tariff tariff, List<ItemComposition> itemCompositions) {
@@ -31,6 +33,38 @@ public class CataloguePackCard extends HTMLPanel {
 		
 		this.packProduct = packProduct;
 		this.tariff = tariff;
+		this.itemCompositions = itemCompositions;
+		
+		content = new HTMLPanel(EMPTY_STRING);
+		content.addStyleName(AON.CSS.aonItemFlex());
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.getElement().getStyle().setProperty("justify-content", "space-between");
+		
+		contentData = new HTMLPanel(EMPTY_STRING);
+		contentData.addStyleName(AON.CSS.aonItemFlex());
+		contentData.addStyleName(AON.CSS.aonFlexColumn());
+		
+		content.add(contentData);
+		
+		createTitle();
+		createPrice();
+		
+		if(!itemCompositions.isEmpty())
+			createPackContent();
+		
+		createButton();
+		
+		add(content);
+	}
+	
+	public CataloguePackCard(Product packProduct, ItemTariff itemTariff, List<ItemComposition> itemCompositions) {
+		super(EMPTY_STRING);
+		addStyleName(AON.CSS.aonCustomCard());
+		getElement().getStyle().setProperty("min-width", "18rem");
+		getElement().getStyle().setProperty("min-height", "18rem");
+		
+		this.packProduct = packProduct;
+		this.itemTariff = itemTariff;
 		this.itemCompositions = itemCompositions;
 		
 		content = new HTMLPanel(EMPTY_STRING);
@@ -76,21 +110,40 @@ public class CataloguePackCard extends HTMLPanel {
 		pricePanel.addStyleName(AON.CSS.aonItemFlex());
 		pricePanel.addStyleName(AON.CSS.aonFlexBetween());
 		pricePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
+		pricePanel.getElement().getStyle().setProperty("flexDirection", "column-reverse");
 		
 		Label price = new Label(formaDouble(packProduct.getItem().getPrice()) + " \u20ac");
 		
-		if(tariff.getDiscount() != 0.00) {
-			Label newPrice = new Label(formaDouble(getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount())) + " \u20ac");
-			newPrice.getElement().getStyle().setProperty("font-size", "2rem");
-			newPrice.getElement().getStyle().setColor("#0ea90e");
-			pricePanel.add(newPrice);
-			
-			price.getElement().getStyle().setProperty("font-size", "1.3rem");
-			price.getElement().getStyle().setColor("#848484");
-			price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+		if(null != tariff) {
+			if(tariff.getDiscount() != 0.00) {
+				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), tariff.getDiscount());
+				Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : formaDouble(tariffPrice) + " \u20ac");
+				newPrice.getElement().getStyle().setProperty("font-size", "2rem");
+				newPrice.getElement().getStyle().setColor("#0ea90e");
+				pricePanel.add(newPrice);
+				
+				price.getElement().getStyle().setProperty("font-size", "1.3rem");
+				price.getElement().getStyle().setColor("#848484");
+				price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+			} else {
+				price.getElement().getStyle().setProperty("font-size", "2rem");
+			}
 		} else {
-			price.getElement().getStyle().setProperty("font-size", "2rem");
+			if(itemTariff.getProfitPercent() != 0.00) {
+				double tariffPrice = getTariffPrice(packProduct.getItem().getPrice(), itemTariff.getProfitPercent());
+				Label newPrice = new Label(tariffPrice == 0.00 ? "Gratis" : formaDouble(tariffPrice) + " \u20ac");
+				newPrice.getElement().getStyle().setProperty("font-size", "2rem");
+				newPrice.getElement().getStyle().setColor("#0ea90e");
+				pricePanel.add(newPrice);
+				
+				price.getElement().getStyle().setProperty("font-size", "1.3rem");
+				price.getElement().getStyle().setColor("#848484");
+				price.getElement().getStyle().setTextDecoration(TextDecoration.LINE_THROUGH);
+			} else {
+				price.getElement().getStyle().setProperty("font-size", "2rem");
+			}
 		}
+		
 		
 		pricePanel.add(price);
 		
