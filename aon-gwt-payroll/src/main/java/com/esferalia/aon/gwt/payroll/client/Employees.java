@@ -2446,12 +2446,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		for ( int i = workplacesOffset; i < tree.getItemCount(); i++ ) {			
 			TreeItem workplaceItem = tree.getItem(i);	
 
-			workplaceItem.setVisible(false);	// hides
-			workplaceItem.setState(false, false);// close
+			workplaceItem.setVisible(false);		// hides
+			workplaceItem.setState(false, false);	// close
 
 			loadAndfilterWorkplace( pattern, workplaceItem, employeeItem -> {
-				workplaceItem.setVisible(true);	// display
+				workplaceItem.setVisible(true);			// display
 				workplaceItem.setState(true, false); 	// open	
+				removeFakeChild(workplaceItem);
 				found.accept( workplaceItem );
 			});
 		}

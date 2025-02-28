@@ -48,7 +48,7 @@ public class Mod202PrintAEAT extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod202 mod202 = MODEL202.getMod202(occam,id);
+			Mod202 mod202 = MODEL202.get(occam,id);
 
 			String s = mod202.getName();
 			StringBuilder sb = new StringBuilder();

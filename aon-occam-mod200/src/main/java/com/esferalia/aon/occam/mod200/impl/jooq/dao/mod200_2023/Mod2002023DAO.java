@@ -1126,7 +1126,7 @@ public class Mod2002023DAO  {
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
 				.filter(mod -> mod.getYear() == mod200.getYear() && (mod.isFinished() || mod.isSent()))
 				.forEach(mod -> {
-					Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());
+					Mod202 mod202 = Mod202DAO.get(ctx, mod.getId());
 					Mod2002023Key key = null;
 					if (mod202.getPeriod() == Period.T1) {
 						key = Mod2002023Key.BN601;

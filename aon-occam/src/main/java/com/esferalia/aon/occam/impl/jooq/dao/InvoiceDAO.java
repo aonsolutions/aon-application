@@ -962,6 +962,22 @@ public class InvoiceDAO {
 		InvoiceDataDAO.save(ctx, invoiceData, invoice);
 	}
 	
+	private static void generateSHA(AONContext ctx, Invoice invoice) {
+		String sha = AonDigestUtils.sha256Hex(invoice.flat().getBytes());
+		InvoiceData invoiceData = InvoiceDataDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getInvoiceProperty().eq(invoice.getId()))
+				.and(f.getNameProperty().eq("SHA")));
+		if(invoiceData == null) invoiceData = new InvoiceData();
+		
+		invoiceData.setDomain(invoice.getDomain())
+				.setInvoice(invoice.getId())
+				.setName("SHA")
+				.setValue(sha)
+				.setStartDate(new Date());
+		
+		InvoiceDataDAO.save(ctx, invoiceData, invoice);
+	}
+	
 	public static Invoice insert(AONContext ctx, Invoice invoice) {
 		return insert(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
 	}
@@ -1739,17 +1755,16 @@ public class InvoiceDAO {
 	public static InvoiceCounter getCounter(AONContext ctx) {
 		InvoiceCounter counter = new InvoiceCounter();
 		
-		AggregateFunction<Integer> COUNT = DSL.count(INVOICE.ID);
+		AggregateFunction<Integer> count = DSL.count(INVOICE.ID);
 		
-		ctx.getDslContext().select(INVOICE.TYPE, COUNT)
+		ctx.getDslContext().select(INVOICE.TYPE, count)
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-		.and(INVOICE.STATUS.eq(InvoiceStatus.PENDING.value()))
+		.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new Date()))))
 		.groupBy(INVOICE.TYPE)
 		.fetch().stream().forEach(r -> {
 			InvoiceType type = InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE));
-			Integer count = r.getValue(COUNT);
-			counter.getMap().put(type, count);
+			counter.getMap().put(type, r.getValue(count));
 		});
 		
 		return counter;

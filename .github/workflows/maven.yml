@@ -5,13 +5,9 @@ on:
   push:
     branches: 
       - master
-      - cadizbay
-      - macleod
   pull_request:
     branches: 
       - master
-      - cadizbay
-      - macleod
   workflow_dispatch:
     inputs:
       skipTests:
@@ -24,7 +20,7 @@ env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.ref_name == 'cadizbay' && true || github.event.inputs.skipTests }}
+  SKIP_TESTS: ${{ github.event.inputs.skipTests }}
   
 jobs:
   build:
@@ -195,10 +191,10 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/macleod'
+      if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'macleod' }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
@@ -218,10 +214,10 @@ jobs:
         AWS_REGION: eu-south-2
 
     - name: Tag, and push images to Amazon ECR (Spain)
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/cadizbay'
+      if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' || 'cadiz' }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
@@ -236,11 +232,5 @@ jobs:
     #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-SOLUTIONS --force-new-deployment
     #    aws ecs update-service --region=eu-south-2 --cluster AON --service AON-APPLICATION --force-new-deployment
 
-    # - name: Deploy to Amazon ECS CADIZ
-    #  if: github.ref == 'refs/heads/cadizbay'
-    #  run : |
-    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-SOLUTIONS --force-new-deployment
-    #   aws ecs update-service --region=eu-south-2 --cluster AON --service CADIZ-APPLICATION --force-new-deployment
-        
 
 
