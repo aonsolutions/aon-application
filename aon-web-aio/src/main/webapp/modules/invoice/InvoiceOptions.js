@@ -31,14 +31,14 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
   export const income = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
-    parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting', filter && filter.status === CONSTANT.PROCESSING);
+    parent.buildIncomeToolbarOptions();
     parent.aonIncome(/*filter*/);
   }
 
   export const expense = (filter) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
-    parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting', filter && filter.status === CONSTANT.PROCESSING);
+    parent.buildExpenseToolbarOptions();
     parent.aonExpense(/*filter*/);
   }
 
@@ -272,7 +272,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
     icon: "add_card",
-    fn: () => income({ status: CONSTANT.INBOX, type: "emitida" })
+    fn: () => alert("EN DESARROLLO")
   }
 
   export const OFFERS = {
@@ -286,7 +286,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
     icon: "account_balance_wallet",
-    fn: () => expense({ status: CONSTANT.INBOX, type: "emitida" })
+    fn: () => alert("EN DESARROLLO")
   }
 
   export const STAFF_EXPENSES = {

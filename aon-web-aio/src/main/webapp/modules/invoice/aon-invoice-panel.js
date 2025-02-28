@@ -45,6 +45,8 @@ import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
 import { AonIncome } from "./aon-income.js";
 import { AonExpense } from "./aon-expense.js";
+import { AonIncomeList } from "./aon-income-list.js";
+import { AonExpenseList } from "./aon-expense-list.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -266,6 +268,14 @@ export class AonInvoicePanel extends AonElement {
     this.buildToolbarSearchOption();
   }
 
+  buildIncomeToolbarOptions() {
+    this.clearToolbar();
+  }
+
+  buildExpenseToolbarOptions() {
+    this.clearToolbar();
+  }
+
   clearToolbar() {
     let aonInvoice = this.getApplication();
     let toolbar = this.getElement(aonInvoice.TOOLBAR);
@@ -482,12 +492,12 @@ export class AonInvoicePanel extends AonElement {
   }
 
   aonIncome(){
-    let table = new AonIncome();
+    let table = new AonIncomeList();
     this.getApplication().setContent(table);
   }
 
   aonExpense(){
-    let table = new AonExpense();
+    let table = new AonExpenseList();
     this.getApplication().setContent(table);
   }
 

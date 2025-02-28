@@ -110,6 +110,8 @@ export const AON_PARENT = 'aon-parent';
 
 export const AON_INCOME = 'aon-income';
 export const AON_EXPENSE = 'aon-expense';
+export const AON_INCOME_LIST = 'aon-income-list';
+export const AON_EXPENSE_LIST = 'aon-expense-list';
 export const AON_INVOICE_PANEL = 'aon-invoice-panel';
 export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
