@@ -106,7 +106,7 @@ public class TariffCatalogueExcelServlet extends HttpServlet {
 				
 				if(productTariffs.isEmpty()) {
 					productTariffs.add(new ProductTariffsEntryExcel()
-							.setDescription("No existen productos para esta tarifa")
+							.setDescription("No existen productos para este tipo de dominio")
 							.setType("")
 							.setTariffs(new TreeMap<String, Double>())
 							);

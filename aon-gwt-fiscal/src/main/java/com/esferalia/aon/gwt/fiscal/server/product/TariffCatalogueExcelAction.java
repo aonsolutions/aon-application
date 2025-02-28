@@ -79,7 +79,8 @@ public class TariffCatalogueExcelAction extends AbsExcelAction implements Consum
 		entry.getTariffs().values().forEach(value -> alignRight( addCell( formaaAmount(value) ) ));
 	}
 
-	private static String formaaAmount(double value) {
+	private static String formaaAmount(Double value) {
+		if(null == value) return "";
         // Round to two decimal places
         long scaledValue = Math.round(value * 100); // Scale to avoid floating-point precision issues
         long integerPart = scaledValue / 100;      // Extract integer part
