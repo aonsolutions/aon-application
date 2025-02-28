@@ -653,7 +653,7 @@ export class AonMobileHome extends AonElement {
     async getEnviadas() {
         let filterCount = {};
         if (!this.getDur().isMessenger()) return null;
-        let taskHolder = await getTaskHolder({  workgroups: true, reload: true});
+        let taskHolder = await getTaskHolder({ });
         let id = taskHolder.id;
         let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
     
