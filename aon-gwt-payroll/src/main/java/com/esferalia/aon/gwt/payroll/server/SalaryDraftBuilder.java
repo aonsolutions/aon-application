@@ -281,7 +281,12 @@ public class SalaryDraftBuilder
 		
 		List<IPayment> dbPayments;
 		dbPayments = new ArrayList<IPayment>(dbSalary.getPaymentS());
-		for (Payment payment : salaryDraft.getPayments()) {
+		
+		List<Payment> draftPayments ; 
+		draftPayments = new ArrayList<Payment>(salaryDraft.getPayments());
+		Collections.sort(draftPayments, (p1,p2) -> AonNumberUtils.compare(p2.getAmount(), p1.getAmount()) );
+		
+		for (Payment payment : draftPayments) {
 			List<IPayment> dbCounterParts = getDbItemCounterParts(dbPayments,
 					payment);
 			if (dbCounterParts.size() == 0)
