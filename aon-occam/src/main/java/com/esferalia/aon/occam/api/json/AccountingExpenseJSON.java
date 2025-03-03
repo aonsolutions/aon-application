@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -35,7 +36,7 @@ public class AccountingExpenseJSON {
 				.setCreditor(CreditorJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CREDITOR)))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setDescription(JsonUtils.optString(json,IJsonNames.DESCRIPTION))
-				.setPaymethod(PayMethodJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
+				.setRbank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
 				.setReference(JsonUtils.getString(json, IJsonNames.REFERENCE));
 	}
 	
@@ -50,16 +51,18 @@ public class AccountingExpenseJSON {
 	}
 	
 	public static JSONObject toJSON(AccountingExpense a) {
-		return new JSONObject()
-				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(a.getActivity()))
+	    return new JSONObject()
+	    		.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(a.getActivity().orElse(null))) 
 				.put(IJsonNames.AMOUNT, a.getAmount())
 				.put(IJsonNames.COMMENTS, a.getComments())
-				.put(IJsonNames.CREDITOR, CreditorJSON.toJSON(a.getCreditor()))
+				.put(IJsonNames.CREDITOR, CreditorJSON.toJSON(a.getCreditor().orElse(null)))
 				.put(IJsonNames.DATE, AonDateUtils.format(a.getDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
 				.put(IJsonNames.DESCRIPTION, a.getDescription())
-				.put(IJsonNames.PAY_METHOD, PayMethodJSON.toJSON(a.getPaymethod()))
+				.put(IJsonNames.PAY_METHOD, RegistryBankJSON.toJSON(a.getRbank().orElse(null)))
 				.put(IJsonNames.REFERENCE, a.getReference());
 	}
+
+
 	
 	
 	

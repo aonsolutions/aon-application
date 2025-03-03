@@ -35,7 +35,7 @@ public class AccountingIncomeJSON {
 				.setCustomer(CustomerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setDescription(JsonUtils.optString(json,IJsonNames.DESCRIPTION))
-				.setPaymethod(PayMethodJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
+				.setRbank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
 				.setReference(JsonUtils.getString(json, IJsonNames.REFERENCE));
 	}
 	
@@ -49,15 +49,16 @@ public class AccountingIncomeJSON {
 		return array;
 	}
 	
-	public static JSONObject toJSON(AccountingIncome a) {
+	public static JSONObject toJSON(AccountingIncome a) {	
 		return new JSONObject()
-				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(a.getActivity()))
+				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(a.getActivity().orElse(null))) 
 				.put(IJsonNames.AMOUNT, a.getAmount())
 				.put(IJsonNames.COMMENTS, a.getComments())
-				.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(a.getCustomer()))
+				.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(a.getCustomer().orElse(null)))
 				.put(IJsonNames.DATE, AonDateUtils.format(a.getDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
 				.put(IJsonNames.DESCRIPTION, a.getDescription())
-				.put(IJsonNames.PAY_METHOD, PayMethodJSON.toJSON(a.getPaymethod()))
+				.put(IJsonNames.PAY_METHOD, RegistryBankJSON.toJSON(a.getRbank().orElse(null)))
 				.put(IJsonNames.REFERENCE, a.getReference());
 	}
+	
 }
