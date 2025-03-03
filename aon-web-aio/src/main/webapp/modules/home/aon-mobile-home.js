@@ -656,7 +656,8 @@ export class AonMobileHome extends AonElement {
         let taskHolder = await getTaskHolder({ });
         let id = taskHolder.id;
         let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
-    
+     
+        
         let auth = await getAuth();
         let email = auth.email;
     
