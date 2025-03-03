@@ -601,7 +601,7 @@ public class Mod2002015DAO  {
 				}
 				if (key != null) {
 					DoubleVariable2015 dv = new DoubleVariable2015( key );
-					dv.setValue( (Double) mod202.getResult() );
+					dv.setValue( (Double) mod202.getDeclarationResult() );
 					mod200.addVariable( dv );
 				}
 			});

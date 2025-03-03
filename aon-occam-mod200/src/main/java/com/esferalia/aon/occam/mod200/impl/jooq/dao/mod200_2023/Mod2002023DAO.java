@@ -1137,7 +1137,7 @@ public class Mod2002023DAO  {
 					}
 					if (key != null) {
 						DoubleVariableEx dv = new DoubleVariableEx(key);
-						dv.setValue(mod202.getResult());
+						dv.setValue(mod202.getDeclarationResult());
 						mod200.addVariable(dv);
 					}
 				});
