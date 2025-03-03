@@ -233,7 +233,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		generalCard.getElement().getStyle().setProperty("min-width", "36rem");
 		generalCard.add(table);
 		
-		code.getElement().getStyle().setProperty("text-transform", "uppercase");
+		code.getTextBox().getElement().getStyle().setProperty("text-transform", "uppercase");
 		code.getTextBox().setMaxLength(15);
 		code.setValue(product.getCode());
 		code.addValueChangeHandler(e -> product.setCode(code.getValue().trim().toUpperCase()));
@@ -335,7 +335,7 @@ public abstract class ProductEntry extends AonCustomDockLayout {
 		aditionalCard.add(table);
 		
 		app.clearItems();
-		app.addItem("-", "");
+		app.addItem("-", "--");
 		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
 		app.setValue(AonStringUtils.leftPad(AonStringUtils.substring(item.getBarcode(), 0, 2), 2, "0"));
 		app.addChangeHandler(e -> createBarCode());

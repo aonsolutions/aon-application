@@ -98,7 +98,7 @@ public class LoginServlet extends AonApiHttpServlet{
 	    	}
 	    	
 	    	if(!auth.isEmpty()) {
-	    		token = AonToken.build(auth, null);
+	    		token = AonToken.build(auth.getUuid(), null);
 	    	}
 		} else if ( AonStringUtils.isNotBlank(token)) {
 			JSONObject jsonToken = null;
@@ -125,14 +125,17 @@ public class LoginServlet extends AonApiHttpServlet{
 						.and(f.getDomainProperty().in(arrayOf(tokenDomainId /*, domain.getId(), domain.getParentId()*/))));
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} else {
 					auth = newAuthForUser(user);
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} 
 				ok = true;
 			} else {
-				String domainName = req.getServerName();
+				//String domainName = req.getServerName();
+				
+				// Ya que tenemos el primer dominio del schema, lo usamos
+				String domainName = aonToken.getSchemaFirstDomain();
 				Domain domain = AON_SOLUTIONS.getDomain(domainName);
 				if ( domain != null && Objects.equals(domain.getName(), domainName )) {
 					User user = AON_SOLUTIONS.getUser(domain, token);
@@ -164,11 +167,11 @@ public class LoginServlet extends AonApiHttpServlet{
 				
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} else {
 					try {
 						auth = newAuthForUser(user);
-						token = AonToken.build(auth, null);
+						token = AonToken.build(auth.getUuid(), null);
 					} catch ( Exception e ) {
 						token = AonToken.build(user, null, user.getDomain().getName());
 					}
