@@ -660,3 +660,25 @@ input[type='checkbox']:checked {
 	max-width: 67rem;
 	min-height: 7rem;
 }
+
+.gwt-MenuBarPopup{
+	border-radius: 2px;
+}
+
+.gwt-Selector .gwt-MenuBarPopup{
+	padding: 0;
+}
+
+.gwt-Selector .gwt-MenuBar.gwt-MenuBar-vertical{
+	min-height: 1.5rem;
+	height: 100%;
+	display: flex;
+}
+
+.gwt-Selector .gwt-MenuBar.gwt-MenuBar-vertical::hover{
+	background-color: #e3e8f3;	
+}
+
+.gwt-Selector .gwt-MenuBar-vertical .gwt-MenuItem{
+	padding: .4rem 1rem;
+}

@@ -483,11 +483,12 @@
 .aon_inline_flex {
 	display: inline-flex;
 }
+
 .aon_cmd_item{
 	background-position: center left;
 	background-repeat: no-repeat;
 	padding-left: 25px !important;
-	background-size: contain;
+	background-size: contain !important;
 }
 
 .aon_row_highlight{
