@@ -839,7 +839,7 @@ public class Mod2002018DAO  {
 				}
 				if (key != null) {
 					DoubleVariable2018 dv = new DoubleVariable2018( key );
-					dv.setValue( (Double) mod202.getResult() );
+					dv.setValue( (Double) mod202.getDeclarationResult() );
 					mod200.addVariable( dv );
 				}
 			});
