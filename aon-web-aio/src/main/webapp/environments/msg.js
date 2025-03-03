@@ -413,6 +413,7 @@ export const ISSUE = "Asunto"; //TODO
 // ----- K
 
 // ----- L
+
 export const LABELS = "Etiquetas";
 export const LABORAL_COSTS = MSG.LABORAL_COSTS;
 export const LANGUAGE = MSG.LANGUAGE;
@@ -432,6 +433,7 @@ export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
 export const LOADING = MSG.LOADING;
 export const LOGIN = MSG.LOGIN;
 export const LOGIN_SUBTITLE = MSG.LOGIN_SUBTITLE;
+
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
@@ -459,6 +461,7 @@ export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
 export const MINS = "Minutos"; //TODO
+
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -488,6 +491,7 @@ export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
 export const NUMBER = MSG.NUMBER;
 export const NUMBER_OF_USERS = MSG.NUMBER_OF_USERS;
+export const NUMBER_OF_PALLETS = MSG.NUMBER_OF_PALLETS;
 export const NOTARY = 'Notario'; //TODO
 export const NOTES = MSG.NOTES;
 export const NOTE = MSG.NOTE;

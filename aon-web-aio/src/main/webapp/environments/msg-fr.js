@@ -317,8 +317,9 @@ export const NOTIFICATION = 'Notificación';
 export const NOTIFICATIONS = 'Notificaciones';
 export const NOTES = 'Notes';
 export const NOTE = 'Nota';
-export const NUMBER = 'Número';
-export const NUMBER_OF_USERS = 'Número de usuarios';
+export const NUMBER = "Nombre";
+export const NUMBER_OF_USERS = "Nombre d'utilisateurs";
+export const NUMBER_OF_PALLETS = "Nombre de palettes";
 
 // ----- O
 

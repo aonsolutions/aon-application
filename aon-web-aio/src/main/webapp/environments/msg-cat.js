@@ -313,6 +313,8 @@ export const NOTES = 'Notes';
 export const NOTE = 'Nota';
 export const NUMBER = 'Nombre';
 export const NUMBER_OF_USERS = "Nombre d'usuaris";
+export const NUMBER_OF_PALLETS = "Nombre de palets";
+
 
 // ----- O
 
