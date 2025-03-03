@@ -41,8 +41,6 @@ export const get = (item) => {
     return value;
 }
 
-
-
 export const set = (item, value) => {
     localStorage.setItem(item, value);
 }
@@ -57,7 +55,9 @@ export const closeSession = () => {
     let topMenu = getTopMenu();
     let leftMenu = getLeftMenu();
     let portalChecked = getPortalChecked();
+    
     localStorage.clear();
+    
     setTheme(theme);
     setLanguage(language);
     setTopMenu(topMenu);
