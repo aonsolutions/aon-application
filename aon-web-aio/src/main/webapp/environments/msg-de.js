@@ -313,8 +313,9 @@ export const NOTIFICATION = 'Benachrichtigung';
 export const NOTIFICATIONS = 'Benachrichtigungen';
 export const NOTES = 'Notes';
 export const NOTE = 'Note';
-export const NUMBER = 'Number';
+export const NUMBER = 'Nummer';
 export const NUMBER_OF_USERS = 'Anzahl der Nutzer';
+export const NUMBER_OF_PALLETS = "Anzahl Paletten";
 
 // ----- O
 export const OBSERVATION = 'Observation';

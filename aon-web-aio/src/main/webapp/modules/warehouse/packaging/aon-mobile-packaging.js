@@ -127,8 +127,6 @@ export class AonMobilePackaging extends AonElement {
 		product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode());
 		// product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
 
-
-
 		// product.addEventListener(EVENT.AON_KEYUP, (e) => {
 		// 	if(product.value.length > 2) {
 		// 		let data = { serialNumber: product.value};
@@ -155,7 +153,7 @@ export class AonMobilePackaging extends AonElement {
 		});
 		table.addCell(lote);
 
-		let date = createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Lote");
+		let date = createDate(this.PACKAGING_PRODUCT_SERIAL_DATE, "Fecha Caducidad");
 		date.addEventListener(EVENT.CHANGE, (e) => {
 			if(this.packaging.item)
 				this.packaging.item.serialDate = date.getDateValue();
@@ -201,11 +199,10 @@ export class AonMobilePackaging extends AonElement {
 
 			table.addRow();
 		}
-		let copies = createInput(this.PACKAGING_COPIES, "Copias");
+		let copies = createInput(this.PACKAGING_COPIES, MSG.NUMBER_OF_PALLETS);
 		copies.value = 1;
 
 		table.addCell(copies, 2);
-
 	}
 
 	changeProduct() {
@@ -219,12 +216,14 @@ export class AonMobilePackaging extends AonElement {
 			let quantity = this.getElement(this.PACKAGING_QUANTITY);
 
 			this.packaging = r;
+			this.packaging.item.serialNumber = undefined;
+			this.packaging.item.serialDate = undefined;
 			this.packaging.warehouse = this.warehouses[0];
 			let val = r.base.description || r.base.name;
 			product.setValue(val || '');
 			container.setOptions(r.containers);
-			lote.setValue(r.item.serialNumber);
-			date.setDate(r.item.serialDate);
+			// lote.setValue(r.item.serialNumber);
+			// date.setDate(r.item.serialDate);
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
 			this.contenedor = container.value;
@@ -244,7 +243,6 @@ export class AonMobilePackaging extends AonElement {
 
 	setBarcodeData(barcodeStr) {
 		try {
-			
 			if(typeof barcodeStr === 'string') {
 				barcodeStr = JSON.parse(barcodeStr);
 			}
@@ -320,6 +318,8 @@ export class AonMobilePackaging extends AonElement {
 	save(div, saveButton, printButton, downloadButton) {
 		if(!this.packaging.item.serialNumber){
 			this.showError({message:`El número de Lote está vacío.`, type:CONSTANT.ERROR});
+		} else if(!this.packaging.item.serialDate) {
+			this.showError({message:`El fecha de caducidad no es correcta.`, type:CONSTANT.ERROR});
 		} else {
 			saveButton.style.display = 'none';
 			this.getApplication().startLoader();

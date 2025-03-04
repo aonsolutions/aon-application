@@ -316,6 +316,7 @@ export const NOTES = 'Notes';
 export const NOTE = 'Note';
 export const NUMBER = 'Number';
 export const NUMBER_OF_USERS = 'Number of users';
+export const NUMBER_OF_PALLETS = "Number of pallets";
 
 // ----- O
 export const OCR = 'OCR';

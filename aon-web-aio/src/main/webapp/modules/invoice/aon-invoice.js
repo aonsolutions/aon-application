@@ -1737,7 +1737,7 @@ export class AonInvoice extends AonElement {
 		tax.type = tax.type || tax.tax;
 		let administration = this.configuration ? this.configuration.administration : '';
 		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), administration));
-		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration));
+		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration, this.getInvoice().isWithholdingFarmer()));
 		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
 			tax.type = getTaxType(tax.percentage);
@@ -2036,7 +2036,8 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isVatEnabled()) {
 			let administration = this.configuration ? this.configuration.administration : '';
 			let vat = createSelect(this.DETAIL_VAT + i, getVatLabel(administration));
-			vat.options = JSON.stringify(getVats(administration));
+			alert(this.getInvoice().isWithholdingFarmer())
+			vat.options = JSON.stringify(getVats(administration, this.getInvoice().isWithholdingFarmer()));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
 			
@@ -2143,7 +2144,8 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isVatEnabled() &&  (!detail.prepayment || detail.prepayment == 'false')) {
 			let administration = this.configuration ? this.configuration.administration : '';
 			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, getVatLabel(administration));
-			vat.options = JSON.stringify(getVats(administration));
+			alert(this.getInvoice().isWithholdingFarmer())
+			vat.options = JSON.stringify(getVats(administration, this.getInvoice().isWithholdingFarmer()));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
 			vat.addEventListener(EVENT.SELECT, () => {

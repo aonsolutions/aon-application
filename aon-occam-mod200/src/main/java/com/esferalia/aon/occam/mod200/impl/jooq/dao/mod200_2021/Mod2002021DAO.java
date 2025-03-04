@@ -992,7 +992,7 @@ public class Mod2002021DAO  {
 				}
 				if (key != null) {
 					DoubleVariableEx dv = new DoubleVariableEx( key );
-					dv.setValue( (Double) mod202.getResult() );
+					dv.setValue( (Double) mod202.getDeclarationResult() );
 					mod200.addVariable( dv );
 				}
 			});

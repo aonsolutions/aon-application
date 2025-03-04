@@ -135,7 +135,9 @@ public class ProductPanel extends HTMLPanel {
 		generalCard.addStyleName(AON.CSS.aonWidthAll());
 		generalCard.add(table);
 		
-		code.addValueChangeHandler(e -> product.setCode(code.getValue()));
+		code.getTextBox().getElement().getStyle().setProperty("text-transform", "uppercase");
+		code.getTextBox().setMaxLength(15);
+		code.addValueChangeHandler(e -> product.setCode(code.getValue().trim().toUpperCase()));
 		
 		barcode.setEnable(false);
 		barcode.setValue(item.getBarcode());
@@ -150,7 +152,7 @@ public class ProductPanel extends HTMLPanel {
 		table.add(createRow(name, null));
 		
 		app.clearItems();
-		app.addItem("-", "00");
+		app.addItem("-", "--");
 		AonApp.getValues().forEach(appIt -> app.addItem(appIt.getDescription(), AonStringUtils.leftPad(appIt.ordinal() + "", 2, "0") ));
 		app.addChangeHandler(e -> createBarCode());
 		
