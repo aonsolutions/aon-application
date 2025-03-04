@@ -33,9 +33,7 @@ import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.ContractDataJSON;
 import com.esferalia.aon.occam.api.json.EmployeeJSON;
 import com.esferalia.aon.occam.api.model.Company;
@@ -44,10 +42,8 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -67,6 +63,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 @SuppressWarnings("serial")
 @WebServlet(name = "CONTRACT-SERVLET", urlPatterns = { "/ms/api/contract/*"})
 public class ContractServlet extends AonApiHttpServlet {
+	
 	private static Logger LOGGER = Logger.getLogger(ContractServlet.class.getName());
 	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
 	
@@ -194,10 +191,8 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private JSONArray getEmployeeSalaries(AonApiData api) throws Exception {
 		LOGGER.info("[GET]  EMPLOYEE SALARIES");
-		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 		JSONArray arr = new JSONArray();
-		String document = auth.getDocument(); 
+		String document = api.getUser().getAuth().getDocument(); 
 		if(document==null) {
 			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry().getId())).getDocument();
 		}
@@ -208,19 +203,17 @@ public class ContractServlet extends AonApiHttpServlet {
 			JooqPayrollSalaries.getSalariesByDocument(conn, filter, document).stream()
 			.sorted(Comparator.comparing(SalaryInfo::getStartDate))
 			.forEach(lt -> arr.put(toJSONSalaryInfo(lt)) );
-		} 
+		}
 
 		return arr;
 	}
 	
 	private JSONArray getEmployeeSalary(AonApiData api) throws Exception {
 		LOGGER.info("[GET]  EMPLOYEE SALARIES");
-		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 		JSONArray arr = new JSONArray();
-		String document = auth.getDocument(); 
+		String document = api.getUser().getAuth().getDocument();
 		if(document==null) {
-			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry().getId())).getDocument();
+			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(api.getUser().getRegistry().getId())).getDocument();
 		}
 			
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){

@@ -64,8 +64,8 @@ public class UserDAO {
 				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
 				.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
 				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
-//				.where(USER.DOMAIN.eq(domain.getId()).or(DOMAIN.PARENT.eq(domain.getId())))
-				.where(USER.AUTH.eq(aonToken.getAuth()).or(USER.LOGIN.eq(aonToken.getUuid())))
+				.where(USER.DOMAIN.eq(domain.getId()).or(DOMAIN.PARENT.eq(domain.getId())))
+				.and(USER.AUTH.eq(aonToken.getAuth()).or(USER.LOGIN.eq(aonToken.getUuid())))
 				.fetch()
 				.stream().map(new UserFiller()).findFirst().orElse(new User());
 		
