@@ -54,6 +54,7 @@ public class RegistryBankJSON {
 	}
 
 	public static JSONObject toJSON(RegistryBank rbank) {
+		if(rbank == null) return null;
 		return new JSONObject()
 				.put(IJsonNames.ID, rbank.getId())
 				.put(IJsonNames.DOMAIN, rbank.getDomain())

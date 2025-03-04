@@ -50,6 +50,7 @@ public class CreditorJSON {
 	}
 	
 	public static JSONObject toJSON(Creditor creditor) {
+		if(creditor == null) return null;
 		return RegistryJSON.toJSON(creditor)
 			.put(IJsonNames.WITHHOLDING, creditor.isWithholding())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, creditor.isVatAccrualPayment())

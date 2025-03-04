@@ -28,6 +28,20 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     parent.aonInvoiceList(filter);
   }
 
+  export const income = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildIncomeToolbarOptions();
+    parent.aonIncome(/*filter*/);
+  }
+
+  export const expense = (filter) => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildExpenseToolbarOptions();
+    parent.aonExpense(/*filter*/);
+  }
+
   export const info = (title, description) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     application.confirmDialog(title, description, () => {});

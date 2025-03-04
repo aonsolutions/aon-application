@@ -8,6 +8,7 @@ import { AonDocumentalAyudat } from './documental/ayudat/aon-documental-ayudat.j
 import { AonDocumental } from './documental/aon-documental.js';
 import { AonSaltra } from'./laboral/aon-saltra.js';
 import '../components/aon-icon.js';
+import * as UA from '../services/userAgentService.js' ;
 import '../components/aon-application.js';
 import './invoice/aon-invoice-panel.js';
 import './laboral/aon-laboral.js';
@@ -19,6 +20,7 @@ import { AonWarehouse } from './warehouse/aon-warehouse.js';
 import { AonConsole } from './console/aon-console.js';
 import { AonMarketing } from './marketing/aon-marketing.js';
 import { AonDragLeftNotification } from './home/aon-dragleft-notification.js';
+import { AonComunica } from './laboral/aon-comunica.js';
 
 
 export class AonApps extends AonElement {
@@ -160,7 +162,7 @@ export class AonApps extends AonElement {
 				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.COMUNICA.app:
-				this.rootPanelHtml(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
+				this.rootPanel(new AonComunica());
 				break;
 			case Apps.PAYROLL.app:
 				this.rootPanelHtml(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
@@ -196,7 +198,7 @@ export class AonApps extends AonElement {
 		else if(Apps.FISCAL.app === app.app)
 			return this.getDur().isFiscal();
 		else if(Apps.COMUNICA.app === app.app)
-			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal() ) && !this.getDur().isPayroll();
+			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal() ) && (UA.isMobile() || (!UA.isMobile() && !this.getDur().isPayroll()));
 		else if(Apps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
 		else if(Apps.DOCUMENTAL.app === app.app)

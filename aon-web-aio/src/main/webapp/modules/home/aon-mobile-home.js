@@ -1,5 +1,5 @@
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotice, getUserNotice, request, getTaskCount, getSalaryPdf, getBanks } from '../../services/service.js';
+import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotice, getUserNotice, request, getTaskCount, getSalaryPdf, getBanks, getEmployeeLastSalary, getEmployeeSalary, getTaskHolderWorkGroups } from '../../services/service.js';
 import { AonElement } from '../../components/AonElement';
 import '../invoice/aon-invoice-panel.js';
 import * as LS from '../../services/localStorageService.js';
@@ -49,6 +49,10 @@ export class AonMobileHome extends AonElement {
       };
     BANKS = [];
     taskHolder;
+    _list;
+    TASK_HOLDER;
+    _filter;
+    _listFilter
 
 	constructor () {
 		super();
@@ -77,6 +81,8 @@ export class AonMobileHome extends AonElement {
         this.WIDGET_INGRESOS = this.id + "WidgetIngresos";
         this.WIDGET_GASTOS = this.id + "WidgetGastos";
         this.taskHolder = {};
+        this._list=[];
+        this.TASK_HOLDER = {};
 	}
 
     async build() {
@@ -91,29 +97,29 @@ export class AonMobileHome extends AonElement {
                 console.log(error);
               }
             }
-        
-        this.PERIODS = await getPeriods(this.params).catch((error) => {
-            console.log(error);
-            return [];
-        });
+        if (this.getDur().isAccounting()){
+            this.PERIODS = await getPeriods(this.params).catch((error) => {
+                console.log(error);
+                return [];
+            });
+            let currentYear = new Date().getFullYear();
+            let currentYearPeriods = this.PERIODS.filter((p) => 
+                new Date(p.initiationDate).getFullYear() === currentYear
+            );      
+            let selectedPeriod = null; 
 
-        let currentYear = new Date().getFullYear();
-        let currentYearPeriods = this.PERIODS.filter((p) => 
-            new Date(p.initiationDate).getFullYear() === currentYear
-        );      
-        let selectedPeriod = null; 
-
-        if (currentYearPeriods.length > 0) {
-            selectedPeriod = currentYearPeriods.reduce((latest, p) => 
-                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            );
-        } else if (this.PERIODS.length > 0) {
-            selectedPeriod = this.PERIODS.reduce((latest, p) => 
-                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            );
+            if (currentYearPeriods.length > 0) {
+                selectedPeriod = currentYearPeriods.reduce((latest, p) => 
+                    new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+                );
+            } else if (this.PERIODS.length > 0) {
+                selectedPeriod = this.PERIODS.reduce((latest, p) => 
+                    new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+                );
+            }
+            this.selectedPeriod = selectedPeriod;
         }
         
-        this.selectedPeriod = selectedPeriod;
         
         this.accounts = await this.getData();
         if(this.accounts)
@@ -180,10 +186,10 @@ export class AonMobileHome extends AonElement {
 
         let aonSign = new AonSignMobile();
         aonSign.showInfo = false;
+        if (!this.getDur().isTimecontrol()) return null;
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
         widgetTC.appendChild(aonSign);
-
         return widgetTC;
     }
 
@@ -491,15 +497,16 @@ export class AonMobileHome extends AonElement {
         let company = JSON.parse(localStorage.getItem("company"));
         if(!this.BANKS.length){
             try {
-            const banks = await getBanks({id: company.registry});
-            if(banks){
-                this.BANKS = sortBy(banks,'alias')
-                .filter((bank) => bank.active == true);
-            }
-            return this.BANKS;
-            } catch (error) {
-            console.error(error);
-            this.showError(error);
+                if (!this.getDur().isAccounting()) return null;
+                const banks = await getBanks({id: company.registry});
+                if(banks){
+                    this.BANKS = sortBy(banks,'alias')
+                    .filter((bank) => bank.active == true);
+                }
+                return this.BANKS;
+                } catch (error) {
+                    console.error(error);
+                    this.showError(error);
             }
         } else {
             return this.BANKS;
@@ -578,17 +585,16 @@ export class AonMobileHome extends AonElement {
 
         if (!isEmptyObject(this.PERIODS)) {
             if (this.PERIODS && this.PERIODS.length > 0) {
-            this.params.period = this.selectedPeriod.id;
-
-            this.params.fromDate = this.selectedPeriod.initiationDate;
-            this.params.toDate = this.selectedPeriod.deadline;
+                this.params.period = this.selectedPeriod.id;
+                this.params.fromDate = this.selectedPeriod.initiationDate;
+                this.params.toDate = this.selectedPeriod.deadline;
             }
 
             if(!this.params.fromDate) { return []; }
-
+            if (!this.getDur().isAccounting()) return null;
             this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
-            this.showError(err);
-            return null;
+                this.showError(err);
+                return null;
             });
         }
         return this.ACCOUNTS;
@@ -616,7 +622,8 @@ export class AonMobileHome extends AonElement {
     async obtenerDatosNominas() {
         try {
             const filter = this.getApplicationParent()?._filter || {};
-            let datos = await getEmployeeSalaries(filter); 
+            if (!this.getDur().isPayroll()) return null;
+            let datos = await getEmployeeSalary(filter); 
             datos = datos.sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
             const ultimoSalario = datos[0]; 
     
@@ -645,11 +652,12 @@ export class AonMobileHome extends AonElement {
     
     async getEnviadas() {
         let filterCount = {};
-    
-        let taskHolder = await getTaskHolder({  });
+        if (!this.getDur().isMessenger()) return null;
+        let taskHolder = await getTaskHolder({ });
         let id = taskHolder.id;
         let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
-    
+     
+        
         let auth = await getAuth();
         let email = auth.email;
     
@@ -662,17 +670,29 @@ export class AonMobileHome extends AonElement {
         let enviadas = count.task_holder !== undefined && count.task_holder !== null
             ? count.task_holder + ""
             : "0";
-    
+
         return enviadas;
     }
      
     formatCurrency(valor) {
-        if (isNaN(valor) || valor === null || valor === undefined) {
+        if (isNaN(valor) || valor === null || valor === undefined) 
             return "0";
-        }
         const partes = Number(valor).toFixed(2).split(".");
         const parteEnteraConMiles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         return `${parteEnteraConMiles},${partes[1]}`;
+    }
+
+    addListFilter(filter) {
+        this.setListFilter({...this.getListFilter(), ...filter});
+    }
+
+    setListFilter(filter) {
+        this._listFilter = filter;
+        this.addBackgroundSidenav(filter);
+    }
+
+    getListFilter() {
+        return this._listFilter || {page:0, perPage:30, status: TASK_STATUS.PENDING};
     }
     
 

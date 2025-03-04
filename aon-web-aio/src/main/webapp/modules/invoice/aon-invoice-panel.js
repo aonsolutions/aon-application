@@ -43,6 +43,10 @@ import { getReader } from "../../services/utils.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
 import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
+import { AonIncome } from "./aon-income.js";
+import { AonExpense } from "./aon-expense.js";
+import { AonIncomeList } from "./aon-income-list.js";
+import { AonExpenseList } from "./aon-expense-list.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -264,6 +268,14 @@ export class AonInvoicePanel extends AonElement {
     this.buildToolbarSearchOption();
   }
 
+  buildIncomeToolbarOptions() {
+    this.clearToolbar();
+  }
+
+  buildExpenseToolbarOptions() {
+    this.clearToolbar();
+  }
+
   clearToolbar() {
     let aonInvoice = this.getApplication();
     let toolbar = this.getElement(aonInvoice.TOOLBAR);
@@ -477,6 +489,16 @@ export class AonInvoicePanel extends AonElement {
     table.invofoxFilter = this.invofoxFilter;
     this.getApplication().setContent(table);
     this.getApplication().buildDragAndDrop(true);
+  }
+
+  aonIncome(){
+    let table = new AonIncomeList();
+    this.getApplication().setContent(table);
+  }
+
+  aonExpense(){
+    let table = new AonExpenseList();
+    this.getApplication().setContent(table);
   }
 
   aonCustomerList(filter) {

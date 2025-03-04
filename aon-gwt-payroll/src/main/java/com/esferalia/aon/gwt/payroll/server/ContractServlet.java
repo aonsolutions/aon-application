@@ -112,6 +112,9 @@ public class ContractServlet extends AonApiHttpServlet {
 				case "/employee/salaries":
 					response(req, resp, getEmployeeSalaries(api));
 					break;
+				case "/employee/salary":
+					response(req, resp, getEmployeeSalary(api));
+					break;
 				case "/enterprise/salaries":
 					response(req, resp, getEnterpriseSalaries(api));
 					break;
@@ -207,6 +210,26 @@ public class ContractServlet extends AonApiHttpServlet {
 			.forEach(lt -> arr.put(toJSONSalaryInfo(lt)) );
 		} 
 
+		return arr;
+	}
+	
+	private JSONArray getEmployeeSalary(AonApiData api) throws Exception {
+		LOGGER.info("[GET]  EMPLOYEE SALARIES");
+		AonToken aonToken = SECURITY.getAonToken(api.getToken());
+		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+		JSONArray arr = new JSONArray();
+		String document = auth.getDocument(); 
+		if(document==null) {
+			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry().getId())).getDocument();
+		}
+			
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			SalaryInfoFilter filter = getFilter(api.getData());
+			filter.setWorkplaceId(api.getDomain().getId());
+			JooqPayrollSalaries.getLastSalaryByDocument(conn, filter, document).stream()
+			.sorted(Comparator.comparing(SalaryInfo::getStartDate))
+			.forEach(lt -> arr.put(toJSONSalaryInfo(lt)) );
+		} 
 		return arr;
 	}
 	
