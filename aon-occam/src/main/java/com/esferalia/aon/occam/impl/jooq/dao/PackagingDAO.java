@@ -804,13 +804,11 @@ public class PackagingDAO {
 	}
 	
 	private static String calculateSerialNumber(String barcode) {
-		Integer year = AonDateUtils.getYear(new Date());
-		String init = year.toString().substring(2,4);
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return init + AonStringUtils.leftPad(Integer.toString(AonDateUtils.getDayOfYear(new Date())), 3, "0");
+		return null;
 	}
 	
 	private static Date calculateSerialDate(String barcode) {
@@ -818,7 +816,7 @@ public class PackagingDAO {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return AonDateUtils.parse(b.parseGS1128().get(GS1128Codes.CODE_15), "yyMMdd");
 		}
-		return new Date();
+		return null;
 	}
 	
 	private static String calculateBarcode(String barcode) {

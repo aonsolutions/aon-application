@@ -214,16 +214,13 @@ export class AonMobilePackaging extends AonElement {
 			let lote = this.getElement(this.PACKAGING_PRODUCT_SERIAL_NUMBER);
 			let date = this.getElement(this.PACKAGING_PRODUCT_SERIAL_DATE);
 			let quantity = this.getElement(this.PACKAGING_QUANTITY);
-
 			this.packaging = r;
-			this.packaging.item.serialNumber = undefined;
-			this.packaging.item.serialDate = undefined;
 			this.packaging.warehouse = this.warehouses[0];
 			let val = r.base.description || r.base.name;
 			product.setValue(val || '');
 			container.setOptions(r.containers);
-			// lote.setValue(r.item.serialNumber);
-			// date.setDate(r.item.serialDate);
+			if(r.item.serialNumber) lote.setValue(r.item.serialNumber);
+			if(r.item.serialDate) date.setDate(r.item.serialDate);
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
 			this.contenedor = container.value;
