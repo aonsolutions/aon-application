@@ -1,0 +1,123 @@
+:root {
+	--vistaPersonaliazadaColor: white;
+	--favicon: faviconCustom;
+	--title: titleCustom;
+}
+
+.aonLogo{
+	background-image: url("logoCustom");
+	background-size: contain;
+}
+
+.aonNewLogo{
+	background-image: url("logoCustom");
+	background-size: contain;
+}
+
+.aonLoginLogo{
+	background-image: url("loginLogoCustom");
+	background-size: contain;
+}
+
+#aonConfigThemesCard{
+	display: none;
+}
+
+.aonHeader,
+.aonMenuLeftop,
+.aonMenuLeftopStart,
+.aonMenuSidenav,
+.aonNewMenuTopNavDiv{
+	overflow: hidden;
+	background-color: var(--vistaPersonaliazadaColor);
+}
+
+#academy:hover, 
+#accounting:hover, 
+#accountingMenu:hover, 
+#aonApplication:hover, 
+#comerce:hover, 
+#comercialMenu:hover, 
+#comunica:hover, 
+#documental:hover, 
+#fiscal:hover, 
+#fiscalMenu:hover, 
+#garage:hover, 
+#groupwareMenu:hover, 
+#home:hover, 
+#apps:hover,
+#invoice:hover, 
+#managementMenu:hover, 
+#marketingMenu:hover,
+#messenger:hover, 
+#new:hover, 
+#note:hover, 
+#warehouse:hover,
+#office:hover, 
+#payroll:hover, 
+#payrollMenu:hover, 
+#timecontrol:hover, 
+#treasuryMenu:hover, 
+#warehouseMenu:hover,
+#configurationMenu:hover {
+  background-color: rgba(0,0,0,.1);
+}
+
+#applications {
+	background-color: var(--vistaPersonaliazadaColor);
+}
+
+#applications .material-symbols-outlined{
+	color: var(--gray-50);
+}
+
+.aonHeader #aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: var(--gray-50);
+}
+
+.aonHeaderAppSpan{
+	color: black;
+}
+
+.aonNewMenuLeftTopAppDiv #aonMenuListAppImgTop-applications {
+	color: var(--gray-50);
+}
+
+.aonSideNavFiscalCircle{
+  border: 1px solid var(--aonFiscal);
+  color: var(--aonFiscal);
+}
+
+.aonAppMenuSidenavListSelected div {
+  	background-color: var(--aonFiscal);
+  	border: 1px solid var(--aonFiscal);
+  	color: white;
+}
+
+.aonSupportName:after {
+  content: 'titleCustom';	
+}
+
+.aonSupportTelephone:after {
+  content: 'phoneCustom';
+}
+
+.aonSupportUsersEmail:after {
+  content: 'emailCustom';
+}
+
+.aonSupportSalesEmail:after,
+.aonSupportAdminEmail:after,
+#aonContactIcon4,
+#aonContactIcon5 {
+  display:none;
+}
+
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+	--aon-theme: 'AONCUSTONVIEW';
+}

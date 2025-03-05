@@ -464,6 +464,7 @@ export const AON_TAB_ITEM_TEXT_SELECTED = 'aonTabItemTextSelected';
 export const AON_WEEK_SCHEDULE = 'aonWeekSchedule';
 export const AON_WEEK_FRIDAY_SCHEDULE ='aonWeekFridaySchedule';
 
+export const AON_SUPPORT_NAME = 'aonSupportName';
 export const AON_SUPPORT_TELEPHONE = 'aonSupportTelephone';
 export const AON_SUPPORT_USERS_EMAIL = 'aonSupportUsersEmail';
 export const AON_SUPPORT_SALES_EMAIL = 'aonSupportSalesEmail';

@@ -179,7 +179,7 @@ export class AonDesktop extends AonElement {
 			}
 		});
 
-		if(this.getDur().hasCustomView()){
+		/*if(this.getDur().hasCustomView()){
 			getAttach(parentFilter).then(r => {
 				let attach = new Attach(r);
 				if(attach && attach.id && attach.getContentType().includes("image")){
@@ -189,13 +189,13 @@ export class AonDesktop extends AonElement {
 						domain_name: attach.getDomain().getName(),
 						id: attach.getId()
 					};
-					let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
-	
+					let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
 					let headerLogo = this.getElement('aonLogo');
-					headerLogo.src = url;
+					headerLogo.style.backgroundImage = `url(${url})`;
+					headerLogo.style.backgroundSize = 'contain';
 				}
 			});
-		}
+		}*/
 
 		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {

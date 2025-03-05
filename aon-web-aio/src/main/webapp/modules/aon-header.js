@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts } from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -23,6 +23,7 @@ import { AonParent } from 'aonparent';
 import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
+import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
 
 export class AonHeader extends AonElement {
 
@@ -1070,12 +1071,77 @@ export class AonHeader extends AonElement {
 		}
 		
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init().then(() => aonMenu.open());
+		aonMenu.init().then(() => {
+			aonMenu.open();
+			let customUrl = location.origin + '/customview?user=' + company.login + '&domain=' + company.domain + '&parentId=' + company.parentId;
+			this.loadCustomView(customUrl).then(() => { 
+				this.favicon();
+				this.title();
+			});
+		}
+		);
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
 			callback();				
 		});
+	}
+
+	loadCustomView(customCssUrl) {
+		return new Promise((resolve, reject) => {
+			try {
+				const aonThemeSpan = document.createElement(TAG.SPAN);
+				aonThemeSpan.className = 'aonTheme';
+				aonThemeSpan.style.display = 'none';
+				document.body.appendChild(aonThemeSpan);
+	
+				this.loadLink(customCssUrl, 'stylesheet', 'text/css');
+	
+				let tries = 0;
+				let interval = setInterval(() => {
+					const aonThemeStyle = getComputedStyle(aonThemeSpan);
+					const aonThemeProperty = aonThemeStyle.getPropertyValue('--aon-theme');
+					
+					if ((tries++ > 5) || aonThemeProperty) {
+						resolve();
+						aonThemeSpan.remove();
+						clearInterval(interval);
+					}
+				}, 200);
+	
+			} catch (err) {
+				reject(new Error(`Something went wrong with theme '${themeUrl}'`));
+			}
+		});
+	}
+
+	loadLink(url, rel, type){
+		return new Promise((resolve, reject) => {
+			const link = document.createElement('link');
+			document.head.appendChild(link);
+			link.onload = resolve(link);
+			link.onerror = reject;
+			link.href = url;
+			link.rel = rel || "stylesheet";
+			link.type = type || "text/css";
+		});
+	}
+	
+	favicon() {
+		let favicon = getComputedStyle(document.body).getPropertyValue('--favicon').trim();
+		if (favicon) {
+            this.loadLink('', 'icon', 'image/x-icon')
+                .then(faviconLink => {
+                    faviconLink.href = favicon;
+                });
+        }
+	}
+	
+	title() {
+		let title = getComputedStyle(document.body).getPropertyValue('--title').trim();
+		if (title) {
+			document.title = title;
+		}
 	}
 
 	buildMenuLeftop() {

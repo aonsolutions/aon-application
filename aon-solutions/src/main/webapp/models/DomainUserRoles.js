@@ -25,8 +25,6 @@ export class DomainUserRoles {
   domainPayer;
   trial;
 
-  customCss;
-
   constructor(data) {
     this.domain = new Domain(data.domain);
     this.parentDomain = new Domain(data.parentDomain);
@@ -47,10 +45,6 @@ export class DomainUserRoles {
 
     this.trial = data.trial;
     this.customCss = data.customCss;
-  }
-
-  getCustomCss() {
-    return this.customCss;
   }
 
   checkUsers() {
