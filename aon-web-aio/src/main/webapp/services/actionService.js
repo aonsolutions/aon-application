@@ -49,7 +49,7 @@ export const printFile = (file) => {
     }
 }
 
-export const openFile = (file) => {
+export const openFileApp = (file) => {
     let data = {action: 'openFile', url: file.url, title: file.title};
     if(UA.isAndroidApp()) {
         window.Android.openFile(JSON.stringify(data));
