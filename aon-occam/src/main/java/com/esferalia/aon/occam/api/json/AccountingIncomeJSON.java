@@ -1,10 +1,8 @@
 package com.esferalia.aon.occam.api.json;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.function.Supplier;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -14,51 +12,45 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class AccountingIncomeJSON {
 	
 	private AccountingIncomeJSON() {
-		
 	}
 	
-	public static List<AccountingIncome> fromJSON(JSONArray json) {
-		LinkedList<AccountingIncome> list = new LinkedList<>();
-		for(Integer i = 0; i < json.length(); i++) {
-			list.add(fromJSON(json.getJSONObject(i)));
-		}
- 		return list;
+	public static Optional<AccountingIncome> from(JSONObject json) {
+		return from(json, AccountingIncome::new );
 	}
-	
-	public static AccountingIncome fromJSON(JSONObject json) {
-		if(json == null) return new AccountingIncome();
-
-		return new AccountingIncome()
-				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-				.setAmount(JsonUtils.getDouble(json, IJsonNames.AMOUNT))
-				.setComments(JsonUtils.optString(json, IJsonNames.COMMENTS))
+	public static Optional<AccountingIncome> from(JSONObject json, Supplier<AccountingIncome> income) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of( 
+			income.get()
+				.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
 				.setCustomer(CustomerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
-				.setDescription(JsonUtils.optString(json,IJsonNames.DESCRIPTION))
-				.setRbank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PAY_METHOD)))
-				.setReference(JsonUtils.getString(json, IJsonNames.REFERENCE));
+				.setActivity(EnterpriseActivityJSON.from(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)).orElse(null))
+				.setExpAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.EXP_ACCOUNT)).orElse(null))
+				.setConcept(JsonUtils.optString(json,IJsonNames.CONCEPT))
+				.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
+				.setAmount(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
+				.setBank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.BANK)))
+				.setCashAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CASH_ACCOUNT)).orElse(null))
+				.setComments(JsonUtils.optString(json, IJsonNames.COMMENTS))
+		);
 	}
 	
-	public static JSONArray toJSON(List<AccountingIncome> projects) {
-		return toJSON(projects.stream());
-	}
-	
-	public static JSONArray toJSON(Stream<AccountingIncome> datas) {
-		JSONArray array = new JSONArray();
-		datas.forEach(d -> array.put(toJSON(d)));
-		return array;
-	}
-	
-	public static JSONObject toJSON(AccountingIncome a) {	
-		return new JSONObject()
-				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(a.getActivity().orElse(null))) 
-				.put(IJsonNames.AMOUNT, a.getAmount())
-				.put(IJsonNames.COMMENTS, a.getComments())
+	public static Optional<JSONObject> to(AccountingIncome a) {
+		if (a == null) return Optional.empty();
+		return Optional.of(
+			new JSONObject()
+				.put(IJsonNames.DOMAIN, a.getDomain())
 				.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(a.getCustomer().orElse(null)))
 				.put(IJsonNames.DATE, AonDateUtils.format(a.getDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
-				.put(IJsonNames.DESCRIPTION, a.getDescription())
-				.put(IJsonNames.PAY_METHOD, RegistryBankJSON.toJSON(a.getRbank().orElse(null)))
-				.put(IJsonNames.REFERENCE, a.getReference());
+				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.to(a.getActivity()).orElse(null)) 
+				.put(IJsonNames.EXP_ACCOUNT, AccountJSON.to(a.getExpAccount()).orElse(null))
+				.put(IJsonNames.CONCEPT, a.getConcept())
+				.put(IJsonNames.REFERENCE_CODE, a.getReferenceCode())
+				.put(IJsonNames.AMOUNT, a.getAmount())
+				.put(IJsonNames.BANK, RegistryBankJSON.to(a.getBank()).orElse(null))
+				.put(IJsonNames.CASH_ACCOUNT, AccountJSON.to(a.getCashAccount()).orElse(null))
+				.put(IJsonNames.COMMENTS, a.getComments())
+		);
 	}
 	
 }

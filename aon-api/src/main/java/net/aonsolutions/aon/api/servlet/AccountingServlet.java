@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -119,22 +118,19 @@ public class AccountingServlet extends AonApiHttpServlet{
 		AccountingIncome acc = new AccountingIncome()
 				.setActivity(new EnterpriseActivity().setDescription("Actividad de ejemplo"))
 				.setAmount(12.5)
-				.setDescription("Descripcion de ejemplo")
+				.setConcept("Concepto de ejemplo")
 				.setDate(new Date());
 				;
 		
-		array.put(AccountingIncomeJSON.toJSON(acc));
-		
+		array.put(AccountingIncomeJSON.to(acc));
 		return array;
 	}
 	
 	private static JSONObject setExpense(AonApiData api) {
-		AccountingExpense acc = AccountingExpenseJSON.fromJSON(api.getData());
 		return api.getData();
 	}
 	
 	private static JSONObject setIncome(AonApiData api) {
-		AccountingIncome acc = AccountingIncomeJSON.fromJSON(api.getData());
 		return api.getData();
 	}
 	

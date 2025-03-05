@@ -1,86 +1,86 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountFromJSON;
-import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonAccountToJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public enum AccountJSON {
-
-	ID(
-		(account, json) -> account.setId(AonNumberUtils.toInteger(  json.optNumber(IJsonNames.ID, null) )),
-		(account, json) -> json.put(IJsonNames.ID, account.getId())
-	),
-	DOMAIN(
-		(account, json) -> account.setDomain(AonNumberUtils.toInteger(  json.optNumber(IJsonNames.DOMAIN, null) )),
-		(account, json) -> json.put(IJsonNames.DOMAIN, account.getDomain())
-	),
-	CODE(
-		(account, json) -> account.setCode(json.optString(IJsonNames.CODE,null)),
-		(account, json) -> json.put(IJsonNames.CODE, account.getCode())
-	),
-	DESCRIPTION(
-		(account, json) -> account.setDescription(json.optString(IJsonNames.DESCRIPTION,null)),
-		(account, json) -> json.put(IJsonNames.DESCRIPTION, account.getDescription())
-	),
-	ALIAS(
-			(account, json) -> account.setAlias(json.optString(IJsonNames.ALIAS,null)),
-			(account, json) -> json.put(IJsonNames.ALIAS, account.getAlias())
-	),
-	ENTRY_ENABLED(
-			(account, json) -> account.setEntryEnabled(json.optBoolean(IJsonNames.ENTRY_ENABLED)),
-			(account, json) -> json.put(IJsonNames.ENTRY_ENABLED, account.isEntryEnabled())
-	),
-	LEVEL(
-			(account, json) -> account.setLevel((byte) json.optInt(IJsonNames.LEVEL)),
-			(account, json) -> json.put(IJsonNames.LEVEL, account.getLevel())
-	),
-	ACTIVE(
-			(account, json) -> account.setActive(json.optBoolean(IJsonNames.ACTIVE)),
-			(account, json) -> json.put(IJsonNames.ACTIVE, account.isActive())
-	),
-	COST_CENTER(
-			(account, json) -> account.setCostCenter(json.optString(IJsonNames.COST_CENTER,null)),
-			(account, json) -> json.put(IJsonNames.COST_CENTER, account.getCostCenter())
-	),
-	;
-
-	private IAonAccountFromJSON fromJSON;
-	private IAonAccountToJSON toJSON;
-
-	private AccountJSON(IAonAccountFromJSON fromJSON, IAonAccountToJSON toJSON) {
-		this.fromJSON = fromJSON;
-		this.toJSON = toJSON;
-	}
+public class AccountJSON {
 	
+	private AccountJSON() {
+		
+	}
+	/**
+	 * @deprecated Use Optional<JSONObject> to(Optional<Account> account)
+	 */
+	@Deprecated
 	public static JSONObject toJSON(Account account) {
-		if (account != null) {
-			JSONObject json = new JSONObject();
-			for (AccountJSON p : AccountJSON.values()) {
-				p.toJSON.to(account, json);
-			}
-			return json;
-		}
-		return null;
+		if (account == null) return null;
+		return to( account ).orElse( null );
 	}
 	
+	/**
+	 * @deprecated Will be deleted
+	 */
+	@Deprecated
 	public static Account fromString(String text) {
 		JSONObject json = new JSONObject(text);
 		return fromJSON(json); 
 	}
-
+	
+	/**
+	 * @deprecated Use Optional<JSONObject> from(Optional<Account> account)
+	 */
+	@Deprecated
 	public static Account fromJSON(JSONObject json) {
-		if (json != null) {
-			Account account = new Account();
-			for (AccountJSON p : AccountJSON.values()) {
-				p.fromJSON.from(account, json);
-			}
-			return account;
-		}
-		return null;
+		if(json == null) return null;
+		return from( json ).orElse( new Account() ) ;
+	}
+
+	public static Optional<Account> from(JSONObject json) {
+		return from(json, Account::new );
+	}
+	public static Optional<Account> from(JSONObject json, Supplier<Account> account) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of( 
+			account.get()
+				.setId(JsonUtils.getInteger( json, IJsonNames.ID ))
+				.setDomain(JsonUtils.getInteger( json, IJsonNames.DOMAIN ))
+				.setCode(JsonUtils.getString(json,IJsonNames.CODE))
+				.setDescription(JsonUtils.getString(json,IJsonNames.DESCRIPTION))
+				.setAlias(JsonUtils.getString(json,IJsonNames.ALIAS))
+				.setEntryEnabled(JsonUtils.getboolean(json, IJsonNames.ENTRY_ENABLED))
+				.setLevel(JsonUtils.getbyte(json,IJsonNames.LEVEL))
+				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
+				.setCostCenter(JsonUtils.getString(json,IJsonNames.COST_CENTER))
+		);
+	}
+	
+	public static Optional<JSONObject> to(Optional<Account> account) {
+		return account.flatMap( a -> to( a) );
+	}
+	public static Optional<JSONObject> to(Account account) {
+		if (account == null) return Optional.empty();
+		return Optional.of(
+			new JSONObject()
+				.put(IJsonNames.ID, account.getId())
+				.put(IJsonNames.DOMAIN, account.getDomain())
+				.put(IJsonNames.CODE, account.getCode())
+				.put(IJsonNames.DESCRIPTION, account.getDescription())
+				.put(IJsonNames.ALIAS, account.getAlias())
+				.put(IJsonNames.ENTRY_ENABLED, account.isEntryEnabled())
+				.put(IJsonNames.LEVEL, account.getLevel())
+				.put(IJsonNames.ACTIVE, account.isActive())
+				.put(IJsonNames.COST_CENTER, account.getCostCenter())
+		);
 	}
 
 }
+
+
+	
+	
+	

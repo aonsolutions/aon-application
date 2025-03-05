@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -181,6 +182,11 @@ public class JsonUtils {
 		return IntStream
 	    	.range(0,array.length())
 	    	.mapToObj(i -> array.getJSONObject(i));
+	}
+
+	static boolean isEmpty(JSONObject json) {
+		if (json == null) return true;
+		return AonCollectionUtils.isEmpty(json.keySet());
 	}
 
 }

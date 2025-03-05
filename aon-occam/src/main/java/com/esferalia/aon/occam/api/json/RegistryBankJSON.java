@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -26,7 +27,14 @@ public class RegistryBankJSON {
 	}
 	
 	public static RegistryBank fromJSON(JSONObject json) {
-		return new RegistryBank()
+		if(json == null) return new RegistryBank();
+		return from(json).orElse(new RegistryBank());
+	}
+	
+	public static Optional<RegistryBank> from(JSONObject json) {
+		if(json == null) return Optional.empty();
+		return Optional.of(
+			new RegistryBank()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 				.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY))
@@ -40,7 +48,10 @@ public class RegistryBankJSON {
 				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED))
 				.setBalance(JsonUtils.getdouble(json, IJsonNames.BALANCE))
 				.setAvailableBalance(JsonUtils.getdouble(json, IJsonNames.AVAILABLE_BALANCE))
-				.setBalanceDate(JsonUtils.getDate(json, IJsonNames.BALANCE_DATE));
+				.setBalanceDate(JsonUtils.getDate(json, IJsonNames.BALANCE_DATE))
+				.setRequisition( JsonUtils.getString(json, IJsonNames.REQUISITION))
+				.setSepaMandateRef(JsonUtils.getString(json, IJsonNames.SEPA_MANDATE_REF))
+		);
 	}
 	
 	public static JSONArray toJSON(List<RegistryBank> rbanks) {
@@ -52,10 +63,17 @@ public class RegistryBankJSON {
 		rbanks.forEach(rbank -> array.put(toJSON(rbank)));
 		return array;
 	}
-
+	
 	public static JSONObject toJSON(RegistryBank rbank) {
-		if(rbank == null) return null;
-		return new JSONObject()
+		return to(rbank).orElse( new JSONObject() );
+	}
+	public static Optional<JSONObject> to(Optional<RegistryBank> act) {
+		return act.flatMap( a -> to( a) );
+	}
+	public static Optional<JSONObject> to(RegistryBank rbank) {
+		if(rbank == null) return Optional.empty();
+		return Optional.of(
+			new JSONObject()
 				.put(IJsonNames.ID, rbank.getId())
 				.put(IJsonNames.DOMAIN, rbank.getDomain())
 				.put(IJsonNames.REGISTRY, rbank.getRegistry())
@@ -70,6 +88,9 @@ public class RegistryBankJSON {
 				.put(IJsonNames.BALANCE, rbank.getBalance())
 				.put(IJsonNames.AVAILABLE_BALANCE, rbank.getAvailableBalance())
 				.put(IJsonNames.BALANCE_DATE, rbank.getBalanceDate())
-				;
+				.put(IJsonNames.REQUISITION, rbank.getRequisition())
+				.put(IJsonNames.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
+				
+		);
 	}
 }
