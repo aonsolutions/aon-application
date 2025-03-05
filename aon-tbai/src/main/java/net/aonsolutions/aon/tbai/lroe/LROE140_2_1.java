@@ -221,7 +221,7 @@ public class LROE140_2_1 extends LROE140 {
 			if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
 				tax.setDeductibleQuota(AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));
 			}
-			r.setCuotaIVADeducible(Double.toString(AonMathUtils.round(tax.getDeductibleQuota())));
+			r.setCuotaIVADeducible(Double.toString(invoice.isSurcharge() ? 0.0 : AonMathUtils.round(tax.getDeductibleQuota())));
 			r.setCuotaIVASoportada(Double.toString(AonMathUtils.round(tax.getQuota())));
 
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
