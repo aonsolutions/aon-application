@@ -688,6 +688,7 @@ public class JooqPayrollSalaries {
 		Table<FinanceRecord> filteredFinance = DSL.selectFrom(FINANCE)
 			    .where(FINANCE.DOMAIN.eq(domainId)
 			    .and(FINANCE.PAYROLL.eq((byte)1)))
+			    .groupBy(FINANCE.SOURCE_ID)
 			    .asTable("filtered_finance");
 		
 		SelectConditionStep<Record> select = dslContext.select().from(SALARY)
@@ -785,7 +786,7 @@ public class JooqPayrollSalaries {
 	}
 
 	private static Condition paramsToCondition(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, SalaryParams params) {
-		Condition condition = DSL.trueCondition();
+		Condition condition = DSL.noCondition();
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			condition = condition.and(
