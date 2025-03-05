@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -56,6 +57,7 @@ import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
@@ -63,7 +65,6 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
@@ -83,6 +84,10 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
+import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
+import com.esferalia.aon.occam.api.model.tariff.TariffParams;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -729,7 +734,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Product> getProducts(ProductParams params) throws AonCoreException {
-		return AON.getProductList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		List<Product> products = AON.getProductList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		return products;
 	}
 	
 	@Override
@@ -806,7 +812,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public List<ItemTariff> getItemTariffs(String domainName, int domain, String user, Integer id) throws AonCoreException {
-		return AON.getItemTariffStream(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(id))).collect(Collectors.toList());
+		List<ItemTariff> itemTariffs = AON.getItemTariffStream(new Domain().setName(domainName).setId(domain), user, null != id ? f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(id)) : f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+		return itemTariffs;
 	}
 	
 	@Override
@@ -851,6 +858,82 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<ItemComposition> saveItemCompositions(String domainName, int domain, String user, List<ItemComposition> itemCompositions) throws AonCoreException {
 		return AON.saveItemCompositions(new Domain().setName(domainName).setId(domain), user, itemCompositions);
+	}
+	
+	@Override
+	public List<ItemAddInfo> getItemAddInfos(String domainName, int domain, String user, Integer itemId) throws AonCoreException {
+		List<ItemAddInfo> addInfoList = AON.getItemAddInfoStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getItemProperty().eq(itemId))).collect(Collectors.toList());
+		return addInfoList;
+	}
+	
+	@Override
+	public void saveItemAddInfos(String domainName, int domain, String user, List<ItemAddInfo> itemAddInfoList) throws AonCoreException {
+		itemAddInfoList.forEach(itemAddInfo -> {
+			if(AonStringUtils.isBlank(itemAddInfo.getValue()) && null != itemAddInfo.getId())
+				AON.deleteItemAddInfo(domainName, domain, user, itemAddInfo.getId());
+			else
+				AON.saveItemAddInfo(domainName, domain, user, itemAddInfo);
+		});
+	}
+	
+	// **************************************************
+	// ***************************************** [TARIFF]
+	// **************************************************
+
+	@Override
+	public List<Tariff> getTariffs(TariffParams params) throws AonCoreException {
+		List<Tariff> tariffs = AON.getTariffList(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		return tariffs;
+	}
+	
+	@Override
+	public Tariff getTariff(String domainName, int domain, String user, Integer tariffId) throws AonCoreException {
+		return AON.getTariffStream(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(tariffId)).findFirst().get();
+	}
+	
+	@Override
+	public void deleteTariff(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteTariff(new Domain().setName(domainName).setId(domain), user, id);	
+	}
+	
+	@Override
+	public Tariff saveTariff(String domainName, int domain, String user, Tariff tariff) throws AonCoreException {
+		return AON.saveTariff(new Domain().setName(domainName).setId(domain), user, tariff);
+	}
+	
+	@Override
+	public List<TariffAddInfo> getTariffAddInfoList(String domainName, int domain, String user, Integer tariffId) throws AonCoreException {
+		return AON.getTariffAddInfoList(new Domain().setName(domainName).setId(domain), user, tariffId);
+	}
+	
+	@Override
+	public TariffAddInfo saveTariffAddInfo(String domainName, int domain, String user, TariffAddInfo tariffAddInfo) throws AonCoreException {
+		return AON.saveTariffAddInfo(new Domain().setName(domainName).setId(domain), user, tariffAddInfo);
+	}
+	
+	@Override
+	public void deleteTariffAddInfo(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteTariffAddInfo(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public List<TariffCatalogue> getTariffCatalgueList(String domainName, int domain, String user, Integer tariffId) throws AonCoreException {
+		return AON.getTariffCatalgueList(new Domain().setName(domainName).setId(domain), user, tariffId);
+	}
+	
+	@Override
+	public TariffCatalogue saveTariffCatalogue(String domainName, int domain, String user, TariffCatalogue tariffCatalogue) throws AonCoreException {
+		return AON.saveTariffCatalogue(new Domain().setName(domainName).setId(domain), user, tariffCatalogue);
+	}
+	
+	@Override
+	public void deleteTariffCatalogue(String domainName, int domain, String user, Integer id) throws AonCoreException {
+		AON.deleteTariffCatalogue(new Domain().setName(domainName).setId(domain), user, id);
+	}
+	
+	@Override
+	public List<Catalogue> getCatalogueList(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getCatalogueList(new Domain().setName(domainName).setId(domain), user, f -> f.getDomainProperty().eq(domain));
 	}
 
 }

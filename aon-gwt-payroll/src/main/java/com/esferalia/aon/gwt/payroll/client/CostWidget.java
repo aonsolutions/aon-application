@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomMultiSelectBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -776,7 +777,7 @@ public class CostWidget extends AonCustomDockLayout {
 			JSONArray noSexArr = new JSONArray(JsonUtils.safeEval(noSex.toString()));
 			
 			if(noSexArr.size() > 0) {
-				HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+				HTMLPanel messagePanelNoSex = new HTMLPanel(AonStringUtils.EMPTY);
 				String message = "";
 				
 				for (int i=0; i<noSexArr.size(); i++) {
@@ -789,8 +790,8 @@ public class CostWidget extends AonCustomDockLayout {
 					message += "ADVERTENCIA: Sexo no definido - NAF: " + nss + ", Nombre: "+ name + "<br>";
 				}
 				
-				messagePanel = new HTMLPanel(message);
-				AonMessagePanel.showWarning(messagePanel, messagePanel);
+				messagePanelNoSex = new HTMLPanel(message);
+				new AonDialog("Registro Retributivo", messagePanelNoSex).warning();
 				
 			}
 			
@@ -804,6 +805,7 @@ public class CostWidget extends AonCustomDockLayout {
 			
 			Window.open(url, "Registro Retributivo", "");
 			
+			container.remove(formPanel);
 		});
 		
 		FlowPanel flowPanel = new FlowPanel();
@@ -816,10 +818,6 @@ public class CostWidget extends AonCustomDockLayout {
 			flowPanel.add(new Hidden("workplaceName", workplaceId.getDescription()));
 		
 		formPanel.add(flowPanel);
-		
-		formPanel.addSubmitCompleteHandler(e1 -> {
-			container.remove(formPanel);
-		});
 		
 		container.add(formPanel);
 		

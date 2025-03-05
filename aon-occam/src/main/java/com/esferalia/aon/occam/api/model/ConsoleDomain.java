@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
+import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
+
 public class ConsoleDomain extends Domain {
 
 	private static final long serialVersionUID = 1093889839212920172L;

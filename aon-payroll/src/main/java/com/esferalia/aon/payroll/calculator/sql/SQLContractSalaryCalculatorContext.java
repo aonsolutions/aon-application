@@ -888,7 +888,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					return guarentee;
 
 			}
-			return super.guarantee(guarentee);
+			return guarentee; // super.guarantee(guarentee);
 
 		}
 
@@ -5904,13 +5904,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx) throws SQLException {
 	    	Collection<ITimedObject<IExpression>> undefined = 
-	    		loadContractData(ctx, contractStartDate, contractEndDate);
-		Date irpfDate = getIrpfDate();
-		if (irpfDate != null && irpfDate.after(contractEndDate)) {
-		    undefined.addAll(loadContractData(ctx, irpfDate, irpfDate));
+			loadContractData(ctx, contractStartDate, contractEndDate);
+			Date irpfDate = getIrpfDate();
+			if (irpfDate != null && irpfDate.after(contractEndDate)) {
+				undefined.addAll(loadContractData(ctx, irpfDate, irpfDate));
+			}
+			return undefined;
 		}
-		return undefined;
-	}
 
 	protected void loadExpression(ExpressionContext ctx, String name, String script, Date start, Date end)
 			throws SQLException {
@@ -5948,29 +5948,35 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				dataEnd = ( dataEnd != null && dataEnd.equals(dbContractEndDate))? null: dataEnd; 
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
+				
+				if ( isLazyExpression(expr)) {
+					ctx.addLazyExpression(expr, start, end);
+					
+				} else {
+					try {
+						ctx.addExpression(expr, start, end);
+					} catch (UndefinedVariablesException e) {
+						failed.add(new TimedObject<>(expr, new Period(start, end)));
+					} catch (CheckException e) {
 
-				try {
-					ctx.addExpression(expr, start, end);
-
-				} catch (UndefinedVariablesException e) {
-					failed.add(new TimedObject<>(expr, new Period(start, end)));
-				} catch (CheckException e) {
-
-				} catch (Exception e) {
-					// TODO: 
+					} catch (Exception e) {
+						// TODO: 
+					}
 				}
+				
 			}
 
 			for (ITimedObject<IExpression> timedExpr : failed) {
+				Period period = timedExpr.getPeriod();
+				IExpression expr = timedExpr.getValue();
 				try {
-					Period period = timedExpr.getPeriod();
-					IExpression expr = timedExpr.getValue();
 					ctx.addExpression(expr, period.getStart(), period.getEnd());
 
 				} catch (UndefinedVariablesException e) {
 				    	undefined.add(timedExpr);
 					onUndefinedData(timedExpr.getValue(), e.getMessage(), timedExpr.getPeriod().getStart(),
 							timedExpr.getPeriod().getEnd(), e.getVariableNames());
+//					ctx.addLazyExpression(expr, period.getStart(), period.getEnd());
 				} catch (Exception e) {
 				}
 			}
@@ -5980,7 +5986,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				rs.close();
 			}
 		}
-		return failed;
+		return undefined;
 	}
 
 	protected void onIrpf(IrpfOutcome irpfOutcome) {
@@ -7059,6 +7065,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return ssRegimeType;
 		}
 	}
+	
+	private static boolean isLazyExpression(ExpressionImpl expr) {
+		return ContextVariable.IRPF_PERCENT.getName().equals(expr.getName());
+	}
+
 	
 
 }

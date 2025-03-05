@@ -17,6 +17,10 @@ public class JsConsoleDomain extends JavaScriptObject {
 		return this.id;
 	}-*/;
 	
+	public final native String getSchema() /*-{
+		return this.schema;
+	}-*/;
+
 	public final Integer getId(){
 		return AonNumberUtils.toInteger("" +  id());
 	}

@@ -105,7 +105,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		
 		rectl.seh1c = createSEH1CRecord(delivery, codes);
 		rectl.seh1dList = createSEH1DList(delivery, codes);
-//		rectl.seh1pList = createSEH1PList(delivery, packageData, codes);
 		if(packageData != null) {
 			rectl.seh1pList = createSEH1PList2(delivery, packageData, codes);			
 		} else if(!delivery.getPackaging().isEmpty()) {
@@ -218,7 +217,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		List<DeliveryDetail> detailList = delivery.getDetails().isEmpty()
 				? getDetailList(delivery.getId()).stream()
 						.sorted((d1, d2)->Short.compare(d1.getLine(),d2.getLine()))
-						.collect(Collectors.toList())
+						.toList()
 				: delivery.getDetails();
 		
  
@@ -229,8 +228,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		mainPackage.seh1lList = new ArrayList<>();
 		list.add(mainPackage);
 
-//		LinkedList<Integer> lineList = new LinkedList<>();
-//		Integer auxLine = ssccList.size();
 		for (Integer i = 0; i < ssccList.size(); i++) {
 			IngenetPackaging sscc = ssccList.get(i);
 
@@ -455,36 +452,18 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1l.setCodigoDUN_14_ADU_(base.getBarcode());
 		seh1l.setCodigoACU_ACU_(null);
 		seh1l.setNumeroDeLote_NB_(detail.getItem().getSerialNumber());
-		seh1l.setNumeroDeArticuloDelComprador_IN_(null);
-		// ANTES SOLO ESTABA PARA EROSKI AHORA PARA TODOS. 
+		seh1l.setNumeroDeArticuloDelComprador_IN_(productCustomerCode);
 		seh1l.setSeh1b(createSEH1BRecord(detail.getItem()));
 		
-		double quantity = 0.0;
-		double packUnits = detail.getItem().getPackUnits();
-		if(packageQuantity==null) {
-			quantity = obtainPackageQuantity(detail.getItem(), detail.getQuantity(), codes.getCustomerEdiCode());
-		} else {
-			quantity = packUnits * packageQuantity;
-		}
+		String customerPackage = obtainPackageUnitTag(detail, codes.getCustomerPackage());
+		double quantity = packageQuantity == null 
+			? obtainPackageQuantity(detail.getItem(), detail.getQuantity(), customerPackage)
+			: obtainPackageQuantity(detail, packageQuantity, customerPackage);		
 
-		if(detail.getItem().getPackFormatTag().getName().equals(detail.getItem().getPackUnitsTag().getName())){
-			seh1l.setCantidadEnviada_12_(quantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
-			if(detail.getItem().getPackMeasurementTag()!=null && detail.getItem().getPackMeasurementTag().getName()!=null){
-				seh1l.setUnidadDeMedidaCantidadEnviada(
-						StringUtils.substring(detail.getItem().getPackMeasurementTag().getName(), 0, 3).toUpperCase());
-			}
-			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement());
-		} else {
-			seh1l.setCantidadEnviada_12_(quantity);
-			seh1l.setUnidadDeMedidaCantidadEnviada(null);
-			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
-		}
-
-//		Date fechaCaducidad = detail.getItem().getExpireDate() != null
-//				? detail.getItem().getExpireDate()
-//				: detail.getItem().getSerialDate();
-//		if(fechaCaducidad != null)
-//			seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(fechaCaducidad));
+		seh1l.setCantidadEnviada_12_(quantity);
+		seh1l.setUnidadDeMedidaCantidadEnviada(StringUtils.substring(customerPackage, 0, 3).toUpperCase());
+		seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(obtainPackageUnit(detail, customerPackage));
+		
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
 		seh1l.setFecha_horaReferencia1_102_203_(null);
@@ -570,7 +549,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		double quantity = 0.0;
 		double packUnits = item.getPackUnits();
 		if(packageQuantity == null) {
-			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerEdiCode());
+			quantity = obtainPackageQuantity(item, ic.getQuantity(), codes.getCustomerPackage());
 		} else {
 			quantity = packUnits * packageQuantity;
 		}
@@ -588,11 +567,6 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			seh1l.setUnidadesDeConsumoEnUnidadDeExpedicion_59_(packUnits);
 		}
 
-//		Date fechaCaducidad = detail.getItem().getExpireDate() != null
-//				? detail.getItem().getExpireDate()
-//				: detail.getItem().getSerialDate();
-//		if(fechaCaducidad != null)
-//			seh1l.setFechaDeCaducidad_36__102_203_(SeresUtils.dateFormat().format(fechaCaducidad));
 		seh1l.setCalificadorReferencia1(null);
 		seh1l.setNumeroReferencia1(null);
 		seh1l.setFecha_horaReferencia1_102_203_(null);
@@ -713,8 +687,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 	}
 	
 	private List<DeliveryDetail> getDetailList(Integer deliveryId) {
-		return AON.getDeliveryDetailStream(domainName, domainId, login, f -> f.getDelivery().eq(deliveryId))
-				.collect(Collectors.toList());
+		return AON.getDeliveryDetailStream(domainName, domainId, login, f -> f.getDelivery().eq(deliveryId)).toList();
 	}
 	
 	private Workplace getWorkPlace(Integer workplaceId) {
@@ -766,19 +739,33 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		}
 		return null;
 	}
-	
-	
+
 	private String obtainPurchaseReference(Delivery delivery) {
-		List<DeliveryDetail> list = getDetailList(delivery.getId()).stream()
-				.map(to -> ((DeliveryDetail) to)).collect(Collectors.toList());
+		List<DeliveryDetail> list = getDetailList(delivery.getId());
 		if (!list.isEmpty()) {
-			DeliveryDetail detail = list.get(0);
-			if (detail.getSalesDetail() != null) {
-				Sales sales = getSalesDetail(detail.getSalesDetail()).getSales();
-				return sales.getPurchaseReference();
-			}
+			return obtainSalesNumber(list);
 		}
 		return null;
+	}
+	
+	private String obtainSalesNumber(List<DeliveryDetail> list) {
+		String salesNumber = null;
+		for (DeliveryDetail invoiceDetail : list) {
+			if(salesNumber == null) {
+				salesNumber = obtainSalesNumber(invoiceDetail);
+			}				
+		}
+		return salesNumber;
+	}
+	
+	private String obtainSalesNumber(DeliveryDetail deliveryDetail) {
+		String salesNumber = null;
+		if (deliveryDetail != null && deliveryDetail.getId()!=null && deliveryDetail.getSalesDetail()!=null) {
+			SalesDetail detail = getSalesDetail(deliveryDetail.getSalesDetail());
+			if(detail != null && detail.getSales() != null)
+				salesNumber = detail.getSales().getPurchaseReference();
+		}
+		return salesNumber;
 	}
 
 	private com.esferalia.aon.occam.api.model.registry.RegistryItem obtainProductCustomerCode(Item item, Integer customerId) {
@@ -800,7 +787,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		return null;
 	}
 	
-	private Double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
+	private double obtainPackageQuantity(Item item, double quantity, String customerPackingTag) {
 		if(customerPackingTag!=null){
 			Item oldItem = getItem(item.getId());
 			Tag itemPackFormatTag = oldItem.getPackFormatTag();
@@ -808,8 +795,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			Tag itemPackingTag = oldItem.getPackUnitsTag();
 			double itemPackMeasurement = oldItem.getPackMeasurement();
 			double itemPackUnits = oldItem.getPackUnits();
-			if (customerPackingTag != null && itemPackingTag != null
-					&& itemPackFormatTag != null && itemPackMeasurementTag != null) {
+			if (itemPackingTag != null && itemPackFormatTag != null && itemPackMeasurementTag != null) {
 				if (customerPackingTag.equals(itemPackMeasurementTag.getName())) {
 					return quantity;
 				} else if (customerPackingTag.equals(
@@ -822,7 +808,53 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			}
 			return quantity;
 		}
-		return null;
+		return 0.0;
+	}
+	
+	private double obtainPackageQuantity(DeliveryDetail detail, double packageQuantity, String customerPackingTag) {
+		if(customerPackingTag != null){
+			Tag packFormatTag = detail.getItem().getPackFormatTag();
+			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
+
+			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+				return packageQuantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
+			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
+				return packageQuantity * detail.getItem().getPackUnits();
+			else if(packMeasurementTag != null && customerPackingTag.equalsIgnoreCase(packMeasurementTag.getName()))
+				return packageQuantity * detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement(); 
+			else return packageQuantity;
+		}
+		return 0.0;
+	}
+	
+	private String obtainPackageUnitTag(DeliveryDetail detail, String customerPackingTag) {
+		Tag packFormatTag = detail.getItem().getPackFormatTag();
+		Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+		Tag packUnitsTag = detail.getItem().getPackUnitsTag();
+
+		if(customerPackingTag != null){
+			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+				return packMeasurementTag.getName();
+			} else return customerPackingTag;
+		} else return packFormatTag.getName();
+	}
+	
+	private double obtainPackageUnit(DeliveryDetail detail, String customerPackingTag) {
+		if(customerPackingTag != null){
+			Tag packFormatTag = detail.getItem().getPackFormatTag();
+			Tag packMeasurementTag = detail.getItem().getPackMeasurementTag();
+			Tag packUnitsTag = detail.getItem().getPackUnitsTag();
+
+			if(packFormatTag != null && packUnitsTag != null && packFormatTag.getName().equalsIgnoreCase(packUnitsTag.getName())) {
+				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement();
+			} else if(packUnitsTag != null &&  customerPackingTag.equalsIgnoreCase(packUnitsTag.getName())) 
+				return detail.getItem().getPackUnits();
+			else if(packMeasurementTag != null && customerPackingTag.equalsIgnoreCase(packMeasurementTag.getName()))
+				return detail.getItem().getPackUnits() * detail.getItem().getPackMeasurement(); 
+			else return 1.0;
+		}
+		return 1.0;
 	}
 	
 	// //////////////////////////////////////////////////////////////////////

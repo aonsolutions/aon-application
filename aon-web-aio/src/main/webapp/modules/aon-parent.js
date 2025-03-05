@@ -1,12 +1,12 @@
-import {AonElement} from 'aonsolutions/components/AonElement.js';
-import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl, getContracts} from  'aonsolutions/services/service.js';
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from 'aonsolutions/environments/environments.js';
-import { AonDesktop } from 'aonsolutions/modules/company/aon-desktop.js';
-import { AonApplication } from 'aonsolutions/components/aon-application.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
-import { AonDialogMenu } from 'aonsolutions/components/aon-dialog-menu.js';
-import { MenuApps, ClassicApps, Apps } from 'aonsolutions/services/app.js';
-import { AonSign } from "aonsolutions/modules/timecontrol/aon-sign.js";
+import {AonElement} from '../components/AonElement.js';
+import {closeSession, getCompanies, getUserNotice, getUser, getCompaniesBySchemas, getTimeControl, getContracts} from  '../services/service.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG, CONSTANT } from '../environments/environments.js';
+import { AonDesktop } from '../modules/company/aon-desktop.js';
+import { AonApplication } from '../components/aon-application.js';
+import * as LS from '../services/localStorageService.js';
+import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { MenuApps, ClassicApps, Apps } from '../services/app.js';
+import { AonSign } from "../modules/timecontrol/aon-sign.js";
 
 
 export class AonParent extends AonElement {

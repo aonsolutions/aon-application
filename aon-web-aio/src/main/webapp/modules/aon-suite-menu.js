@@ -1,11 +1,11 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { AonApplication } from 'aonsolutions/components/aon-application.js';
-import { MSG, CSS, EVENT, TAG, CONSTANT } from 'aonsolutions/environments/environments.js'; 
-import { AonIconButton } from 'aonsolutions/components/aon-icon-button.js';
-import { AonButton } from 'aonsolutions/components/aon-button.js';
+import { AonElement } from '../components/AonElement.js';
+import { AonApplication } from '../components/aon-application.js';
+import { MSG, CSS, EVENT, TAG, CONSTANT } from '../environments/environments.js'; 
+import { AonIconButton } from '../components/aon-icon-button.js';
+import { AonButton } from '../components/aon-button.js';
 import { Apps, HomeApps, MenuApps, AuxApps, MENU_APPS, TOP_MENU_APPS, AON_APPS, HOME, APPS } from '../services/app.js';
-import { AonCard } from 'aonsolutions/components/aon-card.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonCard } from '../components/aon-card.js';
+import * as LS from '../services/localStorageService.js';
 export class AonSuiteMenu extends AonElement {
 
 	SIDE_MENU;

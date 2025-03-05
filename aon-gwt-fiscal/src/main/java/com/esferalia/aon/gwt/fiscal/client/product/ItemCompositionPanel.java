@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
@@ -22,7 +23,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ItemCompositionPanel  extends HTMLPanel {
@@ -134,10 +134,15 @@ public class ItemCompositionPanel  extends HTMLPanel {
 				.map(item -> item.getProduct().getName())
 				.collect(Collectors.toSet());
 			
-			List<String> productsSuggestions = new ArrayList<>();
-			optionsSet.forEach(option -> productsSuggestions.add(option + ""));
-			MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) products.getSuggestBox().getSuggestOracle();
-			orclDocuments.addAll(productsSuggestions);
+			AonCustomSuggestOracle customOracle = new AonCustomSuggestOracle();
+			customOracle.setData(new ArrayList<>(optionsSet));
+			
+			products = new AonCustomSuggestBox("Productos", customOracle);
+			
+//			List<String> productsSuggestions = new ArrayList<>();
+//			optionsSet.forEach(option -> productsSuggestions.add(option + ""));
+//			MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) products.getSuggestBox().getSuggestOracle();
+//			orclDocuments.addAll(productsSuggestions);
 			
 			products.setPlaceHolder("Descripci\u00f3n producto ...");
 			products.setAutoSelectEnabled(true);

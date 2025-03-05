@@ -57,6 +57,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -1311,7 +1312,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					}
 
 					// ContextDrescriptor
-					ContextDescriptor contextDescriptor = getContext(connection, context, startDate, endDate);
+					ContextDescriptor contextDescriptor = getContext(connection, context, startDate, endDate, Collections.emptyList());
 
 //					ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
 //							startDate, endDate, domainID, parentDomainID);
@@ -4109,8 +4110,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = EmployeesServiceHelper.getSalaryCalculatorContext(conn,
 					draft, null);
-
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			
+			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate(), draft.getContext() );
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -4127,7 +4128,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	protected static ContextDescriptor getContext(Connection conn, IContractSalaryCalculatorContext calculatorCtx,
-			Date startDate, Date endDate) {
+			Date startDate, Date endDate, List<Variable> context) {
 		try {
 
 			ExpressionContext expressionContext = notNull(calculatorCtx.getExpressionContext(),
@@ -4149,7 +4150,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				for (ITimedVariable<Object> var : vars) {
 					try {
-						value = var.getValue(var.getPeriod());
+						value = getValue(context, varName, var);
 					} catch (Throwable e) {
 
 					}
@@ -4220,6 +4221,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 
+	private static Object getValue(List<Variable> context, String name, ITimedVariable<Object> var) {
+		return context.stream()
+				.filter(v -> Objects.equals(name, v.getName()))
+				.filter(v -> var.getPeriod().intersects(new com.esferalia.aon.salary.expression.Period(v.getStartDate(), v.getEndDate())))
+				.map(Variable::getValue).findFirst().orElseGet(() -> var.getValue(var.getPeriod()));
+	}
+
 	protected static ContextDescriptor getDraftContext(String domain, AgreementDraft draft, int levelId) {
 		Connection conn = null;
 		try {
@@ -4227,7 +4235,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, draft, levelId);
 
-			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate(), Collections.emptyList());
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -4252,7 +4260,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, startDate, levelId);
 
-			return getContext(conn, calculatorCtx, startDate, endDate);
+			return getContext(conn, calculatorCtx, startDate, endDate, Collections.emptyList());
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -7825,24 +7833,33 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Date endDate) {
 
 		List<Certifica2Info> certs = new ArrayList<>();
+		List<Integer> visitedMonth = new ArrayList<Integer>();
+		
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			String ccc = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
 			String naf = itEmployee.getEmployeeInfo().getSsNumber();
 
-			AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
+			List<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
 				f -> f.getCCCProperty().eq(ccc)
 					.and(f.getSSProperty().eq(naf))
 					.and(f.getStartDateProperty().ge(startDate))
 					.and(f.getEndDateProperty().le(endDate))
-					.and(
-						f.getIsSalaryProperty().eq(true)
-//						.or(f.getIsDelayProperty().eq(true))
-						.or(f.getIsSettlementProperty().eq(true))
-					)
+					.and(f.getTypeProperty().eq((byte)0))
 			)
 			.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
-			.forEach(salary -> {				
+			.collect(Collectors.toList());
+			
+			List<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaryData(new Domain().setId(domainId).setName(domainName), login,
+					f -> f.getCCCProperty().eq(ccc)
+						.and(f.getSSProperty().eq(naf))
+						.and(f.getEndDateProperty().between(startDate, endDate))
+						.and(f.getTypeProperty().eq((byte)3))
+				)
+				.sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
+				.collect(Collectors.toList());
+			
+			salaries.forEach(salary -> {				
 				salary.getContextData()
 				.entrySet()
 				.stream()
@@ -7855,20 +7872,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					Date start = dt.getStartDate();
 					Date end = dt.getEndDate();
 					
-					Double baseCgc   = salary.getContextData("BASE_CGC", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-					Double baseCgp   = salary.getContextData("BASE_CGP", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
-					Double quoteDays = salary.getContextData("DIAS_COTIZADOS", start, end).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+					if(!visitedMonth(visitedMonth, start)) {
+						Double baseCgc   = salary.getContextData("BASE_CGC", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+						Double baseCgp   = salary.getContextData("BASE_CGP", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+						Double quoteDays = salary.getContextData("DIAS_COTIZADOS", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
 
-					if (quoteDays != null && quoteDays > 0) {
-						Certifica2Info cert = new Certifica2Info();
-						cert.setStartDate(start);
-						cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
-						cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
-						cert.setSettleQuoteDays(quoteDays.intValue());
-						certs.add(cert);
+						if (quoteDays != null && quoteDays > 0) {
+							Optional<com.esferalia.aon.occam.api.model.Salary> delayOpt = delays.stream()
+								.filter(delay -> (delay.getStartDate().before(start) || delay.getStartDate().equals(start)) && (delay.getEndDate().after(end) || delay.getEndDate().equals(end)))
+								.findFirst();
+							
+							Certifica2Info cert = new Certifica2Info();
+							if(delayOpt.isEmpty()) {
+								cert.setStartDate(start);
+								cert.setBaseCgc(baseCgc != null ? baseCgc : 0.00);
+								cert.setBaseUnemployment(baseCgp != null ? baseCgp : 0.00);
+								cert.setSettleQuoteDays(quoteDays.intValue());
+								certs.add(cert);
+							} else {
+								Double delayBaseCgc  = delayOpt.get().getContextData("BASE_CGC", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+								Double delayBaseCgp  = delayOpt.get().getContextData("BASE_CGP", DateUtils.getFirstDayOfMonth(start), DateUtils.getLastDayOfMonth(end)).stream().map(d-> d.getExpression()).collect(summingDouble(Double::parseDouble));
+								
+								Double totalBaseCgc  = (baseCgc != null ? baseCgc : 0.00) + (delayBaseCgc != null ? delayBaseCgc : 0.00);
+								Double totalBaseCgp  = (baseCgp != null ? baseCgp : 0.00) + (delayBaseCgp != null ? delayBaseCgp : 0.00);
+								
+								cert.setStartDate(start);
+								cert.setBaseCgc(totalBaseCgc);
+								cert.setBaseUnemployment(totalBaseCgp);
+								cert.setSettleQuoteDays(quoteDays.intValue());
+								certs.add(cert);
+							}
+							
+							System.out.println("startDate: "+ dt.getStartDate() +" endDate: "+ dt.getEndDate() +" value: "+dt.getExpression() + " baseCgc : " + cert.getBaseCgc() + " baseCpc : " + cert.getBaseUnemployment());
+						}
 					}
-					
-					System.out.println("startDate:"+dt.getStartDate()+" endDate:"+dt.getEndDate()+" value:"+dt.getExpression());
 				});
 			});
 		} catch (SQLException e) {
@@ -7878,6 +7915,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		return certs;
 	}
 	
+	private boolean visitedMonth(List<Integer> visitedMonth, Date date) {
+		if(!visitedMonth.isEmpty() && visitedMonth.contains(date.getMonth())) return true;
+		visitedMonth.add(date.getMonth());
+		return false;
+	}
+
 	private static Throwable getRootCause(Throwable throwable) {
 		Throwable cause = throwable;
 		while ( cause.getCause() != null )

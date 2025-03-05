@@ -828,7 +828,7 @@ public class Mod2002018DAO  {
 			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
 			
 			.forEach( mod -> {
-				Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());		
+				Mod202 mod202 = Mod202DAO.get(ctx, mod.getId());		
 				Mod2002018Key key = null;
 				if (mod202.getPeriod() == Period.T1) {
 					key = Mod2002018Key.BN601;
@@ -839,7 +839,7 @@ public class Mod2002018DAO  {
 				}
 				if (key != null) {
 					DoubleVariable2018 dv = new DoubleVariable2018( key );
-					dv.setValue( (Double) mod202.getResult() );
+					dv.setValue( (Double) mod202.getDeclarationResult() );
 					mod200.addVariable( dv );
 				}
 			});

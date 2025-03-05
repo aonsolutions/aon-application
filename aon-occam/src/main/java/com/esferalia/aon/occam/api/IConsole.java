@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 public interface IConsole {
 	
 	public String[] getSchemaNames(AONContext ctx);
-	public Stream<ConsoleDomain> getDomains(AONContext ctx, DomainParams params);
+	public Stream<ConsoleDomain> getDomains(DomainParams params);
 	public boolean deleteDomain(ConsoleParams params);
 	public Domain changeActive(AONContext ctx, Integer domainId, boolean active);
 	public Domain changeExpirationDate(AONContext ctx, Integer domainId, Date expireDate);
@@ -28,7 +28,7 @@ public interface IConsole {
 	public String[] getAonTables();		
 	public ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow row);
 	public Stream<ConsoleTableRow> getTableRows(AONContext ctx, ConsoleTableRow row);
-	public ConsoleTableRow getTableRowMetadata(AONContext ctx, ConsoleTableRow row);
+	public ConsoleTableRow getTableRowMetadata(ConsoleTableRow row);
 	public ConsoleTableRow update(AONContext ctx, ConsoleTableRow row, ConsoleTableField field);
 	public Boolean delete(AONContext ctx, ConsoleTableRow row);
 	public Stream<DomainCompany> getAllDomains(AONContext ctx);

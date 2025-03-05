@@ -92,15 +92,6 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 		container.add(targetTable);
 		
 		newSchemaBox.clear();
-// newSchemaBox.addItem(AonStringUtils.EMPTY);
-//		int i = 1;
-//		for (String sch : callback.getSchemas()) {
-//			newSchemaBox.addItem(sch);
-//			if (AonStringUtils.equals(sch, callback.getSchema())) {
-//				newSchemaBox.setSelectedIndex(i);
-//			}
-//			i++;
-//		}
 		int i = 0;
 		for (ConsoleSchema sch : ConsoleSchema.values()) {
 			newSchemaBox.addItem(sch.name(), sch.getSchema());
@@ -169,15 +160,15 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 			} else {
 				if (validate()) {
 					DomainParams params = new DomainParams()
-							.setSchema(callback.getSchema())
-							.setId(AonNumberUtils.toInteger("" +  domain.getId()))
-							.setName(domain.getName())
-							.setDescription(domain.getDescription())
-							.setValidate(validate.getValue().booleanValue())
-							.setMustFlatten(mustFlatten.getValue().booleanValue())
-							;
+						.setDbSchema(domain.getSchema())
+						.setId(AonNumberUtils.toInteger("" +  domain.getId()))
+						.setName(domain.getName())
+						.setDescription(domain.getDescription())
+						.setValidate(validate.getValue().booleanValue())
+						.setMustFlatten(mustFlatten.getValue().booleanValue())
+					;
 					DomainParams target = new DomainParams()
-							.setSchema(newSchemaBox.getSelectedValue())
+							.setDbSchema(newSchemaBox.getSelectedValue())
 							.setName(newDomainBox.getValue())
 							;
 					hide();
@@ -201,7 +192,8 @@ public class ConsoleDomainIsolateDialog extends AonCustomDialog {
 	}
 
 	private void manageMustFlatten(ConsoleDomainTableCallback callback) {
-		ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaBox.getSelectedValue());
+		ConsoleSchema cs = ConsoleSchema.safeValueOf(newSchemaBox.getSelectedValue())
+			.orElseThrow(() -> new IllegalArgumentException("No schema found!"));
 		if (!AonStringUtils.equals(callback.getSchema(), cs.getSchema())) {
 			mustFlatten.setEnabled(false);
 			mustFlatten.setValue(domain.getParentId() != null && domain.isEnableHeredity());

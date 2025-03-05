@@ -14,7 +14,7 @@
                     <!-- Title -->
                     <tr>
                         <td align="center" style="padding: 0 20px;">
-                            <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Magic Link</h2>
+                            <h2 style="color: #333; font-size: 18px; margin: 0 0 10px;">Acceso sin contraseña</h2>
                         </td>
                     </tr>
                     <!-- Body -->
@@ -26,22 +26,13 @@
                             
                             <p style="margin: 0 0 15px; text-align: center;">
 	                            <a href="$magicLink" style="display: inline-block; background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
-	                                Magic Link
+	                                Acceder
 	                            </a>
 	                        </p>
                             
                             <p style="margin: 0 0 10px;">Una vez dentro, te recomendamos que vayas a la configuración de tu usuario. Para hacerlo, dirígete a la parte superior derecha de la pantalla y pulsa el icono de usuario. Al pulsarlo verás un desplegable con los datos de tu empresa y debajo encontrarás el texto "Configuración".</p>
                             <p style="margin: 0 0 10px;">Haciendo click sobre el texto "Configuración" podrás establecer tu nueva contraseña pulsando el icono con forma de lápiz.</p>
                             <p style="margin: 0 0 10px;">Esto te permitirá editar tu contraseña actual y crear una que consideres conveniente. Así, podrás iniciar sesión fácilmente con tu nueva contraseña en el futuro.</p>
-                            <p style="margin: 0 0 10px;">En el caso que tengas alguna duda o pregunta, no dudes en contactarnos.</p>
-                        </td>
-                    </tr>
-                    <!-- Footer -->
-                    <tr>
-                        <td align="center" style="font-size: 12px; color: #888; padding: 20px;">
-                            <p style="margin: 0;">Si tienes alguna duda, por favor contacta con soporte: 
-                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$contact">$contact</a>.
-                            </p>
                         </td>
                     </tr>
                 </table>

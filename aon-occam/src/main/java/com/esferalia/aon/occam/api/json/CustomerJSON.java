@@ -56,6 +56,7 @@ public class CustomerJSON {
 	}
 	
 	public static JSONObject toJSON(Customer customer) {
+		if(customer == null) return null;
 		return RegistryJSON.toJSON(customer)
 			.put(IJsonNames.SURCHARGE, customer.isSurcharge())
 			.put(IJsonNames.WITHHOLDING, customer.isWithholding())

@@ -27,9 +27,9 @@ public class MODEL202 {
 		}
 	}
 
-	public static Mod202 getMod202(Occam occam, int id) {
+	public static Mod202 get(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod202(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
@@ -45,13 +45,13 @@ public class MODEL202 {
 		}
 	}
 
-	public static void deleteMod202(Occam occam, Mod202 mod202) {
+	public static void delete(Occam occam, Mod202 mod202) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			getImpl().delete(ctx, mod202);
 		}
 	}
 
-	public static Mod202 initializeMod202(Occam occam,Mod202 mod202) {
+	public static Mod202 initialize(Occam occam,Mod202 mod202) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().initialize(ctx, mod202);
 		}
@@ -87,19 +87,30 @@ public class MODEL202 {
 		}
 	}
 
+	public static Mod202 markAsCustomerAccepted(Occam occam, Mod202 mod202) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerAccepted(ctx, mod202);
+		}
+	}
+	public static Mod202 markAsCustomerRejected(Occam occam, Mod202 mod202, String reason) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsCustomerRejected(ctx, mod202, reason);
+		}
+	}
+	
 	public static Mod202 markAsPending(Occam occam, Mod202 mod202) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().markAsPending(ctx, mod202);
 		}
 	}
 
-	public static Mod202 createMod202(Occam occam,Mod202 mod202) {
+	public static Mod202 create(Occam occam,Mod202 mod202) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().create(ctx, mod202);
 		}
 	}
 
-	public static String getMod202Info(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey) {
+	public static String getInfo(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod202, script, infoKey);
 		}
@@ -111,10 +122,4 @@ public class MODEL202 {
 		}
 	}
 
-	public static Mod202 resetMod202(Occam occam, Mod202 mod202) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().reset(ctx, mod202);
-		}
-	}
-	
 }

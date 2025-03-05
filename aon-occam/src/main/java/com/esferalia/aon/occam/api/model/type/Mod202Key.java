@@ -51,6 +51,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C04("202-C04", 4,"Resultado contable despu\u00E9s del IS")
 	,C05("202-C05", 5,"Correcciones al resultado contable - por Impuesto sobre Sociedades - Aumentos")
 	,C06("202-C06", 6,"Correcciones al resultado contable - por Impuesto sobre Sociedades - Disminuciones")
+	,C67("202-C67",67,"Correcciones al resultado contable - por Impuesto Complementario (IC)")
 	,C36("202-C36",36,"30% gastos amortiz (exc.  emp. reducidas) - Aumentos")
 	,C37("202-C37",37,"Reversi\u00F3n del 30% del importe de los gastos de amortiz. contable (art. 7 Ley 16/2012)")
 	,C07("202-C07", 7,"Resto correcciones al resultado contable, excepto comp. - Aumentos")
@@ -79,7 +80,14 @@ public enum Mod202Key implements IFiscalModelKey{
 	,C22("202-C22",22,"Importe pago fraccionado") 
 	,C23("202-C23",23,"Base a tipo 2")
 	,C24("202-C24",24,"Porcentaje")
-	,C25("202-C25",25,"Importe pago fraccionado") 
+	,C25("202-C25",25,"Importe pago fraccionado")
+	,C61("202-C61",61,"Base a tipo 3")
+	,C62("202-C62",62,"Porcentaje")
+	,C63("202-C63",63,"Importe pago fraccionado") 
+	,C64("202-C64",64,"Base a tipo 3")
+	,C65("202-C65",65,"Porcentaje")
+	,C66("202-C66",66,"Importe pago fraccionado") 
+
 	,C50("202-C50",50,"Dotaciones del art. 11.12 de la LIS (s\u00F3lo cooperativas) (DF 4\u00BA LIS)") 
 	,C42("202-C42",42,"Compensaci\u00F3n de cuotas negativas de per\u00EDodos anteriores (s\u00F3lo cooperativas)") 
 	,C51("202-C51",51,"Reserva de nivelaci\u00F3n (art. 105 LIS) (s\u00F3lo entidades del art. 101 LIS). Aumentos") 
@@ -138,6 +146,10 @@ public enum Mod202Key implements IFiscalModelKey{
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getFullDescription() {
+		return getBoxFormatted() + " " + getDescription();
 	}
 	
     @Override

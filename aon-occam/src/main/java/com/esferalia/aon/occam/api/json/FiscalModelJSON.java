@@ -153,31 +153,30 @@ public enum FiscalModelJSON {
 		public JSONObject to(FiscalModel model, JSONObject json) {
 			model.getModel().visit(new IFiscalModelTypeVisitor() {
 				
-				private void visitOld() {
+				private void visitEmpty() {
 					json.put(IJsonNames.RESULT, model.getResult());	
 				}
-				private void visitNew() {
+				private void visitResult() {
 					json.put(IJsonNames.RESULT, model.getDeclarationResult());
 				}
-				@Override public void visitM390()  { visitNew();}
-				@Override public void visitM349()  { visitOld();}
-				@Override public void visitM347()  { visitOld();}
-				@Override public void visitM202()  { visitOld();}
-				@Override public void visitM200()  { visitOld();}
-				@Override public void visitM193()  { visitOld();}
-				@Override public void visitM190()  { visitOld();}
-				@Override public void visitM184()  { visitOld();}
-				@Override public void visitM180()  { visitOld();}
-				//@Override public void visitM131()  { visitOld();}
-				@Override public void visitM131()  { visitNew();}
+				@Override public void visitM349()  { visitEmpty();}
+				@Override public void visitM347()  { visitEmpty();}
+				@Override public void visitM200()  { visitEmpty();}
+				@Override public void visitM193()  { visitEmpty();}
+				@Override public void visitM190()  { visitEmpty();}
+				@Override public void visitM184()  { visitEmpty();}
+				@Override public void visitM180()  { visitEmpty();}
 
-				@Override public void visitM130()  { visitNew();}
-				@Override public void visitM303()  { visitNew();}
-				@Override public void visitM123()  { visitNew();}
-				@Override public void visitM115()  { visitNew();}
-				@Override public void visitM111()  { visitNew();}
-				@Override public void visitM390HF(){ visitNew();}
-				@Override public void visitM369()  { visitNew();}
+				@Override public void visitM390()  { visitResult();}
+				@Override public void visitM131()  { visitResult();}
+				@Override public void visitM202()  { visitResult();}
+				@Override public void visitM130()  { visitResult();}
+				@Override public void visitM303()  { visitResult();}
+				@Override public void visitM123()  { visitResult();}
+				@Override public void visitM115()  { visitResult();}
+				@Override public void visitM111()  { visitResult();}
+				@Override public void visitM390HF(){ visitResult();}
+				@Override public void visitM369()  { visitResult();}
 			});
 			return json;
 		}
@@ -194,28 +193,28 @@ public enum FiscalModelJSON {
 				private void visitOld() {
 					json.put(IJsonNames.TYPE, model.getDeclarationType());	
 				}
-				private void visitNew() {
+				private void visitDeclarationResultType() {
 					json.put(IJsonNames.TYPE, model.getDeclarationResultType());
 				}
 				
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
-				@Override public void visitM202()  { visitOld();}
 				@Override public void visitM200()  { visitOld();}
 				@Override public void visitM193()  { visitOld();}
 				@Override public void visitM190()  { visitOld();}
 				@Override public void visitM184()  { visitOld();}
 				@Override public void visitM180()  { visitOld();}
 
-				@Override public void visitM131()  { visitNew();}
-				@Override public void visitM130()  { visitNew();}
-				@Override public void visitM390()  { visitNew();}
-				@Override public void visitM390HF(){ visitNew();}
-				@Override public void visitM303()  { visitNew();}
-				@Override public void visitM123()  { visitNew();}
-				@Override public void visitM115()  { visitNew();}
-				@Override public void visitM111()  { visitNew();}
-				@Override public void visitM369()  { visitNew();}
+				@Override public void visitM202()  { visitDeclarationResultType();}
+				@Override public void visitM131()  { visitDeclarationResultType();}
+				@Override public void visitM130()  { visitDeclarationResultType();}
+				@Override public void visitM390()  { visitDeclarationResultType();}
+				@Override public void visitM390HF(){ visitDeclarationResultType();}
+				@Override public void visitM303()  { visitDeclarationResultType();}
+				@Override public void visitM123()  { visitDeclarationResultType();}
+				@Override public void visitM115()  { visitDeclarationResultType();}
+				@Override public void visitM111()  { visitDeclarationResultType();}
+				@Override public void visitM369()  { visitDeclarationResultType();}
 			});
 			return json;
 		}

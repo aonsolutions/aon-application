@@ -409,7 +409,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public static Filter accountFilter(AccountProperties f, Domain domain, String type) {
 		Integer[] domains = { domain.getId(), domain.getParentId() };
 		Filter filter =  f.getDomainProperty().in(domains);
-
+		
     	InvoiceType iType = InvoiceType.safeValueOf(type);
     	if(iType != null && InvoiceType.SALES.equals(iType)) {
     		filter = filter.and(f.getCodeProperty().like("700%").or(f.getCodeProperty().like("705%"))); 

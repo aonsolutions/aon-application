@@ -1,6 +1,6 @@
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 
 export class AonCommercialMenu extends AonSuiteMenu {

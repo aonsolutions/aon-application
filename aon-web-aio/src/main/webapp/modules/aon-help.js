@@ -1,12 +1,12 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "aonsolutions/environments/environments.js";
-import { AonCard } from 'aonsolutions/components/aon-card.js';
-import { getManifest, getDomainUserRoles} from "aonsolutions/services/service.js";
-import { AonSwitch } from "aonsolutions/components/aon-switch.js";
-import { getSupport, setSupport } from 'aonsolutions/services/supportService.js';
-import { getParentCompany } from 'aonsolutions/services/companyService.js';
-import { DomainUserRoles } from 'aonsolutions/models/DomainUserRoles.js';
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonElement } from '../components/AonElement.js';
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
+import { AonCard } from '../components/aon-card.js';
+import { getManifest, getDomainUserRoles} from "../services/service.js";
+import { AonSwitch } from "../components/aon-switch.js";
+import { getSupport, setSupport } from '../services/supportService.js';
+import { getParentCompany } from '../services/companyService.js';
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import * as LS from '../services/localStorageService.js';
 export class AonHelp extends AonElement {
 
 	SUPPORT_SWITCH;

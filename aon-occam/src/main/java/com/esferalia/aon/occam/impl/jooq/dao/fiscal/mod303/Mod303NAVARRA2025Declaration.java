@@ -1,17 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.DEC2;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.blockCenter;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.bold;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.border;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.fontLarger;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.marginTop;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.noWrap;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.paddingLeft;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.styledTag;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textCenter;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textRight;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width150;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.DEC2;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.blockCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.bold;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.border;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.fontLarger;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.marginTop;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.noWrap;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.paddingLeft;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.styledTag;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textRight;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.width150;
 
 import java.text.MessageFormat;
 
@@ -77,12 +77,15 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			,(ctx,mod,vat) -> add(Mod303Key.NF_010,mod,vat.getBase())
 			,null,null,null)
 		,NF_001(Mod303Key.NF_001
-			,(mod,vat) -> isExportation(vat)
+			,(mod,vat) -> isExportation(vat) && !vat.isSalesOSS()
 			,(ctx,mod,vat) -> add(Mod303Key.NF_001,mod,vat.getBase())
 			,null,null,null)
 		,NF_002(Mod303Key.NF_002)
 		,NF_194(Mod303Key.NF_194, (mod, vat) -> vat.isSales() && vat.isVatAccrualRegime(), null, null, null, null)
-		,NF_171(Mod303Key.NF_171)
+		,NF_171(Mod303Key.NF_171
+				,(mod,vat) -> (vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isOtherISPSales()) || vat.isSalesOSS()
+				,(ctx,mod,vat) -> add(Mod303Key.NF_171,mod,vat.getBase())
+				,null,null,null)
 		
 		,NF_003(Mod303Key.NF_003
 			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
@@ -111,7 +114,6 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_015,mod,vat.getQuota())
 			,null,null,null)
-				
 		
 		,NF_006(Mod303Key.NF_006
 			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
@@ -159,16 +161,16 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			,(ctx,mod,vat) -> add(Mod303Key.NF_019,mod,vat.getQuota())
 			,null,null,null)
 		,NF_172(Mod303Key.NF_172
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.NF_172,mod,vat.getBase())
 			,null,null,null)
 		,NF_173(Mod303Key.NF_173
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.NF_173,mod,vat.getQuota())
 			,null,null,null)
 		,NF_176(Mod303Key.NF_176
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
-			,(ctx,mod,vat) -> add(Mod303Key.GP_C039,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod303Key.NF_176,mod,vat.getBase())
 			,null,null,null)
 		,NF_177(Mod303Key.NF_177
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
@@ -207,11 +209,11 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.NF_042,mod,vat)
 			,null,null,null)
 		,NF_039(Mod303Key.NF_039
-			,(mod,vat) -> adqIntracomunitariasFilter(vat)
+			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.NF_039,mod,vat.getBase())
 			,null,null,null)
 		,NF_049(Mod303Key.NF_049
-			,(mod,vat) -> adqIntracomunitariasFilter(vat)
+			,(mod,vat) -> adqIntracomunitariasFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.NF_049,mod,vat)
 			,null,null,null)
 		,NF_170(Mod303Key.NF_170
@@ -223,11 +225,11 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.NF_043,mod,vat)
 			,null,null,null)
 		,NF_174(Mod303Key.NF_174
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.NF_174,mod,vat.getBase())
 			,null,null,null)
 		,NF_175(Mod303Key.NF_175
-			,(mod,vat) -> operacionesISPFilter(vat)
+			,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.NF_175,mod,vat)
 			,null,null,null)
 		,NF_178(Mod303Key.NF_178
@@ -359,7 +361,8 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 			&& !vat.isVatSurchargeRegime()
 			&& vat.isNational() 
 			&& vat.isSales() 
-			&& !vat.isRectification();
+			&& !vat.isRectification()
+			&& !vat.isSalesOSS();
 	}
 	private static boolean hasPercent21(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_21;	
@@ -382,7 +385,7 @@ class Mod303NAVARRA2025Declaration extends Mod303NAVARRA {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
 			&& vat.isRectification() 
-			&& (vat.isNationalSales() || operacionesISPFilter(vat));		
+			&& (vat.isNationalSales() || operacionesISPFilter(vat) || adqIntracomunitariasFilter(vat));		
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()

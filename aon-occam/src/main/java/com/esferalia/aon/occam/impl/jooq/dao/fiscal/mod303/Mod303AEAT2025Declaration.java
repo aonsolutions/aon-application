@@ -1,14 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.DEC2;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.border;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.fontLarger;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.paddingLeft;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.styledTag;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textCenter;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textRight;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width150;
-import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width500;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.DEC2;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.border;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.fontLarger;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.paddingLeft;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.styledTag;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.textRight;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.width150;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.width500;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -32,7 +32,8 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
@@ -2231,9 +2232,12 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		,CT_C122(Mod303Key.CT_C122, (mod, vat) -> (ventasISP(vat, mod) && vat.isSpainDocumentCountry()),
 			(ctx, mod, vat) -> add(Mod303Key.CT_C122, mod, vat.getBase()), null, null, null)
 		//Operaciones no sujetas por reglas de localización acogidas a los regímenes especiales de ventanilla única.
-		,CT_C123(Mod303Key.CT_C123)
+		,CT_C123(Mod303Key.CT_C123, (mod, vat) -> (vat.isSalesOSS() && !vat.isSpainDocumentCountry()),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C123, mod, vat.getBase()), null, null, null)
+		
 		//Operaciones sujetas y acogidas a los regímenes especiales de ventanilla única.
-		,CT_C124(Mod303Key.CT_C124)
+		,CT_C124(Mod303Key.CT_C124, (mod, vat) -> (vat.isSalesOSS() && vat.isSpainDocumentCountry()),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C124, mod, vat.getBase()), null, null, null)
 
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
@@ -2265,14 +2269,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// IVA a la importación liquidado por la Aduana pendiente de ingreso
 		, CT_C77(Mod303Key.CT_C77)
 
-		// A partir de 2021 la casilla 67 se desglosa en 3 casillas (110, 78 y 87)
-		//, CT_C67(Mod303Key.CT_C67)
-
 		// Cuotas a compensar de periodos anteriores
-		, CT_C110(Mod303Key.CT_C110, null, null, (ctx,mod) -> add( Mod303Key.CT_C110, mod, getPendingCompesateAmounts( ctx, mod ))
-				,null
-				,null
-			)
+		, CT_C110(Mod303Key.CT_C110, null, null, (ctx,mod) -> add( Mod303Key.CT_C110, mod, getPendingCompesateAmounts( ctx, mod )), null, null)
 
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
 		// Validación que hace la Agencia Tributaria:
@@ -2280,20 +2278,18 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		//	está cumplimentada, es decir, si se hubieran aplicado a la autoliquidación que se
 		//	está presentando cuotas pendientes de compensación generadas en periodos
 		//	anteriores.		
-		, CT_C78(Mod303Key.CT_C78, null, null,
-				(ctx, mod) -> add(Mod303Key.CT_C78, mod, mod.getAmount(Mod303Key.CT_C110)), "checkC78(CT_C78,CT_C110,CT_C66,CT_C77)", null)
+		, CT_C78(Mod303Key.CT_C78, null, null, (ctx, mod) -> add(Mod303Key.CT_C78, mod, mod.getAmount(Mod303Key.CT_C110)), "checkC78(CT_C78,CT_C110,CT_C66,CT_C77)", null)
 		
 		// Cuotas a compensar de periodos previos pendientes para periodos posteriores
 		, CT_C87(Mod303Key.CT_C87, null, null, null, "CT_C110-CT_C78", null)
 
-		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la
-		// Administración del Estado
+		// Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administración del Estado
 		// y a las Diputaciones Forales. Resultado de la Regularización anual.
 		, CT_C68(Mod303Key.CT_C68)
 		
 		, CT_C108(Mod303Key.CT_C108)
 
-		// Resultado
+		// Resultado de la autoliquidación
 		, CT_C69(Mod303Key.CT_C69, null, null, null, "CT_C66+CT_C77-CT_C78+CT_C68+CT_C108", null)
 
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
@@ -2308,8 +2304,11 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null
 		)
 		,CT_C109(Mod303Key.CT_C109)
+		
+		// Resultado
 		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109", null)
 		
+		// Importe a devolver consecuencia de la rectificación
 		,CT_C111(Mod303Key.CT_C111, null, null, null, "calculateC111(CT_C69,CT_C70,CT_C71)", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
@@ -2648,7 +2647,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	// -----------------------------------------------------------------------
 	private static boolean isCommonNationalSales(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isNational()
-				&& vat.isSales() && !vat.isRectification();
+				&& vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 
 	private static boolean hasPercent0(Mod303 mod, VatContext vat) {
@@ -2729,9 +2728,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	}
 
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification()
-				&& (vat.isNationalSales() || adqIntracomunitariasFilterGene(vat, mod)
-						|| operacionesISPFilterGene(vat, mod));
+		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isRectification() && !vat.isSalesOSS()
+				&& (vat.isNationalSales() || adqIntracomunitariasFilterGene(vat, mod) || operacionesISPFilterGene(vat, mod));
 	}
 
 	private static boolean operacionesInterioresCorrientesFilter(VatContext vat, Mod303 mod) {
@@ -2798,11 +2796,11 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		return !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();
 	}
 	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
-		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
+		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()) && !vat.isSalesOSS();
 	}
 	public static boolean  ventasExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
 		boolean add = !vat.isVatSurchargeRegime() 
-			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()))) && !vat.isSalesOSS();
 		if ( add && mod.getYear() == 2021) {
 			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
 		} 
@@ -2956,7 +2954,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	}
 	@Override
 	protected String getRegularizationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
-		return DeclarationInfoUtil.getRegularizationExplain( ctx, mod303, key );
+		return Mod303InfoUtil.getRegularizationExplain( ctx, mod303, key );
 	}
 	
 	// -----------------------------------------------------------------------

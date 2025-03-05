@@ -1,12 +1,14 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.jooq.tools.json.JSONValue;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONString;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -19,6 +21,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -38,6 +41,7 @@ public class LoginServlet extends AonApiHttpServlet{
 		String token = json.optString("token");
 		String username = json.optString("username");
 		String password = json.optString("password");
+		password = password.trim();
 		String login = "";
 		if(username.contains("=")) {
 			String[] strs = username.split("=");
@@ -94,14 +98,23 @@ public class LoginServlet extends AonApiHttpServlet{
 	    	}
 	    	
 	    	if(!auth.isEmpty()) {
-	    		token = AonToken.build(auth, null);
+	    		token = AonToken.build(auth.getUuid(), null);
 	    	}
 		} else if ( AonStringUtils.isNotBlank(token)) {
-			JSONObject jsonToken = SECURITY.decodeJWT(token, AonSecret.getAonSecret());
+			JSONObject jsonToken = null;
+			try {
+				jsonToken = SECURITY.decodeJWT(token, AonSecret.getAonSecret());
+			} catch (Exception e) {
+				error(req, resp, e.getMessage());
+				return;
+			}
 				
 			AonToken aonToken= AonToken.parse(jsonToken);
+			if(aonToken.isExpired()) { 
+				error(req, resp, "Token expirado");
+				return;
+			}
 			if ( AonStringUtils.isBlank(aonToken.getUuid()) ) {
-				
 				String tokenLogin = jsonToken.getString(IJsonNames.LOGIN);
 				Integer tokenDomainId = jsonToken.getInt(IJsonNames.DOMAIN); // relax , really user's  domain id, See AonToken
 				String tokenDomainName = jsonToken.getString(IJsonNames.SCHEMA_FIRST_DOMAIN);
@@ -112,18 +125,21 @@ public class LoginServlet extends AonApiHttpServlet{
 						.and(f.getDomainProperty().in(arrayOf(tokenDomainId /*, domain.getId(), domain.getParentId()*/))));
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} else {
 					auth = newAuthForUser(user);
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} 
 				ok = true;
 			} else {
-				String domainName = req.getServerName();
+				//String domainName = req.getServerName();
+				
+				// Ya que tenemos el primer dominio del schema, lo usamos
+				String domainName = aonToken.getSchemaFirstDomain();
 				Domain domain = AON_SOLUTIONS.getDomain(domainName);
 				if ( domain != null && Objects.equals(domain.getName(), domainName )) {
 					User user = AON_SOLUTIONS.getUser(domain, token);
-					ok = user != null && Objects.equals(user.getAuth().getUuid(), aonToken.getUuid());
+					ok = user != null && AonStringUtils.equalsIgnoreCase(user.getAuth().getUuid(), aonToken.getUuid());
 					token = ok ? token /*AonToken.build(user.getAuth().getUuid(), null)*/ : null;
 				} else {
 					ok = true;
@@ -151,11 +167,11 @@ public class LoginServlet extends AonApiHttpServlet{
 				
 				if(!user.getAuth().isEmpty()) {
 					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
+					token = AonToken.build(auth.getUuid(), null);
 				} else {
 					try {
 						auth = newAuthForUser(user);
-						token = AonToken.build(auth, null);
+						token = AonToken.build(auth.getUuid(), null);
 					} catch ( Exception e ) {
 						token = AonToken.build(user, null, user.getDomain().getName());
 					}
@@ -176,6 +192,14 @@ public class LoginServlet extends AonApiHttpServlet{
 	    }
     	resp.setContentType("application/json;charset=UTF-8");
 
+    	response(req, resp, object);
+	}
+	
+	private void error (HttpServletRequest req, HttpServletResponse resp, String message) {
+		resp.setStatus(401);
+		JSONObject object = new JSONObject();
+		object.put("message", message);
+    	resp.setContentType("application/json;charset=UTF-8");
     	response(req, resp, object);
 	}
 

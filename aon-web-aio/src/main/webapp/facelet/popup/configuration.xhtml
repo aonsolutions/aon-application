@@ -310,13 +310,14 @@
 											action="brand-configuration"
 											value="#{bundle.product_brand_module}" />
 									</aon:div>
+				
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tariff-configuration"
-											rendered="#{actionDenied.renderedOption('tariff_list-configuration')}"
 											action="tariff_list-configuration"
 											actionListener="#{tariff.onSearch}"
 											value="#{bundle.product_tariff_module2}" />
 									</aon:div>
+									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="catalogue-configuration"
 											rendered="#{actionDenied.renderedOption('catalogue_search-configuration')}"
@@ -478,6 +479,7 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>

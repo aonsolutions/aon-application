@@ -11,12 +11,14 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,26 +62,34 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 	}	
 	
 	private void magicLink(JSONObject json, String url) {
-		String email = JsonUtils.getString(json, IJsonNames.EMAIL);
+		JSONObject data = JsonUtils.getJSONObject(json, "data");
+		String email = JsonUtils.getString(data, IJsonNames.EMAIL);
+		String urlNew = JsonUtils.getString(data, IJsonNames.URL);
 		if(Utils.isEmail(email)) {
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			
-			if(auth.isEmpty()) throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage());
+			if(auth.isEmpty()) throw new AonApiException(AonApiError.NOT_EXIST_USER.getMessage() + " Compruebe el email.");
 			
-			Date expireDate = AonDateUtils.addDays(new Date(), 1);
-			String token = AonToken.build(auth, expireDate);
-			String magicLink = "https://" + url + "?token=" + token; 
+			Date expireDate = AonDateUtils.addMinutes(new Date(), 15);
+			
+			JSONObject dataToken = new JSONObject();
+			dataToken.put(IJsonNames.SCHEMA, auth.getSchema());
+			dataToken.put(IJsonNames.SCHEMA_FIRST_DOMAIN, AonStringUtils.isBlank(auth.getSchema()) ? "" : AONContext.getSchemaFirstDomain(auth.getSchema()));
+			
+			String token = AonToken.build(auth.getUuid(), expireDate, dataToken);
+			
+			String magicLink = urlNew + "?token=" + token; 
 			
 			sendGmail(auth, magicLink, expireDate);
 				
-		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage());
+		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage() + " Compruebe el email.");
 	}
 	
 	public void sendGmail(Auth auth, String magicLink, Date expireDate) {
 		SESMessage msg = new SESMessage()
 			.setTo(auth.getEmail())
-			.setFrom(AON_FROM)
-			.setSubject("MAGIC LINK | " + "AON SOLUTIONS")
+//			.setFrom(AON_FROM)
+			.setSubject("SOLICITUD ACCESO | " + "AON SOLUTIONS")
 			.setBody(getContent(auth, magicLink, expireDate));
 		SES.sendEmail(msg);
 	}
@@ -96,7 +106,6 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 		context.put("name", auth.getName());
         context.put("expireDate", AonDateUtils.format(expireDate, "dd/MM/yyyy HH:mm"));
         context.put("magicLink", magicLink);
-		context.put("contact", "booking@aonsolutions.es");
         
         Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/magic_link.vm");
         

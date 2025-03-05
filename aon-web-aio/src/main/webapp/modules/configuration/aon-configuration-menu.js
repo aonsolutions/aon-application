@@ -1,6 +1,6 @@
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 
 
@@ -166,7 +166,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             }, {
                 description: "Tarifas",
                 title: "Tarifas",
-                action: () => this.rootPanel(new JSF.AonJsfTariff())
+                action: () => GWT.iLoad(GWT.TARIFF_MODULE)
+               // action: () => this.rootPanel(new JSF.AonJsfTariff())
             }, {
                 description: "Catálogos",
                 title: "Catálogos",

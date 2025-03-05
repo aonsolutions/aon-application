@@ -42,9 +42,7 @@ public class CONSOLE {
 	}
 
 	public static Stream<ConsoleDomain> getDomains(DomainParams params) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
-			return getConsole().getDomains(ctx, params);
-		}
+		return getConsole().getDomains(params);
 	}
 	
 	public static Stream<DomainCompany> getAllDomains() {
@@ -162,26 +160,26 @@ public class CONSOLE {
 		return domainCompany;
 	}
 
-	public static boolean deleteDomain(DomainParams params, Integer domainId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+	public static boolean deleteDomain(String schema, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			ConsoleParams consoleParams = new ConsoleParams(); 
 			ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 				.setAONContext(ctx)
-				.setSchemaName(params.getSchema())
+				.setSchemaName(schema)
 				.setDomain(new Domain().setId(domainId));
 			consoleParams.setFromConnection(conParams);
 			return getConsole().deleteDomain(consoleParams);
 		}
 	}
 
-	public static Domain changeActive(DomainParams params, Integer domainId, boolean active) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+	public static Domain changeActive(String schema, Integer domainId, boolean active) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			return getConsole().changeActive(ctx,domainId, active);
 		}
 	}
 
-	public static Domain changeExpirationDate(DomainParams params, Integer domainId, Date expireDate) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+	public static Domain changeExpirationDate(String schema, Integer domainId, Date expireDate) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			return getConsole().changeExpirationDate(ctx,domainId,expireDate);
 		}
 	}
@@ -193,8 +191,8 @@ public class CONSOLE {
 		}
 	}
 	
-	public static boolean switchRemoteAccess(DomainParams params, Integer domainId) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
+	public static boolean switchRemoteAccess(String schema, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 			return getConsole().switchRemoteAccess(ctx,domainId);
 		}
 	}
@@ -219,9 +217,7 @@ public class CONSOLE {
 	}
 
 	public static ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
-			return getConsole().getTableRowMetadata(ctx,row);
-		}
+		return getConsole().getTableRowMetadata(row);
 	}
 
 	public static String[] getAonTables() {

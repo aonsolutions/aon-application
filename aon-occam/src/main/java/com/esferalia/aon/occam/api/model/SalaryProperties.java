@@ -29,4 +29,6 @@ public interface SalaryProperties{
 	Property<Boolean> getIsDelayProperty();
 
 	Property<Boolean> getIsSettlementProperty();
+	
+	Property<Byte> getTypeProperty();
 }

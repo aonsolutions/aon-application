@@ -1,7 +1,7 @@
-import { MSG, TAG } from 'aonsolutions/environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import { AonInvoiceRecord } from 'aonsolutions/modules/invoice/aon-invoice-record.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
+import { AonInvoiceRecord } from '../../modules/invoice/aon-invoice-record.js';
+import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 
 export class AonAccountingMenu extends AonSuiteMenu {

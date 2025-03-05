@@ -45,6 +45,7 @@ public abstract class AbsExcelAction  {
 	protected CellStyle decimalStyle;
 	protected CellStyle numberStyle;
 	protected CellStyle centerCellStyle;
+	protected CellStyle rightCellStyle;
 	protected XSSFCellStyle headerCellStyle;
 	protected Font boldFont;
 	protected Font defaulFont;	
@@ -58,7 +59,6 @@ public abstract class AbsExcelAction  {
     
 	public void initialize(String name, boolean printHeaders) {
 		workbook = new SXSSFWorkbook(1);
-		
 		
 	    sheet = (SXSSFSheet) workbook.createSheet(name);
 	    dataFormat = workbook.getCreationHelper().createDataFormat();
@@ -78,6 +78,9 @@ public abstract class AbsExcelAction  {
 	    
 		centerCellStyle = workbook.createCellStyle();
 		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+		
+		rightCellStyle = workbook.createCellStyle();
+		rightCellStyle.setAlignment( HorizontalAlignment.RIGHT );
 
 		defaulFont= workbook.createFont();
 		defaulFont.setFontHeightInPoints((short) 9);
@@ -118,8 +121,75 @@ public abstract class AbsExcelAction  {
 	    }
 	}
 	
+	public void initializeEmpty() {
+		workbook = new SXSSFWorkbook(1);
+	}
+	
+	public void createSheet(String name) {
+		sheet = (SXSSFSheet) workbook.createSheet(name);
+	    dataFormat = workbook.getCreationHelper().createDataFormat();
+	    rowCount = 0;
+	    cellCount = 0;
+	    dateStyle = workbook.createCellStyle();
+	    dateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
+	    dateStyle.setAlignment( HorizontalAlignment.CENTER );
+	    
+	    numberStyle = workbook.createCellStyle();
+	    numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
+	    numberStyle.setAlignment( HorizontalAlignment.CENTER );
+	     
+	    decimalStyle = workbook.createCellStyle();
+	    decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+	    decimalStyle.setAlignment( HorizontalAlignment.RIGHT );
+	    
+		centerCellStyle = workbook.createCellStyle();
+		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+		
+		rightCellStyle = workbook.createCellStyle();
+		rightCellStyle.setAlignment( HorizontalAlignment.RIGHT );
+
+		defaulFont= workbook.createFont();
+		defaulFont.setFontHeightInPoints((short) 9);
+		
+		smallFont = workbook.createFont();
+		smallFont.setFontHeightInPoints((short) 8);
+
+		smallBoldFont = workbook.createFont();
+		smallBoldFont.setFontHeightInPoints((short) 8);
+		smallBoldFont.setBold(true);
+
+		italicSmallFont = workbook.createFont();
+		italicSmallFont.setFontHeightInPoints((short) 8);
+		italicSmallFont.setItalic(true);
+		
+		smallDateStyle = workbook.createCellStyle();
+	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
+	    smallDateStyle.setAlignment( HorizontalAlignment.CENTER );
+	    smallDateStyle.setFont( smallFont );
+
+	    boldFont= workbook.createFont();
+		boldFont.setFontHeightInPoints((short) 9);
+		boldFont.setBold(true);
+
+		Font headerFont= workbook.createFont();
+		headerFont.setBold(true);
+		headerFont.setColor( IndexedColors.WHITE.index );
+
+		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+		headerCellStyle.setAlignment( HorizontalAlignment.CENTER );
+		headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
+	    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerCellStyle.setFillForegroundColor(AON_BLUE);
+	    headerCellStyle.setFont(headerFont);
+	}
+	
 	protected Cell alignCenter(Cell cell) {
 		cell.setCellStyle( centerCellStyle );
+		return cell;
+	}
+	protected Cell alignRight(Cell cell) {
+		cell.setCellStyle( rightCellStyle );
 		return cell;
 	}
 	protected Cell addEmptyCell() {

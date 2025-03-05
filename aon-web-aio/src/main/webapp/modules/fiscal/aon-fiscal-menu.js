@@ -1,7 +1,7 @@
-import { MSG, CSS, EVENT, TAG, APPPARAMS } from 'aonsolutions/environments/environments.js'; 
-import { getApplicationParameters} from 'aonsolutions/services/applicationParameterService.js';
+import { MSG, CSS, EVENT, TAG, APPPARAMS } from '../../environments/environments.js'; 
+import { getApplicationParameters} from '../../services/applicationParameterService.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import * as GWT from 'aonsolutions/gwt/gwt.js';
+import * as GWT from '../../gwt/gwt.js';
 
 export class AonFiscalMenu extends AonSuiteMenu {
 

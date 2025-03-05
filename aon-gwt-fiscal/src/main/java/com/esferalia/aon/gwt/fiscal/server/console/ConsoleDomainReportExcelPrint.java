@@ -45,12 +45,12 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 
 			ExcelAction action = new ExcelAction();
 			action.initialize("Dominios");
-			params.setOffset(0);
+			params.initializeOffsets();
 			params.setLimit(Integer.MAX_VALUE);
 			CONSOLE.getDomains(params)
 				.forEach(action);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
-			String balName = "Plan general contable";
+			String balName = "Console - Dominios";
 			resp.setHeader("Content-disposition",
 					"attachment; filename=\"" + balName + "." + MimeType.MS_EXCEL_2007.getExtension() + "\";");
 			action.finalize(resp.getOutputStream());
