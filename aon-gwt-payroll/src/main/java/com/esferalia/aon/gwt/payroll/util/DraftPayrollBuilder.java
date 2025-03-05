@@ -171,7 +171,7 @@ public class DraftPayrollBuilder {
 				int craKey = p.getType().ordinal();
 				if ( Objects.equals(ContextVariable.PPE, p.getName())) {
 				    craKey  = IPayrollTemplate.PPE;
-				    accrual.setAmount(p.getQuote());
+				    accrual.setAmount(p.getQuote() >= 0.00 ? p.getQuote() : p.getAmount());
 				} else if ( Objects.equals(ContextVariable.NOTE, p.getName())) {
 				    craKey  = IPayrollTemplate.NOTE;
 				} else if ( Objects.equals(ContextVariable.INFO, p.getName())) {

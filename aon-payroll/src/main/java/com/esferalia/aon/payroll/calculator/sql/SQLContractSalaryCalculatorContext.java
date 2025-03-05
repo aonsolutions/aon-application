@@ -238,12 +238,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ "	ON payment_concept = payment_concept.id" + " WHERE contract = ? " + " AND start_date <= ? "
 			+ " AND ( end_date IS NULL " + " OR end_date >= ? )";
 
-
-	private static final String COST_SQL = "SELECT *" 
-			+ ", " + ExpressionScope.CONTRACT.ordinal() + " AS " + SQLContractCost.SCOPE_ALIAS 
-			+ " FROM contract_cost" 
-			+ " WHERE contract = ? " 
-			+ " AND start_date <= ? "
+	private static final String COST_SQL = "SELECT *" + ", " + ExpressionScope.CONTRACT.ordinal() + " AS "
+			+ SQLContractCost.SCOPE_ALIAS + " FROM contract_cost" + " WHERE contract = ? " + " AND start_date <= ? "
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )";
 
 	private static final String DEDUCTION_SQL = "SELECT *" + ", " + ExpressionScope.CONTRACT.ordinal() + " AS "
@@ -300,8 +296,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 											// NULL
 			+ " ON payment_concept = payment_concept.id" + " WHERE start_date <= ? " + " AND ( end_date IS NULL"
 			+ " OR end_date >= ? )" + " AND " + SQLContractPayment.PAYMENT_ALIAS + ".domain <= 0 "
-			//+ " ORDER BY payment_concept.code "
-			;
+	// + " ORDER BY payment_concept.code "
+	;
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data" + " WHERE contract = ? "
 			+ "AND start_date <= ? " + " AND ( end_date IS NULL " + " OR end_date >= ? )"
@@ -312,31 +308,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public static final String CLEAVE_SQL_PARENT_DAYS = "dias";
 
-	private static final String CLEAVE_SQL = 
-			"SELECT contract_leave.* ," 
-				+ "( SELECT sum(DATEDIFF(end_date,start_date)+1)"
-				+ " FROM contract_leave AS parent" 
-				+ " WHERE ( parent.id=contract_leave.parent"
-				+ " OR parent=contract_leave.parent )" 
-				+ " AND parent.start_date < contract_leave.start_date )" 
-				+ " AS "+ CLEAVE_SQL_PARENT_DAYS 
-				+ ", contract_data.* "
-			+ " FROM contract_leave" 
-			+ " LEFT JOIN contract_data ON ( "
-				+ " contract_leave.contract = contract_data.contract "
-				+ " AND contract_data.name IN ('" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" +DIRECT_PAY_START + "')"
-				+ " AND ( contract_data.start_date <= ? )"
-				+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= ? ) "
-				+ ")"
-			+ " LEFT JOIN contract ON ( contract_leave.contract = contract.id ) "
-			+ " WHERE"
-			+ " ( contract.person IN ( SELECT person FROM contract WHERE id = ? ) )" 
-			+ " AND contract_leave.start_date <= ? "
-			+ " AND ( contract_leave.end_date IS NULL " + " OR contract_leave.end_date >= ? )"
-			+ " AND contract_leave.id >= 0 "
-			+ " ORDER BY FIELD(contract_leave.type,0,1,6,7,8,2,3,4,5)"
-			+ ", FIELD(contract_data.name, '" + PATERNITY_FACTOR + "','" +MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')"
-			;
+	private static final String CLEAVE_SQL = "SELECT contract_leave.* ,"
+			+ "( SELECT sum(DATEDIFF(end_date,start_date)+1)" + " FROM contract_leave AS parent"
+			+ " WHERE ( parent.id=contract_leave.parent" + " OR parent=contract_leave.parent )"
+			+ " AND parent.start_date < contract_leave.start_date )" + " AS " + CLEAVE_SQL_PARENT_DAYS
+			+ ", contract_data.* " + " FROM contract_leave" + " LEFT JOIN contract_data ON ( "
+			+ " contract_leave.contract = contract_data.contract " + " AND contract_data.name IN ('" + PATERNITY_FACTOR
+			+ "','" + MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')" + " AND ( contract_data.start_date <= ? )"
+			+ " AND ( contract_data.end_date IS NULL OR contract_data.end_date >= ? ) " + ")"
+			+ " LEFT JOIN contract ON ( contract_leave.contract = contract.id ) " + " WHERE"
+			+ " ( contract.person IN ( SELECT person FROM contract WHERE id = ? ) )"
+			+ " AND contract_leave.start_date <= ? " + " AND ( contract_leave.end_date IS NULL "
+			+ " OR contract_leave.end_date >= ? )" + " AND contract_leave.id >= 0 "
+			+ " ORDER BY FIELD(contract_leave.type,0,1,6,7,8,2,3,4,5)" + ", FIELD(contract_data.name, '"
+			+ PATERNITY_FACTOR + "','" + MATERNITY_FACTOR + "','" + DIRECT_PAY_START + "')";
 
 	private static final int CACHE_SIZE = 25;
 
@@ -437,7 +422,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public static interface NextHook {
-		default void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException{};
+		default void beforeLoadLeaves(ExpressionContext ctx) throws ExpressionException {
+		};
+
 		void beforeLoadDaysContextVariables(ExpressionContext ctx) throws ExpressionException;
 	}
 
@@ -462,17 +449,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		// --------------------------------------------------------------------
-		protected String zeroGuarantee(String script, Date start, Date end ) {
+		protected String zeroGuarantee(String script, Date start, Date end) {
 			if (script == null)
 				return null;
-			
-			if ( !script.contains(GUARANTEE))
+
+			if (!script.contains(GUARANTEE))
 				return script;
-			
+
 			Set<String> inputs = getVarNames(script);
 			try {
 				List<PeriodMap> bindingsList = getBindingsNew(inputs, start, end);
-				if ( bindingsList.size() > 0 )
+				if (bindingsList.size() > 0)
 					return script;
 			} catch (UndefinedVariablesException e) {
 			}
@@ -495,7 +482,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public Integer getMES() {
 			return payment.getMonth() != null ? payment.getMonth().getValue() + 1 : null;
 		}
-		
+
 		@Override
 		public IContractPayment getPayment() {
 			return payment;
@@ -520,7 +507,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public Integer getDomain() {
 			return domain;
 		}
-		
+
 		public Integer getRegime() {
 			return regime;
 		}
@@ -543,7 +530,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		@Override
 		public int hashCode() {
-			return AonUtils.hashCode(domain) + AonUtils.hashCode(regime) + AonUtils.hashCode(agreementId) + AonUtils.hashCode(agreementLevelId);
+			return AonUtils.hashCode(domain) + AonUtils.hashCode(regime) + AonUtils.hashCode(agreementId)
+					+ AonUtils.hashCode(agreementLevelId);
 		}
 
 	}
@@ -554,8 +542,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		private CCCType cccType;
 		private SSRegimeType ssRegime;
 
-
-		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime, Integer domain ) {
+		public CCCContextKey(CCCType cccType, SSRegimeType ssRegime, Integer domain) {
 			this.domain = domain;
 			this.cccType = cccType;
 			this.ssRegime = ssRegime;
@@ -568,11 +555,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public SSRegimeType getSSRegime() {
 			return ssRegime;
 		};
-		
+
 		public Integer getDomain() {
 			return domain;
 		}
-		
+
 	}
 
 	protected static class GuarenteeException extends SalaryException {
@@ -667,7 +654,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public void loadContractLeave(Integer id, Date leaveStart, Date leaveEnd, long parentDays,
 						LeaveType type, Double dailyRegBase, ExpressionContext exprCtx) throws ExpressionException {
-					
+
 					Date itStart = ContractLeaveLoader.getStartDate(type, leaveStart);
 
 					if (start < 0)
@@ -675,24 +662,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					Date leaveEnd4End = leaveEnd;
 					Date leaveEnd4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
 					leaveEnd = Period.min(endDate, leaveEnd);
-					
+
 					Period leavePeriod = new Period(itStart, leaveEnd);
 
 					Calendar leaveCalendar = Calendar.getInstance();
 					leaveCalendar.setTime(itStart);
 //					leaveCalendar.add(Calendar.DATE, start /*- (int) parentDays*/);
-					
-					if ( itStart.compareTo(startDate) < 0 )
+
+					if (itStart.compareTo(startDate) < 0)
 						parentDays = Math.max(parentDays - getDaysBetweenDates(itStart, startDate), 0);
-					
+
 					leaveCalendar.add(Calendar.DATE, Math.max(start - (int) parentDays, 0));
 					Date guarenteeStart = leaveCalendar.getTime();
 					leaveCalendar.add(Calendar.DATE, end - start);
 					Date guarenteeEnd = Period.min(leaveEnd, leaveCalendar.getTime());
-					
-					if ( startDate.after(guarenteeEnd ))
+
+					if (startDate.after(guarenteeEnd))
 						return;
-					if ( guarenteeStart.after(guarenteeEnd ))
+					if (guarenteeStart.after(guarenteeEnd))
 						return;
 
 					lastLeaveEnd = Period.max(leaveEnd, lastLeaveEnd);
@@ -712,7 +699,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					List<Period> leavePeriods = leavePeriod.sub(guarenteePeriod);
 					for (Period p : leavePeriods) {
-						if ( startDate.after(p.getEnd() ))
+						if (startDate.after(p.getEnd()))
 							continue;
 						long leaveParentDays = CommonUtil.getDaysBetweenDates(itStart, p.getStart());
 						super.loadContractLeave(id, p.getStart(), p.getEnd(), parentDays + leaveParentDays, type,
@@ -722,54 +709,57 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, itStart, guarenteeStart, guarenteeEnd);
 					exprCtx.setVariable(IT_LENGTH, new Period(itStart, leaveEnd4Length), guarenteeStart, guarenteeEnd);
-					if ( leaveEnd4End != null ) exprCtx.setVariable(IT_END, leaveEnd4End, guarenteeStart, guarenteeEnd);
-					
+					if (leaveEnd4End != null)
+						exprCtx.setVariable(IT_END, leaveEnd4End, guarenteeStart, guarenteeEnd);
+
 					Period period = new Period(Period.max(guarenteeStart, startDate), guarenteeEnd);
 //					int guaranteedDays = (int) getGuaranteedDays(exprCtx,period);
 //					exprCtx.setVariable(GUARANTEED_DAYS, guaranteedDays, guarenteeStart, guarenteeEnd);
 
 					exprCtx.putVariable(GUARANTEED_DAYS, new ITimedVariable<Double>() {
-						
+
 						@Override
 						public Period getPeriod() {
 							return period;
 						}
+
 						@Override
-						public Double getValue(Period p ) {
-							return getGuaranteedDays(exprCtx,p);
+						public Double getValue(Period p) {
+							return getGuaranteedDays(exprCtx, p);
 						}
 					});
-					
-    					exprCtx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
-    						
-    						@Override
-    						public Period getPeriod() {
-    							return period;
-    						}
-    						@Override
-    						public Double getValue(Period p ) {
-						    	double workDays = getGuaranteeWorkDays(exprCtx, p);
-    							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
-    								obj -> ((Number) obj).doubleValue(), 1.00);
-    						}
-    					});
+
+					exprCtx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
+
+						@Override
+						public Period getPeriod() {
+							return period;
+						}
+
+						@Override
+						public Double getValue(Period p) {
+							double workDays = getGuaranteeWorkDays(exprCtx, p);
+							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
+									obj -> ((Number) obj).doubleValue(), 1.00);
+						}
+					});
 
 					ExpressionImpl exp = new ExpressionImpl();
 					exp.setName(EVERYTHING.getName());
 					if (dailyRegBase != null) {
-						//exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
+						// exp.setExpression(String.format("%f * %d ", dailyRegBase, guaranteedDays));
 						exp.setExpression(String.format(Locale.US, "%f * %s ", dailyRegBase, GUARANTEED_DAYS));
 					} else {
-						//exp.setExpression(String.format("SELF.br(%s) * %d", IT_START, guaranteedDays));
-						exp.setExpression(String.format(Locale.US,"SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
+						// exp.setExpression(String.format("SELF.br(%s) * %d", IT_START,
+						// guaranteedDays));
+						exp.setExpression(String.format(Locale.US, "SELF.br(%s) * %s", IT_START, GUARANTEED_DAYS));
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
 //					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 //							new TimedObject<Double>(0.00, guarenteeStart, guarenteeEnd));
-					
-					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
-					new ITimedVariable() {
+
+					exprCtx.putVariable(ContextVariable.REGULATORY_BASE, new ITimedVariable() {
 						@Override
 						public Object getValue(Period period) {
 							try {
@@ -778,7 +768,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 								return 0.00;
 							}
 						}
-						
+
 						@Override
 						public Period getPeriod() {
 							return new Period(guarenteeStart, guarenteeEnd);
@@ -794,10 +784,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_DAYS, 0, guarenteeStart, guarenteeEnd);
 							return null;
 						}
-						
+
 						@Override
 						public Void visitCommonDiseaseAtLack(LeaveType leaveType) {
-							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_LACK_DAYS, 0, guarenteeStart, guarenteeEnd);
+							exprCtx.setVariable(ContextVariable.COMMON_DISEASE_LACK_DAYS, 0, guarenteeStart,
+									guarenteeEnd);
 							return null;
 						}
 
@@ -834,27 +825,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						public Void visitNonOcupationalDisease(LeaveType leaveType) {
 							return visitCommonDisease(leaveType);
 						}
-						
+
 						@Override
 						public Void visitCommonProfessionalDisease(LeaveType leaveType) {
 							return visitOcupationalDisease(leaveType);
 						}
-						
+
 						@Override
 						public Void visitMenstruation(LeaveType leaveType) {
 							exprCtx.setVariable(ContextVariable.MENSTRUATION_DAYS, 0, guarenteeStart, guarenteeEnd);
 							return null;
 						}
-						
+
 						@Override
 						public Void visitPregnacyStop(LeaveType leaveType) {
 							exprCtx.setVariable(ContextVariable.PREGNANCY_STOP_DAYS, 0, guarenteeStart, guarenteeEnd);
 							return null;
 						}
-						
+
 						@Override
 						public Void visitPregnacy39Week(LeaveType leaveType) {
-							exprCtx.setVariable(ContextVariable.PREGNANCY_39_WEEK_DAYS, 0, guarenteeStart, guarenteeEnd);
+							exprCtx.setVariable(ContextVariable.PREGNANCY_39_WEEK_DAYS, 0, guarenteeStart,
+									guarenteeEnd);
 							return null;
 						}
 
@@ -868,7 +860,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		public double getIrpf() {
 			return 0.00;
 		}
-		
+
 //		@Override
 //		public Collection<IContractPayment> getContractPayments() throws AonException {
 //			Collection<IContractPayment> payments =  super.getContractPayments();
@@ -897,7 +889,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				NotFoundHandler notFoundHandler) {
 			return new ContractExpressionContext(expressionContext, notFoundHandler) {
 				@Override
-				protected String zeroGuarantee(String script, Date start,Date end) {
+				protected String zeroGuarantee(String script, Date start, Date end) {
 					return script;
 				}
 			};
@@ -916,9 +908,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		@Override
 		protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-			
-			getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
-			getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+
+			getEreDaysVars().forEach(v -> ctx.removeVariable(v));
+			getEreFactorsVars().forEach(v -> ctx.removeVariable(v));
 
 			super.loadDaysContextVariables(ctx);
 		}
@@ -972,9 +964,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				} // leave until ends of work, try next work with this leave.
 
 			} while (true);
-			
+
 			periods.add(work);
-			for ( w++; w < worked.size(); w++ )
+			for (w++; w < worked.size(); w++)
 				periods.add(worked.get(w));
 
 			return periods;
@@ -985,21 +977,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			Double workDays = super.getWorkDays(ctx, p);
 			return getDays(workDays, ctx, p);
 		}
-		
+
 		public void throwGuarenteeException() throws GuarenteeException {
-			if ( guarentees!= null && !guarentees.isEmpty()  ) {
+			if (guarentees != null && !guarentees.isEmpty()) {
 				throw new GuarenteeException(guarentees);
 			}
 		}
 
 		protected double getGuaranteeWorkDays(ExpressionContext ctx, Period p) {
 			Double workDays = super.getWorkDays(ctx, p);
-			if ( isWholeMonth(p)  ) 
+			if (isWholeMonth(p))
 				return workDays;
-			
-			if ( p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
+
+			if (p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
 				return getRemainDays(workDays, ctx, p);
-	
+
 			if (p.getEnd().before(lastLeaveEnd))
 				return workDays;
 
@@ -1023,65 +1015,63 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		protected double getDays(Double workDays, ExpressionContext ctx, Period p) {
-			
-			if ( isWholeMonth(p)  ) 
+
+			if (isWholeMonth(p))
 				return workDays;
-			
-			if ( p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
+
+			if (p.getStart().after(getStartDate()) && isLastMonthPeriod(p))
 				return getRemainDays(workDays, ctx, p);
-	
+
 			if (p.getEnd().before(lastLeaveEnd))
 				return workDays;
 
-			if (p.getStart().equals(getStart())/* && p.getEnd().equals(getEnd())*/)
+			if (p.getStart().equals(getStart())/* && p.getEnd().equals(getEnd()) */)
 				return workDays;
 
-			if (p.getStart().equals(getStartDate()) /*&& p.getEnd().equals(getEndDate())*/)
+			if (p.getStart().equals(getStartDate()) /* && p.getEnd().equals(getEndDate()) */)
 				return workDays;
 
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
 		}
-		
+
 		protected double getMonthDays(ExpressionContext ctx, Period p) {
-		    try {
-			return ctx.getVariable(MONTH_DAYS, p.getStart(), p.getEnd(), Number.class).doubleValue();
-		    } catch (Exception e) {
 			try {
-			    for (ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(),
-				    Number.class))
-				return result.getValue().doubleValue();
-			} catch (ExpressionException e1) {
+				return ctx.getVariable(MONTH_DAYS, p.getStart(), p.getEnd(), Number.class).doubleValue();
+			} catch (Exception e) {
+				try {
+					for (ITimedResult<Number> result : ctx.eval(MONTH_DAYS.getName(), p.getStart(), p.getEnd(),
+							Number.class))
+						return result.getValue().doubleValue();
+				} catch (ExpressionException e1) {
+				}
 			}
-		    }
-		    return AonDateUtils.get(AonDateUtils.getLastDayOfMonth(p.getStart()), Calendar.DAY_OF_MONTH);
+			return AonDateUtils.get(AonDateUtils.getLastDayOfMonth(p.getStart()), Calendar.DAY_OF_MONTH);
 		}
-		
+
 		@Override
 		protected void onContractLeaveLoaded(ResultSet rs, ExpressionContext ctx) {
 			// Skip load GUARANTEE, that is already loaded
 		}
-		
+
 		@Override
 		protected double getActiveDays(Period p) {
 			try {
-				double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, p.getStart(), p.getEnd())
-				.stream()
-				.map ( v -> v.getValue(v.getPeriod()) )
-				.filter( v -> (v != null) && (v instanceof Number ))
-				.collect(Collectors.summingDouble( v -> ((Number) v).doubleValue() ))
-				;
+				double activeDays = getExpressionContext()
+						.getVariables(ContextVariable.ACTIVE_DAYS, p.getStart(), p.getEnd()).stream()
+						.map(v -> v.getValue(v.getPeriod())).filter(v -> (v != null) && (v instanceof Number))
+						.collect(Collectors.summingDouble(v -> ((Number) v).doubleValue()));
 				return activeDays;
-			} catch (Throwable t ) {
+			} catch (Throwable t) {
 				return 0.00;
 			}
 		}
-		
+
 		@Override
 		protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate,
 				Date endDate, Date issueDate, Criteria criteria, double x) {
 			return super.getPaymentCalculatorContext(conn, startDate, endDate, issueDate, criteria, x, (ctx) -> {
-				getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
-				getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+				getEreDaysVars().forEach(v -> ctx.removeVariable(v));
+				getEreFactorsVars().forEach(v -> ctx.removeVariable(v));
 			});
 		}
 
@@ -1090,22 +1080,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		private Date getGuaranteeEnd() {
 			return guaranteePeriods.get(guaranteePeriods.size() - 1).getEnd();
 		}
-		
+
 		private double getRemainDays(Double workDays, ExpressionContext ctx, Period p) {
-			
+
 			double realMonthDays = getMax(p.getEnd(), DAY_OF_MONTH);
 			double ctxMonthDays = super.getContexVariable(ctx, p, MONTH_DAYS);
-			return ctxMonthDays - ( realMonthDays - workDays );
+			return ctxMonthDays - (realMonthDays - workDays);
 		}
-		
-		
-		
+
 	}
 
 	/**
-	 * Clase base para implementar variables pesadas con evaluaci\F3n perezosa.
-	 * Las clases hijas \FAnicamente deber\E1n implementar el m\E9todo 'V
-	 * getValue()'.
+	 * Clase base para implementar variables pesadas con evaluaci\F3n perezosa. Las
+	 * clases hijas \FAnicamente deber\E1n implementar el m\E9todo 'V getValue()'.
 	 * 
 	 * @author rtrepiana
 	 * 
@@ -1316,9 +1303,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
-	
-	private Set<IContractBonus> contextBonus; 
-	private Set<IContractDeduction> contextDeduction; 
+
+	private Set<IContractBonus> contextBonus;
+	private Set<IContractDeduction> contextDeduction;
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -1329,8 +1316,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	 * 
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
 	 * startDate, Date endDate, Date issueDate) throws SQLException,
-	 * ExpressionException { this(connection, startDate, endDate, issueDate,
-	 * null); }
+	 * ExpressionException { this(connection, startDate, endDate, issueDate, null);
+	 * }
 	 */
 
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate,
@@ -1423,8 +1410,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		agreementContextFactory = new SQLAgreementContextFactory(connection, this::getCCCExpressionContext,
 				this.startDate, this.getEnd(), order);
-		this.agreementExpressionContexts = new LRUCache<>(CACHE_SIZE,
-				agreementContextFactory);
+		this.agreementExpressionContexts = new LRUCache<>(CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate, this.getEnd());
 
 		this.liquids = new HashMap<>();
@@ -1551,7 +1537,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
 	}
-	
+
 	@Override
 	public String getEmployeeCity() {
 		return "-";
@@ -1564,7 +1550,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	@Override
 	public String getEnterpriseCity() {
-		//TODO: hacer un JOIN en el MAIN_SQL con geozone
+		// TODO: hacer un JOIN en el MAIN_SQL con geozone
 //		String geozoneName = getString(SQLConstants.GEOZONE, SQLConstants.GeozoneColumns.NAME);
 		String geozone = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.GEOZONE);
 		return geozone;
@@ -1586,7 +1572,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
 //		if (AonStringUtils.isNotBlank(category))
 		return category;
-		
+
 //		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
 	}
 
@@ -1643,7 +1629,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public Collection<ISystemPayment> getSystemPayments() {
 		return systemPayments;
 	}
-	
+
 	@Override
 	public Collection<IContractPayment> getAgreementPayments() {
 		AgreementKey agreementKey = getAgreementKey();
@@ -1666,10 +1652,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			paymentStmt.setInt(1, id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.contractPayments = SQLCollections.contractPaymentsCollection(rs);
-			
+
 			Collection<IContractPayment> contractAgreementPayments = getAgreementPayments();
-			
-			return new CompositePayments(this.contractPayments, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
+
+			return new CompositePayments(this.contractPayments, contractAgreementPayments,
+					/* getDefaultAgreementPayments(), */ getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
@@ -1704,23 +1691,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			this.sqlContractDeduction.setResultSet(rs);
 //			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(this.sqlContractDeduction,
 //					getCCCDeductions().iterator(), getSSRegimeDeductions().iterator());
-			CompositeDeductions hierarchyDeductions = new CompositeDeductions(
-				this.contextDeduction,
-				this.sqlContractDeduction,
-				getCCCDeductions(), 
-				getSSRegimeDeductions()) {
+			CompositeDeductions hierarchyDeductions = new CompositeDeductions(this.contextDeduction,
+					this.sqlContractDeduction, getCCCDeductions(), getSSRegimeDeductions()) {
 
-			    	@Override
+				@Override
 				protected int getLevel(IContractDeduction item) {
-			    	    
-			    	    if ( item instanceof ISystemDeduction ) {
-			    		return ((ISystemDeduction) item).getDomain();
-			    	    } else {
-			    		int level =  super.getLevel(item);
-			    		return level + ( Integer.MAX_VALUE - 100 ) ;
-			    	    }
+
+					if (item instanceof ISystemDeduction) {
+						return ((ISystemDeduction) item).getDomain();
+					} else {
+						int level = super.getLevel(item);
+						return level + (Integer.MAX_VALUE - 100);
+					}
 				}
-			    
+
 			};
 			return hierarchyDeductions;
 		} catch (SQLException e) {
@@ -1753,8 +1737,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			costStmt.setInt(1, id);
 			ResultSet rs = costStmt.executeQuery();
 			this.sqlContractCost.setResultSet(rs);
-			CompositeCosts hierarchyCosts = new CompositeCosts(this.sqlContractCost,
-					getCCCCosts(), getSSRegimeCosts()) {
+			CompositeCosts hierarchyCosts = new CompositeCosts(this.sqlContractCost, getCCCCosts(),
+					getSSRegimeCosts()) {
 				@Override
 				protected int getLevel(IContractCost item) {
 					return ((ISystemCost) item).getDomain();
@@ -1781,7 +1765,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			bonusStmt.setInt(1, id);
 			ResultSet rs = bonusStmt.executeQuery();
 			this.sqlContractBonus.setResultSet(rs);
-			return new CompositeCollection<IContractBonus>( contextBonus, sqlContractBonus );
+			return new CompositeCollection<IContractBonus>(contextBonus, sqlContractBonus);
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -1970,10 +1954,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public <T> void addVariable(String name, T t) {
-	    	Period defPeriod = new Period(this.contractStartDate, this.contractEndDate); 
-	    	this.contractExpressionContext.getVariables(name).stream().map( v -> v.getPeriod())
-	    	.collect(() -> new HashSet<Period>(Collections.singleton(defPeriod)), Set::add, Set::addAll)
-	    	.forEach( p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
+		Period defPeriod = new Period(this.contractStartDate, this.contractEndDate);
+		this.contractExpressionContext.getVariables(name).stream().map(v -> v.getPeriod())
+				.collect(() -> new HashSet<Period>(Collections.singleton(defPeriod)), Set::add, Set::addAll)
+				.forEach(p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
 	}
 
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
@@ -1981,7 +1965,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public <T> List<T> getValues(ContextVariable var, Class<T> toType) {
-		List<ITimedVariable<T>> variables = this.contractExpressionContext.getVariables(var.getName(), this.contractStartDate, this.contractEndDate);
+		List<ITimedVariable<T>> variables = this.contractExpressionContext.getVariables(var.getName(),
+				this.contractStartDate, this.contractEndDate);
 		return variables.stream().map(v -> v.getValue(v.getPeriod())).collect(Collectors.toList());
 	}
 
@@ -1995,32 +1980,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public Boolean hasVariable(String name, Date start, Date end) {
 		List<ITimedVariable<Object>> vars = this.contractExpressionContext.getVariables(name, start, end);
-		if ( vars.isEmpty()  )
+		if (vars.isEmpty())
 			return false;
-		
-		Period periods [] = vars.stream().map(v-> v.getPeriod()).sorted().toArray(Period[]::new);
-		for ( int i= 1; i < periods.length; i++)
-			if ( Period.compare(add(periods[i-1].getEnd(), DAY_OF_MONTH,1),periods[i].getStart()) != 0 ) 
+
+		Period periods[] = vars.stream().map(v -> v.getPeriod()).sorted().toArray(Period[]::new);
+		for (int i = 1; i < periods.length; i++)
+			if (Period.compare(add(periods[i - 1].getEnd(), DAY_OF_MONTH, 1), periods[i].getStart()) != 0)
 				return false;
-		
-		if ( Period.compare(periods[0].getStart(), start) > 0 )
+
+		if (Period.compare(periods[0].getStart(), start) > 0)
 			return false;
-		
-		return Period.compare(periods[periods.length-1].getEnd(), end) >= 0; 
+
+		return Period.compare(periods[periods.length - 1].getEnd(), end) >= 0;
 	}
 
-	public Period []  getPeriods(String varName) {
-		return this.contractExpressionContext.getVariables(varName).stream()
-				.map(v->v.getPeriod()).toArray(Period[]::new);
+	public Period[] getPeriods(String varName) {
+		return this.contractExpressionContext.getVariables(varName).stream().map(v -> v.getPeriod())
+				.toArray(Period[]::new);
 	}
 
 	public List<Period> getPeriods(ContextVariable var) {
-		 return this.contractExpressionContext
-			.getVariables(var.getName())
-			.stream()
-			.map(v->v.getPeriod())
-			.collect(Collectors.toList())
-			;
+		return this.contractExpressionContext.getVariables(var.getName()).stream().map(v -> v.getPeriod())
+				.collect(Collectors.toList());
 	}
 
 	public static java.sql.Date toSqlDate(Date date) {
@@ -2031,7 +2012,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
-				return expr.replaceAll(ContextVariable.GUARANTEE, String.format("/*%s*/ SELF.guarantee", ContextVariable.GUARANTEE));
+				return expr.replaceAll(ContextVariable.GUARANTEE,
+						String.format("/*%s*/ SELF.guarantee", ContextVariable.GUARANTEE));
 			}
 		};
 	}
@@ -2086,216 +2068,214 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return periods;
 	}
 
-	public void addBonus (String description, String expression) {
+	public void addBonus(String description, String expression) {
 		addBonus(getStartDate(), null, description, expression);
 	}
 
-	public void addBonus (String name, String description, String expression) {
+	public void addBonus(String name, String description, String expression) {
 		addBonus(name, getStartDate(), null, description, expression);
 	}
 
-	public void addBonus (Date startDate, String description, String expression) {
+	public void addBonus(Date startDate, String description, String expression) {
 		addBonus(startDate, null, description, expression);
 	}
-	
-	public void addBonus (Date startDate, Date endDate, String description, String expression) {
+
+	public void addBonus(Date startDate, Date endDate, String description, String expression) {
 		addBonus(null, startDate, endDate, description, expression);
 	}
-	
-	public void addBonus (String name, Date startDate, Date endDate, String description, String expression) {
+
+	public void addBonus(String name, Date startDate, Date endDate, String description, String expression) {
 		IContractBonus bonus = new IContractBonus() {
-			
+
 			@Override
 			public Date getStartDate() {
 				return startDate;
 			}
-			
+
 			@Override
 			public Date getEndDate() {
 				return endDate;
 			}
-			
+
 			@Override
 			public BonusType getType() {
 				return null;
 			}
-			
+
 			@Override
 			public double getAmount() {
 				return 0;
 			}
-			
+
 			@Override
 			public boolean isReadOnly() {
 				return true;
 			}
-			
+
 			@Override
 			public ExpressionScope getScope() {
 				return ExpressionScope.SYSTEM;
 			}
-			
+
 			@Override
 			public String getName() {
 				return name;
 			}
-			
+
 			@Override
 			public Integer getId() {
-				return (int)(Math.random()*Integer.MAX_VALUE);
+				return (int) (Math.random() * Integer.MAX_VALUE);
 			}
-			
+
 			@Override
 			public String getExpression() {
 				return String.format("/*read-only*/%s/**/", expression);
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return description;
 			}
-			
+
 			@Override
 			public boolean equals(Object obj) {
-				if ( this == obj )
+				if (this == obj)
 					return true;
-				
-				if (!( obj instanceof IContractBonus ))
+
+				if (!(obj instanceof IContractBonus))
 					return false;
-				
+
 				IContractBonus bonus = (IContractBonus) obj;
-				return ( AonUtils.equals(this.getStartDate(), bonus.getStartDate())
+				return (AonUtils.equals(this.getStartDate(), bonus.getStartDate())
 						&& AonUtils.equals(this.getEndDate(), bonus.getEndDate())
-						&& AonUtils.equals( this.getExpression(), bonus.getExpression())
-						&& AonUtils.equals( this.getDescription(), bonus.getDescription()) )
-						;
-					
+						&& AonUtils.equals(this.getExpression(), bonus.getExpression())
+						&& AonUtils.equals(this.getDescription(), bonus.getDescription()));
+
 			}
-			
+
 			@Override
 			public int hashCode() {
-			    int hash = 7;
-			    hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
-			    hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
-			    hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
-			    hash = 31 * hash + (description == null ? 0 : description.hashCode());
-			    return hash;
+				int hash = 7;
+				hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
+				hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
+				hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
+				hash = 31 * hash + (description == null ? 0 : description.hashCode());
+				return hash;
 			}
 
 		};
-		
+
 		contextBonus.add(bonus);
 	}
 
-	public void addDeduction (String name, String description, String expression) {
-	    addDeduction(name, getStartDate(), null, description, expression);
+	public void addDeduction(String name, String description, String expression) {
+		addDeduction(name, getStartDate(), null, description, expression);
 	}
 
-	public void addDeduction (String name, Date startDate, Date endDate, String description, String expression) {
-	    	
+	public void addDeduction(String name, Date startDate, Date endDate, String description, String expression) {
+
 		IContractDeduction deduction = new ISystemDeduction() {
-			
-		    	@Override
-		    	public int getDomain() {
-		    	    return 0;
-		    	}
-		    
+
+			@Override
+			public int getDomain() {
+				return 0;
+			}
+
 			@Override
 			public Date getStartDate() {
 				return startDate;
 			}
-			
+
 			@Override
 			public Date getEndDate() {
 				return endDate;
 			}
-			
+
 			@Override
 			public DeductionType getType() {
-			    	switch (name) {
+				switch (name) {
 				case "MEI":
-				    return DeductionType.MEI;
+					return DeductionType.MEI;
 				case "FP":
-				    return DeductionType.JOB_TRAINING;
+					return DeductionType.JOB_TRAINING;
 				case "DESMPL":
-				    return DeductionType.UNEMPLOYMENT;
+					return DeductionType.UNEMPLOYMENT;
 				case "CGC":
-				    return DeductionType.COMMON_CONTINGENCY;
+					return DeductionType.COMMON_CONTINGENCY;
 				case "BONIF":
-				    return DeductionType.BONUS;
+					return DeductionType.BONUS;
 				default:
-				    return DeductionType.OTHER;
+					return DeductionType.OTHER;
 				}
 			}
-			
+
 			@Override
 			public double getAmount() {
 				return 0;
 			}
-			
+
 			@Override
 			public boolean isReadOnly() {
 				return true;
 			}
-			
+
 			@Override
 			public ExpressionScope getScope() {
 				return ExpressionScope.SYSTEM;
 			}
-			
+
 			@Override
 			public String getName() {
 				return name;
 			}
-			
+
 			@Override
 			public Integer getId() {
-				return (int)(Math.random()*Integer.MAX_VALUE);
+				return (int) (Math.random() * Integer.MAX_VALUE);
 			}
-			
+
 			@Override
 			public String getExpression() {
 				return String.format("/*read-only*/%s/**/", expression);
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return description;
 			}
-			
+
 			@Override
 			public boolean equals(Object obj) {
-				if ( this == obj )
+				if (this == obj)
 					return true;
-				
-				if (!( obj instanceof IContractDeduction ))
+
+				if (!(obj instanceof IContractDeduction))
 					return false;
-				
+
 				IContractDeduction deduction = (IContractDeduction) obj;
-				return ( AonUtils.equals(this.getStartDate(), deduction.getStartDate())
+				return (AonUtils.equals(this.getStartDate(), deduction.getStartDate())
 						&& AonUtils.equals(this.getEndDate(), deduction.getEndDate())
-						&& AonUtils.equals( this.getExpression(), deduction.getExpression())
-						&& AonUtils.equals( this.getDescription(), deduction.getDescription()) )
-						;
-					
+						&& AonUtils.equals(this.getExpression(), deduction.getExpression())
+						&& AonUtils.equals(this.getDescription(), deduction.getDescription()));
+
 			}
-			
+
 			@Override
 			public int hashCode() {
-			    int hash = 7;
-			    hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
-			    hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
-			    hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
-			    hash = 31 * hash + (description == null ? 0 : description.hashCode());
-			    return hash;
+				int hash = 7;
+				hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
+				hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
+				hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
+				hash = 31 * hash + (description == null ? 0 : description.hashCode());
+				return hash;
 			}
 
 		};
-		
+
 		contextDeduction.add(deduction);
 	}
 
-	//	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
+	// protected Collection<ISystemPayment> getDefaultAgreementPayments() {
 //		
 //		
 //		if ( getAgreementKey() != null ) 
@@ -2388,96 +2368,82 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected double getActiveDays(Period p) {
-		
+
 		int startDay = AonDateUtils.get(p.getStart(), DAY_OF_MONTH);
-		//The first day of the month has value 1. ??? 
-		if ( startDay == 1 )
-			return 0.00; 
-		
-		Date start  = AonDateUtils.getFirstDayOfMonth(p.getStart());
-		Date end  = AonDateUtils.getLastDayOfMonth(p.getStart()); //AonDateUtils.add(p.getStart(), DAY_OF_MONTH,-1);
-		
+		// The first day of the month has value 1. ???
+		if (startDay == 1)
+			return 0.00;
+
+		Date start = AonDateUtils.getFirstDayOfMonth(p.getStart());
+		Date end = AonDateUtils.getLastDayOfMonth(p.getStart()); // AonDateUtils.add(p.getStart(), DAY_OF_MONTH,-1);
+
 		double activeDays = getExpressionContext().getVariables(ContextVariable.ACTIVE_DAYS, start, end).stream()
-		.map ( v -> v.getValue(v.getPeriod()) )
-		.filter( v -> ( v != null ) && ( v instanceof Number ))
-		.collect(Collectors.summingDouble( v -> ((Number) v).doubleValue() ))
-		;
+				.map(v -> v.getValue(v.getPeriod())).filter(v -> (v != null) && (v instanceof Number))
+				.collect(Collectors.summingDouble(v -> ((Number) v).doubleValue()));
 
-		if (activeDays > 0.00 )
+		if (activeDays > 0.00)
 			return activeDays;
-		
-		Date contractStart = getContractStartate();
-		if ( contractStart.compareTo(p.getStart() ) == 0) 
-			return getActiveDaysFromAnotherContract(contractStart);
-		
-		end  = AonDateUtils.add(p.getStart(), Calendar.DAY_OF_MONTH,-1);
-		
-		activeDays = getExpressionContext().getVariables(ContextVariable.WORKED_DAYS, start, end)
-		.stream().map( v -> (Double) v.getValue(v.getPeriod()) ).collect(Collectors.summingDouble( v -> v ))
-		;
-		
-		double partialFactor = getCurrentBindings().get(PARTIAL_FACTOR,
-				obj -> ((Number) obj).doubleValue(), 1.00);
-		activeDays /= partialFactor;
-		
-		for ( ContextVariable variable: new ContextVariable[] {ContextVariable.DROP_DAYS, ContextVariable.STRIKE_FACTOR, ContextVariable.NON_WORKED_DAYS} ) {
-		    try {
-			activeDays += getExpressionContext().eval(variable.getName(), start, end).stream()
-			.map( r -> ((Number) r.getValue()).doubleValue() ).collect(Collectors.summingDouble( v -> v ));
-		    } catch( Exception e ){
-		    }
-		}
 
+		Date contractStart = getContractStartate();
+		if (contractStart.compareTo(p.getStart()) == 0)
+			return getActiveDaysFromAnotherContract(contractStart);
+
+		end = AonDateUtils.add(p.getStart(), Calendar.DAY_OF_MONTH, -1);
+
+		activeDays = getExpressionContext().getVariables(ContextVariable.WORKED_DAYS, start, end).stream()
+				.map(v -> (Double) v.getValue(v.getPeriod())).collect(Collectors.summingDouble(v -> v));
+
+		double partialFactor = getCurrentBindings().get(PARTIAL_FACTOR, obj -> ((Number) obj).doubleValue(), 1.00);
+		activeDays /= partialFactor;
+
+		for (ContextVariable variable : new ContextVariable[] { ContextVariable.DROP_DAYS,
+				ContextVariable.STRIKE_FACTOR, ContextVariable.NON_WORKED_DAYS }) {
+			try {
+				activeDays += getExpressionContext().eval(variable.getName(), start, end).stream()
+						.map(r -> ((Number) r.getValue()).doubleValue()).collect(Collectors.summingDouble(v -> v));
+			} catch (Exception e) {
+			}
+		}
 
 		return activeDays;
 	}
 
 	protected double getActiveDaysFromAnotherContract(Date contractStart) {
-		Date endDate = AonDateUtils.add(contractStart, Calendar.DAY_OF_MONTH,-1);
+		Date endDate = AonDateUtils.add(contractStart, Calendar.DAY_OF_MONTH, -1);
 		Date startDate = AonDateUtils.getFirstDayOfMonth(contractStart);
-		
-		ResultSet rs  = null;
+
+		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			stmt = 
-			connection.prepareStatement(
-			"SELECT "
-			+ "contract.end_date "
-			+ ", contract.start_date "
-			+ "FROM contract  "
-			+ "WHERE contract.person = ? "
-			+ "AND contract.enterprise_ccc = ? "
-			+ "AND contract.start_date <= ? "
-			+ "AND contract.end_date >= ? "
-			+ "AND contract.end_date < ? "
-			);
-			
+			stmt = connection.prepareStatement("SELECT " + "contract.end_date " + ", contract.start_date "
+					+ "FROM contract  " + "WHERE contract.person = ? " + "AND contract.enterprise_ccc = ? "
+					+ "AND contract.start_date <= ? " + "AND contract.end_date >= ? " + "AND contract.end_date < ? ");
 
-			stmt.setInt(1, getInt(SQLConstants.CONTRACT, ContractColumns.PERSON) );
-			stmt.setInt(2, getInt(SQLConstants.CONTRACT, ContractColumns.ENTERPRISE_CCC) );
-			stmt.setDate(3, toSqlDate(endDate) );
-			stmt.setDate(4, toSqlDate(startDate) );
+			stmt.setInt(1, getInt(SQLConstants.CONTRACT, ContractColumns.PERSON));
+			stmt.setInt(2, getInt(SQLConstants.CONTRACT, ContractColumns.ENTERPRISE_CCC));
+			stmt.setDate(3, toSqlDate(endDate));
+			stmt.setDate(4, toSqlDate(startDate));
 			stmt.setDate(5, toSqlDate(contractStart));
-			
+
 			int days = 0;
 			rs = stmt.executeQuery();
-			while ( rs.next() ) {
+			while (rs.next()) {
 				Date contractEndDate = rs.getDate(ContractColumns.END_DATE);
 				Date contractStartDate = rs.getDate(ContractColumns.START_DATE);
 				rs.getDate(ContractColumns.END_DATE);
 				days += new Period(Period.max(contractStartDate, startDate), contractEndDate).daysStream().count();
 			}
 			return days;
-			
+
 		} catch (Exception e) {
 		} finally {
-			if ( rs != null ) {
+			if (rs != null) {
 				try {
 					rs.close();
 				} catch (SQLException e) {
 				}
 			}
-			if ( stmt != null ) {
+			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (SQLException e) {
@@ -2589,8 +2555,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ExpressionContext agreementCtx = agreementExpressionContexts.get(agreementAndLevelKey);
 
 		Integer enterpriseDomain = getEnterpriseDomain();
-		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain, Integer.MIN_VALUE,
-				Integer.MIN_VALUE);
+		AgreementContextKey enterpriseAndLevel = new AgreementContextKey(ssRegimeId, enterpriseDomain,
+				Integer.MIN_VALUE, Integer.MIN_VALUE);
 		ExpressionContext enterpriseCtx = agreementExpressionContexts.get(enterpriseAndLevel);
 
 		ExpressionContext ctx = new ExpressionContext(agreementCtx);
@@ -2699,10 +2665,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	/*
-	 * Devuelve el <code>ICalendar</code> asociado con el contrato (trabajador),
-	 * si no tiene calendario propio devuelve el de su centro de trabajo o el
-	 * del sistema ( calendario estatal ) si el centro tampoco tiene calendario
-	 * propio.
+	 * Devuelve el <code>ICalendar</code> asociado con el contrato (trabajador), si
+	 * no tiene calendario propio devuelve el de su centro de trabajo o el del
+	 * sistema ( calendario estatal ) si el centro tampoco tiene calendario propio.
 	 */
 	private ICalendar getCalendar() {
 		Object calendarId = getObject(SQLConstants.CONTRACT, ContractColumns.CALENDAR);
@@ -2748,8 +2713,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
 
-		ISQLContractSalaryCalculatorContext ctx = getNoItCalculatorContext(connection, startDate, endDate, endDate, contractCriteria, -1,
-				Integer.MAX_VALUE - 1);
+		ISQLContractSalaryCalculatorContext ctx = getNoItCalculatorContext(connection, startDate, endDate, endDate,
+				contractCriteria, -1, Integer.MAX_VALUE - 1);
 		return ctx;
 	}
 
@@ -2795,15 +2760,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return guarantee(guarentee, 1, Integer.MAX_VALUE);
 	}
 
-
 	public Object guarantee(double guarentee, int start) throws ExpressionException {
 		return guarantee(guarentee, start, Integer.MAX_VALUE);
 	}
 
 	public Object guarantee(double guarentee, int start, int end) throws ExpressionException {
 
-		Period guaranteePeriod = new Period(
-				getCurrentBindings().getPeriod().getStart(),
+		Period guaranteePeriod = new Period(getCurrentBindings().getPeriod().getStart(),
 				getCurrentBindings().getPeriod().getEnd());
 
 		if (leaveLoader.isEmpty())
@@ -2813,13 +2776,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		// Assert all PREST_IT payments have been calculated.
 		// Double prestIts = getVariable(PREST_IT, Double.class);
 		// if (prestIts == null && totalPayment == null)
-		//  throw new UndefinedVariablesException(PREST_IT);
-		if ( totalPayment == null )
-			for ( Leave leave : leaveLoader.getLeaves() )
-				if ( Period.compare(leave.getStart(), getEndDate() ) <= 0 
-						&& !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()) )
+		// throw new UndefinedVariablesException(PREST_IT);
+		if (totalPayment == null)
+			for (Leave leave : leaveLoader.getLeaves())
+				if (Period.compare(leave.getStart(), getEndDate()) <= 0
+						&& !hasVariable(PREST_IT, leave.getStart(), leave.getEnd()))
 					throw new UndefinedVariablesException(PREST_IT);
-		
 
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
@@ -2840,34 +2802,33 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throwGuarenteeException(ctx);
 		} catch (GuarenteeException e) {
 			Double extraPayment = getVariable(ContextVariable.EXTRA_PAYMENT, Double.class);
-			if ( totalPayment != null && extraPayment != null )
-			    totalPayment -= extraPayment;
-			
+			if (totalPayment != null && extraPayment != null)
+				totalPayment -= extraPayment;
+
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
-			
+
 			double guarenteed = 0.00;
 			long guarenteeDays = 0;
-			for ( ITimedResult<Double> r : guarenteeResults ) {
+			for (ITimedResult<Double> r : guarenteeResults) {
 				guarenteed += fixGuarantee(r);
 				guarenteeDays += days(r.getPeriod());
 			}
-						
-			if ( guarenteeResults.size() == 1 
-					&& AonUtils.equals(guarentee, guarenteed /*guarenteeResults.get(0).getValue()*/))
+
+			if (guarenteeResults.size() == 1
+					&& AonUtils.equals(guarentee, guarenteed /* guarenteeResults.get(0).getValue() */))
 				return onConstantGuarantee(guarenteed, totalPayment);
-			
+
 			long allDays = days(contractStartDate, contractEndDate);
 
 			// all salary days guaranteed, easier.
-			if ( allDays == guarenteeDays ) 
+			if (allDays == guarenteeDays)
 				return onAllGuarantee(guarenteed, totalPayment);
 
-			for ( Period p : getPeriods(WORKED_DAYS.getName()))
+			for (Period p : getPeriods(WORKED_DAYS.getName()))
 				guarenteeDays += days(p);
 
-			
 			return onGuarantee(guarenteeResults);
-		} catch ( ClassCastException e){
+		} catch (ClassCastException e) {
 			e.printStackTrace();
 			//
 		} catch (SalaryException e) {
@@ -2879,74 +2840,72 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected void throwGuarenteeException(IContractSalaryCalculatorContext ctx) throws GuarenteeException {
-		((SQLNoItContractSalaryCalculatorContext)ctx).throwGuarenteeException();
+		((SQLNoItContractSalaryCalculatorContext) ctx).throwGuarenteeException();
 	}
-	
 
-	protected double fixGuarantee( ITimedResult<Double> result) {
-		
-		if ( getSalaryType() == SalaryType.EXTRA)
+	protected double fixGuarantee(ITimedResult<Double> result) {
+
+		if (getSalaryType() == SalaryType.EXTRA)
 			return result.getValue();
 
 		Period period = result.getPeriod();
 		double quoteGuarenteed = result.getValue();
 		double paidGuarenteed = result.getValue();
 
-		double br = getDoubleVariable(ContextVariable.REGULATORY_BASE.getName(),period.getStart(), period.getEnd() );
-		double quoteDays = getVariables(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
-		
-		
-		if ( quoteGuarenteed <=  br ) {
+		double br = getDoubleVariable(ContextVariable.REGULATORY_BASE.getName(), period.getStart(), period.getEnd());
+		double quoteDays = getVariables(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(),
+				Collectors.summingDouble(v -> (Double) v.getValue(v.getPeriod())));
+
+		if (quoteGuarenteed <= br) {
 			quoteGuarenteed *= quoteDays;
 			paidGuarenteed *= period.daysStream().count();
 		}
-		
-		double prestIt = 
-				getVariables(ContextVariable.PREST_IT,period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
-		
+
+		double prestIt = getVariables(ContextVariable.PREST_IT, period.getStart(), period.getEnd(),
+				Collectors.summingDouble(v -> (Double) v.getValue(v.getPeriod())));
+
 		double max = br * period.daysStream().count();
-		
-		if ( (quoteGuarenteed < prestIt ) 
-			&& (quoteGuarenteed + prestIt) <= max) {
+
+		if ((quoteGuarenteed < prestIt) && (quoteGuarenteed + prestIt) <= max) {
 			quoteGuarenteed += prestIt;
 			paidGuarenteed += prestIt;
 			return paidGuarenteed < max ? paidGuarenteed : quoteGuarenteed;
 		} else {
 			return quoteGuarenteed;
 		}
-		
-		
+
 	}
 
 	protected Object onAllGuarantee(Double guarenteed, Double totalPayment) throws UndefinedContextVariablesException {
-		if ( totalPayment == null )
-			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT); 
+		if (totalPayment == null)
+			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT);
 		return Math.max(0.00, guarenteed - totalPayment);
 	}
 
-	protected Object onConstantGuarantee(Double constant, Double totalPayment) throws UndefinedContextVariablesException {
-		if ( totalPayment == null )
-			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT); 
+	protected Object onConstantGuarantee(Double constant, Double totalPayment)
+			throws UndefinedContextVariablesException {
+		if (totalPayment == null)
+			throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT);
 		return Math.max(0.00, constant - totalPayment);
 	}
 
 	protected Object onGuarantee(List<ITimedResult<Double>> guarenteeResults) {
 		double guarantee = 0.00;
 		for (ITimedResult<Double> guarenteeResult : guarenteeResults) {
-			
+
 			Period period = guarenteeResult.getPeriod();
 			Date start = period.getStart();
 			Date end = period.getEnd();
 			double value = guarenteeResult.getValue();
-			
+
 			value = fixGuarantee(guarenteeResult);
-			
-			double max = getDayDoubleVariable( ContextVariable.CGC_BASE.getName() , start, end );			
-			if ( max > 0.00 ) {
+
+			double max = getDayDoubleVariable(ContextVariable.CGC_BASE.getName(), start, end);
+			if (max > 0.00) {
 				value = Math.min(max, value);
 			}
-			
-			double prestIt = getDayDoubleVariable(PREST_IT, start,end);
+
+			double prestIt = getDayDoubleVariable(PREST_IT, start, end);
 
 			guarantee += value - prestIt;
 		}
@@ -2963,7 +2922,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		final Criteria contractCriteria = new Criteria();
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, getId());
-		
+
 		UnivariateFunction univariateFunction = new UnivariateFunction() {
 
 			@Override
@@ -2972,7 +2931,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				try {
 					IContractSalaryCalculatorContext ctx = getLiquidCalculatorContext(connection, start, end, issueDate,
 							contractCriteria, solve, liquid);
-					//ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+					// ContractSalaryCalculator<Salary> calculator = new
+					// ContractSalaryCalculator<Salary>();
 					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
@@ -2992,13 +2952,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					});
 
 					ISalary salary = calculator.calculate(((ISQLContractSalaryCalculatorContext) ctx));
-					
+
 					double zero = liquid - salary.getTotalLiquid();
-					
-					
-					if ( Math.abs(zero) <= solver.getAbsoluteAccuracy())
+
+					if (Math.abs(zero) <= solver.getAbsoluteAccuracy())
 						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
-					
+
 					return zero;
 
 				} catch (SalaryException e) {
@@ -3007,17 +2966,17 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 
 		};
-		
+
 		try {
 			result = getLiquidStartValue(start, liquid);
-			if ( Math.abs(univariateFunction.value(result)) <=  solver.getAbsoluteAccuracy() ) {
-				System.out.println("Wonderfull NETO calculated in one step!!!. " );
+			if (Math.abs(univariateFunction.value(result)) <= solver.getAbsoluteAccuracy()) {
+				System.out.println("Wonderfull NETO calculated in one step!!!. ");
 				return result;
 			}
-		} catch ( Exception e ) {
-			
+		} catch (Exception e) {
+
 		}
-		
+
 		result = solver.solve(Byte.MAX_VALUE, univariateFunction, -2.00 * liquid, 2.00 * liquid, liquid);
 
 		SQLContractSalaryCalculatorContext.this.liquids.put(liquid, result);
@@ -3156,14 +3115,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							}
 
 							@Override
-							protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-								
-								getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
-								getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+							protected void loadDaysContextVariables(ContractExpressionContext ctx)
+									throws ExpressionException {
+
+								getEreDaysVars().forEach(v -> ctx.removeVariable(v));
+								getEreFactorsVars().forEach(v -> ctx.removeVariable(v));
 
 								super.loadDaysContextVariables(ctx);
 							}
-							
+
 						};
 						ctx.leaveLoader = new NoopSQLContractLeaveLoader(startDate, endDate);
 						return new SQLIrpfCalculatorContext(connection, startDate, endDate, ctx) {
@@ -3189,7 +3149,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 							@Override
 							public int getAñoNacimiento() {
-								Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
+								Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON,
+										SQLConstants.PersonColumns.BIRTH_DATE);
 								return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 							};
 
@@ -3212,13 +3173,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria, final double x) {
-		return getPaymentCalculatorContext(conn, startDate, endDate, issueDate, criteria, x, (ctx) -> {});
+	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate,
+			Date endDate, Date issueDate, Criteria criteria, final double x) {
+		return getPaymentCalculatorContext(conn, startDate, endDate, issueDate, criteria, x, (ctx) -> {
+		});
 	}
-	
-	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria, final double x, NextHook hook) {
+
+	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate,
+			Date endDate, Date issueDate, Criteria criteria, final double x, NextHook hook) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {
 			ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria) {
@@ -3278,9 +3240,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Collection<IContractPayment> getContractPayments() throws AonException {
-					return new FilterCollection<>(p -> p.getMonth() == null , super.getContractPayments());
+					return new FilterCollection<>(p -> p.getMonth() == null, super.getContractPayments());
 				}
-				
+
 				@Override
 				public Collection<IContractDeduction> getContractDeductions() throws AonException {
 					return Collections.emptyList();
@@ -3300,7 +3262,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Collection<IContractCost> getContractCosts() throws AonException {
 					return Collections.emptyList();
 				}
-				
+
 			};
 			ctx.leaveLoader = leaveLoader;
 			ctx.next(hook);
@@ -3339,9 +3301,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	public Object system(String name) throws ExpressionException, SQLException {
 		try {
 			ExpressionContext systemExpressionCtx = agreementContextFactory.getSystemExpressionContext();
-			return systemExpressionCtx.eval(name, startDate, getEnd(), Object.class).stream().map( ITimedResult::getValue ).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
-		} catch ( Exception e ) {
-			return implicitExpressionContext.eval(name, startDate, getEnd(), Object.class).stream().map( ITimedResult::getValue ).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
+			return systemExpressionCtx.eval(name, startDate, getEnd(), Object.class).stream()
+					.map(ITimedResult::getValue).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
+		} catch (Exception e) {
+			return implicitExpressionContext.eval(name, startDate, getEnd(), Object.class).stream()
+					.map(ITimedResult::getValue).findAny().orElseThrow(() -> new UndefinedVariablesException(name));
 		}
 	}
 
@@ -3360,11 +3324,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(connection, startDate, endMonth,
 				contractCriteria);
 
-		
 		IrpfOutcome irpfOutcome = IrpfCalculator.calculateIrpf(irpfCalculatorContext, endMonth);
 
 		onIrpf(irpfOutcome);
-		
+
 		return irpfOutcome.getIrpfResult().getIrpf();
 	}
 
@@ -3398,21 +3361,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public double getIrpf() {
 				return 0.00;
 			}
-			
+
 			@Override
 			protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-				
-				getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
-				getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+
+				getEreDaysVars().forEach(v -> ctx.removeVariable(v));
+				getEreFactorsVars().forEach(v -> ctx.removeVariable(v));
 
 				super.loadDaysContextVariables(ctx);
 			}
-			
+
 		};
-		ctx.leaveLoader = new NoopSQLContractLeaveLoader(this.startDate, this.getEnd()); 
+		ctx.leaveLoader = new NoopSQLContractLeaveLoader(this.startDate, this.getEnd());
 		ctx.liquids.putAll(this.liquids);
 		ctx.payments.putAll(this.payments);
-		//new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader;
+		// new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader;
 		return ctx;
 	}
 
@@ -3432,7 +3395,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public int getAñoNacimiento() {
-					Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
+					Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON,
+							SQLConstants.PersonColumns.BIRTH_DATE);
 					return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 				}
 
@@ -3492,7 +3456,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				throw new CheckException(
 						"Imposible calcular el salario regulador de la indemnizaci\u00F3n por despido");
 			}
-			
+
 			@Override
 			protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
 			}
@@ -3535,20 +3499,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		calculator.setSalaryBuilder(salaryBuilder);
 		Salary salary = calculator.calculate(ctx);
 
-		double quoteDys = 
-				getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), ContextVariable.QUOTE_DAYS);
-		
+		double quoteDys = getContexVariable(ctx.getExpressionContext(),
+				new Period(ctx.getStartDate(), ctx.getEndDate()), ContextVariable.QUOTE_DAYS);
+
 		double monthDays = 0;
-		monthDays = getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()), MONTH_DAYS);
-				
+		monthDays = getContexVariable(ctx.getExpressionContext(), new Period(ctx.getStartDate(), ctx.getEndDate()),
+				MONTH_DAYS);
 
 		double totalPayment = salary.getTotalPayment();
 		double extraPayProration = salary.getExtraPayProration();
 
-		return (totalPayment + extraPayProration) * monthDays / quoteDys ;
+		return (totalPayment + extraPayProration) * monthDays / quoteDys;
 
 	}
-	
+
 	public static long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
 		workedDays += 1;
@@ -3562,17 +3526,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return false;
 		}
 
-		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER; 
+		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER;
 	}
-
 
 	private boolean isWorkingDay(DayType type) {
-		return type == 
-				DayType.WORKING_DAY 
-				|| type == DayType.CONTINUOUS_TIME 
-				|| type == DayType.OTHER; 
+		return type == DayType.WORKING_DAY || type == DayType.CONTINUOUS_TIME || type == DayType.OTHER;
 	}
-
 
 	private boolean isHoliday(Calendar day) {
 		Date date = day.getTime();
@@ -3619,10 +3578,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-
 	private boolean isWorkingDay(Calendar day) {
 		Date date = day.getTime();
-		
+
 		ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
 		ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
 		if (hours == null)
@@ -3631,9 +3589,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			Period period = hours.getPeriod();
 			Object value = hours.getValue(period);
-			if ( value == null )
+			if (value == null)
 				return false;
-			
+
 			return Double.parseDouble(value.toString()) >= 0.00;
 
 		} catch (Error e) {
@@ -3656,19 +3614,19 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	/*
-	 * Calculate 'DIAS_EFECTIVOS' for the contract (employee). Be care of leaves
-	 * and agreement.
+	 * Calculate 'DIAS_EFECTIVOS' for the contract (employee). Be care of leaves and
+	 * agreement.
 	 */
 	private double getActualDays() {
 		return getActualDays(contractStartDate, contractEndDate);
 	}
 
 	private double getActualDays(Date startDate, Date endDate) {
-		
+
 		long days = 0;
-		
-		boolean  hasDaysHours = hasDefinedDaysHours();
-		
+
+		boolean hasDaysHours = hasDefinedDaysHours();
+
 		ICalendar calendar = getCalendar();
 		Calendar end = Calendar.getInstance();
 		end.setTime(endDate);
@@ -3676,54 +3634,47 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		day.setTime(startDate);
 		while (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			
+
 			Double dayHours = getDayHours(day);
-			
-			
-			if ( dayHours != null && dayHours < 0 ) {
+
+			if (dayHours != null && dayHours < 0) {
 				// < 0 == NO_LABORABLE
-			} else if ( isHoliday(day)  ) {
-				// It's  DIAS_VACACIONES
-			} else if ( isNotWorkingDay(day) ) {
-				// It's  NO_LABORABLE
+			} else if (isHoliday(day)) {
+				// It's DIAS_VACACIONES
+			} else if (isNotWorkingDay(day)) {
+				// It's NO_LABORABLE
 			} else if (leaveLoader.isLeaveDay(day)) {
-				// It's  DIAS_IT ( DIAS_ENFERME..., DIAS_MATER... )
-			} else if (!hasDaysHours && isActualDay(type, day) ) {
+				// It's DIAS_IT ( DIAS_ENFERME..., DIAS_MATER... )
+			} else if (!hasDaysHours && isActualDay(type, day)) {
 				days++;
-			} else if ( DayType.HOLIDAY != type && dayHours != null && dayHours > 0.00 ) {
+			} else if (DayType.HOLIDAY != type && dayHours != null && dayHours > 0.00) {
 				days++;
-			} 
+			}
 			day.add(Calendar.DATE, 1);
 		}
 		return days;
 	}
-	
+
 	private boolean hasDefinedDaysHours() {
-		for ( ContextVariable variable : WEEK_HOURS_VARIABLES.values()) {
-			boolean effectiveDefined = 
-			getValues(variable, Object.class).stream()
-			.filter(Objects::nonNull)
-			.filter(Number.class::isInstance)
-			.map(v -> ((Number)v).doubleValue())
-			.filter( v -> v > 0.00)
-			.count() > 0 ;
-			
-			if ( effectiveDefined )
+		for (ContextVariable variable : WEEK_HOURS_VARIABLES.values()) {
+			boolean effectiveDefined = getValues(variable, Object.class).stream().filter(Objects::nonNull)
+					.filter(Number.class::isInstance).map(v -> ((Number) v).doubleValue()).filter(v -> v > 0.00)
+					.count() > 0;
+
+			if (effectiveDefined)
 				return true;
-			
+
 		}
 		return false;
 	}
-	
-	private Double getDayHours( Calendar day ) {
+
+	private Double getDayHours(Calendar day) {
 		try {
 			ContextVariable dayHoursVar = getDayHoursVar(day);
-			return  
-			this.contractExpressionContext.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class)
-			.stream()
-			.map(ITimedResult::getValue)
-			.map(value -> value == null ? -1 : value )
-			.collect(Collectors.summingDouble(Number::doubleValue));
+			return this.contractExpressionContext
+					.eval(dayHoursVar.getName(), day.getTime(), day.getTime(), Number.class).stream()
+					.map(ITimedResult::getValue).map(value -> value == null ? -1 : value)
+					.collect(Collectors.summingDouble(Number::doubleValue));
 		} catch (ExpressionException e) {
 			return null;
 		}
@@ -3752,37 +3703,40 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected double getWorkDays(ExpressionContext ctx, Period p) {
-		
+
 		Date workStart = Period.max(p.getStart(), contractStartDate);
 		Date workEnd = Period.min(p.getEnd(), contractEndDate);
-		
+
 		double workEndDay = AonDateUtils.get(workEnd, DAY_OF_MONTH);
 		double monthDays = AonDateUtils.getMax(p.getStart(), DAY_OF_MONTH);
-		
-		double availableDays = getAvailableDays(workStart,workEnd);
-		
-		if ( workEndDay == monthDays ) {
+
+		double availableDays = getAvailableDays(workStart, workEnd);
+
+		if (workEndDay == monthDays) {
 			double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-			double prevAdjustDays = getActiveDays(p) ;
-			availableDays = (availableDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays;			
+			double prevAdjustDays = getActiveDays(p);
+			availableDays = (availableDays + prevAdjustDays) == monthDays ? (ctxMonthDays - prevAdjustDays)
+					: availableDays;
 		}
 
 		double workedDays = availableDays /*- leaveDays*/;
-		
-		for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS ) {
+
+		for (ContextVariable ereFactor : ContextVariable.ERE_FACTORS) {
 			try {
 				getCurrentBindings().get(ereFactor);
 				workedDays *= 1.00 - getContexVariable(ctx, p, ereFactor);
-			}
-			catch ( Exception e ) {
-				
+			} catch (Exception e) {
+
 			}
 		}
 
 		workedDays *= 1.00 - getCurrentBindings().get(STRIKE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
 		getCurrentBindings().get(STRIKE_DAYS);
-		
-//		if ( workEndDay < monthDays )
+
+		workedDays *= 1.00 - getCurrentBindings().get(DROP_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
+		getCurrentBindings().get(DROP_FACTOR);
+
+		//		if ( workEndDay < monthDays )
 //			return workedDays; // Not the last period or doesn't work the full month. 
 //
 //		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
@@ -3790,10 +3744,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //		double prevAdjustDays = getActiveDays(p) ;
 //		
 //		return (workedDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : workedDays;
-		
+
 		return workedDays;
 	}
-	
 
 	private double getDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
@@ -3802,91 +3755,82 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return (availableDays == monthDays ? ctxMonthDays : availableDays) * factor;
 	}
 
-	private double getEreDays(ExpressionContext ctx, Period p, double factor, List<Pair<ContextVariable,ITimedVariable<Object>>> others ) {
+	private double getEreDays(ExpressionContext ctx, Period p, double factor,
+			List<Pair<ContextVariable, ITimedVariable<Object>>> others) {
 		double availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-		
-		//availableDays *= factor;
-		
-		if ( availableDays == naturalMonthDays )
+
+		// availableDays *= factor;
+
+		if (availableDays == naturalMonthDays)
 			return ctxMonthDays * factor;
-		
-		if ( ctxMonthDays == naturalMonthDays )
+
+		if (ctxMonthDays == naturalMonthDays)
 			return availableDays * factor;
 
-		if ( isPartial(ctx, p) && isInIT(ctx, p) )
+		if (isPartial(ctx, p) && isInIT(ctx, p))
 			return availableDays * factor;
-					
+
 		Date ctxEndDate = getEndDate();
-		if ( getLastDayOfMonth(ctxEndDate).after(ctxEndDate))
+		if (getLastDayOfMonth(ctxEndDate).after(ctxEndDate))
 			return availableDays * factor;
-			
-		
+
 		Period adjust = p;
 		try {
 			adjust = getPeriod4Adjust(others);
-		} catch ( NoSuchElementException e) {
-			
+		} catch (NoSuchElementException e) {
+
 		}
-		
+
 //		if ( p.compareTo(adjust) != 0 )
-		if ( !AonUtils.equals(p.getEnd(), adjust.getEnd() ) )
+		if (!AonUtils.equals(p.getEnd(), adjust.getEnd()))
 			return availableDays * factor;
-				
+
 		return (availableDays + (30 - naturalMonthDays)) * factor;
-		//return (availableDays) + (30 - naturalMonthDays);
+		// return (availableDays) + (30 - naturalMonthDays);
 	}
 
 	private boolean isPartial(ExpressionContext ctx, Period p) {
 		try {
-			return ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd())
-			.stream().map( v -> v.getValue(v.getPeriod()))
-			.filter( v -> v != null && v instanceof Number )
-			.anyMatch( v -> ((Number)v).doubleValue() < 1.00);
-		} catch ( Exception e) {
+			return ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd()).stream()
+					.map(v -> v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
+					.anyMatch(v -> ((Number) v).doubleValue() < 1.00);
+		} catch (Exception e) {
 			return false;
 		}
 	}
-	
+
 	private boolean isInIT(ExpressionContext ctx, Period p) {
-		return getLeavesPeriods().size() > 0 ;
+		return getLeavesPeriods().size() > 0;
 	}
 
-	private Period getPeriod4Adjust(List<Pair<ContextVariable,ITimedVariable<Object>>> others) {
-		return 
-		others.stream().map(pair -> pair.snd)
-		.filter(v -> ((Number)v.getValue(v.getPeriod())).doubleValue() == 1.00)
-		.reduce((v1,v2) -> v2)
-		.map(v -> v.getPeriod())
-		.orElseGet(() ->  
-		others.stream().map(pair -> pair.snd)
-		.filter(v -> ((Number)v.getValue(v.getPeriod())).doubleValue() < 1.00)
-		.reduce((v1,v2) -> v2)
-		.map(v -> v.getPeriod())
-		.orElseThrow()
-		);
+	private Period getPeriod4Adjust(List<Pair<ContextVariable, ITimedVariable<Object>>> others) {
+		return others.stream().map(pair -> pair.snd)
+				.filter(v -> ((Number) v.getValue(v.getPeriod())).doubleValue() == 1.00).reduce((v1, v2) -> v2)
+				.map(v -> v.getPeriod())
+				.orElseGet(() -> others.stream().map(pair -> pair.snd)
+						.filter(v -> ((Number) v.getValue(v.getPeriod())).doubleValue() < 1.00).reduce((v1, v2) -> v2)
+						.map(v -> v.getPeriod()).orElseThrow());
 	}
-	
-	
 
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getFirstContexVariable(ctx, p, MONTH_DAYS);
-		double prevAdjustDays = getActiveDays(p) ;
-		
-		return (( availableDays + prevAdjustDays ) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays);
+		double prevAdjustDays = getActiveDays(p);
+
+		return ((availableDays + prevAdjustDays) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays);
 	}
 
 	private int getSeniorityYears(Period period) {
 		Date start = getSeniorityDate();
 		try {
-			start = getCurrentBindings().get(SENIORITY_START, v -> (Date) v, start );
-			
-		} catch (Throwable t ) {
+			start = getCurrentBindings().get(SENIORITY_START, v -> (Date) v, start);
+
+		} catch (Throwable t) {
 			t.printStackTrace();
-			
+
 		}
 		Date end = period.getStart();
 		return getYears(start, end);
@@ -3899,9 +3843,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTime(start);
-		
+
 		int startDayOfMonth = startCalendar.get(Calendar.DAY_OF_MONTH);
-		
+
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(end);
 
@@ -3928,10 +3872,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (calendar.get(Calendar.DAY_OF_MONTH) == calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
 				return years + months / 12d;
 		}
-		
-		if ( startDayOfMonth == endDayOfMonth )
+
+		if (startDayOfMonth == endDayOfMonth)
 			return years + months / 12d;
-		
+
 		startCalendar.add(Calendar.MONTH, -1);
 		long days = CommonUtil.getDaysBetweenDates(startCalendar.getTime(), end);
 		if (days > 0)
@@ -3940,67 +3884,67 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return years + months / 12d;
 
 	}
-	
+
 	public Double sum(String varName) {
-		
+
 		// Get Period
 		Date firsDayOfMonth = AonDateUtils.getFirstDayOfMonth(getStartDate());
 		Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(getStartDate());
-		
-		Stream<com.esferalia.aon.occam.api.model.Salary> salariesData = AON.getSalaryData(
-				new AONContext(connection), 
-				p -> p.getIsSalaryProperty().eq(true)
-					.and(p.getSSProperty().eq(getSocialSecurityNumber()))
-					.and(p.getStartDateProperty().ge(firsDayOfMonth))
-					.and(p.getEndDateProperty().le(lastDayOfMonth))
-				);
-		
+
+		Stream<com.esferalia.aon.occam.api.model.Salary> salariesData = AON.getSalaryData(new AONContext(connection),
+				p -> p.getIsSalaryProperty().eq(true).and(p.getSSProperty().eq(getSocialSecurityNumber()))
+						.and(p.getStartDateProperty().ge(firsDayOfMonth))
+						.and(p.getEndDateProperty().le(lastDayOfMonth)));
+
 		List<ContextData> varNameCtxData = new ArrayList<ContextData>();
 		salariesData.forEach(s -> varNameCtxData.addAll(s.getContextData(varName, firsDayOfMonth, lastDayOfMonth)));
 
-		Stream<ContextData> filteredVarNameCtxData = varNameCtxData.stream().filter(ctxData -> !ctxData.getStartDate().equals(getStartDate()) && !ctxData.getEndDate().equals(getEndDate()));
-		
+		Stream<ContextData> filteredVarNameCtxData = varNameCtxData.stream()
+				.filter(ctxData -> !ctxData.getStartDate().equals(getStartDate())
+						&& !ctxData.getEndDate().equals(getEndDate()));
+
 		Double sum = filteredVarNameCtxData.collect(Collectors.summingDouble(ctxData -> {
-						try { 
-							return Double.parseDouble(ctxData.getExpression()); 
-						} catch (Exception e){
-							return 0.00;
-						}
-					}));
-		
+			try {
+				return Double.parseDouble(ctxData.getExpression());
+			} catch (Exception e) {
+				return 0.00;
+			}
+		}));
+
 		return sum;
 	}
-	
+
 	public Double sum(Number amount) throws MacroException {
-	    throw new MacroException() {
+		throw new MacroException() {
 
-		@Override
-		public String doMacro(String expr) {
-		    Matcher matcher = Pattern.compile("SUM\\s*\\((?<expression>.*?)\\)" ).matcher(expr);
-		    while ( matcher.find() ) {
-			String sum = matcher.group();
-			String expression = matcher.group("expression");
-			Double value = eval(expression);
-			expr = AonStringUtils.replace(expr, sum, value.toString());
-		    }
-		    return expr;
-		}
-		
-		private Double eval(String expression) {
-		    try {
-			return getExpressionContext().eval(expression, contractStartDate, contractEndDate, Number.class)
-			.stream().map(ITimedResult::getValue).collect(Collectors.summingDouble(Number::doubleValue));
-		    } catch (ExpressionException e) {
-			throw new ExpressionExceptionWrapper(e);
-		    }		    
-		}
+			@Override
+			public String doMacro(String expr) {
+				Matcher matcher = Pattern.compile("SUM\\s*\\((?<expression>.*?)\\)").matcher(expr);
+				while (matcher.find()) {
+					String sum = matcher.group();
+					String expression = matcher.group("expression");
+					Double value = eval(expression);
+					expr = AonStringUtils.replace(expr, sum, value.toString());
+				}
+				return expr;
+			}
 
-	    };
+			private Double eval(String expression) {
+				try {
+					return getExpressionContext().eval(expression, contractStartDate, contractEndDate, Number.class)
+							.stream().map(ITimedResult::getValue)
+							.collect(Collectors.summingDouble(Number::doubleValue));
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				}
+			}
+
+		};
 	}
 
 	public Object br(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
 		switch (leaveType) {
-		case MATERNITY , PATERNITY : {
+		case MATERNITY, PATERNITY: {
 			return br(add(date, Calendar.MONTH, -1));
 		}
 		default:
@@ -4009,69 +3953,74 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
-		
+
 		double br = getSavedBr(date);
 
 		if (br > 0.00)
 			return br;
-		
+
 		br = getL00Br(date);
 		if (br > 0.00)
 			return br;
 
 		// No salaries are present.
-		return calculateBr(date.before(contractStartDate) ? contractStartDate: date);
+		return calculateBr(date.before(contractStartDate) ? contractStartDate : date);
 	}
 
 	public double getSavedBr(Date date) {
 		int contractId = getId();
-		
-		boolean fullTime = true ;
+
+		boolean fullTime = true;
 		try {
 			fullTime = isFullTime();
-		} catch ( Throwable t ) {
+		} catch (Throwable t) {
 		}
 
 		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
-		Date prevStartMonth = getFirstDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
+		Date prevStartMonth = getFirstDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1 : -3));
 
 		double br = 0.00;
 
 		try {
-		    	boolean partial = !fullTime;
+			boolean partial = !fullTime;
 			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
-			
+							.and(p.getStartDateProperty().le(prevEndMonth))
+							.and(p.getEndDateProperty().ge(prevStartMonth)));
+
 			Pair<Double, Double> pair = new Pair<>(0.00, 0.00);
-			salaries.forEach(s-> {
+			salaries.forEach(s -> {
 				pair.fst += s.getCommonContingenciesBase();
-				
-				double monthDays = s.getContextData(MONTH_DAYS.getName(), summingDouble(Double::parseDouble));; 
+
+				double monthDays = s.getContextData(MONTH_DAYS.getName(), summingDouble(Double::parseDouble));
+				;
 				double quoteDays = s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
-				double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(s.getEndDate(), Calendar.DAY_OF_MONTH) : quoteDays;
-				
-				pair.snd += partial ? naturalDays: quoteDays ;
-			} )
-			;
-			Stream<com.esferalia.aon.occam.api.model.Salary> delays =
-			AON.getSalaryData(new AONContext(connection), p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
-					.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
-				
-			delays.forEach(s ->  { 
-				List<ContextData> cgcBases = s.getContextData(ContextVariable.CGC_BASE.getName(), prevStartMonth, prevEndMonth);
-				double commonContingenciesBase = cgcBases.stream().collect(Collectors.summingDouble( d -> AonNumberUtils.todouble(d.getExpression()) ));
-				pair.fst += commonContingenciesBase;
-			
+				double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(s.getEndDate(), Calendar.DAY_OF_MONTH)
+						: quoteDays;
+
+				pair.snd += partial ? naturalDays : quoteDays;
 			});
-			
+			Stream<com.esferalia.aon.occam.api.model.Salary> delays = AON.getSalaryData(new AONContext(connection),
+					p -> p.getIsDelayProperty().eq(true).and(p.getContractProperty().eq(contractId))
+							.and(p.getStartDateProperty().le(prevEndMonth))
+							.and(p.getEndDateProperty().ge(prevStartMonth)));
+
+			delays.forEach(s -> {
+				List<ContextData> cgcBases = s.getContextData(ContextVariable.CGC_BASE.getName(), prevStartMonth,
+						prevEndMonth);
+				double commonContingenciesBase = cgcBases.stream()
+						.collect(Collectors.summingDouble(d -> AonNumberUtils.todouble(d.getExpression())));
+				pair.fst += commonContingenciesBase;
+
+			});
+
 			br = pair.fst / pair.snd;
-			
-			boolean occupational = getLeaves().stream()
-					.filter(leave -> date.compareTo(leave.getEnd()) <= 0 )
-					.filter(leave -> date.compareTo(leave.getStart() ) >= 0 || AonDateUtils.get(leave.getStart(), Calendar.DAY_OF_MONTH) == 1)
+
+			boolean occupational = getLeaves().stream().filter(leave -> date.compareTo(leave.getEnd()) <= 0)
+					.filter(leave -> date.compareTo(leave.getStart()) >= 0
+							|| AonDateUtils.get(leave.getStart(), Calendar.DAY_OF_MONTH) == 1)
 					.anyMatch(l -> l.getType() == LeaveType.OCCUPATIONAL_DISEASE);
-			if ( occupational ) {
+			if (occupational) {
 				Date prevStartYear = add(getFirstDayOfMonth(date), Calendar.YEAR, -1);
 				Stream<com.esferalia.aon.occam.api.model.Salary> prevYearSalaryDatas = AON.getSalaryData(
 						new AONContext(connection),
@@ -4079,35 +4028,36 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 								.and(p.getIsSalaryProperty().eq(true).or(p.getIsDelayProperty().eq(true)))
 								.and(p.getStartDateProperty().le(prevEndMonth))
 								.and(p.getEndDateProperty().ge(prevStartYear)));
-				double overtimeBase =
-				prevYearSalaryDatas.map( s -> {
-					double structuralOvertimeBase = s.getContextData(STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
-					double nonStructuralOvertimeBase = s.getContextData(NON_STRUCTURAL_OVERTIME_BASE.getName(), Collectors.summingDouble(AonNumberUtils::todouble));
+				double overtimeBase = prevYearSalaryDatas.map(s -> {
+					double structuralOvertimeBase = s.getContextData(STRUCTURAL_OVERTIME_BASE.getName(),
+							Collectors.summingDouble(AonNumberUtils::todouble));
+					double nonStructuralOvertimeBase = s.getContextData(NON_STRUCTURAL_OVERTIME_BASE.getName(),
+							Collectors.summingDouble(AonNumberUtils::todouble));
 					return structuralOvertimeBase + nonStructuralOvertimeBase;
-				}).collect(Collectors.summingDouble( d -> d ));
-				
+				}).collect(Collectors.summingDouble(d -> d));
+
 				Date contractStartDate = getContractStartate();
-				long days = contractStartDate.after(prevStartYear) ? new Period(getContractStartate(), prevEndMonth).getDays() : 365;
-				double brOvertime = overtimeBase / days; 
-				 br += brOvertime;
+				long days = contractStartDate.after(prevStartYear)
+						? new Period(getContractStartate(), prevEndMonth).getDays()
+						: 365;
+				double brOvertime = overtimeBase / days;
+				br += brOvertime;
 			}
-			
+
 			salaries.close();
 		} catch (Throwable t) {
 			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
 					p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
-							.and(p.getStartDateProperty().le(prevEndMonth)).and(p.getEndDateProperty().ge(prevStartMonth)));
+							.and(p.getStartDateProperty().le(prevEndMonth))
+							.and(p.getEndDateProperty().ge(prevStartMonth)));
 			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
-			salaries.forEach(s-> {
+			salaries.forEach(s -> {
 				pair.fst += s.getCommonContingenciesBase();
-				pair.snd += ( s.getSalaryDays()
-						* ifnull(
-								s.getContextData(MONTH_DAYS.getName(),
-										summingDouble(Double::parseDouble)),
+				pair.snd += (s.getSalaryDays()
+						* ifnull(s.getContextData(MONTH_DAYS.getName(), summingDouble(Double::parseDouble)),
 								(double) getMax(s.getStartDate(), DAY_OF_MONTH))
 						/ getMax(s.getStartDate(), DAY_OF_MONTH));
-			} )
-			;
+			});
 			br = pair.fst / pair.snd;
 
 			salaries.close();
@@ -4118,34 +4068,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	public double getL00Br(Date date) {
 		int contractId = getId();
-		
-		boolean fullTime = true ;
+
+		boolean fullTime = true;
 		try {
 			fullTime = isFullTime();
-		} catch ( Throwable t ) {
+		} catch (Throwable t) {
 		}
 
 		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
-		Date prevStartMonth = getLastDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1: -3 ));
+		Date prevStartMonth = getLastDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1 : -3));
 
 		double br = 0.00;
 
 		try {
-			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = 
-			AON.getSalaries(new AONContext(connection),
-			p -> p.getIsL00Property().eq(true)
-			.and(p.getContractProperty().eq(contractId))
-			.and(p.getStartDateProperty().le(prevEndMonth))
-			.and(p.getEndDateProperty().ge(prevStartMonth)));
-			
+			Stream<com.esferalia.aon.occam.api.model.Salary> salaries = AON.getSalaries(new AONContext(connection),
+					p -> p.getIsL00Property().eq(true).and(p.getContractProperty().eq(contractId))
+							.and(p.getStartDateProperty().le(prevEndMonth))
+							.and(p.getEndDateProperty().ge(prevStartMonth)));
+
 			Pair<Double, Double> pair = new Pair<Double, Double>(0.00, 0.00);
-			salaries.forEach(s-> {
+			salaries.forEach(s -> {
 				pair.fst += s.getCommonContingenciesBase();
 				pair.snd += s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
-			} )
-			;
+			});
 			br = pair.fst / pair.snd;
-			
+
 			salaries.close();
 		} catch (Throwable t) {
 
@@ -4160,11 +4107,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
 				@Override
-				protected void resolvePayment(IContractPayment contractPayment,  Date start, Date end, Date issueDate,
+				protected void resolvePayment(IContractPayment contractPayment, Date start, Date end, Date issueDate,
 						ExpressionContext expressionContext,
 						com.esferalia.aon.payroll.calculator.TaxCalculator taxCalculator,
-						com.esferalia.aon.payroll.calculator.QuoteCalculator quoteCalculator,
-						List<Period> leavePeriods,
+						com.esferalia.aon.payroll.calculator.QuoteCalculator quoteCalculator, List<Period> leavePeriods,
 						List<Period> strikePeriods) throws AonException {
 					try {
 						super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator,
@@ -4173,6 +4119,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						// e.printStackTrace();
 					}
 				};
+
 				@Override
 				protected java.util.List<com.esferalia.aon.salary.expression.ITimedResult<Double>> fixGuaranteedResults(
 						IContractPayment contractPayment,
@@ -4181,38 +4128,37 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						throws UnsupportedOperationException {
 					return Collections.emptyList();
 				};
-				
+
 				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 					return TaxCalculator.getTaxCalculator(ctx);
 				};
 
 			}.calculate(ctx);
 
-			boolean fullTime = true ;
+			boolean fullTime = true;
 			try {
 				fullTime = isFullTime();
-			} catch ( Throwable t ) {
+			} catch (Throwable t) {
 			}
-			
+
 			double monthDays = AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH);
 			try {
-			    monthDays = ctx.getExpressionContext().eval(MONTH_DAYS.getName(), date, date).stream().map( v -> (Double)v.getValue() ).findAny().get();
-			} catch ( Exception  e ) {
+				monthDays = ctx.getExpressionContext().eval(MONTH_DAYS.getName(), date, date).stream()
+						.map(v -> (Double) v.getValue()).findAny().get();
+			} catch (Exception e) {
 			}
-			double quoteDays = ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(),
-				ctx.getEndDate(), Double.class);
+			double quoteDays = ctx.getExpressionContext().getVariable(QUOTE_DAYS, ctx.getStartDate(), ctx.getEndDate(),
+					Double.class);
 			double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH) : quoteDays;
 
-			Object br =  salary.getCommonBase() / ( fullTime ? quoteDays : naturalDays);
-			
+			Object br = salary.getCommonBase() / (fullTime ? quoteDays : naturalDays);
+
 			return br;
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw t;
 		}
 	}
-	
-	
 
 	public Object br(Date start, Date end) throws ExpressionException, SalaryException, SQLException {
 		int count = 0;
@@ -4232,7 +4178,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		return ("14".indexOf(tc2.charAt(0)) != -1);
 	}
-
 
 	private double getAdvanceNoticeDays() {
 
@@ -4274,28 +4219,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		p.daysStream().filter(
 				day -> !contractExpressionContext.containsVariable(getDayHoursVar(day), day.getTime(), day.getTime()))
 				.forEach(day -> onUndefinedData(
-						new ExpressionImpl().setName(getDayHoursVar(day).getName()).setScope(ExpressionScope.SYSTEM), null,
-						day.getTime(), day.getTime(), getDayHoursVar(day).getName()));
+						new ExpressionImpl().setName(getDayHoursVar(day).getName()).setScope(ExpressionScope.SYSTEM),
+						null, day.getTime(), day.getTime(), getDayHoursVar(day).getName()));
 
-		double workedHours =  p.daysStream()
-				.map(day -> contractExpressionContext.getVariable(getDayHoursVar(day), day.getTime(), day.getTime(), Number.class))
-				.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
-				.collect(Collectors.summingDouble(hours -> hours.doubleValue()))
-				;
-			
-		if ( workedHours != 0 )
+		double workedHours = p.daysStream()
+				.map(day -> contractExpressionContext.getVariable(getDayHoursVar(day), day.getTime(), day.getTime(),
+						Number.class))
+				.filter(hours -> hours != null && hours.doubleValue() > 0.00)
+				.collect(Collectors.summingDouble(hours -> hours.doubleValue()));
+
+		if (workedHours != 0)
 			return workedHours;
-		
+
 		Number workedDays = contractExpressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
-		if ( workedDays == null  || workedDays.doubleValue() == 0.00  ) 
+		if (workedDays == null || workedDays.doubleValue() == 0.00)
 			return 0.00;
-		
-		Number agreementHours = contractExpressionContext.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
-		if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
+
+		Number agreementHours = contractExpressionContext.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(),
+				Number.class);
+		if (agreementHours == null || agreementHours.doubleValue() == 0.00)
 			return 0.00;
-		
-		return agreementHours.doubleValue()  * workedDays.doubleValue() / 5.00 ; 
-				
+
+		return agreementHours.doubleValue() * workedDays.doubleValue() / 5.00;
+
 	}
 
 	private double getSalaryHours(Period p) {
@@ -4317,7 +4263,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 		return ("14".indexOf(tc2.charAt(0)) != -1);
 	}
-	
 
 	private boolean isShortContract() {
 		Date endDate = getContractEndDate();
@@ -4365,14 +4310,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return value != null ? value : 0.00;
 	}
 
+	private <R, A> R getVariables(String name, Date start, Date end,
+			Collector<? super ITimedVariable<?>, A, R> collector) {
+		return this.contractExpressionContext.getVariables(name, start, end).stream().collect(collector);
 
-	private <R,A> R getVariables(String name, Date start, Date end, Collector<? super ITimedVariable<?>, A, R> collector) {
-		return 
-		this.contractExpressionContext
-		.getVariables(name, start, end)
-		.stream().collect(collector)
-		;
-		
 	}
 
 	private double getDoubleVariable(String name, Date start, Date end) {
@@ -4401,10 +4342,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private double getAverageVariable(String name, Date start, Date end, double def) {
 		List<ITimedVariable<Number>> vars = this.contractExpressionContext.getVariables(name);
-		
+
 		int days = 0;
 		double sum = 0.00;
-		
+
 		Period period = new Period(start, end);
 		for (ITimedVariable<Number> var : vars) {
 			Period varPeriod = var.getPeriod();
@@ -4418,14 +4359,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			days += days(intersect);
 			sum += value.doubleValue() * days(intersect);
 		}
-		
+
 		List<Period> varPeriods = vars.stream().map(var -> var.getPeriod()).toList();
 		List<Period> emptyPeriods = Period.sub(period, varPeriods);
 		for (Period emptyPeriod : emptyPeriods) {
 			days += days(emptyPeriod);
 			sum += def * days(emptyPeriod);
 		}
-		
 
 		return days == 0 ? 0.00 : sum / days;
 	}
@@ -4438,20 +4378,20 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Object last = null;
 		Date endDate = null;
 		Date startDate = null;
-		List<ITimedVariable<Object>> list =this.contractExpressionContext.getVariables(name, this.contractStartDate, this.contractEndDate);
-		for ( ITimedVariable<Object> var : list  ) {
+		List<ITimedVariable<Object>> list = this.contractExpressionContext.getVariables(name, this.contractStartDate,
+				this.contractEndDate);
+		for (ITimedVariable<Object> var : list) {
 			Period p = var.getPeriod();
 			Object v = var.getValue(p);
-			if ( last == null  )
+			if (last == null)
 				last = v;
-			else if ( !last.equals(v) )
+			else if (!last.equals(v))
 				return false;
 			endDate = endDate == null ? p.getEnd() : Period.max(endDate, p.getEnd());
 			startDate = startDate == null ? p.getStart() : Period.min(startDate, p.getStart());
 		}
-		
-		return ( Period.compare(startDate, contractStartDate) == 0 )
-				&& ( Period.compare(endDate, contractEndDate) == 0 );
+
+		return (Period.compare(startDate, contractStartDate) == 0) && (Period.compare(endDate, contractEndDate) == 0);
 	}
 
 	private boolean containsVariable(Object name, Period p) {
@@ -4473,7 +4413,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected ITimedVariable<Number> getExtraDays(ITimedVariable<Number> monthDays) {
 		return new ExtraDays(monthDays);
 	}
-	
+
 	/*
 	 * Inicializa el contexto dentro del cual se calcular\E1n ejecutar\E1n las
 	 * percepciones y deducciones de trabajador.
@@ -4555,18 +4495,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
-		this.implicitExpressionContext.setVariable(ContextVariable.SALARY, salaryType == SalaryType.SALARY, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(ContextVariable.SETTLE, salaryType == SalaryType.SETTLE, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(ContextVariable.DELAY, salaryType == SalaryType.DELAY, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(ContextVariable.EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, getEnd());
-		
-		this.implicitExpressionContext.setVariable(TODAY,
-				DateUtils.truncate(new Date(), DAY_OF_MONTH), startDate, getEnd());
-		this.implicitExpressionContext.setVariable(CONTRACT_START,
-				getContractStartate(), startDate, getEnd());
-		
-		this.implicitExpressionContext.setVariable(CONTRACT_END, salaryType == SalaryType.SETTLE ? contractEndDate
-				: getContractEndDate(), startDate, getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.SALARY, salaryType == SalaryType.SALARY, startDate,
+				getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.SETTLE, salaryType == SalaryType.SETTLE, startDate,
+				getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.DELAY, salaryType == SalaryType.DELAY, startDate,
+				getEnd());
+		this.implicitExpressionContext.setVariable(ContextVariable.EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate,
+				getEnd());
+
+		this.implicitExpressionContext.setVariable(TODAY, DateUtils.truncate(new Date(), DAY_OF_MONTH), startDate,
+				getEnd());
+		this.implicitExpressionContext.setVariable(CONTRACT_START, getContractStartate(), startDate, getEnd());
+
+		this.implicitExpressionContext.setVariable(CONTRACT_END,
+				salaryType == SalaryType.SETTLE ? contractEndDate : getContractEndDate(), startDate, getEnd());
 
 		if (!this.implicitExpressionContext.containsVariable(IRPF_PERCENT, startDate, getEnd()))
 			this.implicitExpressionContext.putVariable(IRPF_PERCENT, irpf);
@@ -4574,10 +4517,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.implicitExpressionContext.putVariable(START, start);
 		this.implicitExpressionContext.putVariable(END, end);
 
-		this.implicitExpressionContext.setVariable(EFECTIVE_START,
-				contractStartDate, startDate, getEnd());
-		this.implicitExpressionContext.setVariable(EFECTIVE_END,
-				contractEndDate, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(EFECTIVE_START, contractStartDate, startDate, getEnd());
+		this.implicitExpressionContext.setVariable(EFECTIVE_END, contractEndDate, startDate, getEnd());
 
 		if (!this.implicitExpressionContext.containsVariable(SENIORITY, startDate, getEnd()))
 			this.implicitExpressionContext.putVariable(SENIORITY, new ActiveTimedVariable<Integer>() {
@@ -4723,7 +4664,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							try {
 								return getDaySalary();
 							} catch (Exception e) {
-								//throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(), getName()));
+								// throw new ExpressionExceptionWrapper(new InvalidVariables(e.getMessage(),
+								// getName()));
 								throw new ExpressionExceptionWrapper(new UndefinedVariablesException(getName()));
 							}
 						}
@@ -4750,14 +4692,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.implicitExpressionContext.setVariable(SENIORITY_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
-		
+
 		agreementCtx.getVariables(SENIORITY_START.getName(), startDate, getEnd()).forEach(v -> {
 			try {
 				implicitExpressionContext.addExpression(((IExpressionVariable) v).getExpression(), startDate, getEnd());
-			} catch (Exception e) {	
+			} catch (Exception e) {
 			}
 		});
-		
+
 		this.contractExpressionContext = newContractExpressionContext(this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT, contractExpressionContext, startDate, getEnd());
@@ -4765,20 +4707,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR, "def(x){ SELF.br(x)};", this.startDate, this.getEnd());
-		
+
 		loadExpression(this.contractExpressionContext, SUM, "def(x){ SELF.sum(x)};", this.startDate, this.getEnd());
-		
-		loadExpression(this.contractExpressionContext, GROSS,
-				String.format(
-						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.gross(x, %2$s, %3$s ); };",
-						SELF, START, END, GROSS),
-				this.startDate, this.getEnd());
+
+		loadExpression(this.contractExpressionContext, GROSS, String.format(
+				"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.gross(x, %2$s, %3$s ); };",
+				SELF, START, END, GROSS), this.startDate, this.getEnd());
 
 		MethodStub __netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "__neto");
 		this.contractExpressionContext.setVariable("__NETO", __netoStub, this.startDate, this.getEnd());
 		MethodStub netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "neto");
 		this.contractExpressionContext.setVariable(LIQUID, netoStub, this.startDate, this.getEnd());
-		
+
 		loadExpression(this.contractExpressionContext, SYSTEM, "def(x){ SELF.system(x)};", this.startDate,
 				this.getEnd());
 		loadExpression(this.contractExpressionContext, AGREEMENT, "def(x){ SELF.agreement(x)};", this.startDate,
@@ -4790,9 +4730,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		hook.beforeLoadLeaves(contractExpressionContext);
 
 		loadContractLeave(this.contractExpressionContext);
-		
+
 		Collection<ITimedObject<IExpression>> undefined = loadContractData(this.contractExpressionContext);
-		
+
 		loadPersonData(this.contractExpressionContext);
 
 		hook.beforeLoadDaysContextVariables(this.contractExpressionContext);
@@ -4800,66 +4740,61 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		// WEEK_HOURS, WORKED_DAYS and so on. These variables
 		//
 		loadDaysContextVariables(this.contractExpressionContext);
-		
+
 		ContextFunctions.loadDaysFunctions(this.contractExpressionContext, contractStartDate, contractEndDate);
-		
+
 		loadExpressions(this.contractExpressionContext, undefined);
-		
-		autoFracionate(this.contractExpressionContext, contractStartDate, contractEndDate, ContextVariable.ADDITIONAL_HOURS);
+
+		autoFracionate(this.contractExpressionContext, contractStartDate, contractEndDate,
+				ContextVariable.ADDITIONAL_HOURS);
 	}
-	
-	private static void autoFracionate(ExpressionContext context, Date contractStartDate, Date contractEndDate, ContextVariable ...contextVars) {
-		Period contractPeriod = new Period(contractStartDate, contractEndDate );
+
+	private static void autoFracionate(ExpressionContext context, Date contractStartDate, Date contractEndDate,
+			ContextVariable... contextVars) {
+		Period contractPeriod = new Period(contractStartDate, contractEndDate);
 		List<Period> workedPeriods = context.getPeriods(ContextVariable.WORKED_DAYS);
-		
+
 		for (ContextVariable contextVar : contextVars) {
-			
+
 			List<ITimedVariable<Object>> varVariables = context.getVariables(contextVar.getName());
-			if ( varVariables.isEmpty() )
+			if (varVariables.isEmpty())
 				continue;
-			
+
 			context.removeVariable(contextVar.getName());
-			
+
 			for (Period workedPeriod : workedPeriods) {
-				
+
 				context.putVariable(contextVar.getName(), new ITimedVariable<Double>() {
 					@Override
 					public Period getPeriod() {
 						return workedPeriod;
 					}
-					
+
 					@Override
 					public Double getValue(Period period) {
-					    	
-						double amount =  
-						varVariables.stream()
-						.filter( v -> period.contains(v.getPeriod()))
-						.filter( v -> v.getValue(period) instanceof Number )
-						.map( v -> (( Number) v.getValue(v.getPeriod())).doubleValue() )						
-						.collect(Collectors.summingDouble( AonNumberUtils::toDouble ));
-						
-						if ( amount > 0.00 )
-						    return amount;
-						
-						amount = 
-						varVariables.stream()
-						.filter( v -> period.intersects(v.getPeriod()))
-						.map( v -> v.getValue(v.getPeriod()))
-						.filter( Number.class::isInstance )
-						.collect(Collectors.summingDouble( n -> AonNumberUtils.toDouble((Number)n)));
+
+						double amount = varVariables.stream().filter(v -> period.contains(v.getPeriod()))
+								.filter(v -> v.getValue(period) instanceof Number)
+								.map(v -> ((Number) v.getValue(v.getPeriod())).doubleValue())
+								.collect(Collectors.summingDouble(AonNumberUtils::toDouble));
+
+						if (amount > 0.00)
+							return amount;
+
+						amount = varVariables.stream().filter(v -> period.intersects(v.getPeriod()))
+								.map(v -> v.getValue(v.getPeriod())).filter(Number.class::isInstance)
+								.collect(Collectors.summingDouble(n -> AonNumberUtils.toDouble((Number) n)));
 
 						return ContextFunctions.fractionate(context, amount);
 					}
 				});
 			}
 		}
-		
+
 	}
-	
-	
-	
+
 	public static Double neto(Double liquido) throws MacroException {
-		
+
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
@@ -4869,31 +4804,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		};
 	}
 
-	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double liquido) 
-	throws ExpressionException, SalaryException, SQLException {
-		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(),"__NETO");
-		return ctx.liquid(liquido, 
-		getCurrentBindings().get(START, v -> (Date)v ),  
-		getCurrentBindings().get(END, v -> (Date)v ));
+	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double liquido)
+			throws ExpressionException, SalaryException, SQLException {
+		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(), "__NETO");
+		return ctx.liquid(liquido, getCurrentBindings().get(START, v -> (Date) v),
+				getCurrentBindings().get(END, v -> (Date) v));
 	}
 
-	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double bruto, Double liquido) 
-	throws ExpressionException, SalaryException, SQLException {
-		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(),"__NETO");
-		Date start = getCurrentBindings().get(START, v -> (Date)v );
-		Date end = getCurrentBindings().get(END, v -> (Date)v );
-		
-		ctx.addBonus("", 
-		String.format(Locale.ROOT,
-		"CHECK(%3$s(%2$s-%1$.2f) < 0.01, \""
-		+ "<div>El TOTAL L&Iacute;QUIDO no coincide con el introducido inicialmente %1$.2f.</div>"
-		+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>"
-		+ "\")", 
-		liquido, 
-		TOTAL_LIQUID,
-		ABS
-		));
-		
+	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double bruto, Double liquido)
+			throws ExpressionException, SalaryException, SQLException {
+		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(), "__NETO");
+		Date start = getCurrentBindings().get(START, v -> (Date) v);
+		Date end = getCurrentBindings().get(END, v -> (Date) v);
+
+		ctx.addBonus("", String.format(Locale.ROOT, "CHECK(%3$s(%2$s-%1$.2f) < 0.01, \""
+				+ "<div>El TOTAL L&Iacute;QUIDO no coincide con el introducido inicialmente %1$.2f.</div>"
+				+ "<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>"
+				+ "\")", liquido, TOTAL_LIQUID, ABS));
+
 		return ctx.gross(bruto, start, end);
 	}
 
@@ -4903,7 +4831,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public String doMacro(String expr) {
 				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.LIQUID),
 						String.format("%s\\(%s,", "__NETO", ContextVariable.SELF));
-				
+
 			}
 		};
 	}
@@ -4914,32 +4842,32 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-		
+
 		fixItDaysWhenIfDays(ctx);
-		
+
 		loadHolidaysContextVariable(ctx);
-		
+
 		loadWeekHoursContextVariable(ctx);
 
 		loadTotalsContextVars(ctx);
 
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
-		
+
 		List<Period> weekHours = ctx.getPeriods(WEEK_HOURS);
 		List<Period> partialFactor = ctx.getPeriods(PARTIAL_FACTOR);
-		
+
 		weekHours = Period.sub(weekHours, partialFactor);
 
 		List<Period> contractHours = new ArrayList<>();
-	
+
 		contractHours.addAll(Period.sub(contract, weekHours));
 		contractHours.addAll(weekHours);
-		
+
 		List<Period> agreeementHours = ctx.getPeriods(AGREEMENT_HOURS);
 
 		Collections.sort(contractHours);
 		Collections.sort(agreeementHours);
-		
+
 		List<Period> intersects = Period.intersect(contractHours, agreeementHours);
 		intersects = Period.intersect(intersects, contract);
 
@@ -4956,30 +4884,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					public Double getValue(Period p) {
 						try {
 							boolean definedWeekHours = false;
-							for ( ContextVariable hourVar : WEEK_HOURS_VARIABLES.values() ) {
+							for (ContextVariable hourVar : WEEK_HOURS_VARIABLES.values()) {
 								definedWeekHours |= getCurrentBindings().look(hourVar,
 										obj -> ((Number) obj).doubleValue(), 0.00) > 0.00;
 							}
 
-							if ( (getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE) || definedWeekHours  /*!isFullTime()*/) {
-								
+							if ((getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE)
+									|| definedWeekHours /* !isFullTime() */) {
+
 								double agreementWeekHours = getCurrentBindings().get(AGREEMENT_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
 
 								double weekHours = getCurrentBindings().get(WEEK_HOURS,
 										obj -> ((Number) obj).doubleValue(), DEFAULT_AGRREEMENT_HOURS);
 
-								
 								double wholeFactor = weekHours / agreementWeekHours;
 
 								if (isWholeMonth(p) /* && false */ ) {
 									return wholeFactor;
-								} else if (isAllMonth()  ) {
+								} else if (isAllMonth()) {
 									return wholeFactor;
-								} else if (isMonthly()  ) {
+								} else if (isMonthly()) {
 									return wholeFactor;
 								} else {
-									
+
 									ICalendar calendar = getCalendar();
 									double agreementDayHours = agreementWeekHours / getWeekDaysOf(DayType.WORKING_DAY);
 
@@ -5003,14 +4931,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 										else
 											hours[1] += dayHours > 0.00
 													|| calendar.getDayType(day) == DayType.WORKING_DAY
-															? agreementDayHours : 0.00;
+															? agreementDayHours
+															: 0.00;
 									});
-									
 
 									double incompleteFactor = hours[1] == 0.00 ? 0.00 : (hours[0] / hours[1]);
-									
-									if ( incompleteFactor != wholeFactor ) 
-										onMistakenPartialFactor(hours[1], hours[0], wholeFactor);								
+
+									if (incompleteFactor != wholeFactor)
+										onMistakenPartialFactor(hours[1], hours[0], wholeFactor);
 
 									return incompleteFactor;
 								}
@@ -5026,8 +4954,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(PARTIAL_FACTOR, partial_factor);
 
 			}
-			
-			for ( Period salaryp : Period.sub(period, getPeriods(SALARY_DAYS)) ) {
+
+			for (Period salaryp : Period.sub(period, getPeriods(SALARY_DAYS))) {
 				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
 					@Override
 					public Period getPeriod() {
@@ -5042,7 +4970,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				};
 				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
-			
+
 			if (!containsVariable(SALARY_HOURS, period)) {
 				ITimedVariable<Double> salaryHours = new ITimedVariable<Double>() {
 					@Override
@@ -5062,7 +4990,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		List<Period> quote = contract;
-		
+
 		for (ITimedVariable<Object> strikeFactor : ctx.getVariables(STRIKE_FACTOR)) {
 			Period period = strikeFactor.getPeriod();
 			Object value = strikeFactor.getValue(period);
@@ -5073,27 +5001,37 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			else
 				intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
 						Collections.singletonList(period));
-			
+
 		}
-		
+
 		for (ContextVariable var : new ContextVariable[] { QUOTE_GROUP, OCCUPATION, TC2, PARTIAL_FACTOR }) {
 			List<Period> periods = getPeriods(ctx, var.getName());
 			quote = Period.intersect(quote, periods);
 			intersects = Period.intersect(intersects, periods);
 		}
-		
+
 		List<Period> offs = ctx.getPeriods(OFF_DAYS);
 		intersects = Period.sub(intersects, offs);
 
-		List<Period> nons = getPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number)v).doubleValue() > 0.00);
+		List<Period> nons = getPeriods(ctx, NON_WORKED_DAYS, v -> v != null && ((Number) v).doubleValue() > 0.00);
 		intersects = Period.sub(intersects, nons);
-		
 
 		// DropDays
 		List<Period> drops = ctx.getPeriods(DROP_FACTOR);
-		intersects = Period.sub(intersects, drops);
-		
-		for(Period p: drops) {
+		// intersects = Period.sub(intersects, drops);
+
+		for (Period p : drops) {
+
+			List<ITimedResult<Number>> dropFactors = ctx.eval(DROP_FACTOR.getName(), p.getStart(), p.getEnd(),
+					Number.class).stream().filter(r -> r.getValue() != null ).toList();
+			
+			List<Period> fullDrops = dropFactors.stream()
+					.filter(r -> r.getValue().doubleValue() >= 1.0)
+					.map(ITimedResult::getPeriod)
+					.toList();
+
+			intersects = Period.sub(intersects, fullDrops);
+
 			ITimedVariable<Double> dropDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -5104,7 +5042,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Double getValue(Period p) {
 					Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 					return availableDays.doubleValue();
-					
+
 //					if ( !isWholeMonth() )
 //						return availableDays.doubleValue();
 //					
@@ -5114,11 +5052,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				}
 
 			};
-			
+
 			ctx.putVariable(DROP_DAYS, dropDays);
 			ctx.putVariable(SALARY_DAYS, dropDays);
-			
-			
+
 			ITimedVariable<Double> workedFactor = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -5127,93 +5064,97 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-					
-					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR,
-							obj -> ((Number) obj).doubleValue(), 1.00);
-					
-					for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
-						workedFactor *= (1.00 - getCurrentBindings().get(ereFactor,
-							obj -> ((Number) obj).doubleValue(), 0.00));
-					
+
+					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR, obj -> ((Number) obj).doubleValue(),
+							1.00);
+
+					for (ContextVariable ereFactor : ContextVariable.ERE_FACTORS)
+						workedFactor *= (1.00
+								- getCurrentBindings().get(ereFactor, obj -> ((Number) obj).doubleValue(), 0.00));
+
+//					workedFactor *= (1.00 - getCurrentBindings().get(ContextVariable.DROP_FACTOR,
+//							obj -> ((Number) obj).doubleValue(), 0.00));
+
 					return workedFactor;
 				}
 
 			};
+
 			ctx.putVariable(WORKED_FACTOR, workedFactor);
 			
-		}
+			List<Period> partialDrops = dropFactors.stream()
+					.filter(r -> r.getValue().doubleValue() < 1.0)
+					.map(ITimedResult::getPeriod)
+					.toList();
+			intersects = split(intersects, partialDrops);
 
-		
+		}
 
 		// ITs
 		List<Period> leaves = getLeavesPeriods();
 		intersects = Period.sub(intersects, leaves);
-		
-		List<Pair<ContextVariable,ITimedVariable<Object>>> ereFactorsPairs = 
-		Arrays.stream(ContextVariable.ERE_FACTORS)
-		.flatMap(c -> join(ctx.getVariables(c)).stream().map(v -> new Pair<ContextVariable,ITimedVariable<Object>>(c, v)))
-		.sorted( (p1,p2) -> p1.snd.getPeriod().compareTo(p2.snd.getPeriod()) )
-		.filter( p -> p.snd.getValue(p.snd.getPeriod()) instanceof Number )
-		.collect(Collectors.toList())
-		;
-		
+
+		List<Pair<ContextVariable, ITimedVariable<Object>>> ereFactorsPairs = Arrays.stream(ContextVariable.ERE_FACTORS)
+				.flatMap(c -> join(ctx.getVariables(c)).stream()
+						.map(v -> new Pair<ContextVariable, ITimedVariable<Object>>(c, v)))
+				.sorted((p1, p2) -> p1.snd.getPeriod().compareTo(p2.snd.getPeriod()))
+				.filter(p -> p.snd.getValue(p.snd.getPeriod()) instanceof Number).collect(Collectors.toList());
+
 		// ERE
-		for (Pair<ContextVariable,ITimedVariable<Object>> ereFactorPair : ereFactorsPairs) {
+		for (Pair<ContextVariable, ITimedVariable<Object>> ereFactorPair : ereFactorsPairs) {
 			ContextVariable ereFactorVar = ereFactorPair.fst;
 			ITimedVariable<Object> ereFactor = ereFactorPair.snd;
-					
-			//Period period = ereFactor.getPeriod();
-			
-			for ( Period period : split(Collections.singletonList(ereFactor.getPeriod()), leaves) ) {
-			
-			Object value = ereFactor.getValue(period);		
-			
 
-			double factor = ((Number) value).doubleValue();
-			if (((Number) value).doubleValue() >= 1.00)
-				intersects = Period.sub(intersects, Collections.singletonList(period));
-			else
-				intersects = split(intersects,
-						Collections.singletonList(period));
-			
-			ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
-				@Override
-				public Period getPeriod() {
-					return period;
+			// Period period = ereFactor.getPeriod();
+
+			for (Period period : split(Collections.singletonList(ereFactor.getPeriod()), leaves)) {
+
+				Object value = ereFactor.getValue(period);
+
+				double factor = ((Number) value).doubleValue();
+				if (((Number) value).doubleValue() >= 1.00)
+					intersects = Period.sub(intersects, Collections.singletonList(period));
+				else
+					intersects = split(intersects, Collections.singletonList(period));
+
+				ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						ctx.readVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
+						return getEreDays(ctx, p, factor, ereFactorsPairs);
+					}
+
+				};
+
+				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						return getEreDays(ctx, p, 1.00, ereFactorsPairs);
+					}
+
+				};
+
+				String daysVar = ereFactorVar.getName().replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
+
+				ctx.putVariable(daysVar, ereDays);
+
+				ITimedVariable<?> prevQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),
+						period.getEnd());
+				if (prevQuoteDays == null) {
+					ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
 				}
 
-				@Override
-				public Double getValue(Period p) {
-					ctx.readVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
-					return getEreDays(ctx, p, factor, ereFactorsPairs);
-				}
-
-			};
-			
-			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-				@Override
-				public Period getPeriod() {
-					return period;
-				}
-
-				@Override
-				public Double getValue(Period p) {
-					return getEreDays(ctx, p, 1.00, ereFactorsPairs);
-				}
-
-			};
-
-			String daysVar = ereFactorVar.getName()
-			.replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
-			
-			ctx.putVariable(daysVar, ereDays);
-			
-			ITimedVariable<?> prevQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),period.getEnd());		
-			if (prevQuoteDays == null ) {
-				ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
-			}
-
-			Date ereStartDate = getStartDate(ereFactorVar, period);
+				Date ereStartDate = getStartDate(ereFactorVar, period);
 
 //			ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
 //				@Override
@@ -5238,29 +5179,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //			
 //			if (userBr == null)
 //				ctx.putVariable(REGULATORY_BASE, ereBase);
-			
-			for ( Period p : Period.sub(period, getPeriods(REGULATORY_BASE))) {
-				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return p;
-					}
 
-					@Override
-					public Double getValue(Period p) {
-						try {
-							return  (Double) br(ereStartDate);
-						} catch (ExpressionException | SalaryException | SQLException e) {
-							throw new ExpressionExceptionWrapper(
-									new UndefinedContextVariablesException(REGULATORY_BASE));
+				for (Period p : Period.sub(period, getPeriods(REGULATORY_BASE))) {
+					ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+						@Override
+						public Period getPeriod() {
+							return p;
 						}
-					}
 
-				};
-				
-				ctx.putVariable(REGULATORY_BASE, ereBase);
-			}
-			
+						@Override
+						public Double getValue(Period p) {
+							try {
+								return (Double) br(ereStartDate);
+							} catch (ExpressionException | SalaryException | SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new UndefinedContextVariablesException(REGULATORY_BASE));
+							}
+						}
+
+					};
+
+					ctx.putVariable(REGULATORY_BASE, ereBase);
+				}
+
 //			ITimedVariable<Boolean> ereBack = new ITimedVariable<Boolean>() {
 //				@Override
 //				public Period getPeriod() {
@@ -5275,13 +5216,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //			};
 //			
 //			ctx.putVariable(ERE_BACK, ereBack );
-			getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v ));
-			
-			getFullERE(period).forEach(v -> ctx.putVariable(FULL_ERE, v ));
-			;
+				getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v));
+
+				getFullERE(period).forEach(v -> ctx.putVariable(FULL_ERE, v));
+				;
 			}
 		}
-		
 
 		intersects = splitWorkedDays(intersects);
 
@@ -5298,8 +5238,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					double workDays = getWorkDays(ctx, p);
 					try {
 //						if ( getVariable(FULL_TIME, p, Boolean.class) != Boolean.TRUE /*!isFullTime()*/) {
-							return workDays * getCurrentBindings().get(PARTIAL_FACTOR,
-									obj -> ((Number) obj).doubleValue(), 1.00);
+						return workDays
+								* getCurrentBindings().get(PARTIAL_FACTOR, obj -> ((Number) obj).doubleValue(), 1.00);
 //						}
 					} catch (ExpressionExceptionWrapper e) {
 					}
@@ -5332,7 +5272,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			if (userWorkDays == null) {
 				ctx.putVariable(WORK_DAYS, workDays);
-			} 
+			}
 
 			ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
 				private Map<Integer, ContextVariable> DAYS = new HashMap<Integer, ContextVariable>() {
@@ -5354,47 +5294,43 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-					
-					List<Calendar> workedList = p.daysStream()
-					.filter(day -> !isHoliday(day))
-					.filter(day -> getDayType(day) != DayType.HOLIDAY)
-					.collect(Collectors.toList());
-					
-					if ( workedList.isEmpty() )
+
+					List<Calendar> workedList = p.daysStream().filter(day -> !isHoliday(day))
+							.filter(day -> getDayType(day) != DayType.HOLIDAY).collect(Collectors.toList());
+
+					if (workedList.isEmpty())
 						return 0.00;
-					
-					Double workedHours =  
-						workedList.stream()
-						.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(),day.getTime(), Number.class))
-						.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
-						.collect(Collectors.summingDouble(Number::doubleValue));
-					
-					for ( ContextVariable ereFactorVar : ContextVariable.ERE_FACTORS ) {
-						Number ereFactor =  ctx.getVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
-						if ( ereFactor == null  || ereFactor.doubleValue() == 0.00  ) 
+
+					Double workedHours = workedList.stream()
+							.map(day -> ctx.getVariable(DAYS.get(day.get(DAY_OF_WEEK)), day.getTime(), day.getTime(),
+									Number.class))
+							.filter(hours -> hours != null && hours.doubleValue() > 0.00)
+							.collect(Collectors.summingDouble(Number::doubleValue));
+
+					for (ContextVariable ereFactorVar : ContextVariable.ERE_FACTORS) {
+						Number ereFactor = ctx.getVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
+						if (ereFactor == null || ereFactor.doubleValue() == 0.00)
 							continue;
 						workedHours *= 1.00 - ereFactor.doubleValue();
 					}
-					
-					if ( workedHours != 0 )
+
+					if (workedHours != 0)
 						return workedHours;
-					
+
 					Number agreementHours = ctx.getVariable(AGREEMENT_HOURS, p.getStart(), p.getEnd(), Number.class);
-					if ( agreementHours == null  || agreementHours.doubleValue() == 0.00  ) 
+					if (agreementHours == null || agreementHours.doubleValue() == 0.00)
 						return 0.00;
 
 					double actualDays = ctx.getVariables(ACTUAL_DAYS, p.getStart(), p.getEnd()).stream()
-					.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()));
-					if ( actualDays > 0.00  ) 
-						return agreementHours.doubleValue() / 5.00 * actualDays ;
-					
-					
+							.collect(Collectors.summingDouble(v -> ((Number) v.getValue(v.getPeriod())).doubleValue()));
+					if (actualDays > 0.00)
+						return agreementHours.doubleValue() / 5.00 * actualDays;
+
 					Number workedDays = ctx.getVariable(WORKED_DAYS, p.getStart(), p.getEnd(), Number.class);
-					if ( workedDays == null  || workedDays.doubleValue() == 0.00  ) 
+					if (workedDays == null || workedDays.doubleValue() == 0.00)
 						return 0.00;
-					
-					
-					return agreementHours.doubleValue()  * workedDays.doubleValue() / 5.00 ; 
+
+					return agreementHours.doubleValue() * workedDays.doubleValue() / 5.00;
 				}
 
 			};
@@ -5406,7 +5342,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(WORKED_HOURS, workedHours);
 			} else {
 			}
-
 
 			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
 				@Override
@@ -5428,7 +5363,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(QUOTE_DAYS, quoteDays);
 			} else {
 			}
-						
+
 			ITimedVariable<Double> actualDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -5444,12 +5379,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			ITimedVariable<?> userActualDays = getExpressionContext().getVariable(ACTUAL_DAYS, period.getStart(),
 					period.getEnd());
-			
+
 			if (userActualDays == null) {
 				ctx.putVariable(ACTUAL_DAYS, actualDays);
 			} else {
 			}
-			
+
 			ITimedVariable<Double> workingDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -5465,7 +5400,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			ITimedVariable<?> userWorkingDays = getExpressionContext().getVariable(WORKING_DAYS, period.getStart(),
 					period.getEnd());
-			
+
 			if (userWorkingDays == null) {
 				ctx.putVariable(WORKING_DAYS, workingDays);
 			} else {
@@ -5473,11 +5408,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			class WeekDays implements ITimedVariable<Double> {
 				private int dayOfWeek;
-				
-				WeekDays(int weekDay ) {
+
+				WeekDays(int weekDay) {
 					this.dayOfWeek = weekDay;
 				}
-				
+
 				@Override
 				public Period getPeriod() {
 					return period;
@@ -5485,17 +5420,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-					return p.daysStream()
-							.filter(d -> !isHoliday(d) )
-							.filter(d -> d.get(DAY_OF_WEEK) == dayOfWeek )
+					return p.daysStream().filter(d -> !isHoliday(d)).filter(d -> d.get(DAY_OF_WEEK) == dayOfWeek)
 							.collect(Collectors.summingDouble(d -> 1.00));
 				}
 
-			};
-			
-			for ( Map.Entry<Integer, ContextVariable> var : WEEK_DAYS_VARIABLES.entrySet())
+			}
+			;
+
+			for (Map.Entry<Integer, ContextVariable> var : WEEK_DAYS_VARIABLES.entrySet())
 				ctx.putVariable(var.getValue(), new WeekDays(var.getKey()));
-			
+
 			ITimedVariable<Double> workedFactor = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -5504,14 +5438,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
-					
-					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR,
-							obj -> ((Number) obj).doubleValue(), 1.00);
-					
-					for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
-						workedFactor *= (1.00 - getCurrentBindings().get(ereFactor,
-							obj -> ((Number) obj).doubleValue(), 0.00));
-					
+
+					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR, obj -> ((Number) obj).doubleValue(),
+							1.00);
+
+					for (ContextVariable ereFactor : ContextVariable.ERE_FACTORS)
+						workedFactor *= (1.00
+								- getCurrentBindings().get(ereFactor, obj -> ((Number) obj).doubleValue(), 0.00));
+
 					return workedFactor;
 				}
 
@@ -5534,79 +5468,73 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					period.getEnd());
 
 			if (userEreBack == null) {
-				getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v ));
+				getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v));
 			} else {
 			}
 
 		}
-		
-		for ( Period period : nons ) {
-			
-		    ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-			@Override
-			public Period getPeriod() {
-			    return period;
+
+		for (Period period : nons) {
+
+			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getQuoteDays(ctx, p, 1.00);
+				}
+
+			};
+			ITimedVariable<?> userQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),
+					period.getEnd());
+
+			if (userQuoteDays == null) {
+				ctx.putVariable(QUOTE_DAYS, quoteDays);
+			} else {
 			}
 
-			@Override
-			public Double getValue(Period p) {
-			    return getQuoteDays(ctx, p, 1.00);
-			}
-
-		    };
-		    ITimedVariable<?> userQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),
-			    period.getEnd());
-
-		    if (userQuoteDays == null) {
-			ctx.putVariable(QUOTE_DAYS, quoteDays);
-		    } else {
-		    }
-		    
 		}
-		
+
 		// TGSS Periods ...
-		
+
 		List<Period> ssPeriods = getPeriods(MONTH_DAYS);
-		for (ContextVariable ctxVar : new ContextVariable [] {
-										TC2,
-										UNEMPLOY_EMPLOYEE_PERCENT}) {
-			
+		for (ContextVariable ctxVar : new ContextVariable[] { TC2, UNEMPLOY_EMPLOYEE_PERCENT }) {
+
 			List<Period> varPeriods = getPeriods(ctxVar);
-			ssPeriods= split(ssPeriods, varPeriods);
-			
+			ssPeriods = split(ssPeriods, varPeriods);
+
 		}
-		
+
 		ssPeriods = split(ssPeriods, leaves);
-		for ( ContextVariable ctxVar : new ContextVariable [] {
-					MONTH_DAYS
-					,REGULATORY_BASE
-		}) {
-				
+		for (ContextVariable ctxVar : new ContextVariable[] { MONTH_DAYS, REGULATORY_BASE }) {
+
 			List<ITimedVariable<Object>> aonTimedVars = ctx.getVariables(ctxVar);
-			
-			for ( ITimedVariable<Object> aonTimedVar : aonTimedVars ) {				
-				
-				for ( Period ssPeriod: ssPeriods ) {
+
+			for (ITimedVariable<Object> aonTimedVar : aonTimedVars) {
+
+				for (Period ssPeriod : ssPeriods) {
 
 					Period intersect = aonTimedVar.getPeriod().intersect(ssPeriod);
 
-					if ( intersect == null || ssPeriod.equals(aonTimedVar.getPeriod()))
+					if (intersect == null || ssPeriod.equals(aonTimedVar.getPeriod()))
 						continue;
 
-					ITimedVariable<?> ssTimedVar = 
-					Variables.getNarrowVariable(aonTimedVar, intersect);
-					
+					ITimedVariable<?> ssTimedVar = Variables.getNarrowVariable(aonTimedVar, intersect);
+
 					ctx.putVariable(ctxVar, ssTimedVar);
 				}
-			
+
 			}
-		
+
 		}
-		
+
 		fixDoDaysContextVariable(ctx, leaves);
-		
+
 		overrideHolidaysContextVariable(ctx);
-		
+
 	}
 
 	/**
@@ -5614,63 +5542,62 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	 * @param leaves
 	 */
 	private void fixDoDaysContextVariable(ContractExpressionContext ctx, List<Period> leaves) {
-	    List<Period> doDays = getPeriods(DO_DAYS);
-	    
-	    if ( doDays.isEmpty() ) {
-		return;
-	    }
-	    
-	    // QUOTE_DAYS = DO_DAYS 
-	    ctx.removeVariable(QUOTE_DAYS);
-	    
-	    
-	    Stream.concat(doDays.stream(), leaves.stream())
-	    .forEach(p -> ctx.putVariable(QUOTE_DAYS, new ITimedVariable<Double>() {
-		@Override
-		public Period getPeriod() {
-		    return p;
+		List<Period> doDays = getPeriods(DO_DAYS);
+
+		if (doDays.isEmpty()) {
+			return;
 		}
 
-		@Override
-		public Double getValue(Period period) {
-		    return ( (Long) p.intersect(period).getDays()).doubleValue();
+		// QUOTE_DAYS = DO_DAYS
+		ctx.removeVariable(QUOTE_DAYS);
+
+		Stream.concat(doDays.stream(), leaves.stream())
+				.forEach(p -> ctx.putVariable(QUOTE_DAYS, new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return p;
+					}
+
+					@Override
+					public Double getValue(Period period) {
+						return ((Long) p.intersect(period).getDays()).doubleValue();
+					}
+
+				}));
+
+		// WORK_DAYS = DO_DAYS
+		ctx.removeVariable(WORKED_DAYS);
+		doDays.forEach(p -> ctx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+				return p;
+			}
+
+			@Override
+			public Double getValue(Period period) {
+				return ((Long) p.intersect(period).getDays()).doubleValue();
+			}
+
+		}));
+
+		if (leaves.isEmpty()) {
+			return;
 		}
 
-	    }));
-	    
-	    // WORK_DAYS = DO_DAYS 
-	    ctx.removeVariable(WORKED_DAYS);
-	    doDays.forEach(p -> ctx.putVariable(WORKED_DAYS, new ITimedVariable<Double>() {
-		@Override
-		public Period getPeriod() {
-		    return p;
-		}
+		// Clean DO_DAYS at IT
+		List<Period> itDoDays = Period.intersect(doDays, leaves);
+		itDoDays.forEach(p -> ctx.subVariable(DO_DAYS, p.getStart(), p.getEnd()));
+		List<Period> activeDoDays = Period.sub(doDays, leaves);
+		activeDoDays.forEach(p -> ctx.setVariable(DO_DAYS, p.getDays(), p.getStart(), p.getEnd()));
 
-		@Override
-		public Double getValue(Period period) {
-		    return ( (Long) p.intersect(period).getDays()).doubleValue();
-		}
-
-	    }));
-
-	    if (leaves.isEmpty()) {
-		return;
-	    }
-
-	    // Clean DO_DAYS at IT
-	    List<Period> itDoDays = Period.intersect(doDays, leaves);
-	    itDoDays.forEach(p -> ctx.subVariable(DO_DAYS, p.getStart(), p.getEnd()));
-	    List<Period> activeDoDays = Period.sub(doDays, leaves);
-	    activeDoDays.forEach(p -> ctx.setVariable(DO_DAYS, p.getDays(), p.getStart(), p.getEnd()));
-	    
 	}
 
-	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var, Predicate<Object>  predicate) {
-		return ctx.getPeriods(var).stream()
-		.flatMap( p -> {
+	private static List<Period> getPeriods(ContractExpressionContext ctx, ContextVariable var,
+			Predicate<Object> predicate) {
+		return ctx.getPeriods(var).stream().flatMap(p -> {
 			try {
-				return ctx.dryEval(var.getName(), p.getStart(), p.getEnd(), Object.class)
-				.stream().filter( r -> predicate.test(r.getValue())).map( ITimedResult::getPeriod);
+				return ctx.dryEval(var.getName(), p.getStart(), p.getEnd(), Object.class).stream()
+						.filter(r -> predicate.test(r.getValue())).map(ITimedResult::getPeriod);
 			} catch (ExpressionException e) {
 				return Stream.empty();
 			}
@@ -5681,8 +5608,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		ITimedVariable<Double> totalWorkedDays = new ITimedVariable<Double>() {
 			@Override
 			public Period getPeriod() {
-				return new Period(
-						SQLContractSalaryCalculatorContext.this.startDate, 
+				return new Period(SQLContractSalaryCalculatorContext.this.startDate,
 						SQLContractSalaryCalculatorContext.this.getEnd());
 			}
 
@@ -5690,31 +5616,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public Double getValue(Period p) {
 				List<Period> periods = getPeriods(WORKED_DAYS);
 				double workDays = 0.00;
-				for ( Period period : periods )
-					workDays += getWorkDays(ctx, period);			
-				
+				for (Period period : periods)
+					workDays += getWorkDays(ctx, period);
+
 				try {
-					double avgPartialFactor = getAverageVariable(
-							PARTIAL_FACTOR.getName(), 
-							SQLContractSalaryCalculatorContext.this.startDate, 
-							SQLContractSalaryCalculatorContext.this.getEnd(),
-							1.00 );
-					double avgPaternityFactor = getAverageVariable(
-							PATERNITY_FACTOR.getName(), 
-							SQLContractSalaryCalculatorContext.this.startDate, 
-							SQLContractSalaryCalculatorContext.this.getEnd(),
-							1.00);
-					double avgMaternityFactor = getAverageVariable(
-							MATERNITY_FACTOR.getName(), 
-							SQLContractSalaryCalculatorContext.this.startDate, 
-							SQLContractSalaryCalculatorContext.this.getEnd(),
-							1.00);
-					
-					return workDays  
-							* ( avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor ) 
-							* ( avgPaternityFactor == 0.00 ? 1.00 : avgPaternityFactor )
-							* ( avgMaternityFactor == 0.00 ? 1.00 : avgMaternityFactor )
-							;
+					double avgPartialFactor = getAverageVariable(PARTIAL_FACTOR.getName(),
+							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
+					double avgPaternityFactor = getAverageVariable(PATERNITY_FACTOR.getName(),
+							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
+					double avgMaternityFactor = getAverageVariable(MATERNITY_FACTOR.getName(),
+							SQLContractSalaryCalculatorContext.this.startDate,
+							SQLContractSalaryCalculatorContext.this.getEnd(), 1.00);
+
+					return workDays * (avgPartialFactor == 0.00 ? 1.00 : avgPartialFactor)
+							* (avgPaternityFactor == 0.00 ? 1.00 : avgPaternityFactor)
+							* (avgMaternityFactor == 0.00 ? 1.00 : avgMaternityFactor);
 				} catch (ExpressionExceptionWrapper e) {
 				}
 				return workDays;
@@ -5723,89 +5641,89 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		};
 		ctx.putVariable(TOTAL_WORKED_DAYS, totalWorkedDays);
 	}
-	
+
 	private void fixItDaysWhenIfDays(ContractExpressionContext ctx) {
 		List<Period> ifPeriods = ctx.getPeriods(ContextVariable.IF_DAYS);
-		if ( ifPeriods.isEmpty() ) 
+		if (ifPeriods.isEmpty())
 			return;
-		
+
 		List<Period> itPeriods = ctx.getPeriods(ContextVariable.LEAVE_DAYS);
-		if ( itPeriods.isEmpty() ) 
+		if (itPeriods.isEmpty())
 			return;
-		
-		ctx.removeVariable(ContextVariable.LEAVE_DAYS);		
-		
-		for ( Period p : Period.sub(itPeriods, ifPeriods) ) {
+
+		ctx.removeVariable(ContextVariable.LEAVE_DAYS);
+
+		for (Period p : Period.sub(itPeriods, ifPeriods)) {
 			ctx.setVariable(ContextVariable.LEAVE_DAYS, p.daysStream().count(), p.getStart(), p.getEnd());
 		}
-		
+
 		itPeriods = ctx.getPeriods(ContextVariable.COMMON_DISEASE_DAYS_21);
-		
-		if ( itPeriods.size() > 0 ) {  
-			ctx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS_21);	
-			for ( Period p : Period.sub(itPeriods, ifPeriods) )
-				ctx.setVariable(ContextVariable.COMMON_DISEASE_DAYS_21, p.daysStream().count(), p.getStart(), p.getEnd());
+
+		if (itPeriods.size() > 0) {
+			ctx.removeVariable(ContextVariable.COMMON_DISEASE_DAYS_21);
+			for (Period p : Period.sub(itPeriods, ifPeriods))
+				ctx.setVariable(ContextVariable.COMMON_DISEASE_DAYS_21, p.daysStream().count(), p.getStart(),
+						p.getEnd());
 		}
 	}
-	
+
 	private void loadHolidaysContextVariable(ContractExpressionContext ctx) {
-		
+
 		ICalendar calendar = getCalendar();
-		if ( calendar == null )
+		if (calendar == null)
 			return;
-		
-		
-		List<Period> contractParty  = new ArrayList<>();
-		contractParty.addAll( getPeriods(ctx, ContextVariable.PARTY_DAYS, value -> value instanceof Number number && number.doubleValue() > 0 ));
-		
-		List<Period> contractNonWorking  = new ArrayList<>();
-		contractNonWorking.addAll( getPeriods(ctx, ContextVariable.NON_WORKING, value -> value instanceof Number number && number.doubleValue() > 0 ));
-		contractNonWorking.addAll( getPeriods(ctx, ContextVariable.PARTY_DAYS, value -> value instanceof Number number && number.doubleValue() <= 0 ));
-		
+
+		List<Period> contractParty = new ArrayList<>();
+		contractParty.addAll(getPeriods(ctx, ContextVariable.PARTY_DAYS,
+				value -> value instanceof Number number && number.doubleValue() > 0));
+
+		List<Period> contractNonWorking = new ArrayList<>();
+		contractNonWorking.addAll(getPeriods(ctx, ContextVariable.NON_WORKING,
+				value -> value instanceof Number number && number.doubleValue() > 0));
+		contractNonWorking.addAll(getPeriods(ctx, ContextVariable.PARTY_DAYS,
+				value -> value instanceof Number number && number.doubleValue() <= 0));
+
 		Map<Integer, List<Period>> contractNonHours = new HashMap<>();
-		WEEK_HOURS_VARIABLES.forEach((day,hourVar) -> contractNonHours.put(day, getPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0 )));
-		
+		WEEK_HOURS_VARIABLES.forEach((day, hourVar) -> contractNonHours.put(day,
+				getPeriods(ctx, hourVar, value -> AonNumberUtils.todouble(value) <= 0)));
+
 		Deque<TimedObject<Double>> holidays = new ArrayDeque<>();
-		new Period(contractStartDate, contractEndDate)
-		.forEachDay( day -> {
+		new Period(contractStartDate, contractEndDate).forEachDay(day -> {
 			Date date = day.getTime();
-			if ( contractNonWorking.stream().anyMatch( p -> p.contains(date))){
+			if (contractNonWorking.stream().anyMatch(p -> p.contains(date))) {
 				return;
-			} 
-			
+			}
+
 			List<Period> weekDayNonHours = contractNonHours.getOrDefault(day.get(Calendar.DAY_OF_WEEK),
 					Collections.emptyList());
-			
+
 			if (weekDayNonHours.stream().anyMatch(p -> p.contains(date))) {
 				return;
 			}
-				
-			if ( calendar.getDayType(day) == DayType.HOLIDAY  
-				|| contractParty.stream().anyMatch( p -> p.contains(date)) ) {
-				if ( holidays.isEmpty() ) {
+
+			if (calendar.getDayType(day) == DayType.HOLIDAY || contractParty.stream().anyMatch(p -> p.contains(date))) {
+				if (holidays.isEmpty()) {
 					holidays.push(new TimedObject<>(1d, day.getTime(), day.getTime()));
 				} else {
 					TimedObject<Double> prevHoliday = holidays.peek();
 					Date prevHolidayEnd = prevHoliday.getPeriod().getEnd();
 					Date prevHolidayNext = AonDateUtils.add(prevHolidayEnd, Calendar.DAY_OF_MONTH, 1);
 					Date holidayDate = day.getTime();
-					if ( AonDateUtils.compare(prevHolidayNext, holidayDate) == 0) {
+					if (AonDateUtils.compare(prevHolidayNext, holidayDate) == 0) {
 						holidays.pop();
-								holidays.push(new TimedObject<>(prevHoliday.getValue() + 1d,
-										prevHoliday.getPeriod().getStart(), day.getTime()));
-							} else {
+						holidays.push(new TimedObject<>(prevHoliday.getValue() + 1d, prevHoliday.getPeriod().getStart(),
+								day.getTime()));
+					} else {
 						holidays.push(new TimedObject<>(1d, day.getTime(), day.getTime()));
 					}
-					
+
 				}
 			}
 		});
-		
-		holidays.forEach( holiday -> ctx.putVariable(PARTY_DAYS, holiday));
-		
-		
+
+		holidays.forEach(holiday -> ctx.putVariable(PARTY_DAYS, holiday));
+
 	}
-	
 
 	private void loadWeekHoursContextVariable(ContractExpressionContext ctx) {
 
@@ -5845,11 +5763,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ctx.putVariable(WEEK_HOURS, new WeekHours(period));
 		}
 
-
 	}
 
 	private void overrideHolidaysContextVariable(ContractExpressionContext ctx) {
-		ctx.getVariables(HOLIDAYS).forEach( v -> {
+		ctx.getVariables(HOLIDAYS).forEach(v -> {
 			ctx.removeVariable(HOLIDAYS, v.getPeriod().getStart(), v.getPeriod().getEnd());
 			ctx.putVariable(HOLIDAYS, new ITimedVariable<Double>() {
 
@@ -5860,7 +5777,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period period) {
-					return Math.min( period.getDays(), (( Number) v.getValue(period)).doubleValue());
+					return Math.min(period.getDays(), ((Number) v.getValue(period)).doubleValue());
 				}
 			});
 		});
@@ -5895,22 +5812,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		try {
-			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class).stream()
-					.findFirst().get().getValue();
+			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class).stream().findFirst().get()
+					.getValue();
 		} catch (ExpressionException e) {
 			throw new ExpressionExceptionWrapper(e);
 		}
 	}
 
 	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx) throws SQLException {
-	    	Collection<ITimedObject<IExpression>> undefined = 
-			loadContractData(ctx, contractStartDate, contractEndDate);
-			Date irpfDate = getIrpfDate();
-			if (irpfDate != null && irpfDate.after(contractEndDate)) {
-				undefined.addAll(loadContractData(ctx, irpfDate, irpfDate));
-			}
-			return undefined;
+		Collection<ITimedObject<IExpression>> undefined = loadContractData(ctx, contractStartDate, contractEndDate);
+		Date irpfDate = getIrpfDate();
+		if (irpfDate != null && irpfDate.after(contractEndDate)) {
+			undefined.addAll(loadContractData(ctx, irpfDate, irpfDate));
 		}
+		return undefined;
+	}
 
 	protected void loadExpression(ExpressionContext ctx, String name, String script, Date start, Date end)
 			throws SQLException {
@@ -5926,14 +5842,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate, Date endDate) throws SQLException {
+	protected Collection<ITimedObject<IExpression>> loadContractData(ExpressionContext ctx, Date startDate,
+			Date endDate) throws SQLException {
 		ResultSet rs = null;
 		List<ITimedObject<IExpression>> failed = new LinkedList<>();
 		List<ITimedObject<IExpression>> undefined = new LinkedList<>();
 		try {
-			
+
 			Date dbContractEndDate = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
-			
+
 			ceventStmt.setInt(1, getId());
 			ceventStmt.setDate(2, toSqlDate(endDate));
 			ceventStmt.setDate(3, toSqlDate(startDate));
@@ -5945,13 +5862,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				expr.setScope(ExpressionScope.CONTRACT);
 				Date dataStart = rs.getDate(ContractDataColumns.START_DATE);
 				Date dataEnd = rs.getDate(ContractDataColumns.END_DATE);
-				dataEnd = ( dataEnd != null && dataEnd.equals(dbContractEndDate))? null: dataEnd; 
+				dataEnd = (dataEnd != null && dataEnd.equals(dbContractEndDate)) ? null : dataEnd;
 				Date start = Period.max(dataStart, startDate);
 				Date end = Period.min(dataEnd, endDate);
-				
-				if ( isLazyExpression(expr)) {
+
+				if (isLazyExpression(expr)) {
 					ctx.addLazyExpression(expr, start, end);
-					
+
 				} else {
 					try {
 						ctx.addExpression(expr, start, end);
@@ -5960,10 +5877,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					} catch (CheckException e) {
 
 					} catch (Exception e) {
-						// TODO: 
+						// TODO:
 					}
 				}
-				
+
 			}
 
 			for (ITimedObject<IExpression> timedExpr : failed) {
@@ -5973,7 +5890,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					ctx.addExpression(expr, period.getStart(), period.getEnd());
 
 				} catch (UndefinedVariablesException e) {
-				    	undefined.add(timedExpr);
+					undefined.add(timedExpr);
 					onUndefinedData(timedExpr.getValue(), e.getMessage(), timedExpr.getPeriod().getStart(),
 							timedExpr.getPeriod().getEnd(), e.getVariableNames());
 //					ctx.addLazyExpression(expr, period.getStart(), period.getEnd());
@@ -6025,22 +5942,21 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ctx.setVariable(GUARANTEE, new MethodStub(guarantee), start, end);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
-		} catch ( IllegalArgumentException e ) {
+		} catch (IllegalArgumentException e) {
 			if (listener == null)
 				return;
 			listener.onInvalidLeave(start, end);
 		}
 	}
 
-	protected void loadLeaveContractFactor(ResultSet rs, ExpressionContext ctx)
-			throws SQLException{
-		
+	protected void loadLeaveContractFactor(ResultSet rs, ExpressionContext ctx) throws SQLException {
+
 		String name = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME);
-		if ( name == null )
+		if (name == null)
 			return;
-		
-		String expression = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION); 
-		
+
+		String expression = rs.getString(SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION);
+
 		ExpressionImpl expr = new ExpressionImpl();
 		expr.setName(name);
 		expr.setExpression(expression);
@@ -6050,57 +5966,48 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date start = Period.max(dataStart, startDate);
 		Date end = Period.min(dataEnd, endDate);
 
-
-		
-		if ( name.equals(DIRECT_PAY_START.getName())  ) {
+		if (name.equals(DIRECT_PAY_START.getName())) {
 			try {
 				ctx.addExpression(expr, start, end);
 			} catch (Exception e) {
 			}
 			return;
 		}
-			
-		if ( Period.compare(end, start) < 0)
+
+		if (Period.compare(end, start) < 0)
 			return;
-		
+
 		Date leaveStart = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.START_DATE);
 		Date leaveEnd = rs.getDate(SQLConstants.CONTRACT_LEAVE + "." + ContractLeaveColumns.END_DATE);
-		
+
 		try {
 			List<ITimedResult<Number>> factors = ctx.addExpression(expr, start, end, Number.class);
-			
-			for ( ITimedResult<Number> factor: factors ) {
+
+			for (ITimedResult<Number> factor : factors) {
 				Date periodStart = Period.max(leaveStart, factor.getPeriod().getStart());
 				Date periodEnd = Period.min(leaveEnd, factor.getPeriod().getEnd());
-				if ( Period.compare(periodStart,periodEnd) > 0 )
+				if (Period.compare(periodStart, periodEnd) > 0)
 					continue;
-				Period period = new Period(periodStart,periodEnd);
-				
-				double workDayHours  = getWorkDayHours(ctx, period.getStart(), period.getEnd());
-				
-				double fullWorkedHours = period
-				.daysStream()
-				.filter(day -> getDayType(day) == DayType.WORKING_DAY)
-				.collect(Collectors.summingDouble(day -> workDayHours ))
-				;
-				
-				ctx.setVariable(ContextVariable.WORKED_HOURS, 
-						fullWorkedHours * factor.getValue().doubleValue(), 
-						period.getStart(), 
-						period.getEnd());
+				Period period = new Period(periodStart, periodEnd);
+
+				double workDayHours = getWorkDayHours(ctx, period.getStart(), period.getEnd());
+
+				double fullWorkedHours = period.daysStream().filter(day -> getDayType(day) == DayType.WORKING_DAY)
+						.collect(Collectors.summingDouble(day -> workDayHours));
+
+				ctx.setVariable(ContextVariable.WORKED_HOURS, fullWorkedHours * factor.getValue().doubleValue(),
+						period.getStart(), period.getEnd());
 			}
-			
+
 			return;
 
 		} catch (ExpressionException e) {
 			e.printStackTrace();
-		} 
-		
-		
-		
+		}
+
 	}
-	
-	protected  void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+
+	protected void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
 		ResultSet rs = null;
 		try {
 			this.cleaveStmt.setDate(1, toSqlDate(this.getEnd()));
@@ -6122,8 +6029,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		}
 	}
-	
-	protected void loadExpressions(ExpressionContext ctx, Collection<ITimedObject<IExpression>> expressions ) {
+
+	protected void loadExpressions(ExpressionContext ctx, Collection<ITimedObject<IExpression>> expressions) {
 		for (ITimedObject<IExpression> expression : expressions) {
 			try {
 				Period period = expression.getPeriod();
@@ -6135,84 +6042,85 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						expression.getPeriod().getEnd(), e.getVariableNames());
 			} catch (Exception e) {
 			}
-		}	    
+		}
 	}
-	
+
 	private boolean isMonthly() {
 		int lastDayOfMonth = AonDateUtils.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DAY_OF_MONTH);
-		
-		ITimedVariable<?> monthDaysVar = null; 
+
+		ITimedVariable<?> monthDaysVar = null;
 		try {
-			monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+			monthDaysVar = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
 		} catch (Exception e) {
 			try {
 				getExpressionContext().eval(MONTH_DAYS.getName(), contractStartDate, contractEndDate);
-				monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+				monthDaysVar = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
 			} catch (Exception e1) {
 				return false;
 			}
 		}
-		if ( monthDaysVar == null )
+		if (monthDaysVar == null)
 			return false;
-		
+
 		Number monthDays = 30.00;
-		
+
 		try {
 			monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
-		}catch ( Exception e ) {
+		} catch (Exception e) {
 			try {
 				getExpressionContext().eval(MONTH_DAYS.getName(), contractStartDate, contractEndDate);
-				monthDaysVar  = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
+				monthDaysVar = getExpressionContext().getVariable(MONTH_DAYS, contractStartDate, contractEndDate);
 				monthDays = (Number) monthDaysVar.getValue(monthDaysVar.getPeriod());
 			} catch (Exception e1) {
 				return false;
 			}
 		}
-		
-		if ( monthDays == null )
+
+		if (monthDays == null)
 			return false;
-		
-		if ( monthDays.doubleValue() != 30.00)
+
+		if (monthDays.doubleValue() != 30.00)
 			return false;
-		
-		if ( lastDayOfMonth != 30 )
+
+		if (lastDayOfMonth != 30)
 			return true;
-		
-		if (!( monthDaysVar instanceof IExpressionVariable<?> ))
-			return false; // we can't assure 
-		
+
+		if (!(monthDaysVar instanceof IExpressionVariable<?>))
+			return false; // we can't assure
+
 		String expression = ((IExpressionVariable<?>) monthDaysVar).getExpression().getExpression();
-	
-		Map<String,Object> map = new HashMap<String,Object>();
+
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(QUOTE_GROUP.getName(), getQuoteGroup());
 		map.put(NATURAL_MONTH_DAYS.getName(), 22);
 		try {
 			monthDays = ExpressionContext.eval(expression, map, Number.class);
 			return monthDays.doubleValue() == 30.00;
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			return false;
 		}
-	
+
 	}
 
 	private boolean isAllMonth() {
-		return AonDateUtils.get(contractStartDate, Calendar.DATE ) == 1 
-				&& AonDateUtils.get(contractEndDate, Calendar.DATE ) == AonDateUtils.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DATE)
+		return AonDateUtils.get(contractStartDate, Calendar.DATE) == 1
+				&& AonDateUtils.get(contractEndDate, Calendar.DATE) == AonDateUtils
+						.get(AonDateUtils.getLastDayOfMonth(contractEndDate), Calendar.DATE)
 				&& isConstantVariable(WEEK_HOURS);
 	}
 
-	private DayType getDayType ( Calendar day ) {
+	private DayType getDayType(Calendar day) {
 		ICalendar calendar = getCalendar();
 		return calendar.getDayType(day);
 	}
-	
-	private double getWorkDayHours( ExpressionContext ctx, Date start, Date end) {
+
+	private double getWorkDayHours(ExpressionContext ctx, Date start, Date end) {
 		double weekWorkDays = getWeekDaysOf(DayType.WORKING_DAY);
-		Number agreementWeekHours = ctx.containsVariable(AGREEMENT_HOURS,start,end) ? 
-				ctx.getVariable(AGREEMENT_HOURS,start,end, Number.class) : DEFAULT_AGRREEMENT_HOURS;
+		Number agreementWeekHours = ctx.containsVariable(AGREEMENT_HOURS, start, end)
+				? ctx.getVariable(AGREEMENT_HOURS, start, end, Number.class)
+				: DEFAULT_AGRREEMENT_HOURS;
 		return agreementWeekHours.doubleValue() / weekWorkDays;
 	}
-	
 
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {
 
@@ -6312,22 +6220,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		return periods;
 	}
-	
-	private List<Period> getPeriods(ExpressionContext ctx, Predicate<ITimedResult<?>> filter,  String ...varNames) {
+
+	private List<Period> getPeriods(ExpressionContext ctx, Predicate<ITimedResult<?>> filter, String... varNames) {
 		List<Period> periods = new ArrayList<>();
-		for ( String varName : varNames ) {
+		for (String varName : varNames) {
 			try {
-				List<ITimedResult<Object>> varResults = ctx.eval(varName, contractStartDate,
-						contractEndDate);
-				varResults.stream().filter(filter)
-						.forEach(r -> periods.add(r.getPeriod()));
+				List<ITimedResult<Object>> varResults = ctx.eval(varName, contractStartDate, contractEndDate);
+				varResults.stream().filter(filter).forEach(r -> periods.add(r.getPeriod()));
 			} catch (Exception e) {
 			}
 		}
 		return periods;
 	}
-	
-	
 
 	private List<Period> joinEquals(List<ITimedVariable<Object>> vars) {
 
@@ -6385,14 +6289,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					new SQLSystemExpressionContextFactory(connection, this.startDate, this.getEnd(), order));
 		return cccExpressionContexts;
 	}
-	
-	protected boolean isUndefined (ITimedVariable<?> var) {
+
+	protected boolean isUndefined(ITimedVariable<?> var) {
 		try {
 			var.getValue(var.getPeriod());
-		} catch ( ExpressionExceptionWrapper wrapper){
+		} catch (ExpressionExceptionWrapper wrapper) {
 			try {
 				throw wrapper.getCause();
-			} catch ( DeferredExpressionException deferred){
+			} catch (DeferredExpressionException deferred) {
 //				try {
 //					deferred.eval( contractExpressionContext, Object.class);
 //				} catch ( UndefinedVariablesException e){
@@ -6400,298 +6304,251 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //				} catch (ExpressionException e) {
 //					// TODO: return true ? Really it's undefined
 //				}
-			} catch (Throwable e) { 
+			} catch (Throwable e) {
 				// TODO: return true ? Really it's undefined
-			} 
+			}
 		}
 		return false;
 	}
-	
+
 	protected boolean isWholeMonth() {
-		return isWholeMonth(new Period(this.contractStartDate,this.contractEndDate));
+		return isWholeMonth(new Period(this.contractStartDate, this.contractEndDate));
 	}
-	
+
 	private Double getLiquidStartValue(Date date, double liquid) {
 		PaymentVariable paymentVar = getVariable(ContextVariable.PAYMENT_VARIABLE, PaymentVariable.class);
 		IContractPayment payment = paymentVar.getPayment();
 		String expression = payment.getExpression();
 		String description = payment.getDescription();
-		
+
 		int contractId = getId();
 		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
 		Date prevStartMonth = getFirstDayOfMonth(prevEndMonth);
 
-		return 
-		AON.getSalaries(new AONContext(connection),
-		p -> p.getIsSalaryProperty().eq(true)
-		.and(p.getContractProperty().eq(contractId))
-		.and(p.getStartDateProperty().le(prevEndMonth))
-		.and(p.getEndDateProperty().ge(prevStartMonth)))
-		.filter(salary -> salary.getTotalLiquid().equals(liquid) )
-		.findAny()
-		.orElseThrow( IllegalStateException::new )
-		.getPayments().stream()
-		.filter( p -> AonStringUtils.equals(p.getExpression(),expression) || AonStringUtils.equals(p.getDescription(),description) )
-		.findAny()
-		.orElseThrow( IllegalStateException::new )
-		.getAmount()
-		;
+		return AON
+				.getSalaries(new AONContext(connection),
+						p -> p.getIsSalaryProperty().eq(true).and(p.getContractProperty().eq(contractId))
+								.and(p.getStartDateProperty().le(prevEndMonth))
+								.and(p.getEndDateProperty().ge(prevStartMonth)))
+				.filter(salary -> salary.getTotalLiquid().equals(liquid)).findAny()
+				.orElseThrow(IllegalStateException::new).getPayments().stream()
+				.filter(p -> AonStringUtils.equals(p.getExpression(), expression)
+						|| AonStringUtils.equals(p.getDescription(), description))
+				.findAny().orElseThrow(IllegalStateException::new).getAmount();
 	}
-	
-	private Date getStartDate (ContextVariable var, Period p) {
-		List<ContractDataRecord> datas =
-		new AONContext(connection)
-		.getDslContext()
-		.select()
-		.from(CONTRACT_DATA)
-		.where(CONTRACT_DATA.CONTRACT.eq(getId()))
-		.and(CONTRACT_DATA.NAME.eq(var.getName()))
-		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd())))
-		.orderBy(CONTRACT_DATA.START_DATE.desc())
-		.fetchInto(CONTRACT_DATA);
-		
-		if ( datas.isEmpty()) 
+
+	private Date getStartDate(ContextVariable var, Period p) {
+		List<ContractDataRecord> datas = new AONContext(connection).getDslContext().select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(getId())).and(CONTRACT_DATA.NAME.eq(var.getName()))
+				.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd()))).orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetchInto(CONTRACT_DATA);
+
+		if (datas.isEmpty())
 			return p.getStart(); // ???
-		
+
 		Date startDate = datas.get(0).getStartDate();
-		
-		for (int i = 1 ; i < datas.size() ; i++) {
+
+		for (int i = 1; i < datas.size(); i++) {
 			Date endDate = datas.get(i).getEndDate();
-			if ( endDate.before(add(startDate, DAY_OF_MONTH,-1)))
+			if (endDate.before(add(startDate, DAY_OF_MONTH, -1)))
 				break;
 			startDate = datas.get(i).getStartDate();
 		}
-		
-		
+
 		return startDate;
 	}
-	
-	private List<ITimedVariable<Boolean>> getFullERE (Period p) {
-		
+
+	private List<ITimedVariable<Boolean>> getFullERE(Period p) {
+
 		Calendar ereStart = Calendar.getInstance();
 		ereStart.set(2020, Calendar.MARCH, 23, 0, 0, 0);
 
-		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = 
-		getContractEreFactorsMap(new Period(Period.min(ereStart.getTime(), p.getStart()), p.getEnd()));
-		
+		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = getContractEreFactorsMap(
+				new Period(Period.min(ereStart.getTime(), p.getStart()), p.getEnd()));
+
 		Date enterpiseBackDate = null;
-		
-		
+
 		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
 			List<ContractDataRecord> ereFactors = entry.getValue();
-			ereFactors = ereFactors.stream().filter(c -> c.getId() != null ).collect(Collectors.toList());
-			if ( ereFactors == null || ereFactors.isEmpty() )
-				continue; 
-			
-			Collections.sort(ereFactors, (c1,c2) -> c1.getStartDate().compareTo(c2.getStartDate()));
-			
-			int i = 0; 
+			ereFactors = ereFactors.stream().filter(c -> c.getId() != null).collect(Collectors.toList());
+			if (ereFactors == null || ereFactors.isEmpty())
+				continue;
+
+			Collections.sort(ereFactors, (c1, c2) -> c1.getStartDate().compareTo(c2.getStartDate()));
+
+			int i = 0;
 			double factor = Double.parseDouble(ereFactors.get(i).getExpression());
 			Date employeeBackDate = ereFactors.get(i).getEndDate();
-			for ( i= 1 ; i < ereFactors.size(); i++ ) {
+			for (i = 1; i < ereFactors.size(); i++) {
 				try {
 					double newFactor = Double.parseDouble(ereFactors.get(i).getExpression());
-					if ( factor !=  newFactor )
+					if (factor != newFactor)
 						break;
-					Date newStartDate = add(ereFactors.get(i).getStartDate(), DAY_OF_MONTH,-1);
-					if ( Period.compare(employeeBackDate, newStartDate) < 0) 
+					Date newStartDate = add(ereFactors.get(i).getStartDate(), DAY_OF_MONTH, -1);
+					if (Period.compare(employeeBackDate, newStartDate) < 0)
 						break;
 					employeeBackDate = ereFactors.get(i).getEndDate();
-				} catch ( NullPointerException | NumberFormatException e) {
+				} catch (NullPointerException | NumberFormatException e) {
 				}
-				
+
 			}
-			
+
 			enterpiseBackDate = Period.min(enterpiseBackDate, employeeBackDate);
 		}
-		
+
 		try {
 			enterpiseBackDate = getEnterpriseBackDate(p);
-		} catch ( NotFoundVariableError e ) {
-			; 
+		} catch (NotFoundVariableError e) {
+			;
 		}
-		
-		if ( Period.compare( enterpiseBackDate, p.getStart() ) < 0 )
+
+		if (Period.compare(enterpiseBackDate, p.getStart()) < 0)
 			return Collections.singletonList(new TimedObject<Boolean>(false, p));
-		
-		if ( Period.compare( enterpiseBackDate, p.getEnd() ) >= 0 )
+
+		if (Period.compare(enterpiseBackDate, p.getEnd()) >= 0)
 			return Collections.singletonList(new TimedObject<Boolean>(true, p));
-		
-		List<ITimedVariable<Boolean>>  fullEres = new ArrayList<ITimedVariable<Boolean>>(2);
-		fullEres.add(new TimedObject<Boolean>(true, new Period ( p.getStart(), enterpiseBackDate)));
-		fullEres.add(new TimedObject<Boolean>(false , new Period (add(enterpiseBackDate, DAY_OF_MONTH,1), p.getEnd())));
-		
-		
+
+		List<ITimedVariable<Boolean>> fullEres = new ArrayList<ITimedVariable<Boolean>>(2);
+		fullEres.add(new TimedObject<Boolean>(true, new Period(p.getStart(), enterpiseBackDate)));
+		fullEres.add(new TimedObject<Boolean>(false, new Period(add(enterpiseBackDate, DAY_OF_MONTH, 1), p.getEnd())));
+
 		return fullEres;
-	}	
-	
-	
-	private Date getEnterpriseBackDate (Period p) {
-		
-		java.sql.Date start = toSqlDate(p.getStart()); 
-		java.sql.Date end = toSqlDate(p.getEnd()); 
-		
-		AONContext aonContext = new AONContext(connection); 
+	}
+
+	private Date getEnterpriseBackDate(Period p) {
+
+		java.sql.Date start = toSqlDate(p.getStart());
+		java.sql.Date end = toSqlDate(p.getEnd());
+
+		AONContext aonContext = new AONContext(connection);
 		DSLContext dslContext = aonContext.getDslContext();
 
-		return 
-		dslContext
-		.select()
-		.from(ENTERPRISE_DATA)
-		.where(ENTERPRISE_DATA.ENTERPRISE.eq(getEnterpriseId() ))
-		.and(ENTERPRISE_DATA.NAME.eq(FULL_ERE.getName()))
-		.and(ENTERPRISE_DATA.START_DATE.le(end))
-		.and((ENTERPRISE_DATA.END_DATE.isNull().or(ENTERPRISE_DATA.END_DATE.ge(start))))
-		.fetchOptional(ENTERPRISE_DATA.START_DATE)
-		.orElseThrow(() -> new NotFoundVariableError(FULL_ERE.getName()))
-		;
-		
+		return dslContext.select().from(ENTERPRISE_DATA).where(ENTERPRISE_DATA.ENTERPRISE.eq(getEnterpriseId()))
+				.and(ENTERPRISE_DATA.NAME.eq(FULL_ERE.getName())).and(ENTERPRISE_DATA.START_DATE.le(end))
+				.and((ENTERPRISE_DATA.END_DATE.isNull().or(ENTERPRISE_DATA.END_DATE.ge(start))))
+				.fetchOptional(ENTERPRISE_DATA.START_DATE)
+				.orElseThrow(() -> new NotFoundVariableError(FULL_ERE.getName()));
+
 	}
-	
+
 	private Map<Integer, List<ContractDataRecord>> getContractEreFactorsMap(Period p) {
 		// only active employees, of course
-		Condition activeEmployees = 
-		CONTRACT.SS_REGIME.ne((byte)SSRegimeType.SELF_EMPLOYED.ordinal())
-		.and(CONTRACT.START_DATE.le(toSqlDate(p.getEnd())))
-		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(toSqlDate(p.getStart()))))
-		;
-		
-		Condition activeEreFactors = 
-		CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName())
-		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd())))
-		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSqlDate(p.getStart()))))
-		;
-		
-		return
-		new AONContext(connection)
-		.getDslContext()
-		.select()
-		.from(WORKPLACE)
-		.innerJoin(CONTRACT).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE).and(activeEmployees))
-		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT).and(activeEreFactors))
-		.where(WORKPLACE.ENTERPRISE.eq(getInt(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY)))
-		.fetchGroups(CONTRACT.ID, r ->r.into(CONTRACT_DATA))
-		;
-		
+		Condition activeEmployees = CONTRACT.SS_REGIME.ne((byte) SSRegimeType.SELF_EMPLOYED.ordinal())
+				.and(CONTRACT.START_DATE.le(toSqlDate(p.getEnd())))
+				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(toSqlDate(p.getStart()))));
+
+		Condition activeEreFactors = CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName())
+				.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd())))
+				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSqlDate(p.getStart()))));
+
+		return new AONContext(connection).getDslContext().select().from(WORKPLACE).innerJoin(CONTRACT)
+				.on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE).and(activeEmployees)).leftJoin(CONTRACT_DATA)
+				.on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT).and(activeEreFactors))
+				.where(WORKPLACE.ENTERPRISE.eq(getInt(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY)))
+				.fetchGroups(CONTRACT.ID, r -> r.into(CONTRACT_DATA));
+
 	}
-	
-	private Boolean isFullERE (Period p) {
+
+	private Boolean isFullERE(Period p) {
 
 		Calendar c = Calendar.getInstance();
 		c.set(2020, Calendar.MARCH, 23, 0, 0, 0);
 
-		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = 
-		getContractEreFactorsMap(new Period(c.getTime(),p.getEnd()));
-		
+		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = getContractEreFactorsMap(
+				new Period(c.getTime(), p.getEnd()));
+
 		Date start = p.getStart();
 		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
 			List<ContractDataRecord> ereFactors = entry.getValue();
-			if ( ereFactors == null || ereFactors.isEmpty() )
+			if (ereFactors == null || ereFactors.isEmpty())
 				return false; // this employee isn't at ERE.
-			
-			start  = p.getStart();
-			for ( ContractDataRecord ereFactor : ereFactors ) {
-				if ( ereFactor.getId() == null ) 
+
+			start = p.getStart();
+			for (ContractDataRecord ereFactor : ereFactors) {
+				if (ereFactor.getId() == null)
 					return false;
-				
-				if ( ereFactor.getStartDate().after(start))
-					return false; 
-				
+
+				if (ereFactor.getStartDate().after(start))
+					return false;
+
 				try {
 					double factor = Double.parseDouble(ereFactor.getExpression());
-					if ( factor < 1.00 )
+					if (factor < 1.00)
 						return false;
-				} catch ( NullPointerException | NumberFormatException e) {
+				} catch (NullPointerException | NumberFormatException e) {
 					return false;
 				}
-				
-				Date endDate = ereFactor.getEndDate() == null ? 
-				p.getEnd() : ereFactor.getEndDate();
-				
-				start = DateUtils.addDays(endDate,1);
+
+				Date endDate = ereFactor.getEndDate() == null ? p.getEnd() : ereFactor.getEndDate();
+
+				start = DateUtils.addDays(endDate, 1);
 			}
 		}
-		
+
 		return start.after(p.getEnd());
-		
-		
+
 	}
-	
-	private Boolean isEREBack (Period p) {
+
+	private Boolean isEREBack(Period p) {
 		Calendar c = Calendar.getInstance();
 		c.set(2020, Calendar.APRIL, 30, 0, 0, 0);
 		return isEREBack(c.getTime(), p);
 	}
-	
-	private List<ITimedVariable<Boolean>> getEREBack (Period p) {
-		return isEREBack(p) ?  Collections.singletonList( new TimedObject<Boolean>(true,p)) : Collections.emptyList();
+
+	private List<ITimedVariable<Boolean>> getEREBack(Period p) {
+		return isEREBack(p) ? Collections.singletonList(new TimedObject<Boolean>(true, p)) : Collections.emptyList();
 	}
 
-	private Boolean isEREBack (Date date, Period p) {
-		
-		if ( Period.compare(p.getEnd(), date) <= 0 )
+	private Boolean isEREBack(Date date, Period p) {
+
+		if (Period.compare(p.getEnd(), date) <= 0)
 			return false;
-		
+
 		double currentEreFactor = 0.00;
-		List<ITimedVariable<?>> ereFactorVars = getVariables(ContextVariable.ERE_FACTOR_FORCE_OFF.getName(), p.getStart(), p.getEnd(), Collectors.toList());
-		if ( ereFactorVars.size() > 0  ) {
-			Collections.sort(ereFactorVars, (v1,v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
-			ITimedVariable<?> lastEreFactorVar = ereFactorVars.get(ereFactorVars.size()-1);
-			if ( Period.compare(lastEreFactorVar.getPeriod().getEnd(), p.getEnd() ) >= 0 ) {
+		List<ITimedVariable<?>> ereFactorVars = getVariables(ContextVariable.ERE_FACTOR_FORCE_OFF.getName(),
+				p.getStart(), p.getEnd(), Collectors.toList());
+		if (ereFactorVars.size() > 0) {
+			Collections.sort(ereFactorVars, (v1, v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
+			ITimedVariable<?> lastEreFactorVar = ereFactorVars.get(ereFactorVars.size() - 1);
+			if (Period.compare(lastEreFactorVar.getPeriod().getEnd(), p.getEnd()) >= 0) {
 				try {
-					currentEreFactor = ((Number)lastEreFactorVar.getValue(lastEreFactorVar.getPeriod())).doubleValue();
-				} catch ( Exception e ) {
-					
+					currentEreFactor = ((Number) lastEreFactorVar.getValue(lastEreFactorVar.getPeriod())).doubleValue();
+				} catch (Exception e) {
+
 				}
 			}
 		}
-		
+
 		double startEreFactor = 0.00;
-		List<String> ereExpressions =
-		new AONContext(connection)
-		.getDslContext()
-		.select()
-		.from(CONTRACT_DATA)
-		.where(CONTRACT_DATA.CONTRACT.eq(getId()))
-		.and(CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName()))
-		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(date)))
-		.and(CONTRACT_DATA.END_DATE.ge(toSqlDate(date)))
-		.fetch(CONTRACT_DATA.EXPRESSION)
-		;
-		
-		if ( ereExpressions.isEmpty() ) 
+		List<String> ereExpressions = new AONContext(connection).getDslContext().select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(getId()))
+				.and(CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName()))
+				.and(CONTRACT_DATA.START_DATE.le(toSqlDate(date))).and(CONTRACT_DATA.END_DATE.ge(toSqlDate(date)))
+				.fetch(CONTRACT_DATA.EXPRESSION);
+
+		if (ereExpressions.isEmpty())
 			return false;
-		
+
 		for (String expression : ereExpressions) {
 			try {
 				startEreFactor = Double.parseDouble(expression);
 			} catch (NullPointerException | NumberFormatException e) {
 			}
 		}
-		
-		
+
 		return currentEreFactor < startEreFactor;
 	}
 
 	public Double getPPEDelaysLiquid(Date startDate, Date endDate) {
-		return
-		new AONContext(connection)
-		.getDslContext()
-		.select()
-		.from(SALARY)
-		.innerJoin(SALARY_DATA)
-		.on(SALARY_DATA.SALARY.eq(SALARY.ID))
-		.where(SALARY.CONTRACT.eq(getId()))
-		.and(SALARY.START_DATE.le(toSqlDate(endDate)))
-		.and(SALARY.END_DATE.ge(toSqlDate(startDate)))
-		.and(SALARY.TYPE.eq((byte)SalaryType.DELAY.ordinal()))
-		.and(SALARY_DATA.NAME.eq(ContextVariable.DELAY_CAUSE.getName()))
-		.and(SALARY_DATA.EXPRESSION.eq(PaymentType.CRA_0033.name()))
-		.fetchStreamInto(SALARY)
-		.collect(Collectors.summingDouble(SalaryRecord::getSocialSecurityContributions));
+		return new AONContext(connection).getDslContext().select().from(SALARY).innerJoin(SALARY_DATA)
+				.on(SALARY_DATA.SALARY.eq(SALARY.ID)).where(SALARY.CONTRACT.eq(getId()))
+				.and(SALARY.START_DATE.le(toSqlDate(endDate))).and(SALARY.END_DATE.ge(toSqlDate(startDate)))
+				.and(SALARY.TYPE.eq((byte) SalaryType.DELAY.ordinal()))
+				.and(SALARY_DATA.NAME.eq(ContextVariable.DELAY_CAUSE.getName()))
+				.and(SALARY_DATA.EXPRESSION.eq(PaymentType.CRA_0033.name())).fetchStreamInto(SALARY)
+				.collect(Collectors.summingDouble(SalaryRecord::getSocialSecurityContributions));
 	}
 
-	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -6704,7 +6561,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public static Integer getDomain(SSRegimeType ssRegime) {
-	    	switch (ssRegime) {
+		switch (ssRegime) {
 		case SEA_WORKERS: // Really ASSIMILATED
 			return (-1) * SSRegimeType.GENERAL.ordinal();
 		default:
@@ -6785,14 +6642,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				return null;
 			}
-			
-			
+
 			@Override
 			public Double visitCommonDiseaseAtLack(LeaveType leaveType) {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public Double visitOcupationalDisease(LeaveType leaveType) {
 				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
@@ -6828,30 +6684,29 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				// TODO Ap\E9ndice de m\E9todo generado autom\E1ticamente
 				return null;
 			}
-			
+
 			@Override
 			public Double visitCommonProfessionalDisease(LeaveType leaveType) {
 				return visitOcupationalDisease(leaveType);
 			}
-			
+
 			@Override
 			public Double visitMenstruation(LeaveType leaveType) {
-        			// TODO Auto-generated method stub
-        			return null;
+				// TODO Auto-generated method stub
+				return null;
 			}
-			
+
 			@Override
 			public Double visitPregnacyStop(LeaveType leaveType) {
-        			// TODO Auto-generated method stub
-        			return null;
+				// TODO Auto-generated method stub
+				return null;
 			}
-			
+
 			@Override
 			public Double visitPregnacy39Week(LeaveType leaveType) {
-        			// TODO Auto-generated method stub
-        			return null;
+				// TODO Auto-generated method stub
+				return null;
 			}
-			
 
 		});
 
@@ -6988,11 +6843,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected static boolean isLastMonthPeriod(Period period) {
-		return AonDateUtils.get(period.getEnd(),
-				Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(), Calendar.DAY_OF_MONTH);
+		return AonDateUtils.get(period.getEnd(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(period.getEnd(),
+				Calendar.DAY_OF_MONTH);
 	}
-	
-	
 
 	@Override
 	public Date getDate(String tableLabel, String columnLabel) {
@@ -7002,60 +6855,55 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw new RuntimeException(e);
 		}
 	}
-	
-	
+
 	private static Collection<ContextVariable> getEreDaysVars() {
-		return
-		Arrays.stream(ContextVariable.values())
-		.filter( v -> v.getName().startsWith(ERE_DAYS.getName()))
-		.collect(Collectors.toList());
+		return Arrays.stream(ContextVariable.values()).filter(v -> v.getName().startsWith(ERE_DAYS.getName()))
+				.collect(Collectors.toList());
 	}
-	
+
 	private static Collection<ContextVariable> getEreFactorsVars() {
-		return
-		Arrays.stream(ContextVariable.values())
-		.filter( v -> v.getName().startsWith(ERE_FACTOR.getName()))
-		.collect(Collectors.toList());
+		return Arrays.stream(ContextVariable.values()).filter(v -> v.getName().startsWith(ERE_FACTOR.getName()))
+				.collect(Collectors.toList());
 	}
-	
+
 	private static <T extends Object> List<ITimedVariable<T>> join(List<ITimedVariable<T>> list) {
-		if ( list.isEmpty()  ) 
+		if (list.isEmpty())
 			return list;
-		
-		list.sort( (v1, v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
+
+		list.sort((v1, v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
 		Stack<ITimedVariable<T>> joined = new Stack<ITimedVariable<T>>();
-		joined.push( list.get(0) );
-		
-		for ( int i = 1; i < list.size() ; i++) {
+		joined.push(list.get(0));
+
+		for (int i = 1; i < list.size(); i++) {
 			ITimedVariable<T> v1 = joined.peek();
 			ITimedVariable<T> v2 = list.get(i);
 			T value1 = v1.getValue(v1.getPeriod());
 			T value2 = v2.getValue(v2.getPeriod());
 			Date enDate1 = v1.getPeriod().getEnd();
-			Date startDate1 = AonDateUtils.add(enDate1, DAY_OF_MONTH,1);
+			Date startDate1 = AonDateUtils.add(enDate1, DAY_OF_MONTH, 1);
 			Date startDate2 = v2.getPeriod().getStart();
 			if (AonUtils.notEquals(value1, value2)) {
 				joined.push(v2);
-			} else if ( startDate2.after(startDate1) ) {
+			} else if (startDate2.after(startDate1)) {
 				joined.push(v2);
 			} else {
 				startDate1 = v1.getPeriod().getStart();
 				Date endDate2 = v2.getPeriod().getEnd();
 				joined.pop();
-				joined.push(new TimedObject<T>(value1, new Period( startDate1, endDate2 )));
+				joined.push(new TimedObject<T>(value1, new Period(startDate1, endDate2)));
 			}
 		}
-		
+
 		return joined.stream().collect(Collectors.toList());
 	}
-	
-	private SSRegimeType getSSsRegimeType(int ordinal ) {
-		SSRegimeType [] ssRegimeTypes = SSRegimeType.values();
-		if ( ordinal < 0 ) 
+
+	private SSRegimeType getSSsRegimeType(int ordinal) {
+		SSRegimeType[] ssRegimeTypes = SSRegimeType.values();
+		if (ordinal < 0)
 			return SSRegimeType.GENERAL;
-		if ( ordinal >= ssRegimeTypes.length ) 
+		if (ordinal >= ssRegimeTypes.length)
 			return SSRegimeType.GENERAL;
-		
+
 		SSRegimeType ssRegimeType = ssRegimeTypes[ordinal];
 		switch (ssRegimeType) {
 		case ARTIST:
@@ -7065,11 +6913,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			return ssRegimeType;
 		}
 	}
-	
+
 	private static boolean isLazyExpression(ExpressionImpl expr) {
 		return ContextVariable.IRPF_PERCENT.getName().equals(expr.getName());
 	}
-
-	
 
 }
