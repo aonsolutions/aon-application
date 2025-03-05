@@ -437,28 +437,18 @@ export class AonNewMenu extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.classList.add("aonNewMenuTopNavDiv");
 		div.id = "aonTopMenuDiv";
-
-		let sidenav = this.getElement("aonMenuSidenav");
-	
-		if (!LS.isPortalChecked()) {
-			let topMenuHome = div.appendChild(this.buildTopApp(HOME));
-			// topMenuHome.id = "topMenuHome";
-		}
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 	
 		for (let item in TOP_MENU_APPS) {
+			
 			let app = TOP_MENU_APPS[item];
-	
+			
 			if (!this.isApp(app)) {
 				if (!showAllApps || excludedApps.includes(app.app)) {
 					continue;
 				} else {
 					let appElement = this.buildTopApp(app);
-
-					// app.cssLogo = this.getCssVariable(`${app.app}TopNavLogo`);
-					// app.cssIcon = this.getCssVariable(`${app.app}TopNavIcon`);
-					// app.cssSymbol = this.getCssVariable(`${app.app}TopNavSymbol`);
 
 					appElement.classList.add("aonNewMenuTopNavAppElement");
 					app.color = "var(--aonTopMenuNotAvailable)";
@@ -466,23 +456,11 @@ export class AonNewMenu extends AonElement {
 					continue;
 				}
 			}
-	
+			
 			let appElement = this.buildTopApp(app);
 			div.appendChild(appElement);
+					
 		}
-		
-		// if(!LS.isLeftMenu() && this.isCSSLoaded("beta.css")){
-		// 	for (let item in MENU_APPS) {
-		// 		let app = MENU_APPS[item];
-		// 		if(app.app!= "home" && app.app!= "new"){
-		// 			if (this.isApp(MENU_APPS[item])){
-		// 				div.appendChild(this.buildTopApp(MENU_APPS[item]));
-		// 			}
-		// 		}
-						
-		// 	}
-			
-		// }
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
@@ -1032,8 +1010,11 @@ export class AonNewMenu extends AonElement {
 	}
 
 	isApp(app) {
-		if (OFFICE.app === app.app)
-			return this.getDur().isOffice();
+		if (OFFICE.app === app.app){
+			//return this.getDur().isOffice();
+			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+		}
+		
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
 		if (COMMERCE.app === app.app)

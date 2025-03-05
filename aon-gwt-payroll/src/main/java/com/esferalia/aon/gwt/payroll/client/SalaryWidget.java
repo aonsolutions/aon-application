@@ -21,20 +21,26 @@ import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.Mail;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryParams;
+import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
@@ -157,6 +163,8 @@ public class SalaryWidget extends AonCustomDockLayout {
 	}	
 
 	// --------------------------------------------- Variables
+	
+	private static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	
 	private HTMLPanel container;
 	private HTMLPanel messagePanel = new HTMLPanel("");
@@ -541,9 +549,96 @@ public class SalaryWidget extends AonCustomDockLayout {
 	}
 	
 	void onPublish(String type) {
-		for (Listener listener : listeners)
-			for(SalaryInfo salary : salaryTable.getSelectedSalaries())
-				listener.onPublishSalaries(salary, type);
+		AonMessagePanel.showLoading(messagePanel, "Exportando n\u00f3minas a Bidoq");
+		publishBidow(salaryTable.getSelectedSalaries(), 0);
+			
+		
+//		for (Listener listener : listeners)
+//			for(SalaryInfo salary : salaryTable.getSelectedSalaries())
+//				listener.onPublishSalaries(salary, type);
+	}
+
+	private void publishBidow(List<SalaryInfo> selectedSalaries, int index) {
+		if(selectedSalaries.size() == index) {
+			AonMessagePanel.showSuccess(messagePanel, "N\u00f3minas exportadas correctamente");
+		} else {
+			SalaryInfo salary = selectedSalaries.get(index);
+			
+			AonMessagePanel.showLoading(messagePanel, "Exportando n\u00f3mina " + salary.getEmployeeName() + " a Bidoq");
+			
+			StringBuffer requestDataBuffer = new StringBuffer();
+
+			requestDataBuffer.append("&" + ShareService.SALARY + "=" + salary.getId()).append("&type=bidoq");
+
+			// Send request to server and catch any errors.
+			XMLHttpRequest xhr = XMLHttpRequest.create();
+			xhr.open("POST", SHARE_URL);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+				private int loaded = 0;
+
+				@Override
+				public void onReadyStateChange(XMLHttpRequest xhr) {
+					int state = xhr.getReadyState();
+
+					if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
+
+						String text = xhr.getResponseText();
+
+						try {
+							for (JsShareResult result = read(text); text != null; result = read(text)) {
+								if(null != result.getError() && AonStringUtils.startsWith(result.getError(), "succes")) {
+									String message = result.getDescription();
+									message = AonStringUtils.isNotBlank(message) && AonStringUtils.containsIgnoreCase(message, "-") ? message.split("-")[1].trim() : message;
+									AonMessagePanel.showSuccess(messagePanel, message);
+								} else {
+									AonMessagePanel.showError(messagePanel, result.getError());
+								}
+								
+								Timer timmer = new Timer() {
+									
+									@Override
+									public void run() {
+										publishBidow(selectedSalaries, index + 1);											
+									}
+								};
+								
+								timmer.schedule(2800);
+							}
+						} catch (IndexOutOfBoundsException e) {}
+					}
+				}
+
+				private JsShareResult read(String text) {
+					for (int begin = loaded; begin < text.length(); begin++) {
+						if (text.charAt(begin) == '{') {
+							loaded = findEnd(text, begin + 1) + 1;
+							String json = text.substring(begin, loaded);
+							return JsonUtils.safeEval(json);
+						}
+					}
+					throw new IndexOutOfBoundsException();
+				}
+
+				private int findEnd(String text, int start) {
+					for (int end = start; end < text.length(); end++) {
+						switch (text.charAt(end)) {
+						case '}':
+							return end;
+						case '{':
+							end = findEnd(text, end + 1);
+						}
+					}
+					throw new IndexOutOfBoundsException();
+				}
+
+			});
+
+			xhr.send(requestDataBuffer.toString());
+			
+		}
+		
 	}
 
 	public void hideEnterpriseSiteButtons() {
