@@ -2036,7 +2036,6 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isVatEnabled()) {
 			let administration = this.configuration ? this.configuration.administration : '';
 			let vat = createSelect(this.DETAIL_VAT + i, getVatLabel(administration));
-			alert(this.getInvoice().isWithholdingFarmer())
 			vat.options = JSON.stringify(getVats(administration, this.getInvoice().isWithholdingFarmer()));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
@@ -2144,7 +2143,6 @@ export class AonInvoice extends AonElement {
 		if(this.invoice.isVatEnabled() &&  (!detail.prepayment || detail.prepayment == 'false')) {
 			let administration = this.configuration ? this.configuration.administration : '';
 			let vat = createSelect(this.DETAIL_VAT + 'Dialog' + i, getVatLabel(administration));
-			alert(this.getInvoice().isWithholdingFarmer())
 			vat.options = JSON.stringify(getVats(administration, this.getInvoice().isWithholdingFarmer()));
 			if(detail.prepayment === undefined) detail.prepayment = false;
 			vat.readonly = this.invoice.isReadonly() || detail.prepayment;

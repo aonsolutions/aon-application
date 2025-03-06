@@ -4,7 +4,7 @@ import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
 import {  PRESENCE_FILTER } from "../../timecontrol/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
@@ -275,5 +275,6 @@ export class AonPayrollList extends AonElement {
     }
   }
 }
-
-window.customElements.define("aon-payroll-list", AonPayrollList);
+if(!window.customElements.get(TAG.AON_PAYROLL_LIST)){
+    window.customElements.define(TAG.AON_PAYROLL_LIST, AonPayrollList);
+}

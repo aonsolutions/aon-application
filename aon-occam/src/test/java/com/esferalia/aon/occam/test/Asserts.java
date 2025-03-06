@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -1278,6 +1279,20 @@ public class Asserts {
 				}
 			}
 		}
-		
+	}
+
+	public static void assertAccountingIncome(AccountingIncome expected, AccountingIncome actual) {
+		assertEqualsNulls( "AccountingIncome", expected, actual);
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEqualsCustomer(expected.getCustomer().orElse(null), actual.getCustomer().orElse(null));
+		assertEquals("Date",expected.getDate(), actual.getDate());
+		assertEqualsEnterpriseActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
+		assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
+		assertEquals("Concept",expected.getConcept(), actual.getConcept());
+		assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 
+		assertEquals("Amount",expected.getAmount(), actual.getAmount(), DELTA);
+		assertEqualsRegistryBank(expected.getBank().orElse(null), actual.getBank().orElse(null));
+		assertEqualsAccount(expected.getCashAccount().orElse(null), actual.getCashAccount().orElse(null));
+		assertEquals("Comments",expected.getComments(), actual.getComments()); 
 	}
 }

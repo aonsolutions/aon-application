@@ -119,6 +119,9 @@ export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 export const AON_INVOICE_CLOSING_LIST = 'aon-invoice-closing-list';
 export const AON_INVOICE_RECORD = 'aon-invoice-record';
 
+// MODULES - PAYROLL
+export const AON_PAYROLL_LIST = "aon-payroll-list";
+
 // MODULES - USER
 
 export const AON_USER = 'aon-user';

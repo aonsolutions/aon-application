@@ -102,6 +102,7 @@ public final class IJsonNames {
 	public static final String CARRIER = "carrier";
 	public static final String CARRIER_PACKING = "carrierPacking";
 	public static final String CARRIER_REFERENCE = "carrierReference";
+	public static final String CASH_ACCOUNT= "cashAccount";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
@@ -543,6 +544,7 @@ public final class IJsonNames {
 	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
+	public static final String REQUISITION = "requisition";
 	public static final String RESERVATION = "reservation";
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
@@ -577,6 +579,7 @@ public final class IJsonNames {
 	public static final String SELLERS = "sellers";
 	public static final String SELLER_IDS = "sellerIds";
 	public static final String SENDER = "sender";
+	public static final String SEPA_MANDATE_REF = "sepaMandateRef";
 	public static final String SERFRUIT = "serfruit";
 	public static final String SERIAL_NUMBER = "serialNumber";
 	public static final String SERIAL_DATE = "serialDate";

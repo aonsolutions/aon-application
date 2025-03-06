@@ -199,13 +199,13 @@ public enum FiscalModelJSON {
 				
 				@Override public void visitM349()  { visitOld();}
 				@Override public void visitM347()  { visitOld();}
-				@Override public void visitM202()  { visitOld();}
 				@Override public void visitM200()  { visitOld();}
 				@Override public void visitM193()  { visitOld();}
 				@Override public void visitM190()  { visitOld();}
 				@Override public void visitM184()  { visitOld();}
 				@Override public void visitM180()  { visitOld();}
 
+				@Override public void visitM202()  { visitDeclarationResultType();}
 				@Override public void visitM131()  { visitDeclarationResultType();}
 				@Override public void visitM130()  { visitDeclarationResultType();}
 				@Override public void visitM390()  { visitDeclarationResultType();}
