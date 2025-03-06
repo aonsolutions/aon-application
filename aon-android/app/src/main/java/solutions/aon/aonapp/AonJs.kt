@@ -12,6 +12,7 @@ import android.os.Environment
 import android.os.PersistableBundle
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.util.Base64
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.json.JSONObject
 import java.io.File
+import java.io.FileOutputStream
 
 class AonJs(private val webView: WebView?, private val context: Context) : ComponentActivity() {
 
@@ -102,9 +104,30 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     @JavascriptInterface
     fun openFile(data:String) {
         val json = JSONObject(data)
+        val base64 = json.getString("content")
+        val title = json.getString("title")
+        val mimeType = json.getString("mimeType")
         val url = json.getString("url")
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(intent)
+        Log.v("TAG", "Base64: $base64")
+        Log.v("TAG", "url: $url")
+        Log.v("TAG", "title: $title")
+        Log.v("TAG", "mimeType: $mimeType")
+        if(base64.isNotBlank()) {
+            val fileBytes = Base64.decode(base64, Base64.DEFAULT)
+            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), title )
+            FileOutputStream(file).use { it.write(fileBytes) }
+            val uri = Uri.fromFile(file)
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
+        }
     }
 
     @JavascriptInterface
@@ -113,8 +136,6 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
         val json = JSONObject(data)
         val url = json.getString("url")
         val title = json.getString("title")
-        //val url = "https://www.industrialhama.com/wp-content/uploads/2018/06/Ejemplo-pdf.pdf"
-        // val title = "prueba"
         val fileName = "$title.pdf"
         downloadFile(context,url,title,title)
         Thread.sleep(1000)
