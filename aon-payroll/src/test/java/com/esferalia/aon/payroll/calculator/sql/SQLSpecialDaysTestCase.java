@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -48,6 +49,8 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -392,7 +395,7 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 				, new String[] {}, 
 				null);
 		
-		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "BASE_CGC_MIN", PaymentType.CRA_0001, SalaryType.SALARY);
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "/*fixBaseCgcMin*/MAX(0.00, BASE_CGC_MIN - (isdef BASE_CGC_BRUTA ? BASE_CGC_BRUTA : 0.00))", PaymentType.CRA_0001, SalaryType.SALARY);
 		
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -443,6 +446,101 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testPartialDropDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		
+		addSystemData(
+				aonContext, 
+				AonDateUtils.getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String,String>(){
+					{
+						// 1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD
+						put("BASE_CGC_MIN", "[\"04\": (1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) * COEFICIENTE_PARCIALIDAD) ][GRUPO_COTIZACION]");
+					}
+				});
+		
+		
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+					{
+						put("GRUPO_COTIZACION","'04'");
+						put("DIAS_MES", "30");
+						put(TC2.getName(), format("\"%s\"", FULL_TIME[0].getValue()));
+					}
+				}
+				, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {}, 
+				null);
+		
+		addPayment(aonContext, contract, "DIAS DE AUSENCIA", "DIAS_AUSENCIA * 0.00", "_P", "/*fixBaseCgcMin*/MAX(0.00, BASE_CGC_MIN - (isdef BASE_CGC_BRUTA ? BASE_CGC_BRUTA : 0.00))", PaymentType.CRA_0001, SalaryType.SALARY);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		// Calculate Salary for all month without dropdays
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		SalaryBuilder builder = new SalaryBuilder();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator(builder);
+		
+		Salary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals(1500.00, salary.getTotalPayment(), DELTA);
+		
+		// Add DropDays Period -> 14/12/2019 - 24/12/2019
+		Calendar startDateIDay = Calendar.getInstance();
+		startDateIDay.set(Calendar.DAY_OF_MONTH, 13);
+		
+		Calendar endDateIDay = Calendar.getInstance();
+		endDateIDay.set(Calendar.DAY_OF_MONTH, 23);
+
+		addDropContractData(aonContext, contract, startDateIDay.getTime(), endDateIDay.getTime(), "0.4");
+		
+		// Calculate Salary for all month with drop
+		ctx = getContractSalaryCalculatorContext(
+				connection, 
+				new java.sql.Date(startDate.getTime()), 
+				new java.sql.Date(endDate.getTime()), 
+				new java.sql.Date(endDate.getTime()),
+				contract);
+		
+		builder = new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+					Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				System.out.println(description + ": " + amount + ", " + quote + " [" + startDate +".." + endDate + "]" );
+			}
+		};
+		calculator = new SmartContractSalaryCalculator(builder);
+		
+		salary = calculator.calculate(ctx);
+		
+		int monthDays = get( endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(1500.00 * (monthDays - 11) / 30 + 1500.00 * 11 * 0.60 / 30 , salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
+		Assert.assertEquals(1500.00 * (monthDays - 11) / 30  + 1381.20 * 11 / 30 , salary.getCommonBase(), DELTA);
+		
+	}
+
 	@Test
 	public void testDropDaysAdjustI() throws ExpressionException, SQLException,
 			SalaryException {
@@ -647,6 +745,17 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 			.execute();
 	}
 	
+	private void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, String factor) {
+		aonContext.getDslContext().insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
+			.set(CONTRACT_DATA.NAME, "COEFICIENTE_AUSENCIA")
+			.set(CONTRACT_DATA.CONTRACT, contract.getId())
+			.set(CONTRACT_DATA.EXPRESSION, factor)
+			.set(CONTRACT_DATA.START_DATE, new java.sql.Date(startDate.getTime()))
+			.set(CONTRACT_DATA.END_DATE, new java.sql.Date(endDate.getTime()))
+			.execute();
+	}
+
 	private Integer getDaysBetweenDates(Date startDate, Date endDate) {
 		if(null == startDate || null == endDate)
 			return 0;

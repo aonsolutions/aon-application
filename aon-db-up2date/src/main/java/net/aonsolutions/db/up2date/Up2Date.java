@@ -33,6 +33,7 @@ import net.aonsolutions.db.up2date.tgss.AgriculturalBases2025Update;
 import net.aonsolutions.db.up2date.tgss.Artist2025Update;
 import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
 import net.aonsolutions.db.up2date.tgss.BasesMin2025Update;
+import net.aonsolutions.db.up2date.tgss.DropDaysFix;
 import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
 import net.aonsolutions.db.up2date.tgss.FellowsBases2025Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2025Update;
@@ -545,7 +546,8 @@ public class Up2Date {
 			// AgriculturalBases2025Update.AGRICULTURALBASES2025UPDATE,
 			// AlterFsMod369Detail2025.ALTER_FS_MODEL_369_DETAIL_2025,
 			// RefreshMod202Result.REFRESH_MOD202_RESULT
-			RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE
+			RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE,
+			DropDaysFix.DROPDAYSFIX
 			
 	};
 

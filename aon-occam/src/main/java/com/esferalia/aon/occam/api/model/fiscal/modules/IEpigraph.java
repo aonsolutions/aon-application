@@ -8,5 +8,6 @@ public interface IEpigraph {
 	public double getPorcMin();
 	public double getLimExceso();
 	public Module[] getIRPFModules();
+	public Module[] getVATModules();
 
 }

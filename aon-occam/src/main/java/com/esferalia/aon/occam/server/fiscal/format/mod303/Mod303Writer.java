@@ -26,17 +26,17 @@ public class Mod303Writer {
 	}
 	
 	private enum Writers {
-		 AEAT_2024_T4 (mod303 -> mod303.isAEAT() && 
-				 		( (mod303.getYear() > 2024) || 
-				          (mod303.getYear() == 2024 && (mod303.getPeriod() == Period.M12 || mod303.getPeriod() == Period.T4)))
+		 AEAT_2025 (mod303 -> mod303.isAEAT() && mod303.getYear() >= 2025
+				, Mod303WriterAEAT2025::new)
+		,AEAT_2024_T4 (mod303 -> mod303.isAEAT() && 
+		 		(mod303.getYear() == 2024 && (mod303.getPeriod() == Period.M12 || mod303.getPeriod() == Period.T4))
 				, Mod303WriterAEAT2024T4::new)
 		,AEAT_2024_T3 (mod303 -> mod303.isAEAT() 
-		 && ((mod303.getYear() == 2024 && 
+		 && (mod303.getYear() == 2024 && 
 		 	 (mod303.getPeriod() == Period.M09
 					|| mod303.getPeriod() == Period.M10
 					|| mod303.getPeriod() == Period.M11
-					|| mod303.getPeriod() == Period.T3
-			 )
+					|| mod303.getPeriod() == Period.T3			 
 			 )
 			), Mod303WriterAEAT2024T3::new)
 		,AEAT_2024	(mod303 -> (mod303.isAEAT() && mod303.getYear() == 2024
