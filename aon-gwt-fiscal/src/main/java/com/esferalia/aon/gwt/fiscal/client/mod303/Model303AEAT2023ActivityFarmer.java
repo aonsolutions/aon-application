@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEAT2023SimplifiedRegimeActivities.IModel303AEATActivityCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -99,8 +99,8 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 			.addCell( new Label(AON.MSG.f04Msg()), AON.CSS.aonBorderBottom() )
 			.addCell( cuo );
 		
-		// DANA - A partir del ultimo periodo de 2024
-		if ((cbk.getModel().getYear() == 2024 && cbk.getModel().isLastPeriod()) || (cbk.getModel().getYear() > 2024)) {
+		// DANA - Ultimo periodo de 2024
+		if (cbk.getModel().getYear() == 2024 && cbk.getModel().isLastPeriod()) {
 			dana.setEnabled(cbk.getActivity().isNotEmpty() && cbk.getModel().isEditable());
 			dana.addChangeHandler(event-> {
 				cbk.getActivity().setDana(dana.getSelectedIndex());
@@ -243,14 +243,21 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		
-		final Model303AEAT2023ActivityFarmerSelection activityFarmer = new Model303AEAT2023ActivityFarmerSelection();
-		activityFarmer.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+		if (cbk.getModel().getYear() >= 2025) {
+			final Model303AEAT2025ActivityFarmerSelection activityFarmer = new Model303AEAT2025ActivityFarmerSelection();
+			activityFarmer.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+			scroll.setWidget(activityFarmer);
+		} else {
+			final Model303AEAT2023ActivityFarmerSelection activityFarmer = new Model303AEAT2023ActivityFarmerSelection();
+			activityFarmer.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+			scroll.setWidget(activityFarmer);
+		}
 		
-		scroll.setWidget(activityFarmer);
+//		scroll.setWidget(activityFarmer);
 		return scroll;
 	}
 	
-	private void checkAccept(IModel303AEATActivityCallback<Mod303ActivityFarmer> cbk, final FarmerIVA selected) {
+	private void checkAccept(IModel303AEATActivityCallback<Mod303ActivityFarmer> cbk, final IFarmerIVA selected) {
 		if (cbk.getActivity().isNotEmpty()) {
 			AonConfirmDialog.showConfirm(AON.MSG.epigrapChanged(), () -> accept(cbk, selected));
 		} else {
@@ -258,7 +265,7 @@ class Model303AEAT2023ActivityFarmer extends DockLayoutPanel implements HasValue
 		}
 	}
 
-	private void accept(IModel303AEATActivityCallback<Mod303ActivityFarmer> cbk, final FarmerIVA selected) {
+	private void accept(IModel303AEATActivityCallback<Mod303ActivityFarmer> cbk, final IFarmerIVA selected) {
 		cbk.getActivity().initialize();
 		cbk.getActivity().setCode(selected.getCode());
 		cbk.getActivity().setDescription(selected.getDescription());
