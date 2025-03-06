@@ -244,21 +244,21 @@ const getObjFromBase64 = (base64Data, fileName = undefined, type=null) => {
 }
 
 export const openFile = async (url, data) => new Promise(async (resolve, reject) => {
-  if(UA.isAndroidApp()) {
-    let file = {
-      url:`${window.location.origin}${window.location.pathname}/${url}${formatParams(data)}`,
-      title: 'file'
-    }
-    openFileApp(file);
-  } else {
     requestFile("GET", url, data, async(result, error) => {
       if (error) reject(error);
       else {
         const {blob, fileName} = result;
-        if (webkitRequestMobile()){
+        if(UA.isApp()){
            //------------ IS MOBILE APP---------
           const base64Data = await blobToBase64(blob).catch(e=>reject(e));
-          await sendActionMobile(getObjFromBase64(base64Data, fileName));
+          if(UA.isAndroidApp()) {
+            let file = {
+              content: base64Data,
+              title: 'file',
+              mimeType: 'application/pdf'
+            }
+            openFileApp(file);
+          } else await sendActionMobile(getObjFromBase64(base64Data, fileName));
         } else {
           // ------------IS DESKTOP---------------
           try {
@@ -272,7 +272,6 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
         resolve(true);
       }
     });
-  }
 });
 
 export const openFileBase64 = async (base64Str, contentType) => new Promise(async (resolve, reject) => {
