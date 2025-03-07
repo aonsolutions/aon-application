@@ -50,7 +50,7 @@ export const printFile = (file) => {
 }
 
 export const openFileApp = (file) => {
-    let data = {action: 'openFile', url: file.url, title: file.title, content: file.content, mymeType: file.mimeType};
+    let data = {action: 'openFile', url: file.url, title: file.title, content: file.content, mimeType: file.mimeType};
     if(UA.isAndroidApp()) {
         window.Android.openFile(JSON.stringify(data));
     } else if (UA.isIosApp()) {
