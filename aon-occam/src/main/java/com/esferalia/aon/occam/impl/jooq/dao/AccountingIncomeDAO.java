@@ -140,11 +140,19 @@ public class AccountingIncomeDAO {
 				.filter( a -> a != null && a.getId() != null )
 				.or(() -> income.getBank()
 					.map(rbank -> {
+						String accountCode = AccountDAO.getNextAccountCode(ctx,"5720" );
+						String accountDescription = rbank.getAlias();
+						if(AonStringUtils.isEmpty(accountDescription) ) {
+							accountDescription = rbank.getFullName();
+						}
+						if(AonStringUtils.isEmpty(accountDescription) ) {
+							accountDescription = accountCode;
+						}
 						Account newAccount = AccountDAO.save(ctx, 
 							new Account()
 								.setDomain(income.getDomain())
-								.setCode(AccountDAO.getNextAccountCode(ctx,"5720" ))
-								.setDescription( rbank.getAlias() )
+								.setCode(accountCode)
+								.setDescription( accountDescription )
 								.setAlias( rbank.getAlias() )
 								.setActive( true));
 						RegistryBankDAO.updateAccount(ctx, rbank.getId(), newAccount.getId());
