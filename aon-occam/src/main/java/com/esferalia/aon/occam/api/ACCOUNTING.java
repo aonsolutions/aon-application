@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -759,6 +760,28 @@ public class ACCOUNTING {
 		}
 	}
 
+	// *************************************************************
+	// **************************************** [ACCOUNTING INCOMES]
+	// *************************************************************
+	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user) throws AonCoreException {
+		return getAccountingIncomes(domainName, domain, user, null );	
+	}
+	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user, String query) throws AonCoreException {
+		return getAccountingIncomes(domainName, domain, user, query, 0, Integer.MAX_VALUE , true);	
+	}
+	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user, String query, int offset, int limit, boolean closeContext) {
+		CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user);
+		IDAOCallback callback = (closeContext)
+			? () -> { if (ctx != null) { ctx.close(); }  }
+			: null;
+		return getAccounting().getAccountingIncomes(ctx
+				, domain
+				,query
+				, offset
+				, limit
+				, callback 
+		);
+	}
 	
 
 }

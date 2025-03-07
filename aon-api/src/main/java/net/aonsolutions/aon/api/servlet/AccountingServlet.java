@@ -1,7 +1,10 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +22,6 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
-import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -114,15 +116,16 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getIncomes(AonApiData api) {
-		JSONArray array = new JSONArray();
-		AccountingIncome acc = new AccountingIncome()
-				.setActivity(new EnterpriseActivity().setDescription("Actividad de ejemplo"))
-				.setAmount(12.5)
-				.setConcept("Concepto de ejemplo")
-				.setDate(new Date());
-				;
-		
-		array.put(AccountingIncomeJSON.to(acc));
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(
+			 api.getDomain().getName()
+			,api.getDomain().getId()
+			,api.getUser().getLogin()
+			)
+		.map( AccountingIncomeJSON::to )
+		.filter( Optional::isPresent )
+		.map( Optional::get );
+		JSONArray array = stream.collect(Collector.of(JSONArray::new, JSONArray::put, JSONArray::put)); 
+		stream.close();
 		return array;
 	}
 	

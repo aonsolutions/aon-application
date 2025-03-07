@@ -339,19 +339,21 @@ public class Asserts {
 
 	public static void assertEqualsCustomer(Customer expected, Customer actual) {
 		assertEqualsNulls( "Customer", expected, actual);
-		assertEqualsRegistry(expected, actual);
-		assertEquals("Tariff",expected.getTariff(), actual.getTariff());
-		assertEquals("Surcharge",expected.isSurcharge(),actual.isSurcharge());
-		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
-		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
-		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
-		assertEquals("EInvoice",expected.isEInvoice(),actual.isEInvoice());
-		assertEquals("InvoicingGroup",expected.getInvoicingGroup(),actual.getInvoicingGroup());
-		assertEquals("ProjectGrouped",expected.isProjectGrouped(),actual.isProjectGrouped());
-		assertEquals("DeliveryGrouped",expected.isDeliveryGrouped(),actual.isDeliveryGrouped());
-		assertEquals("DeliveryValuated",expected.isDeliveryValuated(),actual.isDeliveryValuated());
-		assertEquals("Account",expected.getAccount(),actual.getAccount());
+		if (expected != null ) {
+			assertEqualsRegistry(expected, actual);
+			assertEquals("Tariff",expected.getTariff(), actual.getTariff());
+			assertEquals("Surcharge",expected.isSurcharge(),actual.isSurcharge());
+			assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+			assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
+			assertEquals("Status",expected.getStatus(),actual.getStatus());
+			assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
+			assertEquals("EInvoice",expected.isEInvoice(),actual.isEInvoice());
+			assertEquals("InvoicingGroup",expected.getInvoicingGroup(),actual.getInvoicingGroup());
+			assertEquals("ProjectGrouped",expected.isProjectGrouped(),actual.isProjectGrouped());
+			assertEquals("DeliveryGrouped",expected.isDeliveryGrouped(),actual.isDeliveryGrouped());
+			assertEquals("DeliveryValuated",expected.isDeliveryValuated(),actual.isDeliveryValuated());
+			assertEquals("Account",expected.getAccount(),actual.getAccount());
+		}
 	}
 
 	public static void assertEqualsCreditor(Creditor expected, Creditor actual) {
@@ -1178,6 +1180,7 @@ public class Asserts {
 	}
 	
 	public static void assertEqualsRegistryBank(RegistryBank expected, RegistryBank actual) {
+		assertEqualsNulls( "RegistryBank", expected, actual);
 		if (expected != null) {
 			assertEquals("Id", expected.getId(), actual.getId());
 			assertEqualsAccount(expected.getAccount(), actual.getAccount());
@@ -1286,7 +1289,7 @@ public class Asserts {
 		assertEquals("Domain", expected.getDomain(), actual.getDomain());
 		assertEqualsCustomer(expected.getCustomer().orElse(null), actual.getCustomer().orElse(null));
 		assertEquals("Date",expected.getDate(), actual.getDate());
-		assertEqualsEnterpriseActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
+		assertEquals("Activity",expected.getActivity(), actual.getActivity());
 		assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
 		assertEquals("Concept",expected.getConcept(), actual.getConcept());
 		assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 

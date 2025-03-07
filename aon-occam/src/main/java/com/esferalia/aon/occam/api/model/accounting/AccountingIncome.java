@@ -7,7 +7,6 @@ import java.util.Optional;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -17,7 +16,7 @@ public class AccountingIncome implements Serializable{
 	private static final long serialVersionUID = -2866173741486957944L;
 
 	private int domain;
-	private EnterpriseActivity activity;
+	private Integer activity;
 	private Date date;
 	private Customer customer;
 	private Account expAccount;
@@ -40,10 +39,10 @@ public class AccountingIncome implements Serializable{
 		return this;
 	}
 	
-	public Optional<EnterpriseActivity> getActivity() {
+	public Optional<Integer> getActivity() {
 		return Optional.ofNullable(activity);
 	}
-	public AccountingIncome setActivity(EnterpriseActivity activity) {
+	public AccountingIncome setActivity(Integer activity) {
 		this.activity = activity;
 		return this;
 	}
@@ -124,22 +123,28 @@ public class AccountingIncome implements Serializable{
 	public Optional<Rawdoc> getRawdoc() {
 		return Optional.ofNullable(rawdoc);
 	}
-	public void setRawdoc(Rawdoc rawdoc) {
+	public AccountingIncome setRawdoc(Rawdoc rawdoc) {
 		this.rawdoc = rawdoc;
+		return this;
 	}
 	
 	public Optional<AccountEntry> getAccountEntry() {
 		return Optional.ofNullable(accountEntry);
 	}
-	public void setAccountEntry(AccountEntry accountEntry) {
+	public AccountingIncome setAccountEntry(AccountEntry accountEntry) {
 		this.accountEntry = accountEntry;
+		return this;
 	}
 	
 	public Optional<Finance> getFinance() {
 		return Optional.ofNullable(finance);
 	}
-	public void setFinance(Finance finance) {
+	public AccountingIncome setFinance(Finance finance) {
 		this.finance = finance;
+		return this;
 	}
 
+	
+	
+	
 }

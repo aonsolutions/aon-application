@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -207,7 +208,7 @@ public class AccountingFaker {
 			.setDomain(ctx.getDomainId())
 			.setCustomer( AonFaker.getCustomer(ctx) )
 			.setDate( AonRandom.getPastDate(10) )
-			.setActivity( AonFaker.getEnterpriseActivity(ctx) )
+			.setActivity(Optional.ofNullable(AonRandom.getRandomActivity( ctx )).map( a -> a.getId()).orElse( null ))
 			.setExpAccount( getAccount(ctx, "629") )
 			.setConcept(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
 			.setReferenceCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))

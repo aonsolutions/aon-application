@@ -188,7 +188,11 @@ public enum AccountEntryType  implements Serializable {
 		return description;
 	}
 	
+	@Deprecated
 	public Byte getValue() {
+		return (byte) ordinal();
+	}
+	public byte value() {
 		return (byte) ordinal();
 	}
 	
