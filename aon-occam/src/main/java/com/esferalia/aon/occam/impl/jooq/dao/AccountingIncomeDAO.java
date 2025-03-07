@@ -6,16 +6,18 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -125,11 +127,9 @@ public class AccountingIncomeDAO {
 	
 	private static AccountingIncome insert(AONContext ctx, AccountingIncome income) {
 		initializeAccountEntry( ctx, income );
-		if (income.getCustomer().isPresent()) {
-			initializeFinance( ctx, income );
-		} else {
-			saveBasicAccountEntry( ctx, income );
-		}
+		saveBasicAccountEntry( ctx, income );
+		income.getCustomer()
+			.ifPresent( c -> saveAndRecordFinanace( ctx, c, income ));
 		return income;
 	}
 	
@@ -163,7 +163,7 @@ public class AccountingIncomeDAO {
 			);
 	}
 	
-	private static void saveBasicAccountEntry(AONContext ctx, AccountingIncome income) {
+	private static AccountingIncome saveBasicAccountEntry(AONContext ctx, AccountingIncome income) {
 		AccountEntry ae = income.getAccountEntry()
 			.orElseThrow( () -> new AonCoreException( "AccountEntry not initialized" ) );
 		Account expAccount = income.getExpAccount()
@@ -188,7 +188,7 @@ public class AccountingIncomeDAO {
 				.setBalancingAccount( expAccount.getId() )
 		);
 		AccountEntryDAO.save( ctx, ae);
-		System.out.println( "AccountEntry saved ..: " +  ae.getId() );
+		return income;
 	}
 
 	private static AccountingIncome initializeAccountEntry(AONContext ctx, AccountingIncome income) {
@@ -209,39 +209,51 @@ public class AccountingIncomeDAO {
 		return income.setAccountEntry(ae);
 	}
 	
-	private static Optional<Finance> initializeFinance(AONContext ctx, AccountingIncome income) {
-		return income.getCustomer()
-			.map(creditor -> {
-				Finance finance = new Finance();
-				finance.setDomain( income.getDomain() );
-				finance.setPayment( true );
-				finance.setRegistry( RegistryDAO.get(ctx,creditor.getId() ));
-				finance.setScope( creditor.getScope() );
-				finance.setSecurityLevel( creditor.getSecurityLevel() );
-				finance.setRegistryDocument( creditor.getDocument() );
-				finance.setRegistryDocumentType( creditor.getDocumentType() );
-				finance.setRegistryDocumentCountry( creditor.getDocumentCountry() );
-				finance.setRegistryName( creditor.getName() );
-				Account account = AccountDAO.get( ctx, creditor.getAccount() );
-				if (account != null) {
-					finance.setRegistryAccountId( account.getId() );
-					finance.setRegistryAccountCode( account.getCode() );
-					finance.setRegistryAccountDescription( account.getDescription() );
-				}
-				finance.setAmount( income.getAmount() );
-				finance.setConcept( income.getConcept() );
-				finance.setDueDate( income.getDate() );
-				finance.setManual(true);
-				finance.setFinanceStatus(FinanceStatus.PENDING);
-				finance.setRemarks(income.getComments());
-				income.getBank().ifPresent( b -> {
-					finance.setBankAccount( b.getBankAccount() );	
-					finance.setBankAlias( b.getAlias() );
-					finance.setBic( b.getBic() );
-				});
-				income.setFinance(finance);
-				return finance;
-			});  
+	private static AccountingIncome saveAndRecordFinanace(AONContext ctx, Customer cust, AccountingIncome income) {
+		Finance finance = new Finance();
+		finance.setDomain( income.getDomain() );
+		finance.setPayment( false );
+		finance.setRegistry( RegistryDAO.get(ctx,cust.getId() ));
+		finance.setScope( cust.getScope() );
+		finance.setSecurityLevel( cust.getSecurityLevel() );
+		finance.setRegistryDocument( cust.getDocument() );
+		finance.setRegistryDocumentType( cust.getDocumentType() );
+		finance.setRegistryDocumentCountry( cust.getDocumentCountry() );
+		finance.setRegistryName( cust.getName() );
+		Account account = AccountDAO.get( ctx, cust.getAccount() );
+		if (account != null) {
+			finance.setRegistryAccountId( account.getId() );
+			finance.setRegistryAccountCode( account.getCode() );
+			finance.setRegistryAccountDescription( account.getDescription() );
+		}
+		finance.setAmount( income.getAmount() );
+		finance.setConcept( AonStringUtils.abbreviate( income.getConcept() , 32) );
+		finance.setDueDate( income.getDate() );
+		finance.setManual(true);
+		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setRemarks(income.getComments());
+		income.getBank().ifPresent( b -> {
+			finance.setBankAccount( b.getBankAccount() );	
+			finance.setBankAlias( b.getAlias() );
+			finance.setBic( b.getBic() );
+		});
+		Integer financeId = FinanceDAO.save( ctx, finance);
+		finance.setId( financeId );
+		income.getAccountEntry().ifPresent( ae -> {
+			FinanceTracking tracking = new FinanceTracking()
+				.setDomain(finance.getDomain())
+				.setFinance(finance)
+				.setTrackingDate( finance.getDueDate() )
+				.setAmount(finance.getAmount() )
+				.setRegistryBank( income.getBank().orElse( null) )
+				.setDescription( income.getConcept() )
+				.setAmount( finance.getAmount() )
+			;
+			FinanceTrackingDAO.pay( ctx, tracking, ae );
+		});
+		Finance savedFinance = FinanceDAO.getFinance( ctx, financeId);
+		income.setFinance(savedFinance);
+		return income;
 	}
 
 
