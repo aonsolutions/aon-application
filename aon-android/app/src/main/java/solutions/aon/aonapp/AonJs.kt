@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +27,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -104,24 +107,24 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     @JavascriptInterface
     fun openFile(data:String) {
         val json = JSONObject(data)
-        val base64 = json.getString("content")
-        val title = json.getString("title")
-        val mimeType = json.getString("mimeType")
-        val url = json.getString("url")
-        Log.v("TAG", "Base64: $base64")
-        Log.v("TAG", "url: $url")
-        Log.v("TAG", "title: $title")
-        Log.v("TAG", "mimeType: $mimeType")
+        val base64 = json.optString("content")
+        val title = json.optString("title")
+        val mimeType = json.optString("mimeType")
+        val url = json.optString("url")
+
         if(base64.isNotBlank()) {
             val fileBytes = Base64.decode(base64, Base64.DEFAULT)
-            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), title )
+
+            val downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val file = File(downloadsDirectory, title);
             FileOutputStream(file).use { it.write(fileBytes) }
-            val uri = Uri.fromFile(file)
+
+            val fileUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
 
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, mimeType)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                setDataAndType(fileUri, mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Permitir acceso temporal
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Evitar problemas en algunas versiones de Android
             }
             context.startActivity(intent)
         } else {
