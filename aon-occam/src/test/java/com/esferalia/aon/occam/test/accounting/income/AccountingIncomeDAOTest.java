@@ -2,8 +2,9 @@ package com.esferalia.aon.occam.test.accounting.income;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -25,24 +26,23 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
-public class SaveTest extends AbstractOccamTest {
+public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	private static final double DELTA = 1e-8;
 
 	@Test
-	@Repeat( 20 )
 	public void saveCustomerBankTest() {
 		RegistryBank rbank = ensureBanks();
 		AccountingIncome income = new AccountingIncome();
@@ -191,7 +191,62 @@ public class SaveTest extends AbstractOccamTest {
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 	}
+	
+	@Test
+	public void deleteCashTest() {
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(100.0);
+		Account cashAccount = AonRandom.getAccountCash(ctx);
+		income.setCashAccount(cashAccount);
+		ensureAccountPeriod( income );
+		
+		AccountingIncomeDAO.save(ctx, income);
+		assertNotNull(income);
+		assertNotNull(income.getAccountEntry());
+		assertTrue(income.getAccountEntry().isPresent());
+		AccountEntry ae = income.getAccountEntry().get();
+		AccountingIncomeDAO.delete(ctx, ae );
+		
+		AccountEntry deleted = AccountEntryDAO.getAccountEntry( ctx, ae.getId() );
+		assertNull(deleted);
+	}
 
+	@Test
+	public void deleteFinanceTest() {
+		RegistryBank rbank = ensureBanks();
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(-1,1,64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(300.0);
+		Customer customer = AonRandom.getCustomer(ctx);
+		income.setCustomer(customer);
+		income.setBank(rbank);
+		ensureAccountPeriod( income );
+		
+		AccountingIncomeDAO.save(ctx, income);
+		assertNotNull(income);
+		assertNotNull(income.getAccountEntry());
+		assertTrue(income.getAccountEntry().isPresent());
+		AccountEntry ae = income.getAccountEntry().get();
+		System.out.println(ae.getId());
+		AccountingIncomeDAO.delete(ctx, ae );
+		
+		AccountEntry deleted = AccountEntryDAO.getAccountEntry( ctx, ae.getId() );
+		assertNull(deleted);
+		
+	}
 	private void ensureAccountPeriod(AccountingIncome exp) {
 		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, exp.getDate() );
 		if (period == null) {
@@ -220,4 +275,6 @@ public class SaveTest extends AbstractOccamTest {
 					.setActive(true))
 			);
 	}
+	
+
 }

@@ -6,14 +6,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.google.gwt.event.dom.client.ErrorEvent;
-import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,7 +16,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
 	private ScrollPanel tableContainer;
-	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;
 	private AccountEntryWrapper wrapper;
 	
@@ -45,8 +39,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getAccountEntryService().getAccountEntry(getCallback().getCurrentDomainName(),
-					getCallback().getCurrentDomainId(),getCallback().getCurrentUser(), id ,
+			getAccountEntryService().getAccountEntry(getCallback().getOccam(), id ,
 					new AsyncCallback<AccountEntry>() {
 						@Override
 						public void onSuccess(AccountEntry result) {
@@ -78,25 +71,14 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	private void select(IAccountEntryWrapper wrp,ISelectionCallback cbk) {
 		setWrapper((AccountEntryWrapper) wrp);
 		tableContainer.setStyleName(AON.AON_CSS.aonScrollArea());
-		tableInnerContainer = new VerticalPanel();
+		VerticalPanel tableInnerContainer = new VerticalPanel();
 		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
 		
 		table = new AccountEntryTable(getCallback().getModuleOptions(),this);
-		table.addErrorHandler(new ErrorHandler() {
-
-			@Override
-			public void onError(ErrorEvent event) {
-				getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR"));
-			}
-			
-		});
-		table.addValueChangeHandler(new ValueChangeHandler<AccountEntryDetail>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<AccountEntryDetail> event) {
-				getCallback().getModule().refreshIdLabel();
-				getCallback().getModule().onPreview(getWrapper());
-			}
+		table.addErrorHandler(event -> getCallback().getModule().onError(event.getRelativeElement().getAttribute("ERROR")));
+		table.addValueChangeHandler(event -> {
+			getCallback().getModule().refreshIdLabel();
+			getCallback().getModule().onPreview(getWrapper());
 		});
 		tableInnerContainer.add(table);
 		tableContainer.setWidget(tableInnerContainer);
@@ -118,7 +100,10 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 			 || type == AccountEntryType.SOCIAL_INSURANCE_ADJUST
 			 || type == AccountEntryType.LOAN
 			 || type == AccountEntryType.TAX
-			 || type == AccountEntryType.LOAN_FEE );
+			 || type == AccountEntryType.LOAN_FEE 
+			 || type == AccountEntryType.OTHER_EXPENSES
+			 || type == AccountEntryType.OTHER_INCOMES
+		);
 	}
 	@Override
 	public String getNoUpdatableCause() {
@@ -138,9 +123,11 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	}
 	@Override
 	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		// Nothing
 	}
 	@Override
 	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		// Nothing		
 	}
 
 	@Override
@@ -156,15 +143,14 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
 	@Override
 	public void reset(AccountEntry base, ISelectionCallback cbk) {
-		AccountEntryWrapper wrapper = create(base);
-		select(wrapper, cbk);
+		select( create(base), cbk);
 	}
 
 	private AccountEntryWrapper create(AccountEntry base) {
 		return new AccountEntryWrapper( new AccountEntry()
 				.setPeriod(base.getPeriod())
 				.setEntryType(AccountEntryType.MANUAL)
-				.setDomain(getCallback().getCurrentDomainId())
+				.setDomain(getCallback().getOccam().getDomain())
 				.setConfidential(false)
 				.setEntryDate(base.getEntryDate())
 				.setActivity(base.getActivity())
@@ -173,7 +159,7 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
-		
+		// Nothing
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
+
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -310,4 +312,31 @@ public class AccountingIncomeDAO {
 				.accept(new AccountingIncomeContext(ctx,config,income));
 		}
 	}
+	
+	public static void delete(AONContext ctx, AccountEntry ae) {
+		if (ae == null) throw new AonCoreException("AccountEntry is mandatory"); 
+		if (ae.getEntryType() != AccountEntryType.OTHER_INCOMES) 
+			throw new AonCoreException("El apunte que se quiere borrar no es \"Otros Ingresos\"");
+		AccountEntryDAO.delete( ctx, ae.getId() );
+	}
+	
+	public static void unrecord(AONContext ctx, int domain, int accountEntryId) {
+		ctx.getDslContext()
+			.select(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING)
+			.from( ACCOUNT_ENTRY_FINANCE_TRACKING )
+			.where(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY.eq(accountEntryId))
+			.and(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN.eq(domain))
+			.fetch()
+			.stream()
+			.forEach( rec -> {
+				Integer ftId = rec.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING);
+				FinanceTracking ft = FinanceTrackingDAO.getFinanceTracking( ctx, ftId );
+				FinanceTrackingDAO.delete( ctx, ft);
+				if (ft.getFinance() != null) {
+					FinanceDAO.delete( ctx, ft.getFinance().getId() );
+				}
+			});
+		
+	}
+
 }
