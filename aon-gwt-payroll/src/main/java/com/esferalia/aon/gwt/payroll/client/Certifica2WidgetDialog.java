@@ -263,6 +263,8 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		if(!certifica2Info.getQuoteDataList().isEmpty()) {
 			fillQuoteDataListPanel();
 			scrollContent.add(economicCard);
+		} else {
+			AonMessagePanel.showError(messagePanel, "No existen datos econ\u00f3micos. Revise que existan n\u00f3minas en los \u00faltimos 180 d\u00edas");
 		}
 		
 		scrollPanel.setWidget(scrollContent);
@@ -275,7 +277,6 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		quoteTable.createHeader();
 		for ( COLUMNS col : COLUMNS.values()) 
 			quoteTable.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getCellStyleClass());
-		
 		
 		for(Map<String, String> quoteData : certifica2Info.getQuoteDataList()) {
 			
