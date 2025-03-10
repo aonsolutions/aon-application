@@ -3703,9 +3703,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
-			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
+			User user = AON.getUser(domain, domainId, login);
+//			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
 			
-			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, userId) : AON.getCertificates(domain, domainId, login, userId);
+			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, user.getId()) : AON.getCertificates(domain, domainId, login, user.getId());
 			return certificates;
 		} catch (Exception e) {
 			e.printStackTrace();

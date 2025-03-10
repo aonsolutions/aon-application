@@ -30,8 +30,10 @@ public abstract class AbsExcelAction  {
 	protected static final String DATE_PATTERN = "dd/MM/yyyy";
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String NUMBER_PATTERN = "#,###";
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(47,170,158));
 	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240));
+	protected static final XSSFColor AON_TEAL = new XSSFColor(new java.awt.Color(79,149,157));
+	protected static final XSSFColor AON_LIGHT_TEAL = new XSSFColor(new java.awt.Color(152,210,192));
 	
 	protected SXSSFWorkbook workbook;
 	protected SXSSFSheet sheet;
@@ -47,6 +49,10 @@ public abstract class AbsExcelAction  {
 	protected CellStyle rightCellStyle;
 	protected XSSFCellStyle headerCellStyle;
 	protected XSSFCellStyle headerSecondaryCellStyle;
+	
+	protected XSSFCellStyle headerEvenMonthCellStyle;
+	protected XSSFCellStyle headerOddMonthCellStyle;
+	
 	protected Font boldFont;
 	protected Font defaulFont;	
 	protected Font smallFont;
@@ -126,6 +132,20 @@ public abstract class AbsExcelAction  {
 	    headerSecondaryCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 	    headerSecondaryCellStyle.setFont(subheaderFont);
 	    
+	    headerEvenMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerEvenMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
+	    headerEvenMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerEvenMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerEvenMonthCellStyle.setFillForegroundColor(AON_TEAL);
+	    headerEvenMonthCellStyle.setFont(headerFont);
+	    
+	    headerOddMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerOddMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
+	    headerOddMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerOddMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
+	    headerOddMonthCellStyle.setFont(headerFont);
+	    
 	    if (printHeaders) {
 	    	headerRow();
 	    }
@@ -201,6 +221,20 @@ public abstract class AbsExcelAction  {
 	    headerSecondaryCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	    headerSecondaryCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
 	    headerSecondaryCellStyle.setFont(subheaderFont);
+	    
+	    headerEvenMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerEvenMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
+	    headerEvenMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerEvenMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerEvenMonthCellStyle.setFillForegroundColor(AON_TEAL);
+	    headerEvenMonthCellStyle.setFont(headerFont);
+	    
+	    headerOddMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerOddMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
+	    headerOddMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerOddMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
+	    headerOddMonthCellStyle.setFont(headerFont);
 	}
 	
 	protected Cell alignCenter(Cell cell) {

@@ -449,7 +449,7 @@ public class CertificateDAO {
 		
 		if(AonStringUtils.containsIgnoreCase(description, "HIDE")) {
 			try {
-				return description.split("HIDE\\(")[1].split("\\)")[0];
+				return description.split("HIDE\\(")[1].substring(0, description.split("HIDE\\(")[1].length() - 1);
 			} catch (Exception e) {
 				return "";
 			}
