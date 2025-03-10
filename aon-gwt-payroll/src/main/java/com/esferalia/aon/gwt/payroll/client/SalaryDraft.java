@@ -5003,7 +5003,7 @@ public class SalaryDraft extends ResizeComposite
 		return new VariablePaymentChangeHandler<TextBox>(payment, variableName);
 	}
 	
-	public native void consoleLog(String msg) /*-{
+	public static native void consoleLog(String msg) /*-{
 		console.log(msg);
 	}-*/;
 	
@@ -6543,7 +6543,7 @@ public class SalaryDraft extends ResizeComposite
 		case UNEMPLOYMENT:
 			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
 		case COMMON_CONTINGENCY:
-			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject));
+			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
 		default:
 			return newPercentLabel(deduction, percent, getPercentVariable(type));
 		}
@@ -7541,7 +7541,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 		try {
-			Variable var = getPercentVariable(deduction.getExpression(), draftObject);
+			Variable var = getPercentVariable(deduction.getExpression(), draftObject, deduction.getStartDate(), deduction.getEndDate());
 			if ( var != null ) {
 				return Double.parseDouble(var.getValue().toString());
 			}
@@ -7583,27 +7583,29 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 
-	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject) {
+	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
 		RegExp regExp = 
 		RegExp.compile("PORCENTAJE_[A-Z_]+");
 		
 		MatchResult r = regExp.exec(str);
 		
 		if ( r != null )
-			return getContextVariable(r.getGroup(0), draftObject);
+			return getContextVariable(r.getGroup(0), draftObject, startDate, endDate);
 		
 		return null;
 	}
 
-	private static Variable getContextVariable(String name, SalaryDraftObject salaryDraftObject) {
+	private static Variable getContextVariable(String name, SalaryDraftObject salaryDraftObject, Date startDate, Date endDate) {
+		consoleLog("getContextVariable ( " + name +", " + startDate +", " + endDate +")");
 		for (Variable var : salaryDraftObject.getDrafContext())
-			if (StringUtils.equals(var.getName(), name))
+			if (StringUtils.equals(var.getName(), name) && intersects(var, startDate, endDate))
 				return var;
 
 		for (Variable var : salaryDraftObject.getContext())
-			if (StringUtils.equals(var.getName(), name))
+			if (StringUtils.equals(var.getName(), name) && intersects(var, startDate, endDate))
 				return var;
 
+		consoleLog("getContextVariable ( NOTFOUND )");
 		return null;
 	}	
 	
@@ -8324,6 +8326,12 @@ public class SalaryDraft extends ResizeComposite
 		return result != null ? result.getGroup(1): null;
 	}
 	
+	private static boolean intersects ( Variable var, Date startDate, Date endDate) {
+		Date maxStart = AonDateUtils.max(startDate, var.getStartDate());
+		Date minEnd = AonDateUtils.min(endDate, var.getEndDate());
+		return AonDateUtils.compare(maxStart, minEnd) <= 0;
+	}
+
 	private static boolean intersects ( Period p1, Period p2) {
 		Date maxStart = AonDateUtils.max(p1.getStart(), p2.getStart());
 		Date minEnd = AonDateUtils.min(p1.getEnd(), p2.getEnd());
