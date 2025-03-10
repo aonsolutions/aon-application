@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
+import com.esferalia.aon.occam.api.model.finance.InvoiceIntegrityCheckError;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -152,6 +154,7 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 					,Checks.REGISTRY_DOCUMENT_DIFFERENT.stream( ctx, basicCondition, offset , limit )
 					,Checks.ACCOUNT_ENTRY_SUM_VS_INVOICE_TOTAL.stream( ctx, basicCondition, offset , limit )
 					,Checks.ACCOUNT_ENTRY_VAT_VS_INVOICE_TAX.stream( ctx, basicCondition, offset , limit )
+					, Checks.INVOICE_TAX_DUPLICATE.stream(ctx, basicCondition, offset, limit)
 				)
 				.flatMap( s -> s)
 				.forEach( js -> writer.print( js.toString() ))
@@ -215,9 +218,7 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 						.and( INVOICE.TYPE.ne(InvoiceType.UNDEDUCTIBLE.value()))
 					, offset
 					, limit )
-					.map( json -> json.put(IJsonNames.ERROR
-							, "El NIF de la ficha de ClI/PRO/ACR no coincide con el NIF de la factura") 
-						); 
+					.map( json -> json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.ACCOUNT_ENTRY_SUM_VS_INVOICE_TOTAL.name())); 
 
 			}
 		}
@@ -250,9 +251,7 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 						;
 						return (count.isPresent() && AonMathUtils.isZero(count.get()));
 					})
-					.map( json -> json.put(IJsonNames.ERROR
-							, "El Total del apunte no coincide con el total factura") 
-						); 
+					.map(json -> json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.ACCOUNT_ENTRY_SUM_VS_INVOICE_TOTAL.name()));
 
 			}
 		}
@@ -312,10 +311,33 @@ public class InvoiceIntegrityStreamServlet extends HttpServlet {
 						}
 						return ret;
 					})
-					.map( json -> json.put(IJsonNames.ERROR
-							, "El Sumatorio IVA del apunte (472 y/o 477) no coincide con el total IVA de la factura") 
-						); 
+					.map(json -> json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.ACCOUNT_ENTRY_VAT_VS_INVOICE_TAX.name())); 
 
+			}
+		}, INVOICE_TAX_DUPLICATE  {
+			@Override
+			Stream<JSONObject> stream(AONContext ctx, Condition basicCondition, int offset, int limit) {
+				List<Integer> invoiceDetails = ctx.getDslContext().select(INVOICE_TAX.DOMAIN, INVOICE_TAX.INVOICE_DETAIL, DSL.count(INVOICE_TAX.INVOICE_DETAIL))
+					.from(INVOICE_TAX)
+					.where(INVOICE_TAX.DOMAIN.eq(ctx.getDomainId()))
+					.groupBy(INVOICE_TAX.INVOICE_DETAIL, INVOICE_TAX.TAX_TYPE)
+					.having(DSL.count(INVOICE_TAX.INVOICE_DETAIL).eq(2))
+					.fetch().stream()
+					.map(r -> r.getValue(INVOICE_TAX.INVOICE_DETAIL))
+					.toList();
+				
+				return getInvoices(
+					 () -> ctx.getDslContext()
+						.select(DATA_FIELDS)
+							.from(INVOICE)
+							.innerJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID) )
+							.leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.eq(INVOICE.ID) )
+					,() -> basicCondition.and(INVOICE_DETAIL.ID.in(invoiceDetails))
+					, offset, limit )
+					.map( json -> {
+						json.put(IJsonNames.ERROR, InvoiceIntegrityCheckError.INVOICE_TAX_DUPLICATE.name());
+						return json;
+					}); 
 			}
 		}
 		;

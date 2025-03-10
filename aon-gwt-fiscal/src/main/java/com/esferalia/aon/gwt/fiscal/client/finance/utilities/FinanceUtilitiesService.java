@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceIntegrityCheckError;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -37,5 +38,7 @@ public interface FinanceUtilitiesService extends RemoteService {
 	//Integridad del dato actividad en facturas y asientos.
 	FinanceUtilitiesResult activityIntegrity(Occam occam, Integer domain) throws AonCoreException;
 	void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity) throws AonCoreException;
-	
+
+	void invoiceFix(Occam occam, Integer invoiceId, InvoiceIntegrityCheckError error) throws AonCoreException;
+
 }

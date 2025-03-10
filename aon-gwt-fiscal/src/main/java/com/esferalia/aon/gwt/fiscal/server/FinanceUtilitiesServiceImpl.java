@@ -8,11 +8,13 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FINANCE;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceIntegrityCheckError;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -79,6 +81,13 @@ public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServle
 	@Override
 	public void activityIntegrityFix(Occam occam, Integer invoiceId, boolean useInvoiceActivity) throws AonCoreException {
 		FINANCE.activityIntegrityFix(occam, invoiceId, useInvoiceActivity);
+	}
+	
+	@Override
+	public void invoiceFix(Occam occam, Integer invoiceId, InvoiceIntegrityCheckError error) throws AonCoreException {
+		if(InvoiceIntegrityCheckError.INVOICE_TAX_DUPLICATE.equals(error)) {
+			AON_SOLUTIONS.invoiceTaxDuplicateFix(occam, invoiceId);
+		}
 	}
 	
 }

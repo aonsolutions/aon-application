@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceIntegrityCheckError;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -291,6 +292,7 @@ class InvoiceIntegrityCheck extends OptionBase {
 		private void paintHeader() {
 			grid.addHeaderRow()
 				.addCell(new Label(""),AON.CSS.aonWidth20())
+				.addCell(new Label(""),AON.CSS.aonWidth20())
 				.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
 				.addCell(new Label("Actividiad."),AON.CSS.aonWidth300(), AON.CSS.aonNowrap())
 				.addCell(new Label("N\u00BA Documento"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
@@ -319,14 +321,22 @@ class InvoiceIntegrityCheck extends OptionBase {
 		public void addRow(JsInvoiceIntegrity inv) {
 			InvoiceType invoiceType = InvoiceType.safeValueOf(inv.getInvoiceType());
 			
+			InvoiceIntegrityCheckError error = InvoiceIntegrityCheckError.safeValueOf(inv.getError());
+
 			AonTableButton selectButton = new AonTableButton(AON.MSG.viewInvoice(), AON.CSS.aonIconSearch());
 			selectButton.addClickHandler(event -> SelectionEvent.fire(this, inv));
 			
+			AonTableButton fixButton = new AonTableButton("FIX", AON.CSS.aonIconFix());
+			fixButton.addClickHandler(event -> FinanceUtilitiesModule.SERVICE.invoiceFix(getOptions().getOccam(), inv.getId(), error, new AsyncCallback<Void>() {
+				@Override public void onFailure(Throwable arg0) {}
+				@Override public void onSuccess(Void arg0) {}				
+			}));
+			
 			AonDisplayGridRow row = grid.addRow();
-			row
-				.addCell(selectButton)
+			row.addCell(selectButton)
+				.addCell(error.isFix() ? fixButton : new Label(""))
 				.addCell(new Label(ensure(invoiceType,invoiceType::getAbbrDescription)))
-				.addCell(new Label(ensure(inv.getError(), inv::getError, AonStringUtils.EMPTY)))
+				.addCell(new Label(ensure(error.getMessage(), error::getMessage, AonStringUtils.EMPTY)))
 				.addCell(new Label(ensure(inv.getDocumentNumber(), inv::getDocumentNumber, AonStringUtils.EMPTY)))
 				.addCell(new Label(ensure(inv.getRegistryDocument(), inv::getRegistryDocument, AonStringUtils.EMPTY)))
 				.addCell(new Label(ensure(inv.getRegistryName(), () -> AonStringUtils.abbreviate(inv.getRegistryName(),25), AonStringUtils.EMPTY)))
