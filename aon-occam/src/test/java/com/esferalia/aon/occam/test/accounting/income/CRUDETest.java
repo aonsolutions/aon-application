@@ -34,7 +34,7 @@ public class CRUDETest extends AbstractOccamTest {
 		exp.setDate( date );
 		Account expAccount = AonRandom.getAccountIncome(ctx);
 		exp.setExpAccount( expAccount );
-		exp.setConcept(AonRandom.string(64));
+		exp.setConcept(AonRandom.string(-1, 1, 64));
 		exp.setReferenceCode( AonRandom.string(32) );
 		exp.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
