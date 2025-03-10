@@ -310,7 +310,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", 11.16);
 		assertText("unemployment", 21.41);
 		assertText("job_training", 0.27);
-		assertText("mei", 1.72);
+		assertText("mei", 1.80);
+		assertText("meiPercentLabel", "0,13 %");
+		
 
 	}
 
@@ -368,9 +370,11 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		
 		calculate(Calendar.JANUARY, 2025);
-		assertText("mei", "1,72");
+		assertText("mei", "1,80");
+		assertText("meiPercentLabel", "0,13 %");
 		click("costsCheck-input");
-		assertText("mei_cost", "8,86");
+		assertText("mei_cost", "9,25");
+		assertText("mei_ePercentLabel", "0,67 %");
 		click("costsCheck-input");
 		
 		

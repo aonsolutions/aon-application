@@ -5003,7 +5003,7 @@ public class SalaryDraft extends ResizeComposite
 		return new VariablePaymentChangeHandler<TextBox>(payment, variableName);
 	}
 	
-	public native void consoleLog(String msg) /*-{
+	public static native void consoleLog(String msg) /*-{
 		console.log(msg);
 	}-*/;
 	
@@ -6531,21 +6531,33 @@ public class SalaryDraft extends ResizeComposite
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
 		if ( percent == null )
 			return newPercentLabel("");
-
+		
 		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
 		switch (type) {
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		case OTHER:
 		case BONUS:
-		case IN_KIND:
-			return newPercentLabel("");
-		case UNEMPLOYMENT:
-			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
-		case COMMON_CONTINGENCY:
-			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject));
-		default:
-			return newPercentLabel(deduction, percent, getPercentVariable(type));
+		case IN_KIND:{
+			Widget percentLabel = newPercentLabel("");
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
+		case UNEMPLOYMENT:{
+			Widget percentBox = newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
+			percentBox.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentBox;
+		}
+		case COMMON_CONTINGENCY:{
+			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
+		default: {
+			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(type));
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
 		}
 	}
 	
@@ -7541,7 +7553,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 		try {
-			Variable var = getPercentVariable(deduction.getExpression(), draftObject);
+			Variable var = getPercentVariable(deduction.getExpression(), draftObject, deduction.getStartDate(), deduction.getEndDate());
 			if ( var != null ) {
 				return Double.parseDouble(var.getValue().toString());
 			}
@@ -7583,27 +7595,29 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 
-	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject) {
+	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
 		RegExp regExp = 
 		RegExp.compile("PORCENTAJE_[A-Z_]+");
 		
 		MatchResult r = regExp.exec(str);
 		
 		if ( r != null )
-			return getContextVariable(r.getGroup(0), draftObject);
+			return getContextVariable(r.getGroup(0), draftObject, startDate, endDate);
 		
 		return null;
 	}
 
-	private static Variable getContextVariable(String name, SalaryDraftObject salaryDraftObject) {
+	private static Variable getContextVariable(String name, SalaryDraftObject salaryDraftObject, Date startDate, Date endDate) {
+		consoleLog("getContextVariable ( " + name +", " + startDate +", " + endDate +")");
 		for (Variable var : salaryDraftObject.getDrafContext())
-			if (StringUtils.equals(var.getName(), name))
+			if (StringUtils.equals(var.getName(), name) && intersects(var, startDate, endDate))
 				return var;
 
 		for (Variable var : salaryDraftObject.getContext())
-			if (StringUtils.equals(var.getName(), name))
+			if (StringUtils.equals(var.getName(), name) && intersects(var, startDate, endDate))
 				return var;
 
+		consoleLog("getContextVariable ( NOTFOUND )");
 		return null;
 	}	
 	
@@ -8324,6 +8338,12 @@ public class SalaryDraft extends ResizeComposite
 		return result != null ? result.getGroup(1): null;
 	}
 	
+	private static boolean intersects ( Variable var, Date startDate, Date endDate) {
+		Date maxStart = AonDateUtils.max(startDate, var.getStartDate());
+		Date minEnd = AonDateUtils.min(endDate, var.getEndDate());
+		return AonDateUtils.compare(maxStart, minEnd) <= 0;
+	}
+
 	private static boolean intersects ( Period p1, Period p2) {
 		Date maxStart = AonDateUtils.max(p1.getStart(), p2.getStart());
 		Date minEnd = AonDateUtils.min(p1.getEnd(), p2.getEnd());
