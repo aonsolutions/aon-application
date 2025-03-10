@@ -32,6 +32,7 @@ public class AccountingIncomeJSON {
 				.setBank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.BANK)))
 				.setCashAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CASH_ACCOUNT)).orElse(null))
 				.setComments(JsonUtils.optString(json, IJsonNames.COMMENTS))
+				.setAccountEntry(AccountEntryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACCOUNT_ENTRY)).orElse(null))
 		);
 	}
 	
@@ -50,6 +51,7 @@ public class AccountingIncomeJSON {
 				.put(IJsonNames.BANK, RegistryBankJSON.to(a.getBank()).orElse(null))
 				.put(IJsonNames.CASH_ACCOUNT, AccountJSON.to(a.getCashAccount()).orElse(null))
 				.put(IJsonNames.COMMENTS, a.getComments())
+				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)))
 		);
 	}
 	

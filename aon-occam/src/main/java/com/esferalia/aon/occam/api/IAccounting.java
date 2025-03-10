@@ -173,6 +173,7 @@ public interface IAccounting {
 	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
 
 	// **************************************** [ACCOUNTING INCOMES]
-	public Stream<AccountingIncome> getAccountingIncomes(CloseableAONContext ctx, int domain, String query, int offset, int limit, IDAOCallback cbk);
-	
+	public Stream<AccountingIncome> getAccountingIncomes(CloseableAONContext ctx, int domain, String query, int offset, int limit, IDAOCallback cbk) throws AonCoreException;
+	public AccountingIncome saveAccountingIncome(AONContext ctx, AccountingIncome income) throws AonCoreException;
+	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) throws AonCoreException;
 }

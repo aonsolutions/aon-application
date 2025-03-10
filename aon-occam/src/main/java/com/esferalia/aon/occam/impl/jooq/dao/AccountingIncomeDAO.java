@@ -114,7 +114,7 @@ public class AccountingIncomeDAO {
 	// --------------------------------------------------------------- ESCRITURA
 	public static AccountingIncome save(AONContext ctx, AccountingIncome income) {
 		ctx.checkWrite();
-		AccountingIncomeValidation.validateExpense(ctx,income);
+		AccountingIncomeValidation.validateIncome(ctx,income);
 		income.getAccountEntry()
 			.filter( ae -> ae.getId() != null )
 			.ifPresentOrElse( 
@@ -305,7 +305,7 @@ public class AccountingIncomeDAO {
 			}
 		};
 		
-		public static void validateExpense(AONContext ctx, AccountingIncome income) throws AonCoreException {
+		public static void validateIncome(AONContext ctx, AccountingIncome income) throws AonCoreException {
 			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, income.getDate());
 			validateExpense(ctx, config, income);
 		}

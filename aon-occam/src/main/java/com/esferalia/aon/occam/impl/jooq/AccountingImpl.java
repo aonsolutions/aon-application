@@ -651,5 +651,12 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 			configuration -> AccountingIncomeDAO.stream(ctx, domain, query ,offset, limit, cbk) );	
 	}
-	
+	@Override
+	public AccountingIncome saveAccountingIncome(AONContext ctx, AccountingIncome income) {
+		return ctx.getDslContext().transactionResult( configuration -> AccountingIncomeDAO.save(ctx, income) );
+	}
+	@Override
+	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) {
+		ctx.getDslContext().transaction( configuration -> AccountingIncomeDAO.delete(ctx, ae) );
+	}
 }

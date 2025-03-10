@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -168,8 +169,12 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	public void saveCashTest() {
 		AccountingIncome income = getCashIncome( );
 		ensureAccountPeriod( income );
-		
 		AccountingIncomeDAO.save(ctx, income);
+		
+		System.out.println( AccountingIncomeJSON.to(income).get().toString(2) );
+		
+		
+		
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
 		assertTrue(income.getAccountEntry().isPresent());

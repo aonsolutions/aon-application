@@ -763,14 +763,14 @@ public class ACCOUNTING {
 	// *************************************************************
 	// **************************************** [ACCOUNTING INCOMES]
 	// *************************************************************
-	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user) throws AonCoreException {
-		return getAccountingIncomes(domainName, domain, user, null );	
+	public static Stream<AccountingIncome> getAccountingIncomes(Occam occam, int domain) throws AonCoreException {
+		return getAccountingIncomes(occam, domain, null );	
 	}
-	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user, String query) throws AonCoreException {
-		return getAccountingIncomes(domainName, domain, user, query, 0, Integer.MAX_VALUE , true);	
+	public static Stream<AccountingIncome> getAccountingIncomes(Occam occam, int domain, String query) throws AonCoreException {
+		return getAccountingIncomes(occam, domain, query, 0, Integer.MAX_VALUE , true);	
 	}
-	public static Stream<AccountingIncome> getAccountingIncomes(String domainName, int domain, String user, String query, int offset, int limit, boolean closeContext) {
-		CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user);
+	public static Stream<AccountingIncome> getAccountingIncomes(Occam occam, int domain, String query, int offset, int limit, boolean closeContext) {
+		CloseableAONContext ctx = AONContext.getAONContext(occam);
 		IDAOCallback callback = (closeContext)
 			? () -> { if (ctx != null) { ctx.close(); }  }
 			: null;
@@ -781,6 +781,11 @@ public class ACCOUNTING {
 				, limit
 				, callback 
 		);
+	}
+	public static AccountingIncome saveAccountingIncome(Occam occam, AccountingIncome income) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().saveAccountingIncome(ctx, income);
+		}
 	}
 	
 

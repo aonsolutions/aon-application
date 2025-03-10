@@ -16,12 +16,15 @@ import com.esferalia.aon.occam.api.json.AccountTrialBalanceReportJSON;
 import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
 import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.json.AccountingReportParamsJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -81,6 +84,23 @@ public class AccountingServlet extends AonApiHttpServlet{
 
 	}
 		
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+		try {
+			AonApiData api = initialize(req);
+			
+			Object object = new AonRouting(api)
+				.addRoute(INCOMES, AccountingServlet::deleteIncome)
+				.apply();
+			
+			response(req, resp, object);
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+
+	}
+
 	private static JSONObject getTrialBalance(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		AccountingReportParams params = AccountingReportParamsJSON.fromJSON( jsonParams );
@@ -114,28 +134,34 @@ public class AccountingServlet extends AonApiHttpServlet{
 		
 		return array;
 	}
-	
-	private static JSONArray getIncomes(AonApiData api) {
-		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(
-			 api.getDomain().getName()
-			,api.getDomain().getId()
-			,api.getUser().getLogin()
-			)
-		.map( AccountingIncomeJSON::to )
-		.filter( Optional::isPresent )
-		.map( Optional::get );
-		JSONArray array = stream.collect(Collector.of(JSONArray::new, JSONArray::put, JSONArray::put)); 
-		stream.close();
-		return array;
-	}
-	
 	private static JSONObject setExpense(AonApiData api) {
 		return api.getData();
 	}
 	
-	private static JSONObject setIncome(AonApiData api) {
-		return api.getData();
+	private static JSONArray getIncomes(AonApiData api) {
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(api.getOccam(),api.getDomain().getId())
+			.map( AccountingIncomeJSON::to )
+			.filter( Optional::isPresent )
+			.map( Optional::get );
+		JSONArray array = stream.collect(Collector.of(JSONArray::new, JSONArray::put, JSONArray::put)); 
+		stream.close();
+		return array;
 	}
-	
+	private static JSONObject setIncome(AonApiData api) {
+		JSONObject jsonParams = api.getData();
+		if (JsonUtils.isEmpty(jsonParams)) {
+			throw new AonCoreException("El ingreso es un dato obligatorio.");
+		}
+		AccountingIncome income = AccountingIncomeJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("El ingreso es un dato obligatorio."));
+		income = ACCOUNTING.saveAccountingIncome(api.getOccam(), income);
+		return AccountingIncomeJSON.to( income )
+			.orElse(new JSONObject());
+	}
+	private static JSONObject deleteIncome(AonApiData api) {
+		return api.getData();
+		// TODO
+	}
+		
 }
 
