@@ -745,7 +745,7 @@ public class JooqEnterpriseSalaryBuilder {
 		.fetchStreamInto(SALARY_PAYMENT)
 		.filter(Objects::nonNull)
 		.forEach(sp -> {
-			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getQuote());
+			double amount = firstNonZeroOrZero(sp.getQuote(), sp.getAmount());
 			inKindDeductions.compute(sp.getSalary(), ( k, v ) -> v == null ? amount : amount + v);
 		});
 		
@@ -1484,5 +1484,10 @@ public class JooqEnterpriseSalaryBuilder {
 		
 		
 	}*/
+	
+	private static double firstNonZeroOrZero (  Double ...values) {
+		return Arrays.stream(values).filter(AonNumberUtils::isValid).filter( d -> d != 0.00 ).findFirst().orElse(0.00);
+	}
+	
 	
 }
