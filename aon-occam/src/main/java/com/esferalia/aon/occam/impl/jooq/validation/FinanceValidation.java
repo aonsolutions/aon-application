@@ -285,9 +285,7 @@ public class FinanceValidation {
 
 	public static void validatePay(AONContext ctx, Finance finance) {
 		Finance original = FinanceDAO.getFinance(ctx, finance.getId());
-		if (original == null ) {
-			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
-		}
+		if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
 		if (finance.isDirty()) {
 			if (!AonNumberUtils.equals( finance.getPayMethod(), original.getPayMethod())) {
 				int i = ctx.getDslContext().update(FINANCE)

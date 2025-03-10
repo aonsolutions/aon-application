@@ -7,12 +7,17 @@
   background-color: #fafafa;
 }
 
-.aonLoginForm{
-    margin-top: 50px;
+
+.aonLoginForm {
+    margin-top: 600px;
 }
 
 #divCompanyLogoForm {
     display:none;
+}
+
+.aonMobileSubContent{
+    overflow-y: visible !important;
 }
 
 .aonCardUploadToast {

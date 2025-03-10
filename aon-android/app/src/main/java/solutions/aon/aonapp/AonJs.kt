@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +14,7 @@ import android.os.Environment
 import android.os.PersistableBundle
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.util.Base64
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
@@ -24,7 +27,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 class AonJs(private val webView: WebView?, private val context: Context) : ComponentActivity() {
 
@@ -102,9 +107,30 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
     @JavascriptInterface
     fun openFile(data:String) {
         val json = JSONObject(data)
-        val url = json.getString("url")
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(intent)
+        val base64 = json.optString("content")
+        val title = json.optString("title")
+        val mimeType = json.optString("mimeType")
+        val url = json.optString("url")
+
+        if(base64.isNotBlank()) {
+            val fileBytes = Base64.decode(base64, Base64.DEFAULT)
+
+            val downloadsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val file = File(downloadsDirectory, title);
+            FileOutputStream(file).use { it.write(fileBytes) }
+
+            val fileUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(fileUri, mimeType)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Permitir acceso temporal
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Evitar problemas en algunas versiones de Android
+            }
+            context.startActivity(intent)
+        } else {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
+        }
     }
 
     @JavascriptInterface
@@ -113,8 +139,6 @@ class AonJs(private val webView: WebView?, private val context: Context) : Compo
         val json = JSONObject(data)
         val url = json.getString("url")
         val title = json.getString("title")
-        //val url = "https://www.industrialhama.com/wp-content/uploads/2018/06/Ejemplo-pdf.pdf"
-        // val title = "prueba"
         val fileName = "$title.pdf"
         downloadFile(context,url,title,title)
         Thread.sleep(1000)

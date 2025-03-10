@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -116,6 +117,11 @@ public class CompanyDAO {
 		@Override
 		public EnterpriseActivity apply(Record r) {
 			return build(r);
+		}
+		
+		public static Optional<EnterpriseActivity> buildOptional(Record rec) {
+			if (rec.getValue(ENTERPRISE_ACTIVITY.ID) == null) return Optional.empty();
+			return Optional.of (build(rec)); 
 		}
 		
 		public static EnterpriseActivity build(Record r) {

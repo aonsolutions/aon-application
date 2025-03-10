@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocType;
 
 import es.translogia.tedi.ewok.TediInvoice;
 
-public class Rawdoc implements Serializable {
+public class Rawdoc implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -3954007129622239737L;
 	private static final String BUCKET = "aon-upload-post"; //"aon-rawdoc";
@@ -150,6 +150,7 @@ public class Rawdoc implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -159,6 +160,7 @@ public class Rawdoc implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -168,6 +170,7 @@ public class Rawdoc implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public String getModificationUser() {
 		return modificationUser;
 	}
@@ -177,6 +180,7 @@ public class Rawdoc implements Serializable {
 		return this;
 	}
 	
+	@Override
 	public Date getModificationDate() {
 		return modificationDate;
 	}

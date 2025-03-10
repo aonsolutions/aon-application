@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -50,13 +49,14 @@ import com.esferalia.aon.file.seres.connect2.salesresponse.v2.data.ORSPC;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.seres.ftp.FtpException;
+import com.esferalia.aon.occam.api.model.seres.SeresPath;
 import com.esferalia.aon.seres.ftp.FtpFile;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.reader.connect.ConnectSalesReader;
 import com.esferalia.aon.seres.writer.connect2.ConnectSalesResponseOccam;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public class FtpSalesDownloadHandler implements Serializable {
 	
@@ -73,7 +73,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 	private Integer port;
 	private String user;
 	private String password;
-	private String remotePath;
 	
 	private Date date;
 	private boolean deleteOnComplete;
@@ -114,14 +113,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 
 	public void setServer(String server) {
 		this.server = server;
-	}
-	
-	public String getRemotePath() {
-		return remotePath;
-	}
-
-	public void setRemotePath(String remotePath) {
-		this.remotePath = remotePath;
 	}
 	
 	public String getUser() {
@@ -194,10 +185,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 			user = pUser.getValue();
 		if (pPasswd != null)
 			password = pPasswd.getValue();
-		if (pPath != null)
-			remotePath = pPath.getValue();
-		else 
-			remotePath = "/";
 	}
 	
 	private void checkValidLogin() {
@@ -216,7 +203,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 			AppParamUtil.insertParameter("SERES_FTP_SERVER_PORT", String.valueOf(port));
 		AppParamUtil.insertParameter("SERES_FTP_USER", user);
 		AppParamUtil.insertParameter("SERES_FTP_PASSWORD", password);
-		AppParamUtil.insertParameter("SERES_FTP_PATH_ORDER", remotePath);
+		AppParamUtil.insertParameter("SERES_FTP_PATH_ORDER", "");
 	}
 	
 	public void onShowFtpEdi(ActionEvent event) {
@@ -254,9 +241,6 @@ public class FtpSalesDownloadHandler implements Serializable {
 	}
 	
 	public void onSelectFtpDirectory(ActionEvent event) {
-		if (remoteDirectoryModel.isRowAvailable()){
-			setRemotePath((String) remoteDirectoryModel.getRowData());
-		}
 		remoteDirectoryList = null;
 		remoteDirectoryModel = null;
 	}
@@ -267,17 +251,18 @@ public class FtpSalesDownloadHandler implements Serializable {
 			checkValidLogin();
 		}
 		try {
-			List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
-					remotePath, date, date, server, port, user,
-					password);
-			ConnectSalesReader reader = new ConnectSalesReader();
-			com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
-					controller);
 			unreadSalesList = new LinkedList<>();
-			if(list!=null && !list.isEmpty()){
-				list.forEach(ftpFile -> {
-					unreadSalesList.add(obtainStrippedItem(reader, connectHandler, ftpFile));
-				});
+			for (SeresPath seresPath : SeresPath.getReceptionOrders()) {
+				List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
+					seresPath.getPath(), date, date, server, port, user, password);
+				ConnectSalesReader reader = new ConnectSalesReader();
+				com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler connectHandler = new com.code.aon.ui.sales.importer.edi.EdiSalesImporterHandler(
+					controller);
+				if(list!=null && !list.isEmpty()){
+					list.forEach(ftpFile -> {
+						unreadSalesList.add(obtainStrippedItem(reader, connectHandler, ftpFile, seresPath));
+					});
+				}
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -295,12 +280,13 @@ public class FtpSalesDownloadHandler implements Serializable {
 		unreadSalesModel = null;
 	}
 	
-	private FtpFileItem obtainStrippedItem(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile) {
+	private FtpFileItem obtainStrippedItem(ConnectSalesReader reader, EdiSalesImporterHandler connectHandler, FtpFile ftpFile, SeresPath seresPath) {
 		FtpFileItem ftpFileItem = new FtpFileItem();
 		ftpFileItem.setFtpFile(ftpFile);
+		ftpFileItem.setSeresPath(seresPath);
 		ftpFileItem.setOrders(new LinkedList<>());
 		
-		byte[] byteFile = obtainFtpFile(ftpFile.getName());
+		byte[] byteFile = obtainFtpFile(seresPath, ftpFile.getName());
 		List<RECTL> rectlList = null;
 		try {
 			rectlList = obtainStrippedFileOrders(reader, byteFile);
@@ -348,9 +334,9 @@ public class FtpSalesDownloadHandler implements Serializable {
 		getLogPanel().finish();
 	}
 	
-	private byte[] obtainFtpFile(String name) {
+	private byte[] obtainFtpFile(SeresPath seresPath, String name) {
 		try {
-			return SeresFtpConnectionProvider.retrieveFile(remotePath,
+			return SeresFtpConnectionProvider.retrieveFile(seresPath.getPath(),
 					name, server, port, user, password);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -363,7 +349,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		if(getUnreadSalesModel().isRowAvailable()){
 			FtpFileItem ftpFileItem = (FtpFileItem) getUnreadSalesModel().getRowData();
 			
-			byte[] byteFile = obtainFtpFile(ftpFileItem.getFtpFile().getName());
+			byte[] byteFile = obtainFtpFile(ftpFileItem.getSeresPath(), ftpFileItem.getFtpFile().getName());
 			
 			FileOutput output = null;
 			HttpServletResponse response = null;
@@ -427,7 +413,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 				}
 			}
 			if(isDeleteOnComplete()){
-				deleteFile(ftpFileItem.getFtpFile());
+				deleteFile(ftpFileItem.getSeresPath(), ftpFileItem.getFtpFile());
 			}
 		}
 		
@@ -436,18 +422,18 @@ public class FtpSalesDownloadHandler implements Serializable {
 	public void onDeleteFile(ActionEvent event) {
 		if (getUnreadSalesModel().isRowAvailable()) {
 			FtpFileItem ftpFileItem = (FtpFileItem) getUnreadSalesModel().getRowData();
-			deleteFile(ftpFileItem.getFtpFile());
+			deleteFile(ftpFileItem.getSeresPath(), ftpFileItem.getFtpFile());
 			unreadSalesList.remove(ftpFileItem);
 			getUnreadSalesModel().setWrappedData(unreadSalesList);
 		}
 	}
 		
-	private boolean deleteFile(FtpFile ftpFile) {
+	private boolean deleteFile(SeresPath seresPath, FtpFile ftpFile) {
 		if (ftpFile!=null) {
 			getLogPanel().info(
 					"Borrando el fichero EDI del servidor FTP de SERESNET");
 			try {
-				String remotePath = this.remotePath;
+				String remotePath = seresPath.getPath();
 				remotePath += remotePath != null && remotePath.endsWith("/") ? ""
 						: "/";
 				remotePath += ftpFile.getName();
@@ -474,6 +460,8 @@ public class FtpSalesDownloadHandler implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private FtpFile ftpFile;
 		private List<FtpFileOrder> orders;
+		private SeresPath seresPath;
+		
 		public FtpFile getFtpFile() {
 			return ftpFile;
 		}
@@ -485,6 +473,17 @@ public class FtpSalesDownloadHandler implements Serializable {
 		}
 		public void setOrders(List<FtpFileOrder> orders) {
 			this.orders = orders;
+		}
+		
+		public SeresPath getSeresPath() {
+			if(seresPath == null) {
+				seresPath = SeresPath.RECEPCION_ORDERS_D96A;
+			}
+			return seresPath;
+		}
+		
+		public void setSeresPath(SeresPath seresPath) {
+			this.seresPath = seresPath;
 		}
 	}
 	

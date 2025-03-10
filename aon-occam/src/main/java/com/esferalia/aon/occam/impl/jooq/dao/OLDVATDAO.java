@@ -139,6 +139,8 @@ public class OLDVATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_PERCENT
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
+				,INVOICE_FISCAL.VAT_UNION
+				,INVOICE_FISCAL.VAT_UNION_EXTERNAL
 				,INVOICE_FISCAL.VAT_IMPORTATION
 				,INVOICE_DUA.ID
 				,INVOICE.WITHHOLDING
@@ -421,6 +423,8 @@ public class OLDVATDAO  {
 				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
 				
+				.setVatUnion(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_UNION)))
+				.setVatUnionExternal(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_UNION_EXTERNAL)))
 				.setVatImportation(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_IMPORTATION)))
 				.setDuaLinked(rec.getValue(INVOICE_DUA.ID) != null)
 				

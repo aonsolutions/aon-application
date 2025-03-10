@@ -47,7 +47,7 @@ public class VatContext implements Serializable {
 	private VatDeductionType vatDeductionType;
 	private boolean farmerRegime;
 	private boolean prepayment;
-	private boolean vatImportation;
+	private boolean vatImportation;       // En Ventas se utiliza para Ventanilla Unica (OSS) Régimen de Importación 
 	private boolean duaLinked;
 	private double base;
 	private double percentage;
@@ -72,9 +72,10 @@ public class VatContext implements Serializable {
 	private Date rectificateInvoiceTaxDate; // Fecha IVA de la factura rectificada (se utiliza al generar el Modelo 349)
 	private int rectificateYear;            // Año del periodo de la factura rectificada (se utiliza al generar el Modelo 349)
 	private Period rectificatePeriod;       // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
+	private boolean vatUnion;               // Ventanilla Unica (OSS) - Régimen de la Unión (Ventas)
+	private boolean vatUnionExternal;       // Ventanilla Unica (OSS) - Régimen Exterior a la Unión (Ventas)
 	
-	
-	// GETTERS Y SETTERS
+	// GETTERS Y SETTERS ------------------------------------------------------------------------------------------
 	
 	public Integer getInvoice() {
 		return invoice;
@@ -524,7 +525,24 @@ public class VatContext implements Serializable {
 		return this;
 	}
 	
-	// Filter methods
+	public boolean isVatUnion() {
+		return vatUnion;
+	}
+	public VatContext setVatUnion(boolean vatUnion) {
+		this.vatUnion = vatUnion;
+		return this;
+	}
+	
+	public boolean isVatUnionExternal() {
+		return vatUnionExternal;
+	}
+	public VatContext setVatUnionExternal(boolean vatUnionExternal) {
+		this.vatUnionExternal = vatUnionExternal;
+		return this;
+	}
+	
+	// OTHER METHODS -----------------------------------------------------------------------------------------------------
+	
 	public boolean isVatGeneralRegime(VATRegime defaultRegime) {
 		return (defaultRegime == VATRegime.GENERAL && getVatRegime() == null) || getVatRegime() == VATRegime.GENERAL;
 	}
@@ -618,9 +636,11 @@ public class VatContext implements Serializable {
 	public boolean isWithoutRightDeductionType() {
 		return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
 	}
-	
 	public boolean isSpainDocumentCountry() {
 		return this.registryDocumentCountry == null || this.registryDocumentCountry == Country.ES; 
+	}
+	public boolean isSalesOSS() {
+		return (invoiceType == InvoiceType.SALES && (isVatUnion() || isVatUnionExternal() || isVatImportation()));
 	}
 	
 }

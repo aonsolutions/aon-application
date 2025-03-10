@@ -224,49 +224,12 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				
 				rawdoc = AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
 				json.put("id", rawdoc.getId()); 
-
-				exportDocument(api, documentId);
 			}
 			return json;
 		} else return new JSONObject(rawdoc.getJson());
 	}
 	
 	private static JSONObject refreshProcessing(AonApiData api) {
-  		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
-  		
-		Company cp = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-		if (!AonStringUtils.isBlank(cp.getDocument())) {
-			OCRCompaniesResponse companiesResponse = OCRInvofox.getCompanies(invofoxConfiguration.getApiKey(),
-					invofoxConfiguration.getApiUrl(), OCRCompanyParams.get().withTaxId(cp.getDocument()));
-			
-			List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
-			if (!companies.isEmpty()) {
-				OCRCompany ocrCompany = companies.get(0);
-				
-				OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get();
-				ocrDocumentParams.withEnvironment(invofoxConfiguration.getEnvironment());
-				ocrDocumentParams.sort(OCRNames.CREATION, OCRDocumentsParams.DESC);
-				ocrDocumentParams.withCompany(ocrCompany.getId());
-				ocrDocumentParams.withPublicState(OCRSeverity.approved);
-				ocrDocumentParams.withPublicState(OCRSeverity.discarded);
-				ocrDocumentParams.withPublicState(OCRSeverity.error);
-				ocrDocumentParams.withPublicState(OCRSeverity.pendingCorrection);
-				ocrDocumentParams.withPublicState(OCRSeverity.pendingDecission);
-				ocrDocumentParams.withPublicState(OCRSeverity.rejected);
-
-				OCRDocumentsResponse response = OCRInvofox.getDocuments(invofoxConfiguration.getApiKey(),
-						invofoxConfiguration.getApiUrl(), ocrDocumentParams);
-				response.getDocuments().orElse(new LinkedList<>()).forEach(d -> {
-					if(d.getId().isPresent() && d.getPublicState().isPresent()) {
-						String documentId = d.getId().get();
-						if(OCRSeverity.approved.equals(d.getPublicState().get())) {
-							acceptDocument(api, documentId);
-						} else rawdocDocument(api, documentId);
-					}
-				});
-			}
-		}
-		
 		String jobId = generateJobId();
 		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
@@ -384,8 +347,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 								.setValue(documentId)
 								.setStartDate(new Date());
 						AON.saveInvoiceData(api.getDomain(), api.getUser(), invoiceData);
-						
-						exportDocument(api, documentId);
 					}
 
 					if(invofoxConfiguration.isAutoRecord()) {					
@@ -401,14 +362,6 @@ public class InvofoxServlet extends AonApiHttpServlet {
 			rawdocDocument(api, documentId);
 			return new JSONObject();
 		}
-	}
-	
-	private static void exportDocument(AonApiData api, String documentId) {
-		JSONObject data = new JSONObject();
-		data.put("_id", documentId);
-		data.put("publicState", "exported");
-		api.setData(data);
-		updateDocument(api);
 	}
 
 	public static JSONObject getDocument(Domain domain, User user, String documentId) {

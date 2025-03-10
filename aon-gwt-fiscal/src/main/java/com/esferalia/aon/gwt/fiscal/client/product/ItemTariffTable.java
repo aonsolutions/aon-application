@@ -21,7 +21,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemTariff;
 import com.esferalia.aon.occam.api.model.product.ItemTariffType;
 import com.esferalia.aon.occam.api.model.product.Product;
-import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -328,8 +328,16 @@ public abstract class ItemTariffTable extends ScrollPanel{
 				@Override
 				public void onSuccess(List<ItemTariff> itemTariffsDb) {
 					itemTariffsDb.forEach(tariff -> tariff.setTariffType((byte)1));
+					
+					List<Integer> itemTariffIds = itemTariffsDb.stream().map(itemTariff -> itemTariff.getTariff().getId()).collect(Collectors.toList());
+					
+					List<ItemTariff> removeItemTariffs = itemTariffs.stream().filter(itemTariff -> itemTariffIds.contains(itemTariff.getTariff().getId())).collect(Collectors.toList());
+					itemTariffs.removeAll(removeItemTariffs);
+					
 					itemTariffs.addAll(itemTariffsDb);
+					
 					itemTariffs.sort((o1, o2) -> o1.getTariff().getName().compareTo(o2.getTariff().getName()));
+					
 					success.accept(itemTariffs);
 				}
 				

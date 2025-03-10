@@ -6,7 +6,6 @@ import java.io.Writer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 
 public class Mod202Writer {
@@ -29,7 +28,8 @@ public class Mod202Writer {
 
 	
 	private enum Writers {
-		 AEAT_2024		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2024))	, Mod202WriterAEAT2024::new)
+		 AEAT_2025		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2025))	, Mod202WriterAEAT2025::new)
+		,AEAT_2024		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2024 && mod202.getYear() < 2025)), Mod202WriterAEAT2024::new)
 		,AEAT_2023		(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2023))	, Mod202WriterAEAT2023::new)
 		,AEAT_2019		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2019 && mod202.getYear() < 2023))	, Mod202WriterAEAT2019::new)
 		,AEAT_2017_1	(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()))	, Mod202WriterAEAT20172::new)

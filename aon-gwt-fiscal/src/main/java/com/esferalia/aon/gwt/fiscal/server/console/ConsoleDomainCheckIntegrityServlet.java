@@ -5,18 +5,12 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.jooq.Schema;
 import org.jooq.tools.json.ParseException;
 
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AONContext.UnpooledCloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
@@ -24,6 +18,11 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDomainCheckIntegrity;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Console Domain Check Integrity Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/ConsoleDomainCheckIntegrityServlet" })
 public class ConsoleDomainCheckIntegrityServlet extends ConsoleAbstractServlet {
@@ -41,16 +40,16 @@ public class ConsoleDomainCheckIntegrityServlet extends ConsoleAbstractServlet {
 		DomainParams domainParams = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
-			try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(domainParams.getSchema())) {
+			try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(domainParams.getDbSchema())) {
 				Schema schema = ctx.getDslContext().meta()
-					.getSchemas(domainParams.getSchema())
+					.getSchemas(domainParams.getDbSchema())
 					.stream()
 					.findFirst()
 					.orElse(null);
 				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
 					.setAONContext(ctx)
 					.setSchema(schema)
-					.setSchemaName(domainParams.getSchema())
+					.setSchemaName(domainParams.getDbSchema())
 					.setDomain(new Domain().setId(domainParams.getId()));
 				consoleParams.setFromConnection(conParams);
 				ConsoleDomainCheckIntegrity.check(consoleParams);

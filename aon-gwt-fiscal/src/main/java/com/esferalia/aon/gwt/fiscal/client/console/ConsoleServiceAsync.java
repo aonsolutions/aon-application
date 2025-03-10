@@ -16,10 +16,10 @@ public interface ConsoleServiceAsync {
 
 	void getSchemas(Occam occam, AsyncCallback<String[]> callback);
 	void getDomains(DomainParams params, AsyncCallback<LinkedList<ConsoleDomain>> asyncCallback);
-	void deleteDomain(DomainParams params, Integer domainId, AsyncCallback<Boolean> callback);
-	void changeActive(DomainParams params, Integer domainId, boolean active, AsyncCallback<Domain> callback);
-	void changeExpirationDate(DomainParams params, Integer domainId, Date expireDate, AsyncCallback<Domain> callback);
-	void switchRemoteAccess(DomainParams params, Integer domainId, AsyncCallback<Boolean > callback);
+	void deleteDomain(String schema, Integer domainId, AsyncCallback<Boolean> callback);
+	void changeActive(String schema, Integer domainId, boolean active, AsyncCallback<Domain> callback);
+	void changeExpirationDate(String schema, Integer domainId, Date expireDate, AsyncCallback<Domain> callback);
+	void switchRemoteAccess(String schema, Integer domainId, AsyncCallback<Boolean > callback);
 	void availableUsers(Occam occam, Integer domainId, AsyncCallback<LinkedList<User>> callback);
 	void getAonTables(AsyncCallback<String[]> asyncCallback);
 	void getTableRow(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);

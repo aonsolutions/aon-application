@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -170,7 +171,8 @@ public interface IAccounting {
 	public List<AmortizationType> getAmortizationTypeList(CloseableAONContext ctx, AmortizationTypeParams params) throws AonCoreException;
 	public void deleteAmortizationTypes(CloseableAONContext ctx, List<Integer> deleteIds) throws AonCoreException;
 	public void saveAmortizationType(CloseableAONContext ctx, AmortizationType amortizationType) throws AonCoreException;
-	
-	
+
+	// **************************************** [ACCOUNTING INCOMES]
+	public Stream<AccountingIncome> getAccountingIncomes(CloseableAONContext ctx, int domain, String query, int offset, int limit, IDAOCallback cbk);
 	
 }

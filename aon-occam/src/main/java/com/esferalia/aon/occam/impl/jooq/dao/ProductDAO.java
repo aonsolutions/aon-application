@@ -1,8 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
-import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
@@ -19,6 +19,8 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -26,13 +28,16 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductParams;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
@@ -128,11 +133,23 @@ public class ProductDAO {
 		SelectConditionStep<Record> select = ctx.getDslContext()
 		.select()
 		.from(PRODUCT)
+		.join(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 		.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
 		.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
 		.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
+		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
 		.where(condition);
+		
+		System.out.println(ctx.getDslContext().select()
+		.from(PRODUCT)
+		.join(ITEM).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+		.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
+		.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
+		.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
+		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+		.where(condition).getSQL(ParamType.INLINED));
 		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "code"))
@@ -190,7 +207,39 @@ public class ProductDAO {
 		if(null != params.getProductComposition())
 			condition = condition.and(PRODUCT.COMPOSITION.eq(params.getProductComposition() ? (byte) 1 : 0));
 		
+		if(null != params.getDomainType())
+			condition = condition.and(ITEM.BARCODE.isNotNull())
+					   .and(DSL.length(ITEM.BARCODE).eq(12))
+					   .and(getDomainTypeChar(params.getDomainType()));
+		
 		return condition;
+	}
+
+	private static Condition getDomainTypeChar(DomainType domainType) {
+		switch (domainType) {
+			case CONSULTANCY:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(4), DSL.inline(1)).eq("1");
+			case GARAGE:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(5), DSL.inline(1)).eq("1");
+			case ACADEMY:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(6), DSL.inline(1)).eq("1");
+			case HOTEL:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(7), DSL.inline(1)).eq("1");
+			case ADMIN:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(8), DSL.inline(1)).eq("1");
+			case OFFICE:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(9), DSL.inline(1)).eq("1");
+			case GENERIC:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(10), DSL.inline(1)).eq("1");
+			case COMMERCE:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(11), DSL.inline(1)).eq("1");
+			case KIT_DIGITAL:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(12), DSL.inline(1)).eq("1");
+			default:
+				return DSL.substring(ITEM.BARCODE, DSL.inline(3), DSL.inline(1)).eq("1");
+//				return DSL.substring(ITEM.BARCODE, 2, 3).eq("1");
+		}
+		
 	}
 
 	public static Product get(AONContext ctx, ProductFilter filter) {
@@ -315,7 +364,7 @@ public class ProductDAO {
 		}
 		
 		public static Product build(Record r, com.esferalia.aon.jooq.tables.Product alias) {
-			return new Product()
+			Product product = new Product()
 					.setId(getValue(r, alias.ID))
 					.setName(getValue(r, alias.NAME))
 					.setDomain(new Domain().setId(getValue(r, alias.DOMAIN)))
@@ -350,6 +399,41 @@ public class ProductDAO {
 					.setCreationUser(getValue(r, alias.CREATION_USER))
 					.setModificationDate(getValue(r, alias.MODIFICATION_DATE))
 					.setModificationUser(getValue(r, alias.MODIFICATION_USER));
+			
+			if(checkField(r, ITEM.ID) && r.get(ITEM.ID) != null) {
+				product.setItem(
+						new Item()
+						.setId(getValue(r, ITEM.ID))
+						.setDomain(new Domain().setId(getValue(r, ITEM.DOMAIN)))
+						.setDetail(getValue(r, ITEM.DETAIL))
+						.setDetail2(getValue(r, ITEM.DETAIL2))
+						.setDetail3(getValue(r, ITEM.DETAIL3))
+						.setDescription(getValue(r, ITEM.DESCRIPTION))
+						.setSerialNumber(getValue(r, ITEM.SERIAL_NUMBER))
+						.setSerialDate(getValue(r, ITEM.SERIAL_DATE))
+						.setExpireDate(getValue(r, ITEM.EXPIRE_DATE))
+						.setPrice(getDouble(r, ITEM.PRICE))
+						.setStatus(ProductStatus.safeValueOf(getValue(r, ITEM.STATUS)))
+						.setExpensesPercent(getDouble(r, ITEM.EXPENSES_PERCENT))
+						.setExpensesFixed(getDouble(r, ITEM.EXPENSES_FIXED))
+						.setProfitPercent(getDouble(r, ITEM.PROFIT_PERCENT))
+						.setPurchasePrice(getDouble(r, ITEM.PURCHASE_PRICE))				
+						.setInternet(getBoolean(r, ITEM.INTERNET))
+						.setBarcode(getValue(r, ITEM.BARCODE))
+						.setPackFormatTag(new Tag().setId(getValue(r, ITEM.PACK_FORMAT_TAG)))
+						.setPackUnits(getInteger(r, ITEM.PACK_UNITS))
+						.setPackUnitsTag(new Tag().setId(getValue(r, ITEM.PACK_UNITS_TAG)))
+						.setPackMeasurement(getDouble(r, ITEM.PACK_MEASUREMENT))
+						.setPackMeasurementTag(new Tag().setId(getValue(r, ITEM.PACK_MEASUREMENT_TAG)))
+						.setStockUnitTag(new Tag().setId(getValue(r, ITEM.STOCK_UNIT_TAG)))
+						.setCreationUser(getValue(r, ITEM.CREATION_USER))
+						.setCreationDate(getValue(r, alias.CREATION_DATE))
+						.setModificationUser(getValue(r, ITEM.MODIFICATION_USER))
+						.setModificationDate(getValue(r, ITEM.MODIFICATION_DATE))
+				);
+			}
+			
+			return product;
 		}
 		
 	}

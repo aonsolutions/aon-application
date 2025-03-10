@@ -166,7 +166,7 @@
 /* .aon-EmployeeTree-Employees */
 .gwt-Selector .aon-MainCreta-Enterprises .gwt-Tree .gwt-TreeItem,
 	.gwt-Selector .aon-EmployeeTree-Employees .gwt-Tree .gwt-TreeItem {
-	min-width: 260px;
+	min-width:225px;
 	position: relative;
 	padding: 4px 4px 4px 4px;
 	background-color: #fafafa;
@@ -400,6 +400,10 @@
 .aon_custom_row:hover, .aon_utility_option:hover, .aon_custom_text_box:hover, .aon_custom_text_area:hover
 	{
 	background-color: #f1f1f1;
+}
+
+.aon_toolbar_button_container .aon_custom_text_box:hover {
+	background-color: transparent;
 }
 
 .aon_icon_info {
@@ -655,4 +659,26 @@ input[type='checkbox']:checked {
 .aon_contract_medium_card {
 	max-width: 67rem;
 	min-height: 7rem;
+}
+
+.gwt-MenuBarPopup{
+	border-radius: 2px;
+}
+
+.gwt-Selector .gwt-MenuBarPopup{
+	padding: 0;
+}
+
+.gwt-Selector .gwt-MenuBar.gwt-MenuBar-vertical{
+	min-height: 1.5rem;
+	height: 100%;
+	display: flex;
+}
+
+.gwt-Selector .gwt-MenuBar.gwt-MenuBar-vertical::hover{
+	background-color: #e3e8f3;	
+}
+
+.gwt-Selector .gwt-MenuBar-vertical .gwt-MenuItem{
+	padding: .4rem 1rem;
 }

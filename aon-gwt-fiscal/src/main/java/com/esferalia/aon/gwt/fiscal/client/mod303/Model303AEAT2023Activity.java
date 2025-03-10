@@ -18,9 +18,9 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEAT2023SimplifiedRegi
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityDesk;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -211,14 +211,21 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		
-		final Model303AEAT2023ActivitySelection activitySelection = new Model303AEAT2023ActivitySelection();
-		activitySelection.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+		if (cbk.getModel().getYear() >= 2025) {
+			final Model303AEAT2025ActivitySelection activitySelection = new Model303AEAT2025ActivitySelection();
+			activitySelection.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+			scroll.setWidget(activitySelection);
+		} else {
+			final Model303AEAT2023ActivitySelection activitySelection = new Model303AEAT2023ActivitySelection();
+			activitySelection.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
+			scroll.setWidget(activitySelection);
+		}
 		
-		scroll.setWidget(activitySelection);
+//		scroll.setWidget(activitySelection);
 		return scroll;
 	}
 
-	private void checkAccept(IModel303AEATActivityCallback<Mod303Activity> callback, final Epigraph selected) {
+	private void checkAccept(IModel303AEATActivityCallback<Mod303Activity> callback, final IEpigraph selected) {
 		if (callback.getActivity().isNotEmpty()) {
 			AonConfirmDialog.showConfirm(AON.MSG.epigrapChanged(), () -> accept(callback, selected));
 		} else {
@@ -226,7 +233,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 		}
 	}
 	
-	private void accept(IModel303AEATActivityCallback<Mod303Activity> callback, final Epigraph selected) {
+	private void accept(IModel303AEATActivityCallback<Mod303Activity> callback, final IEpigraph selected) {
 		callback.getActivity().initialize();
 		callback.getActivity().setEpigraph(selected.getEpigraph());
 		callback.getActivity().setDescription(selected.getDescription());
@@ -373,8 +380,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			.addCell( new Label(AON.MSG.irpfActivityEmp()), AON.CSS.aonBorderBottom() )
 			.addCell( emp);
 		
-		// DANA y LORCA a partir del ultimo periodo de 2024, se realizan el cálculo del importe de la reducción aquí y además Lorca y DANA no se pueden marcar los dos, si uno de ellos está en exclusiva
-		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
+		// DANA y LORCA: Ultimo periodo de 2024, se realizan el cálculo del importe de la reducción aquí y además Lorca y DANA no se pueden marcar los dos, si uno de ellos está en exclusiva
+		if (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) {
 			
 			lor.setEnabled(callback.getActivity().getDana() != 1 && callback.getModel().isEditable());
 			lor.addChangeHandler(event-> {
@@ -429,7 +436,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"), AON.CSS.aonBorderBottom())
 				.addCell(dana);
 			
-		} else {
+		} else  if (callback.getModel().getYear() <= 2024) {
 			
 		    // Hasta 3T de 2024 (solo Lorca)
 			lor.addChangeHandler(event-> {
@@ -705,7 +712,13 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			.addCell( new AonBoxLabel("C") )
 			.addCell( dev );
 		
-		if ((callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) || (callback.getModel().getYear() > 2024)) {
+		// A partir de 2025 no hay reducciones, aunque se muestra la casilla, siempre está a cero
+		if (callback.getModel().getYear() >= 2025) {
+			red.setEnabled(false);			
+		}
+		else if (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod()) {
+			
+			// Lorca y DANA: Ultimo periodo del 2024
 			
 			lorcaReduction.setEnabled(callback.getActivity().getLor() == 2 && callback.getModel().isEditable());
 			lorcaReduction.addValueChangeHandler(event -> {
@@ -732,7 +745,8 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 				.addCell(danaReduction);
 			
 			red.setEnabled(false);
-		} else {
+		} else if (callback.getModel().getYear() <= 2024) {
+			// Lorca: Hasta 3T de 2024
 			red.setEnabled(callback.getActivity().getLor() != 1);
 		}
 		
@@ -742,7 +756,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 			ValueChangeEvent.<Mod303Activity>fire(Model303AEAT2023Activity.this, callback.getActivity());
 		});
 		tab.addRow()
-			.addCell( new Label(AON.MSG.reductions() + " (total)"), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
+			.addCell( new Label(AON.MSG.reductions() + ((callback.getModel().getYear() <= 2024) ? " (total)" : "")), AON.CSS.aonBorderBottom(), AON.CSS.aonWidth400() )
 			.addCell( new AonBoxLabel("D") )
 			.addCell( red );
 		

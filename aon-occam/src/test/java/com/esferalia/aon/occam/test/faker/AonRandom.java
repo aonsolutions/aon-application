@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -29,12 +30,12 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -289,10 +290,20 @@ public class AonRandom {
 		return getAccount(ctx, 0);
 	}
 	public static Account getAccount(AONContext ctx, int nullThreshold){
+		return getAccount(ctx, nullThreshold, null);
+	}
+	public static Account getAccount(AONContext ctx, int nullThreshold, AccountFilter filter){
 		return gt(nullThreshold)
-			?AccountDAO.getRandom(ctx, null )
+			?AccountDAO.getRandom(ctx, filter )
 			:null;
 	}
+	public static Account getAccountIncome(AONContext ctx){
+		return getAccount(ctx, -1, f -> f.getCodeProperty().like("7%").and( f.getEntryEnabledProperty().eq((byte) 1) ));
+	}
+	public static Account getAccountCash(AONContext ctx){
+		return getAccount(ctx, -1, f -> f.getCodeProperty().like("570%").and( f.getEntryEnabledProperty().eq((byte) 1) ));
+	}
+
 	public static AccountPeriod getAccountPeriod(AONContext ctx) {
 		return getAccountPeriod(ctx, 0);
 	}

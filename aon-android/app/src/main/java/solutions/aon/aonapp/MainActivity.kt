@@ -1,7 +1,9 @@
 package solutions.aon.aonapp
 
+import MyWebChromeClient
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -30,6 +32,7 @@ const val PAGE_URL = "https://aon.solutions"
 class MainActivity : ComponentActivity() {
 
     private val aonJs: AonJs by lazy { AonJs(null, this) }
+    private lateinit var webChromeClient: MyWebChromeClient
     private val locationPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             when {
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        webChromeClient = MyWebChromeClient(this)
         locationPermissionRequest.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -69,6 +73,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        webChromeClient.onActivityResult(requestCode, resultCode, data)
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Composable
@@ -89,9 +97,11 @@ class MainActivity : ComponentActivity() {
                     settings.setSupportZoom(false)
                     settings.domStorageEnabled = true
                     settings.databaseEnabled = true
+                    settings.allowFileAccess = true
+                    settings.allowContentAccess = true
                     settings.cacheMode = WebSettings.LOAD_DEFAULT
                     settings.textZoom = 100
-
+                    webChromeClient = mainActivity.webChromeClient
                     WebView.setWebContentsDebuggingEnabled(true)
                 }
             },

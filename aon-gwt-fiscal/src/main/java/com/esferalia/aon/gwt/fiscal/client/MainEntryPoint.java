@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
+import com.esferalia.aon.gwt.fiscal.client.tariff.TariffModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
@@ -272,6 +273,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== PRODRUCT
 	//
 	private static final String PRODUCT_MODULE_ENTRY_POINT = "ProductModule";
+	//
+	//    ================================================================== TARIFF
+	//
+	private static final String TARIFF_MODULE_ENTRY_POINT = "TariffModule";
 	
 	
 
@@ -947,6 +952,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					ProductModule productModule = new ProductModule();
 					productModule.onModuleLoad();
+				}
+				
+			});
+		} else if( entryPoint.equalsIgnoreCase(TARIFF_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(ProductModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					TariffModule tariffModule = new TariffModule();
+					tariffModule.onModuleLoad();
 				}
 				
 			});

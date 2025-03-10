@@ -132,7 +132,7 @@ public class AonDomainBox extends ResizeComposite implements HasValue<String>
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
 					DomainParams  params = new DomainParams()
-						.setSchema(getSchema())
+						.setDbSchema(getSchema())
 						.setQuery(request.getQuery());
 					if (onlyParents) {
 						params.setDomainManagement(onlyParents);

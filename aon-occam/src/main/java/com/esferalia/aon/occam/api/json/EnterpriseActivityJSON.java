@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -27,21 +28,26 @@ public class EnterpriseActivityJSON {
 		}
  		return list;
 	}
-	
 	public static EnterpriseActivity fromJSON(JSONObject json) {
 		if(json == null) return new EnterpriseActivity();
-		return new EnterpriseActivity()
-			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-			.setPrincipal(JsonUtils.getboolean(json, IJsonNames.PRINCIPAL))
-			.setIae(new Iae().setId(JsonUtils.getInteger(json, IJsonNames.IAE)))
-			.setEpigraph(JsonUtils.getString(json, IJsonNames.EPIGRAPH))
-			.setCnae(JsonUtils.getInteger(json, IJsonNames.CNAE))
-			.setCnaeCode(JsonUtils.getString(json, IJsonNames.CNAE_CODE))
-			.setCnaeDescription(JsonUtils.getString(json, IJsonNames.CNAE_DESCRIPTION))
-			.setVatRegime(VATRegime.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_REGIME)))
-			.setVatExemptionCause(VATExemptionCause.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_EXEMPTION_CAUSE)))
-			;
+		return from(json).orElse(new EnterpriseActivity());
+	}
+	
+	public static Optional<EnterpriseActivity> from(JSONObject json) {
+		if(json == null) return Optional.empty();
+		return Optional.of(
+			new EnterpriseActivity()
+				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+				.setPrincipal(JsonUtils.getboolean(json, IJsonNames.PRINCIPAL))
+				.setIae(new Iae().setId(JsonUtils.getInteger(json, IJsonNames.IAE)))
+				.setEpigraph(JsonUtils.getString(json, IJsonNames.EPIGRAPH))
+				.setCnae(JsonUtils.getInteger(json, IJsonNames.CNAE))
+				.setCnaeCode(JsonUtils.getString(json, IJsonNames.CNAE_CODE))
+				.setCnaeDescription(JsonUtils.getString(json, IJsonNames.CNAE_DESCRIPTION))
+				.setVatRegime(VATRegime.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_REGIME)))
+				.setVatExemptionCause(VATExemptionCause.safeValueOf(JsonUtils.getString(json, IJsonNames.VAT_EXEMPTION_CAUSE)))
+		);
 	}
 	
 	public static JSONArray toJSON(List<EnterpriseActivity> list) {
@@ -56,19 +62,26 @@ public class EnterpriseActivityJSON {
 		return array;
 	}
 	
-	public static JSONObject toJSON(EnterpriseActivity object) {
-		if(object == null) return new JSONObject();
-		return new JSONObject()
-			.put(IJsonNames.ID, object.getId())
-			.put(IJsonNames.DESCRIPTION, object.getDescription())
-			.put(IJsonNames.PRINCIPAL,  object.isPrincipal())
-			.put(IJsonNames.IAE, object.getIae().getId())
-			.put(IJsonNames.EPIGRAPH, object.getEpigraph())
-			.put(IJsonNames.CNAE, object.getCnae())
-			.put(IJsonNames.CNAE_CODE, object.getCnaeCode())
-			.put(IJsonNames.CNAE_DESCRIPTION, object.getCnaeDescription())
-			.put(IJsonNames.VAT_REGIME, object.getVatRegime().name())
-			.put(IJsonNames.VAT_EXEMPTION_CAUSE, object.getVatExemptionCause() != null ? object.getVatExemptionCause().name() : null)
-			;
+	public static JSONObject toJSON(EnterpriseActivity act) {
+		return to(act).orElse( new JSONObject() );
+	}
+	public static Optional<JSONObject> to(Optional<EnterpriseActivity> act) {
+		return act.flatMap( a -> to( a) );
+	}
+	public static Optional<JSONObject> to(EnterpriseActivity object) {
+		if(object == null) return Optional.empty();
+		return Optional.of(
+			new JSONObject()
+				.put(IJsonNames.ID, object.getId())
+				.put(IJsonNames.DESCRIPTION, object.getDescription())
+				.put(IJsonNames.PRINCIPAL,  object.isPrincipal())
+				.put(IJsonNames.IAE, object.getIae().getId())
+				.put(IJsonNames.EPIGRAPH, object.getEpigraph())
+				.put(IJsonNames.CNAE, object.getCnae())
+				.put(IJsonNames.CNAE_CODE, object.getCnaeCode())
+				.put(IJsonNames.CNAE_DESCRIPTION, object.getCnaeDescription())
+				.put(IJsonNames.VAT_REGIME, object.getVatRegime().name())
+				.put(IJsonNames.VAT_EXEMPTION_CAUSE, object.getVatExemptionCause() != null ? object.getVatExemptionCause().name() : null)
+		);
 	}
 }

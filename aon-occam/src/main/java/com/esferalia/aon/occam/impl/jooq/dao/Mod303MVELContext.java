@@ -116,6 +116,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		return 0;
 	}
 	
+	public double calculatePorcentajeIngresoCuenta2025(int actIdx) {
+		if (isLastPeriod()) return 0.0;
+		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
+		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		double por = 0.0;
+		if (epig != null) por = epig.getVatPorc();
+		return por;
+	}
+	
 	public double calculatePorcentajeIngresoCuenta2023(int actIdx,double covid) {
 		if (isLastPeriod()) return 0.0;
 		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
@@ -187,6 +196,38 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		}
 
 		double f1 = (quota - reductions) * percent / 100;
+		f1 = f1 * tempIndex;
+		f1 = AonMathUtils.round(f1 * daysTrim / diasActividad);
+		return f1;
+	}
+	
+	public double calculateIngresoCuenta2025(int actNum, double daysAct, double daysTrim, double reductions, double tempIndex, double percent) {
+		if (isLastPeriod())
+			return 0.0;
+		double diasActividad = 0;
+		if (tempIndex == 0) {
+			tempIndex = 1;
+			diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303), FiscalUtils.getPeriodEnd(mod303)) + 1.0;
+		} else {
+			diasActividad = daysAct;
+		}
+		double q = 0.0;
+		double comisiones = 0.0;
+		for (int i = 0; i < 7; i++ ) {
+			double result = this.mod303.getActivityList().get(actNum).getModules().get(i).getResult();
+			if ( AonMathUtils.isZero(result)) {
+				double value = this.mod303.getActivityList().get(actNum).getModules().get(i).getValue();
+				double factor = this.mod303.getActivityList().get(actNum).getModules().get(i).getFactor();
+				result = AonMathUtils.round(value * factor);
+			}
+			String desc   = this.mod303.getActivityList().get(actNum).getModules().get(i).getDescription();
+			if ( AonStringUtils.isNotBlank(desc) && AonStringUtils.containsIgnoreCase(desc, "comisiones")) {
+				comisiones = result;
+			} else {
+				q = q + result; 
+			}
+		}
+		double f1 = ((q - reductions) * percent / 100) + comisiones;
 		f1 = f1 * tempIndex;
 		f1 = AonMathUtils.round(f1 * daysTrim / diasActividad);
 		return f1;

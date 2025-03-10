@@ -90,7 +90,7 @@ public class VATDAO  {
 		,INVOICE_TAX.DEDUCTIBLE_QUOTA	,INVOICE_TAX.VAT_DEDUCTION_TYPE};
 	
 	private static final Field<?>[] INVOICE_DUA_FIELDS = new Field[]{
-		INVOICE_FISCAL.VAT_IMPORTATION	,INVOICE_DUA.ID};
+		INVOICE_FISCAL.VAT_UNION, INVOICE_FISCAL.VAT_UNION_EXTERNAL, INVOICE_FISCAL.VAT_IMPORTATION, INVOICE_DUA.ID};
 
 	private static final Field<?>[] ENTERPRISE_ACTIVITY_FIELDS = new Field[]{
 		 ENTERPRISE_ACTIVITY.ID			,ENTERPRISE_ACTIVITY.DESCRIPTION
@@ -132,7 +132,7 @@ public class VATDAO  {
 			.select( INVOICE_DETAIL_FIELDS )
 			.select( INVOICE_TAX_FIELDS )
 			.select( ENTERPRISE_ACTIVITY_FIELDS )
-			.select( INVOICE_DUA_FIELDS )
+			.select( INVOICE_DUA_FIELDS )			
 			.from(INVOICE_TAX)
 			.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -623,7 +623,9 @@ public class VATDAO  {
 				.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
 				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
-				
+
+				.setVatUnion(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_UNION)))
+				.setVatUnionExternal(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_UNION_EXTERNAL)))
 				.setVatImportation(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_IMPORTATION)))
 				.setDuaLinked(rec.getValue(INVOICE_DUA.ID) != null)
 				

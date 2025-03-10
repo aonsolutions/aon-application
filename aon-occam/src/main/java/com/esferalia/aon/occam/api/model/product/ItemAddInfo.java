@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.api.model.product;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ItemAddInfo {
+public class ItemAddInfo implements Serializable {
 
+	private static final long serialVersionUID = -3946597484641126158L;
+	
 	private Integer id;
 	private Integer domain;
 	private Integer product;
@@ -13,7 +16,7 @@ public class ItemAddInfo {
 	private Date date;
 	
 	public ItemAddInfo() {
-	
+		super();
 	}
 
 	public Integer getId() {

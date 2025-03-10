@@ -10,7 +10,8 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -94,9 +95,9 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C371,mod,vat.getQuota()))
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
-		,AR_C372	(Mod303Key.AR_C372,(mod,vat) -> operacionesISPFilter(vat)
+		,AR_C372	(Mod303Key.AR_C372,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C372,mod,vat.getBase()))
-		,AR_C373	(Mod303Key.AR_C373,(mod,vat) -> operacionesISPFilter(vat)
+		,AR_C373	(Mod303Key.AR_C373,(mod,vat) -> operacionesISPFilter(vat) && !vat.isRectification()
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C373,mod,vat.getQuota()))
 		
 		// Recargo equivalencia al 0.5%
@@ -241,9 +242,11 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 		,AR_C055(Mod303Key.AR_C055,(mod,vat) -> ventasISP (vat, mod)
 			,(ctx,mod,vat) -> add(Mod303Key.AR_C055,mod,vat.getBase()))
 		// Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS
-		,AR_C056(Mod303Key.AR_C056)
+		,AR_C056(Mod303Key.AR_C056, (mod,vat) -> (vat.isSalesOSS() && !vat.isSpainDocumentCountry())
+				,(ctx,mod,vat) -> add(Mod303Key.AR_C056,mod,vat.getBase()))
 		// Operaciones sujetas y acogidas a la OSS
-		,AR_C058(Mod303Key.AR_C058)
+		,AR_C058(Mod303Key.AR_C058, (mod,vat) -> (vat.isSalesOSS() && vat.isSpainDocumentCountry())
+				,(ctx,mod,vat) -> add(Mod303Key.AR_C058,mod,vat.getBase()))
 		// Recargo presentación extemporánea	IVA deducible por importaciones de bienes corrientes
 		,AR_C061	(Mod303Key.AR_C061)
 		// Intereses demora	IVA deducible por importaciones de bienes de inversión
@@ -390,7 +393,7 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 	//	-----------------------------------------------------------------------
 	private static boolean isCommonNationalSales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isNational() && vat.isSales() && !vat.isRectification();
+			&& vat.isNational() && vat.isSales() && !vat.isRectification() && !vat.isSalesOSS();
 	}
 	private static boolean hasPercent0(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_0;	
@@ -419,7 +422,7 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 	
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
-			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat));		
+			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat)) && !vat.isSalesOSS();		
 	}
 	private static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
@@ -491,11 +494,11 @@ class Mod303ARABA2025Declaration extends Mod303ARABA {
 	}
 	
 	public static boolean  ventasExtraComunitariasCanCeuBienes(VatContext vat, Mod303 mod) {
-		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales());
+		return !vat.isVatSurchargeRegime() && !vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()) && !vat.isSalesOSS();
 	}
 	public static boolean  ventasExtraComunitariasCanCeuServicios(VatContext vat, Mod303 mod) {
 		boolean add = !vat.isVatSurchargeRegime() 
-			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales())));
+			&& ((vat.isService() && (vat.isExtracommunitySales() || vat.isCanCeuMelSales()))) && !vat.isSalesOSS();
 		if ( add && mod.getYear() == 2021) {
 			add = FiscalUtils.isInPeriodRange(mod, vat.getTaxDate());
 		} 

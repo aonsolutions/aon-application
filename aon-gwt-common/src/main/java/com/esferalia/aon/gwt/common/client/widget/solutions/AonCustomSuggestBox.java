@@ -7,16 +7,29 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class AonCustomSuggestBox extends HTMLPanel {
-
+	
 	private static final String EMPTY_STRING = "";
 	private HTMLPanel suggestBoxPanel = new HTMLPanel(EMPTY_STRING);
 	private SuggestBox suggestBox;
+	
+	private AonCustomSuggestOracle customOracle;
 	
 	public AonCustomSuggestBox(String title) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
 		addStyleName(AON.CSS.aonCustomTextBox());
 
+		createTitle(title);
+		createInput();
+	}
+	
+	public AonCustomSuggestBox(String title, AonCustomSuggestOracle customOracle) {
+		super(EMPTY_STRING);
+		addStyleName(AON.CSS.aonFlexColumn());
+		addStyleName(AON.CSS.aonCustomTextBox());
+
+		this.customOracle = customOracle;
+		
 		createTitle(title);
 		createInput();
 	}
@@ -32,7 +45,9 @@ public class AonCustomSuggestBox extends HTMLPanel {
 		suggestBoxPanel.addStyleName(AON.CSS.aonFlexBetween());
 		suggestBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		
-		suggestBox = new SuggestBox();
+		if(null == customOracle) suggestBox = new SuggestBox();
+		else suggestBox = new SuggestBox(customOracle);
+		
 		suggestBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
 		suggestBoxPanel.add(suggestBox);
 		add(suggestBoxPanel);

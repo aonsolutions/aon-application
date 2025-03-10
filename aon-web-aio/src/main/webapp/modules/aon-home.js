@@ -1,7 +1,7 @@
-import { AonElement } from 'aonsolutions/components/AonElement.js';
-import { AonHeader } from 'aonsolutions/modules/aon-header.js';
-import { MSG, CSS, EVENT, TAG } from 'aonsolutions/environments/environments.js'; 
-import * as LS from 'aonsolutions/services/localStorageService.js';
+import { AonElement } from '../components/AonElement.js';
+import { AonHeader } from '../modules/aon-header.js';
+import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
+import * as LS from '../services/localStorageService.js';
 import { AonNewMenu } from './aon-new-menu.js';
 import { AonConfig } from './aon-config.js';
 import { AonHelp } from './aon-help.js';
@@ -9,10 +9,10 @@ import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
 import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
-import { clearAuth } from 'aonsolutions/services/service.js';
+import { clearAuth } from '../services/service.js';
 
-import { AonMobileHeader } from 'aonsolutions/modules/aon-mobile-header.js';
-import { AonMobileMenu } from 'aonsolutions/modules/aon-mobile-menu.js';
+import { AonMobileHeader } from '../modules/aon-mobile-header.js';
+import { AonMobileMenu } from '../modules/aon-mobile-menu.js';
 
 export class AonHome extends AonElement {
 

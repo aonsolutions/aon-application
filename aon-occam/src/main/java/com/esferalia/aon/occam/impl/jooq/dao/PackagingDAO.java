@@ -514,43 +514,45 @@ public class PackagingDAO {
 		
 		Item containerItem = ItemDAO.get(ctx, packaging.getContainer().getItem(), new Options().setFull(true));
 		containerItem.getItemComposition().stream().forEach(itemComposition -> {
-			Integer productId = itemComposition.getComposition().getProduct().getId();
-			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
-				.and(f.getItem().eq(itemComposition.getCompositionItemId())));
-			double q = dd.getQuantity() - itemComposition.getQuantity();
-			if(q == 0) {
-				DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
-			} else {
-				dd.setQuantity(q);
-				DeliveryDetailDAO.save(ctx, dd);
+			if(itemComposition.getId() != null) {
+				Integer productId = itemComposition.getComposition().getProduct().getId();
+				DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+					.and(f.getItem().eq(itemComposition.getCompositionItemId())));
+				double q = dd.getQuantity() - itemComposition.getQuantity();
+				if(q == 0) {
+					DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
+				} else {
+					dd.setQuantity(q);
+					DeliveryDetailDAO.save(ctx, dd);
+				}
+				SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
+				sd.setDelivered(sd.getDelivered() - itemComposition.getQuantity());
+				if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
+					sd.setDelivery(null);
+				sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
+				SalesDetailDAO.save(ctx, sd);
+				
+				// TODO FALTA REVISAR PEDIDO!!!
+				List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+					f.getSalesProperty().eq(sd.getSales().getId())
+					.and(f.getDomainProperty().eq(sd.getDomain()))
+					.and(f.getDeliveryProperty().isNotNull()))
+					.toList();
+				if(list.isEmpty()) {
+					Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
+					sales.setStatus(SalesStatus.PENDING);
+					SalesDAO.save(ctx, sales);
+				}
+				
+				Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
+				if(stock.getId() != null) {
+					stock.setQuantity(stock.getQuantity() + itemComposition.getQuantity());
+					WarehouseDAO.saveStock(ctx, stock);
+				}
+				
+				deleteItemBox(ctx, deliveryId, productId, itemComposition.getQuantity());	
 			}
-			SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
-			sd.setDelivered(sd.getDelivered() - itemComposition.getQuantity());
-			if(bool && sd.getDelivery() != null && sd.getDelivered() == 0.0 && sd.getDelivery().equals(deliveryId))
-				sd.setDelivery(null);
-			sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
-			SalesDetailDAO.save(ctx, sd);
-			
-			// TODO FALTA REVISAR PEDIDO!!!
-			List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
-				f.getSalesProperty().eq(sd.getSales().getId())
-				.and(f.getDomainProperty().eq(sd.getDomain()))
-				.and(f.getDeliveryProperty().isNotNull()))
-				.toList();
-			if(list.isEmpty()) {
-				Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
-				sales.setStatus(SalesStatus.PENDING);
-				SalesDAO.save(ctx, sales);
-			}
-			
-			Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
-				.and(f.getItemProperty().eq(itemComposition.getCompositionItemId())));
-			if(stock.getId() != null) {
-				stock.setQuantity(stock.getQuantity() + itemComposition.getQuantity());
-				WarehouseDAO.saveStock(ctx, stock);
-			}
-			
-			deleteItemBox(ctx, deliveryId, productId, itemComposition.getQuantity());
 		});
 		
 		// QUITAR envase en delivery detail.
@@ -804,13 +806,11 @@ public class PackagingDAO {
 	}
 	
 	private static String calculateSerialNumber(String barcode) {
-		Integer year = AonDateUtils.getYear(new Date());
-		String init = year.toString().substring(2,4);
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return b.parseGS1128().get(GS1128Codes.CODE_10);
 		}
-		return init + Integer.toString(AonDateUtils.getDayOfYear(new Date()));
+		return null;
 	}
 	
 	private static Date calculateSerialDate(String barcode) {
@@ -818,7 +818,7 @@ public class PackagingDAO {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
 			return AonDateUtils.parse(b.parseGS1128().get(GS1128Codes.CODE_15), "yyMMdd");
 		}
-		return new Date();
+		return null;
 	}
 	
 	private static String calculateBarcode(String barcode) {

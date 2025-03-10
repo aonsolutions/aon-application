@@ -1,16 +1,16 @@
 
-import * as LS from 'aonsolutions/services/localStorageService.js';
-import * as UA from 'aonsolutions/services/userAgentService.js';
+import * as LS from './services/localStorageService.js';
+import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';
-import { setPosition } from 'aonsolutions/services/maps.js';
-import { waitEl } from 'aonsolutions/services/utils.js';
-import { EVENT, TAG } from 'aonsolutions/environments/environments.js';
-import { saveAuthDevice } from 'aonsolutions/services/authDeviceService.js';
+import { setPosition } from './services/maps.js';
+import { waitEl } from './services/utils.js';
+import { EVENT, TAG } from './environments/environments.js';
+import { saveAuthDevice } from './services/authDeviceService.js';
 
-import 'aonsolutions/css/aon-css-utils.css';
-import 'aonsolutions/css/aon-grid.css';
-import 'aonsolutions/css/aon-mobile.css';
-import 'aonsolutions/css/aon-figma.css';
+import './css/aon-css-utils.css';
+import './css/aon-grid.css';
+import './css/aon-mobile.css';
+import './css/aon-figma.css';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -54,10 +54,8 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-    // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
-	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
-	let themeUrl = UA.isMobile() 
-        ? LS.AON_MOBILE_ANDROID 
+   	let themeUrl = UA.isMobile() 
+        ? (UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME) 
         : getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;
 
 	return new Promise((resolve, reject) => {
