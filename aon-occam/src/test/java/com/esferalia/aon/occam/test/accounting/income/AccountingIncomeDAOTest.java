@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -34,8 +35,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
@@ -43,22 +46,42 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	private static final double DELTA = 1e-8;
 
 	@Test
-	public void saveCustomerBankTest() {
-		RegistryBank rbank = ensureBanks();
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
-		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(-1,1,64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
-		Customer customer = AonRandom.getCustomer(ctx);
-		income.setCustomer(customer);
-		income.setBank(rbank);
+	public void getCashTest() {
+		AccountingIncome income = getCashIncome( );
 		ensureAccountPeriod( income );
+		AccountingIncomeDAO.save(ctx, income);
+		assertNotNull(income);
+		assertNotNull(income.getAccountEntry());
+		assertTrue(income.getAccountEntry().isPresent());
+		AccountEntry ae = income.getAccountEntry().get();
+		assertNotNull( ae.getId() );
+		Optional<AccountingIncome> optInc = AccountingIncomeDAO.get( ctx, DOMAIN_ID, ae.getId() , null);
+		assertNotNull(optInc);
+		assertTrue(optInc.isPresent());
+		assertTrue(optInc.get().getAccountEntry().isPresent());
+		AccountEntry saved = optInc.get().getAccountEntry().get();
+		assertTrue(AonCollectionUtils.isNotEmpty(saved.getDetails()));
+		assertEquals(2, AonCollectionUtils.size(saved.getDetails()));
+		AccountEntryDetail expDetail = saved.getDetails().get(0);
+		assertNotNull(expDetail.getAccount());
+		assertNotNull(expDetail.getBalancingAccount());
+		assertEquals(expDetail.getConcept(), income.getConcept());
+		assertEquals(expDetail.getDocumentNumber(), income.getReferenceCode());
+		AccountEntryDetail bankDetail = saved.getDetails().get(1);
+		assertNotNull(bankDetail.getAccount());
+		assertNotNull(bankDetail.getBalancingAccount());
+		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
+		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
+		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
+		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 		
+	}	
+	
+	@Test
+	public void saveCustomerBankTest() {
+		AccountingIncome income = getCustomerIncome( );
+		ensureAccountPeriod( income );
 		AccountingIncomeDAO.save(ctx, income);
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
@@ -66,7 +89,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		AccountEntry ae = income.getAccountEntry().get();
 		assertNotNull(ae.getId());
 		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(date, ae.getEntryDate());
+		assertEquals(income.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
@@ -87,6 +110,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 		
+		Customer customer = income.getCustomer()
+			.orElseThrow( () -> new AonCoreException("Sin cliente"));
 		assertNotNull(income.getFinance());
 		assertTrue(income.getFinance().isPresent());
 		Finance finance = income.getFinance().get();
@@ -110,19 +135,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 
 	@Test
 	public void saveBankTest() {
-		RegistryBank rbank = ensureBanks();
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
-		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
-		income.setBank(rbank);
+		AccountingIncome income = getBankIncome( );
 		ensureAccountPeriod( income );
-		
 		AccountingIncomeDAO.save(ctx, income);
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
@@ -130,7 +144,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		AccountEntry ae = income.getAccountEntry().get();
 		assertNotNull(ae.getId());
 		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(date, ae.getEntryDate());
+		assertEquals(income.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
@@ -152,17 +166,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	
 	@Test
 	public void saveCashTest() {
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
-		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
-		Account cashAccount = AonRandom.getAccountCash(ctx);
-		income.setCashAccount(cashAccount);
+		AccountingIncome income = getCashIncome( );
 		ensureAccountPeriod( income );
 		
 		AccountingIncomeDAO.save(ctx, income);
@@ -172,7 +176,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		AccountEntry ae = income.getAccountEntry().get();
 		assertNotNull(ae.getId());
 		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(date, ae.getEntryDate());
+		assertEquals(income.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
@@ -194,19 +198,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	
 	@Test
 	public void deleteCashTest() {
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
-		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
-		Account cashAccount = AonRandom.getAccountCash(ctx);
-		income.setCashAccount(cashAccount);
+		AccountingIncome income = getCashIncome( );
 		ensureAccountPeriod( income );
-		
 		AccountingIncomeDAO.save(ctx, income);
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
@@ -220,21 +213,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 
 	@Test
 	public void deleteFinanceTest() {
-		RegistryBank rbank = ensureBanks();
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
-		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(-1,1,64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(300.0);
-		Customer customer = AonRandom.getCustomer(ctx);
-		income.setCustomer(customer);
-		income.setBank(rbank);
+		AccountingIncome income = getCustomerIncome( );
 		ensureAccountPeriod( income );
-		
 		AccountingIncomeDAO.save(ctx, income);
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
@@ -247,6 +227,58 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertNull(deleted);
 		
 	}
+	
+	@Test
+	public void updateCashTest() {
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(100.0);
+		Account cashAccount = AonRandom.getAccountCash(ctx);
+		income.setCashAccount(cashAccount);
+		ensureAccountPeriod( income );
+		AccountingIncomeDAO.save(ctx, income);
+		assertNotNull(income);
+		assertNotNull(income.getAccountEntry());
+		assertTrue(income.getAccountEntry().isPresent());
+		//AccountEntry ae = income.getAccountEntry().get();
+		
+		income.setAmount (AonMathUtils.round( income.getAmount() + 10));
+		AccountingIncome updated = AccountingIncomeDAO.save( ctx, income );
+		
+		assertNotNull(updated);
+		assertNotNull(updated.getAccountEntry());
+		assertTrue(updated.getAccountEntry().isPresent());
+		Optional<AccountingIncome> optSavedUpdate = AccountingIncomeDAO.get( ctx, DOMAIN_ID, updated.getAccountEntry().map( AccountEntry::getId).get(), null);
+		assertNotNull(optSavedUpdate);
+		assertTrue(optSavedUpdate.isPresent());
+		AccountingIncome savedUpdate = optSavedUpdate.get();
+		assertNotNull(savedUpdate.getAccountEntry());
+		assertTrue(savedUpdate.getAccountEntry().isPresent());
+		AccountEntry updatedEntry = AccountEntryDAO.getAccountEntry( ctx, savedUpdate.getAccountEntry().get().getId() );
+		assertTrue(AonCollectionUtils.isNotEmpty(updatedEntry.getDetails()));
+		
+		assertEquals(2, AonCollectionUtils.size(updatedEntry.getDetails()));
+		AccountEntryDetail expDetail = updatedEntry.getDetails().get(0);
+		assertNotNull(expDetail.getAccount());
+		assertNotNull(expDetail.getBalancingAccount());
+		AccountEntryDetail bankDetail = updatedEntry.getDetails().get(1);
+		assertNotNull(bankDetail.getAccount());
+		assertNotNull(bankDetail.getBalancingAccount());
+		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
+		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
+		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
+		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
+		assertEquals(AonMathUtils.absRounded(expDetail.getCredit() - expDetail.getDebit()), savedUpdate.getAmount() , DELTA);
+		assertEquals(AonMathUtils.absRounded(bankDetail.getCredit() - bankDetail.getDebit()), savedUpdate.getAmount() , DELTA);
+	}
+
 	private void ensureAccountPeriod(AccountingIncome exp) {
 		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, exp.getDate() );
 		if (period == null) {
@@ -276,5 +308,50 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 			);
 	}
 	
+	private AccountingIncome getCashIncome() {
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(100.0);
+		Account cashAccount = AonRandom.getAccountCash(ctx);
+		income.setCashAccount(cashAccount);
+		return income;
+	}
 
+	private AccountingIncome getBankIncome() {
+		RegistryBank rbank = ensureBanks();
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(100.0);
+		income.setBank(rbank);
+		return income;
+	}
+	
+	private AccountingIncome getCustomerIncome() {
+		RegistryBank rbank = ensureBanks();
+		AccountingIncome income = new AccountingIncome();
+		income.setDomain(DOMAIN_ID);
+		Date date = AonRandom.getPastDate(-1);
+		income.setDate( date );
+		Account expAccount = AonRandom.getAccountIncome(ctx);
+		income.setExpAccount( expAccount );
+		income.setConcept(AonRandom.string(-1,1,64));
+		income.setReferenceCode( AonRandom.string(32) );
+		income.setAmount(100.0);
+		Customer customer = AonRandom.getCustomer(ctx);
+		income.setCustomer(customer);
+		income.setBank(rbank);
+		return income;
+	}
 }

@@ -124,7 +124,14 @@ public class AccountingIncomeDAO {
 	}
 	
 	private static AccountingIncome update(AONContext ctx, AccountingIncome income) {
-		return income;
+		return income.getAccountEntry()
+			.map( ae -> {
+				delete(ctx, ae);
+				income.setAccountEntry( null );
+				income.setFinance( null );
+				return insert( ctx, income );
+			})
+			.orElseThrow( () -> new AonCoreException("No se pudo modificar el imgreso."));
 	}
 	
 	private static AccountingIncome insert(AONContext ctx, AccountingIncome income) {
