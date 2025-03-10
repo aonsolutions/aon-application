@@ -6531,21 +6531,33 @@ public class SalaryDraft extends ResizeComposite
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
 		if ( percent == null )
 			return newPercentLabel("");
-
+		
 		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
 		switch (type) {
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		case OTHER:
 		case BONUS:
-		case IN_KIND:
-			return newPercentLabel("");
-		case UNEMPLOYMENT:
-			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
-		case COMMON_CONTINGENCY:
-			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
-		default:
-			return newPercentLabel(deduction, percent, getPercentVariable(type));
+		case IN_KIND:{
+			Widget percentLabel = newPercentLabel("");
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
+		case UNEMPLOYMENT:{
+			Widget percentBox = newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
+			percentBox.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentBox;
+		}
+		case COMMON_CONTINGENCY:{
+			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
+		default: {
+			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(type));
+			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			return percentLabel;
+		}
 		}
 	}
 	
