@@ -14,6 +14,8 @@ public class MonthlyDaysEntryExcel implements Serializable {
     private int diasTrabajados;
     private int diasVacaciones;
     private int diasIT;
+    private int diasNoRecuperables;
+    private int diasAusencia;
 	
 	public MonthlyDaysEntryExcel() {
 		super();
@@ -89,8 +91,30 @@ public class MonthlyDaysEntryExcel implements Serializable {
 	public MonthlyDaysEntryExcel setDiasIT(int diasIT) {
 		this.diasIT = diasIT;
 		return this;
-	}	
+	}
 	
+	public int getDiasNoRecuperables() {
+		return diasNoRecuperables;
+	}
+
+	public MonthlyDaysEntryExcel setDiasNoRecuperables(int diasNoRecuperables) {
+		this.diasNoRecuperables = diasNoRecuperables;
+		return this;
+	}
+	
+	public int getDiasAusencia() {
+		return diasAusencia;
+	}
+
+	public MonthlyDaysEntryExcel setDiasAusencia(int diasAusencia) {
+		this.diasAusencia = diasAusencia;
+		return this;
+	}
+	
+	public int getDiasTotal() {
+		return diasLaborables - diasAusencia;
+	}
+
 	@Override
     public String toString() {
         return String.format(

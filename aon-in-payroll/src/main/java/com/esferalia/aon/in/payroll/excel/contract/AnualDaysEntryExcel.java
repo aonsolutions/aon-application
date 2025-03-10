@@ -12,6 +12,9 @@ public class AnualDaysEntryExcel implements Serializable {
     private String document;
     private String naf;
     
+    private String startDate;
+    private String endDate;
+    
     private List<MonthlyDaysEntryExcel> meses = new ArrayList<>();
 	
 	public AnualDaysEntryExcel() {
@@ -42,6 +45,24 @@ public class AnualDaysEntryExcel implements Serializable {
 
 	public AnualDaysEntryExcel setNaf(String naf) {
 		this.naf = naf;
+		return this;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public AnualDaysEntryExcel setStartDate(String startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public AnualDaysEntryExcel setEndDate(String endDate) {
+		this.endDate = endDate;
 		return this;
 	}
 

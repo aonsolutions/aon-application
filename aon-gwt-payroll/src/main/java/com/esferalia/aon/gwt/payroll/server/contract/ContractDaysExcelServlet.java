@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ContractDaysExcelServlet extends HttpServlet {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat MONTH_YEAR_FORMAT = new SimpleDateFormat("MM_yyyy");
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -63,13 +64,11 @@ public class ContractDaysExcelServlet extends HttpServlet {
 					
 				});
 				
-				
-
 			} catch (Exception e) {
 				throw new IllegalArgumentException(e);
 			}
 			
-			String fileName = "Informe_D\u00edas_Contrato";
+			String fileName = "Informe_D\u00edas_Contrato_" + MONTH_YEAR_FORMAT.format(startDate) + ( AonStringUtils.isBlank(req.getParameter("endDate")) || AonStringUtils.equalsIgnoreCase(MONTH_YEAR_FORMAT.format(startDate), MONTH_YEAR_FORMAT.format(endDate)) ? "" : ("_" + MONTH_YEAR_FORMAT.format(endDate)));
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""+ fileName + ".xlsx\";");
 			action.finalize(resp.getOutputStream());

@@ -54,23 +54,38 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
-		// Docuemnto
+		// NAF
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// Start
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// End
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
 		// Procesar automáticamente los 12 meses del annio
-		this.meses.forEach(mes -> {
-			String monthName = obtenerNombreMes(mes.getMes());
+		
+		XSSFCellStyle headerMonth = null;
+		
+		for(WorkplaceMonthlyDaysEntryExcel mes : meses) {
+			String monthName = obtenerNombreMes(mes.getMes()) + " " + mes.getYear();
         	
-    		CellUtil.createCell(row, cellCount, monthName, headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+			headerMonth = null == headerMonth || headerMonth == headerOddMonthCellStyle ? headerEvenMonthCellStyle : headerOddMonthCellStyle;
+			
+    		CellUtil.createCell(row, cellCount, monthName, headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
     		cellCount++;
     		cellCount++;
-    		
-    		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 3, cellCount));
     		cellCount++;
-		});
+    		
+    		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 4, cellCount));
+    		cellCount++;
+    		cellCount++;
+		}
         
         row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -83,23 +98,36 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
-		// Docuemnto
+		// NAF
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// Start
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// End
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
 		// Procesar automáticamente los 12 meses del annio
 		this.meses.forEach(mes -> {
-			CellUtil.createCell(row, cellCount, "D. Mes", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+			CellUtil.createCell(row, cellCount, "DM", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. Laborables", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+    		CellUtil.createCell(row, cellCount, "FS", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. Sab/Dom", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+    		CellUtil.createCell(row, cellCount, "DF", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. Festivos", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+    		CellUtil.createCell(row, cellCount, "DL", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "Hrs. JC", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		cellCount++;
 		});
         
         row = sheet.createRow(rowCount++);
@@ -113,17 +141,27 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
-		// Docuemnto
+		// NAF
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// Start
+		CellUtil.createCell(row, cellCount, "");
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// End
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
 		// Procesar automáticamente los 12 meses del annio
 		this.meses.forEach(workplaceMonthlyDaysEntryExcel -> {
         	addCell(workplaceMonthlyDaysEntryExcel.getDiasMes());
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasLaborables());
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasFinDeSemana());
         	addCell(workplaceMonthlyDaysEntryExcel.getDiasFestivos());
+        	addCell(workplaceMonthlyDaysEntryExcel.getDiasFinDeSemana());
+        	addCell(workplaceMonthlyDaysEntryExcel.getDiasLaborables());
+        	addCell(workplaceMonthlyDaysEntryExcel.getHorasJornada());
         	
+        	cellCount++;
         });
 		
         row = sheet.createRow(rowCount++);
@@ -144,24 +182,42 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "Documento", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
-		// Docuemnto
+		// NAF
 		CellUtil.createCell(row, cellCount, "NAF", headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// Start
+		CellUtil.createCell(row, cellCount, "F. Inicio", headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 15*256);
+		
+		// End
+		CellUtil.createCell(row, cellCount, "F. Fin", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 15*256);
 			
 		// Procesar automáticamente los 12 meses del annio
-		this.meses.forEach(mes -> {
-        	CellUtil.createCell(row, cellCount, "D. Trabajados", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+		headerMonth = null;
+		
+		for (int i = 0; i < meses.size(); i++) {
+			headerMonth = null == headerMonth || headerMonth == headerOddMonthCellStyle ? headerEvenMonthCellStyle : headerOddMonthCellStyle;
+			
+        	CellUtil.createCell(row, cellCount, "DV", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. Vacaciones", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+    		CellUtil.createCell(row, cellCount, "IT", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. IT", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
+    		CellUtil.createCell(row, cellCount, "NR", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
     		
-    		CellUtil.createCell(row, cellCount, "D. No Recuper.", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 15*256);
-        });
+    		CellUtil.createCell(row, cellCount, "DA", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "DT", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "Total", headerMonth);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+		}
 		
 	}
 	
@@ -177,31 +233,50 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		addCell( entry.getFullName() ) ;
 		alignCenter( addCell( entry.getDocument() ) );
 		alignCenter( addCell( entry.getNaf() ) );
+		alignCenter( addCell( entry.getStartDate() ) );
+		alignCenter( addCell( entry.getEndDate() ) );
 		
 		this.meses.forEach(mes -> {
 			MonthlyDaysEntryExcel monthlyDaysEntryExcel = getMes(entry.getMeses(), obtenerNombreMes(mes.getMes()));
 
-			addCell(monthlyDaysEntryExcel.getDiasTrabajados());
-			addCell(monthlyDaysEntryExcel.getDiasVacaciones());
-			addCell(monthlyDaysEntryExcel.getDiasIT());
-			addCell(0);
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasVacaciones())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasVacaciones());
+			
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasIT())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasIT());
+			
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasNoRecuperables())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasNoRecuperables());
+			
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasAusencia())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasAusencia());
+			
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasTrabajados())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasTrabajados());
+			
+			if (checkZeroValue(monthlyDaysEntryExcel.getDiasTotal())) alignCenter(addCell("-"));
+			else addCell(monthlyDaysEntryExcel.getDiasTotal());
 		});
+	}
+	
+	private boolean checkZeroValue(int value) {
+		return 0 == value;
 	}
 
     private static String obtenerNombreMes(int mes) {
         return switch (mes) {
-            case 1 -> "ENE";
-            case 2 -> "FEB";
-            case 3 -> "MAR";
-            case 4 -> "ABR";
-            case 5 -> "MAY";
-            case 6 -> "JUN";
-            case 7 -> "JUL";
-            case 8 -> "AGO";
-            case 9 -> "SEP";
-            case 10 -> "OCT";
-            case 11 -> "NOV";
-            case 12 -> "DIC";
+            case 1 -> "Enero";
+            case 2 -> "Febrero";
+            case 3 -> "Marzo";
+            case 4 -> "Abril";
+            case 5 -> "Mayo";
+            case 6 -> "Junio";
+            case 7 -> "Julio";
+            case 8 -> "Agosto";
+            case 9 -> "Septiembre";
+            case 10 -> "Octubre";
+            case 11 -> "Noviembre";
+            case 12 -> "Diciembre";
             default -> "INV";
         };
     }
