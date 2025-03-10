@@ -120,7 +120,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 		@Override
 		public void execute() {
-			if(mainContrataContractObject.getDomainUserRoles().isBeta()) {
+//			if(mainContrataContractObject.getDomainUserRoles().isBeta()) {
 				AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption( "Informe d\u00edas contrato" );
 				dialog.showCloseButton(true);
@@ -161,10 +161,10 @@ public class MainContrataContract extends MainEntryPoint {
 				
 				dialog.add( periodPanel );
 				dialog.showLoaded();
-			} else {
-				excelContextMenu.hide();
-				AonMessagePanel.showInfo(employeesMessagePanel, "Este proceso se encuentra en desarrollo. Pr\u00f3ximamente estar\u00e1 disponible.");
-			}
+//			} else {
+//				excelContextMenu.hide();
+//				AonMessagePanel.showInfo(employeesMessagePanel, "Este proceso se encuentra en desarrollo. Pr\u00f3ximamente estar\u00e1 disponible.");
+//			}
 		}
 
 	}
