@@ -107,7 +107,11 @@ public class ContractJourneyDuration implements Serializable {
 			String expression = journey.getExpression();
 			if(AonStringUtils.isNotBlank(expression))
 				expression = expression.replace(",", ".");
-			hours += Double.parseDouble(((null == expression || "" == expression || "NL" == expression) ? "0" : expression));
+			try {
+				hours += Double.parseDouble(((null == expression || "" == expression || "NL" == expression) ? "0" : expression));
+			} catch (Exception e) {
+				expression = "NL";
+			}
 			if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
 			if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
 			if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == expression || "" == expression) ? "NL" : expression) + " ";
