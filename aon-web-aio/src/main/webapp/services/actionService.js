@@ -14,7 +14,7 @@ export const openCamera = (ionicData, callback) => {
     }
 }
 
-export const getPosition = (ionicData, callback) => {
+export const getPositionMobile = (ionicData, callback) => {
     window.receivePosition = callback;
     let data = {action: 'getPosition'};
     if(UA.isAndroidApp()) {
@@ -49,8 +49,8 @@ export const printFile = (file) => {
     }
 }
 
-export const openFile = (file) => {
-    let data = {action: 'openFile', url: file.url, title: file.title};
+export const openFileApp = (file) => {
+    let data = {action: 'openFile', url: file.url, title: file.title, content: file.content, mimeType: file.mimeType};
     if(UA.isAndroidApp()) {
         window.Android.openFile(JSON.stringify(data));
     } else if (UA.isIosApp()) {

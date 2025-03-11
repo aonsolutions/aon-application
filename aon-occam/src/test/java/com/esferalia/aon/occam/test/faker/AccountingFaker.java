@@ -4,11 +4,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
@@ -18,8 +21,11 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
@@ -200,4 +206,76 @@ public class AccountingFaker {
 		}
 		return periods;
 	}
+
+	public static AccountingExpense getAccountingExpense(AONContext ctx) {
+		return new AccountingExpense()
+			.setDomain(ctx.getDomainId())
+			.setCreditor( AonFaker.getCreditor(ctx) )
+			.setDate( AonRandom.getPastDate(10) )
+			.setActivity(Optional.ofNullable(AonRandom.getRandomActivity( ctx )).map( a -> a.getId()).orElse( null ))
+			.setExpAccount( getAccount(ctx, "629") )
+			.setConcept(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setReferenceCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setAmount(AonRandom.getDouble(0, 150000))
+			.setBank( AonFaker.getRegistryBank(ctx) )
+			.setCashAccount( getAccount(ctx, "570") )
+			.setComments(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+		;
+	}
+
+	public static AccountingIncome getAccountingIncome(AONContext ctx) {
+		return new AccountingIncome()
+			.setDomain(ctx.getDomainId())
+			.setCustomer( AonFaker.getCustomer(ctx) )
+			.setDate( AonRandom.getPastDate(10) )
+			.setActivity(Optional.ofNullable(AonRandom.getRandomActivity( ctx )).map( a -> a.getId()).orElse( null ))
+			.setExpAccount( getAccount(ctx, "629") )
+			.setConcept(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setReferenceCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setAmount(AonRandom.getDouble(0, 150000))
+			.setBank( AonFaker.getRegistryBank(ctx) )
+			.setCashAccount( getAccount(ctx, "570") )
+			.setComments(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+		;
+	}
+
+	public static AccountEntry getAccountEntry(AONContext ctx) {
+		AccountEntry ae = new AccountEntry()
+			.setId( AonRandom.integer(5, 1000000 ))
+			.setDomain(ctx.getDomainId())
+			.setPeriod( AonRandom.integer(5, 1000000 ))
+			.setPeriodName(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 10))
+			.setPeriodStatus( AonRandom.getRandomAccountPeriodStatus( 10 ) )
+			.setEntryDate( AonRandom.getPastDate(10) )
+			.setEntryType( AonRandom.getRandomAccountEntryType( 10 ) )
+			.setActivity( AonRandom.integer(50, 1000000 ))
+			.setActivityDescription(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 30))
+			.setJournal( AonRandom.integer(25, 1000000 ))
+			.setSecurityLevel( AonRandom.getRandomSecurityLevel())
+			.setComments(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+		;
+		AonCollectionUtils.stream( AonRandom.number(1, 10) )
+			.forEach( i -> ae.addDetail( getAccountEntryDetail(ctx) ));
+		return ae;
+	}
+	
+	public static AccountEntryDetail getAccountEntryDetail(AONContext ctx) {
+		return new AccountEntryDetail()
+			.setId( AonRandom.integer(5, 1000000 ))
+			.setDomain(ctx.getDomainId())
+			.setAccountEntry(AonRandom.integer(5, 1000000 ))
+			.setAccount(AonRandom.integer(5, 1000000 ))
+			.setAccountCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 10))
+			.setAccountDescription(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 10))
+			.setLine( AonRandom.integer(5, 250 ))
+			.setConcept(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 30))
+			.setDebit(AonRandom.getDouble(0, 2500, 2 ))
+			.setCredit(AonRandom.getDouble(0, 2500, 2 ))
+			.setBalancingAccount(AonRandom.integer(5, 1000000 ))
+			.setBalancingAccountCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 10))
+			.setBalancingAccountDescription(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 10))
+			.setDocumentNumber(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 30))
+		;
+	}
+	
 }

@@ -711,7 +711,7 @@ public class ExpressionContext {
 		}
 	}
 
-	public List<LazyExpressionVariable> addLazyExpression(IExpression expression, Date start, Date end) throws ExpressionException {
+	public List<LazyExpressionVariable> addLazyExpression(IExpression expression, Date start, Date end) {
 		String script = expression.getExpression();
 
 		Set<String> inputs = null;

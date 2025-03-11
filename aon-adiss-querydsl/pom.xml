@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>9.23-SNAPSHOT</version>
+  </parent>
+  <groupId>net.aonsolutions</groupId>
+  <artifactId>aon.adiss.querydsl</artifactId>
+  <name>AON ADISS QUERYDSL</name>
+  <description>AON ADISS QUERYDSL</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-maven-plugin</artifactId>
+        <version>5.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>export</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <jdbcDriver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbcDriver>
+          <jdbcUrl>jdbc:sqlserver://aon.adisscloud.es;databaseName=3e891185-f826-4f06-9b53-614a7d69628c;nullCatalogMeansCurrent=true;encrypt=false</jdbcUrl>
+          <jdbcUser>dataloop</jdbcUser>
+          <jdbcPassword>Data123$%</jdbcPassword>
+          <packageName>net.aonsolutions.adiss.querydsl</packageName>
+          <targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
+          <exportBeans>true</exportBeans>
+	 
+          <!--schemaToPackage>true</schemaToPackage-->	
+          <schemaPattern>dbo</schemaPattern>
+          <tableNamePattern>%</tableNamePattern>
+          <namingStrategyClass>com.querydsl.sql.codegen.OriginalNamingStrategy</namingStrategyClass>
+
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.9.0.jre11-preview</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.querydsl</groupId>
+      <artifactId>querydsl-sql</artifactId>
+      <version>5.1.0</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>

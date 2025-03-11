@@ -17,6 +17,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_ALIAS = "accountAlias";
 	public static final String ACCOUNT_CODE = "accountCode";
 	public static final String ACCOUNT_DESCRIPTION = "accountDescription";
+	public static final String ACCOUNT_ENTRY = "accountEntry";
 	public static final String ACCOUNT_ENTRY_ID = "accountEntryId";
 	public static final String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	public static final String ACCOUNT_PARAMS = "accountParams";
@@ -102,6 +103,7 @@ public final class IJsonNames {
 	public static final String CARRIER = "carrier";
 	public static final String CARRIER_PACKING = "carrierPacking";
 	public static final String CARRIER_REFERENCE = "carrierReference";
+	public static final String CASH_ACCOUNT= "cashAccount";
 	public static final String CATEGORY = "category";
 	public static final String CATEGORY_IDS = "categoryIds";
 	public static final String CITY = "city";
@@ -147,6 +149,7 @@ public final class IJsonNames {
 	public static final String CREATION_DATE = "creation_date";
 	public static final String CREATION_USER = "creation_user";
 	public static final String CREDIT = "credit";
+	public static final String CREDITOR = "creditor";
 	public static final String CUSTOMER = "customer";
 	public static final String CUSTOMERS = "customers";
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
@@ -542,6 +545,7 @@ public final class IJsonNames {
 	public static final String REMOTE_ACCESS_ENABLED = "remoteAccessEnabled";
 	public static final String REMOVED = "removed";
 	public static final String REPLACEMENT = "replacement";
+	public static final String REQUISITION = "requisition";
 	public static final String RESERVATION = "reservation";
 	public static final String RESULT = "result";
 	public static final String RESUME = "resume";
@@ -576,6 +580,7 @@ public final class IJsonNames {
 	public static final String SELLERS = "sellers";
 	public static final String SELLER_IDS = "sellerIds";
 	public static final String SENDER = "sender";
+	public static final String SEPA_MANDATE_REF = "sepaMandateRef";
 	public static final String SERFRUIT = "serfruit";
 	public static final String SERIAL_NUMBER = "serialNumber";
 	public static final String SERIAL_DATE = "serialDate";
@@ -685,6 +690,8 @@ public final class IJsonNames {
 	public static final String VAT_EXEMPTION_CAUSE = "vatExemptionCause";
 	public static final String VAT_SUMMARY_TYPE = "vatSummaryType";
 	public static final String VAT_SURCHARGE_REGIME = "vatSurchargeRegime";
+	public static final String VAT_UNION = "vatUnion";
+	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 

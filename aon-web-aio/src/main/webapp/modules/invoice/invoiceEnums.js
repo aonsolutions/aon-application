@@ -182,6 +182,18 @@ export const TaxIVAPercentage = [
   {value:0.0, name:'0%'}
 ];
 
+export const TaxIVAAgriPercentage = [
+  {value:21.0, name:'21%'},
+  {value:12.0, name:'12%'},
+  {value:10.5, name:'10,5%'},
+  {value:10.0, name:'10%'},
+  {value:7.5, name:'7,5%'},
+  {value:5.0, name:'5%'},
+  {value:4.0, name:'4%'},
+  {value:2.0, name:'2%'},
+  {value:0.0, name:'0%'}
+];
+
 export const TaxVatREPercentage = [
   {value:21.0, name:'21%+5,2%'},
   {value:10.0, name:'10%+1,4%'},
@@ -230,10 +242,10 @@ export const TaxIRPFAGRIPercentage = [
   {value:2.0, name:'2%'}
 ];
 
-export const getVats = (administration) => {
+export const getVats = (administration, agri) => {
   if(administration && "CANARIAS" == administration) {
     return TaxVatIGICPercentage;
-  } else return TaxIVAPercentage;
+  } else return agri ? TaxIVAAgriPercentage : TaxIVAPercentage;
 }
 
 export const getVatLabel = (administration) => {
@@ -289,11 +301,11 @@ export const getTaxTypeName = (type, mobile, administration) => {
   } 
 }
 
-export const getTaxPercentageOption = (type, administration) => {
+export const getTaxPercentageOption = (type, administration, agri) => {
   if("CANARIAS" == administration) {
     return TaxVatIGICPercentage;
   } else if(TaxType.IVA === type) {
-    return TaxIVAPercentage;
+    return agri ? TaxIVAAgriPercentage : TaxIVAPercentage;
   } else if(TaxType.IVA_RE === type) {
     return TaxVatREPercentage;
   } else if(TaxType.IGIC === type) {

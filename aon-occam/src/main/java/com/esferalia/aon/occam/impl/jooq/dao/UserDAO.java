@@ -56,6 +56,9 @@ public class UserDAO {
 	}
 	
 	public static User get(CloseableAONContext ctx, com.esferalia.aon.occam.api.model.Domain domain, AonToken aonToken) {
+		// Como aqui puede llegar el primer dominio del schema, que no tiene que ser el del user
+		// Buscamos solo por auth o login por que estamos dentro del schema correcto y son datos que deberian ser unicos y no estar repetidos
+		
 		User user = ctx.getDslContext().select()
 				.from(USER)
 				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))

@@ -1,5 +1,5 @@
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotice, getUserNotice, request, getTaskCount, getSalaryPdf, getBanks } from '../../services/service.js';
+import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotice, getUserNotice, request, getTaskCount, getSalaryPdf, getBanks, getEmployeeLastSalary, getEmployeeSalary, getTaskHolderWorkGroups } from '../../services/service.js';
 import { AonElement } from '../../components/AonElement';
 import '../invoice/aon-invoice-panel.js';
 import * as LS from '../../services/localStorageService.js';
@@ -16,6 +16,7 @@ import { AonIcon } from '../../components/aon-icon.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { formatNumber, isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
+import { getWorkgroups } from '../../services/workgroupService.js';
 
 export class AonMobileHome extends AonElement {
 
@@ -48,7 +49,7 @@ export class AonMobileHome extends AonElement {
         byMonth: true,
       };
     BANKS = [];
-    taskHolder;
+    _filter;
 
 	constructor () {
 		super();
@@ -76,7 +77,7 @@ export class AonMobileHome extends AonElement {
         this.WIDGET_BANKS = this.id + "WidgetBanks";
         this.WIDGET_INGRESOS = this.id + "WidgetIngresos";
         this.WIDGET_GASTOS = this.id + "WidgetGastos";
-        this.taskHolder = {};
+        
 	}
 
     async build() {
@@ -91,29 +92,29 @@ export class AonMobileHome extends AonElement {
                 console.log(error);
               }
             }
-        
-        this.PERIODS = await getPeriods(this.params).catch((error) => {
-            console.log(error);
-            return [];
-        });
+        if (this.getDur().isAccounting()){
+            this.PERIODS = await getPeriods(this.params).catch((error) => {
+                console.log(error);
+                return [];
+            });
+            let currentYear = new Date().getFullYear();
+            let currentYearPeriods = this.PERIODS.filter((p) => 
+                new Date(p.initiationDate).getFullYear() === currentYear
+            );      
+            let selectedPeriod = null; 
 
-        let currentYear = new Date().getFullYear();
-        let currentYearPeriods = this.PERIODS.filter((p) => 
-            new Date(p.initiationDate).getFullYear() === currentYear
-        );      
-        let selectedPeriod = null; 
-
-        if (currentYearPeriods.length > 0) {
-            selectedPeriod = currentYearPeriods.reduce((latest, p) => 
-                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            );
-        } else if (this.PERIODS.length > 0) {
-            selectedPeriod = this.PERIODS.reduce((latest, p) => 
-                new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
-            );
+            if (currentYearPeriods.length > 0) {
+                selectedPeriod = currentYearPeriods.reduce((latest, p) => 
+                    new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+                );
+            } else if (this.PERIODS.length > 0) {
+                selectedPeriod = this.PERIODS.reduce((latest, p) => 
+                    new Date(p.initiationDate) > new Date(latest.initiationDate) ? p : latest
+                );
+            }
+            this.selectedPeriod = selectedPeriod;
         }
         
-        this.selectedPeriod = selectedPeriod;
         
         this.accounts = await this.getData();
         if(this.accounts)
@@ -146,12 +147,12 @@ export class AonMobileHome extends AonElement {
         const widgetOrder = [
             { id: this.WIDGET_TC, builder: this.widgetTimeControl, show: this.getDur().isTimecontrol()},
             { id: this.WIDGET_NOMINA, builder: this.widgetNomina, show: this.getDur().isPayroll()},
-            { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: this.widgetSolicitudesRecbidas, show: this.getDur().isMessenger() },
-            { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: this.widgetSolicitudesEnviadas, show: this.getDur().isMessenger() },
+            { id: this.WIDGET_SOLICITUDES_RECIBIDAS, builder: () => this.widgetSolicitudes("recibidas"), show: this.getDur().isMessenger() },
+            { id: this.WIDGET_SOLICITUDES_ENVIADAS, builder: () => this.widgetSolicitudes("enviadas"), show: this.getDur().isMessenger() },
             { id: this.WIDGET_FACTURAS_PENDIENTES, builder: this.widgetFacturasPendientes, show: this.getDur().isInvoice() },
             { id: this.WIDGET_BANKS, builder: this.widgetBanks, show: this.getDur().isAccounting() },
-            { id: this.WIDGET_INGRESOS, builder: this.widgetIngresos, show: this.getDur().isAccounting() },
-            { id: this.WIDGET_GASTOS, builder: this.widgetGastos, show: this.getDur().isAccounting() },
+            { id: this.WIDGET_INGRESOS, builder: () => this.widgetIngresosGastos("ingresos"), show: this.getDur().isAccounting() },
+            { id: this.WIDGET_GASTOS, builder: () => this.widgetIngresosGastos("gastos"), show: this.getDur().isAccounting() },
         ];
 
         for (const widget of widgetOrder) {
@@ -180,10 +181,10 @@ export class AonMobileHome extends AonElement {
 
         let aonSign = new AonSignMobile();
         aonSign.showInfo = false;
+        if (!this.getDur().isTimecontrol()) return null;
         const r = await getTimeControl();
         aonSign.setTimeControl(r);
         widgetTC.appendChild(aonSign);
-
         return widgetTC;
     }
 
@@ -242,93 +243,40 @@ export class AonMobileHome extends AonElement {
         return widgetNomina;
     }
     
-    widgetSolicitudesRecbidas() {
-        const widgetSolicitudesRecibidas = this.createElement(TAG.DIV);
-        widgetSolicitudesRecibidas.id = this.WIDGET_SOLICITUDES_RECIBIDAS;
-        widgetSolicitudesRecibidas.className = "aonWidgetSolicitudesMobile";
+    widgetSolicitudes(tipo) {
+        const widgetSolicitudes = this.createElement(TAG.DIV);
+        widgetSolicitudes.id = this.id+"Widget"+tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+        widgetSolicitudes.className = "aonWidgetSolicitudesMobile";
     
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetSolicitudesMobileTitulo";
-        widgetSolicitudesRecibidas.appendChild(titulo);
+        widgetSolicitudes.appendChild(titulo);
     
-        let textoRecibidas = this.createElement(TAG.SPAN);
-        textoRecibidas.innerHTML = "Solicitudes Recibidas";
-        titulo.appendChild(textoRecibidas);
-    
-        let segundaLinea = this.createElement(TAG.DIV);
-        segundaLinea.className = "aonWidgetSolicitudesMobileSegundaLinea";
-        widgetSolicitudesRecibidas.appendChild(segundaLinea);
-    
-        let icon = this.createElement(TAG.I);
-        icon.className = CSS.MATERIAL_ICONS;
-        icon.innerHTML = "move_to_inbox";
-        icon.classList.add("aonWidgetSolicitudesIconRecibidas");
-        segundaLinea.appendChild(icon);
-    
-        let numeroRecibidas = this.createElement(TAG.DIV);
-        numeroRecibidas.className = "aonWidgetSolicitudesMobileLineaNumero";
-        numeroRecibidas.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
-        segundaLinea.appendChild(numeroRecibidas);
-    
-        let requestPromise = localStorage.getItem('company')
-            ? (!this.getDur().isEmployee() ? getDomainNotice() : Promise.resolve(null))
-            : this.buildCompany().then(() => !this.getDur().isEmployee() ? getUserNotice() : null);
-    
-        requestPromise.then(notice => {
-            numeroRecibidas.innerHTML = notice && notice.solicitudes && notice.solicitudes.task_holder
-                    ? " " + notice.solicitudes.task_holder : " 0";
-            numeroRecibidas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
-        }).catch(e => {
-            numeroRecibidas.innerHTML = " 0";
-            numeroRecibidas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
-        });
-    
-        widgetSolicitudesRecibidas.addEventListener('click', () => {
-            let aonMessenger = new AonMessenger();
-            aonMessenger._filter.task_holder = this.taskHolder.id;
-            this.rootPanel(aonMessenger);
-        });
-    
-        return widgetSolicitudesRecibidas;
-    }
-    
-    widgetSolicitudesEnviadas() {
-        const widgetSolicitudesEnviadas = this.createElement(TAG.DIV);
-        widgetSolicitudesEnviadas.id = this.WIDGET_SOLICITUDES_ENVIADAS;
-        widgetSolicitudesEnviadas.className = "aonWidgetSolicitudesMobile";
-    
-        let titulo = this.createElement(TAG.DIV);
-        titulo.className = "aonWidgetSolicitudesMobileTitulo";
-        widgetSolicitudesEnviadas.appendChild(titulo);
-    
-        let textoEnviadas = this.createElement(TAG.SPAN);
-        textoEnviadas.innerHTML = "Solicitudes Enviadas";
-        titulo.appendChild(textoEnviadas);
+        let texto = this.createElement(TAG.SPAN);
+        texto.innerHTML = "Solicitudes "+tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+        titulo.appendChild(texto);
     
         let segundaLinea = this.createElement(TAG.DIV);
         segundaLinea.className = "aonWidgetSolicitudesMobileSegundaLinea";
-        widgetSolicitudesEnviadas.appendChild(segundaLinea);
+        widgetSolicitudes.appendChild(segundaLinea);
     
         let icon = this.createElement(TAG.I);
         icon.className = CSS.MATERIAL_ICONS;
         icon.innerHTML = "outbox";
-        icon.classList.add("aonWidgetSolicitudesIconEnviadas");
+        icon.classList.add("aonWidgetSolicitudesIcon"+tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase());
         segundaLinea.appendChild(icon);
     
-        let numeroEnviadas = this.createElement(TAG.DIV);
-        numeroEnviadas.className = "aonWidgetSolicitudesMobileLineaNumero";
-        numeroEnviadas.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
-        segundaLinea.appendChild(numeroEnviadas);
+        let numero = this.createElement(TAG.DIV);
+        numero.className = "aonWidgetSolicitudesMobileLineaNumero";
+        numero.innerHTML = `<i class="${CSS.AON_COMPANY_FILTER_LOADING}"></i>`;
+        segundaLinea.appendChild(numero);
     
-        this.getEnviadas().then(enviadas => {
-            if (!enviadas) {
-                return null;
-            }
-            numeroEnviadas.innerHTML = enviadas;
-            numeroEnviadas.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+        this.getSolicitudes().then(solicitudes => {
+            numero.innerHTML = tipo == "enviadas" ? solicitudes.enviadas : solicitudes.recibidas;
+            numero.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
         });
     
-        return widgetSolicitudesEnviadas;
+        return widgetSolicitudes;
     }
     
     widgetFacturasPendientes() {
@@ -377,7 +325,7 @@ export class AonMobileHome extends AonElement {
         });
     
         return widgetFacturasPendientes;
-    }    
+    }   
 
     widgetBanks() {
         let widgetBanks = this.createElement(TAG.DIV);
@@ -418,88 +366,57 @@ export class AonMobileHome extends AonElement {
     
         return widgetBanks;
     }
-    
 
-    widgetIngresos() {
-        const widgetIngresos = this.createElement(TAG.DIV);
-        widgetIngresos.id = this.WIDGET_INGRESOS;
-        widgetIngresos.className = "aonWidgetNominaMobile";
+    widgetIngresosGastos(tipo) {
+        const widgetIG = this.createElement(TAG.DIV);
+        widgetIG.id = this.id+"Widget"+tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+        widgetIG.className = "aonWidgetNominaMobile";
     
         let titulo = this.createElement(TAG.DIV);
         titulo.className = "aonWidgetNominaMobileTitulo";
 
-        let nominaTitulo = this.createElement(TAG.SPAN);
-        nominaTitulo.innerHTML = "Ingresos";
-        nominaTitulo.style.fontWeight = "bold";
-        titulo.appendChild(nominaTitulo);
+        let tituloTexto = this.createElement(TAG.SPAN);
+        tituloTexto.innerHTML = tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+        tituloTexto.style.fontWeight = "bold";
+        titulo.appendChild(tituloTexto);
 
         let fecha = this.createElement(TAG.SPAN);
         fecha.innerHTML = new Date().getFullYear();
         fecha.className = "aonWidgetNominaMobileFecha";
         titulo.appendChild(fecha); 
     
-        let nomina = this.createElement(TAG.DIV);
-        nomina.innerHTML = `${this.formatCurrency(this.income)}€`;
-        if (this.income > 1000000)
-            nomina.style.fontSize = "1.3rem";        
-        nomina.className = "aonWidgetNominaMobileNomina";
-    
-        widgetIngresos.appendChild(titulo);    
-        widgetIngresos.appendChild(nomina);
+        let numero = this.createElement(TAG.DIV);
+        let amount = tipo === "ingresos" ? this.income : this.outgoings;
 
-        if(this.income == 0)
-            nomina.innerHTML == "0";
-    
-        return widgetIngresos;
-    }  
+        numero.innerHTML = `${this.formatCurrency(amount)}€`;
 
-    widgetGastos() {
-        const widgetVentas = this.createElement(TAG.DIV);
-        widgetVentas.id = this.WIDGET_NOMINA;
-        widgetVentas.className = "aonWidgetNominaMobile";
-    
-        let titulo = this.createElement(TAG.DIV);
-        titulo.className = "aonWidgetNominaMobileTitulo";
+        if (amount > 1000000)
+            numero.style.fontSize = "1.3rem";
+        if (amount === 0)
+            numero.innerHTML = "0"
 
-        let nominaTitulo = this.createElement(TAG.SPAN);
-        nominaTitulo.innerHTML = "Gastos";
-        nominaTitulo.style.fontWeight = "bold";
-        titulo.appendChild(nominaTitulo);
+        numero.className = "aonWidgetNominaMobileNomina";
+    
+        widgetIG.appendChild(titulo);    
+        widgetIG.appendChild(numero);
 
-        let fecha = this.createElement(TAG.SPAN);
-        fecha.innerHTML = new Date().getFullYear();
-        fecha.className = "aonWidgetNominaMobileFecha";
-        titulo.appendChild(fecha); 
-    
-        let nomina = this.createElement(TAG.DIV);
-        nomina.innerHTML = `${this.formatCurrency(this.outgoings)}€`;
-        if (this.outgoings > 1000000) 
-            nomina.style.fontSize = "1.3rem";
-        nomina.className = "aonWidgetNominaMobileNomina";
-    
-        widgetVentas.appendChild(titulo);    
-        widgetVentas.appendChild(nomina);
-
-        if(this.outgoings == 0)
-            nomina.innerHTML = "0";
-    
-        return widgetVentas;
+        return widgetIG;
     }  
     
-
     async getCompanyBanks() {
         let company = JSON.parse(localStorage.getItem("company"));
         if(!this.BANKS.length){
             try {
-            const banks = await getBanks({id: company.registry});
-            if(banks){
-                this.BANKS = sortBy(banks,'alias')
-                .filter((bank) => bank.active == true);
-            }
-            return this.BANKS;
-            } catch (error) {
-            console.error(error);
-            this.showError(error);
+                if (!this.getDur().isAccounting()) return null;
+                const banks = await getBanks({id: company.registry});
+                if(banks){
+                    this.BANKS = sortBy(banks,'alias')
+                    .filter((bank) => bank.active == true);
+                }
+                return this.BANKS;
+                } catch (error) {
+                    console.error(error);
+                    this.showError(error);
             }
         } else {
             return this.BANKS;
@@ -578,17 +495,16 @@ export class AonMobileHome extends AonElement {
 
         if (!isEmptyObject(this.PERIODS)) {
             if (this.PERIODS && this.PERIODS.length > 0) {
-            this.params.period = this.selectedPeriod.id;
-
-            this.params.fromDate = this.selectedPeriod.initiationDate;
-            this.params.toDate = this.selectedPeriod.deadline;
+                this.params.period = this.selectedPeriod.id;
+                this.params.fromDate = this.selectedPeriod.initiationDate;
+                this.params.toDate = this.selectedPeriod.deadline;
             }
 
             if(!this.params.fromDate) { return []; }
-
+            if (!this.getDur().isAccounting()) return null;
             this.ACCOUNTS = await getAccounting(this.params).catch((err) => {
-            this.showError(err);
-            return null;
+                this.showError(err);
+                return null;
             });
         }
         return this.ACCOUNTS;
@@ -616,7 +532,8 @@ export class AonMobileHome extends AonElement {
     async obtenerDatosNominas() {
         try {
             const filter = this.getApplicationParent()?._filter || {};
-            let datos = await getEmployeeSalaries(filter); 
+            if (!this.getDur().isPayroll()) return null;
+            let datos = await getEmployeeSalary(filter); 
             datos = datos.sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
             const ultimoSalario = datos[0]; 
     
@@ -643,39 +560,44 @@ export class AonMobileHome extends AonElement {
         }
     }
     
-    async getEnviadas() {
+    async getSolicitudes() {
         let filterCount = {};
+        if (!this.getDur().isMessenger()) return null;
     
-        let taskHolder = await getTaskHolder({  });
+        let taskHolder = await getTaskHolder({});
         let id = taskHolder.id;
-        let workgroups = this.getWorkgroupsStr(taskHolder.workgroups);
+    
+        let wg = await getWorkgroups({status:"ACTIVE", task_holder: id});
+        let workgroups = this.getWorkgroupsStr(wg);
     
         let auth = await getAuth();
         let email = auth.email;
     
         filterCount.email = email;
-        filterCount.taskHolder = id;
+        filterCount.task_holder = id;
         filterCount.workgroups = workgroups;
     
         let count = await getTaskCount(filterCount);
-            
-        let enviadas = count.task_holder !== undefined && count.task_holder !== null
-            ? count.task_holder + ""
-            : "0";
     
-        return enviadas;
+        let enviadas = count.sender !== undefined && count.sender !== null
+            ? count.sender + ""
+            : "0";
+
+        let recibidas = count.task_holder !== undefined && count.task_holder !== null
+        ? count.task_holder + ""
+        : "0";
+    
+        return {enviadas, recibidas};
     }
-     
+
     formatCurrency(valor) {
-        if (isNaN(valor) || valor === null || valor === undefined) {
+        if (isNaN(valor) || valor === null || valor === undefined) 
             return "0";
-        }
         const partes = Number(valor).toFixed(2).split(".");
         const parteEnteraConMiles = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         return `${parteEnteraConMiles},${partes[1]}`;
     }
     
-
     getDur() {
 		return this.dur;
 	}

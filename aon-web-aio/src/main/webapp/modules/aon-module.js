@@ -1,17 +1,14 @@
 import { AonElement } from '../components/AonElement.js';
 import { login } from '../services/service.js';
-
 import { AonHome } from './aon-home.js';
-import { TAG } from '../environments/environments.js'; 
-import * as LS  from '../services/localStorageService.js';
-import './company/aon-mobile-parent.js';
+import { CONSTANT, TAG } from '../environments/environments.js';
 import { AonLoader } from '../components/aon-loader.js';
 import { AonNewLogin } from './login/aon-new-login.js';
-
 import { AonNewInput } from "../components/aon-new-input.js";
-import { AonParent } from 'aonparent';
 import { AonMobileParent } from './company/aon-mobile-parent.js';
+import { AonParent } from './aon-parent.js';
 
+import * as LS from '../services/localStorageService.js';
 
 export class AonModule extends AonElement {
 
@@ -19,22 +16,22 @@ export class AonModule extends AonElement {
 	AON_HOME;
 	AON_MODULE_LOADER;
 
-	constructor () {
+	constructor() {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.initialize();
 		this.load();
 	}
 
-	initialize(){
+	initialize() {
 		this.AON_LOGIN = 'aonLogin';
 		this.AON_HOME = 'aonHome';
 		this.AON_MODULE_LOADER = 'aonModuleLoader';
 	}
 
-	buildLogin(){
+	buildLogin() {
 		this.clear();
 		let login = new AonNewLogin(new AonNewInput(), this.newCompanyLogoDiv());
 		login.id = this.AON_LOGIN;
@@ -46,7 +43,7 @@ export class AonModule extends AonElement {
 		let home = new AonHome();
 		home.id = this.AON_HOME;
 		this.appendChild(home);
-		
+
 		let loader = new AonLoader();
 		loader.id = this.AON_MODULE_LOADER;
 		this.appendChild(loader);
@@ -60,75 +57,83 @@ export class AonModule extends AonElement {
 		this.getElement(this.AON_MODULE_LOADER).stopLoading();
 	}
 
-	async load() {
+	load() {
+		this.loading();
 		LS.setNewTheme(true, false);
-		await this.checkLogin();
-		if(LS.getToken()){
-			this.buildHome();
-			if(this.isMobile()) {
-				let mobileParent = new AonMobileParent();
-				mobileParent.selection = true;
-				this.rootPanel(mobileParent);
-			} else this.rootPanel(new AonParent());
-		} else {
-			this.buildLogin();
+		this.checkLogin();
+	}
+
+	checkLogin() {
+		const urlParams = new URLSearchParams(location.search);
+		let username = urlParams.get(CONSTANT.USER);
+		let password = urlParams.get(CONSTANT.PASSWORD);
+		let token = urlParams.get(CONSTANT.TOKEN);
+
+		if ((username && password) || token) {
+			if(username) sessionStorage.setItem(CONSTANT.USERNAME, username);
+			if(password) sessionStorage.setItem(CONSTANT.PASSWORD, password);
+			if(token) sessionStorage.setItem(CONSTANT.TOKEN, token);
+
+			window.location = `${window.location.origin}${window.location.pathname}`;
+		} else this.login();
+	}
+
+	login() {
+		let username = sessionStorage.getItem(CONSTANT.USERNAME);
+		let password = sessionStorage.getItem(CONSTANT.PASSWORD);
+		let token = sessionStorage.getItem(CONSTANT.TOKEN);
+
+		let data;
+		if ((username && password) || token) {
+			data = {username, password, token};
+			sessionStorage.removeItem(CONSTANT.USERNAME);
+			sessionStorage.removeItem(CONSTANT.PASSWORD);
+			sessionStorage.removeItem(CONSTANT.TOKEN);
+		} else if(LS.getToken() && LS.getToken().length > 0) {
+			data = {token: LS.getToken()};
+		} else this.buildLogin();
+
+		if (data) {
+			login(data).then(() => {
+				this.buildHome();
+				if (this.isMobile()) {
+					let mobileParent = new AonMobileParent();
+					mobileParent.selection = true;
+					this.rootPanel(mobileParent);
+				} else {
+					this.rootPanel(new AonParent());
+				}
+			}).catch(e => {
+				this.buildLogin();
+				this.showLoginErrorToast(e);
+			});
 		}
 	}
 
-	async checkLogin() {
-		const urlParams = new URLSearchParams(location.search);
-		let user = urlParams.get('user');
-		let password = urlParams.get('password');
-		let token = urlParams.get('token');
-		let beta = location.pathname === '/beta';
-		
-		if(user && password) {
-			const data = {
-				username: user,
-				password: password,
-			};
+	loading() {
+		let loader = new AonLoader();
+		loader.id = this.AON_MODULE_LOADER;
+		this.appendChild(loader);
+		loader.startLoading();
+	}
 
-			try {
-				await login(data);
-			} catch (e) {
-				alert(e);
-			}
-			window.location = window.location.origin;
-			
-		} else if( token ) {
-			//LS.setToken(token);
-			try {
-				const data = {
-					token,
-				};
-				await login(data);
-			} catch (e) {
-				alert(e);
-				window.location =`${window.location.origin}${window.location.pathname}`;
-			};
-		} else if ( beta && LS.getToken() ) {
-			try {
-				const data = {
-					token : LS.getToken(),
-				};
-				await login(data);
-			} catch (e) {
-				LS.removeToken();
-				window.location =`${window.location.origin}${window.location.pathname}`;
-			}
-		} 
-	} 
-	
+	showLoginErrorToast(e) {
+		let error = JSON.parse(e);
+		const loginToast = this.getElement("aonLoginToast");
+		loginToast.start({ type: 'error', message: error.message, delay: 3000 });
+	}
+
 	newCompanyLogoDiv() {
 		let divCompanyLogo = this.createElement(TAG.DIV);
 		let imgCompanyLogo = this.createElement(TAG.IMG);
-		imgCompanyLogo.src='aonDocuments/company.logo';
-		imgCompanyLogo.style.maxWidth='201px';
+		imgCompanyLogo.src = 'aonDocuments/company.logo';
+		imgCompanyLogo.style.maxWidth = '201px';
 		divCompanyLogo.appendChild(imgCompanyLogo);
 		return divCompanyLogo;
-	} 
+	}
 
 }
-if(!window.customElements.get(TAG.AON_MODULE)){
+
+if (!window.customElements.get(TAG.AON_MODULE)) {
 	window.customElements.define(TAG.AON_MODULE, AonModule);
 }

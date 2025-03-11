@@ -24,6 +24,8 @@ public interface IAccountEntryTypeVisitor {
 	void visitReturnedCollection(AccountEntry entry);
 	void visitSocialInsuranceAdjust(AccountEntry entry);
 	void visitFinance(AccountEntry entry);
+	void visitOtherExpenses(AccountEntry entry);
+	void visitOtherIncomes(AccountEntry entry);
 	@Deprecated
 	void visitLeasing(AccountEntry entry);
 	@Deprecated

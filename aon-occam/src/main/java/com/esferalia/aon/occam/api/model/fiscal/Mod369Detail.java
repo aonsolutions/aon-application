@@ -21,6 +21,11 @@ public class Mod369Detail implements Serializable {
 	private boolean dirty;
 	private boolean deleted;
 	private int tempId;
+	
+	private Country originalCountry;       // Código de país/EM de consumo (valor original, cuando se crea la línea de detalle de forma automática)
+	private double originalVatPercent;     // Tipo (%) de IVA (valor original, cuando se crea la línea de detalle de forma automática)
+	private double originalBase;           // Base imponible (valor original, cuando se crea la línea de detalle de forma automática)
+	private double originalQuota;          // Cuota IVA (valor original, cuando se crea la línea de detalle de forma automática)
 
 	public Integer getId() {
 		return id;
@@ -119,6 +124,48 @@ public class Mod369Detail implements Serializable {
 	public Mod369Detail setQuota(double quota) {
 		this.quota = quota;
 		return this;
+	}
+
+	public Country getOriginalCountry() {
+		return originalCountry;
+	}
+
+	public Mod369Detail setOriginalCountry(Country originalCountry) {
+		this.originalCountry = originalCountry;
+		return this;
+	}
+
+	public double getOriginalVatPercent() {
+		return originalVatPercent;
+	}
+
+	public Mod369Detail setOriginalVatPercent(double originalVatPercent) {
+		this.originalVatPercent = originalVatPercent;
+		return this;
+	}
+
+	public double getOriginalBase() {
+		return originalBase;
+	}
+
+	public Mod369Detail setOriginalBase(double originalBase) {
+		this.originalBase = originalBase;
+		return this;
+	}
+
+	public double getOriginalQuota() {
+		return originalQuota;
+	}
+
+	public Mod369Detail setOriginalQuota(double originalQuota) {
+		this.originalQuota = originalQuota;
+		return this;
+	}
+	
+	// Línea de detalle introducida o modificada manualmente
+	public boolean isManual() {
+		return (this.originalCountry == null && this.originalVatPercent == 0.0 && this.originalBase == 0.0 && this.originalQuota == 0.0) ||   // Línea introducida manualmente (los datos originales están vacios)          
+		       (this.country != this.originalCountry || this.vatPercent != this.originalVatPercent || this.base != this.originalBase || this.quota != this.originalQuota);   // Línea modificada manualmente (alguno de los datos originales son distintos de los actuales)
 	}
 
 }

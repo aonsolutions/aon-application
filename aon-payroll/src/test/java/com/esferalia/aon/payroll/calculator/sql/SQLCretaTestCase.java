@@ -435,6 +435,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	
 		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
 		Date endDate = getLastDayOfMonth(startDate);
+		while ( get(endDate, Calendar.DAY_OF_MONTH ) < 31 ) {
+			startDate = add(startDate, MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
 		
 		Date unpaidDate = startDate;
 		

@@ -42,12 +42,12 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
-import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
@@ -1028,7 +1028,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			}
 		};
 		
-		wrp.getAccountEntry().getEntryType().visit(wrp.getAccountEntry(), new  AccountEntryTypeVisitorAdapter() {
+		wrp.getAccountEntry().getEntryType().visit(wrp.getAccountEntry(), new  IAccountEntryTypeVisitor() {
 			@Override
 			public void visitExpenseInvoice(AccountEntry entry) {
 				entryType.setSelectedIndex(EntryType.INVOICE.ordinal());
@@ -1068,6 +1068,9 @@ public class AccountEntryModule extends MainEntryPoint {
 			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasing(AccountEntry entry) {visitManual();}
 			@Override public void visitLeasingFee(AccountEntry entry) {visitManual();}
+			
+			@Override public void visitOtherExpenses(AccountEntry entry) {visitManual();}
+			@Override public void visitOtherIncomes(AccountEntry entry) {visitManual();}
 			
 			private void visitFinance() {
 				entryType.setSelectedIndex(EntryType.FINANCE.ordinal());

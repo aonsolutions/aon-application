@@ -315,6 +315,7 @@ export const NOTES = 'Oharrak';
 export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
 export const NUMBER_OF_USERS = 'Erabiltzaile kopurua';
+export const NUMBER_OF_PALLETS = "Palet kopurua";
 
 // ----- O
 export const OBSERVATION = 'Oharra';

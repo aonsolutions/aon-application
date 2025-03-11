@@ -466,11 +466,15 @@ public class Invoice2tbai {
 					VATExemptionCause cause = invoice.getActivity().getVatExemptionCause();
 					detalleExenta.setCausaExencion(CausaExencionType.fromValue(cause.name()));
 				}
-				
-				if(invoice.isIntracommunity())
+			
+				if(invoice.isNational()) {
+					detalleExenta.setCausaExencion(CausaExencionType.E_1);
+				} else if(invoice.isIntracommunity()) {
 					detalleExenta.setCausaExencion(CausaExencionType.E_5);
-				if(invoice.isExtracommunity() || invoice.isCanCeuMel())
+				} else if(invoice.isExtracommunity() || invoice.isCanCeuMel()) {
 					detalleExenta.setCausaExencion(CausaExencionType.E_2);
+				}
+				
 				exenta.getDetalleExenta().add(detalleExenta);
 			});
 			

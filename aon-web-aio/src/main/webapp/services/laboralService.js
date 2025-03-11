@@ -4,6 +4,8 @@ import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 
 export const getEmployeeSalaries = (data) =>
   get(`${API_URL}/contract/employee/salaries`, data);
+export const getEmployeeSalary = (data) =>
+  get(`${API_URL}/contract/employee/salary`, data);
 export const getEnterpriseSalaries = (data) =>
   get(`${API_URL}/contract/enterprise/salaries`, data);
 export const getAllEmployeesWorkplace = (data) =>

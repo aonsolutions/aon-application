@@ -1027,7 +1027,7 @@ public class Mod2002022DAO  {
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
 				.filter(mod -> mod.getYear() == mod200.getYear() && (mod.isFinished() || mod.isSent()))
 				.forEach(mod -> {
-					Mod202 mod202 = Mod202DAO.getMod202(ctx, mod.getId());
+					Mod202 mod202 = Mod202DAO.get(ctx, mod.getId());
 					Mod2002022Key key = null;
 					if (mod202.getPeriod() == Period.T1) {
 						key = Mod2002022Key.BN601;
@@ -1038,7 +1038,7 @@ public class Mod2002022DAO  {
 					}
 					if (key != null) {
 						DoubleVariableEx dv = new DoubleVariableEx(key);
-						dv.setValue(mod202.getResult());
+						dv.setValue(mod202.getDeclarationResult());
 						mod200.addVariable(dv);
 					}
 				});

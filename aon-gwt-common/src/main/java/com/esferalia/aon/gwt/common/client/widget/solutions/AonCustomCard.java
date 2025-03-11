@@ -31,12 +31,12 @@ public class AonCustomCard extends HTMLPanel {
 		toolbarPanel.getElement().getStyle().setProperty("align-items", "center");
 		toolbarPanel.getElement().getStyle().setProperty("justify-content", "space-between");
 		toolbarPanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
-		toolbarPanel.getElement().getStyle().setProperty("height", "2.5rem");
 		
 		HTMLPanel titlePanel = new HTMLPanel(EMPTY_STRING);
 		titlePanel.getElement().getStyle().setProperty("display", "flex");
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
+		titlePanel.getElement().getStyle().setProperty("height", "2.6rem");
 		
 		HTMLPanel titleLabel = new HTMLPanel(title);
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");
@@ -58,6 +58,7 @@ public class AonCustomCard extends HTMLPanel {
 		titlePanel.getElement().getStyle().setProperty("align-items", "center");
 		titlePanel.getElement().getStyle().setProperty("gap", "0.5rem");
 		titlePanel.getElement().getStyle().setProperty("margin-bottom", "1rem");
+		titlePanel.getElement().getStyle().setProperty("height", "2.6rem");
 		
 		HTMLPanel titleLabel = new HTMLPanel(title);
 		titleLabel.getElement().getStyle().setProperty("font-size", "1rem");

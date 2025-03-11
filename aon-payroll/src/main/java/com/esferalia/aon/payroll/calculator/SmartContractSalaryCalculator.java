@@ -1916,9 +1916,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) ) {
 			throw e;
 		    }
-		} catch (RemoveException | CheckException | RemoveVariableError | CompileException | ScriptRuntimeException e) {
+		} catch (RemoveException | CheckException | RemoveVariableError | CompileException | ScriptRuntimeException | NumberFormatException e) {
 		    	return;
-		} catch ( ConversionException | NumberFormatException e ) {
+		} catch ( ConversionException e ) {
 			throw new UndefinedVariablesException();
 		} 
 

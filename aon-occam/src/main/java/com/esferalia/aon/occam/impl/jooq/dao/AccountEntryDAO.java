@@ -5,8 +5,8 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
-import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.AmortizationDetail.AMORTIZATION_DETAIL;
+import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
@@ -45,7 +45,6 @@ import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
-import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AutoConcept;
@@ -54,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
+import com.esferalia.aon.occam.api.model.IAccountEntryTypeVisitor;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
@@ -506,7 +506,7 @@ public class AccountEntryDAO {
 		Field<BigDecimal> sumCredit = DSL.sum(ACCOUNT_ENTRY_DETAIL.CREDIT); 
 		LinkedHashMap<String, AccountBalance> map = new LinkedHashMap<String, AccountBalance>();
 		Condition pygCondition = pyg
-				?ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPERATING.getValue())
+				?ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPERATING.value())
 						.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
 				:DSL.trueCondition()
 		;
@@ -525,7 +525,7 @@ public class AccountEntryDAO {
 			.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
 			.where(domainCondition)
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(start,end))
-			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
+			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.value()) )
 			.and( params.getSecurityLevel()!=null
 				? ACCOUNT_ENTRY.SECURITY_LEVEL.eq(params.getSecurityLevel().value())
 				: DSL.trueCondition() )
@@ -584,7 +584,7 @@ public class AccountEntryDAO {
 	}
 
 	private static void beforeRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
+		entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
 			
 			@Override
 			public void visitTax(AccountEntry entry) {
@@ -672,11 +672,32 @@ public class AccountEntryDAO {
 					InvoiceDAO.delete(ctx, invoiceId);
 				}
 			}
+			
+			@Override 
+			public void visitOtherIncomes(AccountEntry entry) {
+				AccountingIncomeDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
+			}
+			@Override 
+			public void visitOtherExpenses(AccountEntry entry) {
+				AccountingExpenseDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
+			}
+			
+			@Override public void visitOpening(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitClosing(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOperating(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitManual(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalary(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoan(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitStockVariation(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsurance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoanFee(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) { /* Nothing */ }
 		});	
 	}
 
 	private static void afterRemove(final AONContext ctx,final AccountEntry entry) {
-		entry.getEntryType().visit(entry, new AccountEntryTypeVisitorAdapter() {
+		entry.getEntryType().visit(entry, new IAccountEntryTypeVisitor() {
 			
 			@Override
 			public void visitOpening(AccountEntry entry) {
@@ -720,6 +741,30 @@ public class AccountEntryDAO {
 					AccountPeriodDAO.active(ctx,entry.getPeriod());
 				}
 			}
+
+			@Override public void visitManual(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalesInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitPurchaseInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenseInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitInvestmentInvoice(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSalary(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitTax(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoan(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitPayment(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitCollection(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitStockVariation(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitAmortization(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsurance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLoanFee(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitReturnedPayment(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitReturnedCollection(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitFinance(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherExpenses(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitOtherIncomes(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLeasing(AccountEntry entry) { /* Nothing */ }
+			@Override public void visitLeasingFee(AccountEntry entry) { /* Nothing */ }
 		});
 	}
 
@@ -907,7 +952,7 @@ public class AccountEntryDAO {
 					ctx.checkWrite();
 					ae.setEntryType(AccountEntryType.MANUAL);
 					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
-							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().getValue()) 
+							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().value()) 
 							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
 							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
@@ -925,7 +970,7 @@ public class AccountEntryDAO {
 					ctx.checkWrite();
 					ae.setEntryType(AccountEntryType.OPENING);
 					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
-							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().getValue()) 
+							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().value()) 
 							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
 							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
@@ -1210,7 +1255,7 @@ public class AccountEntryDAO {
 							.from(ACCOUNT_ENTRY)
 							.where(ACCOUNT_ENTRY.DOMAIN.eq(ae.getDomain()))
 							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ae.getPeriod()))
-							.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.getValue())));
+							.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.value())));
 					if (!hasOpeningEntry) {
 						list.add(AccountEntryUpdate.OPENING_TYPE);			
 					}
@@ -1232,8 +1277,7 @@ public class AccountEntryDAO {
 			
 			@Override
 			public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+				if (wrapper instanceof AccountingInvoice ai) {
 					AccountEntry ae = wrapper.getAccountEntry();
 					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
 						list.add(AccountEntryUpdate.INVESTMENT);
@@ -1244,8 +1288,7 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+				if (wrapper instanceof AccountingInvoice ai) {
 					AccountEntry ae = wrapper.getAccountEntry();
 					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
 						list.add(AccountEntryUpdate.TAX_DATE);
@@ -1256,8 +1299,7 @@ public class AccountEntryDAO {
 			
 			@Override
 			public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+				if (wrapper instanceof AccountingInvoice ai) {
 					AccountEntry ae = wrapper.getAccountEntry();
 					Collection<EnterpriseActivity> activities = CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),ae.getEntryDate())
 							.collect(Collectors.toCollection(LinkedList::new));
@@ -1272,8 +1314,7 @@ public class AccountEntryDAO {
 
 			@Override
 			public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
-				if (wrapper instanceof AccountingInvoice) {
-					AccountingInvoice ai = (AccountingInvoice) wrapper;
+				if (wrapper instanceof AccountingInvoice ai) {
 					AccountEntry ae = wrapper.getAccountEntry();
 					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
 						if (ai.isSales() || ai.isPurchase()) {

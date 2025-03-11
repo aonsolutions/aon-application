@@ -364,6 +364,7 @@ export const TIMECONTROL = 'timecontrol';
 export const TITLE = 'title';
 export const TOOLBAR = 'toolbar';
 export const TOOLS = 'tools';
+export const TOKEN = 'token';
 export const TOTAL = 'total';
 export const TRANSACTION = 'transaction';
 export const TRANSACTION_TYPE = 'transactionType';
@@ -380,6 +381,7 @@ export const UPDATE_INVOICE = 'updateInvoice';
 export const UPLOAD = 'upload';
 export const UPLOAD_FILE = 'uploadFile';
 export const USER = 'user';
+export const USERNAME = 'username';
 export const USERS = 'users';
 export const UTILITIES = 'utilities'
 

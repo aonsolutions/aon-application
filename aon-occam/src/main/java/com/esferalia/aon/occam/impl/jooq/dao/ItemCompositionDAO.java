@@ -81,6 +81,16 @@ public class ItemCompositionDAO {
 	
 	
 	public static ItemComposition insert(AONContext ctx, ItemComposition itemComposition) {
+		// Actualizamos los otros sequences
+		if(null != itemComposition.getSequence())
+			ctx.getDslContext().update(ITEM_COMPOSITION)
+		       .set(ITEM_COMPOSITION.SEQUENCE, ITEM_COMPOSITION.SEQUENCE.add(1))
+		       .where(ITEM_COMPOSITION.DOMAIN.eq(itemComposition.getDomain()))
+		       .and(ITEM_COMPOSITION.ITEM.eq(itemComposition.getItemId()))
+		       .and(ITEM_COMPOSITION.SEQUENCE.ge(itemComposition.getSequence().shortValue()))
+		       .execute();
+		
+		
 		Integer id = ctx.getDslContext().insertInto(ITEM_COMPOSITION)
 				.set(ITEM_COMPOSITION.DOMAIN, itemComposition.getDomain())
 				.set(ITEM_COMPOSITION.ITEM, itemComposition.getItemId())
@@ -95,6 +105,29 @@ public class ItemCompositionDAO {
 	}
 	
 	public static ItemComposition update(AONContext ctx, ItemComposition itemComposition) {
+		// Actualizamos los otros sequences
+		ItemComposition oldItemComposition = get(ctx, f -> f.getDomainProperty().eq(itemComposition.getDomain()).and(f.getIdProperty().eq(itemComposition.getId())));
+		
+		if (itemComposition.getSequence() < oldItemComposition.getSequence()) {
+	        // Caso: desplazamiento hacia arriba (el registro se mueve a una posición anterior)
+			ctx.getDslContext().update(ITEM_COMPOSITION)
+	           .set(ITEM_COMPOSITION.SEQUENCE, ITEM_COMPOSITION.SEQUENCE.add(1))
+	           .where(ITEM_COMPOSITION.DOMAIN.eq(itemComposition.getDomain()))
+	           .and(ITEM_COMPOSITION.ITEM.eq(itemComposition.getItemId()))
+	           .and(ITEM_COMPOSITION.SEQUENCE.ge(itemComposition.getSequence().shortValue()))
+	           .and(ITEM_COMPOSITION.SEQUENCE.lt(oldItemComposition.getSequence().shortValue()))
+	           .execute();
+	    } else if (itemComposition.getSequence() > oldItemComposition.getSequence()) {
+	        // Caso: desplazamiento hacia abajo (el registro se mueve a una posición posterior)
+	    	ctx.getDslContext().update(ITEM_COMPOSITION)
+	           .set(ITEM_COMPOSITION.SEQUENCE, ITEM_COMPOSITION.SEQUENCE.sub(1))
+	           .where(ITEM_COMPOSITION.DOMAIN.eq(itemComposition.getDomain()))
+	           .and(ITEM_COMPOSITION.ITEM.eq(itemComposition.getItemId()))
+	           .and(ITEM_COMPOSITION.SEQUENCE.le(itemComposition.getSequence().shortValue()))
+	           .and(ITEM_COMPOSITION.SEQUENCE.gt(oldItemComposition.getSequence().shortValue()))
+	           .execute();
+	    }
+		
 		ctx.getDslContext().update(ITEM_COMPOSITION)
 			.set(ITEM_COMPOSITION.DOMAIN, itemComposition.getDomain())
 			.set(ITEM_COMPOSITION.ITEM, itemComposition.getItemId())
@@ -123,8 +156,19 @@ public class ItemCompositionDAO {
 	}
 	
 	public static void delete(AONContext ctx, Integer id) {
+		ItemComposition deleteItemComposition = get(ctx, f -> f.getIdProperty().eq(id));
+		
 		ctx.getDslContext().delete(ITEM_COMPOSITION).where(ITEM_COMPOSITION.ID.eq(id)).execute();
 		ctx.log().debug("DELETE ITEM COMPOSITION id:" + id);
+		
+		// Actualizamos los otros sequences
+		if(null != deleteItemComposition.getSequence())
+			ctx.getDslContext().update(ITEM_COMPOSITION)
+		       .set(ITEM_COMPOSITION.SEQUENCE, ITEM_COMPOSITION.SEQUENCE.sub(1))
+		       .where(ITEM_COMPOSITION.DOMAIN.eq(deleteItemComposition.getDomain()))
+		       .and(ITEM_COMPOSITION.ITEM.eq(deleteItemComposition.getItemId()))
+		       .and(ITEM_COMPOSITION.SEQUENCE.gt(deleteItemComposition.getSequence().shortValue()))
+		       .execute();
 	}
 
 	public static class ItemCompositionFiller extends Filler  implements Function<Record, ItemComposition> {

@@ -92,6 +92,10 @@ public class JooqPayrollSalaries {
 		return getSalariesByDocumentDB(DSL.using(connection, getDefaultSettings()), filter, document);
 	}
 	
+	public static List<SalaryInfo> getLastSalaryByDocument(Connection connection, SalaryInfoFilter filter,  String document) {
+		return getLastSalaryByDocumentDB(DSL.using(connection, getDefaultSettings()), filter, document);
+	}
+	
 	// --------------------------------------------------------------------------------------------
 	//									WORKPLACE METHODS
 	// --------------------------------------------------------------------------------------------
@@ -399,6 +403,96 @@ public class JooqPayrollSalaries {
 		
 		return salaries;
 	}
+
+	private static List<SalaryInfo> getLastSalaryByDocumentDB(DSLContext dslContext, SalaryInfoFilter filter,  String document) {
+		List<SalaryInfo> salaries = new ArrayList<>();
+		// SalaryType
+		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
+		// Dates
+		Condition datesCondition = getDatesCondition(filter);
+		
+		// Get salaries
+		Table<FinanceRecord> filteredFinance = DSL.selectFrom(FINANCE)
+			    .where(FINANCE.DOMAIN.eq(filter.getWorkplaceId())
+			    .and(FINANCE.PAYROLL.eq((byte)1)))
+			    .asTable();
+		
+		// Get salaries
+		Result<Record> salaryRecords = dslContext.select().from(SALARY)
+				.innerJoin(CONTRACT)
+				.on(CONTRACT.ID.eq(SALARY.CONTRACT))
+				.innerJoin(REGISTRY)
+				.on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.leftJoin(filteredFinance).on(filteredFinance.field(FINANCE.SOURCE_ID).eq(SALARY.ID))
+				.where(REGISTRY.DOMAIN.eq(filter.getWorkplaceId()))
+				.and(REGISTRY.DOCUMENT.eq(document))
+				.and(salaryTypeCondition)
+				.and(datesCondition)
+				.orderBy(SALARY.END_DATE.desc())
+				.limit(1)
+				.fetch();
+		
+		// Enterprise Id
+		Integer enterpriseId = null;
+		
+		if(salaryRecords.isNotEmpty()) {
+			Integer contractId = salaryRecords.get(0).get(SALARY.CONTRACT);
+			enterpriseId = getEnterpriseId(dslContext, contractId);
+		}
+		
+		for(Record salaryRecord : salaryRecords) {
+			
+			SalaryInfo salaryInfo = new SalaryInfo();
+			salaryInfo.setId(salaryRecord.get(SALARY.ID));
+			salaryInfo.setDomain(salaryRecord.get(SALARY.DOMAIN));
+			salaryInfo.setContract(salaryRecord.get(SALARY.CONTRACT));
+			salaryInfo.setStartDate(salaryRecord.get(SALARY.START_DATE));
+			salaryInfo.setEndDate(salaryRecord.get(SALARY.END_DATE));
+			salaryInfo.setChargeDate(salaryRecord.get(SALARY.CHARGE_DATE));
+			salaryInfo.setType(Salary.Type.values()[salaryRecord.get(SALARY.TYPE)]);
+			salaryInfo.setEnterpriseName(salaryRecord.get(SALARY.ENTERPRISE_NAME));
+			salaryInfo.setEmployeeName(salaryRecord.get(SALARY.EMPLOYEE_NAME));
+			salaryInfo.setTotalPayment(salaryRecord.get(SALARY.TOTAL_PAYMENT));
+			salaryInfo.setTotalDeduction(salaryRecord.get(SALARY.TOTAL_DEDUCTION));
+			salaryInfo.setTotalLiquid(salaryRecord.get(SALARY.TOTAL_LIQUID));
+			
+			Integer contractId = salaryRecord.get(SALARY.CONTRACT);
+			
+			Record workplaceRecord = getWorkplaceRecord(dslContext, contractId);
+			
+			String workplaceName = workplaceRecord.get(WORKPLACE.DESCRIPTION);
+			Integer workplaceId =  workplaceRecord.get(WORKPLACE.ID);
+			
+			// Workplace
+			salaryInfo.setWorkplaceName(workplaceName);
+			salaryInfo.setWorkplaceId(workplaceId);
+			
+			// Enterprise ID
+			salaryInfo.setEnterpriseId(enterpriseId);
+			
+			Byte financeStatus = salaryRecord.get(FINANCE.STATUS);
+			salaryInfo.setFinance(financeStatus != null && financeStatus != (byte) 0);
+			
+			//Is Alcatraz
+			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
+			if(!alcatrazRecords.isEmpty()) {
+				salaryInfo.setAlcatraz(true);
+				
+				FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+				salaryInfo.setAlcatrazYear(fsModelRecord.getYear());
+				salaryInfo.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+				salaryInfo.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+				
+			} else salaryInfo.setAlcatraz(false);
+			
+			
+			// Add to salaries list
+			salaries.add(salaryInfo);
+
+		}
+		
+		return salaries;
+	}
 	
 	// --------------------------------------------------------------------------------------------
 	//									AUXLIAR METHODS
@@ -594,6 +688,7 @@ public class JooqPayrollSalaries {
 		Table<FinanceRecord> filteredFinance = DSL.selectFrom(FINANCE)
 			    .where(FINANCE.DOMAIN.eq(domainId)
 			    .and(FINANCE.PAYROLL.eq((byte)1)))
+			    .groupBy(FINANCE.SOURCE_ID)
 			    .asTable("filtered_finance");
 		
 		SelectConditionStep<Record> select = dslContext.select().from(SALARY)
@@ -691,7 +786,7 @@ public class JooqPayrollSalaries {
 	}
 
 	private static Condition paramsToCondition(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer userId, SalaryParams params) {
-		Condition condition = DSL.trueCondition();
+		Condition condition = DSL.noCondition();
 		
 		if(AonStringUtils.isNotBlank(params.getDescription()))
 			condition = condition.and(

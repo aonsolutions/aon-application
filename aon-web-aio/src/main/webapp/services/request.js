@@ -1,7 +1,9 @@
 import { CONSTANT, MSG } from "../environments/environments.js";
+import { openFileApp } from "./actionService.js";
 import { extensionsEnums } from "./extensionsEnums.js";
 
 import * as LS from './localStorageService.js';
+import * as UA from './userAgentService.js';
 
 const formatParams = (params) => {
   let arrays = Object.keys(params).filter((key) => Array.isArray(params[key]));
@@ -242,27 +244,35 @@ const getObjFromBase64 = (base64Data, fileName = undefined, type=null) => {
 }
 
 export const openFile = async (url, data) => new Promise(async (resolve, reject) => {
-  requestFile("GET", url, data, async(result, error) => {
-    if (error) reject(error);
-    else {
-      const {blob, fileName} = result;
-      if (webkitRequestMobile()){
-         //------------ IS MOBILE APP---------
-        const base64Data = await blobToBase64(blob).catch(e=>reject(e));
-        await sendActionMobile(getObjFromBase64(base64Data, fileName));
-      } else {
-        // ------------IS DESKTOP---------------
-        try {
-          const newUrl = URL.createObjectURL(blob);
-          openFileDesktop(newUrl);
-          setTimeout(()=>{ URL.revokeObjectURL(url);},50);
-        } catch (e) {
-          reject({message:e.message, type:CONSTANT.ERROR});
+    requestFile("GET", url, data, async(result, error) => {
+      if (error) reject(error);
+      else {
+        const {blob, fileName} = result;
+        if(UA.isApp()){
+           //------------ IS MOBILE APP---------
+           const base64Data = await blobToBase64(blob).catch(e=>reject(e));          
+          if(UA.isAndroidApp()) {
+            const base64Str = base64Data.replace(/^data:.+;base64,/, "");
+            let file = {
+              content: base64Str,
+              title: 'file',
+              mimeType: 'application/pdf'
+            }
+            openFileApp(file);
+          } else await sendActionMobile(getObjFromBase64(base64Data, fileName));
+        } else {
+          // ------------IS DESKTOP---------------
+          try {
+            const newUrl = URL.createObjectURL(blob);
+            openFileDesktop(newUrl);
+            setTimeout(()=>{ URL.revokeObjectURL(url);},50);
+          } catch (e) {
+            reject({message:e.message, type:CONSTANT.ERROR});
+          }
         }
+        resolve(true);
       }
-      resolve(true);
-    }
-  });
+    });
 });
 
 export const openFileBase64 = async (base64Str, contentType) => new Promise(async (resolve, reject) => {

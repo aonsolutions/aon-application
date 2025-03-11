@@ -2168,7 +2168,7 @@ public class EnterprisePayrollExcel {
 			condition = condition.and(WORKPLACE.ID.eq(workplaceId));
 		
 		if(null == types || types.isEmpty())
-			condition = condition.and(SALARY.TYPE.le((byte)4)); // Only, salary, extra, delay, settle
+			condition = condition.and(SALARY.TYPE.le((byte)3)); // Only, salary, extra, delay, settle
 		else {
 			Collection<Integer> typeInts = types.stream().map(com.esferalia.aon.occam.api.model.type.SalaryType::ordinal).collect(Collectors.toList());	
 			condition = condition.and(SALARY.TYPE.in(typeInts));

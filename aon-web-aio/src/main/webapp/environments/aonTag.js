@@ -108,12 +108,19 @@ export const AON_PARENT = 'aon-parent';
 
 // MODULES - INVOICE
 
+export const AON_INCOME = 'aon-income';
+export const AON_EXPENSE = 'aon-expense';
+export const AON_INCOME_LIST = 'aon-income-list';
+export const AON_EXPENSE_LIST = 'aon-expense-list';
 export const AON_INVOICE_PANEL = 'aon-invoice-panel';
 export const AON_INVOICE_HOME = 'aon-invoice-home';
 export const AON_INVOICE_LIST = 'aon-invoice-list';
 export const AON_MOBILE_INVOICE_LIST = 'aon-mobile-invoice-list';
 export const AON_INVOICE_CLOSING_LIST = 'aon-invoice-closing-list';
 export const AON_INVOICE_RECORD = 'aon-invoice-record';
+
+// MODULES - PAYROLL
+export const AON_PAYROLL_LIST = "aon-payroll-list";
 
 // MODULES - USER
 

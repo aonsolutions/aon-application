@@ -3703,9 +3703,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
-			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
+			User user = AON.getUser(domain, domainId, login);
+//			Integer userId = AonServletUtils.getUserID(connection, login, domainId, parentDomainId);
 			
-			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, userId) : AON.getCertificates(domain, domainId, login, userId);
+			List<com.esferalia.aon.occam.api.model.Certificate> certificates = withParent ? AON.getCertificatesWithParent(domain, domainId, parentDomainId, login, user.getId()) : AON.getCertificates(domain, domainId, login, user.getId());
 			return certificates;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -5100,16 +5101,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if(params.isExtra()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.EXTRA);
 			if(params.isSettle()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.SETTLE);
 			if(params.isDelay()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.DELAY);
-			if(params.isL00()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L00);
-			if(params.isL03()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L03);
-			if(params.isL13()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L13);
 			
 			ByteArrayOutputStream oos = new ByteArrayOutputStream();
 
-			if(params.isGroupByWorkplace())
+			if(params.isGroupByWorkplace()) {
 				JooqEnterpriseSalaryBuilder.generateEnterprisePayrollByPeriod(oos, domain, "", domainId, params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
-			else
+			}else {
+				if(params.isL00()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L00);
+				if(params.isL03()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L03);
+				if(params.isL13()) salaryTypes.add(com.esferalia.aon.occam.api.model.type.SalaryType.L13);
 				JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(oos, domain, "", params.getStart(), params.getEnd(), params.getEnterprise(), params.getWorkplace(), salaryTypes.toArray(new com.esferalia.aon.occam.api.model.type.SalaryType[0]));
+			}
 			
 			byte bytes[] = oos.toByteArray();
 						

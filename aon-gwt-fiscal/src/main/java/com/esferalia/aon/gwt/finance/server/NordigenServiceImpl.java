@@ -75,7 +75,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 
 	@Override
 	public List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country) throws NordigenException {
-		return AonNordigen.getInstitutions(token, country, null);
+		return AonNordigen.getInstitutionsByCountry(token, country);
 	}
 
 }

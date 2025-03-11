@@ -52,6 +52,8 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "6,67");
 		calculate(Calendar.SEPTEMBER, 2021);
 		assertText("common_contingency", "9,10");
+		calculate(Calendar.SEPTEMBER, 2025);
+		assertText("common_contingency", "11,16");
 
 
 		draft("FORMACIÓN Y EL, APRENDIZAJE");
@@ -115,6 +117,21 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("it_cost", "3,82");
 		assertText("ims_cost", "3,56");
 		click("costsCheck-input");
+		calculate(Calendar.JANUARY, 2025);
+		assertText("common_contingency", "11,16");
+		assertText("unemployment", "21,41"); // 1381.20 * 1.55 / 100.00
+		assertText("job_training", "0,27");
+		//assertValue("cgcBaseLabel", "1.381,20");
+		//assertValue("cgpBaseLabel", "1.381,20");
+		click("costsCheck-input");
+		wait4Id("common_contingency_cost");
+		assertText("common_contingency_cost", "55,97");
+		assertText("unemployment_cost", "75,96"); // 1381.20 * 5.50 / 100.00
+		assertText("job_training_cost", "2,09");
+		assertText("fogasa_cost", "4,25");
+		assertText("it_cost", "3,99");
+		assertText("ims_cost", "3,72");
+		click("costsCheck-input");
 		
 
 		//costsCheck-input
@@ -159,6 +176,21 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("fogasa_cost", "4,07");
 		assertText("it_cost", "3,82");
 		assertText("ims_cost", "3,56");
+		assertNotElement("mei_cost");
+		click("costsCheck-input");
+		calculate(Calendar.JANUARY, 2025);
+		assertValue("cgcBaseLabel", "1.381,20");
+		assertValue("cgpBaseLabel", "1.381,20");
+		assertText("common_contingency", "11,16");
+		assertText("job_training", "0,27");
+		assertNotElement("mei");
+		click("costsCheck-input");
+		wait4Id("it_cost");
+		assertText("common_contingency_cost", "55,97");
+		assertText("job_training_cost", "2,09");
+		assertText("fogasa_cost", "4,25");
+		assertText("it_cost", "3,99");
+		assertText("ims_cost", "3,72");
 		assertNotElement("mei_cost");
 		click("costsCheck-input");
 
@@ -272,6 +304,15 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("mei", 1.59);
 		//assertText("totalDeductionLabel", totalDeduction - 28.00 );
 		//assertText("totalEnterpriseLabel", totalEnterprise - 91.00 );
+		calculate(Calendar.JANUARY, 2025);
+		assertValue("cgcBaseLabel", 1381.20);
+		assertValue("cgpBaseLabel", 1381.20);
+		assertText("common_contingency", 11.16);
+		assertText("unemployment", 21.41);
+		assertText("job_training", 0.27);
+		assertText("mei", 1.80);
+		assertText("meiPercentLabel", "0,13 %");
+		
 
 	}
 
@@ -294,7 +335,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		}
 		setValue("editor-dias_vacaciones_no_disfrutados", "1");
 		//double totalPayment = getValue("totalPaymentLabel");
-		assertText("unemployment", 20.51);
+		assertText("unemployment", 21.41);
 		
 		
 		draft("FINIQUITO FORMACION, ALTERNANCIA");
@@ -328,6 +369,13 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("mei_cost", "7,67");
 		click("costsCheck-input");
 		
+		calculate(Calendar.JANUARY, 2025);
+		assertText("mei", "1,80");
+		assertText("meiPercentLabel", "0,13 %");
+		click("costsCheck-input");
+		assertText("mei_cost", "9,25");
+		assertText("mei_ePercentLabel", "0,67 %");
+		click("costsCheck-input");
 		
 		
 	}

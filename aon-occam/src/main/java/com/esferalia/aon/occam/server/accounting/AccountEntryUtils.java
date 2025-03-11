@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountEntryUtils {
@@ -95,6 +96,24 @@ public class AccountEntryUtils {
 						p.getAccountProperty().eq(params.getAccount())
 						.or(p.getBalancingAccountProperty().eq(params.getAccount()))
 						);
+			}
+		}
+		if (AonStringUtils.isNotBlank(params.getQuery())) {
+			if (AonNumberUtils.isNumber(params.getQuery())) {
+				double queryNumber = AonNumberUtils.todouble( params.getQuery() );
+				prop = prop.and( 
+					    (p.getDebitProperty().eq(queryNumber)
+					.or (p.getCreditProperty().like(queryNumber))));
+			} else {
+				String q = AonStringUtils.SQLlike(params.getQuery());
+				prop = prop.and( (
+					p.getAccountCodeProperty().like(q)
+						.or(p.getAccountDescriptionProperty().like(q))
+						.or(p.getBalancingAccountCodeProperty().like(q))
+						.or(p.getBalancingAccountDescriptionProperty().like(q))
+						.or(p.getConceptProperty().like(q))
+						.or(p.getDocumentNumber().like(q))
+						));
 			}
 		}
 		if (AonStringUtils.isNotBlank(params.getConcept())) {

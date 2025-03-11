@@ -89,15 +89,11 @@ public class Mod202ServiceAsyncDecorator implements Mod202ServiceAsync {
 		AON.start();
 		fsa.markAsPending(occam, mod202, new AsyncCallbackWrapper<>(callback));
 	}
+	
 	@Override
 	public void create(Occam occam,Mod202 mod202, AsyncCallback<Mod202> callback) {
 		AON.start();
 		fsa.create(occam, mod202,new AsyncCallbackWrapper<>(callback));
-	}
-	@Override
-	public void reset(Occam occam,Mod202 mod202, AsyncCallback<Mod202> callback) {
-		AON.start();
-		fsa.reset(occam, mod202,new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override

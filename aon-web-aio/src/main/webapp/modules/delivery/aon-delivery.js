@@ -14,7 +14,7 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonTab } from '../../components/aon-tab.js';
 
 import { getDelivery } from '../../services/warehouseService.js';
-import { acceptDeliveryPackaging, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
+import { acceptDeliveryPackaging, deleteDelivery, getDeliveryPackaging, getProducts, saveDeliveryPackaging } from '../../services/productService.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
@@ -88,6 +88,7 @@ export class AonDelivery extends AonElement {
 		this.appendChild(toolbar);
 		// toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.ADD, () => this.addPackaging());
+		if(this.delivery.status != 'INVOICED') toolbar.addButton2(ACTION.DELETE, () => this.delete());
 		toolbar.addButton2(ACTION.ACCEPT, () => this.accept());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
@@ -175,6 +176,18 @@ export class AonDelivery extends AonElement {
 			acceptDeliveryPackaging({id:this.delivery.id}).then(this.back());
     	});
     	d.open();
+	}
+
+	delete() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ACCEPT);
+		d.setContentHTML(`Estás seguro de eliminar el albarán.`);
+		d.addAcceptAction(() => {
+			deleteDelivery({id:this.delivery.id}).then(() => this.back());
+		});
+		d.open();	
 	}
 
 	back() {
@@ -624,9 +637,6 @@ export class AonDelivery extends AonElement {
 			this.showError(error);
 		}
 	}
-
-
-
 }
 
 if(!window.customElements.get(TAG.AON_DELIVERY)){
