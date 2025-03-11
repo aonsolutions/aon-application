@@ -109,7 +109,7 @@ public class NordigenTestCase {
 	@Test
 	void testGetAllInstitutions() {
 		try {
-			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, null, null);
+			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutionsByCountry(nordigenToken, null);
 			assertTrue(allInstitutions != null && allInstitutions.size() > 2000);
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -119,7 +119,7 @@ public class NordigenTestCase {
 	@Test
 	void testGetAllSpanishInstitutions() {
 		try {
-			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutions(nordigenToken, Country.ES, null);
+			List<NordigenInstitution> allInstitutions = AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES);
 			assertNotNull(allInstitutions);
 			assertTrue(allInstitutions.stream().allMatch(inst -> inst.getCountries().contains(Country.ES)));
 		} catch (Exception e) {
