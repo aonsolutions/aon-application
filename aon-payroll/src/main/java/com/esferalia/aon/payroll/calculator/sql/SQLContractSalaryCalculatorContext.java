@@ -114,6 +114,7 @@ import com.esferalia.aon.payroll.calculator.ISystemDeduction;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
@@ -1958,6 +1959,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.contractExpressionContext.getVariables(name).stream().map(v -> v.getPeriod())
 				.collect(() -> new HashSet<Period>(Collections.singleton(defPeriod)), Set::add, Set::addAll)
 				.forEach(p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
+	}
+
+	public <T extends Number> void setBaseVariable(String name, T t) {
+		this.contractExpressionContext.putVariable(name, new QuoteCalculator.BaseVariable( t != null ? t.doubleValue() : 0.00, getCurrentBindings().getPeriod() ));
 	}
 
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
