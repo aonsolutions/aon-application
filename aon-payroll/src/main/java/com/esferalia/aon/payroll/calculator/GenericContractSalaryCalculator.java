@@ -505,6 +505,41 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		
 	}
 
+	private static class ResultVariable implements ITimedVariable<Double> {
+
+		private Double value;
+		private Period period;
+		
+		public ResultVariable(Double value, Period period ) {
+			this.value = value;
+			this.period = period;
+		}
+		
+		public ResultVariable(Double value, Date start, Date end ) {
+			this ( value, new Period(start, end) );
+		}
+
+
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+		
+		@Override
+		public Double getValue(Period p) {
+			return value / getValueDays() * getPeriodDays(period.intersect(p));
+		}
+		
+		private long getValueDays() {
+			return getPeriodDays(period);
+		}
+
+		private long getPeriodDays(Period p) {
+		    	return p == null ? 0L : AonDateUtils.getDaysBetweenDates(p.getStart(), p.getEnd())+1;
+		}
+
+	}
+
 	protected IListener listener;
 	protected ISalaryBuilder<T> salaryBuilder;
 
@@ -2097,29 +2132,29 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if (valueStart.compareTo(prevStart) < 0) {
 					Date valueEnd = prev(prevStart);
 					long valueDays = getDays(valueStart, valueEnd);
-					expressionContext.setVariable(name, resultValue / resultDays * valueDays, valueStart,valueEnd);
+					expressionContext.putVariable(name, new ResultVariable(resultValue / resultDays * valueDays, valueStart,valueEnd));
 				} 
 				valueStart = Period.max(valueStart, prevStart);
 				Date valueEnd = Period.min(prevEnd, resultEnd);
 				long valueDays = getDays(valueStart, valueEnd);
 				if (prev instanceof IExpressionVariable<?>) {
-					expressionContext.setVariable(name, resultValue / resultDays * valueDays, valueStart, valueEnd);
+					expressionContext.putVariable(name, new ResultVariable(resultValue / resultDays * valueDays, valueStart, valueEnd));
 				}
 				else {
-					expressionContext.setVariable(name, ( resultValue  / resultDays + prevValue.doubleValue() / prevDays )  * valueDays, valueStart, valueEnd);
+					expressionContext.putVariable(name, new ResultVariable(( resultValue  / resultDays + prevValue.doubleValue() / prevDays )  * valueDays, valueStart, valueEnd));
 				}
 				
 				valueStart = next(valueEnd);
 				if ( Period.compare(prevEnd, valueEnd) > 0 ) {					
 					valueDays = getDays(valueStart, prevEnd);
-					expressionContext.setVariable(name, prevValue.doubleValue() / prevDays * valueDays, valueStart,prevEnd);
+					expressionContext.putVariable(name, new ResultVariable(prevValue.doubleValue() / prevDays * valueDays, valueStart,prevEnd));
 				}
 			} catch (Exception e) {
 				System.err.println(String.format("ERROR [%s]: %s", name, e.getLocalizedMessage()));
 			}
 		}
 		if (valueStart.compareTo(resultEnd) <= 0) {
-			expressionContext.setVariable(name, resultValue / resultDays * getDays(valueStart, resultEnd), valueStart, resultEnd);
+			expressionContext.putVariable(name, new ResultVariable(resultValue / resultDays * getDays(valueStart, resultEnd), valueStart, resultEnd));
 		}
 	}
 

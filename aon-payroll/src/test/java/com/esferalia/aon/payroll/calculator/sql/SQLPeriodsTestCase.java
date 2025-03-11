@@ -1,10 +1,12 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static org.junit.Assert.assertEquals;
 
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -14,7 +16,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
@@ -24,6 +25,7 @@ import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
@@ -555,6 +557,159 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 		
 		Assert.assertEquals(1250.00 * 10.00 / 100.00  , salary.getSocialSecurityContributions(), 0.015);
+		
+	}
+	
+	@Test
+	public void testCostPercentsPeriodsI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+					private static final long serialVersionUID = 1L;
+
+			{
+				put(CGC_BASE_MIN.getName(), "(1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){{
+					put("DIAS_MES", "30.00");
+				}
+				}
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+						}
+				, new String[] {
+						"BASE_CGP * ( isdef PORCENTAJE_DESMPL ? PORCENTAJE_DESMPL : PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100"
+				}, null);
+		//@formatter:on
+		
+		addCost(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)", "0.60 %", "DESMPL_E");
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, Calendar.DAY_OF_MONTH, 9), null, 1000.00 / 30.00);
+		
+		Date desmplEndDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		Date desmplStartDate = add(desmplEndDate, Calendar.DAY_OF_MONTH, 1);
+		addData(aonContext, contract, startDate, desmplEndDate, ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "1.55");
+		addData(aonContext, contract, desmplStartDate, endDate, ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "1.55");
+		addData(aonContext, contract, startDate, desmplEndDate, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "5.50");
+		addData(aonContext, contract, desmplStartDate, endDate, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "5.50");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder() {
+		}, d -> d) ).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println("P " + s.getDescription() + " = " + s.getAmount() + "," + s.getType()+ ", " + s.getQuote());
+
+		double quote = salary.getSalaryPayments().stream().collect(Collectors.summingDouble(p -> p.getQuote()));
+		
+		for ( SalaryDeduction s : salary.getSalaryDeductions() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+
+		for ( SalaryCost s : salary.getSalaryCosts() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+		
+		
+		
+		double cost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
+
+		double deduction = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
+		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
+		assertEquals(1381.20, salary.getCommonBase(), DELTA);
+		assertEquals(1000.00, salary.getProfessionalBase(), 0.009);
+		assertEquals(salary.getProfessionalBase() * 1.55 / 100.00, deduction, DELTA);
+		assertEquals(salary.getProfessionalBase() * 5.50 / 100.00, cost, DELTA);
+		
+	}
+	
+	@Test
+	public void testCostPercentsPeriodsII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+					private static final long serialVersionUID = 1L;
+
+			{
+				put(CGC_BASE_MIN.getName(), "(1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+				put(CGP_BASE_MIN.getName(), "(1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+			}
+		});
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){{
+					put("DIAS_MES", "30.00");
+				}
+				}
+				, new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+						}
+				, new String[] {
+						"BASE_CGP * ( isdef PORCENTAJE_DESMPL ? PORCENTAJE_DESMPL : PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100"
+				}, null);
+		//@formatter:on
+		
+		addCost(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "(PORCENTAJE_DESMPL == 0) ? 0.00 : ( BASE_CGP_E * ( isdef PORCENTAJE_DESMPL_E ? PORCENTAJE_DESMPL_E : PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100)", "0.60 %", "DESMPL_E");
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, add(startDate, Calendar.DAY_OF_MONTH, 9), null, 1000.00 / 30.00);
+		
+		Date desmplEndDate = add(startDate, Calendar.DAY_OF_MONTH, 10);
+		Date desmplStartDate = add(desmplEndDate, Calendar.DAY_OF_MONTH, 1);
+		addData(aonContext, contract, startDate, desmplEndDate, ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "1.55");
+		addData(aonContext, contract, desmplStartDate, endDate, ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "1.55");
+		addData(aonContext, contract, startDate, desmplEndDate, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "5.50");
+		addData(aonContext, contract, desmplStartDate, endDate, ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "5.50");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder() {
+		}, d -> d) ).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println("P " + s.getDescription() + " = " + s.getAmount() + "," + s.getType()+ ", " + s.getQuote());
+
+		double quote = salary.getSalaryPayments().stream().collect(Collectors.summingDouble(p -> p.getQuote()));
+		
+		for ( SalaryDeduction s : salary.getSalaryDeductions() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+
+		for ( SalaryCost s : salary.getSalaryCosts() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+		
+		
+		
+		double cost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
+
+		double deduction = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(c -> c.getAmount()));
+		
+		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
+		
+		assertEquals(1381.20, salary.getCommonBase(), DELTA);
+		assertEquals(1381.20, salary.getProfessionalBase(), 0.009);
+		assertEquals(salary.getProfessionalBase() * 1.55 / 100.00, deduction, DELTA);
+		assertEquals(salary.getProfessionalBase() * 5.50 / 100.00, cost, DELTA);
 		
 	}
 	
