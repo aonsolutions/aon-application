@@ -1,14 +1,15 @@
 import {AonElement} from '../../components/AonElement.js';
 import { ToolbarType} from '../../models/enums.js';
 import {AonToolbar} from "../../components/aon-toolbar.js";
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js'; 
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js'; 
 import * as ACTION from '../actions.js';
 import { createCard, createDate, createInput, createSelect, createTextarea, createNumber } from '../../components/CreateComponent.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
-import { getCompanyActivities } from '../../services/companyService.js';
-import { getAccounts } from '../../services/accountingService.js';
+import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
+import { getAccounts, setIncome } from '../../services/accountingService.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonIncomeList } from './aon-income-list.js';
+import { Income } from './Income.js';
 
 export class AonIncome extends AonElement {
 
@@ -16,14 +17,17 @@ export class AonIncome extends AonElement {
     INCOME_CARD;
     INCOME_DATE;
     INCOME_ACTIVITY;
-    INCOME_INCOME;
+    INCOME_EXPACCOUNT;
     INCOME_DESCRIPTION;
     INCOME_REFERENCE;
     INCOME_AMOUNT;
     INCOME_PAYMENT;
+    INCOME_CUSTOMER;
     INCOME_COMMENTS;
     DIV_GENERAL;
     exampleObject;
+
+    income;
 
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -43,12 +47,14 @@ export class AonIncome extends AonElement {
     }
 
     initialize() {
+        this.income = this.income || new Income();
         this.id = this.id || 'aonIncome';
         this.INCOME_TOOLBAR = this.id + "Toolbar";
         this.INCOME_CARD = this.id + "Card";
         this.INCOME_DATE = this.id + "Date";
         this.INCOME_ACTIVITY = this.id + "Activity"
-        this.INCOME_INCOME = this.id + "Income";
+        this.INCOME_EXPACCOUNT = this.id + "ExpAccount";
+        this.INCOME_CUSTOMER = this.id + "Customer";
         this.INCOME_DESCRIPTION = this.id + "Description";
         this.INCOME_REFERENCE = this.id + "Reference";
         this.INCOME_AMOUNT = this.id + "Amount";
@@ -65,7 +71,9 @@ export class AonIncome extends AonElement {
         toolbar.title = MSG.INCOMES; 
         this.appendChild(toolbar);
 
+        toolbar.addButton2(ACTION.SAVE, () => this.save());
         toolbar.addButton2(ACTION.BACK, () => this.back());
+        
 
         let div = this.createDiv();
         div.id = this.DIV_GENERAL; 
@@ -80,10 +88,10 @@ export class AonIncome extends AonElement {
 
     buildCard(parent) {
         let card = createCard(this.INCOME_CARD, MSG.OTHER_INCOMES, parent);
-
+    
         let div = this.createDiv();
         card.setContent(div);
-
+    
         let activity = createSelect(this.INCOME_ACTIVITY, MSG.ACTIVITY, div);
         activity.setAlias("id", "description");
         getCompanyActivities({}).then(activities => {
@@ -95,51 +103,165 @@ export class AonIncome extends AonElement {
         });
     
         let date = createDate(this.INCOME_DATE, MSG.DATE, div);
-        date.value = this.exampleObject.date;
-
+        date.setDate(this.income.date);
+        date.addEventListener(EVENT.CHANGE, () =>  {
+            this.getIncome().setDate(this.getDate())
+        });
+    
         let customer = new AonCustomerSuggestion();
+        customer.id = this.INCOME_CUSTOMER;
+        if(this.getIncome().getCustomer())
+            customer.setCustomer(this.getIncome().getCustomer());
+
+        customer.addEventListener(EVENT.CHANGE, () =>  {
+            this.getIncome().setCustomer(this.getCustomer());
+        });
         div.appendChild(customer);
+    
+        let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Ingreso");
+        expAccount.setValue(this.income.expAccount);
+        expAccount.autocomplete = true;
+        expAccount.setAlias("id", "description");
+        div.appendChild(expAccount);
+        getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
+            expAccount.setOptions(accounts);
+            expAccount.value = this.income.expAccount.id;
+        });
+        
+        expAccount.addEventListener(EVENT.CHANGE, () =>  {
+            this.getIncome().setExpAccount(this.getExpAccount());
+        });
 
-        let income = createSelect(this.INCOME_INCOME, "Ingreso");
-        income.autocomplete = true;
-        income.setAlias("id", "description");
-        div.appendChild(income);
-        getAccounts({code: "7"}).then(accounts => {
-            income.setOptions(accounts);
-        })
+    
+        let description = createInput(this.INCOME_DESCRIPTION, MSG.CONCEPT, div);
+        description.setValue(this.income.concept) ;
 
-        let descripition = createInput(this.INCOME_DESCRIPTION, MSG.DESCRIPTION, div);
-
+        description.addEventListener(EVENT.CHANGE, () =>  {
+            this.getIncome().setConcept(this.getConcept());
+        });
+    
         let subDiv = this.createElement(TAG.DIV);
         subDiv.style.display = "flex";
         div.appendChild(subDiv);
-
+    
         let reference = createInput(this.INCOME_REFERENCE, MSG.REFERENCE, subDiv)
+        reference.setValue(this.income.referenceCode);
         reference.style.width = "50%";
 
+        reference.addEventListener(EVENT.CHANGE, () => {
+            this.getIncome().setReferenceCode(this.getReference());
+        });
+    
         let amount = createNumber(this.INCOME_AMOUNT, MSG.AMOUNT, subDiv);
+        amount.value = this.income.amount;
         amount.style.marginLeft = "10px";
         amount.style.width = "50%";
 
-        let paymentMethod = createSelect (this.INCOME_PAYMENT, MSG.PAYMETHOD, div);
-        getPaymethods({}).then(paymethods => {
-            let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
-            paymentMethod.options = JSON.stringify(pms);
-            paymentMethod.value = finance.paymethod;
+        amount.addEventListener(EVENT.CHANGE, ()=>{
+            this.getIncome().setAmount(this.getAmount());
         });
+    
+        let paymentMethod = createSelect(this.INCOME_PAYMENT, MSG.PAYMETHOD, div);
+        paymentMethod.setAlias("id", "alias");
+        let opciones = [];
+        getCompanyBanks({ active: true }).then(banks => {
+            banks
+                .filter(b => b.active)
+                .forEach(b => {
+                    b.alias = b.alias; 
+                    opciones.push(b); 
+                });
+        
+            getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
+                accounts.forEach(a => {
+                    a.alias = a.description; 
+                    opciones.push(a); 
+                });
+        
+                paymentMethod.setOptions(opciones);
+                if(this.income.cashAccount){
+                    paymentMethod.value = this.income.cashAccount.id;
+                    paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
+                        this.getIncome().setCashAccount(this.getPaymethods());
+                    });
+                }
+                if(this.income.bank){
+                    paymentMethod.value = this.income.bank.id;
+                    paymentMethod.addEventListener(EVENT.CHANGE, () =>{
+                        this.getIncome().setBank(this.getPaymethods());
+                    })
+                }
+                    
+            });
+        });
+        
+        
+        paymentMethod.addEventListener(EVENT.SELECT, (event) => {
+            const selectedObject = event.detail;
+            console.log("Objeto seleccionado:", selectedObject);
+        });        
 
         let comments = createTextarea(this.INCOME_COMMENTS, MSG.COMMENTS, div);
+        comments.setValue(this.income.comments);
+        comments.addEventListener(EVENT.CHANGE, () => {
+            this.getIncome().setComments(this.getComments());
+        });
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.height = "100px";
-    }
-
-    setExampleObject(exampleObject) {
-        this.exampleObject = exampleObject;
+        this.getElement(this.INCOME_COMMENTS + "Textarea").style.marginTop = "2px";
     }
 
     back() {
         this.getApplication().setContent(new AonIncomeList());
     }
 
+    save() {
+        console.log(JSON.stringify(this.income));
+        setIncome(this.income);
+    }
+
+    getActivity(){
+        return this.getElement(this.INCOME_ACTIVITY).getValue();
+    }
+
+    getDate() {
+        return this.getElement(this.INCOME_DATE).getValue();
+    }
+
+    getCustomer() {
+        return this.getElement(this.INCOME_CUSTOMER).getCustomer();
+    }
+
+    getExpAccount() {
+        return this.getElement(this.INCOME_EXPACCOUNT).getValueObject();
+    }
+
+    getConcept() {
+        return this.getElement(this.INCOME_DESCRIPTION).getValue();
+    }
+
+    getReference() {
+        return this.getElement(this.INCOME_REFERENCE).getValue();
+    }
+
+    getAmount() {
+        return this.getElement(this.INCOME_AMOUNT).getValue();
+    }
+
+    getComments() {
+        return this.getElement(this.INCOME_COMMENTS).getValue();
+    }
+
+    getPaymethods() {
+        return this.getElement(this.INCOME_PAYMENT).getValueObject();
+    }
+
+    getIncome() {
+        return this.income
+    }
+
+    setIncome(income){
+        this.income = income;
+    }
 }
 if(!window.customElements.get(TAG.AON_INCOME)){
     window.customElements.define(TAG.AON_INCOME, AonIncome);
