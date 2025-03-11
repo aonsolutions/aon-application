@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -360,13 +361,15 @@ public class Asserts {
 
 	public static void assertEqualsCreditor(Creditor expected, Creditor actual) {
 		assertEqualsNulls( "Creditor", expected, actual);
-		assertEqualsRegistry(expected, actual);
-		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
-		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
-		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
-		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
-		assertEquals("Account",expected.getAccount(),actual.getAccount());
+		if (expected != null) {
+			assertEqualsRegistry(expected, actual);
+			assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+			assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+			assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
+			assertEquals("Status",expected.getStatus(),actual.getStatus());
+			assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
+			assertEquals("Account",expected.getAccount(),actual.getAccount());
+		}
 	}
 
 	public static void assertEqualsSeller(Seller expected, Seller actual) {
@@ -1283,6 +1286,23 @@ public class Asserts {
 					assertNotEmptyKeys( current , j);
 				}
 			}
+		}
+	}
+
+	public static void assertAccountingExpense(AccountingExpense expected, AccountingExpense actual) {
+		assertEqualsNulls( "AccountingExpense", expected, actual);
+		if (expected != null) {
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEqualsCreditor(expected.getCreditor().orElse(null), actual.getCreditor().orElse(null));
+			assertEquals("Date",expected.getDate(), actual.getDate());
+			assertEquals("Activity",expected.getActivity(), actual.getActivity());
+			assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
+			assertEquals("Concept",expected.getConcept(), actual.getConcept());
+			assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 
+			assertEquals("Amount",expected.getAmount(), actual.getAmount(), DELTA);
+			assertEqualsRegistryBank(expected.getBank().orElse(null), actual.getBank().orElse(null));
+			assertEqualsAccount(expected.getCashAccount().orElse(null), actual.getCashAccount().orElse(null));
+			assertEquals("Comments",expected.getComments(), actual.getComments()); 
 		}
 	}
 

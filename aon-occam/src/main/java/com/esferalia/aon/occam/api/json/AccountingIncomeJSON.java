@@ -54,9 +54,4 @@ public class AccountingIncomeJSON {
 				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)))
 		);
 	}
-	
 }
-/*
-.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
-
-*/

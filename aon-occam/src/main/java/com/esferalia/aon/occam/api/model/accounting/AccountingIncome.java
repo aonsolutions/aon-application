@@ -144,7 +144,4 @@ public class AccountingIncome implements Serializable{
 		return this;
 	}
 
-	
-	
-	
 }

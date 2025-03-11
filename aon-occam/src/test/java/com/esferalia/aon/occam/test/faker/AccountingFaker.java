@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport.AccountTrialBalance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.DateInterval;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -204,6 +205,22 @@ public class AccountingFaker {
 			periods.add(AonRandom.getAccountPeriod(ctx, 80));
 		}
 		return periods;
+	}
+
+	public static AccountingExpense getAccountingExpense(AONContext ctx) {
+		return new AccountingExpense()
+			.setDomain(ctx.getDomainId())
+			.setCreditor( AonFaker.getCreditor(ctx) )
+			.setDate( AonRandom.getPastDate(10) )
+			.setActivity(Optional.ofNullable(AonRandom.getRandomActivity( ctx )).map( a -> a.getId()).orElse( null ))
+			.setExpAccount( getAccount(ctx, "629") )
+			.setConcept(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setReferenceCode(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+			.setAmount(AonRandom.getDouble(0, 150000))
+			.setBank( AonFaker.getRegistryBank(ctx) )
+			.setCashAccount( getAccount(ctx, "570") )
+			.setComments(AonStringUtils.substring(faker.gameOfThrones().house(), 0, 128))
+		;
 	}
 
 	public static AccountingIncome getAccountingIncome(AONContext ctx) {
