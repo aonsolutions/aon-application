@@ -6,7 +6,7 @@ import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
-import {favicon, loadLink } from './css/aon-customView.js';
+import {favicon, title, loadLink } from './css/aon-customView.js';
 
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
@@ -41,6 +41,7 @@ const load = () => {
 	loadTheme().then(
 	() => { 
 		favicon(); 
+		title();
 		document.body.appendChild(new AonModule());
 	},
 	(err) => {

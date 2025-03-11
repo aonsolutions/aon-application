@@ -24,7 +24,7 @@ import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
 import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
-import {favicon, loadCustomView } from '../css/aon-customView.js';
+import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
 
 
 export class AonHeader extends AonElement {
@@ -1078,7 +1078,7 @@ export class AonHeader extends AonElement {
 			let customUrl = location.origin + '/customview?domain=' + company.domain;
 			loadCustomView(customUrl).then(() => { 
 				favicon();
-				this.title();
+				title();
 			});
 		}
 		);
@@ -1089,12 +1089,7 @@ export class AonHeader extends AonElement {
 		});
 	}
 	
-	title() {
-		let title = getComputedStyle(document.body).getPropertyValue('--title').trim();
-		if (title) {
-			document.title = title;
-		}
-	}
+	
 
 	buildMenuLeftop() {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
