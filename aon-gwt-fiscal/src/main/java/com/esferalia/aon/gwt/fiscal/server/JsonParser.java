@@ -216,6 +216,10 @@ public class JsonParser {
 		if (confidential != null) {
 			params.setSecurityLevel( SecurityLevel.safeValueOf( confidential.intValue() ));
 		}
+		String query = (String) jsonParams.get(IRequestParamsNames.QUERY);
+		if (AonStringUtils.isNotBlank(query)) {
+			params.setQuery(query);			
+		}
 		Long account = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT);
 		if (account != null) {
 			params.setAccount(account.intValue());	

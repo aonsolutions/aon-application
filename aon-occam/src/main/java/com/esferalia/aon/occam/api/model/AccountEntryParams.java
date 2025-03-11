@@ -26,6 +26,8 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private SecurityLevel securityLevel;
 	// private boolean confidential; 
 	
+	private String query;
+	
 	private int applyAccount; // 0 = BOTH, 1 = ACCOUNT, 2 = BALANCING ACOUNT
 	private Integer account;
 	private Double debit;
@@ -142,6 +144,13 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	}
 	public AccountEntryParams setToDate(Date toDate) {
 		this.toDate = toDate;
+		return this;
+	}
+	public String getQuery() {
+		return query;
+	}
+	public AccountEntryParams setQuery(String query) {
+		this.query = query;
 		return this;
 	}
 	public int getApplyAccount() {
@@ -289,7 +298,8 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 		return (account != null 
 			|| (debit != null  && debit != 0.0)
 			|| (credit != null && credit != 0.0)
-			|| AonStringUtils.isNotEmpty( concept) 
+			|| AonStringUtils.isNotEmpty( query ) 
+			|| AonStringUtils.isNotEmpty( concept)
 			|| AonStringUtils.isNotEmpty( document) );
 	}
 	

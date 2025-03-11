@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.test.accounting.entry.AccountEntryTestSuite;
+import com.esferalia.aon.occam.test.accounting.expense.AccountingExpenseTestSuite;
 import com.esferalia.aon.occam.test.accounting.income.AccountingIncomeTestSuite;
 import com.esferalia.aon.occam.test.accounting.period.AccountPeriodTestSuite;
 
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.test.accounting.period.AccountPeriodTestSuite;
 @SuiteClasses({
 	AccountPeriodTestSuite.class,
 	AccountEntryTestSuite.class,
+	AccountingExpenseTestSuite.class,
 	AccountingIncomeTestSuite.class,
 	// BalanceTestSuite.class
 })

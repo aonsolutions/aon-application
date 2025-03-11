@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -35,6 +36,8 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -66,6 +69,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
+import com.esferalia.aon.occam.test.accounting.entry.AccountEntryTest;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -289,10 +293,20 @@ public class AonRandom {
 		return getAccount(ctx, 0);
 	}
 	public static Account getAccount(AONContext ctx, int nullThreshold){
+		return getAccount(ctx, nullThreshold, null);
+	}
+	public static Account getAccount(AONContext ctx, int nullThreshold, AccountFilter filter){
 		return gt(nullThreshold)
-			?AccountDAO.getRandom(ctx, null )
+			?AccountDAO.getRandom(ctx, filter )
 			:null;
 	}
+	public static Account getAccountExpense(AONContext ctx){
+		return getAccount(ctx, -1, f -> f.getCodeProperty().like("7%").and( f.getEntryEnabledProperty().eq((byte) 1) ));
+	}
+	public static Account getAccountCash(AONContext ctx){
+		return getAccount(ctx, -1, f -> f.getCodeProperty().like("570%").and( f.getEntryEnabledProperty().eq((byte) 1) ));
+	}
+
 	public static AccountPeriod getAccountPeriod(AONContext ctx) {
 		return getAccountPeriod(ctx, 0);
 	}
@@ -489,6 +503,24 @@ public class AonRandom {
 			:null;
 	}
 	
+	public static AccountPeriodStatus getRandomAccountPeriodStatus() {
+		return getRandomAccountPeriodStatus(-1);
+	}
+	public static AccountPeriodStatus getRandomAccountPeriodStatus(int nullThreshold) {
+		return gt(nullThreshold)
+			?AccountPeriodStatus.values()[faker.random().nextInt(AccountPeriodStatus.values().length)]
+			:null;
+	}
+
+	public static AccountEntryType getRandomAccountEntryType() {
+		return getRandomAccountEntryType(-1);
+	}
+	public static AccountEntryType getRandomAccountEntryType(int nullThreshold) {
+		return gt(nullThreshold)
+			?AccountEntryType.values()[faker.random().nextInt(AccountEntryType.values().length)]
+			:null;
+	}
+
 	public static RegistryStatus getRandomRegistryStatus() {
 		return getRandomRegistryStatus (-1);
 	}

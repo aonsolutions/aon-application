@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -406,15 +406,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureFarmerActivity(mod, 0).setCuo(mod.getAmount(Mod303Key.CT_SA14))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA14))
 		// (1) Actividades agrícolas, ganaderas y forestales. DANA 2024
-		,CT_SA1X(Mod303Key.CT_SA1X, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_SA1X, ensureFarmerActivity(mod, 0).getDana())
-			,mod -> ensureFarmerActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_SA1X))
-			,null)
+//		,CT_SA1X(Mod303Key.CT_SA1X, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA1X, ensureFarmerActivity(mod, 0).getDana())
+//			,mod -> ensureFarmerActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_SA1X))
+//			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
-		,CT_SA1R(Mod303Key.CT_SA1R, null, null, null, "(hasFarmerActivity(0)?calculateReduction2024(CT_SA1X,25,CT_SA14,CT_SA1R):0.0)", null
-			,mod -> mod.putAmount(Mod303Key.CT_SA1R, ensureFarmerActivity(mod, 0).getDanaReduction())
-			,mod -> ensureFarmerActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_SA1R))
-			,null)
+//		,CT_SA1R(Mod303Key.CT_SA1R, null, null, null, "(hasFarmerActivity(0)?calculateReduction2024(CT_SA1X,25,CT_SA14,CT_SA1R):0.0)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA1R, ensureFarmerActivity(mod, 0).getDanaReduction())
+//			,mod -> ensureFarmerActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_SA1R))
+//			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T,2T,3T)
 		,CT_SA15(Mod303Key.CT_SA15, null, null, null
 			,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)"
@@ -424,7 +424,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T,2T,3T)
 		,CT_SA16(Mod303Key.CT_SA16, null, null, null
-			,"(hasFarmerActivity(0) && !isLastPeriod())?round((CT_SA14-CT_SA1R)*CT_SA15/100):(0.0)"
+			,"(hasFarmerActivity(0) && !isLastPeriod())?round((CT_SA14)*CT_SA15/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA16, ensureFarmerActivity(mod, 0).getIng())
 			,mod -> ensureFarmerActivity(mod, 0).setIng(mod.getAmount(Mod303Key.CT_SA16))
@@ -459,7 +459,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1A))
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA18(Mod303Key.CT_SA18, null, null, null
-			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA1R-CT_SA1A):(0.0)"
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA1A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA18, ensureFarmerActivity(mod, 0).getCad())
 			,mod -> ensureFarmerActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_SA18))
@@ -491,15 +491,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureFarmerActivity(mod, 1).setCuo(mod.getAmount(Mod303Key.CT_SA24))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA24))
 		// (2) Actividades agrícolas, ganaderas y forestales. DANA 2024
-		,CT_SA2X(Mod303Key.CT_SA2X, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_SA2X, ensureFarmerActivity(mod, 1).getDana())
-			,mod -> ensureFarmerActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_SA2X))
-			,null)
+//		,CT_SA2X(Mod303Key.CT_SA2X, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA2X, ensureFarmerActivity(mod, 1).getDana())
+//			,mod -> ensureFarmerActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_SA2X))
+//			,null)
 		// (2) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
-		,CT_SA2R(Mod303Key.CT_SA2R, null, null, null, "(hasFarmerActivity(1)?calculateReduction2024(CT_SA2X,25,CT_SA24,CT_SA2R):0.0)", null
-			,mod -> mod.putAmount(Mod303Key.CT_SA2R, ensureFarmerActivity(mod, 1).getDanaReduction())
-			,mod -> ensureFarmerActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_SA2R))
-			,null)
+//		,CT_SA2R(Mod303Key.CT_SA2R, null, null, null, "(hasFarmerActivity(1)?calculateReduction2024(CT_SA2X,25,CT_SA24,CT_SA2R):0.0)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA2R, ensureFarmerActivity(mod, 1).getDanaReduction())
+//			,mod -> ensureFarmerActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_SA2R))
+//			,null)
 		// (2) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
 		,CT_SA25(Mod303Key.CT_SA25, null, null, null
 			,"(hasFarmerActivity(1) && !isLastPeriod())?CT_SA25:(0.0)"
@@ -509,7 +509,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA25))
 		// (2) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA26(Mod303Key.CT_SA26, null, null, null
-			,"(hasFarmerActivity(1) && !isLastPeriod())?round((CT_SA24-CT_SA2R)*CT_SA25/100):(0.0)"
+			,"(hasFarmerActivity(1) && !isLastPeriod())?round((CT_SA24)*CT_SA25/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA26, ensureFarmerActivity(mod, 1).getIng())
 			,mod -> ensureFarmerActivity(mod, 1).setIng(mod.getAmount(Mod303Key.CT_SA26))
@@ -544,7 +544,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2A))
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]  (4T)
 		,CT_SA28(Mod303Key.CT_SA28, null, null, null
-			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA2R-CT_SA2A):(0.0)"
+			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA2A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA28, ensureFarmerActivity(mod, 1).getCad())
 			,mod -> ensureFarmerActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_SA28))
@@ -578,15 +578,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureFarmerActivity(mod, 2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA34))
 		// (3) Actividades agrícolas, ganaderas y forestales. DANA 2024
-		,CT_SA3X(Mod303Key.CT_SA3X, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_SA3X, ensureFarmerActivity(mod, 2).getDana())
-			,mod -> ensureFarmerActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_SA3X))
-			,null)
+//		,CT_SA3X(Mod303Key.CT_SA3X, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA3X, ensureFarmerActivity(mod, 2).getDana())
+//			,mod -> ensureFarmerActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_SA3X))
+//			,null)
 		// (3) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
-		,CT_SA3R(Mod303Key.CT_SA3R, null, null, null, "(hasFarmerActivity(2)?calculateReduction2024(CT_SA3X,25,CT_SA34,CT_SA3R):0.0)", null
-			,mod -> mod.putAmount(Mod303Key.CT_SA3R, ensureFarmerActivity(mod, 2).getDanaReduction())
-			,mod -> ensureFarmerActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_SA3R))
-			,null)
+//		,CT_SA3R(Mod303Key.CT_SA3R, null, null, null, "(hasFarmerActivity(2)?calculateReduction2024(CT_SA3X,25,CT_SA34,CT_SA3R):0.0)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA3R, ensureFarmerActivity(mod, 2).getDanaReduction())
+//			,mod -> ensureFarmerActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_SA3R))
+//			,null)
 		// (3) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
 		,CT_SA35(Mod303Key.CT_SA35, null, null, null
 			,"(hasFarmerActivity(2) && !isLastPeriod())?CT_SA35:(0.0)"
@@ -596,7 +596,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA35))
 		// (3) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA36(Mod303Key.CT_SA36, null, null, null
-			,"(hasFarmerActivity(2) && !isLastPeriod())?round((CT_SA34-CT_SA3R)*CT_SA35/100):(0.0)"
+			,"(hasFarmerActivity(2) && !isLastPeriod())?round((CT_SA34)*CT_SA35/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA36, ensureFarmerActivity(mod, 2).getIng())
 			,mod -> ensureFarmerActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_SA36))
@@ -631,7 +631,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3A))
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA38(Mod303Key.CT_SA38, null, null, null
-			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA3R-CT_SA3A):(0.0)"
+			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA3A):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA38, ensureFarmerActivity(mod, 2).getCad())
 			,mod -> ensureFarmerActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_SA38))
@@ -665,15 +665,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureFarmerActivity(mod, 3).setCuo(mod.getAmount(Mod303Key.CT_SA44))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA44))
 		// (4) Actividades agrícolas, ganaderas y forestales. DANA 2024
-		,CT_SA4X(Mod303Key.CT_SA4X, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_SA4X, ensureFarmerActivity(mod, 3).getDana())
-			,mod -> ensureFarmerActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_SA4X))
-			,null)
+//		,CT_SA4X(Mod303Key.CT_SA4X, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA4X, ensureFarmerActivity(mod, 3).getDana())
+//			,mod -> ensureFarmerActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_SA4X))
+//			,null)
 		// (4) Actividades agrícolas, ganaderas y forestales. Reducción DANA 2024
-		,CT_SA4R(Mod303Key.CT_SA4R, null, null, null, "(hasFarmerActivity(3)?calculateReduction2024(CT_SA4X,25,CT_SA44,CT_SA4R):0.0)", null
-			,mod -> mod.putAmount(Mod303Key.CT_SA4R, ensureFarmerActivity(mod, 3).getDanaReduction())
-			,mod -> ensureFarmerActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_SA4R))
-			,null)
+//		,CT_SA4R(Mod303Key.CT_SA4R, null, null, null, "(hasFarmerActivity(3)?calculateReduction2024(CT_SA4X,25,CT_SA44,CT_SA4R):0.0)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_SA4R, ensureFarmerActivity(mod, 3).getDanaReduction())
+//			,mod -> ensureFarmerActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_SA4R))
+//			,null)
 		// (4) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral (1T, 2T, 3T)
 		,CT_SA45(Mod303Key.CT_SA45, null, null, null
 			,"(hasFarmerActivity(3) && !isLastPeriod())?CT_SA45:(0.0)"
@@ -683,7 +683,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA45))
 		// (4) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A] (1T, 2T, 3T)
 		,CT_SA46(Mod303Key.CT_SA46, null, null, null
-			,"(hasFarmerActivity(3) && !isLastPeriod())?round((CT_SA44-CT_SA4R)*CT_SA45/100):(0.0)"
+			,"(hasFarmerActivity(3) && !isLastPeriod())?round((CT_SA44)*CT_SA45/100):(0.0)"
 			,null
 			,mod -> mod.putAmount(Mod303Key.CT_SA46, ensureFarmerActivity(mod, 3).getIng())
 			,mod -> ensureFarmerActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_SA46))
@@ -718,7 +718,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4A))
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B] (4T)
 		,CT_SA48(Mod303Key.CT_SA48, null, null, null
-			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA4R-CT_SA4A):(0.0)", null
+			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA4A):(0.0)", null
 			,mod -> mod.putAmount(Mod303Key.CT_SA48, ensureFarmerActivity(mod, 3).getCad())
 			,mod -> ensureFarmerActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_SA48))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA48))
@@ -754,20 +754,20 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 0).setEmp((int) mod.getAmount(Mod303Key.CT_S1X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X3))
 		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,CT_S1X4(Mod303Key.CT_S1X4, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S1X4, ensureActivity(mod, 0).getLor())
-			,mod -> ensureActivity(mod, 0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X4))
+//		,CT_S1X4(Mod303Key.CT_S1X4, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S1X4, ensureActivity(mod, 0).getLor())
+//			,mod -> ensureActivity(mod, 0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X4))
 		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,CT_S1X5(Mod303Key.CT_S1X5, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S1X5, ensureActivity(mod, 0).getCov())
-			,mod -> ensureActivity(mod, 0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X5))		
+//		,CT_S1X5(Mod303Key.CT_S1X5, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S1X5, ensureActivity(mod, 0).getCov())
+//			,mod -> ensureActivity(mod, 0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X5))		
 		// (1) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
-		,CT_S1X6(Mod303Key.CT_S1X6, null, null, null, null, null
-				,mod -> mod.putAmount(Mod303Key.CT_S1X6, ensureActivity(mod, 0).getDana())
-				,mod -> ensureActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_S1X6))
-				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X6))		
+//		,CT_S1X6(Mod303Key.CT_S1X6, null, null, null, null, null
+//				,mod -> mod.putAmount(Mod303Key.CT_S1X6, ensureActivity(mod, 0).getDana())
+//				,mod -> ensureActivity(mod, 0).setDana((int) mod.getAmount(Mod303Key.CT_S1X6))
+//				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X6))		
 		,CT_S11D(Mod303Key.CT_S11D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S11D, ensureModule(mod, 0, 0).getDescription())
 			,mod -> ensureModule(mod, 0, 0).setDescription(mod.getDescription(Mod303Key.CT_S11D))
@@ -1009,17 +1009,17 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117))
 			,null)		
 		// (1) Actividades en régimen simplificado. Reducción Lorca
-		,CT_S1R1(Mod303Key.CT_S1R1, null, null, null, "calculateReduction2024(CT_S1X4,20,CT_S117,CT_S1R1)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S1R1, ensureActivity(mod, 0).getLorcaReduction())
-			,mod -> ensureActivity(mod, 0).setLorcaReduction(mod.getAmount(Mod303Key.CT_S1R1))
-			,null)		
+//		,CT_S1R1(Mod303Key.CT_S1R1, null, null, null, "calculateReduction2024(CT_S1X4,20,CT_S117,CT_S1R1)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S1R1, ensureActivity(mod, 0).getLorcaReduction())
+//			,mod -> ensureActivity(mod, 0).setLorcaReduction(mod.getAmount(Mod303Key.CT_S1R1))
+//			,null)		
 		// (1) Actividades en régimen simplificado. Reducción DANA
-		,CT_S1R2(Mod303Key.CT_S1R2, null, null, null, "calculateReduction2024(CT_S1X6,25,CT_S117,CT_S1R2)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S1R2, ensureActivity(mod, 0).getDanaReduction())
-			,mod -> ensureActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_S1R2))
-			,null)		
+//		,CT_S1R2(Mod303Key.CT_S1R2, null, null, null, "calculateReduction2024(CT_S1X6,25,CT_S117,CT_S1R2)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S1R2, ensureActivity(mod, 0).getDanaReduction())
+//			,mod -> ensureActivity(mod, 0).setDanaReduction(mod.getAmount(Mod303Key.CT_S1R2))
+//			,null)		
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,CT_S118(Mod303Key.CT_S118, null, null, null, "CT_S1R1+CT_S1R2", null
+		,CT_S118(Mod303Key.CT_S118, null, null, null, "0.0", null  // NO HAY CALCULO DE REDUCCIONES EN 2025, HASTA AHORA ERA LORCA + DANA
 			,mod -> mod.putAmount(Mod303Key.CT_S118, ensureActivity(mod, 0).getRed())
 			,mod -> ensureActivity(mod, 0).setRed(mod.getAmount(Mod303Key.CT_S118))
 			,null)		
@@ -1030,13 +1030,13 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S120(Mod303Key.CT_S120, null, null, null
-			,"calculatePorcentajeIngresoCuenta2023(0,CT_S1X5)", null
+			,"calculatePorcentajeIngresoCuenta2025(0)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor())
 			,mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120))
 			,null)
 		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S121(Mod303Key.CT_S121, null, null, null
-			,"calculateIngresoCuenta2021(0, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120,CT_S1X5)", null
+			,"calculateIngresoCuenta2025(0, CT_S1X1, CT_S1X2, CT_S118, CT_S119, CT_S120)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S121, ensureActivity(mod, 0).getIng())
 			,mod -> ensureActivity(mod, 0).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S121))
 			,null)
@@ -1117,20 +1117,20 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 1).setEmp((int) mod.getAmount(Mod303Key.CT_S2X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X3))
 		// (2) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,CT_S2X4(Mod303Key.CT_S2X4, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S2X4, ensureActivity(mod, 1).getLor())
-			,mod -> ensureActivity(mod, 1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X4))
+//		,CT_S2X4(Mod303Key.CT_S2X4, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S2X4, ensureActivity(mod, 1).getLor())
+//			,mod -> ensureActivity(mod, 1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X4))
 		// (2) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,CT_S2X5(Mod303Key.CT_S2X5, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S2X5, ensureActivity(mod, 1).getCov())
-			,mod -> ensureActivity(mod, 1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X5))
+//		,CT_S2X5(Mod303Key.CT_S2X5, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S2X5, ensureActivity(mod, 1).getCov())
+//			,mod -> ensureActivity(mod, 1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X5))
 		// (2) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
-		,CT_S2X6(Mod303Key.CT_S2X6, null, null, null, null, null
-				,mod -> mod.putAmount(Mod303Key.CT_S2X6, ensureActivity(mod, 1).getDana())
-				,mod -> ensureActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_S2X6))
-				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X6))		
+//		,CT_S2X6(Mod303Key.CT_S2X6, null, null, null, null, null
+//				,mod -> mod.putAmount(Mod303Key.CT_S2X6, ensureActivity(mod, 1).getDana())
+//				,mod -> ensureActivity(mod, 1).setDana((int) mod.getAmount(Mod303Key.CT_S2X6))
+//				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X6))		
 		,CT_S21D(Mod303Key.CT_S21D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S21D, ensureModule(mod, 1, 0).getDescription())
 			,mod -> ensureModule(mod, 1, 0).setDescription(mod.getDescription(Mod303Key.CT_S21D))
@@ -1376,17 +1376,17 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217))
 			,null)
 		// (2) Actividades en régimen simplificado. Reducción Lorca
-		,CT_S2R1(Mod303Key.CT_S2R1, null, null, null, "calculateReduction2024(CT_S2X4,20,CT_S217,CT_S2R1)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S2R1, ensureActivity(mod, 1).getLorcaReduction())
-			,mod -> ensureActivity(mod, 1).setLorcaReduction(mod.getAmount(Mod303Key.CT_S2R1))
-			,null)		
+//		,CT_S2R1(Mod303Key.CT_S2R1, null, null, null, "calculateReduction2024(CT_S2X4,20,CT_S217,CT_S2R1)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S2R1, ensureActivity(mod, 1).getLorcaReduction())
+//			,mod -> ensureActivity(mod, 1).setLorcaReduction(mod.getAmount(Mod303Key.CT_S2R1))
+//			,null)		
 		// (2) Actividades en régimen simplificado. Reducción DANA
-		,CT_S2R2(Mod303Key.CT_S2R2, null, null, null, "calculateReduction2024(CT_S2X6,25,CT_S217,CT_S2R2)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S2R2, ensureActivity(mod, 1).getDanaReduction())
-			,mod -> ensureActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_S2R2))
-			,null)		
+//		,CT_S2R2(Mod303Key.CT_S2R2, null, null, null, "calculateReduction2024(CT_S2X6,25,CT_S217,CT_S2R2)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S2R2, ensureActivity(mod, 1).getDanaReduction())
+//			,mod -> ensureActivity(mod, 1).setDanaReduction(mod.getAmount(Mod303Key.CT_S2R2))
+//			,null)		
 		// (2) Actividades en régimen simplificado. D Reducciones
-		,CT_S218(Mod303Key.CT_S218, null, null, null, "CT_S2R1+CT_S2R2", null
+		,CT_S218(Mod303Key.CT_S218, null, null, null, "0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S218, ensureActivity(mod, 1).getRed())
 			,mod -> ensureActivity(mod, 1).setRed(mod.getAmount(Mod303Key.CT_S218))
 			,null)
@@ -1397,13 +1397,13 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null)
 		// (2) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S220(Mod303Key.CT_S220, null, null, null
-			,"calculatePorcentajeIngresoCuenta2023(1,CT_S2X5)", null
+			,"calculatePorcentajeIngresoCuenta2025(1)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor())
 			,mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220))
 			,null)
 		// (2) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S221(Mod303Key.CT_S221, null, null, null
-			,"calculateIngresoCuenta2021(1, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220,CT_S2X5)", null
+			,"calculateIngresoCuenta2025(1, CT_S2X1, CT_S2X2, CT_S218, CT_S219, CT_S220)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S221, ensureActivity(mod, 1).getIng())
 			,mod -> ensureActivity(mod, 1).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S221))
 			,null)
@@ -1484,20 +1484,20 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 2).setEmp((int) mod.getAmount(Mod303Key.CT_S3X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
 		// (3) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,CT_S3X4(Mod303Key.CT_S3X4, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S3X4, ensureActivity(mod, 2).getLor())
-			,mod -> ensureActivity(mod, 2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+//		,CT_S3X4(Mod303Key.CT_S3X4, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S3X4, ensureActivity(mod, 2).getLor())
+//			,mod -> ensureActivity(mod, 2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
 		// (3) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,CT_S3X5(Mod303Key.CT_S3X5, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S3X5, ensureActivity(mod, 2).getCov())
-			,mod -> ensureActivity(mod, 2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+//		,CT_S3X5(Mod303Key.CT_S3X5, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S3X5, ensureActivity(mod, 2).getCov())
+//			,mod -> ensureActivity(mod, 2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
 		// (3) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
-		,CT_S3X6(Mod303Key.CT_S3X6, null, null, null, null, null
-				,mod -> mod.putAmount(Mod303Key.CT_S3X6, ensureActivity(mod, 2).getDana())
-				,mod -> ensureActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_S3X6))
-				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X6))		
+//		,CT_S3X6(Mod303Key.CT_S3X6, null, null, null, null, null
+//				,mod -> mod.putAmount(Mod303Key.CT_S3X6, ensureActivity(mod, 2).getDana())
+//				,mod -> ensureActivity(mod, 2).setDana((int) mod.getAmount(Mod303Key.CT_S3X6))
+//				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X6))		
 		,CT_S31D(Mod303Key.CT_S31D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S31D, ensureModule(mod, 2, 0).getDescription())
 			,mod -> ensureModule(mod, 2, 0).setDescription(mod.getDescription(Mod303Key.CT_S31D))
@@ -1738,17 +1738,17 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317))
 			,null)
 		// (3) Actividades en régimen simplificado. Reducción Lorca
-		,CT_S3R1(Mod303Key.CT_S3R1, null, null, null, "calculateReduction2024(CT_S3X4,20,CT_S317,CT_S3R1)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S3R1, ensureActivity(mod, 2).getLorcaReduction())
-			,mod -> ensureActivity(mod, 2).setLorcaReduction(mod.getAmount(Mod303Key.CT_S3R1))
-			,null)		
+//		,CT_S3R1(Mod303Key.CT_S3R1, null, null, null, "calculateReduction2024(CT_S3X4,20,CT_S317,CT_S3R1)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S3R1, ensureActivity(mod, 2).getLorcaReduction())
+//			,mod -> ensureActivity(mod, 2).setLorcaReduction(mod.getAmount(Mod303Key.CT_S3R1))
+//			,null)		
 		// (3) Actividades en régimen simplificado. Reducción DANA
-		,CT_S3R2(Mod303Key.CT_S3R2, null, null, null, "calculateReduction2024(CT_S3X6,25,CT_S317,CT_S3R2)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S3R2, ensureActivity(mod, 2).getDanaReduction())
-			,mod -> ensureActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_S3R2))
-			,null)		
+//		,CT_S3R2(Mod303Key.CT_S3R2, null, null, null, "calculateReduction2024(CT_S3X6,25,CT_S317,CT_S3R2)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S3R2, ensureActivity(mod, 2).getDanaReduction())
+//			,mod -> ensureActivity(mod, 2).setDanaReduction(mod.getAmount(Mod303Key.CT_S3R2))
+//			,null)		
 		// (3) Actividades en régimen simplificado. D Reducciones
-		,CT_S318(Mod303Key.CT_S318, null, null, null, "CT_S3R1+CT_S3R2", null
+		,CT_S318(Mod303Key.CT_S318, null, null, null, "0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S318, ensureActivity(mod, 2).getRed())
 			,mod -> ensureActivity(mod, 2).setRed(mod.getAmount(Mod303Key.CT_S318))
 			,null)
@@ -1759,13 +1759,13 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null)
 		// (3) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S320(Mod303Key.CT_S320, null, null, null
-			,"calculatePorcentajeIngresoCuenta2023(2,CT_S3X5)", null
+			,"calculatePorcentajeIngresoCuenta2025(2)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor())
 			,mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320))
 			,null)
 		// (3) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S321(Mod303Key.CT_S321, null, null, null
-			,"calculateIngresoCuenta2021(2, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320,CT_S3X5)", null
+			,"calculateIngresoCuenta2025(2, CT_S3X1, CT_S3X2, CT_S318, CT_S319, CT_S320)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S321, ensureActivity(mod, 2).getIng())
 			,mod -> ensureActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_S321))
 			,null)
@@ -1847,20 +1847,20 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 3).setEmp((int) mod.getAmount(Mod303Key.CT_S4X3))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X3))
 		// (4) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,CT_S4X4(Mod303Key.CT_S4X4, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S4X4, ensureActivity(mod, 3).getLor())
-			,mod -> ensureActivity(mod, 3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X4))
+//		,CT_S4X4(Mod303Key.CT_S4X4, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S4X4, ensureActivity(mod, 3).getLor())
+//			,mod -> ensureActivity(mod, 3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X4))
 		// (4) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,CT_S4X5(Mod303Key.CT_S4X5, null, null, null, null, null
-			,mod -> mod.putAmount(Mod303Key.CT_S4X5, ensureActivity(mod, 3).getCov())
-			,mod -> ensureActivity(mod, 3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X5))
+//		,CT_S4X5(Mod303Key.CT_S4X5, null, null, null, null, null
+//			,mod -> mod.putAmount(Mod303Key.CT_S4X5, ensureActivity(mod, 3).getCov())
+//			,mod -> ensureActivity(mod, 3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5))
+//			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X5))
 		// (4) Actividades en régimen simplificado. Si realiza la actividad en municipios afectados por la DANA
-		,CT_S4X6(Mod303Key.CT_S4X6, null, null, null, null, null
-				,mod -> mod.putAmount(Mod303Key.CT_S4X6, ensureActivity(mod, 3).getDana())
-				,mod -> ensureActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_S4X6))
-				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X6))		
+//		,CT_S4X6(Mod303Key.CT_S4X6, null, null, null, null, null
+//				,mod -> mod.putAmount(Mod303Key.CT_S4X6, ensureActivity(mod, 3).getDana())
+//				,mod -> ensureActivity(mod, 3).setDana((int) mod.getAmount(Mod303Key.CT_S4X6))
+//				,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X6))		
 		,CT_S41D(Mod303Key.CT_S41D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S41D, ensureModule(mod, 3, 0).getDescription())
 			,mod -> ensureModule(mod, 3, 0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
@@ -2101,17 +2101,17 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S417))
 		// (4) Actividades en régimen simplificado. Reducción Lorca
-		,CT_S4R1(Mod303Key.CT_S4R1, null, null, null, "calculateReduction2024(CT_S4X4,20,CT_S417,CT_S4R1)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S4R1, ensureActivity(mod, 3).getLorcaReduction())
-			,mod -> ensureActivity(mod, 3).setLorcaReduction(mod.getAmount(Mod303Key.CT_S4R1))
-			,null)		
+//		,CT_S4R1(Mod303Key.CT_S4R1, null, null, null, "calculateReduction2024(CT_S4X4,20,CT_S417,CT_S4R1)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S4R1, ensureActivity(mod, 3).getLorcaReduction())
+//			,mod -> ensureActivity(mod, 3).setLorcaReduction(mod.getAmount(Mod303Key.CT_S4R1))
+//			,null)		
 		// (4) Actividades en régimen simplificado. Reducción DANA
-		,CT_S4R2(Mod303Key.CT_S4R2, null, null, null, "calculateReduction2024(CT_S4X6,25,CT_S417,CT_S4R2)", null
-			,mod -> mod.putAmount(Mod303Key.CT_S4R2, ensureActivity(mod, 3).getDanaReduction())
-			,mod -> ensureActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_S4R2))
-			,null)		
+//		,CT_S4R2(Mod303Key.CT_S4R2, null, null, null, "calculateReduction2024(CT_S4X6,25,CT_S417,CT_S4R2)", null
+//			,mod -> mod.putAmount(Mod303Key.CT_S4R2, ensureActivity(mod, 3).getDanaReduction())
+//			,mod -> ensureActivity(mod, 3).setDanaReduction(mod.getAmount(Mod303Key.CT_S4R2))
+//			,null)		
 		// (4) Actividades en régimen simplificado. D Reducciones
-		,CT_S418(Mod303Key.CT_S418, null, null, null, "CT_S4R1+CT_S4R2", null
+		,CT_S418(Mod303Key.CT_S418, null, null, null, "0.0", null
 			,mod -> mod.putAmount(Mod303Key.CT_S418, ensureActivity(mod, 3).getRed())
 			,mod -> ensureActivity(mod, 3).setRed(mod.getAmount(Mod303Key.CT_S418))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S418))
@@ -2122,13 +2122,13 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,null)
 		// (4) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta (1T, 2T, 3T)
 		,CT_S420(Mod303Key.CT_S420, null, null, null
-			,"calculatePorcentajeIngresoCuenta2023(3,CT_S4X5)", null
+			,"calculatePorcentajeIngresoCuenta2025(3)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor())
 			,mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420))
 			,null)
 		// (4) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E]) (1T, 2T, 3T)
 		,CT_S421(Mod303Key.CT_S421, null, null, null
-			,"calculateIngresoCuenta2021(3, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420,CT_S4X5)", null
+			,"calculateIngresoCuenta2025(3, CT_S4X1, CT_S4X2, CT_S418, CT_S419, CT_S420)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S421, ensureActivity(mod, 3).getIng())
 			,mod -> ensureActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_S421))
 			,null)
@@ -2462,165 +2462,6 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	public IMod303KeyDAO[] getKeys() {
 		return Mod303KeyDAO.values();
 	}
-
-//	private static boolean c154Filter(Mod303 mod, VatContext vat) {
-//		// Al cambiar el tipo de porcentaje a lo largo del ejercicio
-//		// Si la declaración es complementaria y por diferencia hay que tener
-//		// en cuenta que en los ejercicio anteriores donde ahora se aplica un 7.5% 
-//		// se aplicaba un 5%
-//		if (!mod.isComplementary()) {
-//			return isCommonNationalSales(vat, mod)
-//				&& (
-//				// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75) ||
-//				  (mod.getYear() == 2024
-//				  && (mod.getPeriod() == Period.M10 
-//				  ||  mod.getPeriod() == Period.M11 
-//				  ||  mod.getPeriod() == Period.M12 
-//				  ||  mod.getPeriod() == Period.T4)
-//				  && (vat.getPercentage() == PERCENT75)
-//				  )
-//				 || (mod.getYear() == 2024 
-//				  && (mod.getPeriod() == Period.M09 
-//				  ||  mod.getPeriod() == Period.T3)
-//				  && (vat.getPercentage() == PERCENT5)
-//				  )
-//				);
-//		} else {
-//			return isCommonNationalSales(vat, mod)
-//				&& (
-//			// (mod.getYear() > 2024 && vat.getPercentage() == PERCENT75 || vat.getPercentage() == PERCENT5)) || 
-//					(mod.getYear() == 2024 
-//				  	&& (mod.getPeriod() == Period.M10 
-//				  	||  mod.getPeriod() == Period.M11 
-//				  	||  mod.getPeriod() == Period.M12 
-//				  	||  mod.getPeriod() == Period.T4)
-//				  	&& (vat.getPercentage() == PERCENT75 
-//				  	 || vat.getPercentage() == PERCENT5)
-//				  )
-//				 || (mod.getYear() == 2024 
-//				  	&& (mod.getPeriod() == Period.M09 
-//				  	||  mod.getPeriod() == Period.T3)
-//				  	&& (vat.getPercentage() == PERCENT5)
-//				  )
-//				);
-//		}
-//		
-//		
-//	}
-
-//	private static boolean c169Filter(Mod303 mod, VatContext vat) {
-//		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
-//		return isCommonNationalSales(vat, mod) 
-//			&& vat.isSurcharge()
-//			&& (
-//				(mod.getYear() > 2024 && vat.getSurchargePercent() == SURCHARGE_PERCENT_05) 
-//			|| (mod.getYear() == 2024 
-//		 	  && (mod.getPeriod() == Period.M10 
-//			  ||  mod.getPeriod() == Period.M11 
-//			  ||  mod.getPeriod() == Period.M12 
-//			  ||  mod.getPeriod() == Period.T4)
-//		 	  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_026
-// 			   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05)
-//			  )
-//			);
-//	}
-	
-//	private static boolean c169Filter(Mod303 mod) {
-//		//"00026", "00050" 	periodos 10 y 4T de 2024 y ejercicios posteriores
-//		return (
-//			mod.getYear() > 2024 || 
-//			(mod.getYear() == 2024 
-//		 	  && (mod.getPeriod() == Period.M10 
-//			  ||  mod.getPeriod() == Period.M11 
-//			  ||  mod.getPeriod() == Period.M12 
-//			  ||  mod.getPeriod() == Period.T4)
-//		 	  )
-//			);
-//	}
-
-//	private static boolean c17Filter(Mod303 mod, VatContext vat) {
-//		//	Constante "00000", "00050" o "00062"	09 y 3T de 2024
-//		//	Constante "00100"						A partir de 10 y 4T de 2024 y ejercicios posteriores
-//		if (!mod.isComplementary()) {
-//			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-//				&& (
-////						mod.getYear() > 2024 || 
-//					(mod.getYear() == 2024 
-//				  && (mod.getPeriod() == Period.M10 
-//				  ||  mod.getPeriod() == Period.M11 
-//				  ||  mod.getPeriod() == Period.M12 
-//				  ||  mod.getPeriod() == Period.T4)
-//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
-//				  )
-//				 || (mod.getYear() == 2024 
-//				  && (mod.getPeriod() == Period.M09 
-//				  ||  mod.getPeriod() == Period.T3)
-//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
-//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
-//				  )
-//				);
-//		} else {
-//			return isCommonNationalSales(vat, mod) && vat.isSurcharge()
-//				&& (
-////						mod.getYear() > 2024 || 
-//					(mod.getYear() == 2024 
-//				  && (mod.getPeriod() == Period.M10 
-//				  ||  mod.getPeriod() == Period.M11 
-//				  ||  mod.getPeriod() == Period.M12 
-//				  ||  mod.getPeriod() == Period.T4)
-//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-////					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_05
-//					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_062
-//					  || vat.getSurchargePercent() == SURCHARGE_PERCENT_1)
-//				  )
-//				 || (mod.getYear() == 2024 
-//				  && (mod.getPeriod() == Period.M09 
-//				  ||  mod.getPeriod() == Period.T3)
-//				  && (vat.getSurchargePercent() == SURCHARGE_PERCENT_0 
-//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_05 
-//				   || vat.getSurchargePercent() == SURCHARGE_PERCENT_062)
-//				  )
-//				);
-//		}
-//	}
-
-
-//	public static void greatherQuotaPercent(Mod303Key modkey, Mod303 mod, VatContext vat) {
-//		if (modkey == Mod303Key.CT_C17
-//		&& (
-////			mod.getYear() > 2024 || 
-//				(mod.getYear() == 2024
-//		 && (mod.getPeriod() == Period.M10 
-//			|| mod.getPeriod() == Period.M11
-//			|| mod.getPeriod() == Period.M12
-//			|| mod.getPeriod() == Period.T4
-//			)))){
-//			FiscalModelDetail detail = mod.ensureDetail(modkey);
-//			detail.setAccumulatedAmount(SURCHARGE_PERCENT_1);
-//			detail.setResultAmount( SURCHARGE_PERCENT_1 );	
-//			detail.setAmount( SURCHARGE_PERCENT_1 );
-//		} else {
-//			HashMap<String, Double> map = mod.getTempMap();
-//			String key = modkey.getValue() +  vat.getSurchargePercent();
-//			Double value = map.computeIfAbsent(key, k -> Double.valueOf(0));
-//			value = AonMathUtils.round(value + vat.getSurchargeQuota());
-//			map.put( key, value);
-//			Entry<String, Double> maxEntry = map.entrySet()
-//				.stream()
-//				.filter( k -> AonStringUtils.startsWith(k.getKey(), modkey.getValue()))
-//				.max( (e1, e2) -> e1.getValue().compareTo(e2.getValue()))
-//				.orElse(null);
-//			if (maxEntry != null) {
-//				String v = AonStringUtils.removeStart( maxEntry.getKey() , modkey.getValue());
-//				double d = AonNumberUtils.todouble(v);
-//				FiscalModelDetail detail = mod.ensureDetail(modkey);
-//				detail.setAccumulatedAmount(d);
-//				detail.setResultAmount( d );	
-//				detail.setAmount( d );
-//			}
-//		}
-//	}
 
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
@@ -2979,11 +2820,11 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	}
 
 	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
-		return Modules2018.Epigraph.getEpigraph(mod303.getDescription(key));
+		return Modules2025.Epigraph.getEpigraph(mod303.getDescription(key));
 	}
 
 	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
-		return Modules2018.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
+		return Modules2025.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
 	}
 
 	@Override
@@ -3001,8 +2842,14 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 	}
 
 	private static void copyKey(Mod303 previous,Mod303 current, Mod303Key key) {
-		current.putAmount(key, previous.getAmount(key));
-		current.putDescription(key, previous.getDescription(key));
+		// En 2025 se añade una nueva actividad agricola (la 17) y la 17 anterior pasa a la 18
+		if ((previous.getYear() < 2025) && (key == Mod303Key.CT_SA11 || key == Mod303Key.CT_SA21 || key == Mod303Key.CT_SA31 || key == Mod303Key.CT_SA41) && "17".equals(previous.getDescription(key))) {
+			current.putAmount(key, 0.0);
+			current.putDescription(key, "18");
+		} else {
+			current.putAmount(key, previous.getAmount(key));		
+			current.putDescription(key, previous.getDescription(key));
+		}
 	}
 	
 	private static boolean hasSimplifiedRegime(Mod303 mod303) {

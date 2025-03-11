@@ -178,15 +178,18 @@ public class JsonUtils {
 		return json.opt(key) != null;
 	}
 	public static Stream<JSONObject> stream( JSONArray array ) {
-		if (array == null) return Stream.empty();
+		if ( isEmpty(array)) return Stream.empty();
 		return IntStream
 	    	.range(0,array.length())
 	    	.mapToObj(i -> array.getJSONObject(i));
 	}
 
-	static boolean isEmpty(JSONObject json) {
+	public static boolean isEmpty(JSONObject json) {
 		if (json == null) return true;
 		return AonCollectionUtils.isEmpty(json.keySet());
+	}
+	public static boolean isEmpty(JSONArray jsonArray) {
+		return (jsonArray == null || jsonArray.length() == 0);
 	}
 
 }

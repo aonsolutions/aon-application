@@ -10,8 +10,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
@@ -19,6 +21,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonPeriodPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonPeriodPanel.AonPeriodPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -47,6 +51,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -109,6 +114,75 @@ public class MainContrataContract extends MainEntryPoint {
 
 	}
 	
+	// ------------------------------------------------- ContextMenu
+	
+	class ExcelExportommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+//			if(mainContrataContractObject.getDomainUserRoles().isBeta()) {
+				AonCustomDialog dialog = new AonCustomDialog();
+				dialog.setCaption( "Informe d\u00edas contrato" );
+				dialog.showCloseButton(true);
+				AonPeriodPanel periodPanel = new AonPeriodPanel((AonPeriodPanelCallback) new AonPeriodPanelCallback() {
+					
+					@Override
+					public void onAccept(Date start, Date end) {
+						dialog.hide();
+						
+						FormPanel diskForm = new FormPanel("_blank");
+						diskForm.setMethod(FormPanel.METHOD_POST);
+						diskForm.setAction(GWT.getHostPageBaseURL() + "ms/api/contractDays/");
+						diskForm.addSubmitCompleteHandler(ev -> employeesDockLayoutPanel.removeToolbarButton(diskForm));
+						
+						Hidden domainIdHidden = new Hidden("domainId", Integer.toString( Wnd.getCurrentDomain() ));
+						Hidden domainNameHidden = new Hidden("domainName", Wnd.getCurrentDomainNameURL());
+						Hidden startDateHidden = new Hidden("startDate", formatFullDate.format(start));
+						Hidden endDateHiddenHidden = new Hidden("endDate", formatFullDate.format(null == end ? new Date() : end));
+						
+						FlowPanel formFlowPanel = new FlowPanel();
+						diskForm.add(formFlowPanel);
+						formFlowPanel.add(startDateHidden);
+						formFlowPanel.add(endDateHiddenHidden);
+						formFlowPanel.add(domainIdHidden);
+						formFlowPanel.add(domainNameHidden);
+
+						employeesDockLayoutPanel.addToolbarButton(diskForm);
+						
+						AonMessagePanel.showLoading(employeesMessagePanel, "Exportando informe de d\u00edas...");
+						
+						diskForm.submit();
+						
+						new Timer() {
+							@Override public void run() { AonMessagePanel.hideMessage(employeesMessagePanel); }
+						}.schedule(3500);
+					}
+				});
+				
+				dialog.add( periodPanel );
+				dialog.showLoaded();
+//			} else {
+//				excelContextMenu.hide();
+//				AonMessagePanel.showInfo(employeesMessagePanel, "Este proceso se encuentra en desarrollo. Pr\u00f3ximamente estar\u00e1 disponible.");
+//			}
+		}
+
+	}
+
+	class ExcelContextMenu extends ContextMenu {
+
+		public ExcelContextMenu() {
+			addMenuItem("Informe D\u00edas", new ExcelExportommand(), AON.CSS.aonIconExcel(), "excelExportDays");
+		}
+
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+
+	}
+	
 	// ------------------------------------------ UiFields
 	
 	@UiField
@@ -155,6 +229,8 @@ public class MainContrataContract extends MainEntryPoint {
 	private AonExpandButton tgssExpandButton;
 	private TGSSContextMenu tgssContextMenu;
 	
+	private ExcelContextMenu excelContextMenu = new ExcelContextMenu();
+	
 	private HTMLPanel sistemaREDMessagePanel;
 	private SistemaREDResults sistemaREDResults;
 	private AonToolbarButton sistemREDInfoBtn;
@@ -189,7 +265,7 @@ public class MainContrataContract extends MainEntryPoint {
 		  DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DOC(AON.MSG.document()					,"6rem"				,"")
 		, NSS("NSS"									,"8rem"				,"")
-		, CON("TC2"									,"3rem"				,"")
+		, CON("TC2"									,"4.5rem"				,"")
 		, WOR(AON.MSG.workplace()					,"8rem"				,"")
 		, CAT("Categoria"							,"7rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Inicio"							,"5.5rem"			,"")
@@ -424,9 +500,21 @@ public class MainContrataContract extends MainEntryPoint {
 		salariesBtn.addClickHandler(e -> showEnterpriseSalary());
 		employeesDockLayoutPanel.addToolbarButton(salariesBtn);
 		
-		AonToolbarButton exportExcelBtn = new AonToolbarButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel());
-		exportExcelBtn.addClickHandler(e -> exportEnterpriseContracts());
-		employeesDockLayoutPanel.addToolbarButton(exportExcelBtn);
+		AonExpandButton excelExpandBtn = new AonExpandButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel()) {
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				exportEnterpriseContracts();
+			}
+
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				excelContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				excelContextMenu.show();
+			}
+		};
+		employeesDockLayoutPanel.addToolbarButton(excelExpandBtn);
 		
 		syncSistemREDBtn = new AonToolbarButton("Consultando SistemaRED...", AON.CSS.aonIconRefresh());
 		syncSistemREDBtn.addStyleName(AON.CSS.aonSpin());
