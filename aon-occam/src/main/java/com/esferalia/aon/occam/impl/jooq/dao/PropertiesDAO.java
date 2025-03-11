@@ -67,7 +67,9 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Raddinfo;
+import com.esferalia.aon.jooq.tables.Rdoc;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -110,6 +112,8 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3DocumentFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -160,6 +164,8 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
+import com.esferalia.aon.occam.api.model.Properties.S3CategoryProperties;
+import com.esferalia.aon.occam.api.model.Properties.S3DocumentProperties;
 import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
@@ -1630,6 +1636,56 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM_TARIFF.TYPE);}
 		@Override public Property<Double> getProfitPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM_TARIFF.PROFIT_PERCENT);}
 		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM_TARIFF.PRICE);}
+	}
+	
+	public static class S3DocumentPropertiesDAO implements S3DocumentProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, S3DocumentFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(S3DocumentFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] {filterDAO.getCondition()};
+		}
+		
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.ID);}
+		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.DOMAIN); }
+		@Override public Property<String> getNameProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.NAME); }
+		@Override public Property<Byte> getMimeTypeProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.MIMETYPE); }
+		@Override public Property<Integer> getScopeProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.SCOPE); }
+		@Override public Property<Integer> getCategoryProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.CATEGORY); }
+		@Override public Property<java.util.Date> getDocumentDateProperty() { return new FilterDAO.DatePropertyDAO(Rdoc.RDOC.DOCUMENT_DATE); }
+		@Override public Property<Timestamp> getCreationDateProperty() { return new FilterDAO.TimestampPropertyDAO(Rdoc.RDOC.CREATION_DATE); }
+		@Override public Property<String> getS3Property() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.S3); }
+		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.REGISTRY); }
+//		@Override public Property<Integer> getRattachProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.); }
+	}
+	
+	public static class S3CategoryPropertiesDAO implements S3CategoryProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, S3CategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		protected Condition[] getConditions(S3CategoryFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) {
+				return new Condition[0];
+			}
+			return new Condition[] {filterDAO.getCondition()};
+		}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.ID);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.NAME);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.TYPE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.SCOPE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DESCRIPTION);}
+		@Override public Property<String> getUrlProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.URL);}
+		@Override public Property<Integer> getRattachProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.RATTACH);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CategoryTree.CATEGORY_TREE.ID_PARENT);}
 	}
 
 }

@@ -3456,5 +3456,19 @@
 			<key-column name="id" type="java.lang.Integer"/>
 		</primary-key>
 	</table>
+	
+	<table name="rdoc">
+		<primary-key>
+			<generator class="identity"/>
+			<key-column name="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
+	
+	<table name="category_tree">
+		<primary-key>
+			<generator class="identity"/>
+			<key-column name="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
 
 </hibernate-reverse-engineering>
