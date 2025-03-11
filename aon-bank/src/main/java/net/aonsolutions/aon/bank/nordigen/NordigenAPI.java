@@ -15,7 +15,6 @@ import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.INSTITUTION_I
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.LIMIT_PARAM;
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.MAX_HISTORICAL_DAYS_PARAM;
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.OFFSET_PARAM;
-import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.PAYMENTS_ENABLED_PARAM;
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.REFRESH_PARAM;
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.SECRET_ID_PARAM;
 import static net.aonsolutions.aon.bank.nordigen.NordigenConstants.SECRET_KEY_PARAM;
@@ -305,11 +304,10 @@ class NordigenAPI {
 			,NordigenResponseJSON::from);
 	}
 
-	static List<NordigenInstitution> getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
+	static List<NordigenInstitution> getInstitutionsByCountry(String token, Country country) throws NordigenException {
 		return  getInstitutions(token
 			, new JSONObject()
 				.put(COUNTRY_PARAM, country != null ? country.getIso2() : null)
-				// .put(PAYMENTS_ENABLED_PARAM, paymentsEnabled)
 				);
 	}
 	
