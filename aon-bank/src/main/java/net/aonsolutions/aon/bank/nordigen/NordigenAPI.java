@@ -309,7 +309,8 @@ class NordigenAPI {
 		return  getInstitutions(token
 			, new JSONObject()
 				.put(COUNTRY_PARAM, country != null ? country.getIso2() : null)
-				.put(PAYMENTS_ENABLED_PARAM, paymentsEnabled));
+				// .put(PAYMENTS_ENABLED_PARAM, paymentsEnabled)
+				);
 	}
 	
 	static List<NordigenInstitution> getInstitutions(String token, JSONObject params) throws NordigenException {
