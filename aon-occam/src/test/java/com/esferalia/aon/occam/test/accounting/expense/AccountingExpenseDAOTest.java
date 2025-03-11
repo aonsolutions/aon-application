@@ -1,8 +1,7 @@
-package com.esferalia.aon.occam.test.accounting.income;
+package com.esferalia.aon.occam.test.accounting.expense;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -17,11 +16,11 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
@@ -29,7 +28,7 @@ import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingExpenseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -42,20 +41,20 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
-public class AccountingIncomeDAOTest extends AbstractOccamTest {
+public class AccountingExpenseDAOTest extends AbstractOccamTest {
 	private static final double DELTA = 1e-8;
 
 	@Test
 	public void getCashTest() {
-		AccountingIncome income = getCashIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
+		AccountingExpense expense = getCashExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
 		assertNotNull( ae.getId() );
-		Optional<AccountingIncome> optInc = AccountingIncomeDAO.get( ctx, DOMAIN_ID, ae.getId() , null);
+		Optional<AccountingExpense> optInc = AccountingExpenseDAO.get( ctx, DOMAIN_ID, ae.getId() , null);
 		assertNotNull(optInc);
 		assertTrue(optInc.isPresent());
 		assertTrue(optInc.get().getAccountEntry().isPresent());
@@ -65,8 +64,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		AccountEntryDetail expDetail = saved.getDetails().get(0);
 		assertNotNull(expDetail.getAccount());
 		assertNotNull(expDetail.getBalancingAccount());
-		assertEquals(expDetail.getConcept(), income.getConcept());
-		assertEquals(expDetail.getDocumentNumber(), income.getReferenceCode());
+		assertEquals(expDetail.getConcept(), expense.getConcept());
+		assertEquals(expDetail.getDocumentNumber(), expense.getReferenceCode());
 		AccountEntryDetail bankDetail = saved.getDetails().get(1);
 		assertNotNull(bankDetail.getAccount());
 		assertNotNull(bankDetail.getBalancingAccount());
@@ -79,25 +78,25 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	}	
 	
 	@Test
-	public void saveCustomerBankTest() {
-		AccountingIncome income = getCustomerIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
+	public void saveCreditorBankTest() {
+		AccountingExpense expense = getCustomerExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
 		assertNotNull(ae.getId());
-		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(income.getDate(), ae.getEntryDate());
+		assertEquals(AccountEntryType.OTHER_EXPENSES, ae.getEntryType());
+		assertEquals(expense.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
 		AccountEntryDetail expDetail = ae.getDetails().get(0);
 		assertNotNull(expDetail.getAccount());
 		assertNotNull(expDetail.getBalancingAccount());
-		assertEquals(expDetail.getConcept(), income.getConcept());
-		assertEquals(expDetail.getDocumentNumber(), income.getReferenceCode());
+		assertEquals(expDetail.getConcept(), expense.getConcept());
+		assertEquals(expDetail.getDocumentNumber(), expense.getReferenceCode());
 		
 		
 		AccountEntryDetail bankDetail = ae.getDetails().get(1);
@@ -110,24 +109,24 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 		
-		Customer customer = income.getCustomer()
-			.orElseThrow( () -> new AonCoreException("Sin cliente"));
-		assertNotNull(income.getFinance());
-		assertTrue(income.getFinance().isPresent());
-		Finance finance = income.getFinance().get();
+		Creditor creditor = expense.getCreditor()
+			.orElseThrow( () -> new AonCoreException("Sin acreedor"));
+		assertNotNull(expense.getFinance());
+		assertTrue(expense.getFinance().isPresent());
+		Finance finance = expense.getFinance().get();
 		assertNotNull(finance.getId());
-		assertFalse( finance.isPayment() );
+		assertTrue( finance.isPayment() );
 		assertTrue(finance.hasRegistry());
-		assertEquals( finance.getRegistry().getId(), customer.getId() );
-		assertEquals( finance.getDueDate(), income.getDate() );
+		assertEquals( finance.getRegistry().getId(), creditor.getId() );
+		assertEquals( finance.getDueDate(), expense.getDate() );
 		assertEquals( FinanceStatus.PAID, finance.getFinanceStatus()); 
-		assertEquals( finance.getAmount(), income.getAmount(), DELTA);
+		assertEquals( finance.getAmount(), expense.getAmount(), DELTA);
 		
 		FinanceTracking ft = FinanceTrackingDAO.getLastTracking(ctx, finance.getId() );
 		assertNotNull(ft);
 		assertNotNull(ft.getId());
 		assertEquals( FinanceTrackingType.PAID, ft.getType());
-		assertEquals( ft.getTrackingDate(), income.getDate() );
+		assertEquals( ft.getTrackingDate(), expense.getDate() );
 		assertTrue( ft.isRecorded() );
 		assertEquals( ft.getAccountEntry(), ae.getId() );
 		
@@ -135,16 +134,16 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 
 	@Test
 	public void saveBankTest() {
-		AccountingIncome income = getBankIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
+		AccountingExpense expense = getBankExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
 		assertNotNull(ae.getId());
-		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(income.getDate(), ae.getEntryDate());
+		assertEquals(AccountEntryType.OTHER_EXPENSES, ae.getEntryType());
+		assertEquals(expense.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
@@ -166,16 +165,16 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	
 	@Test
 	public void saveCashTest() {
-		AccountingIncome income = getCashIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
+		AccountingExpense expense = getCashExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
 		assertNotNull(ae.getId());
-		assertEquals(AccountEntryType.OTHER_INCOMES, ae.getEntryType());
-		assertEquals(income.getDate(), ae.getEntryDate());
+		assertEquals(AccountEntryType.OTHER_EXPENSES, ae.getEntryType());
+		assertEquals(expense.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
@@ -197,14 +196,14 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	
 	@Test
 	public void deleteCashTest() {
-		AccountingIncome income = getCashIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
-		AccountingIncomeDAO.delete(ctx, ae );
+		AccountingExpense expense = getCashExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
+		AccountingExpenseDAO.delete(ctx, ae );
 		
 		AccountEntry deleted = AccountEntryDAO.getAccountEntry( ctx, ae.getId() );
 		assertNull(deleted);
@@ -212,14 +211,14 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 
 	@Test
 	public void deleteFinanceTest() {
-		AccountingIncome income = getCustomerIncome( );
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		AccountEntry ae = income.getAccountEntry().get();
-		AccountingIncomeDAO.delete(ctx, ae );
+		AccountingExpense expense = getCustomerExpense( );
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
+		AccountEntry ae = expense.getAccountEntry().get();
+		AccountingExpenseDAO.delete(ctx, ae );
 		
 		AccountEntry deleted = AccountEntryDAO.getAccountEntry( ctx, ae.getId() );
 		assertNull(deleted);
@@ -228,34 +227,33 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	
 	@Test
 	public void updateCashTest() {
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
+		AccountingExpense expense = new AccountingExpense();
+		expense.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
+		expense.setDate( date );
 		Account expAccount = AonRandom.getAccountExpense(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(-1,1,64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
+		expense.setExpAccount( expAccount );
+		expense.setConcept(AonRandom.string(-1,1,64));
+		expense.setReferenceCode( AonRandom.string(32) );
+		expense.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
-		income.setCashAccount(cashAccount);
-		ensureAccountPeriod( income );
-		AccountingIncomeDAO.save(ctx, income);
-		assertNotNull(income);
-		assertNotNull(income.getAccountEntry());
-		assertTrue(income.getAccountEntry().isPresent());
-		//AccountEntry ae = income.getAccountEntry().get();
+		expense.setCashAccount(cashAccount);
+		ensureAccountPeriod( expense );
+		AccountingExpenseDAO.save(ctx, expense);
+		assertNotNull(expense);
+		assertNotNull(expense.getAccountEntry());
+		assertTrue(expense.getAccountEntry().isPresent());
 		
-		income.setAmount (AonMathUtils.round( income.getAmount() + 10));
-		AccountingIncome updated = AccountingIncomeDAO.save( ctx, income );
+		expense.setAmount (AonMathUtils.round( expense.getAmount() + 10));
+		AccountingExpense updated = AccountingExpenseDAO.save( ctx, expense );
 		
 		assertNotNull(updated);
 		assertNotNull(updated.getAccountEntry());
 		assertTrue(updated.getAccountEntry().isPresent());
-		Optional<AccountingIncome> optSavedUpdate = AccountingIncomeDAO.get( ctx, DOMAIN_ID, updated.getAccountEntry().map( AccountEntry::getId).get(), null);
+		Optional<AccountingExpense> optSavedUpdate = AccountingExpenseDAO.get( ctx, DOMAIN_ID, updated.getAccountEntry().map( AccountEntry::getId).get(), null);
 		assertNotNull(optSavedUpdate);
 		assertTrue(optSavedUpdate.isPresent());
-		AccountingIncome savedUpdate = optSavedUpdate.get();
+		AccountingExpense savedUpdate = optSavedUpdate.get();
 		assertNotNull(savedUpdate.getAccountEntry());
 		assertTrue(savedUpdate.getAccountEntry().isPresent());
 		AccountEntry updatedEntry = AccountEntryDAO.getAccountEntry( ctx, savedUpdate.getAccountEntry().get().getId() );
@@ -277,7 +275,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals(AonMathUtils.absRounded(bankDetail.getCredit() - bankDetail.getDebit()), savedUpdate.getAmount() , DELTA);
 	}
 
-	private void ensureAccountPeriod(AccountingIncome exp) {
+	private void ensureAccountPeriod(AccountingExpense exp) {
 		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, exp.getDate() );
 		if (period == null) {
 			AccountPeriodDAO.save(ctx, new AccountPeriod()
@@ -306,39 +304,39 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 			);
 	}
 	
-	private AccountingIncome getCashIncome() {
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
+	private AccountingExpense getCashExpense() {
+		AccountingExpense expense = new AccountingExpense();
+		expense.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
+		expense.setDate( date );
 		Account expAccount = AonRandom.getAccountExpense(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(-1,1,64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
+		expense.setExpAccount( expAccount );
+		expense.setConcept(AonRandom.string(-1,1,64));
+		expense.setReferenceCode( AonRandom.string(32) );
+		expense.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
-		income.setCashAccount(cashAccount);
-		return income;
+		expense.setCashAccount(cashAccount);
+		return expense;
 	}
 
-	private AccountingIncome getBankIncome() {
+	private AccountingExpense getBankExpense() {
 		RegistryBank rbank = ensureBanks();
-		AccountingIncome income = new AccountingIncome();
-		income.setDomain(DOMAIN_ID);
+		AccountingExpense expense = new AccountingExpense();
+		expense.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
-		income.setDate( date );
+		expense.setDate( date );
 		Account expAccount = AonRandom.getAccountExpense(ctx);
-		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(-1,1,64));
-		income.setReferenceCode( AonRandom.string(32) );
-		income.setAmount(100.0);
-		income.setBank(rbank);
-		return income;
+		expense.setExpAccount( expAccount );
+		expense.setConcept(AonRandom.string(-1,1,64));
+		expense.setReferenceCode( AonRandom.string(32) );
+		expense.setAmount(100.0);
+		expense.setBank(rbank);
+		return expense;
 	}
 	
-	private AccountingIncome getCustomerIncome() {
+	private AccountingExpense getCustomerExpense() {
 		RegistryBank rbank = ensureBanks();
-		AccountingIncome income = new AccountingIncome();
+		AccountingExpense income = new AccountingExpense();
 		income.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		income.setDate( date );
@@ -347,8 +345,8 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		income.setConcept(AonRandom.string(-1,1,64));
 		income.setReferenceCode( AonRandom.string(32) );
 		income.setAmount(100.0);
-		Customer customer = AonRandom.getCustomer(ctx);
-		income.setCustomer(customer);
+		Creditor creditor = AonRandom.getCreditor(ctx);
+		income.setCreditor(creditor);
 		income.setBank(rbank);
 		return income;
 	}

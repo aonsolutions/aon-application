@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
@@ -757,6 +758,34 @@ public class ACCOUNTING {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			AmortizationTypeValidation.validate(ctx, amortizationType);
 			getAccounting().saveAmortizationType(ctx, amortizationType);
+		}
+	}
+
+	// *************************************************************
+	// *************************************** [ACCOUNTING EXPENSES]
+	// *************************************************************
+	public static Stream<AccountingExpense> getAccountingExpenses(Occam occam, int domain) throws AonCoreException {
+		return getAccountingExpenses(occam, domain, null );	
+	}
+	public static Stream<AccountingExpense> getAccountingExpenses(Occam occam, int domain, String query) throws AonCoreException {
+		return getAccountingExpenses(occam, domain, query, 0, Integer.MAX_VALUE , true);	
+	}
+	public static Stream<AccountingExpense> getAccountingExpenses(Occam occam, int domain, String query, int offset, int limit, boolean closeContext) {
+		CloseableAONContext ctx = AONContext.getAONContext(occam);
+		IDAOCallback callback = (closeContext)
+			? () -> { if (ctx != null) { ctx.close(); }  }
+			: null;
+		return getAccounting().getAccountingExpenses(ctx
+				, domain
+				,query
+				, offset
+				, limit
+				, callback 
+		);
+	}
+	public static AccountingExpense saveAccountingExpense(Occam occam, AccountingExpense expense) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().saveAccountingExpense(ctx, expense);
 		}
 	}
 

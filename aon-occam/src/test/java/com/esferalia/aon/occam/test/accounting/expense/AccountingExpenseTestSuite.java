@@ -7,9 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ 
 	AccountingExpenseJSONTest.class,
-//	ValidationSaveTest.class,
-//	AccountingIncomeDAOTest.class,
-//	CRUDETest.class,
+	ValidationSaveTest.class,
+	AccountingExpenseDAOTest.class,
+	CRUDETest.class,
 })
 public class AccountingExpenseTestSuite {
 

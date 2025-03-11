@@ -300,7 +300,7 @@ public class AonRandom {
 			?AccountDAO.getRandom(ctx, filter )
 			:null;
 	}
-	public static Account getAccountIncome(AONContext ctx){
+	public static Account getAccountExpense(AONContext ctx){
 		return getAccount(ctx, -1, f -> f.getCodeProperty().like("7%").and( f.getEntryEnabledProperty().eq((byte) 1) ));
 	}
 	public static Account getAccountCash(AONContext ctx){

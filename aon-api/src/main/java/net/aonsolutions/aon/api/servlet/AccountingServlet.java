@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
@@ -21,7 +20,6 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -91,6 +89,7 @@ public class AccountingServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
+				.addRoute(EXPENSES, AccountingServlet::deleteExpense)
 				.addRoute(INCOMES, AccountingServlet::deleteIncome)
 				.apply();
 			
@@ -123,19 +122,28 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getExpenses(AonApiData api) {
-		JSONArray array = new JSONArray();
-		AccountingExpense acc = new AccountingExpense()
-				.setActivity(new EnterpriseActivity().setDescription("Actividad de ejemplo"))
-				.setAmount(12.5)
-				.setDescription("Descripcion de ejemplo")
-				.setDate(new Date());
-				;
-		array.put(AccountingExpenseJSON.toJSON(acc));
-		
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingExpenses(api.getOccam(),api.getDomain().getId())
+			.map( AccountingExpenseJSON::to )
+			.filter( Optional::isPresent )
+			.map( Optional::get );
+		JSONArray array = stream.collect(Collector.of(JSONArray::new, JSONArray::put, JSONArray::put)); 
+		stream.close();
 		return array;
 	}
 	private static JSONObject setExpense(AonApiData api) {
+		JSONObject jsonParams = api.getData();
+		if (JsonUtils.isEmpty(jsonParams)) {
+			throw new AonCoreException("El gasto es un dato obligatorio.");
+		}
+		AccountingExpense expense = AccountingExpenseJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("El gasto es un dato obligatorio."));
+		expense = ACCOUNTING.saveAccountingExpense(api.getOccam(), expense);
+		return AccountingExpenseJSON.to( expense )
+			.orElse(new JSONObject());
+	}
+	private static JSONObject deleteExpense(AonApiData api) {
 		return api.getData();
+		// TODO
 	}
 	
 	private static JSONArray getIncomes(AonApiData api) {

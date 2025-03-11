@@ -677,6 +677,10 @@ public class AccountEntryDAO {
 			public void visitOtherIncomes(AccountEntry entry) {
 				AccountingIncomeDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
 			}
+			@Override 
+			public void visitOtherExpenses(AccountEntry entry) {
+				AccountingExpenseDAO.unrecord( ctx, entry.getDomain(), entry.getId() );
+			}
 			
 			@Override public void visitOpening(AccountEntry entry) { /* Nothing */ }
 			@Override public void visitClosing(AccountEntry entry) { /* Nothing */ }
@@ -689,7 +693,6 @@ public class AccountEntryDAO {
 			@Override public void visitSocialInsurance(AccountEntry entry) { /* Nothing */ }
 			@Override public void visitLoanFee(AccountEntry entry) { /* Nothing */ }
 			@Override public void visitSocialInsuranceAdjust(AccountEntry entry) { /* Nothing */ }
-			@Override public void visitOtherExpenses(AccountEntry entry) { /* Nothing */ }
 		});	
 	}
 
