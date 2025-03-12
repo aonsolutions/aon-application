@@ -170,8 +170,13 @@ public class S3CategoryServlet extends AonApiHttpServlet {
 			filter = filter.and(f.getNameProperty().eq("%" + json.getString(IJsonNames.NAME) + "%"));
 		if(json.has(IJsonNames.DESCRIPTION))
 			filter = filter.and(f.getDescriptionProperty().eq("%" + json.getString(IJsonNames.DESCRIPTION) + "%"));
-		if(json.has(IJsonNames.PARENT))
-			filter = filter.and(f.getParentProperty().eq(json.getInt(IJsonNames.PARENT)));
+		if(json.has(IJsonNames.PARENT)) {
+			if(json.getString(IJsonNames.PARENT).equals("null")) {
+				filter = filter.and(f.getParentProperty().isNull());
+			} else {
+				filter = filter.and(f.getParentProperty().eq(json.getInt(IJsonNames.PARENT)));
+			}
+		}
 		return filter;
 	}
 	
