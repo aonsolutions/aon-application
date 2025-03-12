@@ -5,6 +5,8 @@ import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.isEnabled;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+import static com.esferalia.aon.watson.util.AonStringUtils.defaultIfBlank;
+import static com.esferalia.aon.watson.util.AonStringUtils.lowerCase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -4172,6 +4174,7 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
+	    syncEndDate();
 		showEmitting();
 		settleButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
@@ -6529,7 +6532,7 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
-		if ( percent == null )
+		if ( percent == null || deduction == null )
 			return newPercentLabel("");
 		
 		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
@@ -6540,22 +6543,22 @@ public class SalaryDraft extends ResizeComposite
 		case BONUS:
 		case IN_KIND:{
 			Widget percentLabel = newPercentLabel("");
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentLabel");
 			return percentLabel;
 		}
 		case UNEMPLOYMENT:{
 			Widget percentBox = newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
-			percentBox.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentBox.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentBox");
 			return percentBox;
 		}
 		case COMMON_CONTINGENCY:{
 			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentLabel");
 			return percentLabel;
 		}
 		default: {
 			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(type));
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type != null ? type.name() : ""))+ "PercentLabel");
 			return percentLabel;
 		}
 		}

@@ -4605,7 +4605,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		});
 
-		this.implicitExpressionContext.putVariable(WORKED_YEARS,
+ 		this.implicitExpressionContext.putVariable(WORKED_YEARS,
 				new ActiveTimedExpressionVariable<Double>(WORKED_YEARS.name(), ExpressionScope.CONTRACT) {
 					@Override
 					public Period getPeriod() {
@@ -4614,7 +4614,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					@Override
 					public Double getValue(Period period) {
-						return getWorkedYears(period.getStart(), period.getEnd());
+						return getWorkedYears(period.getStart(), Period.min(endDate, period.getEnd()));
 					}
 				});
 
