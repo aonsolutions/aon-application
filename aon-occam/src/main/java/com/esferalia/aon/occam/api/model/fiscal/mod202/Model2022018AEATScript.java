@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal.mod202;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.ACT_ACCOUNT;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.CORPORATE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -84,8 +85,8 @@ public enum Model2022018AEATScript implements IModelScript<Mod202Key> {
 	
 	,R44 ("B.2) Casos espec\u00EDficos (entidades con m\u00E1s de un porcentaje)",null,TITLE)
 	,R45 (Mod202Key.C19.getDescription(),new Mod202Key[]{Mod202Key.C19,null,null},COMPUTE)
-	,R46 (Mod202Key.C20.getDescription(),new Mod202Key[]{Mod202Key.C20,Mod202Key.C21,Mod202Key.C22},COMPUTE)
-	,R47 (Mod202Key.C23.getDescription(),new Mod202Key[]{Mod202Key.C23,Mod202Key.C24,Mod202Key.C25},COMPUTE)
+	,R46 (Mod202Key.C20.getDescription(),new Mod202Key[]{Mod202Key.C20,Mod202Key.C21,Mod202Key.C22},COMPUTE_KEY)
+	,R47 (Mod202Key.C23.getDescription(),new Mod202Key[]{Mod202Key.C23,Mod202Key.C24,Mod202Key.C25},COMPUTE_KEY)
 	,R48 (Mod202Key.C50.getDescription(),new Mod202Key[]{Mod202Key.C50},NONE)
 	,R49 (Mod202Key.C42.getDescription(),new Mod202Key[]{Mod202Key.C42},NONE)
 	,R50 ("Reserva de nivelaci\u00F3n (art. 105 LIS) (s\u00F3lo entidades que cumplan los "

@@ -121,7 +121,7 @@ public class Mod202AEATDeclaration extends Mod202Declaration {
 		,C03(Mod202Key.C03
 			,null
 			,null
-			,"isMethodA()?((C01-C02)*18/100):0.0"
+			,"isMethodA()?((C01*18/100)-C02):0.0"  
 			, Mod202AEATDeclaration::getC03ComputeKeyInfo )
 		,C04(Mod202Key.C04
 			,null

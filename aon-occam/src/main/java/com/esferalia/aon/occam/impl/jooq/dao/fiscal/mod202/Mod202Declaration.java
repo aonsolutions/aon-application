@@ -222,10 +222,27 @@ abstract class Mod202Declaration {
 				if (mod202Key == Mod202Key.X08) {
 					String x08 = detail.getDescription();
 					amount = AonNumberUtils.todouble(x08);
-					double x081 = AonNumberUtils.todouble(AonStringUtils.substringBefore(x08, "/"));
+					double x081 = 0.0;
+					double x082 = 0.0;
+					double x083 = 0.0;
+					double x084 = 0.0;
+					String[] percent = AonStringUtils.split(AonStringUtils.replace(x08,"N",""), '/');
+					if (percent != null && percent.length > 0) {
+						x081 = AonNumberUtils.todouble(percent[0]);
+						if (percent.length > 1) {
+							x082 = AonNumberUtils.todouble(percent[1]);
+						}
+						if (percent.length > 2) {
+							x083 = AonNumberUtils.todouble(percent[2]);
+						}
+						if (percent.length > 3) {
+							x084 = AonNumberUtils.todouble(percent[3]);
+						}
+					} 
 					mvelCtx.put(Mod202MVELContext.X08_1, x081);
-					double x082 = AonNumberUtils.todouble(AonStringUtils.substringAfter(x08, "/"));
 					mvelCtx.put(Mod202MVELContext.X08_2, x082);
+					mvelCtx.put(Mod202MVELContext.X08_3, x083);
+					mvelCtx.put(Mod202MVELContext.X08_4, x084);
 				} else {
 					amount = detail==null?0.0:detail.getAmount();
 				}

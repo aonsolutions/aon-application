@@ -94,8 +94,8 @@ public class Mod202DAO extends FiscalModelDAO {
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<Mod202>().apply(rec, Mod202::new))
-			.filter( mod-> mod.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
-			.filter( mod-> mod.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
+			.filter( mod-> mod202.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
+			.filter( mod-> mod202.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
 			.forEach( mod -> {
 				Mod202Declaration dec = Mod202Declaration.getInstance(mod);
 				map.computeIfAbsent(mod.getPeriod(), k -> new LinkedList<>());
@@ -130,9 +130,36 @@ public class Mod202DAO extends FiscalModelDAO {
 	}
 
 	public static Mod202 save(AONContext ctx, Mod202 mod202) {
+		beforeSave(mod202);
 		calculate(ctx, mod202);
 		return FiscalModelDAO.save(ctx, mod202);
 	}
+	
+	private static void beforeSave(Mod202 mod202) {
+
+		if (mod202.getInitialDate() != null) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat(DD_MM_YYYY);
+				String date = formatter.format(mod202.getInitialDate());
+				mod202.putDescription(Mod202Key.P02,date);
+			} catch (NumberFormatException e) {
+				mod202.putDescription(Mod202Key.P02,null);
+			}
+		} else {
+			mod202.putDescription(Mod202Key.P02,null);
+		}
+		if (mod202.getCnae() != null ) {
+			try {
+				mod202.putDescription(Mod202Key.P03, mod202.getCnae().getCode());
+			} catch (NumberFormatException e) {
+				mod202.putDescription(Mod202Key.P03,null);
+			}
+		} else {
+			mod202.putDescription(Mod202Key.P03,null);
+		}
+
+	}
+	
 	public static Mod202 saveComments(AONContext ctx, Mod202 mod202) {
 		FiscalModelDAO.saveComments(ctx, mod202);
 		return mod202;

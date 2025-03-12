@@ -31,8 +31,8 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 	 
 	@Override
 	protected String getDeclarationType() {
-		return (model.getDeclarationType()!=null
-				?model.getDeclarationType().getDescription()
+		return (model.getDeclarationResultType()!=null
+				?model.getDeclarationResultType().getDescription()
 				:AonStringUtils.EMPTY);
 	}
 	@Override

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
-import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -29,13 +29,13 @@ public class Mod202 extends FiscalModel implements Serializable {
 	@Override
 	@Deprecated
 	public double getResult() {
-		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResult())");
+		throw new UnsupportedOperationException("Mod202.getResult(): Unsupported method! (use getDeclarationResult())");
 	}
 	
 	@Override
 	@Deprecated
-	public Mod115Key getDeclarationTypeKey() {
-		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
+	public Mod202Key getDeclarationTypeKey() {
+		throw new UnsupportedOperationException("Mod202.getDeclarationTypeKey(): Unsupported method! (use getDeclarationResultType())");
 	}
 	
 	@Override
@@ -80,7 +80,9 @@ public class Mod202 extends FiscalModel implements Serializable {
 	 * 		N (Negativa/Sin actividad/Resultado cero)
 	 */
 	public String getAeatDeclarationType() {
-		return getDescription(Mod202Key.P01);
+		// CON EL REFACTOR LA KEY P01 YA NO SE GRABA, EL TIPO DE RESULTADO SE GRABA EN LA TABLA FS_MODEL
+		// return getDescription(Mod202Key.P01);
+		return getDeclarationResultType().getValue();
 	}
 	
 	public CNAE2009 getCnae() {
@@ -127,6 +129,12 @@ public class Mod202 extends FiscalModel implements Serializable {
 	}
 	public boolean isMethodB2() {
 		return AonMathUtils.equals(getAmount(Mod202Key.X00),2);
+	}
+	
+	@Override
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isCustomerAccepted() || isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 
 	//	@Override
