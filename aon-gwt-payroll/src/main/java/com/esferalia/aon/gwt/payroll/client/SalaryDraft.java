@@ -4172,6 +4172,7 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
+	    syncEndDate();
 		showEmitting();
 		settleButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
