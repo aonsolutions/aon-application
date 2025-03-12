@@ -126,7 +126,7 @@ export class AonExpense extends AonElement {
             this.getExpense().setExpAccount(this.getExpAccount());
         });
 
-        let description = createInput(this.EXPENSE_DESCRIPTION, MSG.DESCRIPTION, div);
+        let description = createInput(this.EXPENSE_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.expense.concept);
         description.addEventListener(EVENT.CHANGE, () => {
             this.getExpense().setConcept(this.getConcept());
