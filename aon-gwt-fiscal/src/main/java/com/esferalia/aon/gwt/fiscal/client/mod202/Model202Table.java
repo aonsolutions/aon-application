@@ -185,7 +185,7 @@ class Model202Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			row.addCell( new InlineLabel(FiscalModelUtils.getModelName(mod202)), AON.CSS.aonTextCenter())
 				.addCell( admon , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(AonNumberUtils.toString( mod202.getYear())), AON.CSS.aonTextCenter())
-				.addCell( new InlineLabel(mod202.getPeriod().getDescription()), AON.CSS.aonTextCenter());
+				.addCell( new InlineLabel(FiscalModelUtils.getPeriodDescription(mod202)), AON.CSS.aonTextCenter());
 			
 			AonDisplayGridCell statusCell = new AonDisplayGridCell();
 			statusCell.add(new InlineLabel(mod202.getStatus().getName()));

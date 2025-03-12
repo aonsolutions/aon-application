@@ -27,7 +27,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod180.Mod180DAO;
@@ -79,13 +78,6 @@ public class FiscalMenuDAO {
 						.filter( fm -> fm.getModel() != FiscalModelType.M200 )  // Tampoco se coge el modelo 200 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M369 )  // Tampoco se coge el modelo 369 de fs_model
 						.filter( fm -> fm.getModel() != FiscalModelType.M390_HF || (fm.getModel() == FiscalModelType.M390_HF && (params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)) )
-						.peek( fm -> {
-							// FALTA - AUN NO ESTA HECHO EL REFACTOR DEL MODELO 202 POR AHORA LES ASIGNO AQUI ESTAS PROPIEDADES
-							if (fm.getModel() == FiscalModelType.M202) {
-								fm.setDeclarationResult(fm.getAmount(Mod202Key.X00) == 0 ? fm.getAmount(Mod202Key.C03) : fm.getAmount(Mod202Key.C34));
-								fm.setDeclarationResultType(FiscalModelDeclarationType.safeValueOf(fm.getDescription(Mod202Key.P01)));																		
-							}
-						 })						
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put );
 				}

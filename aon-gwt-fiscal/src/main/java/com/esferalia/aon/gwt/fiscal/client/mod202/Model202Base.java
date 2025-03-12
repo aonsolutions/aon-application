@@ -245,8 +245,8 @@ public abstract class Model202Base extends DockLayoutPanel {
 		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
 		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
 		dirtyLabel.setTitle("Cambios sin guardar");
-		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
-		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
+//		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
+//		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
@@ -348,7 +348,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 				public void onAccept() {
 					if (callback.getOptions().isBackButtonVisible() && callback.getOptions().hasExternalCallback()) {
 						callback.getOptions().getExternalCallback().onExit(callback.getModel());
-					} else {
+					} else {						
 						callback.onCancel(callback.getModel());
 					}
 				}
@@ -684,12 +684,12 @@ public abstract class Model202Base extends DockLayoutPanel {
 		} else {
 			int row = table.getRowCount();
 			paintLabel(table,row,script);
-			if (script.getKeys() == null) {
-				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
+			if (script.getKeys() == null) {				
+				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 			} else {
 				int c = 1;
 				if (script.getKeys().length==1) c = 5;
-				if (script.getKeys().length==1) c = 3;
+				if (script.getKeys().length==2) c = 3;
 				table.getFlexCellFormatter().setColSpan(row, 0, c );
 				int col = 1;
 				for (Mod202Key key : script.getKeys()) {
@@ -722,7 +722,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		}
 	}
-	
+
 	private int paintBox(FlexTable table,int row, int col, Mod202Key key) {
 		if (key != null && key.getBox() != 0) {
 			table.setWidget(row, col, new AonBoxLabel(key.getBox()));
@@ -871,6 +871,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 				
 				private AonTableButton addButton() {
 					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
+					button.setTabIndex(-2);
 					buttonContainer.add(button);
 					return button;
 				}
