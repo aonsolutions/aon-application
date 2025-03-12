@@ -10,10 +10,12 @@ import java.util.stream.Stream;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Rattach;
 import com.esferalia.aon.jooq.tables.Rdoc;
 import com.esferalia.aon.occam.api.AONContext;
@@ -35,7 +37,8 @@ public class S3DocumentDAO {
 		  throw new IllegalStateException("Utility class");
 	}
 	
-	public static Stream<S3Document> getStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Optional<Integer> page, Optional<Integer> perPage) {
+	public static Stream<S3Document> getStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
+		Result<Record1<Integer>> recursiveIds = null;
 		ctx.checkRead();
 		SelectConditionStep<Record> queryRDoc = ctx.getDslContext()
 				.select(Rdoc.RDOC.ID)
@@ -55,7 +58,8 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.REGISTRY)
 				.select(Rdoc.RDOC.SCOPE)
 				.from(Rdoc.RDOC)
-				.where(S3DOCUMENT_PROPERTIES.getConditions(filter));
+				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+				;
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
 				.select(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.select(DSL.inline((Integer) 1).as(TYPE_DOC))
@@ -75,6 +79,24 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.SCOPE.as(Rdoc.RDOC.SCOPE))
 				.from(Rattach.RATTACH)
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
+		if(category != null) {
+			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.ID_CATEGORY, CategoryTree.CATEGORY_TREE.ID_PARENT)
+	                        .from(CategoryTree.CATEGORY_TREE)
+	                        .where(CategoryTree.CATEGORY_TREE.ID_PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .unionAll(
+	                            DSL.select(CategoryTree.CATEGORY_TREE.field("id_category", Integer.class), CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class))
+	                                .from(CategoryTree.CATEGORY_TREE)
+	                                .join(DSL.table("category_hierarchy"))
+	                                .on(CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class).eq(DSL.field("category_hierarchy.id_category", Integer.class)))
+	                        )
+	                )
+	                .select(DSL.field("id_category", Integer.class))
+	                .from(DSL.table("category_hierarchy"))
+	                .fetch();
+			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
+			queryRAttach = queryRAttach.and(Rattach.RATTACH.CATEGORY.in(recursiveIds));
+		}
 		Select<Record> fullQuery;
 		if(type == null) {
 			if(page.isPresent() && perPage.isPresent())

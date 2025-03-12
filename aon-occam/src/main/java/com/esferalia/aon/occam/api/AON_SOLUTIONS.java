@@ -1203,9 +1203,9 @@ public class AON_SOLUTIONS {
 	
 	// S3 DOCUMENTAL
 	
-	public static Stream<S3Document> getS3DocumentStream(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Optional<Integer> page, Optional<Integer> perPage) {
+	public static Stream<S3Document> getS3DocumentStream(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getAttachment().getS3DocumentStream(ctx, filter, attachFilter, type, page, perPage);
+			return getAttachment().getS3DocumentStream(ctx, filter, attachFilter, type, category, page, perPage);
 		}
 	}
 	

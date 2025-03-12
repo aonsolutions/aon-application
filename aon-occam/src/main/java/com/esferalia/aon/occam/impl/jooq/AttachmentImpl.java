@@ -447,9 +447,9 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 	@Override
-	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Optional<Integer> page, Optional<Integer> perPage) {
+	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> S3DocumentDAO.getStream(ctx, filter, attachFilter, type, page, perPage));
+				configuration -> S3DocumentDAO.getStream(ctx, filter, attachFilter, type, category, page, perPage));
 	}
 	
 	@Override

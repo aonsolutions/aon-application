@@ -130,7 +130,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static Attach getFile(AonApiData api) throws Exception {
 		try {
 			Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null).toList().getFirst();
+			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 			byte[] data = null;
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), AON_BUCKET_NAME);
@@ -160,7 +160,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		JSONArray jsArray = new JSONArray();
 		Optional<Integer> page = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		Optional<Integer> perPage = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api), f -> generateFilterRAttach(f, api), null, page, perPage)
+		Integer category = JsonUtils.getInteger(api.getData(), IJsonNames.CATEGORY);
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api), f -> generateFilterRAttach(f, api), null, category, page, perPage)
 		.forEach(document -> {
 			jsArray.put(fullDocumentToJson(document));
 		});
@@ -171,7 +172,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		System.out.println("GET ONE METHOD");
 		JSONArray jsArray = new JSONArray();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null)
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			jsArray.put(fullDocumentToJson(document));
 		});
@@ -228,7 +229,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static JSONObject deleteAction(AonApiData api) {
 		System.out.println("DELETE METHOD");
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null).toList().getFirst();
+		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 		if(document.getS3key() != null && document.getType() == 0)
 			S3rDoc.deleteObject(document.getS3key(), AON_BUCKET_NAME);
 		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type);
@@ -238,8 +239,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static Filter generateFilter(S3DocumentProperties f, AonApiData api) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		JSONObject json = api.getData();
-		if(json.has(IJsonNames.CATEGORY))
-			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
+//		if(json.has(IJsonNames.CATEGORY))
+//			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
 		if(json.has(IJsonNames.SCOPE))
 			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
 		if(json.has(IJsonNames.START_DATE))
@@ -260,8 +261,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static Filter generateFilterRAttach(AttachProperties f, AonApiData api) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		JSONObject json = api.getData();
-		if(json.has(IJsonNames.CATEGORY))
-			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
+//		if(json.has(IJsonNames.CATEGORY))
+//			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
 		if(json.has(IJsonNames.SCOPE))
 			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
 		if(json.has(IJsonNames.START_DATE))

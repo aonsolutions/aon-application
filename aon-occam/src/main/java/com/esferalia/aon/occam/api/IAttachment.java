@@ -100,7 +100,7 @@ public interface IAttachment {
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId);
 	public void deleteTagRegistryAttach(AONContext ctx, Integer tagId);
 	
-	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Optional<Integer> page, Optional<Integer> perPage);
+	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage);
 	public S3Document insertS3Document(AONContext ctx, S3Document document);
 	public S3Document updateS3Document(AONContext ctx, S3Document document, Integer type);
 	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type);
