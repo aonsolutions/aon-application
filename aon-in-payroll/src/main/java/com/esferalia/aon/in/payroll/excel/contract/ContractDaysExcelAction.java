@@ -66,6 +66,20 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
+		// Accumulate
+		if(meses.size() > 1) {
+			CellUtil.createCell(row, cellCount, "Acumulado Periodo", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		cellCount++;
+    		cellCount++;
+    		cellCount++;
+    		
+    		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 4, cellCount));
+    		cellCount++;
+    		cellCount++;
+		}
+		
 		// Procesar automáticamente los 12 meses del annio
 		
 		XSSFCellStyle headerMonth = null;
@@ -110,6 +124,26 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
+		// Accumulate
+		if(meses.size() > 1) {
+			CellUtil.createCell(row, cellCount, "DM", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "FS", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "DF", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "DL", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "Hrs. JC", headerSecondaryCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		cellCount++;
+		}
+		
 		// Procesar automáticamente los 12 meses del annio
 		this.meses.forEach(mes -> {
 			CellUtil.createCell(row, cellCount, "DM", headerSecondaryCellStyle);
@@ -153,6 +187,17 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "");
 		sheet.setColumnWidth(cellCount++, 15*256);
 		
+		// Accumulate
+		if(meses.size() > 1) {
+			addCell( meses.stream().mapToInt(mes -> mes.getDiasMes()).sum() );
+			addCell( meses.stream().mapToInt(mes -> mes.getDiasFestivos()).sum() );
+			addCell( meses.stream().mapToInt(mes -> mes.getDiasFinDeSemana()).sum() );
+			addCell( meses.stream().mapToInt(mes -> mes.getDiasLaborables()).sum() );
+			addCell( meses.stream().mapToInt(mes -> mes.getHorasJornada()).sum() );
+    		
+    		cellCount++;
+		}
+		
 		// Procesar automáticamente los 12 meses del annio
 		this.meses.forEach(workplaceMonthlyDaysEntryExcel -> {
         	addCell(workplaceMonthlyDaysEntryExcel.getDiasMes());
@@ -194,6 +239,27 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "F. Fin", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 15*256);
 			
+		// Accumulate
+		if(meses.size() > 1) {
+			CellUtil.createCell(row, cellCount, "DV", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "IT", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "NR", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "DA", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "DT", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+    		
+    		CellUtil.createCell(row, cellCount, "Total", headerCellStyle);
+    		sheet.setColumnWidth(cellCount++, 10*256);
+		}
+		
 		// Procesar automáticamente los 12 meses del annio
 		headerMonth = null;
 		
@@ -235,6 +301,16 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		alignCenter( addCell( entry.getNaf() ) );
 		alignCenter( addCell( entry.getStartDate() ) );
 		alignCenter( addCell( entry.getEndDate() ) );
+		
+		// Accumulate
+		if(meses.size() > 1) {
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasVacaciones()).sum() );
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasIT()).sum() );
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasNoRecuperables()).sum() );
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasAusencia()).sum() );
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasTrabajados()).sum() );
+			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasTotal()).sum() );
+		}
 		
 		this.meses.forEach(mes -> {
 			MonthlyDaysEntryExcel monthlyDaysEntryExcel = getMes(entry.getMeses(), obtenerNombreMes(mes.getMes()));
