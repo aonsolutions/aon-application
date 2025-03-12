@@ -212,24 +212,25 @@ export class Invoice {
 
   setActivity(activity) {
     this.activity = activity;
-    
     if(!this.isVatEnabled()){
       this.surcharge = false;
-        
-      if(!this.isCcm()) {
+      if(this.isCcm())
+        this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+      else {
         this.withholding = false;
         this.withholdingFarmer = false;
-        this.taxes = [{
-          tax:TaxType.IVA,
-          type: TaxType.IVA,
-          percentage: 0.0,
-          quota:0.0,
-          base: this.total,
-          surcharge: 0.0,
-          surcharge_quota: 0.0
-        }];
-      } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
-      
+      }        
+
+      this.taxes.push({
+        tax:TaxType.IVA,
+        type: TaxType.IVA,
+        percentage: 0.0,
+        quota:0.0,
+        base: this.total,
+        surcharge: 0.0,
+        surcharge_quota: 0.0
+      });
+   
       this.details.forEach((detail,i) => {
         if(detail.percentage !== 0.0 || detail.vat !== 0.0){
           detail.percentage = 0.0;
@@ -562,20 +563,23 @@ export class Invoice {
     this.transaction = transaction;
     if(!this.isVatEnabled()){
       this.surcharge = false;
-      
-      if(!this.isCcm()) {
+      if(this.isCcm())
+        this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+      else {
         this.withholding = false;
         this.withholdingFarmer = false;
-        this.taxes = [{
-          tax:TaxType.IVA,
-          type: TaxType.IVA,
-          percentage: 0.0,
-          quota:0.0,
-          base: this.total,
-          surcharge: 0.0,
-          surcharge_quota: 0.0
-        }];
-      } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+      }        
+      
+      this.taxes.push({
+        tax:TaxType.IVA,
+        type: TaxType.IVA,
+        percentage: 0.0,
+        quota:0.0,
+        base: this.total,
+        surcharge: 0.0,
+        surcharge_quota: 0.0
+      });
+      
       this.details.forEach((detail,i) => {
         detail.percentage = 0.0;
         detail.vat = 0.0;
