@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
@@ -1189,6 +1190,12 @@ public class AON_SOLUTIONS {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){		
 			InvoiceDuplicateFixDAO.invoiceDuplicateFix(ctx);
 			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
+		}
+	}
+	
+	public static void invoiceTaxDuplicateFix(Occam occam, Integer invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){		
+			InvoiceDuplicateFixDAO.invoiceTaxDuplicateFix(ctx, invoice);
 		}
 	}
 }

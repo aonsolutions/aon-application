@@ -4,6 +4,7 @@ import { createList } from '../../components/CreateComponent.js';
 import { AonExampleObject } from '../example/aon-example-object.js';
 import { getIncomes } from '../../services/accountingService.js';
 import { AonIncome } from './aon-income.js';
+import { Income } from './Income.js';
 
 export class AonIncomeList extends AonElement {
 
@@ -48,15 +49,11 @@ export class AonIncomeList extends AonElement {
         this.more = true;
     }
 
-    aonExampleObject(object, i) {
-        let data = {
-            id: object.id,
-        }
-        this.getExample(data).then(r => {
-            let aonExampleObject = new AonExampleObject();
-            aonExampleObject.setExampleObject(r);
-            this.getApplication().setContent(aonExampleObject);
-        });
+    incomeObject(incomingIncome) {
+        console.log(incomingIncome);
+        let income = new AonIncome();
+        income.setIncome(new Income(incomingIncome));
+        this.getApplication().setContent(income);
     }
     
     setFilter(filter) {
@@ -75,7 +72,7 @@ export class AonIncomeList extends AonElement {
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
         table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.DESCRIPTION, 'string', 'description', '825px');
+        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
         table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
         
 
@@ -93,13 +90,11 @@ export class AonIncomeList extends AonElement {
         if(table) {
             getIncomes().then(incomes => {
                 if(incomes.length == 0){   
-                    this.empty();
+                    console.log("No hay datos!!!")
                 }
                 table.removeRows();
-
-                incomes.forEach((income, i) => {
-                    console.log(JSON.stringify(income))
-                    table.addRow(income, () => this.aonExampleObject(income, i));
+                incomes.forEach((income) => {
+                    table.addRow(income, () => this.incomeObject(income));
                 });
 
             });
@@ -116,7 +111,7 @@ export class AonIncomeList extends AonElement {
                     this.more = false;
                 else this.more = true;
                 examples.forEach((example, i) => {
-                    table.addRow(example, () => this.aonExampleObject(example, i));
+                    table.addRow(example, () => this.incomeObject(example, i));
                 });
             });
         }

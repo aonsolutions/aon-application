@@ -164,7 +164,7 @@ public abstract class QuoteCalculator {
 		
 	}
 	
-	private static class BaseVariable implements ITimedVariable<Double> {
+	public static class BaseVariable implements ITimedVariable<Double> {
 
 		private Double value;
 		private Period period;

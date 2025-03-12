@@ -71,9 +71,15 @@ public class AccountsServlet extends AonApiHttpServlet {
 		Filter filter =  f.getDomainProperty().in(domains);
 		
 		String code = JsonUtils.getString(json, IJsonNames.CODE);
+		boolean entryEnabled = JsonUtils.getBoolean(json, IJsonNames.ENTRY_ENABLED);
+		boolean active = JsonUtils.getboolean(json, IJsonNames.ACTIVE);
 		
     	if(code!=null)
     		filter = filter.and(f.getCodeProperty().like(code+"%")); 
+    	if(entryEnabled)
+    		filter = filter.and(f.getEntryEnabledProperty().eq((byte) 1));
+    	if(active)
+    		filter = filter.and(f.getActiveProperty().eq((byte) 1));
     	
 		return filter;
     }

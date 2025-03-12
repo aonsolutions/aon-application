@@ -6,8 +6,8 @@ import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.f
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.marginTop;
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.paddingLeft;
 import static com.esferalia.aon.watson.j2html.TagCreator.div;
-import static com.esferalia.aon.watson.j2html.TagCreator.span;
 import static com.esferalia.aon.watson.j2html.TagCreator.li;
+import static com.esferalia.aon.watson.j2html.TagCreator.span;
 import static com.esferalia.aon.watson.j2html.TagCreator.ul;
 
 import java.util.Date;
@@ -37,7 +37,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 	}
 	
 	private enum Mod202KeyDAO  implements IMod202KeyDAO {
-		 P00(Mod202Key.P00)	
+		 P00(Mod202Key.P00)
 		,P01(Mod202Key.P01)
 		// Devengo (2). Fecha de inicio del período impositivo
 		,P02(Mod202Key.P02)
@@ -90,7 +90,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 			,(ctx,mod) -> getC01ComputeKeyInfo(ctx,mod) )
 		// A) Liquidación. Mod. 40.2 LIS - Resultado de la declaración anterior (complementarias) [02]
 		,C02(Mod202Key.C02
-			,(ctx,mod) -> mod.putAmount(Mod202Key.C31,
+			,(ctx,mod) -> mod.putAmount(Mod202Key.C02,
 				(mod.isComplementary() && mod.isMethodA())
 					?Mod202DAO.getSamePeriodFiscalModels(ctx, mod).mapToDouble(fm -> fm.getDeclarationResult()).sum()
 					:0.0)
@@ -100,7 +100,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		// A) Liquidación. Mod. 40.2 LIS - A Ingresar [03]
 		,C03(Mod202Key.C03
 			,null
-			,"isMethodA()?((C01-C02)*18/100):0.0"
+			,"isMethodA()?((C01*18/100)-C02):0.0"  
 			,(ctx,mod) -> getC03ComputeKeyInfo(ctx,mod) )
 		
 		// B) Liquidación. Mod. 40.3 LIS - Resultado contable después del IS e IC [04]
@@ -213,50 +213,73 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 			,null
 			,"isMethodB2()?((C13-C44-C14+C45)>0?(C13-C44-C14+C45):0.0):0.0"
 			,(ctx,mod) -> getC19ComputeKeyInfo(ctx,mod) )
+		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 1 [20]
 		,C20(Mod202Key.C20
 			,null
 			,"isMethodB2()?(C20):0.0"
-			,null)
+			,(ctx,mod) -> "")
 		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [21]
 		,C21(Mod202Key.C21
 			,null
 			,"isMethodB2()?computeC21():0.0"
-			,(ctx,mod) -> getC21ComputeKeyInfo(ctx,mod) )
+			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C21, getPercent1(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [22]
 		,C22(Mod202Key.C22
 			,null
 			,"isMethodB2()?(C20*C21/100):0.0"
-			,(ctx,mod) -> getC22ComputeKeyInfo(ctx,mod) )
+			,(ctx,mod) -> getAmountComputeKeyInfo(ctx, mod, Mod202Key.C20, Mod202Key.C21, Mod202Key.C22))
+		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 2 [23]
 		,C23(Mod202Key.C23
 			,null
-			,"isMethodB2()?(C19-C20):0.0"
-			,(ctx,mod) -> getC23ComputeKeyInfo(ctx,mod) )
+//			,"isMethodB2()?(C19-C20):0.0" // FALTA - POR AHORA TODAS LAS BASES MANUALES, HASTA VER COMO LO CALCULA EXACTAMENTE EL MODELO
+			,"isMethodB2()?(C23):0.0"
+			//,(ctx,mod) -> getC23ComputeKeyInfo(ctx,mod) )
+			,(ctx,mod) -> "" )
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [24]
 		,C24(Mod202Key.C24
 			,null
 			,"isMethodB2()?computeC24():0.0"
-			,(ctx,mod) -> getC24ComputeKeyInfo(ctx,mod) )
+			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C24, getPercent2(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [25]
 		,C25(Mod202Key.C25
 			,null
 			,"isMethodB2()?(C23*C24/100):0.0"
-			,(ctx,mod) -> getC25ComputeKeyInfo(ctx,mod) )
+			,(ctx,mod) -> getAmountComputeKeyInfo(ctx, mod, Mod202Key.C23, Mod202Key.C24, Mod202Key.C25))
 		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 3 [61]
-		,C61(Mod202Key.C61)
+		,C61(Mod202Key.C61
+			,null
+			,"isMethodB2()?(C61):0.0"
+			,(ctx,mod) -> "")
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [62]
-		,C62(Mod202Key.C62)
+		,C62(Mod202Key.C62
+			,null
+			,"isMethodB2()?computeC62():0.0"
+			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C62, getPercent3(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [63]
-		,C63(Mod202Key.C63)
+		,C63(Mod202Key.C63
+			,null
+			,"isMethodB2()?(C61*C62/100):0.0"
+			,(ctx,mod) -> getAmountComputeKeyInfo(ctx, mod, Mod202Key.C61, Mod202Key.C62, Mod202Key.C63))
+		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 4 [64]
-		,C64(Mod202Key.C64)
+		,C64(Mod202Key.C64
+			,null
+			,"isMethodB2()?(C64):0.0"
+			,(ctx,mod) -> "")
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [65]
-		,C65(Mod202Key.C65)
+		,C65(Mod202Key.C65
+			,null
+			,"isMethodB2()?computeC65():0.0"
+			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C65, getPercent4(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [66]
-		,C66(Mod202Key.C66)
+		,C66(Mod202Key.C66
+			,null
+			,"isMethodB2()?(C64*C65/100):0.0"
+			,(ctx,mod) -> getAmountComputeKeyInfo(ctx, mod, Mod202Key.C64, Mod202Key.C65, Mod202Key.C66))
 		
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Dotac. art. 11.12 LIS (solo cooperativas) (DF 4 LIS) [50]
 		,C50(Mod202Key.C50
@@ -280,8 +303,8 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 			,null)
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje)-Resultado previo(claves [22]+[25]+[50]-[42]+[51]-[52]) [26]
 		,C26(Mod202Key.C26
-			,null			
-			,"isMethodB2()?(C22+C25+C50-C42+C51-C52):0.0"
+			,null
+			,"isMethodB2()?(C22+C25+C63+C66+C50-C42+C51-C52):0.0"
 			,(ctx,mod) -> getC26ComputeKeyInfo(ctx,mod) )
 		// B) Liquidación. Mod. 40.3 LIS - Bonificaciones correspondientes al periodo computado (total) [27]
 		,C27(Mod202Key.C27
@@ -654,21 +677,21 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 					Double x04 = mod.getAmount(Mod202Key.X04);
 					Double x09 = mod.getAmount(Mod202Key.X09);
 					double c17 = mod.getAmount(Mod202Key.C17);
-					if (AonMathUtils.isNotZero(x04) &&  mod.getYear() >= 2017  ) {
+					if (AonMathUtils.isNotZero(x04) && mod.getYear() >= 2017  ) {
 						return ul()
 							.with( li( "Entidad que aplica el r\u00E9gimen de las entidades navieras en funci\u00F3n del tonelaje: " + fmt( c17 )) )
 							.render();
 					} else if (AonMathUtils.isZero(x09)) {
 						return ul()
-							.with( li( "Resultado de aplicar 5/7 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x08 ) 
-									+ ") es decir, ("+ AonMathUtils.floor((double)5/7) 
-									+"), redondeado a la baja, igual: "+ fmt( c17 )) )
+							.with( li( "Resultado de aplicar 5/7 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt(x08) 
+									+ "%) es decir, ("+ fmt(x08) + " * 5/7)" 
+									+", redondeado a la baja, igual: "+ fmt( c17 )) )
 							.render();
 					} else {
 						return ul()
-							.with( li( "Resultado de aplicar 19/20 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x08 ) 
-									+ ") es decir, ("+ AonMathUtils.ceil((double)19/20) 
-									+ "), redondeado al alza, igual: "+ fmt( c17 )) )
+							.with( li( "Resultado de aplicar 19/20 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt(x08) 
+									+ "%) es decir, ("+ fmt(x08) + " * 19/20)" 
+									+ ", redondeado al alza, igual: "+ fmt( c17 )) )
 							.render();
 					}
 				}
@@ -733,119 +756,26 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		});
 	}
 
-	private static String getC21ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C21 , new ExplainRowManager() {
-			@Override
-			public String apply(FiscalModel fm) {
-				setSomething(true);
-				if (mod.isMethodB2()) {
-					double x081 = getPercent1( mod );
-					double x09 = mod.getAmount(Mod202Key.X09);
-					double c21 = mod.getAmount(Mod202Key.C21);
-					if (AonMathUtils.isZero(x09)) {
-						return ul()
-							.with( li( "Resultado de aplicar 5/7 al primer tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x081 ) 
-									+ ") es decir, ("+ AonMathUtils.floor((double)5/7) 
-									+"), redondeado a la baja, igual: "+ fmt( c21 )) )
-							.render();
-					} else {
-						return ul()
-							.with( li( "Resultado de aplicar 19/20 al primer tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x081 ) 
-									+ ") es decir, ("+ AonMathUtils.ceil((double)19/20) 
-									+ "), redondeado al alza, igual: "+ fmt( c21 )) )
-							.render();
-					}
-				}
-				return noMethodB2().render();
-			}
-		});
-	}
+// FALTA - INFO DE LA SEGUNDA BASE, CALCULADA HASTA 2024 CON EL RESTO DE LA BASE IMPONIBLE, POR AHORA LAS 4 BASES SON MANUALES HASTA VER COMO SON LOS CALCULOS	
+//	private static String getC23ComputeKeyInfo(AONContext ctx, Mod202 mod) {
+//		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C23 , new ExplainRowManager() {
+//			@Override
+//			public String apply(FiscalModel fm) {
+//				setSomething(true);
+//				if (mod.isMethodB2()) {
+//					double c19 = mod.getAmount(Mod202Key.C19);
+//					double c20 = mod.getAmount(Mod202Key.C20);
+//					double c23 = mod.getAmount(Mod202Key.C23);
+//					return ul()
+//						.with( li( "Resultado de la f\u00F3rmula [019] - [020] ") )
+//						.with( li( fmt(c19)+" - "+fmt(c20)+" = "+fmt(c23)) )
+//						.render();
+//				}
+//				return noMethodB2().render();
+//			}
+//		});
+//	}
 	
-	private static String getC22ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C22 , new ExplainRowManager() {
-			@Override
-			public String apply(FiscalModel fm) {
-				setSomething(true);
-				if (mod.isMethodB2()) {
-					double c20 = mod.getAmount(Mod202Key.C20);
-					double c21 = mod.getAmount(Mod202Key.C21);
-					double c22 = mod.getAmount(Mod202Key.C22);
-					return ul()
-						.with( li( "Resultado de la f\u00F3rmula [020] * [021] / 100 ") )
-						.with( li( fmt(c20)+" * "+fmt(c21)+" / 100 = "+fmt(c22)) )
-						.render();
-				}
-				return noMethodB2().render();
-			}
-		});
-	}
-
-	private static String getC23ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C23 , new ExplainRowManager() {
-			@Override
-			public String apply(FiscalModel fm) {
-				setSomething(true);
-				if (mod.isMethodB2()) {
-					double c19 = mod.getAmount(Mod202Key.C19);
-					double c20 = mod.getAmount(Mod202Key.C20);
-					double c23 = mod.getAmount(Mod202Key.C23);
-					return ul()
-						.with( li( "Resultado de la f\u00F3rmula [019] - [020] ") )
-						.with( li( fmt(c19)+" - "+fmt(c20)+" = "+fmt(c23)) )
-						.render();
-				}
-				return noMethodB2().render();
-			}
-		});
-	}
-
-	private static String getC24ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C24 , new ExplainRowManager() {
-			@Override
-			public String apply(FiscalModel fm) {
-				setSomething(true);
-				if (mod.isMethodB2()) {
-					double x082 = getPercent2( mod );
-					double x09 = mod.getAmount(Mod202Key.X09);
-					double c24 = mod.getAmount(Mod202Key.C21);
-					if (AonMathUtils.isZero(x09)) {
-						return ul()
-							.with( li( "Resultado de aplicar 5/7 al segundo tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x082 ) 
-									+ ") es decir, ("+ AonMathUtils.floor((double)5/7) 
-									+"), redondeado a la baja, igual: "+ fmt( c24 )) )
-							.render();
-					} else {
-						return ul()
-							.with( li( "Resultado de aplicar 19/20 al segundo tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt( x082 ) 
-									+ ") es decir, ("+ AonMathUtils.ceil((double)19/20) 
-									+ "), redondeado al alza, igual: "+ fmt( c24 )) )
-							.render();
-					}
-				}
-				return noMethodB2().render();
-			}
-		});
-	}
-
-	private static String getC25ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C25 , new ExplainRowManager() {
-			@Override
-			public String apply(FiscalModel fm) {
-				setSomething(true);
-				if (mod.isMethodB2()) {
-					double c23 = mod.getAmount(Mod202Key.C23);
-					double c24 = mod.getAmount(Mod202Key.C24);
-					double c25 = mod.getAmount(Mod202Key.C25);
-					return ul()
-						.with( li( "Resultado de la f\u00F3rmula [023] * [024] / 100 ") )
-						.with( li( fmt(c23)+" * "+fmt(c24)+" / 100 = "+fmt(c25)) )
-						.render();
-				}
-				return noMethodB2().render();
-			}
-		});
-	}	
-
 	private static String getC26ComputeKeyInfo(AONContext ctx, Mod202 mod) {
 		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C26 , new ExplainRowManager() {
 			@Override
@@ -908,7 +838,6 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 	}
 	
 	private static String getC34ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-//	,""
 		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C32 , new ExplainRowManager() {
 			@Override
 			public String apply(FiscalModel fm) {
@@ -916,7 +845,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 				if (mod.isMethodB()) {
 					double c34 = mod.getAmount(Mod202Key.C34);
 					return ul()
-						.with( li("Si la modalidad de c\u00E1lculo es B.1) o B.2) : La cantidad mayor entre [032] y  [033]") )
+						.with( li("Si la modalidad de c\u00E1lculo es B.1) o B.2) : La cantidad mayor entre [032] y [033]") )
 						.with( li( "Resultado: " + fmt(c34)) )
 						.render();
 				}
@@ -925,15 +854,86 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		});
 	}
 	
+	private static String getPercentComputeKeyInfo(AONContext ctx, Mod202 mod, Mod202Key percentKey, double taxType) {
+		return DeclarationInfoUtil.getExplain( ctx, mod, percentKey , new ExplainRowManager() {
+			@Override
+			public String apply(FiscalModel fm) {
+				setSomething(true);
+				if (mod.isMethodB2()) {
+					double x09 = mod.getAmount(Mod202Key.X09);
+					double percent = mod.getAmount(percentKey);
+					if (AonMathUtils.isZero(x09)) {
+						return ul()
+							.with( li( "Casilla " + percentKey.getBoxFormatted() + " :").withStyle( bold ) )	
+							.with( li( "Resultado de aplicar 5/7 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt(taxType) 
+									+ "%) es decir, ("+ fmt(taxType) + " * 5/7)" 
+									+", redondeado a la baja, igual: "+ fmt(percent)) )
+							.render();
+					} else {
+						return ul()
+							.with( li( "Casilla " + percentKey.getBoxFormatted() + " :").withStyle( bold ) )
+							.with( li( "Resultado de aplicar 19/20 al tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso (" + fmt(taxType) 
+									+ "%) es decir, ("+ fmt(taxType) + " * 19/20)" 
+									+ ", redondeado al alza, igual: "+ fmt(percent)) )
+							.render();
+					}
+				}
+				return noMethodB2().render();
+			}
+		});
+	}
+	
+	private static String getAmountComputeKeyInfo(AONContext ctx, Mod202 mod, Mod202Key baseKey, Mod202Key percentKey, Mod202Key amountKey ) {
+		return DeclarationInfoUtil.getExplain( ctx, mod, amountKey, new ExplainRowManager() {
+			@Override
+			public String apply(FiscalModel fm) {
+				setSomething(true);
+				if (mod.isMethodB2()) {
+					double c23 = mod.getAmount(baseKey);
+					double c24 = mod.getAmount(percentKey);
+					double c25 = mod.getAmount(amountKey);
+					return ul()
+						.with( li( "Casilla " + amountKey.getBoxFormatted() + " :").withStyle( bold ) )						
+						.with( li( "Resultado de la f\u00F3rmula " + baseKey.getBoxFormatted() + " * " + percentKey.getBoxFormatted() + " / 100 ") )
+						.with( li( fmt(c23)+" * "+fmt(c24)+" / 100 = "+fmt(c25)) )
+						.render();
+				}
+				return noMethodB2().render();
+			}
+		});
+	}	
+	
 	public static double getPercent(Mod202 mod) {
 		return AonNumberUtils.todouble( mod.getDescription(Mod202Key.X08) );
 	}
 	public static double getPercent1(Mod202 mod) {
-		return AonNumberUtils.todouble(AonStringUtils.substringBefore(mod.getDescription(Mod202Key.X08), "/"));
+		String[] percent = AonStringUtils.split(AonStringUtils.replace(mod.getDescription(Mod202Key.X08),"N",""), '/');
+		if (percent != null && percent.length > 0)
+			return AonNumberUtils.todouble(percent[0]);
+		else 
+			return 0.0;
 	}
 	public static double getPercent2(Mod202 mod) {
-		return AonNumberUtils.todouble(AonStringUtils.substringAfter(mod.getDescription(Mod202Key.X08), "/"));
+		String[] percent = AonStringUtils.split(AonStringUtils.replace(mod.getDescription(Mod202Key.X08),"N",""), '/');
+		if (percent != null && percent.length > 1)
+			return AonNumberUtils.todouble(percent[1]);
+		else 
+			return 0.0;
 	}
+	public static double getPercent3(Mod202 mod) {
+		String[] percent = AonStringUtils.split(AonStringUtils.replace(mod.getDescription(Mod202Key.X08),"N",""), '/');
+		if (percent != null && percent.length > 2)
+			return AonNumberUtils.todouble(percent[2]);
+		else 
+			return 0.0;
+	}
+	public static double getPercent4(Mod202 mod) {
+		String[] percent = AonStringUtils.split(AonStringUtils.replace(mod.getDescription(Mod202Key.X08),"N",""), '/');
+		if (percent != null && percent.length > 3)
+			return AonNumberUtils.todouble(percent[3]);
+		else 
+			return 0.0;
+	}	
 
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9

@@ -32,7 +32,10 @@ public enum AccountEntryType implements IResourceable {
 	RETURNED_PAYMENT,
 	RETURNED_COLLECTION,
 	SOCIAL_INSURANCE_ADJUST,
-	FINANCE;
+	FINANCE,
+	OTHER_EXPENSES,
+	OTHER_INCOMES
+	;
 	
     private static final String MSG_KEY_PREFIX = "aon_enum_account_type_";
 

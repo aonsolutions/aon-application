@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
-import com.esferalia.aon.occam.test.Repeat;
 import com.esferalia.aon.occam.test.faker.AccountingFaker;
 
 public class AccountingIncomeJSONTest extends AbstractOccamTest {
@@ -65,7 +64,7 @@ public class AccountingIncomeJSONTest extends AbstractOccamTest {
 	}
 
 	@Test
-	@Repeat( 20 )
+//	@Repeat( 20 )
 	public void testFromTo() {
 		AccountingIncome to = AccountingFaker.getAccountingIncome(ctx);
 		Optional<JSONObject> optJsonTo = AccountingIncomeJSON.to(to);

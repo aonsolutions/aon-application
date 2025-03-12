@@ -14,6 +14,7 @@ public interface InvoiceBuilder<T extends Object>  {
 	T get();
 	void addInsightNifs( Collection<Document> nifs);
 	TediNif[] getInsightNifs();
+	boolean isMinInfoSet();
 	void addInsightDates( Collection<Date> dates);
 	void addInsightAmounts( Collection<Double> amounts);
 	Double[] getInsightAmounts();

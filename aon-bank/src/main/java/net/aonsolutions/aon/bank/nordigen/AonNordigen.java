@@ -89,14 +89,14 @@ public class AonNordigen  {
 		return NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
 	}
 	
-	public static List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country, Boolean paymentsEnabled) {
-		return NordigenAPI.getInstitutions(token.getAccess(), country, paymentsEnabled);
+	public static List<NordigenInstitution> getInstitutionsByCountry(NordigenAccessToken token, Country country) {
+		return NordigenAPI.getInstitutionsByCountry(token.getAccess(), country);
 	}
 
 	public static List<NordigenInstitution> getInstitutionsByBic(NordigenAccessToken token, String bic) {
 		if (AonStringUtils.isNotBlank(bic)) {
 			List<NordigenInstitution> matchedInstitutions = 
-				AonCollectionUtils.stream(AonNordigen.getInstitutions(token, null, null))
+				AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(token, null))
 					.filter(inst -> AonStringUtils.containsIgnoreCase(inst.getBic(), bic))
 					.collect(Collectors.toList());
 			if (AonCollectionUtils.isNotEmpty(matchedInstitutions)) {
@@ -466,7 +466,7 @@ public class AonNordigen  {
 		}
 		final String bic = bicBuilder.toString();
 		
-		List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null)
+		List<NordigenInstitution> instList = AonNordigen.getInstitutionsByCountry(token, null)
 			.stream()
 			.filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic))
 			.toList();

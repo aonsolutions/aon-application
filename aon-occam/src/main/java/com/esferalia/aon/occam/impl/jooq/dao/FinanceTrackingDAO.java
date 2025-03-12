@@ -45,6 +45,10 @@ public class FinanceTrackingDAO {
 
 	private static final com.esferalia.aon.jooq.tables.Account RBANK_ACCOUNT = ACCOUNT.as("rbAcc");;
 	private static final com.esferalia.aon.jooq.tables.Account PM_TYPE_DETAIL_ACCOUNT = ACCOUNT.as("pmAcc");
+	
+	private FinanceTrackingDAO() {
+		
+	}
 
 	// -------------------------------------------------------------
 	// ------------------------ LECTURA ----------------------------
@@ -111,7 +115,7 @@ public class FinanceTrackingDAO {
 	// -------------------------------------------------------------
 	public static Integer insert(AONContext ctx, FinanceTracking ft) {
 		ctx.checkWrite();
-		FinanceTrackingRecord record = ctx.getDslContext()
+		FinanceTrackingRecord rec = ctx.getDslContext()
 			.insertInto(FINANCE_TRACKING)
 				.set(FINANCE_TRACKING.DOMAIN,ft.getDomain())
 				.set(FINANCE_TRACKING.FINANCE,ft.getFinance().getId())
@@ -127,8 +131,8 @@ public class FinanceTrackingDAO {
 				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 				.returning(FINANCE_TRACKING.ID)
 				.fetchOne();
-		ctx.log().debug("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
-		return record.getValue(FINANCE_TRACKING.ID); 
+		ctx.log().debug("INSERT FINANCE_TRACKING id: " + rec.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
+		return rec.getValue(FINANCE_TRACKING.ID); 
 	}
 	
 	private static void updateFinanceStatus(AONContext ctx,Integer financeId,FinanceStatus financeStatus) {
@@ -328,8 +332,7 @@ public class FinanceTrackingDAO {
 		FinanceValidation.validatePay(ctx, tracking);
 		updateFinanceStatus(ctx,tracking.getFinance().getId(),FinanceStatus.PAID);
 		tracking.setType(FinanceTrackingType.PAID);
-		Integer trackingId = insert(ctx, tracking);
-		return trackingId;
+		return insert(ctx, tracking);
 	}
 	
 	public static void pay(AONContext ctx,FinanceTracking tracking,AccountEntry entry) {

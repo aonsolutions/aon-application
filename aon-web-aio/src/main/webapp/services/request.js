@@ -250,10 +250,11 @@ export const openFile = async (url, data) => new Promise(async (resolve, reject)
         const {blob, fileName} = result;
         if(UA.isApp()){
            //------------ IS MOBILE APP---------
-          const base64Data = await blobToBase64(blob).catch(e=>reject(e));
+           const base64Data = await blobToBase64(blob).catch(e=>reject(e));          
           if(UA.isAndroidApp()) {
+            const base64Str = base64Data.replace(/^data:.+;base64,/, "");
             let file = {
-              content: base64Data,
+              content: base64Str,
               title: 'file',
               mimeType: 'application/pdf'
             }

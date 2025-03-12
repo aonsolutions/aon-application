@@ -42,6 +42,12 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	public TediInsightInvoice getInsight() {
 		return invoice.getInsight();
 	}
+	@Override
+	public boolean isMinInfoSet() {
+		return getInsightNifs() != null 
+			&& getInsightNifs().length >= 2
+		;
+	}
 	
 	@Override
 	public TediNif[] getInsightNifs() {
@@ -136,6 +142,8 @@ public class TediInsightInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 				}
 				LocalDate lastLocalDate = LocalDate.ofInstant( last.toInstant(), ZoneId.systemDefault() );
 				int lastYear = lastLocalDate.getYear() - 1;
+				
+				System.out.println( "lastLocalDate ...: ( " + lastLocalDate + " ) "); 
 				Date limit = Date.from(LocalDateTime.of(lastYear, 1, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
 				// Se asume como fecha de factura la fecha mas cercana al uno de enero del año de la ultima fecha parseada.
 				for (Date date : getInsight().getDates()) {

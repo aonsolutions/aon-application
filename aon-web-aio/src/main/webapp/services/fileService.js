@@ -1,6 +1,8 @@
 
 import { post, openFileMobile, openFileDesktop, webkitRequestMobile, sendActionMobile, requestFile, get, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
+import * as UA from "./userAgentService.js";
+import { openFileApp } from "./actionService.js";
 
 export const uploadFile = (data) => post(`${API_URL}/file`, data);
 
@@ -29,7 +31,9 @@ export const getFileUrl = (data) =>{
  */
 export const openFileUrl = async (url, contentType=null) => {
   try {
-    if (webkitRequestMobile()){
+    if(UA.isAndroidApp()) {
+      openFileApp({ url });
+    } else if (webkitRequestMobile()){
       await openFileMobile(url, contentType).then(async (obj) => await sendActionMobile(obj));
     } else {
       openFileDesktop(url);

@@ -8,6 +8,8 @@ export const getAccounts = (data) => get(`${API_URL}/accounts`, data);
 export const getAccount = (data) => get(`${API_URL}/accounts/${data.id}`, data);
 export const getExpenses = (data) => get(`${API_URL}/accounting/expenses`, data);
 export const getIncomes = (data) => get(`${API_URL}/accounting/incomes`, data);
+export const setIncome = (data) => post(`${API_URL}/accounting/incomes`, data);
+export const setExpense = (data) => post(`${API_URL}/accounting/expenses`, data);
 
 export const PERIOD_FILTER = [
   {

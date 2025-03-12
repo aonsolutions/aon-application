@@ -24,14 +24,15 @@ public class AccountingIncomeJSON {
 				.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
 				.setCustomer(CustomerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
-				.setActivity(EnterpriseActivityJSON.from(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)).orElse(null))
+				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY))
 				.setExpAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.EXP_ACCOUNT)).orElse(null))
 				.setConcept(JsonUtils.optString(json,IJsonNames.CONCEPT))
-				.setReferenceCode(JsonUtils.getString(json, IJsonNames.REFERENCE_CODE))
+				.setReferenceCode(JsonUtils.optString(json,IJsonNames.REFERENCE_CODE))
 				.setAmount(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 				.setBank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.BANK)))
 				.setCashAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CASH_ACCOUNT)).orElse(null))
 				.setComments(JsonUtils.optString(json, IJsonNames.COMMENTS))
+				.setAccountEntry(AccountEntryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACCOUNT_ENTRY)).orElse(null))
 		);
 	}
 	
@@ -42,7 +43,7 @@ public class AccountingIncomeJSON {
 				.put(IJsonNames.DOMAIN, a.getDomain())
 				.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(a.getCustomer().orElse(null)))
 				.put(IJsonNames.DATE, AonDateUtils.format(a.getDate(), AonDateUtils.SIMPLE_DATE_FORMAT))
-				.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.to(a.getActivity()).orElse(null)) 
+				.put(IJsonNames.ACTIVITY, a.getActivity().orElse(null)) 
 				.put(IJsonNames.EXP_ACCOUNT, AccountJSON.to(a.getExpAccount()).orElse(null))
 				.put(IJsonNames.CONCEPT, a.getConcept())
 				.put(IJsonNames.REFERENCE_CODE, a.getReferenceCode())
@@ -50,7 +51,7 @@ public class AccountingIncomeJSON {
 				.put(IJsonNames.BANK, RegistryBankJSON.to(a.getBank()).orElse(null))
 				.put(IJsonNames.CASH_ACCOUNT, AccountJSON.to(a.getCashAccount()).orElse(null))
 				.put(IJsonNames.COMMENTS, a.getComments())
+				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)))
 		);
 	}
-	
 }

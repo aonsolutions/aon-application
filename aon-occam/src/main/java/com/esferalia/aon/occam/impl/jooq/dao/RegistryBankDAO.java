@@ -294,6 +294,15 @@ public class RegistryBankDAO {
 		return count;
 	}
 	
+	public static void updateAccount(AONContext ctx, Integer rbankId, Integer account) {
+		ctx.checkWrite();
+		ctx.getDslContext().update(RBANK)
+			.set(RBANK.ACCOUNT,account)
+			.where(RBANK.ID.eq(rbankId))
+			.execute();
+		ctx.log().debug("ACCOUNT {0} LINKED TO RBANK {1}",account,rbankId);
+	}
+	
 	// *************************************************
 	// ********** TEST PURPOSE METHODS *****************
 	// *************************************************

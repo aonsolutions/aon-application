@@ -34,6 +34,8 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
@@ -56,6 +58,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingExpenseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingOperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
@@ -643,4 +647,33 @@ public class AccountingImpl implements IAccounting {
 		ctx.getDslContext().transaction( configuration -> AmortizationTypeDAO.save(ctx, amortizationType) );	
 	}
 	
+	// **************************************** [ACCOUNTING EXPENSE]
+	@Override
+	public Stream<AccountingExpense> getAccountingExpenses(CloseableAONContext ctx, int domain, String query, int offset, int limit,IDAOCallback cbk) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingExpenseDAO.stream(ctx, domain, query ,offset, limit, cbk) );	
+	}
+	@Override
+	public AccountingExpense saveAccountingExpense(AONContext ctx, AccountingExpense expense) {
+		return ctx.getDslContext().transactionResult( configuration -> AccountingExpenseDAO.save(ctx, expense) );
+	}
+	@Override
+	public void deleteAccountingExpense(AONContext ctx, AccountEntry ae) {
+		ctx.getDslContext().transaction( configuration -> AccountingExpenseDAO.delete(ctx, ae) );
+	}
+
+	// **************************************** [ACCOUNTING INCOMES]
+	@Override
+	public Stream<AccountingIncome> getAccountingIncomes(CloseableAONContext ctx, int domain, String query, int offset, int limit,IDAOCallback cbk) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> AccountingIncomeDAO.stream(ctx, domain, query ,offset, limit, cbk) );	
+	}
+	@Override
+	public AccountingIncome saveAccountingIncome(AONContext ctx, AccountingIncome income) {
+		return ctx.getDslContext().transactionResult( configuration -> AccountingIncomeDAO.save(ctx, income) );
+	}
+	@Override
+	public void deleteAccountingIncome(AONContext ctx, AccountEntry ae) {
+		ctx.getDslContext().transaction( configuration -> AccountingIncomeDAO.delete(ctx, ae) );
+	}
 }

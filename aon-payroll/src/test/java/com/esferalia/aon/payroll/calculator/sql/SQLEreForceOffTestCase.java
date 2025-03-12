@@ -1617,7 +1617,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
 		addPayment(aonContext, 
 				contract, ere, 
-				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
+				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','CUOTA_EMPRESARIAL * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
 				String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
 		
 		addSystemData(aonContext
@@ -1814,7 +1814,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
 		addPayment(aonContext, 
 				contract, ere, 
-				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
+				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','CUOTA_EMPRESARIAL * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
 				String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
 		
 		addSystemData(aonContext
