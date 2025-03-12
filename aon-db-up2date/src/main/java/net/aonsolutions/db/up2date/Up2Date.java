@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
+import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
 import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
@@ -550,7 +552,9 @@ public class Up2Date {
 			// RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE,
 			// DropDaysFix.DROPDAYSFIX
 			
-			MEITrainingFix2025.MEITRAININGFIX2025
+			MEITrainingFix2025.MEITRAININGFIX2025,
+			DocumentalCategoryTree.DOCUMENTAL_CATEGORY_TREE,
+			DocumentalRDoc.DOCUMENTAL_RDOC
 			
 	};
 

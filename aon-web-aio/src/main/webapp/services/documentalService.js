@@ -92,12 +92,20 @@ export const deleteFile = (data) => {
   return post(`${API_URL}/attachment/${domainName}/${user}/remove`, data);
 }
 
-export const insertDocument = (data) => post(`${API_URL}/documental`, data);
+export const insertDocument    = (data) => post(`${API_URL}/documental`, data);
 
 export const downloadDocuments = (data) => open(`${API_URL}/multiple_download/document?json=${data}`);
 
-export const sendDocumentMail = (data) => post(`${API_URL}/send_mail/document`, data);
+export const sendDocumentMail  = (data) => post(`${API_URL}/send_mail/document`, data);
 
-export const getSepaDocuments = (data) => get(`${API_URL}/documental/files/sepa`, data);
-export const getSepaDocument = (data) => get(`${API_URL}/documental/file/sepa`, data);
-export const downloadDocument = (data) => open(`${API_URL}/download?json=${data}`);
+export const getSepaDocuments  = (data) => get(`${API_URL}/documental/files/sepa`, data);
+export const getSepaDocument   = (data) => get(`${API_URL}/documental/file/sepa`, data);
+export const downloadDocument  = (data) => open(`${API_URL}/download?json=${data}`);
+
+//Llamadas al nuevo servlet de documental
+export const getS3Document 		= (data) => get(`${API_URL}/s3/`, data);
+export const getS3Document_File = (data) => get(`${API_URL}/s3/file`, data);
+export const getS3DocumentCount = (data) => get(`${API_URL}/s3/coount`, data);
+//LLamadas al nuevo servlet de categorias
+export const getS3Category 		= (data) => get(`${API_URL}/s3category`, data);
+export const getS3CategoryCount = (data) => get(`${API_URL}/s3category/count`, data);

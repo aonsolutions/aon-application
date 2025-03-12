@@ -7,23 +7,23 @@ public class S3Category extends Category {
 	private static final long serialVersionUID = 4674846006716485119L;
 	
 	Integer parent;
-	byte isVisible;
-	byte isDeletable;
+	Byte isVisible;
+	Byte isDeletable;
 	
-	public byte getIsVisible() {
+	public Byte getIsVisible() {
 		return isVisible;
 	}
 
-	public S3Category setIsVisible(byte isVisible) {
+	public S3Category setIsVisible(Byte isVisible) {
 		this.isVisible = isVisible;
 		return this;
 	}
 
-	public byte getIsDeletable() {
+	public Byte getIsDeletable() {
 		return isDeletable;
 	}
 
-	public S3Category setIsDeletable(byte isDeletable) {
+	public S3Category setIsDeletable(Byte isDeletable) {
 		this.isDeletable = isDeletable;
 		return this;
 	}
