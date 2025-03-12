@@ -1,11 +1,11 @@
 import * as LS from '../../services/localStorageService.js';
 
-export class Income {
+export class Expense {
 
   domain; 
   activity;
   date;
-  customer;
+  creditor;
   expAccount;
   concept;
   referenceCode;
@@ -17,25 +17,25 @@ export class Income {
   accountEntry; 
   finance; 
 
-  constructor(income) {
-    this.buildObject(income);
+  constructor(expense) {
+    this.buildObject(expense);
   }
 
-  buildObject(income) {
-    if(income) {
-      this.domain = income.domain || LS.getDomainId();
-      this.activity = income.activity;
-      this.date = income.date;
-      this.customer = income.customer;
-      this.expAccount = income.expAccount;
-      this.concept = income.concept;
-      this.referenceCode = income.referenceCode;
-      this.amount = income.amount;
-      this.bank = income.bank;
-      this.cashAccount = income.cashAccount;
-      this.comments = income.comments;
-      this.accountEntry = income.accountEntry;
-      this.finance = income.finance;
+  buildObject(expense) {
+    if(expense) {
+      this.domain = expense.domain || LS.getDomainId();
+      this.activity = expense.activity;
+      this.date = expense.date;
+      this.creditor = expense.creditor;
+      this.expAccount = expense.expAccount;
+      this.concept = expense.concept;
+      this.referenceCode = expense.referenceCode;
+      this.amount = expense.amount;
+      this.bank = expense.bank;
+      this.cashAccount = expense.cashAccount;
+      this.comments = expense.comments;
+      this.accountEntry = expense.accountEntry;
+      this.finance = expense.finance;
     }
     
   }
@@ -67,12 +67,12 @@ export class Income {
     return this;
   }
 
-  getCustomer() {
-    return this.customer;
+  getCreditor() {
+    return this.creditor;
   }
 
-  setCustomer(customer) {
-    this.customer = customer;
+  setCreditor(creditor) {
+    this.creditor = creditor;
     return this;
   }
 

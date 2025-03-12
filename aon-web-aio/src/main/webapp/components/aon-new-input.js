@@ -342,7 +342,8 @@ export class AonNewInput extends AonElement {
     }
 
     setValue(value) {
-        this.value = value;
+        this.value = value; 
+        if(value == undefined) value = CONSTANT.EMPTY
         let input = this.getElement(this.INPUT);
         if(input) input.value = value;
     }

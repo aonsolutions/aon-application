@@ -4,6 +4,7 @@ import { createList } from '../../components/CreateComponent.js';
 import { AonExampleObject } from '../example/aon-example-object.js';
 import { getExpenses, getIncomes } from '../../services/accountingService.js';
 import { AonExpense } from './aon-expense.js';
+import { Expense } from './Expense.js';
 
 export class AonExpenseList extends AonElement {
 
@@ -48,15 +49,11 @@ export class AonExpenseList extends AonElement {
         this.more = true;
     }
 
-    aonExampleObject(object, i) {
-        let data = {
-            id: object.id,
-        }
-        this.getExample(data).then(r => {
-            let aonExampleObject = new AonExampleObject();
-            aonExampleObject.setExampleObject(r);
-            this.getApplication().setContent(aonExampleObject);
-        });
+    expenseObject(incomingExpense) {
+        console.log(incomingExpense);
+        let expense = new AonExpense();
+        expense.setExpense(new Expense(incomingExpense));
+        this.getApplication().setContent(expense);
     }
     
     setFilter(filter) {
@@ -75,7 +72,7 @@ export class AonExpenseList extends AonElement {
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
         table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.DESCRIPTION, 'string', 'description', '825px');
+        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
         table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
         
 
@@ -99,7 +96,7 @@ export class AonExpenseList extends AonElement {
 
                 expenses.forEach((expense, i) => {
                     console.log(JSON.stringify(expense))
-                    table.addRow(expense, () => this.aonExampleObject(expense, i));
+                    table.addRow(expense, () => this.expenseObject(expense));
                 });
 
             });
@@ -116,7 +113,7 @@ export class AonExpenseList extends AonElement {
                     this.more = false;
                 else this.more = true;
                 examples.forEach((example, i) => {
-                    table.addRow(example, () => this.aonExampleObject(example, i));
+                    table.addRow(example, () => this.expenseObject(example));
                 });
             });
         }
