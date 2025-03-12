@@ -7,7 +7,6 @@ import { createCard, createDate, createInput, createSelect, createTextarea, crea
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
 import { getAccounts, setIncome } from '../../services/accountingService.js';
-import { getPaymethods } from '../../services/invoiceService.js';
 import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
 
@@ -107,7 +106,7 @@ export class AonIncome extends AonElement {
         date.addEventListener(EVENT.CHANGE, () =>  {
             this.getIncome().setDate(this.getDate())
         });
-    
+
         let customer = new AonCustomerSuggestion();
         customer.id = this.INCOME_CUSTOMER;
         if(this.getIncome().getCustomer())
@@ -132,10 +131,8 @@ export class AonIncome extends AonElement {
             this.getIncome().setExpAccount(this.getExpAccount());
         });
 
-    
         let description = createInput(this.INCOME_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.income.concept) ;
-
         description.addEventListener(EVENT.CHANGE, () =>  {
             this.getIncome().setConcept(this.getConcept());
         });
@@ -147,7 +144,6 @@ export class AonIncome extends AonElement {
         let reference = createInput(this.INCOME_REFERENCE, MSG.REFERENCE, subDiv)
         reference.setValue(this.income.referenceCode);
         reference.style.width = "50%";
-
         reference.addEventListener(EVENT.CHANGE, () => {
             this.getIncome().setReferenceCode(this.getReference());
         });
@@ -156,7 +152,6 @@ export class AonIncome extends AonElement {
         amount.value = this.income.amount;
         amount.style.marginLeft = "10px";
         amount.style.width = "50%";
-
         amount.addEventListener(EVENT.CHANGE, ()=>{
             this.getIncome().setAmount(this.getAmount());
         });
@@ -206,6 +201,7 @@ export class AonIncome extends AonElement {
         comments.addEventListener(EVENT.CHANGE, () => {
             this.getIncome().setComments(this.getComments());
         });
+
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.height = "100px";
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.marginTop = "2px";
     }
@@ -219,7 +215,7 @@ export class AonIncome extends AonElement {
         setIncome(this.income);
     }
 
-    getActivity(){
+    getActivity() {
         return this.getElement(this.INCOME_ACTIVITY).getValue();
     }
 
@@ -256,7 +252,7 @@ export class AonIncome extends AonElement {
     }
 
     getIncome() {
-        return this.income
+        return this.income;
     }
 
     setIncome(income){

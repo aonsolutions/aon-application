@@ -50,10 +50,10 @@ export class AonIncomeList extends AonElement {
     }
 
     incomeObject(incomingIncome) {
-        console.log(object);
+        console.log(incomingIncome);
         let income = new AonIncome();
         income.setIncome(new Income(incomingIncome));
-        this.getApplication().setContent(incomingIncome);
+        this.getApplication().setContent(income);
     }
     
     setFilter(filter) {
@@ -111,7 +111,7 @@ export class AonIncomeList extends AonElement {
                     this.more = false;
                 else this.more = true;
                 examples.forEach((example, i) => {
-                    table.addRow(example, () => this.aonExampleObject(example, i));
+                    table.addRow(example, () => this.incomeObject(example, i));
                 });
             });
         }
