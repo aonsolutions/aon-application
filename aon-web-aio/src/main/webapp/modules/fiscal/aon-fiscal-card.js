@@ -61,6 +61,7 @@ export class AonFiscalCard extends AonElement {
     let cardContent = this.createElement(TAG.DIV);
     cardContent.className = CSS.AON_FLEX_COLUMN;
     cardContent.id = "fiscalCardTable";
+    cardContent.style.justifyContent = "start";
     this.appendChild(cardContent);
 
     let totalDiv = this.createElement(TAG.DIV);
@@ -153,8 +154,9 @@ export class AonFiscalCard extends AonElement {
       content.style.height = "100%";
       content.appendChild(emptyMessage);
 
-      let fiscalCard = this.getElement("fiscalCard");
-      fiscalCard.style.display = "none";
+      //let fiscalCard = this.getElement("fiscalCard");
+      //fiscalCard.style.display = "none";
+      
     } else {
       let maxModels = modelDatas && modelDatas.length < 5 ? modelDatas.length : 5;
       let accumulatedModels = 0;
@@ -604,6 +606,7 @@ export class AonFiscalCard extends AonElement {
     if(__filter.title && __filter.title.includes("Borrador")){
       __filter.future = true;
     }
+    
     return __filter;
   }
 }

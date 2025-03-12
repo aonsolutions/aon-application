@@ -483,7 +483,7 @@ public final class EmployeeAFIGeneration {
 			this.gender = AonStringUtils.leftPad(gender, 1, '1');
 			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
 			this.reWomen = " ";
-			this.disabilityAdmited = "N";
+			this.disabilityAdmited = " ";
 			this.freelancer = " ";
 			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 			
