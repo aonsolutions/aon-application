@@ -45,7 +45,7 @@ public class Mod202Print extends HttpServlet {
 			action.initialize(FiscalModelUtils.getModelName(mod202));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			
-			for (IModelScript<Mod202Key> ms : Model202ScriptProvider.obtainExcelScript(mod202)) {
+			for (IModelScript<Mod202Key> ms : Model202ScriptProvider.obtainScript(mod202)) {
 				action.accept(ms);
 			}
 			action.beforeFinalize();

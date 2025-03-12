@@ -31,14 +31,11 @@ public class Mod202ScriptTest extends AbstractOccamTest {
 				.setAdministration(Administration.COMMON_TERRITORY);
 		Mod202 mod202 = FiscalFaker.getMod202(params);
 		MODEL202.calculate(getOccam(), mod202);
-		if (mod202.getYear() >= 2025)
-			test2025(mod202, Model202ScriptProvider.obtainExcelScript(mod202));
-		else
-			test(mod202, Model202ScriptProvider.obtainScript(mod202));		
+		test(mod202, Model202ScriptProvider.obtainScript(mod202));		
 	}
 
-	private void test2025(Mod202 mod202, List<IModelScript<Mod202Key>> scripts) {
-		for (IModelScript<Mod202Key> script : scripts) {
+	private void test( Mod202 mod202, List<IModelScript<Mod202Key>> list) {
+		for (IModelScript<Mod202Key> script : list) {
 			try {
 				if (script != null) {
 					for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
@@ -94,80 +91,7 @@ public class Mod202ScriptTest extends AbstractOccamTest {
 				}
 			} catch (Exception e) {
 				System.out.println( " \t [ERROR]" 
-					+ " Class: " + scripts.getClass().getSimpleName() 
-					+ " Script Key: " + script 
-					+ " DAO Keys: " +
-						((script.getKeys() == null)
-							?" NO KEYS!"
-							:Arrays.stream(script.getKeys())
-							.filter( k -> k!= null)
-							.map(k -> k.toString())
-							.reduce(String::concat))
-					);
-				throw e;
-			}
-		}
-		
-	}
-
-	private void test( Mod202 mod202, IModelScript<Mod202Key>[] scripts) {
-		for (IModelScript<Mod202Key> script : scripts) {
-			try {
-				if (script != null) {
-					for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-						if (infoKey != null && script.getKeys() != null) {
-							for (Mod202Key key : script.getKeys() ) {
-								if (key != null) {
-									String info = MODEL202.getInfo(getOccam(), mod202, script, infoKey);
-									infoKey.visit( new IFiscalModelKeyInfoVisitor<String>(){
-										
-										private String arrayNotNull() {
-											JSONArray array = new JSONArray(info);
-											Assert.assertNotNull(array);
-											return null;
-										}
-										
-										@Override public String visitCompute() { return arrayNotNull(); }
-										@Override public String visitModelInvoiceVatBreakdown() { return arrayNotNull(); }
-										@Override public String visitModelInvoiceIrpfBreakdown() {return arrayNotNull(); }
-										@Override public String visitModelSalaryIrpfBreakdown() {return arrayNotNull(); }
-										@Override public String visitModelOutVatAccrualInvoice() {return arrayNotNull(); }
-										@Override public String visitModelInVatAccrualInvoice() {return arrayNotNull(); }
-										
-										@Override 
-										public String visitComputeKey() {
-											return null;
-										}
-										
-										@Override 
-										public String visitNone() { 
-											Assert.assertEquals(AonStringUtils.EMPTY,info);
-											return null;
-										}
-										
-				
-										@Override public String visitInvoice() {return null;}
-										@Override public String visitInAccrualInvoice() {return null;}
-										@Override public String visitOutAccrualInvoice() {return null;}
-										@Override public String visitDiffInvoice() {return null;}
-										@Override public String visitDiffInAccrualInvoice() {return null;}
-										@Override public String visitDiffOutAccrualInvoice() {return null;}
-										@Override public String visitSalary() {return null;}
-										@Override public String visitDiffSalary() {return null;}
-										@Override public String visitActAccount() {return null;}
-										@Override public String visitTitle() {return null;}
-										@Override public String visitIrpfActivity() {return null;}
-										@Override public String visitCorporate() {return null;}
-										@Override public String visitProrratedModelInvoiceVatBreakdown() {return null;}
-									});
-								}
-							}
-						}
-					}
-				}
-			} catch (Exception e) {
-				System.out.println( " \t [ERROR]" 
-					+ " Class: " + scripts.getClass().getSimpleName() 
+					+ " Class: " + list.getClass().getSimpleName() 
 					+ " Script Key: " + script 
 					+ " DAO Keys: " +
 						((script.getKeys() == null)

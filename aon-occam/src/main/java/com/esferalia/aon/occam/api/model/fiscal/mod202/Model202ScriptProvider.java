@@ -19,20 +19,18 @@ public class Model202ScriptProvider {
 			}
 	
 			@Override
-			IModelScript<Mod202Key>[] getScript() {
-				return null;  // A partir de 2025 se separan las casillas en 3 pestañas, por lo que no se usa este metodo, 
-				              // sino que se hace directamente en Model2022025AEAT. Hasta ahora se usaba un solo script 
-							  // para la pantalla y para la Excel
-			}
-
-			@Override
-			List<IModelScript<Mod202Key>> getExcelScript() {
+			List<IModelScript<Mod202Key>> getScript() {
+				// A partir de 2025 se separan las casillas en 3 pestañas, por lo que no se usa este metodo 
+				// para el formulario en pantalla, sino que se hace directamente en Model2022025AEAT. 
+				// Hasta ahora se usaba un solo script para la pantalla y para la Excel, pero a partir
+				// de 2025, este metodo solo se usa para la Excel y devuelve todos los scripts				
 				List<IModelScript<Mod202Key>> scriptList = new ArrayList<IModelScript<Mod202Key>>();
 				scriptList.addAll(Arrays.asList(Model2022025AddDataAEATScript.values()));
 				scriptList.addAll(Arrays.asList(Model2022025LiquidationAEATScript.values()));
 				scriptList.addAll(Arrays.asList(Model2022025AddInfoAEATScript.values()));
 				return scriptList;
 			}
+			
 		},
 		AEAT_2023_SCRIPT {
 			@Override
@@ -41,14 +39,10 @@ public class Model202ScriptProvider {
 			}
 	
 			@Override
-			IModelScript<Mod202Key>[] getScript() {
-				return Model2022023AEATScript.values();
-			}
-
-			@Override
-			List<IModelScript<Mod202Key>> getExcelScript() {
+			List<IModelScript<Mod202Key>> getScript() {
 				return Arrays.asList(Model2022023AEATScript.values());
 			}
+			
 		},
 		AEAT_2018_SCRIPT {
 			@Override
@@ -60,14 +54,10 @@ public class Model202ScriptProvider {
 			}
 	
 			@Override
-			IModelScript<Mod202Key>[] getScript() {
-				return Model2022018AEATScript.values();
-			}
-
-			@Override
-			List<IModelScript<Mod202Key>> getExcelScript() {
+			List<IModelScript<Mod202Key>> getScript() {
 				return Arrays.asList(Model2022018AEATScript.values());
 			}
+			
 		},
 		AEAT_SCRIPT {
 			@Override
@@ -78,24 +68,19 @@ public class Model202ScriptProvider {
 			}
 	
 			@Override
-			IModelScript<Mod202Key>[] getScript() {
-				return Model202AEATScript.values();
-			}
-
-			@Override
-			List<IModelScript<Mod202Key>> getExcelScript() {
+			List<IModelScript<Mod202Key>> getScript() {
 				return Arrays.asList(Model202AEATScript.values());
 			}
+			
 		}
 		;
 		abstract boolean accept(Mod202 mod202);
-		abstract IModelScript<Mod202Key>[] getScript();
-		abstract List<IModelScript<Mod202Key>> getExcelScript();
+		abstract List<IModelScript<Mod202Key>> getScript();
 	}
 	
-	public static IModelScript<Mod202Key>[] obtainScript(Mod202 mod202) {
-		IModelScript<Mod202Key>[] ms = null;
-		for ( Model202Script script : Model202Script.values()) {
+	public static List<IModelScript<Mod202Key>> obtainScript(Mod202 mod202) {
+		List<IModelScript<Mod202Key>> ms = null;
+		for (Model202Script script : Model202Script.values()) {
 			if (script.accept(mod202)) {
 				ms = script.getScript();
 				break;
@@ -109,23 +94,5 @@ public class Model202ScriptProvider {
 		}
 		return ms;
 	}
-
-	public static List<IModelScript<Mod202Key>> obtainExcelScript(Mod202 mod202) {
-		List<IModelScript<Mod202Key>> ms = null;
-		for (Model202Script script : Model202Script.values()) {
-			if (script.accept(mod202)) {
-				ms = script.getExcelScript();
-				break;
-			}
-		}
-		if (ms == null) {
-			throw new IllegalStateException("No hay declaraci\u00F3n disponible para: "
-					+ mod202.getAdministration().getDescription()
-					+ " - " 
-					+ mod202.getModelFullName());
-		}
-		return ms;
-	}
-	
 	
 }

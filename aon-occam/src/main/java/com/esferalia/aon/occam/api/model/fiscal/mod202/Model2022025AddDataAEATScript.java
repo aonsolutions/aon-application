@@ -20,7 +20,7 @@ public enum Model2022025AddDataAEATScript implements IModelScript<Mod202Key> {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	
-	 R00 ("Devengo",null,TITLE)
+	 R00 ("Territorio Foral",null,TITLE)
 	 	,R00_X15 ( Mod202Key.X15.getDescription(),new Mod202Key[]{Mod202Key.X15},NONE)
 	 	,R00_X16 ( Mod202Key.X16.getDescription(),new Mod202Key[]{Mod202Key.X16},NONE)
 	 	,R00_X17 ( Mod202Key.X17.getDescription(),new Mod202Key[]{Mod202Key.X17},NONE)

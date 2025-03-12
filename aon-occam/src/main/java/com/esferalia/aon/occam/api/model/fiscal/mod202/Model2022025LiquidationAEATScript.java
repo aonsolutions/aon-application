@@ -21,7 +21,9 @@ public enum Model2022025LiquidationAEATScript implements IModelScript<Mod202Key>
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
-	 X00 (Mod202Key.X00.getDescription(),new Mod202Key[]{Mod202Key.X00},NONE)
+	
+	 LIQ ("Liquidaci\u00F3n",null,TITLE)
+	,X00 (Mod202Key.X00.getDescription(),new Mod202Key[]{Mod202Key.X00},NONE)
 	
 	,A	 ("A) C\u00E1lculo del pago fraccionado: modalidad art\u00EDculo 40.2 LIS",null,TITLE)
 	,AC01(Mod202Key.C01.getDescription(),new Mod202Key[]{Mod202Key.C01},COMPUTE_KEY)
