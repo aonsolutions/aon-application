@@ -159,7 +159,7 @@ public class InvoiceValidation {
 	public static final BiConsumer<Invoice,AonConfigurationContext> DUPLICATED_REFERENCE_CODE = (inv,ctx) -> {
 		if (!inv.isSales() || (inv.getReferenceCode() != null && !"".equals(inv.getReferenceCode()))) {
 			if (ctx.getContext().getDslContext().fetchExists( 
-					ctx.getContext().getDslContext().selectOne()
+				ctx.getContext().getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(inv.getDomain()))
 					.and(INVOICE.REGISTRY.eq(inv.getRegistry()))

@@ -18,7 +18,11 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class TediProblems extends ScrollPanel {
-	private static TediServiceAsync TEDI_SERVICE;
+	private static final TediServiceAsync TEDI_SERVICE;
+	static {
+		TediServiceAsync serviceRaw = GWT.create(TediService.class);
+		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
+	}
 
 	public interface ITediProblemsCallback  extends IAccountEntryModuleCallback {
 		public TediResult getResult();
@@ -27,12 +31,10 @@ public class TediProblems extends ScrollPanel {
 	}
 
 	public TediProblems( ITediProblemsCallback callback) {
-		TediServiceAsync serviceRaw = GWT.create(TediService.class);
-		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 		setStyleName(AON.CSS.aonScrollArea());
 		FlowPanel mainPanel = new FlowPanel();
 		setWidget(mainPanel);
-		if (callback.getResult().getAccountingInvoice().getMessages() != null && callback.getResult().getAccountingInvoice().getMessages().size() > 0) {
+		if (callback.getResult().getAccountingInvoice().hasMessages()) {
 			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
 			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
 			mainPanel.addStyleName(AON.CSS.aonFixedFont());
@@ -74,14 +76,17 @@ public class TediProblems extends ScrollPanel {
 
 						@Override
 						public void onCancel() {
-
+							// Nothing
 						}
 
 						@Override
 						public void onAccept(TediResult result) {
-							TEDI_SERVICE.validateInvoice(callback.getCurrentDomainName(),
-								callback.getCurrentUser(), callback.getCurrentDomainId(), result
-								, new AsyncCallback<TediResult>() {
+							TEDI_SERVICE.validateInvoice(
+								callback.getOccam().getDomainName()
+								,callback.getOccam().getUser()
+								,callback.getOccam().getDomain()
+								,result
+								,new AsyncCallback<TediResult>() {
 									
 									@Override
 									public void onSuccess(TediResult result) {

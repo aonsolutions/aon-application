@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.widget.RegistryBankListBox;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -55,6 +56,13 @@ public class FinanceBankPanel extends SimplePanel implements Focusable {
 	private AonBankAccountBox bankAccountBox;
 	private ListBox payMethodBox;
 	private Finance financeData;	
+
+	public void show(final Occam occam
+			, final AonConfiguration config
+			, final Finance oriData
+			, final FinanceBankPanelCallback callback) {
+		show( occam.getDomainName(),occam.getDomain(),occam.getUser(),config,oriData,callback);
+	}
 	
 	public void show(final String domainName
 			, final int domain
