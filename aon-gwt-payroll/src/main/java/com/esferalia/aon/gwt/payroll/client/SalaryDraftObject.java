@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -531,7 +530,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 
 		// Send request to server and catch any errors.
 		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDServlet.CALCS);
+		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDService.CALCS);
 		xhr.setRequestHeader("Content-type",
 				"application/x-www-form-urlencoded");
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
