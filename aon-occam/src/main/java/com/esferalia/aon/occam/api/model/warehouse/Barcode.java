@@ -41,8 +41,11 @@ public class Barcode {
 			if(!gs1Code.isSeparator()) {
 				map.put(gs1Code, barcode.substring(gs1Code.getKeyLength(), gs1Code.getKeyLength() + gs1Code.getValueLength()));
 				barcode = barcode.substring(gs1Code.getKeyLength() + gs1Code.getValueLength());
-			} else if(barcode.contains("\u001d") || barcode.contains("\f")) {
-				Integer index = barcode.contains("\u001d") ? barcode.indexOf('\u001d') : barcode.indexOf('\f');
+			} else if(barcode.contains("\u001d") || barcode.contains("\f") || barcode.contains("\312")) {
+				Integer index = 0;
+				if(barcode.contains("\u001d")) index = barcode.indexOf('\u001d');
+				else if(barcode.contains("\f")) index = barcode.indexOf('\f');
+				else if(barcode.contains("\312")) index = barcode.indexOf('\312');
 				map.put(gs1Code, barcode.substring(gs1Code.getKeyLength(), index));
 				barcode = barcode.substring(index + 1);
 			} else {

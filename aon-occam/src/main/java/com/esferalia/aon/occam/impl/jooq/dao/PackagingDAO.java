@@ -220,6 +220,8 @@ public class PackagingDAO {
 		
 		Item containerBase = null; 
 		
+		boolean existDeliveryPackaging = false;
+		
 		if(packaging.getContainer().getItem() != null) {
 			container = ItemDAO.getFull(ctx, f -> f.getIdProperty().eq(packaging.getContainer().getItem()));
 			Integer containerProductId = container.getProduct().getId();
@@ -235,7 +237,7 @@ public class PackagingDAO {
 						.setDomain(ctx.getDomainId())
 						.setDelivery(delivery)
 						.setItem(container));
-			}
+			} else existDeliveryPackaging = true;
 		} else if(packaging.getContainer().getProduct() != null){
 			containerBase = ItemDAO.get(ctx,  f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getProductProperty().eq(packaging.getContainer().getProduct()))
@@ -284,7 +286,9 @@ public class PackagingDAO {
 				});		
 			}
 		}
-		container.addItemComposition(list);
+		if(existDeliveryPackaging)
+			container.setItemComposition(list);
+		else container.addItemComposition(list);
 
 
 		// RESTAR STOCK!
@@ -330,25 +334,27 @@ public class PackagingDAO {
 		}
 		
 		// Añadir envase en delivery detail.
-		Integer containerBaseId = containerBase.getId();
-		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+		if(!existDeliveryPackaging) {
+			Integer containerBaseId = containerBase.getId();
+			DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
 				.and(f.getItem().eq(containerBaseId)));
-		if(dd.getId() != null) {
-			dd.setQuantity(dd.getQuantity() + 1); // TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
-			DeliveryDetailDAO.save(ctx, dd);
-		} else {
-			Integer line = delivery.getDetails().size() + 1;
-			dd = new DeliveryDetail()
-				.setDelivery(new Delivery().setId(deliveryId))
-				.setDomain(ctx.getDomainId())
-				.setDescription(AonStringUtils.isBlank(containerBase.getDescription())
-						? containerBase.getProduct().getName() : containerBase.getDescription())
-				.setDiscountExpression("0.0")
-				.setPrice(0.0)
-				.setQuantity(1)// TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
-				.setItem(containerBase)
-				.setLine(line.shortValue());
-			DeliveryDetailDAO.save(ctx, dd);
+			if(dd.getId() != null) {
+				dd.setQuantity(dd.getQuantity() + 1); // TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
+				DeliveryDetailDAO.save(ctx, dd);
+			} else {
+				Integer line = delivery.getDetails().size() + 1;
+				dd = new DeliveryDetail()
+						.setDelivery(new Delivery().setId(deliveryId))
+						.setDomain(ctx.getDomainId())
+						.setDescription(AonStringUtils.isBlank(containerBase.getDescription())
+								? containerBase.getProduct().getName() : containerBase.getDescription())
+						.setDiscountExpression("0.0")
+						.setPrice(0.0)
+						.setQuantity(1)// TODO HAY QUE AÑADIR QUANTITY EN DELIVERY PACKAGING (POR LOS BOX...)
+						.setItem(containerBase)
+						.setLine(line.shortValue());
+				DeliveryDetailDAO.save(ctx, dd);
+			}
 		}
 		
 		DataResponse dr = new DataResponse()
@@ -808,7 +814,7 @@ public class PackagingDAO {
 	private static String calculateSerialNumber(String barcode) {
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return b.parseGS1128().get(GS1128Codes.CODE_10);
+			return b.parseGS1128().get(GS1128Codes.CODE_10).replaceFirst("0", "");
 		}
 		return null;
 	}

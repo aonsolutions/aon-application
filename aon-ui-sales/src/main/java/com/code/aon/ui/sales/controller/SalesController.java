@@ -1204,7 +1204,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.setCustomer(new com.esferalia.aon.occam.api.model.Customer().setId(to.getCustomer().getId()))
 				.setSeries(series)
 				.setAddress(new com.esferalia.aon.occam.api.model.registry.RegistryAddress().setId(to.getShippingAddress().getId()))
-				.setDate(date)
+				.setDate(to.getDeliveryDate())
 				.setStatus(DeliveryStatus.IN_PREPARATION)
 				.setWorkplace(new Workplace().setId(to.getWorkPlace().getId()))
 				.setScope(new Scope().setId(to.getScope().getId()))
