@@ -50,7 +50,6 @@ export class AonExpenseList extends AonElement {
     }
 
     expenseObject(incomingExpense) {
-        console.log(incomingExpense);
         let expense = new AonExpense();
         expense.setExpense(new Expense(incomingExpense));
         this.getApplication().setContent(expense);
@@ -95,7 +94,7 @@ export class AonExpenseList extends AonElement {
                 table.removeRows();
 
                 expenses.forEach((expense, i) => {
-                    console.log(JSON.stringify(expense))
+                    console.log(expense);
                     table.addRow(expense, () => this.expenseObject(expense));
                 });
 
