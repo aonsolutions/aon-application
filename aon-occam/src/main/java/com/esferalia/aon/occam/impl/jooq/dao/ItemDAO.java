@@ -147,8 +147,8 @@ public class ItemDAO {
 	}
 	
 	public static Item getFull(AONContext ctx, ItemFilter filter){
-		Item item = getFullStream(ctx, filter).findFirst().orElse(new Item());
-	
+		Item item = get(ctx, filter);
+		if(item.getId() != null) item.setItemComposition(ItemCompositionDAO.getList(ctx, f -> f.getItemProperty().eq(item.getId())));  
 		if(item.getStockUnitTag().getId() != null) item.setStockUnitTag(TagDAO.getTag(ctx, item.getStockUnitTag().getId()));
 		if(item.getPackFormatTag().getId() != null) item.setPackFormatTag(TagDAO.getTag(ctx, item.getPackFormatTag().getId()));
 		if(item.getPackUnitsTag().getId() != null) item.setPackUnitsTag(TagDAO.getTag(ctx, item.getPackUnitsTag().getId()));
