@@ -1,14 +1,14 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
-import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemCost.SYSTEM_COST;
 
 import java.sql.Connection;
@@ -27,11 +27,12 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc.ContractConceptCalcType;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeContractPayments {
 
@@ -336,7 +337,7 @@ public class JooqEmployeeContractPayments {
 				.set(CONTRACT_PAYMENT.EXPRESSION, contractConceptCalc.getExpression())
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, contractConceptCalc.getIrpfExpression())
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, contractConceptCalc.getQuoteExpression())
-				.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+				.set(CONTRACT_PAYMENT.MONTH, AonNumberUtils.toByte(contractConceptCalc.getMonth()))
 				.set(CONTRACT_PAYMENT.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
 				.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) contractConceptCalc.getSalaryType().ordinal())
@@ -352,10 +353,10 @@ public class JooqEmployeeContractPayments {
 				.execute();
 		} else if(contractConceptCalc.getHasChange())
 			dslContext.update(CONTRACT_DEDUCTION)
-				.set(CONTRACT_DEDUCTION.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+				.set(CONTRACT_DEDUCTION.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 				.set(CONTRACT_DEDUCTION.DESCRIPTION, contractConceptCalc.getDescription())
 				.set(CONTRACT_DEDUCTION.EXPRESSION, contractConceptCalc.getExpression())
-				.set(CONTRACT_DEDUCTION.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+				.set(CONTRACT_DEDUCTION.MONTH, AonNumberUtils.toByte(contractConceptCalc.getMonth()))
 				.set(CONTRACT_DEDUCTION.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
 				.set(CONTRACT_DEDUCTION.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 				.where(CONTRACT_DEDUCTION.ID.eq(contractConceptCalc.getId()))
@@ -370,7 +371,7 @@ public class JooqEmployeeContractPayments {
 				.execute();
 		} else if(contractConceptCalc.getHasChange())
 			dslContext.update(CONTRACT_COST)
-				.set(CONTRACT_COST.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+				.set(CONTRACT_COST.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 				.set(CONTRACT_COST.CODE, contractConceptCalc.getName())
 				.set(CONTRACT_COST.DESCRIPTION, contractConceptCalc.getDescription())
 				.set(CONTRACT_COST.EXPRESSION, contractConceptCalc.getExpression())
@@ -401,11 +402,11 @@ public class JooqEmployeeContractPayments {
 					.set(BONUS_CONCEPT.DOMAIN, contractConceptCalc.getDomain())
 					.set(BONUS_CONCEPT.DESCRIPTION, contractConceptCalc.getDescription())
 					.set(BONUS_CONCEPT.EXPRESSION, contractConceptCalc.getExpression())
-					.set(BONUS_CONCEPT.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+					.set(BONUS_CONCEPT.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 					.execute();
 			else
 				dslContext.update(BONUS_CONCEPT)
-					.set(BONUS_CONCEPT.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+					.set(BONUS_CONCEPT.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 					.where(BONUS_CONCEPT.ID.eq(bonusConceptId))
 					.execute();
 				
@@ -476,7 +477,7 @@ public class JooqEmployeeContractPayments {
 				return dslContext.insertInto(DEDUCTION_CONCEPT)
 						.set(DEDUCTION_CONCEPT.DOMAIN, domainId)
 						.set(DEDUCTION_CONCEPT.CODE, parseCode(contractConceptCalc.getName()))
-						.set(DEDUCTION_CONCEPT.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+						.set(DEDUCTION_CONCEPT.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 						.set(DEDUCTION_CONCEPT.DESCRIPTION, contractConceptCalc.getDescription())
 						.set(DEDUCTION_CONCEPT.EXPRESSION, contractConceptCalc.getExpression())
 						.returning(DEDUCTION_CONCEPT.ID)
@@ -486,7 +487,7 @@ public class JooqEmployeeContractPayments {
 						.set(BONUS_CONCEPT.DOMAIN, domainId)
 						.set(BONUS_CONCEPT.DESCRIPTION, contractConceptCalc.getDescription())
 						.set(BONUS_CONCEPT.EXPRESSION, contractConceptCalc.getExpression())
-						.set(BONUS_CONCEPT.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+						.set(BONUS_CONCEPT.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 						.returning(BONUS_CONCEPT.ID)
 						.fetchOne().getId();
 			case COST:
@@ -512,7 +513,7 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_PAYMENT.EXPRESSION, contractConceptCalc.getExpression())
 			.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, contractConceptCalc.getIrpfExpression())
 			.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, contractConceptCalc.getQuoteExpression())
-			.set(CONTRACT_PAYMENT.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+			.set(CONTRACT_PAYMENT.MONTH, AonNumberUtils.toByte(contractConceptCalc.getMonth()))
 			.set(CONTRACT_PAYMENT.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_PAYMENT.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) contractConceptCalc.getSalaryType().ordinal())
@@ -523,11 +524,11 @@ public class JooqEmployeeContractPayments {
 		dslContext.insertInto(CONTRACT_DEDUCTION)
 			.set(CONTRACT_DEDUCTION.DOMAIN, domainId)
 			.set(CONTRACT_DEDUCTION.CONTRACT, contractId)
-			.set(CONTRACT_DEDUCTION.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+			.set(CONTRACT_DEDUCTION.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 			.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, contractConceptCalc.getConceptId())
 			.set(CONTRACT_DEDUCTION.DESCRIPTION, contractConceptCalc.getDescription())
 			.set(CONTRACT_DEDUCTION.EXPRESSION, contractConceptCalc.getExpression())
-			.set(CONTRACT_DEDUCTION.MONTH, null == contractConceptCalc.getMonth() ? null : contractConceptCalc.getMonth().byteValue())
+			.set(CONTRACT_DEDUCTION.MONTH, AonNumberUtils.toByte(contractConceptCalc.getMonth()))
 			.set(CONTRACT_DEDUCTION.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_DEDUCTION.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.execute();
@@ -537,7 +538,7 @@ public class JooqEmployeeContractPayments {
 		dslContext.insertInto(CONTRACT_COST)
 			.set(CONTRACT_COST.DOMAIN, domainId)
 			.set(CONTRACT_COST.CONTRACT, contractId)
-			.set(CONTRACT_COST.TYPE, AonStringUtils.isBlank(contractConceptCalc.getCodeType()) ? null : Byte.parseByte(contractConceptCalc.getCodeType()))
+			.set(CONTRACT_COST.TYPE, AonNumberUtils.toByte(contractConceptCalc.getCodeType()))
 			.set(CONTRACT_COST.CODE, parseCode(contractConceptCalc.getName()))
 			.set(CONTRACT_COST.DESCRIPTION, contractConceptCalc.getDescription())
 			.set(CONTRACT_COST.EXPRESSION, contractConceptCalc.getExpression())

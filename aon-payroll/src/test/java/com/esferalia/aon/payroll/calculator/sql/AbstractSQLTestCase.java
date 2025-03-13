@@ -126,6 +126,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
@@ -746,7 +747,7 @@ public abstract class AbstractSQLTestCase {
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.concept)
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.expression)
 					.set(AGREEMENT_PAYMENT.START_DATE, startDate)
-					.set(AGREEMENT_PAYMENT.MONTH, payment.month != null ? (byte) payment.month.ordinal() : null )
+					.set(AGREEMENT_PAYMENT.MONTH, AonEnumUtils.getByte(payment.month ))
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.salary.ordinal()).returning().fetchOne();
 		}
 	}
@@ -1343,7 +1344,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(CONTRACT_PAYMENT.TYPE, AonEnumUtils.getByte(type))
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
 				.set(CONTRACT_PAYMENT.MONTH, month )
 				.returning()
@@ -1387,7 +1388,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(CONTRACT_PAYMENT.TYPE, AonEnumUtils.getByte(type))
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
 				.set(CONTRACT_PAYMENT.MONTH, (byte)month.ordinal() )
 				.returning()
@@ -1416,7 +1417,7 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.EXPRESSION, expression)
 				.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 				.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
-				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
+				.set(CONTRACT_PAYMENT.TYPE, AonEnumUtils.getByte(type))
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
 				.returning()
 				.fetchOne()
@@ -1566,7 +1567,7 @@ public abstract class AbstractSQLTestCase {
 	public static final BonusConceptRecord addBonusConcept(AONContext aonContext, int domain, BonusType type,
 			String expression) {
 		return aonContext.getDslContext().insertInto(BONUS_CONCEPT).set(BONUS_CONCEPT.DOMAIN, domain)
-				.set(BONUS_CONCEPT.TYPE, type != null ? (byte) type.ordinal() : null)
+				.set(BONUS_CONCEPT.TYPE, AonEnumUtils.getByte(type))
 				.set(BONUS_CONCEPT.EXPRESSION, expression)
 				.set(BONUS_CONCEPT.DESCRIPTION, type != null ? type.getName(new Locale("es", "ES")) : expression)
 				.returning().fetchOne();

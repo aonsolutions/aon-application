@@ -56,6 +56,13 @@ public class AonNumberUtils {
 		return null;
 	}
 
+	public static byte toByte(Short i) {
+		if (i != null) {
+			return i.byteValue();
+		}
+		return 0;
+	}
+
 	public static byte toByte(Integer i) {
 		if (i != null) {
 			return i.byteValue();

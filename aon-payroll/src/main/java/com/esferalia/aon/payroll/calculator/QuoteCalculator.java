@@ -133,6 +133,8 @@ public abstract class QuoteCalculator {
 	public abstract List<ITimedResult<Double>> quote(IContractPayment payment,
 			Date start, Date end, double amount) throws AonException;
 	
+	public abstract List<ITimedResult<Double>> limit(ContextVariable limit, ExpressionContext ctx, Date start,
+			Date end);
 	
 	private static class ZeroTimedResult implements ITimedResult<Double>{
 		
@@ -246,6 +248,11 @@ public abstract class QuoteCalculator {
 		@Override
 		public List<ITimedResult<Double>> quote(IContractPayment payment,
 				Date start, Date end, double amount) throws AonException {
+			return Collections.emptyList(); // No cotiza...
+		}
+		
+		@Override
+		public List<ITimedResult<Double>> limit(ContextVariable limit, ExpressionContext ctx, Date start, Date end) {
 			return Collections.emptyList(); // No cotiza...
 		}
 
@@ -721,6 +728,18 @@ public abstract class QuoteCalculator {
 			return quotesImpl;
 		}
 
+		public List<ITimedResult<Double>> limit(ContextVariable limit, ExpressionContext ctx, Date start, Date end) {
+			return
+			limit(limit, 
+				limit == CGC_BASE ? CGC_BASE_RAW : CGP_BASE_RAW,
+				limit == CGC_BASE ? CGC_BASE_MIN : CGP_BASE_MIN, 
+				limit == CGC_BASE ? CGC_BASE_MAX : CGP_BASE_MAX, 
+				ctx,
+				start, 
+				end, 
+				ERE_BASES,
+				FREE_BASES);
+		}
 
 
 		protected List<ITimedResult<Double>> limit(ContextVariable limit, ContextVariable raw,
@@ -946,6 +965,22 @@ public abstract class QuoteCalculator {
 				if (intersect != null) {
 					quotes.addAll(calculator.quote(payment,
 							intersect.getStart(), intersect.getEnd(), amount));
+				}
+			}
+
+			return quotes;
+		}
+		
+		
+		@Override
+		public List<ITimedResult<Double>> limit(ContextVariable limit, ExpressionContext ctx, Date start, Date end) {
+			List<ITimedResult<Double>> quotes = new ArrayList<ITimedResult<Double>>();
+
+			for (GeneralQuote calculator : calculators) {
+				Period intersect = CompositeGeneralQuote.intersect(calculator,
+						start, end);
+				if (intersect != null) {
+					quotes.addAll(calculator.limit(limit, ctx, start, end));
 				}
 			}
 

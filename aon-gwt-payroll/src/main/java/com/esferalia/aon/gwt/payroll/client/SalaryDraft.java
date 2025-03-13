@@ -7564,9 +7564,22 @@ public class SalaryDraft extends ResizeComposite
 			
 		}
 
+		Double base  = null;
+		try {
+			Variable baseVar = getBaseVariable(deduction.getExpression(), draftObject, deduction.getStartDate(), deduction.getEndDate());
+			if ( baseVar != null ) {
+				base = Double.parseDouble(baseVar.getValue().toString());
+			}
+		} catch (Exception e ) {
+			
+		}
+
 		Double cgcBase = null; 
 		Double cgpBase = null;
+		Double irpfBase = draftObject.getIrpfBase(); 
 		switch (deduction.getName()) {
+		case "IRPF":
+			irpfBase = base != null ? base : irpfBase;
 		case "IT_E":
 		case "IMS_E":
 		case "FP_E":
@@ -7579,7 +7592,6 @@ public class SalaryDraft extends ResizeComposite
 			cgcBase = getContextSumValue("BASE_CGC_E", draftObject);
 			cgpBase = getContextSumValue("BASE_CGP_E", draftObject);
 			break;
-
 		default:
 			cgcBase = getContextSumValue("BASE_CGC", draftObject);
 			cgpBase = getContextSumValue("BASE_CGP", draftObject);
@@ -7589,7 +7601,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		return getPercent(getType(deduction, Deduction.Type.OTHER), 
 				deduction.getAmount(), 
-				draftObject.getIrpfBase(),
+				irpfBase,
 				cgcBase, 
 				cgpBase,
 				draftObject.gethExtraBase(),
@@ -7601,6 +7613,18 @@ public class SalaryDraft extends ResizeComposite
 	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
 		RegExp regExp = 
 		RegExp.compile("PORCENTAJE_[A-Z_]+");
+		
+		MatchResult r = regExp.exec(str);
+		
+		if ( r != null )
+			return getContextVariable(r.getGroup(0), draftObject, startDate, endDate);
+		
+		return null;
+	}
+
+	private static Variable getBaseVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
+		RegExp regExp = 
+		RegExp.compile("BASE_[A-Z_]+");
 		
 		MatchResult r = regExp.exec(str);
 		

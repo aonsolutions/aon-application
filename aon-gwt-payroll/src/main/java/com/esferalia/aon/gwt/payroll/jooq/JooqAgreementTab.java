@@ -45,6 +45,8 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqAgreementTab {
@@ -550,8 +552,8 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
 					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
-					.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE,null == payment.getSalaryType() ? (byte) Salary.Type.SALARY.ordinal() : (byte) payment.getSalaryType().ordinal())
+					.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE,AonEnumUtils.getByte(payment.getSalaryType()))
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
 					.returning(AGREEMENT_PAYMENT.ID)
@@ -575,8 +577,8 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
 					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
-					.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) payment.getSalaryType().ordinal())
+					.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE, AonEnumUtils.getByte(payment.getSalaryType()))
 					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
 					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
 					.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
@@ -619,8 +621,8 @@ public class JooqAgreementTab {
 							.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
 							.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
-							.set(AGREEMENT_PAYMENT.MONTH, null == payment.getMonth() ? null : payment.getMonth().byteValue())
-							.set(AGREEMENT_PAYMENT.SALARY_TYPE, null == payment.getSalaryType() ? (byte) Salary.Type.SALARY.ordinal() : (byte) payment.getSalaryType().ordinal())
+							.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, AonEnumUtils.getByte(payment.getSalaryType()))
 							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression())
 							.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression())
 							.returning(AGREEMENT_PAYMENT.ID)

@@ -6989,7 +6989,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase());
+		Assert.assertEquals(1500.00, salary.getCommonBase(), DELTA);
 
 	}
 
@@ -7076,7 +7076,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			System.out.println(d.getName() + " = "+ d.getExpression() + "[" + d.getStartDate() + ".." + d.getEndDate() + "]");
 		});
 
-		Assert.assertEquals(1500.00, salary.getCommonBase());
+		Assert.assertEquals(1500.00, salary.getCommonBase(), DELTA);
 //		Assert.assertEquals(1250.00, salary.getProfessionalBase());
 
 	}
