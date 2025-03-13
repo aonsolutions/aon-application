@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -147,7 +148,13 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getIncomes(AonApiData api) {
-		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(api.getOccam(),api.getDomain().getId())
+		JSONObject jsonParams = api.getData();
+		String query = null;
+		if (jsonParams != null) {
+			query = JsonUtils.getString(jsonParams, IJsonNames.VALUE);
+		}
+		
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(api.getOccam(),api.getDomain().getId(), query)
 			.map( AccountingIncomeJSON::to )
 			.filter( Optional::isPresent )
 			.map( Optional::get );
@@ -162,6 +169,9 @@ public class AccountingServlet extends AonApiHttpServlet{
 		}
 		AccountingIncome income = AccountingIncomeJSON.from( jsonParams )
 			.orElseThrow( () -> new AonCoreException("El ingreso es un dato obligatorio."));
+		System.out.println( jsonParams.toString(2) );
+		AccountingIncomeJSON.to( income )
+			.ifPresent( json -> System.out.println(json.toString(2)));
 		income = ACCOUNTING.saveAccountingIncome(api.getOccam(), income);
 		return AccountingIncomeJSON.to( income )
 			.orElse(new JSONObject());

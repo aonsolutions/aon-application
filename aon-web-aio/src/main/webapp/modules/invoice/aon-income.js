@@ -36,8 +36,9 @@ export class AonIncome extends AonElement {
         this.setAttribute(CONSTANT.ID, id);
     }
 
-    constructor () {
+    constructor (income) {
         super();
+        this.income = income;
     }
 
     connectedCallback () {
@@ -46,7 +47,6 @@ export class AonIncome extends AonElement {
     }
 
     initialize() {
-        this.income = this.income || new Income();
         this.id = this.id || 'aonIncome';
         this.INCOME_TOOLBAR = this.id + "Toolbar";
         this.INCOME_CARD = this.id + "Card";
@@ -80,7 +80,6 @@ export class AonIncome extends AonElement {
             div.style.width = "100%";
         else
             div.style.width = "50%";
-        
         this.appendChild(div);
         this.buildCard(div);
     }
@@ -111,10 +110,8 @@ export class AonIncome extends AonElement {
         customer.id = this.INCOME_CUSTOMER;
         if(this.getIncome().getCustomer())
             customer.setCustomer(this.getIncome().getCustomer());
-
-        customer.addEventListener(EVENT.CHANGE, () =>  {
-            this.getIncome().setCustomer(this.getCustomer());
-        });
+        customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.getIncome().setCustomer(this.getCustomer() ));
+        
         div.appendChild(customer);
     
         let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Ingreso");
@@ -158,43 +155,44 @@ export class AonIncome extends AonElement {
     
         let paymentMethod = createSelect(this.INCOME_PAYMENT, MSG.PAYMETHOD, div);
         paymentMethod.setAlias("id", "alias");
-        let opciones = [];
+        let opts = [];
         getCompanyBanks({ active: true }).then(banks => {
             banks
                 .filter(b => b.active)
                 .forEach(b => {
                     b.alias = b.alias; 
-                    opciones.push(b); 
+                    b.bank  = true; 
+                    opts.push(b); 
                 });
         
             getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
                 accounts.forEach(a => {
                     a.alias = a.description; 
-                    opciones.push(a); 
+                    a.bank  = false; 
+                    opts.push(a); 
                 });
         
-                paymentMethod.setOptions(opciones);
+                paymentMethod.setOptions(opts);
                 if(this.income.cashAccount){
                     paymentMethod.value = this.income.cashAccount.id;
-                    paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
-                        this.getIncome().setCashAccount(this.getPaymethods());
-                    });
                 }
                 if(this.income.bank){
                     paymentMethod.value = this.income.bank.id;
-                    paymentMethod.addEventListener(EVENT.CHANGE, () =>{
-                        this.getIncome().setBank(this.getPaymethods());
-                    })
                 }
                     
             });
         });
-        
-        
-        paymentMethod.addEventListener(EVENT.SELECT, (event) => {
-            const selectedObject = event.detail;
-            console.log("Objeto seleccionado:", selectedObject);
-        });        
+
+        paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
+            let pm = this.getPaymethods();
+            if (pm.bank) {
+                this.getIncome().setBank( pm );
+                this.getIncome().setCashAccount(null);
+            } else {
+                this.getIncome().setBank( null );
+                this.getIncome().setCashAccount(pm);
+            }
+        });
 
         let comments = createTextarea(this.INCOME_COMMENTS, MSG.COMMENTS, div);
         comments.setValue(this.income.comments);
@@ -212,7 +210,9 @@ export class AonIncome extends AonElement {
 
     save() {
         console.log(JSON.stringify(this.income));
-        setIncome(this.income);
+        setIncome(this.income)
+            .then( r => alert(r))
+            .catch(e => this.showError(e));
     }
 
     getActivity() {

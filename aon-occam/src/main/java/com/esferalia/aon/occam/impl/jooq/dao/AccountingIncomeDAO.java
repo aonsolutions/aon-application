@@ -236,7 +236,8 @@ public class AccountingIncomeDAO {
 			.setPeriod(period.getId())
 			.setEntryDate( income.getDate() )
 			.setEntryType( AccountEntryType.OTHER_INCOMES )
-			.setActivity( income.getActivity().orElse(null) );
+			.setActivity( income.getActivity().orElse(null) )
+			.setComments( income.getComments() );
 		income.getCustomer().ifPresentOrElse(
 		   c -> ae.setConfidential( c.isConfidential()  )
 		 ,() -> ae.setConfidential( false )

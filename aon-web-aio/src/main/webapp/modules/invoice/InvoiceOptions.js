@@ -272,7 +272,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.OTHER_INCOMES.initCap(),
     name: MSG.OTHER_INCOMES,
     icon: "add_card",
-    fn: () => alert("EN DESARROLLO")
+    fn: () => income()
   }
 
   export const OFFERS = {

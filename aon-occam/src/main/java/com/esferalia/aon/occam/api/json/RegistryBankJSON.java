@@ -28,11 +28,12 @@ public class RegistryBankJSON {
 	
 	public static RegistryBank fromJSON(JSONObject json) {
 		if(json == null) return new RegistryBank();
+		if(JsonUtils.isEmpty( json) ) return new RegistryBank();
 		return from(json).orElse(new RegistryBank());
 	}
 	
 	public static Optional<RegistryBank> from(JSONObject json) {
-		if(json == null) return Optional.empty();
+		if ( JsonUtils.isEmpty( json) ) return Optional.empty();
 		return Optional.of(
 			new RegistryBank()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))

@@ -36,8 +36,11 @@ export class Income {
       this.comments = income.comments;
       this.accountEntry = income.accountEntry;
       this.finance = income.finance;
+    } else {
+      this.domain = LS.getDomainId();
+      this.date = new Date();
     }
-    
+
   }
 
   getDomain() {
