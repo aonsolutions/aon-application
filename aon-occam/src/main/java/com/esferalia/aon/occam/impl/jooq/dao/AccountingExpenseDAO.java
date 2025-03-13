@@ -103,7 +103,7 @@ public class AccountingExpenseDAO {
 				  .setExpAccount( AccountDAO.get( ctx, aed.getBalancingAccount() ) )
 				  .setConcept( aed.getConcept())
 				  .setReferenceCode( aed.getDocumentNumber())
-				  .setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit())))
+				  .setAmount( AonMathUtils.round(aed.getCredit() - aed.getDebit())))
 			;
 		return ai;
 	}
@@ -185,7 +185,7 @@ public class AccountingExpenseDAO {
 				.setAccount( expAccount.getId() )
 				.setConcept( expense.getConcept() )
 				.setDocumentNumber( expense.getReferenceCode() )
-				.setCredit( expense.getAmount())
+				.setDebit( expense.getAmount())
 				.setBalancingAccount( bankAccount.getId() )
 		);
 		ae.getDetails().add( 
@@ -193,7 +193,7 @@ public class AccountingExpenseDAO {
 				.setAccount( bankAccount.getId() )
 				.setConcept( expense.getConcept() )
 				.setDocumentNumber( expense.getReferenceCode() )
-				.setDebit( expense.getAmount())
+				.setCredit( expense.getAmount())
 				.setBalancingAccount( expAccount.getId() )
 		);
 		AccountEntryDAO.save( ctx, ae);

@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_CONCEPT("El concepto es un dato dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_AMOUNT("El importe es un dato dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_BANK_ACCOUNT("El banco o caja es un dato dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_CUSTOMER("Si indica un cliente, debe ser v\u00E1lido.")
 	,EMPTY_STATUS("El estado es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
