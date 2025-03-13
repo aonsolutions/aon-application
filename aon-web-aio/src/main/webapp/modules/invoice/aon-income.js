@@ -9,6 +9,7 @@ import { getCompanyActivities, getCompanyBanks } from '../../services/companySer
 import { getAccounts, setIncome } from '../../services/accountingService.js';
 import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonIncome extends AonElement {
 
@@ -101,9 +102,10 @@ export class AonIncome extends AonElement {
         });
     
         let date = createDate(this.INCOME_DATE, MSG.DATE, div);
-        date.setDate(this.income.date);
+        let fixedDate = this.fixDateFormat(this.income.date);
+        date.setDate(fixedDate);
         date.addEventListener(EVENT.CHANGE, () =>  {
-            this.getIncome().setDate(this.getDate())
+            this.getIncome().setDate((this.getDate()));
         });
 
         let customer = new AonCustomerSuggestion();
@@ -204,6 +206,23 @@ export class AonIncome extends AonElement {
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.marginTop = "2px";
     }
 
+    fixDateFormat(dateString) {
+        if (dateString !== undefined && dateString !== null) {
+            let strDate = dateString.toString(); 
+            let parts = strDate.includes("/") ? strDate.split("/") : strDate.split("-"); 
+    
+            if (parts.length === 3) {
+                let day = parts[0].padStart(2, '0');
+                let month = parts[1].padStart(2, '0');
+                let year = parts[2];
+    
+                return `${year}-${month}-${day}`; 
+            }
+        }
+        return dateString; 
+    }
+    
+
     back() {
         this.getApplication().setContent(new AonIncomeList());
     }
@@ -211,7 +230,9 @@ export class AonIncome extends AonElement {
     save() {
         console.log(JSON.stringify(this.income));
         setIncome(this.income)
-            .then( r => alert(r))
+            .then( r => {
+//                this.income = r;
+                console.log("SAVE: "+JSON.stringify(r))})
             .catch(e => this.showError(e));
     }
 

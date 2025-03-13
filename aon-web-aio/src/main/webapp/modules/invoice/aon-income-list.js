@@ -94,6 +94,7 @@ export class AonIncomeList extends AonElement {
                 }
                 table.removeRows();
                 incomes.forEach((income) => {
+                    console.log(income);
                     table.addRow(income, () => this.incomeObject(income));
                 });
 
