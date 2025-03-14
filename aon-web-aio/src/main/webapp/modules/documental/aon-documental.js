@@ -69,7 +69,6 @@ export class AonDocumental extends AonElement {
               domain  : localStorage.getItem('aon_domain_id')
           };
 
-
 		//   this.innerHTML = `
 		//   <aon-application id="${this.DOCUMENTAL}" title="${}" drag_and_drop='true'></aon-application>
 		//   <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>

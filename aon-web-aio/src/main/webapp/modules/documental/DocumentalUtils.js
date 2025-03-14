@@ -1,14 +1,14 @@
 import { AonDialog } from "../../components/aon-dialog.js";
 import { AonSelect } from "../../components/aon-select.js";
+import { AonNewSelect } from "../../components/aon-new-select.js";
+import { AonNewDate } from "../../components/aon-new-date.js";
 import { MSG } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental, getS3Category, postS3Document } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
 import { AonDocumental } from "./aon-documental.js";
-import { AonNewDate } from "../../components/aon-new-date.js";
-// import { AonDocumental } from "./aon-documental.js";
 import {
-	ASESOR_TYPE_OPTION,
-	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
+  ASESOR_TYPE_OPTION,
+  ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
 } from './DocumentalEnums.js';
 
 export const uploadDocument = (file, data, success, error) => {
@@ -23,14 +23,13 @@ export const uploadDocument = (file, data, success, error) => {
 				scope: data.scope,
 				type: data.type
 			};
-//			uploadFileDocumental(doc)
-			postS3Document(doc)
-				.then(r => success(file))
-				.catch((e) => error(file, e));
+            const uploadDocumentsUse = this.isBeta() ? postS3Document : uploadFileDocumental;
+			uploadDocumentsUse(doc)
+              .then(r => success(file))
+              .catch((e) => error(file, e));
 		}).catch((e) => error(file, e));
 	}
 }
-
 
 export const uploadDocuments = (el, files, dur) => {
 	let d = new AonDialog();
@@ -68,12 +67,7 @@ export const uploadDocuments = (el, files, dur) => {
 }
 
 export const uploadOption = (dur, beta) => {
-	let table = null;
-	if (beta) {
-		table = S3DocumentalSelects();
-	} else {
-		table = oldDocumentalSelects(dur);
-	}
+	let table = beta ? S3DocumentalSelects() : oldDocumentalSelects(dur);
 	return table;
 }
 
@@ -128,7 +122,6 @@ function oldDocumentalSelects(dur) {
 	table.appendChild(tr4);
 
 	// TAG
-
 	let tdTag = document.createElement('td');
 	tdTag.setAttribute('colspan', '1');
 	let selTag = new AonSelect();
@@ -150,7 +143,6 @@ function oldDocumentalSelects(dur) {
 	table.appendChild(tr5);
 
 	// TYPE
-
 	let tdType = document.createElement('td');
 	tdType.setAttribute('colspan', '1');
 	let selType = new AonSelect();
@@ -171,9 +163,29 @@ function oldDocumentalSelects(dur) {
 }
 
 export const S3DocumentalSelects = () => {
-
+  // Se monta la tabla
 	let table = document.createElement('table');
 	table.style.width = '100%';
+
+	// Aniadir un DatePicker aqui� como una columna mas (al final)
+	let trDatePicker = document.createElement('tr');
+	table.appendChild(trDatePicker);
+	
+	// Celda para el datePicker
+	let tdDatePicker = document.createElement('td');
+	tdDatePicker.setAttribute('colspan', '1');
+	let datePicker = new AonNewDate();
+	datePicker.id = "aonDocumentalUploadDatePicker";
+	datePicker.title = "Fecha";
+	tdDatePicker.appendChild(datePicker);
+	trDatePicker.appendChild(tdDatePicker);
+
+	// Event listener para el datePicker (si se necesita)
+	datePicker.addEventListener('change', (event) => {
+		return datePicker.getDateValue();
+//		console.log('Fecha seleccionada:', datePicker.getDateValue());
+	});
+
 
 	// TAG - Este campo no se debe eliminar
 	let trTag = document.createElement('tr');
@@ -181,7 +193,7 @@ export const S3DocumentalSelects = () => {
 
 	let tdTag = document.createElement('td');
 	tdTag.setAttribute('colspan', '1');
-	let selTag = new AonSelect();
+	let selTag = new AonNewSelect();
 	selTag.id = "aonDocumentalUploadTag";
 	selTag.title = MSG.TAG;
 	tdTag.appendChild(selTag);
@@ -203,7 +215,7 @@ export const S3DocumentalSelects = () => {
 	let tdCategory = document.createElement('td');
 	tdCategory.setAttribute('colspan', '1');
 
-	let selCat = new AonSelect();
+	let selCat = new AonNewSelect();
 	selCat.id = "aonDocumentalUploadCategory";
 	selCat.title = MSG.CATEGORY;
 	tdCategory.appendChild(selCat);
@@ -213,47 +225,28 @@ export const S3DocumentalSelects = () => {
 		if (categories.length > 0) {
 			selCat.options = JSON.stringify(categories.map(c => {
 				return {
-					value: c.id,
-					name: c.name
-				}
+                  value: c.id,
+                  name : c.name
+				};
 			}));
 			trCategory.appendChild(tdCategory);
 		} else {
-			console.log('No hay categorías disponibles.');
+			console.log('No hay categorias disponibles.');
 		}
 	});
 	
-	// Limpiar campos de subcategoría, administración y modelos
+	// Limpiar campos de subcategori�a, administracion y modelos
 	function clearFields(fieldsToKeep = []) {
 		const trElements = table.querySelectorAll('tr');
 		trElements.forEach((tr) => {
-			// Evitar eliminar las filas que deben permanecer (etiquetas, categoría y el datePicker)
+			// Evitar eliminar las filas que deben permanecer (etiquetas, categori�a y el datePicker)
 			if (!fieldsToKeep.includes(tr) && !tr.contains(tdDatePicker)) {
 				tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
 			}
 		});
 	}
 
-	// Añadir un DatePicker aquí como una columna más (al final)
-	let trDatePicker = document.createElement('tr');
-	table.appendChild(trDatePicker);
-	
-	// Celda para el datePicker
-	let tdDatePicker = document.createElement('td');
-	tdDatePicker.setAttribute('colspan', '1');
-	let datePicker = new AonNewDate();
-	datePicker.id = "aonDocumentalUploadDatePicker";
-	datePicker.title = "Fecha";
-	tdDatePicker.appendChild(datePicker);
-	trDatePicker.appendChild(tdDatePicker);
-
-	// Event listener para el datePicker (si se necesita)
-	datePicker.addEventListener('change', (event) => {
-		return datePicker.getDateValue();
-//		console.log('Fecha seleccionada:', datePicker.getDateValue());
-	});
-
-	// Event listener para la selección de la categoría
+	// Event listener para la seleccion de la categoria�
 	selCat.addEventListener('change', (event) => {
 		const selectedCategoryId = event.target.value;
 		console.log('Categoría seleccionada:', selectedCategoryId);
@@ -262,13 +255,13 @@ export const S3DocumentalSelects = () => {
 		clearFields([trCategory, trTag, trDatePicker]);
 
 		if (selectedCategoryId != null) {
-			// Crear un nuevo tr para Subcategoría solo si hay subcategorías
+			// Crear un nuevo tr para Subcategori�a solo si hay subcategori�as
 			let trSubCategory = document.createElement('tr');
 			table.appendChild(trSubCategory);
 
 			let tdSubCategory = document.createElement('td');
 			tdSubCategory.setAttribute('colspan', '1');
-			let selSubCat = new AonSelect();
+			let selSubCat = new AonNewSelect();
 			selSubCat.id = "aonDocumentalUploadSubCategory";
 			selSubCat.title = MSG.SUBCATEGORY;
 			tdSubCategory.appendChild(selSubCat);
@@ -302,7 +295,7 @@ export const S3DocumentalSelects = () => {
 
 					let tdAdministration = document.createElement('td');
 					tdAdministration.setAttribute('colspan', '1');
-					let selAdministration = new AonSelect();
+					let selAdministration = new AonNewSelect();
 					selAdministration.id = "aonDocumentalAdministration";
 					selAdministration.title = "Administración";
 					tdAdministration.appendChild(selAdministration);
@@ -337,7 +330,7 @@ export const S3DocumentalSelects = () => {
 
 							let tdModel = document.createElement('td');
 							tdModel.setAttribute('colspan', '1');
-							let selModel = new AonSelect();
+							let selModel = new AonNewSelect();
 							selModel.id = "aonDocumentalModels";
 							selModel.title = "Modelos";
 							tdModel.appendChild(selModel);
@@ -365,10 +358,6 @@ export const S3DocumentalSelects = () => {
 	
 	return table;
 };
-
-
-
-
 
 const attach = async (reader, d) => {
 	const data = {
