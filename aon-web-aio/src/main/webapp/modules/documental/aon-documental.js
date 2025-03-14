@@ -53,12 +53,21 @@ export class AonDocumental extends AonElement {
 	initialize() {
 		this.DOCUMENTAL = 'aonDocumental';
 		this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
-		this._filter = {
-			type: 'all',
-			page: 1,
-			perPage: 30,
-			domain: localStorage.getItem('aon_domain_id')
-		};
+		this._filter = this.isBeta() 
+          ?
+            {
+              type    : 'all',
+              page    : 1,
+              perPage : 30,
+              domain  : localStorage.getItem('aon_domain_id')
+            }
+          :
+            {
+              type    : 'all',
+              page    : 1,
+              per_page: 30,
+              domain  : localStorage.getItem('aon_domain_id')
+          };
 
 
 		//   this.innerHTML = `
