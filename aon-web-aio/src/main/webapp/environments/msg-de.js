@@ -124,6 +124,7 @@ export const CUSTOMERS = 'Customers';
 // ----- D
 
 export const DATE = 'Date';
+export const DATE_CREATION = 'Sortze-data';
 export const DARK = 'Dunkel';
 export const DEACTIVATE = 'Deactivate';
 export const DELETE = 'Delete';
