@@ -70,9 +70,10 @@ export class AonIncomeList extends AonElement {
         let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
-        table.addColumn(MSG.DATE, 'date', 'date', '120px');
+        table.addColumn(MSG.DATE, 'date', 'date', '150px');
+        table.addColumn(MSG.REFERENCE, 'string', 'referenceCode', '150px');
+        table.addColumn("Ingreso", 'string', 'incomeDescription', '300px');
         table.addColumn(MSG.CONCEPT, 'string', 'concept', '420px');
-        table.addColumn(MSG.PAYMETHOD, 'string' , 'paymethod', '599px')
         table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
     
 
@@ -94,7 +95,7 @@ export class AonIncomeList extends AonElement {
                 }
                 table.removeRows();
                 incomes.forEach((income) => {
-                    income.paymethod = income.cashAccount.description;
+                    income.incomeDescription = income.expAccount.description;
                     table.addRow(income, () => this.incomeObject(income));
                 });
 
