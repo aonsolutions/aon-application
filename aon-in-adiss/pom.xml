@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions</groupId>
+	<artifactId>aon.in.adiss</artifactId>
+	<packaging>jar</packaging>
+
+	<name>AON-IN-ADISS</name>
+
+	<build>
+		<plugins>
+
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.adiss.querydsl</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.master.jooq</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+          <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.9.0.jre11-preview</version>
+			<scope>compile</scope>
+          </dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.13</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+</project>	
