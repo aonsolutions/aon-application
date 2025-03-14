@@ -195,7 +195,6 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setS3key(doc)
 				.setScope(json.getInt(IJsonNames.SCOPE))
 				.setSecurityLevel((byte) 0)
-				.setDocumentDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setCreationDate(new Date())
 				.setCreationUser(api.getUser().getLogin())
 				.setModificationDate(new Date())
