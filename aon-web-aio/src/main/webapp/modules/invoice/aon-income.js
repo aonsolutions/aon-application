@@ -6,7 +6,7 @@ import * as ACTION from '../actions.js';
 import { createCard, createDate, createInput, createSelect, createTextarea, createNumber } from '../../components/CreateComponent.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
-import { getAccounts, setIncome } from '../../services/accountingService.js';
+import { deleteIncome, getAccounts, setIncome } from '../../services/accountingService.js';
 import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
@@ -71,6 +71,7 @@ export class AonIncome extends AonElement {
         toolbar.title = MSG.INCOMES; 
         this.appendChild(toolbar);
 
+        toolbar.addButton2(ACTION.DELETE, () => this.delete());
         toolbar.addButton2(ACTION.SAVE, () => this.save());
         toolbar.addButton2(ACTION.BACK, () => this.back());
         
@@ -92,6 +93,7 @@ export class AonIncome extends AonElement {
         card.setContent(div);
     
         let activity = createSelect(this.INCOME_ACTIVITY, MSG.ACTIVITY, div);
+        activity.setValue(this.income.activity);
         activity.setAlias("id", "description");
         getCompanyActivities({}).then(activities => {
             if (activities.length > 0) {
@@ -100,6 +102,10 @@ export class AonIncome extends AonElement {
                 if (principalActivity) activity.value = principalActivity.id;
             }
         });
+
+        activity.addEventListener(EVENT.CHANGE, () => {
+            this.getIncome().setActivity(this.getActivity());
+        })
     
         let date = createDate(this.INCOME_DATE, MSG.DATE, div);
         let fixedDate = this.fixDateFormat(this.income.date);
@@ -148,6 +154,8 @@ export class AonIncome extends AonElement {
         });
     
         let amount = createNumber(this.INCOME_AMOUNT, MSG.AMOUNT, subDiv);
+        amount.format = CONSTANT.TRUE;
+		amount.decimals = "2";
         amount.value = this.income.amount;
         amount.style.marginLeft = "10px";
         amount.style.width = "50%";
@@ -231,8 +239,16 @@ export class AonIncome extends AonElement {
         console.log(JSON.stringify(this.income));
         setIncome(this.income)
             .then( r => {
-//                this.income = r;
+                this.setIncome(new Income(r));
                 console.log("SAVE: "+JSON.stringify(r))})
+            .catch(e => this.showError(e));
+    }
+
+    delete(){
+        deleteIncome(this.income)
+            .then(r => {
+                this.back();
+            })
             .catch(e => this.showError(e));
     }
 

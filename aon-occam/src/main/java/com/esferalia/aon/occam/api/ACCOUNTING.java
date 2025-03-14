@@ -817,5 +817,13 @@ public class ACCOUNTING {
 		}
 	}
 	
+	public static void deleteAccountingIncome( Occam occam,  AccountingIncome income) {
+		if (income == null) throw new AonCoreException("El ingreso es obligatorio");
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			AccountEntry ae = income.getAccountEntry()
+				.orElseThrow(() -> new AonCoreException("El apunte es obligatorio"));
+			getAccounting().deleteAccountingIncome(ctx, ae);
+		}
+	}
 
 }
