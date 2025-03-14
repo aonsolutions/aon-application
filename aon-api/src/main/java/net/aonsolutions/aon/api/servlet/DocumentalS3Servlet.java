@@ -188,7 +188,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		S3Document rdoc = new S3Document()
 				.setCategory(json.getInt(IJsonNames.CATEGORY))
 				.setDomain(json.getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID))
-				.setRegistry(216081)
+				.setRegistry(api.getUser().getRegistry().getId())
 				.setDocumentDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setMimetype(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)))
 				.setName(json.getString(IJsonNames.NAME))
