@@ -116,6 +116,7 @@ public final class IJsonNames {
 	public static final String CNAE_CODE = "cnaeCode";
 	public static final String CNAE_DESCRIPTION = "cnaeDescription";
 	public static final String CODE = "code";
+	public static final String COLOR = "color";
 	public static final String COMMENT = "comment";
 	public static final String COMMENTS = "comments";
 	public static final String COMMERCIAL = "commercial";
@@ -642,6 +643,7 @@ public final class IJsonNames {
 	public static final String TAX_TYPE = "taxType";	
 	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TAG = "tag";
+	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
 	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
