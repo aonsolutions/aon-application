@@ -66,9 +66,13 @@ export class AonDocument extends AonElement {
     this.TYPE = this.id + 'Type';
   }
 
+//este es el que habia antes, controlar con lo nuevo
+//      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
+
   build() {
+	console.log('this.DATA' , this.DATA);
     this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
+      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>

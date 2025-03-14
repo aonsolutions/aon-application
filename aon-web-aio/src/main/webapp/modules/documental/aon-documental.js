@@ -6,7 +6,7 @@ import {
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
 	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument, getS3Category
+	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSelect } from '../../components/aon-select.js';
@@ -56,7 +56,7 @@ export class AonDocumental extends AonElement {
 		this._filter = {
 			type: 'all',
 			page: 1,
-			per_page: 30,
+			perPage: 30,
 			domain: localStorage.getItem('aon_domain_id')
 		};
 
@@ -116,10 +116,11 @@ export class AonDocumental extends AonElement {
 		this.addCategoryOptions();
 		this.addTagOptions();
 		this.loadScopes();
-
 		if (this.value) {
 			this.aonDocumentById(this.value);
-		} else this.aonDocumentalList();
+		} else {
+			this.aonDocumentalList();
+		}
 	}
 
 	addDocumentOptions() {
@@ -202,40 +203,52 @@ export class AonDocumental extends AonElement {
 		let data = {
 			parent: null
 		};
-		getS3Category(data).then(categories => {
-			this._categories = categories.map(c => {
-				return {
-					value: c.id,
-					name: c.name
-				};
-			});
-			let application = this.getApplication();
-			//		getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
-			//			this._categories = categories.map(c => {
-			//				return {
-			//					value: c.id,
-			//					name: c.name
-			//				};
-			//			});
-			// Si no es beta, agregamos las categorías bajo el apartado categorías
-			if (!this.isBeta()) {
-				this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
-			}
-			categories.forEach(item => {
-				let option = {
-					name: item.name,
-					icon: !this.isBeta() ? 'label' : 'insert_drive_file',
-					fn: () => {
-						this._filter.tag = undefined;
-						this._filter.category = item.id;
-						this.aonDocumentalList();
-					}
-				};
-				// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
-				if (this.isBeta()) {
+		if (this.isBeta()) {
+			getS3Category(data).then(categories => {
+				this._categories = categories.map(c => {
+					return {
+						value: c.id,
+						name: c.name
+					};
+				});
+				let application = this.getApplication();
+				categories.forEach(item => {
+					let option = {
+						name: item.name,
+						icon: !this.isBeta() ? 'label' : 'insert_drive_file',
+						fn: () => {
+							this._filter.tag = undefined;
+							this._filter.category = item.id;
+							this.aonDocumentalList();
+						}
+					};
+					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
 					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
 					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
-				} else {
+				});
+			});
+		} else {
+
+			getCategories(data).then(categories => {
+				this._categories = categories.map(c => {
+					return {
+						value: c.id,
+						name: c.name
+					};
+				});
+				let application = this.getApplication();
+				// Si no es beta, agregamos las categorías bajo el apartado categorías
+				this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
+				categories.forEach(item => {
+					let option = {
+						name: item.name,
+						icon: !this.isBeta() ? 'label' : 'insert_drive_file',
+						fn: () => {
+							this._filter.tag = undefined;
+							this._filter.category = item.id;
+							this.aonDocumentalList();
+						}
+					};
 					// Si no es beta, agregamos las opciones de eliminar y editar las categorías
 					if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 						option.actions = [{
@@ -249,11 +262,10 @@ export class AonDocumental extends AonElement {
 						}];
 					}
 					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
-				}
+				});
 			});
-		});
+		}
 	}
-
 
 	loadScopes() {
 		getScopes().then(scopes => {
@@ -451,7 +463,10 @@ export class AonDocumental extends AonElement {
 	}
 
 	aonDocumentById(id) {
-		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+//		getS3Document_File(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+		console.log('entra en aonDocumentById');
+		getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+//		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
 	}
 
 	aonDocument(doc) {
@@ -466,53 +481,52 @@ export class AonDocumental extends AonElement {
 	addDocumentalFile() {
 		if (this.isBeta()) {
 			// Si es beta, primero abrimos el modal
-			console.log('comprobamos que es beta');
 			let d = document.getElementById(this.getApplication().DIALOG);
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.UPLOAD_FILE);
 			d.setContent(uploadOption(this.getDur(), this.isBeta()));
 			d.addAcceptAction(async () => {
-				console.log('formamos el data');
 
-								let data = {
-									category: document.getElementById("aonDocumentalUploadCategory").value,
-									subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
-									administration: document.getElementById("aonDocumentalAdministration").value,
-									model: document.getElementById("aonDocumentalModels").value,
-									tag: document.getElementById("aonDocumentalUploadTag").value,
-									date: document.getElementById("aonDocumentalUploadDatePicker").getValue()
-									
-				//					category: document.getElementById("aonDocumentalUploadCategory").value,
-				//					scope: document.getElementById("aonDocumentalUploadScope").value,
-				//					tag: document.getElementById("aonDocumentalUploadTag").value,
-				//					type: document.getElementById("aonDocumentalUploadType").value
-								};
-																	console.log(data.date);
+				let data = {};
 
+				// Verificar si el elemento existe antes de acceder a su valor
+				let categoryElement = document.getElementById("aonDocumentalUploadCategory");
+				if (categoryElement && categoryElement.value !== null) {
+					let category = categoryElement.value;
+					data.category = category;
+				}
 
-//				let data = {
-//					category: document.getElementById("aonDocumentalUploadCategory").value,
-//					subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
-//					tag: document.getElementById("aonDocumentalUploadTag").value
-//				};
-//
-//				// Verificamos si "administration" tiene un valor
-//
-//				if (document.getElementById("aonDocumentalAdministration").value != null) {
-//					let administration = document.getElementById("aonDocumentalAdministration").value;
-//					data.administration = administration;
-//				}
-//
-//				// Verificamos si "model" tiene un valor
-//				if (document.getElementById("aonDocumentalModels").value != null) {
-//					let model = document.getElementById("aonDocumentalModels").value;
-//					data.model = model;
-//				}
+				let subCategoryElement = document.getElementById("aonDocumentalUploadSubCategory");
+				if (subCategoryElement && subCategoryElement.value !== null) {
+					let subcategory = subCategoryElement.value;
+					data.category = subcategory;  // Se sobrescribe 'category' si subcategoría existe
+				}
 
-				console.log(data);
+				let administrationElement = document.getElementById("aonDocumentalAdministration");
+				if (administrationElement && administrationElement.value !== null) {
+					let administration = administrationElement.value;
+					data.category = administration;  // Se sobrescribe 'category' si administración existe
+				}
 
-				console.log('data formado correctamente');
+				let modelElement = document.getElementById("aonDocumentalModels");
+				if (modelElement && modelElement.value !== null) {
+					let model = modelElement.value;
+					data.category = model;  // Se sobrescribe 'category' si modelo existe
+				}
+
+				let tagElement = document.getElementById("aonDocumentalUploadTag");
+				if (tagElement && tagElement.value !== null) {
+					let tag = tagElement.value;
+					data.tag = tag;
+				}
+
+				let datePickerElement = document.getElementById("aonDocumentalUploadDatePicker");
+				if (datePickerElement && datePickerElement.getValue() !== null) {
+					let date = datePickerElement.getValue();
+					data.date = date;
+				}
+
 				let uploadToast = this.getElement('aonUploadToast');
 				if (!uploadToast) {
 					uploadToast = new AonUploadToast();
@@ -543,34 +557,48 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.UPLOAD_FILE);
-		d.setContent(uploadOption(this.getDur()));
+		d.setContent(uploadOption(this.getDur(), this.isBeta()));
 		d.addAcceptAction(async () => {
-						let data = {
-							category: document.getElementById("aonDocumentalUploadCategory").value,
-							scope: document.getElementById("aonDocumentalUploadScope").value,
-							tag: document.getElementById("aonDocumentalUploadTag").value,
-							type: document.getElementById("aonDocumentalUploadType").value,
-							date: document.getElementById("aonDocumentalUploadDatePicker").getValue()
-						}
+			let data = {};
 
-//			let data = {
-//				category: document.getElementById("aonDocumentalUploadCategory").value,
-//				subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
-//				tag: document.getElementById("aonDocumentalUploadTag").value
-//			};
-//
-//			// Verificamos si "administration" tiene un valor
-//
-//			if (document.getElementById("aonDocumentalAdministration").value != null) {
-//				let administration = document.getElementById("aonDocumentalAdministration").value;
-//				data.administration = administration;
-//			}
-//
-//			// Verificamos si "model" tiene un valor
-//			if (document.getElementById("aonDocumentalModels").value != null) {
-//				let model = document.getElementById("aonDocumentalModels").value;
-//				data.model = model;
-//			}
+			if (this.isBeta()) {
+				if (document.getElementById("aonDocumentalUploadCategory").value !== null) {
+					let category = document.getElementById("aonDocumentalUploadCategory").value;
+					data.category = category;
+				}
+
+				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null) {
+					let subcategory = document.getElementById("aonDocumentalUploadSubCategory").value
+					data.category = subcategory;
+				}
+				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null && document.getElementById("aonDocumentalAdministration").value !== null) {
+					let administration = document.getElementById("aonDocumentalAdministration").value
+					data.category = administration;
+				}
+
+				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null && document.getElementById("aonDocumentalAdministration").value !== null && document.getElementById("aonDocumentalModels").value !== null) {
+					let model = document.getElementById("aonDocumentalModels").value
+					data.category = model;
+				}
+
+				if (document.getElementById("aonDocumentalUploadTag").value !== null) {
+					let tag = document.getElementById("aonDocumentalUploadTag").value;
+					data.tag = tag;
+				}
+
+				if (document.getElementById("aonDocumentalUploadDatePicker").getValue() !== null) {
+					let date = document.getElementById("aonDocumentalUploadDatePicker").getValue();
+					data.date = date;
+				}
+
+			} else {
+				data = {
+					category: document.getElementById("aonDocumentalUploadCategory").value,
+					scope: document.getElementById("aonDocumentalUploadScope").value,
+					tag: document.getElementById("aonDocumentalUploadTag").value,
+					type: document.getElementById("aonDocumentalUploadType").value
+				}
+			}
 
 			let uploadToast = this.getElement('aonUploadToast');
 			if (!uploadToast) {
