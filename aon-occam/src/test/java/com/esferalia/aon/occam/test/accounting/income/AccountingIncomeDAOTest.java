@@ -168,7 +168,6 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 	public void saveCashTest() {
 		AccountingIncome income = getCashIncome( );
 		ensureAccountPeriod( income );
-		
 		AccountingIncomeDAO.save(ctx, income);
 		assertNotNull(income);
 		assertNotNull(income.getAccountEntry());
@@ -220,7 +219,6 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertNotNull(income.getAccountEntry());
 		assertTrue(income.getAccountEntry().isPresent());
 		AccountEntry ae = income.getAccountEntry().get();
-		System.out.println(ae.getId());
 		AccountingIncomeDAO.delete(ctx, ae );
 		
 		AccountEntry deleted = AccountEntryDAO.getAccountEntry( ctx, ae.getId() );
@@ -234,9 +232,9 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		income.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
+		Account expAccount = AonRandom.getAccountExpense(ctx);
 		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
+		income.setConcept(AonRandom.string(-1,1,64));
 		income.setReferenceCode( AonRandom.string(32) );
 		income.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
@@ -313,9 +311,9 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		income.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
+		Account expAccount = AonRandom.getAccountExpense(ctx);
 		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
+		income.setConcept(AonRandom.string(-1,1,64));
 		income.setReferenceCode( AonRandom.string(32) );
 		income.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
@@ -329,9 +327,9 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		income.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
+		Account expAccount = AonRandom.getAccountExpense(ctx);
 		income.setExpAccount( expAccount );
-		income.setConcept(AonRandom.string(64));
+		income.setConcept(AonRandom.string(-1,1,64));
 		income.setReferenceCode( AonRandom.string(32) );
 		income.setAmount(100.0);
 		income.setBank(rbank);
@@ -344,7 +342,7 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		income.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		income.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
+		Account expAccount = AonRandom.getAccountExpense(ctx);
 		income.setExpAccount( expAccount );
 		income.setConcept(AonRandom.string(-1,1,64));
 		income.setReferenceCode( AonRandom.string(32) );

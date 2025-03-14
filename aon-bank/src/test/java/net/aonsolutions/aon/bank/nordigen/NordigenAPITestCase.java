@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,6 @@ public class NordigenAPITestCase {
 	private static NordigenAccessScope[] ALL_SCOPES = {NordigenAccessScope.DETAILS, NordigenAccessScope.BALANCES, NordigenAccessScope.TRANSACTIONS};
 	private static final String CAIXABANK_CAIXESBB = "CAIXABANK_CAIXESBB";
 	
-	@BeforeAll
 	public static void initialize() throws NordigenException {
 		NordigenAccessToken tokenJson = NordigenAPI.newAccessToken();
 		accessToken = tokenJson.getAccess();
@@ -168,7 +166,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutions() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutions(accessToken, null, null);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, null);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}
@@ -176,7 +174,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromSpain() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutions(accessToken, Country.ES, null);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, Country.ES);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}
@@ -185,7 +183,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromDPRK() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitutions(accessToken, Country.KP, null));
+			, () -> NordigenAPI.getInstitutionsByCountry(accessToken, Country.KP));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -194,7 +192,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitutions(accessToken + "123", null, null));
+			, () -> NordigenAPI.getInstitutions(accessToken + "123", null));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -202,7 +200,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromSpainWithPayments() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutions(accessToken, Country.ES, true);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, Country.ES);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}

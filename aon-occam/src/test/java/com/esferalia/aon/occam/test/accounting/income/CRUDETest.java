@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Stream;
 
+import org.json.JSONObject;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
@@ -32,9 +32,9 @@ public class CRUDETest extends AbstractOccamTest {
 		exp.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		exp.setDate( date );
-		Account expAccount = AonRandom.getAccountIncome(ctx);
+		Account expAccount = AonRandom.getAccountExpense(ctx);
 		exp.setExpAccount( expAccount );
-		exp.setConcept(AonRandom.string(64));
+		exp.setConcept(AonRandom.string(-1, 1, 64));
 		exp.setReferenceCode( AonRandom.string(32) );
 		exp.setAmount(100.0);
 		Account cashAccount = AonRandom.getAccountCash(ctx);
@@ -72,9 +72,11 @@ public class CRUDETest extends AbstractOccamTest {
 	@Test
 	public void streamTest() {
 		AccountingIncomeDAO.stream(ctx,DOMAIN_ID,null,0,100, null)
-			.forEach( ai -> AccountingIncomeJSON.to( ai )
-				.ifPresent( a -> System.out.println(a.toString())) );
-		
+			.forEach( ai -> {
+				Optional<JSONObject> json = AccountingIncomeJSON.to( ai );
+				assertNotNull(json);
+				assertTrue(json.isPresent());
+			} );
 	}
 	
 }

@@ -1,12 +1,15 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3DocumentFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -96,5 +99,12 @@ public interface IAttachment {
 	public RattachTag save(AONContext ctx, RattachTag ratttachTag);
 	public void deleteRegistryAttachTag(AONContext ctx, Integer rattachId);
 	public void deleteTagRegistryAttach(AONContext ctx, Integer tagId);
-
+	
+	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage);
+	public S3Document insertS3Document(AONContext ctx, S3Document document);
+	public S3Document updateS3Document(AONContext ctx, S3Document document, Integer type);
+	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type);
+	public byte[] getFileS3Document(AONContext ctx, Integer id);
+	public long getCountS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter);
+	
 }

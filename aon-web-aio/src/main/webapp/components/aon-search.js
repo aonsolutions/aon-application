@@ -200,6 +200,7 @@ export class AonSearch extends AonElement {
 
 	openOrClose(){
 		let divOpts = this.getElement(this.OPTIONS);
+		console.log('divOpts en openOrClose' , divOpts);
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
@@ -299,6 +300,7 @@ export class AonSearch extends AonElement {
 	}]
 	*/
 	buildOptionsFilter(inputs){
+		console.log('inputs', inputs);
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
 

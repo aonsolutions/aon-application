@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceIntegrityCheckError;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -91,5 +92,12 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		AON.start();
 		fsa.activityIntegrityFix(occam, invoiceId, useInvoiceActivity, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void invoiceFix(Occam occam, Integer invoiceId, InvoiceIntegrityCheckError error, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		fsa.invoiceFix(occam, invoiceId, error, new AsyncCallbackWrapper<>(callback));
+	}
+	
 
 }

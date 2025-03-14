@@ -10,9 +10,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Field;
-import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,6 +19,8 @@ import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.S3Category;
+import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
@@ -37,11 +36,15 @@ import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3DocumentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
@@ -1191,4 +1194,79 @@ public class AON_SOLUTIONS {
 			InvoiceDuplicateFixDAO.invoiceIrpfDuplicateFix(ctx);
 		}
 	}
+	
+	public static void invoiceTaxDuplicateFix(Occam occam, Integer invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){		
+			InvoiceDuplicateFixDAO.invoiceTaxDuplicateFix(ctx, invoice);
+		}
+	}
+	
+	// S3 DOCUMENTAL
+	
+	public static Stream<S3Document> getS3DocumentStream(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().getS3DocumentStream(ctx, filter, attachFilter, type, category, page, perPage);
+		}
+	}
+	
+	public static S3Document insertS3Document(Domain domain, User user, S3Document document) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().insertS3Document(ctx, document);
+		}
+	}
+	
+	public static S3Document updateS3Document(Domain domain, User user, S3Document document, Integer type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().updateS3Document(ctx, document, type);
+		}
+	}
+	
+	public static void deleteS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getAttachment().deleteS3Document(ctx, filter, attachFilter, type);
+		}
+	}
+	
+	public static byte[] getFileS3Document(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().getFileS3Document(ctx, id);
+		}
+	}
+	
+	public static long getCountS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().getCountS3Document(ctx, filter, attachFilter);
+		}
+	}
+	
+	public static Stream<S3Category> getS3CategoryStream(Domain domain, User user, S3CategoryFilter filter, Optional<Integer> page, Optional<Integer> perPage){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().getS3CategoryStream(ctx, filter, page, perPage);
+		}
+	}
+	
+	public static long countS3Category(Domain domain, User user, S3CategoryFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().countS3Category(ctx, filter);
+		}
+	}
+	
+	public static S3Category updateS3Category(Domain domain, User user, S3Category category) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().updateS3Category(ctx, category);
+		}
+	}
+	
+	public static S3Category insertS3Category(Domain domain, User user, S3Category category) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getCategory().insertS3Category(ctx, category);
+		}
+	}
+	
+	public static void deleteS3Category(Domain domain, User user, S3CategoryFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getCategory().deleteS3Category(ctx, filter);
+		}
+	}
+	
 }

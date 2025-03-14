@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -8,13 +9,16 @@ import com.esferalia.aon.occam.api.IAttachment;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.Filter.S3DocumentFilter;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.RattachTag;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.security.AuthAttach;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.S3DocumentDAO;
 
 public class AttachmentImpl implements IAttachment{
 
@@ -440,6 +444,42 @@ public class AttachmentImpl implements IAttachment{
 	public void setDataAttachStream(AONContext ctx, Integer attachId, byte[] data) {
 		ctx.getDslContext().transaction(
 				configuration -> AttachmentDAO.setSepeAttachStream(ctx, attachId, data));
+	}
+	
+	@Override
+	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.getStream(ctx, filter, attachFilter, type, category, page, perPage));
+	}
+	
+	@Override
+	public S3Document insertS3Document(AONContext ctx, S3Document document) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.insert(ctx, document));
+	}
+	
+	@Override
+	public S3Document updateS3Document(AONContext ctx, S3Document document, Integer type) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.update(ctx, document, type));
+	}
+	
+	@Override
+	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type) {
+		ctx.getDslContext().transaction(
+				configuration -> S3DocumentDAO.delete(ctx, filter, attachFilter, type));
+	}
+	
+	@Override
+	public byte[] getFileS3Document(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.getFile(ctx, id));
+	}
+	
+	@Override
+	public long getCountS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.getCount(ctx, filter, attachFilter));
 	}
 	
 }

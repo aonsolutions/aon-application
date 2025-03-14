@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatement;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -358,13 +361,15 @@ public class Asserts {
 
 	public static void assertEqualsCreditor(Creditor expected, Creditor actual) {
 		assertEqualsNulls( "Creditor", expected, actual);
-		assertEqualsRegistry(expected, actual);
-		assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
-		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
-		assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
-		assertEquals("Status",expected.getStatus(),actual.getStatus());
-		assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
-		assertEquals("Account",expected.getAccount(),actual.getAccount());
+		if (expected != null) {
+			assertEqualsRegistry(expected, actual);
+			assertEquals("Withholding",expected.isWithholding(),actual.isWithholding());
+			assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
+			assertEquals("Transaction",expected.getTransaction(),actual.getTransaction());
+			assertEquals("Status",expected.getStatus(),actual.getStatus());
+			assertEquals("Scope",expected.getScope().getId(),actual.getScope().getId());
+			assertEquals("Account",expected.getAccount(),actual.getAccount());
+		}
 	}
 
 	public static void assertEqualsSeller(Seller expected, Seller actual) {
@@ -1266,7 +1271,7 @@ public class Asserts {
 			fail(parent + " is empty");
 		}
 		for (String name : json.keySet()) {
-			String current = parent + ">" + name;
+			String current = parent + " -> " + name;
 			JSONArray a = json.optJSONArray(name);
 			if (a != null) {
 				if ( a.length() == 0 ) {
@@ -1284,18 +1289,79 @@ public class Asserts {
 		}
 	}
 
+	public static void assertAccountingExpense(AccountingExpense expected, AccountingExpense actual) {
+		assertEqualsNulls( "AccountingExpense", expected, actual);
+		if (expected != null) {
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEqualsCreditor(expected.getCreditor().orElse(null), actual.getCreditor().orElse(null));
+			assertEquals("Date",expected.getDate(), actual.getDate());
+			assertEquals("Activity",expected.getActivity(), actual.getActivity());
+			assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
+			assertEquals("Concept",expected.getConcept(), actual.getConcept());
+			assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 
+			assertEquals("Amount",expected.getAmount(), actual.getAmount(), DELTA);
+			assertEqualsRegistryBank(expected.getBank().orElse(null), actual.getBank().orElse(null));
+			assertEqualsAccount(expected.getCashAccount().orElse(null), actual.getCashAccount().orElse(null));
+			assertEquals("Comments",expected.getComments(), actual.getComments()); 
+		}
+	}
+
 	public static void assertAccountingIncome(AccountingIncome expected, AccountingIncome actual) {
 		assertEqualsNulls( "AccountingIncome", expected, actual);
-		assertEquals("Domain", expected.getDomain(), actual.getDomain());
-		assertEqualsCustomer(expected.getCustomer().orElse(null), actual.getCustomer().orElse(null));
-		assertEquals("Date",expected.getDate(), actual.getDate());
-		assertEquals("Activity",expected.getActivity(), actual.getActivity());
-		assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
-		assertEquals("Concept",expected.getConcept(), actual.getConcept());
-		assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 
-		assertEquals("Amount",expected.getAmount(), actual.getAmount(), DELTA);
-		assertEqualsRegistryBank(expected.getBank().orElse(null), actual.getBank().orElse(null));
-		assertEqualsAccount(expected.getCashAccount().orElse(null), actual.getCashAccount().orElse(null));
-		assertEquals("Comments",expected.getComments(), actual.getComments()); 
+		if (expected != null) {
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEqualsCustomer(expected.getCustomer().orElse(null), actual.getCustomer().orElse(null));
+			assertEquals("Date",expected.getDate(), actual.getDate());
+			assertEquals("Activity",expected.getActivity(), actual.getActivity());
+			assertEqualsAccount(expected.getExpAccount().orElse(null), actual.getExpAccount().orElse(null)); 
+			assertEquals("Concept",expected.getConcept(), actual.getConcept());
+			assertEquals("ReferenceCode",expected.getReferenceCode(), actual.getReferenceCode()); 
+			assertEquals("Amount",expected.getAmount(), actual.getAmount(), DELTA);
+			assertEqualsRegistryBank(expected.getBank().orElse(null), actual.getBank().orElse(null));
+			assertEqualsAccount(expected.getCashAccount().orElse(null), actual.getCashAccount().orElse(null));
+			assertEquals("Comments",expected.getComments(), actual.getComments()); 
+		}
 	}
+	
+	public static void assertAccountEntry(AccountEntry expected, AccountEntry actual) {
+		assertEqualsNulls( "AccountEntry", expected, actual);
+		if (expected != null) {
+			assertEquals("Id", expected.getDomain(), actual.getDomain());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Period", expected.getPeriod(), actual.getPeriod());
+			assertEquals("PeriodName",expected.getPeriodName(), actual.getPeriodName());
+			assertEquals("PeriodStatus", expected.getPeriodStatus(), actual.getPeriodStatus());
+			assertEquals("PeriodStatus", expected.getPeriodStatus(), actual.getPeriodStatus());
+			assertEquals("EntryDate",expected.getEntryDate(), actual.getEntryDate());
+			assertEquals("EntryType",expected.getEntryType(), actual.getEntryType());
+			assertEquals("Activity",expected.getActivity(), actual.getActivity());
+			assertEquals("ActivityDescription",expected.getActivityDescription(), actual.getActivityDescription());
+			assertEquals("Journal",expected.getJournal(), actual.getJournal());
+			assertEquals("SecurityLevel",expected.getSecurityLevel(), actual.getSecurityLevel());
+			assertEquals("Comments",expected.getComments(), actual.getComments()); 
+			for (int i = 0; i < expected.getDetails().size(); i++) {
+				assertEqualsAccountEntryDetail(expected.getDetails().get(i), actual.getDetails().get(i));	
+			}
+		}
+	}
+	public static void assertEqualsAccountEntryDetail(AccountEntryDetail expected, AccountEntryDetail actual) {
+		assertEqualsNulls( "AccountEntryDetail", expected, actual);
+		if (expected != null) {
+			assertEquals("Id",expected.getId(), actual.getId());
+			assertEquals("Domain",expected.getDomain(), actual.getDomain());
+			assertEquals("AccountEntry",expected.getAccountEntry(), actual.getAccountEntry());
+			assertEquals("Account",expected.getAccount(), actual.getAccount());
+			assertEquals("AccountCode",expected.getAccountCode(), actual.getAccountCode());
+			assertEquals("AccountDescription",expected.getAccountDescription(), actual.getAccountDescription());
+			assertEquals("Line",expected.getLine(), actual.getLine());
+			assertEquals("Concept",expected.getConcept(), actual.getConcept());
+			assertEquals("Debit",expected.getDebit(), actual.getDebit(), DELTA);
+			assertEquals("Credit",expected.getCredit(), actual.getCredit(), DELTA);
+			assertEquals("BalancingAccount",expected.getBalancingAccount(), actual.getBalancingAccount());
+			assertEquals("BalancingAccountCode",expected.getBalancingAccountCode(), actual.getBalancingAccountCode());
+			assertEquals("BalancingAccountDescription",expected.getBalancingAccountDescription(), actual.getBalancingAccountDescription());
+			assertEquals("DocumentNumber",expected.getDocumentNumber(), actual.getDocumentNumber());
+		}
+	}
+	
 }

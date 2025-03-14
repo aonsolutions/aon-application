@@ -6,7 +6,7 @@ import {
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
 	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument
+	getDomainUserRoles, getDocument, getS3Category
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSelect } from '../../components/aon-select.js';
@@ -51,7 +51,6 @@ export class AonDocumental extends AonElement {
 	}
 
 	initialize() {
-		this._tags = ['mi prima', 'tu prima'];
 		this.DOCUMENTAL = 'aonDocumental';
 		this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
 		this._filter = {
@@ -200,14 +199,24 @@ export class AonDocumental extends AonElement {
 	}
 
 	loadCategories() {
-		let application = this.getApplication();
-		getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
+		let data = {
+//			parent   : 3788
+		};
+		getS3Category(data).then(categories => {
 			this._categories = categories.map(c => {
 				return {
 					value: c.id,
 					name: c.name
 				};
-			});
+		});
+		let application = this.getApplication();
+//		getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
+//			this._categories = categories.map(c => {
+//				return {
+//					value: c.id,
+//					name: c.name
+//				};
+//			});
 			// Si no es beta, agregamos las categorías bajo el apartado categorías
 			if (!this.isBeta()) {
 				this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
@@ -225,6 +234,7 @@ export class AonDocumental extends AonElement {
 				// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
 				if (this.isBeta()) {
 					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
+					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
 				} else {
 					// Si no es beta, agregamos las opciones de eliminar y editar las categorías
 					if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {

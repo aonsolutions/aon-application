@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -358,10 +359,10 @@ public class JooqCertifica2 {
 
 		Integer registryId = getEnterpriseData(dslContext, certifica2Info, enterpriseCCCId, enterpriseActivityId, contractId);
 		RegistryAddress address = AON.get(domainName, domainId, user, ((RegistryAddressFilter) f -> f.getRegistryProperty().eq(registryId)));
-		certifica2Info.setAddress(address.getAddress());
-		certifica2Info.setCity(address.getCity());
+		certifica2Info.setAddress(normalizeString(address.getAddress()));
+		certifica2Info.setCity(normalizeString(address.getCity()));
 		certifica2Info.setZip(address.getZip());
-		certifica2Info.setGeozone(address.getGeozoneName());
+		certifica2Info.setGeozone(normalizeString(address.getGeozoneName()));
 
 		// Certifica2 Periods
 
@@ -457,9 +458,9 @@ public class JooqCertifica2 {
 		// certifica2Info
 		certifica2Info.setDocument(dni);
 		certifica2Info.setSSNumber(ssNum);
-		certifica2Info.setName(name);
-		certifica2Info.setSurname(surName);
-		certifica2Info.setSecondSurname(secondSurName);
+		certifica2Info.setName(normalizeString(name));
+		certifica2Info.setSurname(normalizeString(surName));
+		certifica2Info.setSecondSurname(normalizeString(secondSurName));
 		certifica2Info.setContractType(tc2);
 		certifica2Info.setQuoteGroup(quoteGroup);
 		certifica2Info.setContractDuration(contractDuration);
@@ -538,9 +539,9 @@ public class JooqCertifica2 {
 		certifica2Info.setCcc(ccc);
 		certifica2Info.setCompleteCCC(completeCCC);
 		certifica2Info.setEnterpriseDocument(enterpriseCIF);
-		certifica2Info.setEnterpriseName(enterpriseName);
+		certifica2Info.setEnterpriseName(normalizeString(enterpriseName));
 		
-		certifica2Info.setCnae(cnae);
+		certifica2Info.setCnae(normalizeString(cnae));
 		certifica2Info.setCnaeCode(cnaeCode);
 		
 		return registryId;
@@ -674,9 +675,9 @@ public class JooqCertifica2 {
 			representativeCharge = staffCharges.get(0);
 
 		certifica2Info.setRepresentativeDocument(representativeDocument);
-		certifica2Info.setRepresentativeName(representativeName);
-		certifica2Info.setRepresentativeSurname(representativeSurname);
-		certifica2Info.setRepresentativeWork(representativeCharge);
+		certifica2Info.setRepresentativeName(normalizeString(representativeName));
+		certifica2Info.setRepresentativeSurname(normalizeString(representativeSurname));
+		certifica2Info.setRepresentativeWork(normalizeString(representativeCharge));
 
 	}
 
@@ -766,7 +767,7 @@ public class JooqCertifica2 {
 
 		List<Map<String, String>> quoteDataList = new ArrayList<>();
 
-		certifica2List.sort((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+		certifica2List.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
 
 		for (Certifica2Period certifica2 : certifica2List) {
 			Map<String, String> quoteData = new HashMap<>();
@@ -1297,7 +1298,20 @@ public class JooqCertifica2 {
 	}
 
 	private static String normalizeString(String value) {
-		return null != value && value.contains("\"") ? value.split("\"")[1] : value;
+		if( null != value && value.contains("\"") )
+			value = value.split("\"")[1];
+		
+		return normalize(value);
+	}
+	
+	private static String normalize(String value) {
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
+                                       .replaceAll("\\p{M}", ""); 
+        
+        normalized = normalized.replaceAll("ñ", "n").replaceAll("Ñ", "N")
+                               .replaceAll("[^a-zA-Z0-9 ]", "");
+        
+        return normalized;
 	}
 
 	private static String parseSSRegime(Byte ssRegime) {

@@ -17,6 +17,7 @@ public final class IJsonNames {
 	public static final String ACCOUNT_ALIAS = "accountAlias";
 	public static final String ACCOUNT_CODE = "accountCode";
 	public static final String ACCOUNT_DESCRIPTION = "accountDescription";
+	public static final String ACCOUNT_ENTRY = "accountEntry";
 	public static final String ACCOUNT_ENTRY_ID = "accountEntryId";
 	public static final String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	public static final String ACCOUNT_PARAMS = "accountParams";
