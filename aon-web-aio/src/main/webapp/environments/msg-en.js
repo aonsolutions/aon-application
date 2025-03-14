@@ -66,6 +66,7 @@ export const BUSINESS_NAME = 'Business Name';
 export const CANCEL = 'Cancel';
 export const CATALAN = 'Catalan';
 export const CATEGORY = 'Category';
+export const SUBCATEGORY = 'Subcategory';
 export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';

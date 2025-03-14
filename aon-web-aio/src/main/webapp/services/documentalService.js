@@ -106,6 +106,8 @@ export const downloadDocument  = (data) => open(`${API_URL}/download?json=${data
 export const getS3Document 		= (data) => get(`${API_URL}/s3/`, data);
 export const getS3Document_File = (data) => get(`${API_URL}/s3/file`, data);
 export const getS3DocumentCount = (data) => get(`${API_URL}/s3/coount`, data);
+export const postS3Document 	= (data) => post(`${API_URL}/s3/`, data);
+
 //LLamadas al nuevo servlet de categorias
 export const getS3Category 		= (data) => get(`${API_URL}/s3category`, data);
 export const getS3CategoryCount = (data) => get(`${API_URL}/s3category/count`, data);
