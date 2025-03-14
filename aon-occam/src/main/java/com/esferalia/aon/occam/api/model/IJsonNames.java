@@ -260,6 +260,7 @@ public final class IJsonNames {
 	public static final String FILE_NAME = "fileName";
 	public static final String FINANCE_PARAMS = "financeParams";
 	public static final String FINANCE_PENDING = "financePending";
+	public static final String FINANCE = "finance";
 	public static final String FINANCES = "finances";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";

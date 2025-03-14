@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -109,8 +110,27 @@ public class AccountingIncomeDAO {
 	}
 	
 	private static AccountingIncome fillFinance(AONContext ctx, AccountingIncome ai) {
+		ai.setFinance(
+			ai.getAccountEntry()
+				.map( ae -> FinanceEntryDAO.getFinanceEntry(ctx, ae.getId()) )
+				.filter( fe -> fe.getTrackings() != null )
+				.filter( fe -> fe.getTrackings().size() == 1 )
+				.map( fe -> AonCollectionUtils.stream(fe.getTrackings().values()).findFirst().orElse(null) )
+				.filter( Objects::nonNull )
+				.map( ft -> ft.getFinance())
+				.orElse(null)
+		)
+		.setCustomer( 
+			ai.getFinance()
+				.map(Finance::getRegistry)
+				.filter( r -> r != null )
+				.map(r -> r.getId() )
+				.map(id -> CustomerDAO.get( ctx, p -> p.getIdProperty().eq(id).and(p.getDomainProperty().eq(ai.getDomain()))))
+				.orElse(null)
+		);
 		return ai;
 	}
+	
 	// --------------------------------------------------------------- ESCRITURA
 	public static AccountingIncome save(AONContext ctx, AccountingIncome income) {
 		ctx.checkWrite();

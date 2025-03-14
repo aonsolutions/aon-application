@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -131,7 +132,11 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals( ft.getTrackingDate(), income.getDate() );
 		assertTrue( ft.isRecorded() );
 		assertEquals( ft.getAccountEntry(), ae.getId() );
-		
+		income.getAccountEntry().ifPresent( sae -> {
+			AccountingIncome saved = AccountingIncomeDAO.get(ctx, DOMAIN_ID, sae.getId(), null).orElse(null);
+			System.out.println( AccountingIncomeJSON.to(saved).map( j -> j.toString(2) ).orElse("NULL") );
+			
+		});
 	}
 
 	@Test
