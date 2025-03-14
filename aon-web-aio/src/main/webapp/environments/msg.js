@@ -125,6 +125,7 @@ export const CAMPAIGN = "Campaña";
 export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
+export const SUBCATEGORY = "Subcategoria";
 export const CAU = "Cau";// TODO
 export const CARRIER = "Agencia de Transporte"; // TODO
 export const CARRIERS = "Agencias de Transporte"; // TODO

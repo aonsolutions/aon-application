@@ -200,7 +200,7 @@ export class AonDocumental extends AonElement {
 
 	loadCategories() {
 		let data = {
-//			parent   : 3788
+			parent: null
 		};
 		getS3Category(data).then(categories => {
 			this._categories = categories.map(c => {
@@ -208,15 +208,15 @@ export class AonDocumental extends AonElement {
 					value: c.id,
 					name: c.name
 				};
-		});
-		let application = this.getApplication();
-//		getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
-//			this._categories = categories.map(c => {
-//				return {
-//					value: c.id,
-//					name: c.name
-//				};
-//			});
+			});
+			let application = this.getApplication();
+			//		getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
+			//			this._categories = categories.map(c => {
+			//				return {
+			//					value: c.id,
+			//					name: c.name
+			//				};
+			//			});
 			// Si no es beta, agregamos las categorías bajo el apartado categorías
 			if (!this.isBeta()) {
 				this.clearElementById(application.SIDENAV + DocumentalSidenav.CATEGORIES.id + 'List');
@@ -466,18 +466,53 @@ export class AonDocumental extends AonElement {
 	addDocumentalFile() {
 		if (this.isBeta()) {
 			// Si es beta, primero abrimos el modal
+			console.log('comprobamos que es beta');
 			let d = document.getElementById(this.getApplication().DIALOG);
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.UPLOAD_FILE);
-			d.setContent(uploadOption(this.getDur()));
+			d.setContent(uploadOption(this.getDur(), this.isBeta()));
 			d.addAcceptAction(async () => {
-				let data = {
-					category: document.getElementById("aonDocumentalUploadCategory").value,
-					scope: document.getElementById("aonDocumentalUploadScope").value,
-					tag: document.getElementById("aonDocumentalUploadTag").value,
-					type: document.getElementById("aonDocumentalUploadType").value
-				};
+				console.log('formamos el data');
+
+								let data = {
+									category: document.getElementById("aonDocumentalUploadCategory").value,
+									subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
+									administration: document.getElementById("aonDocumentalAdministration").value,
+									model: document.getElementById("aonDocumentalModels").value,
+									tag: document.getElementById("aonDocumentalUploadTag").value,
+									date: document.getElementById("aonDocumentalUploadDatePicker").getValue()
+									
+				//					category: document.getElementById("aonDocumentalUploadCategory").value,
+				//					scope: document.getElementById("aonDocumentalUploadScope").value,
+				//					tag: document.getElementById("aonDocumentalUploadTag").value,
+				//					type: document.getElementById("aonDocumentalUploadType").value
+								};
+																	console.log(data.date);
+
+
+//				let data = {
+//					category: document.getElementById("aonDocumentalUploadCategory").value,
+//					subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
+//					tag: document.getElementById("aonDocumentalUploadTag").value
+//				};
+//
+//				// Verificamos si "administration" tiene un valor
+//
+//				if (document.getElementById("aonDocumentalAdministration").value != null) {
+//					let administration = document.getElementById("aonDocumentalAdministration").value;
+//					data.administration = administration;
+//				}
+//
+//				// Verificamos si "model" tiene un valor
+//				if (document.getElementById("aonDocumentalModels").value != null) {
+//					let model = document.getElementById("aonDocumentalModels").value;
+//					data.model = model;
+//				}
+
+				console.log(data);
+
+				console.log('data formado correctamente');
 				let uploadToast = this.getElement('aonUploadToast');
 				if (!uploadToast) {
 					uploadToast = new AonUploadToast();
@@ -510,12 +545,32 @@ export class AonDocumental extends AonElement {
 		d.setTitle(MSG.UPLOAD_FILE);
 		d.setContent(uploadOption(this.getDur()));
 		d.addAcceptAction(async () => {
-			let data = {
-				category: document.getElementById("aonDocumentalUploadCategory").value,
-				scope: document.getElementById("aonDocumentalUploadScope").value,
-				tag: document.getElementById("aonDocumentalUploadTag").value,
-				type: document.getElementById("aonDocumentalUploadType").value
-			}
+						let data = {
+							category: document.getElementById("aonDocumentalUploadCategory").value,
+							scope: document.getElementById("aonDocumentalUploadScope").value,
+							tag: document.getElementById("aonDocumentalUploadTag").value,
+							type: document.getElementById("aonDocumentalUploadType").value,
+							date: document.getElementById("aonDocumentalUploadDatePicker").getValue()
+						}
+
+//			let data = {
+//				category: document.getElementById("aonDocumentalUploadCategory").value,
+//				subcategory: document.getElementById("aonDocumentalUploadSubCategory").value,
+//				tag: document.getElementById("aonDocumentalUploadTag").value
+//			};
+//
+//			// Verificamos si "administration" tiene un valor
+//
+//			if (document.getElementById("aonDocumentalAdministration").value != null) {
+//				let administration = document.getElementById("aonDocumentalAdministration").value;
+//				data.administration = administration;
+//			}
+//
+//			// Verificamos si "model" tiene un valor
+//			if (document.getElementById("aonDocumentalModels").value != null) {
+//				let model = document.getElementById("aonDocumentalModels").value;
+//				data.model = model;
+//			}
 
 			let uploadToast = this.getElement('aonUploadToast');
 			if (!uploadToast) {

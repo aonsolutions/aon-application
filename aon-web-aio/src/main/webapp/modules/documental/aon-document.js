@@ -80,6 +80,7 @@ export class AonDocument extends AonElement {
     `;
 
     this.doc = this.document;
+    console.log('this.document',this.document);
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';

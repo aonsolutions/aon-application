@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-table.js';
@@ -55,7 +55,8 @@ export class AonDocumentalList extends AonElement {
 		this.appendChild(aonDocumentalTable);
 
 		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
+//		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'name', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
 		// INFO
@@ -82,7 +83,8 @@ export class AonDocumentalList extends AonElement {
 		if(aonDocumentalTable && filter.page) {
 			filter.page = filter.page + 1;
 			this.setFilter(filter);
-			getDocuments(filter).then(documents => {
+//			getDocuments(filter).then(documents => {
+			getS3Document(filter).then(documents => {
 				if(documents.length == 0)
 					this.more = false;
 				documents.forEach((doc, i) => {
@@ -97,7 +99,9 @@ export class AonDocumentalList extends AonElement {
 		this.more = true;
 		let aonDocumentalTable = this.getElement(this.TABLE);
 		if(aonDocumentalTable) {
-			getDocuments(this.getFilter()).then(documents => {
+//			getDocuments(this.getFilter()).then(documents => {
+			getS3Document(this.getFilter()).then(documents => {
+				console.log(documents);
 				aonDocumentalTable.removeRows();
 				aonDocumentalTable.selected = [];
 				this.removeDocumentalActions();
