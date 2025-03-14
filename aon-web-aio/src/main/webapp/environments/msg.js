@@ -203,6 +203,7 @@ export const CREATED_BY = "Creado por"; //TODO
 // ----- D
 
 export const DATE = MSG.DATE;
+export const DATE_CREATION = MSG.DATE_CREATION;
 export const DATA = "Datos";//TODO
 export const DARK = MSG.DARK;
 export const DEACTIVATE = MSG.DEACTIVATE;

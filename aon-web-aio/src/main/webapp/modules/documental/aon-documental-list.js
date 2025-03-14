@@ -53,14 +53,17 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
 		this.appendChild(aonDocumentalTable);
-
+        // Columnas y datos
+        // addColumn(name, type, id, width, textAlign)
+        console.log('agregar columna')
+        if(this.isBeta()){
+          aonDocumentalTable.addColumn(MSG.DATE_CREATION, 'creation_date', 'creation_date', '20%');
+        }
 		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
-//		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'name', '60%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBeta() ? 'name' : 'title', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
-		// INFO
-		// aonInvoiceTable.addColumn('', '', '');
+		// Iniciar tabla
 		this.init();
 		aonDocumentalTable.addEventListener('more', () => {
 			if(this.more)
@@ -76,42 +79,51 @@ export class AonDocumentalList extends AonElement {
 		});
 	}
 
-	loadMore() {
-		let aonDocumentalTable = this.getElement(this.TABLE);
-		let filter = this.getFilter();
+    loadMore() {
+        let aonDocumentalTable = this.getElement(this.TABLE);
+        let filter = this.getFilter();
 
-		if(aonDocumentalTable && filter.page) {
-			filter.page = filter.page + 1;
-			this.setFilter(filter);
-//			getDocuments(filter).then(documents => {
-			getS3Document(filter).then(documents => {
-				if(documents.length == 0)
-					this.more = false;
-				documents.forEach((doc, i) => {
-					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
-					tr.id = "aonDocumentalRow";
-				});
-			});
-		}
-	}
+        if (aonDocumentalTable && filter.page) {
+            this.loadDocumentsIntoTable(aonDocumentalTable, filter, false);
+        }
+    }
 
-	init() {
-		this.more = true;
-		let aonDocumentalTable = this.getElement(this.TABLE);
-		if(aonDocumentalTable) {
-//			getDocuments(this.getFilter()).then(documents => {
-			getS3Document(this.getFilter()).then(documents => {
-				console.log(documents);
-				aonDocumentalTable.removeRows();
-				aonDocumentalTable.selected = [];
-				this.removeDocumentalActions();
-				documents.forEach((doc, i) => {
-					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
-					tr.id = "aonDocumentalRow";
-				});
-			});
-		}
-	}
+    init() {
+        this.more = true;
+        let aonDocumentalTable = this.getElement(this.TABLE);
+        let filter = this.getFilter();
+
+        if (aonDocumentalTable) {
+            this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
+        }
+    }
+
+    loadDocumentsIntoTable(table, filter, isInit = false) {
+        const fetchDocuments = this.isBeta() ? getS3Document : getDocuments;
+
+        fetchDocuments(filter).then(documents => {
+            if (isInit) {
+                table.removeRows();               // Limpiar la tabla si es la inicialización
+                table.selected = [];              // Limpiar la selección
+                this.removeDocumentalActions();   // Eliminar acciones de documentos
+            } else {
+              // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente página
+                filter.page = filter.page + 1;
+                this.setFilter(filter);
+            }
+
+            if (documents.length === 0) {
+                this.more = false;  // Si no hay documentos, no se puede cargar más
+            }
+
+            // Insertar los documentos en la tabla
+            documents.forEach((doc, i) => {
+              console.log(doc, i);
+                let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+                tr.id = "aonDocumentalRow";
+            });
+        });
+    }
 
 	aonDocument(doc, i) {
 		this.removeDocumentalActions();

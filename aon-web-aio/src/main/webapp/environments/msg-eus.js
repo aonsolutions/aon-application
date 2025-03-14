@@ -124,6 +124,7 @@ export const CUSTOMERS = 'Bezeroak';
 // ----- D
 
 export const DATE = 'Data';
+export const DATE_CREATION = 'Sortze-data';
 export const DARK = 'Iluna';
 export const DEACTIVATE = 'Desaktibatu';
 export const DELETE = 'Ezabatu';

@@ -326,7 +326,7 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="date") {
+      } else if(item.type && item.type ==="date" || item.type ==="creation_date") {
         const dateRegex = /\d{2,4}\-\d{1,2}\-\d{1,2}(?:T.*)?/;
         const dateValue = value[id] !== undefined? value[id] : "";
         let val = "";
