@@ -392,7 +392,7 @@ export class AonInvoice extends AonElement {
 					moreActions.push(send);
 				}
 	
-				if(!this.getInvoice().isRawdoc()){
+				if(!this.getInvoice().isRawdoc() && !this.getInvoice().isRectified()){
 					let rectify = ACTION.RECTIFY_INVOICE;
 					rectify.permission = true;
 					rectify.backgroundColor = INVOICE.color;

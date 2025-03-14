@@ -221,8 +221,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				f -> invoiceFilter(f, api.getDomain().getId(), filter))
 		.forEach(invoice -> {
 			jsArray.put(InvoiceNewPortalList2JSON(invoice, api));
-		}
-		);
+		});
 		return jsArray;
 	}
 

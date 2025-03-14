@@ -1168,7 +1168,7 @@ public class InvoiceDAO {
 	}
 	
 	private static void delete(AONContext ctx, AonConfiguration config, Integer id) {
-		ctx.checkWrite();
+	ctx.checkWrite();
 		Invoice invoice = getFullInvoice(ctx, id);
 		if (invoice == null) throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
 		InvoiceValidation.validateInvoiceDeletion(ctx, config, invoice);
@@ -1177,13 +1177,17 @@ public class InvoiceDAO {
 			if (invoice.getRectificationInvoice() != null) {
 				final Invoice rectified = getInvoice(ctx, invoice.getRectificationInvoice());
 				if (rectified == null) throw new AonCoreException(AonError.INVOICE_RECTIFIED_NOT_FOUND.getMessage());
-				if (rectified.getRectificationInvoice() != null &&
-					AonNumberUtils.equals(invoice.getId(), rectified.getRectificationInvoice())) {
+				if (rectified.getRectificationInvoice() != null && 
+						AonNumberUtils.equals(invoice.getId(), rectified.getRectificationInvoice())) {
+
+					Invoice rect = getInvoiceStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain()).and(f.getRectificationInvoiceProperty().eq(rectified.getId()))).findFirst().orElse(null);
+					boolean rectBool = rect != null && rect.getId() != null && !AonNumberUtils.equals(invoice.getId(),rect.getId());
+					
 					// La factura rectificada, solo lo esta una vez, y es por la factura que estamos borrando.
 					// Luego marcamos la factura rectificada como "NO RECTIFICADA".
 					ctx.getDslContext().update(INVOICE)
-						.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NONE.value())
-						.set(INVOICE.RECTIFICATION_INVOICE, (Integer) null)
+						.set(INVOICE.RECTIFICATION_TYPE, rectBool ? RectificationType.NORMAL_RECTIFIER.value() : RectificationType.NONE.value())
+						.set(INVOICE.RECTIFICATION_INVOICE, rectBool ? rect.getId() : null)
 						.set(INVOICE.MODIFICATION_USER,ctx.getUser())
 						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.where(INVOICE.ID.equal( rectified.getId() ))
