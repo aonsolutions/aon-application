@@ -40,6 +40,7 @@ public enum AonError implements Serializable{
 	,EMPTY_CONCEPT("El concepto es un dato dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_AMOUNT("El importe es un dato dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_BANK_ACCOUNT("El banco o caja es un dato dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_CUSTOMER("Si indica un cliente, debe ser v\u00E1lido.")
 	,EMPTY_STATUS("El estado es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDa")
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDa")
@@ -195,7 +196,7 @@ public enum AonError implements Serializable{
 	,INVOICE_EMPTY_SCOPE("El \u00E1mbito de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_DUPLICATED_SERIES_NUMBER("Ya existe una factura con esa Serie/N\u00FAmero. [{0}]")
 
-	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura del titular con ese N\u00FAmero de referencia.")
+	,INVOICE_DUPLICATED_REFERENCE_CODE("Ya existe una factura registrada del titular o del NIF con ese N\u00FAmero de referencia. [{0},{1},{2}]")
 	,INVOICE_OPERATIONS_DEADLINE("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. ")
 	,INVOICE_TEN_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es anterior diez a\u00F1os al actual") 
 	,INVOICE_TWO_YEARS("El a\u00F1o de la factura no es v\u00E1lido, es posterior dos a\u00F1os al actual") 

@@ -3,10 +3,12 @@ package com.esferalia.aon.occam.api.json.raw;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -29,6 +31,10 @@ public class FinanceJSON {
  		return list;
 	}
 	
+	public static Optional<Finance> from(JSONObject json) {
+		if ( JsonUtils.isEmpty( json) ) return Optional.empty();
+		return Optional.of(fromJSON(json)); 
+	}
 	public static Finance fromJSON(JSONObject json) {
 		Date date = JsonUtils.getDate(json, IJsonNames.DUE_DATE);
 		Integer paymethod = null;
@@ -52,6 +58,10 @@ public class FinanceJSON {
 		return array;
 	}
 	
+	public static Optional<JSONObject> to(Finance finance) {
+		if(finance == null) return Optional.empty();
+		return Optional.of(toJSON(finance));
+	}
 	public static JSONObject toJSON(Finance finance) {
 		return new JSONObject()
 			.put(IJsonNames.ID, finance.getId())

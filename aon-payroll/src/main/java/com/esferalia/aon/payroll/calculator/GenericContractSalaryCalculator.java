@@ -7,8 +7,10 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_CTA_ESP
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_PPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
@@ -877,7 +879,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
     			    expressionContext.setVariable(IRPF_CTA_ESP, irpfCtaEsp, irpfDate, irpfDate);
 			
 
-			Double rawCgcbase = quoteCalculator.getRawCgcBase();
+
+    		Double rawCgcbase = quoteCalculator.getRawCgcBase();
 			salaryBuilder.setRawCgcBase(rawCgcbase);
 
 			Double cgcBase = rawCgcbase;
@@ -924,6 +927,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 
 
+			addVars(expressionContext, CGC_BASE_RAW,  ADDITIONAL_BASE);
+			quoteCalculator.limit(CGC_BASE, expressionContext, start, end);
+			cgcBase = getValue(expressionContext, CGC_BASE);
+
 			if (ereBase != null)
 				cgcBase += ereBase;
 			if (unpaidBase != null)
@@ -934,23 +941,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgcBase += lackPeriodBase;
 			if (maternityBase != null)
 				cgcBase += maternityBase;
-			if (additionalBase != null)
-				cgcBase += additionalBase;
 			
-			evalVar(ctx, SALARY_HOURS);
-			
-			addVars(expressionContext, CGC_BASE,  ADDITIONAL_BASE);
-
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  FREE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  CGC_BASE);
-//			if (cgcBase != null)
-//				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
-
-			salaryBuilder.setCgcBase(cgcBase);
-
 			Double rawCgpbase = quoteCalculator.getRawCgpBase();
-
 			Double cgpBase = rawCgpbase;
 			try {
 				cgpBase = quoteCalculator.getCgpBase();
@@ -963,25 +955,32 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
 			}
 
+			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE);
+			quoteCalculator.limit(CGP_BASE, expressionContext, start, end);
+			cgpBase = getValue(expressionContext, CGP_BASE);
+
+			evalVar(ctx, SALARY_HOURS);
+
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  FREE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  CGC_BASE);
+
+			salaryBuilder.setCgcBase(cgcBase);
+
 			if (ereBase != null)
 				cgpBase += ereBase;
 			if (maternityBase != null)
 				cgpBase += maternityBase;
-			if (additionalBase != null)
-				cgpBase += additionalBase;
 			if (directPayBase != null)
 				cgpBase += directPayBase;
 			if (lackPeriodBase != null)
 				cgpBase += lackPeriodBase;
 			
-			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
+			
 
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, FREE_BASES);
 			addVars(expressionContext, CGP_BASE_ENTERPRISE, CGP_BASE);
-			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
-//			if (cgpBase != null)
-//				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
 
 			salaryBuilder.setCgpBase(cgpBase);
 

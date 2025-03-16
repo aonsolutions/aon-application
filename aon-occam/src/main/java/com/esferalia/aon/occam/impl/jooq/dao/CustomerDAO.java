@@ -338,14 +338,32 @@ public class CustomerDAO {
 	public static void updateCustomerAccount(AONContext ctx, Integer customerId, Integer account) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(CUSTOMER)
-		.set(CUSTOMER.ACCOUNT,account)
-		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
-		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
-		.where(CUSTOMER.REGISTRY.eq(customerId))
-		.execute();
-	ctx.log().debug("ACCOUNT {0} LINKED TO CUSTOMER {1}",account,customerId);
+			.set(CUSTOMER.ACCOUNT,account)
+			.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
+			.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.where(CUSTOMER.REGISTRY.eq(customerId))
+			.execute();
+		ctx.log().debug("ACCOUNT {0} LINKED TO CUSTOMER {1}",account,customerId);
 	}
 	
+	public static Account ensureAccount(AONContext ctx, Integer customerId) {
+		Account account = getCustomerAccount(ctx, customerId);
+		if (account == null) {
+			Customer customer = get(ctx, customerId);
+			if (customer == null || customer.getId()==null) {
+				throw new AonCoreException("Cliente no encontrado");
+			}
+			account = new Account()
+				.setDomain( customer.getDomain().getId() )
+				.setCode( AccountDAO.getNextAccountCode(ctx,"4300" ) )
+				.setDescription( customer.getName() )
+				.setAlias( customer.getAlias() )
+				.setActive( true );
+			account = AccountDAO.save( ctx, account);
+		}
+		return account;
+	}
+
 	public static Domain getDomainLinked(AONContext ctx, Integer id) {
 		ctx.checkRead();
 		Customer customer = get(ctx, id);
@@ -421,6 +439,7 @@ public class CustomerDAO {
 			.findFirst()
 			.orElse(null);
 	}
+
 	
 
 }

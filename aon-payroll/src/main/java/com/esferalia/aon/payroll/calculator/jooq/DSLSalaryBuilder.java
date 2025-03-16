@@ -58,6 +58,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class DSLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
@@ -365,7 +366,7 @@ public class DSLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		salaryCostRecord.set(SALARY_COST.SALARY, getSalaryId());
 		salaryCostRecord.set(SALARY_COST.AMOUNT, amount);
 		salaryCostRecord.set(SALARY_COST.COST_CONCEPT, cost.getName());
-		salaryCostRecord.set(SALARY_COST.TYPE, type != null ? (byte) type.ordinal() : null);
+		salaryCostRecord.set(SALARY_COST.TYPE, AonEnumUtils.getByte(type));
 		// .set(SALARY_COST.DESCRIPTION, description) For what ?
 		
 		salaryCostRecords.push(salaryCostRecord);
@@ -417,7 +418,7 @@ public class DSLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			salaryPaymentRecord.set(SALARY_PAYMENT.SALARY, getSalaryId());
 			salaryPaymentRecord.set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName());
 			salaryPaymentRecord.set(SALARY_PAYMENT.DESCRIPTION, description);
-			salaryPaymentRecord.set(SALARY_PAYMENT.TYPE, type != null ? (byte) type.ordinal() : null);
+			salaryPaymentRecord.set(SALARY_PAYMENT.TYPE, AonEnumUtils.getByte(type));
 
 			salaryPaymentRecord.set(SALARY_PAYMENT.IRPF, tax != null ? tax : 0.00);
 			salaryPaymentRecord.set(SALARY_PAYMENT.QUOTE, quote != null ? quote : 0.00);
@@ -463,7 +464,7 @@ public class DSLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			salaryDeductionRecord.set(SALARY_DEDUCTION.SALARY, getSalaryId());
 			salaryDeductionRecord.set(SALARY_DEDUCTION.DESCRIPTION, description);
 			salaryDeductionRecord.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, deduction.getName());
-			salaryDeductionRecord.set(SALARY_DEDUCTION.TYPE, type != null ? (byte) type.ordinal() : null);
+			salaryDeductionRecord.set(SALARY_DEDUCTION.TYPE, AonEnumUtils.getByte(type));
 			salaryDeductionRecord.set(SALARY_DEDUCTION.AMOUNT, amount != null ? amount : 0.00);
 			
 			salaryDeductionRecords.push(salaryDeductionRecord);

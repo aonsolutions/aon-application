@@ -59,6 +59,7 @@ import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
@@ -371,7 +372,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		insertMoreCost = insertCost.set(SALARY_COST.DOMAIN, this.domainId).set(SALARY_COST.SALARY, salaryId)
 				.set(SALARY_COST.AMOUNT, amount).set(SALARY_COST.COST_CONCEPT, cost.getName())
 				// .set(SALARY_COST.DESCRIPTION, description) For what ?
-				.set(SALARY_COST.TYPE, type != null ? (byte) type.ordinal() : null);
+				.set(SALARY_COST.TYPE, AonEnumUtils.getByte(type));
 		putContext(context);
 
 	}
@@ -426,7 +427,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMorePayment = insertPayment.set(SALARY_PAYMENT.DOMAIN, this.domainId)
 					.set(SALARY_PAYMENT.SALARY, salaryId).set(SALARY_PAYMENT.PAYMENT_CONCEPT, payment.getName())
 					.set(SALARY_PAYMENT.DESCRIPTION, description)
-					.set(SALARY_PAYMENT.TYPE, type != null ? (byte) type.ordinal() : null);
+					.set(SALARY_PAYMENT.TYPE, AonEnumUtils.getByte(type));
 
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.IRPF, tax != null ? tax : 0.00);
 			insertMorePayment = insertMorePayment.set(SALARY_PAYMENT.QUOTE, quote != null ? quote : 0.00);
@@ -469,7 +470,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			insertMoreDeduction = insertDeduction.set(SALARY_DEDUCTION.DOMAIN, this.domainId)
 					.set(SALARY_DEDUCTION.SALARY, salaryId).set(SALARY_DEDUCTION.DESCRIPTION, description)
 					.set(SALARY_DEDUCTION.DEDUCTION_CONCEPT, deduction.getName())
-					.set(SALARY_DEDUCTION.TYPE, type != null ? (byte) type.ordinal() : null);
+					.set(SALARY_DEDUCTION.TYPE, AonEnumUtils.getByte(type));
 
 			insertMoreDeduction = insertMoreDeduction.set(SALARY_DEDUCTION.AMOUNT, amount != null ? amount : 0.00);
 		}

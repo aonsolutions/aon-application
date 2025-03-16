@@ -265,6 +265,8 @@ public class ContextFunctions {
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
 				ContextVariable.CGP_BASE.getName(),
+				ContextVariable.CGC_BASE_RAW.getName(),
+				ContextVariable.CGP_BASE_RAW.getName(),
 				ContextVariable.UNPAID.getName(),
 				ContextVariable.MATERNITY_BASE.getName(),
 				ContextVariable.ERE_BASE.getName(),
@@ -291,6 +293,7 @@ public class ContextFunctions {
 //				ContextVariable.FOGASA_ENTERPRISE.getName(), 
 				ContextVariable.ENTERPRISE_QUOTA.getName(),
 //				ContextVariable.EMPLOYEE_QUOTA.getName(),				
+
 				})
 		{
 			for ( ITimedVariable<Object> variable : context.getVariables(name) ) {

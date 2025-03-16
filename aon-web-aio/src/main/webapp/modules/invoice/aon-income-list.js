@@ -4,6 +4,7 @@ import { createList } from '../../components/CreateComponent.js';
 import { AonExampleObject } from '../example/aon-example-object.js';
 import { getIncomes } from '../../services/accountingService.js';
 import { AonIncome } from './aon-income.js';
+import * as LS from '../../services/localStorageService.js';
 import { Income } from './Income.js';
 
 export class AonIncomeList extends AonElement {
@@ -50,9 +51,7 @@ export class AonIncomeList extends AonElement {
     }
 
     incomeObject(incomingIncome) {
-        console.log(incomingIncome);
-        let income = new AonIncome();
-        income.setIncome(new Income(incomingIncome));
+        let income = new AonIncome( new Income(incomingIncome) );
         this.getApplication().setContent(income);
     }
     
@@ -71,10 +70,12 @@ export class AonIncomeList extends AonElement {
         let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
-        table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
+        table.addColumn(MSG.DATE, 'date', 'date', '150px');
+        table.addColumn(MSG.REFERENCE, 'string', 'referenceCode', '150px');
+        table.addColumn("Ingreso", 'string', 'incomeDescription', '300px');
+        table.addColumn(MSG.CONCEPT, 'string', 'concept', '420px');
         table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
-        
+    
 
         table.addEventListener(EVENT.MORE, this.moreFn);
         this.init();
@@ -88,12 +89,13 @@ export class AonIncomeList extends AonElement {
     init() {
         let table = this.getElement(this.TABLE);
         if(table) {
-            getIncomes().then(incomes => {
+            getIncomes( this.filter ).then(incomes => {
                 if(incomes.length == 0){   
                     console.log("No hay datos!!!")
                 }
                 table.removeRows();
                 incomes.forEach((income) => {
+                    income.incomeDescription = income.expAccount.description;
                     table.addRow(income, () => this.incomeObject(income));
                 });
 
@@ -137,7 +139,8 @@ export class AonIncomeList extends AonElement {
     }
 
     add(){
-        this.getApplication().setContent(new AonIncome());
+        let inc = new AonIncome( new Income() );
+        this.getApplication().setContent(inc);
     }
 }
 

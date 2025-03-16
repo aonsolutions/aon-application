@@ -466,7 +466,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Double getLackPeriodBase() throws AonException {
 			return delegate.getLackPeriodBase();
 		}
-
+		
 		public List<ITimedResult<Double>> quote(IContractPayment payment, Date start, Date end, double amount)
 				throws AonException {
 			
@@ -558,6 +558,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			
 
 			return delegate.quote(payment, start, end, amount);
+		}
+		
+		@Override
+		public List<ITimedResult<Double>> limit(ContextVariable limit, ExpressionContext ctx, Date start, Date end) {
+			return delegate.limit(limit, ctx, start, end);
 		}
 		
 		public Double qu0te(IContractPayment payment, Date start, Date end, double amount) throws AonException {

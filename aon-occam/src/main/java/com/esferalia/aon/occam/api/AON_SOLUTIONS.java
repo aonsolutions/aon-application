@@ -10,9 +10,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jooq.Field;
-import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
