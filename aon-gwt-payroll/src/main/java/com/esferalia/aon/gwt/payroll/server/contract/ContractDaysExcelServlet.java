@@ -38,7 +38,12 @@ public class ContractDaysExcelServlet extends HttpServlet {
 			Date startDate = DATE_FORMAT.parse( req.getParameter("startDate") );
 			Date endDate = AonStringUtils.isBlank(req.getParameter("endDate")) ? AonDateUtils.getMonthLastDay(new Date()) : DATE_FORMAT.parse( req.getParameter("endDate") );
 			
+			Boolean extended = AonStringUtils.isBlank(req.getParameter("extended")) ? false : Boolean.parseBoolean(req.getParameter("extended"));
+			Boolean showTotals = AonStringUtils.isBlank(req.getParameter("showTotals")) ? false : Boolean.parseBoolean(req.getParameter("showTotals"));
+			
 			ContractDaysExcelAction action = new ContractDaysExcelAction();
+			action.setExtended(extended);
+			action.setShowTotals(showTotals);
 			
 			try (Connection connection = AonServletUtils.getConnection(domainName)) {
 				
@@ -53,8 +58,6 @@ public class ContractDaysExcelServlet extends HttpServlet {
 					String clearWorkplaceName = cleanSheetName(informesCT.getDescription());
 					
 					action.createSheet(clearWorkplaceName);
-					
-					action.setCTMeses( informesCT.getMeses() );
 					
 					action.headerRow(clearWorkplaceName, DATE_FORMAT.format(startDate), DATE_FORMAT.format(endDate));
 					

@@ -15,6 +15,14 @@ public class AnualDaysEntryExcel implements Serializable {
     private String startDate;
     private String endDate;
     
+    private String gender;
+    
+    private String agreementLevel;
+    private String agreementCategory;
+    
+    private String contractType;
+    private String partiality;
+    
     private List<MonthlyDaysEntryExcel> meses = new ArrayList<>();
 	
 	public AnualDaysEntryExcel() {
@@ -63,6 +71,51 @@ public class AnualDaysEntryExcel implements Serializable {
 
 	public AnualDaysEntryExcel setEndDate(String endDate) {
 		this.endDate = endDate;
+		return this;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public AnualDaysEntryExcel setGender(String gender) {
+		this.gender = gender;
+		return this;
+	}
+
+	public String getAgreementLevel() {
+		return agreementLevel;
+	}
+
+	public AnualDaysEntryExcel setAgreementLevel(String agreementLevel) {
+		this.agreementLevel = agreementLevel;
+		return this;
+	}
+
+	public String getAgreementCategory() {
+		return agreementCategory;
+	}
+
+	public AnualDaysEntryExcel setAgreementCategory(String agreementCategory) {
+		this.agreementCategory = agreementCategory;
+		return this;
+	}
+
+	public String getContractType() {
+		return contractType;
+	}
+
+	public AnualDaysEntryExcel setContractType(String contractType) {
+		this.contractType = contractType;
+		return this;
+	}
+
+	public String getPartiality() {
+		return partiality;
+	}
+
+	public AnualDaysEntryExcel setPartiality(String partiality) {
+		this.partiality = partiality;
 		return this;
 	}
 
