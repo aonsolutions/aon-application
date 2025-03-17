@@ -117,7 +117,6 @@ export class AonDocumentalList extends AonElement {
 
             // Insertar los documentos en la tabla
             documents.forEach((doc, i) => {
-              console.log(doc, i);
                 let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
                 tr.id = "aonDocumentalRow";
             });

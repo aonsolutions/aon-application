@@ -11,8 +11,9 @@ import {
   ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
 } from './DocumentalEnums.js';
 
-export const uploadDocument = (file, data, success, error) => {
+export const uploadDocument = (beta, file, data, success, error) => {
 	if (file) {
+		if(beta){
 		getReader(file).then(f => {
 			const doc = {
 				...f,
@@ -21,16 +22,18 @@ export const uploadDocument = (file, data, success, error) => {
 				category: data.category,
 				tag: data.tag,
 				scope: data.scope,
-				type: data.type
+				type: data.type,
+				// AÃ±adir `date` solo si es beta y `data.date` existe
+				...(beta && data.date ? { date: data.date } : {})
 			};
-            const uploadDocumentsUse = this.isBeta() ? postS3Document : uploadFileDocumental;
+            const uploadDocumentsUse = beta ? postS3Document : uploadFileDocumental;
 			uploadDocumentsUse(doc)
               .then(r => success(file))
               .catch((e) => error(file, e));
-		}).catch((e) => error(file, e));
+			}).catch((e) => error(file, e));
+		}
 	}
 }
-
 export const uploadDocuments = (el, files, dur) => {
 	let d = new AonDialog();
 	let rootPanel = document.getElementById("rootPanel");
@@ -167,7 +170,7 @@ export const S3DocumentalSelects = () => {
 	let table = document.createElement('table');
 	table.style.width = '100%';
 
-	// Aniadir un DatePicker aqui­ como una columna mas (al final)
+	// Aniadir un DatePicker aquiï¿½ como una columna mas (al final)
 	let trDatePicker = document.createElement('tr');
 	table.appendChild(trDatePicker);
 	
@@ -183,7 +186,6 @@ export const S3DocumentalSelects = () => {
 	// Event listener para el datePicker (si se necesita)
 	datePicker.addEventListener('change', (event) => {
 		return datePicker.getDateValue();
-//		console.log('Fecha seleccionada:', datePicker.getDateValue());
 	});
 
 
@@ -214,7 +216,6 @@ export const S3DocumentalSelects = () => {
 
 	let tdCategory = document.createElement('td');
 	tdCategory.setAttribute('colspan', '1');
-
 	let selCat = new AonNewSelect();
 	selCat.id = "aonDocumentalUploadCategory";
 	selCat.title = MSG.CATEGORY;
@@ -224,6 +225,7 @@ export const S3DocumentalSelects = () => {
 	getS3Category(data).then(categories => {
 		if (categories.length > 0) {
 			selCat.options = JSON.stringify(categories.map(c => {
+						console.log('primera llamada categorias');
 				return {
                   value: c.id,
                   name : c.name
@@ -235,18 +237,18 @@ export const S3DocumentalSelects = () => {
 		}
 	});
 	
-	// Limpiar campos de subcategori­a, administracion y modelos
+	// Limpiar campos de subcategoriï¿½a, administracion y modelos
 	function clearFields(fieldsToKeep = []) {
 		const trElements = table.querySelectorAll('tr');
 		trElements.forEach((tr) => {
-			// Evitar eliminar las filas que deben permanecer (etiquetas, categori­a y el datePicker)
+			// Evitar eliminar las filas que deben permanecer (etiquetas, categoriï¿½a y el datePicker)
 			if (!fieldsToKeep.includes(tr) && !tr.contains(tdDatePicker)) {
 				tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
 			}
 		});
 	}
 
-	// Event listener para la seleccion de la categoria­
+	// Event listener para la seleccion de la categoriaï¿½
 	selCat.addEventListener('change', (event) => {
 		const selectedCategoryId = event.target.value;
 		console.log('CategorÃ­a seleccionada:', selectedCategoryId);
@@ -255,7 +257,7 @@ export const S3DocumentalSelects = () => {
 		clearFields([trCategory, trTag, trDatePicker]);
 
 		if (selectedCategoryId != null) {
-			// Crear un nuevo tr para Subcategori­a solo si hay subcategori­as
+			// Crear un nuevo tr para Subcategoriï¿½a solo si hay subcategoriï¿½as
 			let trSubCategory = document.createElement('tr');
 			table.appendChild(trSubCategory);
 

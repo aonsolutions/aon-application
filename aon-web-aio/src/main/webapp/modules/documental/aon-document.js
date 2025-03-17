@@ -10,8 +10,6 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
-
-
 export class AonDocument extends AonElement {
 
   doc;
@@ -70,7 +68,6 @@ export class AonDocument extends AonElement {
 //      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
 
   build() {
-	console.log('this.DATA' , this.DATA);
     this.innerHTML = `
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>
       <div style="display:flex;">
@@ -84,7 +81,6 @@ export class AonDocument extends AonElement {
     `;
 
     this.doc = this.document;
-    console.log('this.document',this.document);
     let fileDiv = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
     fileDiv.style.width = '50%';

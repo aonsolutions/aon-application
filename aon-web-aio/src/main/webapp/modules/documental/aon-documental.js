@@ -472,7 +472,6 @@ export class AonDocumental extends AonElement {
 
 	aonDocumentById(id) {
 //		getS3Document_File(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-		console.log('entra en aonDocumentById');
 		getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
 //		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
 	}
@@ -547,6 +546,7 @@ export class AonDocumental extends AonElement {
 
 				input.addEventListener(EVENT.CHANGE, () => {
 					for (let file of input.files) {
+						file.date = data.date;
 						uploadToast.addFile("documental", file, data, () => this.aonDocumentalList());
 					}
 				});
@@ -598,7 +598,6 @@ export class AonDocumental extends AonElement {
 					let date = document.getElementById("aonDocumentalUploadDatePicker").getValue();
 					data.date = date;
 				}
-
 			} else {
 				data = {
 					category: document.getElementById("aonDocumentalUploadCategory").value,
