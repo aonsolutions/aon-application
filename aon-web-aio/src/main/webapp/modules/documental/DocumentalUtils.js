@@ -11,7 +11,7 @@ import {
   ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
 } from './DocumentalEnums.js';
 
-export const uploadDocument = (file, data, success, error, beta = false) => {
+export const uploadDocument = (file, data, success, error, isBetaDoc = false) => {
 	if (file) {
 		getReader(file).then(f => {
 			const doc = {
@@ -23,9 +23,9 @@ export const uploadDocument = (file, data, success, error, beta = false) => {
 				scope: data.scope,
 				type: data.type,
 				// Añadir `date` solo si es beta y `data.date` existe
-				...(beta && data.date ? { date: data.date } : {})
+				...(isBetaDoc && data.date ? { date: data.date } : {})
 			};
-            const uploadDocumentsUse = beta ? postS3Document : uploadFileDocumental;
+            const uploadDocumentsUse = isBetaDoc ? postS3Document : uploadFileDocumental;
 			uploadDocumentsUse(doc)
               .then(r => success(file))
               .catch((e) => error(file, e));
@@ -41,6 +41,7 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setTitle(MSG.UPLOAD_FILE);
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
+      /*
 		let arr = [];
 		let data = {
 			category: document.getElementById("aonDocumentalUploadCategory").value,
@@ -63,6 +64,8 @@ export const uploadDocuments = (el, files, dur) => {
 			rootPanel.innerHTML = "";
 			rootPanel.appendChild(aonComponent);
 		}
+      
+     */
 	});
 	d.open();
 }
@@ -264,9 +267,10 @@ function S3DocumentalSelects() {
 			}
 		}));
 	});
-
-	trTag.appendChild(tdTag);
-
+    // Solo agregamos si tenemos TAG
+    if (selTag.options && JSON.parse(selTag.options).length > 0) {
+      trTag.appendChild(tdTag);
+    }
   // CATEGORY
 	let trCategory = document.createElement('tr');
 	table.appendChild(trCategory);
@@ -293,7 +297,9 @@ function S3DocumentalSelects() {
             // cargado categoria, metemos funcionalidad
             uploadedCategory(selCat, table, trCategory, trTag, trDatePicker, loadingOverlay);
 		} else {
-			console.log('No hay categorias disponibles.');
+          // Oculta el overlay
+          loadingOverlay.style.display = 'none';
+          console.log('No hay categorias disponibles.');
 		}
 	});
     // filtros para subir
@@ -403,20 +409,26 @@ function S3DocumentalSelects() {
                                             // Oculta el overlay
                                             loadingOverlay.style.display = 'none';
                                         } else {
-                                            console.log('No hay modelos disponibles.');
+                                          // Oculta el overlay
+                                          loadingOverlay.style.display = 'none';
+                                          console.log('No hay modelos disponibles.');
                                         }
                                     });
                                 }
                             });
                         ///////////////////////////////////////////////////
 						} else {
-							console.log('No hay administraciones disponibles.');
+                          // Oculta el overlay
+                          loadingOverlay.style.display = 'none';
+                          console.log('No hay administraciones disponibles.');
 						}
 					});
 				}
 			});
 ///////////////////////////////////////////////////
           } else {
+            // Oculta el overlay
+            loadingOverlay.style.display = 'none';
             console.log('No hay subcategorías disponibles.');
           }
         });

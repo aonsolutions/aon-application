@@ -146,6 +146,10 @@ const isBeta = () => {
 	return href.includes('aonsolutions.org') || isLocal();
 }
 
+const isBetaDoc = () => {
+  return isBeta();
+}
+
 const isLocal =  () => {
     const href = window.location.href;
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
