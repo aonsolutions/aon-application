@@ -31,7 +31,7 @@ export const getFileUrl = (data) =>{
  */
 export const openFileUrl = async (url, contentType=null) => {
   try {
-    if(UA.isMobile()) {
+    if(UA.isAndroidApp()) {
       openFileApp({ url });
     } else if (webkitRequestMobile()){
       await openFileMobile(url, contentType).then(async (obj) => await sendActionMobile(obj));

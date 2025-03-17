@@ -59,6 +59,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod349DAO {
@@ -675,7 +676,9 @@ public class Mod349DAO {
 				   }
 				   
 				   // Diferencia
-				   double amount = accumulated - declared; 
+				   accumulated = AonMathUtils.round(accumulated);
+				   declared = AonMathUtils.round(declared);
+				   double amount = AonMathUtils.round(accumulated - declared); 
 				  
 				   // Añadir el registro, si el importe a declarar es distinto de cero
 				   if (amount != 0 || year != 0) {

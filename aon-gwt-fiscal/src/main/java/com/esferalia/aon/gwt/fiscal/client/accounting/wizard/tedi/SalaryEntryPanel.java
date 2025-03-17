@@ -21,9 +21,8 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,7 +35,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 
 public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
-	private static DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	static final String BACKGROUND_COLOR = "#EEEEEE";
 	
@@ -106,13 +105,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		flexTable.addStyleName(AON.CSS.aonMarginLeft());
 		flexTable.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
-//		String col0Width = AON.CSS.aonWidth170(); 
-//		String col1Width = AON.CSS.aonWidth140();
-//		String col2Width = AON.CSS.aonWidth70();
-		
 		Label label = new Label(AON.MSG.concept());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		
@@ -131,7 +125,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		flexTable.getRowFormatter().setStyleName(row, AON.CSS.aonBorderTop());
 		label = new Label(AON.MSG.moneySalary());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		moneySalary = new AonDoubleBox();
@@ -141,10 +134,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, moneySalary);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		moneySalaryAccount = createAccountBox();
@@ -159,7 +150,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.inKindSalary());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		inKindSalary = new AonDoubleBox();
@@ -169,10 +159,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, inKindSalary);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		inKindSalaryAccount = createAccountBox();
@@ -187,7 +175,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.allowances());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		allowances = new AonDoubleBox();
@@ -197,10 +184,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, allowances);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		allowancesAccount = createAccountBox();
@@ -214,7 +199,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.salaryCompensations());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		salaryCompensations = new AonDoubleBox();
@@ -224,10 +208,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryCompensations);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryCompensationsAccount = createAccountBox();
@@ -241,7 +223,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		
 		label = new Label(AON.MSG.advance());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		salaryDedAdvPayment = new AonDoubleBox();
@@ -251,10 +232,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryDedAdvPayment);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryDedAdvPaymentAccount = createAccountBox();
@@ -269,7 +248,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		
 		label = new Label(AON.MSG.seize());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		salaryDedSeize = new AonDoubleBox();
@@ -279,10 +257,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryDedSeize);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryDedSeizeAccount = createAccountBox();
@@ -296,7 +272,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.salaryOtherDeductions());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		salaryOtherDeductions = new AonDoubleBox();
@@ -306,10 +281,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryOtherDeductions);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryOtherDeductionsAccount = createAccountBox();
@@ -323,7 +296,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.irpf());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		irpf = new AonDoubleBox();
@@ -333,10 +305,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, irpf);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		irpfAccount = createAccountBox();
@@ -350,7 +320,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.inKindIrpf());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		inKindIrpf = new AonDoubleBox();
@@ -360,10 +329,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, inKindIrpf);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		inKindIrpfAccount = createAccountBox();
@@ -377,7 +344,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.employeeSocialInsurance());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		employeeSocialInsurance = new AonDoubleBox();
@@ -387,19 +353,14 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, employeeSocialInsurance);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		employeeSocialInsuranceAccount = createAccountBox();
-		employeeSocialInsuranceAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setEmployeeSocialInsuranceAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		employeeSocialInsuranceAccount.addSelectionHandler( event -> {
+			getWrapper().setEmployeeSocialInsuranceAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, employeeSocialInsuranceAccount);
 		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
@@ -407,7 +368,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.companySocialInsurance());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		companySocialInsurance = new AonDoubleBox();
@@ -417,10 +377,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			valueChanged();
 		});
 		flexTable.setWidget(row, 1, companySocialInsurance);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		companySocialInsuranceAccount = createAccountBox();
@@ -434,17 +392,14 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 		label = new Label(AON.MSG.netSalary());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
 		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		netSalary = new AonDoubleBox();
 		netSalary.setEnabled(false);
 		
 		flexTable.setWidget(row, 1, netSalary);
-//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.CSS.aonInnerLabel());
-//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
 		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		netSalaryAccount = createAccountBox();
@@ -454,17 +409,16 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		});
 		flexTable.setWidget(row, 3, netSalaryAccount);
 		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
-		row++;
 	}
 
 	protected void valueChanged() {
 		netSalary.setValue( getWrapper().getNetSalary(), false, true );
 		getWrapper().getAccountEntry().setDetails( getEntryDetails() );
-		_paintEntry();
+		innerPaintEntry();
 	}
 
 	private AonAccountBox createAccountBox() {
-		 return new AonAccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
+		 return new AonAccountBox(getCallback().getOccam());
 	}
 
 	@Override
@@ -490,7 +444,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.SALARY)
 			.setPeriod(base.getPeriod())
-			.setDomain(getCallback().getCurrentDomainId())
+			.setDomain(getCallback().getOccam().getDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -519,7 +473,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		wrp.setEmployeeSocialInsuranceAccount(getWrapper().getEmployeeSocialInsuranceAccount());
 		wrp.setCompanySocialInsuranceAccount(getWrapper().getCompanySocialInsuranceAccount());
 		wrp.setNetSalaryAccount(getWrapper().getNetSalaryAccount());
-		setWrapper( (SalaryEntry) wrp);
+		setWrapper( wrp );
 		populate();
 		valueChanged();
 	}
@@ -580,7 +534,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		}
 	}
 
-	private void _paintEntry() {
+	private void innerPaintEntry() {
 		getCallback().getModule().onPreview(getWrapper() );
 	}
 	
@@ -604,66 +558,59 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	}
 	@Override
 	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		// nothing
 	}
 	@Override
 	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		// nothing
 	}
 	
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
+		// nothing
 	}
 
+	private boolean check(double d, Account account) {
+		return (AonMathUtils.isNotZero( d )  
+			&& (account == null || account.getId() == null));
+	}
 	private LinkedList<AccountEntryDetail> getEntryDetails() {
-		if (getWrapper().getMoneySalary()  != 0 && (getWrapper().getMoneySalaryAccount() == null ||  getWrapper().getMoneySalaryAccount().getId() == null)) {
+		if (check(getWrapper().getMoneySalary(),getWrapper().getMoneySalaryAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones monetarias'";
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getInKindSalary()   != 0 && (getWrapper().getInKindSalaryAccount() == null || getWrapper().getInKindSalaryAccount().getId() == null)) {
+		} else if (check(getWrapper().getInKindSalary(),getWrapper().getInKindSalaryAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Remuneraciones en especie'";		
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getAllowance() != 0 	&& (getWrapper().getAllowanceAccount() == null || getWrapper().getAllowanceAccount().getId() == null)) {
+		} else if (check(getWrapper().getAllowance(),getWrapper().getAllowanceAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Dietas'";
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getSalaryCompensation() != 0 && (getWrapper().getSalaryCompensationAccount() == null || getWrapper().getSalaryCompensationAccount().getId() == null)) {
+		} else if (check(getWrapper().getSalaryCompensation(),getWrapper().getSalaryCompensationAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Indemnizaciones'";		
 			getCallback().getModule().onError(msg);
-		}
-
-		if (getWrapper().getSalaryDedAdvPayment() != 0 && (getWrapper().getSalaryDedAdvPaymentAccount() == null || getWrapper().getSalaryDedAdvPaymentAccount().getId() == null)) {
+		} else if (check(getWrapper().getSalaryDedAdvPayment(),getWrapper().getSalaryDedAdvPaymentAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Anticipo'";		
 			getCallback().getModule().onError(msg);
-		}
-		
-		if (getWrapper().getSalaryDedSeize() != 0 && (getWrapper().getSalaryDedSeizeAccount() == null || getWrapper().getSalaryDedSeizeAccount().getId() == null)) {
+		} else if (check(getWrapper().getSalaryDedSeize(),getWrapper().getSalaryDedSeizeAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Embargo'";		
 			getCallback().getModule().onError(msg);
-		}
-
-		if (getWrapper().getSalaryOtherDeductions() != 0 && (getWrapper().getSalaryOtherDeductionsAccount() == null || getWrapper().getSalaryOtherDeductionsAccount().getId() == null)) {
+		} else if (check(getWrapper().getSalaryOtherDeductions(),getWrapper().getSalaryOtherDeductionsAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Otras deducciones'";		
 			getCallback().getModule().onError(msg);
-		}
-
-		if (getWrapper().getCompanySocialInsurance() != 0	&& (getWrapper().getCompanySocialInsuranceAccount() == null || getWrapper().getCompanySocialInsuranceAccount().getId() == null)) {
+		} else if (check(getWrapper().getCompanySocialInsurance(),getWrapper().getCompanySocialInsuranceAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empresa'";			
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getIrpf() != 0	&& (getWrapper().getIrpfAccount() == null || getWrapper().getIrpfAccount().getId() == null)) {	
+		} else if (check(getWrapper().getIrpf(),getWrapper().getIrpfAccount())) {	
 			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F.'";
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getInKindIrpf() != 0 && (getWrapper().getInKindIrpfAccount() == null || getWrapper().getInKindIrpfAccount().getId() == null)) {
+		} else if (check(getWrapper().getInKindIrpf(),getWrapper().getInKindIrpfAccount())) {
 			String msg = "Debe indicar una cuenta contable para el valor 'I.R.P.F. en especie'";		
 			getCallback().getModule().onError(msg);
-		}
-		if (getWrapper().getTotalSocialInsurance() != 0 && (getWrapper().getEmployeeSocialInsuranceAccount() == null || getWrapper().getEmployeeSocialInsuranceAccount().getId() == null)) {	
+		} else if (check(getWrapper().getTotalSocialInsurance(),getWrapper().getEmployeeSocialInsuranceAccount())) {	
 			String msg = "Debe indicar una cuenta contable para el valor 'Seg.Social Empleado'";
 			getCallback().getModule().onError(msg);
 		}
 		
-		LinkedList<AccountEntryDetail> list = new LinkedList<AccountEntryDetail>();
+		LinkedList<AccountEntryDetail> list = new LinkedList<>();
 		if (getWrapper().getMoneySalary() != 0 
 			&& getWrapper().getMoneySalaryAccount() != null 
 			&& getWrapper().getMoneySalaryAccount().getId() != null) {
@@ -876,9 +823,13 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		
 		centerPanel.add(tab);
-		getAccountEntryService().getSalaryEntries(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser() ,start, end
-				, new AsyncCallback<LinkedList<SalaryEntry>>() {
+		getAccountEntryService().getSalaryEntries(
+			getCallback().getOccam().getDomainName()
+			,getCallback().getOccam().getDomain()
+			,getCallback().getOccam().getUser() 
+			,start
+			, end
+			, new AsyncCallback<LinkedList<SalaryEntry>>() {
 					
 			@Override
 			public void onSuccess(LinkedList<SalaryEntry> result) {
@@ -901,24 +852,25 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 						reportButton.setTitle(AON.MSG.informationBreakdown());
 						reportButton.addClickHandler(event -> 
 							getAccountEntryService().getSalaryFormatted(
-								getCallback().getCurrentDomainName()
-								, getCallback().getCurrentDomainId()
-								, getCallback().getCurrentUser()
-								, entry.getAccountEntry().getEntryDate()
-								, entry.getAccountEntry().getEntryDate()
-							,new AsyncCallback<String>() {
+								getCallback().getOccam().getDomainName()
+								,getCallback().getOccam().getDomain()
+								,getCallback().getOccam().getUser()
+								,entry.getAccountEntry().getEntryDate()
+								,entry.getAccountEntry().getEntryDate()
+								,new AsyncCallback<String>() {
 
-							@Override
-							public void onSuccess(String result) {
-								getCallback().getModule().addExtraInfo(result);	
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								// Nothing
-							}
-						}));
-
+									@Override
+									public void onSuccess(String result) {
+										getCallback().getModule().addExtraInfo(result);	
+									}
+		
+									@Override
+									public void onFailure(Throwable caught) {
+										// Nothing
+									}
+								}
+							)
+						);
 
 						AonTextButton viewButton = new AonTextButton("Existe Apunte",AON.CSS.aonIconSearch());
 						final AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction() + " apunte",AON.CSS.aonIconDelete());
@@ -943,23 +895,24 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 									@Override
 									public void onAccept() {
 										getAccountEntryService().deleteAccountEntry(
-												getCallback().getCurrentDomainName()
-												, getCallback().getCurrentDomainId()
-												, getCallback().getCurrentUser()
-												, entry.getAccountEntry().getId(),
-												new AsyncCallback<Void>() {
+											getCallback().getOccam().getDomainName()
+											, getCallback().getOccam().getDomain()
+											, getCallback().getOccam().getUser()
+											, entry.getAccountEntry().getId(),
+											new AsyncCallback<Void>() {
 
-											@Override
-											public void onSuccess(Void result) {
-												removeButton.setEnabled(true);
-												fillCenterPanel(centerPanel);
+												@Override
+												public void onSuccess(Void result) {
+													removeButton.setEnabled(true);
+													fillCenterPanel(centerPanel);
+												}
+	
+												@Override
+												public void onFailure(Throwable caught) {
+													removeButton.setEnabled(true);
+												}
 											}
-
-											@Override
-											public void onFailure(Throwable caught) {
-												removeButton.setEnabled(true);
-											}
-										});
+										);
 									}
 								});
 							});
@@ -970,7 +923,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 								
 								@Override
 								public void onSuccess() {
-									_paintEntry();
+									innerPaintEntry();
 								}
 
 								@Override

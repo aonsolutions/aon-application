@@ -1305,6 +1305,8 @@ public class JooqCertifica2 {
 	}
 	
 	private static String normalize(String value) {
+		if(AonStringUtils.isBlank(value)) return value;
+		
         String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
                                        .replaceAll("\\p{M}", ""); 
         

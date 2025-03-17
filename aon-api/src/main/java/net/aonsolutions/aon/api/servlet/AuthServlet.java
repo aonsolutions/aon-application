@@ -42,12 +42,7 @@ public class AuthServlet extends AonApiHttpServlet{
 			AonToken aonToken = null;
 			Auth auth;
 			if(api.getData().opt(IJsonNames.EMAIL) != null) {
-// TODO AUTH with dynamodb
-//				auth = AuthDyn.getAuth(JsonUtils.getString(api.getData(), IJsonNames.EMAIL));
-//				if(auth.isEmpty())
-					auth = AON_SOLUTIONS.getAuth(api.getData().optString(IJsonNames.EMAIL));
-//				else if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR)) 
-//					auth.setAvatar(S3.getPresignedURL(S3.AUTH_ATTACH_BUCKET, auth.getUuid(), AonDateUtils.addDays(new Date(), 1)));
+				auth = AON_SOLUTIONS.getAuth(api.getData().optString(IJsonNames.EMAIL));
 			} else if(api.getData().opt("task_holder") != null){
 				TaskHolder th = AON.getTaskHolder(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 						f -> f.getIdProperty().eq(api.getData().optInt("task_holder")));
@@ -58,12 +53,9 @@ public class AuthServlet extends AonApiHttpServlet{
 				auth = api.getUser().getAuth();
 			} else {
 				aonToken = SECURITY.getAonToken(api.getToken());
-// TODO AUTH with dynamodb
-//				auth = AuthDyn.getAuthByUuid(aonToken.getUuid());
-//				if(auth.isEmpty())
-					auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
-//				else if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR)) 
-//					auth.setAvatar(S3.getPresignedURL(S3.AUTH_ATTACH_BUCKET, auth.getUuid(), AonDateUtils.addDays(new Date(), 1)));
+				auth = !AonStringUtils.isBlank(aonToken.getSchemaFirstDomain()) 
+						? AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth())
+						: AON_SOLUTIONS.getAuth(aonToken.getAuth());
 			}
 			
 			if(JsonUtils.getboolean(api.getData(), IJsonNames.AVATAR) && AonStringUtils.isBlank(auth.getAvatar())) {
@@ -82,11 +74,7 @@ public class AuthServlet extends AonApiHttpServlet{
 					auth.setAvatar(url);
 				}
 			}
-			
-			JSONObject json = AuthJSON.toJSON(auth);
-			
-			
-			response(req, resp, json);
+			response(req, resp, AuthJSON.toJSON(auth));
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -138,17 +126,18 @@ public class AuthServlet extends AonApiHttpServlet{
 		} 
 		
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
-		auth.setSchema(aonToken.getSchema());
 		
-		String email = auth.getEmail();
+		Auth auth = !AonStringUtils.isBlank(aonToken.getSchemaFirstDomain()) 
+			? AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth())
+			: AON_SOLUTIONS.getAuth(aonToken.getAuth());
+		if(aonToken.getSchema() != null) auth.setSchema(aonToken.getSchema());
 		
 //		String oldPass = Utils.createPasswordHash(email, oldPassword);
 //		if(!oldPass.equalsIgnoreCase(auth.getPassword())) {
 //			throw new AonApiException("La contraseña actual no coincide.");
 //		}
 //		
-		String newPass = Utils.createPasswordHash(email, newPassword);
+		String newPass = Utils.createPasswordHash(auth.getEmail(), newPassword);
 		auth.setPassword(newPass);
 		
 		AON_SOLUTIONS.updateAuthPassword(auth);
@@ -158,7 +147,10 @@ public class AuthServlet extends AonApiHttpServlet{
 	
 	private JSONObject saveAvatar(AonApiData api) {
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+
+		Auth auth = !AonStringUtils.isBlank(aonToken.getSchemaFirstDomain()) 
+				? AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth())
+				: AON_SOLUTIONS.getAuth(aonToken.getAuth());
 		
 		if(auth.getSchema() == null) {
 			auth.setSchema(aonToken.getSchema());

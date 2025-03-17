@@ -362,6 +362,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.posibleRegistries = posibleRegistries;
 		return this;
 	}
+	
+	public boolean hasMessages() {
+		return invoice.hasMessages();
+	}
 
 	public List<InvoiceError> getMessages() {
 		return invoice.getMessages();

@@ -1,8 +1,7 @@
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { getTimeControl, getEmployeeSalaries, getDomainUserRoles, getDomainNotice, getUserNotice, request, getTaskCount, getSalaryPdf, getBanks, getEmployeeLastSalary, getEmployeeSalary, getTaskHolderWorkGroups } from '../../services/service.js';
+import { CSS, TAG } from '../../environments/environments.js';
+import { getTimeControl, getDomainUserRoles, getDomainNotice, getUserNotice, getTaskCount, getBanks, getEmployeeSalary} from '../../services/service.js';
 import { AonElement } from '../../components/AonElement';
 import '../invoice/aon-invoice-panel.js';
-import * as LS from '../../services/localStorageService.js';
 import * as UTILS from '../accounting/AccountingUtils.js'
 import { AonDragLeftNotification } from './aon-dragleft-notification.js';
 import { AonSignMobile } from '../timecontrol/aon-sign-mobile.js';
@@ -10,11 +9,9 @@ import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { getTaskHolder } from '../../services/service.js';
 import { getAuth } from '../../services/service.js';
 import { getAccounting, getPeriods } from '../../services/accountingService.js';
-import { AonMessenger } from '../messenger/aon-messenger.js';
 import { AonLaboral } from '../laboral/aon-laboral.js';
 import { AonIcon } from '../../components/aon-icon.js';
-import { AonAccounting } from '../accounting/aon-accounting.js';
-import { formatNumber, isEmptyObject, sortBy } from '../../services/utils.js';
+import { isEmptyObject, sortBy } from '../../services/utils.js';
 import { AonApps } from '../aon-apps.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 

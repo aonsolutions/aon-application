@@ -132,7 +132,7 @@ public class Mod202WriterAEAT2024 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A11),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A12),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.A13),17))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.isReplacement()))
+			,(wr,mod) -> wr.append(AonFiscalFileUtils.mark(mod.isComplementary()))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.text(mod.getReplacedNumber(),13))
 		    ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),34)) 
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(101))

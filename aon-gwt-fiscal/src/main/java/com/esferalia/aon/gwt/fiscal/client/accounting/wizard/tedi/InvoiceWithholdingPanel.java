@@ -173,7 +173,7 @@ public class InvoiceWithholdingPanel extends SimplePanel implements HasValueChan
 
 		dataRow.add(getCell(withholdingQuota));
 		
-		withholdingAccount = new AonAccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
+		withholdingAccount = new AonAccountBox(callback.getOccam(), false);
 		withholdingAccount.addSelectionHandler(event -> {
 			ai.setWithholdingAccount( event.getSelectedItem() );
 			SelectionEvent.<Account>fire(InvoiceWithholdingPanel.this, event.getSelectedItem());

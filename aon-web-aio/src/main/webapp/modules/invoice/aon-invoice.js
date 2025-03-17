@@ -392,7 +392,7 @@ export class AonInvoice extends AonElement {
 					moreActions.push(send);
 				}
 	
-				if(!this.getInvoice().isRawdoc()){
+				if(!this.getInvoice().isRawdoc() && !this.getInvoice().isRectified()){
 					let rectify = ACTION.RECTIFY_INVOICE;
 					rectify.permission = true;
 					rectify.backgroundColor = INVOICE.color;
@@ -1171,7 +1171,7 @@ export class AonInvoice extends AonElement {
 				item: r};}));
 		});
 		serie.readonly = this.invoice.isReadonly();
-		serie.value = this.invoice.serie;
+		serie.value = this.invoice.series;
 		serie.addEventListener(EVENT.CHANGE, () => this.onChangeSerie(serie.value));
 		serie.addEventListener(EVENT.SELECT, () => this.onChangeSerie(serie.value));
 
@@ -1397,12 +1397,12 @@ export class AonInvoice extends AonElement {
 	}
 
 	onChangeSerie(value) {	
-		this.invoice.setSerie(value);
+		this.invoice.setSeries(value);
 		if(this.invoice.isInbox()) {
 			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
 			this.getElement(this.NUMBER).readonly = !enabled;
 			this.getElement(this.NUMBER).disabled = !enabled;
-			if(!enabled || this.invoice.serie == '') {
+			if(!enabled || this.invoice.series == '') {
 				this.invoice.number = '';
 				this.getElement(this.NUMBER).value = '';
 			} else {
@@ -2983,7 +2983,6 @@ export class AonInvoice extends AonElement {
 			recInv.id = undefined;
 			recInv.date = new Date();
 			recInv.series = 'R' + new Date().getFullYear();
-			recInv.serie = 'R' + new Date().getFullYear();
 			recInv.number = undefined;
 			recInv.reference = undefined;
 			recInv.status = 'inbox';
@@ -3099,7 +3098,6 @@ export class AonInvoice extends AonElement {
 				dupInv.details[i].id = undefined;
 			});
 		}
-
 		let aip = document.querySelector('aon-invoice-panel');
 		aip.aonInvoice(dupInv.type, dupInv);
 	}

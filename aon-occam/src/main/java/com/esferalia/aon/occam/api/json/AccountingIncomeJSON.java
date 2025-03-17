@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.raw.FinanceJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -22,17 +23,18 @@ public class AccountingIncomeJSON {
 		return Optional.of( 
 			income.get()
 				.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
-				.setCustomer(CustomerJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)))
+				.setCustomer(CustomerJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CUSTOMER)).orElse(null))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY))
 				.setExpAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.EXP_ACCOUNT)).orElse(null))
 				.setConcept(JsonUtils.optString(json,IJsonNames.CONCEPT))
 				.setReferenceCode(JsonUtils.optString(json,IJsonNames.REFERENCE_CODE))
 				.setAmount(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
-				.setBank(RegistryBankJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.BANK)))
+				.setBank(RegistryBankJSON.from(JsonUtils.getJSONObject(json, IJsonNames.BANK)).orElse(null))
 				.setCashAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CASH_ACCOUNT)).orElse(null))
 				.setComments(JsonUtils.optString(json, IJsonNames.COMMENTS))
 				.setAccountEntry(AccountEntryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACCOUNT_ENTRY)).orElse(null))
+				.setFinance(FinanceJSON.from(JsonUtils.getJSONObject(json, IJsonNames.FINANCE)).orElse(null))
 		);
 	}
 	
@@ -51,7 +53,8 @@ public class AccountingIncomeJSON {
 				.put(IJsonNames.BANK, RegistryBankJSON.to(a.getBank()).orElse(null))
 				.put(IJsonNames.CASH_ACCOUNT, AccountJSON.to(a.getCashAccount()).orElse(null))
 				.put(IJsonNames.COMMENTS, a.getComments())
-				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)))
+				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)).orElse(null))
+				.put(IJsonNames.FINANCE, FinanceJSON.to(a.getFinance().orElse(null)).orElse(null))
 		);
 	}
 }

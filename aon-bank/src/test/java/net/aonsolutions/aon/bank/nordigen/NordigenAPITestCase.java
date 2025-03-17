@@ -24,19 +24,34 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitions;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 public class NordigenAPITestCase {
 	
-	private static String accessToken;
+	//private static String accessToken;
 	private static String refreshAccessToken;
 	private static NordigenAccessScope[] ALL_SCOPES = {NordigenAccessScope.DETAILS, NordigenAccessScope.BALANCES, NordigenAccessScope.TRANSACTIONS};
 	private static final String CAIXABANK_CAIXESBB = "CAIXABANK_CAIXESBB";
 	
 	public static void initialize() throws NordigenException {
 		NordigenAccessToken tokenJson = NordigenAPI.newAccessToken();
-		accessToken = tokenJson.getAccess();
+//		accessToken = tokenJson.getAccess();
 		refreshAccessToken = tokenJson.getRefresh();
 	}
+	
+	private static synchronized NordigenAccessToken newAccessToken() throws NordigenException {
+		return NordigenAPI.newAccessToken();
+	}
+	private static synchronized String getAccessToken() throws NordigenException {
+		NordigenAccessToken token = newAccessToken();
+		return token.getAccess();
+	}
+	private static synchronized String getRefreshAccessToken() throws NordigenException {
+		NordigenAccessToken token = newAccessToken();
+		return token.getRefresh();
+	}
+	
 	@BeforeEach
 	public void beforeTest(TestInfo testInfo) throws NordigenException {
 		System.out.println( "Running test against Nordigen API .... " + testInfo.getDisplayName());
@@ -45,9 +60,9 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testRefreshAccessToken() {
-		NordigenAccessToken newTokenJson = NordigenAPI.refreshAccessToken(refreshAccessToken);
+		NordigenAccessToken newTokenJson = NordigenAPI.refreshAccessToken(getRefreshAccessToken());
 		assertNotNull(newTokenJson);
-		accessToken = newTokenJson.getAccess();
+		String accessToken = newTokenJson.getAccess();
 		assertNotNull(accessToken);
 	}
 	
@@ -63,7 +78,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitution() {
 		String institutionId = CAIXABANK_CAIXESBB;
-		NordigenInstitution institution = NordigenAPI.getInstitution(accessToken, institutionId );
+		NordigenInstitution institution = NordigenAPI.getInstitution(getAccessToken(), institutionId );
 		assertNotNull(institution);
 		assertNotNull(institution.getId());
 		assertEquals( institutionId, institution.getId());
@@ -73,7 +88,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitution(accessToken + "123", CAIXABANK_CAIXESBB));
+			, () -> NordigenAPI.getInstitution(getAccessToken() + "123", CAIXABANK_CAIXESBB));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -82,7 +97,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionInvalidBank() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitution(accessToken, "MOGAMBO_BANK"));
+			, () -> NordigenAPI.getInstitution(getAccessToken(), "MOGAMBO_BANK"));
 		assertNotNull( e.getResponse() );
 		assertEquals(404, e.getResponse().getStatusCode());
 	}
@@ -91,7 +106,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionNullBank() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitution(accessToken, null));
+			, () -> NordigenAPI.getInstitution(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertEquals(404, e.getResponse().getStatusCode());
 	}
@@ -101,7 +116,7 @@ public class NordigenAPITestCase {
 	@Disabled("HTTP 500 ????")
 	void testCreateAgreementUnknownInstitution() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(accessToken, 70, 1, ALL_SCOPES, "MOGAMBO_BANK"));
+			, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 70, 1, ALL_SCOPES, "MOGAMBO_BANK"));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -110,37 +125,37 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 //	@Disabled("IGNORADO MIENTRAS NO OBTENGA LOS SCOPES AL CREARSE")
 	void testCRDAgreements() throws InterruptedException {
-		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(accessToken, 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
+		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
 		String agreementId = agreement.getId();
 		// GET THE CREATED AGREEMENT AND COMPARE TO THE ORIGINAL
-		NordigenAgreement retrievedAgreement = NordigenAPI.getEndUserAgreement(accessToken, agreementId);
+		NordigenAgreement retrievedAgreement = NordigenAPI.getEndUserAgreement(getAccessToken(), agreementId);
 		assertEquals(retrievedAgreement.getId(), agreement.getId());
 		//DELETE THE AGREEMENT
-		NordigenAPI.deleteEndUserAgreement(accessToken, agreementId);
+		NordigenAPI.deleteEndUserAgreement(getAccessToken(), agreementId);
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	@Disabled("A VECES NO OBTIENE A TIEMPO EL ID DE AGREEMENT")
 	void testCRDRequisitions() {
-		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(accessToken, 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
+		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
 		RequisitionParams params = new RequisitionParams()
 			.setAgreement(agreement.getId())
 			.setUserLanguage(AonLanguage.SPANISH)
 			.setInstitutionId(agreement.getInstitutionId())
 			.setRedirect("https://aonsolutions.org/");
-		NordigenRequisition requisition = NordigenAPI.createRequisition(accessToken, params);
+		NordigenRequisition requisition = NordigenAPI.createRequisition(getAccessToken(), params);
 		String requisitionId = requisition.getId();
-		NordigenRequisition retrievedRequisition = NordigenAPI.getRequisition(accessToken, requisitionId);
+		NordigenRequisition retrievedRequisition = NordigenAPI.getRequisition(getAccessToken(), requisitionId);
 		assertEquals(requisition.toString(), retrievedRequisition.toString());
-		NordigenAPI.deleteRequisition(accessToken, requisitionId);
+		NordigenAPI.deleteRequisition(getAccessToken(), requisitionId);
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementIncorrectHistoricalDays() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(accessToken, 1000000, 1, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1000000, 1, ALL_SCOPES, CAIXABANK_CAIXESBB));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -149,7 +164,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementIncorrectAccessDays() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(accessToken, 1, 1000000, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1, 1000000, ALL_SCOPES, CAIXABANK_CAIXESBB));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -158,7 +173,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(accessToken + "123", 50, 50, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			, () -> NordigenAPI.createEndUserAgreement(getAccessToken() + "123", 50, 50, ALL_SCOPES, CAIXABANK_CAIXESBB));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -166,7 +181,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutions() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, null);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(getAccessToken(), null);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}
@@ -174,7 +189,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromSpain() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, Country.ES);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}
@@ -183,7 +198,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromDPRK() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitutionsByCountry(accessToken, Country.KP));
+			, () -> NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.KP));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -192,7 +207,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitutions(accessToken + "123", null));
+			, () -> NordigenAPI.getInstitutions(getAccessToken() + "123", null));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -200,7 +215,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionsFromSpainWithPayments() {
-		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(accessToken, Country.ES);
+		List<NordigenInstitution> institutions = NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES);
 		assertNotNull(institutions);
 		assertTrue( institutions.size() > 0, "No Institutions!");
 	}
@@ -208,7 +223,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetRequisitions() {
-		NordigenRequisitions requisitions = NordigenAPI.getRequisitions(accessToken, 100, 0);
+		NordigenRequisitions requisitions = NordigenAPI.getRequisitions(getAccessToken(), 100, 0);
 		assertNotNull( requisitions );
 		assertNotNull( requisitions.getCount() );
 		assertNotNull( requisitions.getResult() );
@@ -219,7 +234,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testDeleteRequisitionInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.deleteRequisition(accessToken + "123", "MOGAMBO"));
+			, () -> NordigenAPI.deleteRequisition(getAccessToken() + "123", "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -228,7 +243,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testDeleteRequisitionInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.deleteRequisition(accessToken, "MOGAMBO"));
+			, () -> NordigenAPI.deleteRequisition(getAccessToken(), "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -242,7 +257,7 @@ public class NordigenAPITestCase {
 			.setInstitutionId(CAIXABANK_CAIXESBB)
 			.setRedirect("https://aonsolutions.org/");
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createRequisition(accessToken + "123", params));
+			, () -> NordigenAPI.createRequisition(getAccessToken() + "123", params));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -256,7 +271,7 @@ public class NordigenAPITestCase {
 			.setInstitutionId(CAIXABANK_CAIXESBB)
 			.setRedirect("https://aonsolutions.org/");
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createRequisition(accessToken, params));
+			, () -> NordigenAPI.createRequisition(getAccessToken(), params));
 		assertNotNull( e.getResponse() );
 		assertEquals(400, e.getResponse().getStatusCode());
 	}
@@ -265,7 +280,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetRequisitionInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getRequisition(accessToken, "MOGAMBO"));
+			, () -> NordigenAPI.getRequisition(getAccessToken(), "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -274,7 +289,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetRequisitionNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getRequisition(accessToken, null));
+			, () -> NordigenAPI.getRequisition(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -283,7 +298,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetRequisitionInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getRequisition(accessToken + "123", "MOGAMBO"));
+			, () -> NordigenAPI.getRequisition(getAccessToken() + "123", "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -292,7 +307,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testDeleteRequisitionNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.deleteRequisition(accessToken, null));
+			, () -> NordigenAPI.deleteRequisition(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -301,7 +316,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetRequisitionsInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getRequisitions(accessToken + "123", 10, 0));
+			, () -> NordigenAPI.getRequisitions(getAccessToken() + "123", 10, 0));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -309,7 +324,7 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetAgreements() {
-		NordigenAgreements agreements = NordigenAPI.getEndUserAgreements(accessToken, 10, 0);
+		NordigenAgreements agreements = NordigenAPI.getEndUserAgreements(getAccessToken(), 10, 0);
 		assertNotNull( agreements );
 		assertNotNull( agreements.getCount() );
 		assertNotNull( agreements.getResult() );
@@ -320,7 +335,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAgreementsInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getEndUserAgreements(accessToken + "123", 10, 0));
+			, () -> NordigenAPI.getEndUserAgreements(getAccessToken() + "123", 10, 0));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -329,7 +344,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAgreementNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getEndUserAgreement(accessToken, null));
+			, () -> NordigenAPI.getEndUserAgreement(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -338,7 +353,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAgreementInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getEndUserAgreement(accessToken, "chimbo-de45-4efb-aa1a-f8157ffa94"));
+			, () -> NordigenAPI.getEndUserAgreement(getAccessToken(), "chimbo-de45-4efb-aa1a-f8157ffa94"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -347,7 +362,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAgreementInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getEndUserAgreement(accessToken + "123", "inventado"));
+			, () -> NordigenAPI.getEndUserAgreement(getAccessToken() + "123", "inventado"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -356,7 +371,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testDeleteAgreementInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-				, () -> NordigenAPI.deleteEndUserAgreement(accessToken + "123", "inventado"));
+				, () -> NordigenAPI.deleteEndUserAgreement(getAccessToken() + "123", "inventado"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -365,7 +380,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testDeleteAgreementInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.deleteEndUserAgreement(accessToken, "inventado"));
+			, () -> NordigenAPI.deleteEndUserAgreement(getAccessToken(), "inventado"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -374,7 +389,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getAccountMetadata(accessToken, "MOGAMBO"));
+			, () -> NordigenAPI.getAccountMetadata(getAccessToken(), "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -383,7 +398,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getAccountMetadata(accessToken, null));
+			, () -> NordigenAPI.getAccountMetadata(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -392,7 +407,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getAccountMetadata(accessToken + "123", "MOGAMBO"));
+			, () -> NordigenAPI.getAccountMetadata(getAccessToken() + "123", "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -401,7 +416,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountBalancesInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getAccountMetadata(accessToken + "123", "MOGAMBO"));
+			, () -> NordigenAPI.getAccountMetadata(getAccessToken() + "123", "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -410,7 +425,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountBalancesInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getBalances(accessToken, "MOGAMBO"));
+			, () -> NordigenAPI.getBalances(getAccessToken(), "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -419,7 +434,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountBalancesNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getBalances(accessToken, null));
+			, () -> NordigenAPI.getBalances(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -429,7 +444,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountDetailsInvalidId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getDetail(accessToken, "MOGAMBO"));
+			, () -> NordigenAPI.getDetail(getAccessToken(), "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -438,7 +453,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountDetailsNullId() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getDetail(accessToken, null));
+			, () -> NordigenAPI.getDetail(getAccessToken(), null));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -447,7 +462,7 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 	void testGetAccountDetailsInvalidToken() {
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getDetail(accessToken + "123", "MOGAMBO"));
+			, () -> NordigenAPI.getDetail(getAccessToken() + "123", "MOGAMBO"));
 		assertNotNull( e.getResponse() );
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
@@ -460,7 +475,7 @@ public class NordigenAPITestCase {
 		Date dateFrom = cal.getTime();
 		Date dateTo = new Date(); 
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getTransactions(accessToken, "MOGAMBO", dateFrom, dateTo));
+			, () -> NordigenAPI.getTransactions(getAccessToken(), "MOGAMBO", dateFrom, dateTo));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -481,7 +496,7 @@ public class NordigenAPITestCase {
 		Date dateFrom = cal.getTime();
 		Date dateTo = new Date(); 
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getTransactions(accessToken, null, dateFrom, dateTo));
+			, () -> NordigenAPI.getTransactions(getAccessToken(), null, dateFrom, dateTo));
 		assertNotNull( e.getResponse() );
 		assertTrue(e.getResponse().getStatusCode() == 400 || e.getResponse().getStatusCode() == 404);
 	}
@@ -495,7 +510,7 @@ public class NordigenAPITestCase {
 		Date dateFrom = cal.getTime();
 		Date dateTo = new Date(); 
 		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getTransactions(accessToken + "123", "MOGAMBO", dateFrom, dateTo));
+			, () -> NordigenAPI.getTransactions(getAccessToken() + "123", "MOGAMBO", dateFrom, dateTo));
 		assertEquals(401, e.getResponse().getStatusCode());
 	}
 }

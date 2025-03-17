@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
@@ -35,15 +34,8 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -65,7 +57,11 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
 	
-	private static TediServiceAsync TEDI_SERVICE;
+	private static final TediServiceAsync TEDI_SERVICE;
+	static {
+		TediServiceAsync serviceRaw = GWT.create(TediService.class);
+		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
+	}
 
 	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
 	static {
@@ -80,20 +76,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private VerticalPanel buttons;
 	
 	private FlowPanel attachPanelTableCell2;
-	private AonTableButton attachCloseButton;
-	private AonTableButton attachOpenButton;
 	private AccountingInvoice invoice;
 	private AccountingRegistry lastRegistry;
 	private Focusable focusableWidget;
 	
-	private FormPanel fileSelectForm;
 	private FileUpload fileSelect;
 	private AsyncCallback<IAccountEntryWrapper> attachmentCallback; 
 
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
-		TediServiceAsync serviceRaw = GWT.create(TediService.class);
-		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
-		
 		setCallback(callback);
 		rootPanel = new SplitLayoutPanel(4);
 		
@@ -137,25 +127,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		LOGGER.info("Editing invoice as account source");
 		centerContainer.clear();
 		EditableInvoicePanel eip = new EditableInvoicePanel(invoiceCallback);
-		eip.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-			@Override
-			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
-			}
-		});
-		eip.addSelectionHandler(new AccountEntrySelectionHandler() {
-			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null);
-			}
-		});
+		eip.addSelectionHandler((SelectionHandler<AccountingInvoice>) event -> SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem()));
+		eip.addSelectionHandler((AccountEntrySelectionHandler) event -> AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null));
 		focusableWidget = eip;
 		centerContainer.setWidget( eip );
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			public void execute() {
-				eip.setFocus(true);
-			}});
+		Scheduler.get().scheduleDeferred(() -> eip.setFocus(true));
 	}
 
 	private void viewInvoice() {
@@ -200,7 +176,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setAccountEntry(new AccountEntry()
 			.setPeriod(base.getPeriod())
-			.setDomain(getCallback().getCurrentDomainId())
+			.setDomain(getCallback().getOccam().getDomain())
 			.setConfidential(base.isConfidential())
 			.setEntryDate(base.getEntryDate())
 			.setActivity(base.getActivity())
@@ -212,8 +188,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getAccountEntryService().getAccountingInvoice(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser(),id
+			getAccountEntryService().getAccountingInvoice(
+				getCallback().getOccam().getDomainName()
+				,getCallback().getOccam().getDomain()
+				,getCallback().getOccam().getUser()
+				,id
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -242,8 +221,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		
 	}		
 
-
-	private void _paintEntry() {
+	private void innerPaintEntry() {
 		AccountEntry[] entries = InvoiceRecorder.recordInvoice(getWrapper());
 		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries) );		
 	}
@@ -265,7 +243,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}
 			}
 		}
-		LOGGER.info("isAccountSource() ? -> " + sourceAccount);
 		return sourceAccount;
 	}
 	
@@ -325,10 +302,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	@Override
 	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
 		Integer invoiceId = getWrapper().getInvoice().getId();
-		getAccountEntryService().removeInvoiceAttach(getCallback().getCurrentDomainName()
-				, getCallback().getCurrentDomainId()
-				, getCallback().getCurrentUser()
-				, invoiceId , new AsyncCallback<AccountingInvoice>() {
+		getAccountEntryService().removeInvoiceAttach(
+			 getCallback().getOccam().getDomainName()
+			,getCallback().getOccam().getDomain()
+			,getCallback().getOccam().getUser()
+			,invoiceId 
+			,new AsyncCallback<AccountingInvoice>() {
 
 			@Override
 			public void onSuccess(AccountingInvoice result) {
@@ -356,10 +335,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> cbk) {
-		getAccountEntryService().save(getCallback().getCurrentDomainName()
-				, getCallback().getCurrentDomainId()
-				, getCallback().getCurrentUser()
-				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
+		getAccountEntryService().save(
+			getCallback().getOccam().getDomainName()
+			,getCallback().getOccam().getDomain()
+			,getCallback().getOccam().getUser()
+			,getWrapper()
+			, new AsyncCallback<AccountingInvoice>() {
 
 			@Override
 			public void onSuccess(AccountingInvoice result) {
@@ -430,22 +411,24 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		
 		@Override
 		public void paintEntry() {
-			_paintEntry();
+			innerPaintEntry();
 			getWrapper().getAccountEntry().setDirty(true);
 			getCallback().getModule().refreshIdLabel();
 		}
 		
 		public void setDocument(final String doc, final String name, String type) {
-			InvoicePanel.this.setDocument(this, doc, name, type);
+			InvoicePanel.this.setDocument(this, doc, name, type, true);
+			
 		}
 		@Override
 		public AccountingRegistry getLastRegistry() {
 			return lastRegistry;
 		}
-	};
+	}
 
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
+		// Nothing
 	}
 	
 	@Override
@@ -464,10 +447,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override
 	public void setTabIndex(int index) {
+		// Nothing
 	}
 
 	@Override
@@ -481,8 +466,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		getWrapper().getInvoice().setIssueDate(entryDate);
 	}
 	public void activityChanged(Integer activty) {
+		// Nothing
 	}
 	public void confidentialChanged(boolean confidential) {
+		// Nothing
 	}
 	
 	protected void paintAttach( boolean openWidget ) {
@@ -506,17 +493,15 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			attachPanelTableCell1.clear();
 			attachPanelTableCell2.clear();
 
-			fileSelectForm = new FormPanel();
+			FormPanel fileSelectForm = new FormPanel();
 			fileSelect = new FileUpload();
 			fileSelectForm.add(fileSelect);
 			attachPanelTableCell1.add(fileSelectForm);
 			fileSelect.ensureDebugId("fileSelect");
 			fileSelect.getElement().getStyle().setDisplay(Style.Display.NONE);
-			fileSelect.addChangeHandler(new ChangeHandler() {
-				public void onChange(ChangeEvent event) {
-					event.preventDefault();
-					fileSelectHandler(fileSelect.getElement());
-				}
+			fileSelect.addChangeHandler(event -> {
+				event.preventDefault();
+				fileSelectHandler(fileSelect.getElement());
 			});
 			
 
@@ -539,10 +524,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setDocument(invoiceCallback, doc, name, type,false);
 		AccountingInvoice ai = getWrapper();
 		if (ai.isDocumentAttached()) {
-			getAccountEntryService().addInvoiceAttach(getCallback().getCurrentDomainName()
-					, getCallback().getCurrentDomainId()
-					, getCallback().getCurrentUser()
-					, getWrapper() , new AsyncCallback<AccountingInvoice>() {
+			getAccountEntryService().addInvoiceAttach(
+				getCallback().getOccam().getDomainName()
+				,getCallback().getOccam().getDomain()
+				,getCallback().getOccam().getUser()
+				,getWrapper() 
+				,new AsyncCallback<AccountingInvoice>() {
 
 				@Override
 				public void onSuccess(AccountingInvoice result) {
@@ -569,25 +556,15 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		buttons.setStyleName(AON.CSS.aonFlexBlock());
 		attachPanelTableCell1.add(buttons);
 		
-		attachCloseButton = new AonTableButton("Cerrar documento adjunto",AON.CSS.aonIconRight());
+		AonTableButton attachCloseButton = new AonTableButton("Cerrar documento adjunto",AON.CSS.aonIconRight());
 		buttons.add(attachCloseButton);
 
-		attachOpenButton = new AonTableButton("Ver documento adjunto",AON.CSS.aonIconLeft());
+		AonTableButton attachOpenButton = new AonTableButton("Ver documento adjunto",AON.CSS.aonIconLeft());
 		buttons.add(attachOpenButton);
 		
-		attachCloseButton.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				closeAttach();
-			}
-		});
+		attachCloseButton.addClickHandler( event -> closeAttach());
 		
-		attachOpenButton.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				openAttach();
-			}
-		});
+		attachOpenButton.addClickHandler( event -> openAttach());
 	}
 
 	protected void openAttach() {
@@ -610,9 +587,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			attachPanelTableCell2.add(invoiceAttachPanel);
 		}
 	}
-	private void setDocument(InvoicePanelCallback invoiceCallback,final String doc, final String name, String type) {
-		setDocument(invoiceCallback, doc, name, type, true);
-	}
 
 	private void setDocument(InvoicePanelCallback invoiceCallback,final String doc, final String name, String type, boolean allowParse) {
 		attachPanelTableCell2.clear();
@@ -620,21 +594,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (mimeType == null) {
 			mimeType = MimeType.guessFromFileName(name);	
 		}
-		LOGGER.info("MimeType ..: " + (mimeType==null?"NULL":mimeType.getName()));
 		if (mimeType != null && (mimeType.isPDF() || mimeType.isImage())) {
 			if (mimeType.isPDF()) {
 				FullViewer viewer = new FullViewer( ViewerDefaultScale.PAGE_WIDTH );
-				viewer.addLoadHandler( new LoadHandler() {
-					
-					@Override
-					public void onLoad(LoadEvent event) {
-						viewer.open(doc);
-					}
-				});
+				viewer.addLoadHandler( event -> viewer.open(doc));
 				attachPanelTableCell2.add(viewer);
 				paintButtons();
 				openAttach();
-			} if (mimeType.isImage()) {
+			} else if (mimeType.isImage()) {
 				paintButtons();
 				double from = rootPanel.getWidgetSize(attachPanelTable) == null? 0 : rootPanel.getWidgetSize(attachPanelTable);
 				int to = Window.getClientWidth() - 900;
@@ -643,16 +610,18 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}
 				AonScalableImage scalableImage = new AonScalableImage( );
 				attachPanelTableCell2.add(scalableImage);
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						scalableImage.setImage(doc);
-				}});
+				Scheduler.get().scheduleDeferred(() -> scalableImage.setImage(doc));
 			}
 			
 			if ( allowParse && invoiceCallback.getConfiguration().isOCRActive() ) {
 				final MimeType attachMimeType = mimeType;
-				TEDI_SERVICE.parseInvoice(invoiceCallback.getCurrentDomainName(), invoiceCallback.getCurrentUser(), 
-					invoiceCallback.getCurrentDomainId(), name, doc, new AsyncCallback<TediResult>() {
+				TEDI_SERVICE.parseInvoice(
+					invoiceCallback.getOccam().getDomainName()
+					,invoiceCallback.getOccam().getUser(), 
+					invoiceCallback.getOccam().getDomain()
+					, name
+					, doc
+					, new AsyncCallback<TediResult>() {
 					
 					@Override
 					public void onSuccess(TediResult result) {
@@ -669,12 +638,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					@Override
 					public void onFailure(Throwable caught) {
 						AonMessageDialog d = new AonMessageDialog();
-						d.show("ERROR INESPERADO", caught.getMessage(), new AonMessageDialogCallback() {
-							@Override
-							public void onAccept() {
-								reset(invoiceCallback.getInvoice().getAccountEntry(), null);
-							}
-						});
+						d.show(
+							"ERROR INESPERADO"
+							, caught.getMessage()
+							, () -> reset(invoiceCallback.getInvoice().getAccountEntry(), null)
+						);
 					}
 				});		
 			} else {
@@ -697,7 +665,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setWrapper(ai);
 		getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
-			_paintEntry();
+			innerPaintEntry();
 			editInvoice();
 			getCallback().getModule().onPreview(getWrapper());
 		} else {

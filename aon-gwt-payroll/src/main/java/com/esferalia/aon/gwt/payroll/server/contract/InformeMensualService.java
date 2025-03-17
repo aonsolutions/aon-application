@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server.contract;
 
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -40,10 +41,9 @@ public class InformeMensualService {
 
 	private final DSLContext dsl;
 	private final Integer domainId;
-	private static final String[] MESES = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
-			"Diciembre" };
+	private final String[] MESES = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	public InformeMensualService(DSLContext dsl, Integer domainId) {
 		this.dsl = dsl;
@@ -174,18 +174,30 @@ public class InformeMensualService {
 		// Obtener datos básicos del contrato
 		Record registro = dsl
 				.select(REGISTRY.NAME, REGISTRY.DOCUMENT, PERSON.SOCIAL_SECURITY_NUM, CONTRACT.START_DATE,
-						CONTRACT.END_DATE)
-				.from(CONTRACT).join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON)).join(REGISTRY)
-				.on(REGISTRY.ID.eq(CONTRACT.PERSON)).where(CONTRACT.ID.eq(contratoId)).and(CONTRACT.DOMAIN.eq(domainId))
+						CONTRACT.END_DATE, CONTRACT.AGREEMENT_LEVEL, CONTRACT.CATEGORY_DESCRIPTION, PERSON.GENDER,
+						AGREEMENT_LEVEL.DESCRIPTION)
+				.from(CONTRACT)
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
+				.leftOuterJoin(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+				.where(CONTRACT.ID.eq(contratoId)).and(CONTRACT.DOMAIN.eq(domainId))
 				.fetchOne();
-
+		
+		ContractType contractType = getContractType(contratoId);
+		String partiality = getContractPartiality(contratoId);
+		
 		dto.setFullName(registro.get(REGISTRY.NAME));
 		dto.setDocument(registro.get(REGISTRY.DOCUMENT));
 		dto.setNaf(registro.get(PERSON.SOCIAL_SECURITY_NUM));
 		dto.setStartDate(DATE_FORMAT.format(registro.get(CONTRACT.START_DATE)));
 		dto.setEndDate(
 				null == registro.get(CONTRACT.END_DATE) ? "" : DATE_FORMAT.format(registro.get(CONTRACT.END_DATE)));
-
+		dto.setGender(registro.get(PERSON.GENDER) == (byte)0 ? "H"  : "M");
+		dto.setAgreementCategory(registro.get(CONTRACT.CATEGORY_DESCRIPTION));
+		dto.setAgreementLevel(null == registro.get(AGREEMENT_LEVEL.DESCRIPTION) ? "" : registro.get(AGREEMENT_LEVEL.DESCRIPTION) );
+		dto.setContractType(null == contractType ? "" : (AonStringUtils.equals(contractType.getValue(), "000") ? "Becario" : contractType.getValue()) );
+		dto.setPartiality(partiality);
+		
 		LocalDate contratoInicio = registro.get(CONTRACT.START_DATE).toLocalDate();
 		LocalDate contratoFin = registro.get(CONTRACT.END_DATE) != null ? registro.get(CONTRACT.END_DATE).toLocalDate()
 				: LocalDate.of(9999, 12, 31);
@@ -207,6 +219,7 @@ public class InformeMensualService {
 				int diasMes = (int) (monthEnd.toEpochDay() - monthStart.toEpochDay() + 1);
 				meses.add(new MonthlyDaysEntryExcel()
 						.setMes(obtenerNombreMes(iter.getMonthValue()))
+						.setYear(iter.getYear())
 						.setDiasMes(diasMes)
 						.setDiasFestivos(0)
 						.setDiasFinDeSemana(0)
@@ -221,7 +234,7 @@ public class InformeMensualService {
 				// Calcular el intervalo efectivo de evaluación
 				LocalDate evalStart = contratoInicio.isAfter(monthStart) ? contratoInicio : monthStart;
 				LocalDate evalEnd = contratoFin.isBefore(monthEnd) ? contratoFin : monthEnd;
-				meses.add(obtenerDatosMesContrato(contratoId, iter.getMonthValue(), evalStart, evalEnd));
+				meses.add(obtenerDatosMesContrato(contratoId, iter.getMonthValue(), iter.getYear(), evalStart, evalEnd, contractType));
 			}
 			iter = iter.plusMonths(1);
 		}
@@ -230,10 +243,11 @@ public class InformeMensualService {
 	}
 
 	// Calcula los datos mensuales para un contrato en el intervalo de evaluación
-	private MonthlyDaysEntryExcel obtenerDatosMesContrato(Integer contratoId, int mes, LocalDate evalStart,
-			LocalDate evalEnd) {
+	private MonthlyDaysEntryExcel obtenerDatosMesContrato(Integer contratoId, int mes, int year, LocalDate evalStart,
+			LocalDate evalEnd, ContractType contractType) {
 		MonthlyDaysEntryExcel mesDTO = new MonthlyDaysEntryExcel();
 		mesDTO.setMes(obtenerNombreMes(mes));
+		mesDTO.setYear(year);
 
 		int diasMes = (int) (evalEnd.toEpochDay() - evalStart.toEpochDay() + 1);
 		mesDTO.setDiasMes(diasMes);
@@ -260,7 +274,6 @@ public class InformeMensualService {
 		mesDTO.setDiasAusencia(diasAusencia);
 		
 		// Se calcula días trabajados según el tipo de contrato
-		ContractType contractType = getContractType(contratoId);
 		int fullTimeWorkingDays = diasLaborables - diasVacaciones - diasIT - diasNoRecuperables;
 		int diasTrabajados = (contractType == null || !contractType.isPartial() || isFullTime(contratoId))
 				? fullTimeWorkingDays
@@ -480,7 +493,24 @@ public class InformeMensualService {
 	            .fetchOne(0, Integer.class);
 	    return count != null && count > 0;
 	}
-
+	
+	// Obtiene el tipo de contrato a partir de los datos del contrato
+	private String getContractPartiality(Integer contratoId) {
+		Result<ContractDataRecord> contractTypeCodes = dsl.selectFrom(CONTRACT_DATA)
+				.where(CONTRACT_DATA.DOMAIN.eq(domainId)).and(CONTRACT_DATA.CONTRACT.eq(contratoId))
+				.and(CONTRACT_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
+		
+		if(contractTypeCodes.isEmpty()) return "100";
+		
+		String partiality = contractTypeCodes.get(0).getExpression().replace("\"", "").trim();
+		try {
+			Double part = Double.parseDouble(partiality);
+			part = part * 100;
+			return part.intValue() + AonStringUtils.EMPTY;
+		} catch (Exception e) {
+			return "N/D ";
+		}
+	}
 
 	// Obtiene el tipo de contrato a partir de los datos del contrato
 	private ContractType getContractType(Integer contratoId) {

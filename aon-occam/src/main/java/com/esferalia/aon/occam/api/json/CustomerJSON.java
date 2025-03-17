@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -26,6 +27,10 @@ public class CustomerJSON {
  		return list;
 	}
 	
+	public static Optional<Customer> from(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of(fromJSON(json));
+	}
 	
 	public static Customer fromJSON(JSONObject json) {
 		return new Customer()
