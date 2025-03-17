@@ -174,7 +174,9 @@ public class AccountingIncomeDAO {
 					ai.setBank( ft.getRegistryBank() );
 					return ft;
 				})
-				.map( ft -> ft.getFinance())
+				.map( ft -> ft.getFinance() )
+				.filter( Objects::nonNull )
+				.map( f -> FinanceDAO.getFinance(ctx, f.getId()) )
 				.orElse(null)
 		)
 		.setCustomer( 
