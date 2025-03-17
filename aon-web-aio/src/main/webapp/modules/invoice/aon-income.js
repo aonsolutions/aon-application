@@ -75,7 +75,6 @@ export class AonIncome extends AonElement {
         toolbar.addButton2(ACTION.SAVE, () => this.save());
         toolbar.addButton2(ACTION.BACK, () => this.back());
         
-
         let div = this.createDiv();
         div.id = this.DIV_GENERAL; 
         if(this.isMobile())
@@ -102,7 +101,6 @@ export class AonIncome extends AonElement {
                 if (principalActivity) activity.value = principalActivity.id;
             }
         });
-
         activity.addEventListener(EVENT.CHANGE, () => {
             this.getIncome().setActivity(this.getActivity());
         })
@@ -130,8 +128,7 @@ export class AonIncome extends AonElement {
         getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
             expAccount.value = this.income.expAccount.id;
-        });
-        
+        });  
         expAccount.addEventListener(EVENT.CHANGE, () =>  {
             this.getIncome().setExpAccount(this.getExpAccount());
         });
@@ -230,7 +227,6 @@ export class AonIncome extends AonElement {
         return dateString; 
     }
     
-
     back() {
         this.getApplication().setContent(new AonIncomeList());
     }
@@ -238,18 +234,22 @@ export class AonIncome extends AonElement {
     save() {
         console.log(JSON.stringify(this.income));
         setIncome(this.income)
-            .then( r => {
-                this.setIncome(new Income(r));
-                console.log("SAVE: "+JSON.stringify(r))})
-            .catch(e => this.showError(e));
+            .then( r => { 
+                this.setIncome(new Income(r))
+                this.showMessage("Ingreso grabado correctamente")
+            })
+            .catch( e => this.showError(e));
+    }
+
+    deleteAction(){
+        deleteIncome(this.income)
+            .then( r => { this.back() })
+            .catch( e => this.showError(e));
     }
 
     delete(){
-        deleteIncome(this.income)
-            .then(r => {
-                this.back();
-            })
-            .catch(e => this.showError(e));
+        this.getApplication().confirmDialog("Ingreso", "¿Desea borrar el ingreso?", null, MSG.CONFIRM);
+        this.getElement("aonInvoiceDialogDialogActionAccept").addEventListener(EVENT.CLICK, ()=> this.deleteAction());
     }
 
     getActivity() {
