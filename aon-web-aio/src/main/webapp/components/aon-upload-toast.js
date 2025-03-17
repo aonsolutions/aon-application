@@ -119,8 +119,8 @@ export class AonUploadToast extends AonElement {
 		if("invoice" === type){
 			s3UploadInvoice(file, this.JOB_ID, data, success, error);
  		} else if("documental" === type) {
-			let beta = this.isBeta();
-			uploadDocument(beta, file, data, success, error);
+			const beta = this.isBeta();
+			uploadDocument(file, data, success, error, beta);
 		}
 	}
 
