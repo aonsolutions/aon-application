@@ -29,13 +29,14 @@ public class DocumentalRDoc implements Update {
 		String sql = "CREATE TABLE IF NOT EXISTS rdoc ("
 				+ "    id                INT AUTO_INCREMENT PRIMARY KEY,"
 				+ "    domain            INT NOT NULL COMMENT 'dominio del documento',"
-				+ "    registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????'," // ?????????????
+				+ "    registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????'," 
 				+ "    category          INT NULL COMMENT 'categoria del documento',"
 				+ "    size              INT NULL COMMENT 'tamaño en bytes del documento',"
 				+ "    mimeType          TINYINT NULL DEFAULT 0 COMMENT 'tipo de extension del documento',"
 				+ "    name              VARCHAR(64) NULL COMMENT 'nombre del documento',"
-				+ "    scope             INT NULL COMMENT '????'," // ??????????????
-				+ "    security_level    TINYINT NULL DEFAULT 0 COMMENT '????'," // ??????????????
+				+ "    real_name         VARCHAR(64) NULL COMMENT 'nombre del documento',"
+				+ "    scope             INT NULL COMMENT '????'," 
+				+ "    security_level    TINYINT NULL DEFAULT 0 COMMENT '????'," 
 				+ "    document_date     DATE NULL COMMENT 'fecha a la que pertence el documento',"
 				+ "    s3                VARCHAR(128) NULL COMMENT 'key del s3 donde esta el documento',"
 				+ "    s3_bucket         VARCHAR(128) NULL COMMENT 'bucket del s3 donde esta el documento',"
@@ -43,6 +44,8 @@ public class DocumentalRDoc implements Update {
 				+ "    creation_date     DATETIME NULL,"
 				+ "    modification_user VARCHAR(16) NULL,"
 				+ "    modification_date DATETIME NULL,"
+				+ "    delete_user VARCHAR(16) NULL,"
+				+ "    delete_date DATETIME NULL,"
 				+ "    INDEX idx_rdoc_domain (domain),"
 				+ "    INDEX idx_rdoc_registry (registry),"
 				+ "    INDEX idx_rdoc_category (category),"

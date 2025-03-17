@@ -47,6 +47,7 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.DOMAIN)
 				.select(Rdoc.RDOC.MIMETYPE)
 				.select(Rdoc.RDOC.DOCUMENT_DATE)
+				.select(Rdoc.RDOC.SIZE)
 				.select(Rdoc.RDOC.S3)
 				.select(Rdoc.RDOC.S3_BUCKET)
 				.select(Rdoc.RDOC.SECURITY_LEVEL)
@@ -59,6 +60,7 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.SCOPE)
 				.from(Rdoc.RDOC)
 				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+				.and(Rdoc.RDOC.DELETE_DATE.isNull())
 				;
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
 				.select(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
@@ -67,6 +69,7 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.DOMAIN.as(Rdoc.RDOC.DOMAIN))
 				.select(Rattach.RATTACH.MIMETYPE.as(Rdoc.RDOC.MIMETYPE))
 				.select(Rattach.RATTACH.ATTACH_DATE.as(Rdoc.RDOC.DOCUMENT_DATE))
+				.select(DSL.inline((String) null).as(Rdoc.RDOC.SIZE))
 				.select(DSL.inline((String) null).as(Rdoc.RDOC.S3))
 				.select(DSL.inline((String) null).as(Rdoc.RDOC.S3_BUCKET))
 				.select(Rattach.RATTACH.SECURITY_LEVEL.as(Rdoc.RDOC.SECURITY_LEVEL))
@@ -93,6 +96,9 @@ public class S3DocumentDAO {
 	                )
 	                .select(DSL.field("id_category", Integer.class))
 	                .from(DSL.table("category_hierarchy"))
+	                .unionAll(
+	                        DSL.select(DSL.val(category).as("id_category"))
+	                    )
 	                .fetch();
 			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
 			queryRAttach = queryRAttach.and(Rattach.RATTACH.CATEGORY.in(recursiveIds));
@@ -137,6 +143,8 @@ public class S3DocumentDAO {
 		.set(Rdoc.RDOC.CATEGORY, document.getCategory())
 		.set(Rdoc.RDOC.MIMETYPE, document.getMimetype().value())
 		.set(Rdoc.RDOC.NAME, document.getName())
+		.set(Rdoc.RDOC.REAL_NAME, document.getName())
+		.set(Rdoc.RDOC.SIZE, document.getSize())
 		.set(Rdoc.RDOC.SCOPE, document.getScope())
 		.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
 		.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
@@ -189,8 +197,15 @@ public class S3DocumentDAO {
 	
 	public static void delete(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type){
 		ctx.checkWrite();
+		java.util.Date date = new java.util.Date();
 		if(type == 0)
-			ctx.getDslContext().delete(Rdoc.RDOC)
+//			ctx.getDslContext().delete(Rdoc.RDOC)
+//				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+//				.execute();
+			ctx.getDslContext()
+				.update(Rdoc.RDOC)
+				.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
+				.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
 				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
 				.execute();
 		else
@@ -217,6 +232,7 @@ public class S3DocumentDAO {
 					.setMimetype(MimeType.safeValueOf(r.get(Rdoc.RDOC.MIMETYPE)))
 					.setDocumentDate(r.get(Rdoc.RDOC.DOCUMENT_DATE))
 					.setS3key(r.get(Rdoc.RDOC.S3))
+					.setSize(r.get(Rdoc.RDOC.SIZE))
 					.setS3bucket(r.get(Rdoc.RDOC.S3_BUCKET))
 					.setSecurityLevel(r.get(Rdoc.RDOC.SECURITY_LEVEL))
 					.setCreationDate(r.get(Rdoc.RDOC.CREATION_DATE))

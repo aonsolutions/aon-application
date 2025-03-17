@@ -16,7 +16,7 @@ public class S3Document implements Serializable {
 	private Integer domain;
 	private Integer registry;
 	private MimeType mimetype;
-
+	private Integer size;
 	private String name;
 	private Integer scope;
 	private Byte securityLevel;
@@ -36,6 +36,15 @@ public class S3Document implements Serializable {
 
 	public S3Document setId(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public Integer getSize() {
+		return size;
+	}
+
+	public S3Document setSize(Integer size) {
+		this.size = size;
 		return this;
 	}
 

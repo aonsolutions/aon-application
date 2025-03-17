@@ -189,10 +189,12 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setCategory(json.getInt(IJsonNames.CATEGORY))
 				.setDomain(json.getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID))
 				.setRegistry(api.getUser().getRegistry().getId())
+				.setSize(JsonUtils.getInteger(json, IJsonNames.SIZE))
 				.setDocumentDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setMimetype(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)))
 				.setName(json.getString(IJsonNames.NAME))
 				.setS3key(doc)
+				.setS3bucket(AON_BUCKET_NAME)
 				.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 				.setSecurityLevel((byte) 0)
 				.setCreationDate(new Date())
@@ -229,9 +231,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static JSONObject deleteAction(AonApiData api) {
 		System.out.println("DELETE METHOD");
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
-		if(document.getS3key() != null && document.getType() == 0)
-			S3rDoc.deleteObject(document.getS3key(), AON_BUCKET_NAME);
+//		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
+//		if(document.getS3key() != null && document.getType() == 0)
+//			S3rDoc.deleteObject(document.getS3key(), AON_BUCKET_NAME);
 		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type);
 		return new JSONObject();
 	}

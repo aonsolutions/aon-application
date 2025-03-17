@@ -552,7 +552,7 @@ public class Up2Date {
 			// RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE,
 			// DropDaysFix.DROPDAYSFIX
 			
-			MEITrainingFix2025.MEITRAININGFIX2025,
+//			MEITrainingFix2025.MEITRAININGFIX2025,
 			DocumentalCategoryTree.DOCUMENTAL_CATEGORY_TREE,
 			DocumentalRDoc.DOCUMENTAL_RDOC
 			
