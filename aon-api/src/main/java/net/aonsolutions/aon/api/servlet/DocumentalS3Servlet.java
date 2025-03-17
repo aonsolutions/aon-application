@@ -234,7 +234,12 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 //		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 //		if(document.getS3key() != null && document.getType() == 0)
 //			S3rDoc.deleteObject(document.getS3key(), AON_BUCKET_NAME);
-		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type);
+		JSONArray array = JsonUtils.getJSONArray(api.getData(), IJsonNames.ID);
+		Integer[] ids = new Integer[array.length()];
+		for(int i = 0; i < array.length(); i++) {
+			ids[i] = array.getInt(i);
+		}
+		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(ids), f -> f.getIdProperty().in(ids), type);
 		return new JSONObject();
 	}
 	
