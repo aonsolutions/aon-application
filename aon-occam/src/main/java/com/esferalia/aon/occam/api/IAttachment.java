@@ -103,7 +103,7 @@ public interface IAttachment {
 	public Stream<S3Document> getS3DocumentStream(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type, Integer category, Optional<Integer> page, Optional<Integer> perPage);
 	public S3Document insertS3Document(AONContext ctx, S3Document document);
 	public S3Document updateS3Document(AONContext ctx, S3Document document, Integer type);
-	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type);
+	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter);
 	public byte[] getFileS3Document(AONContext ctx, Integer id);
 	public long getCountS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter);
 	

@@ -53,7 +53,7 @@ export class AonDocumental extends AonElement {
 	initialize() {
 		this.DOCUMENTAL = 'aonDocumental';
 		this.INPUTFILE = this.DOCUMENTAL + 'InputFile';
-		this._filter = this.isBeta() 
+		this._filter = this.isBetaDoc() 
           ?
             {
               type    : 'all',
@@ -151,7 +151,7 @@ export class AonDocumental extends AonElement {
 	}
 
 	addTypeOptions() {
-		if (!this.isBeta()) {
+		if (!this.isBetaDoc()) {
 			if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 				let typeOptions = [{
 					name: MSG.ENTERPRISE,
@@ -197,7 +197,7 @@ export class AonDocumental extends AonElement {
 		let data = DocumentalSidenav.CATEGORIES;
 		data.options = [];
 
-		if (!this.isBeta()) {
+		if (!this.isBetaDoc()) {
 			if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 				application.addSidenavOptions3(data, () => this.createCategory());
 			} else {
@@ -211,7 +211,7 @@ export class AonDocumental extends AonElement {
 		let data = {
 			parent: null
 		};
-		if (this.isBeta()) {
+		if (this.isBetaDoc()) {
 			getS3Category(data).then(categories => {
 				this._categories = categories.map(c => {
 					return {
@@ -223,7 +223,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-						icon: !this.isBeta() ? 'label' : 'insert_drive_file',
+						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -250,7 +250,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-						icon: !this.isBeta() ? 'label' : 'insert_drive_file',
+						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -341,7 +341,7 @@ export class AonDocumental extends AonElement {
 	}
 
 	addTagOptions() {
-		if (!this.isBeta()) {
+		if (!this.isBetaDoc()) {
 			let application = this.getApplication();
 			let data = DocumentalSidenav.TAGS;
 			data.options = [];
@@ -486,13 +486,13 @@ export class AonDocumental extends AonElement {
 	}
 
 	addDocumentalFile() {
-		if (this.isBeta()) {
+		if (this.isBetaDoc()) {
 			// Si es beta, primero abrimos el modal
 			let d = document.getElementById(this.getApplication().DIALOG);
 			d.clear();
 			if (!this.isMobile()) d.width = '400px';
 			d.setTitle(MSG.UPLOAD_FILE);
-			d.setContent(uploadOption(this.getDur(), this.isBeta()));
+			d.setContent(uploadOption(this.getDur(), this.isBetaDoc()));
 			d.addAcceptAction(async () => {
 
 				let data = {};
@@ -565,11 +565,11 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.UPLOAD_FILE);
-		d.setContent(uploadOption(this.getDur(), this.isBeta()));
+		d.setContent(uploadOption(this.getDur(), this.isBetaDoc()));
 		d.addAcceptAction(async () => {
 			let data = {};
 
-			if (this.isBeta()) {
+			if (this.isBetaDoc()) {
 				if (document.getElementById("aonDocumentalUploadCategory").value !== null) {
 					let category = document.getElementById("aonDocumentalUploadCategory").value;
 					data.category = category;

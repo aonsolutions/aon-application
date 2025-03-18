@@ -165,10 +165,14 @@ export class AonElement extends HTMLElement{
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
   }
 
-	isBeta(){
+  isBeta(){
     const href = window.location.href;
-		return href.includes('aonsolutions.org') || this.isLocal();
-	}
+    return href.includes('aonsolutions.org') || this.isLocal();
+  }
+
+  isBetaDoc(){
+    return this.isBeta();
+  }
 
   isSig(){
     const href = window.location.href;

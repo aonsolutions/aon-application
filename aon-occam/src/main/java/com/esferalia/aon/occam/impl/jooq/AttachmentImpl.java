@@ -465,9 +465,9 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 	@Override
-	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type) {
+	public void deleteS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter) {
 		ctx.getDslContext().transaction(
-				configuration -> S3DocumentDAO.delete(ctx, filter, attachFilter, type));
+				configuration -> S3DocumentDAO.delete(ctx, filter, attachFilter));
 	}
 	
 	@Override

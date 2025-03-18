@@ -11,9 +11,8 @@ import {
   ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
 } from './DocumentalEnums.js';
 
-export const uploadDocument = (beta, file, data, success, error) => {
+export const uploadDocument = (file, data, success, error, isBetaDoc = false) => {
 	if (file) {
-		if(beta){
 		getReader(file).then(f => {
 			const doc = {
 				...f,
@@ -24,14 +23,13 @@ export const uploadDocument = (beta, file, data, success, error) => {
 				scope: data.scope,
 				type: data.type,
 				// AÃ±adir `date` solo si es beta y `data.date` existe
-				...(beta && data.date ? { date: data.date } : {})
+				...(isBetaDoc && data.date ? { date: data.date } : {})
 			};
-            const uploadDocumentsUse = beta ? postS3Document : uploadFileDocumental;
+            const uploadDocumentsUse = isBetaDoc ? postS3Document : uploadFileDocumental;
 			uploadDocumentsUse(doc)
               .then(r => success(file))
               .catch((e) => error(file, e));
-			}).catch((e) => error(file, e));
-		}
+        }).catch((e) => error(file, e));
 	}
 }
 export const uploadDocuments = (el, files, dur) => {
@@ -43,6 +41,7 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setTitle(MSG.UPLOAD_FILE);
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
+      /*
 		let arr = [];
 		let data = {
 			category: document.getElementById("aonDocumentalUploadCategory").value,
@@ -65,6 +64,8 @@ export const uploadDocuments = (el, files, dur) => {
 			rootPanel.innerHTML = "";
 			rootPanel.appendChild(aonComponent);
 		}
+      
+     */
 	});
 	d.open();
 }
@@ -165,12 +166,72 @@ function oldDocumentalSelects(dur) {
 	return table;
 }
 
-export const S3DocumentalSelects = () => {
-  // Se monta la tabla
-	let table = document.createElement('table');
-	table.style.width = '100%';
+// Limpiar campos de subcategoria, administracion y modelos
+function clearFields(table, fieldsToKeep = []) {
+    const trElements = table.querySelectorAll('tr');
+    trElements.forEach((tr) => {
+        // Evitar eliminar las filas que deben permanecer (etiquetas, categoriï¿½a y el datePicker)
+        if (!fieldsToKeep.includes(tr)) {
+            tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
+        }
+    });
+}
 
-	// Aniadir un DatePicker aquiï¿½ como una columna mas (al final)
+function S3DocumentalSelects() {
+  // Se monta la tabla
+    let table = document.createElement('table');
+    table.style.width = '100%';
+  
+  // Spinner
+    let loadingOverlay = document.createElement('div');
+    loadingOverlay.style.position = 'absolute';
+    loadingOverlay.style.top = '0';
+    loadingOverlay.style.left = '0';
+    loadingOverlay.style.width = '100%';
+    loadingOverlay.style.height = '100%';
+    loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // Fondo semi-transparente
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.alignItems = 'center';
+    loadingOverlay.style.justifyContent = 'center';
+    loadingOverlay.style.zIndex = '10'; // Asegura que el overlay esté por encima de otros elementos
+
+    // Crear el spinner de Materialize
+    let spinner = document.createElement('div');
+    spinner.classList.add('preloader-wrapper', 'active');
+    spinner.innerHTML = `
+      <span class="material-symbols-outlined">
+        refresh
+      </span>
+    `;
+
+    // Hacer el ícono más grande
+    let icon = spinner.querySelector('.material-symbols-outlined');
+    icon.style.fontSize = '48px'; // Tamaño más grande del ícono
+
+    // Aplicar la animación de rotación
+    icon.style.animation = 'rotate 2s linear infinite'; // Rotación infinita de 2 segundos
+
+    // Crear la animación de rotación (por JavaScript)
+    let style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    `;
+    document.head.appendChild(style); // Insertar la animación en el head del documento
+
+    // Agregar el spinner al overlay
+    loadingOverlay.appendChild(spinner);
+
+    // Agregar el overlay a la tabla
+    table.appendChild(loadingOverlay);
+
+  // DatePicker
 	let trDatePicker = document.createElement('tr');
 	table.appendChild(trDatePicker);
 	
@@ -188,8 +249,7 @@ export const S3DocumentalSelects = () => {
 		return datePicker.getDateValue();
 	});
 
-
-	// TAG - Este campo no se debe eliminar
+  // TAG
 	let trTag = document.createElement('tr');
 	table.appendChild(trTag);
 
@@ -207,10 +267,11 @@ export const S3DocumentalSelects = () => {
 			}
 		}));
 	});
-
-	trTag.appendChild(tdTag);
-
-	// CATEGORY
+    // Solo agregamos si tenemos TAG
+    if (selTag.options && JSON.parse(selTag.options).length > 0) {
+      trTag.appendChild(tdTag);
+    }
+  // CATEGORY
 	let trCategory = document.createElement('tr');
 	table.appendChild(trCategory);
 
@@ -225,71 +286,68 @@ export const S3DocumentalSelects = () => {
 	getS3Category(data).then(categories => {
 		if (categories.length > 0) {
 			selCat.options = JSON.stringify(categories.map(c => {
-						console.log('primera llamada categorias');
 				return {
                   value: c.id,
                   name : c.name
 				};
 			}));
 			trCategory.appendChild(tdCategory);
+            // Oculta el overlay
+            loadingOverlay.style.display = 'none';
+            // cargado categoria, metemos funcionalidad
+            uploadedCategory(selCat, table, trCategory, trTag, trDatePicker, loadingOverlay);
 		} else {
-			console.log('No hay categorias disponibles.');
+          // Oculta el overlay
+          loadingOverlay.style.display = 'none';
+          console.log('No hay categorias disponibles.');
 		}
 	});
-	
-	// Limpiar campos de subcategoriï¿½a, administracion y modelos
-	function clearFields(fieldsToKeep = []) {
-		const trElements = table.querySelectorAll('tr');
-		trElements.forEach((tr) => {
-			// Evitar eliminar las filas que deben permanecer (etiquetas, categoriï¿½a y el datePicker)
-			if (!fieldsToKeep.includes(tr) && !tr.contains(tdDatePicker)) {
-				tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
-			}
-		});
-	}
+    // filtros para subir
+	return table;
+};
 
-	// Event listener para la seleccion de la categoriaï¿½
+  function uploadedCategory(selCat, table, trCategory, trTag, trDatePicker, loadingOverlay){
+    // Se escoge una categoria
 	selCat.addEventListener('change', (event) => {
-		const selectedCategoryId = event.target.value;
-		console.log('CategorÃ­a seleccionada:', selectedCategoryId);
+      const selectedCategoryId = event.target.value;
 
-		// Limpiar los campos antes de generar nuevos select
-		clearFields([trCategory, trTag, trDatePicker]);
+      // Limpiar los campos antes de generar nuevos select
+      clearFields(table, [trCategory, trTag, trDatePicker]);
 
-		if (selectedCategoryId != null) {
-			// Crear un nuevo tr para Subcategoriï¿½a solo si hay subcategoriï¿½as
-			let trSubCategory = document.createElement('tr');
-			table.appendChild(trSubCategory);
+      if (selectedCategoryId != null) {
+        // Crear un nuevo tr para Subcategoria solo si hay subcategorias
+        let trSubCategory = document.createElement('tr');
+        table.appendChild(trSubCategory);
 
-			let tdSubCategory = document.createElement('td');
-			tdSubCategory.setAttribute('colspan', '1');
-			let selSubCat = new AonNewSelect();
-			selSubCat.id = "aonDocumentalUploadSubCategory";
-			selSubCat.title = MSG.SUBCATEGORY;
-			tdSubCategory.appendChild(selSubCat);
+        let tdSubCategory = document.createElement('td');
+        tdSubCategory.setAttribute('colspan', '1');
+        let selSubCat = new AonNewSelect();
+        selSubCat.id = "aonDocumentalUploadSubCategory";
+        selSubCat.title = MSG.SUBCATEGORY;
+        tdSubCategory.appendChild(selSubCat);
 
-			let data = { parent: selectedCategoryId };
-			getS3Category(data).then(subcategories => {
-				if (subcategories.length > 0) {
-					selSubCat.options = JSON.stringify(subcategories.map(sc => {
-						return {
-							value: sc.id,
-							name: sc.name
-						}
-					}));
-					trSubCategory.appendChild(tdSubCategory);
-				} else {
-					console.log('No hay subcategorÃ­as disponibles.');
-				}
-			});
-
+        let data = { parent: selectedCategoryId };
+        
+        // Mostrar el overlay
+        loadingOverlay.style.display = 'flex';
+        getS3Category(data).then(subcategories => {
+          if (subcategories.length > 0) {
+            selSubCat.options = JSON.stringify(subcategories.map(sc => {
+              return {
+                value: sc.id,
+                name: sc.name
+              }
+            }));
+            trSubCategory.appendChild(tdSubCategory);
+            // Oculta el overlay
+            loadingOverlay.style.display = 'none';
+///////////////////////////////////////////////////
 			// Event listener para la selecciÃ³n de la subcategorÃ­a
 			selSubCat.addEventListener('change', (event) => {
 				const selectedSubCategoryId = event.target.value;
-				console.log('SubcategorÃ­a seleccionada:', selectedSubCategoryId);
 
 				// Limpiar los campos de administraciÃ³n y modelos antes de generar nuevos
-				clearFields([trCategory, trTag, trSubCategory]);
+				clearFields(table, [trCategory, trTag, trDatePicker, trSubCategory]);
 				if (selectedSubCategoryId != null) {
 					// Crear un nuevo tr para AdministraciÃ³n solo si hay administraciones
 					let trAdministration = document.createElement('tr');
@@ -303,6 +361,8 @@ export const S3DocumentalSelects = () => {
 					tdAdministration.appendChild(selAdministration);
 
 					let data = { parent: selectedSubCategoryId };
+                    // Mostrar el overlay
+                    loadingOverlay.style.display = 'flex';
 					getS3Category(data).then(administrations => {
 						if (administrations.length > 0) {
 							selAdministration.options = JSON.stringify(administrations.map(adm => {
@@ -312,54 +372,69 @@ export const S3DocumentalSelects = () => {
 								}
 							}));
 							trAdministration.appendChild(tdAdministration);
+                            // Oculta el overlay
+                            loadingOverlay.style.display = 'none';
+                        ///////////////////////////////////////////////////
+                            // Event listener para la selecciÃ³n de la administraciÃ³n
+                            selAdministration.addEventListener('change', (event) => {
+                                const selectedAdministrationId = event.target.value;
+
+                                // Limpiar el campo de modelos antes de generar nuevos
+                                clearFields(table, [trCategory, trTag, trDatePicker, trSubCategory, trAdministration]);
+
+                                if (selectedAdministrationId != null) {
+                                    // Crear un nuevo tr para Modelos solo si hay modelos
+                                    let trModel = document.createElement('tr');
+                                    table.appendChild(trModel);
+
+                                    let tdModel = document.createElement('td');
+                                    tdModel.setAttribute('colspan', '1');
+                                    let selModel = new AonNewSelect();
+                                    selModel.id = "aonDocumentalModels";
+                                    selModel.title = "Modelos";
+                                    tdModel.appendChild(selModel);
+
+                                    let data = { parent: selectedAdministrationId };
+                                    // Mostrar el overlay
+                                    loadingOverlay.style.display = 'flex';
+                                    getS3Category(data).then(models => {
+                                        if (models.length > 0) {
+                                            selModel.options = JSON.stringify(models.map(mod => {
+                                                return {
+                                                    value: mod.id,
+                                                    name: mod.name
+                                                }
+                                            }));
+                                            trModel.appendChild(tdModel);
+                                            // Oculta el overlay
+                                            loadingOverlay.style.display = 'none';
+                                        } else {
+                                          // Oculta el overlay
+                                          loadingOverlay.style.display = 'none';
+                                          console.log('No hay modelos disponibles.');
+                                        }
+                                    });
+                                }
+                            });
+                        ///////////////////////////////////////////////////
 						} else {
-							console.log('No hay administraciones disponibles.');
-						}
-					});
-
-					// Event listener para la selecciÃ³n de la administraciÃ³n
-					selAdministration.addEventListener('change', (event) => {
-						const selectedAdministrationId = event.target.value;
-						console.log('AdministraciÃ³n seleccionada:', selectedAdministrationId);
-
-						// Limpiar el campo de modelos antes de generar nuevos
-						clearFields([trCategory, trTag, trSubCategory, trAdministration]);
-
-						if (selectedAdministrationId != null) {
-							// Crear un nuevo tr para Modelos solo si hay modelos
-							let trModel = document.createElement('tr');
-							table.appendChild(trModel);
-
-							let tdModel = document.createElement('td');
-							tdModel.setAttribute('colspan', '1');
-							let selModel = new AonNewSelect();
-							selModel.id = "aonDocumentalModels";
-							selModel.title = "Modelos";
-							tdModel.appendChild(selModel);
-
-							let data = { parent: selectedAdministrationId };
-							getS3Category(data).then(models => {
-								if (models.length > 0) {
-									selModel.options = JSON.stringify(models.map(mod => {
-										return {
-											value: mod.id,
-											name: mod.name
-										}
-									}));
-									trModel.appendChild(tdModel);
-								} else {
-									console.log('No hay modelos disponibles.');
-								}
-							});
+                          // Oculta el overlay
+                          loadingOverlay.style.display = 'none';
+                          console.log('No hay administraciones disponibles.');
 						}
 					});
 				}
 			});
-		}
+///////////////////////////////////////////////////
+          } else {
+            // Oculta el overlay
+            loadingOverlay.style.display = 'none';
+            console.log('No hay subcategorÃ­as disponibles.');
+          }
+        });
+      }
 	});
-	
-	return table;
-};
+  }
 
 const attach = async (reader, d) => {
 	const data = {

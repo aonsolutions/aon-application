@@ -55,11 +55,11 @@ export class AonDocumentalList extends AonElement {
 		this.appendChild(aonDocumentalTable);
         // Columnas y datos
         // addColumn(name, type, id, width, textAlign)
-        if(this.isBeta()){
+        if(this.isBetaDoc()){
           aonDocumentalTable.addColumn(MSG.DATE_CREATION, 'creation_date', 'creation_date', '20%');
         }
 		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBeta() ? 'name' : 'title', '60%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
 		// Iniciar tabla
@@ -98,7 +98,7 @@ export class AonDocumentalList extends AonElement {
     }
 
     loadDocumentsIntoTable(table, filter, isInit = false) {
-        const fetchDocuments = this.isBeta() ? getS3Document : getDocuments;
+        const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
 
         fetchDocuments(filter).then(documents => {
             if (isInit) {
