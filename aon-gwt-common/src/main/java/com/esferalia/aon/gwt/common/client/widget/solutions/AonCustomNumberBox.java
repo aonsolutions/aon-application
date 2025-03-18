@@ -25,7 +25,6 @@ public class AonCustomNumberBox extends HTMLPanel {
 	public AonCustomNumberBox(String title) {
 		super(EMPTY_STRING);
 		addStyleName(AON.CSS.aonFlexColumn());
-//		addStyleName(AON.CSS.aonCustomTextBox());
 		addStyleName(AON.CSS.aonCustomTextBoxNoBorder());
 
 		createTitle(title);
@@ -44,7 +43,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 		textBoxPanel.getElement().getStyle().setProperty("align-items", "flex-start");
 		textBoxPanel.getElement().getStyle().setProperty("border-bottom", "1px solid #b9b8b8");
 		
-		numberBox = new DoubleBox();
+		numberBox = new DoubleBox(12, 3);
 		numberBox.setStyleName(AON.CSS.aonCustomTextBoxInput());
 		numberBox.getElement().setPropertyString("placeholder", "Introduce un valor");
 		
@@ -83,7 +82,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 		
 		Label gt = new Label("\u2265");
 		
-		gtnumberBox = new DoubleBox();
+		gtnumberBox = new DoubleBox(12, 3);
 		gtnumberBox.setStyleName(AON.CSS.aonBetweenInput());
 		gtnumberBox.getElement().setPropertyString("placeholder", "Mayor o igual que...");
 		gtnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -99,7 +98,7 @@ public class AonCustomNumberBox extends HTMLPanel {
 		
 		Label lt = new Label("\u2264");
 		
-		ltnumberBox = new DoubleBox();
+		ltnumberBox = new DoubleBox(12, 3);
 		ltnumberBox.setStyleName(AON.CSS.aonBetweenInput());
 		ltnumberBox.getElement().setPropertyString("placeholder", "Menor o igual que...");
 		ltnumberBoxPanel.getElement().getStyle().setDisplay(Display.NONE);
