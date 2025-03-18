@@ -2,11 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-<<<<<<< HEAD
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate } from '../../services/service.js';
-=======
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, deleteS3Document } from '../../services/service.js';
->>>>>>> 361fdb3ef5e04f824e524631cea8bd9472de5d43
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
