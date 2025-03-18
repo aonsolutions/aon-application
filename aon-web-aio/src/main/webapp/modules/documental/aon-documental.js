@@ -570,40 +570,43 @@ export class AonDocumental extends AonElement {
 			let data = {};
 
 			if (this.isBetaDoc()) {
-				if (document.getElementById("aonDocumentalUploadCategory").value !== null) {
-					let category = document.getElementById("aonDocumentalUploadCategory").value;
-					data.category = category;
+				const categoryElement       = document.getElementById("aonDocumentalUploadCategory");
+                const subcategoryElement    = document.getElementById("aonDocumentalUploadSubCategory");
+                const administrationElement = document.getElementById("aonDocumentalAdministration");
+                const modelsElement         = document.getElementById("aonDocumentalModels");
+                const tagElement            = document.getElementById("aonDocumentalUploadTag");
+                const dateElement           = document.getElementById("aonDocumentalUploadDatePicker");
+
+                // Verificar si los elementos tienen valores válidos y asignarlos a la propiedad 'category' del objeto 'data'
+                if (categoryElement && categoryElement.value !== null && categoryElement.value.trim() !== "") {
+                    data.category = categoryElement.value;
+
+                    if (subcategoryElement && subcategoryElement.value !== null && subcategoryElement.value.trim() !== "") {
+                        data.category = subcategoryElement.value;
+
+                        if (administrationElement && administrationElement.value !== null && administrationElement.value.trim() !== "") {
+                            data.category = administrationElement.value;
+
+                            if (modelsElement && modelsElement.value !== null && modelsElement.value.trim() !== "") {
+                                data.category = modelsElement.value;
+                            }
+                        }
+                    }
+                }
+
+				if (tagElement && tagElement.value !== null &&  tagElement.value.trim() !== "") {
+					data.tag = dateElement.value;
 				}
 
-				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null) {
-					let subcategory = document.getElementById("aonDocumentalUploadSubCategory").value
-					data.category = subcategory;
-				}
-				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null && document.getElementById("aonDocumentalAdministration").value !== null) {
-					let administration = document.getElementById("aonDocumentalAdministration").value
-					data.category = administration;
-				}
-
-				if (document.getElementById("aonDocumentalUploadCategory").value !== null && document.getElementById("aonDocumentalUploadSubCategory").value !== null && document.getElementById("aonDocumentalAdministration").value !== null && document.getElementById("aonDocumentalModels").value !== null) {
-					let model = document.getElementById("aonDocumentalModels").value
-					data.category = model;
-				}
-
-				if (document.getElementById("aonDocumentalUploadTag").value !== null) {
-					let tag = document.getElementById("aonDocumentalUploadTag").value;
-					data.tag = tag;
-				}
-
-				if (document.getElementById("aonDocumentalUploadDatePicker").getValue() !== null) {
-					let date = document.getElementById("aonDocumentalUploadDatePicker").getValue();
-					data.date = date;
+				if (dateElement && dateElement.getValue() !== null && dateElement.getValue().trim() !== "") {
+					data.date = dateElement.getValue();
 				}
 			} else {
 				data = {
 					category: document.getElementById("aonDocumentalUploadCategory").value,
-					scope: document.getElementById("aonDocumentalUploadScope").value,
-					tag: document.getElementById("aonDocumentalUploadTag").value,
-					type: document.getElementById("aonDocumentalUploadType").value
+					scope   : document.getElementById("aonDocumentalUploadScope").value,
+					tag     : document.getElementById("aonDocumentalUploadTag").value,
+					type    : document.getElementById("aonDocumentalUploadType").value
 				}
 			}
 

@@ -41,8 +41,7 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setTitle(MSG.UPLOAD_FILE);
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
-      /*
-		let arr = [];
+		let arr = [];npm 
 		let data = {
 			category: document.getElementById("aonDocumentalUploadCategory").value,
 			scope: document.getElementById("aonDocumentalUploadScope").value,
@@ -64,8 +63,6 @@ export const uploadDocuments = (el, files, dur) => {
 			rootPanel.innerHTML = "";
 			rootPanel.appendChild(aonComponent);
 		}
-      
-     */
 	});
 	d.open();
 }
