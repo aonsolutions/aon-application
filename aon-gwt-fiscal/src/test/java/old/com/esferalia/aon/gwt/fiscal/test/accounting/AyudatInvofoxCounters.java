@@ -2,17 +2,18 @@ package old.com.esferalia.aon.gwt.fiscal.test.accounting;
 
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -27,7 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dev.util.collect.HashMap;
@@ -74,7 +76,7 @@ public class AyudatInvofoxCounters {
 					String[] tokens =  AonStringUtils.splitPreserveAllTokens(line, '\t' );
 					Integer domain = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[0]));
 					Integer count = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[1]));
-					Integer prev = counters.put( domain, count );
+					counters.put( domain, count );
 					domains.stream()
 						.filter( d -> AonNumberUtils.equals(domain, d.getDomainId()  ))
 						.findAny()
@@ -128,34 +130,10 @@ public class AyudatInvofoxCounters {
 		;
 	}
 	private static class Invofox {
-		private String companyId;
 		private String name;
 		private String document;
-		private double pendingCorrection;
-		private double pendingDecission;
-		private double approved;
-		private double rejected;
-		private double discarded;
-		private double exported;
-		private double error;
-		private double total;
-		
-		private double aonProcessed;
 		private double processed;	
-		private double automated;
-		private double clientDiscarded;	
-		private double duplicated;
-		private double usedClassifier;	
-		private double usedSplitter;
-
 		
-		public String getCompanyId() {
-			return companyId;
-		}
-		public Invofox setCompanyId(String companyId) {
-			this.companyId = companyId;
-			return this;
-		}
 		public String getName() {
 			return name;
 		}
@@ -171,77 +149,6 @@ public class AyudatInvofoxCounters {
 			return this;
 		}
 		
-		public double getPendingCorrection() {
-			return pendingCorrection;
-		}
-		public Invofox setPendingCorrection(double pendingCorrection) {
-			this.pendingCorrection = pendingCorrection;
-			return this;
-		}
-		
-		public double getPendingDecission() {
-			return pendingDecission;
-		}
-		public Invofox setPendingDecission(double pendingDecission) {
-			this.pendingDecission = pendingDecission;
-			return this;
-		}
-		
-		public double getApproved() {
-			return approved;
-		}
-		public Invofox setApproved(double approved) {
-			this.approved = approved;
-			return this;
-		}
-		
-		public double getRejected() {
-			return rejected;
-		}
-		public Invofox setRejected(double rejected) {
-			this.rejected = rejected;
-			return this;
-		}
-		
-		public double getDiscarded() {
-			return discarded;
-		}
-		public Invofox setDiscarded(double discarded) {
-			this.discarded = discarded;
-			return this;
-		}
-		
-		public double getExported() {
-			return exported;
-		}
-		public Invofox setExported(double exported) {
-			this.exported = exported;
-			return this;
-		}
-		
-		public double getError() {
-			return error;
-		}
-		public Invofox setError(double error) {
-			this.error = error;
-			return this;
-		}
-		
-		public double getTotal() {
-			return total;
-		}
-		public Invofox setTotal(double total) {
-			this.total = total;
-			return this;
-		}
-		
-		public double getAonProcessed() {
-			return aonProcessed;
-		}
-		public Invofox setAonProcessed(double aonProcessed) {
-			this.aonProcessed = aonProcessed;
-			return this;
-		}
 		public double getProcessed() {
 			return processed;
 		}
@@ -249,42 +156,9 @@ public class AyudatInvofoxCounters {
 			this.processed = processed;
 			return this;
 		}
-		public double getAutomated() {
-			return automated;
+		public void addProcessed(double processed) {
+			this.processed = AonMathUtils.round(this.processed + processed);
 		}
-		public Invofox setAutomated(double automated) {
-			this.automated = automated;
-			return this;
-		}
-		public double getClientDiscarded() {
-			return clientDiscarded;
-		}
-		public Invofox setClientDiscarded(double clientDiscarded) {
-			this.clientDiscarded = clientDiscarded;
-			return this;
-		}
-		public double getDuplicated() {
-			return duplicated;
-		}
-		public Invofox setDuplicated(double duplicated) {
-			this.duplicated = duplicated;
-			return this;
-		}
-		public double getUsedClassifier() {
-			return usedClassifier;
-		}
-		public Invofox setUsedClassifier(double usedClassifier) {
-			this.usedClassifier = usedClassifier;
-			return this;
-		}
-		public double getUsedSplitter() {
-			return usedSplitter;
-		}
-		public Invofox setUsedSplitter(double usedSplitter) {
-			this.usedSplitter = usedSplitter;
-			return this;
-		}
-	
 		
 	}
 	
@@ -411,11 +285,12 @@ public class AyudatInvofoxCounters {
 		}
 	}
 	
-	private static void readExcel() throws FileNotFoundException, IOException {
+	private static void readExcel() throws IOException {
 		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/February_2025.xlsx" );
 		ExcelAction action = new ExcelAction( );
 		action.initialize("USAGE");
 		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
+		LinkedHashMap<String, Invofox> map = new LinkedHashMap<>();
 		try (FileInputStream fis = new FileInputStream(f)) {
 			try (XSSFWorkbook workbook = new XSSFWorkbook(fis)){
 				XSSFSheet sheet = workbook.getSheetAt(0);
@@ -426,40 +301,19 @@ public class AyudatInvofoxCounters {
 					Row row =  rowIterator.next();
 					if (line > 0) {
 						String document = row.getCell( 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK ).getStringCellValue();
+						System.out.print(" " + document + " ---> ");
 						if (AonStringUtils.isNotBlank( document )) {
-							Invofox invofox = new Invofox()
-									.setCompanyId( row.getCell( 0 , Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue())
-									.setName( row.getCell( 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK ).getStringCellValue())
+							double processed = row.getCell( 3 ).getNumericCellValue();
+							Invofox invofox = map.get( document );
+							if (invofox == null) {
+								invofox = new Invofox()
 									.setDocument(document)
-									
-//							.setPendingCorrection(row.getCell( 3 ).getNumericCellValue())
-//							.setPendingDecission(row.getCell( 4 ).getNumericCellValue())
-//							.setApproved(row.getCell( 5 ).getNumericCellValue())
-//							.setRejected(row.getCell( 6 ).getNumericCellValue())
-//							.setDiscarded(row.getCell( 7 ).getNumericCellValue())
-//							.setExported(row.getCell( 8 ).getNumericCellValue())
-//							.setError(row.getCell( 9 ).getNumericCellValue())
-//							.setTotal(row.getCell( 10 ).getNumericCellValue())
-									
-									.setProcessed( row.getCell( 3 ).getNumericCellValue() )	
-									.setAutomated(row.getCell( 4 ).getNumericCellValue()) 	
-									.setClientDiscarded(row.getCell( 5 ).getNumericCellValue())	
-//							.setDuplicated(row.getCell( 6 ).getNumericCellValue())	
-									.setUsedClassifier(row.getCell( 6 ).getNumericCellValue())	
-									.setUsedSplitter(row.getCell( 7 ).getNumericCellValue())
+									.setProcessed( processed )	
 									;
-							boolean exists = domains.stream()
-									.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
-									.findAny()
-									.isPresent();
-							
-							if (!exists) {
-								System.out.println( invofox.getDocument() );
+								map.put(document, invofox);
+							} else {
+								invofox.addProcessed( processed );
 							}
-							domains.stream()
-							.filter( d -> AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument() ))
-							.forEach( d -> action.accept(d, invofox ))
-							;
 						}
 					}
 					System.out.println();
@@ -467,6 +321,38 @@ public class AyudatInvofoxCounters {
 				}
 			}
 		}
+		
+		for (Invofox invofox : map.values()) {
+			String document = invofox.getDocument();
+			long multipleDomains = domains.stream()
+				.filter( d -> AonStringUtils.equalsIgnoreCase(document, d.getDocument() ))
+				.count();
+			MutableInt counter = new MutableInt();
+			MutableInt docsCounter = new MutableInt();
+			boolean grouped = (multipleDomains > 1);
+			boolean found = false;
+			for (Domain d : domains ) {
+				if (AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument())) {
+					invofox.setName((multipleDomains>1?">>":"")); 
+					action.accept(d, invofox , grouped , counter.getValue());		
+					counter.increment();
+					if (d.getCounter() != null) {
+						docsCounter.add( d.getCounter() );
+					}
+					found = true;
+				}
+			}
+			if (!found) {
+				invofox.setName("NOT FOUND");
+				action.accept(null, invofox , false , 0);
+			}
+			
+			if (counter.getValue() > 1) {
+				invofox.setName("TOTAL");
+				action.groupTotal(invofox, docsCounter.getValue() );
+			}
+		}
+		
 		action.finalize(fos);
 		fos.flush();
 		fos.close();
@@ -474,6 +360,7 @@ public class AyudatInvofoxCounters {
 
 	private static class ExcelAction extends AbsExcelAction {
 		private XSSFCellStyle entryHeaderStyle;
+		protected CellStyle decimalBoldStyle;
 		
 		@Override
 		protected void headerRow() {
@@ -488,6 +375,11 @@ public class AyudatInvofoxCounters {
 			defaultStyle.setFont(smallFont);
 			
 			decimalStyle.setFont(smallFont);
+			
+			decimalBoldStyle = workbook.createCellStyle();
+		    decimalBoldStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
+		    decimalBoldStyle.setAlignment( HorizontalAlignment.RIGHT );
+			decimalBoldStyle.setFont(smallBoldFont);
 
 			Font journalHeaderFont = workbook.createFont();
 			journalHeaderFont.setBold(true);
@@ -511,8 +403,6 @@ public class AyudatInvofoxCounters {
 			entryHeaderStyle.setBorderBottom(BorderStyle.THIN);
 			entryHeaderStyle.setFont(defaulFont);
 
-			
-		    
 			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
@@ -523,11 +413,6 @@ public class AyudatInvofoxCounters {
 				,"TaxId"
 				,"AON"
 				,"Processed"
-				,"Automated"
-				,"ClientDiscarded"	
-				,"Duplicated"
-				,"UsedClassifier"	
-				,"UsedSplitter"
 				,"BD"
 				,"COMPANY ID"
 				,"COMPANY NIF"
@@ -549,40 +434,66 @@ public class AyudatInvofoxCounters {
 				sheet.setColumnWidth(cellCount++, 10 * 256);
 			}
 		}
-
-		public void accept(Domain domain, Invofox invofox) {
+		
+		public void groupTotal(Invofox invofox, double total) {
 			row = sheet.createRow(rowCount++);
 			cellCount = 0;
+			Cell cell = addCell(invofox.getName());
+			
+			cell.getCellStyle().setFont(boldFont);
+			cell = addCell(invofox.getDocument());
+			cell.getCellStyle().setFont(boldFont);
+			cell = addCell(total);
+			cell.setCellStyle(decimalBoldStyle);
+			cell = addCell(invofox.getProcessed());
+			cell.setCellStyle(decimalBoldStyle);
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+			addEmptyCell();
+		}
+		
+		public void accept(Domain domain, Invofox invofox, boolean grouped, Integer counter) {
+			row = sheet.createRow(rowCount++);
+			cellCount = 0;
+
 			addCell(invofox.getName());
 			addCell(invofox.getDocument());
 			
-			addCell(domain.getCounter());
+			if (domain != null && domain.getCounter() != null) {
+				addCell((double) domain.getCounter());
+			} else {
+				addEmptyCell();
+			}
 			
-			addCell(invofox.getProcessed());
-			addCell(invofox.getAutomated());
-			addCell(invofox.getClientDiscarded());	
-			addCell(invofox.getDuplicated());
-			addCell(invofox.getUsedClassifier());	
-			addCell(invofox.getUsedSplitter());
-			
-			addCell(domain.getSchema());
-			addCell(domain.getRegistry());
-			addCell(domain.getDocument());
-			addCell(domain.getCompanyName());
-			addCell(domain.getDomainId());
-			addCell(domain.getDomainName());
-			addCell(domain.getDomainDescription());
-			addCell(domain.getDomainAonCustomer());
-			addCell(domain.getParentId());
-			addCell(domain.getParentName());
-			addCell(domain.getParentDescription());
-			addCell(domain.getParentAonCustomer());
-
-			try {
-				if (rowCount % 100 == 0) sheet.flushRows();
-			} catch (IOException e) {
-				throw new AonCoreException( e );
+			if (!grouped || counter == 0) {
+				addCell(invofox.getProcessed());
+			} else {
+				addEmptyCell();
+			}
+			if (domain != null) {
+				addCell(domain.getSchema());
+				addCell(domain.getRegistry());
+				addCell(domain.getDocument());
+				addCell(domain.getCompanyName());
+				addCell(domain.getDomainId());
+				addCell(domain.getDomainName());
+				addCell(domain.getDomainDescription());
+				addCell(domain.getDomainAonCustomer());
+				addCell(domain.getParentId());
+				addCell(domain.getParentName());
+				addCell(domain.getParentDescription());
+				addCell(domain.getParentAonCustomer());
 			}
 		}
 	}
+
 }
