@@ -230,17 +230,17 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static JSONObject deleteAction(AonApiData api) {
 		System.out.println("DELETE METHOD");
-		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-//		S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
-//		if(document.getS3key() != null && document.getType() == 0)
-//			S3rDoc.deleteObject(document.getS3key(), AON_BUCKET_NAME);
-		JSONArray array = JsonUtils.getJSONArray(api.getData(), IJsonNames.ID);
-		Integer[] ids = new Integer[array.length()];
+		JSONArray array = JsonUtils.getJSONArray(api.getData(), IJsonNames.DATA);
+		Integer[] idsRdoc = new Integer[array.length()];
+		Integer[] idsRattach = new Integer[array.length()];
 		for(int i = 0; i < array.length(); i++) {
-			ids[i] = array.getInt(i);
+			if(array.getJSONObject(i).getInt(IJsonNames.TYPE) == 0)
+				idsRdoc[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
+			else
+				idsRattach[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
 		}
-		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(ids), f -> f.getIdProperty().in(ids), type);
-		return new JSONObject();
+		AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc), f -> f.getIdProperty().in(idsRattach));	
+		return new JSONObject("{ result: OK }");
 	}
 	
 	private static Filter generateFilter(S3DocumentProperties f, AonApiData api) {
