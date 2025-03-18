@@ -167,7 +167,7 @@ export class AonDesktop extends AonElement {
 					domain_name: attach.getDomain().getName(),
 					id: attach.getId()
 				};
-				let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+				let url = location.origin + '/ms/api/file/' + btoa(JSON.stringify(data));
 
 				let img = this.createElement(TAG.IMG);
 				img.id = this.id + 'LogoImg';

@@ -99,12 +99,24 @@
   content: 'titleCustom';	
 }
 
+#aonContactIcon1 {
+  display: titleIcon; 
+}
+
 .aonSupportTelephone:after {
   content: 'phoneCustom';
 }
 
-.aonSupportUsersEmail:after {
-  content: 'emailCustom';
+#aonContactIcon2 {
+  display: phoneIcon; 
+}
+
+.aonSupportUsersEmail:after{
+  content: "emailCustom";
+}
+
+#aonContactIcon3 {
+  display: emailIcon; 
 }
 
 .aonSupportSalesEmail:after,

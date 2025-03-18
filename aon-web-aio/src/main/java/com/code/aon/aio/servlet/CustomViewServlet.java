@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -117,13 +118,22 @@ public class CustomViewServlet extends HttpServlet {
 					String loginLogoMd5 = getMd5(loginLogoAttach.getData());
 					byte [] bytes = is.readAllBytes();
 					String css = new String(bytes, StandardCharsets.UTF_8);
-					
-					css = css.replaceAll("phoneCustom", phone);
-					css = css.replaceAll("emailCustom", email);
-					css = css.replaceAll("titleCustom", title);
-					css = css.replaceAll("logoCustom", "aonDocuments/" + headerLogoAttach.getId() + "-" + headerLogoMd5);
-					css = css.replaceAll("faviconCustom", "aonDocuments/" + faviconAttach.getId() + "-" + faviconMd5);
-					css = css.replaceAll("loginLogoCustom", "aonDocuments/" + loginLogoAttach.getId() + "-" + loginLogoMd5);
+				
+					css = AonStringUtils.replace(css, "phoneCustom", phone==null ? "" : phone);
+					if (phone==null) {
+						css = AonStringUtils.replace(css, "phoneIcon", "none");
+					}
+					css = AonStringUtils.replace(css, "emailCustom", email==null ? "" : email);
+					if (email==null) {
+						css = AonStringUtils.replace(css, "emailIcon", "none");
+					}
+					css = AonStringUtils.replace(css, "titleCustom", title==null ? "" : title);
+					if (title==null) {
+						css = AonStringUtils.replace(css, "titleIcon", "none");
+					}
+					css = AonStringUtils.replace(css, "logoCustom", "aonDocuments/" + headerLogoAttach.getId() + "-" + headerLogoMd5);
+					css = AonStringUtils.replace(css, "faviconCustom", "aonDocuments/" + faviconAttach.getId() + "-" + faviconMd5);
+					css = AonStringUtils.replace(css, "loginLogoCustom", "aonDocuments/" + loginLogoAttach.getId() + "-" + loginLogoMd5);
 					
 					byte[] finalCssBytes = css.getBytes(StandardCharsets.UTF_8);
 					resp.setContentLength(finalCssBytes.length);  
