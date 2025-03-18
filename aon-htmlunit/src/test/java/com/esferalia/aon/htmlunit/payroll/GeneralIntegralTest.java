@@ -2903,6 +2903,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1184.00 * 2);
 	}
 
+	@Test
+	public void TestIndefinidoFijoDiscontinuo() throws Exception {
+		
+		if (!isDisplayed("indefinido_fijo,_discontino"))
+			open("orden_pjc_178/2025");
+
+
+		wait4Id("indefinido_fijo,_discontino");
+
+		draft("INDEFINIDO FIJO, DISCONTINO");
+		calculate(Calendar.JANUARY,2025);
+		click("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		click("costsCheck-input");
+		
+		draft("CORTA DURACIÓN, ART. 28");
+		calculate(Calendar.JANUARY,2025);
+		click("costsCheck-input");
+		assertText("cgc_e_tempPercentLabel", "3,26 %");
+		click("costsCheck-input");
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
