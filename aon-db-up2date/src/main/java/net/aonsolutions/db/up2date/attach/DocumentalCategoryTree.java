@@ -76,7 +76,7 @@ public class DocumentalCategoryTree implements Update {
 
 	private void addDefaultCategories(DSLContext dslContext, Integer domain) {
 		
-		String [] categorias = {"Fiscal", "Contable", "Laboral", "Notificaciones", "General", "Listados excel (1 opcion)"};
+		String [] categorias = {"Fiscal", "Contable", "Laboral", "Notificaciones", "General", "Listados excel"};
 		
 		String [] fiscalTags = {"1T", "2T", "3T", "4T", "Anual"};
 		String [] contableTags = {"CCAA", "Libros Contables", "Libros Diarios", "Balance situación", "PyG"};

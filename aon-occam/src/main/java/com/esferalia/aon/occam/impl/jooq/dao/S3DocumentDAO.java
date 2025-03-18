@@ -195,23 +195,18 @@ public class S3DocumentDAO {
 		return document;
 	}
 	
-	public static void delete(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer type){
+	public static void delete(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter){
 		ctx.checkWrite();
 		java.util.Date date = new java.util.Date();
-		if(type == 0)
-//			ctx.getDslContext().delete(Rdoc.RDOC)
-//				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-//				.execute();
-			ctx.getDslContext()
-				.update(Rdoc.RDOC)
-				.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
-				.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
-				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-				.execute();
-		else
-			ctx.getDslContext().delete(Rattach.RATTACH)
-				.where(ATTACH_PROPERTIES.getConditions(attachFilter))
-				.execute();
+		ctx.getDslContext()
+			.update(Rdoc.RDOC)
+			.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
+			.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
+			.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+			.execute();
+		ctx.getDslContext().delete(Rattach.RATTACH)
+			.where(ATTACH_PROPERTIES.getConditions(attachFilter))
+			.execute();
 	}
 	
 	public static byte[] getFile(AONContext ctx, Integer id) {

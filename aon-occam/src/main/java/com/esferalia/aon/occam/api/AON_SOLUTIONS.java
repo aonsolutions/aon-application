@@ -1221,9 +1221,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer type) {
+	public static void deleteS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			getAttachment().deleteS3Document(ctx, filter, attachFilter, type);
+			getAttachment().deleteS3Document(ctx, filter, attachFilter);
 		}
 	}
 	
