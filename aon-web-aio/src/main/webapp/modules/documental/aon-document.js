@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, deleteS3Document } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -11,8 +11,8 @@ import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
 export class AonDocument extends AonElement {
-
   doc;
+  docS3;
   _tags;
 
   TOOLBAR;
@@ -64,20 +64,11 @@ export class AonDocument extends AonElement {
     this.TYPE = this.id + 'Type';
   }
 
-//este es el que habia antes, controlar con lo nuevo
-//     
-
   async build() {
-    let toolbar;
-    if(this.isBetaDoc()){
-      toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>`
-    }else{
-      toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>`
-    }
+    let title   = this.isBetaDoc() ? this.document.name : this.document.title;
+    let toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${title}"> </aon-toolbar>`
 
-    this.innerHTML = 
-      toolbar +
-      `
+    this.innerHTML = toolbar +`
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
@@ -95,6 +86,7 @@ export class AonDocument extends AonElement {
     if(this.isBetaDoc()){
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
+          this.docS3 = document;
           fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
           let dataDiv = this.getElement(this.DATA);
           dataDiv.style.width = '50%';
@@ -129,11 +121,6 @@ export class AonDocument extends AonElement {
       this.buildDocumentToolbar();
     }
 
-  }
-
-  getS3DocumentFile(data){
-    let response = getS3Document_File(data);
-    return response;
   }
 
   buildData() {
@@ -322,7 +309,10 @@ export class AonDocument extends AonElement {
       documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 
       documentToolbar.addSeparator();
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+      if(this.isBetaDoc() && this.getDur().isDocumentalManager()){
+        // Solo si eres asesor, entiendo que es este permiso
+        documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+      } else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
       }
       //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
@@ -356,6 +346,25 @@ export class AonDocument extends AonElement {
 		d.open();
   }
 
+  
+  removeS3() {
+    let aonDocumental = this.getApplication();
+    let d = document.getElementById(aonDocumental.DIALOG);
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.DELETE_FILE);
+    d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.name}`);
+    d.addAcceptAction(() => {
+      let data = {
+        id: this.document.id,
+        type: this.document.type
+      };
+      deleteS3Document(data).then(() => {
+        this.back();
+      });
+    });
+    d.open();
+  }
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
@@ -376,7 +385,11 @@ export class AonDocument extends AonElement {
   }
 
   download() {
-    openFileUrl(this.document.file.url);
+    if(this.isBetaDoc()){
+      openFileUrl(this.docS3);
+    } else {
+      openFileUrl(this.document.file.url);
+    }
   }
 
   updateCategory(category) {
