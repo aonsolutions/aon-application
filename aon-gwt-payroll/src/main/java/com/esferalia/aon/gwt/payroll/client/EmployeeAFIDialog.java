@@ -824,22 +824,26 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			if (isComunication) {
 				if (isStartContract())
 					onStartContract();
-				if (isEndContract())
+				else if (isEndContract())
 					onEndContract(settleReasonLB.getSelectedValue());
-				if (isChangeContract()) {
-					onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());	
-				} if (isQuoteContract())
-					onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
-				if (isOcupationContract())
-					onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
-				if (isPartialityCoefContract())
-					onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
-				if (isCnoContract())
-					onCnoContract(afiChangesMap.getChangeValue("CNO"), afiChangesMap.getChangeDate());
-				
-				// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
-				if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
-					onChangeContract(this.tc2Original, (null == this.partialityCoefOriginal ? null : this.partialityCoefOriginal.toString()), afiChangesMap.getChangeDate());
+				else {
+					
+					if (isChangeContract()) {
+						onChangeContract(afiChangesMap.getChangeValue("TC2"), afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());	
+					} if (isQuoteContract())
+						onQuoteContract(afiChangesMap.getChangeValue("GRUPO_COTIZACION"), afiChangesMap.getChangeDate());
+					if (isOcupationContract())
+						onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
+					if (isPartialityCoefContract())
+						onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+					if (isCnoContract())
+						onCnoContract(afiChangesMap.getChangeValue("CNO"), afiChangesMap.getChangeDate());
+					
+					// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
+					if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
+						onChangeContract(this.tc2Original, (null == this.partialityCoefOriginal ? null : this.partialityCoefOriginal.toString()), afiChangesMap.getChangeDate());
+					
+				}
 			}
 			
 			// Solo recargar la informacion del empleado si la fecha de modificacion es
