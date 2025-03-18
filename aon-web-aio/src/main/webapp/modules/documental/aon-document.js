@@ -65,11 +65,19 @@ export class AonDocument extends AonElement {
   }
 
 //este es el que habia antes, controlar con lo nuevo
-//      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
+//     
 
   async build() {
-    this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>
+    let toolbar;
+    if(this.isBetaDoc()){
+      toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>`
+    }else{
+      toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>`
+    }
+
+    this.innerHTML = 
+      toolbar +
+      `
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
