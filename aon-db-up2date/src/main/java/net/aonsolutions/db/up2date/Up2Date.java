@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod369Detail2025;
 import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod202Result;
 import net.aonsolutions.db.up2date.management.AlterInvoiceAddIndexDomainStatus;
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
 import net.aonsolutions.db.up2date.payroll.LackPayInsert;
 import net.aonsolutions.db.up2date.payroll.PartialRetirementInsert;
@@ -550,7 +551,9 @@ public class Up2Date {
 			// RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE,
 			// DropDaysFix.DROPDAYSFIX
 			
-			MEITrainingFix2025.MEITRAININGFIX2025
+			// MEITrainingFix2025.MEITRAININGFIX2025
+			
+			AgreementPaymentsMonthFix.AGREEMENTPAYMENTSMONTHFIX
 			
 	};
 

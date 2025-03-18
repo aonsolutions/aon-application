@@ -195,51 +195,59 @@ class Adiss2Salary {
 		String description = AonStringUtils
 				.trim(registro.map(r -> firstNotBlank(r.getDESCRIPCION(), r.getDESCRIPCION2())).orElse(null));
 
-		BigDecimal irpf = concepto.getIMPORTECONCEPTO();
+//	    Tipo T: para importes fijos que se cobran por el total del período.
+//	    Tipo N: para importes que se cobran por día natural (la aplicación multiplicará por el número de días naturales del período).
+//	    Tipo L: para importes que se cobran por día laboral (la aplicación multiplicará por el número de días laborales del período).
+//	    Tipo X: su tratamiento es idéntico al del día laboral, con la diferencia de que en los días X se consideran también laborales los festivos entre semana.
+//	    Tipo F: sólo actúa si, posteriormente, se informan número de unidades desde el punto: "Calculo/ Gestión de Incidencias (código de incidencia 1 = Conceptos Variables)". La aplicación multiplicará el importe de este concepto por el número de unidades entradas. Es de utilidad para calcular horas extras, dietas, kilometraje,...
+//	    Tipo S: son literales que no afectan a los importes. Permiten reflejar en la nómina literales a nivel informativo.
+//	    Tipo H: el importe se multiplicará por las horas realizadas en el período.
+	    
+	    BigDecimal irpf = concepto.getIMPORTECONCEPTO();
 		BigDecimal amount = concepto.getIMPORTECONCEPTO();
 		BigDecimal quote = salaryRecord.getSsRegime() == 3 ? BigDecimal.ZERO : concepto.getIMPORTECONCEPTO();
-
+		
 		if (AonNumberUtils.between(codigo, 1, 399)) {
-			// Del cï¿½digo 001 al 399. Conceptos que cotizan a todo (Contingencias Comunes
-			// +
-			// Accidentes) y tributan a I.R.P.F. Ejemplo: salario base, plus convenio, etc.
+			// Del código 001 al 399. Conceptos que cotizan a todo (Contingencias
+			// Comunes Accidentes) y tributan a I.R.P.F. Ejemplo: salario base, plus
+			// convenio, etc.
+
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, quote);
 		} else if (AonNumberUtils.between(codigo, 400, 449)) {
-			// Del cï¿½digo 400 al 449. Conceptos que sï¿½lo cotizan a Accidentes y tributan
-			// a
+			// Del código 400 al 449. Conceptos que sï¿½lo cotizan a Accidentes y tributan a
 			// I.R.P.F. Ejemplo: horas extras.
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, quote);
 		} else if (AonNumberUtils.between(codigo, 450, 599)) {
-			// Del cï¿½digo 450 al 599. Conceptos que sï¿½lo tributan a I.R.P.F. Ejemplo:
+			// Del código 450 al 599. Conceptos que sï¿½lo tributan a I.R.P.F. Ejemplo:
 			// prestaciï¿½n de IT
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, BigDecimal.ZERO);
 
 		} else if (AonNumberUtils.between(codigo, 600, 699)) {
-			// Del cï¿½digo 600 al 699. Conceptos que no cotizan, ni tributan. Ejemplo:
+			// Del código 600 al 699. Conceptos que no cotizan, ni tributan. Ejemplo:
 			// dietas.
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, BigDecimal.ZERO,
 					BigDecimal.ZERO);
 
 		} else if (AonNumberUtils.between(codigo, 700, 799)) {
-			// Del cï¿½digo 700 al 799. Conceptos de descuento. Significa que cualquier
-			// concepto situado entre estos cï¿½digos se tratarï¿½ como un descuento a
+			// Del código 700 al 799. Conceptos de descuento. Significa que cualquier
+			// concepto situado entre estos códigos se tratarï¿½ como un descuento a
 			// efectos
 			// del cï¿½lculo de la nï¿½mina.
 			return Optional.empty();
 
 		} else if (AonNumberUtils.between(codigo, 900, 912)) {
-			// Del cï¿½digo 901 al 912. Conceptos de Pagas Extras. Cï¿½digos de conceptos
+			// Del código 901 al 912. Conceptos de Pagas Extras. códigos de conceptos
 			// que el
 			// programa asigna automï¿½ticamente a las diferentes pagas extras que puede
 			// tener
 			// definidas el trabajador a nivel particular. A la paga extra nï¿½mero 1 le
-			// corresponde el cï¿½digo 901, a la nï¿½mero 2 el cï¿½digo 902,... y asï¿½
-			// sucesivamente. Este cï¿½digo aparecerï¿½ asociado al importe de la paga en la
+			// corresponde el código 901, a la nï¿½mero 2 el código 902,... y asï¿½
+			// sucesivamente. Este código aparecerï¿½ asociado al importe de la paga en la
 			// hoja de salario. agrupaciones predefinidas conceptos
 			return Optional.empty();
 
 		} else if (AonNumberUtils.between(codigo, 800, 999)) {
-			// Del cï¿½digo 800 al 999. Conceptos predefinidos que utiliza la aplicaciï¿½n
+			// Del código 800 al 999. Conceptos predefinidos que utiliza la aplicaciï¿½n
 			// para
 			// determinados cï¿½lculos internos como son las bases de cotizaciï¿½n, las
 			// deducciones de Seguridad Social o la retenciï¿½n a cuenta del I.R.P.F. Estos
