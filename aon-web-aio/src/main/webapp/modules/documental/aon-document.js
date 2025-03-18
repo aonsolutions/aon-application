@@ -356,9 +356,13 @@ export class AonDocument extends AonElement {
     d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.name}`);
     d.addAcceptAction(() => {
       let data = {
-        id: this.document.id,
-        type: this.document.type
-      };
+        data: [
+          {
+            id: this.document.id,
+            type: this.document.type
+          }
+        ]
+      };      
       deleteS3Document(data).then(() => {
         this.back();
       });

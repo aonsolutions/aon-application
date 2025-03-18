@@ -1,4 +1,4 @@
-import { post, get, remove, openFile, getFile } from "./request.js";
+import { post, get, remove, openFile, getFile, removeS3 } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getDocument = (id) => get(`${API_URL}/documental`, { id });
