@@ -1,4 +1,4 @@
-import { post, get, remove, openFile, getFile } from "./request.js";
+import { post, get, put, remove, openFile, getFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getDocument = (id) => get(`${API_URL}/documental`, { id });
@@ -103,10 +103,11 @@ export const getSepaDocument   = (data) => get(`${API_URL}/documental/file/sepa`
 export const downloadDocument  = (data) => open(`${API_URL}/download?json=${data}`);
 
 //Llamadas al nuevo servlet de documental
-export const getS3Document 		= (data) => get(`${API_URL}/s3/`, data);
-export const getS3Document_File = (data) => getFile(`${API_URL}/s3/file`, data);
-export const getS3DocumentCount = (data) => get(`${API_URL}/s3/coount`, data);
-export const postS3Document 	= (data) => post(`${API_URL}/s3/`, data);
+export const getS3Document 		 = (data) => get(`${API_URL}/s3/`, data);
+export const getS3Document_File  = (data) => getFile(`${API_URL}/s3/file`, data);
+export const getS3DocumentCount  = (data) => get(`${API_URL}/s3/coount`, data);
+export const postS3Document 	 = (data) => post(`${API_URL}/s3/`, data);
+export const putS3DocumentUpdate = (data) => put(`${API_URL}/s3/`, data);
 
 //LLamadas al nuevo servlet de categorias
 export const getS3Category 		= (data) => get(`${API_URL}/s3category`, data);
