@@ -471,10 +471,13 @@ export class AonDocumental extends AonElement {
 	}
 
 	aonDocumentById(id) {
-//		getS3Document_File(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+	if(this.isBetaDoc()){
 		getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-//		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+	}else{
+		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+		}
 	}
+	
 
 	aonDocument(doc) {
 		let application = this.getApplication();
@@ -577,7 +580,7 @@ export class AonDocumental extends AonElement {
                 const tagElement            = document.getElementById("aonDocumentalUploadTag");
                 const dateElement           = document.getElementById("aonDocumentalUploadDatePicker");
 
-                // Verificar si los elementos tienen valores válidos y asignarlos a la propiedad 'category' del objeto 'data'
+                // Verificar si los elementos tienen valores vï¿½lidos y asignarlos a la propiedad 'category' del objeto 'data'
                 if (categoryElement && categoryElement.value !== null && categoryElement.value.trim() !== "") {
                     data.category = categoryElement.value;
 

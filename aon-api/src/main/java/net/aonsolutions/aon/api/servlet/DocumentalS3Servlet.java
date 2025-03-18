@@ -210,7 +210,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		System.out.println("PUT METHOD");
 		JSONObject json = api.getData();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-		MimeType mime = JsonUtils.getString(json, IJsonNames.CONTENT_TYPE) != null ? MimeType.getByExtension(JsonUtils.getString(json, IJsonNames.CONTENT_TYPE)) : null;
+		MimeType mime = JsonUtils.getString(json, IJsonNames.CONTENT_TYPE) != null ? MimeType.safeValueFromContenType(JsonUtils.getString(json, IJsonNames.CONTENT_TYPE)) : null;
 		S3Document rdoc = new S3Document()
 				.setId(json.getInt(IJsonNames.ID))
 				.setCategory(JsonUtils.getInteger(json, IJsonNames.CATEGORY))

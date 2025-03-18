@@ -2,7 +2,11 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
+<<<<<<< HEAD
 import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate } from '../../services/service.js';
+=======
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, deleteS3Document } from '../../services/service.js';
+>>>>>>> 361fdb3ef5e04f824e524631cea8bd9472de5d43
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -121,11 +125,6 @@ export class AonDocument extends AonElement {
       this.buildDocumentToolbar();
     }
 
-  }
-
-  getS3DocumentFile(data){
-    let response = getS3Document_File(data);
-    return response;
   }
 
   buildData() {
@@ -360,7 +359,10 @@ export class AonDocument extends AonElement {
       documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 
       documentToolbar.addSeparator();
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+      if(this.isBetaDoc() && this.getDur().isDocumentalManager()){
+        // Solo si eres asesor, entiendo que es este permiso
+        documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+      } else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
       }
       //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
@@ -393,6 +395,25 @@ export class AonDocument extends AonElement {
     d.open();
   }
 
+  
+  removeS3() {
+    let aonDocumental = this.getApplication();
+    let d = document.getElementById(aonDocumental.DIALOG);
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.DELETE_FILE);
+    d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.name}`);
+    d.addAcceptAction(() => {
+      let data = {
+        id: this.document.id,
+        type: this.document.type
+      };
+      deleteS3Document(data).then(() => {
+        this.back();
+      });
+    });
+    d.open();
+  }
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);

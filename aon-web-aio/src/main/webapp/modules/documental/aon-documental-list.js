@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document } from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-table.js';
@@ -172,12 +172,27 @@ export class AonDocumentalList extends AonElement {
 		d.setTitle(MSG.DELETE_FILE);
 		d.setContentHTML(`Estás seguro de eliminar los ficheros?`);
 		d.addAcceptAction(() => {
-		  deleteFile({
+			console.log('hasta aqui llega en removeFiles')
+		  deleteS3Document({
 			id: aonDocumentalTable.selected.map(r => r.id),
-			attach_type: 'registry'
+			type: aonDocumentalTable.selected.map(t => t.type)
 		  }).then(() => this.init() );
 		});
 		d.open();
+		// let aonDocumentalTable = this.getElement(this.TABLE);
+		// let aonDocumental = this.getApplication();
+		// let d = document.getElementById(aonDocumental.DIALOG);
+		// d.clear();
+		// if(!this.isMobile()) d.width = '400px';
+		// d.setTitle(MSG.DELETE_FILE);
+		// d.setContentHTML(`Estás seguro de eliminar los ficheros?`);
+		// d.addAcceptAction(() => {
+		//   deleteFile({
+		// 	id: aonDocumentalTable.selected.map(r => r.id),
+		// 	attach_type: 'registry'
+		//   }).then(() => this.init() );
+		// });
+		// d.open();
 	}
 
 	sendFiles() {
