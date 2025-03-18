@@ -11,8 +11,8 @@ import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
 export class AonDocument extends AonElement {
-
   doc;
+  docS3;
   _tags;
 
   TOOLBAR;
@@ -64,20 +64,11 @@ export class AonDocument extends AonElement {
     this.TYPE = this.id + 'Type';
   }
 
-//este es el que habia antes, controlar con lo nuevo
-//     
-
   async build() {
-    let toolbar;
-    if(this.isBetaDoc()){
-      toolbar = `<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>`
-    }else{
-      toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>`
-    }
+    let title   = this.isBetaDoc() ? this.document.name : this.document.title;
+    let toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${title}"> </aon-toolbar>`
 
-    this.innerHTML = 
-      toolbar +
-      `
+    this.innerHTML = toolbar +`
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
@@ -95,6 +86,7 @@ export class AonDocument extends AonElement {
     if(this.isBetaDoc()){
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
+          this.docS3 = document;
           fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
           let dataDiv = this.getElement(this.DATA);
           dataDiv.style.width = '50%';
@@ -393,7 +385,11 @@ export class AonDocument extends AonElement {
   }
 
   download() {
-    openFileUrl(this.document.file.url);
+    if(this.isBetaDoc()){
+      openFileUrl(this.docS3);
+    } else {
+      openFileUrl(this.document.file.url);
+    }
   }
 
   updateCategory(category) {
