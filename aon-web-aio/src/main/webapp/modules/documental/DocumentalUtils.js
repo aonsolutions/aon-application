@@ -165,13 +165,15 @@ function oldDocumentalSelects(dur) {
 
 // Limpiar campos de subcategoria, administracion y modelos
 function clearFields(table, fieldsToKeep = []) {
-    const trElements = table.querySelectorAll('tr');
-    trElements.forEach((tr) => {
-        // Evitar eliminar las filas que deben permanecer (etiquetas, categori�a y el datePicker)
-        if (!fieldsToKeep.includes(tr)) {
-            tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
-        }
-    });
+  var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
+  button.disabled = true;
+  const trElements = table.querySelectorAll('tr');
+  trElements.forEach((tr) => {
+    // Evitar eliminar las filas que deben permanecer (etiquetas, categori�a y el datePicker)
+    if (!fieldsToKeep.includes(tr)) {
+      tr.remove(); // Elimina todas las filas de la tabla excepto las que deben permanecer
+    }
+  });
 }
 
 function S3DocumentalSelects() {
@@ -304,8 +306,12 @@ function S3DocumentalSelects() {
 };
 
   function uploadedCategory(selCat, table, trCategory, trTag, trDatePicker, loadingOverlay){
+    // Botton de aceptar oculto
+    var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
+    button.disabled = true;
     // Se escoge una categoria
 	selCat.addEventListener('change', (event) => {
+      button.disabled = true;
       const selectedCategoryId = event.target.value;
 
       // Limpiar los campos antes de generar nuevos select
@@ -341,6 +347,7 @@ function S3DocumentalSelects() {
 ///////////////////////////////////////////////////
 			// Event listener para la selección de la subcategoría
 			selSubCat.addEventListener('change', (event) => {
+                button.disabled = true;
 				const selectedSubCategoryId = event.target.value;
 
 				// Limpiar los campos de administración y modelos antes de generar nuevos
@@ -374,6 +381,7 @@ function S3DocumentalSelects() {
                         ///////////////////////////////////////////////////
                             // Event listener para la selección de la administración
                             selAdministration.addEventListener('change', (event) => {
+                                button.disabled = true;
                                 const selectedAdministrationId = event.target.value;
 
                                 // Limpiar el campo de modelos antes de generar nuevos
@@ -405,7 +413,12 @@ function S3DocumentalSelects() {
                                             trModel.appendChild(tdModel);
                                             // Oculta el overlay
                                             loadingOverlay.style.display = 'none';
+                                            // Cuando se escoge un modelo
+                                            selModel.addEventListener('change', (event) => {
+                                                button.disabled = false;
+                                            });
                                         } else {
+                                          button.disabled = false;
                                           // Oculta el overlay
                                           loadingOverlay.style.display = 'none';
                                           console.log('No hay modelos disponibles.');
@@ -415,6 +428,7 @@ function S3DocumentalSelects() {
                             });
                         ///////////////////////////////////////////////////
 						} else {
+                          button.disabled = false;
                           // Oculta el overlay
                           loadingOverlay.style.display = 'none';
                           console.log('No hay administraciones disponibles.');
@@ -424,11 +438,14 @@ function S3DocumentalSelects() {
 			});
 ///////////////////////////////////////////////////
           } else {
+            button.disabled = false;
             // Oculta el overlay
             loadingOverlay.style.display = 'none';
             console.log('No hay subcategorías disponibles.');
           }
         });
+      } else {
+        button.disabled = false;
       }
 	});
   }
