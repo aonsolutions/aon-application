@@ -214,12 +214,12 @@ class Adiss2Salary {
 
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, quote);
 		} else if (AonNumberUtils.between(codigo, 400, 449)) {
-			// Del código 400 al 449. Conceptos que sï¿½lo cotizan a Accidentes y tributan a
+			// Del código 400 al 449. Conceptos que sólo cotizan a Accidentes y tributan a
 			// I.R.P.F. Ejemplo: horas extras.
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, quote);
 		} else if (AonNumberUtils.between(codigo, 450, 599)) {
-			// Del código 450 al 599. Conceptos que sï¿½lo tributan a I.R.P.F. Ejemplo:
-			// prestaciï¿½n de IT
+			// Del código 450 al 599. Conceptos que sólo tributan a I.R.P.F. Ejemplo:
+			// prestación de IT
 			return insertSalaryPayment(dslContext, salaryRecord, name, description, amount, irpf, BigDecimal.ZERO);
 
 		} else if (AonNumberUtils.between(codigo, 600, 699)) {
