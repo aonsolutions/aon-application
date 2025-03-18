@@ -150,6 +150,20 @@ export const get = (url, data, sessionData) => {
   });
 };
 
+export const  getFile = (url, data, sessionData) => {
+  return new Promise((resolve, reject) => {
+    sessionData = sessionData || getDefaultSessionData();
+    console.log('data',data);
+    requestFile("GET", url, data, (result, error) => {
+      console.log('result',result);
+      try{
+        if (error) reject(error);
+        else blobToBase64(result.blob).then(data => resolve(data));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const getPro = (url, data) => {
   return get(url, data, getProSessionData());
 };

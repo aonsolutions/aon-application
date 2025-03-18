@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -67,7 +67,7 @@ export class AonDocument extends AonElement {
 //este es el que habia antes, controlar con lo nuevo
 //      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
 
-  build() {
+  async build() {
     this.innerHTML = `
       <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.name}"> </aon-toolbar>
       <div style="display:flex;">
@@ -80,26 +80,52 @@ export class AonDocument extends AonElement {
       </div>
     `;
 
-    this.doc = this.document;
-    let fileDiv = this.getElement(this.FILE);
+    let fileDiv           = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
-    fileDiv.style.width = '50%';
-		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+    fileDiv.style.width   = '50%';
+    
+    if(this.isBetaDoc()){
+      let data = { type: this.document.type, id: this.document.id};
+      getS3Document_File(data).then(document => {
+          fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+          let dataDiv = this.getElement(this.DATA);
+          dataDiv.style.width = '50%';
+    
+          if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+            let offset1 = fileDiv.getBoundingClientRect();
+            fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+    
+            let offset2 = dataDiv.getBoundingClientRect();
+            dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+          }
+    
+          this.buildData();
+          this.buildDocumentToolbar();
+      });
+    
+    } else {
+      fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
-    let dataDiv = this.getElement(this.DATA);
-    dataDiv.style.width = '50%';
+      let dataDiv = this.getElement(this.DATA);
+      dataDiv.style.width = '50%';
 
-		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
-      let offset1 = fileDiv.getBoundingClientRect();
-      fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+      if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+        let offset1 = fileDiv.getBoundingClientRect();
+        fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
 
-      let offset2 = dataDiv.getBoundingClientRect();
-  		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+        let offset2 = dataDiv.getBoundingClientRect();
+        dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+      }
+
+      this.buildData();
+      this.buildDocumentToolbar();
     }
 
-    this.buildData();
+  }
 
-    this.buildDocumentToolbar();
+  getS3DocumentFile(data){
+    let response = getS3Document_File(data);
+    return response;
   }
 
   buildData() {
@@ -237,9 +263,9 @@ export class AonDocument extends AonElement {
     containerTags.style.flexWrap = "wrap";
     containerTags.id = "containerTags";
     card.setContent(containerTags);
-    this.document.tags.forEach((item) => {
-      this.addTag(item);
-    });
+    // this.document.tags.forEach((item) => {
+    //   this.addTag(item);
+    // });
     //set tags avaibles
     this.setTagsAvaible();
   }

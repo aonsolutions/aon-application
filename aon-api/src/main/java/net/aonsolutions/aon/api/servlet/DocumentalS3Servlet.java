@@ -297,7 +297,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		json.put(IJsonNames.S3_KEY, document.getS3key());
 		json.put(IJsonNames.SCOPE, document.getScope());
 		json.put(IJsonNames.SECURITY_LEVEL, document.getSecurityLevel());
-		json.put(IJsonNames.CONTENT_TYPE, document.getMimetype());
+		json.put(IJsonNames.CONTENT_TYPE, document.getMimetype().getName());
 		json.put(IJsonNames.DATE, document.getDocumentDate());
 		json.put(IJsonNames.CREATION_USER, document.getCreationUser());
 		json.put(IJsonNames.CREATION_DATE, document.getCreationDate());
