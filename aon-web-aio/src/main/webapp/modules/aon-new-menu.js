@@ -51,7 +51,6 @@ import { AonSearchBox } from '../components/aon-search-box.js';
 
 import { AonParent } from "./aon-parent.js";
 
-
 import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
 import { getApplicationParameters } from '../services/applicationParameterService.js';
@@ -61,12 +60,9 @@ import { AonSuiteMenu } from './aon-suite-menu.js';
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
 //
 
-
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
-
-
 
 export class AonNewMenu extends AonElement {
 	AON_MENU_TOPNAV;
@@ -77,8 +73,7 @@ export class AonNewMenu extends AonElement {
 	AON_MENU_SEARCH_BOX;
 	AON_MENU_SEARCH_DIALOG;
 	CLOSE;
-	
-	
+
 	supersetDashboard;
 
 	get id() {

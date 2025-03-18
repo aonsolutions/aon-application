@@ -24,7 +24,7 @@ module.exports = {
     },
     optimization: {
         minimizer: [
-//          new CssMinimizerPlugin(), '...'
+          new CssMinimizerPlugin(), '...'
         ]
 	},
 	resolve: {

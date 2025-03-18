@@ -27,7 +27,6 @@ export class AonDocument extends AonElement {
   TAG;
   TYPE;
 
-
   get document() {
     return JSON.parse(this.getAttribute('document'));
   }
@@ -266,7 +265,6 @@ export class AonDocument extends AonElement {
       // });
       //set tags avaibles
       this.setTagsAvaible();
-      
     }
   }
   
@@ -293,6 +291,8 @@ export class AonDocument extends AonElement {
         date.setDate(new Date(d[0], d[1] - 1, d[2]));
       }
       tdDate.appendChild(date);
+      // Si se modifica la fecha
+      date.addEventListener(EVENT.CHANGE, (event) => this.updateDate(date.getDateValue()));
 
     // Nombre
       let tr2 = this.createElement(TAG.TR);
@@ -307,9 +307,6 @@ export class AonDocument extends AonElement {
       }
       name.setValue(this.document.name);
       name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
-
-    let tr3 = this.createElement(TAG.TR);
-    table.appendChild(tr3);
   }
 
   addTag(tag){
@@ -462,7 +459,7 @@ export class AonDocument extends AonElement {
   }
 
   updateName(name) {
-    if(this.isBetaDoc()){
+    if(this.isBetaDoc()){ 
       this.doc.name = name;
     } else {
       this.doc.title = name;
@@ -470,10 +467,14 @@ export class AonDocument extends AonElement {
 
     this.save();
   }
+  
+  updateDate(newDate){
+    this.doc.date = newDate;
+    this.save();
+  }
 
   save() {
     if(this.isBetaDoc()){
-      console.log(this.doc);
       putS3DocumentUpdate(this.doc);
     } else {
       let d = {

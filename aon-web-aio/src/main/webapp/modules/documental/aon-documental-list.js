@@ -57,8 +57,10 @@ export class AonDocumentalList extends AonElement {
         // addColumn(name, type, id, width, textAlign)
         if(this.isBetaDoc()){
           aonDocumentalTable.addColumn(MSG.DATE_CREATION, 'creation_date', 'creation_date', '20%');
+          aonDocumentalTable.addColumn(MSG.DATE+' del documento', 'date', 'date', '20%');
+        } else {
+          aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
         }
-		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
 		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
