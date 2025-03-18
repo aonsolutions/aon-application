@@ -115,25 +115,24 @@ export class AonDesktop extends AonElement {
 		}
 	}	
 
-
 	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
-		this.innerHTML = /*html*/`
-			<input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
-			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
-			<aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
+        this.innerHTML = /*html*/`
+          <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
+          <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
+          <aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
-		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => {
-			this.uploadInvoiceDesktop(undefined, target.files);
-		});
-		
-		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => {
-			this.uploadDocumentsDesktop(undefined, target.files);
-		});
+          let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+          inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => {
+              this.uploadInvoiceDesktop(undefined, target.files);
+          });
 
+          let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+          inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => {
+              this.uploadDocumentsDesktop(undefined, target.files);
+          });
+        
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
 		aonDesktop.getSidenav().appendChild(divLogo);
@@ -387,27 +386,29 @@ export class AonDesktop extends AonElement {
 		dashboard.className = CSS.AON_DASHBOARD;
 		parent.appendChild(dashboard);
 
-		// Upload Panel
-		let upload = this.createElement(TAG.DIV);
-		upload.className = CSS.AON_UPLOAD_PANEL;
-		upload.id = "uploads";
-		dashboard.appendChild(upload);
-		
-		if ( this.getDur().isDocumental() ){
-			let uploadDoc = new AonNewUpload();
-			uploadDoc.id = "docUpload";
-			uploadDoc.setMessage("Subir documentación");
-			uploadDoc.setType("Documental");
-			upload.appendChild(uploadDoc);
-		}
+		if (!this.isBetaDoc()){
+          // Upload Panel
+          let upload = this.createElement(TAG.DIV);
+          upload.className = CSS.AON_UPLOAD_PANEL;
+          upload.id = "uploads";
+          dashboard.appendChild(upload);
 
-		if (this.getDur().isInvoice() && ( this.getDur().isOcr() || this.getDur().isInvofox() )){
-			let uploadInv = new AonNewUpload();
-			uploadInv.id = "factUpload";
-			uploadInv.setMessage("Subir factura");
-			uploadInv.setType("Invoice");
-			upload.appendChild(uploadInv);
-		}
+          if (this.getDur().isDocumental()){
+              let uploadDoc = new AonNewUpload();
+              uploadDoc.id = "docUpload";
+              uploadDoc.setMessage("Subir documentación");
+              uploadDoc.setType("Documental");
+              upload.appendChild(uploadDoc);
+          }
+
+          if (this.getDur().isInvoice() && ( this.getDur().isOcr() || this.getDur().isInvofox() )){
+              let uploadInv = new AonNewUpload();
+              uploadInv.id = "factUpload";
+              uploadInv.setMessage("Subir factura");
+              uploadInv.setType("Invoice");
+              upload.appendChild(uploadInv);
+          }
+        }
 
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
