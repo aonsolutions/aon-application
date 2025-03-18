@@ -58,6 +58,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.lang.String.format;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_WEEK;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -84,6 +85,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -724,6 +726,7 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(3000.00 * 24.00/40.00, salary.getTotalPayment(), 0.00);
 	}
 
+
 	@Test
 	public void testHolidaysWorkHoursI()
 			throws ExpressionException, SQLException, SalaryException {
@@ -866,6 +869,132 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testHolidaysWorkHoursII()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Set<Integer> weekend = new HashSet<Integer>();
+		weekend.add(Calendar.SATURDAY);
+		weekend.add(Calendar.SUNDAY);
+		
+		Date date = getFirstDayOfMonth(getToday());
+		while ( weekend.contains(get(date, Calendar.DAY_OF_WEEK)))
+			date = add(date, Calendar.DAY_OF_MONTH, 1);
+		
+		Date holiday = date;
+		
+		Integer domainId = newDomain(aonContext).getId();
+		Integer holidayId = newHoliday(
+				aonContext, 
+				domainId, 
+				null, //parentId, 
+				holiday
+				)
+				.getId();
+		
+		CalendarRecord calendar = newCalendar(aonContext, 
+				domainId, 
+				holidayId, 
+				8.00,//mondayHours, 
+				8.00,//tuesdayHours, 
+				8.00,//wednesdayHours, 
+				8.00,//thursdayHours, 
+				8.00,//fridayHours, 
+				null,//saturdayHours, 
+				null//sundayHours
+				)
+				;
+		
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, getFirstDayOfMonth(getToday()),
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 5));
+						put(TUESDAY_HOURS.getName(), format("%d", 5));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 5));
+						put(THURSDAY_HOURS.getName(), format("%d", 5));
+						put(FRIDAY_HOURS.getName(), format("%d", 5));
+					}
+				},
+				new String[] { 
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"TRACE('HORAS_TRABAJADAS = %f\r\n', HORAS_TRABAJADAS); 0.00"},
+				new String[] { 
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" },
+				null,
+				calendar);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		addData(aonContext, contract, holiday, holiday, ContextVariable.PARTY_DAYS, 0.00);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+		
+		List<ITimedResult<Object>> workedHours = ctx.getExpressionContext().eval(WORKED_HOURS.toString(), startDate, endDate);
+
+		double hours = 0.00;
+		for (ITimedVariable<Object> workedHour : workedHours)
+			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
+					.doubleValue();
+
+		double expected = new Period(startDate, endDate)
+				.daysStream()
+				.peek( 
+				day -> System.out.println(day.get(DAY_OF_MONTH) +" == " + get(holiday, DAY_OF_MONTH)
+				+ "," + (day.get(DAY_OF_MONTH) == get(holiday, DAY_OF_MONTH)) ))
+				.collect(Collectors.summingDouble(
+						day -> (day.get(DAY_OF_WEEK) == Calendar.SUNDAY
+								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
+										? 0.00 : 5.00));
+		assertEquals(WORKED_HOURS.getName(), expected, hours, 0.00);
+
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		List<ContextData> datas = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get().getContextData().get(WORKED_HOURS.getName());;
+
+		hours = 0.00;
+		for (ContextData data : datas)
+			hours += Double.parseDouble(data.getExpression());
+		
+		// TODO: 
+		expected = new Period(startDate, endDate)
+				.daysStream()
+				.collect(Collectors.summingDouble(
+						day -> (day.get(DAY_OF_WEEK) == Calendar.SUNDAY
+								|| day.get(DAY_OF_WEEK) == Calendar.SATURDAY)
+										? 0.00 : 5.00));
+		assertEquals(WORKED_HOURS.getName(), expected, hours, 0.00);
+		
+		
+
+		datas = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get().getContextData().get(PARTIAL_FACTOR.getName());
+		;
+
+		for (ContextData data : datas)
+			assertEquals(PARTIAL_FACTOR.getName(), 5.00/8.00, Double.parseDouble(data.getExpression()), 0.00);
+		
+	}
 
 	@Test
 	public void testPartialTimeSalaryHoursI()

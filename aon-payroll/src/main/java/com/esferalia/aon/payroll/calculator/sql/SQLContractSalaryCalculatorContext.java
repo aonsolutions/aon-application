@@ -3561,6 +3561,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	private boolean isNotPartyDay(Calendar day) {
+		Date date = day.getTime();
+		ITimedVariable<?> partyDays = this.contractExpressionContext.getVariable(PARTY_DAYS, date, date);
+		if (partyDays == null)
+			return false;
+
+		try {
+			Period period = partyDays.getPeriod();
+			Object value = partyDays.getValue(period);
+			int days = (int) Double.parseDouble(value.toString());
+
+			return days <= 0.00;
+
+		} catch (Error e) {
+			return false;
+		}
+
+	}
+
 	private boolean isNotWorkingDay(Calendar day) {
 		Date date = day.getTime();
 		ITimedVariable<?> nonWorkings = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
@@ -5300,8 +5319,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 
-					List<Calendar> workedList = p.daysStream().filter(day -> !isHoliday(day))
-							.filter(day -> getDayType(day) != DayType.HOLIDAY).collect(Collectors.toList());
+					List<Calendar> workedList = p.daysStream()
+							.filter(day -> !isHoliday(day))
+							.filter(day ->  getDayType(day) != DayType.HOLIDAY || isNotPartyDay(day))
+							.collect(Collectors.toList());
 
 					if (workedList.isEmpty())
 						return 0.00;

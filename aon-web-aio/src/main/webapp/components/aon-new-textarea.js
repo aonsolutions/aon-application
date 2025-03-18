@@ -310,13 +310,19 @@ export class AonNewTextarea extends AonElement {
     }
 
     getValue() {
-        return this.value;
+        let textarea = this.getElement(this.TEXTAREA);
+        return textarea ? textarea.value : this.value;
     }
-
+    
     setValue(value) {
         this.value = value;
+    
+        let textarea = this.getElement(this.TEXTAREA);
+        if (textarea) {
+            textarea.value = value; 
+        }
     }
-
+    
     isRequired() {
         return this.required;
     }
