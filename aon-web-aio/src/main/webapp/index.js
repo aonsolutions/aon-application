@@ -83,7 +83,6 @@ export const loadTheme = () => {
 	});
 }
 
-
 const favicon = () => {
 	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
 	if ( favicon ) {
@@ -92,7 +91,6 @@ const favicon = () => {
 			faviconLink.href = favicon;
 		});
 	}
-
 }
 
 const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
@@ -115,7 +113,6 @@ const loadScript = (url, module=false) => new Promise((resolve, reject) => {
         script.src = url;
         if(module) script.type = "module";
     } else resolve(true);
-
 });
 
 const setWindowApp = () => {
@@ -139,7 +136,6 @@ const loadScriptFirebase = async() =>{
     await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js");
     setWindowApp()
 }
-
 
 const isBeta = () => {
     const href = window.location.href;
@@ -172,4 +168,3 @@ const getCookie = (cookieName) => {
 } 
  
 load();
-
