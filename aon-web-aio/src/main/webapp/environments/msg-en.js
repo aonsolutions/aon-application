@@ -269,6 +269,7 @@ export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
 export const LOADING = 'Loading';
 export const LOCATION = 'Location';
+export const LOCATIONS = 'Locations';
 export const LOGIN = 'Login';
 export const LOGIN_SUBTITLE = 'Enter your credentials';
 
