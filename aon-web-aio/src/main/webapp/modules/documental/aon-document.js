@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -356,11 +356,12 @@ export class AonDocument extends AonElement {
       if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
         // Solo si no eres empleado o empresa, entiendo que es este permiso
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+        documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
       }else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
+        documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
       documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
-      documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
     }
     documentToolbar.addButton2(ACTION.BACK, () => this.back());
   }
@@ -439,6 +440,22 @@ export class AonDocument extends AonElement {
     }
   }
 
+  async downloadS3() {
+    let data = [
+      {
+        id: this.document.id,
+        type: this.document.type
+      }
+    ];    
+    let json = JSON.stringify(data);
+		let i = await downloadS3Documents(encodeURI(json));
+		const url = URL.createObjectURL(i);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'documento.zip';
+		a.click();
+		URL.revokeObjectURL(url);
+  }
   updateCategory(category) {
     if(!this.doc.category)
       this.doc.category = {};
