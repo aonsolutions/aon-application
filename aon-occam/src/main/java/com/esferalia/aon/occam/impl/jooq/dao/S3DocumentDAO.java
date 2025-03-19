@@ -105,7 +105,7 @@ public class S3DocumentDAO {
 		}
 		Select<Record> fullQuery;
 		if(type == null) {
-			if(page.isPresent() && perPage.isPresent())
+			if(page != null && perPage != null && page.isPresent() && perPage.isPresent())
 				fullQuery = queryRDoc.union(queryRAttach).limit(perPage.get()).offset(perPage.get() * (page.get() - 1));
 			else
 				fullQuery = queryRDoc.union(queryRAttach);

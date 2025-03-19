@@ -1,11 +1,18 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +41,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	public static final String DOCUMENT = "/";
 	public static final String DOCUMENT_FILE = "/file";
+	public static final String DOCUMENT_FILE_MULTIPLE = "/file_multiple";
 	public static final String COUNT = "/count";
 	
 	private static final String AON_BUCKET_NAME = "aon-documental";
@@ -69,6 +77,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				case DOCUMENT_FILE:
 					responseFile(resp, getFile(api));
 					break;
+				case DOCUMENT_FILE_MULTIPLE:
+					responseFile(resp, getFileMultiple(api, resp));
+					break;
 				case COUNT:
 					response(req, resp, getCount(api));
 					break;
@@ -82,10 +93,11 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			Object object = new AonRouting(api)
-				.addRoute(DOCUMENT, DocumentalS3Servlet::postAction)
-				.apply();
-			response(req, resp, object);
+			switch(api.getPath()) {
+				case DOCUMENT:
+					response(req, resp, postAction(api));
+					break;
+			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -146,6 +158,62 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			throw e;
 		}
 	}
+	
+	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
+		try {
+			String jsonData = api.getData().getString(IJsonNames.DATA);
+			String decodedJson = URLDecoder.decode(jsonData, "UTF-8");
+			JSONArray array = new JSONArray(decodedJson);
+			Integer[] idsRdoc = new Integer[array.length()];
+			Integer[] idsRattach = new Integer[array.length()];
+			for(int i = 0; i < array.length(); i++) {
+				if(array.getJSONObject(i).getInt(IJsonNames.TYPE) == 0)
+					idsRdoc[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
+				else
+					idsRattach[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
+			}
+			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
+			List<byte[]> files = new LinkedList<byte[]>();
+			List<String> filenames = new LinkedList<String>();
+			for(S3Document document: documents) {
+				byte[] data = null;
+				if(document.getType() == 0 && document.getS3key() != null) {
+					data = S3rDoc.download(document.getS3key(), AON_BUCKET_NAME);
+				} else if(document.getType() == 1){
+					data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
+				}
+				files.add(data);
+				filenames.add(document.getName());
+			}
+			byte[] i = createZipFromByteArrays(files, filenames);
+			Attach attach = new Attach()
+					.setData(i)
+					.setDescription("files")
+					.setMimeType(MimeType.ZIP);
+			return attach;
+		} catch(Exception e) {
+			throw e;
+		}
+	}
+	
+	public static byte[] createZipFromByteArrays(List<byte[]> fileDataList, List<String> fileNames) throws IOException {
+        if (fileDataList.size() != fileNames.size()) {
+            throw new IllegalArgumentException("La cantidad de archivos y nombres no coincide.");
+        }
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(baos)) {
+            for (int i = 0; i < fileDataList.size(); i++) {
+                byte[] fileData = fileDataList.get(i);
+                String fileName = fileNames.get(i);
+                ZipEntry entry = new ZipEntry(fileName);
+                zos.putNextEntry(entry);
+                zos.write(fileData);
+                zos.closeEntry();
+            }
+            zos.finish();
+            return baos.toByteArray();
+        }
+    }
 	
 	private static Object getAction(AonApiData api) {
 		if(api.getData().has(IJsonNames.ID)) {
