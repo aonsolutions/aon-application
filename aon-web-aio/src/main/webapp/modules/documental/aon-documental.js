@@ -135,6 +135,7 @@ export class AonDocumental extends AonElement {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
 		let documentOptions = [
 			{
+				id  : MSG.ALL_FILES,
 				name: MSG.ALL_FILES,
 				icon: 'insert_drive_file',
 				fn: () => {
@@ -148,6 +149,10 @@ export class AonDocumental extends AonElement {
 		let data = DocumentalSidenav.DOCUMENTS;
 		data.options = documentOptions;
 		aonDocumental.addSidenavOptions3(data);
+        if (this.isBetaDoc()) {
+          // Marcamos la primera opcion
+          aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
+        }
 	}
 
 	addTypeOptions() {
@@ -236,7 +241,6 @@ export class AonDocumental extends AonElement {
 				});
 			});
 		} else {
-
 			getCategories(data).then(categories => {
 				this._categories = categories.map(c => {
 					return {

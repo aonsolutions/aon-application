@@ -1,32 +1,28 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-
 import '../../components/aon-table.js';
-
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
 
 export class AonDocumentalList extends AonElement {
-
 	more;
 	_roles;
-
 	TABLE;
 
 	static get observedAttributes() {
 		return [];
 	}
 
-	get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
+    get filter() {
+      return this.getAttribute(CONSTANT.FILTER);
+    }
 
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
+    set filter(filter) {
+      this.setAttribute(CONSTANT.FILTER, filter);
+    }
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.initialize();
@@ -115,6 +111,8 @@ export class AonDocumentalList extends AonElement {
 
             if (documents.length === 0) {
                 this.more = false;  // Si no hay documentos, no se puede cargar m�s
+                // Mostrar mensaje si no hay documentos
+                table.addRowNoData("No existen documentos disponibles");
             }
 
             // Insertar los documentos en la tabla
