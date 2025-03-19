@@ -15,6 +15,17 @@ on:
         type: boolean
         required: true
         default: false
+      javaVersion:
+        description: 'Java version'
+        type: choice
+        options:
+          - 25
+          - 24
+          - 23
+          - 22
+          - 21
+        required: true
+        default: 21
 
 env:
   TZ: Europe/Madrid
@@ -35,10 +46,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK ${{ github.event.inputs.javaVersion }}
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: ${{ github.event.inputs.javaVersion }}
         distribution: 'temurin'
         cache: maven
         
