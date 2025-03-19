@@ -673,6 +673,7 @@ public final class IJsonNames {
 	public static final String UNPAID_BALANCE = "unpaidBalance";
 	public static final String URL = "url";
 	public static final String USER = "user";
+	public static final String USERNAME = "username";
 	public static final String USERS = "users";
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 

@@ -192,6 +192,7 @@ export const LANGUAGE = 'language';
 export const LAST_ACCESS = 'lastAccess';
 export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
+export const LOCATION = 'location';
 export const LOGO = 'logo';
 
 // ----- M
@@ -257,6 +258,7 @@ export const PENDING_DECISSION = 'pendingDecission';
 export const PENDINGS = 'pendings';
 export const PERCENTAGE = 'percentage';
 export const PERSON = 'person';
+export const PRESENCE = 'presence';
 export const PREPAYMENT = 'prepayment';
 export const PREVIOUS = 'previous';
 export const PRICE = 'price';
@@ -356,6 +358,7 @@ export const TABS = 'tabs';
 export const TAG = 'tag';
 export const TAGS = 'tags';
 export const TARGET = 'target';
+export const TASK_HOLDER = 'taskHolder';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TEXTAREA = 'textarea';

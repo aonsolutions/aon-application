@@ -266,6 +266,7 @@ export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
 export const LOADING = 'Carregant';
 export const LOCATION = 'Ubicació';
+export const LOCATIONS = 'Ubicacions';
 export const LOGIN = 'Inici de sessió';
 export const LOGIN_SUBTITLE = 'Introduïu les vostres credencials';
 

@@ -193,6 +193,7 @@ export const LIST = 'list';
 export const LIST_ALT = 'list_alt';
 export const LOCAL_MALL = 'local_mall';
 export const LOCAL_SHIPPING = 'local_shipping';
+export const LOCATION_ON = 'location_on';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 

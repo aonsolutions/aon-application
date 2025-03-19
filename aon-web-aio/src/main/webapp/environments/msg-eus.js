@@ -267,6 +267,7 @@ export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
 export const LINK_DOMAIN_QUESTION = "Domeinuarekin bezero hau estekatu nahi duzu?";
 export const LOADING = 'Kargatzen';
 export const LOCATION = 'Kokapena';
+export const LOCATIONS = 'Kokapenak';
 export const LOGIN = 'Saioa hasi';
 export const LOGIN_SUBTITLE = 'Sartu zure kredentzialak';
 
