@@ -204,7 +204,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             ZipOutputStream zos = new ZipOutputStream(baos)) {
             for (int i = 0; i < fileDataList.size(); i++) {
                 byte[] fileData = fileDataList.get(i);
-                String fileName = fileNames.get(i);
+                String fileName = i + "_" + fileNames.get(i);
                 ZipEntry entry = new ZipEntry(fileName);
                 zos.putNextEntry(entry);
                 zos.write(fileData);
