@@ -211,8 +211,6 @@ export class AonInvoiceHome extends AonElement {
 			cypCard.firstChild.children.item(1).style.height = "22.5rem";
 			cypCard.firstChild.style.margin = '0';
 		}
-
-		this.updateCounterHome();
 	}
 
 	buildInvoiceResumeCard() {
@@ -467,40 +465,6 @@ export class AonInvoiceHome extends AonElement {
 		trashDiv.appendChild(trashName);
 		
 		return div;
-	}
-
-
-	updateCounterHome() {
-		let issued = getCounter()[OPTION.INVOICE_ISSUED.id] || 0;
-		let received = getCounter()[OPTION.INVOICE_RECEIVED.id] || 0;
-		let ticket = getCounter()[OPTION.INVOICE_TICKET.id] || 0;
-		let total = issued + received + ticket;
-		let pendingRecordNumber = this.getElement('pendingRecordNumber');
-		if(pendingRecordNumber) pendingRecordNumber.innerHTML = total;
-
-		// let pending = getCounter()[OPTION.INVOICE_PENDINGS.id] || 0;
-		//let pendingNumber = this.getElement('pendingNumber');
-		//if(pendingNumber) pendingNumber.innerHTML = pending;
-
-		let pendingIssuedCounter = getCounter()[OPTION.RAWDOC_INBOX_ISSUED.id] || 0;
-		let pendingIssuedNumber = this.getElement('pendingIssuedNumber');
-		if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
-
-		let pendingReceivedCounter = getCounter()[OPTION.RAWDOC_INBOX_RECEIVED.id] || 0;
-		let pendingReceivedNumber = this.getElement('pendingReceivedNumber');
-		if(pendingReceivedNumber) pendingReceivedNumber.innerHTML = pendingReceivedCounter;
-		
-		let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET.id] || 0;
-		let pendingTicketNumber = this.getElement('pendingTicketNumber');
-		if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
-		
-		let rejectedCounter = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
-		let rejectedNumber = this.getElement('rejectedNumber');
-		if(rejectedNumber) rejectedNumber.innerHTML = rejectedCounter;
-
-		let trashCounter = getCounter()[OPTION.RAWDOC_TRASH.id] || 0;
-		let trashNumber = this.getElement('trashNumber');
-		if(trashNumber) trashNumber.innerHTML = trashCounter;
 	}
 
     aonInvoice(type, invoice) {

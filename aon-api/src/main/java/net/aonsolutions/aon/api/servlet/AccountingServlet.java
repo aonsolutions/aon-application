@@ -20,8 +20,10 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -147,7 +149,13 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getIncomes(AonApiData api) {
-		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(api.getOccam(),api.getDomain().getId())
+		JSONObject jsonParams = api.getData();
+		String query = null;
+		if (jsonParams != null) {
+			query = JsonUtils.getString(jsonParams, IJsonNames.VALUE);
+		}
+		
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingIncomes(api.getOccam(),api.getDomain().getId(), query)
 			.map( AccountingIncomeJSON::to )
 			.filter( Optional::isPresent )
 			.map( Optional::get );
@@ -167,8 +175,14 @@ public class AccountingServlet extends AonApiHttpServlet{
 			.orElse(new JSONObject());
 	}
 	private static JSONObject deleteIncome(AonApiData api) {
-		return api.getData();
-		// TODO
+		JSONObject jsonParams = api.getData();
+		if (JsonUtils.isEmpty(jsonParams)) {
+			throw new AonCoreException("El ingreso es un dato obligatorio.");
+		}
+		AccountingIncome income = AccountingIncomeJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("El ingreso es un dato obligatorio."));
+		ACCOUNTING.deleteAccountingIncome(api.getOccam(), income );
+		return new JSONObject();
 	}
 		
 }

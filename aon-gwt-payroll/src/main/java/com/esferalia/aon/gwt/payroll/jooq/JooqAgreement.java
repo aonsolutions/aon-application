@@ -74,6 +74,7 @@ import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -1583,12 +1584,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
 						(byte) payment.getSalaryType().ordinal())
 				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
-				.set(AGREEMENT_PAYMENT.MONTH,
-						payment.getMonth() != null ? payment.getMonth()
-								.byteValue() : null)
-				.set(AGREEMENT_PAYMENT.TYPE,
-						payment.getType() != null ? (byte) payment.getType()
-								.ordinal() : null)
+				.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
+				.set(AGREEMENT_PAYMENT.TYPE,AonEnumUtils.getByte(payment.getType()))
 				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
 				.set(AGREEMENT_PAYMENT.CREATION_USER,userLogin)
 				.set(AGREEMENT_PAYMENT.CREATION_DATE,creationDate)
@@ -1613,12 +1610,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 						payment.getQuoteExpression())
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE,
 						(byte) payment.getSalaryType().ordinal())
-				.set(AGREEMENT_PAYMENT.MONTH,
-						payment.getMonth() != null ? payment.getMonth()
-								.byteValue() : null)
-				.set(AGREEMENT_PAYMENT.TYPE,
-						payment.getType() != null ? (byte) payment.getType()
-								.ordinal() : null)
+				.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
+				.set(AGREEMENT_PAYMENT.TYPE,AonEnumUtils.getByte(payment.getType()))
 				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
 				.set(AGREEMENT_PAYMENT.END_DATE, SQL_FOREVER)
 				.set(AGREEMENT_PAYMENT.MODIFICATION_USER, userLogin)
@@ -1643,8 +1636,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
 				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, conceptId)
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
-				.set(AGREEMENT_PAYMENT.MONTH,
-						month != null ? month.byteValue() : null)
+				.set(AGREEMENT_PAYMENT.MONTH,AonNumberUtils.toByte(month))
 				.set(AGREEMENT_PAYMENT.START_DATE,SQL_EPOCH)
 				.set(AGREEMENT_PAYMENT.END_DATE,SQL_FOREVER)
 				.set(AGREEMENT_PAYMENT.CREATION_USER,userLogin)
@@ -1666,8 +1658,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) salaryType.ordinal())
 				.set(AGREEMENT_PAYMENT.DESCRIPTION, description)
 				.set(AGREEMENT_PAYMENT.EXPRESSION, expression)
-				.set(AGREEMENT_PAYMENT.MONTH,
-						month != null ? month.byteValue() : null)
+				.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(month))
 				.set(AGREEMENT_PAYMENT.START_DATE,
 						new java.sql.Date(startDate.getTime()))
 				.set(AGREEMENT_PAYMENT.END_DATE,

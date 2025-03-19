@@ -84,7 +84,7 @@ public class RefreshMod390HFResult implements Update {
 							if (result != null) {
 								dslContext.update(FS_MODEL)
 									.set(FS_MODEL.RESULT,result)
-									.set(FS_MODEL.DECLARATION_TYPE, (declarationType == null? null : declarationType.value()))
+									.set(FS_MODEL.DECLARATION_TYPE, (declarationType == null? null : (Byte)declarationType.value()))
 									.where(FS_MODEL.ID.eq(id))
 									.execute();
 							}

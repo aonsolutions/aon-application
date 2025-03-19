@@ -199,7 +199,7 @@ public class JooqWorkplace {
 		dslContext.update(WORKPLACE)
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
-			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == -1 ? null : workplaceInfo.getEconomicConcert())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == -1 ? null : (Byte)workplaceInfo.getEconomicConcert())
 			.where(WORKPLACE.ID.eq(workplaceInfo.getWorkplaceId()))
 			.execute();
 		
@@ -294,7 +294,7 @@ public class JooqWorkplace {
 			.set(WORKPLACE.DESCRIPTION, workplaceInfo.getDescription())
 			.set(WORKPLACE.ADDRESS, workplaceInfo.getAddressId())
 			.set(WORKPLACE.SCOPE, scopeId)
-			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == 0 ? null : workplaceInfo.getEconomicConcert())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplaceInfo.getEconomicConcert() == 0 ? null : (Byte) workplaceInfo.getEconomicConcert())
 			.returning(WORKPLACE.ID)
 			.fetchOne();
 		

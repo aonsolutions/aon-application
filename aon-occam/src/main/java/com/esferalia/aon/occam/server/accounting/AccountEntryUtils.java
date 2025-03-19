@@ -107,12 +107,13 @@ public class AccountEntryUtils {
 			} else {
 				String q = AonStringUtils.SQLlike(params.getQuery());
 				prop = prop.and( (
-					p.getAccountCodeProperty().like(q)
-						.or(p.getAccountDescriptionProperty().like(q))
-						.or(p.getBalancingAccountCodeProperty().like(q))
-						.or(p.getBalancingAccountDescriptionProperty().like(q))
-						.or(p.getConceptProperty().like(q))
-						.or(p.getDocumentNumber().like(q))
+						p.getConceptProperty().like(q).or(p.getDocumentNumber().like(q))
+//					p.getAccountCodeProperty().like(q)
+//						.or(p.getAccountDescriptionProperty().like(q))
+//						.or(p.getBalancingAccountCodeProperty().like(q))
+//						.or(p.getBalancingAccountDescriptionProperty().like(q))
+//						.or(p.getConceptProperty().like(q))
+//						.or(p.getDocumentNumber().like(q))
 						));
 			}
 		}

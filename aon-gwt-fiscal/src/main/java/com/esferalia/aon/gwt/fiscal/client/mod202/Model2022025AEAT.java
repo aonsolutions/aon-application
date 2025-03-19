@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022025AddInfoAEATSc
 import com.esferalia.aon.occam.api.model.fiscal.mod202.Model2022025LiquidationAEATScript;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -23,9 +24,60 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model2022025AEAT extends Model202Base {
 	
-	
 	public Model2022025AEAT(Model202Callback callback) {
 		super(callback);
+	}
+	
+	private class TaxTypeListBox extends ListBox {
+
+		public TaxTypeListBox() {
+			this.setWidth("130px");
+			this.addItem("---", "");
+			this.addItem("00");
+			this.addItem("01");
+			this.addItem("04");
+			this.addItem("10");
+			this.addItem("15");
+			this.addItem("23");
+			this.addItem("24");
+			this.addItem("25");
+			this.addItem("30");
+			this.addItem("00/23");
+			this.addItem("00/21/22");
+			this.addItem("00/24");
+			this.addItem("00/25");
+			this.addItem("21/22");
+			this.addItem("20/23");
+			this.addItem("20/24");
+			this.addItem("20/25");
+			this.addItem("18/19/21/22");
+			this.addItem("12/15");
+			this.addItem("25/30");
+			this.addItem("23/30");
+			this.addItem("24/30");
+			this.addItem("21/22/30");
+			this.addItem("15/30");
+			this.addItem("04/23");
+			this.addItem("04/21/22");
+			this.addItem("04/24");
+			this.addItem("04/25");
+			this.addItem("23/23N");
+			this.addItem("24/24N");
+			this.addItem("25/25N");
+			this.addItem("21/22/21N/22N");
+		}
+		
+		public void setSelectedValue(String value) {
+			setSelectedIndex(0);
+			if (AonStringUtils.isNotBlank(value)) {
+				for (int i = 0; i < this.getItemCount(); i++) {
+					if (AonStringUtils.equalsIgnoreCase(this.getValue(i), value)) {
+						setSelectedIndex(i);
+						break;
+					}				
+				}
+			}
+		}		
 	}
 	
 	@Override
@@ -64,7 +116,14 @@ public class Model2022025AEAT extends Model202Base {
 		container.add(table);
 		defineTable(table);
 		for (IModelScript<Mod202Key> ms : Model2022025LiquidationAEATScript.values()) {
-			paintRow(table,callback,ms);	
+			if (ms == Model2022025LiquidationAEATScript.B) {
+				paintEmptyRow(table);
+			}
+			if (ms == Model2022025LiquidationAEATScript.B || ms == Model2022025LiquidationAEATScript.B1 || ms == Model2022025LiquidationAEATScript.B2  || ms == Model2022025LiquidationAEATScript.B2C27) {
+				paintEmptyRow(table);
+				paintEmptyRow(table);
+			}
+			paintRow(table,callback,ms);
 		}
 		liquidationScrollPanel.setWidget(container);
 		tabPanel.add(liquidationScrollPanel, AON.MSG.liquidacion());
@@ -80,7 +139,7 @@ public class Model2022025AEAT extends Model202Base {
 		if (script == Model2022025AddDataAEATScript.R01_P02) paintDateRow(table, callback, script);
 		if (script == Model2022025AddDataAEATScript.R01_P03) paintCNAERow(table, callback, script);
 		
-		if (script == Model2022025AddDataAEATScript.R02_X08) paintX08(table, callback, script);
+		if (script == Model2022025AddDataAEATScript.R02_X08) paintX08(table, callback, script); // Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso
 		if (script == Model2022025AddDataAEATScript.R02_X09) paintX09(table, callback, script);
 		
 		if (script == Model2022025LiquidationAEATScript.X00) paintX00(table, callback, script);
@@ -176,6 +235,7 @@ public class Model2022025AEAT extends Model202Base {
 		
 	}
 	
+	// Tipo de gravamen del Impuesto sobre Sociedades del ejercicio en curso
 	private void paintX08(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
 		int row = table.getRowCount();
 		final Mod202Key key = script.getKeys()[0];
@@ -183,16 +243,14 @@ public class Model2022025AEAT extends Model202Base {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
-		final AonTextBox textBox = new AonTextBox();
-		textBox.setMaxLength(5);
-		textBox.setVisibleLength(6);
-		textBox.setValue(callback.getModel().getDescription(key));
-		textBox.addValueChangeHandler( event -> {
-			callback.getModel().putDescription(key,textBox.getValue());
+		final TaxTypeListBox r18Box = new TaxTypeListBox();
+		r18Box.setSelectedValue(callback.getModel().getDescription(key));
+		r18Box.addChangeHandler( event -> {
+			callback.getModel().putDescription(key,r18Box.getSelectedValue());		
 			calculateAndRefresh( callback );
 			markAsDirty(callback);
 		});
-		table.setWidget(row, 1, textBox );
+		table.setWidget(row, 1, r18Box );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 	}
 
@@ -204,11 +262,11 @@ public class Model2022025AEAT extends Model202Base {
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
 		final ListBox r19Box = new ListBox();
-		r19Box.setWidth("200px");
+		r19Box.setWidth("260px");
 		r19Box.addItem("NO CONSTA","0");
-		r19Box.addItem("- Igual/sup. 10 mill. \u20AC e inferior a 20 mill. \u20AC","1");
-		r19Box.addItem("- Igual/sup. 20 mill. \u20AC e inferior a 60 mill. \u20AC","2");
-		r19Box.addItem("- Igual/sup. 60 mill. \u20AC.","3");
+		r19Box.addItem("Igual/sup. 10 mill. \u20AC e inferior a 20 mill. \u20AC","1");
+		r19Box.addItem("Igual/sup. 20 mill. \u20AC e inferior a 60 mill. \u20AC","2");
+		r19Box.addItem("Igual/sup. 60 mill. \u20AC.","3");
 		int value = (int) callback.getModel().getAmount(key);
 		if (value < 0 || value > 4) value = 0;
 		r19Box.setSelectedIndex(value);
@@ -222,6 +280,8 @@ public class Model2022025AEAT extends Model202Base {
 	}
 	
 	private void paintX00(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		paintEmptyRow(table);
+		paintEmptyRow(table);
 		int row = table.getRowCount();
 		Mod202Key key = script.getKeys()[0];
 		table.setWidget(row, 0, new Label(script.getLabel()));
@@ -244,6 +304,9 @@ public class Model2022025AEAT extends Model202Base {
 		});
 		table.setWidget(row, 1, r21Box );
 		table.getFlexCellFormatter().setColSpan(row, 1, 6);
+		paintEmptyRow(table);
+		paintEmptyRow(table);
+		paintEmptyRow(table);
 	}
 
 	private void paintR62(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
@@ -289,15 +352,18 @@ public class Model2022025AEAT extends Model202Base {
 		getFieldsMap().get(Mod202Key.C45).setEnabled(methodB);
 		getFieldsMap().get(Mod202Key.C46).setEnabled(methodB);
 		
-		
 		// B.1) Caso general (entidades con porcentaje único)
 		getFieldsMap().get(Mod202Key.C47).setEnabled(methodB1);
 		getFieldsMap().get(Mod202Key.C40).setEnabled(methodB1);
 		getFieldsMap().get(Mod202Key.C48).setEnabled(methodB1);
 		getFieldsMap().get(Mod202Key.C49).setEnabled(methodB1);
+
 		// B.2) Casos específicos (entidades con más de un porcentaje)
 		getFieldsMap().get(Mod202Key.C20).setEnabled(methodB2);
-		getFieldsMap().get(Mod202Key.C50).setEnabled(methodB2);
+		getFieldsMap().get(Mod202Key.C23).setEnabled(methodB2);
+		getFieldsMap().get(Mod202Key.C61).setEnabled(methodB2);
+		getFieldsMap().get(Mod202Key.C64).setEnabled(methodB2);
+		getFieldsMap().get(Mod202Key.C50).setEnabled(methodB2);		
 		getFieldsMap().get(Mod202Key.C42).setEnabled(methodB2);
 		getFieldsMap().get(Mod202Key.C51).setEnabled(methodB2);
 		getFieldsMap().get(Mod202Key.C52).setEnabled(methodB2);

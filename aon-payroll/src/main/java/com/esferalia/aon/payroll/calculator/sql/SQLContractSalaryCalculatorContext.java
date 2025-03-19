@@ -114,6 +114,7 @@ import com.esferalia.aon.payroll.calculator.ISystemDeduction;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.QuoteCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
@@ -1960,6 +1961,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				.forEach(p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
 	}
 
+	public <T extends Number> void setBaseVariable(String name, T t) {
+		this.contractExpressionContext.putVariable(name, new QuoteCalculator.BaseVariable( t != null ? t.doubleValue() : 0.00, getCurrentBindings().getPeriod() ));
+	}
+
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
 		return getVariable(var.getName(), toType);
 	}
@@ -3556,6 +3561,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	private boolean isNotPartyDay(Calendar day) {
+		Date date = day.getTime();
+		ITimedVariable<?> partyDays = this.contractExpressionContext.getVariable(PARTY_DAYS, date, date);
+		if (partyDays == null)
+			return false;
+
+		try {
+			Period period = partyDays.getPeriod();
+			Object value = partyDays.getValue(period);
+			int days = (int) Double.parseDouble(value.toString());
+
+			return days <= 0.00;
+
+		} catch (Error e) {
+			return false;
+		}
+
+	}
+
 	private boolean isNotWorkingDay(Calendar day) {
 		Date date = day.getTime();
 		ITimedVariable<?> nonWorkings = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
@@ -4600,7 +4624,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			}
 		});
 
-		this.implicitExpressionContext.putVariable(WORKED_YEARS,
+ 		this.implicitExpressionContext.putVariable(WORKED_YEARS,
 				new ActiveTimedExpressionVariable<Double>(WORKED_YEARS.name(), ExpressionScope.CONTRACT) {
 					@Override
 					public Period getPeriod() {
@@ -4609,7 +4633,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					@Override
 					public Double getValue(Period period) {
-						return getWorkedYears(period.getStart(), period.getEnd());
+						return getWorkedYears(period.getStart(), Period.min(endDate, period.getEnd()));
 					}
 				});
 
@@ -5295,8 +5319,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 
-					List<Calendar> workedList = p.daysStream().filter(day -> !isHoliday(day))
-							.filter(day -> getDayType(day) != DayType.HOLIDAY).collect(Collectors.toList());
+					List<Calendar> workedList = p.daysStream()
+							.filter(day -> !isHoliday(day))
+							.filter(day ->  getDayType(day) != DayType.HOLIDAY || isNotPartyDay(day))
+							.collect(Collectors.toList());
 
 					if (workedList.isEmpty())
 						return 0.00;

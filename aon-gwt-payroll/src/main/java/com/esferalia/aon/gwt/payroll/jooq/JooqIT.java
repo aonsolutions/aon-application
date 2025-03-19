@@ -457,6 +457,18 @@ public class JooqIT {
 			if(!contractTypeRecords.isEmpty())
 				contractInfo.setContractType(contractTypeRecords.getFirst().get(CONTRACT_DATA.EXPRESSION));
 			
+			Result<Record> fullTimeRecords = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(r.get(CONTRACT.ID)))
+					.and(CONTRACT_DATA.NAME.eq("TIEMPO_COMPLETO"))
+					.and(CONTRACT_DATA.START_DATE.le(today))
+					.and(CONTRACT_DATA.END_DATE.ge(today).or(CONTRACT_DATA.END_DATE.isNull()))
+					.orderBy(CONTRACT_DATA.START_DATE.desc())
+					.fetch();
+			
+			if(!fullTimeRecords.isEmpty()) {
+				String fullTimeRecord = fullTimeRecords.getFirst().get(CONTRACT_DATA.EXPRESSION);
+				contractInfo.setFullTimePartialContracts(AonStringUtils.isNotBlank(fullTimeRecord) && Boolean.parseBoolean(fullTimeRecord));
+			}
 			
 			Optional.ofNullable(r.get(ENTERPRISE_CCC.ID))
 			.ifPresent( contractInfo::setCccId);

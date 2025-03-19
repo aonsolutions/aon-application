@@ -114,11 +114,16 @@ public class Model202 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod202 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model202Table);
-			model202Table.refresh( new Model202Callback(model) );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model202Table);
+				model202Table.refresh( new Model202Callback(model) );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 
 		@Override
@@ -141,7 +146,6 @@ public class Model202 extends MainEntryPoint {
 					closeFootPanel();
 					showNewDeclarationPanel(m202);
 				}
-
 
 				@Override
 				public void onFailure(Throwable caught) {

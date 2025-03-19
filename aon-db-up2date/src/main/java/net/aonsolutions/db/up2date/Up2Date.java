@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+<<<<<<< HEAD
 import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
 import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
 import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
@@ -53,6 +54,10 @@ import net.aonsolutions.db.up2date.tgss.TrainingPercentages2025Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2024Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2025Update;
 import net.aonsolutions.db.up2date.user.AlterUserAddIndexAuth;
+=======
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
+>>>>>>> master
 
 public class Up2Date {
 
@@ -552,9 +557,11 @@ public class Up2Date {
 			// RealDecreeLaw1782025Art28Update.REALDECREELAW1782025ART28UPDATE,
 			// DropDaysFix.DROPDAYSFIX
 			
-//			MEITrainingFix2025.MEITRAININGFIX2025,
+			// MEITrainingFix2025.MEITRAININGFIX2025,
 			DocumentalCategoryTree.DOCUMENTAL_CATEGORY_TREE,
-			DocumentalRDoc.DOCUMENTAL_RDOC
+			DocumentalRDoc.DOCUMENTAL_RDOC,
+			AgreementPaymentsMonthFix.AGREEMENTPAYMENTSMONTHFIX,
+			RealDecreeLaw1782025Art28300Fix.REALDECREELAW1782025ART28300FIX
 			
 	};
 

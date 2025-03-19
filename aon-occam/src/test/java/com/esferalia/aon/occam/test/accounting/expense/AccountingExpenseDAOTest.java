@@ -271,8 +271,8 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
-		assertEquals(AonMathUtils.absRounded(expDetail.getCredit() - expDetail.getDebit()), savedUpdate.getAmount() , DELTA);
-		assertEquals(AonMathUtils.absRounded(bankDetail.getCredit() - bankDetail.getDebit()), savedUpdate.getAmount() , DELTA);
+		assertEquals(AonMathUtils.absRounded(expDetail.getDebit() - expDetail.getCredit()), savedUpdate.getAmount() , DELTA);
+		assertEquals(AonMathUtils.absRounded(bankDetail.getDebit() - bankDetail.getCredit()), savedUpdate.getAmount() , DELTA);
 	}
 
 	private void ensureAccountPeriod(AccountingExpense exp) {

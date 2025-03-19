@@ -417,8 +417,8 @@ public class SistemaRED2AON {
 			String certificatePassword, String certificateType, Liquidacion liquidacion, String[] nafs,
 			CalcsCallback callback) throws SegSocialException {
 
-		java.sql.Date endDate = toSqlDate(liquidacion.getPeriodoHasta());
-		java.sql.Date startDate = toSqlDate(liquidacion.getPeriodoDesde());
+		java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(toSqlDate(liquidacion.getPeriodoHasta()));
+		java.sql.Date startDate = AonDateUtils.getFirstDayOfMonth(toSqlDate(liquidacion.getPeriodoDesde()));
 		java.sql.Date ctrlDate = toSqlDate(liquidacion.getFechaControl());
 
 		String ccc = liquidacion.getCcc().getProvincia() + liquidacion.getCcc().getNumero();

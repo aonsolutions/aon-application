@@ -106,6 +106,8 @@ public class ContractInfo implements Serializable{
 	private boolean isSSComunicate;
 	private boolean isSepeComunicate;
 	
+	private boolean fullTimePartialContracts;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -168,6 +170,8 @@ public class ContractInfo implements Serializable{
 		
 		this.isSSComunicate = false;
 		this.isSepeComunicate = false;
+		
+		this.fullTimePartialContracts = true;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -741,11 +745,19 @@ public class ContractInfo implements Serializable{
 	public void setSepeComunicate(boolean isSepeComunicate) {
 		this.isSepeComunicate = isSepeComunicate;
 	}
+	
+	public boolean isFullTimePartialContracts() {
+		return fullTimePartialContracts;
+	}
+
+	public void setFullTimePartialContracts(boolean fullTimePartialContracts) {
+		this.fullTimePartialContracts = fullTimePartialContracts;
+	}
 
 	public boolean isPartial() {
-		if(contractType!=null) {
+		if(contractType !=null) {
 			int type = Integer.parseInt(contractType);
-			return AonNumberUtils.between(type, 200, 300) ||  Arrays.asList(309,330,350,389).contains(type) || AonNumberUtils.between(type, 500, 599) || AonNumberUtils.equals(type, 0) ;
+			return (AonNumberUtils.between(type, 200, 300) ||  Arrays.asList(309,330,350,389).contains(type) || AonNumberUtils.between(type, 500, 599) || AonNumberUtils.equals(type, 0)) && !fullTimePartialContracts ;
 		}
 		return false;
 	}

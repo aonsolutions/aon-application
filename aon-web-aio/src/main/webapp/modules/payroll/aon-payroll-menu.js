@@ -80,11 +80,15 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        description: "CRA - Conceptos Retributivos Abonados",
 		        title: "CRA - Conceptos Retributivos Abonados",
 		        action: () => GWT.iLoad(GWT.MAIN_CRA)
-		    },{
+		    },
+		    /*
+		    {
 		        description: "AFI - Altas, bajas y modificaciones de trabajadores",
 		        title: "AFI - Altas, bajas y modificaciones de trabajadores",
 				action: () => this.rootPanel(new JSF.AonJsfContractBatch)
-		    },{
+		    },
+		    */
+		    {
 		        description: "AFI - Régimen Especial Agrario Jornadas",
 		        title: "AFI - Régimen Especial Agrario Jornadas",
 		        action: () => GWT.iLoad(GWT.MAIN_AFI)

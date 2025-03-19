@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -77,8 +78,9 @@ public class AccountingIncomeDAO {
 				? AccountEntryDAO.fetchByLines(ctx,p -> AccountEntryUtils.getFilterByLines(ctx,p, params),offset,limit,orderBy)
 				: AccountEntryDAO.fetch(ctx,p -> AccountEntryUtils.getFilterByHeader(ctx,p, params),offset,limit,orderBy)
 			)
-			.map( ae -> fillAccountingIncome( ctx , ae))
+			.map( ae -> createAccountingIncome( ctx , ae))
 			.map( ai -> fillFinance( ctx , ai))
+			.map( ai -> fillAccountingIncome( ctx , ai))
 			.onClose(() -> {
 				if (cbk != null) {
 					cbk.onFinish();
@@ -86,31 +88,108 @@ public class AccountingIncomeDAO {
 			})
 			;
 	}
-	
-	private static AccountingIncome fillAccountingIncome(AONContext ctx, AccountEntry ae) {
-		AccountingIncome ai = new AccountingIncome()
+	private static AccountingIncome createAccountingIncome(AONContext ctx, AccountEntry ae) {
+		return new AccountingIncome()
 			.setDomain( ae.getDomain() )
 			.setAccountEntry( ae )
 			.setActivity( ae.getActivity( ) )
 			.setDate( ae.getEntryDate() )
 			.setComments( ae.getComments() )
 		;
-		AonCollectionUtils.stream( ae.getDetails() )
-			.filter( aed -> AonStringUtils.startsWith( aed.getAccountCode(), "57"))
-			.findFirst()
-			.ifPresent( aed -> 
-				ai.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
-				  .setExpAccount( AccountDAO.get( ctx, aed.getBalancingAccount() ) )
-				  .setConcept( aed.getConcept())
-				  .setReferenceCode( aed.getDocumentNumber())
-				  .setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit())))
-			;
+	}
+
+	private enum AccountType {
+		EXP_ACCOUNT {
+			@Override
+			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed ) {
+				return inc.setExpAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+					.setConcept( aed.getConcept())
+					.setReferenceCode( aed.getDocumentNumber())
+					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+			}
+			
+			@Override
+			boolean accept(String code) {
+				return (AonStringUtils.startsWith( code, "7"));
+			}
+		},
+		CASH_ACCOUNT {
+			@Override
+			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
+				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+					.setConcept( aed.getConcept())
+					.setReferenceCode( aed.getDocumentNumber())
+					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+			}
+			
+			@Override
+			boolean accept(String code) {
+				return (AonStringUtils.startsWith( code, "5"));
+			}
+		},
+		CUSTOMER_ACCOUNT {
+			@Override
+			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
+				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+					.setConcept( aed.getConcept())
+					.setReferenceCode( aed.getDocumentNumber())
+					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+			}
+
+			@Override
+			boolean accept(String code) {
+				return (AonStringUtils.startsWith( code, "4"));
+			}
+		},
+		;
+		static Optional<AccountType> get( String code ) {
+			return AonCollectionUtils.stream( AccountType.values() )
+				.filter( at -> at.accept( code ) )
+				.findFirst();
+		}
+		
+		abstract boolean accept( String code);
+		abstract AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  );
+	}
+	
+	private static AccountingIncome fillAccountingIncome(AONContext ctx, AccountingIncome ai) {
+		ai.getAccountEntry()
+			.ifPresent(	ae-> AonCollectionUtils.stream( ae.getDetails() )
+				.forEach( aed -> AccountType.get( aed.getAccountCode() ).ifPresent( at -> at.visit( ctx, ai, aed)))
+		);
 		return ai;
 	}
 	
 	private static AccountingIncome fillFinance(AONContext ctx, AccountingIncome ai) {
+		ai.setFinance(
+			ai.getAccountEntry()
+				.map( ae -> FinanceEntryDAO.getFinanceEntry(ctx, ae.getId()) )
+				.filter( fe -> fe.getTrackings() != null )
+				.filter( fe -> fe.getTrackings().size() == 1 )
+				.map( fe -> AonCollectionUtils.stream(fe.getTrackings().values()).findFirst().orElse(null) )
+				.filter( Objects::nonNull )
+				.map( ft -> FinanceTrackingDAO.getFinanceTracking( ctx, ft.getId() ))
+				.filter( Objects::nonNull )
+				.map( ft -> {
+					ai.setBank( ft.getRegistryBank() );
+					return ft;
+				})
+				.map( ft -> ft.getFinance() )
+				.filter( Objects::nonNull )
+				.map( f -> FinanceDAO.getFinance(ctx, f.getId()) )
+				.orElse(null)
+		)
+		.setCustomer( 
+			ai.getFinance()
+				.map(Finance::getRegistry)
+				.filter( r -> r != null )
+				.map(r -> r.getId() )
+				.map(id -> CustomerDAO.get( ctx, p -> p.getIdProperty().eq(id).and(p.getDomainProperty().eq(ai.getDomain()))))
+				.orElse(null)
+		);
 		return ai;
 	}
+	
 	// --------------------------------------------------------------- ESCRITURA
 	public static AccountingIncome save(AONContext ctx, AccountingIncome income) {
 		ctx.checkWrite();
@@ -136,10 +215,16 @@ public class AccountingIncomeDAO {
 	
 	private static AccountingIncome insert(AONContext ctx, AccountingIncome income) {
 		initializeAccountEntry( ctx, income );
-		saveBasicAccountEntry( ctx, income );
+		saveAccountEntry( ctx, income );
 		income.getCustomer()
 			.ifPresent( c -> saveAndRecordFinanace( ctx, c, income ));
 		return income;
+	}
+	
+	private static Optional<Account> obtainCustomerAccount(AONContext ctx, AccountingIncome income) {
+		return income.getCustomer()
+			.map( c -> CustomerDAO.ensureAccount( ctx, c.getId()))
+		;
 	}
 	
 	private static Account obtainBankAccount(AONContext ctx, AccountingIncome income) {
@@ -172,29 +257,49 @@ public class AccountingIncomeDAO {
 			);
 	}
 	
-	private static AccountingIncome saveBasicAccountEntry(AONContext ctx, AccountingIncome income) {
+	private static AccountingIncome saveAccountEntry(AONContext ctx, AccountingIncome income) {
 		AccountEntry ae = income.getAccountEntry()
 			.orElseThrow( () -> new AonCoreException( "AccountEntry not initialized" ) );
 		Account expAccount = income.getExpAccount()
 			.orElseThrow( () -> new AonCoreException( "Exp Account not initialized" ) );
 		Account bankAccount = obtainBankAccount(ctx,income);
+		Optional<Account> customerAccount = obtainCustomerAccount(ctx,income);
 		
 		ae.setDetails( new LinkedList<>());
+		
 		ae.getDetails().add( 
 			new AccountEntryDetail()
 				.setAccount( expAccount.getId() )
 				.setConcept( income.getConcept() )
 				.setDocumentNumber( income.getReferenceCode() )
 				.setCredit( income.getAmount())
-				.setBalancingAccount( bankAccount.getId() )
+				.setBalancingAccount(customerAccount.map( Account::getId ).orElse(bankAccount.getId()))
 		);
+		customerAccount.ifPresent( ca -> {
+			ae.getDetails().add( 
+				new AccountEntryDetail()
+					.setAccount( ca.getId() )
+					.setConcept( income.getConcept() )
+					.setDocumentNumber( income.getReferenceCode() )
+					.setDebit( income.getAmount())
+					.setBalancingAccount(expAccount.getId())
+			);
+			ae.getDetails().add( 
+				new AccountEntryDetail()
+					.setAccount( ca.getId() )
+					.setConcept( income.getConcept() )
+					.setDocumentNumber( income.getReferenceCode() )
+					.setCredit( income.getAmount())
+					.setBalancingAccount(bankAccount.getId())
+			);
+		});
 		ae.getDetails().add( 
 			new AccountEntryDetail()
 				.setAccount( bankAccount.getId() )
 				.setConcept( income.getConcept() )
 				.setDocumentNumber( income.getReferenceCode() )
 				.setDebit( income.getAmount())
-				.setBalancingAccount( expAccount.getId() )
+				.setBalancingAccount(customerAccount.map( Account::getId ).orElse(expAccount.getId()))
 		);
 		AccountEntryDAO.save( ctx, ae);
 		return income;
@@ -210,7 +315,8 @@ public class AccountingIncomeDAO {
 			.setPeriod(period.getId())
 			.setEntryDate( income.getDate() )
 			.setEntryType( AccountEntryType.OTHER_INCOMES )
-			.setActivity( income.getActivity().orElse(null) );
+			.setActivity( income.getActivity().orElse(null) )
+			.setComments( income.getComments() );
 		income.getCustomer().ifPresentOrElse(
 		   c -> ae.setConfidential( c.isConfidential()  )
 		 ,() -> ae.setConfidential( false )
@@ -266,7 +372,7 @@ public class AccountingIncomeDAO {
 	}
 
 
-	private static record AccountingIncomeContext(AONContext ctx,AonConfiguration config, AccountingIncome exp){}
+	private static record AccountingIncomeContext(AONContext ctx,AonConfiguration config, AccountingIncome inc){}
 	private static class AccountingIncomeValidation {
 		
 		private AccountingIncomeValidation() {
@@ -274,37 +380,49 @@ public class AccountingIncomeDAO {
 		}
 		
 		private static final Consumer<AccountingIncomeContext> EMPTY_DOMAIN = aec -> {
-			if (aec.exp.getDomain() == 0) 
+			if (aec.inc.getDomain() == 0) 
 				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 		};
 		
 		private static final Consumer<AccountingIncomeContext> EMPTY_DATE = aec -> {
-			if (aec.exp.getDate() == null)
+			if (aec.inc.getDate() == null)
 				throw new AonCoreException(AonError.EMPTY_DATE.getMessage());
 		};
 		
 		private static final Consumer<AccountingIncomeContext> EMPTY_EXP_ACCOUNT = 
-			aec -> aec.exp.getExpAccount()
+			aec -> aec.inc.getExpAccount()
 				.filter( a -> a.getId() != null )
 				.orElseThrow( () -> new AonCoreException(AonError.EMPTY_EXP_ACCOUNT.getMessage()))
 		;
 		
 		private static final Consumer<AccountingIncomeContext> EMPTY_CONCEPT = aec -> {
-			if (AonStringUtils.isEmpty( aec.exp.getConcept() ))
+			if (AonStringUtils.isEmpty( aec.inc.getConcept() ))
 				throw new AonCoreException(AonError.EMPTY_CONCEPT.getMessage());
 		};
 
 		private static final Consumer<AccountingIncomeContext> EMPTY_AMOUNT = aec -> {
-			if (AonMathUtils.isZero( aec.exp.getAmount() ))
+			if (AonMathUtils.isZero( aec.inc.getAmount() ))
 				throw new AonCoreException(AonError.EMPTY_AMOUNT.getMessage());
 		};
 		
 		private static final Consumer<AccountingIncomeContext> EMPTY_DEFAULT_CASH_ACCOUNT = aec -> {
-			if (aec.exp.getBank().isEmpty() && aec.exp.getCashAccount().isEmpty()) {
+			if (aec.inc.getBank().isEmpty() && aec.inc.getCashAccount().isEmpty()) {
 				throw new AonCoreException(AonError.EMPTY_BANK_ACCOUNT.getMessage());
 			}
 		};
 		
+		private static final Consumer<AccountingIncomeContext> VALID_CUSTOMER = aec -> {
+			if (aec.inc.getCustomer().isPresent()) {
+				aec.inc.getCustomer()
+					.filter( c -> c.getId() != null)
+					.map( c -> CustomerDAO.get( aec.ctx, p -> p.getIdProperty().eq(c.getId()).and(p.getDomainProperty().eq(aec.inc.getDomain()))))
+					.filter( c -> c != null && c.getId() != null)
+					.orElseThrow(() -> new AonCoreException(AonError.EMPTY_CUSTOMER.getMessage() ) );
+			}
+		}
+		;
+			
+
 		public static void validateIncome(AONContext ctx, AccountingIncome income) throws AonCoreException {
 			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, income.getDate());
 			validateExpense(ctx, config, income);
@@ -316,6 +434,7 @@ public class AccountingIncomeDAO {
 				.andThen(EMPTY_CONCEPT)
 				.andThen(EMPTY_AMOUNT)
 				.andThen(EMPTY_DEFAULT_CASH_ACCOUNT)
+				.andThen(VALID_CUSTOMER)
 				.accept(new AccountingIncomeContext(ctx,config,income));
 		}
 	}

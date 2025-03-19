@@ -156,9 +156,9 @@ export class AonMobileInvoice extends AonInvoice {
 			let serie = createInput(this.SERIE, MSG.SERIE);
 			table.addCell(serie);
 			serie.readonly = this.invoice.isReadonly();
-			serie.value = this.invoice.serie;
+			serie.value = this.invoice.series;
 			serie.addEventListener(EVENT.CHANGE, () => {
-				this.invoice.setSerie(serie.value);
+				this.invoice.setSeries(serie.value);
 				if(this.autosave) this.save();
 			});
 

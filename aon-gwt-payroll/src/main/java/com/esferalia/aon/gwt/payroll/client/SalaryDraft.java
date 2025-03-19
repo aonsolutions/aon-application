@@ -5,6 +5,8 @@ import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.isEnabled;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+import static com.esferalia.aon.watson.util.AonStringUtils.defaultIfBlank;
+import static com.esferalia.aon.watson.util.AonStringUtils.lowerCase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -4172,6 +4174,7 @@ public class SalaryDraft extends ResizeComposite
 
 	@UiHandler("settleButton")
 	void onSettleButtonClick(ClickEvent event) {
+	    syncEndDate();
 		showEmitting();
 		settleButton.setEnabled(false);
 		salaryDraftObject.emitSalary(new CalculateCallback() {
@@ -6529,7 +6532,7 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
-		if ( percent == null )
+		if ( percent == null || deduction == null )
 			return newPercentLabel("");
 		
 		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
@@ -6540,22 +6543,22 @@ public class SalaryDraft extends ResizeComposite
 		case BONUS:
 		case IN_KIND:{
 			Widget percentLabel = newPercentLabel("");
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentLabel");
 			return percentLabel;
 		}
 		case UNEMPLOYMENT:{
 			Widget percentBox = newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
-			percentBox.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentBox.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentBox");
 			return percentBox;
 		}
 		case COMMON_CONTINGENCY:{
 			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(deduction.getExpression(), salaryDraftObject, deduction.getStartDate(), deduction.getEndDate()));
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type.name())) + "PercentLabel");
 			return percentLabel;
 		}
 		default: {
 			Widget percentLabel = newPercentLabel(deduction, percent, getPercentVariable(type));
-			percentLabel.ensureDebugId(deduction.getName().toLowerCase() + "PercentLabel");
+			percentLabel.ensureDebugId(lowerCase(defaultIfBlank(deduction.getName(), type != null ? type.name() : ""))+ "PercentLabel");
 			return percentLabel;
 		}
 		}
@@ -7561,9 +7564,22 @@ public class SalaryDraft extends ResizeComposite
 			
 		}
 
+		Double base  = null;
+		try {
+			Variable baseVar = getBaseVariable(deduction.getExpression(), draftObject, deduction.getStartDate(), deduction.getEndDate());
+			if ( baseVar != null ) {
+				base = Double.parseDouble(baseVar.getValue().toString());
+			}
+		} catch (Exception e ) {
+			
+		}
+
 		Double cgcBase = null; 
 		Double cgpBase = null;
+		Double irpfBase = draftObject.getIrpfBase(); 
 		switch (deduction.getName()) {
+		case "IRPF":
+			irpfBase = base != null ? base : irpfBase;
 		case "IT_E":
 		case "IMS_E":
 		case "FP_E":
@@ -7576,7 +7592,6 @@ public class SalaryDraft extends ResizeComposite
 			cgcBase = getContextSumValue("BASE_CGC_E", draftObject);
 			cgpBase = getContextSumValue("BASE_CGP_E", draftObject);
 			break;
-
 		default:
 			cgcBase = getContextSumValue("BASE_CGC", draftObject);
 			cgpBase = getContextSumValue("BASE_CGP", draftObject);
@@ -7586,7 +7601,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		return getPercent(getType(deduction, Deduction.Type.OTHER), 
 				deduction.getAmount(), 
-				draftObject.getIrpfBase(),
+				irpfBase,
 				cgcBase, 
 				cgpBase,
 				draftObject.gethExtraBase(),
@@ -7598,6 +7613,18 @@ public class SalaryDraft extends ResizeComposite
 	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
 		RegExp regExp = 
 		RegExp.compile("PORCENTAJE_[A-Z_]+");
+		
+		MatchResult r = regExp.exec(str);
+		
+		if ( r != null )
+			return getContextVariable(r.getGroup(0), draftObject, startDate, endDate);
+		
+		return null;
+	}
+
+	private static Variable getBaseVariable(String str, SalaryDraftObject draftObject, Date startDate, Date endDate) {
+		RegExp regExp = 
+		RegExp.compile("BASE_[A-Z_]+");
 		
 		MatchResult r = regExp.exec(str);
 		

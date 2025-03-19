@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
@@ -39,7 +40,7 @@ public class LoginServlet extends AonApiHttpServlet{
 		LOGGER.info("Login Servlet - POST METHOD");
 		JSONObject json = Utils.getRequestJSON(req);
 		String token = json.optString("token");
-		String username = json.optString("username");
+		String username = JsonUtils.getString(json, IJsonNames.USERNAME, "").trim();
 		String password = json.optString("password");
 		password = password.trim();
 		String login = "";

@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
@@ -92,23 +93,24 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals(income.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
-		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
+		assertEquals(4, AonCollectionUtils.size(ae.getDetails()));
+		
 		AccountEntryDetail expDetail = ae.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		AccountEntryDetail custExpDetail = ae.getDetails().get(1);
+		AccountEntryDetail custBankDetail = ae.getDetails().get(2);
+		AccountEntryDetail bankDetail = ae.getDetails().get(3);
+		
+		assertEquals(expDetail.getCredit(), custExpDetail.getDebit(), DELTA);
+		assertEquals(custBankDetail.getCredit(), custExpDetail.getDebit(), DELTA);
+		
 		assertEquals(expDetail.getConcept(), income.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), income.getReferenceCode());
-		
-		
-		AccountEntryDetail bankDetail = ae.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
-
-		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
-		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
-		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
+		assertEquals(custExpDetail.getConcept(), income.getConcept());
+		assertEquals(custExpDetail.getDocumentNumber(), income.getReferenceCode());
+		assertEquals(custBankDetail.getConcept(), income.getConcept());
+		assertEquals(custBankDetail.getDocumentNumber(), income.getReferenceCode());
+		assertEquals(bankDetail.getConcept(), income.getConcept());
+		assertEquals(bankDetail.getDocumentNumber(), income.getReferenceCode());
 		
 		Customer customer = income.getCustomer()
 			.orElseThrow( () -> new AonCoreException("Sin cliente"));
@@ -130,7 +132,11 @@ public class AccountingIncomeDAOTest extends AbstractOccamTest {
 		assertEquals( ft.getTrackingDate(), income.getDate() );
 		assertTrue( ft.isRecorded() );
 		assertEquals( ft.getAccountEntry(), ae.getId() );
-		
+		income.getAccountEntry().ifPresent( sae -> {
+			AccountingIncome saved = AccountingIncomeDAO.get(ctx, DOMAIN_ID, sae.getId(), null).orElse(null);
+			System.out.println( AccountingIncomeJSON.to(saved).map( j -> j.toString(2) ).orElse("NULL") );
+			
+		});
 	}
 
 	@Test

@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.test.fiscal.mod202;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.junit.Assert;
@@ -30,11 +31,11 @@ public class Mod202ScriptTest extends AbstractOccamTest {
 				.setAdministration(Administration.COMMON_TERRITORY);
 		Mod202 mod202 = FiscalFaker.getMod202(params);
 		MODEL202.calculate(getOccam(), mod202);
-		test( mod202, Model202ScriptProvider.obtainScript(mod202));
+		test(mod202, Model202ScriptProvider.obtainScript(mod202));		
 	}
 
-	private void test( Mod202 mod202, IModelScript<Mod202Key>[] scripts) {
-		for (IModelScript<Mod202Key> script : scripts) {
+	private void test( Mod202 mod202, List<IModelScript<Mod202Key>> list) {
+		for (IModelScript<Mod202Key> script : list) {
 			try {
 				if (script != null) {
 					for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
@@ -90,7 +91,7 @@ public class Mod202ScriptTest extends AbstractOccamTest {
 				}
 			} catch (Exception e) {
 				System.out.println( " \t [ERROR]" 
-					+ " Class: " + scripts.getClass().getSimpleName() 
+					+ " Class: " + list.getClass().getSimpleName() 
 					+ " Script Key: " + script 
 					+ " DAO Keys: " +
 						((script.getKeys() == null)

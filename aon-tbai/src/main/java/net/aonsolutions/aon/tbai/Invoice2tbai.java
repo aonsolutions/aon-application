@@ -11,7 +11,6 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.VATExemptionCause;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -513,7 +512,8 @@ public class Invoice2tbai {
 				desglose.setDesgloseFactura(desgloseFactura);
 			} else if(invoice.isService()){
 				PrestacionServicios serv = new PrestacionServicios();
-				serv.setSujeta(sujeta);
+				if(sujeta.getExenta() != null || sujeta.getNoExenta() != null)
+					serv.setSujeta(sujeta);
 				if(!noSujeta.getDetalleNoSujeta().isEmpty())
 					serv.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();
@@ -521,7 +521,8 @@ public class Invoice2tbai {
 				desglose.setDesgloseTipoOperacion(desgloseFactura);
 			} else {
 				Entrega entrega = new Entrega();
-				entrega.setSujeta(sujeta);
+				if(sujeta.getExenta() != null || sujeta.getNoExenta() != null)
+					entrega.setSujeta(sujeta);
 				if(!noSujeta.getDetalleNoSujeta().isEmpty())
 					entrega.setNoSujeta(noSujeta);
 				DesgloseTipoOperacionType desgloseFactura = new DesgloseTipoOperacionType();

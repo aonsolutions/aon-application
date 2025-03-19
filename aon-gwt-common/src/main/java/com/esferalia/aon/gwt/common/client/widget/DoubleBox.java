@@ -58,6 +58,7 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 	private int precision;
 	
 	private static final NumberFormat EUROPEAN_FORMAT = NumberFormat.getFormat("#,##0.00");
+	private static final NumberFormat EUROPEAN_FORMAT_3 = NumberFormat.getFormat("#,##0.000");
 
 	
 	private static final Renderer<Double> RENDERER = new AbstractRenderer<Double>() {
@@ -240,8 +241,12 @@ public class DoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 
         // Asegurarse de que se renderice correctamente con el formato europeo
         super.setValue(AonMathUtils.round(value,getPrecision()), fireEvents);
-        getElement().setPropertyString("value", EUROPEAN_FORMAT.format(AonMathUtils.round(value,getPrecision())));
-    
+        
+        if(getPrecision() == 2)
+        	getElement().setPropertyString("value", EUROPEAN_FORMAT.format(AonMathUtils.round(value,getPrecision())));
+        else if(getPrecision() == 3) 
+        	getElement().setPropertyString("value", EUROPEAN_FORMAT_3.format(AonMathUtils.round(value,getPrecision())));
+        
 	}
 	
 	public void setValue(Double value, boolean fireEvents, boolean shouldDisplayChange) {

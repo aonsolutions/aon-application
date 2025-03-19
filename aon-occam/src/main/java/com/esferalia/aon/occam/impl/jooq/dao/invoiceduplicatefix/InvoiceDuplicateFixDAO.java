@@ -50,7 +50,7 @@ public class InvoiceDuplicateFixDAO {
 		if(taxes.size() > 1) {
 			InvoiceTax retentionTax = null;
 			for (InvoiceTax tax : taxes) {
-				if(tax.isVatType() && retentionTax == null && !hasInvoiceTaxAccount(ctx, tax.getId())) 
+				if(tax.isWithholding() && retentionTax == null && !hasInvoiceTaxAccount(ctx, tax.getId())) 
 					retentionTax = tax;
 			}
 			if(retentionTax == null) retentionTax = taxes.get(0);

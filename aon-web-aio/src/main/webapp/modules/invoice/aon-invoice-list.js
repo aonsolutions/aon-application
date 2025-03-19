@@ -90,6 +90,14 @@ export class AonInvoiceList extends AonElement {
 			if(this.more)
 				this.loadMore();
 		});
+
+		aonInvoiceTable.addEventListener('select', () => {
+			if(aonInvoiceTable.selected.length === 1) {
+				this.addInvoiceActions();
+			} else if(aonInvoiceTable.selected.length === 0){
+				this.removeInvoiceActions();
+			}
+		});	
 	}
 
 	paintAccountingRow(idx, invoice) {
@@ -320,7 +328,7 @@ export class AonInvoiceList extends AonElement {
 			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
-			//aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			// aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'accounting'){
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
@@ -328,6 +336,8 @@ export class AonInvoiceList extends AonElement {
 			//if(this.isBeta()) {
 			//	aonInvoice.addToolbarOption2(ACTION.DELETE_INVOICES, () => this.nullInvoices());
 			//}
+		} else if(this.isProcessing()) {
+			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 		}
 	}
 

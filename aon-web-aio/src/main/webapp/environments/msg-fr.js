@@ -270,7 +270,8 @@ export const LINKED1 = 'Vinculados';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
-export const LOCATION = 'Ubicación';
+export const LOCATION = 'Emplacement';
+export const LOCATIONS = 'Emplacements';
 export const LOGIN = 'Se connecter';
 export const LOGIN_SUBTITLE = 'Entrez vos identifiants';
 

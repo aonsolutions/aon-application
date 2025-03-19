@@ -12,6 +12,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class Mod202MVELContext extends ModelMVELContext implements Map<String, Object> {
 	public static final String X08_1 = "202-X08-1";
 	public static final String X08_2 = "202-X08-2";
+	public static final String X08_3 = "202-X08-3"; // Porcentaje 3 de la modalidad B2 (se utiliza a partir de 2025)
+	public static final String X08_4 = "202-X08-4"; // Porcentaje 4 de la modalidad B2 (se utiliza a partir de 2025)
 	
 	protected Mod202 mod202;
 	protected final LinkedList<Mod202Key> keys = new LinkedList<>();
@@ -48,6 +50,14 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 		Double x08 = (Double) get(X08_2);
 		return x08;
 	}
+	public double getPercent3() {
+		Double x08 = (Double) get(X08_3);
+		return x08;
+	}
+	public double getPercent4() {
+		Double x08 = (Double) get(X08_4);
+		return x08;
+	}
 	
 	public boolean isX04Empty() {
 		Double x04 = (Double) get(Mod202Key.X04.toString());
@@ -57,7 +67,7 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	public double computeC17() {
 		double x08 = getPercent();
 		double c17;		
-		if (!isX04Empty() &&  mod202.getYear() >= 2017  ) {
+		if (!isX04Empty() && mod202.getYear() >= 2017) {
 			// A partir del 2017 si está marcado lo de las entidades navieras, el porcentaje es del 25%
 			c17 = 25;
 		} 
@@ -69,6 +79,7 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 		return c17;
 	}
 
+	// Casilla [21] Porcentaje 1 de la Modalidad B2
 	public double computeC21() {
 		double x08 = getPercent1();
 		Double c20 = (Double) get(Mod202Key.C20.toString());
@@ -83,6 +94,7 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 		return c21;
 	}
 
+	// Casilla [24] Porcentaje 2 de la Modalidad B2
 	public double computeC24() {
 		double x08 = getPercent2();
 		double c24 = 0.0;
@@ -95,6 +107,38 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 			}
 		}
 		return c24;
+	}
+	
+	// FALTA - POR AHORA EL CALCULO DEL PORCENTAJE 3 SE HACE IGUAL QUE LOS DOS PRIMEROS PORCENTAJES
+	// Casilla [62] Porcentaje 3 de la Modalidad B2
+	public double computeC62() {
+		double x08 = getPercent3();
+		double c62 = 0.0;
+		Double c61 = (Double) get(Mod202Key.C61.toString());
+		if (c61 != 0) {
+			if (isX09Empty()) {
+				c62 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+			} else {
+				c62 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+			}
+		}
+		return c62;
+	}
+	
+	// FALTA - POR AHORA EL CALCULO DEL PORCENTAJE 4 SE HACE IGUAL QUE LOS DOS PRIMEROS PORCENTAJES
+	// Casilla [65] Porcentaje 4 de la Modalidad B2
+	public double computeC65() {
+		double x08 = getPercent4();
+		double c65 = 0.0;
+		Double c64 = (Double) get(Mod202Key.C64.toString());
+		if (c64 != 0) {
+			if (isX09Empty()) {
+				c65 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+			} else {
+				c65 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+			}
+		}
+		return c65;
 	}
 	
 	public double computeC32() {

@@ -115,6 +115,8 @@ export class AonInvoiceCommunication extends AonElement {
         active.id = this.TBAI_ACTIVE;
  		active.title = MSG.TICKETBAI;
     	active.checked = this.configuration.tbai.active;
+        if(!this.isConsole())
+            active.disabled = this.configuration.tbai.active; 
         active.addEventListener(EVENT.CHANGE, () => {
             if(active.isChecked()) {
                 if(this.configuration.administration === 'BIZKAIA' && !this.configuration.company.legalPerson){
@@ -132,6 +134,8 @@ export class AonInvoiceCommunication extends AonElement {
         test.id = this.TBAI_TEST;
 		test.title = MSG.TEST_ENVIRONMENT;
 	    test.checked = this.configuration.tbai.test;
+        if(!this.configuration.tbai.test && !this.isConsole()) 
+            test.disabled = true; 
         if(!this.configuration.tbai.active) {
             test.classList.add(CSS.AON_NONE);
         }

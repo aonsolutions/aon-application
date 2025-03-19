@@ -641,7 +641,6 @@ export class AonDesktop extends AonElement {
 			fiscalCard.message = MSG.TAXES;
 			fiscalCard.setApp(Apps.FISCAL);
 			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
-				// this.appSelection(Apps.FISCAL.app);
 				let fiscalFilter = await aonFiscalCard.getFilter();
 				this.appSelectionFilter(Apps.FISCAL.app, fiscalFilter);
 			});
@@ -662,7 +661,7 @@ export class AonDesktop extends AonElement {
 			}
 			fiscalCard.addSection2(spanPeriod);
 			
-			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal(fiscalCard));
+			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal());
 			fiscalCard.firstChild.style.minHeight = "28rem";
 			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
 			fiscalCard.firstChild.style.margin = '0';
@@ -1013,125 +1012,204 @@ export class AonDesktop extends AonElement {
 		let result = aonFiscalCard.getFilterModels;
 		
 		let options = [];
-
-		// Borrador future
-		let periodFuture;
-		let periodTextFuture;
-		let yearFuture;
-		if(result[0].period == "T1") {
-			periodFuture = "T2";
-			periodTextFuture = "2º Trim.";
-			yearFuture = result[0].year;
-		} else if(result[0].period == "T2") {
-			periodFuture = "T3";
-			periodTextFuture = "3º Trim.";
-			yearFuture = result[0].year;
-		} else if(result[0].period == "T3") {
-			periodFuture = "T4";
-			periodTextFuture = "4º Trim.";
-			yearFuture = result[0].year;
-		} else {
-			periodFuture = "T1";
-			periodTextFuture = "1º Trim.";
-			yearFuture = result[0].year + 1;
-		}
-		let periodOptFuture = {
-			name: periodTextFuture + " " + yearFuture + " (B)",
-			title: periodTextFuture + " " + yearFuture + " (Borrador)",
-			icon: MATERIAL_ICONS.EVENT,
-			backgroundColor: "#4472C4",
-			fn: () => aonFiscalCard.filterEstimationTable({year: yearFuture, period: periodFuture, title: "Borrador " + periodTextFuture + " " + yearFuture})
-		};
-		options.push(periodOptFuture);
-
-		// Borrador
-		let periodCurrent;
-		let periodTextCurrent;
-		let yearCurrent;
 		
-		if(result[0].period == "T1") {
-			periodCurrent = "T1";
-			periodTextCurrent = "1º Trim.";
-			yearCurrent = result[0].year;
-		} else if(result[0].period == "T2") {
-			periodCurrent = "T2";
-			periodTextCurrent = "2º Trim.";
-			yearCurrent = result[0].year;
-		} else if(result[0].period == "T3") {
-			periodCurrent = "T3";
-			periodTextCurrent = "3º Trim.";
-			yearCurrent = result[0].year;
-		} else {
-			periodCurrent = "T4";
-			periodTextCurrent = "4º Trim.";
-			yearCurrent = result[0].year;
-		}
-		
-		let periodOptCurrent = {
-			name: periodTextCurrent + " " + yearCurrent + " (B)",
-			title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
-			icon: MATERIAL_ICONS.EVENT,
-			backgroundColor: "#4472C4",
-			fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
-		};
-		options.push(periodOptCurrent);
-
-		// Filtros
-		for (let index = 0; index < 4; index++) {
-			const period = result[index];
-			const periodOpt = {
-				name: period.periodText + " " + period.year,
-				title: period.periodText + " " + period.year,
+		if(!result || result.length === 0){
+			let period = this.getCurrentFiscalPeriod();
+			let year = new Date().getFullYear();
+			
+			// Borrador actual (para empresas nuevas o sin modelos existentes)
+			let periodCurrent;
+			let periodTextCurrent;
+			let yearCurrent;
+			
+			if(period == "T1") {
+				periodCurrent = "T1";
+				periodTextCurrent = "1º Trim.";
+				yearCurrent = year;
+			} else if(period == "T2") {
+				periodCurrent = "T2";
+				periodTextCurrent = "2º Trim.";
+				yearCurrent = year;
+			} else if(period == "T3") {
+				periodCurrent = "T3";
+				periodTextCurrent = "3º Trim.";
+				yearCurrent = year;
+			} else {
+				periodCurrent = "T4";
+				periodTextCurrent = "4º Trim.";
+				yearCurrent = year;
+			}
+			
+			let periodOptCurrent = {
+				name: periodTextCurrent + " " + yearCurrent + " (B)",
+				title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
 				icon: MATERIAL_ICONS.EVENT,
 				backgroundColor: "#4472C4",
-				fn: () => aonFiscalCard.filterTable({year: period.year, period: period.period, title: period.periodText + " " + period.year})
+				fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
 			};
-			options.push(periodOpt);
+			options.push(periodOptCurrent);
+		} else {
+			// Borrador future
+			let periodFuture;
+			let periodTextFuture;
+			let yearFuture;
+			if(result[0].period == "T1") {
+				periodFuture = "T2";
+				periodTextFuture = "2º Trim.";
+				yearFuture = result[0].year;
+			} else if(result[0].period == "T2") {
+				periodFuture = "T3";
+				periodTextFuture = "3º Trim.";
+				yearFuture = result[0].year;
+			} else if(result[0].period == "T3") {
+				periodFuture = "T4";
+				periodTextFuture = "4º Trim.";
+				yearFuture = result[0].year;
+			} else {
+				periodFuture = "T1";
+				periodTextFuture = "1º Trim.";
+				yearFuture = result[0].year + 1;
+			}
+			let periodOptFuture = {
+				name: periodTextFuture + " " + yearFuture + " (B)",
+				title: periodTextFuture + " " + yearFuture + " (Borrador)",
+				icon: MATERIAL_ICONS.EVENT,
+				backgroundColor: "#4472C4",
+				fn: () => aonFiscalCard.filterEstimationTable({year: yearFuture, period: periodFuture, title: "Borrador " + periodTextFuture + " " + yearFuture})
+			};
+			options.push(periodOptFuture);
+	
+			// Borrador
+			let periodCurrent;
+			let periodTextCurrent;
+			let yearCurrent;
+			
+			if(result[0].period == "T1") {
+				periodCurrent = "T1";
+				periodTextCurrent = "1º Trim.";
+				yearCurrent = result[0].year;
+			} else if(result[0].period == "T2") {
+				periodCurrent = "T2";
+				periodTextCurrent = "2º Trim.";
+				yearCurrent = result[0].year;
+			} else if(result[0].period == "T3") {
+				periodCurrent = "T3";
+				periodTextCurrent = "3º Trim.";
+				yearCurrent = result[0].year;
+			} else {
+				periodCurrent = "T4";
+				periodTextCurrent = "4º Trim.";
+				yearCurrent = result[0].year;
+			}
+			
+			let periodOptCurrent = {
+				name: periodTextCurrent + " " + yearCurrent + " (B)",
+				title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
+				icon: MATERIAL_ICONS.EVENT,
+				backgroundColor: "#4472C4",
+				fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
+			};
+			options.push(periodOptCurrent);
+	
+			// Filtros
+			for (let index = 0; index < 4; index++) {
+				const period = result[index];
+				const periodOpt = {
+					name: period.periodText + " " + period.year,
+					title: period.periodText + " " + period.year,
+					icon: MATERIAL_ICONS.EVENT,
+					backgroundColor: "#4472C4",
+					fn: () => aonFiscalCard.filterTable({year: period.year, period: period.period, title: period.periodText + " " + period.year})
+				};
+				options.push(periodOpt);
+			}	
 		}
 		
 		d.setMenuOptions(options, top, left);
 		d.open();
+	}
+	
+	getCurrentFiscalPeriod(){
+		const fecha = new Date();
+		const mes = fecha.getMonth(); // getMonth() devuelve un número entre 0 (enero) y 11 (diciembre)
+    
+	    if (mes >= 0 && mes <= 2) return "T1";  // Enero - Marzo
+	    if (mes >= 3 && mes <= 5) return "T2";  // Abril - Junio
+	    if (mes >= 6 && mes <= 8) return "T3";  // Julio - Septiembre
+	    return "T4"; // Octubre - Diciembre
 	}
 
 	async filterFutureFiscal(){
 		let aonFiscalCard = document.getElementById('aonFiscalCard');
 		let result = await this.getFilterModels();
 
-		if(!result || result.length === 0) { return; }
-
-		let lastPeriod;
-		let period;
-		let periodText;
-		let year;
-
-		if(result[0].period == "T1") {
-			period = "T2";
-			periodText = "2º Trim.";
-			year = result[0].year;
-			lastPeriod = new Date(result[0].year + "-" + "03-31");
-		} else if(result[0].period == "T2") {
-			period = "T3";
-			periodText = "3º Trim.";
-			year = result[0].year;
-			lastPeriod = new Date(result[0].year + "-" + "06-30");
-		} else if(result[0].period == "T3") {
-			period = "T4";
-			periodText = "4º Trim.";
-			year = result[0].year;
-			lastPeriod = new Date(result[0].year + "-" + "09-30");
-		} else {
-			period = "T1";
-			periodText = "1º Trim.";
-			year = result[0].year + 1;
-			lastPeriod = new Date(result[0].year + "-" + "12-31");
-		}
-
-		const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
-
-		if(dayDiff > 30){
+		// Borrador actual (para empresas nuevas o sin modelos existentes)
+		if(!result || result.length === 0) {
+			
+			let period = this.getCurrentFiscalPeriod();
+			let year = new Date().getFullYear();
+			
+			let periodCurrent;
+			let periodTextCurrent;
+			let yearCurrent;
+			
+			if(period == "T1") {
+				periodCurrent = "T1";
+				periodTextCurrent = "1º Trim.";
+				yearCurrent = year;
+			} else if(period == "T2") {
+				periodCurrent = "T2";
+				periodTextCurrent = "2º Trim.";
+				yearCurrent = year;
+			} else if(period == "T3") {
+				periodCurrent = "T3";
+				periodTextCurrent = "3º Trim.";
+				yearCurrent = year;
+			} else {
+				periodCurrent = "T4";
+				periodTextCurrent = "4º Trim.";
+				yearCurrent = year;
+			}
+			
 			setTimeout(() => {
-				aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+					aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
 			}, 500);
+			
+		} else {
+			let lastPeriod;
+			let period;
+			let periodText;
+			let year;
+	
+			if(result[0].period == "T1") {
+				period = "T2";
+				periodText = "2º Trim.";
+				year = result[0].year;
+				lastPeriod = new Date(result[0].year + "-" + "03-31");
+			} else if(result[0].period == "T2") {
+				period = "T3";
+				periodText = "3º Trim.";
+				year = result[0].year;
+				lastPeriod = new Date(result[0].year + "-" + "06-30");
+			} else if(result[0].period == "T3") {
+				period = "T4";
+				periodText = "4º Trim.";
+				year = result[0].year;
+				lastPeriod = new Date(result[0].year + "-" + "09-30");
+			} else {
+				period = "T1";
+				periodText = "1º Trim.";
+				year = result[0].year + 1;
+				lastPeriod = new Date(result[0].year + "-" + "12-31");
+			}
+	
+			const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
+	
+			if(dayDiff > 30){
+				setTimeout(() => {
+					aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+				}, 500);
+			}	
 		}
 	}
 

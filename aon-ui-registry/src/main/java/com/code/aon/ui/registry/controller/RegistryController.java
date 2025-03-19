@@ -68,6 +68,8 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
+import com.code.aon.config.Tariff;
+
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.person.Person;
@@ -361,6 +363,7 @@ public class RegistryController extends BasicController {
 		String personJoin = " LEFT OUTER JOIN person p ON c.registry = p.registry";
 		String rnoteJoin = " LEFT OUTER JOIN rnote rn ON c.registry = rn.registry AND rn.note_type = "+NoteType.OBSERVATION.ordinal();
 		String addInfoJoin =  " LEFT OUTER JOIN raddinfo ai ON c.registry = ai.registry";
+		String tariffJoin =  " LEFT OUTER JOIN tariff trf ON c.tariff = trf.id";
 		return " FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+ (!"com.code.aon.seller.Seller".equals(getPojo())?scopeJoin:"")
@@ -374,6 +377,7 @@ public class RegistryController extends BasicController {
 			+" LEFT OUTER JOIN rsegment rs ON rs.registry = r.id"
 			+" LEFT OUTER JOIN segment s ON rs.segment = s.id"
 			+" LEFT OUTER JOIN rattach cd ON cd.registry = r.id"
+			+ ("com.code.aon.customer.Customer".equals(getPojo())?tariffJoin:"")
 			+(!"com.code.aon.seller.Seller".equals(getPojo())?sellerJoin:"")
 			+ ("com.code.aon.customer.Customer".equals(getPojo())?personJoin:"")
 			+ ("com.code.aon.customer.Customer".equals(getPojo())?rnoteJoin:"")
@@ -455,6 +459,7 @@ public class RegistryController extends BasicController {
 		if("com.code.aon.customer.Customer".equals(getPojo())){
 			tableMapping.put(mappingPrefix + ".person", "p");
 			tableMapping.put(mappingPrefix + ".rnote", "rnp");
+			tableMapping.put(mappingPrefix + ".tariff", "trf");
 		}
 		if("com.code.aon.customer.Customer".equals(getPojo()) 
 				|| "com.code.aon.commercial.Target".equals(getPojo())){
@@ -490,6 +495,7 @@ public class RegistryController extends BasicController {
 		if("com.code.aon.customer.Customer".equals(getPojo())){
 			pojoMapping.put(mappingPrefix + ".person", Person.class);
 			pojoMapping.put(mappingPrefix + ".rnote", RegistryNote.class);
+			pojoMapping.put(mappingPrefix + ".tariff", Tariff.class);
 		}
 		if("com.code.aon.customer.Customer".equals(getPojo())
 				|| "com.code.aon.commercial.Target".equals(getPojo())){
@@ -535,7 +541,6 @@ public class RegistryController extends BasicController {
 					+ getSqlTables(pojoClass);
 			String where = getSqlCriteria(pojoClass);
 			select = select + " " + where;
-			
 			if (TargetDB.class.isAssignableFrom(pojoClass)) {
 				// Se chequea el caso especial del @Formula que hay en Target para saber si es cliente o no.
 				select = StringUtils.replace(select, "c.customer = 'true'", "(1 IN (SELECT 1 FROM customer WHERE registry = c.registry))");

@@ -783,6 +783,9 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public boolean hasMessages() {
+		return getMessages() != null && !getMessages().isEmpty();
+	}
 	public List<InvoiceError> getMessages() {
 	    if ( messages == null ) {
 		messages = new LinkedList<>();
