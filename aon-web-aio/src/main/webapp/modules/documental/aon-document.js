@@ -353,8 +353,8 @@ export class AonDocument extends AonElement {
       documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
 
       documentToolbar.addSeparator();
-      if(this.isBetaDoc() && this.getDur().isDocumentalManager()){
-        // Solo si eres asesor, entiendo que es este permiso
+      if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
+        // Solo si no eres empleado o empresa, entiendo que es este permiso
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
       }else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());

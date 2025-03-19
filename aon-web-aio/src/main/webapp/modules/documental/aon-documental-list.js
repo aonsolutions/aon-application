@@ -221,7 +221,7 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-		if(this.isBetaDoc() && this._roles.isDocumentalManager()){
+        if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
 			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
 		}else if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
