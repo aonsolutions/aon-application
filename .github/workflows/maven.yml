@@ -32,6 +32,7 @@ env:
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
   SKIP_TESTS: ${{ github.event.inputs.skipTests }}
+  JAVA_VERSION: ${{ github.event.inputs.javaVersion }}
   
 jobs:
   build:
@@ -46,10 +47,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK ${{ github.event.inputs.javaVersion }}
+    - name: Set up JDK ${JAVA_VERSION}
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ github.event.inputs.javaVersion }}
+        java-version: ${JAVA_VERSION}
         distribution: 'temurin'
         cache: maven
         
