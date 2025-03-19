@@ -88,9 +88,7 @@ export class AonDocumentalList extends AonElement {
 				
 				timeOut = setTimeout(() => {
 	        this._list = [];
-			console.log("detail", detail)
 	        if(detail) {
-				console.log("if", detail)
 				this.setFilter(detail)
 				this.init();	
 			} // this.getApplicationParent().setDataFilter(detail);
@@ -107,10 +105,69 @@ export class AonDocumentalList extends AonElement {
 		let categoryEl = this.getElement("category");
 		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
 		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-			      //if(detail) this.getEmployees(detail);
+			this.getElement("category2").hidden = true;
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getSubcategories(detail);
 		});
 	}
-
+	
+	async getSubcategories(detail){
+	    try {
+	      let categoryEl = this.getElement("category2");
+	      let categories = await getS3Category({parent: detail.value});
+	      if(categories.length>0) {
+	        categoryEl.setOptions(
+	          categories.map((category)=> ({name:category.name, value:category.id}))
+	        );
+	        categoryEl.hidden =  false;
+	      }
+	      else categoryEl.hidden =  true;
+		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getAdministrations(detail);
+		  });
+	    } catch (error) {
+	      console.log(error);
+	    }
+	}
+	async getAdministrations(detail){
+	  	    try {
+	  	      let categoryEl = this.getElement("category3");
+	  	      let categories = await getS3Category({parent: detail.value});
+	  	      if(categories.length>0) {
+	  	        categoryEl.setOptions(
+	  	          categories.map((category)=> ({name:category.name, value:category.id}))
+	  	        );
+	  	        categoryEl.hidden =  false;
+	  	      }
+	  	      else categoryEl.hidden =  true;
+	  		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+				this.getElement("category4").hidden = true;
+	  		  	if(detail) this.getModels(detail);
+	  		  });
+	  	    } catch (error) {
+	  	      console.log(error);
+	  	    }
+	  }
+			  
+	  async getModels(detail){
+		    try {
+		      let categoryEl = this.getElement("category4");
+		      let categories = await getS3Category({parent: detail.value});
+		      if(categories.length>0) {
+		        categoryEl.setOptions(
+		          categories.map((category)=> ({name:category.name, value:category.id}))
+		        );
+		        categoryEl.hidden =  false;
+		      }
+		      else categoryEl.hidden =  true;
+		    } catch (error) {
+		      console.log(error);
+		    }
+	  }
+	  
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();

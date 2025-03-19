@@ -30,18 +30,39 @@ export const DOCUMENTAL_FILTER = [
       id: "category",
       name: "category",
       title: MSG.CATEGORY,
-    },	  
+    },
+	{
+      type: "select",
+      id: "category2",
+      name: "category2",
+      title: "Subcategoría",
+	  hidden: "true"
+	},
+	{
+      type: "select",
+      id: "category3",
+      name: "category3",
+      title: "Administración",
+	  hidden: "true"
+	},
+	{
+      type: "select",
+      id: "category4",
+      name: "category4",
+      title: "Modelo",
+	  hidden: "true"
+	},	  
 	{
       type: "date",
       name: "start_date",
       id: "start_date",
-      title: MSG.FROM,
+      title: "Fecha del documento - desde",
     },
     {
       type: "date",
       name: "end_date",
       id: "end_date",
-      title: MSG.TO,
+      title: "Fecha del documento - hasta",
     },
 ];
 
