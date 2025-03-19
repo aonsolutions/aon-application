@@ -350,15 +350,14 @@ export class AonDocument extends AonElement {
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
-      documentToolbar.addButton2(ACTION.NEXT, () => this.next());
-      documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
-
       documentToolbar.addSeparator();
       if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
         // Solo si no eres empleado o empresa, entiendo que es este permiso
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
       } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
+        documentToolbar.addButton2(ACTION.NEXT, () => this.next());
+        documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
