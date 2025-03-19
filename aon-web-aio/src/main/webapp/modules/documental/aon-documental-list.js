@@ -222,10 +222,10 @@ export class AonDocumentalList extends AonElement {
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
         if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
-			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
-		}else if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
+		}else if(!this.isBetaDoc() && (this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())){
+			// El boton este de editar  no hace nada??
+            aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
 		}
 		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
