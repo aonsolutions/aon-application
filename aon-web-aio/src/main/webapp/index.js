@@ -6,6 +6,7 @@ import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
+import {favicon, title, loadLink } from './css/aon-customView.js';
 
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
@@ -35,11 +36,12 @@ const load = () => {
     LS.setAonSolutions(true);
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
-
+	
 	loadScripts(); 
 	loadTheme().then(
 	() => { 
 		favicon(); 
+		title();
 		document.body.appendChild(new AonModule());
 	},
 	(err) => {
@@ -54,9 +56,11 @@ const load = () => {
 }
 
 export const loadTheme = () => {
-   	let themeUrl = UA.isMobile() 
-        ? (UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME) 
-        : getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;
+    // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
+	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
+	let themeUrl = UA.isMobile() 
+        ? LS.AON_MOBILE_ANDROID 
+        : location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;
 
 	return new Promise((resolve, reject) => {
 		try {
@@ -84,7 +88,7 @@ export const loadTheme = () => {
 }
 
 
-const favicon = () => {
+/*const favicon = () => {
 	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
 	if ( favicon ) {
 		loadLink('', 'icon', 'image/x-icon')
@@ -103,7 +107,7 @@ const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
     link.href = url;
     link.rel = rel || "stylesheet";
     link.type = type || "text/css";
-});
+});*/
 
 const loadScript = (url, module=false) => new Promise((resolve, reject) => {
     let script = document.querySelector(`script[src="${url}"]`);

@@ -2178,6 +2178,13 @@ border-bottom: 1px solid rgb(221, 221, 221);
 }
 
 .aonNewLogo{
+  width: 132px;
+  height: 32px;
+  cursor: pointer;
+  padding: 0px 0px 0px 68px;
+  position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
   background-image: url("../assets/aon-white-logo.svg");
   background-position: 50%;
   background-repeat: no-repeat;
@@ -2805,6 +2812,10 @@ background-image: url("../favicon.png");
 
 .aonWeekFridaySchedule:after{
   content: 'Viernes de 8:00 a 14:00';
+}
+
+.aonSupportName:after{
+  content: 'AON SOLUTIONS S.L.';	
 }
 
 .aonSupportTelephone:after {
