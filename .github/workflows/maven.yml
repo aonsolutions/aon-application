@@ -42,7 +42,7 @@ env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
   SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
-  JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || temurin }}
+  JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   
 jobs:
   build:
