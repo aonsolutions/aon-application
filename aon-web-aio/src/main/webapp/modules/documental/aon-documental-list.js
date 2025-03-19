@@ -49,7 +49,9 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
-		this.buildToolbarSearch();
+		if(this.isBetaDoc()){
+			this.buildToolbarSearch();
+		}
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
 		this.appendChild(aonDocumentalTable);
