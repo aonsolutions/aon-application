@@ -190,7 +190,10 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
+		if(this.isBetaDoc() && this.getDur().isDocumentalManager()){
+			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
+			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+		}else if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
 			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
 		}

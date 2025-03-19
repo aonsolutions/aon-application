@@ -87,7 +87,6 @@ export const loadTheme = () => {
 	});
 }
 
-
 /*const favicon = () => {
 	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
 	if ( favicon ) {
@@ -96,7 +95,6 @@ export const loadTheme = () => {
 			faviconLink.href = favicon;
 		});
 	}
-
 }
 
 const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
@@ -119,7 +117,6 @@ const loadScript = (url, module=false) => new Promise((resolve, reject) => {
         script.src = url;
         if(module) script.type = "module";
     } else resolve(true);
-
 });
 
 const setWindowApp = () => {
@@ -144,10 +141,13 @@ const loadScriptFirebase = async() =>{
     setWindowApp()
 }
 
-
 const isBeta = () => {
     const href = window.location.href;
 	return href.includes('aonsolutions.org') || isLocal();
+}
+
+const isBetaDoc = () => {
+  return isBeta();
 }
 
 const isLocal =  () => {
@@ -172,4 +172,3 @@ const getCookie = (cookieName) => {
 } 
  
 load();
-

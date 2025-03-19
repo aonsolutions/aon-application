@@ -123,6 +123,7 @@ export const CUSTOMERS = 'Clients';
 // ----- D
 
 export const DATE = 'Data';
+export const DATE_CREATION = 'Data de creació';
 export const DARK = 'Fosc';
 export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Esborrar';

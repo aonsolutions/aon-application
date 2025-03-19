@@ -202,6 +202,30 @@ export class AonTable extends AonElement {
       iconBack.addEventListener(EVENT.CLICK, e => fn(e))
     }
   }
+  
+  addRowNoData(message) {
+      let body = this.getElement(this.getId() + "TableBody");
+      if (!body) return true;
+
+      let tr = this.createElement(TAG.TR);
+      tr.className    = "aonTableTr";
+      tr.style.cursor = "default";
+      tr.style.border = '0';
+      // Agregar el efecto hover
+      tr.addEventListener('mouseover', function() {
+        tr.style.backgroundColor = 'transparent';
+      });
+      // Crear la celda para el mensaje
+      let tdMessage = this.createElement(TAG.TD);
+      tdMessage.setAttribute('colspan', '100%');
+      tdMessage.style.textAlign = 'center';
+      tdMessage.style.padding   = '10px';
+      tdMessage.textContent     = message;
+      // Añadir la celda a la fila
+      tr.appendChild(tdMessage);
+      // Añadir la fila con el mensaje al cuerpo de la tabla
+      body.appendChild(tr);
+  }
 
   addRow(value, fn, contextMenu) {
     let body = this.getElement(this.getId() + "TableBody");
@@ -326,7 +350,7 @@ export class AonTable extends AonElement {
           });
           td.addEventListener("contextmenu", contextMenu);
         }
-      } else if(item.type && item.type ==="date") {
+      } else if(item.type && item.type ==="date" || item.type ==="creation_date") {
         const dateRegex = /\d{2,4}\-\d{1,2}\-\d{1,2}(?:T.*)?/;
         const dateValue = value[id] !== undefined? value[id] : "";
         let val = "";

@@ -125,6 +125,7 @@ export const CAMPAIGN = "Campaña";
 export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
+export const SUBCATEGORY = "Subcategoria";
 export const CAU = "Cau";// TODO
 export const CARRIER = "Agencia de Transporte"; // TODO
 export const CARRIERS = "Agencias de Transporte"; // TODO
@@ -202,6 +203,7 @@ export const CREATED_BY = "Creado por"; //TODO
 // ----- D
 
 export const DATE = MSG.DATE;
+export const DATE_CREATION = MSG.DATE_CREATION;
 export const DATA = "Datos";//TODO
 export const DARK = MSG.DARK;
 export const DEACTIVATE = MSG.DEACTIVATE;

@@ -9346,6 +9346,52 @@ CREATE TABLE `fs_model369_detail` (
   CONSTRAINT `FK_FS_MODEL369_DETAIL_FS_MODEL369` FOREIGN KEY (`fs_model369`) REFERENCES `fs_model369` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 369';
 
+#
+# Table structure for table `rdoc`
+#
+
+CREATE TABLE IF NOT EXISTS rdoc (
+	id                INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	domain            INT NOT NULL COMMENT 'dominio del documento',
+	registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????',
+	category          INT NULL COMMENT 'categoria del documento',
+	size              INT NULL COMMENT 'tamaño en bytes del documento',
+	mimeType          TINYINT NULL DEFAULT 0 COMMENT 'tipo de extension del documento',
+	name              VARCHAR(64) NULL COMMENT 'nombre del documento',
+	real_name         VARCHAR(64) NULL COMMENT 'nombre del documento',
+	scope             INT NULL COMMENT '????',
+	security_level    TINYINT NULL DEFAULT 0 COMMENT '????',
+	document_date     DATE NULL COMMENT 'fecha a la que pertence el documento',
+	s3                VARCHAR(128) NULL COMMENT 'key del s3 donde esta el documento',
+	s3_bucket         VARCHAR(128) NULL COMMENT 'bucket del s3 donde esta el documento',
+	creation_user     VARCHAR(16) NULL,
+	creation_date     DATETIME NULL,
+	modification_user VARCHAR(16) NULL,
+	modification_date DATETIME NULL,
+	delete_user VARCHAR(16) NULL,
+	delete_date DATETIME NULL,
+	INDEX idx_rdoc_domain (domain),
+	INDEX idx_rdoc_registry (registry),
+	INDEX idx_rdoc_category (category),
+	INDEX idx_rdoc_scope (scope),
+	CONSTRAINT fk_rdoc_domain FOREIGN KEY (domain) REFERENCES domain(id),
+	CONSTRAINT fk_rdoc_registry FOREIGN KEY (registry) REFERENCES registry(id),
+	CONSTRAINT fk_rdoc_category FOREIGN KEY (category) REFERENCES category(id),
+	CONSTRAINT fk_rdoc_scope FOREIGN KEY (scope) REFERENCES scope(id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos del documental en el s3';
+
+#
+# Table structure for table `category_tree`
+#
+
+CREATE TABLE IF NOT EXISTS category_tree (
+    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
+    id_parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
+    is_visible BOOLEAN DEFAULT TRUE COMMENT 'indica si sera o no visible para los subdominios',
+    is_deletable BOOLEAN DEFAULT TRUE COMMENT 'indica si se puede borrar o no, asi diferenciamos las categorias por defecto de las creadas por usuarios',
+	CONSTRAINT fk_category FOREIGN KEY (id_category) REFERENCES category(id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creación de jerarquía en las categorias del documental';
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 

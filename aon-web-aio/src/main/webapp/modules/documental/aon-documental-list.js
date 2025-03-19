@@ -1,32 +1,31 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles} from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-
 import '../../components/aon-table.js';
 
-import { CONSTANT, MSG } from '../../environments/environments.js';
+import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
+import { clearFields } from './DocumentalUtils.js'
+import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
-
 	more;
 	_roles;
-
 	TABLE;
 
 	static get observedAttributes() {
 		return [];
 	}
 
-	get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
+    get filter() {
+      return this.getAttribute(CONSTANT.FILTER);
+    }
 
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
+    set filter(filter) {
+      this.setAttribute(CONSTANT.FILTER, filter);
+    }
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.initialize();
@@ -50,16 +49,24 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
+		if(this.isBetaDoc()){
+			this.buildToolbarSearch();
+		}
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
 		this.appendChild(aonDocumentalTable);
-
-		aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', 'title', '60%');
+        // Columnas y datos
+        // addColumn(name, type, id, width, textAlign)
+        if(this.isBetaDoc()){
+          aonDocumentalTable.addColumn(MSG.DATE_CREATION, 'creation_date', 'creation_date', '20%');
+          aonDocumentalTable.addColumn(MSG.DATE+' del documento', 'date', 'date', '20%');
+        } else {
+          aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
+        }
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '60%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
-		// INFO
-		// aonInvoiceTable.addColumn('', '', '');
+		// Iniciar tabla
 		this.init();
 		aonDocumentalTable.addEventListener('more', () => {
 			if(this.more)
@@ -74,40 +81,154 @@ export class AonDocumentalList extends AonElement {
 			}
 		});
 	}
-
-	loadMore() {
-		let aonDocumentalTable = this.getElement(this.TABLE);
-		let filter = this.getFilter();
-
-		if(aonDocumentalTable && filter.page) {
-			filter.page = filter.page + 1;
-			this.setFilter(filter);
-			getDocuments(filter).then(documents => {
-				if(documents.length == 0)
-					this.more = false;
-				documents.forEach((doc, i) => {
-					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
-					tr.id = "aonDocumentalRow";
-				});
-			});
-		}
+	
+	buildToolbarSearch(){
+	    const btnSearch = this.getApplication().addSearchOption();
+	    let timeOut = null;
+	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+				clearTimeout(timeOut);
+				
+				timeOut = setTimeout(() => {
+	        this._list = [];
+	        if(detail) {
+				if(detail.category2){					
+					detail.category = detail.category2;
+					delete detail.category2;
+				}
+				if(detail.category3){					
+					detail.category = detail.category3;
+					delete detail.category3;
+				}
+				if(detail.category4){					
+					detail.category = detail.category4;
+					delete detail.category4;
+				}
+				detail.name = detail.search;
+				this.setFilter(detail)
+				this.init();	
+			} // this.getApplicationParent().setDataFilter(detail);
+				}, 300);
+	    });
+	    btnSearch.buildOptionsFilter([
+	      ...DOCUMENTAL_FILTER
+	    ]);
+	    this.searchValueDefault();
 	}
-
-	init() {
-		this.more = true;
-		let aonDocumentalTable = this.getElement(this.TABLE);
-		if(aonDocumentalTable) {
-			getDocuments(this.getFilter()).then(documents => {
-				aonDocumentalTable.removeRows();
-				aonDocumentalTable.selected = [];
-				this.removeDocumentalActions();
-				documents.forEach((doc, i) => {
-					let tr = aonDocumentalTable.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
-					tr.id = "aonDocumentalRow";
-				});
-			});
-		}
+	
+	async searchValueDefault(){
+		let categories = await getS3Category({"parent":"null"});
+		let categoryEl = this.getElement("category");
+		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			this.getElement("category2").hidden = true;
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getSubcategories(detail);
+		});
 	}
+	
+	async getSubcategories(detail){
+	    try {
+	      let categoryEl = this.getElement("category2");
+	      let categories = await getS3Category({parent: detail.value});
+	      if(categories.length>0) {
+	        categoryEl.setOptions(
+	          categories.map((category)=> ({name:category.name, value:category.id}))
+	        );
+	        categoryEl.hidden =  false;
+	      }
+	      else categoryEl.hidden =  true;
+		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getAdministrations(detail);
+		  });
+	    } catch (error) {
+	      console.log(error);
+	    }
+	}
+	async getAdministrations(detail){
+	  	    try {
+	  	      let categoryEl = this.getElement("category3");
+	  	      let categories = await getS3Category({parent: detail.value});
+	  	      if(categories.length>0) {
+	  	        categoryEl.setOptions(
+	  	          categories.map((category)=> ({name:category.name, value:category.id}))
+	  	        );
+	  	        categoryEl.hidden =  false;
+	  	      }
+	  	      else categoryEl.hidden =  true;
+	  		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+				this.getElement("category4").hidden = true;
+	  		  	if(detail) this.getModels(detail);
+	  		  });
+	  	    } catch (error) {
+	  	      console.log(error);
+	  	    }
+	  }
+			  
+	  async getModels(detail){
+		    try {
+		      let categoryEl = this.getElement("category4");
+		      let categories = await getS3Category({parent: detail.value});
+		      if(categories.length>0) {
+		        categoryEl.setOptions(
+		          categories.map((category)=> ({name:category.name, value:category.id}))
+		        );
+		        categoryEl.hidden =  false;
+		      }
+		      else categoryEl.hidden =  true;
+		    } catch (error) {
+		      console.log(error);
+		    }
+	  }
+	  
+    loadMore() {
+        let aonDocumentalTable = this.getElement(this.TABLE);
+        let filter = this.getFilter();
+
+        if (aonDocumentalTable && filter.page) {
+            this.loadDocumentsIntoTable(aonDocumentalTable, filter, false);
+        }
+    }
+
+    init() {
+        this.more = true;
+        let aonDocumentalTable = this.getElement(this.TABLE);
+        let filter = this.getFilter();
+		console.log("filter", filter);
+        if (aonDocumentalTable) {
+            this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
+        }
+    }
+
+    loadDocumentsIntoTable(table, filter, isInit = false) {
+        const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
+
+        fetchDocuments(filter).then(documents => {
+            if (isInit) {
+                table.removeRows();               // Limpiar la tabla si es la inicializaci�n
+                table.selected = [];              // Limpiar la selecci�n
+                this.removeDocumentalActions();   // Eliminar acciones de documentos
+            } else {
+              // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
+                filter.page = filter.page + 1;
+                this.setFilter(filter);
+            }
+
+            if (documents.length === 0) {
+                this.more = false;  // Si no hay documentos, no se puede cargar m�s
+                // Mostrar mensaje si no hay documentos
+                table.addRowNoData("No existen documentos disponibles");
+            }
+
+            // Insertar los documentos en la tabla
+            documents.forEach((doc, i) => {
+                let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+                tr.id = "aonDocumentalRow";
+            });
+        });
+    }
 
 	aonDocument(doc, i) {
 		this.removeDocumentalActions();
@@ -125,6 +246,22 @@ export class AonDocumentalList extends AonElement {
 		};
 		let json = btoa(JSON.stringify(data));
 		downloadDocuments(json);
+	}
+
+	async downloadS3Files() {
+		let aonDocumentalTable = this.getElement(this.TABLE);
+		let data = aonDocumentalTable.selected.map(r => ({
+			id: r.id,
+			type: r.type
+		  }));
+		let json = JSON.stringify(data);
+		let i = await downloadS3Documents(encodeURI(json));
+		const url = URL.createObjectURL(i);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'documentos.zip';
+		a.click();
+		URL.revokeObjectURL(url);
 	}
 
 	editFiles() {
@@ -149,8 +286,25 @@ export class AonDocumentalList extends AonElement {
 		d.open();
 	}
 
-	removeFiles() {
+	removeS3Files() {
 		let aonDocumentalTable = this.getElement(this.TABLE);
+		let aonDocumental = this.getApplication();
+		let d = document.getElementById(aonDocumental.DIALOG);
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.DELETE_FILE);
+		d.setContentHTML(`Estás seguro de eliminar los ficheros?`);
+		d.addAcceptAction(() => {
+			let data = aonDocumentalTable.selected.map(r => ({
+				id: r.id,
+				type: r.type
+			  }));
+		deleteS3Document({data}).then(() => this.init() );
+		});
+		d.open();
+	}
+	removeFiles() {
+	let aonDocumentalTable = this.getElement(this.TABLE);
 		let aonDocumental = this.getApplication();
 		let d = document.getElementById(aonDocumental.DIALOG);
 		d.clear();
@@ -163,7 +317,7 @@ export class AonDocumentalList extends AonElement {
 			attach_type: 'registry'
 		  }).then(() => this.init() );
 		});
-		d.open();
+		d.open();	
 	}
 
 	sendFiles() {
@@ -190,11 +344,15 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-		if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
-			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
+        if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
+			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+            aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
+		}else if(!this.isBetaDoc() && (this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())){
+			// El boton este de editar  no hace nada??
+            aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
+			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		}
-		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
