@@ -192,7 +192,7 @@ function S3DocumentalSelects() {
     loadingOverlay.style.display = 'flex';
     loadingOverlay.style.alignItems = 'center';
     loadingOverlay.style.justifyContent = 'center';
-    loadingOverlay.style.zIndex = '10'; // Asegura que el overlay esté por encima de otros elementos
+    loadingOverlay.style.zIndex = '10'; // Asegura que el overlay estï¿½ por encima de otros elementos
 
     // Crear el spinner de Materialize
     let spinner = document.createElement('div');
@@ -203,14 +203,14 @@ function S3DocumentalSelects() {
       </span>
     `;
 
-    // Hacer el ícono más grande
+    // Hacer el ï¿½cono mï¿½s grande
     let icon = spinner.querySelector('.material-symbols-outlined');
-    icon.style.fontSize = '48px'; // Tamaño más grande del ícono
+    icon.style.fontSize = '48px'; // Tamaï¿½o mï¿½s grande del ï¿½cono
 
-    // Aplicar la animación de rotación
-    icon.style.animation = 'rotate 2s linear infinite'; // Rotación infinita de 2 segundos
+    // Aplicar la animaciï¿½n de rotaciï¿½n
+    icon.style.animation = 'rotate 2s linear infinite'; // Rotaciï¿½n infinita de 2 segundos
 
-    // Crear la animación de rotación (por JavaScript)
+    // Crear la animaciï¿½n de rotaciï¿½n (por JavaScript)
     let style = document.createElement('style');
     style.innerHTML = `
       @keyframes rotate {
@@ -222,7 +222,7 @@ function S3DocumentalSelects() {
         }
       }
     `;
-    document.head.appendChild(style); // Insertar la animación en el head del documento
+    document.head.appendChild(style); // Insertar la animaciï¿½n en el head del documento
 
     // Agregar el spinner al overlay
     loadingOverlay.appendChild(spinner);

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, getS3Category } from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
 
@@ -233,6 +233,21 @@ export class AonDocumentalList extends AonElement {
 		downloadDocuments(json);
 	}
 
+	async downloadS3Files() {
+		let aonDocumentalTable = this.getElement(this.TABLE);
+		let data = aonDocumentalTable.selected.map(r => ({
+			id: r.id,
+			type: r.type
+		  }));
+		let json = JSON.stringify(data);
+		let i = await downloadS3Documents(encodeURI(json));
+		const url = URL.createObjectURL(i);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'documentos.zip';
+		a.click();
+		URL.revokeObjectURL(url);
+	}
 	editFiles() {
 		let aonDocumental = this.getApplication();
 		let parent = aonDocumental.getParent();
@@ -316,11 +331,12 @@ export class AonDocumentalList extends AonElement {
         if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
 			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
 		}else if(this._roles.isDocumentalManager() || this._roles.isDocumentalPortal()){
 			aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
+			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		}
-		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
