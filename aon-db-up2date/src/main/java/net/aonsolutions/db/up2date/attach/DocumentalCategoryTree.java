@@ -106,7 +106,7 @@ public class DocumentalCategoryTree implements Update {
 				dslContext.execute(insertIntoCategoryClause(domain, subcategories[i][j]));
 				BigInteger last_id2 = dslContext.lastID();
 				dslContext.execute(insertIntoCategoryTreeClause(last_id2, last_id));
-				if(i == 0 || i == 3) {
+				if(i == 0 || (i == 3 && j == 0)) {
 					for(int k = 0; k < administrations.length; k++) {
 						dslContext.execute(insertIntoCategoryClause(domain, administrations[k]));
 						BigInteger last_id3 = dslContext.lastID();

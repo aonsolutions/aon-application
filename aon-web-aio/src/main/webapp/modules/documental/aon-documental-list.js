@@ -7,7 +7,7 @@ import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
-
+import { clearFields } from './DocumentalUtils.js'
 import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
@@ -89,6 +89,19 @@ export class AonDocumentalList extends AonElement {
 				timeOut = setTimeout(() => {
 	        this._list = [];
 	        if(detail) {
+				if(detail.category2){					
+					detail.category = detail.category2;
+					delete detail.category2;
+				}
+				if(detail.category3){					
+					detail.category = detail.category3;
+					delete detail.category3;
+				}
+				if(detail.category4){					
+					detail.category = detail.category4;
+					delete detail.category4;
+				}
+				detail.name = detail.search;
 				this.setFilter(detail)
 				this.init();	
 			} // this.getApplicationParent().setDataFilter(detail);
