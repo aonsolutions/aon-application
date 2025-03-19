@@ -29,6 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -36,7 +37,7 @@ import com.google.gwt.dev.util.collect.HashMap;
 
 public class AyudatInvofoxCounters {
 	
-	private static List<Domain> domains = new LinkedList<>();
+	private static Map<String,List<Domain>> domains = new HashMap<>();
 	private static Map<Integer,Integer> counters = new HashMap<>();
 	
 	private AyudatInvofoxCounters() {
@@ -68,6 +69,7 @@ public class AyudatInvofoxCounters {
 		String s =AonStringUtils.substringAfter(f, "/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox-"); 
 		String schema = AonStringUtils.substringBefore(s, ".");
 		try (FileInputStream fis = new FileInputStream(f)) {
+			List<Domain> schemaDomains = domains.get(schema);
 			InputStreamReader ireader = new InputStreamReader(fis);
 			LineNumberReader reader = new LineNumberReader(ireader);
 			while ( reader.ready()) {
@@ -77,7 +79,7 @@ public class AyudatInvofoxCounters {
 					Integer domain = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[0]));
 					Integer count = AonNumberUtils.toInteger(AonStringUtils.trimToNull(tokens[1]));
 					counters.put( domain, count );
-					domains.stream()
+					schemaDomains.stream()
 						.filter( d -> AonNumberUtils.equals(domain, d.getDomainId()  ))
 						.findAny()
 						.ifPresentOrElse( 
@@ -94,12 +96,17 @@ public class AyudatInvofoxCounters {
 		String s =AonStringUtils.substringAfter(f, "/home/ecastellano/TRABAJO/INVOFOX/USAGE/invofox_usage_"); 
 		String schema = AonStringUtils.substringBefore(s, ".");
 		try (FileInputStream fis = new FileInputStream(f)) {
+			List<Domain> schemaDomains = domains.get(schema);
+			if (schemaDomains == null) {
+				schemaDomains = new LinkedList<>();
+				domains.put(schema, schemaDomains);
+			}
 			InputStreamReader ireader = new InputStreamReader(fis);
 			LineNumberReader reader = new LineNumberReader(ireader);
 			while ( reader.ready()) {
 				String line = reader.readLine();
 				if ( !AonStringUtils.startsWith( line, "registry" ) ) {
-					domains.add( parseData( schema, line) );
+					schemaDomains.add( parseData( schema, line) );
 				}
 			}
 		}
@@ -324,22 +331,26 @@ public class AyudatInvofoxCounters {
 		
 		for (Invofox invofox : map.values()) {
 			String document = invofox.getDocument();
-			long multipleDomains = domains.stream()
+			long multipleDomains = AonCollectionUtils.valuesStream(domains)
+				.flatMap( l -> AonCollectionUtils.stream(l))
 				.filter( d -> AonStringUtils.equalsIgnoreCase(document, d.getDocument() ))
 				.count();
+			;
 			MutableInt counter = new MutableInt();
 			MutableInt docsCounter = new MutableInt();
 			boolean grouped = (multipleDomains > 1);
 			boolean found = false;
-			for (Domain d : domains ) {
-				if (AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument())) {
-					invofox.setName((multipleDomains>1?">>":"")); 
-					action.accept(d, invofox , grouped , counter.getValue());		
-					counter.increment();
-					if (d.getCounter() != null) {
-						docsCounter.add( d.getCounter() );
+			for (List<Domain> schemaDomains : domains.values() ) {
+				for (Domain d : schemaDomains ) {
+					if (AonStringUtils.equalsIgnoreCase(invofox.getDocument(), d.getDocument())) {
+						invofox.setName((multipleDomains>1?">>":"")); 
+						action.accept(d, invofox , grouped , counter.getValue());		
+						counter.increment();
+						if (d.getCounter() != null) {
+							docsCounter.add( d.getCounter() );
+						}
+						found = true;
 					}
-					found = true;
 				}
 			}
 			if (!found) {

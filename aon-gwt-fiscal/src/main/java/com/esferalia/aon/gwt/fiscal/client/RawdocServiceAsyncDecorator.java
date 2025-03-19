@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -19,8 +20,44 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	public RawdocServiceAsyncDecorator(RawdocServiceAsync rawdocServiceAsync) {
 		this.fsa = rawdocServiceAsync;
 	}
+	// --------------------------------------------------------------- RAWDOC
+	@Override
+	public void getRawdocs(Occam occam, RawdocParams params, int offset, int limit, AsyncCallback<LinkedList<Rawdoc>> callback) {
+		AON.start();
+		fsa.getRawdocs(occam, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Rawdoc>>(callback));
+	}
 	
-	// --------------------------------------------------------------- FINANCE
+	@Override
+	public void parse(Occam occam, Integer rawdocId, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
+	}
+	
+	@Override
+	public void delete(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.delete(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+	}
+	@Override
+	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	
+	// --------------------------------------------------------------- RAWDOC OLD 
 	@Override
 	public void getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset, int limit,
 			AsyncCallback<LinkedList<Rawdoc>> callback) {

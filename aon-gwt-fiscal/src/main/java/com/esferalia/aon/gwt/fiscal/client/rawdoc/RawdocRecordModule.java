@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -146,4 +147,20 @@ public class RawdocRecordModule  extends MainEntryPoint  {
 	/*-{
 		$wnd.reloadInvoice(invoiceId);
 	}-*/;
+
+	public static void run() {
+		GWT.runAsync(RawdocRecordModule.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("RawdocRecordModule"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				RawdocRecordModule rawdocRecordModule = new RawdocRecordModule();
+				rawdocRecordModule.onModuleLoad();
+			}
+		});
+	}
 }
