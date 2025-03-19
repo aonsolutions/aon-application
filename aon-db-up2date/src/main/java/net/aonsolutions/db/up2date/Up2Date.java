@@ -19,45 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-<<<<<<< HEAD
 import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
 import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
-import net.aonsolutions.db.up2date.finance.RemakeTakaraFix;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2024;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod193Detail2024;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod369Detail2025;
-import net.aonsolutions.db.up2date.fiscal.FsModel369Creation;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod202Result;
-import net.aonsolutions.db.up2date.management.AlterInvoiceAddIndexDomainStatus;
-import net.aonsolutions.db.up2date.payroll.Holidays2025Insert;
-import net.aonsolutions.db.up2date.payroll.LackPayInsert;
-import net.aonsolutions.db.up2date.payroll.PartialRetirementInsert;
-import net.aonsolutions.db.up2date.tgss.AgriculturalBases2025Update;
-import net.aonsolutions.db.up2date.tgss.Artist2025Update;
-import net.aonsolutions.db.up2date.tgss.BasesMax2025Update;
-import net.aonsolutions.db.up2date.tgss.BasesMin2025Update;
-import net.aonsolutions.db.up2date.tgss.DropDaysFix;
-import net.aonsolutions.db.up2date.tgss.FPPercentage2024Fix;
-import net.aonsolutions.db.up2date.tgss.FellowsBases2025Update;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2025Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2025Update;
-import net.aonsolutions.db.up2date.tgss.HomeSolidarityRemove;
-import net.aonsolutions.db.up2date.tgss.MEI2025Rollback;
-import net.aonsolutions.db.up2date.tgss.MEITrainingFix2025;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28Update;
-import net.aonsolutions.db.up2date.tgss.SMI2025Update;
-import net.aonsolutions.db.up2date.tgss.MEI2025Insert;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIII;
-import net.aonsolutions.db.up2date.tgss.SolidarityInsert;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024Insert;
-import net.aonsolutions.db.up2date.tgss.TrainingPercentages2025Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2024Update;
-import net.aonsolutions.db.up2date.tgss.TrainningBases2025Update;
-import net.aonsolutions.db.up2date.user.AlterUserAddIndexAuth;
-=======
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
->>>>>>> master
 
 public class Up2Date {
 
