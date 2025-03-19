@@ -4,7 +4,12 @@ import java.io.Serializable;
 
 public enum RawdocNature implements Serializable {
 	
-	 INVOICE("Factura")
+	 INVOICE("Factura") {
+		@Override public <T> T visit(RawdocNatureVisitor<T> visitor) {return visitor.visitInvoice(); }
+	}
+	 ,OTHER_INCOMES("Otros ingresos") {
+		@Override public <T> T visit(RawdocNatureVisitor<T> visitor) {return visitor.visitOtherIncomes(); }
+	}
 	 /*
 	  * NOMINA, PRESUPUESTO, PEDIDO, etc ....
 	  */
@@ -33,5 +38,11 @@ public enum RawdocNature implements Serializable {
 		if (i < 0 || i >= RawdocNature.values().length) return null;
 		return RawdocNature.values()[i];
 	}
+
+	public abstract <T> T visit(RawdocNatureVisitor<T> visitor);
 	
+	public interface RawdocNatureVisitor<T> {
+		T visitInvoice();
+		T visitOtherIncomes();
+	}
 }

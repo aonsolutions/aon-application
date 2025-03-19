@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
@@ -16,6 +17,13 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface RawdocService extends RemoteService {
 	
 	// --------------------------------------------------------------- RAWDOC
+	LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset,int limit) throws AonCoreException;
+	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
+	void delete(Occam occam, Integer rawdocId);
+	void toDraft(Occam occam, Integer rawdocId) throws AonCoreException;
+	void toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
+	void toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
+	
 	LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String  user, RawdocParams params, int offset,int limit) throws AonCoreException;
 	LinkedList<RawdocDomainData> getDomainData(String domainName, int domain, String  user, int searchDomain) throws AonCoreException;
 	TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
