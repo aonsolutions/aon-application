@@ -86,7 +86,8 @@ export class AonDocument extends AonElement {
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
           this.docS3 = document;
-          fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+          const viewPixels = fileDiv.offsetWidth + (fileDiv.offsetWidth * 0.5);
+          fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${viewPixels}"></aon-viewer>`;
           let dataDiv = this.getElement(this.DATA);
           dataDiv.style.width = '50%';
     
@@ -349,15 +350,14 @@ export class AonDocument extends AonElement {
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
-      documentToolbar.addButton2(ACTION.NEXT, () => this.next());
-      documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
-
       documentToolbar.addSeparator();
       if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
         // Solo si no eres empleado o empresa, entiendo que es este permiso
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
-      }else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+      } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
+        documentToolbar.addButton2(ACTION.NEXT, () => this.next());
+        documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
