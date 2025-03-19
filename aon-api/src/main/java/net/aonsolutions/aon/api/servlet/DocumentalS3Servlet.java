@@ -319,13 +319,13 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		if(json.has(IJsonNames.SCOPE))
 			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
 		if(json.has(IJsonNames.START_DATE))
-			filter = filter.and(f.getDocumentDateProperty().ge(JsonUtils.getDate(json, IJsonNames.DATE)));
+			filter = filter.and(f.getDocumentDateProperty().ge(JsonUtils.getDate(json, IJsonNames.START_DATE)));
 		if(json.has(IJsonNames.END_DATE))
-			filter = filter.and(f.getDocumentDateProperty().le(JsonUtils.getDate(json, IJsonNames.DATE)));
+			filter = filter.and(f.getDocumentDateProperty().le(JsonUtils.getDate(json, IJsonNames.END_DATE)));
 		if(json.has(IJsonNames.FROM_DATE))
-			filter = filter.and(f.getCreationDateProperty().gt(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateProperty().gt(new Timestamp(JsonUtils.getDate(json, IJsonNames.FROM_DATE).getTime())));
 		if(json.has(IJsonNames.TO_DATE))
-			filter = filter.and(f.getCreationDateProperty().lt(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateProperty().lt(new Timestamp(JsonUtils.getDate(json, IJsonNames.TO_DATE).getTime())));
 		if(json.has(IJsonNames.CONTENT_TYPE))
 			filter = filter.and(f.getMimeTypeProperty().eq(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)).value()));
 		if(json.has(IJsonNames.NAME))
@@ -341,13 +341,13 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		if(json.has(IJsonNames.SCOPE))
 			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
 		if(json.has(IJsonNames.START_DATE))
-			filter = filter.and(f.getCreationDateTimeStampProperty().ge(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateTimeStampProperty().ge(new Timestamp(JsonUtils.getDate(json, IJsonNames.START_DATE).getTime())));
 		if(json.has(IJsonNames.END_DATE))
-			filter = filter.and(f.getCreationDateTimeStampProperty().le(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateTimeStampProperty().le(new Timestamp(JsonUtils.getDate(json, IJsonNames.END_DATE).getTime())));
 		if(json.has(IJsonNames.FROM_DATE))
-			filter = filter.and(f.getCreationDateTimeStampProperty().gt(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateTimeStampProperty().gt(new Timestamp(JsonUtils.getDate(json, IJsonNames.FROM_DATE).getTime())));
 		if(json.has(IJsonNames.TO_DATE))
-			filter = filter.and(f.getCreationDateTimeStampProperty().lt(new Timestamp(JsonUtils.getDateTime(json, IJsonNames.CREATION_DATE).getTime())));
+			filter = filter.and(f.getCreationDateTimeStampProperty().lt(new Timestamp(JsonUtils.getDate(json, IJsonNames.TO_DATE).getTime())));
 		if(json.has(IJsonNames.CONTENT_TYPE))
 			filter = filter.and(f.getMimeTypeProperty().eq(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)).value()));
 		if(json.has(IJsonNames.NAME))

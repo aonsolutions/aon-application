@@ -24,6 +24,48 @@ export const DocumentalSidenav = {
   }
 }
 
+export const DOCUMENTAL_FILTER = [
+	{
+      type: "select",
+      id: "category",
+      name: "category",
+      title: MSG.CATEGORY,
+    },
+	{
+      type: "select",
+      id: "category2",
+      name: "category2",
+      title: "Subcategoría",
+	  hidden: "true"
+	},
+	{
+      type: "select",
+      id: "category3",
+      name: "category3",
+      title: "Administración",
+	  hidden: "true"
+	},
+	{
+      type: "select",
+      id: "category4",
+      name: "category4",
+      title: "Modelo",
+	  hidden: "true"
+	},	  
+	{
+      type: "date",
+      name: "start_date",
+      id: "start_date",
+      title: "Fecha del documento - desde",
+    },
+    {
+      type: "date",
+      name: "end_date",
+      id: "end_date",
+      title: "Fecha del documento - hasta",
+    },
+];
+
 export const ASESOR_TYPE_OPTION = [
   {value: 'enterprise', name: 'Empresa'},
   {value: 'employee', name: 'Empleado'},

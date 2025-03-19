@@ -1,11 +1,14 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document } from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
+
+import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
+
+import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
 	more;
@@ -46,6 +49,7 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
+		this.buildToolbarSearch();
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
 		this.appendChild(aonDocumentalTable);
@@ -75,7 +79,95 @@ export class AonDocumentalList extends AonElement {
 			}
 		});
 	}
-
+	
+	buildToolbarSearch(){
+	    const btnSearch = this.getApplication().addSearchOption();
+	    let timeOut = null;
+	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+				clearTimeout(timeOut);
+				
+				timeOut = setTimeout(() => {
+	        this._list = [];
+	        if(detail) {
+				this.setFilter(detail)
+				this.init();	
+			} // this.getApplicationParent().setDataFilter(detail);
+				}, 300);
+	    });
+	    btnSearch.buildOptionsFilter([
+	      ...DOCUMENTAL_FILTER
+	    ]);
+	    this.searchValueDefault();
+	}
+	
+	async searchValueDefault(){
+		let categories = await getS3Category({"parent":"null"});
+		let categoryEl = this.getElement("category");
+		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			this.getElement("category2").hidden = true;
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getSubcategories(detail);
+		});
+	}
+	
+	async getSubcategories(detail){
+	    try {
+	      let categoryEl = this.getElement("category2");
+	      let categories = await getS3Category({parent: detail.value});
+	      if(categories.length>0) {
+	        categoryEl.setOptions(
+	          categories.map((category)=> ({name:category.name, value:category.id}))
+	        );
+	        categoryEl.hidden =  false;
+	      }
+	      else categoryEl.hidden =  true;
+		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			this.getElement("category3").hidden = true;
+			this.getElement("category4").hidden = true;
+		    if(detail) this.getAdministrations(detail);
+		  });
+	    } catch (error) {
+	      console.log(error);
+	    }
+	}
+	async getAdministrations(detail){
+	  	    try {
+	  	      let categoryEl = this.getElement("category3");
+	  	      let categories = await getS3Category({parent: detail.value});
+	  	      if(categories.length>0) {
+	  	        categoryEl.setOptions(
+	  	          categories.map((category)=> ({name:category.name, value:category.id}))
+	  	        );
+	  	        categoryEl.hidden =  false;
+	  	      }
+	  	      else categoryEl.hidden =  true;
+	  		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+				this.getElement("category4").hidden = true;
+	  		  	if(detail) this.getModels(detail);
+	  		  });
+	  	    } catch (error) {
+	  	      console.log(error);
+	  	    }
+	  }
+			  
+	  async getModels(detail){
+		    try {
+		      let categoryEl = this.getElement("category4");
+		      let categories = await getS3Category({parent: detail.value});
+		      if(categories.length>0) {
+		        categoryEl.setOptions(
+		          categories.map((category)=> ({name:category.name, value:category.id}))
+		        );
+		        categoryEl.hidden =  false;
+		      }
+		      else categoryEl.hidden =  true;
+		    } catch (error) {
+		      console.log(error);
+		    }
+	  }
+	  
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
@@ -89,7 +181,7 @@ export class AonDocumentalList extends AonElement {
         this.more = true;
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-
+		console.log("filter", filter);
         if (aonDocumentalTable) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
         }
@@ -139,6 +231,22 @@ export class AonDocumentalList extends AonElement {
 		};
 		let json = btoa(JSON.stringify(data));
 		downloadDocuments(json);
+	}
+
+	async downloadS3Files() {
+		let aonDocumentalTable = this.getElement(this.TABLE);
+		let data = aonDocumentalTable.selected.map(r => ({
+			id: r.id,
+			type: r.type
+		  }));
+		let json = JSON.stringify(data);
+		let i = await downloadS3Documents(encodeURI(json));
+		const url = URL.createObjectURL(i);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'documentos.zip';
+		a.click();
+		URL.revokeObjectURL(url);
 	}
 
 	editFiles() {
@@ -223,12 +331,13 @@ export class AonDocumentalList extends AonElement {
 		toolbar.addSeparator();
         if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+            aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
 		}else if(!this.isBetaDoc() && (this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())){
 			// El boton este de editar  no hace nada??
             aonDocumental.addToolbarOption2(ACTION.EDIT_FILE, () => this.editFiles());
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
+			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		}
-		aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
