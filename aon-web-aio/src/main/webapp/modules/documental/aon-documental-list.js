@@ -1,11 +1,14 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document } from '../../services/service.js';
+import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, getS3Category } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
-import { CONSTANT, MSG } from '../../environments/environments.js';
+
+import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
+
+import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
 	more;
@@ -46,6 +49,7 @@ export class AonDocumentalList extends AonElement {
 	}
 
  	build() {
+		this.buildToolbarSearch();
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
 		this.appendChild(aonDocumentalTable);
@@ -75,6 +79,37 @@ export class AonDocumentalList extends AonElement {
 			}
 		});
 	}
+	
+	buildToolbarSearch(){
+	    const btnSearch = this.getApplication().addSearchOption();
+	    let timeOut = null;
+	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+				clearTimeout(timeOut);
+				
+				timeOut = setTimeout(() => {
+	        this._list = [];
+			console.log("detail", detail)
+	        if(detail) {
+				console.log("if", detail)
+				this.setFilter(detail)
+				this.init();	
+			} // this.getApplicationParent().setDataFilter(detail);
+				}, 300);
+	    });
+	    btnSearch.buildOptionsFilter([
+	      ...DOCUMENTAL_FILTER
+	    ]);
+	    this.searchValueDefault();
+	}
+	
+	async searchValueDefault(){
+		let categories = await getS3Category({"parent":"null"});
+		let categoryEl = this.getElement("category");
+		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+			      //if(detail) this.getEmployees(detail);
+		});
+	}
 
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
@@ -89,7 +124,7 @@ export class AonDocumentalList extends AonElement {
         this.more = true;
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-
+		console.log("filter", filter);
         if (aonDocumentalTable) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
         }

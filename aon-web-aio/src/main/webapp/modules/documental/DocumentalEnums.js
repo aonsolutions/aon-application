@@ -24,6 +24,27 @@ export const DocumentalSidenav = {
   }
 }
 
+export const DOCUMENTAL_FILTER = [
+	{
+      type: "select",
+      id: "category",
+      name: "category",
+      title: MSG.CATEGORY,
+    },	  
+	{
+      type: "date",
+      name: "start_date",
+      id: "start_date",
+      title: MSG.FROM,
+    },
+    {
+      type: "date",
+      name: "end_date",
+      id: "end_date",
+      title: MSG.TO,
+    },
+];
+
 export const ASESOR_TYPE_OPTION = [
   {value: 'enterprise', name: 'Empresa'},
   {value: 'employee', name: 'Empleado'},
