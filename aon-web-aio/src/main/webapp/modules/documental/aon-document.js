@@ -260,6 +260,7 @@ export class AonDocument extends AonElement {
       containerTags.style.flexWrap = "wrap";
       containerTags.id = "containerTags";
       card.setContent(containerTags);
+      //revisar los tags en document al recibir
       // this.document.tags.forEach((item) => {
       //   this.addTag(item);
       // });
@@ -355,10 +356,10 @@ export class AonDocument extends AonElement {
       if(this.isBetaDoc() && this.getDur().isDocumentalManager()){
         // Solo si eres asesor, entiendo que es este permiso
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
-      } else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+      }else if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
       }
-      //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
+      documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
       documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
     }
     documentToolbar.addButton2(ACTION.BACK, () => this.back());
@@ -398,9 +399,13 @@ export class AonDocument extends AonElement {
     d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.name}`);
     d.addAcceptAction(() => {
       let data = {
-        id: this.document.id,
-        type: this.document.type
-      };
+        data: [
+          {
+            id: this.document.id,
+            type: this.document.type
+          }
+        ]
+      };      
       deleteS3Document(data).then(() => {
         this.back();
       });
