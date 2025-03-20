@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -206,7 +205,6 @@ public interface IFinance {
 	// 	***********************************************
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
-	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
 	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
 	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);
 	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx);
