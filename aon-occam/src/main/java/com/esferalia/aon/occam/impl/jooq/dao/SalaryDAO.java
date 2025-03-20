@@ -291,6 +291,7 @@ public class SalaryDAO {
 				.setStartDate(rootRecord.get(SALARY.START_DATE))
 				.setEndDate(rootRecord.get(SALARY.END_DATE))
 				.setIssueDate(rootRecord.get(SALARY.ISSUE_DATE))
+				.setChargeDate(rootRecord.get(SALARY.CHARGE_DATE))
 				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
 				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
 				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
