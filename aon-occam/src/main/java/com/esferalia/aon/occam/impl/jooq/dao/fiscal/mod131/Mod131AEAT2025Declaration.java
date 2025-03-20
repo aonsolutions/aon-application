@@ -32,8 +32,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025.Epigraph;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -51,7 +51,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class Mod131AEAT2024Declaration extends Mod131Declaration {
+public class Mod131AEAT2025Declaration extends Mod131Declaration {
 	
 	private static final double LIM_C12_1 = 660.14;
 	private static final double LIM_C12_2 = 33007.20;
@@ -63,6 +63,9 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_EPI ( Mod131Key.AC1_EPI
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,0).getEpigraph())
 			,(mod,key) -> ensureActivity(mod,0).setEpigraph(mod.getDescription(key)))
+		,AC1_EP2 ( Mod131Key.AC1_EP2
+				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getSpecialEpigraph())
+				,(mod,key) -> ensureActivity(mod,0).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod131Key.AC1_EP2, Mod131Key.AC1_EPI, Mod131Key.AC1_EPD)))
 		,AC1_EPD ( Mod131Key.AC1_EPD
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,0).getDescription())
 			,(mod,key) -> ensureActivity(mod,0).setDescription(mod.getDescription(key)))
@@ -96,24 +99,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_TSS ( Mod131Key.AC1_TSS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).isTss()?1:0)
 			,(mod,key) -> ensureActivity(mod,0).setTss(mod.getAmount(key)==1))
-		,AC1_BAT ( Mod131Key.AC1_BAT
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getBat())
-			,(mod,key) -> ensureActivity(mod,0).setBat((int) mod.getAmount(key)))
+//		,AC1_BAT ( Mod131Key.AC1_BAT
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getBat())
+//			,(mod,key) -> ensureActivity(mod,0).setBat((int) mod.getAmount(key)))
 		,AC1_MUN ( Mod131Key.AC1_MUN
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getMun())
 			,(mod,key) -> ensureActivity(mod,0).setMun((int) mod.getAmount(key)))
 		,AC1_EMP ( Mod131Key.AC1_EMP
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getEmp())
 			,(mod,key) -> ensureActivity(mod,0).setEmp( (int) mod.getAmount(key)))
-		,AC1_LOR ( Mod131Key.AC1_LOR
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getLor())
-			,(mod,key) -> ensureActivity(mod,0).setLor((int) mod.getAmount(key)))
-		,AC1_PAL ( Mod131Key.AC1_PAL
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getPal())
-			,(mod,key) -> ensureActivity(mod,0).setPal((int) mod.getAmount(key)))
-		,AC1_DAN ( Mod131Key.AC1_DAN
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getDana())
-				,(mod,key) -> ensureActivity(mod,0).setDana((int) mod.getAmount(key)))
+//		,AC1_LOR ( Mod131Key.AC1_LOR
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getLor())
+//			,(mod,key) -> ensureActivity(mod,0).setLor((int) mod.getAmount(key)))
+//		,AC1_PAL ( Mod131Key.AC1_PAL
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getPal())
+//			,(mod,key) -> ensureActivity(mod,0).setPal((int) mod.getAmount(key)))
+//		,AC1_DAN ( Mod131Key.AC1_DAN
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getDana())
+//				,(mod,key) -> ensureActivity(mod,0).setDana((int) mod.getAmount(key)))
 		,AC1_PRC ( Mod131Key.AC1_PRC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getPrc())
 			,(mod,key) -> ensureActivity(mod,0).setPrc(mod.getAmount(key)))
@@ -252,15 +255,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_RPF ( Mod131Key.AC1_RPF
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRpf())
 			,(mod,key) -> ensureActivity(mod,0).setRpf(mod.getAmount(key)))
-		,AC1_RLO ( Mod131Key.AC1_RLO
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRlo())
-			,(mod,key) -> ensureActivity(mod,0).setRlo(mod.getAmount(key)))
-		,AC1_RPA ( Mod131Key.AC1_RPA
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRpa())
-			,(mod,key) -> ensureActivity(mod,0).setRpa(mod.getAmount(key)))
-		,AC1_RDA ( Mod131Key.AC1_RDA
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getDanaReduction())
-				,(mod,key) -> ensureActivity(mod,0).setDanaReduction(mod.getAmount(key)))
+//		,AC1_RLO ( Mod131Key.AC1_RLO
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRlo())
+//			,(mod,key) -> ensureActivity(mod,0).setRlo(mod.getAmount(key)))
+//		,AC1_RPA ( Mod131Key.AC1_RPA
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRpa())
+//			,(mod,key) -> ensureActivity(mod,0).setRpa(mod.getAmount(key)))
+//		,AC1_RDA ( Mod131Key.AC1_RDA
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getDanaReduction())
+//				,(mod,key) -> ensureActivity(mod,0).setDanaReduction(mod.getAmount(key)))
 		,AC1_RDR ( Mod131Key.AC1_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getRdr())
 			,(mod,key) -> ensureActivity(mod,0).setRdr(mod.getAmount(key)))
@@ -334,13 +337,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC1_DC4 ( Mod131Key.AC1_DC4
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,0).getDeskCapacity4())
 			,(mod,key) -> ensureActivity(mod,0).setDeskCapacity4(mod.getAmountAsInt(key)))
-		
-		
+
 		
 		 // ************************************ [ACTIVIDAD 2]
 		,AC2_EPI ( Mod131Key.AC2_EPI
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,1).getEpigraph())
 			,(mod,key) -> ensureActivity(mod,1).setEpigraph(mod.getDescription(key)))
+		,AC2_EP2 ( Mod131Key.AC2_EP2
+				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getSpecialEpigraph())
+				,(mod,key) -> ensureActivity(mod,1).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod131Key.AC2_EP2, Mod131Key.AC2_EPI, Mod131Key.AC2_EPD)))
 		,AC2_EPD ( Mod131Key.AC2_EPD
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,1).getDescription())
 			,(mod,key) -> ensureActivity(mod,1).setDescription(mod.getDescription(key)))
@@ -374,24 +379,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC2_TSS ( Mod131Key.AC2_TSS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isTss()?1:0)
 			,(mod,key) -> ensureActivity(mod,1).setTss(mod.getAmount(key)==1))
-		,AC2_BAT ( Mod131Key.AC2_BAT
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getBat())
-			,(mod,key) -> ensureActivity(mod,1).setBat((int)mod.getAmount(key)))
+//		,AC2_BAT ( Mod131Key.AC2_BAT
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getBat())
+//			,(mod,key) -> ensureActivity(mod,1).setBat((int)mod.getAmount(key)))
 		,AC2_MUN ( Mod131Key.AC2_MUN
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getMun())
 			,(mod,key) -> ensureActivity(mod,1).setMun((int) mod.getAmount(key)))
 		,AC2_EMP ( Mod131Key.AC2_EMP
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getEmp())
 			,(mod,key) -> ensureActivity(mod,1).setEmp( (int) mod.getAmount(key)))
-		,AC2_LOR ( Mod131Key.AC2_LOR
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getLor())
-			,(mod,key) -> ensureActivity(mod,1).setLor( (int) mod.getAmount(key)))
-		,AC2_PAL ( Mod131Key.AC2_PAL
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getPal())
-			,(mod,key) -> ensureActivity(mod,1).setPal((int) mod.getAmount(key)))
-		,AC2_DAN ( Mod131Key.AC2_DAN
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getDana())
-				,(mod,key) -> ensureActivity(mod,1).setDana((int) mod.getAmount(key)))
+//		,AC2_LOR ( Mod131Key.AC2_LOR
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getLor())
+//			,(mod,key) -> ensureActivity(mod,1).setLor( (int) mod.getAmount(key)))
+//		,AC2_PAL ( Mod131Key.AC2_PAL
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getPal())
+//			,(mod,key) -> ensureActivity(mod,1).setPal((int) mod.getAmount(key)))
+//		,AC2_DAN ( Mod131Key.AC2_DAN
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getDana())
+//				,(mod,key) -> ensureActivity(mod,1).setDana((int) mod.getAmount(key)))
 		,AC2_PRC ( Mod131Key.AC2_PRC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getPrc())
 			,(mod,key) -> ensureActivity(mod,1).setPrc(mod.getAmount(key)))
@@ -530,15 +535,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC2_RPF ( Mod131Key.AC2_RPF
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRpf())
 			,(mod,key) -> ensureActivity(mod,1).setRpf(mod.getAmount(key)))
-		,AC2_RLO ( Mod131Key.AC2_RLO
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRlo())
-			,(mod,key) -> ensureActivity(mod,1).setRlo(mod.getAmount(key)))
-		,AC2_RPA ( Mod131Key.AC2_RPA
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRpa())
-			,(mod,key) -> ensureActivity(mod,1).setRpa(mod.getAmount(key)))
-		,AC2_RDA ( Mod131Key.AC2_RDA
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getDanaReduction())
-				,(mod,key) -> ensureActivity(mod,1).setDanaReduction(mod.getAmount(key)))
+//		,AC2_RLO ( Mod131Key.AC2_RLO
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRlo())
+//			,(mod,key) -> ensureActivity(mod,1).setRlo(mod.getAmount(key)))
+//		,AC2_RPA ( Mod131Key.AC2_RPA
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRpa())
+//			,(mod,key) -> ensureActivity(mod,1).setRpa(mod.getAmount(key)))
+//		,AC2_RDA ( Mod131Key.AC2_RDA
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getDanaReduction())
+//				,(mod,key) -> ensureActivity(mod,1).setDanaReduction(mod.getAmount(key)))
 		,AC2_RDR ( Mod131Key.AC2_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getRdr())
 			,(mod,key) -> ensureActivity(mod,1).setRdr(mod.getAmount(key)))
@@ -612,12 +617,14 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).getDeskCapacity4())
 			,(mod,key) -> ensureActivity(mod,1).setDeskCapacity4(mod.getAmountAsInt(key)))
 		
-		
-		
-		 // ************************************ [ACTIVIDAD 3]
+
+		// ************************************ [ACTIVIDAD 3]
 		,AC3_EPI ( Mod131Key.AC3_EPI
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,2).getEpigraph())
 			,(mod,key) -> ensureActivity(mod,2).setEpigraph(mod.getDescription(key)))
+		,AC3_EP2 ( Mod131Key.AC3_EP2
+				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getSpecialEpigraph())
+				,(mod,key) -> ensureActivity(mod,2).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod131Key.AC3_EP2, Mod131Key.AC3_EPI, Mod131Key.AC3_EPD)))
 		,AC3_EPD ( Mod131Key.AC3_EPD
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,2).getDescription())
 			,(mod,key) -> ensureActivity(mod,2).setDescription(mod.getDescription(key)))
@@ -651,24 +658,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC3_TSS ( Mod131Key.AC3_TSS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).isTss()?1:0)
 			,(mod,key) -> ensureActivity(mod,2).setTss(mod.getAmount(key)==1))
-		,AC3_BAT ( Mod131Key.AC3_BAT
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getBat())
-			,(mod,key) -> ensureActivity(mod,2).setBat((int)mod.getAmount(key)))
+//		,AC3_BAT ( Mod131Key.AC3_BAT
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getBat())
+//			,(mod,key) -> ensureActivity(mod,2).setBat((int)mod.getAmount(key)))
 		,AC3_MUN ( Mod131Key.AC3_MUN
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getMun())
 			,(mod,key) -> ensureActivity(mod,2).setMun( (int) mod.getAmount(key)))
 		,AC3_EMP ( Mod131Key.AC3_EMP
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getEmp())
 			,(mod,key) -> ensureActivity(mod,2).setEmp( (int) mod.getAmount(key)))
-		,AC3_LOR ( Mod131Key.AC3_LOR
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getLor())
-			,(mod,key) -> ensureActivity(mod,2).setLor( (int) mod.getAmount(key)))
-		,AC3_PAL ( Mod131Key.AC3_PAL
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getPal())
-			,(mod,key) -> ensureActivity(mod,2).setPal((int) mod.getAmount(key)))
-		,AC3_DAN ( Mod131Key.AC3_DAN
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getDana())
-				,(mod,key) -> ensureActivity(mod,2).setDana((int) mod.getAmount(key)))
+//		,AC3_LOR ( Mod131Key.AC3_LOR
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getLor())
+//			,(mod,key) -> ensureActivity(mod,2).setLor( (int) mod.getAmount(key)))
+//		,AC3_PAL ( Mod131Key.AC3_PAL
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getPal())
+//			,(mod,key) -> ensureActivity(mod,2).setPal((int) mod.getAmount(key)))
+//		,AC3_DAN ( Mod131Key.AC3_DAN
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getDana())
+//				,(mod,key) -> ensureActivity(mod,2).setDana((int) mod.getAmount(key)))
 		,AC3_PRC ( Mod131Key.AC3_PRC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getPrc())
 			,(mod,key) -> ensureActivity(mod,2).setPrc(mod.getAmount(key)))
@@ -807,15 +814,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC3_RPF ( Mod131Key.AC3_RPF
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRpf())
 			,(mod,key) -> ensureActivity(mod,2).setRpf(mod.getAmount(key)))
-		,AC3_RLO ( Mod131Key.AC3_RLO
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRlo())
-			,(mod,key) -> ensureActivity(mod,2).setRlo(mod.getAmount(key)))
-		,AC3_RPA ( Mod131Key.AC3_RPA
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRpa())
-			,(mod,key) -> ensureActivity(mod,2).setRpa(mod.getAmount(key)))
-		,AC3_RDA ( Mod131Key.AC3_RDA
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getDanaReduction())
-				,(mod,key) -> ensureActivity(mod,2).setDanaReduction(mod.getAmount(key)))
+//		,AC3_RLO ( Mod131Key.AC3_RLO
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRlo())
+//			,(mod,key) -> ensureActivity(mod,2).setRlo(mod.getAmount(key)))
+//		,AC3_RPA ( Mod131Key.AC3_RPA
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRpa())
+//			,(mod,key) -> ensureActivity(mod,2).setRpa(mod.getAmount(key)))
+//		,AC3_RDA ( Mod131Key.AC3_RDA
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getDanaReduction())
+//				,(mod,key) -> ensureActivity(mod,2).setDanaReduction(mod.getAmount(key)))
 		,AC3_RDR ( Mod131Key.AC3_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getRdr())
 			,(mod,key) -> ensureActivity(mod,2).setRdr(mod.getAmount(key)))
@@ -889,12 +896,14 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,2).getDeskCapacity4())
 			,(mod,key) -> ensureActivity(mod,1).setDeskCapacity4(mod.getAmountAsInt(key)))
 		
-		
-		
+
 		 // ************************************ [ACTIVIDAD 4]
 		,AC4_EPI ( Mod131Key.AC4_EPI
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,3).getEpigraph())
 			,(mod,key) -> ensureActivity(mod,3).setEpigraph(mod.getDescription(key)))
+		,AC4_EP2 ( Mod131Key.AC4_EP2
+				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getSpecialEpigraph())
+				,(mod,key) -> ensureActivity(mod,3).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod131Key.AC4_EP2, Mod131Key.AC4_EPI, Mod131Key.AC4_EPD)))
 		,AC4_EPD ( Mod131Key.AC4_EPD
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,3).getDescription())
 			,(mod,key) -> ensureActivity(mod,3).setDescription(mod.getDescription(key)))
@@ -928,24 +937,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC4_TSS ( Mod131Key.AC4_TSS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).isTss()?1:0)
 			,(mod,key) -> ensureActivity(mod,3).setTss(mod.getAmount(key)==1))
-		,AC4_BAT ( Mod131Key.AC4_BAT
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getBat())
-			,(mod,key) -> ensureActivity(mod,3).setBat((int)mod.getAmount(key)))
+//		,AC4_BAT ( Mod131Key.AC4_BAT
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getBat())
+//			,(mod,key) -> ensureActivity(mod,3).setBat((int)mod.getAmount(key)))
 		,AC4_MUN ( Mod131Key.AC4_MUN
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getMun())
 			,(mod,key) -> ensureActivity(mod,3).setMun( (int) mod.getAmount(key)))
 		,AC4_EMP ( Mod131Key.AC4_EMP
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getEmp())
 			,(mod,key) -> ensureActivity(mod,3).setEmp( (int)mod.getAmount(key)))
-		,AC4_LOR ( Mod131Key.AC4_LOR
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getLor())
-			,(mod,key) -> ensureActivity(mod,3).setLor( (int) mod.getAmount(key)))
-		,AC4_PAL ( Mod131Key.AC4_PAL
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getPal())
-			,(mod,key) -> ensureActivity(mod,3).setPal((int) mod.getAmount(key)))
-		,AC4_DAN ( Mod131Key.AC4_DAN
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getDana())
-				,(mod,key) -> ensureActivity(mod,3).setDana((int) mod.getAmount(key)))
+//		,AC4_LOR ( Mod131Key.AC4_LOR
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getLor())
+//			,(mod,key) -> ensureActivity(mod,3).setLor( (int) mod.getAmount(key)))
+//		,AC4_PAL ( Mod131Key.AC4_PAL
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getPal())
+//			,(mod,key) -> ensureActivity(mod,3).setPal((int) mod.getAmount(key)))
+//		,AC4_DAN ( Mod131Key.AC4_DAN
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getDana())
+//				,(mod,key) -> ensureActivity(mod,3).setDana((int) mod.getAmount(key)))
 		,AC4_PRC ( Mod131Key.AC4_PRC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getPrc())
 			,(mod,key) -> ensureActivity(mod,3).setPrc(mod.getAmount(key)))
@@ -1084,15 +1093,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC4_RPF ( Mod131Key.AC4_RPF
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRpf())
 			,(mod,key) -> ensureActivity(mod,3).setRpf(mod.getAmount(key)))
-		,AC4_RLO ( Mod131Key.AC4_RLO
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRlo())
-			,(mod,key) -> ensureActivity(mod,3).setRlo(mod.getAmount(key)))
-		,AC4_RPA ( Mod131Key.AC4_RPA
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRpa())
-			,(mod,key) -> ensureActivity(mod,3).setRpa(mod.getAmount(key)))
-		,AC4_RDA ( Mod131Key.AC4_RDA
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getDanaReduction())
-				,(mod,key) -> ensureActivity(mod,3).setDanaReduction(mod.getAmount(key)))
+//		,AC4_RLO ( Mod131Key.AC4_RLO
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRlo())
+//			,(mod,key) -> ensureActivity(mod,3).setRlo(mod.getAmount(key)))
+//		,AC4_RPA ( Mod131Key.AC4_RPA
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRpa())
+//			,(mod,key) -> ensureActivity(mod,3).setRpa(mod.getAmount(key)))
+//		,AC4_RDA ( Mod131Key.AC4_RDA
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getDanaReduction())
+//				,(mod,key) -> ensureActivity(mod,3).setDanaReduction(mod.getAmount(key)))
 		,AC4_RDR ( Mod131Key.AC4_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,3).getRdr())
 			,(mod,key) -> ensureActivity(mod,3).setRdr(mod.getAmount(key)))
@@ -1167,11 +1176,13 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,1).setDeskCapacity4(mod.getAmountAsInt(key)))
 		
 		
-		
 		 // ************************************ [ACTIVIDAD 5]
 		,AC5_EPI ( Mod131Key.AC5_EPI
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,4).getEpigraph())
 			,(mod,key) -> ensureActivity(mod,4).setEpigraph(mod.getDescription(key)))
+		,AC5_EP2 ( Mod131Key.AC5_EP2
+				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getSpecialEpigraph())
+				,(mod,key) -> ensureActivity(mod,4).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod131Key.AC5_EP2, Mod131Key.AC5_EPI, Mod131Key.AC5_EPD)))
 		,AC5_EPD ( Mod131Key.AC5_EPD
 			,(mod,key) -> mod.putDescription(key,ensureActivity(mod,4).getDescription())
 			,(mod,key) -> ensureActivity(mod,4).setDescription(mod.getDescription(key)))
@@ -1205,24 +1216,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC5_TSS ( Mod131Key.AC5_TSS
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).isTss()?1:0)
 			,(mod,key) -> ensureActivity(mod,4).setTss(mod.getAmount(key)==1))
-		,AC5_BAT ( Mod131Key.AC5_BAT
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getBat())
-			,(mod,key) -> ensureActivity(mod,4).setBat((int)mod.getAmount(key)))
+//		,AC5_BAT ( Mod131Key.AC5_BAT
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getBat())
+//			,(mod,key) -> ensureActivity(mod,4).setBat((int)mod.getAmount(key)))
 		,AC5_MUN ( Mod131Key.AC5_MUN
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getMun())
 			,(mod,key) -> ensureActivity(mod,4).setMun( (int) mod.getAmount(key)))
 		,AC5_EMP ( Mod131Key.AC5_EMP
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getEmp())
 			,(mod,key) -> ensureActivity(mod,4).setEmp( (int)mod.getAmount(key)))
-		,AC5_LOR ( Mod131Key.AC5_LOR
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getLor())
-			,(mod,key) -> ensureActivity(mod,4).setLor( (int) mod.getAmount(key)))
-		,AC5_PAL ( Mod131Key.AC5_PAL
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getPal())
-			,(mod,key) -> ensureActivity(mod,4).setPal((int) mod.getAmount(key)))
-		,AC5_DAN ( Mod131Key.AC5_DAN
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getDana())
-				,(mod,key) -> ensureActivity(mod,4).setDana((int) mod.getAmount(key)))
+//		,AC5_LOR ( Mod131Key.AC5_LOR
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getLor())
+//			,(mod,key) -> ensureActivity(mod,4).setLor( (int) mod.getAmount(key)))
+//		,AC5_PAL ( Mod131Key.AC5_PAL
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getPal())
+//			,(mod,key) -> ensureActivity(mod,4).setPal((int) mod.getAmount(key)))
+//		,AC5_DAN ( Mod131Key.AC5_DAN
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getDana())
+//				,(mod,key) -> ensureActivity(mod,4).setDana((int) mod.getAmount(key)))
 		,AC5_PRC ( Mod131Key.AC5_PRC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getPrc())
 			,(mod,key) -> ensureActivity(mod,4).setPrc(mod.getAmount(key)))
@@ -1361,15 +1372,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,AC5_RPF ( Mod131Key.AC5_RPF
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRpf())
 			,(mod,key) -> ensureActivity(mod,4).setRpf(mod.getAmount(key)))
-		,AC5_RLO ( Mod131Key.AC5_RLO
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRlo())
-			,(mod,key) -> ensureActivity(mod,4).setRlo(mod.getAmount(key)))
-		,AC5_RPA ( Mod131Key.AC5_RPA
-			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRpa())
-			,(mod,key) -> ensureActivity(mod,4).setRpa(mod.getAmount(key)))
-		,AC5_RDA ( Mod131Key.AC5_RDA
-				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getDanaReduction())
-				,(mod,key) -> ensureActivity(mod,4).setDanaReduction(mod.getAmount(key)))
+//		,AC5_RLO ( Mod131Key.AC5_RLO
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRlo())
+//			,(mod,key) -> ensureActivity(mod,4).setRlo(mod.getAmount(key)))
+//		,AC5_RPA ( Mod131Key.AC5_RPA
+//			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRpa())
+//			,(mod,key) -> ensureActivity(mod,4).setRpa(mod.getAmount(key)))
+//		,AC5_RDA ( Mod131Key.AC5_RDA
+//				,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getDanaReduction())
+//				,(mod,key) -> ensureActivity(mod,4).setDanaReduction(mod.getAmount(key)))
 		,AC5_RDR ( Mod131Key.AC5_RDR
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,4).getRdr())
 			,(mod,key) -> ensureActivity(mod,4).setRdr(mod.getAmount(key)))
@@ -1446,19 +1457,19 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// Suma de rendimientos netos
 		,C01 ( Mod131Key.C01
 			,"computeC01()"
-			,Mod131AEAT2024Declaration::getC01ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC01ComputeKeyInfo
 		)
 		// Pago fraccionado previo del trimestre. Suma de resultados.
 		,C02 ( Mod131Key.C02
 			,"computeC02()"
-			,Mod131AEAT2024Declaration::getC02ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC02ComputeKeyInfo
 		)
 		// I. Actividades econ\u00F3micas en estimaci\u00F3n objetiva distintas de las agr\u00EDcolas, ganaderas y forestales.
 		// Volumen de ventas o  ingresos del trimestre (excluidas las subvenciones de capital y las indemnizaciones)
 		,C03 ( Mod131Key.C03,null,null,null
-			,Mod131AEAT2024Declaration::initializeC03
+			,Mod131AEAT2025Declaration::initializeC03
 			,null
-			,Mod131AEAT2024Declaration::getC03ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC03ComputeKeyInfo
 		)
 		//	C03 - Deducción por rentas obtenidas en Ceuta y Melilla (S/N)
 		,C03_1 ( Mod131Key.C03_1)
@@ -1466,23 +1477,22 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		,C03_2 ( Mod131Key.C03_2)
 		//	C03 - Si para el cálculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar
 		,C03_3 ( Mod131Key.C03_3)
-		//	C03 - Volumen de ingresos del primer trimestre o, si la actividad se ha iniciado en 2024, del trimestre en el que se haya comenzado su ejercicio
+		//	C03 - Volumen de ingresos del primer trimestre o, si la actividad se ha iniciado en 2025, del trimestre en el que se haya comenzado su ejercicio
 		,C03_4 ( Mod131Key.C03_4)
-		//	C03 - Número de días en los que ha ejercido la actividad en el primer trimestre, o si la actividad se ha iniciado en 2024, del trimestre en el que se haya comenzado su ejercicio
+		//	C03 - Número de días en los que ha ejercido la actividad en el primer trimestre, o si la actividad se ha iniciado en 2025, del trimestre en el que se haya comenzado su ejercicio
 		,C03_5 ( Mod131Key.C03_5)
 		//	C03 - Número de días en los que previsiblemente ejercerá la actividad durante el año
 		,C03_6 ( Mod131Key.C03_6)
 		
-		
 		// Pago fraccionado previo del trimestre. 2 por 100 del importe de la casilla 03.
 		,C04 ( Mod131Key.C04 ,"C03 * 2 / 100" )
 		
-		// III. Actividades agr\u00EDcolas, ganaderas y forestales, en estimaci\u00F3n objetiva.
+		// III. Actividades agrícolas, ganaderas y forestales, en estimación objetiva.
 		// Volumen de ingresos del trimestre (excluidas las subvenciones de capital y las indemnizaciones)
 		,C05 ( Mod131Key.C05,null,null,null
 			,(ctx,mod) -> mod.putAmount(Mod131Key.C05, getInitialC05(ctx,mod))
 			,null
-			,Mod131AEAT2024Declaration::getC05ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC05ComputeKeyInfo
 		)
 		// Pago fraccionado previo del trimestre. 2 por 100 del importe de la casilla 05.
 		,C06 ( Mod131Key.C06, "C05 * 2 / 100" )
@@ -1495,24 +1505,24 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		// , (mod -> mod.isAEAT() && mod.getYear() < 2015)
 		,C09 ( Mod131Key.C09)
 		
-		// A deducir. Minoraci\u00F3n por aplicaci\u00F3n de la deducci\u00F3n a que se refiere el art\u00EDculo 110.3 C) del reglamento del impuesto.
+		// A deducir. Minoración por aplicación de la deducción a que se refiere el artículo 110.3 C) del reglamento del impuesto.
 		// ,(mod -> mod.isAEAT() && mod.getYear() > 2014)
 		,C091( Mod131Key.C091,null,null,null
-			,Mod131AEAT2024Declaration::initializeC091
+			,Mod131AEAT2025Declaration::initializeC091
 			,null
-			,Mod131AEAT2024Declaration::getC091ComputeKeyInfo)
+			,Mod131AEAT2025Declaration::getC091ComputeKeyInfo)
 
-		// "Diferencia 		([07] - [08] - [09]). Si se obtiene una cantidad negativa, cons\u00EDgnela con signo menos (-)
+		// Diferencia ([07] - [08] - [09]). Si se obtiene una cantidad negativa, consígnela con signo menos (-)
 		,C10 ( Mod131Key.C10, "C07 - C08 - C091" )
 		
-		// "Resultados negativos de trimestres anteriores."
+		// Resultados negativos de trimestres anteriores.
 		,C11 ( Mod131Key.C11,null,null,null,null
 			,"computeC11()"
-			,Mod131AEAT2024Declaration::getC11ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC11ComputeKeyInfo
 			)
 		,C12 ( Mod131Key.C12
 			,"computeC12()"
-			,Mod131AEAT2024Declaration::getC12ComputeKeyInfo
+			,Mod131AEAT2025Declaration::getC12ComputeKeyInfo
 			)
 		,C13 ( Mod131Key.C13
 			,"C10 - C11 - C12"
@@ -2175,7 +2185,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 	private static final double DEFAULT_YEAR_HOURS = 1800;
 
 	static boolean accept(Mod131 mod131) {
-		return mod131.isAEAT() && mod131.getYear() == 2024; 
+		return mod131.isAEAT() && mod131.getYear() >= 2025; 
 	}
 	
 	@Override
@@ -2190,7 +2200,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		calcIndiceCorrectorExceso(ctx,act);
 		calcIndiceCorrectorNuevaActividad(ctx,act);
 		calcRendimientoEfectosPagoFraccionado(ctx,act);
-		calcReducciones(act);
+//		calcReducciones(act); // NO HAY REDUCCIONES (LORCA, PALMA Y DANA) A PARTIR DE 2025
 		calcRendimientoEfectosPagoFraccionadoDespuesReduccion(ctx,act);
 		calcResultadoPagoTrimestral(ctx,act);
 		return act;
@@ -2229,7 +2239,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		if (AonMathUtils.isNotZero(men19Hours)) {
 			salariedStaff = salariedStaff + AonMathUtils.round((men19Hours / yearHours) * 0.60);
 		}
-		if (AonMathUtils.isNotZero(disHours)) {
+		if (AonMathUtils.isNotZero(disHours)) {			
 			salariedStaff = salariedStaff + AonMathUtils.round((disHours / yearHours) * 0.40);
 		}
 	}
@@ -2358,55 +2368,47 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 	}
 	
 	private static void calcIndiceCorrectorEspecial(AONContext ctx, Mod131Activity act) {
-		// N?mero de vehículos afectos de la actividad.
+		// Número de vehículos afectos de la actividad.
 		double veh = act.getVeh();
 		// Municipio donde se ejerce la actividad.
 		double mun = act.getMun();
-		
-		
+
 		// Los índices correctores especiales sólo se aplicarán en aquellas 
 		// actividades concretas que se citan a continuación:
 		double ic1 = 0.0;
 		act.setIndiceEmpresasPequenaDimensionAplicable(true);
-		
 		if (!AonMathUtils.isLessThanZero( act.getRnm() )) {
-			if (Epigraph.E_659_4B.getEpigraph().equals(act.getEpigraph())) {
-	
-				// PREGUNTA para diferenciar de Epigraph.E_659_4A, puesto que el epigrafe es el mismo 
-				if (act.getModules() != null && act.getModules().size() == 4) {
-					
-					// Actividad de comercio al por menor de prensa, revistas y libros 
-					// en quioscos situados en la v?a p?blica:
-					//	Ubicaci?n de los quioscos					?ndice
-					//  --------------------------------------------------
-					//	Madrid y Barcelona							  1,00
-					//	Municipios de m?s de 100.000 habitantes		  0,95
-					//	Resto de municipios							  0,80
-					if (AonMathUtils.round(mun) == 6.0) {
-						ic1 = 1.0;
-					} else if (AonMathUtils.round(mun) == 5.0) {
-						ic1 = 0.95;
-					} else {
-						ic1 = 0.80;
-					}
+			Epigraph epi = Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph());
+			if (epi == Epigraph.E_659_4B) {
+				// Actividad de comercio al por menor de prensa, revistas y libros en quioscos situados en la vía pública:
+				//	Ubicación de los quioscos					Indice
+				//  --------------------------------------------------
+				//	Madrid y Barcelona							  1,00
+				//	Municipios de mas de 100.000 habitantes		  0,95
+				//	Resto de municipios							  0,80
+				if (AonMathUtils.round(mun) == 6.0) {
+					ic1 = 1.0;
+				} else if (AonMathUtils.round(mun) == 5.0) {
+					ic1 = 0.95;
+				} else {
+					ic1 = 0.80;
 				}
-			} else if (Epigraph.E_721_1.getEpigraph().equals(act.getEpigraph()) 
-					|| Epigraph.E_721_3.getEpigraph().equals(act.getEpigraph())) {
+			} else if (epi == Epigraph.E_721_1 || epi == Epigraph.E_721_3) {
 				// Actividad de transporte urbano colectivo y de viajeros por carretera:
-				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
+				// Se aplicará el índice 0,80 cuando el titular disponga de un único vehículo.
 				if (AonMathUtils.round(veh) == 1.0) {
 					ic1 = 0.80;
 					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
 				}
-			} else if (Epigraph.E_721_2.getEpigraph().equals(act.getEpigraph())) {
+			} else if (epi == Epigraph.E_721_2) {				
 				//	Actividad de transporte por autotaxis.
-				//		Poblaci?n del municipio				  ?ndice
+				//		Población del municipio				  Indice
 				//		--------------------------------------------
 				//		Hasta 2.000 habitantes					0,75
 				//		De 2.001 hasta 10.000 habitantes		0,80
 				//		De 10.001 hasta 50.000 habitantes		0,85
 				//		De 50.001 hasta 100.000 habitantes		0,90
-				//		M?s de 100.000 habitantes				1,00
+				//		Más de 100.000 habitantes				1,00
 				act.setIndiceEmpresasPequenaDimensionAplicable(false);
 				if (AonMathUtils.round(mun) == 0.0) {
 					ic1 = 0.75;
@@ -2419,18 +2421,17 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 				} else {
 					ic1 = 1.00;
 				}
-			} else if (Epigraph.E_722A.getEpigraph().equals(act.getEpigraph())) {
-				//Actividades de transporte de mercanc?as por carretera y servicios de mudanzas:
-				// Se aplicar? el ?ndice 0,80 cuando el titular disponga de un ?nico veh?culo.
-				// Se aplicar? el ?ndice 0,90 cuando la actividad se realice con tractocamiones
+			} else if (epi == Epigraph.E_722A || epi == Epigraph.E_722B) {				
+				//Actividades de transporte de mercancías por carretera y servicios de mudanzas:
+				// Se aplicará el índice 0,80 cuando el titular disponga de un único vehículo.
+				// Se aplicará el índice 0,90 cuando la actividad se realice con tractocamiones
 				// y el titular carezca de semirremolques. Cuando la actividad se desarrolle con 
-				// un ?nico tractocami?n y sin semirremolques, se aplicar?, exclusivamente, el ?ndice 0,75.
-	
+				// un único tractocamión y sin semirremolques, se aplicará, exclusivamente, el índice 0,75.
 				if (AonMathUtils.round(veh) == 1.0) {
 					ic1 = 0.80;
 					act.setIndiceEmpresasPequenaDimensionAplicable(false);
 				}
-				// Indique si la actividad se realiza con un ?nico tractocami?n y sin semirremolques.
+				// Indique si la actividad se realiza con un único tractocamión y sin semirremolques.
 				if (act.isTss()) {
 					ic1 = 0.75;
 					act.setIndiceEmpresasPequenaDimensionAplicable(false);
@@ -2440,32 +2441,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 					ic1 = 0.90;
 					act.setIndiceEmpresasPequenaDimensionAplicable(false);
 				}
-			} else if (Epigraph.E____.getEpigraph().equals(act.getEpigraph())) {
-				// Actividad de producci?n de mejill?n en batea:
-				//	- Empresa con una sola batea y sin barco auxiliar: 0,75.
-				//	- Empresa con una sola batea y con un barco auxiliar de 
-				//	  menos de 15 toneladas de registro bruto (T.R.B.): 0,85.
-				//	- Empresa con una sola batea y con un barco auxiliar de 15 
-				//	  a 30 T.R.B.; y empresa con dos bateas y sin barco auxiliar: 0,90.
-				//	- Empresa con una sola batea y con un barco auxiliar de m?s 
-				//	  de 30 T.R.B.; y empresa con dos bateas y un barco auxiliar 
-				//    de menos de 15 T.R.B.: 0,95.
-				act.setIndiceEmpresasPequenaDimensionAplicable(false);
-				// N?mero de bateas y de barcos auxiliares de la empresa.
-				double bat = act.getBat();
-				if (AonMathUtils.round(bat) == 1.0) {
-					ic1 = 0.75;
-				} else if (AonMathUtils.round(bat) == 2.0) {
-					ic1 = 0.85;
-				} else if (AonMathUtils.round(bat) == 3.0 || AonMathUtils.round(bat) == 5.0) {
-					ic1 = 0.90;
-				} else if (AonMathUtils.round(bat) == 4.0 || AonMathUtils.round(bat) == 6.0) {
-					ic1 = 0.95;
-				} else {
-					// Otros: numero de bateas, barcos o TRB distintos de los anteriores.
-					act.setIndiceEmpresasPequenaDimensionAplicable(false);	
-				}
-			}
+			} 
 		}
 		act.setIc1(ic1);
 	}
@@ -2477,8 +2453,8 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			act.setIndiceEmpresasPequenaDimensionAplicable(false);
 		}
 		if (act.isIndiceEmpresasPequenaDimensionAplicable()) {
-			// En ning?n caso ser? aplicable el ?ndice corrector para empresas de peque?a 
-			// dimensi?n (b.1) a las actividades para las que est?n previstos los ?ndices 
+			// En ningún caso será aplicable el índice corrector para empresas de pequeña 
+			// dimensión (b.1) a las actividades para las que estén previstos los índices 
 			// correctores especiales enumerados en las letras a.2), a.3), a.4) y a.5).
 			if (act.isLoc() && act.getRnm() > 0) {
 				if (AonMathUtils.round(act.getVeh()) <= 1.0) {
@@ -2519,7 +2495,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		if (AonMathUtils.isZero(act.getIc2())) {
 			double tope = AonMathUtils.round(act.getMaxImport());
 			if (AonMathUtils.isZero(tope)) {
-				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
+				Epigraph epi = Modules2025.Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph());
 				if (epi != null) {
 					tope = epi.getLimExceso();
 				}
@@ -2591,7 +2567,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		if (AonMathUtils.isNotZero(act.getIc4())) {
 			double  tope = act.getMaxImport();
 			if (AonMathUtils.isZero(tope)) {
-				Epigraph epi = Modules2018.Epigraph.getEpigraph(act.getEpigraph());
+				Epigraph epi = Modules2025.Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph());
 				if (epi != null) {
 					tope = epi.getLimExceso();
 				}
@@ -2604,16 +2580,15 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			rpf = rpf * act.getIc5();	
 		}
 		
-		// Disposición adicional primera. Reducción en 2024 del rendimiento neto calculado por el método de estimación objetiva. 
+		// Disposición adicional primera. Reducción en 2025 del rendimiento neto calculado por el método de estimación objetiva. 
 		//		1. Los contribuyentes que determinen el rendimiento neto de sus actividades
 		//		económicas por el método de estimación objetiva, podrán reducir el rendimiento neto de
-		//		módulos obtenido en 2024 en un 5 por ciento.Rpf
+		//		módulos obtenido en 2025 en un 5 por ciento. Rpf
 		if (AonMathUtils.isGreatherThanZero( rpf )) {
 			rpf = rpf - (rpf * 5 / 100);
-		}
+		}		
 		
-		
-		// Comunidad, Sociedad Civil o Similar. Porcentaje de participaci?n.
+		// Comunidad, Sociedad Civil o Similar. Porcentaje de participación.
 		if (AonMathUtils.isNotZero(act.getCom())) {
 			rpf = (rpf * act.getCom() / 100);
 			
@@ -2622,48 +2597,50 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		act.setRpf(rpf);
 	}
 
+	// NO HAY REDUCCIONES EN 2025
 	// Cálculo reducciones: Lorca, Isla de la Palma, DANA 2024
-	private static void calcReducciones(Mod131Activity act) {
-		
-		// Los cálculos de cada reducción se realizan si es en exclusiva, si no es en exclusiva, se deja lo que haya puesto el usuario
-		
-		// Reducción Lorca: 20% sobre Rendimiento a efectos de pagos fraccionados (RPF)
-		if (AonMathUtils.equals(0,act.getLor())) {
-			act.setRlo(0.0);
-		} else if (AonMathUtils.equals(1,act.getLor())) {			
-			act.setRlo(act.getRpf() >= 0 ? AonMathUtils.round(act.getRpf() * 20 / 100) : 0.0);
-			act.setPal(0);
-			act.setRpa(0.0);
-			act.setDana(0);
-			act.setDanaReduction(0.0);
-		}
-		
-		// Reducción Isla de la Palma: 20% sobre RPF
-		if (AonMathUtils.equals(0,act.getPal())) {
-			act.setRpa(0.0);
-		} else if (AonMathUtils.equals(1,act.getPal())) {
-			act.setRpa(act.getRpf() >= 0 ? AonMathUtils.round(act.getRpf() * 20 / 100) : 0.0);
-			act.setLor(0);
-			act.setRlo(0.0);
-			act.setDana(0);
-			act.setDanaReduction(0.0);
-		}
-		
-		// Reducción DANA: Importe RPF
-		if (AonMathUtils.equals(0,act.getDana())) {
-			act.setDanaReduction(0.0);
-		} else if (AonMathUtils.equals(1,act.getDana())) {
-			act.setDanaReduction(act.getRpf() >= 0 ? act.getRpf() : 0.0);
-			act.setLor(0);
-			act.setRlo(0.0);
-			act.setPal(0);
-			act.setRpa(0.0);
-		}
-		
-	}
+//	private static void calcReducciones(Mod131Activity act) {
+//		
+//		// Los cálculos de cada reducción se realizan si es en exclusiva, si no es en exclusiva, se deja lo que haya puesto el usuario
+//		
+//		// Reducción Lorca: 20% sobre Rendimiento a efectos de pagos fraccionados (RPF)
+//		if (AonMathUtils.equals(0,act.getLor())) {
+//			act.setRlo(0.0);
+//		} else if (AonMathUtils.equals(1,act.getLor())) {			
+//			act.setRlo(act.getRpf() >= 0 ? AonMathUtils.round(act.getRpf() * 20 / 100) : 0.0);
+//			act.setPal(0);
+//			act.setRpa(0.0);
+//			act.setDana(0);
+//			act.setDanaReduction(0.0);
+//		}
+//		
+//		// Reducción Isla de la Palma: 20% sobre RPF
+//		if (AonMathUtils.equals(0,act.getPal())) {
+//			act.setRpa(0.0);
+//		} else if (AonMathUtils.equals(1,act.getPal())) {
+//			act.setRpa(act.getRpf() >= 0 ? AonMathUtils.round(act.getRpf() * 20 / 100) : 0.0);
+//			act.setLor(0);
+//			act.setRlo(0.0);
+//			act.setDana(0);
+//			act.setDanaReduction(0.0);
+//		}
+//		
+//		// Reducción DANA: Importe RPF
+//		if (AonMathUtils.equals(0,act.getDana())) {
+//			act.setDanaReduction(0.0);
+//		} else if (AonMathUtils.equals(1,act.getDana())) {
+//			act.setDanaReduction(act.getRpf() >= 0 ? act.getRpf() : 0.0);
+//			act.setLor(0);
+//			act.setRlo(0.0);
+//			act.setPal(0);
+//			act.setRpa(0.0);
+//		}
+//		
+//	}
 	
 	private static void calcRendimientoEfectosPagoFraccionadoDespuesReduccion(AONContext ctx, Mod131Activity act) {
-		act.setRdr(AonMathUtils.round(act.getRpf() - act.getRlo() - act.getRpa() - act.getDanaReduction()));
+		// Coincide con el rendimiento a efectos de pagos fraccionados, porque no hay reducciones
+		act.setRdr(AonMathUtils.round(act.getRpf()));
 	}
 	
 	private static double getSalariedStaff( Mod131Activity act ) {
@@ -2730,6 +2707,18 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 		
 		double res = AonMathUtils.round(net *  por / 100 );
 		act.setRes(res);
+	}
+	
+	private static int checkSpecialEpigraph(Mod131 mod, Mod131Key specialEpigraphKey, Mod131Key codeKey, Mod131Key descriptionKey) {
+		int specialEpigraph = (int) mod.getAmount(specialEpigraphKey);
+		String code = mod.getDescription(codeKey);
+		String description = mod.getDescription(descriptionKey);
+		// Epígrafes que llevan indicador auxiliar, porque tienen el mismo código de epígrafe
+		if (("659.4".equals(code) || "691.9".equals(code) || "722".equals(code)) && (specialEpigraph == 0)) {
+			return Modules2025.Epigraph.getSpecialEpigraph(code, description);
+		} else {
+			return specialEpigraph;
+		}
 	}
 
 }
