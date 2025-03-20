@@ -192,6 +192,24 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 					
 					getEmployeesTable(page, employees, regime, ccc);
 					
+					// Prev employees
+					page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+					
+					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValue(regime);
+					((HtmlInput)page.getElementById("SDFREG62_ayuda")).setValueAttribute(regime);
+					
+					((HtmlInput)page.getElementById("SDFTESO62")).setValue(ccc.substring(0, 2));
+					((HtmlInput)page.getElementById("SDFTESO62")).setValueAttribute(ccc.substring(0, 2));
+					
+					((HtmlInput)page.getElementById("SDFNUM62")).setValue(ccc.substring(2));
+					((HtmlInput)page.getElementById("SDFNUM62")).setValueAttribute(ccc.substring(2));
+					
+					((HtmlInput)page.getElementById("chkgrupo1_2")).click();
+					
+					page = ((HtmlInput)page.getElementById("Sub2207601004")).click();
+					
+					getEmployeesTable(page, employees, regime, ccc);
+					
 					// Search again
 					page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				}
@@ -212,47 +230,49 @@ public class ServicioREDEmployee extends ServicioREDRegeXML{
 	private static void getEmployeesTable(HtmlPage page, List<Employee> employees, String regime, String ccc) throws IOException, TransformerException {
 		HtmlLabel noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
 		
-		do {
-		
-			noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
+		if(!noMoreDataLabel.getTextContent().contains("NO EXISTEN DATOS PARA ESTA CONSULTA")) {
+			while (!noMoreDataLabel.getTextContent().contains("NO EXISTEN MAS AFILIADOS")) {
 			
-			HtmlTable table = (HtmlTable) page.getElementById("Sub1000112079");
+				noMoreDataLabel = (HtmlLabel) page.getElementById("DIL");
+				
+				HtmlTable table = (HtmlTable) page.getElementById("Sub1000112079");
+				
+				for (int i = 1; i < table.getRowCount(); i++) { 
+	                HtmlTableRow row = table.getRow(i);
+	
+	                // Obtener valores de cada celda
+	                String nss = removeSpaces(getLabelValue(row.getCell(0)));
+	                
+	                if(null == nss || nss.isEmpty()) continue;
+	                
+	                String name = getLabelValue(row.getCell(1));
+	                Date date = parseDateWithDashes(getLabelValue(row.getCell(2)));
+	                String situation = !getLabelValue(row.getCell(3)).isEmpty() ? getLabelValue(row.getCell(3)) : "AL";
+	                String ipf = Toolkit.removeExtraZeros(removeSpaces(getLabelValue(row.getCell(4))));
+	
+	                // Construir el objeto EmployeeBuilder
+	                EmployeeBuilder builder = new EmployeeBuilder();
+	                builder.setNss(nss)
+	                       .setName(name)
+	                       .setFra(date)
+	                       .setSituation(situation)
+	                       .setIpf(ipf)
+	                       .setCtaCti(ccc)
+	                       .setRegime(regime);
+	
+	                if (!situation.contains("AL")) {
+	                    builder.setFrb(date);
+	                }
+	  
+	                // Agregar a la lista si no existe
+	                if(employees.stream().filter(employee -> employee.getNss().equals(nss)).collect(Collectors.toList()).size() == 0)
+	                	employees.add(builder.build());
+	            }
+				
+				page = ((HtmlInput)page.getElementById("Sub2207801001")).click();
 			
-			for (int i = 1; i < table.getRowCount(); i++) { 
-                HtmlTableRow row = table.getRow(i);
-
-                // Obtener valores de cada celda
-                String nss = removeSpaces(getLabelValue(row.getCell(0)));
-                
-                if(null == nss || nss.isEmpty()) continue;
-                
-                String name = getLabelValue(row.getCell(1));
-                Date date = parseDateWithDashes(getLabelValue(row.getCell(2)));
-                String situation = !getLabelValue(row.getCell(3)).isEmpty() ? getLabelValue(row.getCell(3)) : "AL";
-                String ipf = Toolkit.removeExtraZeros(removeSpaces(getLabelValue(row.getCell(4))));
-
-                // Construir el objeto EmployeeBuilder
-                EmployeeBuilder builder = new EmployeeBuilder();
-                builder.setNss(nss)
-                       .setName(name)
-                       .setFra(date)
-                       .setSituation(situation)
-                       .setIpf(ipf)
-                       .setCtaCti(ccc)
-                       .setRegime(regime);
-
-                if (!situation.contains("AL")) {
-                    builder.setFrb(date);
-                }
-  
-                // Agregar a la lista si no existe
-                if(employees.stream().filter(employee -> employee.getNss().equals(nss)).collect(Collectors.toList()).size() == 0)
-                	employees.add(builder.build());
-            }
-			
-			page = ((HtmlInput)page.getElementById("Sub2207801001")).click();
-		
-		} while (!noMoreDataLabel.getTextContent().contains("NO EXISTEN MAS AFILIADOS"));
+			}
+		}
 	}
 
 	private static String getLabelValue(HtmlTableCell cell) {
