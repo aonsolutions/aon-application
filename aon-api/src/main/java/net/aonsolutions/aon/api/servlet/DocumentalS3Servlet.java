@@ -17,6 +17,7 @@ import java.util.zip.ZipOutputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.common.AonException;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -149,11 +150,15 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			} else if(type == 1){
 				data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
 			}
-			Attach attach = new Attach()
-					.setDescription(document.getName())
-					.setData(data)
-					.setMimeType(document.getMimetype());
-			return attach;
+			if(data != null) {				
+				Attach attach = new Attach()
+						.setDescription(document.getName())
+						.setData(data)
+						.setMimeType(document.getMimetype());
+				return attach;
+			} else {
+				throw new AonException("Archivo corrupto.");
+			}
 		} catch(Exception e) {
 			throw e;
 		}
