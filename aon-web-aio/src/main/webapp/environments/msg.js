@@ -520,6 +520,7 @@ export const OTHERS = "Otros";
 export const ONE = MSG.ONE;
 
 // ----- P
+export const PACKAGE = 'Envase';
 export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;
