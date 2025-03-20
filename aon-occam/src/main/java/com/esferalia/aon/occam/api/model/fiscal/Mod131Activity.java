@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -12,9 +11,8 @@ public class Mod131Activity implements Serializable {
 	private static final long serialVersionUID = 1503338850244122274L;
 
 	private int index;
-
-	private IEpigraph epi;
 	private String epigraph;
+	private int specialEpigraph;
 	private String description;
 	
 	private int year;
@@ -34,12 +32,11 @@ public class Mod131Activity implements Serializable {
 	private boolean tss;		// C11. Indique si la actividad se realiza con un único tractocamión y sin semirremolques.
 	private int mun;			// A09. Municipio donde se ejerce la actividad:
 	private int emp;			// A10. N\u00AA de empleados a 1-01-2015 (o en la fecha de inicio de la actividad)
-	private int lor;			// A11. Si en el año de devengo, realiza la actividad en LORCA, seleccione lo que proceda
-	private int pal;			// A12. Si en el año de devengo, realiza la actividad en la Isla de La Palma, seleccione lo que proceda
-	private int dana;			// Actividad realizada en municipios afectados por la DANA 2024 
+	private int lor;			// A11. Si en el año de devengo, realiza la actividad en LORCA, seleccione lo que proceda (hasta 2024)
+	private int pal;			// A12. Si en el año de devengo, realiza la actividad en la Isla de La Palma, seleccione lo que proceda (hasta 2024)
+	private int dana;			// Actividad realizada en municipios afectados por la DANA 2024 (solo ultimo trimestre de 2024)
 	private int bat;			// B06. Número de bateas y de barcos auxiliares de la empresa.
 	private double prc;			// Si para el c\u00E1lculo del pago fraccionado desea aplicar un porcentaje superior al que establece la normativa, indique el porcentaje que desea aplicar
-
 	
 	//Módulo Personal asalariado o Personal asalariado de fabricación
 	private int may19Hours;	//Horas anuales - Mayores de 19 años
@@ -105,14 +102,6 @@ public class Mod131Activity implements Serializable {
 		modules.add(new Mod131ActivityModule());
 	}
 
-	public IEpigraph getEpi() {
-		return epi;
-	}
-	public Mod131Activity setEpi(IEpigraph epi) {
-		this.epi = epi;
-		return this;
-	}
-
 	public String getFullDescription() {
 		return AonStringUtils.trimToEmpty(epigraph)
 			+ (AonStringUtils.isBlank(description)?AonStringUtils.EMPTY:AonStringUtils.HYPHEN) 
@@ -125,6 +114,15 @@ public class Mod131Activity implements Serializable {
 
 	public Mod131Activity setEpigraph(String epigraph) {
 		this.epigraph = epigraph;
+		return this;
+	}
+
+	public int getSpecialEpigraph() {
+		return specialEpigraph;
+	}
+
+	public Mod131Activity setSpecialEpigraph(int specialEpigraph) {
+		this.specialEpigraph = specialEpigraph;
 		return this;
 	}
 
@@ -634,8 +632,8 @@ public class Mod131Activity implements Serializable {
 		return this;
 	}
 	public void initialize() {
-		this.setEpi(null);
 		this.setEpigraph(null);
+		this.setSpecialEpigraph(0);
 		this.setDescription(null);
 		this.setMaxImport(Double.MAX_VALUE);
 		this.setDis(false);
@@ -704,6 +702,7 @@ public class Mod131Activity implements Serializable {
 	public static Mod131Activity clone(Mod131Activity toClone) {
 		Mod131Activity act =new Mod131Activity()
 			.setEpigraph(toClone.getEpigraph())
+			.setSpecialEpigraph(toClone.getSpecialEpigraph())
 			.setDescription(toClone.getDescription())
 			.setYear(toClone.getYear())
 			.setPeriod(toClone.getPeriod())
@@ -776,7 +775,7 @@ public class Mod131Activity implements Serializable {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
-
+	
 	private boolean isEmpty() {
 		return AonStringUtils.isBlank(epigraph);
 	}
@@ -806,4 +805,5 @@ public class Mod131Activity implements Serializable {
 		this.danaReduction = danaReduction;
 		return this;
 	}
+	
 }
