@@ -38,6 +38,8 @@ public class InvoiceRecorderController extends BasicController {
 	private static final String INVOICE_RECORDER_VIEW_NAME = "invoiceRecorder_list";
 	private String invoiceViewer;
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+	private String checkOption;
+	private String showBreakDownOption;
 
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -90,6 +92,44 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void setInvoiceViewer(String invoiceViewer) {
 		this.invoiceViewer = invoiceViewer;
+	}
+	
+	public String getCheckOption() {
+		return checkOption;
+	}
+	
+	public void setCheckOption(String checkOption) {
+		this.checkOption = checkOption;
+	}
+	
+	public String getShowBreakDownOption() {
+		return showBreakDownOption;
+	}
+	
+	public void setShowOption(String showBreakDownOption) {
+		this.showBreakDownOption = showBreakDownOption;
+	}
+	
+	public void onCheckOption(ActionEvent event) throws ManagerBeanException {
+		if(getCheckOption().equals("InvoiceRecorder-checkAll")) {
+			this.onCheckAll(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkNothing")) {
+			this.onCheckNone(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkBrokenDown")) {
+			this.onCheckBrokendown(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkUnBrokenDown")) {
+			this.onCheckUnbrokendown(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkRight")) {
+			this.onCheckRight(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkWarned")) {
+			this.onCheckWarned(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkEntryVisible")) {
+			this.onCheckEntryVisible(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkEntryInvisible")) {
+			this.onCheckEntryInvisible(null);
+		}else {
+			this.onCheckNone(null);
+		}
 	}
 
 	public void onCheckAll(ActionEvent event) throws ManagerBeanException {
@@ -258,6 +298,26 @@ public class InvoiceRecorderController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	
+	public void onShowAccountEntryOption(ActionEvent event) throws ManagerBeanException {
+		if(getCheckOption().equals("InvoiceRecorder-showAllAccountEntry")) {
+			this.onShowAllAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showNothingAccountEntry")) {
+			this.onHideAllAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showCheckedAccountEntry")) {
+			this.onShowCheckedAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showUnCheckedAccountEntry")) {
+			this.onShowUncheckedAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showRightAccountEntry")) {
+			this.onShowCorrectAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showIncorrectAccountEntry")) {
+			this.onShowIncorrectAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showWarnedAccountEntry")) {
+			this.onShowWarnedAccountEntry(null);
+		}else {
+			this.onCheckNone(null);
+		}
+	}
 
 	public void onShowAllAccountEntry(ActionEvent event) {
 		try {
@@ -413,6 +473,26 @@ public class InvoiceRecorderController extends BasicController {
 			LOGGER.warn(msg, e);
 			AonUtil.addWarningMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void onShowBreakDownOption(ActionEvent event) throws ManagerBeanException {
+		if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownAll")) {
+			this.onShowAllTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownNothing")) {
+			this.onHideAllTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownChecked")) {
+			this.onShowCheckedTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownUnChecked")) {
+			this.onShowUncheckedTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownRight")) {
+			this.onShowCorrectTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownIncorrect")) {
+			this.onShowIncorrectTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownWarned")) {
+			this.onShowWarnedTaxBreakDowns(null);
+		}else {
+			this.onHideAllTaxBreakDowns(null);
 		}
 	}
 

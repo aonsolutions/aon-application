@@ -2031,6 +2031,14 @@
 	.aon-padding-1rem {
 		padding: 1rem;
 	}
+	
+	tr:has(td:not(:empty)) {
+    	display: table-row;
+	}
+
+	tr:has(td:empty):not(:has(td:not(:empty))) {
+	    display: none;
+	}
 	</style>
 
 	<script type="text/javascript">

@@ -1556,8 +1556,7 @@
 	input.aon-finding-toolbar-item.rich-fileupload-ico-add,
 	input.aon-finding-toolbar-item.aon-icon-filter,
 	input.aon-finding-toolbar-item.aon-icon-filter-off,
-	input.aon-finding-toolbar-item.aon-icon-close
-	{
+	input.aon-finding-toolbar-item.aon-icon-close	{
 	    width:32px;
 		height:32px;
 	    padding: 8px;
@@ -2869,9 +2868,9 @@
 	}
 	
 	.aon-table-row-link {
-	  background: transparent url(images/aon-icon/aon-icon-rowSelector.png) no-repeat scroll center left;
-	  margin: 0;
-	  padding: 0 10px 0 14px;
+		background: transparent url(#{aonResource.resolve['/images/aon-right-arrow.png']}) scroll center center no-repeat;
+	    margin: 0;
+	    padding: 0 10px 0 14px;
 	}
 	
 	[id*="invoiceFinances"],
@@ -3142,8 +3141,14 @@
 	.aon-padding-1rem {
 		padding: 1rem;
 	}
-
 	
+	tr:has(td:not(:empty)) {
+    	display: table-row;
+	}
+
+	tr:has(td:empty):not(:has(td:not(:empty))) {
+	    display: none;
+	}
 	</style>
 
 	<script type="text/javascript">
