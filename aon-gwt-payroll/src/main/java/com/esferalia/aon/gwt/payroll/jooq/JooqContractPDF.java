@@ -418,7 +418,7 @@ public class JooqContractPDF {
 		}
 		
 		// EMPLOYEE
-		Record contractRecord = dslContext.select().from(CONTRACT)
+		List<Record> contractRecords = dslContext.select().from(CONTRACT)
 				.leftJoin(REGISTRY)
 				.on(CONTRACT.PERSON.eq(REGISTRY.ID))
 				.leftJoin(PERSON)
@@ -426,7 +426,11 @@ public class JooqContractPDF {
 				.leftJoin(RADDRESS)
 				.on(CONTRACT.PERSON.eq(RADDRESS.REGISTRY))
 				.where(CONTRACT.ID.eq(contractData.getContractId()))		
-				.fetchOne();
+				.fetch();
+		
+		if(contractRecords.isEmpty()) throw new IllegalArgumentException("No se ha podido obtener el contrato");
+		
+		Record contractRecord = contractRecords.get(0);
 		
 		Date birthDate = contractRecord.get(PERSON.BIRTH_DATE);
 		
