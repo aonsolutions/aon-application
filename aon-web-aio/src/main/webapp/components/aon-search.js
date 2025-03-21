@@ -303,7 +303,6 @@ export class AonSearch extends AonElement {
 	}]
 	*/
 	buildOptionsFilter(inputs){
-		console.log('inputs', inputs);
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
 
