@@ -196,6 +196,7 @@ export class AonDocumentalList extends AonElement {
         this.more = true;
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
+		console.log("filter", filter);
         if (aonDocumentalTable) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
         }

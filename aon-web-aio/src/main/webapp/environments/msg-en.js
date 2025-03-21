@@ -68,7 +68,6 @@ export const CATALAN = 'Catalan';
 export const CATEGORY = 'Category';
 export const SUBCATEGORY = 'Subcategory';
 export const CATEGORIES = 'Categories';
-export const DEFAULT_CATEGORIES = 'Default Categories';
 export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';

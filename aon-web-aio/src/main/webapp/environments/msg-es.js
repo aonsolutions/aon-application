@@ -68,7 +68,6 @@ export const CANCEL = 'Cancelar';
 export const CATALAN = 'Catalán';
 export const CATEGORY = 'Categoría';
 export const CATEGORIES = 'Categorías';
-export const DEFAULT_CATEGORIES = 'Categorías por Defecto';
 export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
