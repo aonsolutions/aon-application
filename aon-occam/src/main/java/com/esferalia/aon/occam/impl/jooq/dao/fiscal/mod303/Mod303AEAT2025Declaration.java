@@ -727,7 +727,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		,CT_S101(Mod303Key.CT_S101, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S101, ensureActivity(mod, 0).getEpigraph())
 			,mod -> ensureActivity(mod, 0).setEpigraph(mod.getDescription(Mod303Key.CT_S101))
-			,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S101))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S101))
 		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S10D(Mod303Key.CT_S10D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S10D, ensureActivity(mod, 0).getDescription())
@@ -736,8 +736,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722
 		,CT_S102(Mod303Key.CT_S102, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S102, ensureActivity(mod, 0).getSpecialEpigraph())
-			,mod -> ensureActivity(mod, 0).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod303Key.CT_S102, Mod303Key.CT_S101, Mod303Key.CT_S10D))
-		    ,(prev,cur) -> copySpecialEpigraphKey(prev, cur, Mod303Key.CT_S102, Mod303Key.CT_S101, Mod303Key.CT_S10D))
+			,mod -> ensureActivity(mod, 0).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S102))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S102))
 		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el año anterior
 		,CT_S1X1(Mod303Key.CT_S1X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S1X1, ensureActivity(mod, 0).getTem())
@@ -1085,12 +1085,12 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S128, ensureActivity(mod, 0).getCad())
 			,mod -> ensureActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_S128))
 			,null)
-
+		
 		// (2) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S201(Mod303Key.CT_S201, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S201, ensureActivity(mod, 1).getEpigraph())
 			,mod -> ensureActivity(mod, 1).setEpigraph(mod.getDescription(Mod303Key.CT_S201))
-			,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S201))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S201))
 		// (2) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S20D(Mod303Key.CT_S20D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S20D, ensureActivity(mod, 1).getDescription())
@@ -1099,8 +1099,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// (2) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
 		,CT_S202(Mod303Key.CT_S202, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S202, ensureActivity(mod, 1).getSpecialEpigraph())
-			,mod -> ensureActivity(mod, 1).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod303Key.CT_S202, Mod303Key.CT_S201, Mod303Key.CT_S20D))
-			,(prev,cur) -> copySpecialEpigraphKey(prev, cur, Mod303Key.CT_S202, Mod303Key.CT_S201, Mod303Key.CT_S20D))
+			,mod -> ensureActivity(mod, 1).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S202))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S202))
 		// (2) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el aÃ±o anterior
 		,CT_S2X1(Mod303Key.CT_S2X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S2X1, ensureActivity(mod, 1).getTem())
@@ -1452,12 +1452,12 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S228, ensureActivity(mod, 1).getCad())
 			,mod -> ensureActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_S228))
 			,null)
-
+		
 		// (3) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S301(Mod303Key.CT_S301, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S301, ensureActivity(mod, 2).getEpigraph())
 			,mod -> ensureActivity(mod, 2).setEpigraph(mod.getDescription(Mod303Key.CT_S301))
-			,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S301))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S301))
 		// (3) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S30D(Mod303Key.CT_S30D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S30D, ensureActivity(mod, 2).getDescription())
@@ -1466,8 +1466,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// (3) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
 		,CT_S302(Mod303Key.CT_S302, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S302, ensureActivity(mod, 2).getSpecialEpigraph())
-			,mod -> ensureActivity(mod, 2).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod303Key.CT_S302, Mod303Key.CT_S301, Mod303Key.CT_S30D))
-			,(prev,cur) -> copySpecialEpigraphKey(prev, cur, Mod303Key.CT_S302, Mod303Key.CT_S301, Mod303Key.CT_S30D))
+			,mod -> ensureActivity(mod, 2).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S302))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S302))
 		// (3) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el aÃ±o anterior
 		,CT_S3X1(Mod303Key.CT_S3X1, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S3X1, ensureActivity(mod, 2).getTem())
@@ -1814,12 +1814,12 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S328, ensureActivity(mod, 2).getCad())
 			,mod -> ensureActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_S328))
 			,null)
-		
+
 		// (4) Actividades en régimen simplificado. Epigrafe IAE
 		,CT_S401(Mod303Key.CT_S401, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S401, ensureActivity(mod, 3).getEpigraph())
 			,mod -> ensureActivity(mod, 3).setEpigraph(mod.getDescription(Mod303Key.CT_S401))
-			,(prev,cur) -> copyKey(prev, cur, Mod303Key.CT_S401))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S401))
 		// (4) Actividades en régimen simplificado. Epigrafe IAE - Descripción
 		,CT_S40D(Mod303Key.CT_S40D, null, null, null, null, null
 			,mod -> mod.putDescription(Mod303Key.CT_S40D, ensureActivity(mod, 3).getDescription())
@@ -1828,8 +1828,8 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		// (4) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de epígrafes 691.9 y 722
 		,CT_S402(Mod303Key.CT_S402, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_S402, ensureActivity(mod, 3).getSpecialEpigraph())
-			,mod -> ensureActivity(mod, 3).setSpecialEpigraph(checkSpecialEpigraph(mod, Mod303Key.CT_S402, Mod303Key.CT_S401, Mod303Key.CT_S40D))
-			,(prev,cur) -> copySpecialEpigraphKey(prev, cur, Mod303Key.CT_S402, Mod303Key.CT_S401, Mod303Key.CT_S40D))
+			,mod -> ensureActivity(mod, 3).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S402))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S402))
 		// (4) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
 		// los que se ejerció la actividad en el año anterior
 		,CT_S4X1(Mod303Key.CT_S4X1, null, null, null, null, null
@@ -2819,9 +2819,9 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		}
 	}
 
-	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key codeKey, Mod303Key specialKey) {
-		return Modules2025.Epigraph.getEpigraph(mod303.getDescription(codeKey), (int) mod303.getAmount(specialKey));
-    }
+	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
+		return Modules2025.Epigraph.getEpigraph(mod303.getDescription(key));
+	}
 
 	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
 		return Modules2025.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
@@ -2841,8 +2841,7 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 		}
 	}
 
-	private static void copyKey(Mod303 previous, Mod303 current, Mod303Key key) {
-
+	private static void copyKey(Mod303 previous,Mod303 current, Mod303Key key) {
 		// En 2025 se añade una nueva actividad agricola (la 17) y la 17 anterior pasa a la 18
 		if ((previous.getYear() < 2025) && (key == Mod303Key.CT_SA11 || key == Mod303Key.CT_SA21 || key == Mod303Key.CT_SA31 || key == Mod303Key.CT_SA41) && "17".equals(previous.getDescription(key))) {
 			current.putAmount(key, 0.0);
@@ -2851,35 +2850,14 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			current.putAmount(key, previous.getAmount(key));		
 			current.putDescription(key, previous.getDescription(key));
 		}
-		
 	}
-
-	private static void copySpecialEpigraphKey(Mod303 previous, Mod303 current, Mod303Key specialEpigraphKey, Mod303Key codeKey, Mod303Key descriptionKey) {
-
-		// Antes del 2025 en los epígrafes 659.4, 691.9 y 722, no se estaba grabando el indicador auxiliar, por lo que 
-		// no se podía distinguir un epígrafe de otro más que por la descripción del epígrafe
-		// en la copia del ejercicio anterior hay grabar bien el indicador auxiliar, si es necesario
-		
-		int specialEpigraph = (int) previous.getAmount(specialEpigraphKey);
-		String code = previous.getDescription(codeKey);
-		String description = previous.getDescription(descriptionKey);
-		
-		if ((previous.getYear() < 2025)) {
-			current.putAmount(specialEpigraphKey, Modules2025.Epigraph.getSpecialEpigraph(code, description));
-		} else {
-			current.putAmount(specialEpigraphKey, specialEpigraph);
-		}
-		current.putDescription(specialEpigraphKey, null);
-		
-	}
-	
 	
 	private static boolean hasSimplifiedRegime(Mod303 mod303) {
 		return AonNumberUtils.notEquals(mod303.getAmount(Mod303Key.CT_A02), 2);
 	}
 
-	private static void ensureActivityDays(Mod303 previous, Mod303 current, Mod303Key epiKey, Mod303Key daysKey) {
-		if (AonStringUtils.isNotBlank(current.getDescription(epiKey))) {
+	private static void ensureActivityDays(Mod303 previous, Mod303 current,Mod303Key epiKey,Mod303Key daysKey) {
+		if (AonStringUtils.isNotBlank(current.getDescription(Mod303Key.CT_S101))) {
 			Date curStart = FiscalUtils.getPeriodStart(current);
 			Date curEnd = FiscalUtils.getPeriodEnd(current);
 			int curMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(curStart, curEnd)) + 1;
@@ -2915,36 +2893,23 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 			});
 		
 		Mod303Key[][] actKeys = new Mod303Key[][]{
-			new Mod303Key[] {Mod303Key.CT_S101,Mod303Key.CT_S102,Mod303Key.CT_S125,Mod303Key.CT_S120},
-			new Mod303Key[] {Mod303Key.CT_S201,Mod303Key.CT_S202,Mod303Key.CT_S225,Mod303Key.CT_S220},
-			new Mod303Key[] {Mod303Key.CT_S301,Mod303Key.CT_S302,Mod303Key.CT_S325,Mod303Key.CT_S320},
-			new Mod303Key[] {Mod303Key.CT_S401,Mod303Key.CT_S402,Mod303Key.CT_S425,Mod303Key.CT_S420},
+			new Mod303Key[] {Mod303Key.CT_S101,Mod303Key.CT_S125,Mod303Key.CT_S120},
+			new Mod303Key[] {Mod303Key.CT_S201,Mod303Key.CT_S225,Mod303Key.CT_S220},
+			new Mod303Key[] {Mod303Key.CT_S301,Mod303Key.CT_S325,Mod303Key.CT_S320},
+			new Mod303Key[] {Mod303Key.CT_S401,Mod303Key.CT_S425,Mod303Key.CT_S420},
 		};
 		IntStream.range(0, actKeys.length)
 			.boxed()
 			.map(i -> actKeys[i])
 			.filter(actActivity -> AonStringUtils.isNotBlank(mod303.getDescription(actActivity[0])))
 			.forEach(actActivity -> {
-				IEpigraph epi = getEpigraph(mod303, actActivity[0], actActivity[1]);
+				IEpigraph epi = getEpigraph(mod303, actActivity[0]);
 				if (epi != null) {
-					mod303.ensureDetail(actActivity[2]).setAmount(epi.getPorcMin());
+					mod303.ensureDetail(actActivity[1]).setAmount(epi.getPorcMin());
 					if (!mod303.isLastPeriod()) {
-						mod303.ensureDetail(actActivity[3]).setAmount(epi.getVatPorc());
+						mod303.ensureDetail(actActivity[2]).setAmount(epi.getVatPorc());
 					}
 				}
 			});
 	}
-
-	private static int checkSpecialEpigraph(Mod303 mod, Mod303Key specialEpigraphKey, Mod303Key codeKey, Mod303Key descriptionKey) {
-		int specialEpigraph = (int) mod.getAmount(specialEpigraphKey);
-		String code = mod.getDescription(codeKey);
-		String description = mod.getDescription(descriptionKey);
-		// Epígrafes que llevan indicador auxiliar, porque tienen el mismo código de epígrafe
-		if (("659.4".equals(code) || "691.9".equals(code) || "722".equals(code)) && (specialEpigraph == 0)) {
-			return Modules2025.Epigraph.getSpecialEpigraph(code, description);
-		} else {
-			return specialEpigraph;
-		}
-	}
-	
 }

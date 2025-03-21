@@ -347,7 +347,7 @@ public class Mod145Widget extends AonCustomDockLayout {
 		familySituationLB.addItem("Casado/a y no separado/a legalmente cuyo c\u00f3nyuge no obtiene rentas superiores a 1.500 euros anuales, excluidas las exentas", "1");
 		familySituationLB.addItem("Situaci\u00f3n familiar distinta de las dos anteriores (solteros sin hijos, casados cuyos c\u00f3nyuge obtiene rentas superiores a 1500 euros anuales, etc.)", "2");
 		
-		familySituationLB.setValue(null == this.mod145 || null == this.mod145.getFamilySituation() ? "2" : this.mod145.getFamilySituation().toString());
+		familySituationLB.setValue(null == this.mod145 || null == this.mod145.getFamilySituation()  ? null : this.mod145.getFamilySituation().toString());
 		spouseDocumentTB.setValue(null == this.mod145 ? null : this.mod145.getSpouseDocument());
 		
 		table.add(createRow(familySituationLB, spouseDocumentTB));

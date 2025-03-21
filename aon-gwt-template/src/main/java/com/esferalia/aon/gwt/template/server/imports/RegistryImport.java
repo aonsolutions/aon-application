@@ -2,10 +2,10 @@ package com.esferalia.aon.gwt.template.server.imports;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -61,7 +60,7 @@ public class RegistryImport extends Import {
 
 	}
 
-	public List<RegistryImportClass> importation(Domain domain, String login, byte[] data){
+	public LinkedList<RegistryImportClass> importation(Domain domain, String login, byte[] data){
 		try {
 			return importation(domain, login, rowIterator(data));
 		} catch (OfficeXmlFileException e){
@@ -69,13 +68,13 @@ public class RegistryImport extends Import {
 		} 
 	}
 
-	public List<RegistryImportClass> importationX(Domain domain, String login, byte[] data){
+	public LinkedList<RegistryImportClass> importationX(Domain domain, String login, byte[] data){
 		return importation(domain, login, rowIteratorX(data));
 	}
 
-	public List<RegistryImportClass> importation(Domain domain, String login,Iterator<Row> rowIterator){
-		List<String> titleList = new LinkedList<>();
-		List<RegistryImportClass> list = new LinkedList<>();
+	public LinkedList<RegistryImportClass> importation(Domain domain, String login,Iterator<Row> rowIterator){
+		LinkedList<String> titleList = new LinkedList<>();
+		LinkedList<RegistryImportClass> list = new LinkedList<>();
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), login);
@@ -99,7 +98,7 @@ public class RegistryImport extends Import {
 					titleList.add(title != null ? title.toString().trim() :  "");
 				} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()) {
 					String title = titleList.get(cell.getColumnIndex());
-					check(domain, title, cell, aonCtx);
+					check(domain, login, title, cell, aonCtx);
 				}
 			});
 			if(row.getRowNum() > indexTitle) {
@@ -111,7 +110,7 @@ public class RegistryImport extends Import {
 		
 	}
 	
- 	private void check(Domain domain , String title, Cell cell, AonConfiguration aonCtx) {
+ 	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
  		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 
@@ -295,13 +294,10 @@ public class RegistryImport extends Import {
 			return;
 		}
 		
-		if(IConstants.TRANSACCION.equalsIgnoreCase(title) || IConstants.TRANSACCION2.equalsIgnoreCase(title)) {
-			reg.setTransaction(InvoiceTransactionType.safeValueOf(o.toString()));
-		}
 		
 	}
 
-	public static Error insertRegistries(Domain domain, User user, Integer index, List<RegistryImportClass> rvs) {
+	public static Error insertRegistries(Domain domain, User user, Integer index, LinkedList<RegistryImportClass> rvs) {
 		Error error = new Error().setError(true);
 		
 		if(index >= rvs.size()) {
@@ -320,8 +316,8 @@ public class RegistryImport extends Import {
 				throw new Exception("El Documento y la Razón Social no pueden estar vacíos.");
 			}
 			
-			List<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
-				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).toList();
+			LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
 			Registry reg = new Registry();
 			if(regList.stream().filter(f -> f.getDomain().getId().equals(domain.getId())).count() > 0) {
 				reg = regList.stream().filter(f -> f.getDomain().getId().equals(domain.getId())).findFirst().get();
@@ -471,8 +467,7 @@ public class RegistryImport extends Import {
 							.setAccount(acc.getId())
 							.copy(reg)
 							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
-							.setStatus(RegistryStatus.ACTIVE)
-							.setTransaction(r.getTransaction());
+							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);
 					AON.saveCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 				}
@@ -494,8 +489,7 @@ public class RegistryImport extends Import {
 							.copy(reg)
 							.setAccount(acc.getId())
 							.setScope(new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
-							.setStatus(RegistryStatus.ACTIVE)
-							.setTransaction(r.getTransaction());
+							.setStatus(RegistryStatus.ACTIVE);
 					sup.setId(registryId);
 					sup.setDomain(domain);
 					AON.saveSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
@@ -511,8 +505,7 @@ public class RegistryImport extends Import {
 							.copy(reg)
 							.setAccount(acc==null?null:acc.getId())
 							.setScope( new Scope().setId(domain.getScope() != null ? domain.getScope() : s.getId()))
-							.setStatus(RegistryStatus.ACTIVE)
-							.setTransaction(r.getTransaction());
+							.setStatus(RegistryStatus.ACTIVE);
 					cre.setId(registryId);
 					cre.copy(reg);
 					cre.setDomain(domain);

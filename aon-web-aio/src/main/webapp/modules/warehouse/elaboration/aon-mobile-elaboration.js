@@ -10,7 +10,7 @@ import { Elaboration } from '../../../models/elaboration/Elaboration.js';
 import { AonTabs } from '../../../components/aon-tabs.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { AonIconButton } from '../../../components/aon-icon-button.js';
-import { AonMobilePackageList } from '../package/aon-mobile-package-list.js';
+import { AonMobilePackageList } from './aon-mobile-package-list.js';
 import { createCard, createDate, createInput } from '../../../components/CreateComponent.js';
 
 export class AonMobileElaboration extends AonElement {

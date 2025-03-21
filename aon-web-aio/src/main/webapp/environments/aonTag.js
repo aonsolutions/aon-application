@@ -91,8 +91,6 @@ export const AON_ITEM_UPDATE ='aon-item-update';
 export const AON_HEADER ='aon-header';
 export const AON_MOBILE_HEADER ='aon-mobile-header';
 
-export const AON_LIST = 'aon-list';
-
 export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 
 // MODULES - EXAMPLE
@@ -197,10 +195,6 @@ export const AON_ELABORATION = 'aon-elaboration';
 export const AON_ELABORATION_LIST = 'aon-elaboration-list';
 export const AON_MOBILE_ELABORATION = 'aon-mobile-elaboration';
 export const AON_MOBILE_ELABORATION_LIST = 'aon-mobile-elaboration_list';
-
-
-export const AON_PACKAGE_LIST = 'aon-package-list';
-export const AON_PACKAGE = 'aon-package';
 
 export const AON_MOBILE_PACKAGE_LIST = 'aon-mobile-package-list';
 export const AON_MOBILE_PACKAGE = 'aon-mobile-package';

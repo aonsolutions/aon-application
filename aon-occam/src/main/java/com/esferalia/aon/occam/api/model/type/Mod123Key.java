@@ -7,8 +7,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public enum Mod123Key implements IFiscalModelKey {
 	
 	 CM_001("123-CM-01", 1,null)  // Cálculo por diferencias 0-Deshabilitado 1-Habilitado
-	,CM_003("123-CM-03", 3, null)  // Si valor=1, no incluir facturas con rentenciones en la generación.
-	 
 	
 	// ---------------------------------------------------------------- ALAVA
 	,AR_930("123-AR-930", 930,Administration.ALAVA)

@@ -169,10 +169,6 @@ export class AonTable extends AonElement {
     }
   }
 
-  addColumnObject(column) {
-    this.addColumn(column.name, column.type, column.id, column.width, column.textAlign);
-  }
-
   addColumn(name, type, id, width, textAlign) {
     if (this.hasAttribute("selectable")) {
       this.paintCheckboxHeader();
@@ -225,9 +221,9 @@ export class AonTable extends AonElement {
       tdMessage.style.textAlign = 'center';
       tdMessage.style.padding   = '10px';
       tdMessage.textContent     = message;
-      // Aï¿½adir la celda a la fila
+      // Añadir la celda a la fila
       tr.appendChild(tdMessage);
-      // Aï¿½adir la fila con el mensaje al cuerpo de la tabla
+      // Añadir la fila con el mensaje al cuerpo de la tabla
       body.appendChild(tr);
   }
 

@@ -43,6 +43,7 @@ public class Mod303Activity implements Serializable {
 	private double dvc;			// Devolución cuotas soportadas otros países
 	private double cmn;			// Cuota mínima
 	private double cad;			// Cuota anual derivada régimen simplificado
+	
 	private double maxImport;
 	
 	private double may19Hours; 		//Mayores de 19 años
@@ -110,7 +111,7 @@ public class Mod303Activity implements Serializable {
 		this.description = description;
 		return this;
 	}
-
+	
 	public int getSpecialEpigraph() {
 		return specialEpigraph;
 	}
@@ -381,7 +382,6 @@ public class Mod303Activity implements Serializable {
 	
 	public void initialize() {
 		this.setEpigraph(null);
-		this.setSpecialEpigraph(0);
 		this.setDescription(null);
 		this.setTem(0);
 		this.setEmp(0);
@@ -421,7 +421,6 @@ public class Mod303Activity implements Serializable {
 	public static Mod303Activity clone(Mod303Activity toClone) {
 		Mod303Activity act =new Mod303Activity()
 				.setEpigraph(toClone.getEpigraph())
-				.setSpecialEpigraph(toClone.getSpecialEpigraph())
 				.setDescription(toClone.getDescription())
 				.setTem(toClone.getTem())
 				.setDia(toClone.getDia())

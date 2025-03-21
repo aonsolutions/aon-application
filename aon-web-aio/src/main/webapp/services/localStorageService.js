@@ -30,8 +30,6 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
-export const BETADOC = 'betadoc';
-
 export const get = (item) => {
 	let value = getParam(item);
 	if ( value === null ){
@@ -328,15 +326,6 @@ export const isSuite = () => {
 export const setSuite = (suite) => {
     set(SUITE, suite);
     location.reload();
-}
-
-export const isBetaDoc = () => {
-    const betadoc = get(BETADOC);
-    return CONSTANT.TRUE == betadoc;
-}
-
-export const setBetaDoc = (betadoc) => {
-    set(BETADOC, betadoc);
 }
 
 export const removeDomain = () => {

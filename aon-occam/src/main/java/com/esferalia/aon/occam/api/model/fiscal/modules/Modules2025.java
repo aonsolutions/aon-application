@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Modules2025 {
-	
+
 	// ESTO NO SE UTILIZA EN NINGUN SITIO, SOLO ES PARA LA RENTA
 //	public enum FarmerIRPF {
 //		 A01 (0.13,0.23,"Agr\u00EDcola dedicada a la obtenci\u00F3n de remolacha azucarera y ganadera de explotaci\u00F3n de ganado porcino de carne, de ganado bovino de carne, de ganado ovino de carne, de ganado caprino de carne, avicultura y cunicultura.")
@@ -670,7 +670,7 @@ public class Modules2025 {
 				,new Module[]{
 					 new Module(1,ModuleInfo.M62,"Persona",14533.25)
 					,new Module(2,ModuleInfo.M09,"Metro cua.",30.59)}
-				)
+				)			
 		,E_659_4A("659.4","Comercio al por menor de libros, peri\u00F3dicos, art\u00EDculos de papeler\u00EDa y escritorio y art\u00EDculos de dibujo y bellas artes, excepto en quioscos situados en la v\u00EDa p\u00FAblica."
 				,100.0
 				,75
@@ -683,8 +683,8 @@ public class Modules2025 {
 					,new Module(4,ModuleInfo.M09,"Metro cua.",30.86)
 					,new Module(5,ModuleInfo.M24,"CVF",535.38)}
 				,new Module[]{
-					 new Module(1,ModuleInfo.M58,"Euro",0.21)}				
-				,1)
+					 new Module(1,ModuleInfo.M58,"Euro",0.21)}
+				)
 		,E_659_4B("659.4","Comercio al por menor de prensa, revistas y libros en quioscos situados en la v\u00EDa p\u00FAblica."
 				,100.0
 				,75
@@ -697,7 +697,7 @@ public class Modules2025 {
 					,new Module(4,ModuleInfo.M09,"Metro cua.",844.02)}
 				,new Module[]{
 					 new Module(1,ModuleInfo.M58,"Euro",0.21)}
-				,2)
+				)
 		,E_659_6 ("659.6","Comercio al por menor de juguetes, art\u00EDculos de deporte, prendas deportivas de vestido, calzado y tocado, armas, cartucher\u00EDa y art\u00EDculos de pirotecnia."
 				,0.0
 				,0
@@ -1048,7 +1048,7 @@ public class Modules2025 {
 				,new Module[]{
 					 new Module(1,ModuleInfo.M26,"Persona",3000.89)
 					,new Module(2,ModuleInfo.M03,"100 Kwh",36.37)}
-				,1)
+				)
 		,E_691_9B("691.9","Reparaci\u00F3n de otros bienes de consumo n.c.o.p. (excepto reparaci\u00F3n de calzado, restauraci\u00F3n de obras de arte, muebles, antig\u00FCedades e instrumentos musicales)."
 				,15.0
 				,48
@@ -1061,8 +1061,7 @@ public class Modules2025 {
 				,new Module[]{
 					 new Module(1,ModuleInfo.M26,"Persona",5381.76)
 					,new Module(2,ModuleInfo.M09,"Metro cua.",13.23)}
-				,2)
-		
+				)
 		,E_692   ("692"	 ,"Reparaci\u00F3n de maquinaria industrial."
 				,9.0
 				,30
@@ -1128,7 +1127,7 @@ public class Modules2025 {
 					 new Module(1,ModuleInfo.M26,"Persona",1700.62)
 					,new Module(2,ModuleInfo.M21,"Asiento",79.72)}
 				)
-		,E_722A  ("722", "Transporte de mercanc\u00EDas por carretera, expto residuos"
+		,E_722A  ("722"	 ,"Transporte de mercanc\u00EDas por carretera, expto residuos"
 				,5.0
 				,10
 				,5
@@ -1140,8 +1139,8 @@ public class Modules2025 {
 				,new Module[]{
 					 new Module(1,ModuleInfo.M26,"Persona",4149.99)
 					,new Module(2,ModuleInfo.M23,"Tonelada",388.55)}
-				,1)
-		,E_722B  ("722", "Transporte de residuos por carretera."
+				)
+		,E_722B  ("722"	 ,"Transporte de residuos por carretera."
 				,1.0   
 				,1
 				,5
@@ -1153,7 +1152,8 @@ public class Modules2025 {
 				,new Module[]{
 					 new Module(1,ModuleInfo.M26,"Persona",1948.64)
 					,new Module(2,ModuleInfo.M23,"Tonelada",181.58)}
-				,2)
+				)
+
 		,E_751_5 ("751.5","Engrase y lavado de veh\u00EDculos."
 				,9.0
 				,30
@@ -1290,8 +1290,7 @@ public class Modules2025 {
 					 new Module(1,ModuleInfo.M26,"Persona",13136.13)
 					,new Module(2,ModuleInfo.M08,"Kw cont.",239.74)}
 				)
-		;
-		
+				;
 		private String epigraph;
 		private String description;
 		private Module[] irpfModules;
@@ -1300,7 +1299,6 @@ public class Modules2025 {
 		private double porcMin;
 		private double limPers;
 		private double limExceso;
-		private int specialEpigraph; // Indicador auxiliar de actividad para determinados epígrafes
 		
 		private Epigraph(String epigraph, String description
 				,double vatPorc,double porcMin,double limPers
@@ -1314,24 +1312,7 @@ public class Modules2025 {
 			this.limExceso=limExceso;
 			this.irpfModules=irpfModules;
 			this.vatModules=ivaModules;
-			this.specialEpigraph=0;
 		}
-		
-		private Epigraph(String epigraph, String description
-				,double vatPorc,double porcMin,double limPers
-				,double limExceso
-				,Module[] irpfModules, Module[] ivaModules, int specialEpigraph) {
-			this.epigraph = epigraph;
-			this.description = description;
-			this.vatPorc = vatPorc; 
-			this.porcMin=porcMin;
-			this.limPers=limPers;
-			this.limExceso=limExceso;
-			this.irpfModules=irpfModules;
-			this.vatModules=ivaModules;
-			this.specialEpigraph=specialEpigraph;
-		}
-		
 		public String getEpigraph() {
 			return epigraph;
 		}
@@ -1362,58 +1343,20 @@ public class Modules2025 {
 		public boolean hasIRPFModules() {
 			return irpfModules != null;
 		}
-		@Override
-		public int getSpecialEpigraph() {
-			return specialEpigraph;
+		public static boolean hasEpigraph(String code) {
+			return getEpigraph(code) != null; 
 		}
-
-// NO SE PUEDE UTILIZAR ESTE METODO PARA OBTENER EL EPIGRAFE PORQUE HAY MODULOS QUE TIENEN EL MISMO CODIGO DE EPIGRAFE 
-//		public static boolean hasEpigraph(String code) {
-//			return getEpigraph(code) != null; 
-//		}
-//		public static Epigraph getEpigraph(String code) {
-//			for (Epigraph epi: Epigraph.values()) {
-//				if (AonStringUtils.equals(epi.getEpigraph(), code)) {
-//					return epi;
-//				}
-//			}
-//			return null;
-//		}
-		
-		public static Epigraph getEpigraph(String code, int specialEpigraph) {
+		public static Epigraph getEpigraph(String code) {
 			for (Epigraph epi: Epigraph.values()) {
-				if (AonStringUtils.equals(epi.getEpigraph(), code) && specialEpigraph == epi.getSpecialEpigraph()) {
+				if (AonStringUtils.equals(epi.getEpigraph(), code)) {
 					return epi;
 				}
 			}
 			return null;
 		}
-		
-		public static int getSpecialEpigraph(String code, String description) {
-			// Epígrafes que tienen indicador auxiliar, porque llevan el mismo código de epígrafe
-			if (AonStringUtils.equals(code,"659.4")) {
-				if (AonStringUtils.contains(description, "revista")) {
-					return 2; // Quioscos
-				} else {
-					return 1; // Resto
-				}
-			} else if (AonStringUtils.equals(code,"691.9")) {
-				if (AonStringUtils.contains(description,"consumo")) {
-					return 2; // Resto
-				} else {
-					return 1; // Reparación de calzado.
-				}
-			} else if (AonStringUtils.equals(code,"722")) {
-				if (AonStringUtils.contains(AonStringUtils.upperCase(description),"TRANSPORTE DE RESIDUOS")) {
-					return 2; // Transporte de residuos por carretera
-				} else {
-					return 1; // Transporte de mercancías por carretera, expto residuos
-				}
-			} else {
-				return 0;				
-			}
+		public String getFullDescription() {
+			return epigraph  + " - " + description;
 		}
-		
 	}
 	
 	public static void main(String[] args) {

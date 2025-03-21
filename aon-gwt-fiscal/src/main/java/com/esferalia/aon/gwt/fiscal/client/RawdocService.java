@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -24,6 +25,7 @@ public interface RawdocService extends RemoteService {
 	void toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
 	
 	LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String  user, RawdocParams params, int offset,int limit) throws AonCoreException;
+	LinkedList<RawdocDomainData> getDomainData(String domainName, int domain, String  user, int searchDomain) throws AonCoreException;
 	TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
 	void delete(String domainName, int domain, String user, Integer rawdocId);
 	void toDraft(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;

@@ -9,8 +9,5 @@ public interface IEpigraph {
 	public double getLimExceso();
 	public Module[] getIRPFModules();
 	public Module[] getVATModules();
-	public default int getSpecialEpigraph() {
-		return 0;
-	};
 
 }

@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -7618,6 +7619,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getFinance().getRawdocFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<RawdocDomainData> getRawdocDomainData(String domainName, int domain, String user, int searchDomain) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getRawdocDomainData(ctx, searchDomain);
 		} finally {
 			if (ctx != null)
 				ctx.close();

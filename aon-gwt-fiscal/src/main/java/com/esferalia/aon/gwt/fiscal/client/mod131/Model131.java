@@ -273,21 +273,10 @@ public class Model131 extends MainEntryPoint {
 	}
 
 	enum Mod131Declarations {
-		AEAT_2025 {
+		AEAT_2024 {
 			@Override
 			public boolean accept(Mod131 mod131) {
-				return mod131.isAEAT() && mod131.getYear() >= 2025;
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod131 mod131, Model131Callback cbk) {
-				return new Model131AEAT2025(mod131, cbk);
-			}
-		}
-		,AEAT_2024 {
-			@Override
-			public boolean accept(Mod131 mod131) {
-				return mod131.isAEAT() && mod131.getYear() == 2024;
+				return mod131.isAEAT() && mod131.getYear() >= 2024;
 			}
 
 			@Override

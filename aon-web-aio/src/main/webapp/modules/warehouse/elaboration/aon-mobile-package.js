@@ -16,7 +16,7 @@ import {openFileUrl} from '../../../services/service.js';
 
 import * as ACTION from '../../actions.js';
 import { deleteElaborationPackage } from '../../../services/warehouseService.js';
-import { getPackages, removePackage } from '../package/PackagesCache.js';
+import { getPackages, removePackage } from './PackagesCache.js';
 import { AonMobilePackageList } from './aon-mobile-package-list.js';
 
 import * as UA from '../../../services/userAgentService.js';

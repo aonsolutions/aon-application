@@ -442,28 +442,19 @@ public class AgreementParser {
 	    	            NodeList listdescriptions = elementCatProfIt.getElementsByTagName("GRUPO");
 	    	            String description = "";
 	    	            
-//	    	            if(listdescriptions.getLength() == 0) {
-//	    	            	description = "NIVEL " + (j+1);
-//	    	            } else {
-//		    	            for(int b=0; b<listdescriptions.getLength(); b++)
-//		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-//		    	            description = description.trim();
-//	    	            }
-	    	            
-	    	            String category = elementCatProfIt.getElementsByTagName("NOMBRE").item(0).getTextContent();
-	    	            
 	    	            if(listdescriptions.getLength() == 0) {
-//	    	            	description = "NIVEL " + (j+1);
-	    	            	description = category;
+	    	            	description = "NIVEL " + (j+1);
 	    	            } else {
 		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 		    	            	description += listdescriptions.item(b).getTextContent() + " ";
 		    	            description = description.trim();
 	    	            }
 	    	            
+	    	            String category = elementCatProfIt.getElementsByTagName("NOMBRE").item(0).getTextContent();
+	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
-	    	            System.out.println("AL -> code : " + code + ", description : " + description + ", category : " + category);
+//	    	            System.out.println("AL -> code : " + code + ", description : " + description + ", category : " + category);
 	    	            
 	    	        }
 	    		}
@@ -560,24 +551,15 @@ public class AgreementParser {
 		    	     	            	NodeList listcodes = elementCPI.getElementsByTagName("CODIGO");
 		    		    	            String description = "";
 		    		    	            
-//		    		    	            if(listdescriptions.getLength() == 0)
-//		    		    	            	description = "NIVEL " + (listcodes.getLength() == 0 ? (l+1) : listcodes.item(0).getTextContent());
-//		    		    	            else {
-//			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
-//			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-//			    		    	            description = description.trim();
-//		    		    	            }
+		    		    	            if(listdescriptions.getLength() == 0)
+		    		    	            	description = "NIVEL " + (listcodes.getLength() == 0 ? (l+1) : listcodes.item(0).getTextContent());
+		    		    	            else {
+			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
+			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
+			    		    	            description = description.trim();
+		    		    	            }
 		    		    	            
 			   	    	            	String category = elementCPI.getElementsByTagName("NOMBRE").item(0).getTextContent();
-			   	    	            	
-			   	    	            	if(listdescriptions.getLength() == 0) {
-	//			 	    	            	description = "NIVEL " + (j+1);
-				 	    	            	description = category;
-				 	    	            } else {
-				 		    	            for(int b=0; b<listdescriptions.getLength(); b++)
-				 		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-				 		    	            description = description.trim();
-				 	    	            }
 			   	    	            	
 				   	    	            AgreementLevel agreementLevel = agreement.getAgreementLevel(description, category);
 				   	    	            

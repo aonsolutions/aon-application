@@ -18,10 +18,8 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
-import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
@@ -75,11 +73,7 @@ public abstract class Mod131Declaration {
 	}
 	
 	private enum Declarations {
-		 AEAT_2025 {
-			@Override boolean accept(Mod131 mod) { return Mod131AEAT2025Declaration.accept(mod);}
-			@Override Mod131Declaration get() {return new Mod131AEAT2025Declaration();}
-		}
-		,AEAT_2024 {
+		AEAT_2024 {
 			@Override boolean accept(Mod131 mod) { return Mod131AEAT2024Declaration.accept(mod);}
 			@Override Mod131Declaration get() {return new Mod131AEAT2024Declaration();}
 		}
@@ -271,30 +265,15 @@ public abstract class Mod131Declaration {
 		}
 	}
 
-	// CAMBIO DE EPIGRAFES EN 2025 (SE ELIMINA MEJILLON EN BATEA Y SE USA OTRA CLASE Modules2025)
 	private LinkedList<Mod131Activity> copyActivities(Mod131 prev131, Mod131 mod131) {
 		return AonCollectionUtils.stream( prev131.getActivities() )
 			.filter( prevAct -> prevAct.getEpigraph() != null )
-			.filter( prevAct -> getEpigraph(mod131, prevAct) != null )			
+			.filter( prevAct -> Epigraph.hasEpigraph(prevAct.getEpigraph()))
 			.map( prevAct -> {
-				IEpigraph epi = getEpigraph(mod131, prevAct);
-				
-				if (mod131.getYear() >= 2025 && prevAct.getYear() < 2025) {
-					// Grabar SpecialEpigraph si estamos grabando 2025 y viene de 2024 (se empieza a usar a partir de 2025)
-					prevAct.setSpecialEpigraph(epi.getSpecialEpigraph());  
-					// Además en 2025 se quitan Lorca, Palma y Dana
-					prevAct.setLor(0);
-					prevAct.setPal(0);
-					prevAct.setDana(0);
-					prevAct.setRlo(0);
-					prevAct.setRpa(0);
-					prevAct.setDanaReduction(0);
-				}
-
 				prevAct.setYear(mod131.getYear())
-					   .setPeriod(mod131.getPeriod())
-				       .setMaxImport(epi.getLimExceso());
-				
+					.setPeriod(mod131.getPeriod());
+				Epigraph epi = Epigraph.getEpigraph(prevAct.getEpigraph());
+				prevAct.setMaxImport(epi.getLimExceso());
 				int idx = 0;
 				for (Module m : epi.getIRPFModules()) {
 					prevAct.getModules().get(idx).setSalariedStaff(m.isSalariedStaff());
@@ -309,18 +288,6 @@ public abstract class Mod131Declaration {
 				return prevAct;
 			})
 			.collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	private IEpigraph getEpigraph(Mod131 mod131, Mod131Activity prevAct) {
-		if (mod131.getYear() >= 2025) { 
-			if (prevAct.getYear() >= 2025) { 
-				return Modules2025.Epigraph.getEpigraph(prevAct.getEpigraph(), prevAct.getSpecialEpigraph()); 
-			} else { 
-				return Modules2025.Epigraph.getEpigraph(prevAct.getEpigraph(), Modules2025.Epigraph.getSpecialEpigraph(prevAct.getEpigraph(),prevAct.getDescription()));
-			}
-		} else { 
-			return Modules2018.Epigraph.getEpigraph(prevAct.getEpigraph());
-		}
 	}
 
 	protected void initializeDeclarationType(Mod131 mod131) {

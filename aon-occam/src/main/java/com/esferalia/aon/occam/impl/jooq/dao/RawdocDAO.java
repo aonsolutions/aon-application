@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounterDetail;
 import com.esferalia.aon.occam.api.model.RawdocNotice;
@@ -47,12 +49,11 @@ import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
-	
 	private static final String ACTION_DATE = "date";
 	private static final String ACTION_USER = "user";
 	private static final String ACTION_STATUS = "status";
 	private static final String ACTION_REASON = "reason";
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy HH:mm:ss";
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
 	
@@ -135,17 +136,14 @@ public class RawdocDAO {
 		}
 	}
 
-	private static final Field<?>[] SELECT_FIELDS = new Field[]{
+	private static Field<?>[] SELECT_FIELDS = new Field[]{
 		 RAWDOC.ID		,RAWDOC.DOMAIN	,RAWDOC.NATURE	,RAWDOC.TYPE
 		,RAWDOC.STATUS	,RAWDOC.JSON	,RAWDOC.LOG		,RAWDOC.MIME_TYPE
 		,RAWDOC.S3_KEY
 		,RAWDOC.CREATION_USER			,RAWDOC.CREATION_DATE
 		,RAWDOC.MODIFICATION_USER		,RAWDOC.MODIFICATION_DATE
 	}; 
-	
-	private RawdocDAO() {
-		
-	}
+
 	
 	public static Stream<Rawdoc> get(AONContext ctx, RawdocFilter filter) {
 		return get(ctx, filter, 0, Integer.MAX_VALUE);
@@ -248,7 +246,7 @@ public class RawdocDAO {
 			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.eq(rawdoc.getId()))
 			.execute();
-		if (rawdoc.getData() != null && rawdoc.getMimeType() != null) {
+		if(rawdoc != null && rawdoc.getData() != null && rawdoc.getMimeType() != null) {
 			updateFile(ctx, rawdoc);
 		}
 		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());
@@ -279,7 +277,7 @@ public class RawdocDAO {
 			.delete(RAWDOC)
 			.where(RAWDOC_PROPERTIES.getConditions(filter))
 			.execute();
-		ctx.log().info("DELETE RAWDOC {0} ({1} filas)",filter.toString(),count);
+		ctx.log().info("DELETE RAWDOC " + filter.toString() + " ("+count+" filas)");
 	}
 	
 	public static void delete(AONContext ctx, Integer domain, Integer id) {
@@ -287,40 +285,68 @@ public class RawdocDAO {
 		int count = ctx.getDslContext()
 			.delete(RAWDOC)
 			.where(RAWDOC.ID.equal(id))
-			.and(RAWDOC.DOMAIN.equal(domain))
 			.execute();
-		ctx.log().info("DELETE RAWDOC domain: {0}; id: {1} ({2} filas)",id,count);
+		ctx.log().info("DELETE RAWDOC domain: " + domain + "; id: " + id + " ("+count+" filas)");
 	}
 
+	public static LinkedList<RawdocDomainData> getDomainData(AONContext ctx, int domain) {
+		TreeMap<String,RawdocDomainData> map = new TreeMap<String,RawdocDomainData>();
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
+		ctx.getDslContext()
+			.select( DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE,RAWDOC.TYPE, RAWDOC.STATUS, COUNT)
+			.from(RAWDOC)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
+			.where(RAWDOC.DOMAIN.eq(domain))
+			.groupBy(DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE, RAWDOC.STATUS)
+			.fetch()
+			.stream()
+			.forEach(record -> {
+				String desc = record.getValue(DOMAIN.DESCRIPTION);
+				RawdocDomainData data = map.get(desc);
+				if (data == null) {
+					data = new RawdocDomainData()
+							.setDomain(record.getValue(DOMAIN.ID))
+							.setDomainName(record.getValue(DOMAIN.NAME))
+							.setDomainDescription(record.getValue(DOMAIN.DESCRIPTION));
+					map.put(desc, data);
+				}
+				data.getInvoiceBreakdown().putBreakdown(
+					 RawdocType.safeValueOf( record.getValue(RAWDOC.TYPE))
+					,RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS))
+					,record.getValue(COUNT));
+			});
+		return new LinkedList<RawdocDomainData>( map.values() );
+	}
+	
 	public static RawdocUserData getUserData(AONContext ctx, int domain){
-		AggregateFunction<Integer> countField = DSL.count(RAWDOC.ID);
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
 		
 		RawdocUserData rawdocUserData = new RawdocUserData();
 		
 		ctx.getDslContext()
-			.select(DOMAIN.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, countField)
+			.select(DOMAIN.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
 			.from(RAWDOC)
 			.join(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
 			.where(DOMAIN.ID.eq(domain))
 			.groupBy(RAWDOC.DOMAIN,RAWDOC.NATURE, RAWDOC.STATUS)
 			.fetch()
 			.stream()
-			.forEach(rec -> {
-				RawdocStatus status = RawdocStatus.safeValueOf( rec.getValue(RAWDOC.STATUS));
+			.forEach(record -> {
+				RawdocStatus status = RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS));
 				if(rawdocUserData.getInvoiceNotice().containsKey(status)) {
 					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
-					notice.setCount(notice.getCount() + rec.getValue(countField));
-					notice.getDomains().add(rec.getValue(RAWDOC.DOMAIN));
-					notice.getDomainCount().put(rec.getValue(DOMAIN.NAME), rec.getValue(countField));
+					notice.setCount(notice.getCount() + record.getValue(COUNT));
+					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					notice.getDomainCount().put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice().put(status, notice);
 				} else {
 					LinkedList<Integer> ds = new LinkedList<>();
-					ds.add(rec.getValue(RAWDOC.DOMAIN));
+					ds.add(record.getValue(RAWDOC.DOMAIN));
 					HashMap<String, Integer> domainCount = new HashMap<>();
-					domainCount.put(rec.getValue(DOMAIN.NAME), rec.getValue(countField));
+					domainCount.put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice()
 						.put(status, new RawdocNotice()
-							.setCount(rec.getValue(countField))
+							.setCount(record.getValue(COUNT))
 							.setDomains(ds)
 							.setDomainCount(domainCount));
 				}
@@ -331,12 +357,12 @@ public class RawdocDAO {
 	public static RawdocInvoiceCounter getInvoiceCounter(AONContext ctx) {
 		RawdocInvoiceCounter counter = new RawdocInvoiceCounter();
 		
-		AggregateFunction<Integer> countField = DSL.count(RAWDOC.ID);
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
 		Field<Boolean> ticket = DSL.decode()
 			.when(DSL.position(RAWDOC.JSON,"\"TICKET\"").greaterThan(0), true)
 			.otherwise( false);
 				
-		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, ticket, countField)
+		ctx.getDslContext().select(RAWDOC.STATUS, RAWDOC.TYPE, ticket, COUNT)
 		.from(RAWDOC)
 		.where(RAWDOC.DOMAIN.eq(ctx.getDomainId()))
 		.groupBy(RAWDOC.STATUS, RAWDOC.TYPE, ticket)
@@ -350,7 +376,7 @@ public class RawdocDAO {
 			} else {
 				tediType = isTicket?TediInvoiceType.TICKET: TediInvoiceType.RECIBIDA;
 			}
-			Integer count = r.getValue(countField);
+			Integer count = r.getValue(COUNT);
 			counter.getMap().computeIfAbsent(status, k -> new RawdocInvoiceCounterDetail());
 			counter.getMap().get(status).addCount(count);
 			if(RawdocStatus.INBOX.equals(status)) {
@@ -367,12 +393,12 @@ public class RawdocDAO {
 		
 		Domain domain = DOMAIN.as("d");
 		Domain parent = DOMAIN.as("p");
-		AggregateFunction<Integer> countField = DSL.count(RAWDOC.ID);
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
 		
 		RawdocUserData rawdocUserData = new RawdocUserData();
 		
 		ctx.getDslContext()
-			.select(domain.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, countField)
+			.select(domain.NAME, RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
 			.from(RAWDOC)
 			.join(domain).on(RAWDOC.DOMAIN.eq(domain.ID))
 			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
@@ -383,22 +409,22 @@ public class RawdocDAO {
 			.groupBy(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS)
 			.fetch()
 			.stream()
-			.forEach(rec -> {
-				RawdocStatus status = RawdocStatus.safeValueOf( rec.getValue(RAWDOC.STATUS));
+			.forEach(record -> {
+				RawdocStatus status = RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS));
 				if(rawdocUserData.getInvoiceNotice().containsKey(status)) {
 					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
-					notice.setCount(notice.getCount() + rec.getValue(countField));
-					notice.getDomains().add(rec.getValue(RAWDOC.DOMAIN));
-					notice.getDomainCount().put(rec.getValue(DOMAIN.NAME), rec.getValue(countField));
+					notice.setCount(notice.getCount() + record.getValue(COUNT));
+					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					notice.getDomainCount().put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice().put(status, notice);
 				} else {
-					LinkedList<Integer> ds = new LinkedList<>();
-					ds.add(rec.getValue(RAWDOC.DOMAIN));
+					LinkedList<Integer> ds = new LinkedList<Integer>();
+					ds.add(record.getValue(RAWDOC.DOMAIN));
 					HashMap<String, Integer> domainCount = new HashMap<>();
-					domainCount.put(rec.getValue(DOMAIN.NAME), rec.getValue(countField));
+					domainCount.put(record.getValue(DOMAIN.NAME), record.getValue(COUNT));
 					rawdocUserData.getInvoiceNotice()
 						.put(status, new RawdocNotice()
-							.setCount(rec.getValue(countField))
+							.setCount(record.getValue(COUNT))
 							.setDomains(ds)
 							.setDomainCount(domainCount));
 				}
@@ -409,55 +435,49 @@ public class RawdocDAO {
 	public static void toDraft(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
 		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-				.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.DRAFT, null ) )
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (DRAFT) id: {0} ({1} filas)",rawdocId,count);
-		}
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.DRAFT, null ) )
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(RAWDOC.ID.equal(rawdocId))
+			.execute();
+		ctx.log().info("UPDATE RAWDOC (DRAFT) id: " + rawdocId + " ("+count+" filas)");
 	}
 
 	public static void toRejected(AONContext ctx, Integer rawdocId, String reason) {
 		ctx.checkWrite();
 		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-					.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.REJECTED, reason ))
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
-		}
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.REJECTED, reason ))
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(RAWDOC.ID.equal(rawdocId))
+			.execute();
+		ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
 	}
 
 	public static void toInbox(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
 		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-					.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.INBOX, null ) )
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");
-		}
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.INBOX, null ) )
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(RAWDOC.ID.equal(rawdocId))
+			.execute();
+		ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");
 	}
 	
 	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {
 		JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
-		HashMap<String,String> map = new HashMap<>();
-		map.put(ACTION_DATE  ,new SimpleDateFormat(DATE_FORMAT_PATTERN).format(new Date()));
+		HashMap<String,String> map = new HashMap<String,String>();
+		map.put(ACTION_DATE  ,DATE_FORMAT.format(new Date()));
 		map.put(ACTION_USER  ,ctx.getUser() );
 		map.put(ACTION_STATUS,status.getDescription() );
 		if (reason != null) {

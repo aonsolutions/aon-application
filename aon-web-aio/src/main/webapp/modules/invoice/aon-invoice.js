@@ -1737,7 +1737,7 @@ export class AonInvoice extends AonElement {
 		tax.type = tax.type || tax.tax;
 		let administration = this.configuration ? this.configuration.administration : '';
 		let percentage = createSelect(this.TAX_PERCENTAGE + i, '% ' + getTaxTypeName(tax.type, this.isMobile(), administration));
-		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration, this.invoice.isSurcharge(), this.getInvoice().isWithholdingFarmer()));
+		percentage.options = JSON.stringify(getTaxPercentageOption(tax.type, administration, this.getInvoice().isWithholdingFarmer()));
 		percentage.addEventListener(EVENT.SELECT, () => {
 			tax.percentage = percentage.value;
 			tax.type = getTaxType(tax.percentage);

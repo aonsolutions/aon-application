@@ -148,9 +148,9 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_SA26)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA2A),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA28),17,2))
-		   
+
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S101), '.')  ,4))
-		   ,(wr, mod) -> wr.append(getAuxiliaryIndicator(mod, Mod303Key.CT_S101, Mod303Key.CT_S102))
+		   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S101, Mod303Key.CT_S102, Mod303Key.CT_S12F, 181.58, 13.23))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S11I)  ,10,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S11R)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S12I)  ,10,2))
@@ -179,7 +179,7 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S128)  ,17,2))
 		   
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S201), '.')  ,4))
-		   ,(wr, mod) -> wr.append(getAuxiliaryIndicator(mod, Mod303Key.CT_S201, Mod303Key.CT_S202))
+		   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S201, Mod303Key.CT_S202, Mod303Key.CT_S22F, 181.58, 13.23))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S21I)  ,10,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S21R)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S22I)  ,10,2))
@@ -355,7 +355,7 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_SA48),17,2))
 
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S301), '.')  ,4))
-			   ,(wr, mod) -> wr.append(getAuxiliaryIndicator(mod, Mod303Key.CT_S301, Mod303Key.CT_S302))
+			   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S301, Mod303Key.CT_S302, Mod303Key.CT_S32F, 181.58, 13.23))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S31I)  ,10,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S31R)  ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S32I)  ,10,2))
@@ -384,7 +384,7 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S328)  ,17,2))
 			   
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text( AonStringUtils.remove(mod.getDescription(Mod303Key.CT_S401), '.')  ,4))
-			   ,(wr, mod) -> wr.append(getAuxiliaryIndicator(mod, Mod303Key.CT_S401, Mod303Key.CT_S402))
+			   ,(wr, mod) -> wr.append(appendMark(mod, Mod303Key.CT_S401, Mod303Key.CT_S402, Mod303Key.CT_S42F, 181.58, 13.23))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S41I)  ,10,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S41R)  ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(  mod.getAmount(Mod303Key.CT_S42I)  ,10,2))
@@ -714,6 +714,21 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 			}
 			return mod.getFinanceIban();
 		}
+		private static String appendMark(Mod303 mod, Mod303Key epigrphKey, Mod303Key markKey, Mod303Key modulFactorKey , double factor1, double factor2) {
+			   if ("722".equals(mod.getDescription(epigrphKey))) {
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 1)) return "1";
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 2)) return "2";
+				   if (AonNumberUtils.equals( mod.getAmount(modulFactorKey), factor1)) return "2";
+				   return "1";
+			   }
+			   if ("691.9".equals(mod.getDescription(epigrphKey))) {
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 1)) return "1";
+				   if (AonNumberUtils.equals( mod.getAmount(markKey) , 2)) return "2";
+				   if (AonNumberUtils.equals( mod.getAmount(modulFactorKey), factor2)) return "2";
+				   return "1";
+			   } 
+			   return " ";   
+		}
 	}
 
 	public void fillWriter(Mod303 mod303, Writer wr) throws IOException {
@@ -726,16 +741,6 @@ class Mod303WriterAEAT2025 implements IMod303Writer{
 		}
 		if (!filled) {
 			throw new AonCoreException("La generaci\u00F3n del modelo no est\u00E1 soportada.");
-		}
-	}
-
-	private static String getAuxiliaryIndicator(Mod303 mod, Mod303Key epigraphKey, Mod303Key specialEpigraphKey) {
-		String epigraph = mod.getDescription(epigraphKey);
-		int specialEpigraph = (int) mod.getAmount(specialEpigraphKey);
-		if ( "722".equals(epigraph) || "691.9".equals(epigraph) ) {
-			return AonNumberUtils.toString(specialEpigraph);
-		} else {
-			return " ";
 		}
 	}
 	

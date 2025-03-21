@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public class Mod123 extends FiscalModel implements Serializable {
 	
@@ -39,13 +38,6 @@ public class Mod123 extends FiscalModel implements Serializable {
 		return this;
 	}
 
-	public boolean mustExcludeInvoicesOnGeneration() {
-		return getAmount(Mod123Key.CM_003) == 1;
-	}
-	public void setMustExcludeInvoicesOnGeneration(boolean mustExcludeInvoicesOnGeneration) {
-		putAmount(Mod123Key.CM_003, mustExcludeInvoicesOnGeneration ? 1 : 0 );
-	}
-	
 	@Override
 	@Deprecated
 	public double getResult() {

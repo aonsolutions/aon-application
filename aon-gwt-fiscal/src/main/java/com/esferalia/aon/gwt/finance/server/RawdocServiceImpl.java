@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -73,6 +74,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset,
 			int limit) throws AonCoreException {
 		return AON.getRawdocs(domainName, domain,user, params, offset, limit );
+	}
+	
+	@Override
+	public LinkedList<RawdocDomainData> getDomainData(String domainName, int domain, String user, int searchDomain) throws AonCoreException {
+		return AON.getRawdocDomainData(domainName, domain,user,searchDomain);
 	}
 	
 	@Override
