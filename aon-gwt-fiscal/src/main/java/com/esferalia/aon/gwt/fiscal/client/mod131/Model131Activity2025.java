@@ -11,13 +11,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.mod131.Model1312024Activities.IModel131ActivityCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod131.Model1312025Activities.IModel131ActivityCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
-import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025.Epigraph;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,9 +38,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model131Activity2024 extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
+public class Model131Activity2025 extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
 	
-	private static final Logger LOGGER = Logger.getLogger(Model131Activity2024.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Model131Activity2025.class.getName());
 	private final Label epigraph = new Label();
 	private final Label epigraphLabel = new Label();
 	
@@ -59,10 +59,10 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private CheckBox tss = new CheckBox();
 	private ListBox mun = new ListBox();
 	private AonIntegerBox emp = new AonIntegerBox(6);
-	private ListBox lor = new ListBox();
-	private ListBox pal = new ListBox();
-	private ListBox dana = new ListBox();
-	private ListBox bat = new ListBox();
+//	private ListBox lor = new ListBox();
+//	private ListBox pal = new ListBox();
+//	private ListBox dana = new ListBox();
+//	private ListBox bat = new ListBox();
 	private AonDoubleBox prc = new AonDoubleBox(6);
 
 	private Label description0 = new Label();
@@ -120,9 +120,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonDoubleBox ic4 = new AonDoubleBox(6);
 	private AonDoubleBox ic5 = new AonDoubleBox(6);
 	private AonDoubleBox rpf = new AonDoubleBox(6);
-	private AonDoubleBox rlo = new AonDoubleBox(6);
-	private AonDoubleBox rpa = new AonDoubleBox(6);
-	private AonDoubleBox danaReduction = new AonDoubleBox(6);
+//	private AonDoubleBox rlo = new AonDoubleBox(6);
+//	private AonDoubleBox rpa = new AonDoubleBox(6);
+//	private AonDoubleBox danaReduction = new AonDoubleBox(6);
 	
 	private AonDoubleBox rdr = new AonDoubleBox(6);
 	private AonIntegerBox dia = new AonIntegerBox(6);
@@ -159,7 +159,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	private AonTableButton epigraphsButton;
 	private Label toolbarLabel;
 
-	public Model131Activity2024(final IModel131ActivityCallback callback) {
+	public Model131Activity2025(final IModel131ActivityCallback callback) {
 		super(Unit.PX);
 		setStyleName(AON.CSS.aonSelector());
 		
@@ -172,30 +172,30 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		mun.addItem("Madrid o Barcelona.");
 		mun.setWidth("260px");
 		
-		lor.addItem("-");
-		lor.addItem("Actividad realizada exclusivamente en Lorca.");
-		lor.addItem("Actividad realizada en Lorca y otros municipios.");
-		lor.setWidth("300px");
+//		lor.addItem("-");
+//		lor.addItem("Actividad realizada exclusivamente en Lorca.");
+//		lor.addItem("Actividad realizada en Lorca y otros municipios.");
+//		lor.setWidth("300px");
 		
-		pal.addItem("-");
-		pal.addItem("Actividad realizada exclusivamente en la isla de la Palma.");
-		pal.addItem("Actividad realizada en la isla de la Palma y otros municipios.");
-		pal.setWidth("370px");
+//		pal.addItem("-");
+//		pal.addItem("Actividad realizada exclusivamente en la isla de la Palma.");
+//		pal.addItem("Actividad realizada en la isla de la Palma y otros municipios.");
+//		pal.setWidth("370px");
 		
-		dana.addItem("-");
-		dana.addItem("Exclusivamente en municipios afectados por la DANA");
-		dana.addItem("En municipios afectados por la DANA y en otros municipios");
-		dana.setWidth("370px");
+//		dana.addItem("-");
+//		dana.addItem("Exclusivamente en municipios afectados por la DANA");
+//		dana.addItem("En municipios afectados por la DANA y en otros municipios");
+//		dana.setWidth("370px");
 		
-		bat.addItem("-");
-		bat.addItem("Una batea y ning\u00FAn barco");
-		bat.addItem("Una batea y un barco de menos de 15 TRB");
-		bat.addItem("Una batea y un barco de 15 a 30 TRB");
-		bat.addItem("Una batea y un barco de m\u00E1s de 30 TRB");
-		bat.addItem("Dos bateas y ning\u00FAn barco");
-		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
-		bat.addItem("Otros: n\u00FAmero de bateas, barcos o TRB distintos de los anteriores");
-		bat.setWidth("370px");
+//		bat.addItem("-");
+//		bat.addItem("Una batea y ning\u00FAn barco");
+//		bat.addItem("Una batea y un barco de menos de 15 TRB");
+//		bat.addItem("Una batea y un barco de 15 a 30 TRB");
+//		bat.addItem("Una batea y un barco de m\u00E1s de 30 TRB");
+//		bat.addItem("Dos bateas y ning\u00FAn barco");
+//		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
+//		bat.addItem("Otros: n\u00FAmero de bateas, barcos o TRB distintos de los anteriores");
+//		bat.setWidth("370px");
 
 		addNorth(getToolbar( callback ), AonToolbar.HEIGTH);		
 
@@ -234,16 +234,17 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	}
 	
 	private String getTitle(Mod131Activity act) {
+		LOGGER.info("Model131Activity2025 getTitle. selected: " + Modules2025.Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph()));
 		return act.isNotEmpty()
-			?(act.getEpigraph()+ " - " + AonStringUtils.abbreviate(act.getDescription(),80))
-			:"Nueva actividad";
+			? (act.getEpigraph() + " - " + AonStringUtils.abbreviate(act.getDescription(),80))
+			: "Nueva actividad";
 	}
 	
 	private Widget getActivitySelectionPanel(IModel131ActivityCallback cbk) {
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setStyleName(AON.CSS.aonScrollArea());
 		
-		final Model131ActivitySelection2024 activitySelection = new Model131ActivitySelection2024();
+		final Model131ActivitySelection2025 activitySelection = new Model131ActivitySelection2025();
 		activitySelection.addSelectionHandler( event -> checkAccept(cbk, event.getSelectedItem()));
 		
 		scroll.setWidget(activitySelection);
@@ -258,10 +259,11 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		}
 	}
 	
-	private void accept(IModel131ActivityCallback callback, final IEpigraph selected) {
+	private void accept(IModel131ActivityCallback callback, final Epigraph selected) {
+//		LOGGER.info("Model131Activity2025 accept. selected " + selected);
 		callback.getActivity().initialize();
-//		callback.getActivity().setEpi(selected);
 		callback.getActivity().setEpigraph(selected.getEpigraph());
+		callback.getActivity().setSpecialEpigraph(selected.getSpecialEpigraph());		
 		callback.getActivity().setDescription(selected.getDescription());
 		callback.getActivity().setMaxImport(selected.getLimExceso());
 		int i = 0;
@@ -310,7 +312,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	}
 
 	protected void populate(Mod131Activity act) {
-		LOGGER.info("Model131Activity2024 populate");
+//		LOGGER.info("Model131Activity2025 populate");
 		
 		epigraphsButton.setVisible(act.isNotEmpty());
 		removeButton.setVisible(act.isNotEmpty());
@@ -333,10 +335,10 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		
 		mun.setSelectedIndex(act.getMun());
 		emp.setValue(act.getEmp());
-		lor.setSelectedIndex(act.getLor());
-		pal.setSelectedIndex(act.getPal());
-		dana.setSelectedIndex(act.getDana());
-		bat.setSelectedIndex(act.getBat());
+//		lor.setSelectedIndex(act.getLor());
+//		pal.setSelectedIndex(act.getPal());
+//		dana.setSelectedIndex(act.getDana());
+//		bat.setSelectedIndex(act.getBat());
 		prc.setValue(act.getPrc());
 		int i = 0;
 		Mod131ActivityModule mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
@@ -406,9 +408,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		ic4.setValue(act.getIc4());
 		ic5.setValue(act.getIc5());
 		rpf.setValue(act.getRpf());
-		rlo.setValue(act.getRlo());
-		rpa.setValue(act.getRpa());
-		danaReduction.setValue(act.getDanaReduction());
+//		rlo.setValue(act.getRlo());
+//		rpa.setValue(act.getRpa());
+//		danaReduction.setValue(act.getDanaReduction());
 		rdr.setValue(act.getRdr());
 		dia.setValue(act.getDia());
 		net.setValue(act.getNet());
@@ -442,29 +444,20 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	}
 	
 	private void enableFields(Mod131Activity act) {
-		if (AonStringUtils.equals(act.getEpigraph(), Epigraph.E____.getEpigraph())) {
-			bat.setEnabled(true);
-			loc.setEnabled(false);
-			veh.setEnabled(false);
-			cap.setEnabled(false);
-			tns.setEnabled(false);
-			tss.setEnabled(false);
-			mun.setEnabled(false);
-		} else if (AonStringUtils.equals(act.getEpigraph(), Epigraph.E_722A.getEpigraph())  
-				|| AonStringUtils.equals(act.getEpigraph(), Epigraph.E_757.getEpigraph())
-				) {
-			bat.setEnabled(false);
+//		LOGGER.info("Model131Activity2025 enableFields. Epigrafe "+act.getEpi());
+		Epigraph epi = Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph()); 
+		if (epi == Epigraph.E_722A || epi == Epigraph.E_722B || epi == Epigraph.E_757) {		
 			tss.setEnabled(true);
 			tns.setEnabled(true);
 		} else {
-			bat.setEnabled(false);
+//			bat.setEnabled(false);
 			tss.setEnabled(false);
 			tns.setEnabled(false);
 		}
 		cap.setEnabled( act.getVeh() > 0 );
-		rlo.setEnabled( lor.getSelectedIndex() == 2 );
-		rpa.setEnabled( pal.getSelectedIndex() == 2 );
-		danaReduction.setEnabled( dana.getSelectedIndex() == 2 );
+//		rlo.setEnabled( lor.getSelectedIndex() == 2 );
+//		rpa.setEnabled( pal.getSelectedIndex() == 2 );
+//		danaReduction.setEnabled( dana.getSelectedIndex() == 2 );
 	}
 	
 	private Widget getAdditionalDataPanel(IModel131ActivityCallback callback) {
@@ -473,7 +466,6 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		table.addStyleName(AON.CSS.aonMarginLeft());
 		table.addStyleName(AON.CSS.aonMarginRight());
 		table.addStyleName(AON.CSS.aonMarginBottom());
-		
 		
 		dis.addClickHandler(event -> onFieldChange(callback));
 		table.addRow()
@@ -535,76 +527,76 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			.addCell(new Label(AON.MSG.irpfActivityEmp()),AON.CSS.aonBold() )
 			.addCell(emp);
 
-		lor.setEnabled(callback.getActivity().getPal() != 1 && callback.getActivity().getDana() != 1);
-		lor.addChangeHandler(event -> {
-			callback.getActivity().setLor(lor.getSelectedIndex());
-			if (callback.getActivity().getLor() == 1) {
-				callback.getActivity().setPal(0);
-				callback.getActivity().setDana(0);
-				pal.setSelectedIndex(0);
-				dana.setSelectedIndex(0);
-				pal.setEnabled(false);
-				dana.setEnabled(false);
-			} else {
-				pal.setEnabled(true);
-				dana.setEnabled(true);
-				callback.getActivity().setRlo(0.0);
-			}
-			onFieldChange(callback);
-		});
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityLor()),AON.CSS.aonBold() )
-			.addCell(lor);
+//		lor.setEnabled(callback.getActivity().getPal() != 1 && callback.getActivity().getDana() != 1);
+//		lor.addChangeHandler(event -> {
+//			callback.getActivity().setLor(lor.getSelectedIndex());
+//			if (callback.getActivity().getLor() == 1) {
+//				callback.getActivity().setPal(0);
+//				callback.getActivity().setDana(0);
+//				pal.setSelectedIndex(0);
+//				dana.setSelectedIndex(0);
+//				pal.setEnabled(false);
+//				dana.setEnabled(false);
+//			} else {
+//				pal.setEnabled(true);
+//				dana.setEnabled(true);
+//				callback.getActivity().setRlo(0.0);
+//			}
+//			onFieldChange(callback);
+//		});
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityLor()),AON.CSS.aonBold() )
+//			.addCell(lor);
 
-		pal.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getDana() != 1);
-		pal.addChangeHandler(event -> {
-			callback.getActivity().setPal(pal.getSelectedIndex());
-			if (callback.getActivity().getPal() == 1) {
-				callback.getActivity().setLor(0);
-				callback.getActivity().setDana(0);
-				lor.setSelectedIndex(0);
-				dana.setSelectedIndex(0);
-				lor.setEnabled(false);
-				dana.setEnabled(false);
-			} else {
-				lor.setEnabled(true);
-				dana.setEnabled(true);
-				callback.getActivity().setRpa(0.0);
-			}
-			onFieldChange(callback);	
-		});
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityPal()),AON.CSS.aonBold() )
-			.addCell(pal);
+//		pal.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getDana() != 1);
+//		pal.addChangeHandler(event -> {
+//			callback.getActivity().setPal(pal.getSelectedIndex());
+//			if (callback.getActivity().getPal() == 1) {
+//				callback.getActivity().setLor(0);
+//				callback.getActivity().setDana(0);
+//				lor.setSelectedIndex(0);
+//				dana.setSelectedIndex(0);
+//				lor.setEnabled(false);
+//				dana.setEnabled(false);
+//			} else {
+//				lor.setEnabled(true);
+//				dana.setEnabled(true);
+//				callback.getActivity().setRpa(0.0);
+//			}
+//			onFieldChange(callback);	
+//		});
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityPal()),AON.CSS.aonBold() )
+//			.addCell(pal);
 		
 		// DANA solo a partir del ultimo trimestre de 2024
-		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
-			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getPal() != 1);
-			dana.addChangeHandler(event -> {
-				callback.getActivity().setDana(dana.getSelectedIndex());
-				if (callback.getActivity().getDana() == 1) {
-					callback.getActivity().setLor(0);
-					callback.getActivity().setPal(0);
-					lor.setSelectedIndex(0);
-					pal.setSelectedIndex(0);
-					lor.setEnabled(false);
-					pal.setEnabled(false);
-				} else {
-					lor.setEnabled(true);
-					pal.setEnabled(true);
-					callback.getActivity().setDanaReduction(0.0);
-				}
-				onFieldChange(callback);	
-			});
-			table.addRow()
-				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"),AON.CSS.aonBold() )
-				.addCell(dana);
-		}
+//		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
+//			dana.setEnabled(callback.getActivity().getLor() != 1 && callback.getActivity().getPal() != 1);
+//			dana.addChangeHandler(event -> {
+//				callback.getActivity().setDana(dana.getSelectedIndex());
+//				if (callback.getActivity().getDana() == 1) {
+//					callback.getActivity().setLor(0);
+//					callback.getActivity().setPal(0);
+//					lor.setSelectedIndex(0);
+//					pal.setSelectedIndex(0);
+//					lor.setEnabled(false);
+//					pal.setEnabled(false);
+//				} else {
+//					lor.setEnabled(true);
+//					pal.setEnabled(true);
+//					callback.getActivity().setDanaReduction(0.0);
+//				}
+//				onFieldChange(callback);	
+//			});
+//			table.addRow()
+//				.addCell(new Label("Actividad realizada en municipios afectados por la DANA 2024"),AON.CSS.aonBold() )
+//				.addCell(dana);
+//		}
 
-		bat.addChangeHandler(event -> onFieldChange(callback));
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityBat()),AON.CSS.aonBold() )
-			.addCell(bat);
+//		bat.addChangeHandler(event -> onFieldChange(callback));
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityBat()),AON.CSS.aonBold() )
+//			.addCell(bat);
 		
 		prc.addValueChangeHandler(event -> onFieldChange(callback));
 		table.addRow()
@@ -960,19 +952,19 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		value6.setValue(AonNumberUtils.zeroIfNull(value6.getValue()),false);
 		iin.setValue(AonNumberUtils.zeroIfNull(iin.getValue()),false);
 		dia.setValue(AonNumberUtils.zeroIfNull(dia.getValue()),false);
-		rlo.setValue(AonNumberUtils.zeroIfNull(rlo.getValue()),false);
-		rpa.setValue(AonNumberUtils.zeroIfNull(rpa.getValue()),false);
-		danaReduction.setValue(AonNumberUtils.zeroIfNull(danaReduction.getValue()),false);
+//		rlo.setValue(AonNumberUtils.zeroIfNull(rlo.getValue()),false);
+//		rpa.setValue(AonNumberUtils.zeroIfNull(rpa.getValue()),false);
+//		danaReduction.setValue(AonNumberUtils.zeroIfNull(danaReduction.getValue()),false);
 		callback.getActivity().setCom(com.getValue());
 		callback.getActivity().setTem(tem.getValue());
 		callback.getActivity().setNue(nue.getValue());
 		callback.getActivity().setVeh(veh.getValue());
 		callback.getActivity().setEmp(emp.getValue());
 		callback.getActivity().setMun(mun.getSelectedIndex());
-		callback.getActivity().setLor(lor.getSelectedIndex());
-		callback.getActivity().setPal(pal.getSelectedIndex());
-		callback.getActivity().setDana(dana.getSelectedIndex());
-		callback.getActivity().setBat(bat.getSelectedIndex());
+//		callback.getActivity().setLor(lor.getSelectedIndex());
+//		callback.getActivity().setPal(pal.getSelectedIndex());
+//		callback.getActivity().setDana(dana.getSelectedIndex());
+//		callback.getActivity().setBat(bat.getSelectedIndex());
 		callback.getActivity().setPrc(prc.getValue());
 		callback.getActivity().setDis(dis.getValue());
 		callback.getActivity().setCeu(ceu.getValue());
@@ -1043,18 +1035,18 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		
 		iin.addValueChangeHandler(event -> onFieldChange(callback));
 		dia.addValueChangeHandler(event -> onFieldChange(callback));
-		rlo.addValueChangeHandler(event -> {
-			if (rlo.getValue() == null) 
-				rlo.setValue(0.0,false);
-			callback.getActivity().setRlo(rlo.getValue());
-			onFieldChange(callback);
-		});
-		rpa.addValueChangeHandler(event -> {
-			if (rpa.getValue() == null) 
-				rpa.setValue(0.0,false);
-			callback.getActivity().setRpa(rpa.getValue());
-			onFieldChange(callback);
-		});
+//		rlo.addValueChangeHandler(event -> {
+//			if (rlo.getValue() == null) 
+//				rlo.setValue(0.0,false);
+//			callback.getActivity().setRlo(rlo.getValue());
+//			onFieldChange(callback);
+//		});
+//		rpa.addValueChangeHandler(event -> {
+//			if (rpa.getValue() == null) 
+//				rpa.setValue(0.0,false);
+//			callback.getActivity().setRpa(rpa.getValue());
+//			onFieldChange(callback);
+//		});
 		
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRnp()),AON.CSS.aonBold(),AON.CSS.aonWidth600() )
@@ -1086,29 +1078,30 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityRpf()),AON.CSS.aonBold())
 			.addCell(rpf);
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityRlo()),AON.CSS.aonBold())
-			.addCell(rlo);
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityRpa()),AON.CSS.aonBold())
-			.addCell(rpa);
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityRlo()),AON.CSS.aonBold())
+//			.addCell(rlo);
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityRpa()),AON.CSS.aonBold())
+//			.addCell(rpa);
 		
 		// DANA solo a partir del ultimo trimestre de 2024
-		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
-			danaReduction.addValueChangeHandler(event -> {
-				if (danaReduction.getValue() == null) 
-					danaReduction.setValue(0.0,false);
-				callback.getActivity().setDanaReduction(danaReduction.getValue());
-				onFieldChange(callback);	
-			});
-			table.addRow()
-				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"),AON.CSS.aonBold())
-				.addCell(danaReduction);
-		}
-		
-		table.addRow()
-			.addCell(new Label(AON.MSG.irpfActivityRdr()),AON.CSS.aonBold())
-			.addCell(rdr);
+//		if (callback.getModel().getYear() > 2024 || (callback.getModel().getYear() == 2024 && callback.getModel().isLastPeriod())) {
+//			danaReduction.addValueChangeHandler(event -> {
+//				if (danaReduction.getValue() == null) 
+//					danaReduction.setValue(0.0,false);
+//				callback.getActivity().setDanaReduction(danaReduction.getValue());
+//				onFieldChange(callback);	
+//			});
+//			table.addRow()
+//				.addCell(new Label("Reducci\u00F3n por actividad realizada en municipios afectados por la DANA"),AON.CSS.aonBold())
+//				.addCell(danaReduction);
+//		}
+
+		// No se muestra el rendimiento a efectos de pagos fraccionados despues de reducciones, porque no existen reducciones en 2025		
+//		table.addRow()
+//			.addCell(new Label(AON.MSG.irpfActivityRdr()),AON.CSS.aonBold())
+//			.addCell(rdr);
 		table.addRow()
 			.addCell(new Label(AON.MSG.irpfActivityDia()),AON.CSS.aonBold())
 			.addCell(dia);
@@ -1273,7 +1266,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 					callback.getActivity().setPor(result.getPor());
 					callback.getActivity().setRes(result.getRes());
 					populate(callback.getActivity());
-					ValueChangeEvent.<Mod131Activity>fire(Model131Activity2024.this, callback.getActivity());
+					ValueChangeEvent.<Mod131Activity>fire(Model131Activity2025.this, callback.getActivity());
 				}
 				
 				@Override

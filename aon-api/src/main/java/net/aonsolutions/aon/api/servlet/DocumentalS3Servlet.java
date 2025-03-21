@@ -17,6 +17,8 @@ import java.util.zip.ZipOutputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.code.aon.common.AonException;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -149,11 +151,15 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			} else if(type == 1){
 				data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
 			}
-			Attach attach = new Attach()
-					.setDescription(document.getName())
-					.setData(data)
-					.setMimeType(document.getMimetype());
-			return attach;
+			if(data != null) {				
+				Attach attach = new Attach()
+						.setDescription(document.getName())
+						.setData(data)
+						.setMimeType(document.getMimetype());
+				return attach;
+			} else {
+				throw new AonException("Archivo corrupto.");
+			}
 		} catch(Exception e) {
 			throw e;
 		}
@@ -253,10 +259,14 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		byte[] bytes = decoder.decode(api.getData().optString(IJsonNames.CONTENT));
 		String doc = S3rDoc.uploadObject(bytes, AON_BUCKET_NAME, api.getDomain().getName());
 		JSONObject json = api.getData();
+		Integer registry = api.getUser().getRegistry().getId(); 
+		if(api.getUser().getRegistry().getId() == null) {
+			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+		}
 		S3Document rdoc = new S3Document()
 				.setCategory(json.getInt(IJsonNames.CATEGORY))
 				.setDomain(json.getJSONObject(IJsonNames.DOMAIN).getInt(IJsonNames.ID))
-				.setRegistry(api.getUser().getRegistry().getId())
+				.setRegistry(registry)
 				.setSize(JsonUtils.getInteger(json, IJsonNames.SIZE))
 				.setDocumentDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setMimetype(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)))

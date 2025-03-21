@@ -25,6 +25,9 @@ import '../../css/aon-mobile.css';
 import 'aoncss';
 import { uploadOption } from './DocumentalUtils.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
+import { AonSwitch } from '../../components/aon-switch.js';
+
+import * as LS from '../../services/localStorageService.js';
 
 export class AonDocumental extends AonElement {
 	_filter;
@@ -93,6 +96,25 @@ export class AonDocumental extends AonElement {
 
 	build() {
 		let aonDocumental = this.getApplication();
+		if(this.isBeta()) {
+			let titleSection = aonDocumental.getToolbar().getTitleSection();
+
+			let newView = new AonSwitch();
+			newView.style.marginLeft = '20px';
+			newView.id = this.id + "NewView";
+			newView.title = "Nueva Vista";
+			newView.checked = this.isBetaDoc();
+			newView.addEventListener(EVENT.CHANGE, () => {
+				LS.setBetaDoc(newView.checked);
+				this.rootPanel(new AonDocumental());
+			});
+
+			titleSection.appendChild(newView);
+		}
+
+		
+		this.getElement("aonDocumentalToolbarHeaderTitleSection");
+
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 			aonDocumental.drag_and_drop = true;
 		}
@@ -218,7 +240,8 @@ export class AonDocumental extends AonElement {
 
 	loadCategories() {
 		let data = {
-			parent: null
+			parent: null,
+			domain: LS.getDomainId()
 		};
 		if (this.isBetaDoc()) {
 			getS3Category(data).then(categories => {

@@ -119,11 +119,14 @@ public class RawdocServlet extends AonApiHttpServlet {
 	public static JSONArray getRawdocs(AonApiData api) {
 		String status = JsonUtils.getString(api.getData(), IJsonNames.STATUS);
 		String description = JsonUtils.getString(api.getData(), IJsonNames.DESCRIPTION);
+		RawdocNature nature = RawdocNature.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.NATURE));
 		JSONArray jsArray = new JSONArray();
 		RawdocStatus rs = RawdocStatus.safeValueOf(status);
 		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> f.getDomainProperty().eq(api.getDomain().getId())
-				.and(f.getStatusProperty().eq(rs.value())))
+				.and(f.getStatusProperty().eq(rs.value()))
+				.and(f.getNatureProperty().eq(nature != null ? nature.value() : RawdocNature.INVOICE.value()))
+				)
 		.forEach(r -> { 
 			JSONObject json = rawdocToJson(api, r);			
 			String reference = description != null && json.opt(IJsonNames.REFERENCE) != null ? json.optString(IJsonNames.REFERENCE) : "";
@@ -143,7 +146,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 	private static JSONObject getRawdoc(AonApiData api) {
 		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
 		Integer rawdocId = vars.getInt(IJsonNames.ID);
-		Rawdoc rawdoc =AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdocId);
+		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdocId);
 		return rawdocToJson(api, rawdoc);
 	}
 	

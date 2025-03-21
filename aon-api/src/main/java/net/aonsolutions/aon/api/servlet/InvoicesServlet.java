@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -138,7 +139,8 @@ public class InvoicesServlet extends AonApiHttpServlet {
             RawdocStatus rs = getRawdocStatus(status);
             AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(),
                     api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())
-                            .and(f.getStatusProperty().eq(rs.value())))
+                            .and(f.getStatusProperty().eq(rs.value()))
+                            .and(f.getNatureProperty().eq(RawdocNature.INVOICE.value())))
                     .forEach(r -> {
                         JSONObject json = new JSONObject(r.getJson());
                         json.put(IJsonNames.ID, r.getId());
