@@ -9,6 +9,7 @@ import {
   getChartInvoices,
   getChartInvoicesPeriod,
 } from "../../services/invoiceService.js";
+import { Chart } from "chart.js/auto";
 
 export class AonDashboardSalesPurchases extends AonElement {
   PERIODS;

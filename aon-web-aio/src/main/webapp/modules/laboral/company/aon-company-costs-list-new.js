@@ -5,6 +5,7 @@ import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import { Chart } from "chart.js/auto";
 
 let chartCanva;
 let cardFilter;
