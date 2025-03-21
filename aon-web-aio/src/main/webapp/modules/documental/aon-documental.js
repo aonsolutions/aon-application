@@ -102,7 +102,7 @@ export class AonDocumental extends AonElement {
 			let newView = new AonSwitch();
 			newView.style.marginLeft = '20px';
 			newView.id = this.id + "NewView";
-			newView.title = this.isBetaDoc() ? "Vista Clásica" : "Nueva Vista";
+			newView.title = "Nueva Vista";
 			newView.checked = this.isBetaDoc();
 			newView.addEventListener(EVENT.CHANGE, () => {
 				LS.setBetaDoc(newView.checked);
@@ -236,7 +236,8 @@ export class AonDocumental extends AonElement {
 
 	loadCategories() {
 		let data = {
-			parent: null
+			parent: null,
+			domain: LS.getDomainId()
 		};
 		if (this.isBetaDoc()) {
 			getS3Category(data).then(categories => {
