@@ -18,7 +18,8 @@ import * as LS from '../../services/localStorageService.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import { AonProductList } from '../product/aon-product-list.js';
 import { createInput, createSelect } from '../../components/CreateComponent.js';
-import { AonMobilePackageList } from './elaboration/aon-mobile-package-list.js';
+import { AonPackageList } from './package/aon-package-list.js';
+import { AonMobilePackageList } from './package/aon-mobile-package-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -260,8 +261,7 @@ export class AonWarehouse extends AonElement {
 
 	aonPackages() {
 		this.getApplication().removeFloatOption();
-		this.getApplication().setContent( new AonMobilePackageList());
-			// this.isMobile() ? new AonMobileProductList() : new AonProductList());
+		this.getApplication().setContent( this.isMobile() ? new AonMobilePackageList() : new AonPackageList );
 	}
 
 }

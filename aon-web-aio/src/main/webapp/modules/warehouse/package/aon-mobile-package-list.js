@@ -2,7 +2,7 @@ import { AonMobileList } from '../../../components/aon-mobile-list.js';
 import { EVENT, MATERIAL_ICONS, TAG } from '../../../environments/environments.js';
 import { getItems } from '../../../services/productService.js';
 import { AonMobilePackage } from './aon-mobile-package.js';
-import { addPackages, initializePackages, setIndex, setPackages } from './PackagesCache.js';
+import { addPackages, initializePackages, setIndex, setPackages } from '../package/PackagesCache.js';
 
 export class AonMobilePackageList extends AonMobileList {
 
@@ -50,12 +50,12 @@ export class AonMobilePackageList extends AonMobileList {
 	}
 
     loadMore() {
+        this.more = false;
         if(!this.packages && this.filter.page) {
             this.filter.page = this.filter.page + 1;
             getItems(this.filter).then(items => {
                 addPackages(items);
-                if(items.length == 0)
-                    this.more = false;
+                this.more = items.length > 0;
                 items.forEach((item, i) => this.addItemRow(item, i));
             });
         }

@@ -471,6 +471,7 @@ public class Salary implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private Date issueDate;
+	private Date chargeDate;
 	private int salaryDays;
 
 	// Enterprise related data
@@ -625,6 +626,15 @@ public class Salary implements Serializable {
 
 	public Salary setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
+		return this;
+	}
+	
+	public Date getChargeDate() {
+		return chargeDate;
+	}
+
+	public Salary setChargeDate(Date chargeDate) {
+		this.chargeDate = chargeDate;
 		return this;
 	}
 
