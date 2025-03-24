@@ -869,7 +869,7 @@
 	.aon-icon-close,
 	.aon-icon-file-exit-cancel{
 		background-size: 24px;
-		background-image: url(#{aonResource.resolve['/images/aon-cancel.svg']}) ;
+		background-image: url('/images/aon-cancel.svg') ;
 	}
 	
 	.aon-icon-new,
@@ -1020,9 +1020,12 @@
 	.aon-finding-toolbar-item.aon-icon-invoice,
 	.aon-finding-toolbar-item.aon-icon-webmail2,
 	.aon-finding-toolbar-item.aon-icon-import-excel-trans,
-	.aon-finding-toolbar-item.aon-icon-export-excel-trans
+	.aon-finding-toolbar-item.aon-icon-export-excel-trans,
+	.aon-finding-toolbar-item.aon-icon-filter,
+	.aon-finding-toolbar-item.aon-icon-filter-off,
+	.aon-finding-toolbar-item.aon-icon-close	
 	{
-		min-height:24px;
+		min-height:24px !important;
 		padding-top:4px;
 		padding-bottom:4px;
 		padding-left:24px; !important;
@@ -1174,6 +1177,16 @@
 	.rich-fileupload-ico-add {
 		padding-left: 26px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-upload.svg']}) ;
+	}
+	
+	.aon-icon-filter {
+		background-image: url('/images/aon-icon-filter.svg');
+		background-repeat: no-repeat;
+	}
+	
+	.aon-icon-filter-off {
+		background-image: url('/images/aon-icon-filter-off.svg');
+		background-repeat: no-repeat;
 	}
 	
 	.aon-spin-control-element {
