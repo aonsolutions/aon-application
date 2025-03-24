@@ -51,7 +51,7 @@
 		<dependency>
     		<groupId>org.json</groupId>
     		<artifactId>json</artifactId>
-    		<version>20230227</version>
+    		<version>20250107</version>
 		</dependency>
 		
 		<!-- PARA REALIZAR LA CONEXIÓN SFTP -->
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13-beta-1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
