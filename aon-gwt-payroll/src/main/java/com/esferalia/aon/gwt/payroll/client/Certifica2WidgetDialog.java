@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
@@ -67,7 +68,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	private HTMLPanel ertePanel = new HTMLPanel("");
 	private AonCustomTextBox erteCodeTB = new AonCustomTextBox("C\u00f3digo ERTE");
 	private AonCustomTextBox erteCoefTB = new AonCustomTextBox("Red. Jor. ERTE (%)");
-	private AonCustomTextBox erteEnd = new AonCustomTextBox("F. Fin ERTE");
+	private AonCustomDateBox erteEnd = new AonCustomDateBox("F. Fin ERTE");
 	
 	private AonCustomListBox suspensionCodeLB = new AonCustomListBox("C\u00f3digo Suspensi\u00f3n");
 	private AonCustomSuggestBox profesionalCategorySB = new AonCustomSuggestBox("CNO");
@@ -103,6 +104,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 	private Hidden suspensionReasonCodeHidden;
 	private Hidden suspensionReasonHidden;
 	private Hidden ereCodeHidden;
+	private Hidden ereEndHidden;
 	
 	private Map<String, CNO> cnoMap;
 	
@@ -235,14 +237,17 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 			certifica2Info.setErteCode(e.getValue());
 			ereCodeHidden.setValue(e.getValue());
 		});
+		erteEnd.addValueChangeHandler(e -> {
+			certifica2Info.setErteEnd(e.getValue());
+			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
+		});
 		ertePanel.add(erteCodeTB);
 		ertePanel.add(erteCoefTB);
-		erteEnd.setEnable(false);
 		ertePanel.add(erteEnd);
 		if(AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"16") || AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"17") || AonStringUtils.equalsIgnoreCase(certifica2Info.getSuspensionCode(),"18")) {
 			this.ertePanel.getElement().getStyle().clearDisplay();
 			this.erteCoefTB.setValue(certifica2Info.getErteCoef());
-			this.erteEnd.setValue(null == certifica2Info.getErteEnd() ? "" : dateFormat.format(certifica2Info.getErteEnd()));
+			this.erteEnd.setValue(null == certifica2Info.getErteEnd() ? null : certifica2Info.getErteEnd());
 		} else this.ertePanel.getElement().getStyle().setDisplay(Display.NONE);
 		contractCardTable.add(createRow(ertePanel, null, null));
 		initializeCNOSuggestions();
@@ -474,6 +479,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getValue());
 			suspensionReasonHidden.setValue(this.suspensionCodeLB.getListBox().getSelectedItemText().split(" - ")[1]);
 			ereCodeHidden.setValue(this.erteCodeTB.getValue());
+			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
 			
 			formPanelManual.submit();
 		});
@@ -488,6 +494,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 			
 			suspensionReasonCodeHidden.setValue(this.suspensionCodeLB.getValue());
 			ereCodeHidden.setValue(this.erteCodeTB.getValue());
+			ereEndHidden.setValue(null == erteEnd.getValue() ? "" : dateFormat.format(erteEnd.getValue()));
 			
 			formPanelPDF.submit();
 		});
@@ -546,7 +553,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+								AonDialog dialog = new AonDialog("Error CNOs", new HTML(caught.getMessage()));
 								dialog.warning();
 							}
 
@@ -562,7 +569,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+				AonDialog dialog = new AonDialog("Error Dur", new HTML(caught.getMessage()));
 				dialog.warning();
 			}
 			
@@ -601,6 +608,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		documentHidden = new Hidden("document", "");
 		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
 		ereCodeHidden = new Hidden("ereCode", "");
+		ereEndHidden = new Hidden("ereEnd", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -612,6 +620,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		flowPanel.add(documentHidden);
 		flowPanel.add(suspensionReasonCodeHidden);
 		flowPanel.add(ereCodeHidden);
+		flowPanel.add(ereEndHidden);
 		
 		formPanelXML.add(flowPanel);
 		formPanelXML.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
@@ -632,6 +641,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		endDateHidden = new Hidden("endDate", "");
 		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
 		ereCodeHidden = new Hidden("ereCode", "");
+		ereEndHidden = new Hidden("ereEnd", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -644,6 +654,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		flowPanel.add(endDateHidden);
 		flowPanel.add(suspensionReasonCodeHidden);
 		flowPanel.add(ereCodeHidden);
+		flowPanel.add(ereEndHidden);
 		
 		formPanelPDF.add(flowPanel);
 		formPanelPDF.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
@@ -665,6 +676,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		suspensionReasonCodeHidden = new Hidden("suspensionReasonCode", "");
 		suspensionReasonHidden = new Hidden("suspensionReason", "");
 		ereCodeHidden = new Hidden("ereCode", "");
+		ereEndHidden = new Hidden("ereEnd", "");
 		
 		//Add all to FlowPanel to add to FormPanel
 		FlowPanel flowPanel = new FlowPanel();
@@ -678,6 +690,7 @@ public class Certifica2WidgetDialog extends AonCustomDialog {
 		flowPanel.add(suspensionReasonCodeHidden);
 		flowPanel.add(suspensionReasonHidden);
 		flowPanel.add(ereCodeHidden);
+		flowPanel.add(ereEndHidden);
 		
 		formPanelManual.add(flowPanel);
 		formPanelManual.addSubmitCompleteHandler(e -> AonMessagePanel.hideMessage(messagePanel));
