@@ -202,11 +202,13 @@ export class AonPayrollMenu extends AonSuiteMenu {
 		        description: "Gestión de Certificados",
 		        title: "Gestión de Certificados",
 		        action: () => GWT.iLoad(GWT.MAIN_DIGITAL_CERTIFICATES)
-		    },{
+		    },
+		    /*{
 		        description: "Papelera",
 		        title: "Papelera",
 		        action: () => GWT.iLoad(GWT.PAYROLL_TRASH)
-		    },{
+		    },*/
+		    {
 		        description: "CCC",
 		        title: "CCC",
 		        action: () => GWT.iLoad(GWT.MAIN_CCC)
