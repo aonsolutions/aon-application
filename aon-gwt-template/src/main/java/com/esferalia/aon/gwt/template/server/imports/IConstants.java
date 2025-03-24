@@ -6,7 +6,8 @@ public interface IConstants {
 		IConstants.NOMBRE_COMERCIAL,IConstants.DOMICILIO,IConstants.DIRECCION, IConstants.DIRECCION2, IConstants.CP, IConstants.CODIGO_POSTAL, IConstants.CODIGO_POSTAL2, IConstants.POBLACION2,
 		IConstants.POBLACION, IConstants.CIUDAD, IConstants.PROVINCIA, IConstants.IBAN, IConstants.PAIS2, IConstants.PAIS,
 		IConstants.TELEFONO, IConstants.TELEFONO2, IConstants.EMAIL, IConstants.MAIL, IConstants.CORREO_ELECTRONICO, IConstants.CORREO_ELECTRONICO2,
-		IConstants.FORMA_DE_PAGO, IConstants.MOVIL, IConstants.MOVIL2, IConstants.BIC, IConstants.BIC_SWIFT, IConstants.BBAN, IConstants.CCC
+		IConstants.FORMA_DE_PAGO, IConstants.MOVIL, IConstants.MOVIL2, IConstants.BIC, IConstants.BIC_SWIFT, IConstants.BBAN, IConstants.CCC, 
+		IConstants.TRANSACCION, IConstants.TRANSACCION2
 	};
 	
 	String[] DIARY_TITLES = {
@@ -200,5 +201,8 @@ public interface IConstants {
 	
 	String CUENTA_TESORERIA = "CUENTA TESORERIA";
 	String PAGO_POR_CAJA = "PAGO POR CAJA";
+	
+	String TRANSACCION = "TRANSACCION";
+	String TRANSACCION2 = "TRANSACCIÓN";
 
 }

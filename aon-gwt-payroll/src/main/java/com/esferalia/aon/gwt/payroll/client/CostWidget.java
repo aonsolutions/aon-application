@@ -136,18 +136,18 @@ public class CostWidget extends AonCustomDockLayout {
 			
 			LinkedHashSet <Integer> availableYears = new LinkedHashSet<Integer>();
 			
-			excel = addItem("Microsoft Excel (.xls)", new ExcelCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			excel = addItem("Microsoft Excel (.xls)", new ExcelCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			excel.ensureDebugId("excel");
 			
-			excelComplete = addItem("Microsoft Excel (.xls, detallado)", new ExcelCompleteCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			excelComplete = addItem("Microsoft Excel (.xls, detallado)", new ExcelCompleteCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			excelComplete.ensureDebugId("excelComplete");
 			
-			csv = addItem("Valores separados por comas (.csv)", new CSVCCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			csv = addItem("Valores separados por comas (.csv)", new CSVCCommand(), AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			csv.ensureDebugId("csv");
 			
 			addSeparator();
 			
-			MenuItem summaryItem = addItem("Resumen Anual Agregado (.xsl, mensual)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			MenuItem summaryItem = addItem("Resumen Anual Agregado (.xsl, mensual)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			summaryItem.setScheduledCommand(() -> {
 				availableYears.clear();
 				if (costs != null) {
@@ -161,7 +161,7 @@ public class CostWidget extends AonCustomDockLayout {
 					
 					aggregatedAnnualSummary = new ContextMenu();
 					for (Integer year : availableYears)
-						aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.MONTHLY), AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
+						aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.MONTHLY), AON.CSS.aonIconExcel(), AON.CSS.aonCmdItem());
 					
 					aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
 					
@@ -175,7 +175,7 @@ public class CostWidget extends AonCustomDockLayout {
 				
 				
 				
-			MenuItem summaryQuarterlyItem = addItem("Resumen Anual Agregado (.xsl, trimestral)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			MenuItem summaryQuarterlyItem = addItem("Resumen Anual Agregado (.xsl, trimestral)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			summaryQuarterlyItem.setScheduledCommand(() -> {
 				availableYears.clear();
 				if (costs != null) {
@@ -189,7 +189,7 @@ public class CostWidget extends AonCustomDockLayout {
 					
 					aggregatedAnnualSummary = new ContextMenu();
 					for (Integer year : availableYears) 
-						aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.QUARTERLY), AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
+						aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.QUARTERLY), AON.CSS.aonIconExcel(), AON.CSS.aonCmdItem());
 					
 					aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
 					
@@ -202,7 +202,7 @@ public class CostWidget extends AonCustomDockLayout {
 			});
 				
 				
-			MenuItem recordItem = addItem("Registro Retributivo (.xsl)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			MenuItem recordItem = addItem("Registro Retributivo (.xsl)", () -> {}, AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonCmdItem());
 			recordItem.setScheduledCommand(() -> {
 				availableYears.clear();
 				if (costs != null) {
@@ -216,7 +216,7 @@ public class CostWidget extends AonCustomDockLayout {
 					
 					remunerationRecord = new ContextMenu();
 					for (Integer year : availableYears) 
-						remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year), AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
+						remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year), AON.CSS.aonIconExcel(), AON.CSS.aonCmdItem());
 					
 					remunerationRecord.ensureDebugId("aggregatedAnnualSummary");
 					

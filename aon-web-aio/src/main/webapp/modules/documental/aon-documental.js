@@ -112,6 +112,7 @@ export class AonDocumental extends AonElement {
 		}
 
 		this.getElement("aonDocumentalToolbarHeaderTitleSection");
+
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 			aonDocumental.drag_and_drop = true;
 		}

@@ -30,7 +30,6 @@ import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -622,12 +621,6 @@ public class FinanceImpl implements IFinance {
 	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getFull(ctx, filter, offset, limit));
-	}
-	
-	@Override
-	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getDomainData(ctx,searchDomain));
 	}
 	
 	@Override
