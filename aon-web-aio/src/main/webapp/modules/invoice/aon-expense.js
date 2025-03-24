@@ -6,7 +6,7 @@ import * as ACTION from '../actions.js';
 import { createCard, createDate, createInput, createSelect, createTextarea, createNumber } from '../../components/CreateComponent.js';
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
-import { getAccounts, setExpense } from '../../services/accountingService.js';
+import { deleteExpense, getAccounts, setExpense } from '../../services/accountingService.js';
 import { AonExpenseList } from './aon-expense-list.js';
 import { Expense } from './Expense.js';
 
@@ -21,10 +21,8 @@ export class AonExpense extends AonElement {
     EXPENSE_REFERENCE;
     EXPENSE_AMOUNT;
     EXPENSE_PAYMENT;
-    EXPENSE_CREDITOR;
     EXPENSE_COMMENTS;
     DIV_GENERAL;
-    exampleObject;
 
     expense
 
@@ -36,8 +34,9 @@ export class AonExpense extends AonElement {
         this.setAttribute(CONSTANT.ID, id);
     }
 
-    constructor () {
+    constructor (expense) {
         super();
+        this.expense = expense;
     }
 
     connectedCallback () {
@@ -46,7 +45,6 @@ export class AonExpense extends AonElement {
     }
 
     initialize() {
-        this.expense = this.expense || new Expense();
         this.id = this.id || 'aonExpense';
         this.EXPENSE_TOOLBAR = this.id + "Toolbar";
         this.EXPENSE_CARD = this.id + "Card";
@@ -57,10 +55,8 @@ export class AonExpense extends AonElement {
         this.EXPENSE_REFERENCE = this.id + "Reference";
         this.EXPENSE_AMOUNT = this.id + "Amount";
         this.EXPENSE_PAYMENT = this.id + "PaymentMethod";
-        this.EXPENSE_CREDITOR = this.id + "Creditor";
         this.EXPENSE_COMMENTS = this.id + "Comments";
         this.DIV_GENERAL = this.id + 'Div';
-        this.exampleObject = this.exampleObject || {};
     }
 
     build() {
@@ -70,6 +66,7 @@ export class AonExpense extends AonElement {
         toolbar.title = MSG.EXPENSES; 
         this.appendChild(toolbar);
 
+        toolbar.addButton2(ACTION.DELETE, () => this.delete());
         toolbar.addButton2(ACTION.SAVE, () => this.save());
         toolbar.addButton2(ACTION.BACK, () => this.back());
 
@@ -91,6 +88,7 @@ export class AonExpense extends AonElement {
         card.setContent(div);
 
         let activity = createSelect(this.EXPENSE_ACTIVITY, MSG.ACTIVITY, div);
+        activity.setValue(this.expense.activity);
         activity.setAlias("id", "description");
         getCompanyActivities({}).then(activities => {
             if (activities.length > 0) {
@@ -99,26 +97,23 @@ export class AonExpense extends AonElement {
                 if (principalActivity) activity.value = principalActivity.id;
             }
         });
+        activity.addEventListener(EVENT.CHANGE, () => {
+            this.getExpense().setActivity(this.getActivity());
+        })
     
         let date = createDate(this.EXPENSE_DATE, MSG.DATE, div);
-        date.setDate(this.expense.date);
+        let fixedDate = this.fixDateFormat(this.expense.date);
+        date.setDate(fixedDate);
         date.addEventListener(EVENT.CHANGE, () =>  {
-            this.getIncome().setDate(this.getDate())
+            this.getExpense().setDate(this.getDate())
         });
-
-        let creditor = new AonRegistrySuggestion();
-        creditor.id = this.EXPENSE_CREDITOR;
-        creditor.types = [RegistryType.CREDITOR];
-        if(this.getExpense().getCreditor())
-            creditor.setCreditor(this.getExpense().getCreditor());
-        div.appendChild(creditor);
 
         let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Ingreso");
         expAccount.setValue(this.expense.expAccount);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
-        getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
+        getAccounts({ code: "6", entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
             expAccount.value = this.expense.expAccount.id;
         });
@@ -144,6 +139,8 @@ export class AonExpense extends AonElement {
         });
 
         let amount = createNumber(this.EXPENSE_AMOUNT, MSG.AMOUNT, subDiv);
+        amount.format = CONSTANT.TRUE;
+        amount.decimals = "2";
         amount.value = this.expense.amount;
         amount.style.marginLeft = "2px";
         amount.style.width = "50%";
@@ -151,44 +148,53 @@ export class AonExpense extends AonElement {
             this.getExpense().setAmount(this.getAmount());
         });
 
-        let paymentMethod = createSelect (this.EXPENSE_PAYMENT,MSG.PAYMETHOD, div);
+        let paymentMethod = createSelect(this.EXPENSE_PAYMENT, MSG.PAYMETHOD, div);
         paymentMethod.setAlias("id", "alias");
-        let opciones = [];
+        let opts = [];
         getCompanyBanks({ active: true }).then(banks => {
             banks
                 .filter(b => b.active)
                 .forEach(b => {
                     b.alias = b.alias; 
-                    opciones.push(b); 
+                    b.bank  = true; 
+                    opts.push(b); 
                 });
         
             getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
                 accounts.forEach(a => {
                     a.alias = a.description; 
-                    opciones.push(a); 
+                    a.bank  = false; 
+                    opts.push(a); 
                 });
         
-                paymentMethod.setOptions(opciones);
-                if(this.expense.cashAccount){
-                    paymentMethod.value = this.expense.cashAccount.id;
-                    paymentMethod.addEventListener(EVENT.CHANGE, () =>{
-                        this.getExpense().setCashAccount(this.getPaymethods());
-                    });
-                }
-                if(this.expense.bank){
-                    paymentMethod.value = this.expense.bank.id;
-                    paymentMethod.addEventListener(EVENT.CHANGE, () =>{
-                        this.getExpense().setBank(this.getPaymethods());
-                    })
-                }
+                paymentMethod.setOptions(opts);
+                paymentMethod.value = this.expense.cashAccount.id;
+                // if(this.expense.cashAccount){
+                //     paymentMethod.value = this.expense.cashAccount.id;
+                // }
+                // if(this.expense.bank){
+                //     paymentMethod.value = this.expense.bank.id;
+                // }
                     
             });
         });
 
+        paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
+            let pm = this.getPaymethods();
+            if (pm.bank) {
+                this.getExpense().setBank( pm );
+                this.getExpense().setCashAccount(null);
+            } else {
+                this.getExpense().setBank( null );
+                this.getExpense().setCashAccount(pm);
+            }
+        });
+
         let comments = createTextarea(this.EXPENSE_COMMENTS, MSG.COMMENTS, div);
-        comments.setValue(this.expense.comments);
+        if(this.expense.comments)
+            comments.setValue(this.expense.comments);
         comments.addEventListener(EVENT.CHANGE, () => {
-            this.getExepnse().setComments(this.getComments());
+            this.getExpense().setComments(this.getComments());
         })
         this.getElement(this.EXPENSE_COMMENTS + "Textarea").style.height = "100px";
         this.getElement(this.EXPENSE_COMMENTS + "Textarea").style.marginTop = "2px";
@@ -200,8 +206,30 @@ export class AonExpense extends AonElement {
 
     save() {
         console.log(JSON.stringify(this.expense));
-        setExpense(this.expense);
+        setExpense(this.expense)
+            .then( r => { 
+                if(this.getExpense().getNew() == true)
+                    this.showMessage("Gasto grabado correctamente");
+                else if(this.getExpense().getNew() == false)
+                    this.showMessage("Gasto modificado correctamente");
+                this.setExpense(new Expense(r))
+            })
+            .catch( e => this.showError(e));
     }
+
+    delete() {
+        this.getApplication().confirmDialog("Gasto", "¿Desea borrar el gasto?", null, MSG.CONFIRM);
+        this.getElement("aonInvoiceDialogDialogActionAccept").addEventListener(EVENT.CLICK, ()=> this.deleteAction());
+    }
+
+    deleteAction() {
+        deleteExpense(this.expense)
+            .then( r => { 
+                this.back() 
+                this.showMessage("Gasto borrado correctamente") })
+            .catch( e => this.showError(e))
+    }
+
 
     getActivity() {
         return this.getElement(this.EXPENSE_ACTIVITY).getValue();
@@ -209,10 +237,6 @@ export class AonExpense extends AonElement {
 
     getDate() {
         return this.getElement(this.EXPENSE_DATE).getValue();
-    }
-
-    getCreditor() {
-        return this.getElement(this.EXPENSE_CREDITOR).getRegistry();
     }
 
     getExpAccount() {
@@ -245,6 +269,22 @@ export class AonExpense extends AonElement {
 
     setExpense(expense) {
         this.expense = expense;
+    }
+
+    fixDateFormat(dateString) {
+        if (dateString !== undefined && dateString !== null) {
+            let strDate = dateString.toString(); 
+            let parts = strDate.includes("/") ? strDate.split("/") : strDate.split("-"); 
+    
+            if (parts.length === 3) {
+                let day = parts[0].padStart(2, '0');
+                let month = parts[1].padStart(2, '0');
+                let year = parts[2];
+    
+                return `${year}-${month}-${day}`; 
+            }
+        }
+        return dateString; 
     }
 }
 if(!window.customElements.get(TAG.AON_EXPENSE)){

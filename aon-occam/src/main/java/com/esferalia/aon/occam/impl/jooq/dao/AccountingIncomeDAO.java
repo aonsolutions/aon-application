@@ -105,7 +105,7 @@ public class AccountingIncomeDAO {
 				return inc.setExpAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
 					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setAmount( AonMathUtils.round(aed.getCredit() - aed.getDebit()));
 			}
 			
 			@Override
@@ -118,8 +118,7 @@ public class AccountingIncomeDAO {
 			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
 				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
-					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setReferenceCode( aed.getDocumentNumber());
 			}
 			
 			@Override
@@ -132,8 +131,7 @@ public class AccountingIncomeDAO {
 			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
 				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
-					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setReferenceCode( aed.getDocumentNumber());
 			}
 
 			@Override

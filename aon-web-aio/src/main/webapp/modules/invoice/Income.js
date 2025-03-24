@@ -17,8 +17,14 @@ export class Income {
   accountEntry; 
   finance; 
 
+  isNew;
+
   constructor(income) {
     this.buildObject(income);
+    if(income)
+      this.isNew = false;
+    else
+      this.isNew = true;
   }
 
   buildObject(income) {
@@ -158,6 +164,10 @@ export class Income {
   setFinance(finance) {
     this.finance = finance;
     return this;
+  }
+
+  getNew(){
+    return this.isNew;
   }
 
 }
