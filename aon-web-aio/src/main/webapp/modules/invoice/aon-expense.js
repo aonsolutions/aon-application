@@ -109,13 +109,15 @@ export class AonExpense extends AonElement {
         });
 
         let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Ingreso");
-        expAccount.setValue(this.expense.expAccount);
+        expAccount.setValue(this.expense.expAccount?this.expense.expAccount:null);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
         getAccounts({ code: "6", entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
-            expAccount.value = this.expense.expAccount.id;
+            if (this.expense.expAccount && this.expense.expAccount.id) {
+                expAccount.value = this.expense.expAccount.id;
+            }
         });
         expAccount.addEventListener(EVENT.CHANGE, () =>  {
             this.getExpense().setExpAccount(this.getExpAccount());
@@ -151,37 +153,58 @@ export class AonExpense extends AonElement {
         let paymentMethod = createSelect(this.EXPENSE_PAYMENT, MSG.PAYMETHOD, div);
         paymentMethod.setAlias("id", "alias");
         let opts = [];
-        getCompanyBanks({ active: true }).then(banks => {
-            banks
-                .filter(b => b.active)
-                .forEach(b => {
-                    b.alias = b.alias; 
-                    b.bank  = true; 
-                    opts.push(b); 
-                });
-        
-            getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
-                accounts.forEach(a => {
-                    a.alias = a.description; 
-                    a.bank  = false; 
-                    opts.push(a); 
-                });
-        
+        let selectedBankId = null;
+
+        getCompanyBanks({ active: true })
+            .then(banks => banks )
+            .then(banks => getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => [banks,accounts] ))
+            .then(arr => {
+                let banks = arr[0];
+                if (banks) {
+                    banks
+                    .filter(b => b.active)
+                    .forEach(b => {
+                        b.bank  = true; 
+                        opts.push(b);
+                        if ( !this.expense.bank
+                            && this.expense.cashAccount 
+                            && this.expense.cashAccount.id
+                            && b.account
+                            && b.account.id
+                            && b.account.id == this.expense.cashAccount.id) {
+                                selectedBankId = b.id;
+                        }
+                    })
+                }
+                
+                let accounts = arr[1];
+                if (accounts) {
+                    accounts.forEach(a => {
+                        a.alias = a.description; 
+                        a.bank  = false; 
+                        opts.push(a); 
+                    });
+                }
+
                 paymentMethod.setOptions(opts);
-                paymentMethod.value = this.expense.cashAccount.id;
-                // if(this.expense.cashAccount){
-                //     paymentMethod.value = this.expense.cashAccount.id;
-                // }
-                // if(this.expense.bank){
-                //     paymentMethod.value = this.expense.bank.id;
-                // }
-                    
-            });
-        });
+                if ( this.expense.bank && this.expense.bank.id) {
+                    paymentMethod.value = this.expense.bank.id;
+                } else if (this.expense.cashAccount && this.expense.cashAccount.id) {
+                    if (selectedBankId)
+                        paymentMethod.value = selectedBankId;
+                    else {
+                        paymentMethod.value = this.expense.cashAccount.id;
+                    }    
+                }
+            })  
+        ;
 
         paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
             let pm = this.getPaymethods();
-            if (pm.bank) {
+            if (!pm) {
+                this.getExpense().setBank( null );
+                this.getExpense().setCashAccount(null);
+            } else if (pm.bank) {
                 this.getExpense().setBank( pm );
                 this.getExpense().setCashAccount(null);
             } else {

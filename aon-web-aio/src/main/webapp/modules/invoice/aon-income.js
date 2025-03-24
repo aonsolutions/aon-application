@@ -125,7 +125,10 @@ export class AonIncome extends AonElement {
         div.appendChild(expAccount);
         getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
-            expAccount.value = this.income.expAccount.id;
+            if (this.income.expAccount && this.income.expAccount.id) {
+                expAccount.value = this.income.expAccount.id;
+            }
+            
         });  
         expAccount.addEventListener(EVENT.CHANGE, () =>  {
             this.getIncome().setExpAccount(this.getExpAccount());
@@ -161,38 +164,61 @@ export class AonIncome extends AonElement {
         let paymentMethod = createSelect(this.INCOME_PAYMENT, MSG.PAYMETHOD, div);
         paymentMethod.setAlias("id", "alias");
         let opts = [];
-        getCompanyBanks({ active: true }).then(banks => {
-            banks
-                .filter(b => b.active)
-                .forEach(b => {
-                    b.alias = b.alias; 
-                    b.bank  = true; 
-                    opts.push(b); 
-                });
-        
-            getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
-                accounts.forEach(a => {
-                    a.alias = a.description; 
-                    a.bank  = false; 
-                    opts.push(a); 
-                });
-        
+        let selectedBankId = null;
+        getCompanyBanks({ active: true })
+            .then(banks => banks )
+            .then(banks => getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => [banks,accounts] ))
+            .then(arr => {
+                let banks = arr[0];
+                if (banks) {
+                    banks
+                    .filter(b => b.active)
+                    .forEach(b => {
+                        b.bank  = true; 
+                        opts.push(b);
+                        if ( !this.income.bank
+                            && this.income.cashAccount 
+                            && this.income.cashAccount.id
+                            && b.account
+                            && b.account.id
+                            && b.account.id == this.income.cashAccount.id) {
+                                selectedBankId = b.id;
+                        }
+                    })
+                }
+                
+                let accounts = arr[1];
+                if (accounts) {
+                    accounts.forEach(a => {
+                        a.alias = a.description; 
+                        a.bank  = false; 
+                        opts.push(a); 
+                    });
+                }
+
                 paymentMethod.setOptions(opts);
-                if(this.income.cashAccount){
-                    paymentMethod.value = this.income.cashAccount.id;
-                }
-                if(this.income.bank){
+                if ( this.income.bank && this.income.bank.id) {
                     paymentMethod.value = this.income.bank.id;
+                } else if (this.income.cashAccount && this.income.cashAccount.id) {
+                    if (selectedBankId)
+                        paymentMethod.value = selectedBankId;
+                    else {
+                        paymentMethod.value = this.income.cashAccount.id;
+                    }    
                 }
-                    
-            });
-        });
+            })  
+        ;
 
         paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
             let pm = this.getPaymethods();
-            if (pm.bank) {
+            if (!pm) {
+                this.getIncome().setBank( null );
+                this.getIncome().setCashAccount(null);
+            } else if (pm.bank) {
                 this.getIncome().setBank( pm );
+                this.getIncome().setCashAccount(null);
             } else {
+                this.getIncome().setBank( null );
                 this.getIncome().setCashAccount(pm);
             }
         });
