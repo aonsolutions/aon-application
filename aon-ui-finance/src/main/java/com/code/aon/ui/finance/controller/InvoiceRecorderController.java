@@ -40,6 +40,7 @@ public class InvoiceRecorderController extends BasicController {
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	private String checkOption;
 	private String showBreakDownOption;
+	private String showAccountEntryOption;
 
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -105,9 +106,15 @@ public class InvoiceRecorderController extends BasicController {
 	public String getShowBreakDownOption() {
 		return showBreakDownOption;
 	}
-	
-	public void setShowOption(String showBreakDownOption) {
+	public void setShowBreakDownOption(String showBreakDownOption) {
 		this.showBreakDownOption = showBreakDownOption;
+	}
+	
+	public String getShowAccountEntryOption() {
+		return showAccountEntryOption;
+	}
+	public void setShowAccountEntryOption(String showAccountEntryOption) {
+		this.showAccountEntryOption = showAccountEntryOption;
 	}
 	
 	public void onCheckOption(ActionEvent event) throws ManagerBeanException {
