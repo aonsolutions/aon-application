@@ -25,6 +25,9 @@ import '../../css/aon-mobile.css';
 import 'aoncss';
 import { uploadOption } from './DocumentalUtils.js';
 import { AonUploadToast } from '../../components/aon-upload-toast.js';
+import { AonSwitch } from '../../components/aon-switch.js';
+
+import * as LS from '../../services/localStorageService.js';
 
 export class AonDocumental extends AonElement {
 	_filter;
@@ -93,6 +96,22 @@ export class AonDocumental extends AonElement {
 
 	build() {
 		let aonDocumental = this.getApplication();
+		if(this.isBeta()) {
+			let titleSection = aonDocumental.getToolbar().getTitleSection();
+
+			let newView = new AonSwitch();
+			newView.style.marginLeft = '20px';
+			newView.id = this.id + "NewView";
+			newView.title = "Nueva Vista";
+			newView.checked = this.isBetaDoc();
+			newView.addEventListener(EVENT.CHANGE, () => {
+				LS.setBetaDoc(newView.checked);
+				this.rootPanel(new AonDocumental());
+			});
+			titleSection.appendChild(newView);
+		}
+
+		this.getElement("aonDocumentalToolbarHeaderTitleSection");
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
 			aonDocumental.drag_and_drop = true;
 		}
@@ -151,7 +170,11 @@ export class AonDocumental extends AonElement {
 		aonDocumental.addSidenavOptions3(data);
         if (this.isBetaDoc()) {
           // Marcamos la primera opcion
-          aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
+        aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
+		let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
+		aonDocumental.addSidenavOptions3(data2);
+		let data3 = DocumentalSidenav.USER_CATEGORIES;
+		aonDocumental.addSidenavOptions3(data3);
         }
 	}
 
@@ -214,7 +237,8 @@ export class AonDocumental extends AonElement {
 
 	loadCategories() {
 		let data = {
-			parent: null
+			parent: null,
+			domain: LS.getDomainId()
 		};
 		if (this.isBetaDoc()) {
 			getS3Category(data).then(categories => {
@@ -226,18 +250,33 @@ export class AonDocumental extends AonElement {
 				});
 				let application = this.getApplication();
 				categories.forEach(item => {
-					let option = {
-						name: item.name,
-						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
-						fn: () => {
-							this._filter.tag = undefined;
-							this._filter.category = item.id;
-							this.aonDocumentalList();
+					if(item.is_deletable == 0){
+							item.defaultCategory = true
 						}
-					};
+					if(item.defaultCategory){
+						let option2 = {
+							name: item.name,
+							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, option2);
+					}else{
+						let option = {
+							name: item.name,
+							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, option);
+					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
-					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
-					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
 				});
 			});
 		} else {

@@ -339,6 +339,9 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
+	getTitleSection(){
+		return this.getElement(this.TITLE_SECTION);
+	}
 	getToolSection(){
 		return this.getElement(this.TOOL_SECTION);
 	}

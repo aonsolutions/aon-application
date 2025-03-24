@@ -132,6 +132,7 @@ export const CARRIERS = "Agencias de Transporte"; // TODO
 export const CATALAN = MSG.CATALAN;
 export const CATEGORIES = MSG.CATEGORIES;
 export const CERTIFICATE = MSG.CERTIFICATE;
+export const DEFAULT_CATEGORIES = 'Categorias por defecto'; //TODO
 export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
