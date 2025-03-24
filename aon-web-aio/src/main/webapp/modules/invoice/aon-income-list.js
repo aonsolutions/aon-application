@@ -75,7 +75,7 @@ export class AonIncomeList extends AonElement {
         table.addColumn("Ingreso", 'string', 'incomeDescription', '300px');
         table.addColumn(MSG.CONCEPT, 'string', 'concept', '300px');
         table.addColumn(MSG.PAYMETHOD, 'string', 'paymethodDescription', '300px');
-        table.addColumn(MSG.AMOUNT, 'double', 'formattedAmount', 'auto');
+        table.addColumn(MSG.AMOUNT, 'double', 'formattedAmount', '200px');
     
         table.addEventListener(EVENT.MORE, this.moreFn);
         this.init();

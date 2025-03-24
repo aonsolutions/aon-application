@@ -286,14 +286,14 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
     icon: "account_balance_wallet",
-    fn: () => alert("EN DESARROLLO")
+    fn: () => alert("EN DESAROLLO")
   }
 
   export const STAFF_EXPENSES = {
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
     icon: MATERIAL_ICONS.GROUP,
-    fn: () => alert("EN DESARROLLO")    
+    fn: () => expense()    
   }
 
   // MAIN OPTION

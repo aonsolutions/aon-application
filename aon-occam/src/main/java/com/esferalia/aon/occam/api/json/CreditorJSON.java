@@ -2,11 +2,13 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -16,6 +18,11 @@ public class CreditorJSON {
 	
 	private CreditorJSON() {
 	
+	}
+	
+	public static Optional<Creditor> from(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of(fromJSON(json));
 	}
 	
 	public static List<Creditor> fromJSON(JSONArray json) {
