@@ -124,7 +124,13 @@ public class AccountingServlet extends AonApiHttpServlet{
 	}
 	
 	private static JSONArray getExpenses(AonApiData api) {
-		Stream<JSONObject> stream = ACCOUNTING.getAccountingExpenses(api.getOccam(),api.getDomain().getId())
+		JSONObject jsonParams = api.getData();
+		String query = null;
+		if (jsonParams != null) {
+			query = JsonUtils.getString(jsonParams, IJsonNames.VALUE);
+		}
+		
+		Stream<JSONObject> stream = ACCOUNTING.getAccountingExpenses(api.getOccam(),api.getDomain().getId(), query)
 			.map( AccountingExpenseJSON::to )
 			.filter( Optional::isPresent )
 			.map( Optional::get );
@@ -135,17 +141,24 @@ public class AccountingServlet extends AonApiHttpServlet{
 	private static JSONObject setExpense(AonApiData api) {
 		JSONObject jsonParams = api.getData();
 		if (JsonUtils.isEmpty(jsonParams)) {
-			throw new AonCoreException("El gasto es un dato obligatorio.");
+			throw new AonCoreException("El ingreso es un dato obligatorio.");
 		}
 		AccountingExpense expense = AccountingExpenseJSON.from( jsonParams )
-			.orElseThrow( () -> new AonCoreException("El gasto es un dato obligatorio."));
+			.orElseThrow( () -> new AonCoreException("El ingreso es un dato obligatorio."));
 		expense = ACCOUNTING.saveAccountingExpense(api.getOccam(), expense);
 		return AccountingExpenseJSON.to( expense )
 			.orElse(new JSONObject());
 	}
+	
 	private static JSONObject deleteExpense(AonApiData api) {
-		return api.getData();
-		// TODO
+		JSONObject jsonParams = api.getData();
+		if (JsonUtils.isEmpty(jsonParams)) {
+			throw new AonCoreException("El ingreso es un dato obligatorio.");
+		}
+		AccountingExpense expense = AccountingExpenseJSON.from( jsonParams )
+			.orElseThrow( () -> new AonCoreException("El ingreso es un dato obligatorio."));
+		ACCOUNTING.deleteAccountingExpense(api.getOccam(), expense );
+		return new JSONObject();
 	}
 	
 	private static JSONArray getIncomes(AonApiData api) {
