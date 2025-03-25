@@ -46,7 +46,7 @@ export const uploadDocuments = (el, files, dur) => {
 			type: document.getElementById("aonDocumentalUploadType").value
 		}
 
-		let uploadToast = this.getElement('aonUploadToast');
+		let uploadToast = document.getElementById('aonUploadToast');
 		if(!uploadToast) {
 			uploadToast = new AonUploadToast();
 			rootPanel.appendChild(uploadToast);
