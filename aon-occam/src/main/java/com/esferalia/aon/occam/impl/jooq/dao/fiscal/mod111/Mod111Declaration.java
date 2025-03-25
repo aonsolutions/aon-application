@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainR
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod111Declaration {
@@ -139,24 +140,54 @@ public abstract class Mod111Declaration {
 
 	private void initializePreviousData(AONContext ctx, Mod111 mod111) {
 		mod111.getMessages().clear();		
-		mod111.setGenerateFromYearStartAvailable(!mod111.isFirstPeriod());
-		if (mod111.isGenerateFromYearStartAvailable()) {
-			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod111);
-			boolean existsInvoices = invoices != null && !invoices.isEmpty();
-			if (existsInvoices) {
-				mod111.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
-						+ "de inicio de la declaraci\u00F3n.");
-			}
-			Map<Integer, Long> salaries = checkPreviousSalaries(ctx, mod111);
-			boolean existsSalaries = salaries != null && !salaries.isEmpty();			
-			if (existsSalaries) {
-				mod111.addMessage("Se encontraron " + salaries.size() + " n\u00F3minas no declaradas anteriores a la fecha "
-						+ "de inicio de la declaraci\u00F3n.");
-			}
-			mod111.setGenerateFromYearStartAvailable(existsInvoices || existsSalaries);
-			
+		Map<Integer, Long> prevInvoices = checkPreviousInvoices(ctx, mod111);
+		boolean existsPreviousInvoices = AonCollectionUtils.isNotEmpty(prevInvoices);
+		if (existsPreviousInvoices) {
+			mod111.addMessage("Se encontraron " + prevInvoices.size() + " facturas no declaradas anteriores a la fecha "
+					+ "de inicio de la declaraci\u00F3n.");
 		}
+		Map<Integer, Long> currentInvoices = checkCurrentInvoices(ctx, mod111);
+		boolean existsCurrentInvoices = AonCollectionUtils.isNotEmpty(currentInvoices);
+		if (existsCurrentInvoices) {
+			mod111.addMessage("Se encontraron " + currentInvoices.size() + " facturas no declaradas en el periodo de la declaraci\u00F3n.");
+		}
+		mod111.setMustIncludeInvoicesOnGeneration(existsPreviousInvoices || existsCurrentInvoices);
+		
+		Map<Integer, Long> previousSalaries = checkPreviousSalaries(ctx, mod111);
+		boolean existsPreviousSalaries = AonCollectionUtils.isNotEmpty(previousSalaries);			
+		if (existsPreviousSalaries) {
+			mod111.addMessage("Se encontraron " + previousSalaries.size() + " n\u00F3minas no declaradas anteriores a la fecha "
+					+ "de inicio de la declaraci\u00F3n.");
+		}
+		
+		Map<Integer, Long> currentSalaries = checkCurrentSalaries(ctx, mod111);
+		boolean existsCurrentSalaries = AonCollectionUtils.isNotEmpty(currentSalaries);			
+		if (existsCurrentSalaries) {
+			mod111.addMessage("Se encontraron " + currentSalaries.size() + " n\u00F3minas no declaradas en el periodo de la declaraci\u00F3n.");
+		}
+		mod111.setMustIncludeSalariesOnGeneration(existsPreviousSalaries || existsCurrentSalaries);
 	}
+
+//	private void initializePreviousData(AONContext ctx, Mod111 mod111) {
+//		mod111.getMessages().clear();		
+//		mod111.setGenerateFromYearStartAvailable(!mod111.isFirstPeriod());
+//		if (mod111.isGenerateFromYearStartAvailable()) {
+//			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod111);
+//			boolean existsInvoices = invoices != null && !invoices.isEmpty();
+//			if (existsInvoices) {
+//				mod111.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
+//						+ "de inicio de la declaraci\u00F3n.");
+//			}
+//			Map<Integer, Long> salaries = checkPreviousSalaries(ctx, mod111);
+//			boolean existsSalaries = salaries != null && !salaries.isEmpty();			
+//			if (existsSalaries) {
+//				mod111.addMessage("Se encontraron " + salaries.size() + " n\u00F3minas no declaradas anteriores a la fecha "
+//						+ "de inicio de la declaraci\u00F3n.");
+//			}
+//			mod111.setGenerateFromYearStartAvailable(existsInvoices || existsSalaries);
+//			
+//		}
+//	}
 
 	private void initializeComplementaryAndReplacement(AONContext ctx, Mod111 mod111) {
 		mod111.setReplacedNumber(null);
@@ -166,6 +197,8 @@ public abstract class Mod111Declaration {
 				mod111.setComplementary( mod111.isComplementaryDeclarationAvailable() );
 				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() && !mod111.isComplementary() );
 				mod111.setReplacedNumber(previous.getNumber());
+				mod111.setMustIncludeInvoicesOnGeneration( previous.mustIncludeInvoicesOnGeneration() );
+				mod111.setMustIncludeSalariesOnGeneration( previous.mustIncludeSalariesOnGeneration() );
 			} else {
 				mod111.setComplementary( false );
 				mod111.setReplacement( false );
@@ -236,6 +269,14 @@ public abstract class Mod111Declaration {
 					, Collectors.counting()));
 	}
 
+	Map<Integer, Long>  checkCurrentSalaries(final AONContext ctx, final Mod111 mod111) {
+		return IRPFDAO.getCurrentNotInModelSalaryIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getSalary() 
+					, Collectors.counting()));
+	}
+
 	Set<Integer> createFromSalary(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
 		final Map<Mod111Key,Set<String>> pdocs = new EnumMap<>(Mod111Key.class);
@@ -293,6 +334,13 @@ public abstract class Mod111Declaration {
 			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getInvoice() 
 					, Collectors.counting()));
 	}
+	Map<Integer, Long>  checkCurrentInvoices(final AONContext ctx, final Mod111 mod111) {
+		return IRPFDAO.getCurrentNotInModelInputInvoicesIrpfBreakdown(ctx, mod111)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod111,kbr.getIrpfBreakdown()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getInvoice() 
+					, Collectors.counting()));
+	}
 
 	Set<Alcatraz> createFromInvoices(final AONContext ctx, final Mod111 mod111) {
 		final Map<Mod111Key,Set<String>> docs = new EnumMap<>(Mod111Key.class); 
@@ -336,40 +384,4 @@ public abstract class Mod111Declaration {
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
 	public abstract Mod111Key[] getSamePeriodExplainKeys();
-	
-
-
-//	public static Stream<IrpfBreakdown> getReplacementSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
-//		Integer replacedId = ctx.getDslContext()
-//			.select(FS_MODEL.ID)
-//				.from(FS_MODEL)
-//				.join(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
-//				.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
-//				.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
-//				.and(FS_MODEL.YEAR.eq(fm.getYear()))
-//				.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
-//				.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
-//				.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.lt(fm.getId()))
-//				.orderBy(FS_MODEL.ID.desc())
-//				.fetch()
-//				.stream()
-//				.map(rec -> rec.getValue(FS_MODEL.ID))
-//				.findFirst()
-//				.orElse(null)
-//				;
-//		return replacedId==null
-//			? Stream.empty()
-//			: getSalaryIrpfBreakdownSelect(ctx)
-//				.innerJoin(ALCATRAZ).on(ALCATRAZ.SALARY.equal(SALARY.ID))
-//				.where(SALARY.DOMAIN.equal(fm.getDomain()))
-//					.and(ALCATRAZ.FS_MODEL.eq( replacedId ))
-//					.and(SALARY.IRPF_BASE.ne( 0.0 ))
-//					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
-//					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
-//				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_NAME)
-//				.fetch()
-//				.stream()
-//				.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
-//				.flatMap(List::stream);
-//	}
 }

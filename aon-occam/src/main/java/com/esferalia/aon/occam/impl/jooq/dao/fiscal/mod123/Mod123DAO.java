@@ -13,14 +13,17 @@ import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -61,6 +64,10 @@ public class Mod123DAO extends FiscalModelDAO {
 
 	public static Stream<Mod123> getSamePeriodModels(AONContext ctx,Mod123 fm) {
 		return FiscalModelDAO.getSamePeriodModels(ctx, fm, Mod123::new);
+	}
+	
+	public static Stream<Mod123> getSamePeriodNoAdmonModels(AONContext ctx,Mod123 fm) {
+		return FiscalModelDAO.getSamePeriodNoAdmonFiscalModels(ctx, fm, Mod123::new);
 	}
 	
 	public static Mod123 save(AONContext ctx, Mod123 mod123) {
@@ -105,27 +112,56 @@ public class Mod123DAO extends FiscalModelDAO {
 			mod123 = new Mod123();
 			mod123.setDomain(ctx.getDomainId());
 		}
-		initializeFiscalModel(ctx, mod123);
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		initializeFiscalModel(ctx, conf, mod123);
 		Mod123Declaration dec = Mod123Declaration.getInstance(mod123);
 		dec.initialize( ctx, mod123 );
+		initializeMustExcludeInvoicesOnGeneration(ctx, conf, mod123);
 		dec.ensureDetails(mod123);
 		return mod123;
 	}
 	
+	private static void initializeMustExcludeInvoicesOnGeneration(AONContext ctx, AonConfiguration conf, Mod123 mod123) {
+		if ( !mod123.isComplementary() && ! mod123.isReplacement() ) {
+			Integer admin = conf.fiscal().getAdministration();
+			boolean inc = false;
+			if (admin != null ) {
+				inc = mod123.getAdministration() ==  Administration.values()[admin];
+			} else {
+				inc = getSamePeriodNoAdmonModels( ctx, mod123).noneMatch( Mod123::mustIncludeInvoicesOnGeneration );
+			}
+			mod123.setMustIncludeInvoicesOnGeneration( inc );
+		}
+	}
+	
+	public static Mod123 simulate(AONContext ctx,Mod123 mod123) {
+		return createOrSimulate(ctx,mod123, true);	
+	}
+
 	public static Mod123 create(AONContext ctx,Mod123 mod123) {
+		return createOrSimulate(ctx,mod123, false);
+	}
+
+	private static Mod123 createOrSimulate(AONContext ctx,Mod123 mod123, boolean simulate) {
 		Mod123Declaration dec = Mod123Declaration.getInstance(mod123);
 		dec.ensureDetails(mod123);
-		Set<Alcatraz> invoices = dec.createFromInvoices(ctx,mod123);
+		Set<Alcatraz> invoices = null;
+		if ( mod123.mustIncludeInvoicesOnGeneration() ) {
+			invoices = dec.createFromInvoices(ctx,mod123);
+		}
 		for (FiscalModelDetail detail : mod123.getMap().values()) {
 			detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
 			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
 			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 		}
 		dec.uniqueInitialize(ctx,mod123);
-		mod123 = save(ctx, mod123);
-		
-		AlcatrazDAO.deleteFiscalModel(ctx, mod123);
-		AlcatrazDAO.saveModelInvoices(ctx, mod123, invoices);
+		if (simulate) {
+			calculate(mod123);	
+		} else {
+			mod123 = save(ctx, mod123);
+			AlcatrazDAO.deleteFiscalModel(ctx, mod123);
+			AlcatrazDAO.saveModelInvoices(ctx, mod123, invoices);
+		}
 		mod123.setAlcatrazBound( AonCollectionUtils.isNotEmpty(invoices) );
 		return mod123;
 	}

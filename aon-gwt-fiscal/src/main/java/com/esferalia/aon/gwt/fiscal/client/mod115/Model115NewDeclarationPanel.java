@@ -28,7 +28,7 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 	private PeriodListBox periodList;
 	private CheckBox replacement;
 	private CheckBox complementary;
-	private CheckBox generateFromYearStart;
+	private CheckBox includeInvoices = new CheckBox();
 		
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -61,8 +61,8 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 		periodList = new PeriodListBox(true);
 		replacement = new CheckBox();
 		complementary = new CheckBox();
-		generateFromYearStart = new CheckBox();
-
+		includeInvoices = new CheckBox();
+		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			initialize(model, callback );
@@ -101,7 +101,9 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 			}
 		});
 		
-		generateFromYearStart.addClickHandler(event -> model.setGenerateFromYearStart(generateFromYearStart.getValue()));
+		includeInvoices.addClickHandler(event -> 
+			model.setMustIncludeInvoicesOnGeneration(includeInvoices.getValue()));
+
 	}
 	
 		
@@ -128,7 +130,7 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 		paintPeriod(model,callback,tab);
 		paintComplementary(model,tab);
 		paintReplacement(model,tab);
-		paintGenerateFromYearStart(model,tab);
+		paintIncludeInvoices(model,tab);
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
 	
@@ -154,23 +156,26 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 		periodList.setValue(model.getPeriod());
 		complementary.setValue(model.isComplementary());
 		replacement.setValue(model.isReplacement());
-		generateFromYearStart.setValue(model.isGenerateFromYearStart());
+		includeInvoices.setValue(model.mustIncludeInvoicesOnGeneration());
 	}
+	
 	private void paintMessages(Mod115 model, Model115Callback callback) {
 		if (model.getMessages() != null && !model.getMessages().isEmpty()) {
 			FlowPanel messages = new FlowPanel();
-			messages.setStyleName( AON.CSS.aonTextCenter() );
-			messages.addStyleName( AON.CSS.aonMarginBottom() );
+			messages.setStyleName( AON.CSS.aonMarginBottom() );
 			messages.addStyleName( AON.CSS.aonBorder());
 			messages.addStyleName( AON.CSS.aonPadding());
 			messages.addStyleName( AON.CSS.aonBackgroundHighlightedOrange());
+			AonDisplayTable tab = new AonDisplayTable();
+			tab.addStyleName(AON.CSS.aonMarginTop());
+			tab.addStyleName(AON.CSS.aonMarginBottom());
+			tab.addStyleName(AON.CSS.aonBlockCenter());
 			for (String msg : model.getMessages()) {
-				Label message = new Label(msg);
-				message.setStyleName(AON.CSS.aonLabelWithIcon());
-				message.addStyleName(AON.CSS.aonIconWarning());
-				message.addStyleName(AON.CSS.aonBold());
-				messages.add(message);
+				tab.addRow()
+					.addCell(new Label(), AON.CSS.aonLabelWithIcon(),AON.CSS.aonIconInfo(),AON.CSS.aonWidth40() )
+					.addCell(new Label(msg), AON.CSS.aonBold(), AON.CSS.aonNowrap()); 
 			}
+			messages.add(tab);
 			rootPanel.add(messages);
 		}
 		
@@ -213,13 +218,11 @@ public class Model115NewDeclarationPanel extends DockLayoutPanel {
 		
 	}
 
-	private void paintGenerateFromYearStart(Mod115 model, AonDisplayTable tab) {
-		if (model.isGenerateFromYearStartAvailable() ) {
-			generateFromYearStart.setText(AON.MSG.generateFromYearStart( model.getYear() ));
-			tab.addRow()
-				.addCell(new Label(),AON.CSS.aonTableLabel())
-				.addCell(generateFromYearStart,AON.CSS.aonWidth400());
-		}
+	private void paintIncludeInvoices(Mod115 model, AonDisplayTable tab) {
+		includeInvoices.setText(AON.MSG.includeInvoicesOnGeneration());
+		tab.addRow()
+			.addCell(new Label(),AON.CSS.aonTableLabel())
+			.addCell(includeInvoices,AON.CSS.aonWidth400());
 	}
 
 	private FlowPanel getButtonsPanel(Mod115 model, final Model115Callback callback) {

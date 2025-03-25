@@ -96,6 +96,11 @@ public class MODEL123Impl implements IMODEL123 {
 				configuration -> Mod123DAO.create(ctx,mod123));
 	}
 	@Override
+	public Mod123 simulate(AONContext ctx, Mod123 mod123) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod123DAO.simulate(ctx,mod123));
+	}
+	@Override
 	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod123InfoDAO.getInfo(ctx,mod123,script,infoKey);
 	}

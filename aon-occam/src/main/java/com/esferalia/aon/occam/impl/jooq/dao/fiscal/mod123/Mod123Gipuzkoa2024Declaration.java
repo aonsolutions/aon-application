@@ -16,7 +16,8 @@ public class Mod123Gipuzkoa2024Declaration extends Mod123Declaration {
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-		 GP_X00 (Mod123Key.GP_X00,null,null
+		 CM_003(Mod123Key.CM_003,null,null,null,null,null)
+		,GP_X00 (Mod123Key.GP_X00,null,null
 			 ,Mod123Declaration::addDeponentDocument
 			 ,null,null)
 		 

@@ -16,7 +16,10 @@ public class Mod111Navarra2023Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 NF_A1(Mod111Key.NF_A1,true
+		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
+		,CM_003(Mod111Key.CM_003,false,null,null,null,null,null)
+		,CM_004(Mod111Key.CM_004,false,null,null,null,null,null)
+		,NF_A1(Mod111Key.NF_A1,true
 			, (mod,br) -> isRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.NF_A1,mod,br)
 			,null,null,null)
