@@ -1172,6 +1172,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 
 		table.add(createRow(bonusColectiveLB, freelanceEmployeerCB));
 
+		bonusColectiveLB.setWidth("70%");
 		bonusColectiveLB.clearItems();
 		bonusColectiveLB.addItem("JOVENES MENORES DE 30 A\u00D1OS", "001");
 		bonusColectiveLB.addItem("MAYORES DE 45 A\u00D1OS", "002");
@@ -1582,6 +1583,8 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 				break;
 			case "200":
 				set200View();
+			case "209":
+				set200View();
 				break;
 			case "230":
 				set230and250View();
@@ -1716,7 +1719,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(workProgramDataCB, false);
 		showHideElement(investCB, false);
 		showHideElement(interimCauseCB, false);
-		showHideElement(entrepreneurSupportCB, false);
+		showHideElement(entrepreneurSupportCB, true);
 		showHideElement(quoteReductionsCB, false);
 		showHideElement(bonusCB, false);
 	}
@@ -1780,6 +1783,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(academicTitulationLB, false);
 		showHideElement(profesionalityCB, false);
 		showHideElement(repeatFDCB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -1790,7 +1796,7 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(workProgramDataCB, false);
 		showHideElement(investCB, false);
 		showHideElement(interimCauseCB, false);
-		showHideElement(entrepreneurSupportCB, false);
+		showHideElement(entrepreneurSupportCB, true);
 		showHideElement(bonusCB, false);
 	}
 
@@ -1805,6 +1811,10 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(retirementPercentTB, false);
 		showHideElement(planRecoveryCB, false);
 		showHideElement(writenContractCB, false);
+		
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 
 		showHideElement(workProgramDataCB, false);
 		showHideElement(annexedCB, false);
@@ -1820,6 +1830,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(academicTitulationLB, false);
 		showHideElement(profesionalityCB, false);
 		showHideElement(repeatFDCB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -1827,11 +1840,15 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(planRecoveryCB, false);
 		showHideElement(writenContractCB, false);
 
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
+		
 		showHideElement(workProgramDataCB, false);
 		showHideElement(annexedCB, false);
 		showHideElement(investCB, false);
 		showHideElement(interimCauseCB, false);
-		showHideElement(entrepreneurSupportCB, false);
+		showHideElement(entrepreneurSupportCB, true);
 		showHideElement(quoteReductionsCB, false);
 		showHideElement(bonusCB, false);
 	}
@@ -1842,9 +1859,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(academicTitulationLB, false);
 		showHideElement(profesionalityCB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -1959,6 +1976,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
+		showHideElement(journeyTypeLB, false);
+		showHideElement(journeyDurationHoursTB, false);
+		showHideElement(journeyDurationMinutesTB, false);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(retirementPercentTB, false);
 		showHideElement(planRecoveryCB, false);
@@ -2089,9 +2109,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2120,6 +2140,10 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(retirementPercentTB, false);
 		showHideElement(planRecoveryCB, false);
 		showHideElement(writenContractCB, false);
+		
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 
 		showHideElement(workProgramDataCB, false);
 		showHideElement(interimCauseCB, false);
@@ -2146,6 +2170,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2169,6 +2196,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2193,9 +2223,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2219,9 +2249,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2247,9 +2277,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2275,9 +2305,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2304,9 +2334,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2332,9 +2362,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
@@ -2361,9 +2391,9 @@ public abstract class ContractSpecificDataWidget extends FlowPanel {
 		showHideElement(agreementHoursTB, false);
 		showHideElement(agreementMinutesTB, false);
 		showHideElement(repeatFDCB, false);
-		showHideElement(journeyTypeLB, false);
-		showHideElement(journeyDurationHoursTB, false);
-		showHideElement(journeyDurationMinutesTB, false);
+		showHideElement(journeyTypeLB, true);
+		showHideElement(journeyDurationHoursTB, true);
+		showHideElement(journeyDurationMinutesTB, true);
 		showHideElement(teoricFormationLB, false);
 		showHideElement(formationHoursTB, false);
 		showHideElement(formationMinutesTB, false);
