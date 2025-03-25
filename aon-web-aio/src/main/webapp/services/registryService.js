@@ -1,5 +1,6 @@
 import { get, post, put, remove } from "./request.js";
 import { API_URL } from "../environments/environments.js";
+import { openFileUrl } from "./fileService.js";
 
 const CUSTOMERS = `${API_URL}/customers`;
 const TARGETS = `${API_URL}/target`;
@@ -57,4 +58,6 @@ export const removeRelationShip = (data) => remove(`${RELATIONSHIP}/${data.regis
 
 // SUGGESTED ACCOUNT
 
-export const getRegistrySuggestedAccount = (data) => get(SUGGESTED_ACCOUNT, data)
+export const getRegistrySuggestedAccount = (data) => get(SUGGESTED_ACCOUNT, data);
+
+export const downloadRegistryExcel = (data) => openFileUrl(`${API_URL}/downloadRegistryExcel?json=${data}`);
