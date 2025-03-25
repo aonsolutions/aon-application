@@ -362,9 +362,15 @@ export class AonMobileMenu extends AonElement {
       permission: isDocumentalManager,
       backgroundColor: "#6986BB",
       fn :  () => {
-        if(isDocumentalManager){
+        if(isDocumentalManager) {
           dialog.close();
-          this.openCamera("documental");
+          if(UA.isApp()) {
+            this.SELECTED = "documental";
+            let ionicData = { action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' };
+            openCamera(ionicData, (result) => {
+              this.buildInvoiceImageEditor(result);
+            });
+          } else this.openCamera("documental");
         }
       }
     };
@@ -518,7 +524,7 @@ export class AonMobileMenu extends AonElement {
   		}
 		  let data = { uploaded: 0, prefix: 'CM' };
       uploadToast.setJobId(generateJobId()); 
-			uploadToast.addFile("invoice", e.detail, data);
+			uploadToast.addFile(this.SELECTED, e.detail, data);
 
       this.home();
 		});

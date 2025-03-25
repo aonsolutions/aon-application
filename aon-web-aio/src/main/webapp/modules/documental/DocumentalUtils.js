@@ -5,11 +5,8 @@ import { AonNewDate } from "../../components/aon-new-date.js";
 import { MSG } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental, getS3Category, postS3Document } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
-import { AonDocumental } from "./aon-documental.js";
-import {
-  ASESOR_TYPE_OPTION,
-  ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
-} from './DocumentalEnums.js';
+import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
+import { AonUploadToast } from "../../components/aon-upload-toast.js";
 
 export const uploadDocument = (file, data, success, error, isBetaDoc = false) => {
 	if (file) {
@@ -29,9 +26,10 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
 			uploadDocumentsUse(doc)
               .then(r => success(file))
               .catch((e) => error(file, e));
-        }).catch((e) => error(file, e));
+    	}).catch((e) => error(file, e));
 	}
 }
+
 export const uploadDocuments = (el, files, dur) => {
 	let d = new AonDialog();
 	let rootPanel = document.getElementById("rootPanel");
@@ -41,27 +39,20 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setTitle(MSG.UPLOAD_FILE);
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
-		let arr = [];npm 
 		let data = {
 			category: document.getElementById("aonDocumentalUploadCategory").value,
 			scope: document.getElementById("aonDocumentalUploadScope").value,
 			tag: document.getElementById("aonDocumentalUploadTag").value,
 			type: document.getElementById("aonDocumentalUploadType").value
 		}
-		for await (let file of files) {
-			let reader = await getReader(file).catch(() => null);
-			if (reader) {
-				let doc = await attach(reader, data);
-				if (doc)
-					arr.push(doc);
-			}
+
+		let uploadToast = this.getElement('aonUploadToast');
+		if(!uploadToast) {
+			uploadToast = new AonUploadToast();
+			rootPanel.appendChild(uploadToast);
 		}
-		el.value = null;
-		if (arr.length > 0) {
-			let aonComponent = new AonDocumental();
-			aonComponent.value = arr[0].id;
-			rootPanel.innerHTML = "";
-			rootPanel.appendChild(aonComponent);
+		for (let file of files) {
+			uploadToast.addFile("documental", file, data);
 		}
 	});
 	d.open();

@@ -5,6 +5,7 @@ import { getAccounting, getPeriods } from "../../services/accountingService.js";
 import * as UTILS from "./AccountingUtils.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as LS from "../../services/localStorageService.js";
+import { Chart } from "chart.js/auto";
 
 export class AonDashboardGraphicsTrial extends AonElement {
   PERIODS;

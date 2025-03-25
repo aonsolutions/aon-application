@@ -7,6 +7,7 @@ import { getTaskHolderTimeControl} from "../../../../services/timeControlService
 import { DAYS } from "../../../../models/enums.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 import * as LS from "../../../../services/localStorageService.js";
+import { Chart } from "chart.js/auto";
 
 export class AonStatistics extends AonElement {
   
