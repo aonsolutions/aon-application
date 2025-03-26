@@ -165,9 +165,9 @@
 		</dependency>
 		
 		<dependency>
-    		<groupId>commons-logging</groupId>
-    		<artifactId>commons-logging</artifactId>
-    		<version>99.0-does-not-exist</version>
+    			<groupId>commons-logging</groupId>
+	    		<artifactId>commons-logging</artifactId>
+    			<version>1.3.5</version>
 			<scope>test</scope>
 		</dependency>
 
