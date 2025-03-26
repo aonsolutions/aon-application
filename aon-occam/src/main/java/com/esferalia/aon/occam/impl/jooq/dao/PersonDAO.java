@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class PersonDAO {
 	
@@ -93,8 +94,8 @@ public class PersonDAO {
 		.set(PERSON.REGISTRY, person.getId())
 		.set(PERSON.DOMAIN, person.getDomain().getId())
 		.set(PERSON.BIRTH_DATE,  converDateSql(person.getBirthDate()) )
-		.set(PERSON.GENDER, person.getGender()!=null ? person.getGender().value() : null )
-		.set(PERSON.MARITAL_STATUS, person.getMaritalStatus()!=null ? person.getMaritalStatus().value() : null)
+		.set(PERSON.GENDER, AonEnumUtils.getByte( person.getGender() ))
+		.set(PERSON.MARITAL_STATUS, AonEnumUtils.getByte( person.getMaritalStatus() ) )
 		.set(PERSON.SOCIAL_SECURITY_NUM, person.getSocialSecurityNum())
 		.set(PERSON.NAME, person.getFirstName())
 		.set(PERSON.FIRST_SURNAME, person.getFirstSurname())
@@ -108,8 +109,8 @@ public class PersonDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().update(PERSON)
 			.set(PERSON.BIRTH_DATE, converDateSql(person.getBirthDate()) )
-			.set(PERSON.GENDER, person.getGender()!=null ? person.getGender().value() : null )
-			.set(PERSON.MARITAL_STATUS, person.getMaritalStatus()!=null ? person.getMaritalStatus().value() : null)
+			.set(PERSON.GENDER, AonEnumUtils.getByte( person.getGender() )  )
+			.set(PERSON.MARITAL_STATUS, AonEnumUtils.getByte( person.getMaritalStatus()))
 			.set(PERSON.SOCIAL_SECURITY_NUM, person.getSocialSecurityNum())
 			.set(PERSON.NAME, person.getFirstName())
 			.set(PERSON.FIRST_SURNAME, person.getFirstSurname())

@@ -49,5 +49,9 @@ public enum DocumentType implements Serializable {
 		}
 		return null;
 	}
+
+	public static Byte value(DocumentType dt) {
+		return dt==null?null:dt.value();
+	}
 	
 }

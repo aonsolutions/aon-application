@@ -458,7 +458,7 @@ public class RegistryOldDAO {
 		return ctx.getDslContext().insertInto(REGISTRY)
 			.set(REGISTRY.DOMAIN, reg.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,reg.getDocument())
-			.set(REGISTRY.DOCUMENT_TYPE,reg.getDocumentType()==null?null:reg.getDocumentType().value())
+			.set(REGISTRY.DOCUMENT_TYPE, DocumentType.value(reg.getDocumentType()))
 			.set(REGISTRY.DOCUMENT_COUNTRY,reg.getDocumentCountry()==null?null:reg.getDocumentCountry().getIso2())
 			.set(REGISTRY.NAME,reg.getName())
 			.set(REGISTRY.ALIAS,reg.getAlias())
