@@ -39,7 +39,6 @@ public class Mod202InfoDAO {
 			.flatMap(Arrays::stream)
 			.filter( Objects::nonNull )
 			.map( dec::getKey )
-			.peek( keyDAO -> System.out.println( keyDAO ) )
 			.map(keyDAO -> 	infoKey.visit( new IFiscalModelKeyInfoVisitor<String>() {
 					@Override public String visitInvoice() {return visitNone(); }
 					@Override public String visitInAccrualInvoice() {return visitNone(); }

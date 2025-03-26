@@ -1556,8 +1556,7 @@
 	input.aon-finding-toolbar-item.rich-fileupload-ico-add,
 	input.aon-finding-toolbar-item.aon-icon-filter,
 	input.aon-finding-toolbar-item.aon-icon-filter-off,
-	input.aon-finding-toolbar-item.aon-icon-close
-	{
+	input.aon-finding-toolbar-item.aon-icon-close	{
 	    width:32px;
 		height:32px;
 	    padding: 8px;
@@ -1844,11 +1843,11 @@
 	}
 	
 	.aon-icon-filter {
-		background-image: url(#{aonResource.resolve['/images/aon-icon-filter.svg']}) ;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M440-160q-17 0-28.5-11.5T400-200v-240L168-736q-15-20-4.5-42T200-780h560q26 0 36.5 22T792-716L560-440v240q0 17-11.5 28.5T520-160h-80Zm40-308 198-252H282l198 252Z"/&gt;&lt;/svg&gt;');
 	}
 	
 	.aon-icon-filter-off {
-		background-image: url(#{aonResource.resolve['/images/aon-icon-filter-off.svg']}) ;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="m592-481-57-57 143-182H353l-80-80h487q25 0 36 22t-4 42L592-481ZM791-56 560-287v87q0 17-11.5 28.5T520-160h-80q-17 0-28.5-11.5T400-200v-247L56-791l56-57 736 736-57 56Z"/&gt;&lt;/svg&gt;');
 	}
 	           
 	.aon-spin-control-element {
@@ -2869,9 +2868,9 @@
 	}
 	
 	.aon-table-row-link {
-	  background: transparent url(images/aon-icon/aon-icon-rowSelector.png) no-repeat scroll center left;
-	  margin: 0;
-	  padding: 0 10px 0 14px;
+		background: transparent url(#{aonResource.resolve['/images/aon-right-arrow.png']}) scroll center center no-repeat;
+	    margin: 0;
+	    padding: 0 10px 0 14px;
 	}
 	
 	[id*="invoiceFinances"],
@@ -3142,8 +3141,14 @@
 	.aon-padding-1rem {
 		padding: 1rem;
 	}
-
 	
+	tr:has(td:not(:empty)) {
+    	display: table-row;
+	}
+
+	tr:has(td:empty):not(:has(td:not(:empty))) {
+	    display: none;
+	}
 	</style>
 
 	<script type="text/javascript">

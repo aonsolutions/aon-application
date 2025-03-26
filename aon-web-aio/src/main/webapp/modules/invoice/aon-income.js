@@ -6,7 +6,7 @@ import * as ACTION from '../actions.js';
 import { createCard, createDate, createInput, createSelect, createTextarea, createNumber } from '../../components/CreateComponent.js';
 import { AonCustomerSuggestion } from '../registry/customer/aon-customer-suggestion.js';
 import { getCompanyActivities, getCompanyBanks } from '../../services/companyService.js';
-import { getAccounts, setIncome } from '../../services/accountingService.js';
+import { deleteIncome, getAccounts, setIncome } from '../../services/accountingService.js';
 import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
@@ -25,7 +25,6 @@ export class AonIncome extends AonElement {
     INCOME_CUSTOMER;
     INCOME_COMMENTS;
     DIV_GENERAL;
-    exampleObject;
 
     income;
 
@@ -61,7 +60,6 @@ export class AonIncome extends AonElement {
         this.INCOME_PAYMENT = this.id + "PaymentMethod";
         this.INCOME_COMMENTS = this.id + "Comments";
         this.DIV_GENERAL = this.id + 'Div';
-        this.exampleObject = this.exampleObject || {};
     }
 
     build() {
@@ -71,10 +69,10 @@ export class AonIncome extends AonElement {
         toolbar.title = MSG.INCOMES; 
         this.appendChild(toolbar);
 
+        toolbar.addButton2(ACTION.DELETE, () => this.delete());
         toolbar.addButton2(ACTION.SAVE, () => this.save());
         toolbar.addButton2(ACTION.BACK, () => this.back());
         
-
         let div = this.createDiv();
         div.id = this.DIV_GENERAL; 
         if(this.isMobile())
@@ -92,6 +90,7 @@ export class AonIncome extends AonElement {
         card.setContent(div);
     
         let activity = createSelect(this.INCOME_ACTIVITY, MSG.ACTIVITY, div);
+        activity.setValue(this.income.activity);
         activity.setAlias("id", "description");
         getCompanyActivities({}).then(activities => {
             if (activities.length > 0) {
@@ -100,6 +99,9 @@ export class AonIncome extends AonElement {
                 if (principalActivity) activity.value = principalActivity.id;
             }
         });
+        activity.addEventListener(EVENT.CHANGE, () => {
+            this.getIncome().setActivity(this.getActivity());
+        })
     
         let date = createDate(this.INCOME_DATE, MSG.DATE, div);
         let fixedDate = this.fixDateFormat(this.income.date);
@@ -116,16 +118,18 @@ export class AonIncome extends AonElement {
         
         div.appendChild(customer);
     
-        let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Ingreso");
+        let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Tipo de Ingreso");
         expAccount.setValue(this.income.expAccount);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
         getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
-            expAccount.value = this.income.expAccount.id;
-        });
-        
+            if (this.income.expAccount && this.income.expAccount.id) {
+                expAccount.value = this.income.expAccount.id;
+            }
+            
+        });  
         expAccount.addEventListener(EVENT.CHANGE, () =>  {
             this.getIncome().setExpAccount(this.getExpAccount());
         });
@@ -148,6 +152,8 @@ export class AonIncome extends AonElement {
         });
     
         let amount = createNumber(this.INCOME_AMOUNT, MSG.AMOUNT, subDiv);
+        amount.format = CONSTANT.TRUE;
+		amount.decimals = "2";
         amount.value = this.income.amount;
         amount.style.marginLeft = "10px";
         amount.style.width = "50%";
@@ -158,36 +164,57 @@ export class AonIncome extends AonElement {
         let paymentMethod = createSelect(this.INCOME_PAYMENT, MSG.PAYMETHOD, div);
         paymentMethod.setAlias("id", "alias");
         let opts = [];
-        getCompanyBanks({ active: true }).then(banks => {
-            banks
-                .filter(b => b.active)
-                .forEach(b => {
-                    b.alias = b.alias; 
-                    b.bank  = true; 
-                    opts.push(b); 
-                });
-        
-            getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => {
-                accounts.forEach(a => {
-                    a.alias = a.description; 
-                    a.bank  = false; 
-                    opts.push(a); 
-                });
-        
+        let selectedBankId = null;
+        getCompanyBanks({ active: true })
+            .then(banks => banks )
+            .then(banks => getAccounts({ code: "570", entryEnabled: true, active: true }).then(accounts => [banks,accounts] ))
+            .then(arr => {
+                let banks = arr[0];
+                if (banks) {
+                    banks
+                    .filter(b => b.active)
+                    .forEach(b => {
+                        b.bank  = true; 
+                        opts.push(b);
+                        if ( !this.income.bank
+                            && this.income.cashAccount 
+                            && this.income.cashAccount.id
+                            && b.account
+                            && b.account.id
+                            && b.account.id == this.income.cashAccount.id) {
+                                selectedBankId = b.id;
+                        }
+                    })
+                }
+                
+                let accounts = arr[1];
+                if (accounts) {
+                    accounts.forEach(a => {
+                        a.alias = a.description; 
+                        a.bank  = false; 
+                        opts.push(a); 
+                    });
+                }
+
                 paymentMethod.setOptions(opts);
-                if(this.income.cashAccount){
-                    paymentMethod.value = this.income.cashAccount.id;
-                }
-                if(this.income.bank){
+                if ( this.income.bank && this.income.bank.id) {
                     paymentMethod.value = this.income.bank.id;
+                } else if (this.income.cashAccount && this.income.cashAccount.id) {
+                    if (selectedBankId)
+                        paymentMethod.value = selectedBankId;
+                    else {
+                        paymentMethod.value = this.income.cashAccount.id;
+                    }    
                 }
-                    
-            });
-        });
+            })  
+        ;
 
         paymentMethod.addEventListener(EVENT.CHANGE, ()=>{
             let pm = this.getPaymethods();
-            if (pm.bank) {
+            if (!pm) {
+                this.getIncome().setBank( null );
+                this.getIncome().setCashAccount(null);
+            } else if (pm.bank) {
                 this.getIncome().setBank( pm );
                 this.getIncome().setCashAccount(null);
             } else {
@@ -197,43 +224,44 @@ export class AonIncome extends AonElement {
         });
 
         let comments = createTextarea(this.INCOME_COMMENTS, MSG.COMMENTS, div);
-        comments.setValue(this.income.comments);
+        if(this.income.comments)
+            comments.setValue(this.income.comments);
         comments.addEventListener(EVENT.CHANGE, () => {
             this.getIncome().setComments(this.getComments());
         });
 
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.height = "100px";
         this.getElement(this.INCOME_COMMENTS + "Textarea").style.marginTop = "2px";
-    }
 
-    fixDateFormat(dateString) {
-        if (dateString !== undefined && dateString !== null) {
-            let strDate = dateString.toString(); 
-            let parts = strDate.includes("/") ? strDate.split("/") : strDate.split("-"); 
-    
-            if (parts.length === 3) {
-                let day = parts[0].padStart(2, '0');
-                let month = parts[1].padStart(2, '0');
-                let year = parts[2];
-    
-                return `${year}-${month}-${day}`; 
-            }
-        }
-        return dateString; 
     }
     
-
     back() {
         this.getApplication().setContent(new AonIncomeList());
     }
 
     save() {
-        console.log(JSON.stringify(this.income));
         setIncome(this.income)
-            .then( r => {
-//                this.income = r;
-                console.log("SAVE: "+JSON.stringify(r))})
-            .catch(e => this.showError(e));
+            .then( r => { 
+                if(this.getIncome().getNew() == true)
+                    this.showMessage("Ingreso grabado correctamente");
+                else if(this.getIncome().getNew() == false)
+                    this.showMessage("Ingreso modificado correctamente");
+                this.setIncome(new Income(r))
+            })
+            .catch( e => this.showError(e));
+    }
+
+    delete() {
+        this.getApplication().confirmDialog("Ingreso", "¿Desea borrar el ingreso?", null, MSG.CONFIRM);
+        this.getElement("aonInvoiceDialogDialogActionAccept").addEventListener(EVENT.CLICK, ()=> this.deleteAction());
+    }
+
+    deleteAction(){
+        deleteIncome(this.income)
+            .then( r => { 
+                this.back()
+                this.showMessage("Ingreso borrado correctamente") })
+            .catch( e => this.showError(e));
     }
 
     getActivity() {
@@ -279,6 +307,23 @@ export class AonIncome extends AonElement {
     setIncome(income){
         this.income = income;
     }
+
+    fixDateFormat(dateString) {
+        if (dateString !== undefined && dateString !== null) {
+            let strDate = dateString.toString(); 
+            let parts = strDate.includes("/") ? strDate.split("/") : strDate.split("-"); 
+    
+            if (parts.length === 3) {
+                let day = parts[0].padStart(2, '0');
+                let month = parts[1].padStart(2, '0');
+                let year = parts[2];
+    
+                return `${year}-${month}-${day}`; 
+            }
+        }
+        return dateString; 
+    }
+
 }
 if(!window.customElements.get(TAG.AON_INCOME)){
     window.customElements.define(TAG.AON_INCOME, AonIncome);

@@ -51,7 +51,6 @@ export class AonIncomeList extends AonElement {
     }
 
     incomeObject(incomingIncome) {
-        console.log(incomingIncome);
         let income = new AonIncome( new Income(incomingIncome) );
         this.getApplication().setContent(income);
     }
@@ -71,11 +70,13 @@ export class AonIncomeList extends AonElement {
         let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
-        table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
-        table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
-        
-
+        table.addColumn(MSG.DATE, 'date', 'date', '150px');
+        table.addColumn(MSG.REFERENCE, 'string', 'referenceCode', '150px');
+        table.addColumn("Ingreso", 'string', 'incomeDescription', '300px');
+        table.addColumn(MSG.CONCEPT, 'string', 'concept', '300px');
+        table.addColumn(MSG.PAYMETHOD, 'string', 'paymethodDescription', '300px');
+        table.addColumn(MSG.AMOUNT, 'double', 'formattedAmount', '200px');
+    
         table.addEventListener(EVENT.MORE, this.moreFn);
         this.init();
     }
@@ -94,7 +95,10 @@ export class AonIncomeList extends AonElement {
                 }
                 table.removeRows();
                 incomes.forEach((income) => {
-                    console.log(income);
+                    if(income.expAccount)
+                        income.incomeDescription = income.expAccount.description;
+                    income.paymethodDescription = income.cashAccount.description;
+                    income.formattedAmount = this.formatAmount(income.amount);
                     table.addRow(income, () => this.incomeObject(income));
                 });
 
@@ -137,6 +141,12 @@ export class AonIncomeList extends AonElement {
         });
     }
 
+    formatAmount(amount) {
+        const num = parseFloat(amount);  
+        if (isNaN(num)) return amount; 
+        return num.toLocaleString('es-ES', { useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €';
+    }
+    
     add(){
         let inc = new AonIncome( new Income() );
         this.getApplication().setContent(inc);

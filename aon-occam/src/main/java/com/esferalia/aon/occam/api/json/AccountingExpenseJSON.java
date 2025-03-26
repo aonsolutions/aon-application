@@ -22,7 +22,7 @@ public class AccountingExpenseJSON {
 		return Optional.of( 
 			supp.get()
 				.setDomain(JsonUtils.getInt(json, IJsonNames.DOMAIN))
-				.setCreditor(CreditorJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.CREDITOR)))
+				.setCreditor(CreditorJSON.from(JsonUtils.getJSONObject(json, IJsonNames.CREDITOR)).orElse(null))
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setActivity(JsonUtils.getInteger(json, IJsonNames.ACTIVITY))
 				.setExpAccount(AccountJSON.from(JsonUtils.getJSONObject(json, IJsonNames.EXP_ACCOUNT)).orElse(null))
@@ -51,7 +51,7 @@ public class AccountingExpenseJSON {
 				.put(IJsonNames.BANK, RegistryBankJSON.to(a.getBank()).orElse(null))
 				.put(IJsonNames.CASH_ACCOUNT, AccountJSON.to(a.getCashAccount()).orElse(null))
 				.put(IJsonNames.COMMENTS, a.getComments())
-				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)))
+				.put(IJsonNames.ACCOUNT_ENTRY, AccountEntryJSON.toJSON(a.getAccountEntry().orElse(null)).orElse(null))
 		);
 	}
 }

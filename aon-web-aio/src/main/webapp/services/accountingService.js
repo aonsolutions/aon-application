@@ -1,4 +1,4 @@
-import { post, get} from "./request.js";
+import { post, get, remove} from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 export const getAccounting = (data) => post(`${API_URL}/accounting/pyg`, data);
@@ -9,6 +9,8 @@ export const getAccount = (data) => get(`${API_URL}/accounts/${data.id}`, data);
 export const getExpenses = (data) => get(`${API_URL}/accounting/expenses`, data);
 export const getIncomes = (data) => get(`${API_URL}/accounting/incomes`, data);
 export const setIncome = (data) => post(`${API_URL}/accounting/incomes`, data);
+export const deleteIncome = (data) => remove(`${API_URL}/accounting/incomes`, data);
+export const deleteExpense = (data) => remove(`${API_URL}/accounting/expenses`, data);
 export const setExpense = (data) => post(`${API_URL}/accounting/expenses`, data);
 
 export const PERIOD_FILTER = [

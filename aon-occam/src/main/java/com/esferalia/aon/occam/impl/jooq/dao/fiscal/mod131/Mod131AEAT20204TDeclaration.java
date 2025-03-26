@@ -481,7 +481,7 @@ class Mod131AEAT20204TDeclaration extends Mod131AEATBefore2024Declaration {
 			"721.1".equals(act.getEpigraph()) || "721.3".equals(act.getEpigraph())) {
 			prc = 35;
 		}
-		if (act.getEpi() == com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph.E_659_4B) {
+		if (AonStringUtils.equals(act.getEpigraph(),"659.4") && AonStringUtils.contains(act.getDescription(), "revista")) {
 			prc = 20;
 		}
 		

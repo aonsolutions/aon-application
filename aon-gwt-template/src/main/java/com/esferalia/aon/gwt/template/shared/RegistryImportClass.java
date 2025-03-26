@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.template.shared;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class RegistryImportClass implements IsSerializable {
@@ -18,9 +20,9 @@ public class RegistryImportClass implements IsSerializable {
 	private String bic;
 	private String type;
 	private Integer line;
-	private LinkedList<RegistryMedia> rmediaList;
+	private List<RegistryMedia> rmediaList;
 	private PayMethod paymethod;
-
+	private InvoiceTransactionType transaction;
 	
 	public RegistryImportClass() {
 		this.registry = new Registry()
@@ -33,90 +35,108 @@ public class RegistryImportClass implements IsSerializable {
 		return registry;
 	}
 
-	public void setRegistry(Registry registry) {
+	public RegistryImportClass setRegistry(Registry registry) {
 		this.registry = registry;
+		return this;
 	}
 
 	public Account getAccount() {
 		return account;
 	}
 
-	public void setAccount(Account account) {
+	public RegistryImportClass setAccount(Account account) {
 		this.account = account;
+		return this;
 	}
 
 	public String getIban() {
 		return iban;
 	}
 
-	public void setIban(String iban) {
+	public RegistryImportClass setIban(String iban) {
 		this.iban = iban;
+		return this;
 	}
 
 	public String getBic() {
 		return bic;
 	}
 
-	public void setBic(String bic) {
+	public RegistryImportClass setBic(String bic) {
 		this.bic = bic;
+		return this;
 	}
 	
 	public String getCcc( ) {
 		return ccc;
 	}
 	
-	public void setCcc(String ccc) {
+	public RegistryImportClass setCcc(String ccc) {
 		this.ccc = ccc;
+		return this;
 	}
 	
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public RegistryImportClass setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public Integer getLine() {
 		return line;
 	}
 
-	public void setLine(Integer line) {
+	public RegistryImportClass setLine(Integer line) {
 		this.line = line;
+		return this;
 	}
 
-	public LinkedList<RegistryMedia> getRmediaList() {
+	public List<RegistryMedia> getRmediaList() {
 		if(rmediaList == null) {
-			this.rmediaList = new LinkedList<RegistryMedia>();
+			this.rmediaList = new LinkedList<>();
 		}
 		return rmediaList;
 	}
 
-	public void setRmediaList(LinkedList<RegistryMedia> rmediaList) {
+	public RegistryImportClass setRmediaList(List<RegistryMedia> rmediaList) {
 		this.rmediaList = rmediaList;
+		return this;
 	}
 
 	public PayMethod getPaymethod() {
 		return paymethod;
 	}
 
-	public void setPaymethod(PayMethod paymethod) {
+	public RegistryImportClass setPaymethod(PayMethod paymethod) {
 		this.paymethod = paymethod;
+		return this;
+	}
+	
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+	
+	public RegistryImportClass setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+		return this;
 	}
 
-	public Boolean isCustomer() {
+	public boolean isCustomer() {
 		return (this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER") || this.type.equalsIgnoreCase("CLIENTE")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("430"));
 	}
 
-	public Boolean isSupplier() {
+	public boolean isSupplier() {
 		return (this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR") || this.type.equalsIgnoreCase("SUPPLIER")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("400"));
 	}
 
-	public Boolean isCreditor() {
+	public boolean isCreditor() {
 		return (this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR") || this.type.equalsIgnoreCase("CREDITOR")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410"));

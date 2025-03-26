@@ -196,10 +196,11 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		}
 	}
 	
+	@Override
 	public void beforeFinalize() {
 		if (model.isFinished()) {
 			DecimalFormat format = new DecimalFormat("#,##0.00");
-			String paymentInfo = "Resultado: " + format.format(model.getResult())
+			String paymentInfo = "Resultado: " + format.format(model.getDeclarationResult())
 					+ AonStringUtils.SPACE + getDeclarationType()
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceBankAlias())
 					+ AonStringUtils.SPACE + AonStringUtils.trimToEmpty( model.getFinanceMaskedIban())

@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public class Mod123 extends FiscalModel implements Serializable {
 	
@@ -38,6 +38,13 @@ public class Mod123 extends FiscalModel implements Serializable {
 		return this;
 	}
 
+	public boolean mustIncludeInvoicesOnGeneration() {
+		return getAmount(Mod123Key.CM_003) == 0;
+	}
+	public void setMustIncludeInvoicesOnGeneration(boolean mustIncludeInvoicesOnGeneration) {
+		putAmount(Mod123Key.CM_003, mustIncludeInvoicesOnGeneration ? 0 : 1 );
+	}
+	
 	@Override
 	@Deprecated
 	public double getResult() {
@@ -46,7 +53,7 @@ public class Mod123 extends FiscalModel implements Serializable {
 	
 	@Override
 	@Deprecated
-	public Mod115Key getDeclarationTypeKey() {
+	public Mod123Key getDeclarationTypeKey() {
 		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
 	}
 	

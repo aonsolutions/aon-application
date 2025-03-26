@@ -3,14 +3,11 @@ package com.esferalia.aon.in.payroll.excel;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +19,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -35,6 +33,9 @@ public abstract class AbsExcelAction  {
 	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240),  new DefaultIndexedColorMap());
 	protected static final XSSFColor AON_TEAL = new XSSFColor(new java.awt.Color(79,149,157), new DefaultIndexedColorMap());
 	protected static final XSSFColor AON_LIGHT_TEAL = new XSSFColor(new java.awt.Color(152,210,192), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_BLUE = new XSSFColor(new java.awt.Color(224,241,236), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_WHITE = new XSSFColor(new java.awt.Color(255,255,255), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_TOTAL = new XSSFColor(new java.awt.Color(182,223,210), new DefaultIndexedColorMap());
 	
 	protected SXSSFWorkbook workbook;
 	protected SXSSFSheet sheet;
@@ -42,115 +43,29 @@ public abstract class AbsExcelAction  {
 	protected int rowCount;
 	protected int cellCount;
 	protected DataFormat dataFormat;
-	protected CellStyle dateStyle;
-	protected CellStyle smallDateStyle;
-	protected CellStyle decimalStyle;
-	protected CellStyle numberStyle;
-	protected CellStyle centerCellStyle;
-	protected CellStyle rightCellStyle;
+	
 	protected XSSFCellStyle headerCellStyle;
-	protected XSSFCellStyle headerSecondaryCellStyle;
+	
+	protected XSSFCellStyle infoCellStyle;
+	
+	protected XSSFCellStyle totalStyle;
+	protected XSSFCellStyle totalCenterStyle;
 	
 	protected XSSFCellStyle headerEvenMonthCellStyle;
 	protected XSSFCellStyle headerOddMonthCellStyle;
 	
-	protected Font boldFont;
-	protected Font defaulFont;	
-	protected Font smallFont;
-	protected Font smallBoldFont;
-	protected Font italicSmallFont;
+	protected XSSFCellStyle headerEvenMonthCenterCellStyle;
+	protected XSSFCellStyle headerOddMonthCenterCellStyle;
 	
-	public void initialize(String name) {
-		initialize(name, true);
-	}
-    
-	public void initialize(String name, boolean printHeaders) {
-		workbook = new SXSSFWorkbook(1);
-		
-	    sheet = (SXSSFSheet) workbook.createSheet(name);
-	    dataFormat = workbook.getCreationHelper().createDataFormat();
-	    rowCount = 0;
-	    cellCount = 0;
-	    dateStyle = workbook.createCellStyle();
-	    dateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    dateStyle.setAlignment( HorizontalAlignment.CENTER );
-	    
-	    numberStyle = workbook.createCellStyle();
-	    numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
-	    numberStyle.setAlignment( HorizontalAlignment.CENTER );
-	     
-	    decimalStyle = workbook.createCellStyle();
-	    decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-	    decimalStyle.setAlignment( HorizontalAlignment.RIGHT );
-	    
-		centerCellStyle = workbook.createCellStyle();
-		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
-		
-		rightCellStyle = workbook.createCellStyle();
-		rightCellStyle.setAlignment( HorizontalAlignment.RIGHT );
-
-		defaulFont= workbook.createFont();
-		defaulFont.setFontHeightInPoints((short) 9);
-		
-		smallFont = workbook.createFont();
-		smallFont.setFontHeightInPoints((short) 8);
-
-		smallBoldFont = workbook.createFont();
-		smallBoldFont.setFontHeightInPoints((short) 8);
-		smallBoldFont.setBold(true);
-
-		italicSmallFont = workbook.createFont();
-		italicSmallFont.setFontHeightInPoints((short) 8);
-		italicSmallFont.setItalic(true);
-		
-		smallDateStyle = workbook.createCellStyle();
-	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    smallDateStyle.setAlignment( HorizontalAlignment.CENTER );
-	    smallDateStyle.setFont( smallFont );
-
-	    boldFont= workbook.createFont();
-		boldFont.setFontHeightInPoints((short) 9);
-		boldFont.setBold(true);
-
-		Font headerFont= workbook.createFont();
-		headerFont.setBold(true);
-		headerFont.setColor( IndexedColors.WHITE.index );
-		
-		Font subheaderFont= workbook.createFont();
-		subheaderFont.setBold(true);
-
-		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		headerCellStyle.setAlignment( HorizontalAlignment.CENTER );
-		headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-	    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerCellStyle.setFillForegroundColor(AON_BLUE);
-	    headerCellStyle.setFont(subheaderFont);
-	    
-	    headerSecondaryCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerSecondaryCellStyle.setAlignment( HorizontalAlignment.CENTER );
-	    headerSecondaryCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-	    headerSecondaryCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerSecondaryCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
-	    headerSecondaryCellStyle.setFont(subheaderFont);
-	    
-	    headerEvenMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerEvenMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
-	    headerEvenMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-	    headerEvenMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerEvenMonthCellStyle.setFillForegroundColor(AON_TEAL);
-	    headerEvenMonthCellStyle.setFont(headerFont);
-	    
-	    headerOddMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerOddMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
-	    headerOddMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-	    headerOddMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
-	    headerOddMonthCellStyle.setFont(headerFont);
-	    
-	    if (printHeaders) {
-	    	headerRow();
-	    }
-	}
+	protected XSSFCellStyle totalEvenMonthCellStyle;
+	protected XSSFCellStyle totalOddMonthCellStyle;
+	
+	protected XSSFCellStyle totalEvenMonthCenterCellStyle;
+	protected XSSFCellStyle totalOddMonthCenterCellStyle;
+	
+	protected XSSFCellStyle blankCellStyle;
+	
+	protected XSSFFont boldFont;
 	
 	public void initializeEmpty() {
 		workbook = new SXSSFWorkbook(1);
@@ -159,152 +74,99 @@ public abstract class AbsExcelAction  {
 	public void createSheet(String name) {
 		sheet = (SXSSFSheet) workbook.createSheet(name);
 	    dataFormat = workbook.getCreationHelper().createDataFormat();
+	    
 	    rowCount = 0;
 	    cellCount = 0;
-	    dateStyle = workbook.createCellStyle();
-	    dateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    dateStyle.setAlignment( HorizontalAlignment.CENTER );
-	    
-	    numberStyle = workbook.createCellStyle();
-	    numberStyle.setDataFormat(dataFormat.getFormat(NUMBER_PATTERN));
-	    numberStyle.setAlignment( HorizontalAlignment.CENTER );
-	     
-	    decimalStyle = workbook.createCellStyle();
-	    decimalStyle.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
-	    decimalStyle.setAlignment( HorizontalAlignment.RIGHT );
-	    
-		centerCellStyle = workbook.createCellStyle();
-		centerCellStyle.setAlignment( HorizontalAlignment.CENTER );
 		
-		rightCellStyle = workbook.createCellStyle();
-		rightCellStyle.setAlignment( HorizontalAlignment.RIGHT );
-
-		defaulFont= workbook.createFont();
-		defaulFont.setFontHeightInPoints((short) 9);
-		
-		smallFont = workbook.createFont();
-		smallFont.setFontHeightInPoints((short) 8);
-
-		smallBoldFont = workbook.createFont();
-		smallBoldFont.setFontHeightInPoints((short) 8);
-		smallBoldFont.setBold(true);
-
-		italicSmallFont = workbook.createFont();
-		italicSmallFont.setFontHeightInPoints((short) 8);
-		italicSmallFont.setItalic(true);
-		
-		smallDateStyle = workbook.createCellStyle();
-	    smallDateStyle.setDataFormat(dataFormat.getFormat(DATE_PATTERN));
-	    smallDateStyle.setAlignment( HorizontalAlignment.CENTER );
-	    smallDateStyle.setFont( smallFont );
-
-	    boldFont= workbook.createFont();
-		boldFont.setFontHeightInPoints((short) 9);
+		boldFont = (XSSFFont) workbook.createFont();
+		boldFont.setColor(IndexedColors.BLACK.getIndex());
 		boldFont.setBold(true);
-
-		Font headerFont= workbook.createFont();
-		headerFont.setBold(true);
-		headerFont.setColor( IndexedColors.WHITE.index );
-		
-		Font subheaderFont= workbook.createFont();
-		subheaderFont.setBold(true);
 
 		headerCellStyle = (XSSFCellStyle) workbook.createCellStyle();
 		headerCellStyle.setAlignment( HorizontalAlignment.CENTER );
 		headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
 	    headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerCellStyle.setFillForegroundColor(AON_BLUE);
-	    headerCellStyle.setFont(subheaderFont);
+	    headerCellStyle.setFillForegroundColor(AON_TEAL);
+	    headerCellStyle.setFont(boldFont);
 	    
-	    headerSecondaryCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerSecondaryCellStyle.setAlignment( HorizontalAlignment.CENTER );
-	    headerSecondaryCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
-	    headerSecondaryCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerSecondaryCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
-	    headerSecondaryCellStyle.setFont(subheaderFont);
+	    infoCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    infoCellStyle.setAlignment( HorizontalAlignment.CENTER );
+	    infoCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    infoCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    infoCellStyle.setFillForegroundColor(AON_LIGHT_GRAY);
+	    infoCellStyle.setFont(boldFont);
+	    
+	    totalCenterStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    totalCenterStyle.setAlignment( HorizontalAlignment.CENTER );
+	    totalCenterStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    totalCenterStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    totalCenterStyle.setFillForegroundColor(AON_TOTAL);
+	    
+	    totalStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    totalStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    totalStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    totalStyle.setFillForegroundColor(AON_TOTAL);
 	    
 	    headerEvenMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerEvenMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
 	    headerEvenMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
 	    headerEvenMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerEvenMonthCellStyle.setFillForegroundColor(AON_TEAL);
-	    headerEvenMonthCellStyle.setFont(headerFont);
+	    headerEvenMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
 	    
 	    headerOddMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-	    headerOddMonthCellStyle.setAlignment( HorizontalAlignment.CENTER );
 	    headerOddMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
 	    headerOddMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
-	    headerOddMonthCellStyle.setFont(headerFont);
+	    headerOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_BLUE);
+	    
+	    headerEvenMonthCenterCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerEvenMonthCenterCellStyle.setAlignment(HorizontalAlignment.CENTER);
+	    headerEvenMonthCenterCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerEvenMonthCenterCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerEvenMonthCenterCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
+	    
+	    headerOddMonthCenterCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    headerOddMonthCenterCellStyle.setAlignment(HorizontalAlignment.CENTER);
+	    headerOddMonthCenterCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    headerOddMonthCenterCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerOddMonthCenterCellStyle.setFillForegroundColor(AON_LIGHT_BLUE);
+	    
+	    totalEvenMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    totalEvenMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    totalEvenMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    totalEvenMonthCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
+	    totalEvenMonthCellStyle.setFont(boldFont);
+		
+		totalOddMonthCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+		totalOddMonthCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+		totalOddMonthCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		totalOddMonthCellStyle.setFillForegroundColor(AON_LIGHT_BLUE);
+		totalOddMonthCellStyle.setFont(boldFont);
+	    	    
+	    totalEvenMonthCenterCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    totalEvenMonthCenterCellStyle.setAlignment(HorizontalAlignment.CENTER);
+	    totalEvenMonthCenterCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    totalEvenMonthCenterCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    totalEvenMonthCenterCellStyle.setFillForegroundColor(AON_LIGHT_TEAL);
+	    totalEvenMonthCenterCellStyle.setFont(boldFont);
+	    
+	    totalOddMonthCenterCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    totalOddMonthCenterCellStyle.setAlignment(HorizontalAlignment.CENTER);
+	    totalOddMonthCenterCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
+	    totalOddMonthCenterCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    totalOddMonthCenterCellStyle.setFillForegroundColor(AON_LIGHT_BLUE);
+	    totalOddMonthCenterCellStyle.setFont(boldFont);
+	    
+	    blankCellStyle = (XSSFCellStyle) workbook.createCellStyle();
+	    blankCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    blankCellStyle.setFillForegroundColor(AON_WHITE);
 	}
 	
-	protected Cell alignCenter(Cell cell) {
-		cell.setCellStyle( centerCellStyle );
-		return cell;
-	}
-	protected Cell alignRight(Cell cell) {
-		cell.setCellStyle( rightCellStyle );
-		return cell;
-	}
 	protected Cell addEmptyCell() {
 		return addCell("");
 	}
+	
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(CellType.STRING);
-		return cell;
-	}
-
-	protected Cell addCell(Enum<?> value) {
-		Cell cell = row.createCell(cellCount++);
-		if ( value != null ) {
-			cell.setCellValue(value.toString());
-		}
-		cell.setCellType(CellType.STRING);
-		return cell;
-	}
-
-	protected Cell addCell(Short value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(numberStyle);
-		if ( value != null ) {
-			cell.setCellValue(value);
-		}
-		cell.setCellType(CellType.NUMERIC);
-		return cell;
-	}
-	
-	protected Cell addCell(Integer value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(numberStyle);
-		if ( value != null ) {
-			cell.setCellValue(value);
-		}
-		cell.setCellType(CellType.NUMERIC);
-		return cell;
-	}
-
-	protected Cell addCell(Date value) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(dateStyle);
-		if ( value != null ) {
-			cell.setCellValue(value);
-		}
-		return cell;
-	}
-
-	protected Cell addCell(Double number) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellStyle(decimalStyle);
-		cell.setCellValue(number!=null?number:0.0);
-		cell.setCellType(CellType.NUMERIC);
-		return cell;
-	}
-
-	protected Cell addCell(boolean bool) {
-		Cell cell = row.createCell(cellCount++);
-		cell.setCellValue(bool?"SI":"NO");
 		cell.setCellType(CellType.STRING);
 		return cell;
 	}

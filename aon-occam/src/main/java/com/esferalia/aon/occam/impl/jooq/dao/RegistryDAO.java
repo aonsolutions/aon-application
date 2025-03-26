@@ -134,7 +134,7 @@ public class RegistryDAO {
 		Integer id = ctx.getDslContext().insertInto(REGISTRY)
 			.set(REGISTRY.DOMAIN, registry.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,registry.getDocument())
-			.set(REGISTRY.DOCUMENT_TYPE,registry.getDocumentType()==null?null:registry.getDocumentType().value())
+			.set(REGISTRY.DOCUMENT_TYPE, DocumentType.value(registry.getDocumentType()))
 			.set(REGISTRY.DOCUMENT_COUNTRY, Country.safeIso2( registry.getDocumentCountry()))
 			.set(REGISTRY.NAME,registry.getName())
 			.set(REGISTRY.ALIAS,registry.getAlias())
@@ -154,7 +154,7 @@ public class RegistryDAO {
 	private static <R extends Registry> R update(AONContext ctx, R registry) {
 		int count = ctx.getDslContext().update(REGISTRY)
 			.set(REGISTRY.DOCUMENT,registry.getDocument())
-			.set(REGISTRY.DOCUMENT_TYPE,registry.getDocumentType()==null?null:registry.getDocumentType().value())
+			.set(REGISTRY.DOCUMENT_TYPE, DocumentType.value(registry.getDocumentType()))
 			.set(REGISTRY.DOCUMENT_COUNTRY,Country.safeIso2( registry.getDocumentCountry()))
 			.set(REGISTRY.NAME,registry.getName())
 			.set(REGISTRY.ALIAS,registry.getAlias())

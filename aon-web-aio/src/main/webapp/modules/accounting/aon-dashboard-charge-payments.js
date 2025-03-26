@@ -1,3 +1,4 @@
+import { Chart } from "chart.js/auto";
 import { AonElement } from "../../components/AonElement.js";
 import { TAG } from "../../environments/environments.js";
 import { getChargePayments } from "../../services/invoiceService.js";

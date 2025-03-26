@@ -19,8 +19,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
+import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CreditorProperties;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -36,6 +38,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorValidation;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CreditorDAO {
@@ -133,7 +136,11 @@ public class CreditorDAO {
 	
 	
 	public static Creditor get(AONContext ctx, Integer id){
-		return getStream(ctx, p -> p.getIdProperty().eq(id))
+		return get(ctx, p -> p.getIdProperty().eq(id));
+	}
+	
+	public static Creditor get(AONContext ctx, CreditorFilter filter){
+		return getStream(ctx, filter)
 			.findFirst()
 			.orElse(new Creditor());
 	}
@@ -215,6 +222,24 @@ public class CreditorDAO {
 			.where(CREDITOR.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().debug("ACCOUNT {0} LINKED TO CREDITOR {1}",account,registry);
+	}
+	
+	public static Account ensureAccount(AONContext ctx, Integer creditorId) {
+		Account account = getCreditorAccount(ctx, creditorId);
+		if (account == null) {
+			Creditor creditor = get(ctx, creditorId);
+			if (creditor == null || creditor.getId()==null) {
+				throw new AonCoreException("Cliente no encontrado");
+			}
+			account = new Account()
+				.setDomain( creditor.getDomain().getId() )
+				.setCode( AccountDAO.getNextAccountCode(ctx,"4300" ) )
+				.setDescription( creditor.getName() )
+				.setAlias( creditor.getAlias() )
+				.setActive( true );
+			account = AccountDAO.save( ctx, account);
+		}
+		return account;
 	}
 
 	// ******************************************

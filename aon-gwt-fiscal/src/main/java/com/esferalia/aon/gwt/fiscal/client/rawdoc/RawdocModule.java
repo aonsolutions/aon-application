@@ -29,8 +29,8 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
@@ -1044,6 +1045,22 @@ public class RawdocModule extends MainEntryPoint {
 
 	private void closeAttach() {
 		splitLayoutPanel.setWidgetSize(attachPanelContainer, 20);
+	}
+
+	public static void run() {
+		GWT.runAsync(RawdocModule.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("RawdocModule"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				RawdocModule rawdocModule = new RawdocModule();
+				rawdocModule.onModuleLoad();
+			}
+		});
 	}
 
 }		

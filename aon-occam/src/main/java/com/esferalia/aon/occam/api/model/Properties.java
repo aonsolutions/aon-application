@@ -1967,4 +1967,30 @@ public interface Properties {
 		Property<String> getDescriptionProperty();
 		Property<Integer> getScopeProperty();
 	}
+	
+	public interface S3DocumentProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getMimeTypeProperty();
+		Property<Integer> getScopeProperty();
+		Property<Integer> getCategoryProperty();
+		Property<java.util.Date> getDocumentDateProperty();
+		Property<String> getS3Property();
+//		Property<Integer> getRattachProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Timestamp> getCreationDateProperty();
+	}
+	
+	public interface S3CategoryProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getNameProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getScopeProperty();
+		Property<String> getDescriptionProperty();
+		Property<String> getUrlProperty();
+		Property<Integer> getRattachProperty();
+		Property<Integer> getParentProperty();
+	}
 }

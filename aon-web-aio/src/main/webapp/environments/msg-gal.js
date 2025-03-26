@@ -125,6 +125,7 @@ export const CUSTOMERS = 'Clientes';
 // ----- D
 
 export const DATE = 'Data';
+export const DATE_CREATION = 'Data de creación';
 export const DARK = 'Escuro';
 export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Borrar';
@@ -269,7 +270,8 @@ export const LINKED1 = 'Vinculados';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "Desexa vincular este cliente co dominio?";
 export const LOADING = 'Cargando';
-export const LOCATION = 'Ubicación';
+export const LOCATION = 'Localización';
+export const LOCATIONS = 'Localizacións';
 export const LOGIN = 'Iniciar sesión';
 export const LOGIN_SUBTITLE = 'Introduza as súas credenciais';
 

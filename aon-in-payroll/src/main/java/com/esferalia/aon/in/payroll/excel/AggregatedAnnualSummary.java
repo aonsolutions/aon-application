@@ -1306,10 +1306,11 @@ public class AggregatedAnnualSummary {
 		.sorted(Comparator.comparing(s -> s.getEmployeeDocument() != null ? s.getEmployeeDocument() : ""))
 		.forEach(s -> {
 			String month = null;
+			Date checkDate = s.getSalaryType() == SalaryType.DELAY ? s.getChargeDate() : s.getIssueDate();
 			if (type == AggregatedAnnualSummary.SummaryType.MONTHLY)
-				month = s.getIssueDate() != null ? df.format(s.getIssueDate()).toUpperCase() : null;
+				month = checkDate != null ? df.format(checkDate).toUpperCase() : null;
 			else if (type == AggregatedAnnualSummary.SummaryType.QUARTERLY)
-				month = getQuarter(s.getIssueDate());
+				month = getQuarter(checkDate);
 			
 			String identifier = getIdentifier(aonContext, s);
 			

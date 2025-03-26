@@ -35,8 +35,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.product.ProductModule;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -202,11 +200,36 @@ public class MainEntryPoint implements EntryPoint {
 		};
 		abstract void run();
 	}
+	
+	//
+	//    ================================================================== RAWDOC
+	//
+	private enum RawdocEntryPoint {
+		RawdocModule {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.run();
+			}
+		},
+		RawdocModuleNew {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.run();
+			}
+		},
+		RawdocRecordModule {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule.run();
+			}
+		}
+		;
+		abstract void run();
+	}
 
 	private static final String SII_ENTRY_POINT = "Sii";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD240_ENTRY_POINT = "Model240";
-//	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	private static final String FS_CONFIG_POINT = "FiscalConfig";
 	//	
 	//    ================================================================== REGISTRY
@@ -247,11 +270,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_AMORTIZATION_TYPE_ENTRY_POINT = "AmortizationType";
 	private static final String ACC_COST_CENTER_ENTRY_POINT = "CostCenterModule";
 	private static final String INVEST_ASSET_ENTRY_POINT = "InvestAssetModule";
-	//
-	//    ================================================================== RAWDOC
-	//
-	private static final String RAWDOC_ENTRY_POINT = "RawdocModule";
-	private static final String RAWDOC_RECORD_ENTRY_POINT = "RawdocRecordModule";
+
 	//
 	//    ================================================================== CHECKIT
 	//
@@ -327,6 +346,12 @@ public class MainEntryPoint implements EntryPoint {
 		} catch (IllegalArgumentException e) {
 			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
 		}
+		try {
+			RawdocEntryPoint rawdocEntryPoint = RawdocEntryPoint.valueOf(entryPoint);
+			rawdocEntryPoint.run();
+		} catch (IllegalArgumentException e) {
+			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
+		}
 		if (FS_MOD140_ENTRY_POINT.equalsIgnoreCase(entryPoint)) {
 			GWT.runAsync(Model140.class, new RunAsyncCallback() {
 
@@ -356,21 +381,6 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		} 
-//		else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
-//			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
-//
-//				@Override
-//				public void onFailure(Throwable reason) {
-//					Window.alert(ERROR_MSG);
-//				}
-//
-//				@Override
-//				public void onSuccess() {
-//					ModelMatrix modelMatrix = new ModelMatrix();
-//					modelMatrix.onModuleLoad(elementTarget);
-//				}
-//			});
-//		} 
 		else if ( entryPoint.equalsIgnoreCase(FS_CONFIG_POINT)) {
 			GWT.runAsync(FiscalConfig.class, new RunAsyncCallback() {
 
@@ -821,36 +831,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(RAWDOC_ENTRY_POINT)) {
-			GWT.runAsync(RawdocModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					RawdocModule rawdoc  = new RawdocModule();
-					rawdoc.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(RAWDOC_RECORD_ENTRY_POINT)) {
-			GWT.runAsync(RawdocRecordModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					RawdocRecordModule rawdoc  = new RawdocRecordModule();
-					rawdoc.onModuleLoad();
-				}
-				
-			});
 		} else if ( entryPoint.equalsIgnoreCase(CHECKIT_ENTRY_POINT)) {
 			GWT.runAsync(CheckItModule.class, new RunAsyncCallback() {
 
@@ -861,8 +841,8 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					CheckItModule rawdoc  = new CheckItModule();
-					rawdoc.onModuleLoad();
+					CheckItModule checkItModule  = new CheckItModule();
+					checkItModule.onModuleLoad();
 				}
 				
 			});
@@ -876,8 +856,8 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					NordigenModule rawdoc  = new NordigenModule();
-					rawdoc.onModuleLoad();
+					NordigenModule nordigenModule  = new NordigenModule();
+					nordigenModule.onModuleLoad();
 				}
 				
 			});

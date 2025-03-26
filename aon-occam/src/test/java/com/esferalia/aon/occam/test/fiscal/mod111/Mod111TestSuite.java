@@ -16,52 +16,15 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 	Mod111ReopenTest.class,
 	Mod111DeleteTest.class,
 	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyTest.class,
-	Mod111FinishTest.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyComplementaryTest.class,
-	Mod111FinishTest.class,
-//	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertMonthlyReplacementTest.class,
-	Mod111RoundedAmountsTest.class,
-
-	// Modelos trimestrales
-	Mod111ReopenTest.class,
-	Mod111DeleteTest.class,
-//	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyTest.class,
-	Mod111FinishTest.class,
-//	
-	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyComplementaryTest.class,
-	Mod111FinishTest.class,
+	Mod111SimulateMonthlyTest.class,
+	Mod111SimulateQuarterlyTest.class,
 	
-//	InsertRandomInvoicesTest.class,
-	Mod111InsertQuarterlyReplacementTest.class,
-	Mod111RoundedAmountsTest.class,
-	
-//	// IRPF JSON 
-	IrpfBreakdownJSONTest.class,
-	
-//	// Flujo de estados
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111FinishTest.class,					// Finalizado
-	Mod111SentTest.class,					// Presentado
-//	// Flujo de estados
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
-//	// Flujo de estados 
-	Mod111ReopenTest.class,					// Pendiente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod111MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod111MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod111SentTest.class,					// Presentado
-	
+	Mod111AEATTestSuite.class,
+	Mod111ARABATestSuite.class,
+	Mod111BIZKAIATestSuite.class,
+	Mod111GIPUZKOATestSuite.class,
+	Mod111NAVARRATestSuite.class,
 })
 public class Mod111TestSuite {
 

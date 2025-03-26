@@ -7,6 +7,7 @@ public class MonthlyDaysEntryExcel implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String mes;
+	private int year;
     private int diasMes;
     private int diasLaborables;
     private int diasFestivos;
@@ -32,6 +33,15 @@ public class MonthlyDaysEntryExcel implements Serializable {
 
 	public int getDiasMes() {
 		return diasMes;
+	}
+	
+	public MonthlyDaysEntryExcel setYear(int year) {
+		this.year = year;
+		return this;
+	}
+
+	public int getYear() {
+		return year;
 	}
 
 	public MonthlyDaysEntryExcel setDiasMes(int diasMes) {

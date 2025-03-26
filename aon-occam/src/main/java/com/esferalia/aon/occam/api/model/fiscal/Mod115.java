@@ -37,7 +37,13 @@ public class Mod115 extends FiscalModel implements Serializable {
 		this.alcatrazBound = alcatrazBound;
 		return this;
 	}
-	
+	public boolean mustIncludeInvoicesOnGeneration() {
+		return getAmount(Mod115Key.CM_003) == 0;
+	}
+	public void setMustIncludeInvoicesOnGeneration(boolean mustIncludeInvoicesOnGeneration) {
+		putAmount(Mod115Key.CM_003, mustIncludeInvoicesOnGeneration ? 0 : 1 );
+	}
+
 	@Override
 	@Deprecated
 	public double getResult() {

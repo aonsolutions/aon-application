@@ -22,6 +22,7 @@ public interface IMODEL115 {
 	public Mod115 initializeForFinish(AONContext ctx, Mod115 mod115);
 	public Mod115 initialize(AONContext ctx, Mod115 mod115);
 	public Mod115 create(AONContext ctx, Mod115 mod115);
+	public Mod115 simulate(AONContext ctx, Mod115 mod115);
 	public void delete(AONContext ctx, Mod115 mod115);
 	
 	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey);

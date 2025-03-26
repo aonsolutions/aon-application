@@ -125,6 +125,7 @@ export const CAMPAIGN = "Campaña";
 export const CAMPAIGNS = "Campañas";
 export const CANCEL = MSG.CANCEL;
 export const CATEGORY = MSG.CATEGORY;
+export const SUBCATEGORY = "Subcategoria";
 export const CAU = "Cau";// TODO
 export const CARRIER = "Agencia de Transporte"; // TODO
 export const CARRIERS = "Agencias de Transporte"; // TODO
@@ -202,6 +203,7 @@ export const CREATED_BY = "Creado por"; //TODO
 // ----- D
 
 export const DATE = MSG.DATE;
+export const DATE_CREATION = MSG.DATE_CREATION;
 export const DATA = "Datos";//TODO
 export const DARK = MSG.DARK;
 export const DEACTIVATE = MSG.DEACTIVATE;
@@ -240,6 +242,7 @@ export const DOWNLOAD = MSG.DOWNLOAD;
 export const DOWNLOAD_FILE = MSG.DOWNLOAD_FILE;
 export const DOWNLOAD_FILES = MSG.DOWNLOAD_FILES;
 export const DOWNLOAD_INVOICE = MSG.DOWNLOAD_INVOICE;
+export const DOWNLOAD_EXCEL = MSG.DOWNLOAD + " Excel";
 export const DOWNLOAD_EXCEL_INVOICE = MSG.DOWNLOAD_INVOICE + " Excel";
 export const DOWNLOAD_INVOICES = MSG.DOWNLOAD_INVOICES;
 export const DRAFT = 'Borrador';
@@ -422,7 +425,6 @@ export const LAST_ACCESS = "Último Acceso";
 export const LAST_LOCATION = MSG.LAST_LOCATION;
 export const LAST_STATUS = MSG.LAST_STATUS;
 export const LAST_MODIFICATION = "Última modificación";
-export const LOCATION = MSG.LOCATION;
 export const LINK = MSG.LINK;
 export const LINK_CLIENT = MSG.LINK_CLIENT;
 export const LINKING = MSG.LINKING;
@@ -431,6 +433,8 @@ export const LINKED1 = MSG.LINKED1;
 export const LINK_DOMAINS = MSG.LINK_DOMAINS;
 export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
 export const LOADING = MSG.LOADING;
+export const LOCATION = MSG.LOCATION;
+export const LOCATIONS = MSG.LOCATIONS;
 export const LOGIN = MSG.LOGIN;
 export const LOGIN_SUBTITLE = MSG.LOGIN_SUBTITLE;
 
@@ -517,6 +521,7 @@ export const OTHERS = "Otros";
 export const ONE = MSG.ONE;
 
 // ----- P
+export const PACKAGE = 'Envase';
 export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;
@@ -544,6 +549,7 @@ export const PORTAL = 'Portal';
 export const PORTAL_MENU = MSG.PORTAL_MENU;
 export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
+export const PRESENCE = 'Presencia';
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
 export const PRINT = MSG.PRINT;

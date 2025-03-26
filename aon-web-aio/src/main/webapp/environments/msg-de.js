@@ -124,6 +124,7 @@ export const CUSTOMERS = 'Customers';
 // ----- D
 
 export const DATE = 'Date';
+export const DATE_CREATION = 'Sortze-data';
 export const DARK = 'Dunkel';
 export const DEACTIVATE = 'Deactivate';
 export const DELETE = 'Delete';
@@ -267,7 +268,8 @@ export const LINKING = "Verlinkung";
 export const LINK_DOMAINS = 'Domains Verknüpfen';
 export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
 export const LOADING = 'Wird geladen';
-export const LOCATION = 'Location';
+export const LOCATION = 'Standort';
+export const LOCATIONS = 'Standorte';
 export const LOGIN = 'Login';
 export const LOGIN_SUBTITLE = 'Geben Sie Ihre Anmeldedaten ein';
 

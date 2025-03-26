@@ -66,6 +66,7 @@ export const BUSINESS_NAME = 'Business Name';
 export const CANCEL = 'Cancel';
 export const CATALAN = 'Catalan';
 export const CATEGORY = 'Category';
+export const SUBCATEGORY = 'Subcategory';
 export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
@@ -124,6 +125,7 @@ export const CUSTOMERS = 'Customers';
 // ----- D
 
 export const DATE = 'Date';
+export const DATE_CREATION = 'Creation date';
 export const DARK = "Dark";
 export const DEACTIVATE = 'Deactivate';
 export const DELETE = 'Delete';
@@ -269,6 +271,7 @@ export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
 export const LOADING = 'Loading';
 export const LOCATION = 'Location';
+export const LOCATIONS = 'Locations';
 export const LOGIN = 'Login';
 export const LOGIN_SUBTITLE = 'Enter your credentials';
 

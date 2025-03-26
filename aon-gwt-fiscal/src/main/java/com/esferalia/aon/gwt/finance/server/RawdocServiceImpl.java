@@ -14,8 +14,8 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -40,14 +40,39 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	private static final long serialVersionUID = 1249978088517559976L;
 
 	@Override
+	public LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset, int limit) throws AonCoreException {
+		return AON.getRawdocs(occam, params, offset, limit );
+	}
+	@Override
+	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
+		return parse(occam.getDomainName(), occam.getDomain(), occam.getUser(), rawdocId);	
+	}
+
+	@Override
+	public void delete(Occam occam, Integer rawdocId) {
+		AON.rawdocDelete(occam,rawdocId);
+	}
+	@Override
+	public void toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
+		AON.rawdocToDraft(occam,rawdocId);
+	}
+
+	@Override
+	public void toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
+		AON.rawdocToRejected(occam,rawdocId,reason);
+	}
+
+	@Override
+	public void toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
+		AON.rawdocToInbox(occam,rawdocId);
+	}
+	
+	//	************************************************* OLD
+	
+	@Override
 	public LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset,
 			int limit) throws AonCoreException {
 		return AON.getRawdocs(domainName, domain,user, params, offset, limit );
-	}
-	
-	@Override
-	public LinkedList<RawdocDomainData> getDomainData(String domainName, int domain, String user, int searchDomain) throws AonCoreException {
-		return AON.getRawdocDomainData(domainName, domain,user,searchDomain);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts } from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -23,6 +23,9 @@ import { AonParent } from 'aonparent';
 import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
+import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
+import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
+
 
 export class AonHeader extends AonElement {
 
@@ -1070,13 +1073,23 @@ export class AonHeader extends AonElement {
 		}
 		
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init().then(() => aonMenu.open());
+		aonMenu.init().then(() => {
+			aonMenu.open();
+			let customUrl = location.origin + '/customview?domain=' + company.domain;
+			loadCustomView(customUrl).then(() => { 
+				favicon();
+				title();
+			});
+		}
+		);
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
 			callback();				
 		});
 	}
+	
+	
 
 	buildMenuLeftop() {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);

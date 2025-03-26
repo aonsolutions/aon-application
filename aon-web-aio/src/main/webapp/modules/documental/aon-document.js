@@ -2,7 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -10,11 +10,9 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
-
-
 export class AonDocument extends AonElement {
-
   doc;
+  docS3;
   _tags;
 
   TOOLBAR;
@@ -28,7 +26,6 @@ export class AonDocument extends AonElement {
   SCOPE;
   TAG;
   TYPE;
-
 
   get document() {
     return JSON.parse(this.getAttribute('document'));
@@ -66,9 +63,11 @@ export class AonDocument extends AonElement {
     this.TYPE = this.id + 'Type';
   }
 
-  build() {
-    this.innerHTML = `
-      <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.document.title}"> </aon-toolbar>
+  async build() {
+    let title   = this.isBetaDoc() ? this.document.name : this.document.title;
+    let toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${title}"> </aon-toolbar>`
+
+    this.innerHTML = toolbar +`
       <div style="display:flex;">
         <div id="${this.DATA}" class="aonSubContent" style="width:100%">
           <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
@@ -79,168 +78,237 @@ export class AonDocument extends AonElement {
       </div>
     `;
 
-    this.doc = this.document;
-    let fileDiv = this.getElement(this.FILE);
+    let fileDiv           = this.getElement(this.FILE);
     fileDiv.style.display = 'block';
-    fileDiv.style.width = '50%';
-		fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
+    fileDiv.style.width   = '50%';
+    
+    if(this.isBetaDoc()){
+      let data = { type: this.document.type, id: this.document.id};
+      getS3Document_File(data).then(document => {
+          this.docS3 = document;
+          const viewPixels = fileDiv.offsetWidth + (fileDiv.offsetWidth * 0.5);
+          fileDiv.innerHTML = `<aon-viewer type="${this.document.contentType}" file="${document}" width="${viewPixels}"></aon-viewer>`;
+          let dataDiv = this.getElement(this.DATA);
+          dataDiv.style.width = '50%';
+    
+          if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+            let offset1 = fileDiv.getBoundingClientRect();
+            fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+    
+            let offset2 = dataDiv.getBoundingClientRect();
+            dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+          }
+    
+          this.buildData();
+          this.buildDocumentToolbar();
+      });
+    
+    } else {
+      fileDiv.innerHTML = `<aon-viewer type="${this.document.file.type}" file="${this.document.file.url}" width="${fileDiv.offsetWidth}"></aon-viewer>`;
 
-    let dataDiv = this.getElement(this.DATA);
-    dataDiv.style.width = '50%';
+      let dataDiv = this.getElement(this.DATA);
+      dataDiv.style.width = '50%';
 
-		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
-      let offset1 = fileDiv.getBoundingClientRect();
-      fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
+      if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
+        let offset1 = fileDiv.getBoundingClientRect();
+        fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
 
-      let offset2 = dataDiv.getBoundingClientRect();
-  		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+        let offset2 = dataDiv.getBoundingClientRect();
+        dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
+      }
+
+      this.buildData();
+      this.buildDocumentToolbar();
     }
 
-    this.buildData();
-
-    this.buildDocumentToolbar();
   }
 
   buildData() {
+    if(this.isBetaDoc()){
+      this.buildDataS3();
+    } else {
+      let card = this.getElement(this.DATA_CARD);
+      card.setContentHTML('');
+          let table = this.createElement(TAG.TABLE);
+          table.style.width = '100%';
+          card.setContent(table);
+
+      let tr = this.createElement(TAG.TR);
+      table.appendChild(tr);
+
+      let tdDate = this.createElement(TAG.TD);
+      tdDate.setAttribute('colspan', '1');
+          tr.appendChild(tdDate);
+
+      let date = createDate(this.DATE, MSG.DATE);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        date.readonly = 'true';
+      }
+      if(this.document.date) {
+        let d = this.document.date.split('/');
+        date.setDate(new Date(d[2], d[1] - 1, d[0]));
+      }
+      tdDate.appendChild(date);
+
+      let tdConfidential = this.createElement(TAG.TD);
+      tdConfidential.setAttribute('colspan', '1');
+      tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.CONFIDENTIAL}"></aon-switch>`;
+      tr.appendChild(tdConfidential);
+      let confidential = this.getElement('confidential');
+      confidential.disabled = !this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal();
+      confidential.checked = this.document.confidential;
+      confidential.addEventListener(EVENT.CHANGE, () => this.updateConfidential(confidential.checked));
+
+      let tr2 = this.createElement(TAG.TR);
+      table.appendChild(tr2);
+
+      let tdName = this.createElement(TAG.TD);
+      tdName.setAttribute('colspan', '2');
+          tr2.appendChild(tdName);
+          let name = createInput(this.NAME, MSG.NAME, tdName);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        name.readonly = 'true';
+      }
+      name.setValue(this.document.title);
+          name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
+
+      let tr3 = this.createElement(TAG.TR);
+      table.appendChild(tr3);
+
+      // CATEGORY
+      let tdCategory = this.createElement(TAG.TD);
+      tdCategory.setAttribute('colspan', '1');
+      let categorySelect = createSelect(this.CATEGORY, MSG.CATEGORY, tdCategory);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        categorySelect.readonly = 'true';
+      }
+      tr3.appendChild(tdCategory);
+      getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
+        categorySelect.setOptions(categories.map(c => {
+          return {
+            value: c.id,
+            name: c.name
+          }
+        }));
+        if(this.document.category)
+          categorySelect.value = this.document.category.id;
+        categorySelect.addEventListener(EVENT.SELECT, () => this.updateCategory(categorySelect.value));
+      });
+
+      // SCOPE
+      let tdScope = this.createElement(TAG.TD);
+      tdScope.setAttribute('colspan', '1');
+      let scopeSelect =  createSelect(this.SCOPE, MSG.SCOPE, tdScope);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        scopeSelect.readonly = 'true';
+      }
+      tr3.appendChild(tdScope);
+      getScopes().then( scopes => {
+        scopeSelect.setOptions(scopes.map(s => {
+          return {
+            value: s.id,
+            name: s.name
+          }
+        }));
+
+        if(this.document.scope)
+          scopeSelect.value = this.document.scope.id;
+        scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
+      });
+
+      let tr4 = this.createElement(TAG.TR);
+      table.appendChild(tr4);
+
+      // TAG
+      let tdTag = this.createElement(TAG.TD);
+      tdTag.setAttribute('colspan', '1');
+
+      let tagSelect = createSelect(this.TAG, MSG.TAG, tdTag);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        tagSelect.readonly = 'true';
+      }
+      tr4.appendChild(tdTag);
+      tagSelect.addEventListener(EVENT.SELECT, (event) => {
+        this.addTag(event.detail);
+        this.setTagsAvaible();
+        tagSelect.clear();
+      });
+
+      let tdType = this.createElement(TAG.TD);
+      tdType.setAttribute('colspan', '1');
+
+      let typeSelect = createSelect(this.TYPE, MSG.TYPE, tdType);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        typeSelect.readonly = 'true';
+      }
+      let typeOptions = EMPLOYEE_TYPE_OPTION;
+      if(this.getDur().isDocumentalManager()) {
+        typeOptions = ASESOR_TYPE_OPTION;
+      } else if(this.getDur().isDocumentalPortal()){
+        typeOptions = ENTERPRISE_TYPE_OPTION;
+      }
+      typeSelect.setOptions(typeOptions);
+      tr4.appendChild(tdType);
+      typeSelect.value = this.document.type;
+      typeSelect.addEventListener(EVENT.SELECT, () => this.updateType(typeSelect.value));
+
+      let tr5 = this.createElement(TAG.TR);
+      table.appendChild(tr5);
+
+
+      let containerTags = this.createElement(TAG.DIV);
+      containerTags.style.display = "flex";
+      containerTags.style.flexWrap = "wrap";
+      containerTags.id = "containerTags";
+      card.setContent(containerTags);
+      //revisar los tags en document al recibir
+      // this.document.tags.forEach((item) => {
+      //   this.addTag(item);
+      // });
+      //set tags avaibles
+      this.setTagsAvaible();
+    }
+  }
+  
+  buildDataS3() {
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
-		let table = this.createElement(TAG.TABLE);
-		table.style.width = '100%';
-		card.setContent(table);
+    let table = this.createElement(TAG.TABLE);
+    table.style.width = '100%';
+    card.setContent(table);
 
-    let tr = this.createElement(TAG.TR);
-    table.appendChild(tr);
+    // Fecha
+      let tr = this.createElement(TAG.TR);
+      table.appendChild(tr);
+      let tdDate = this.createElement(TAG.TD);
+      tdDate.setAttribute('colspan', '1');
+      tr.appendChild(tdDate);
 
-    let tdDate = this.createElement(TAG.TD);
-    tdDate.setAttribute('colspan', '1');
-		tr.appendChild(tdDate);
+      let date = createDate(this.DATE, MSG.DATE+' del documento');
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        date.readonly = 'true';
+      }
+      if(this.document.date) {
+        let d = this.document.date.split('-');
+        date.setDate(new Date(d[0], d[1] - 1, d[2]));
+      }
+      tdDate.appendChild(date);
+      // Si se modifica la fecha
+      date.addEventListener(EVENT.CHANGE, (event) => this.updateDate(date.getDateValue()));
 
-    let date = createDate(this.DATE, MSG.DATE);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      date.readonly = 'true';
-    }
-    if(this.document.date) {
-      let d = this.document.date.split('/');
-      date.setDate(new Date(d[2], d[1] - 1, d[0]));
-    }
-    tdDate.appendChild(date);
-
-    let tdConfidential = this.createElement(TAG.TD);
-    tdConfidential.setAttribute('colspan', '1');
-    tdConfidential.innerHTML = `<aon-switch id="confidential" title="${MSG.CONFIDENTIAL}"></aon-switch>`;
-    tr.appendChild(tdConfidential);
-    let confidential = this.getElement('confidential');
-    confidential.disabled = !this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal();
-    confidential.checked = this.document.confidential;
-    confidential.addEventListener(EVENT.CHANGE, () => this.updateConfidential(confidential.checked));
-
-    let tr2 = this.createElement(TAG.TR);
-    table.appendChild(tr2);
-
-    let tdName = this.createElement(TAG.TD);
-    tdName.setAttribute('colspan', '2');
-		tr2.appendChild(tdName);
-		let name = createInput(this.NAME, MSG.NAME, tdName);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      name.readonly = 'true';
-    }
-    name.setValue(this.document.title);
-		name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
-
-    let tr3 = this.createElement(TAG.TR);
-    table.appendChild(tr3);
-
-    // CATEGORY
-    let tdCategory = this.createElement(TAG.TD);
-    tdCategory.setAttribute('colspan', '1');
-    let categorySelect = createSelect(this.CATEGORY, MSG.CATEGORY, tdCategory);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      categorySelect.readonly = 'true';
-    }
-    tr3.appendChild(tdCategory);
-    getCategories({domain: localStorage.getItem('aon_domain_id')}).then( categories => {
-      categorySelect.setOptions(categories.map(c => {
-        return {
-          value: c.id,
-          name: c.name
-        }
-      }));
-      if(this.document.category)
-        categorySelect.value = this.document.category.id;
-      categorySelect.addEventListener(EVENT.SELECT, () => this.updateCategory(categorySelect.value));
-    });
-
-    // SCOPE
-    let tdScope = this.createElement(TAG.TD);
-    tdScope.setAttribute('colspan', '1');
-    let scopeSelect =  createSelect(this.SCOPE, MSG.SCOPE, tdScope);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      scopeSelect.readonly = 'true';
-    }
-    tr3.appendChild(tdScope);
-    getScopes().then( scopes => {
-      scopeSelect.setOptions(scopes.map(s => {
-        return {
-          value: s.id,
-          name: s.name
-        }
-      }));
-
-      if(this.document.scope)
-        scopeSelect.value = this.document.scope.id;
-      scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
-    });
-
-    let tr4 = this.createElement(TAG.TR);
-    table.appendChild(tr4);
-
-    // TAG
-    let tdTag = this.createElement(TAG.TD);
-    tdTag.setAttribute('colspan', '1');
-
-    let tagSelect = createSelect(this.TAG, MSG.TAG, tdTag);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      tagSelect.readonly = 'true';
-    }
-    tr4.appendChild(tdTag);
-    tagSelect.addEventListener(EVENT.SELECT, (event) => {
-      this.addTag(event.detail);
-      this.setTagsAvaible();
-      tagSelect.clear();
-    });
-
-    let tdType = this.createElement(TAG.TD);
-    tdType.setAttribute('colspan', '1');
-
-    let typeSelect = createSelect(this.TYPE, MSG.TYPE, tdType);
-    if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-      typeSelect.readonly = 'true';
-    }
-    let typeOptions = EMPLOYEE_TYPE_OPTION;
-    if(this.getDur().isDocumentalManager()) {
-      typeOptions = ASESOR_TYPE_OPTION;
-    } else if(this.getDur().isDocumentalPortal()){
-      typeOptions = ENTERPRISE_TYPE_OPTION;
-    }
-    typeSelect.setOptions(typeOptions);
-    tr4.appendChild(tdType);
-    typeSelect.value = this.document.type;
-    typeSelect.addEventListener(EVENT.SELECT, () => this.updateType(typeSelect.value));
-
-    let tr5 = this.createElement(TAG.TR);
-    table.appendChild(tr5);
-
-
-    let containerTags = this.createElement(TAG.DIV);
-    containerTags.style.display = "flex";
-    containerTags.style.flexWrap = "wrap";
-    containerTags.id = "containerTags";
-    card.setContent(containerTags);
-    this.document.tags.forEach((item) => {
-      this.addTag(item);
-    });
-    //set tags avaibles
-    this.setTagsAvaible();
+    // Nombre
+      let tr2 = this.createElement(TAG.TR);
+      table.appendChild(tr2);
+      let tdName = this.createElement(TAG.TD);
+      tdName.setAttribute('colspan', '2');
+      tr2.appendChild(tdName);
+      let name = createInput(this.NAME, MSG.NAME, tdName);
+      
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        name.readonly = 'true';
+      }
+      name.setValue(this.document.name);
+      name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
   }
 
   addTag(tag){
@@ -277,25 +345,26 @@ export class AonDocument extends AonElement {
     }
   }
 
-
   buildDocumentToolbar() {
     // let aonDocumental = this.getApplication();
     let documentToolbar = this.getElement(this.TOOLBAR);
     documentToolbar.removeButtons();
     if(!this.isMobile()){
-      documentToolbar.addButton2(ACTION.NEXT, () => this.next());
-      documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
-
       documentToolbar.addSeparator();
-      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+      if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
+        // Solo si no eres empleado o empresa, entiendo que es este permiso
+        documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+        documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
+      } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
+        documentToolbar.addButton2(ACTION.NEXT, () => this.next());
+        documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
+        documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
-      //  documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
-      documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
+      documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
     }
     documentToolbar.addButton2(ACTION.BACK, () => this.back());
   }
-
 
   back() {
     let aonDocumental = this.getApplication();
@@ -312,15 +381,38 @@ export class AonDocument extends AonElement {
 
   send() {
     let aonDocumental = this.getApplication();
-		let d = document.getElementById(aonDocumental.DIALOG);
-		d.clear();
-		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.SEND_FILE);
-		d.setContentHTML(MSG.IN_DEVELOPMENT);
-		d.addAcceptAction(() => {});
-		d.open();
+    let d = document.getElementById(aonDocumental.DIALOG);
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.SEND_FILE);
+    d.setContentHTML(MSG.IN_DEVELOPMENT);
+    d.addAcceptAction(() => {});
+    d.open();
   }
 
+  
+  removeS3() {
+    let aonDocumental = this.getApplication();
+    let d = document.getElementById(aonDocumental.DIALOG);
+    d.clear();
+    if(!this.isMobile()) d.width = '400px';
+    d.setTitle(MSG.DELETE_FILE);
+    d.setContentHTML(`Estás seguro de eliminar el Fichero ${this.document.name}`);
+    d.addAcceptAction(() => {
+      let data = {
+        data: [
+          {
+            id: this.document.id,
+            type: this.document.type
+          }
+        ]
+      };      
+      deleteS3Document(data).then(() => {
+        this.back();
+      });
+    });
+    d.open();
+  }
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
@@ -341,9 +433,29 @@ export class AonDocument extends AonElement {
   }
 
   download() {
-    openFileUrl(this.document.file.url);
+    if(this.isBetaDoc()){
+      openFileUrl(this.docS3);
+    } else {
+      openFileUrl(this.document.file.url);
+    }
   }
 
+  async downloadS3() {
+    let data = [
+      {
+        id: this.document.id,
+        type: this.document.type
+      }
+    ];    
+    let json = JSON.stringify(data);
+		let i = await downloadS3Documents(encodeURI(json));
+		const url = URL.createObjectURL(i);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'documento.zip';
+		a.click();
+		URL.revokeObjectURL(url);
+  }
   updateCategory(category) {
     if(!this.doc.category)
       this.doc.category = {};
@@ -369,21 +481,35 @@ export class AonDocument extends AonElement {
   }
 
   updateName(name) {
-    this.doc.title = name;
+    if(this.isBetaDoc()){ 
+      this.doc.name = name;
+    } else {
+      this.doc.title = name;
+    }
+
+    this.save();
+  }
+  
+  updateDate(newDate){
+    this.doc.date = newDate;
     this.save();
   }
 
   save() {
-    let d = {
-      id: this.doc.id,
-      name: this.doc.title,
-      confidential: this.doc.confidential,
-      category: this.doc.category ? this.doc.category.id : undefined,
-      scope: this.doc.scope ? this.doc.scope.id : undefined,
-      type: this.doc.type,
-      tags: this._tags.map(t => t.id || t.value)
+    if(this.isBetaDoc()){
+      putS3DocumentUpdate(this.doc);
+    } else {
+      let d = {
+        id          : this.doc.id,
+        name        : this.doc.title,
+        confidential: this.doc.confidential,
+        category    : this.doc.category ? this.doc.category.id : undefined,
+        scope       : this.doc.scope ? this.doc.scope.id : undefined,
+        type        : this.doc.type,
+        tags        : this._tags.map(t => t.id || t.value)
+      };
+      updateFile(d);
     }
-    updateFile(d);
   }
 
 }

@@ -200,6 +200,9 @@ export class AonSearch extends AonElement {
 
 	openOrClose(){
 		let divOpts = this.getElement(this.OPTIONS);
+		console.log('divOpts en openOrClose' , divOpts);
+	    console.log('divOpts.innerHTML',divOpts.innerHTML);
+		console.log('divOpts.innerHTML.length',divOpts.innerHTML.length );
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
@@ -218,6 +221,7 @@ export class AonSearch extends AonElement {
 	openSearch(){
 		let span = this.getElement(this.SPAN);
 		let advancedButton = this.getElement(this.ADVANCED_BUTTON);
+		console.log('advancedButton ? ' , advancedButton);
 		let input = this.getElement(this.SEARCH_INPUT);
 		if(span && advancedButton && input){
 			if(this.isMobile()) {
@@ -299,6 +303,7 @@ export class AonSearch extends AonElement {
 	}]
 	*/
 	buildOptionsFilter(inputs){
+		console.log('inputs', inputs);
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
 

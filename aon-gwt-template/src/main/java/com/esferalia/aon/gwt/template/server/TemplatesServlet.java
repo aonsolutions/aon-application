@@ -208,7 +208,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	//-------------------- IMPORTAR
 	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<>();
 	HashMap<String, List<InvoiceImportClass>> ivs = new HashMap<>();
-	HashMap<String, LinkedList<RegistryImportClass>> rvs = new HashMap<>();
+	HashMap<String, List<RegistryImportClass>> rvs = new HashMap<>();
 	HashMap<String, LinkedList<AccountEntryImportClass>> dvs = new HashMap<>();
 	HashMap<String, LinkedList<AccountImportClass>> accounts = new HashMap<>();
 	HashMap<String, DeliveryInfo> di;
@@ -226,7 +226,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return ServalInvoiceImport.getInstance().importation(fileData);
 	}
 	
-	public LinkedList<RegistryImportClass> executeRegistry(Domain domain , User user, String data) {
+	public List<RegistryImportClass> executeRegistry(Domain domain , User user, String data) {
 		byte[] fileData = java.util.Base64.getDecoder().decode(data);
 		saveImportation(domain, user, ImportType.REGISTRY, fileData);
 		return RegistryImport.getInstance().importation(domain, user.getLogin(), fileData);

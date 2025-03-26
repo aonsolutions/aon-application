@@ -3,12 +3,7 @@ package com.esferalia.aon.in.payroll.excel.contract;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
@@ -17,274 +12,185 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<AnualDaysEntryExcel> {
 	
-	private List<WorkplaceMonthlyDaysEntryExcel> meses;
+	private XSSFCellStyle style = headerEvenMonthCellStyle;
+	private XSSFCellStyle styleCenter = headerEvenMonthCenterCellStyle;
+	
+	private boolean extended = false;
+	private boolean showTotals = false;
 	
 	public ContractDaysExcelAction() {
 		initializeEmpty();
 	}
 	
-	public void setCTMeses(List<WorkplaceMonthlyDaysEntryExcel> meses) {
-		this.meses = meses;
+	public void setExtended(boolean extended) {
+		this.extended = extended;
+	}
+	
+	public void setShowTotals(boolean showTotals) {
+		this.showTotals = showTotals;
 	}
     
 	public void headerRow(String workplaceName, String startDate, String endDate) {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
-
-		Font orientedHeaderFont= workbook.createFont();
-		orientedHeaderFont.setColor( IndexedColors.WHITE.index );
-
-		XSSFCellStyle orientedHeaderCellStyle = (XSSFCellStyle) workbook.createCellStyle();
-		orientedHeaderCellStyle.setAlignment( HorizontalAlignment.CENTER );
-		orientedHeaderCellStyle.setBorderBottom(BorderStyle.MEDIUM);
-		orientedHeaderCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);  
-		orientedHeaderCellStyle.setFillForegroundColor(AON_BLUE);
-		orientedHeaderCellStyle.setRotation( (short) 90 );
-		orientedHeaderCellStyle.setFont(orientedHeaderFont);
-
-		for (int i = 0 ; i < row.getLastCellNum(); i ++) {
+		
+		for (int i = 0 ; i < row.getLastCellNum(); i ++)
 			sheet.autoSizeColumn(i);
-		}
 		
-		// Nombre Completo
-		CellUtil.createCell(row, cellCount, "", headerSecondaryCellStyle);
+		// Trabajador
+		CellUtil.createCell(row, cellCount, "", infoCellStyle);
 		sheet.setColumnWidth(cellCount++, 40*256);
 		
-		// Docuemnto
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
+		blankRow();
 		
-		// NAF
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
+        row = sheet.createRow(rowCount++);
+		cellCount = 0;
 		
-		// Start
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
+		// Trabajador
+		CellUtil.createCell(row, cellCount, "Contratos activos en el CT " + workplaceName, infoCellStyle);
+		sheet.setColumnWidth(cellCount++, 40*256);
 		
-		// End
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// Accumulate
-		if(meses.size() > 1) {
-			CellUtil.createCell(row, cellCount, "Acumulado Periodo", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		cellCount++;
-    		cellCount++;
-    		cellCount++;
-    		
-    		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 4, cellCount));
-    		cellCount++;
-    		cellCount++;
-		}
-		
-		// Procesar automáticamente los 12 meses del annio
-		
-		XSSFCellStyle headerMonth = null;
-		
-		for(WorkplaceMonthlyDaysEntryExcel mes : meses) {
-			String monthName = obtenerNombreMes(mes.getMes()) + " " + mes.getYear();
-        	
-			headerMonth = null == headerMonth || headerMonth == headerOddMonthCellStyle ? headerEvenMonthCellStyle : headerOddMonthCellStyle;
-			
-    		CellUtil.createCell(row, cellCount, monthName, headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		cellCount++;
-    		cellCount++;
-    		cellCount++;
-    		
-    		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), cellCount - 4, cellCount));
-    		cellCount++;
-    		cellCount++;
-		}
+		blankRow();
         
         row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		
-		// Nombre Completo
-		CellUtil.createCell(row, cellCount, "Contratos activos en el CT " + workplaceName, headerSecondaryCellStyle);
+		// Trabajador
+		CellUtil.createCell(row, cellCount, "Periodo (" + startDate + " al " + endDate + ")", infoCellStyle);
 		sheet.setColumnWidth(cellCount++, 40*256);
 		
-		// Docuemnto
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// NAF
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// Start
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// End
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// Accumulate
-		if(meses.size() > 1) {
-			CellUtil.createCell(row, cellCount, "DM", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "FS", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DF", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DL", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "Hrs. JC", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		cellCount++;
-		}
-		
-		// Procesar automáticamente los 12 meses del annio
-		this.meses.forEach(mes -> {
-			CellUtil.createCell(row, cellCount, "DM", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "FS", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DF", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DL", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "Hrs. JC", headerSecondaryCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		cellCount++;
-		});
-        
-        row = sheet.createRow(rowCount++);
-		cellCount = 0;
-		
-		// Nombre Completo
-		CellUtil.createCell(row, cellCount, "Periodo (" + startDate + " al " + endDate + ")", headerSecondaryCellStyle);
-		sheet.setColumnWidth(cellCount++, 40*256);
-		
-		// Docuemnto
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// NAF
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// Start
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// End
-		CellUtil.createCell(row, cellCount, "");
-		sheet.setColumnWidth(cellCount++, 15*256);
-		
-		// Accumulate
-		if(meses.size() > 1) {
-			addCell( meses.stream().mapToInt(mes -> mes.getDiasMes()).sum() );
-			addCell( meses.stream().mapToInt(mes -> mes.getDiasFestivos()).sum() );
-			addCell( meses.stream().mapToInt(mes -> mes.getDiasFinDeSemana()).sum() );
-			addCell( meses.stream().mapToInt(mes -> mes.getDiasLaborables()).sum() );
-			addCell( meses.stream().mapToInt(mes -> mes.getHorasJornada()).sum() );
-    		
-    		cellCount++;
-		}
-		
-		// Procesar automáticamente los 12 meses del annio
-		this.meses.forEach(workplaceMonthlyDaysEntryExcel -> {
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasMes());
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasFestivos());
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasFinDeSemana());
-        	addCell(workplaceMonthlyDaysEntryExcel.getDiasLaborables());
-        	addCell(workplaceMonthlyDaysEntryExcel.getHorasJornada());
-        	
-        	cellCount++;
-        });
+		blankRow();
 		
         row = sheet.createRow(rowCount++);
         cellCount = 0;
         
-        // Nombre Completo
-        CellUtil.createCell(row, cellCount, "", headerSecondaryCellStyle);
+        // Trabajador
+        CellUtil.createCell(row, cellCount, "", infoCellStyle);
 		sheet.setColumnWidth(cellCount++, 40*256);
+		
+		blankRow();
         
         row = sheet.createRow(rowCount++);
+        row.setHeightInPoints(15);
 		cellCount = 0;
 		
-		// Nombre Completo
-		CellUtil.createCell(row, cellCount, "Trabajador", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 40*256);
+		// Trabajador
+		CellUtil.createCell(row, cellCount++, "Trabajador", headerCellStyle);
 		
 		// Docuemnto
-		CellUtil.createCell(row, cellCount, "Documento", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 15*256);
+		CellUtil.createCell(row, cellCount++, "Documento", headerCellStyle);
 		
 		// NAF
-		CellUtil.createCell(row, cellCount, "NAF", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 15*256);
+		CellUtil.createCell(row, cellCount++, "NAF", headerCellStyle);
+		
+		// Periodo
+		CellUtil.createCell(row, cellCount++, "", headerCellStyle);
+		
+		// DV
+		CellUtil.createCell(row, cellCount++, "DV", headerCellStyle);
+		
+		// IT
+		CellUtil.createCell(row, cellCount++, "IT", headerCellStyle);
+		
+		// NR
+		CellUtil.createCell(row, cellCount++, "NR", headerCellStyle);
+		
+		// DA
+		CellUtil.createCell(row, cellCount++, "DA", headerCellStyle);
+	
+		// DT
+		CellUtil.createCell(row, cellCount++, "DT", headerCellStyle);
+		
+		// Total
+		CellUtil.createCell(row, cellCount++, "Total", headerCellStyle);
 		
 		// Start
-		CellUtil.createCell(row, cellCount, "F. Inicio", headerCellStyle);
-		sheet.setColumnWidth(cellCount++, 15*256);
+		CellUtil.createCell(row, cellCount++, "F. Inicio", headerCellStyle);
 		
 		// End
-		CellUtil.createCell(row, cellCount, "F. Fin", headerCellStyle);
+		CellUtil.createCell(row, cellCount++, "F. Fin", headerCellStyle);
+		
+		// TC2
+		CellUtil.createCell(row, cellCount++, "TC2", headerCellStyle);
+		
+		// Parcialidad
+		CellUtil.createCell(row, cellCount++, "Parc.", headerCellStyle);
+		
+		// Sexo
+		CellUtil.createCell(row, cellCount++, "Sexo", headerCellStyle);
+		
+		// Nivel Retributivo
+		CellUtil.createCell(row, cellCount++, "Nivel Retributivo", headerCellStyle);
+		
+		// P. Trabajo
+		CellUtil.createCell(row, cellCount++, "Puesto Trabajo", headerCellStyle);
+		
+	}
+	
+	private void blankRow() {
+		// Docuemnto
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 12*256);
+		
+		// NAF
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
 		sheet.setColumnWidth(cellCount++, 15*256);
-			
-		// Accumulate
-		if(meses.size() > 1) {
-			CellUtil.createCell(row, cellCount, "DV", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "IT", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "NR", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DA", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DT", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "Total", headerCellStyle);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-		}
 		
-		// Procesar automáticamente los 12 meses del annio
-		headerMonth = null;
+		// Periodo
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 12*256);
 		
-		for (int i = 0; i < meses.size(); i++) {
-			headerMonth = null == headerMonth || headerMonth == headerOddMonthCellStyle ? headerEvenMonthCellStyle : headerOddMonthCellStyle;
-			
-        	CellUtil.createCell(row, cellCount, "DV", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "IT", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "NR", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DA", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "DT", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-    		
-    		CellUtil.createCell(row, cellCount, "Total", headerMonth);
-    		sheet.setColumnWidth(cellCount++, 10*256);
-		}
+		// DV
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
 		
+		// IT
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+		
+		// NR
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+		
+		// DA
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+	
+		// DT
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+		
+		// Total
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 10*256);
+		
+		// Start
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 12*256);
+		
+		// End
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 12*256);
+		
+		// TC2
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+		
+		// Parcialidad
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 8*256);
+		
+		// Sexo
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 7*256);
+		
+		// Nivel Retributivo
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 30*256);
+		
+		// P. Trabajo
+		CellUtil.createCell(row, cellCount, "", blankCellStyle);
+		sheet.setColumnWidth(cellCount++, 30*256);
 	}
 	
 	private MonthlyDaysEntryExcel getMes(List<MonthlyDaysEntryExcel> meses, String mes) {
@@ -293,66 +199,160 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 
 	@Override
 	public void accept(AnualDaysEntryExcel entry) {
-		row = sheet.createRow(rowCount++);
-		cellCount = 0;
+		style = style == headerEvenMonthCellStyle ? headerOddMonthCellStyle : headerEvenMonthCellStyle;
+		styleCenter = styleCenter == headerEvenMonthCenterCellStyle ? headerOddMonthCenterCellStyle : headerEvenMonthCenterCellStyle;
 		
-		addCell( entry.getFullName() ) ;
-		alignCenter( addCell( entry.getDocument() ) );
-		alignCenter( addCell( entry.getNaf() ) );
-		alignCenter( addCell( entry.getStartDate() ) );
-		alignCenter( addCell( entry.getEndDate() ) );
-		
-		// Accumulate
-		if(meses.size() > 1) {
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasVacaciones()).sum() );
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasIT()).sum() );
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasNoRecuperables()).sum() );
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasAusencia()).sum() );
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasTrabajados()).sum() );
-			addCell( entry.getMeses().stream().mapToInt(mes -> mes.getDiasTotal()).sum() );
+		if(this.extended) {
+			for(MonthlyDaysEntryExcel mes : entry.getMeses()){
+				row = sheet.createRow(rowCount++);
+				row.setHeightInPoints(15);
+				cellCount = 0;
+				
+				createCell( entry.getFullName() );
+				createCenterCell( entry.getDocument() );
+				createCenterCell( entry.getNaf() );
+				createCenterCell( obtenerNombreMes(mes.getMes()) + "/" + mes.getYear() );
+				
+				MonthlyDaysEntryExcel monthlyDaysEntryExcel = getMes(entry.getMeses(), mes.getMes());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasVacaciones())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasVacaciones());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasIT())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasIT());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasNoRecuperables())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasNoRecuperables());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasAusencia())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasAusencia());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasTrabajados())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasTrabajados());
+				
+				if (checkZeroValue(monthlyDaysEntryExcel.getDiasTotal())) createCenterCell("-");
+				else createCenterCell(monthlyDaysEntryExcel.getDiasTotal());
+				
+				createCenterCell( entry.getStartDate() );
+				createCenterCell( entry.getEndDate() );
+				
+				createCenterCell( entry.getContractType() );
+				createCenterCell( entry.getPartiality() + "%" );
+				createCenterCell( entry.getGender() );
+				createCell( entry.getAgreementLevel() );
+				createCell( entry.getAgreementCategory() );
+				
+			}
+		} else {
+			row = sheet.createRow(rowCount++);
+			row.setHeightInPoints(15);
+			cellCount = 0;
+			
+			createCell( entry.getFullName() );
+			createCenterCell( entry.getDocument() );
+			createCenterCell( entry.getNaf() );
+			createCenterCell( "Acumulado" );
+			
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasVacaciones()).sum());
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasIT()).sum());
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasNoRecuperables()).sum());
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasAusencia()).sum());
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasTrabajados()).sum() );
+			createCenterCell(entry.getMeses().stream().mapToInt(mes -> mes.getDiasTotal()).sum());
+			
+			createCenterCell( entry.getStartDate() );
+			createCenterCell( entry.getEndDate() );
+			
+			createCenterCell( entry.getContractType() );
+			createCenterCell( entry.getPartiality() + "%" );
+			createCenterCell( entry.getGender() );
+			createCell( entry.getAgreementLevel() );
+			createCell( entry.getAgreementCategory() );
 		}
 		
-		this.meses.forEach(mes -> {
-			MonthlyDaysEntryExcel monthlyDaysEntryExcel = getMes(entry.getMeses(), obtenerNombreMes(mes.getMes()));
-
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasVacaciones())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasVacaciones());
+		
+		if(this.showTotals) {
+			row = sheet.createRow(rowCount++);
+			row.setHeightInPoints(15);
+			cellCount = 0;
 			
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasIT())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasIT());
+			createCellTotals( entry.getFullName() );
+			createCenterCellTotals( entry.getDocument() );
+			createCenterCellTotals( entry.getNaf() );
+			createCenterCellTotals( "Acumulado" );
 			
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasNoRecuperables())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasNoRecuperables());
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasVacaciones()).sum());
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasIT()).sum());
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasNoRecuperables()).sum());
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasAusencia()).sum());
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasTrabajados()).sum() );
+			createCenterCellTotals(entry.getMeses().stream().mapToInt(mes -> mes.getDiasTotal()).sum());
 			
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasAusencia())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasAusencia());
+			createCenterCellTotals( entry.getStartDate() );
+			createCenterCellTotals( entry.getEndDate() );
 			
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasTrabajados())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasTrabajados());
-			
-			if (checkZeroValue(monthlyDaysEntryExcel.getDiasTotal())) alignCenter(addCell("-"));
-			else addCell(monthlyDaysEntryExcel.getDiasTotal());
-		});
+			createCenterCellTotals( entry.getContractType() );
+			createCenterCellTotals( entry.getPartiality() + "%" );
+			createCenterCellTotals( entry.getGender() );
+			createCellTotals( entry.getAgreementLevel() );
+			createCellTotals( entry.getAgreementCategory() );
+		}
+	}
+	
+	private Cell createCell(String value) {
+		Cell cell = addCell( value );
+		cell.setCellStyle(style);
+		return cell;
+	}
+	
+	private Cell createCenterCell(String value) {
+		Cell cell = addCell( value );
+		cell.setCellStyle(styleCenter);
+		return cell;
+	}
+	
+	private Cell createCenterCell(Integer value) {
+		Cell cell = addCell( value.toString() );
+		cell.setCellStyle(styleCenter);
+		return cell;
+	}
+	
+	private Cell createCellTotals(String value) {
+		Cell cell = addCell( value );
+		cell.setCellStyle(totalStyle);
+		return cell;
+	}
+	
+	private Cell createCenterCellTotals(String value) {
+		Cell cell = addCell( value );
+		cell.setCellStyle(totalCenterStyle);
+		return cell;
+	}
+	
+	private Cell createCenterCellTotals(Integer value) {
+		Cell cell = addCell( value.toString() );
+		cell.setCellStyle(totalCenterStyle);
+		return cell;
 	}
 	
 	private boolean checkZeroValue(int value) {
 		return 0 == value;
 	}
 
-    private static String obtenerNombreMes(int mes) {
+    private static String obtenerNombreMes(String mes) {
         return switch (mes) {
-            case 1 -> "Enero";
-            case 2 -> "Febrero";
-            case 3 -> "Marzo";
-            case 4 -> "Abril";
-            case 5 -> "Mayo";
-            case 6 -> "Junio";
-            case 7 -> "Julio";
-            case 8 -> "Agosto";
-            case 9 -> "Septiembre";
-            case 10 -> "Octubre";
-            case 11 -> "Noviembre";
-            case 12 -> "Diciembre";
+            case "Enero" -> "Ene.";
+            case "Febrero" -> "Feb.";
+            case "Marzo" -> "Mar.";
+            case "Abril" -> "Abr.";
+            case "Mayo" -> "May.";
+            case "Junio" -> "Jun.";
+            case "Julio" -> "Jul.";
+            case "Agosto" -> "Ago.";
+            case "Septiembre" -> "Sep.";
+            case "Octubre" -> "Oct.";
+            case "Noviembre" -> "Nov.";
+            case "Diciembre" -> "Dic.";
             default -> "INV";
         };
     }

@@ -70,6 +70,13 @@ public class AonNumberUtils {
 		return 0;
 	}
 
+	public static Byte toNullableByte(Integer i) {
+		if (i != null) {
+			return i.byteValue();
+		}
+		return null;
+	}
+
 	public static Integer toInteger(Number number) {
 		if (number == null) return null; 
 		return Integer.valueOf( number.intValue() );

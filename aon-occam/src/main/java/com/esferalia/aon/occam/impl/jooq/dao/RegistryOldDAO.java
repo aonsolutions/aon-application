@@ -39,6 +39,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
+import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
 import com.esferalia.aon.jooq.tables.records.SegmentRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -238,7 +239,9 @@ public class RegistryOldDAO {
 	public static Stream<Category> getCategoryStream(AONContext ctx, CategoryFilter filter){
 		return ctx.getDslContext()
 				.select().from(CATEGORY)
+				.leftJoin(CategoryTree.CATEGORY_TREE).on(CategoryTree.CATEGORY_TREE.ID_CATEGORY.eq(CATEGORY.ID))
 				.where(CATEGORY_PROPERTIES.getConditions(filter))
+				.and(CategoryTree.CATEGORY_TREE.IS_DELETABLE.isNull().or(CategoryTree.CATEGORY_TREE.IS_DELETABLE.eq((byte) 1)))
 				.fetchInto(CATEGORY).stream().map(new FullCategoryFiller());
 	}
 	
@@ -455,7 +458,7 @@ public class RegistryOldDAO {
 		return ctx.getDslContext().insertInto(REGISTRY)
 			.set(REGISTRY.DOMAIN, reg.getDomain().getId())
 			.set(REGISTRY.DOCUMENT,reg.getDocument())
-			.set(REGISTRY.DOCUMENT_TYPE,reg.getDocumentType()==null?null:reg.getDocumentType().value())
+			.set(REGISTRY.DOCUMENT_TYPE, DocumentType.value(reg.getDocumentType()))
 			.set(REGISTRY.DOCUMENT_COUNTRY,reg.getDocumentCountry()==null?null:reg.getDocumentCountry().getIso2())
 			.set(REGISTRY.NAME,reg.getName())
 			.set(REGISTRY.ALIAS,reg.getAlias())

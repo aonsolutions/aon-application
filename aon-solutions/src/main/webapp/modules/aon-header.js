@@ -1070,7 +1070,11 @@ export class AonHeader extends AonElement {
 		}
 		
 		let aonMenu = this.getElement('aonMenu');
-		aonMenu.init().then(() => aonMenu.open());
+		aonMenu.init().then(() => {
+			aonMenu.open();
+			this.loadCustomView(aonMenu.getDur().getCustomCss());
+		}
+		);
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
@@ -1078,6 +1082,47 @@ export class AonHeader extends AonElement {
 		});
 	}
 
+	loadCustomView(customCssUrl) {
+		return new Promise((resolve, reject) => {
+			try {
+				const aonThemeSpan = document.createElement(TAG.SPAN);
+				aonThemeSpan.className = 'aonTheme';
+				aonThemeSpan.style.display = 'none';
+				document.body.appendChild(aonThemeSpan);
+	
+				this.loadLink(customCssUrl, 'stylesheet', 'text/css');
+	
+				let tries = 0;
+				let interval = setInterval(() => {
+					const aonThemeStyle = getComputedStyle(aonThemeSpan);
+					const aonThemeProperty = aonThemeStyle.getPropertyValue('--aon-theme');
+					
+					if ((tries++ > 5) || aonThemeProperty) {
+						resolve();
+						aonThemeSpan.remove();
+						clearInterval(interval);
+					}
+				}, 200);
+	
+			} catch (err) {
+				reject(new Error(`Something went wrong with theme '${themeUrl}'`));
+			}
+		});
+	}
+
+	loadLink(url, rel, type){
+	new Promise((resolve, reject) => {
+		const link = document.createElement('link');
+		document.head.appendChild(link);
+		link.onload = resolve(link);
+		link.onerror = reject;
+		link.href = url;
+		link.rel = rel || "stylesheet";
+		link.type = type || "text/css";
+	});
+	}
+
+	
 	buildMenuLeftop() {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
 

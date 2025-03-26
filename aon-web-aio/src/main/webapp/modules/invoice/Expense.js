@@ -5,7 +5,7 @@ export class Expense {
   domain; 
   activity;
   date;
-  creditor;
+  //creditor;
   expAccount;
   concept;
   referenceCode;
@@ -19,6 +19,10 @@ export class Expense {
 
   constructor(expense) {
     this.buildObject(expense);
+    if(expense)
+      this.isNew = false;
+    else
+      this.isNew = true
   }
 
   buildObject(expense) {
@@ -26,7 +30,7 @@ export class Expense {
       this.domain = expense.domain || LS.getDomainId();
       this.activity = expense.activity;
       this.date = expense.date;
-      this.creditor = expense.creditor;
+      //this.creditor = expense.creditor;
       this.expAccount = expense.expAccount;
       this.concept = expense.concept;
       this.referenceCode = expense.referenceCode;
@@ -36,6 +40,9 @@ export class Expense {
       this.comments = expense.comments;
       this.accountEntry = expense.accountEntry;
       this.finance = expense.finance;
+    } else {
+      this.domain = LS.getDomainId();
+      this.date = new Date();
     }
     
   }
@@ -67,14 +74,14 @@ export class Expense {
     return this;
   }
 
-  getCreditor() {
-    return this.creditor;
-  }
+  // getCreditor() {
+  //   return this.creditor;
+  // }
 
-  setCreditor(creditor) {
-    this.creditor = creditor;
-    return this;
-  }
+  // setCreditor(creditor) {
+  //   this.creditor = creditor;
+  //   return this;
+  // }
 
   getExpAccount() {
     return this.expAccount;
@@ -155,6 +162,10 @@ export class Expense {
   setFinance(finance) {
     this.finance = finance;
     return this;
+  }
+
+  getNew() {
+    return this.isNew;
   }
 
 }

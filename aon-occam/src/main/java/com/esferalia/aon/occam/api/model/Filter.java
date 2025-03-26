@@ -488,6 +488,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface S3CategoryFilter{
+		Filter filter(S3CategoryProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface NewsFilter{
 		Filter filter(NewsProperties properties);
 	}
@@ -791,4 +796,8 @@ public interface Filter extends Serializable{
 		Filter filter(MarketingCampaignProperties properties);
 	}
 	
+	@FunctionalInterface
+	public interface S3DocumentFilter{
+		Filter filter(S3DocumentProperties properties);
+	}
 }

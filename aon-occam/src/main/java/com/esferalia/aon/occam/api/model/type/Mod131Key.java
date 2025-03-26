@@ -8,6 +8,7 @@ public enum Mod131Key implements IFiscalModelKey {
 	 P2  		("131-P2" )
 		// 	Actividad 1	
 	,AC1_EPI	("131-AC11")
+	,AC1_EP2	("131-AC1EP2") // Indicador auxiliar de actividad en el caso de epígrafes 659.4, 691.9 y 722
 	,AC1_EPD	("131-AC111")
 	,AC1_COM	("131-AC1COM")
 	,AC1_TEM	("131-AC1TEM")	
@@ -101,6 +102,7 @@ public enum Mod131Key implements IFiscalModelKey {
 	
 	// 	Actividad 2	
 	,AC2_EPI	("131-AC21")
+	,AC2_EP2	("131-AC2EP2") // Indicador auxiliar de actividad en el caso de epígrafes 659.4, 691.9 y 722
 	,AC2_EPD	("131-AC211")
 	,AC2_COM	("131-AC2COM")
 	,AC2_TEM	("131-AC2TEM")	
@@ -192,8 +194,10 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC2_DC3	("131-AC2DC3")
 	,AC2_D4		("131-AC2D4")
 	,AC2_DC4	("131-AC2DC4")
+	
 	// 	Actividad 3	
 	,AC3_EPI	("131-AC31")
+	,AC3_EP2	("131-AC3EP2") // Indicador auxiliar de actividad en el caso de epígrafes 659.4, 691.9 y 722
 	,AC3_EPD	("131-AC311")
 	,AC3_COM	("131-AC3COM")
 	,AC3_TEM	("131-AC3TEM")	
@@ -288,6 +292,7 @@ public enum Mod131Key implements IFiscalModelKey {
 
 	// 	Actividad 4	
 	,AC4_EPI	("131-AC41")
+	,AC4_EP2	("131-AC4EP2") // Indicador auxiliar de actividad en el caso de epígrafes 659.4, 691.9 y 722
 	,AC4_EPD	("131-AC411")
 	,AC4_COM	("131-AC4COM")
 	,AC4_TEM	("131-AC4TEM")	
@@ -379,8 +384,10 @@ public enum Mod131Key implements IFiscalModelKey {
 	,AC4_DC3	("131-AC4DC3")
 	,AC4_D4		("131-AC4D4")
 	,AC4_DC4	("131-AC4DC4")
+
 	// 	Actividad 5	
 	,AC5_EPI	("131-AC51")
+	,AC5_EP2	("131-AC5EP2") // Indicador auxiliar de actividad en el caso de epígrafes 659.4, 691.9 y 722
 	,AC5_EPD	("131-AC511")
 	,AC5_COM	("131-AC5COM")
 	,AC5_TEM	("131-AC5TEM")	

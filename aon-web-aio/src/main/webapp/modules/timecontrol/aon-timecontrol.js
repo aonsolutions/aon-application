@@ -14,11 +14,11 @@ import { AonApplication } from "../../components/aon-application.js";
 import { MSG,TAG,CSS } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
 import * as LS from '../../services/localStorageService.js';
+import * as OPTIONS from './TimecontrolOptions.js';
 import 'aoncss';
 import { AonSign } from "./aon-sign.js";
 import { AonStatistics } from "./time-control/statistics/aon-statistics.js";
 import { getPosition } from "../../services/maps.js";
-import { AonApps } from "../aon-apps.js";
 
 export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
@@ -83,28 +83,11 @@ export class AonTimecontrol extends AonElement {
     if(this.isMobile()){
       this.applicationEl.addMobileSidenavHeader(Apps.TIMECONTROL);
     }
-    const options = [
-      {
-        ...SigninSidenav.PRESENCE,
-        fn: () => this.showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
-      },
-      {
-        ...SigninSidenav.LOCATION,
-        fn: () =>this.showView(SIGNIN_VIEWS.AON_LOCATION_LIST)
-      }
-    ];
 
-    if( this.isEmployee()) {
-      delete options[1];
-    } 
-
-    let data = {
-			id: MSG.TIMECONTROL,
-			title: MSG.TIMECONTROL,
-      name: MSG.TIMECONTROL,
-  		app: Apps.TIMECONTROL,
-      options
-		}
+    let data = OPTIONS.TIMECONTROL;
+    if(this.isEmployee()) data.options = [OPTIONS.PRESENCE];
+    else if(!this.isBeta()) data.options = [OPTIONS.PRESENCE, OPTIONS.LOCATION];
+     
     this.applicationEl.addSidenavOptions3(data);
 
     const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;

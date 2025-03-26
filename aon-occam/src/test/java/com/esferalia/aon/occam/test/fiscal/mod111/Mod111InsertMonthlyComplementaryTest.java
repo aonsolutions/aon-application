@@ -34,14 +34,23 @@ public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 	public void mod111InsertMonthlyComplementary(Date date) {
 		System.out.println( "\t ---------------------");
 		
+		Mod111 sbizkaia = simulateModel( Administration.BIZKAIA,date);
+		Mod111 sgipuzkoa = simulateModel( Administration.GIPUZKOA,date);
+		Mod111 snavarra = simulateModel( Administration.NAVARRA,date);
+
 		Mod111 araba = insertModel( Administration.ALAVA,date);
 		Mod111 bizkaia = insertModel( Administration.BIZKAIA,date);
 		Mod111 gipuzkoa = insertModel( Administration.GIPUZKOA,date);
 		Mod111 navarra = insertModel( Administration.NAVARRA,date);
 		
-		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), gipuzkoa.getDeclarationResult());
-		Asserts.assertEqualsDouble("Bizkaia" + bizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), bizkaia.getDeclarationResult());
-		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), navarra.getDeclarationResult());
+		Asserts.assertEqualsDouble("Gipuzkoa " + sgipuzkoa.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), sgipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Bizkaia" + sbizkaia.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), sbizkaia.getDeclarationResult());
+		Asserts.assertEqualsDouble("Navarra " + snavarra.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), snavarra.getDeclarationResult());
+		
+		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + "debe ser cero", 0.0, bizkaia.getDeclarationResult());
+		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + "debe ser cero", 0.0, gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + "debe ser cero", 0.0, navarra.getDeclarationResult());
+		
 	}
 	
 	private Mod111 insertModel( Administration admon, Date date) {
@@ -58,5 +67,19 @@ public class Mod111InsertMonthlyComplementaryTest extends AbstractOccamTest {
 		Asserts.assertMod111(mod111, actual);
 		FiscalTestSuite.printModel(actual);
 		return actual;
+	}
+
+	private Mod111 simulateModel( Administration admon, Date date) {
+		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
+			.setIssueDate(date)
+			.setMonthly(true)
+			.setAdministration(admon)
+			.setComplementary(true)
+			.setGenerateFromYearStart(true)
+			;
+		Mod111 mod111 = FiscalFaker.simulateMod111(params);
+		mod111 = MODEL111.calculate(getOccam(), mod111);
+		FiscalTestSuite.printModel(mod111, true);
+		return mod111;
 	}
 }

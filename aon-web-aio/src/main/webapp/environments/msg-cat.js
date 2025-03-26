@@ -123,6 +123,7 @@ export const CUSTOMERS = 'Clients';
 // ----- D
 
 export const DATE = 'Data';
+export const DATE_CREATION = 'Data de creació';
 export const DARK = 'Fosc';
 export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Esborrar';
@@ -266,6 +267,7 @@ export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
 export const LOADING = 'Carregant';
 export const LOCATION = 'Ubicació';
+export const LOCATIONS = 'Ubicacions';
 export const LOGIN = 'Inici de sessió';
 export const LOGIN_SUBTITLE = 'Introduïu les vostres credencials';
 

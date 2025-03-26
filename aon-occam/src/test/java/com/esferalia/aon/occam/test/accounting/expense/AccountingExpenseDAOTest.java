@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.test.accounting.expense;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -11,12 +12,16 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
+import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
+import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -29,6 +34,7 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingExpenseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -91,23 +97,24 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertEquals(expense.getDate(), ae.getEntryDate());
 		assertTrue(AonCollectionUtils.isNotEmpty(ae.getDetails()));
 		
-		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
+		assertEquals(4, AonCollectionUtils.size(ae.getDetails()));
+		
 		AccountEntryDetail expDetail = ae.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		AccountEntryDetail custExpDetail = ae.getDetails().get(1);
+		AccountEntryDetail custBankDetail = ae.getDetails().get(2);
+		AccountEntryDetail bankDetail = ae.getDetails().get(3);
+		
+		assertEquals(expDetail.getCredit(), custExpDetail.getDebit(), DELTA);
+		assertEquals(custBankDetail.getCredit(), custExpDetail.getDebit(), DELTA);
+		
 		assertEquals(expDetail.getConcept(), expense.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), expense.getReferenceCode());
-		
-		
-		AccountEntryDetail bankDetail = ae.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
-
-		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
-		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
-		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
+		assertEquals(custExpDetail.getConcept(), expense.getConcept());
+		assertEquals(custExpDetail.getDocumentNumber(), expense.getReferenceCode());
+		assertEquals(custBankDetail.getConcept(), expense.getConcept());
+		assertEquals(custBankDetail.getDocumentNumber(), expense.getReferenceCode());
+		assertEquals(bankDetail.getConcept(), expense.getConcept());
+		assertEquals(bankDetail.getDocumentNumber(), expense.getReferenceCode());
 		
 		Creditor creditor = expense.getCreditor()
 			.orElseThrow( () -> new AonCoreException("Sin acreedor"));
@@ -115,7 +122,7 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertTrue(expense.getFinance().isPresent());
 		Finance finance = expense.getFinance().get();
 		assertNotNull(finance.getId());
-		assertTrue( finance.isPayment() );
+		assertFalse( finance.isPayment() );
 		assertTrue(finance.hasRegistry());
 		assertEquals( finance.getRegistry().getId(), creditor.getId() );
 		assertEquals( finance.getDueDate(), expense.getDate() );
@@ -129,6 +136,11 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertEquals( ft.getTrackingDate(), expense.getDate() );
 		assertTrue( ft.isRecorded() );
 		assertEquals( ft.getAccountEntry(), ae.getId() );
+		expense.getAccountEntry().ifPresent( sae -> {
+			AccountingExpense saved = AccountingExpenseDAO.get(ctx, DOMAIN_ID, sae.getId(), null).orElse(null);
+			System.out.println( AccountingExpenseJSON.to(saved).map( j -> j.toString(2) ).orElse("NULL") );
+			
+		});
 		
 	}
 

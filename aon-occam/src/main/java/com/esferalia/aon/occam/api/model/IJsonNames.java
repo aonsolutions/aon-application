@@ -260,6 +260,7 @@ public final class IJsonNames {
 	public static final String FILE_NAME = "fileName";
 	public static final String FINANCE_PARAMS = "financeParams";
 	public static final String FINANCE_PENDING = "financePending";
+	public static final String FINANCE = "finance";
 	public static final String FINANCES = "finances";
 	public static final String FIX_TYPE = "fixType";
 	public static final String FK_COLUMN = "fkColumn";
@@ -386,6 +387,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
 	public static final String NATIONALITY = "nationality";
+	public static final String NATURE = "nature";
 	public static final String NEARBY_NUMBERS = "nearbyNumbers";
 	public static final String NIF = "nif";
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
@@ -672,6 +674,7 @@ public final class IJsonNames {
 	public static final String UNPAID_BALANCE = "unpaidBalance";
 	public static final String URL = "url";
 	public static final String USER = "user";
+	public static final String USERNAME = "username";
 	public static final String USERS = "users";
 	public static final String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 

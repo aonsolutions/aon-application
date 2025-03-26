@@ -942,17 +942,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			if (maternityBase != null)
 				cgcBase += maternityBase;
 			
-			evalVar(ctx, SALARY_HOURS);
-
-
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  FREE_BASES);
-			addVars(expressionContext, CGC_BASE_ENTERPRISE,  CGC_BASE);
-
-			salaryBuilder.setCgcBase(cgcBase);
-
 			Double rawCgpbase = quoteCalculator.getRawCgpBase();
-
 			Double cgpBase = rawCgpbase;
 			try {
 				cgpBase = quoteCalculator.getCgpBase();
@@ -968,6 +958,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE);
 			quoteCalculator.limit(CGP_BASE, expressionContext, start, end);
 			cgpBase = getValue(expressionContext, CGP_BASE);
+
+			evalVar(ctx, SALARY_HOURS);
+
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  FREE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  CGC_BASE);
+
+			salaryBuilder.setCgcBase(cgcBase);
 
 			if (ereBase != null)
 				cgpBase += ereBase;

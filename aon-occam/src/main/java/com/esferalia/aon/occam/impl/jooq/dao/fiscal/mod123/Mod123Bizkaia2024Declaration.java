@@ -16,8 +16,8 @@ public class Mod123Bizkaia2024Declaration extends Mod123Declaration {
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-
-		 BZ_C01(Mod123Key.BZ_C01
+		 CM_003(Mod123Key.CM_003,null,null,null,null,null)
+		,BZ_C01(Mod123Key.BZ_C01
 			, (mod,br) -> isMovableCapitalDividens(br)
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
 			,null,null,null)

@@ -4,7 +4,7 @@ import { AonCard } from '../components/aon-card.js';
 import { getManifest, getDomainUserRoles} from "../services/service.js";
 import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
-import { getParentCompany } from '../services/companyService.js';
+import { getCompany, getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import * as LS from '../services/localStorageService.js';
 export class AonHelp extends AonElement {
@@ -95,8 +95,9 @@ export class AonHelp extends AonElement {
 
 			let cardDiv = this.getElement(rightPanelAboutContactCard.CARD);
 			cardDiv.className = "aonCard rightPanelcardDiv";
-
+			
 			let divGeneral = this.createDiv();
+			divGeneral.appendChild(this.buildSupportData("AON SOLUTIONS S.L.", MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
 			divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
 			divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
 			divGeneral.appendChild(this.buildSupportData("comercial@aonSolutions.es", "Ventas y contratación", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_SALES_EMAIL));
@@ -110,18 +111,17 @@ export class AonHelp extends AonElement {
 			helpContent.appendChild(rightPanelAboutScheduleCard);
 
 			let cardDiv2 = this.getElement(rightPanelAboutScheduleCard.CARD);
-			cardDiv.className = "aonCard rightPanelCardDiv";
+			cardDiv2.className = "aonCard rightPanelCardDiv";
 
 			let divGeneral2 = this.createDiv();
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
 			rightPanelAboutScheduleCard.setContent(divGeneral2);
+
 		}else if(this.dur.getParentDomain() != null){
-			let domain = this.dur.getDomain();
 			let parentDomain = this.dur.getParentDomain();
 			let parentId = parentDomain.id;
 			let parentName = parentDomain.name;
-			console.log(domain);				
 			getParentCompany({parentId, parentName}).then(r =>{		
 				let name = r.name;
 				let phoneData = r.media.find(item => item.media === "fixed_phone");

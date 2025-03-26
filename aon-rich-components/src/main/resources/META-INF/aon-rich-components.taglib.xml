@@ -723,6 +723,12 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>ifNotDefined</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.jsf.ui.IfNotDefinedHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>insertMenuItems</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.richfaces.jsf.ui.InsertMenuItemsHandler

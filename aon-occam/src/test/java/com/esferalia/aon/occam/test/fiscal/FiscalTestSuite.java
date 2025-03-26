@@ -45,7 +45,12 @@ public class FiscalTestSuite {
 	private static NumberFormat FMT = DecimalFormat.getInstance();
 
 	public static <T extends IFiscalModel> String toString( T mod ) {
-		return AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
+		return toString( mod, false );
+	}
+
+	public static <T extends IFiscalModel> String toString( T mod , boolean simulated) {
+		String sim = simulated ? "(S) ":"";
+		return AonStringUtils.leftPad(sim + mod.getAdministration().getDescription(), 20)
 			+ " Modelo "
 			+ AonStringUtils.rightPad(mod.getModelFullName(), 30)
 			+ AonStringUtils.leftPad(FMT.format(AonNumberUtils.zeroIfNull(mod.getDeclarationResult())),25)
@@ -53,7 +58,10 @@ public class FiscalTestSuite {
 	}
 	
 	public static <T extends IFiscalModel> T printModel( T mod ) {
-		System.out.println( "\t" + toString(mod));
+		return printModel(mod, false ); 
+	}
+	public static <T extends IFiscalModel> T printModel( T mod , boolean simulated ) {
+		System.out.println( "\t" + toString(mod, simulated));
 		return mod; 
 	}
 

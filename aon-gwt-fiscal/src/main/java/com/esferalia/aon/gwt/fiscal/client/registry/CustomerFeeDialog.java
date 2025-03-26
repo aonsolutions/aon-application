@@ -1026,7 +1026,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private void acceptDialog() {
 		onAccept(
 			Optional.ofNullable(item),
-			Optional.ofNullable(AonNumberUtils.toDouble(priceTextBox.getValue())),
+			Optional.ofNullable(AonNumberUtils.toDouble( priceTextBox.getValue() )),
 			Optional.ofNullable(AonStringUtils.isBlank(discountTextBox.getValue()) ? null : discountTextBox.getValue()),
 			Optional.ofNullable(null == startDateBox.getValue() ? null : startDateBox.getValue()),
 			Optional.ofNullable(null == endDateBox.getValue() ? null : endDateBox.getValue()),
