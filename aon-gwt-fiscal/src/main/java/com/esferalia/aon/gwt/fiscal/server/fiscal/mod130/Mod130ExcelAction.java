@@ -68,7 +68,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 
 	@Override
 	protected void headerRow() {
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;

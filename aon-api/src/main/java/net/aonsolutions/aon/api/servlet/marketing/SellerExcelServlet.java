@@ -15,6 +15,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -75,7 +76,7 @@ public class SellerExcelServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
+	private XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207), new DefaultIndexedColorMap());
 	private int rowCount = 0;
 	private int cellCount = 0;
 	private Font headerFont;

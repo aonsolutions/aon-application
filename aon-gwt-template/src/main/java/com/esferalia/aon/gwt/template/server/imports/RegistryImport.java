@@ -121,7 +121,7 @@ public class RegistryImport extends Import {
 
 		if(IConstants.CUENTA.equalsIgnoreCase(title) || IConstants.CUENTA_CONTABLE.equalsIgnoreCase(title)) {
 			String acc = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			reg.getAccount().setCode(Utils.calculateAccount(acc));
@@ -191,7 +191,7 @@ public class RegistryImport extends Import {
 				|| IConstants.CODIGO_POSTAL.equalsIgnoreCase(title)
 				|| IConstants.CODIGO_POSTAL2.equalsIgnoreCase(title)) {
 			String zip = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				zip = Integer.toString(Utils.parseDouble(zip).intValue());
 			}
 			reg.getRegistry().getMainAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
@@ -263,7 +263,7 @@ public class RegistryImport extends Import {
 		if(IConstants.TELEFONO.equalsIgnoreCase(title) || IConstants.TELEFONO2.equalsIgnoreCase(title)
 				|| IConstants.MOVIL.equalsIgnoreCase(title) || IConstants.MOVIL2.equalsIgnoreCase(title)) {
 			String telephones = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				telephones = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			String[] phones = telephones.split(",");

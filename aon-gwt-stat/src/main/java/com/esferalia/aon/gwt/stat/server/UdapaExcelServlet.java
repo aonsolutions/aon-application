@@ -29,6 +29,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -119,7 +120,7 @@ public class UdapaExcelServlet extends HttpServlet {
 		private static final SimpleDateFormat YEAR_FORMATTER = new SimpleDateFormat("yyyy");
 		private static final String DECIMAL_PATTERN = "#,##0.00";
 		private static final String PERCENT_PATTERN = "##0.0000%";
-		private static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,0,0));
+		private static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,0,0), new DefaultIndexedColorMap());
 		
 		private Map<String, UdapaStatRow> map;
 		private StatParams params;
@@ -152,9 +153,9 @@ public class UdapaExcelServlet extends HttpServlet {
 		    sheet = (XSSFSheet) workbook.createSheet(name);
 		    dataFormat = workbook.getCreationHelper().createDataFormat();
 		    
-		    XSSFColor currentColor = new XSSFColor(new java.awt.Color(255, 255, 153));
-		    XSSFColor previousYearColor = new XSSFColor(new java.awt.Color(220, 220, 220));
-		    XSSFColor previousMonthColor = new XSSFColor(new java.awt.Color(204, 255, 204));
+		    XSSFColor currentColor = new XSSFColor(new java.awt.Color(255, 255, 153), new DefaultIndexedColorMap());
+		    XSSFColor previousYearColor = new XSSFColor(new java.awt.Color(220, 220, 220), new DefaultIndexedColorMap());
+		    XSSFColor previousMonthColor = new XSSFColor(new java.awt.Color(204, 255, 204), new DefaultIndexedColorMap());
 		    
 		    boldFont= workbook.createFont();
 			boldFont.setFontHeightInPoints((short) 9);

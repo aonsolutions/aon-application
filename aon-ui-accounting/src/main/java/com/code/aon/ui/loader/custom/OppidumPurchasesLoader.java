@@ -293,34 +293,34 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 	}
 
 	private String getStringCellValue(Cell cell) {
-		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==CellType.STRING){
 			return cell.getStringCellValue();
-		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
 			return String.valueOf(cell.getNumericCellValue());
 		}
 		return "";
 	}
 
 	private Double getNumericCellValue(Cell cell) {
-		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==CellType.STRING){
 			if(NumberUtils.isNumber(cell.getStringCellValue())){
 				return Double.parseDouble(cell.getStringCellValue());
 			}
-		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
 			return cell.getNumericCellValue();
 		}
 		return 0.0;
 	}
 
 	private Date getDateCellValue(Cell cell) {
-		if(cell!=null && cell.getCellTypeEnum()==CellType.STRING){
+		if(cell!=null && cell.getCellType()==CellType.STRING){
 			try {
 				return excelFormat.parse(cell.getStringCellValue());
 			} catch (ParseException e) {
 				LOGGER.error(e.getMessage());
 				throw new AbortProcessingException(e.getMessage());
 			}
-		} else if(cell!=null && cell.getCellTypeEnum()==CellType.NUMERIC){
+		} else if(cell!=null && cell.getCellType()==CellType.NUMERIC){
 			return cell.getDateCellValue();
 		}
 		return null;
@@ -353,7 +353,7 @@ public class OppidumPurchasesLoader implements Serializable, ICustomLoaderFactor
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-		catch (InvalidFormatException e) {
+		catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 

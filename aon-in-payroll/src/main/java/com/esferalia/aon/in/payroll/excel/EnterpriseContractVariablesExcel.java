@@ -416,13 +416,13 @@ public class EnterpriseContractVariablesExcel {
 				}
 				
 				if(row.getRowNum() > 3 && cell.getColumnIndex() == 3) {
-					contractId = cell.getCellTypeEnum().equals(CellType.STRING) ? Integer.parseInt(cell.getStringCellValue()) : (int) cell.getNumericCellValue();
+					contractId = cell.getCellType().equals(CellType.STRING) ? Integer.parseInt(cell.getStringCellValue()) : (int) cell.getNumericCellValue();
 				}
 				
 				if(row.getRowNum() > 3 && cell.getColumnIndex() > 3) {
 					
-					if(((cell.getCellTypeEnum().equals(CellType.STRING) && AonStringUtils.isNotBlank(cell.getStringCellValue())) || 
-					(cell.getCellTypeEnum().equals(CellType.NUMERIC) && 0 != cell.getNumericCellValue()))) {
+					if(((cell.getCellType().equals(CellType.STRING) && AonStringUtils.isNotBlank(cell.getStringCellValue())) || 
+					(cell.getCellType().equals(CellType.NUMERIC) && 0 != cell.getNumericCellValue()))) {
 						addContractDatasExcel(
 								contractDatasExcel, 
 								contractId,
@@ -430,7 +430,7 @@ public class EnterpriseContractVariablesExcel {
 									.setDate(date)
 									.setDocument(document)
 									.setName(variablesMap.get(cell.getColumnIndex()))
-									.setExpression(cell.getCellTypeEnum().equals(CellType.STRING) ? cell.getStringCellValue() : Double.toString(cell.getNumericCellValue()))
+									.setExpression(cell.getCellType().equals(CellType.STRING) ? cell.getStringCellValue() : Double.toString(cell.getNumericCellValue()))
 						);
 						totalContractDatas++;
 					} else {
@@ -441,7 +441,7 @@ public class EnterpriseContractVariablesExcel {
 									.setDate(date)
 									.setDocument(document)
 									.setName(variablesMap.get(cell.getColumnIndex()))
-									.setExpression(cell.getCellTypeEnum().equals(CellType.STRING) ? cell.getStringCellValue() : Double.toString(cell.getNumericCellValue()))
+									.setExpression(cell.getCellType().equals(CellType.STRING) ? cell.getStringCellValue() : Double.toString(cell.getNumericCellValue()))
 						);
 					}
 				}

@@ -213,7 +213,7 @@ public class AccountLedgerFlatReportExcelPrint extends HttpServlet {
 
 			
 		    
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.copy();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			row = sheet.createRow(rowCount++);

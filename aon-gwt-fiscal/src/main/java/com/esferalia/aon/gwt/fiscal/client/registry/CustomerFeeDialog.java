@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -1025,7 +1026,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private void acceptDialog() {
 		onAccept(
 			Optional.ofNullable(item),
-			Optional.ofNullable(AonStringUtils.isBlank(priceTextBox.getValue()) ? null : Double.parseDouble(priceTextBox.getValue())),
+			Optional.ofNullable(AonNumberUtils.toDouble(priceTextBox.getValue())),
 			Optional.ofNullable(AonStringUtils.isBlank(discountTextBox.getValue()) ? null : discountTextBox.getValue()),
 			Optional.ofNullable(null == startDateBox.getValue() ? null : startDateBox.getValue()),
 			Optional.ofNullable(null == endDateBox.getValue() ? null : endDateBox.getValue()),

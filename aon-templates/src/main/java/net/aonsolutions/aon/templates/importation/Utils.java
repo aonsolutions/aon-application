@@ -10,21 +10,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Utils {
 
 	public static Object getObjectValue(Cell cell){
-		if(cell != null && CellType.STRING == cell.getCellTypeEnum()) {
+		if(cell != null && CellType.STRING == cell.getCellType()) {
 			return cell.getStringCellValue();
 		}
-		if(cell != null && CellType.NUMERIC == cell.getCellTypeEnum()) {
+		if(cell != null && CellType.NUMERIC == cell.getCellType()) {
 			return cell.getNumericCellValue();
 		}
 		
-		if(cell != null && CellType.FORMULA == cell.getCellTypeEnum() && CellType.NUMERIC == cell.getCachedFormulaResultTypeEnum()) {
+		if(cell != null && CellType.FORMULA == cell.getCellType() && CellType.NUMERIC == cell.getCachedFormulaResultType()) {
 			return cell.getNumericCellValue();
-		} else if(cell != null && CellType.FORMULA == cell.getCellTypeEnum() && CellType.STRING == cell.getCachedFormulaResultTypeEnum()) {
+		} else if(cell != null && CellType.FORMULA == cell.getCellType() && CellType.STRING == cell.getCachedFormulaResultType()) {
 			return cell.getStringCellValue();
-		} else if(cell != null && CellType.FORMULA == cell.getCellTypeEnum()) {
+		} else if(cell != null && CellType.FORMULA == cell.getCellType()) {
 			return cell.getCellFormula();
 		}
-		if(cell != null && CellType.BOOLEAN == cell.getCellTypeEnum()) {
+		if(cell != null && CellType.BOOLEAN == cell.getCellType()) {
 			return cell.getBooleanCellValue() ? 1.0 : 0.0;
 		}
 		return null;

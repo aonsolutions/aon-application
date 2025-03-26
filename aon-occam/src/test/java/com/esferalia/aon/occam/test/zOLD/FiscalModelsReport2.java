@@ -24,6 +24,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.junit.AfterClass;
@@ -39,7 +40,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class FiscalModelsReport2 {
 	private static final String NUMBER_PATTERN = "#,###";
-	private static final XSSFColor HEADER_COLOR = new XSSFColor(new java.awt.Color(80, 80, 80));
+	private static final XSSFColor HEADER_COLOR = new XSSFColor(new java.awt.Color(80, 80, 80), new DefaultIndexedColorMap());
 
 	private static String FILENAME = "/home/ecastellano/TRABAJO/SELECT MODELOS FISCALES/resultado_select_modelos_fiscales.csv";
 	private static String OUTPUT_FILENAME = "/home/ecastellano/TRABAJO/SELECT MODELOS FISCALES/resultado.xlsx";

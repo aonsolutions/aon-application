@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.slf4j.Logger;
@@ -213,7 +214,7 @@ public class AuditSessionController extends BasicController {
 	    	headerCellStyle.setVerticalAlignment( VerticalAlignment.CENTER);
 	    	headerCellStyle.setBorderBottom(BorderStyle.MEDIUM);
 	    	headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    	headerCellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(240,240,240)));
+	    	headerCellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(240,240,240), new DefaultIndexedColorMap()));
 	    	
 	    }
 

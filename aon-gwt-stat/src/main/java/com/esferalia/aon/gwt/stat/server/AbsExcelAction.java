@@ -17,6 +17,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -27,7 +28,7 @@ public abstract class AbsExcelAction  {
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String PERCENT_PATTERN = "##0.0000%";
 	protected static final String NUMBER_PATTERN = "#,###";
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207), new DefaultIndexedColorMap());
 	
 	protected XSSFWorkbook workbook;
 	protected XSSFSheet sheet;

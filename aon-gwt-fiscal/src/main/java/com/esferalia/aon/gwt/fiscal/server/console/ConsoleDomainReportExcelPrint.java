@@ -102,7 +102,7 @@ public class ConsoleDomainReportExcelPrint extends HttpServlet {
 			entryHeaderStyle.setBorderBottom(BorderStyle.THIN);
 			entryHeaderStyle.setFont(defaulFont);
 	
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.copy();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 	
 			row = sheet.createRow(rowCount++);

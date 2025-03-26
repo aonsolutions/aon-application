@@ -22,6 +22,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -31,8 +32,8 @@ public abstract class AbsExcelAction  {
 	protected static final String DATE_PATTERN = "dd/MM/yyyy";
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String NUMBER_PATTERN = "#,###";
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
-	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240));
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240), new DefaultIndexedColorMap());
 	
 	protected SXSSFWorkbook workbook;
 	protected SXSSFSheet sheet;
