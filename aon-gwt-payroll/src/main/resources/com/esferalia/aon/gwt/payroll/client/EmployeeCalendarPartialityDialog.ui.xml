@@ -92,6 +92,12 @@
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
 				
+				<g:HTMLPanel ui:field="reasonPanel" styleName="{style.rowPanel}">
+					<g:Label styleName="{style.percentLabel}">Causa:</g:Label>
+					<g:ListBox ui:field="reasonBox"></g:ListBox>
+					<g:Label styleName="{style.percent}" >%</g:Label>
+				</g:HTMLPanel>
+				
 				<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
 					<g:Label>El valor introducido no tiene formato de número.</g:Label>
 					<g:Label>Decimales separados por '.'</g:Label>
