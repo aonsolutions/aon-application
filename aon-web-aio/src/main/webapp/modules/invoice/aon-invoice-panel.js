@@ -586,7 +586,6 @@ export class AonInvoicePanel extends AonElement {
   addCustomer() {
     let aonCustomer = new AonCustomer();
     aonCustomer.id = this.id + "Customer";
-    aonCustomer.setCustomer();
     this.getApplication().setContent(aonCustomer);
   }
 

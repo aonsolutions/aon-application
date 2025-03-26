@@ -12,6 +12,7 @@ import * as LS from '../../../services/localStorageService.js';
 export class AonCustomerList extends AonRegistryList {
 
 	parent;
+	office;
 
 	constructor(parent) {
 		super();
@@ -48,6 +49,7 @@ export class AonCustomerList extends AonRegistryList {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);
+			aonCustomer.setOffice(this.office);
 			this.getApplication().setContent(aonCustomer);
 		});
 	}
@@ -195,6 +197,10 @@ export class AonCustomerList extends AonRegistryList {
 		downloadRegistryExcel(json);
 	}
 
+
+	setOffice(office) {
+		this.office = office;
+	}
 }
 
 if(!window.customElements.get(TAG.AON_CUSTOMER_LIST)) {

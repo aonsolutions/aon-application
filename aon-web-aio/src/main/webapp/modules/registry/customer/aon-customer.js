@@ -38,6 +38,7 @@ import { AonSellerSmallList } from "../seller/aon-seller-small-list.js";
 export class AonCustomer extends AonReg {
   saveBool;
   ENTERPRISE_LINKED;
+  office;
 
   connectedCallback() {
     this.customerInitialize();
@@ -46,24 +47,25 @@ export class AonCustomer extends AonReg {
   }
 
   customerInitialize() {
+    this.registry = this.registry || new Customer();
     this.saveBool = true;
     this.type = "customer";
     this.ENTERPRISE_LINKED = "enterpriseLinked";
     this.options = [
       { title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
-      // { title: MSG.BANK_DATA, fn: () => this.buildBankData() },
-      // { title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() },
-      { title: "Expedientes", fn: () => this.buildExpedienteData() },
-      // { title: MSG.BOOKING, fn: () => this.buildBookingData() },
-      { title: "Agentes", fn: () => this.buildSellerData() },
+      { title: MSG.BANK_DATA, fn: () => this.buildBankData() },
+      { title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
     ];
 
-    // if (this.isBeta()) {
-    //   this.options.push({
-    //     title: MSG.PRODUCTS,
-    //     fn: () => this.buildItemData(),
-    //   });
-    // }
+    if(this.office) {
+      let officeOptions = [
+        { title: "Expedientes", fn: () => this.buildExpedienteData() },
+        // { title: MSG.BOOKING, fn: () => this.buildBookingData() },
+        { title: "Agentes", fn: () => this.buildSellerData() }
+        // { title: MSG.PRODUCTS, fn: () => this.buildItemData()}
+      ];
+      this.options.concat(officeOptions);
+    }
   }
 
   build = () => {
@@ -619,6 +621,10 @@ export class AonCustomer extends AonReg {
 
   setCustomer(customer) {
     this.registry = new Customer(customer);
+  }
+
+  setOffice(office) {
+    this.office = office;
   }
 }
 

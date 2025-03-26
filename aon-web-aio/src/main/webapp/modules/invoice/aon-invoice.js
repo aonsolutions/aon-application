@@ -1654,43 +1654,31 @@ export class AonInvoice extends AonElement {
 		} 
 	}
 
+	getIban(invoice, registry) {
+		let firstIban = "";
+		let pm = registry.paymethod.paymethod;
+		if((invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
+			firstIban = registry.banks && registry.banks.length > 0 ? registry.banks[0].bank_account : "";			
+		} else if((!invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
+			firstIban = this.configuration.company.banks && this.configuration.company.banks.length > 0 
+				? this.configuration.company.banks[0].bank_account : "";
+		}
+		return registry.paymethod && registry.paymethod.bank && registry.paymethod.bank.bank_account
+			   ? registry.paymethod.bank.bank_account : firstIban;
+	}
+
 	async onChangeRegistry(registry) { 
 		this.invoice.setRegistry(registry);
 		if(registry.paymethod) {
-			this.invoice.setPaymethod(registry.paymethod.paymethod.id);
-			this.invoice.finances.forEach((finance, i) => {
-				let pm = registry.paymethod.paymethod;
-				if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-					getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						if(ba) {
-							ba.value = crpm.bank.bank_account;
-							finance.bank_account = ba.value;
-							this.invoice.setFinance(finance, i);
-						}	
-					});
-					// getRegistryBanks(this.company.id).then(r => {
-				   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-				   	// 	ba.value = r[0] ? r[0].bank_account : "";
-				   	// 	finance.bank_account = ba.value;
-				   	// 	this.invoice.setFinance(finance, i);
-					// });	
-			   	} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-				 		|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
-				   	getRegistryBanks(this.invoice.getRegistry().id).then(r => {
-						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						if(ba) {
-							ba.value = r[0] ? r[0].bank_account : "";
-							finance.bank_account = ba.value;
-							this.invoice.setFinance(finance, i); 
-						}
-				   	});
-				} else {
-					finance.bank_account = "";
-					this.invoice.setFinance(finance, i);
-				}
-			});				
+			let pm = registry.paymethod.paymethod;
+			this.invoice.setPaymethod(pm.id);
+			let finance = {
+				due_date: this.invoice.date,
+				paymethod: this.invoice.paymethod,
+				amount: this.total,
+				bank_account: this.getIban(this.invoice, registry)
+			};
+			this.invoice.finances = [finance];				
 		}
 		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
 		else {
