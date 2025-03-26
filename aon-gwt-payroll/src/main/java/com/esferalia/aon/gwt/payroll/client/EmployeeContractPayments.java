@@ -827,14 +827,16 @@ public class EmployeeContractPayments extends Composite {
 				
 				@Override
 				protected void onGtzdoAccept(List<Payment> payments) {
-					List<ContractConceptCalc> contractConceptCalcListAux = Collections.emptyList();
-					for(Payment payment : payments) {
-						ContractConceptCalc contractConceptCalc = (ContractConceptCalc)payment;
-						contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
-						contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
-						contractConceptCalcListAux.add(contractConceptCalc);
-					}
-					createAndGetPayments(contractConceptCalcListAux);
+					List<ContractConceptCalc> contractConceptCalcList = payments.stream()
+						    .map(ContractConceptCalc::new)
+						    .collect(Collectors.toList());
+					
+					contractConceptCalcList.forEach(contractConceptCalc -> {
+						    	contractConceptCalc.setContractConceptCalcType(ContractConceptCalcType.PAYMENT);
+								contractConceptCalc.setCodeType(contractConceptCalc.getType().ordinal()+"");
+						    });
+					
+					createAndGetPayments(contractConceptCalcList);
 				}
 				
 				@Override
