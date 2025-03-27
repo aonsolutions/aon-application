@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.test.accounting.expense;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -13,15 +12,12 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.json.AccountingExpenseJSON;
-import com.esferalia.aon.occam.api.json.AccountingIncomeJSON;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
-import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
@@ -34,7 +30,6 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingExpenseDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingIncomeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
@@ -122,7 +117,7 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertTrue(expense.getFinance().isPresent());
 		Finance finance = expense.getFinance().get();
 		assertNotNull(finance.getId());
-		assertFalse( finance.isPayment() );
+		assertTrue( finance.isPayment() );
 		assertTrue(finance.hasRegistry());
 		assertEquals( finance.getRegistry().getId(), creditor.getId() );
 		assertEquals( finance.getDueDate(), expense.getDate() );

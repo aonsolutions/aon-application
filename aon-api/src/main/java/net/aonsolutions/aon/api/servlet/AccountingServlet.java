@@ -18,8 +18,11 @@ import com.esferalia.aon.occam.api.json.AccountingReportParamsJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.accounting.AccountingExpense;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
@@ -197,6 +200,6 @@ public class AccountingServlet extends AonApiHttpServlet{
 		ACCOUNTING.deleteAccountingIncome(api.getOccam(), income );
 		return new JSONObject();
 	}
-		
+	
 }
 
