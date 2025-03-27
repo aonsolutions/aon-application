@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.rawdoc;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONArray;
@@ -12,11 +13,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 class RawdocLogPanel extends ScrollPanel  {
 	
-	private static final String ACTION_DATE = "date";
-	private static final String ACTION_USER = "user";
-	private static final String ACTION_STATUS = "status";
-	private static final String ACTION_REASON = "reason";
-
 	RawdocLogPanel( String log) {
 		if (AonStringUtils.isBlank(log)) {
 			Label label = new Label(AON.MSG.noData());
@@ -39,10 +35,10 @@ class RawdocLogPanel extends ScrollPanel  {
 				JSONObject json = l.isObject();
 				if (json != null) {
 					grid.addRow()
-					.addCell( new Label(getValue(json,ACTION_DATE)))
-					.addCell( new Label(getValue(json,ACTION_STATUS)))
-					.addCell( new Label(getValue(json,ACTION_USER)))
-					.addCell( new Label(getValue(json,ACTION_REASON)))
+					.addCell( new Label(getValue(json,IJsonNames.DATE)))
+					.addCell( new Label(getValue(json,IJsonNames.STATUS)))
+					.addCell( new Label(getValue(json,IJsonNames.USER)))
+					.addCell( new Label(getValue(json,IJsonNames.REASON)))
 				;
 				}
 			}
