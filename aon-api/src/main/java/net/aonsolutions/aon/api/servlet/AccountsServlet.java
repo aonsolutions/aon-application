@@ -76,12 +76,23 @@ public class AccountsServlet extends AonApiHttpServlet {
 	        codeArray = (JSONArray) codeObject;
 	    }
 
-	    boolean entryEnabled = JsonUtils.getBoolean(json, IJsonNames.ENTRY_ENABLED);
-	    boolean active = JsonUtils.getBoolean(json, IJsonNames.ACTIVE);
+	    if (json.has(IJsonNames.ENTRY_ENABLED)) {
+	        boolean entryEnabled = JsonUtils.getBoolean(json, IJsonNames.ENTRY_ENABLED);
+	        if (entryEnabled) {
+	            filter = filter.and(f.getEntryEnabledProperty().eq((byte) 1));
+	        }
+	    }
+
+	    if (json.has(IJsonNames.ACTIVE)) {
+	        boolean active = JsonUtils.getBoolean(json, IJsonNames.ACTIVE);
+	        if (active) {
+	            filter = filter.and(f.getActiveProperty().eq((byte) 1));
+	        }
+	    }
 
 	    if (codeArray.length() > 0) {
 	        Filter codeFilter = null;
-	  
+
 	        for (int i = 0; i < codeArray.length(); i++) {
 	            String code = codeArray.getString(i) + "%"; 
 
@@ -92,16 +103,12 @@ public class AccountsServlet extends AonApiHttpServlet {
 	            }
 	        }
 
-	        filter = filter.and(codeFilter); 
+	        filter = filter.and(codeFilter);
 	    }
-
-	    if (entryEnabled)
-	        filter = filter.and(f.getEntryEnabledProperty().eq((byte) 1));
-	    if (active)
-	        filter = filter.and(f.getActiveProperty().eq((byte) 1));
 
 	    return filter;
 	}
+
 
 	
 	

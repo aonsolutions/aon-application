@@ -121,19 +121,31 @@ export class AonExpense extends AonElement {
 
         let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Tipo de gasto");
         expAccount.setValue(this.expense.expAccount);
-
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
-        getAccounts({ code: ["63","64","65","66","67"], entryEnabled: true, active: true }).then(accounts => {
-            expAccount.setOptions(accounts);
-            if (this.expense.expAccount && this.expense.expAccount.id) {
-                expAccount.value = this.expense.expAccount.id;
-            }
-        });
-        expAccount.addEventListener(EVENT.CHANGE, () =>  {
+        
+        let selectedAccount = this.expense.expAccount; 
+        let filteredAccounts = []; 
+        
+        getAccounts({ code: ["63", "64", "65", "66", "67"], entryEnabled: true, active: true })
+            .then(accounts => {
+                filteredAccounts = accounts;        
+                
+                if (selectedAccount && !filteredAccounts.some(acc => acc.id === selectedAccount.id)) {
+                    filteredAccounts.unshift(selectedAccount); 
+                }
+        
+                expAccount.setOptions(filteredAccounts);
+                if (selectedAccount) {
+                    expAccount.value = selectedAccount.id; 
+                }
+            });
+        
+        expAccount.addEventListener(EVENT.CHANGE, () => {
             this.getExpense().setExpAccount(this.getExpAccount());
         });
+           
 
         let description = createInput(this.EXPENSE_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.expense.concept);
