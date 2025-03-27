@@ -1,13 +1,13 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { AonIframe } from "../../../components/aon-iframe.js";
 import { formatNumber, isEmptyObject, sortBy } from "../../../services/utils.js";
 import { getCompanyCosts } from "../../../services/service.js";
 import { PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { CompanyPieChart } from "./CompanyPieChart.js";
-import { CONSTANT, CSS, MSG, TAG } from "../../../environments/environments.js";
+import { MSG, TAG } from "../../../environments/environments.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
-import * as LS from "../../../services/localStorageService.js";
 import { Chart } from "chart.js/auto";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+import * as LS from "../../../services/localStorageService.js";
 
 let filterPeriod;
 let chartCanva;
