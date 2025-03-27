@@ -16,6 +16,7 @@ export class AonExpense extends AonElement {
     EXPENSE_CARD;
     EXPENSE_DATE;
     EXPENSE_ACTIVITY;
+    EXPENSE_CREDITOR
     EXPENSE_EXPACCOUNT;
     EXPENSE_DESCRIPTION;
     EXPENSE_REFERENCE;
@@ -49,6 +50,7 @@ export class AonExpense extends AonElement {
         this.EXPENSE_TOOLBAR = this.id + "Toolbar";
         this.EXPENSE_CARD = this.id + "Card";
         this.EXPENSE_DATE = this.id + "Date";
+        this.EXPENSE_CREDITOR = this.id + "Creditor";
         this.EXPENSE_ACTIVITY = this.id + "Activity";
         this.EXPENSE_EXPACCOUNT = this.id + "ExpAccount";
         this.EXPENSE_DESCRIPTION = this.id + "Description";
@@ -108,12 +110,20 @@ export class AonExpense extends AonElement {
             this.getExpense().setDate(this.getDate())
         });
 
-        let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Ingreso");
+        let creditor = new AonRegistrySuggestion();
+        creditor.types = RegistryType.CREDITOR;
+        creditor.id = this.EXPENSE_CREDITOR;
+        if(this.getExpense().getCreditor())
+            creditor.setRegistry(this.getExpense().getCreditor());
+        creditor.addEventListener(EVENT.SELECT_REGISTRY, () => this.getExpense().setCreditor(this.getCreditor() ));
+        div.appendChild(creditor);
+
+        let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Tipo de gasto");
         expAccount.setValue(this.expense.expAccount);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
-        getAccounts({ code: "6", entryEnabled: true, active: true }).then(accounts => {
+        getAccounts({ code: ["63","64","65","66","67"], entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
             expAccount.value = this.expense.expAccount.id;
         });
@@ -205,6 +215,7 @@ export class AonExpense extends AonElement {
     }
 
     save() {
+        console.log("CREDITOR!!!:"+ JSON.stringify(this.getCreditor()));    
         console.log(JSON.stringify(this.expense));
         setExpense(this.expense)
             .then( r => { 
@@ -245,6 +256,10 @@ export class AonExpense extends AonElement {
 
     getConcept() {
         return this.getElement(this.EXPENSE_DESCRIPTION).getValue();
+    }
+
+    getCreditor() {
+        return this.getElement(this.EXPENSE_CREDITOR).getRegistry();
     }
 
     getReference() {

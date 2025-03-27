@@ -765,8 +765,10 @@ public class ACCOUNTING {
 	// *************************************** [ACCOUNTING EXPENSES]
 	// *************************************************************
 	public static Stream<AccountingExpense> getAccountingExpenses(Occam occam, int domain) throws AonCoreException {
-		return getAccountingExpenses(occam, domain, null );	
+		return getAccountingExpenses(occam, domain );	
 	}
+	
+	
 	public static Stream<AccountingExpense> getAccountingExpenses(Occam occam, int domain, String query) throws AonCoreException {
 		return getAccountingExpenses(occam, domain, query, 0, Integer.MAX_VALUE , true);	
 	}

@@ -123,7 +123,7 @@ export class AonIncome extends AonElement {
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
-        getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
+        getAccounts({ code: ["74","75","76","77"], entryEnabled: true, active: true }).then(accounts => {
             expAccount.setOptions(accounts);
             expAccount.value = this.income.expAccount.id;
         });  
