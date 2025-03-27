@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -40,7 +42,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediInvoiceType;
@@ -48,11 +51,7 @@ import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
 	
-	private static final String ACTION_DATE = "date";
-	private static final String ACTION_USER = "user";
-	private static final String ACTION_STATUS = "status";
-	private static final String ACTION_REASON = "reason";
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy HH:mm:ss";
+	private static final String LOG_DATE_FORMAT_PATTERN = "dd/MM/yyyy HH:mm:ss";
 
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
 	
@@ -457,17 +456,17 @@ public class RawdocDAO {
 	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {
 		JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
 		HashMap<String,String> map = new HashMap<>();
-		map.put(ACTION_DATE  ,new SimpleDateFormat(DATE_FORMAT_PATTERN).format(new Date()));
-		map.put(ACTION_USER  ,ctx.getUser() );
-		map.put(ACTION_STATUS,status.getDescription() );
+		map.put(IJsonNames.DATE,new SimpleDateFormat(LOG_DATE_FORMAT_PATTERN).format(new Date()));
+		map.put(IJsonNames.USER,ctx.getUser() );
+		map.put(IJsonNames.STATUS,status.getDescription() );
 		if (reason != null) {
-			map.put(ACTION_REASON,reason );
+			map.put(IJsonNames.REASON,reason );
 		}
 		JSONObject json = new JSONObject(map);
 		jsonLog.put(json);
 		return jsonLog.toString();
 	}
-
+	
 	public static boolean hasData(AONContext ctx, Integer rawdocId ) {
 		return ctx.getDslContext()
 				.select( RAWDOC.ID )
@@ -480,4 +479,48 @@ public class RawdocDAO {
 				.isPresent();
 	}
 	
+	private static  class RawdocValidation {
+
+		/**
+		 * El dominio del apunte no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_DOMAIN = rc -> {
+			if (rc.rawdoc.getDomain() == null) 
+				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		};
+		
+		/**
+		 * La naturaleza del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_NATURE = rc -> {
+			if (rc.rawdoc.getNature() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_NATURE.getMessage());
+		};
+		
+		/**
+		 * El tipo del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_TYPE = rc -> {
+			if (rc.rawdoc.getType() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_TYPE.getMessage());
+		};
+
+		/**
+		 * El status del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_STATUS = rc -> {
+			if (rc.rawdoc.getStatus() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_STATUS.getMessage());
+		};
+		
+		private record RawdocContext(AONContext ctx, Rawdoc rawdoc) {};
+		private static void validateRawdoc(AONContext ctx, Rawdoc rawdoc) throws AonCoreException {
+			EMPTY_DOMAIN
+				.andThen(EMPTY_NATURE)
+				.andThen(EMPTY_TYPE)
+				.andThen(EMPTY_STATUS)
+				.accept(new RawdocContext(ctx, rawdoc));
+
+		}
+	}
 }

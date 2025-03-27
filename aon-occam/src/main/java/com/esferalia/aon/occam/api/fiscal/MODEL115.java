@@ -113,6 +113,12 @@ public class MODEL115 {
 		}
 	}
 
+	public static Mod115 simulate(Occam occam,Mod115 mod115) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().simulate(ctx, mod115);
+		}
+	}
+
 	public static String getInfo(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod115, script, infoKey);

@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.DeclarationInfoUtil.ExplainR
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod115Declaration {
@@ -112,16 +113,18 @@ public abstract class Mod115Declaration {
 
 	private void initializePreviousData(AONContext ctx, Mod115 mod115) {
 		mod115.getMessages().clear();		
-		mod115.setGenerateFromYearStartAvailable(!mod115.isFirstPeriod());
-		if (mod115.isGenerateFromYearStartAvailable()) {
-			Map<Integer, Long> invoices = checkPreviousInvoices(ctx, mod115);
-			boolean existsInvoices = invoices != null && !invoices.isEmpty();
-			if (existsInvoices) {
-				mod115.addMessage("Se encontraron " + invoices.size() + " facturas no declaradas anteriores a la fecha "
-						+ "de inicio de la declaraci\u00F3n.");
-			}
-			mod115.setGenerateFromYearStartAvailable(existsInvoices);
+		Map<Integer, Long> prevInvoices = checkPreviousInvoices(ctx, mod115);
+		boolean existsPreviousInvoices = AonCollectionUtils.isNotEmpty(prevInvoices);
+		if (existsPreviousInvoices) {
+			mod115.addMessage("Se encontraron " + prevInvoices.size() + " facturas no declaradas anteriores a la fecha "
+					+ "de inicio de la declaraci\u00F3n.");
 		}
+		Map<Integer, Long> currentInvoices = checkCurrentInvoices(ctx, mod115);
+		boolean existsCurrentInvoices = AonCollectionUtils.isNotEmpty(currentInvoices);
+		if (existsCurrentInvoices) {
+			mod115.addMessage("Se encontraron " + currentInvoices.size() + " facturas no declaradas en el periodo de la declaraci\u00F3n.");
+		}
+		mod115.setMustIncludeInvoicesOnGeneration(existsPreviousInvoices || existsCurrentInvoices);
 	}
 
 	private void initializeComplementaryAndReplacement(AONContext ctx, Mod115 mod115) {
@@ -218,6 +221,13 @@ public abstract class Mod115Declaration {
 	
 	Map<Integer, Long>  checkPreviousInvoices(final AONContext ctx, final Mod115 mod115) {
 		return IRPFDAO.getPreviousNotInModelInputInvoicesIrpfBreakdown(ctx, mod115)
+			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
+			.filter(kbr -> kbr.getKey().acceptValue(mod115,kbr.getIrpfBreakdown()))
+			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getInvoice() 
+					, Collectors.counting()));
+	}
+	Map<Integer, Long>  checkCurrentInvoices(final AONContext ctx, final Mod115 mod115) {
+		return IRPFDAO.getCurrentNotInModelInputInvoicesIrpfBreakdown(ctx, mod115)
 			.flatMap(br -> Arrays.stream( getKeys() ).map( key -> new KeyedIrpfBreakdown(key, br)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod115,kbr.getIrpfBreakdown()))
 			.collect(Collectors.groupingBy(kbr -> kbr.getIrpfBreakdown().getInvoice() 

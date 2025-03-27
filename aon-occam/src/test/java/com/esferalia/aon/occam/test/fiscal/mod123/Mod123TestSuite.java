@@ -16,49 +16,16 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,
 	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyTest.class,
-	Mod123FinishTest.class,
+
+	Mod123SimulateMonthlyTest.class,
+	Mod123SimulateQuarterlyTest.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyComplementaryTest.class,
-	Mod123FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertMonthlyReplacementTest.class,
-	Mod123RoundedAmountsTest.class,
-	
-	// Modelos trimestrales
-	Mod123ReopenTest.class,
-	Mod123DeleteTest.class,
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyTest.class,
-	Mod123FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyComplementaryTest.class,
-	Mod123FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod123InsertQuarterlyReplacementTest.class,
-	Mod123RoundedAmountsTest.class,
-	
-	// Flujo de estados
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123FinishTest.class,					// Finalizado
-	Mod123SentTest.class,					// Presentado
-//	// Flujo de estados
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod123SentTest.class,					// Presentado
-	// Flujo de estados 
-	Mod123ReopenTest.class,					// Pendiente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod123MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod123MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod123SentTest.class,					// Presentado
-	
+	Mod123AEATTestSuite.class,
+	Mod123ARABATestSuite.class,
+	Mod123BIZKAIATestSuite.class,
+	Mod123GIPUZKOATestSuite.class,
+	Mod123NAVARRATestSuite.class,
+
 })
 public class Mod123TestSuite {
 

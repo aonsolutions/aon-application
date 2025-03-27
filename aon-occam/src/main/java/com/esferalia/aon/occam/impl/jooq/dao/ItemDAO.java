@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -307,7 +308,7 @@ public class ItemDAO {
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
 		.set(ITEM.SERIAL_DATE, item.getSerialDate() != null ? new Date(item.getSerialDate().getTime()) : null)
 		.set(ITEM.PRICE, item.getPrice())
-		.set(ITEM.STATUS, item.getStatus() != null ? item.getStatus().value() : null)
+		.set(ITEM.STATUS, AonEnumUtils.getByte(item.getStatus()))
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
 		.set(ITEM.EXPENSES_FIXED, item.getExpensesFixed())
 		.set(ITEM.PROFIT_PERCENT, item.getProfitPercent())

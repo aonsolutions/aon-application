@@ -367,6 +367,31 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			hideMessage();
 		}
 	}
+	
+	// ------------------------------------------------- ContractAttachUIImpl
+
+		public class EmployeeCalendarDraftNewImpl extends EmployeeCalendarDraftNew {
+
+			@Override
+			protected void showErrorMessage(String title, String message) {
+				showError(title, message);
+			}
+
+			@Override
+			protected void showSuccessMessage(String title, String message) {
+				showSuccess(title, message);
+			}
+
+			@Override
+			protected void showLoadingMessage(String message) {
+				showLoading(message);
+			}
+
+			@Override
+			protected void onHideMessage() {
+				hideMessage();
+			}
+		}
 
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 
@@ -1193,7 +1218,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractClauseUI = new ContractClauseUIImpl();
 		contractAttachUI = new ContractAttachUIImpl();
 
-		employeeCalendar = new EmployeeCalendarDraftNew();
+		employeeCalendar = new EmployeeCalendarDraftNewImpl();
 		employeeCalendar.hideToolbar();
 		employeeCalendar.setContrataEmployeeCalendarHeight();
 

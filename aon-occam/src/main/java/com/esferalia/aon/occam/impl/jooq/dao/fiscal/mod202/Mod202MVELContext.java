@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.ModelMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod202MVELContext extends ModelMVELContext implements Map<String, Object> {
 	public static final String X08_1 = "202-X08-1";
@@ -80,65 +82,153 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	}
 
 	// Casilla [21] Porcentaje 1 de la Modalidad B2
-	public double computeC21() {
+//	public double computeC21() {
+//		double x08 = getPercent1();
+//		Double c20 = (Double) get(Mod202Key.C20.toString());
+//		double c21 = 0.0;
+//		if (c20 != 0.0) {
+//			if (isX09Empty()) {
+//				c21 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+//			} else {
+//				c21 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+//			}
+//		}
+//		return c21;
+//	}
+
+	// Casilla [24] Porcentaje 2 de la Modalidad B2
+//	public double computeC24() {
+//		double x08 = getPercent2();
+//		double c24 = 0.0;
+//		Double c23 = (Double) get(Mod202Key.C23.toString());
+//		if (c23 != 0) {
+//			if (isX09Empty()) {
+//				c24 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+//			} else {
+//				c24 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+//			}
+//		}
+//		return c24;
+//	}
+	
+	// Casilla [62] Porcentaje 3 de la Modalidad B2
+//	public double computeC62() {
+//		double x08 = getPercent3();
+//		double c62 = 0.0;
+//		Double c61 = (Double) get(Mod202Key.C61.toString());
+//		if (c61 != 0) {
+//			if (isX09Empty()) {
+//				c62 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+//			} else {
+//				c62 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+//			}
+//		}
+//		return c62;
+//	}
+	
+	// Casilla [65] Porcentaje 4 de la Modalidad B2
+//	public double computeC65() {
+//		double x08 = getPercent4();
+//		double c65 = 0.0;
+//		Double c64 = (Double) get(Mod202Key.C64.toString());
+//		if (c64 != 0) {
+//			if (isX09Empty()) {
+//				c65 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+//			} else {
+//				c65 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+//			}
+//		}
+//		return c65;
+//	}
+	
+	// Porcentajes aplicables, sin duplicar ninguno
+	public double computePercentage(int positionResult) {
+
+		double[] result = {0.0,0.0,0.0,0.0};
+		String[] x08array = {"","","",""};
+		
+		String x08s = mod202.getDescription(Mod202Key.X08);
+		String[] percent = AonStringUtils.split(x08s, '/');
+		if (percent != null && percent.length > 0) {
+			x08array[0] = percent[0];
+			if (percent.length > 1) {
+				x08array[1] = percent[1];
+			}
+			if (percent.length > 2) {
+				x08array[2] = percent[2];
+			}
+			if (percent.length > 3) {
+				x08array[3] = percent[3];
+			}
+		} 
+		
+		int position = 0;
+		
+		// Casilla [21] Porcentaje 1 de la Modalidad B2
 		double x08 = getPercent1();
-		Double c20 = (Double) get(Mod202Key.C20.toString());
-		double c21 = 0.0;
-		if (c20 != 0.0) {
+		if (x08 != 0.0) {
+			double c21;
 			if (isX09Empty()) {
 				c21 = AonMathUtils.floor((5.0/7.0) * x08,0);	
 			} else {
 				c21 = AonMathUtils.ceil((19.0/20.0) * x08,0);
 			}
+			result[position] = c21;
 		}
-		return c21;
-	}
 
-	// Casilla [24] Porcentaje 2 de la Modalidad B2
-	public double computeC24() {
-		double x08 = getPercent2();
-		double c24 = 0.0;
-		Double c23 = (Double) get(Mod202Key.C23.toString());
-		if (c23 != 0) {
-			if (isX09Empty()) {
+		// Casilla [24] Porcentaje 2 de la Modalidad B2
+		x08 = getPercent2();
+		if (x08 != 0.0) {
+			double c24;
+			if (x08array[1].contains("N")) {
+				c24 = x08; // Navieras se aplica el porcentaje indicado para el régimen especial
+			} else if (isX09Empty()) {
 				c24 = AonMathUtils.floor((5.0/7.0) * x08,0);	
 			} else {
 				c24 = AonMathUtils.ceil((19.0/20.0) * x08,0);
 			}
+			if (c24 != result[position]) {
+				position++;
+				result[position] = c24;
+			}
 		}
-		return c24;
-	}
-	
-	// FALTA - POR AHORA EL CALCULO DEL PORCENTAJE 3 SE HACE IGUAL QUE LOS DOS PRIMEROS PORCENTAJES
-	// Casilla [62] Porcentaje 3 de la Modalidad B2
-	public double computeC62() {
-		double x08 = getPercent3();
-		double c62 = 0.0;
-		Double c61 = (Double) get(Mod202Key.C61.toString());
-		if (c61 != 0) {
-			if (isX09Empty()) {
+		
+		// Casilla [62] Porcentaje 3 de la Modalidad B2
+		x08 = getPercent3();
+		if (x08 != 0) {
+			double c62;
+			if (x08array[2].contains("N")) {
+				c62 = x08; // Navieras para el régimen especial se aplica el porcentaje indicado
+			} else if (isX09Empty()) {
 				c62 = AonMathUtils.floor((5.0/7.0) * x08,0);	
 			} else {
 				c62 = AonMathUtils.ceil((19.0/20.0) * x08,0);
 			}
+			if (!Arrays.stream(result, 0, position+1).anyMatch(value -> value == c62)) { 
+				position++;
+				result[position] = c62;
+			}
 		}
-		return c62;
-	}
-	
-	// FALTA - POR AHORA EL CALCULO DEL PORCENTAJE 4 SE HACE IGUAL QUE LOS DOS PRIMEROS PORCENTAJES
-	// Casilla [65] Porcentaje 4 de la Modalidad B2
-	public double computeC65() {
-		double x08 = getPercent4();
-		double c65 = 0.0;
-		Double c64 = (Double) get(Mod202Key.C64.toString());
-		if (c64 != 0) {
-			if (isX09Empty()) {
+		
+		// Casilla [65] Porcentaje 4 de la Modalidad B2
+		x08 = getPercent4();
+		if (x08 != 0) {
+			double c65;
+			if (x08array[3].contains("N")) {
+				c65 = x08; // Navieras para el régimen especial se aplica el porcentaje indicado
+			} else if (isX09Empty()) {
 				c65 = AonMathUtils.floor((5.0/7.0) * x08,0);	
 			} else {
 				c65 = AonMathUtils.ceil((19.0/20.0) * x08,0);
 			}
+			if (!Arrays.stream(result, 0, position+1).anyMatch(value -> value == c65)) { 
+				position++;
+				result[position] = c65;
+			}
 		}
-		return c65;
+		
+		return result[positionResult];
+		
 	}
 	
 	public double computeC32() {

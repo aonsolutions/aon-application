@@ -21,11 +21,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonPeriodPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonPeriodPanel.AonPeriodPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.ContractDaysPeriodPanel.ContractDaysPeriodPanelCallback;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -120,83 +119,59 @@ public class MainContrataContract extends MainEntryPoint {
 
 		@Override
 		public void execute() {
-			excelDialog(false, false);
-		}
-		
-	}
-	
-	class ExcelExtendExportommand implements ScheduledCommand {
+			AonCustomDialog dialog = new AonCustomDialog();
+			dialog.setCaption( "Informe d\u00edas contrato" );
+			dialog.showCloseButton(true);
+			ContractDaysPeriodPanel periodPanel = new ContractDaysPeriodPanel((ContractDaysPeriodPanelCallback) new ContractDaysPeriodPanelCallback() {
+				
+				@Override
+				public void onAccept(Date start, Date end, Boolean extended, Boolean totals) {
+					dialog.hide();
+					
+					FormPanel diskForm = new FormPanel("_blank");
+					diskForm.setMethod(FormPanel.METHOD_POST);
+					diskForm.setAction(GWT.getHostPageBaseURL() + "ms/api/contractDays/");
+					diskForm.addSubmitCompleteHandler(ev -> employeesDockLayoutPanel.removeToolbarButton(diskForm));
+					
+					Hidden domainIdHidden = new Hidden("domainId", Integer.toString( Wnd.getCurrentDomain() ));
+					Hidden domainNameHidden = new Hidden("domainName", Wnd.getCurrentDomainNameURL());
+					Hidden startDateHidden = new Hidden("startDate", formatFullDate.format(start));
+					Hidden endDateHiddenHidden = new Hidden("endDate", formatFullDate.format(null == end ? new Date() : end));
+					Hidden extendedHidden = new Hidden("extended", extended.toString());
+					Hidden showTotalsHidden = new Hidden("showTotals", totals.toString());
+					
+					
+					FlowPanel formFlowPanel = new FlowPanel();
+					diskForm.add(formFlowPanel);
+					formFlowPanel.add(startDateHidden);
+					formFlowPanel.add(endDateHiddenHidden);
+					formFlowPanel.add(domainIdHidden);
+					formFlowPanel.add(domainNameHidden);
+					formFlowPanel.add(extendedHidden);
+					formFlowPanel.add(showTotalsHidden);
 
-		@Override
-		public void execute() {
-			excelDialog(true, false);
-		}
-		
-	}
-	
-	class ExcelExtendTotalsExportommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			excelDialog(true, true);
-		}
-		
-	}
-	
-	private void excelDialog(Boolean extended, Boolean totals) {
-		AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "Informe d\u00edas contrato" );
-		dialog.showCloseButton(true);
-		AonPeriodPanel periodPanel = new AonPeriodPanel((AonPeriodPanelCallback) new AonPeriodPanelCallback() {
+					employeesDockLayoutPanel.addToolbarButton(diskForm);
+					
+					AonMessagePanel.showLoading(employeesMessagePanel, "Exportando informe de d\u00edas...");
+					
+					diskForm.submit();
+					
+					new Timer() {
+						@Override public void run() { AonMessagePanel.hideMessage(employeesMessagePanel); }
+					}.schedule(3500);
+				}
+			});
 			
-			@Override
-			public void onAccept(Date start, Date end) {
-				dialog.hide();
-				
-				FormPanel diskForm = new FormPanel("_blank");
-				diskForm.setMethod(FormPanel.METHOD_POST);
-				diskForm.setAction(GWT.getHostPageBaseURL() + "ms/api/contractDays/");
-				diskForm.addSubmitCompleteHandler(ev -> employeesDockLayoutPanel.removeToolbarButton(diskForm));
-				
-				Hidden domainIdHidden = new Hidden("domainId", Integer.toString( Wnd.getCurrentDomain() ));
-				Hidden domainNameHidden = new Hidden("domainName", Wnd.getCurrentDomainNameURL());
-				Hidden startDateHidden = new Hidden("startDate", formatFullDate.format(start));
-				Hidden endDateHiddenHidden = new Hidden("endDate", formatFullDate.format(null == end ? new Date() : end));
-				Hidden extendedHidden = new Hidden("extended", extended.toString());
-				Hidden showTotalsHidden = new Hidden("showTotals", totals.toString());
-				
-				
-				FlowPanel formFlowPanel = new FlowPanel();
-				diskForm.add(formFlowPanel);
-				formFlowPanel.add(startDateHidden);
-				formFlowPanel.add(endDateHiddenHidden);
-				formFlowPanel.add(domainIdHidden);
-				formFlowPanel.add(domainNameHidden);
-				formFlowPanel.add(extendedHidden);
-				formFlowPanel.add(showTotalsHidden);
-
-				employeesDockLayoutPanel.addToolbarButton(diskForm);
-				
-				AonMessagePanel.showLoading(employeesMessagePanel, "Exportando informe de d\u00edas...");
-				
-				diskForm.submit();
-				
-				new Timer() {
-					@Override public void run() { AonMessagePanel.hideMessage(employeesMessagePanel); }
-				}.schedule(3500);
-			}
-		});
+			dialog.add( periodPanel );
+			dialog.showLoaded();
+		}
 		
-		dialog.add( periodPanel );
-		dialog.showLoaded();
 	}
 
 	class ExcelContextMenu extends ContextMenu {
 
 		public ExcelContextMenu() {
 			addMenuItem("Informe D\u00edas", new ExcelExportommand(), AON.CSS.aonIconExcel(), "excelExportDays");
-			addMenuItem("Informe D\u00edas (Detallado)", new ExcelExtendExportommand(), AON.CSS.aonIconExcel(), "excelExtendExportDays");
-			addMenuItem("Informe D\u00edas (Detallado / Totales)", new ExcelExtendTotalsExportommand(), AON.CSS.aonIconExcel(), "excelExtendTotalsExportDays");
 		}
 
 		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {

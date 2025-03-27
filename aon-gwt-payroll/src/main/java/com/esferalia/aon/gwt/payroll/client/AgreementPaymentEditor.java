@@ -135,6 +135,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	HTMLPanel periodPaymentPanel;
 	
 	@UiField
+	ListBox monthPaymentLB;
+	
+	@UiField
 	DateBoxEx startDateBx;
 	
 	@UiField
@@ -236,6 +239,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		initializePaymentSalaryTypeLB();
 		
+		initializeMonthPayment();
+		
 		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
 
 			@Override
@@ -258,6 +263,29 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 
 		});
+	}
+
+	private void initializeMonthPayment() {
+		monthPaymentLB.addStyleName("aon-selectOneMenu");
+		monthPaymentLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		monthPaymentLB.setHeight("1.5rem");
+		monthPaymentLB.getElement().getStyle().setProperty("border", "1px solid rgb(137, 136, 136)");
+		
+		monthPaymentLB.clear();
+		monthPaymentLB.addItem("Todos", "");
+		monthPaymentLB.addItem("Enero", "0");
+		monthPaymentLB.addItem("Febrero", "1");
+		monthPaymentLB.addItem("Marzo", "2");
+		monthPaymentLB.addItem("Abril", "3");
+		monthPaymentLB.addItem("Mayo", "4");
+		monthPaymentLB.addItem("Junio", "5");
+		monthPaymentLB.addItem("Julio", "6");
+		monthPaymentLB.addItem("Agosto", "7");
+		monthPaymentLB.addItem("Septiembre", "8");
+		monthPaymentLB.addItem("Octubre", "9");
+		monthPaymentLB.addItem("Noviembre", "10");
+		monthPaymentLB.addItem("Diciembre", "11");
+		
 	}
 
 	private void initializePaymentSalaryTypeLB() {
@@ -601,6 +629,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		if(AonStringUtils.isNotBlank(quoteExpression) && AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) quoteExpression = "Exento";
 		paymentQuoteExpression.setValue(quoteExpression);
 		
+		setSelectedValueLB(monthPaymentLB, this.payment.getMonth() == null ? "" : this.payment.getMonth().toString());
 		startDateBx.setValue(this.payment.getStartDate());
 		endDateBx.setValue(this.payment.getEndDate());
 		
@@ -730,6 +759,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		payment.setQuoteExpression(quoteExpression);
 		payment.setMonth(null);
 		
+		payment.setMonth(AonStringUtils.isBlank(monthPaymentLB.getSelectedValue()) ? null : Short.parseShort(monthPaymentLB.getSelectedValue()));
 		payment.setStartDate(startDateBx.getValue());
 		payment.setEndDate(endDateBx.getValue());
 		

@@ -1,11 +1,11 @@
-package com.esferalia.aon.occam.test.fiscal.mod123;
+package com.esferalia.aon.occam.test.fiscal.mod115;
 
 import java.util.Date;
 
 import org.junit.Test;
 
-import com.esferalia.aon.occam.api.fiscal.MODEL123;
-import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.fiscal.MODEL115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -17,28 +17,28 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Mod123InsertMonthlyTest extends AbstractOccamTest {
+public class Mod115SimulateMonthlyTest extends AbstractOccamTest {
 	
 	@Test
-	public void mod123InsertMonthlyTest() {
+	public void mod115InsertMonthlyTest() {
 		Date today = new Date();
 		for (Period period : Period.values()) {
 			if (period.isMonthPeriod()) {
 				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
 				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod123InsertMonthly(AonRandom.getRangeDate(start,end));
+				mod115InsertMonthly(AonRandom.getRangeDate(start,end));
 			}
 		}
 	}
 	
-	public void mod123InsertMonthly(Date date) {
+	public void mod115InsertMonthly(Date date) {
 		System.out.println( "\t ---------------------");
-		
-		Mod123 aeat = insertModel( Administration.COMMON_TERRITORY, date);
-		Mod123 araba = insertModel( Administration.ALAVA, date);
-		Mod123 bizkaia = insertModel( Administration.BIZKAIA, date);
-		Mod123 gipuzkoa = insertModel( Administration.GIPUZKOA, date);
-		Mod123 navarra = insertModel( Administration.NAVARRA, date);
+
+		Mod115 aeat = simulateModel( Administration.COMMON_TERRITORY, date);
+		Mod115 araba = simulateModel( Administration.ALAVA, date);
+		Mod115 bizkaia = simulateModel( Administration.BIZKAIA, date);
+		Mod115 gipuzkoa = simulateModel( Administration.GIPUZKOA, date);
+		Mod115 navarra = simulateModel( Administration.NAVARRA, date);
 		
 		Asserts.assertEqualsDouble("Araba " + araba.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), araba.getDeclarationResult());
 		Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), bizkaia.getDeclarationResult());
@@ -46,16 +46,15 @@ public class Mod123InsertMonthlyTest extends AbstractOccamTest {
 		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDeclarationResult(), navarra.getDeclarationResult());
 	}
 
-	private Mod123 insertModel( Administration admon, Date date) {
+	private Mod115 simulateModel( Administration admon, Date date) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(date)
 			.setMonthly(true)
-			.setAdministration(admon);
-		Mod123 mod123 = FiscalFaker.createMod123(params);
-		MODEL123.save(getOccam(), mod123);
-		Mod123 actual = MODEL123.get(getOccam(), mod123.getId());  
-		Asserts.assertMod123(mod123, actual);
-		FiscalTestSuite.printModel(actual);
-		return actual;
+			.setAdministration(admon)
+			;
+		Mod115 mod115 = FiscalFaker.simulateMod115(params);
+		mod115 = MODEL115.calculate(getOccam(), mod115);
+		FiscalTestSuite.printModel(mod115);
+		return mod115;
 	}
 }

@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class RegistrySellerDAO {
     
@@ -109,7 +110,7 @@ public class RegistrySellerDAO {
 			.set(RSELLER.START_DATE, AonDateUtils.toSql(registrySeller.getStartDate()))
 			.set(RSELLER.END_DATE, AonDateUtils.toSql(registrySeller.getEndDate()))
 			.set(RSELLER.STATUS, (byte)  registrySeller.getStatus().ordinal())
-			.set(RSELLER.TYPE, registrySeller.getType() != null ? registrySeller.getType().value() : null)
+			.set(RSELLER.TYPE, AonEnumUtils.getByte(registrySeller.getType()))
 			.returning(RSELLER.ID, RSELLER.TYPE)
 			.fetchOne();
 			if (inserted != null) {
@@ -126,7 +127,7 @@ public class RegistrySellerDAO {
 			.set(RSELLER.START_DATE, AonDateUtils.toSql(registrySeller.getStartDate()))
 			.set(RSELLER.END_DATE, AonDateUtils.toSql(registrySeller.getEndDate()))
 			.set(RSELLER.STATUS, (byte) registrySeller.getStatus().ordinal())
-			.set(RSELLER.TYPE, registrySeller.getType() != null ? registrySeller.getType().value() : null)
+			.set(RSELLER.TYPE, AonEnumUtils.getByte(registrySeller.getType()))
 			.where(RSELLER.ID.eq(registrySeller.getId()))
 			.execute();
 		ctx.log().info("UPDATE RSELLER id: " + registrySeller.getId() + ". (" + count + " rows)");		

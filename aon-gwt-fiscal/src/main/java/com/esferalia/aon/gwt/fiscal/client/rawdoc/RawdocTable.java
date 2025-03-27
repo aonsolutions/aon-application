@@ -56,22 +56,22 @@ class RawdocTable extends ScrollPanel {
 		search( opt, cbk );
 	}
 	
-	public void disableMoreData() {
+	private void disableMoreData() {
 		moreData.setValue(-1);
 	}
-	public void enableMoreData() {
+	private void enableMoreData() {
 		moreData.setValue(0);
 	}
-	public boolean isMoreData() {
+	private boolean isMoreData() {
 		return (moreData.getValue() == 0 );
 	}
-	public void enableSearch() {
+	private void enableSearch() {
 		searchEnabled.setValue(0);
 	}
-	public boolean isSearchEnabled() {
+	private boolean isSearchEnabled() {
 		return (searchEnabled.getValue() == 0 );
 	}
-	public void disableSearch() {
+	private void disableSearch() {
 		searchEnabled.setValue(-1);
 	}
 	
@@ -107,8 +107,8 @@ class RawdocTable extends ScrollPanel {
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(AON.MSG.status()), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
-			.addCell( new Label("N\u00BA Factura"), AON.CSS.aonWidth150() ,AON.CSS.aonTextLeft())
-			.addCell( new Label("F. Fra."), AON.CSS.aonWidth80() ,AON.CSS.aonTextCenter())
+			.addCell( new Label("N\u00BA Factura"), AON.CSS.aonWidth150() ,AON.CSS.aonTextLeft(),AON.CSS.aonNowrap())
+			.addCell( new Label("F. Fra."), AON.CSS.aonWidth80() ,AON.CSS.aonTextCenter(),AON.CSS.aonNowrap())
 			.addCell( new Label("Titular"), AON.CSS.aonWidth100() ,AON.CSS.aonTextLeft())
 			.addCell( new Label(), AON.CSS.aonWidthAuto() ,AON.CSS.aonTextLeft())
 			.addCell( new Label("Importe"), AON.CSS.aonWidth80() ,AON.CSS.aonTextRight())

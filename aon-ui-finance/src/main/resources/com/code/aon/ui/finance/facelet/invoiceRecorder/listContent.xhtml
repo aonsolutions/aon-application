@@ -34,12 +34,12 @@
 				        styleClass="aon-finding-toolbar-item aon-icon-filter"
 				        onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'inline-table'; document.querySelector('[id$=filterButton]').style.display = 'none'; document.querySelector('[id$=noFilterButton]').style.display = 'inline'; 
 				        		return false;"
-				       	style="display:none"/>
+				       	style="display:none;"/>
 					<aon:commandButton id="noFilterButton"
 					    styleClass="aon-finding-toolbar-item aon-icon-filter-off"
 					    onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; 
 			            		return false;"
-			            style="display:inline"/>
+			            style="display:inline;"/>
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
@@ -68,7 +68,7 @@
 						<aon:div>						
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
 							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
-								value="#{InvoiceRecorder.checkOption}"
+								value="#{controller.checkOption}"
 								styleClass="aon-margin-left" >
 									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-checkNothing" />
 								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-checkAll" />
@@ -88,7 +88,7 @@
 							<aon:outputText value="#{bundle.finance_tobreakdown}:"
 								styleClass="aon-bold aon-margin-left" />
 							<aon:selectOneMenu id="filterSelectionShowBreakDownRadioAon"
-								value="#{InvoiceRecorder.showBreakDownOption}"
+								value="#{controller.showBreakDownOption}"
 								styleClass="aon-margin-left" >
 									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showBreakDownNothing" />
 								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showBreakDownAll" />
@@ -107,7 +107,7 @@
 							<aon:outputText value="#{bundle.finance_view_entry}:"
 								styleClass="aon-bold aon-margin-left" />
 							<aon:selectOneMenu id="filterSelectionShowAccountEntryRadioAon"
-								value="#{InvoiceRecorder.showAccountEntryOption}"
+								value="#{controller.showAccountEntryOption}"
 								styleClass="aon-margin-left" >
 									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showNothingAccountEntry" />
 								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showAllAccountEntry" />

@@ -253,6 +253,25 @@ public class FiscalModelDAO {
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	
+	public static <T extends FiscalModel> Stream<T> getSamePeriodNoAdmonFiscalModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+		ctx.checkRead();
+		return getSelect(ctx)
+			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.and(FS_MODEL.YEAR.eq(fm.getYear()))
+			.and(FS_MODEL.PERIOD.eq(fm.getPeriod().value()))
+			.and(fm.getId()==null?DSL.trueCondition():FS_MODEL.ID.lt(fm.getId()))
+			.orderBy(FS_MODEL.ID.desc())
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<T>().apply(rec, modelSupplier))
+			;
+	}
+	public static <T extends FiscalModel> Stream<T> getSamePeriodNoAdmonModels(AONContext ctx,FiscalModel fm, Supplier<T> modelSupplier) {
+		return getSamePeriodFiscalModels(ctx, fm, modelSupplier)
+			.map(mod -> fillModelDetails(ctx,mod));
+	}
+
 	public static <T extends FiscalModel> Stream<T> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
 		ctx.checkRead();
 		if (fiscalModel.getPeriod() == Period.M01 || fiscalModel.getPeriod() == Period.T1) {
@@ -465,9 +484,13 @@ public class FiscalModelDAO {
 			.execute();
 		log(ctx,"DELETE id: {0} Mod: {1} {2} rows",fm.getId(), fm.getModel(), count);
 	}
-
+	
 	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, T fm) {
-		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		return initializeFiscalModel(ctx, conf, fm);	
+	}
+
+	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, AonConfiguration conf, T fm) {
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		if (fm.getAdministration() == null || fm.getAdministration() == Administration.UNKNOWN) {
 			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));

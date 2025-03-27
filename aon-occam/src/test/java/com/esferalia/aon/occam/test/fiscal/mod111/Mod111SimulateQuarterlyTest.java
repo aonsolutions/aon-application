@@ -17,21 +17,21 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Mod111InsertMonthlyTest extends AbstractOccamTest {
+public class Mod111SimulateQuarterlyTest extends AbstractOccamTest {
 	
 	@Test
-	public void mod111InsertMonthlyTest() {
+	public void mod111InsertQuarterlyTest() {
 		Date today = new Date();
 		for (Period period : Period.values()) {
-			if (period.isMonthPeriod()) {
+			if (period.isQuarterPeriod()) {
 				Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
 				Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
-				mod111InsertMonthly(AonRandom.getRangeDate(start,end));
+				mod111InsertQuarterly(AonRandom.getRangeDate(start,end));
 			}
 		}
 	}
-	
-	public void mod111InsertMonthly(Date date) {
+
+	public void mod111InsertQuarterly(Date date) {
 		System.out.println( "\t ---------------------");
 		
 		Mod111 aeat = insertModel( Administration.COMMON_TERRITORY, date);
@@ -49,13 +49,11 @@ public class Mod111InsertMonthlyTest extends AbstractOccamTest {
 	private Mod111 insertModel( Administration admon, Date date) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(date)
-			.setMonthly(true)
+			.setMonthly(false)
 			.setAdministration(admon);
-		Mod111 mod111 = FiscalFaker.createMod111(params);
-		MODEL111.save(getOccam(), mod111);
-		Mod111 actual = MODEL111.get(getOccam(), mod111.getId());  
-		Asserts.assertMod111(mod111, actual);
-		FiscalTestSuite.printModel(actual);
-		return actual;
+		Mod111 mod111 = FiscalFaker.simulateMod111(params);
+		mod111 = MODEL111.calculate(getOccam(), mod111);
+		FiscalTestSuite.printModel(mod111);
+		return mod111;
 	}
 }

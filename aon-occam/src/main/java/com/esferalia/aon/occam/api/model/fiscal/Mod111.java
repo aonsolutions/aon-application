@@ -46,11 +46,18 @@ public class Mod111 extends FiscalModel implements Serializable, ISalaryFiscalMo
 		putAmount(Mod111Key.CM_002, useChargeDate ? 1 : 0 );
 	}
 	
-	public boolean mustExcludeInvoicesOnGeneration() {
-		return getAmount(Mod111Key.CM_003) == 1;
+	public boolean mustIncludeInvoicesOnGeneration() {
+		return getAmount(Mod111Key.CM_003) == 0;
 	}
-	public void setMustExcludeInvoicesOnGeneration(boolean mustExcludeInvoicesOnGeneration) {
-		putAmount(Mod111Key.CM_003, mustExcludeInvoicesOnGeneration ? 1 : 0 );
+	public void setMustIncludeInvoicesOnGeneration(boolean mustIncludeInvoicesOnGeneration) {
+		putAmount(Mod111Key.CM_003, mustIncludeInvoicesOnGeneration ? 0 : 1 );
+	}
+	
+	public boolean mustIncludeSalariesOnGeneration() {
+		return getAmount(Mod111Key.CM_004) == 0;
+	}
+	public void setMustIncludeSalariesOnGeneration(boolean mustIncludeInvoicesOnGeneration) {
+		putAmount(Mod111Key.CM_004, mustIncludeInvoicesOnGeneration ? 0 : 1 );
 	}
 	
 	@Override

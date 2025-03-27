@@ -378,7 +378,7 @@ public class IRPFDAO {
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
 			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
-			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			// .and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelInvoice")
 		;
@@ -395,13 +395,36 @@ public class IRPFDAO {
 			.map( new IrpfInvoiceBreakdownFiller() );
 	}
 
+	public static Stream<IrpfBreakdown> getCurrentNotInModelInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
+			.from(ALCATRAZ)
+			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+			.and(FS_MODEL.YEAR.eq(fm.getYear()))
+			//.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+			.asTable("modelInvoice")
+		;
+		return getInvoiceIrpBreakdownSelect(ctx)
+			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
+			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+			.and(INVOICE.TYPE.ne(InvoiceType.SALES.value()))
+			.and(INVOICE.ISSUE_DATE.ge(getStartDate(fm)))
+			.and(INVOICE.ISSUE_DATE.lt(getEndDate(fm)))
+			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+			.fetch()
+			.stream()
+			.map( new IrpfInvoiceBreakdownFiller() );
+	}
+
 	public static Stream<IrpfBreakdown> getNotInModelInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
 			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
 			.and(FS_MODEL.YEAR.eq(fm.getYear()))
-			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+//			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
 			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
 			.asTable("modelInvoice")
 		;
@@ -537,6 +560,32 @@ public class IRPFDAO {
 				.flatMap(List::stream);
 	}
 	
+	public static Stream<IrpfBreakdown> getCurrentNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
+		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
+				.from(ALCATRAZ)
+				.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+				.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+				.and(FS_MODEL.YEAR.eq(fm.getYear()))
+				.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+				.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+				.asTable("modelSalary")
+			;
+			return getSalaryIrpfBreakdownSelect(ctx)
+				.leftAntiJoin(modelSalary).on(ALCATRAZ_SALARY_ID.equal(SALARY.ID))
+				.where(SALARY.DOMAIN.equal(fm.getDomain()))
+					.and(getSalaryDateField(fm).ge(getStartDate(fm)))
+					.and(getSalaryDateField(fm).lt(getEndDate(fm)))
+					.and(SALARY.IRPF_BASE.ne( 0.0 ))
+					.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+					.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
+					.and(CONTRACT_DATA.EXPRESSION.isNull().or(CONTRACT_DATA.EXPRESSION.ne("\"3\"")))  // No tener en cuenta los no residentes
+				.orderBy(getSalaryDateField(fm),SALARY.ID,SALARY.EMPLOYEE_DOCUMENT)
+				.fetch()
+				.stream()
+				.map(rec -> new IrpfSalaryBreakdownFiller().apply(rec) )
+				.flatMap(List::stream);
+	}
+
 	public static Stream<IrpfBreakdown> getNotInModelSalaryIrpfBreakdown(final AONContext ctx, final ISalaryFiscalModel fm) {
 		Table<Record1<Integer>> modelSalary = ctx.getDslContext().select( ALCATRAZ_SALARY_ID )
 			.from(ALCATRAZ)
