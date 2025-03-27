@@ -1,20 +1,16 @@
 import { AonElement } from '../../components/AonElement.js';
-import { AonSelect } from '../../components/aon-select.js';
-
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
 	 sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
-
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
-
 import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { formatNumber, isBase64 } from '../../services/utils.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { createList, createSelect } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
-import { formatNumber, isBase64 } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
-import { AonDateUtils } from '../utils/AonDateUtils.js';
-import { createList } from '../../components/CreateComponent.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -432,7 +428,7 @@ export class AonInvoiceList extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ACCEPT);
-		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		let certSelect = createSelect("cert", "Certificado");
 		getAeatCertificates().then(certs => {
 			certSelect.setOptions(certs.map(s => {
 				return {
