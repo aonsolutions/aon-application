@@ -10,14 +10,14 @@ import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class RawdocLogPanel extends ScrollPanel  {
+class RawdocLogPanel extends ScrollPanel  {
 	
 	private static final String ACTION_DATE = "date";
 	private static final String ACTION_USER = "user";
 	private static final String ACTION_STATUS = "status";
 	private static final String ACTION_REASON = "reason";
 
-	public RawdocLogPanel( String log) {
+	RawdocLogPanel( String log) {
 		if (AonStringUtils.isBlank(log)) {
 			Label label = new Label(AON.MSG.noData());
 			label.setStyleName(AON.CSS.aonBlockMessage());

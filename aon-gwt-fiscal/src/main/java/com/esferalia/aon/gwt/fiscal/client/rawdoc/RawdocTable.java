@@ -56,22 +56,22 @@ class RawdocTable extends ScrollPanel {
 		search( opt, cbk );
 	}
 	
-	public void disableMoreData() {
+	private void disableMoreData() {
 		moreData.setValue(-1);
 	}
-	public void enableMoreData() {
+	private void enableMoreData() {
 		moreData.setValue(0);
 	}
-	public boolean isMoreData() {
+	private boolean isMoreData() {
 		return (moreData.getValue() == 0 );
 	}
-	public void enableSearch() {
+	private void enableSearch() {
 		searchEnabled.setValue(0);
 	}
-	public boolean isSearchEnabled() {
+	private boolean isSearchEnabled() {
 		return (searchEnabled.getValue() == 0 );
 	}
-	public void disableSearch() {
+	private void disableSearch() {
 		searchEnabled.setValue(-1);
 	}
 	

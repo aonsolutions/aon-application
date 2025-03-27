@@ -9,9 +9,9 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.google.gwt.user.client.ui.Label;
 
-public class RawdocTableRowIncome extends RawdocTableRowAbs<AccountingIncome> {
+class RawdocTableRowIncome extends RawdocTableRowAbs<AccountingIncome> {
 
-	public RawdocTableRowIncome(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
+	RawdocTableRowIncome(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		super( opt, cbk, rawdoc);
 	}
 

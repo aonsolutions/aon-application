@@ -21,9 +21,9 @@ import com.google.gwt.user.client.ui.Label;
 
 import es.translogia.tedi.ewok.TediInvoice;
 
-public class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
+class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 
-	public RawdocTableRowInvoice(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
+	RawdocTableRowInvoice(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		super( opt, cbk, rawdoc);
 	}
 
