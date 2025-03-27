@@ -24,14 +24,10 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
-import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
-import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
@@ -82,7 +78,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
@@ -610,90 +605,6 @@ public class FinanceImpl implements IFinance {
 		});
 	}
 
-	// ------------------------------------- RAWDOC
-	@Override
-	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.get(ctx,filter,offset,limit));
-	}
-	
-	@Override
-	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getFull(ctx, filter, offset, limit));
-	}
-	
-	@Override
-	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getUserData(ctx, auth));
-	}
-	
-	@Override
-	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getUserData(ctx, searchDomain));
-	}
-	
-	@Override
-	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getInvoiceCounter(ctx));
-	}
-	
-	@Override
-	public Rawdoc getRawdocFull(AONContext ctx, int id) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.getFull(ctx, id));
-	}
-	
-	@Override
-	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.save(ctx, rawdoc));			
-	}
-	
-	@Override
-	public void rawdocDelete(AONContext ctx, RawdocFilter filter) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.delete(ctx, filter);
-		} );			
-	}
-	
-	@Override
-	public void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.delete(ctx, domain, rawdocId);
-		} );			
-	}
-	
-	@Override
-	public void rawdocToDraft(AONContext ctx, Integer rawdocId) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toDraft(ctx, rawdocId);
-		} );			
-	}
-
-	@Override
-	public void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toRejected(ctx, rawdocId, reason);
-		} );			
-	}
-
-	@Override
-	public void rawdocToInbox(AONContext ctx, Integer rawdocId) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toInbox(ctx, rawdocId);
-		} );			
-	}
-	@Override
-	public boolean rawdocHasData(AONContext ctx, Integer rawdocId) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.hasData(ctx, rawdocId));
-	}
-	
-	
 	// ------------------------------------- PAY METHOD
 	
 	@Override
