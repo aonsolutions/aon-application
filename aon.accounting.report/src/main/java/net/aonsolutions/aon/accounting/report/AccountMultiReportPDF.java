@@ -60,7 +60,7 @@ public class AccountMultiReportPDF {
 				
 			// Mezclar todos los documentos
 			System.out.println("Mezclando documentos...");					
-			document.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
+			document.mergeDocuments(MemoryUsageSetting.setupTempFileOnly().streamCache);
 			try (FileInputStream input = new FileInputStream(mainTempFile)) { 
 				IOUtils.copy(input, out);
 				out.flush();

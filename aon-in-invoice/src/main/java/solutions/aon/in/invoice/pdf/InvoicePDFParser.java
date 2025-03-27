@@ -63,7 +63,7 @@ public class InvoicePDFParser {
 	}
 
 	public static void parse( InputStream is , InvoiceBuilder<?> handler) throws InvoicePDFException {
-		try (PDDocument doc = Loader.loadPDF(is)) {
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
 			parser(doc, handler);
 		} catch (IOException | UnknownInvoiceException e) {
 			throw new InvoicePDFException(e);
@@ -163,12 +163,12 @@ public class InvoicePDFParser {
 
 	    public ImageSizeExtractor() throws IOException {
 	        // preparing PDFStreamEngine
-	        addOperator(new Concatenate());
-	        addOperator(new DrawObject());
-	        addOperator(new SetGraphicsStateParameters());
-	        addOperator(new Save());
-	        addOperator(new Restore());
-	        addOperator(new SetMatrix());
+	        addOperator(new Concatenate(this));
+	        addOperator(new DrawObject(this));
+	        addOperator(new SetGraphicsStateParameters(this));
+	        addOperator(new Save(this));
+	        addOperator(new Restore(this));
+	        addOperator(new SetMatrix(this));
 	        pageImages = new HashMap<>();
 	    }
 

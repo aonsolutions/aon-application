@@ -839,7 +839,7 @@ public class InvoiceTest {
 			
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
-			PDDocument document = Loader.loadPDF(bis);
+			PDDocument document = Loader.loadPDF(bis.readAllBytes());
 			
 			
 			/** CHECKING PDF DATA **/

@@ -38,7 +38,7 @@ public class CertificaFill {
 	private static byte[] fillCertEnterprisePDF(InputStream is, Map<String, String> fieldsMap) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();

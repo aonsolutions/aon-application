@@ -83,7 +83,7 @@ public class PdfSearcher {
 
 	private static List<PDOutlineItem> getIndex() {
 		try (InputStream is = PdfSearcher.class.getResourceAsStream("index.pdf");
-				PDDocument doc = Loader.loadPDF(is)) {
+				PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
 			return search(doc, "");
 		} catch (Exception e) {
 			return Collections.emptyList();
