@@ -7868,7 +7868,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		Date contractStartDate = add(getToday(), Calendar.MONTH, -10);
+		Date contractStartDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, -10);
 		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
@@ -7928,7 +7928,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		Date contractStartDate = add(getToday(), Calendar.MONTH, -10);
+		Date contractStartDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, -10);
 		
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
