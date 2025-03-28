@@ -605,7 +605,7 @@ class SistemaREDI {
 			xmlPage = htmlPage.getElementById("ENVIO_13").click();
 			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
-			xmlPage = htmlPage.getElementById("ENVIO_14").click();
+			xmlPage = htmlPage.getElementById("ENVIO_12").click();
 			htmlPage = HtmlUnitToolkit.transformXmlPage(xmlPage);
 
 			for (HtmlAnchor anchor : htmlPage.getAnchors()) {
