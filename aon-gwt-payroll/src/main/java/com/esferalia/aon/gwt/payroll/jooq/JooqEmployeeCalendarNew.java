@@ -106,6 +106,9 @@ public class JooqEmployeeCalendarNew {
 		varNames.add("JORNADAS_REALES");
 		varNames.add("JORNADAS_TEORICAS");
 		
+		// PERMISO RETRIBUIDO
+		varNames.add("PERMISO_RETRIBUIDO");
+		
 		// LABORABLES
 		varNames.add("LABORABLE_DOMINGO");
 		varNames.add("LABORABLE_LUNES");
@@ -628,7 +631,8 @@ public class JooqEmployeeCalendarNew {
 						,"COEFICIENTE_ERE_FZA_EXONERADO"
 						//,"FIN_ERE_FZA_EXONERADO"
 						,"COEFICIENTE_AUSENCIA"
-						,"CAUSA_INACTIVIDAD"))
+						,"CAUSA_INACTIVIDAD"
+						,"PERMISO_RETRIBUIDO"))
 				.fetch();
 		
 		for(Record daysTypeRecord : daysTypeRecords){
@@ -926,9 +930,11 @@ public class JooqEmployeeCalendarNew {
 					,"CAUSA_INACTIVIDAD"
 					,"LABORABLE"
 					,"DIAS_FESTIVOS"
+					,"PERMISO_RETRIBUIDO"
 			)).execute();
 		
 		ArrayList<CalendarDayType> dayTypeFixList = calendarDaysType.getFixUpdateList();
+		dayTypeFixList.sort((o1, o2) -> o1.getDayType().compareTo(o2.getDayType()));
 		
 		for(CalendarDayType calendarDayType : dayTypeFixList) {
 			if(calendarDayType.getDayType() == DayType.INACTIVITY) {
@@ -1099,6 +1105,7 @@ public class JooqEmployeeCalendarNew {
 		map.put(DayType.EREFZAEXONENDDAY,"FIN_ERE_FZA_EXONERADO");
 		map.put(DayType.FREEDAY, "DIAS_FESTIVOS");
 		map.put(DayType.WORKINGDAY, "LABORABLE");
+		map.put(DayType.PAID_LEAVE, "PERMISO_RETRIBUIDO");
 		NAME_TYPE_OF_DAY = Collections.unmodifiableMap(map);
 	}
 	
@@ -1122,6 +1129,7 @@ public class JooqEmployeeCalendarNew {
 		map.put("DIAS_FESTIVOS", DayType.FREEDAY);
 		map.put("LABORABLE", DayType.WORKINGDAY);
 		map.put("DIAS_EFECTIVOS", DayType.EFFECTIVE);
+		map.put("PERMISO_RETRIBUIDO", DayType.PAID_LEAVE);
 		TYPE_OF_DAY = Collections.unmodifiableMap(map);
 	}
 	

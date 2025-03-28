@@ -82,6 +82,8 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
+import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
+import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 import net.aonsolutions.aon.sign.PdfSigner;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
@@ -758,16 +760,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(withholdingPercent.getWithholdingType() == null) withholdingPercent.setWithholdingType(WithholdingType.PROFESSIONAL);
 
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		List<RegistryAdditionalInfo> rais = new LinkedList<>();
+		rais.add(RegistryAdditionalInfo.BANKS);
+		JSONObject companyJSON = RegistryServlet.getRegistryAdditionalInfo(CompanyJSON.toJSON(company), api, api.getData(), company.getId(), rais);;
+		
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
-		json.put("company", CompanyJSON.toJSON(company));
+		json.put("company", companyJSON);
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put("tbai", getTbaiConfiguration(api));
 		json.put("sii", getSiiConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
 		json.put("invofox", InvofoxServlet.getConfiguration(api));
-//		json.put(IJsonNames.VATS, getVats(api));
+		json.put(IJsonNames.VATS, getVats(api));
 		return json;
 	}
 	

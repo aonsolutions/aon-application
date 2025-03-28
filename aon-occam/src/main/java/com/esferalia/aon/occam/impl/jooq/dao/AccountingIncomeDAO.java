@@ -105,7 +105,7 @@ public class AccountingIncomeDAO {
 				return inc.setExpAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
 					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setAmount( AonMathUtils.round(aed.getCredit() - aed.getDebit()));
 			}
 			
 			@Override
@@ -118,8 +118,7 @@ public class AccountingIncomeDAO {
 			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
 				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
-					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setReferenceCode( aed.getDocumentNumber());
 			}
 			
 			@Override
@@ -132,8 +131,7 @@ public class AccountingIncomeDAO {
 			AccountingIncome visit( AONContext ctx, AccountingIncome inc, AccountEntryDetail aed  ) {
 				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
 					.setConcept( aed.getConcept())
-					.setReferenceCode( aed.getDocumentNumber())
-					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
+					.setReferenceCode( aed.getDocumentNumber());
 			}
 
 			@Override
@@ -217,7 +215,7 @@ public class AccountingIncomeDAO {
 		initializeAccountEntry( ctx, income );
 		saveAccountEntry( ctx, income );
 		income.getCustomer()
-			.ifPresent( c -> saveAndRecordFinanace( ctx, c, income ));
+			.ifPresent( c -> saveAndRecordFinance( ctx, c, income ));
 		return income;
 	}
 	
@@ -324,7 +322,7 @@ public class AccountingIncomeDAO {
 		return income.setAccountEntry(ae);
 	}
 	
-	private static AccountingIncome saveAndRecordFinanace(AONContext ctx, Customer cust, AccountingIncome income) {
+	private static AccountingIncome saveAndRecordFinance(AONContext ctx, Customer cust, AccountingIncome income) {
 		Finance finance = new Finance();
 		finance.setDomain( income.getDomain() );
 		finance.setPayment( false );

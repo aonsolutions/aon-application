@@ -8,14 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
@@ -25,6 +17,13 @@ import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import solutions.aon.sepe.Sepe;
 import solutions.aon.sepe.exceptions.SepeException;
 
@@ -72,6 +71,13 @@ public class Certifica2Servlet extends HttpServlet {
 			// Get ereCode
 			String ereCode = req.getParameter("ereCode");
 			
+			// Get ereEnd
+			String ereEndStr = req.getParameter("ereEnd");
+			Date ereEnd = null;
+			try {
+				ereEnd = dateFormat.parse(ereEndStr);
+			} catch (Exception e) { ereEnd = null; }
+			
 			// Get Servlet outputStream
 			ServletOutputStream output = res.getOutputStream();	
 			
@@ -87,7 +93,7 @@ public class Certifica2Servlet extends HttpServlet {
 				
 				// If not exist, create it and get it
 				if(null == data) {
-					JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId, suspensionReasonCode, ereCode);
+					JooqCertifica2.createCertifica2DBServlet(domainName, userLogin, contractId, suspensionReasonCode, ereCode, ereEnd);
 					data = JooqCertifica2.getCertitica2Data(domainName, contractId);
 				}
 				
@@ -111,7 +117,7 @@ public class Certifica2Servlet extends HttpServlet {
 				res.setContentType(MimeType.MIME_PDF.getName());
 				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
 				
-				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason, ereCode);
+				data = JooqCertifica2.createCertEnterprisePDF(domainName, userLogin, contractId, suspensionReasonCode, suspensionReason, ereCode, ereEnd);
 			}
 			
 			res.setStatus(HttpServletResponse.SC_OK);
@@ -127,14 +133,7 @@ public class Certifica2Servlet extends HttpServlet {
 
 	private String getCertEnterprisePDF(String domainName, String userLogin, Integer contractId, String document, Date endDate) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Get domain id
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
-
-			// Copy Contract
 			return JooqContractAttach.getCertifica2PDF(connection, contractId);
-			
 		} catch (CertificateNotFoundException e) {
 			throw new IllegalArgumentException(
 					"No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");

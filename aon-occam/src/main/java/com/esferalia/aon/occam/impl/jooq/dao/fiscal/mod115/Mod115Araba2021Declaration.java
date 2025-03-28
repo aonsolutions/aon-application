@@ -16,7 +16,8 @@ public class Mod115Araba2021Declaration extends Mod115Declaration {
 	}
 
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
-		 AR_907(Mod115Key.AR_907,null,null,null,null,null)
+		 CM_003(Mod115Key.CM_003,null,null,null,null,null)
+		,AR_907(Mod115Key.AR_907,null,null,null,null,null)
 		,AR_908(Mod115Key.AR_908,null,null,null,null,null)
 		,AR_909(Mod115Key.AR_909,null,null,null,null,null)
 		,AR_C01(Mod115Key.AR_C01 

@@ -49,7 +49,11 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	private JSONArray getRegistries(AonApiData api) {
 		JSONArray array = new JSONArray();
 		String types = api.getData().optString("types");
-		String[] types2 = types.split(",");
+		String[] types2 = types
+				.replace("[", "")
+				.replace("]", "")
+				.replace("\"", "")
+				.split(",");
 		LinkedList<RegistryType> list = new LinkedList<>();
 		if (types != null) {
 			for (Integer i = 0; i < types2.length; i++) {

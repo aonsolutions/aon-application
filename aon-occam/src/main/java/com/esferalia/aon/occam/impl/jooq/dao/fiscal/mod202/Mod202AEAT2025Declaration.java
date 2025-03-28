@@ -223,7 +223,8 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [21]
 		,C21(Mod202Key.C21
 			,null
-			,"isMethodB2()?computeC21():0.0"
+//			,"isMethodB2()?computeC21():0.0"
+			,"isMethodB2()?computePercentage(0):0.0"
 			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C21, getPercent1(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [22]
 		,C22(Mod202Key.C22
@@ -234,14 +235,12 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) - Base a tipo 2 [23]
 		,C23(Mod202Key.C23
 			,null
-//			,"isMethodB2()?(C19-C20):0.0" // FALTA - POR AHORA TODAS LAS BASES MANUALES, HASTA VER COMO LO CALCULA EXACTAMENTE EL MODELO
 			,"isMethodB2()?(C23):0.0"
-			//,(ctx,mod) -> getC23ComputeKeyInfo(ctx,mod) )
 			,(ctx,mod) -> "" )
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [24]
 		,C24(Mod202Key.C24
 			,null
-			,"isMethodB2()?computeC24():0.0"
+			,"isMethodB2()?computePercentage(1):0.0"
 			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C24, getPercent2(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [25]
 		,C25(Mod202Key.C25
@@ -257,7 +256,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [62]
 		,C62(Mod202Key.C62
 			,null
-			,"isMethodB2()?computeC62():0.0"
+			,"isMethodB2()?computePercentage(2):0.0"
 			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C62, getPercent3(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [63]
 		,C63(Mod202Key.C63
@@ -273,7 +272,7 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Porcentaje [65]
 		,C65(Mod202Key.C65
 			,null
-			,"isMethodB2()?computeC65():0.0"
+			,"isMethodB2()?computePercentage(3):0.0"
 			,(ctx,mod) -> getPercentComputeKeyInfo(ctx, mod, Mod202Key.C65, getPercent4(mod)))
 		// B) Liquidación. Mod. 40.3 LIS - B2 - Casos específicos (más de un porcentaje) -  Importe pago fraccionado [66]
 		,C66(Mod202Key.C66
@@ -755,26 +754,6 @@ public class Mod202AEAT2025Declaration extends Mod202Declaration {
 			}
 		});
 	}
-
-// FALTA - INFO DE LA SEGUNDA BASE, CALCULADA HASTA 2024 CON EL RESTO DE LA BASE IMPONIBLE, POR AHORA LAS 4 BASES SON MANUALES HASTA VER COMO SON LOS CALCULOS	
-//	private static String getC23ComputeKeyInfo(AONContext ctx, Mod202 mod) {
-//		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C23 , new ExplainRowManager() {
-//			@Override
-//			public String apply(FiscalModel fm) {
-//				setSomething(true);
-//				if (mod.isMethodB2()) {
-//					double c19 = mod.getAmount(Mod202Key.C19);
-//					double c20 = mod.getAmount(Mod202Key.C20);
-//					double c23 = mod.getAmount(Mod202Key.C23);
-//					return ul()
-//						.with( li( "Resultado de la f\u00F3rmula [019] - [020] ") )
-//						.with( li( fmt(c19)+" - "+fmt(c20)+" = "+fmt(c23)) )
-//						.render();
-//				}
-//				return noMethodB2().render();
-//			}
-//		});
-//	}
 	
 	private static String getC26ComputeKeyInfo(AONContext ctx, Mod202 mod) {
 		return DeclarationInfoUtil.getExplain( ctx, mod, Mod202Key.C26 , new ExplainRowManager() {

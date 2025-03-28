@@ -387,6 +387,7 @@ public final class IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
 	public static final String NATIONALITY = "nationality";
+	public static final String NATURE = "nature";
 	public static final String NEARBY_NUMBERS = "nearbyNumbers";
 	public static final String NIF = "nif";
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
@@ -519,6 +520,7 @@ public final class IJsonNames {
 	public static final String RATTACH = "rattach";
 	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
+	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";

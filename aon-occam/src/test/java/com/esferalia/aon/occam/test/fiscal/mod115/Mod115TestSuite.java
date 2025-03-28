@@ -5,6 +5,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111AEATTestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111ARABATestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111BIZKAIATestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111GIPUZKOATestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111NAVARRATestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111SimulateMonthlyTest;
+import com.esferalia.aon.occam.test.fiscal.mod111.Mod111SimulateQuarterlyTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -16,48 +23,15 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 	Mod115ReopenTest.class,
 	Mod115DeleteTest.class,
 	InsertRandomInvoicesTest.class,
-	Mod115InsertMonthlyTest.class,
-	Mod115FinishTest.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod115InsertMonthlyComplementaryTest.class,
-	Mod115FinishTest.class,
+	Mod115SimulateMonthlyTest.class,
+	Mod115SimulateQuarterlyTest.class,
 	
-	InsertRandomInvoicesTest.class,
-	Mod115InsertMonthlyReplacementTest.class,
-	Mod115RoundedAmountsTest.class,
-	
-	// Modelos trimestrales
-	Mod115ReopenTest.class,
-	Mod115DeleteTest.class,
-	InsertRandomInvoicesTest.class,
-	Mod115InsertQuarterlyTest.class,
-	Mod115FinishTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod115InsertQuarterlyComplementaryTest.class,
-	Mod115FinishTest.class,
-
-	InsertRandomInvoicesTest.class,
-	Mod115InsertQuarterlyReplacementTest.class,
-	Mod115RoundedAmountsTest.class,
-	
-//	// Flujo de estados
-	Mod115ReopenTest.class,					// Pendiente
-	Mod115FinishTest.class,					// Finalizado
-	Mod115SentTest.class,					// Presentado
-//	// Flujo de estados
-	Mod115ReopenTest.class,					// Pendiente
-	Mod115MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod115MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod115SentTest.class,					// Presentado
-//	// Flujo de estados 
-	Mod115ReopenTest.class,					// Pendiente
-	Mod115MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod115MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod115MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod115MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod115SentTest.class,					// Presentado
+	Mod115AEATTestSuite.class,
+	Mod115ARABATestSuite.class,
+	Mod115BIZKAIATestSuite.class,
+	Mod115GIPUZKOATestSuite.class,
+	Mod115NAVARRATestSuite.class,
 	
 })
 public class Mod115TestSuite {

@@ -29,7 +29,18 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="skipResetButton" value="true" />
-	
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="filterButton"
+				        styleClass="aon-finding-toolbar-item aon-icon-filter"
+				        onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'inline-table'; document.querySelector('[id$=filterButton]').style.display = 'none'; document.querySelector('[id$=noFilterButton]').style.display = 'inline'; 
+				        		return false;"
+				       	style="display:none;"/>
+					<aon:commandButton id="noFilterButton"
+					    styleClass="aon-finding-toolbar-item aon-icon-filter-off"
+					    onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; 
+			            		return false;"
+			            style="display:inline;"/>
+				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
 						value="#{bundle.finance_record_selected}"
@@ -52,156 +63,72 @@
 			</ui:decorate>
 	
 			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
-	
-				<aon:div rendered="#{controller.model.rowCount > 0}"
-					style="background-color:#f6f5e3; padding: 5px; margin-bottom: 5px;">
-					<aon:div>
-						<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold" />
-						<aon:commandLink value="#{bundle.finance_all}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckAll}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_none}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckNone}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_right}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckRight}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_warned}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckWarned}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_brokendown}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckBrokendown}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_unbrokendown}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckUnbrokendown}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_entry_visible}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckEntryVisible}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_entry_invisible}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onCheckEntryInvisible}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</aon:div>
-	
-					<aon:div>
-						<aon:outputText value="#{bundle.finance_tobreakdown}:"
-							styleClass="aon-bold" />
-						<aon:commandLink value="#{bundle.finance_all}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowAllTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_none}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onHideAllTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_checked}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowCheckedTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_unchecked}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowUncheckedTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_right}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowCorrectTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_incorrect}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowIncorrectTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_warned}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowWarnedTaxBreakDowns}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</aon:div>
-	
-					<aon:div>
-						<aon:outputText value="#{bundle.finance_view_entry}:"
-							styleClass="aon-bold" />
-						<aon:commandLink value="#{bundle.finance_all}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowAllAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_none}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onHideAllAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_checked}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowCheckedAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_unchecked}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowUncheckedAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_right}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowCorrectAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_incorrect}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowIncorrectAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandLink value="#{bundle.finance_warned}"
-							style="margin-left: 5px; text-decoration: underline;"
-							actionListener="#{controller.onShowWarnedAccountEntry}"
-							reRender="invoiceRecorderDataDiv"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					</aon:div>
-				</aon:div>
+			<aon:div styleClass="aon-scroll-area">   
+					<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important;">
+						<aon:div>						
+							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
+							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
+								value="#{controller.checkOption}"
+								styleClass="aon-margin-left" >
+									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-checkNothing" />
+								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-checkAll" />
+								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-checkRight" />
+								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-checkWarned" />
+								    <f:selectItem itemLabel="#{bundle.finance_brokendown}" itemValue="InvoiceRecorder-checkBrokenDown" />
+								    <f:selectItem itemLabel="#{bundle.finance_unbrokendown}" itemValue="InvoiceRecorder-checkUnBrokenDown" />
+								    <f:selectItem itemLabel="#{bundle.finance_entry_visible}" itemValue="InvoiceRecorder-checkEntryVisible" />
+								    <f:selectItem itemLabel="#{bundle.finance_entry_invisible}" itemValue="InvoiceRecorder-checkEntryInvisible"/>
+								    <a4j:support event="onchange"
+								    actionListener="#{controller.onCheckOption}"
+								    reRender="invoiceRecorderList"
+								    onsubmit="Richfaces.showModalPanel('waitProccess')"
+								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+							</aon:selectOneMenu>
+					
+							<aon:outputText value="#{bundle.finance_tobreakdown}:"
+								styleClass="aon-bold aon-margin-left" />
+							<aon:selectOneMenu id="filterSelectionShowBreakDownRadioAon"
+								value="#{controller.showBreakDownOption}"
+								styleClass="aon-margin-left" >
+									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showBreakDownNothing" />
+								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showBreakDownAll" />
+								    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showBreakDownChecked" />
+								    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showBreakDownUnChecked" />
+								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showBreakDownRight" />
+								    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showBreakDownIncorrect" />
+								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showBreakDownWarned" />
+								    <a4j:support event="onchange"
+								    actionListener="#{controller.onShowBreakDownOption}"
+								    reRender="invoiceRecorderList"
+								    onsubmit="Richfaces.showModalPanel('waitProccess')"
+								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+							</aon:selectOneMenu>
+								
+							<aon:outputText value="#{bundle.finance_view_entry}:"
+								styleClass="aon-bold aon-margin-left" />
+							<aon:selectOneMenu id="filterSelectionShowAccountEntryRadioAon"
+								value="#{controller.showAccountEntryOption}"
+								styleClass="aon-margin-left" >
+									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showNothingAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showAllAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showCheckedAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showUnCheckedAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showRightAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showIncorrectAccountEntry" />
+								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showWarnedAccountEntry" />
+								    <a4j:support event="onchange"
+								    actionListener="#{controller.onShowAccountEntryOption}"
+								    reRender="invoiceRecorderList"
+								    onsubmit="Richfaces.showModalPanel('waitProccess')"
+								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+							</aon:selectOneMenu>
+						</aon:div>
+						<aon:div style="text-align: right;">
+							<aon:commandButton id="InvoiceRecorder-close"
+								styleClass="aon-finding-toolbar-item aon-icon-close"
+								onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; return false;"/>
+						</aon:div>
+					</aon:panelGrid>
 	
 				<aon:div id="invoiceRecorderDataDiv">
 					<ui:decorate

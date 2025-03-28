@@ -16,7 +16,8 @@ public class Mod123Araba2024Declaration extends Mod123Declaration {
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-		 AR_930(Mod123Key.AR_930,null,null,null,null,null)
+		 CM_003(Mod123Key.CM_003,null,null,null,null,null)
+		,AR_930(Mod123Key.AR_930,null,null,null,null,null)
 		,AR_907(Mod123Key.AR_907,null,null,null,null,null)
 		,AR_908(Mod123Key.AR_908,null,null,null,null,null)
 		,AR_909(Mod123Key.AR_909,null,null,null,null,null)

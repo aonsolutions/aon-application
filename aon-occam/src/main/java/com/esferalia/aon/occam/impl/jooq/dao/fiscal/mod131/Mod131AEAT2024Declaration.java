@@ -358,7 +358,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 			,(mod,key) -> ensureActivity(mod,1).setDis(mod.getAmount(key)==1))
 		,AC2_CEU ( Mod131Key.AC2_CEU
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isCeu()?1:0)
-			,(mod,key) -> ensureActivity(mod,1).setCeu(mod.getAmount(key)==0))
+			,(mod,key) -> ensureActivity(mod,1).setCeu(mod.getAmount(key)==1))
 		,AC2_LOC ( Mod131Key.AC2_LOC
 			,(mod,key) -> mod.putAmount(key,ensureActivity(mod,1).isLoc()?1:0)
 			,(mod,key) -> ensureActivity(mod,1).setLoc(mod.getAmount(key)==1))
@@ -2175,7 +2175,7 @@ public class Mod131AEAT2024Declaration extends Mod131Declaration {
 	private static final double DEFAULT_YEAR_HOURS = 1800;
 
 	static boolean accept(Mod131 mod131) {
-		return mod131.isAEAT() && mod131.getYear() > 2022; 
+		return mod131.isAEAT() && mod131.getYear() == 2024; 
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -117,18 +117,21 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	}
 	
 	public double calculatePorcentajeIngresoCuenta2025(int actIdx) {
-		if (isLastPeriod()) return 0.0;
-		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
-		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		if (isLastPeriod()) 
+			return 0.0;
+		String epigraph = this.mod303.getActivityList().get(actIdx).getEpigraph();
+		int specialEpigraph = this.mod303.getActivityList().get(actIdx).getSpecialEpigraph();
+		Modules2025.Epigraph epi = Modules2025.Epigraph.getEpigraph(epigraph, specialEpigraph);
 		double por = 0.0;
-		if (epig != null) por = epig.getVatPorc();
+		if (epi != null) 
+			por = epi.getVatPorc();
 		return por;
 	}
 	
 	public double calculatePorcentajeIngresoCuenta2023(int actIdx,double covid) {
 		if (isLastPeriod()) return 0.0;
 		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
-		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		Modules2018.Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
 		double por = 0.0;
 		if (epig != null) por = epig.getVatPorc();
 		return por;
@@ -139,7 +142,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 			return 0.0;
 //		double por = this.mod303.getActivityList().get(actIdx).getPor();
 		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
-		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		Modules2018.Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
 		double por = 0.0;
 		if (epig != null)
 			por = epig.getVatPorc();

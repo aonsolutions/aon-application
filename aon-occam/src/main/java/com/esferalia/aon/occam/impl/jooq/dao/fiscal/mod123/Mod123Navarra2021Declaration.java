@@ -16,7 +16,9 @@ public class Mod123Navarra2021Declaration extends Mod123Declaration {
 	}
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
-		 NF_C01(Mod123Key.NF_C01
+		 CM_003(Mod123Key.CM_003,null,null,null,null,null)
+ 		,NF_C01(Mod123Key.NF_C01
+				 
 			, (mod,br) -> (isMovableCapital(br)) 
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.NF_C01,mod,br)
 			,null,null,null)

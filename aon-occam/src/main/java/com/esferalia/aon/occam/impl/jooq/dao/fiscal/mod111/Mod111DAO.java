@@ -14,14 +14,17 @@ import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
@@ -63,6 +66,10 @@ public class Mod111DAO extends FiscalModelDAO {
 		return FiscalModelDAO.getSamePeriodModels(ctx, fm, Mod111::new);
 	}
 	
+	public static Stream<Mod111> getSamePeriodNoAdmonModels(AONContext ctx,Mod111 fm) {
+		return FiscalModelDAO.getSamePeriodNoAdmonFiscalModels(ctx, fm, Mod111::new);
+	}
+
 	public static Mod111 save(AONContext ctx, Mod111 mod111) {
 		calculate(mod111);
 		return FiscalModelDAO.save(ctx, mod111);
@@ -105,25 +112,62 @@ public class Mod111DAO extends FiscalModelDAO {
 			mod111 = new Mod111();
 			mod111.setDomain(ctx.getDomainId());
 		}
-		initializeFiscalModel(ctx, mod111);
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		initializeFiscalModel(ctx, conf, mod111);
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.initialize( ctx, mod111 );
+		initializeMustExcludeInvoicesOnGeneration(ctx, conf, mod111);
 		dec.ensureDetails(mod111);
 		return mod111;
 	}
 	
+	private static void initializeMustExcludeInvoicesOnGeneration(AONContext ctx, AonConfiguration conf, Mod111 mod111) {
+		if ( !mod111.isComplementary() && ! mod111.isReplacement() ) {
+			Integer admin = conf.fiscal().getAdministration();
+			boolean inc = false;
+			if (admin != null ) {
+					inc = mod111.getAdministration() ==  Administration.values()[admin];
+			} else {
+					inc = getSamePeriodNoAdmonModels( ctx, mod111).noneMatch( Mod111::mustIncludeInvoicesOnGeneration );
+			}
+			mod111.setMustIncludeInvoicesOnGeneration( inc );
+		}
+	}
+	
+	public static Mod111 simulate(AONContext ctx,Mod111 mod111) {
+		return createOrSimulate(ctx,mod111, true);	
+	}
+
 	public static Mod111 create(AONContext ctx,Mod111 mod111) {
+		return createOrSimulate(ctx,mod111, false);
+	}
+
+	private static Mod111 createOrSimulate(AONContext ctx,Mod111 mod111, boolean simulate) {
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.ensureDetails(mod111);
-		Set<Alcatraz> invoices = dec.createFromInvoices(ctx,mod111);
-		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
+		Set<Alcatraz> invoices = null;
+		if ( mod111.mustIncludeInvoicesOnGeneration() ) {
+			invoices = dec.createFromInvoices(ctx,mod111);
+		}
+		Set<Integer> salaries = null;
+		if ( mod111.mustIncludeSalariesOnGeneration() ) {
+			salaries = dec.createFromSalary(ctx,mod111);
+		}
 		boolean useChargeDate = mod111.mustUseChargeDate();
 		mod111.getMap().values().stream().forEach(FiscalModelDetail::calculate);
 		dec.uniqueInitialize(ctx,mod111);
-		mod111 = save(ctx, mod111);
-		AlcatrazDAO.deleteFiscalModel(ctx, mod111);
-		AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
-		AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
+		if (simulate) {
+			calculate(mod111);	
+		} else {
+			mod111 = save(ctx, mod111);
+			AlcatrazDAO.deleteFiscalModel(ctx, mod111);
+			if ( mod111.mustIncludeInvoicesOnGeneration() ) {
+				AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
+			}
+			if ( mod111.mustIncludeSalariesOnGeneration() ) {
+				AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
+			}
+		}
 		mod111.setAlcatrazBound( AonCollectionUtils.isNotEmpty(invoices) || AonCollectionUtils.isNotEmpty(salaries) );
 		mod111.setUseChargeDate( useChargeDate );
 		return mod111;

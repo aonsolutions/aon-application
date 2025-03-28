@@ -400,7 +400,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		UIObject.setVisible(quotePanel.getElement(), false);
 
 		// Hide month defaul
-		UIObject.setVisible(monthPanel.getElement(), false);
+//		UIObject.setVisible(monthPanel.getElement(), false);
 
 		// Hide weekDays panel default
 		UIObject.setVisible(weekDaysPanel.getElement(), false);
@@ -556,7 +556,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 		paymentTypeListBox.addChangeHandler(e -> {
 			checkPeriodicityValues();
 			enableOrDisableTaxAndQuote();
-			enableOrDisableMonth();
+//			enableOrDisableMonth();
 			createUpdatePayment();
 			checkProrrat0005();
 		});
@@ -766,7 +766,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 	private void initMonthLB() {
 		monthLB.clear();
-		monthLB.addItem("-", "");
+		monthLB.addItem("Todos", "");
 		monthLB.addItem("Enero", "0");
 		monthLB.addItem("Febrero", "1");
 		monthLB.addItem("Marzo", "2");
@@ -829,7 +829,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 	private Short getMonth() {
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
-		return type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 && monthLB.getSelectedIndex() != 0
+		return /*type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0005 &&*/ monthLB.getSelectedIndex() != 0
 				? Short.parseShort(monthLB.getSelectedValue())
 				: null;
 	}
@@ -1195,6 +1195,8 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			paymenteDescriptionPosValue = "93";
 		} else if (AonStringUtils.equalsIgnoreCase(paymentTypeValue, "MANUAL")) {
 			paymenteDescriptionPosValue = "99";
+		}  else if (AonStringUtils.equalsIgnoreCase(paymentTypeValue, "MEJORA_IT")) {
+			paymenteDescriptionPosValue = "55";
 		}
 
 		paymentDescriptionPos.setValue(Integer.parseInt(paymenteDescriptionPosValue));
@@ -1236,18 +1238,23 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 
 		String paymentTypeValue = paymentType.getSelectedValue();
 		String periodicity = periodicityType.getSelectedValue();
+		
+		if (!AonStringUtils.equalsIgnoreCase(paymentTypeValue, "MEJORA_IT")) {
+			if (AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
+				paymentExpressionText = createBaseSalaryExpression();
 
-		if (AonStringUtils.equalsIgnoreCase(paymentTypeValue, "SALARIO_BASE"))
-			paymentExpressionText = createBaseSalaryExpression();
+			if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL")
+					&& AonStringUtils.containsIgnoreCase(periodicity, "PRORRATEAR"))
+				paymentExpressionText = createProrratExpression();
+			else if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")
+					|| AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL"))
+				paymentExpressionText = createPlusExpression();
+			
+			
 
-		if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL")
-				&& AonStringUtils.containsIgnoreCase(periodicity, "PRORRATEAR"))
-			paymentExpressionText = createProrratExpression();
-		else if (AonStringUtils.containsIgnoreCase(paymentTypeValue, "PLUS")
-				|| AonStringUtils.containsIgnoreCase(paymentTypeValue, "MANUAL"))
-			paymentExpressionText = createPlusExpression();
-
-		this.paymentExpression.setValue(paymentExpressionText, true);
+			this.paymentExpression.setValue(paymentExpressionText, true);
+		}
+	
 	}
 
 	private void createQuoteExpression() {
@@ -1472,6 +1479,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			} else if (AonStringUtils.equalsIgnoreCase(paymentType.getSelectedItemText(), "MEJORA_IT")) {
 				List<Payment> gtzdoPayments = gtzdoWizard.createPayments();
 				for (Payment gtzdoPayment : gtzdoPayments) {
+					gtzdoPayment.setMonth(AonStringUtils.isBlank(monthLB.getSelectedValue()) ? null : Short.parseShort(monthLB.getSelectedValue()));
 					gtzdoPayment.setStartDate(createStartDate());
 					gtzdoPayment.setEndDate(createEndDate());
 					gtzdoPayment.setSalaryType(Salary.Type.values()[Integer.parseInt(salaryTypeLB.getSelectedValue())]);

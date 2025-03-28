@@ -727,6 +727,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tener en cuenta facturas y n\u00F3minas del ejercicio {0} sin incluir en ninguna declaraci\u00F3n")
 	String generateFromYearStart(int year);
 
+	@DefaultMessage("Incluir facturas no declaradas")
+	String includeInvoicesOnGeneration();
+
+	@DefaultMessage("Incluir n\u00F3minas no declaradas")
+	String includeSalariesOnGeneration();
+
 	@DefaultMessage("Tener en cuenta facturas del ejercicio {0} sin incluir en ninguna declaraci\u00F3n")
 	String generateFromYearStartInv(int year);
 

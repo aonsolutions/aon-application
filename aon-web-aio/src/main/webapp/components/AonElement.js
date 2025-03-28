@@ -157,7 +157,7 @@ export class AonElement extends HTMLElement{
   }
 	
   setDur(dur) {
-	this.dur = dur;
+	  this.dur = dur;
   }
   
   isLocal(){
@@ -171,7 +171,7 @@ export class AonElement extends HTMLElement{
   }
 
   isBetaDoc(){
-    return this.isBeta();
+    return this.isBeta() && LS.isBetaDoc(); 
   }
 
   isSig(){

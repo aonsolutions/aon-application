@@ -103,6 +103,9 @@
 			width: auto !important;
 		}
 		
+		.w-14rem{
+			width: 14rem;
+		}
 	</ui:style>
 	
 	<g:HTMLPanel ui:field="container" styleName="{style.container}">
@@ -185,7 +188,7 @@
 						<g:Label styleName="{style.title}">Descripción</g:Label>
 						<g:TextBox ui:field="paymentDescription"/>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.element} {style.w180}">
+					<g:HTMLPanel styleName="{style.element} {style.w-14rem}">
 						<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>
 						<g:ListBox ui:field="salaryTypeLB"/>
 					</g:HTMLPanel>
@@ -198,7 +201,7 @@
 				
 				<g:HTMLPanel styleName="{style.between}">
 					<g:HTMLPanel ui:field="monthPanel" styleName="{style.element} {style.maxWidth}">
-						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes</g:Label>
+						<g:Label ui:field="monthTitle" styleName="{style.title}">Mes Cobro</g:Label>
 						<g:ListBox ui:field="monthLB"/>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">

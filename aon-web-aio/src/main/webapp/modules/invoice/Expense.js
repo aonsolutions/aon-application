@@ -19,6 +19,10 @@ export class Expense {
 
   constructor(expense) {
     this.buildObject(expense);
+    if(expense)
+      this.isNew = false;
+    else
+      this.isNew = true
   }
 
   buildObject(expense) {
@@ -36,6 +40,9 @@ export class Expense {
       this.comments = expense.comments;
       this.accountEntry = expense.accountEntry;
       this.finance = expense.finance;
+    } else {
+      this.domain = LS.getDomainId();
+      this.date = new Date();
     }
     
   }
@@ -155,6 +162,10 @@ export class Expense {
   setFinance(finance) {
     this.finance = finance;
     return this;
+  }
+
+  getNew() {
+    return this.isNew;
   }
 
 }

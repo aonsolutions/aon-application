@@ -260,7 +260,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	
 	private void accept(IModel131ActivityCallback callback, final IEpigraph selected) {
 		callback.getActivity().initialize();
-		callback.getActivity().setEpi(selected);
+//		callback.getActivity().setEpi(selected);
 		callback.getActivity().setEpigraph(selected.getEpigraph());
 		callback.getActivity().setDescription(selected.getDescription());
 		callback.getActivity().setMaxImport(selected.getLimExceso());
@@ -442,7 +442,7 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 	}
 	
 	private void enableFields(Mod131Activity act) {
-		if (act.getEpi() == Epigraph.E____) {
+		if (AonStringUtils.equals(act.getEpigraph(), Epigraph.E____.getEpigraph())) {
 			bat.setEnabled(true);
 			loc.setEnabled(false);
 			veh.setEnabled(false);
@@ -450,10 +450,9 @@ public class Model131Activity2024 extends DockLayoutPanel implements HasValueCha
 			tns.setEnabled(false);
 			tss.setEnabled(false);
 			mun.setEnabled(false);
-		} else if (act.getEpi() == Epigraph.E_722A 
-			|| act.getEpi() == Epigraph.E_722B
-			|| act.getEpi() == Epigraph.E_757
-			) {
+		} else if (AonStringUtils.equals(act.getEpigraph(), Epigraph.E_722A.getEpigraph())  
+				|| AonStringUtils.equals(act.getEpigraph(), Epigraph.E_757.getEpigraph())
+				) {
 			bat.setEnabled(false);
 			tss.setEnabled(true);
 			tns.setEnabled(true);

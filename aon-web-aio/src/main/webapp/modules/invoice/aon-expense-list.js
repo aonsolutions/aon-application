@@ -3,6 +3,9 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { createList } from '../../components/CreateComponent.js';
 import { AonExampleObject } from '../example/aon-example-object.js';
 import { getExpenses, getIncomes } from '../../services/accountingService.js';
+import { AonIncome } from './aon-income.js';
+import * as LS from '../../services/localStorageService.js';
+import { Income } from './Income.js';
 import { AonExpense } from './aon-expense.js';
 import { Expense } from './Expense.js';
 
@@ -50,8 +53,7 @@ export class AonExpenseList extends AonElement {
     }
 
     expenseObject(incomingExpense) {
-        let expense = new AonExpense();
-        expense.setExpense(new Expense(incomingExpense));
+        let expense = new AonExpense( new Expense(incomingExpense) );
         this.getApplication().setContent(expense);
     }
     
@@ -70,11 +72,13 @@ export class AonExpenseList extends AonElement {
         let searchFn = (event) => this.search(event.detail);
         btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
 
-        table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
-        table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
-        
-
+        table.addColumn(MSG.DATE, 'date', 'date', '150px');
+        table.addColumn(MSG.REFERENCE, 'string', 'referenceCode', '150px');
+        table.addColumn("Gasto", 'string', 'expenseDescription', '300px');
+        table.addColumn(MSG.CONCEPT, 'string', 'concept', '300px');
+        table.addColumn(MSG.PAYMETHOD, 'string', 'paymethodDescription', '300px');
+        table.addColumn(MSG.AMOUNT, 'double', 'formattedAmount', '200px');
+    
         table.addEventListener(EVENT.MORE, this.moreFn);
         this.init();
     }
@@ -87,14 +91,16 @@ export class AonExpenseList extends AonElement {
     init() {
         let table = this.getElement(this.TABLE);
         if(table) {
-            getExpenses().then(expenses => {
+            getExpenses( this.filter ).then(expenses => {
                 if(expenses.length == 0){   
-                    this.empty();
+                    console.log("No hay datos!!!")
                 }
                 table.removeRows();
-
-                expenses.forEach((expense, i) => {
-                    console.log(expense);
+                expenses.forEach((expense) => {
+                    if(expense.expAccount)
+                        expense.expenseDescription = expense.expAccount.description;
+                    expense.paymethodDescription = expense.cashAccount.description;
+                    expense.formattedAmount = this.formatAmount(expense.amount);
                     table.addRow(expense, () => this.expenseObject(expense));
                 });
 
@@ -112,7 +118,7 @@ export class AonExpenseList extends AonElement {
                     this.more = false;
                 else this.more = true;
                 examples.forEach((example, i) => {
-                    table.addRow(example, () => this.expenseObject(example));
+                    table.addRow(example, () => this.expenseObject(example, i));
                 });
             });
         }
@@ -136,9 +142,16 @@ export class AonExpenseList extends AonElement {
             resolve({id: filter.id, date: '01-01-2025', example: `Example ${filter.id}`});
         });
     }
+
+    formatAmount(amount) {
+        const num = parseFloat(amount);  
+        if (isNaN(num)) return amount; 
+        return num.toLocaleString('es-ES', { useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €';
+    }
     
     add(){
-        this.getApplication().setContent(new AonExpense());
+        let inc = new AonExpense( new Expense() );
+        this.getApplication().setContent(inc);
     }
 }
 

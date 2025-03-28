@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.IAgreement;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Payment;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AgreementImpl implements IAgreement {
@@ -133,7 +134,7 @@ public class AgreementImpl implements IAgreement {
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
 							.set(AGREEMENT_PAYMENT.START_DATE,new Date(payment.getStartDate().getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE,new Date(payment.getStartDate().getTime()))
-							.set(AGREEMENT_PAYMENT.MONTH,  payment.getMonth() != null ? (byte) payment.getMonth().ordinal():null)
+							.set(AGREEMENT_PAYMENT.MONTH,  AonEnumUtils.getByte( payment.getMonth() ) )
 							;
 					//@formatter:on
 				}

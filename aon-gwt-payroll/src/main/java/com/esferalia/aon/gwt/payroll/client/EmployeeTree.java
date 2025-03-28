@@ -3597,7 +3597,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EmployeeCalendarDraftNew getEmployeeCalendarDraftNew() {
 		if (employeeCalendarDraftNew == null)
-			employeeCalendarDraftNew = new EmployeeCalendarDraftNew();
+			employeeCalendarDraftNew = new EmployeeCalendarDraftNew() {
+
+				@Override
+				protected void showErrorMessage(String title, String message) {
+					AonMessagePanel.showError(messagePanel, title + ": " + message);
+				}
+
+				@Override
+				protected void showSuccessMessage(String title, String message) {
+					AonMessagePanel.showSuccess(messagePanel, title + ": " + message);
+				}
+
+				@Override
+				protected void showLoadingMessage(String message) {
+					AonMessagePanel.showLoading(messagePanel, message);
+				}
+
+				@Override
+				protected void onHideMessage() {
+					AonMessagePanel.hideMessage(messagePanel);
+				}};
+				
 		return employeeCalendarDraftNew;
 	}
 	

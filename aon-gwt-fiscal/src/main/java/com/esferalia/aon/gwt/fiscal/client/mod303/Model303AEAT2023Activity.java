@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.ModuleInfo;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -42,6 +44,7 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
 
+	private static final Logger LOGGER = Logger.getLogger(Model303AEAT2023Activity.class.getName());	
 	private AonToolbar toolbar;
 	private AonTableButton epigraphsButton;
 	private AonToolbarButton removeButton; 
@@ -202,9 +205,10 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	}
 
 	private String getTitle(Mod303Activity act) {
+		LOGGER.info("Model303AEAT2023Activity getTitle. selected: " + Modules2025.Epigraph.getEpigraph(act.getEpigraph(), act.getSpecialEpigraph()));
 		return act.isNotEmpty()
-			?(act.getEpigraph()+ " - " + AonStringUtils.abbreviate(act.getDescription(),80))
-			:"Nueva actividad";
+			? (act.getEpigraph() + " - " + AonStringUtils.abbreviate(act.getDescription(),80))
+			: "Nueva actividad";
 	}
 
 	private Widget getActivitySelectionPanel(IModel303AEATActivityCallback<Mod303Activity> cbk) {
@@ -236,6 +240,7 @@ class Model303AEAT2023Activity extends DockLayoutPanel implements HasValueChange
 	private void accept(IModel303AEATActivityCallback<Mod303Activity> callback, final IEpigraph selected) {
 		callback.getActivity().initialize();
 		callback.getActivity().setEpigraph(selected.getEpigraph());
+		callback.getActivity().setSpecialEpigraph(selected.getSpecialEpigraph());
 		callback.getActivity().setDescription(selected.getDescription());
 		callback.getActivity().setPor(selected.getVatPorc());
 		callback.getActivity().setMaxImport(selected.getLimExceso());

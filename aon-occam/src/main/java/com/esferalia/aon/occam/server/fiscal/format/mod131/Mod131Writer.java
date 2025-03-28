@@ -31,7 +31,8 @@ public class Mod131Writer {
 
 	
 	private enum Writers {
-		 AEAT_2024	(m -> (m.isAEAT() && m.getYear() >= 2024), Mod131WriterAEAT2024::new)
+		 AEAT_2025	(m -> (m.isAEAT() && m.getYear() >= 2025), Mod131WriterAEAT2025::new)
+		,AEAT_2024	(m -> (m.isAEAT() && m.getYear() == 2024), Mod131WriterAEAT2024::new)
 		,AEAT_2019	(m -> (m.isAEAT() && m.getYear() >= 2019 && m.getYear() < 2024), Mod131WriterAEAT2019::new)
 		,AEAT_2016	(m -> (m.isAEAT() && m.getYear() >= 2016 && m.getYear() < 2019), Mod131WriterAEAT2016::new)
 		;

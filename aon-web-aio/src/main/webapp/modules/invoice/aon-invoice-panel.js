@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing, downloadRegistryExcel } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -31,6 +31,7 @@ import { FiscalUtils } from "../fiscal/FiscalUtils.js";
 
 import * as ACTION from "../actions.js";
 import * as OPTION from "./InvoiceOptions.js";
+import * as LS from "../../services/localStorageService.js";
 
 import "./aon-invoice-print.js";
 import "../../components/aon-application.js";
@@ -234,6 +235,9 @@ export class AonInvoicePanel extends AonElement {
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_CUSTOMER, () => this.addCustomer());
     }
+    const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+    if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('customer'));
+    
     // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR CLIENTE EN EL MÓVIL
     // else {
     //   this.getApplication().removeFloatOption();
@@ -247,6 +251,8 @@ export class AonInvoicePanel extends AonElement {
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_SUPPLIER, () => this.addSupplier());
     }
+    const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+    if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('supplier'));
     // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR PROVEEDOR EN EL MÓVIL
     // else {
     //   this.getApplication().removeFloatOption();
@@ -260,6 +266,8 @@ export class AonInvoicePanel extends AonElement {
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
     }
+    const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+    if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('creditor'));
     // TODO ACTIVAR CUANDO ESTE LA OPCIÓN DE AÑADIR ACREEDOR EN EL MÓVIL
     // else {
     //   this.getApplication().removeFloatOption();
@@ -578,7 +586,6 @@ export class AonInvoicePanel extends AonElement {
   addCustomer() {
     let aonCustomer = new AonCustomer();
     aonCustomer.id = this.id + "Customer";
-    aonCustomer.setCustomer();
     this.getApplication().setContent(aonCustomer);
   }
 
@@ -866,6 +873,17 @@ export class AonInvoicePanel extends AonElement {
       this.buildInvoiceImageEditor(file);
     }).catch(() => null);
   } 
+
+  downloadRegistryExcel(type) {
+    let data = {
+      domainId: LS.getDomainId(),
+      domainName: LS.getDomainName(),
+      domainLogin: LS.getDomainLogin(),
+      type
+    };
+    let json = btoa(JSON.stringify(data));
+    downloadRegistryExcel(json);
+  }
 
   buildInvoiceImageEditor(file) {
     let editor = new AonImageEditor();

@@ -1,4 +1,4 @@
-import {getCustomers, getCustomer, getScopes, getTarget} from '../../../services/service.js';
+import {getCustomers, getCustomer, getScopes, getTarget, downloadRegistryExcel} from '../../../services/service.js';
 import { EVENT, TAG} from '../../../environments/environments.js';
 import { AonRegistryList } from '../aon-registry-list.js';
 import { AonCustomer } from './aon-customer.js';
@@ -7,9 +7,12 @@ import { OfficeUtils } from '../../office/OfficeUtils.js';
 import { getProjectTypes } from '../../../services/projectService.js';
 import { OfficeEnums } from '../../office/OfficeEnums.js';
 
+import * as LS from '../../../services/localStorageService.js';
+
 export class AonCustomerList extends AonRegistryList {
 
 	parent;
+	office;
 
 	constructor(parent) {
 		super();
@@ -17,8 +20,9 @@ export class AonCustomerList extends AonRegistryList {
 	}
 
 	build(){
-		this.filter = this.filter || { page: 1, perPage: 50 }
-		super.build();
+		this.buildDur().then(() => {
+			super.build();
+		});
 	}
 
 	async getRegistries() {
@@ -45,6 +49,7 @@ export class AonCustomerList extends AonRegistryList {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);
+			aonCustomer.setOffice(this.office);
 			this.getApplication().setContent(aonCustomer);
 		});
 	}
@@ -52,6 +57,8 @@ export class AonCustomerList extends AonRegistryList {
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
 		this.getApplication().addToolbarOption2(ACTION.ADD, () => this.buildRegistry());
+		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+		if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadExcel('customer'));
 		this.buildSearch();
 	}
 
@@ -177,6 +184,22 @@ export class AonCustomerList extends AonRegistryList {
 			typeInput.value = '';
 			typeEl.setValue('');
 		}
+	}
+
+	downloadExcel(type) {
+		let data = {
+		  domainId: LS.getDomainId(),
+		  domainName: LS.getDomainName(),
+		  domainLogin: LS.getDomainLogin(),
+		  type
+		};
+		let json = btoa(JSON.stringify(data));
+		downloadRegistryExcel(json);
+	}
+
+
+	setOffice(office) {
+		this.office = office;
 	}
 }
 

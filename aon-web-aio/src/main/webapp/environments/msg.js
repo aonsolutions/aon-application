@@ -242,6 +242,7 @@ export const DOWNLOAD = MSG.DOWNLOAD;
 export const DOWNLOAD_FILE = MSG.DOWNLOAD_FILE;
 export const DOWNLOAD_FILES = MSG.DOWNLOAD_FILES;
 export const DOWNLOAD_INVOICE = MSG.DOWNLOAD_INVOICE;
+export const DOWNLOAD_EXCEL = MSG.DOWNLOAD + " Excel";
 export const DOWNLOAD_EXCEL_INVOICE = MSG.DOWNLOAD_INVOICE + " Excel";
 export const DOWNLOAD_INVOICES = MSG.DOWNLOAD_INVOICES;
 export const DRAFT = 'Borrador';
@@ -520,6 +521,7 @@ export const OTHERS = "Otros";
 export const ONE = MSG.ONE;
 
 // ----- P
+export const PACKAGE = 'Envase';
 export const PACKAGES = 'Envases';
 export const PACKAGING = 'Empaquetado';
 export const PARENT_APPS = MSG.PARENT_APPS;

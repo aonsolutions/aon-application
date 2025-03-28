@@ -301,13 +301,13 @@ export const getTaxTypeName = (type, mobile, administration) => {
   } 
 }
 
-export const getTaxPercentageOption = (type, administration, agri) => {
+export const getTaxPercentageOption = (type, administration, surcharge, agri) => {
   if("CANARIAS" == administration) {
     return TaxVatIGICPercentage;
+  } else if(TaxType.IVA_RE === type || surcharge) {
+    return TaxVatREPercentage;
   } else if(TaxType.IVA === type) {
     return agri ? TaxIVAAgriPercentage : TaxIVAPercentage;
-  } else if(TaxType.IVA_RE === type) {
-    return TaxVatREPercentage;
   } else if(TaxType.IGIC === type) {
     return TaxVatIGICPercentage;
   } else if(TaxType.IRPF === type) {

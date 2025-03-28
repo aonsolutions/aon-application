@@ -16,9 +16,9 @@ public class Mod123AEAT2024Declaration extends Mod123Declaration {
 	}
 	
 	private enum Mod123KeyDAO  implements IMod123KeyDAO {
-		
+		 CM_003(Mod123Key.CM_003,null,null,null,null,null)
 		// Dividendos y otras rentas de participación en fondos	propios de entidades
-		 CT_C01(Mod123Key.CT_C01
+		,CT_C01(Mod123Key.CT_C01
 				, (mod,br) -> isMovableCapitalDividens(br)
 				, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.CT_C01,mod,docs,br)
 				,null,null,null) // Número de Rentas

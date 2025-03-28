@@ -175,6 +175,10 @@
 					
 					<g:HTMLPanel styleName="{style.between}" ui:field="periodPaymentPanel">
 						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label text="Mes Cobro" styleName="{style.title}" />
+							<g:ListBox ui:field="monthPaymentLB" styleName="{style.quoteTaxedWidth} {style.inputHeight}"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
 							<g:Label text="Fecha inicio" styleName="{style.title}" />
 							<c:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
 						</g:HTMLPanel>
