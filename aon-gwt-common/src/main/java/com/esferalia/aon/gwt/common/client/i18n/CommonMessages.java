@@ -175,6 +175,7 @@ public interface CommonMessages extends Messages {
 		,"GIPUZKOA"			,"Diputaci\u00F3n foral Gipuzkoa"
 		,"NAVARRA"			,"Gobierno foral de Navarra"
 		,"COMMON_TERRITORY"	,"Agencia Tributaria"
+		,"CANARIAS"			,"Agencia Tributaria Canaria"
 		})	
 	String administrationName(@Select Administration administration);
 
