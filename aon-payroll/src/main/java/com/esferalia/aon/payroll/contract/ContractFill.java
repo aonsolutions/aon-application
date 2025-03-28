@@ -153,7 +153,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("prorroga.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
@@ -187,7 +187,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("propuestaRecolocacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
@@ -227,7 +227,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
@@ -313,7 +313,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("indefinido.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
@@ -466,7 +466,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -552,7 +552,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("formacion.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -641,7 +641,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -728,7 +728,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("practicas.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			
@@ -818,7 +818,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();
@@ -903,7 +903,7 @@ public class ContractFill {
 		InputStream is = ContractFill.class.getResourceAsStream("temporal.pdf");
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();

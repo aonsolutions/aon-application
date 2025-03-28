@@ -2918,7 +2918,7 @@ public class EnterprisePayrollExcel {
 						cell.setCellFormula(fsb.toString());
 						
 						Cell c = sheet.getRow(sheet.getLastRowNum() -1).getCell(i);
-						if (evaluator.evaluateFormulaCellEnum(cell) == CellType.NUMERIC && evaluator.evaluateFormulaCellEnum(c) == CellType.NUMERIC) {
+						if (evaluator.evaluateFormulaCell(cell) == CellType.NUMERIC && evaluator.evaluateFormulaCell(c) == CellType.NUMERIC) {
 							double difference = Math.abs(AonNumberUtils.zeroIfNull(c.getNumericCellValue()) - AonNumberUtils.zeroIfNull(cell.getNumericCellValue()));
 							
 							
@@ -3230,7 +3230,7 @@ public class EnterprisePayrollExcel {
 		}
 		
 		
-		if (evaluator.evaluateFormulaCellEnum(tCell) == CellType.NUMERIC && evaluator.evaluateFormulaCellEnum(dCell) == CellType.NUMERIC) {
+		if (evaluator.evaluateFormulaCell(tCell) == CellType.NUMERIC && evaluator.evaluateFormulaCell(dCell) == CellType.NUMERIC) {
 			double difference = Math.abs(AonNumberUtils.zeroIfNull(dCell.getNumericCellValue()) - AonNumberUtils.zeroIfNull(tCell.getNumericCellValue()));
 			dCell.setCellStyle(selectColor(
 					difference

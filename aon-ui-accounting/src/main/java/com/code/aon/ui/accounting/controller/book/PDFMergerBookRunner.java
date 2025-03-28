@@ -53,7 +53,7 @@ public class PDFMergerBookRunner extends AbsAccountingBookRunner {
 				IOUtils.closeQuietly(output);
 				// FileUtils.deleteQuietly(runnerTempFile);
 			}
-			document.mergeDocuments(MemoryUsageSetting.setupTempFileOnly());
+			document.mergeDocuments(MemoryUsageSetting.setupTempFileOnly().streamCache);
 			input = new FileInputStream(tempFile); 
 			IOUtils.copy(input, out);
 			out.flush();

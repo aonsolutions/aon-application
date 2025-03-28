@@ -146,7 +146,7 @@ public class PGCImport {
  		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;	
 		if("CODIGO".equalsIgnoreCase(title) || "CÓDIGO".equalsIgnoreCase(title)) {
-			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
+			String acc = CellType.NUMERIC == cell.getCellType() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			account.getAccount().setCode(Utils.calculateAccount(acc));
 			return;
 		}

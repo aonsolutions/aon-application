@@ -12,7 +12,9 @@ import org.jooq.Result;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
+import org.jooq.InverseForeignKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.QOM.ForeignKeyRule;
 
 final class WeakForeignKey<R extends Record, O extends Record> extends AbstractKey<R> implements ForeignKey<R, O> {
 
@@ -62,6 +64,21 @@ final class WeakForeignKey<R extends Record, O extends Record> extends AbstractK
 
     @Override
     public final Result<R> fetchChildren(Collection<? extends O> records) {
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public InverseForeignKey<O,R> getInverseKey() {
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ForeignKeyRule getUpdateRule(){
+        throw new UnsupportedOperationException(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ForeignKeyRule getDeleteRule(){
         throw new UnsupportedOperationException(NOT_IMPLEMENTED);
     }
 

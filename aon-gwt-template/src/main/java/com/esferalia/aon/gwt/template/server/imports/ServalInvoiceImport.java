@@ -328,7 +328,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		if(o == null) return;
 	
 		if(isActivity(title)) {
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+			if(CellType.NUMERIC == cell.getCellType()) { 
 				inv.setActivity(Integer.toString(Utils.parseDouble(o.toString()).intValue()));
 			}  else inv.setActivity(o.toString());
 		}
@@ -367,7 +367,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		
 		if(isSerie(title)) {
 			String serie = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+			if(CellType.NUMERIC == cell.getCellType()) { 
 				serie = Integer.toString(Utils.parseDouble(o.toString()).intValue());
 			} 
 			inv.setSerie(serie);
@@ -381,14 +381,14 @@ public class ServalInvoiceImport extends ImportUtils{
 		}
 		
 		if(isReference(title)) {
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+			if(CellType.NUMERIC == cell.getCellType()) { 
 				inv.setRef(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setRef(o.toString());
 			return ;
 		}
 		
 		if(isNif(title)) {
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+			if(CellType.NUMERIC == cell.getCellType()) { 
 				inv.setNif(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setNif(o.toString());
 			return ;
@@ -401,7 +401,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		
 		if(isCuentaContraparte(title)) {
 			String acc = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			inv.setRegistryAccount(Utils.calculateAccount(acc));
@@ -435,7 +435,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		
 		if(isCodigoPostal(title)) {
 			String zip = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				zip = Integer.toString(Utils.parseDouble(zip).intValue());
 			}
 			inv.setZip(zip.length() < 5 ? "0" + zip : zip);
@@ -449,7 +449,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		
 		if(isCuentaExplotacion(title)) {
 			String acc = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			inv.setAccount(Utils.calculateAccount(acc));
@@ -638,7 +638,7 @@ public class ServalInvoiceImport extends ImportUtils{
 		
 		if(isCuentaTesoreria(title)) {
 			String acc = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+			if(CellType.NUMERIC == cell.getCellType()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
 			inv.setFinanceAccount(Utils.calculateAccount(acc));

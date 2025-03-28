@@ -100,7 +100,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-		    <version>20230227</version>
+		    <version>20250107</version>
 			<scope>compile</scope>
 		</dependency>
 		<!--
@@ -117,7 +117,7 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-			<version>2.4.2</version>
+			<version>3.5.2</version>
 			<scope>test</scope>
 		</dependency>
 		<!--
@@ -131,19 +131,19 @@
 		<dependency>
 		    <groupId>org.junit.jupiter</groupId>
 		    <artifactId>junit-jupiter-engine</artifactId>
-		    <version>5.9.2</version>
+		    <version>5.13.0-M2</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>org.junit.platform</groupId>
 		    <artifactId>junit-platform-suite-engine</artifactId>
-		    <version>1.9.2</version>
+		    <version>1.13.0-M2</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
-			<version>2.2</version>
+			<version>3.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
