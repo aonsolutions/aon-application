@@ -119,7 +119,7 @@ export class AonIncome extends AonElement {
         div.appendChild(customer);
     
         let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Tipo de Ingreso");
-        expAccount.setValue(this.income.expAccount);
+        expAccount.setValue(this.income.expAccount?this.income.expAccount:null);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
@@ -145,7 +145,6 @@ export class AonIncome extends AonElement {
             this.getIncome().setExpAccount(this.getExpAccount());
         });
         
-
         let description = createInput(this.INCOME_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.income.concept) ;
         description.addEventListener(EVENT.CHANGE, () =>  {
