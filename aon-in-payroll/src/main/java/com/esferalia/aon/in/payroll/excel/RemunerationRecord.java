@@ -1311,14 +1311,14 @@ public class RemunerationRecord {
 	
 	private static void copyCellProperties(Workbook wb, Cell newCell, Cell originalCell) {
 		newCell.setCellComment(originalCell.getCellComment());
-		if (originalCell.getCellTypeEnum() == CellType.FORMULA) {
+		if (originalCell.getCellType() == CellType.FORMULA) {
 			try {
 			newCell.setCellFormula(originalCell.getCellFormula());
 			} catch (FormulaParseException e) {
 			}
 		}
 		newCell.setCellStyle(originalCell.getCellStyle());
-		newCell.setCellType(originalCell.getCellTypeEnum());
+		newCell.setCellType(originalCell.getCellType());
 		newCell.setHyperlink(originalCell.getHyperlink());
 	}
 	

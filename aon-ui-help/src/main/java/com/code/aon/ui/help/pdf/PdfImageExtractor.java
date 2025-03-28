@@ -61,7 +61,7 @@ public class PdfImageExtractor {
 		Instant before = Instant.now();
 		PDDocument doc;
 		try {
-			doc = Loader.loadPDF(stream);
+			doc = Loader.loadPDF(stream.readAllBytes());
 			PDPageXYZDestination dest = (PDPageXYZDestination) doc.getDocumentCatalog().getNames().getDests().getValue(name);	
 			
 			if(dest == null) {
@@ -96,7 +96,7 @@ public class PdfImageExtractor {
 		
 		PDDocument doc;
 		try {
-			doc = Loader.loadPDF(stream);
+			doc = Loader.loadPDF(stream.readAllBytes());
 			int x = 0;
 			
 			return imageFromPdfPageRegion(doc, page, x, y, height);

@@ -25,7 +25,7 @@ public class CCCLaboralLife {
 
 	//PARSER HANDLE EXCEPTIONS
 	public static Collection<Employee> parse(InputStream is, Employee.EmployeeBuilder builder) throws IOException, UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is)) {return parser(doc,builder);}
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {return parser(doc,builder);}
 	}
 
 	//TOTAL DOCUMENT PARSER

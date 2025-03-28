@@ -20,7 +20,7 @@ public class PrintTextLocations extends PDFTextStripper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		try (PDDocument document = Loader.loadPDF(PrintTextLocations.class.getResourceAsStream("nomina.pdf"))) {
+		try (PDDocument document = Loader.loadPDF(PrintTextLocations.class.getResourceAsStream("nomina.pdf").readAllBytes())) {
 			PDFTextStripper stripper = new PrintTextLocations();
 			stripper.setSortByPosition(true);
 			stripper.setStartPage(0);

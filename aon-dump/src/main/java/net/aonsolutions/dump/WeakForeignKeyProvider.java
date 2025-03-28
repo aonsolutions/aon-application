@@ -45,6 +45,8 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.InverseForeignKey;
+import org.jooq.impl.QOM.ForeignKeyRule;
 
 public class WeakForeignKeyProvider {
 
@@ -159,6 +161,21 @@ public class WeakForeignKeyProvider {
 
         @Override
         public final Result<R> fetchChildren(Collection<? extends O> records) {
+            throw new UnsupportedOperationException("Not implemented");
+        }
+
+        @Override
+        public InverseForeignKey<O,R> getInverseKey() {
+            throw new UnsupportedOperationException("Not implemented");
+        }
+
+        @Override
+        public ForeignKeyRule getUpdateRule(){
+            throw new UnsupportedOperationException("Not implemented");
+        }
+
+        @Override
+        public ForeignKeyRule getDeleteRule(){
             throw new UnsupportedOperationException("Not implemented");
         }
 

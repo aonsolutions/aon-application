@@ -66,6 +66,7 @@ public class Util {
 	}
 
 	private Domain getDomainInfo( String dbName, String domainName ) {
+		System.out.println("10*******************************" + dbName +"," +domainName + "********************************");
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
@@ -77,12 +78,14 @@ public class Util {
 				return domain;
 			}
 		} catch (Throwable e) {
+			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;			
 	}
 	
 	public Domain getDomain( String domainName ) {
+		System.out.println("1*******************************" + domainName + "********************************");
 		String dbName = StringUtils.replace(domainName, ".", "-");
 		if ( dbExists(dbName) ) {
 			Domain domain = getDomainInfo(dbName, domainName);
@@ -97,8 +100,10 @@ public class Util {
 					"SELECT t.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as t " +
 					"WHERE t.TABLE_NAME = 'domain'", h);
 			if ( result != null ) {
+		System.out.println("2*******************************" + dbName + "********************************");
 				for( Object db : result ) {
 					dbName = db.toString();
+		System.out.println("2.1*******************************" + dbName + "********************************");
 					Domain domain = getDomainInfo(dbName, domainName);
 					if ( domain != null ) {
 						return domain;
@@ -106,8 +111,10 @@ public class Util {
 				}
 			}
 		} catch (Throwable e) {
+			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
 		}
+		System.out.println("3*******************************:-(********************************");
 		return null;
 	}
 	

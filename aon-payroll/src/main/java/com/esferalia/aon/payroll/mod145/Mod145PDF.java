@@ -41,7 +41,7 @@ public class Mod145PDF {
 		
 		Map<String, String> mod145Context = createMod145Context(mod145);
 		
-		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+		try (PDDocument pdfDocument = Loader.loadPDF(is.readAllBytes())){
 			pdfDocument.setAllSecurityToBeRemoved(true);
 			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
 			PDAcroForm acroForm = doc.getAcroForm();

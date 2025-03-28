@@ -4727,7 +4727,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.contractExpressionContext = newContractExpressionContext(this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT, contractExpressionContext, startDate, getEnd());
-		this.contractExpressionContext.setVariable(SELF, this, startDate, getEnd());
+		this.contractExpressionContext.setVariable(SELF, this, startDate, null);
 
 		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR, "def(x){ SELF.br(x)};", this.startDate, this.getEnd());
@@ -4742,14 +4742,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.contractExpressionContext.setVariable("__NETO", __netoStub, this.startDate, this.getEnd());
 		MethodStub netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "neto");
 		this.contractExpressionContext.setVariable(LIQUID, netoStub, this.startDate, this.getEnd());
-
+		
 		loadExpression(this.contractExpressionContext, SYSTEM, "def(x){ SELF.system(x)};", this.startDate,
-				this.getEnd());
+				null);
 		loadExpression(this.contractExpressionContext, AGREEMENT, "def(x){ SELF.agreement(x)};", this.startDate,
-				this.getEnd());
-
+				null);
 		loadExpression(this.contractExpressionContext, REDEFINE, "def(x,v){ SELF.redefined(x,v)};", this.startDate,
-				this.getEnd());
+				null);
 
 		hook.beforeLoadLeaves(contractExpressionContext);
 

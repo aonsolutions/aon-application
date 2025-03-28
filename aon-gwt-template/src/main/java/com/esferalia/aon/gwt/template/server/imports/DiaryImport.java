@@ -229,7 +229,7 @@ public class DiaryImport extends ImportUtils {
 		
 		if(isInvoice(title)) {	
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(
-					CellType.NUMERIC == cell.getCellTypeEnum() 
+					CellType.NUMERIC == cell.getCellType() 
 						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
 						: o.toString());
 			invoice = o != null && !o.toString().isBlank();
@@ -238,7 +238,7 @@ public class DiaryImport extends ImportUtils {
 		
 		if(isDocument(title)) {
 			if(!invoice) {
-				String documento = 	CellType.NUMERIC == cell.getCellTypeEnum() 
+				String documento = 	CellType.NUMERIC == cell.getCellType() 
 						? NumberToTextConverter.toText(cell.getNumericCellValue()) 
 						: o.toString();
 				if(documento.length() > 32) {
@@ -250,7 +250,7 @@ public class DiaryImport extends ImportUtils {
 		}
 		
 		if(isAccount(title)) {
-			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
+			String acc = CellType.NUMERIC == cell.getCellType() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountCode(Utils.calculateAccount(acc));
 			return ;
 		}
@@ -261,7 +261,7 @@ public class DiaryImport extends ImportUtils {
 		}
 		
 		if(isContrapartida(title)) {
-			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
+			String acc = CellType.NUMERIC == cell.getCellType() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setBalancingAccountCode(Utils.calculateAccount(acc));
 			return;
 		}

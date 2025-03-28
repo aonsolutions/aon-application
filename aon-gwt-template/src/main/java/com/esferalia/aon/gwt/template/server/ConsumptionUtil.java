@@ -289,7 +289,7 @@ public class ConsumptionUtil {
                             		font2.setSize(8);
 
                                     Cell cell = cellIterator.next(); //Fetch CELL
-                                    switch(cell.getCellTypeEnum()) { //Identify CELL type
+                                    switch(cell.getCellType()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
                                     case STRING:
@@ -634,7 +634,7 @@ public class ConsumptionUtil {
                             		font2.setSize(8);
 
                                     Cell cell = cellIterator.next(); //Fetch CELL
-                                    switch(cell.getCellTypeEnum()) { //Identify CELL type
+                                    switch(cell.getCellType()) { //Identify CELL type
                                             //you need to add more code here based on
                                             //your requirement / transformations
                                     case STRING:

@@ -46,13 +46,13 @@ public class SalaryPDFParser {
 	}
 
 	public static void parse( InputStream is , ISalaryBuilder<?> salaryBuilder) throws IOException , UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is))
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes()))
 		{
 			parser(doc, salaryBuilder);
 		}
 	}
 	public static void parseOmega( InputStream is , ISalaryBuilder<?> salaryBuilder) throws IOException , UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is))
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes()))
 		{
 			parserOmega(doc, salaryBuilder);
 		}

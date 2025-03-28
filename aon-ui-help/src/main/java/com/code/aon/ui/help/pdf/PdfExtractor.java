@@ -97,7 +97,7 @@ public class PdfExtractor {
 		Instant before = Instant.now();
 		PDDocument doc;
 		try {
-			doc = Loader.loadPDF(stream);
+			doc = Loader.loadPDF(stream.readAllBytes());
 			PDDocument region = extractPageRegion(doc.getPage(page), 0f, 400f, doc.getPage(1).getMediaBox().getWidth(), 150f);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			region.save(out);
@@ -121,7 +121,7 @@ public class PdfExtractor {
 		
 		try {
 			
-			PDDocument doc = Loader.loadPDF(stream);
+			PDDocument doc = Loader.loadPDF(stream.readAllBytes());
 			Map<String, PDPageDestination> names = doc.getDocumentCatalog().getNames().getDests().getNames();
 						
 			PDPageXYZDestination dest = (PDPageXYZDestination) names.get(name);

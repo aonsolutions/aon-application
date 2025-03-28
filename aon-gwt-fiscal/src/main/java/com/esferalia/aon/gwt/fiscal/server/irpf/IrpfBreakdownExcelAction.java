@@ -17,7 +17,7 @@ public class IrpfBreakdownExcelAction extends AbsExcelAction implements Consumer
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 		CellUtil.createCell(row, cellCount, "TIPO", headerCellStyle);

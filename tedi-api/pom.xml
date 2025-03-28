@@ -50,20 +50,20 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20230227</version>
+			<version>20250107</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- Test dependecies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13-beta-1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>
-			<version>0.15</version>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

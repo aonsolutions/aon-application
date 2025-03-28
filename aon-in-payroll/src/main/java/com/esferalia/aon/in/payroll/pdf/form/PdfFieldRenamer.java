@@ -14,7 +14,7 @@ public class PdfFieldRenamer {
 
 	//RENAME PDF BASE
 	static void rename_pdf_fields(InputStream is, String filename, String default_prefix, Map<String, String> names) throws IOException, UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is)) {
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
 			doc.setAllSecurityToBeRemoved(true);
 
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();

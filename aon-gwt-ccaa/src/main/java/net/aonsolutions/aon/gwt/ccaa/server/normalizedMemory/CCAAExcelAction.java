@@ -27,6 +27,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
@@ -56,7 +57,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 
 	protected static final XSSFColor REGISTRADORES = new XSSFColor(new java.awt.Color(Integer.valueOf("c4", 16 )
-			,Integer.valueOf("12", 16 ),Integer.valueOf("30", 16 )));
+			,Integer.valueOf("12", 16 ),Integer.valueOf("30", 16 )), new DefaultIndexedColorMap());
 
 	protected  static final String[] IMAGES = new String[] {
 		"/com/esferalia/aon/gwt/common/client/css/images/aon-registro-mercantil-image.png"
@@ -213,7 +214,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		sheet.setColumnWidth(cellCount++, 40 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 		CellUtil.createCell(row, cellCount, column2, rightHeaderCellStyle);
@@ -340,7 +341,7 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 	}
 	
 	private XSSFCellStyle calculateHeaderFontSize(Integer pageMaxNumber) {
-		XSSFCellStyle style = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle style = (XSSFCellStyle) headerCellStyle.copy();
 		
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
