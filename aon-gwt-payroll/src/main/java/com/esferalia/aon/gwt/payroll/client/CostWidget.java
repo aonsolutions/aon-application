@@ -23,7 +23,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.server.SistemaREDServlet;
 import com.esferalia.aon.gwt.payroll.shared.AggregatedAnnualSummaryService;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.CostCSVService.Params;
@@ -841,7 +840,7 @@ public class CostWidget extends AonCustomDockLayout {
 		// Send request to server and catch any errors.
 		
 		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDServlet.CALCS);
+		xhr.open("POST", SISTEMA_RED_URL + "/" + SistemaREDService.CALCS);
 		xhr.setRequestHeader("Content-type",
 				"application/x-www-form-urlencoded");
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {

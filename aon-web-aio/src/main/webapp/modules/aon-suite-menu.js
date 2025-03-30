@@ -417,6 +417,10 @@ export class AonSuiteMenu extends AonElement {
         return this.getElement(this.DROPDOWN_BUTTON);
     }
 
+	hasBank() {
+		return this.getDur().hasBank();
+	}
+	
 	isDomainManagementAvailable() {
 		return this.getDur().isDomainManagementAvailable();
 	}

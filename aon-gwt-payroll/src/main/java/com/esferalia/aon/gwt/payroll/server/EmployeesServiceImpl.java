@@ -4786,8 +4786,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return Dismissal.TEMP_END.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.WORK_COMPLETE.getName(), causeStr)) {
 			return Dismissal.WORK_END.getDescription();
-		} else if (AonStringUtils.equals(ContextVariable.CONTRACT_COMPLETE.getName(), causeStr)) {
-			return Dismissal.DEFINITE_END.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.OBJECTIVE.getName(), causeStr)) {
 			return Dismissal.OBJECTIVE.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.CONDITIONS_CHANGE.getName(), causeStr)) {
