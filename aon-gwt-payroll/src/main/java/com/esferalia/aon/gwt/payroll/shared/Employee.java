@@ -55,7 +55,6 @@ public class Employee implements Serializable, HasId<Integer> {
 		 WORK_END("Fin Contrato Fijo de Obra"),
 		 TEMP_END("Fin Contrato Temporal"),
 		 RETIREMENT("Jubilaci\u00F3n del Empresario"),
-		 DEFINITE_END("Fin Contrato Duraci\u00F3n Determinada"),
 		 CONDITIONS_CHANGE("Baja Voluntaria Modificaci\u00F3n Condiciones"),
 		 NOT_PASS_TRIAL_PERIOD("Baja por no Superar el Periodo de Prueba"),
 		 DEATH_OF_EMPLOYEE("Fallecimiento del Trabajador"),
