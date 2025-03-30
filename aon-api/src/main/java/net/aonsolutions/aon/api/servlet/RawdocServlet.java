@@ -122,9 +122,15 @@ public class RawdocServlet extends AonApiHttpServlet {
 		RawdocNature nature = RawdocNature.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.NATURE));
 		JSONArray jsArray = new JSONArray();
 		RawdocStatus rs = RawdocStatus.safeValueOf(status);
+
+		// TODO AÑADIR POSIBILIDAD DE RECIBIR MÁS DE UN ESTADO EN LA PETICIÓN
+		Byte[] statuses = RawdocStatus.PROCESSING.equals(rs) 
+			? new Byte[] {RawdocStatus.PROCESSING.value(), RawdocStatus.PENDING.value()} 
+			: new Byte[] {rs.value()}; 
+		
 		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> f.getDomainProperty().eq(api.getDomain().getId())
-				.and(f.getStatusProperty().eq(rs.value()))
+				.and(f.getStatusProperty().in(statuses))
 				.and(f.getNatureProperty().eq(nature != null ? nature.value() : RawdocNature.INVOICE.value()))
 				)
 		.forEach(r -> { 
