@@ -110,6 +110,7 @@ export class AonNewSuggestion extends AonNewInput {
     let input = this.getElement(this.INPUT);
     input.readonly = this.isReadonly();
     input.value = this.value;
+    input.autocomplete = 'off';
     input.addEventListener(EVENT.KEYUP, (e) => {
       this.value = input.value;
       if(e.key || e.keyCode) {

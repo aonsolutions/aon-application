@@ -1,10 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -16,10 +12,11 @@ import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
-import net.aonsolutions.aon.api.ewok.IConstants;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AccountsServlet", urlPatterns = {"/ms/api/accounts/*"})
@@ -67,22 +64,52 @@ public class AccountsServlet extends AonApiHttpServlet {
 	}
 	
 	public static Filter accountFilter(AccountProperties f, Domain domain, JSONObject json) {
-		Integer[] domains = { domain.getId(), domain.getParentId() };
-		Filter filter =  f.getDomainProperty().in(domains);
-		
-		String code = JsonUtils.getString(json, IJsonNames.CODE);
-		boolean entryEnabled = JsonUtils.getBoolean(json, IJsonNames.ENTRY_ENABLED);
-		boolean active = JsonUtils.getboolean(json, IJsonNames.ACTIVE);
-		
-    	if(code!=null)
-    		filter = filter.and(f.getCodeProperty().like(code+"%")); 
-    	if(entryEnabled)
-    		filter = filter.and(f.getEntryEnabledProperty().eq((byte) 1));
-    	if(active)
-    		filter = filter.and(f.getActiveProperty().eq((byte) 1));
-    	
-		return filter;
-    }
+	    Integer[] domains = { domain.getId(), domain.getParentId() };
+	    Filter filter = f.getDomainProperty().in(domains);
+
+	    JSONArray codeArray = new JSONArray();
+	    Object codeObject = json.opt(IJsonNames.CODE);
+	    
+	    if (codeObject instanceof String) {
+	        codeArray.put(codeObject); 
+	    } else if (codeObject instanceof JSONArray) {
+	        codeArray = (JSONArray) codeObject;
+	    }
+
+	    if (json.has(IJsonNames.ENTRY_ENABLED)) {
+	        boolean entryEnabled = JsonUtils.getBoolean(json, IJsonNames.ENTRY_ENABLED);
+	        if (entryEnabled) {
+	            filter = filter.and(f.getEntryEnabledProperty().eq((byte) 1));
+	        }
+	    }
+
+	    if (json.has(IJsonNames.ACTIVE)) {
+	        boolean active = JsonUtils.getBoolean(json, IJsonNames.ACTIVE);
+	        if (active) {
+	            filter = filter.and(f.getActiveProperty().eq((byte) 1));
+	        }
+	    }
+
+	    if (codeArray.length() > 0) {
+	        Filter codeFilter = null;
+
+	        for (int i = 0; i < codeArray.length(); i++) {
+	            String code = codeArray.getString(i) + "%"; 
+
+	            if (codeFilter == null) {
+	                codeFilter = f.getCodeProperty().like(code);
+	            } else {
+	                codeFilter = codeFilter.or(f.getCodeProperty().like(code));
+	            }
+	        }
+
+	        filter = filter.and(codeFilter);
+	    }
+
+	    return filter;
+	}
+
+
 	
 	
 	

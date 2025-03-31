@@ -339,9 +339,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.setSelected(Payment.Type.DEFAULT);
 		paymentTypeLB.addStyleName("aon-selectOneMenu");
 		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
-		paymentTypeLB.addChangeHandler(e -> {
-			paymentMonthPanel.setVisible(paymentTypeLB.getSelected().equals(Payment.Type.CRA_0004) || paymentTypeLB.getSelected().equals(Payment.Type.CRA_0005));
-		});
+//		paymentTypeLB.addChangeHandler(e -> {
+//			paymentMonthPanel.setVisible(paymentTypeLB.getSelected().equals(Payment.Type.CRA_0004) || paymentTypeLB.getSelected().equals(Payment.Type.CRA_0005));
+//		});
 		paymentTypePanel.clear();
 		paymentTypePanel.add(paymentTypeLB);
 	}
@@ -476,7 +476,7 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	private void initializeMonth(ListBox listBox) {
 		listBox.clear();
-		listBox.addItem("-", "");
+		listBox.addItem("Todos", "");
 		listBox.addItem("Enero", "0");
 		listBox.addItem("Febrero", "1");
 		listBox.addItem("Marzo", "2");
@@ -622,9 +622,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
-		if(this.payment.getType() != null && (this.payment.getType().equals(Payment.Type.CRA_0004) || this.payment.getType().equals(Payment.Type.CRA_0005))) {
+		if(this.payment.getType() != null /*&& (this.payment.getType().equals(Payment.Type.CRA_0004) || this.payment.getType().equals(Payment.Type.CRA_0005))*/) {
 			paymentMonthPanel.setVisible(true);
-			setSelectedValueLB(paymentMonthLB, this.payment.getMonth() + "");
+			setSelectedValueLB(paymentMonthLB, null == this.payment.getMonth() ? "" : this.payment.getMonth().toString());
 		} else
 			paymentMonthPanel.setVisible(false);
 		

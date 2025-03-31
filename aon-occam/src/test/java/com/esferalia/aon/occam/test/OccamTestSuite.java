@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.test.product.ProductTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
 import com.esferalia.aon.occam.test.project.ProjectTestSuite;
 import com.esferalia.aon.occam.test.ql.AonOccamQLSuite;
+import com.esferalia.aon.occam.test.rawdoc.RawdocTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 import com.esferalia.aon.occam.test.registry.address.RegistryAddressTestSuite;
 import com.esferalia.aon.occam.test.registry.company.CompanyTestSuite;
@@ -55,7 +56,9 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 	OfferTest.class,
 	DeliveryTest.class,
 	MarketingTestSuite.class,
+	MarketingTestSuite.class,
 	
+	RawdocTestSuite.class,
 	// Nuevos cambios en Occam
 	JsonRawTestSuite.class,
 	InvoiceTestSuite.class

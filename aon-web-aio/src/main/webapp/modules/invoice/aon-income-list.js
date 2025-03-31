@@ -90,18 +90,45 @@ export class AonIncomeList extends AonElement {
         let table = this.getElement(this.TABLE);
         if(table) {
             getIncomes( this.filter ).then(incomes => {
-                if(incomes.length == 0){   
-                    console.log("No hay datos!!!")
-                }
-                table.removeRows();
-                incomes.forEach((income) => {
-                    if(income.expAccount)
-                        income.incomeDescription = income.expAccount.description;
-                    income.paymethodDescription = income.cashAccount.description;
-                    income.formattedAmount = this.formatAmount(income.amount);
-                    table.addRow(income, () => this.incomeObject(income));
-                });
+                if(incomes.length == 0){              
+                    let row = table.addRow({ 
+                        date: '',
+                        referenceCode: '',
+                        incomeDescription: 'No hay datos disponibles',
+                        concept: '',
+                        paymethodDescription: '',
+                        formattedAmount: '' 
+                    });
 
+                    document.querySelectorAll('table td').forEach(td => {
+                        if (td.style.width === '5%') 
+                            td.remove();
+                    });
+
+                    document.querySelectorAll('table th:nth-child(3), table td:nth-child(3)').forEach(el => {
+                        el.style.width = "180px";
+                    });  
+
+                    row.style.border = "0px";
+                    row.style.alignContent = "center";
+                    row.style.alignItems = "self-end";
+                    row.style.display = "flex";
+                    row.style.justifyContent = "right";
+                    row.classList.add('no-hover');   
+                }
+                else{
+                    table.removeRows();
+                    incomes.forEach((income) => {
+                        if(income.expAccount)
+                            income.incomeDescription = income.expAccount.description;
+                        if(income.bank && income.bank.alias)
+                            income.paymethodDescription = income.bank.alias
+                        else
+                            income.paymethodDescription = income.cashAccount.description;
+                        income.formattedAmount = this.formatAmount(income.amount);
+                        table.addRow(income, () => this.incomeObject(income));
+                    });
+                }
             });
         }
     }

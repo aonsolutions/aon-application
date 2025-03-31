@@ -93,17 +93,44 @@ export class AonExpenseList extends AonElement {
         if(table) {
             getExpenses( this.filter ).then(expenses => {
                 if(expenses.length == 0){   
-                    console.log("No hay datos!!!")
-                }
-                table.removeRows();
-                expenses.forEach((expense) => {
-                    if(expense.expAccount)
-                        expense.expenseDescription = expense.expAccount.description;
-                    expense.paymethodDescription = expense.cashAccount.description;
-                    expense.formattedAmount = this.formatAmount(expense.amount);
-                    table.addRow(expense, () => this.expenseObject(expense));
-                });
+                    let row = table.addRow({ 
+                        date: '',
+                        referenceCode: '',
+                        incomeDescription: 'No hay datos disponibles',
+                        concept: '',
+                        paymethodDescription: '',
+                        formattedAmount: '' 
+                    });
 
+                    document.querySelectorAll('table td').forEach(td => {
+                        if (td.style.width === '5%') 
+                            td.remove();
+                    });
+
+                    document.querySelectorAll('table th:nth-child(3), table td:nth-child(3)').forEach(el => {
+                        el.style.width = "180px";
+                    });  
+                    
+                    row.style.border = "0px";
+                    row.style.alignContent = "center";
+                    row.style.alignItems = "self-end";
+                    row.style.display = "flex";
+                    row.style.justifyContent = "right";
+                    row.classList.add('no-hover');
+                }
+                else{
+                    table.removeRows();
+                    expenses.forEach((expense) => {
+                        if(expense.expAccount)
+                            expense.expenseDescription = expense.expAccount.description;
+                        if(expense.bank && expense.bank.alias)
+                            expense.paymethodDescription = expense.bank.alias
+                        else
+                            expense.paymethodDescription = expense.cashAccount.description;
+                        expense.formattedAmount = this.formatAmount(expense.amount);
+                        table.addRow(expense, () => this.expenseObject(expense));
+                    });
+                }
             });
         }
     }

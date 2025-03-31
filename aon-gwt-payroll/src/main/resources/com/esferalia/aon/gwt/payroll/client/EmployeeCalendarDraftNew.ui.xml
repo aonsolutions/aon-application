@@ -224,6 +224,11 @@
 			background-color: #445a69;
 		}
 		
+		.paidLeaveColor{ background-color: #80bc70; }
+		.paidLeaveDayStyle{
+			background-color: #80bc70;
+		}
+		
 		.effectiveStyle{
 			background-color: #77e1d2;
 		}
@@ -314,6 +319,7 @@
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.leaveColor}" ui:field="leaveDayButton">Baja IT</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.partialityColor}" ui:field="partialityDayButton">Parcialidad</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.peonadasColor}" ui:field="peonadasDayButton">Peonadas</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton">Perm. Retribuido</g:Button>
 						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="hourButton">Horas</g:Button>
 						<g:Button styleName="{style.aonButtonStyle} {style.aon-toolbar-button} aon_icon_schedule" ui:field="extraHoursButton">H. Extras</g:Button>
 					</g:HTMLPanel>

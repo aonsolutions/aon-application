@@ -3,15 +3,13 @@ import * as MSG from "../../environments/msg.js";
 import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 import { IRPF } from "../../environments/msg-en.js";
 
-
 export const Transactions = [
-  {value: 'NAC', name: 'Nacional'},
+  {value: 'NAC', name: 'Op. Interiores'},
   {value: 'INTR', name: 'Intracomunitaria'},
   {value: 'EXTR', name: 'Extracomunitaria'},
   {value: 'CCM', name: 'Canarias, Ceuta y Melilla'},
   {value: 'ISP', name: 'I.S.P.'},
 ];
-
 
 export const InvoiceStatus = {
   INBOX: 'inbox',
@@ -378,5 +376,4 @@ export const ErrKey = {
 	FINANCE_WRONG_ACCOUNT_BANK: 'FINANCE_WRONG_ACCOUNT_BANK',
 	TOTAL: 'TOTAL',
 	PAY_METHOD: 'PAY_METHOD'
-	
 };

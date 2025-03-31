@@ -119,21 +119,32 @@ export class AonIncome extends AonElement {
         div.appendChild(customer);
     
         let expAccount = createSelect(this.INCOME_EXPACCOUNT, "Tipo de Ingreso");
-        expAccount.setValue(this.income.expAccount);
+        expAccount.setValue(this.income.expAccount?this.income.expAccount:null);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
-        getAccounts({ code: "7", entryEnabled: true, active: true }).then(accounts => {
-            expAccount.setOptions(accounts);
-            if (this.income.expAccount && this.income.expAccount.id) {
-                expAccount.value = this.income.expAccount.id;
-            }
-            
-        });  
-        expAccount.addEventListener(EVENT.CHANGE, () =>  {
+        
+        let selectedAccount = this.income.expAccount; 
+        let filteredAccounts = []; 
+        
+        getAccounts({ code: ["74", "75", "76", "77"], entryEnabled: true, active: true })
+            .then(accounts => {
+                filteredAccounts = accounts;
+                
+                if (selectedAccount && !filteredAccounts.some(acc => acc.id === selectedAccount.id)) {
+                    filteredAccounts.unshift(selectedAccount);
+                }
+        
+                expAccount.setOptions(filteredAccounts);
+                if (selectedAccount) {
+                    expAccount.value = selectedAccount.id;
+                }
+            });
+    
+        expAccount.addEventListener(EVENT.CHANGE, () => {
             this.getIncome().setExpAccount(this.getExpAccount());
         });
-
+        
         let description = createInput(this.INCOME_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.income.concept) ;
         description.addEventListener(EVENT.CHANGE, () =>  {
