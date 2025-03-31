@@ -29,7 +29,6 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -549,8 +548,8 @@ public abstract class AgreementPreview extends Composite {
 
 		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
 				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE")
-						? expression.replaceAll("DISABLE\\(.*\\);\\s", "")
-						: "DISABLE(); " + expression;
+						? null
+						: "DISABLE();";
 //						: "DISABLE(\"<div>" + payment.getDescription()
 //								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
 //								+ expression;

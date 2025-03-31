@@ -548,9 +548,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		String code = null;
 		String description = null;
 
-		if (suggestBox.getValue().contains(" - ")) {
-			code = suggestBox.getValue().split(" - ")[0];
-			description = suggestBox.getValue().split(" - ")[1];
+		if (suggestBox.getValue().contains("-")) {
+			code = suggestBox.getValue().split("-")[0].trim();
+			description = suggestBox.getValue().split("-")[1].trim();
 
 			for (ContractConcept contractConcept : concepts)
 				if (isIdentical(contractConcept, code, description))
@@ -590,6 +590,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
 		
 		paymentConceptSB.setValue(this.payment.getName());
+		paymentConceptSB.addSelectionHandler(e -> selectedConcept = getConcept(paymentConceptSB));
+//		selectedConcept = getConcept(paymentConceptSB);
+		
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionCA.setText(this.payment.getExpression());
 //		paymentExpressionCA.setText(getParsedExpression(this.payment.getExpression()));
@@ -733,10 +736,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		}
 		
 		payment.setType(paymentTypeLB.getSelected());
+		
 		if (null != selectedConcept) {
 			payment.setConceptId(selectedConcept.getId());
 			payment.setName(selectedConcept.getCode());
-		} else {
+		} else if(null == payment.getConceptId()) {
 			payment.setConceptId(null);
 			payment.setName(paymentConceptSB.getValue());
 		}
