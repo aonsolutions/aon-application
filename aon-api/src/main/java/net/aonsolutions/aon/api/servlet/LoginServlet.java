@@ -133,11 +133,9 @@ public class LoginServlet extends AonApiHttpServlet{
 				} 
 				ok = true;
 			} else {
-				//String domainName = req.getServerName();
-				
-				// Ya que tenemos el primer dominio del schema, lo usamos
-				String domainName = aonToken.getSchemaFirstDomain();
+				String domainName = req.getServerName();
 				Domain domain = AON_SOLUTIONS.getDomain(domainName);
+				
 				if ( domain != null && Objects.equals(domain.getName(), domainName )) {
 					User user = AON_SOLUTIONS.getUser(domain, token);
 					ok = user != null && AonStringUtils.equalsIgnoreCase(user.getAuth().getUuid(), aonToken.getUuid());
@@ -238,6 +236,4 @@ public class LoginServlet extends AonApiHttpServlet{
 	private static Integer[] arrayOf( Integer ...ts ) {
 		return Arrays.stream(ts).filter(Objects::nonNull).toArray(Integer[]::new);
 	}
-	
-
 }

@@ -124,9 +124,10 @@ public class SIIPost {
 	protected String post(String uri, String document) throws SOAPException, IOException {
         System.out.println("********************* REQUEST *******************");
         System.out.println(document);
-
+        
 		InputStream is = new ByteArrayInputStream(document.getBytes());
-		SOAPMessage soapMessage = MessageFactory.newInstance().createMessage(null, is);
+		MessageFactory factory = MessageFactory.newInstance();
+		SOAPMessage soapMessage = factory.createMessage(null, is);
 		is.close();
 		secure(uri);
 		
