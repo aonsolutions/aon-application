@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -20,9 +19,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFDrawing;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
@@ -218,7 +217,6 @@ public class Mod349ExcelAction extends AbsExcelAction {
 		
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(decimalStyle);
-		cell.setCellType(CellType.NUMERIC);
 		cell.setCellValue(amount);
 		
 	}

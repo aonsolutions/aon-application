@@ -5,19 +5,18 @@ import java.text.DecimalFormat;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -100,8 +99,8 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		idCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		idCellStyle.setFont(idFont);
 
-		sheet.setMargin(Sheet.LeftMargin, 0.5);
-		sheet.setMargin(Sheet.RightMargin, 0.5);
+		sheet.setMargin(PageMargin.LEFT, 0.5);
+		sheet.setMargin(PageMargin.RIGHT, 0.5);
 
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
@@ -244,7 +243,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		} else {
@@ -276,7 +274,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 					Cell boxCell = addCell((key.getBox() == 0
 							?""
 							:AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")));
-					boxCell.setCellType(CellType.STRING);
 					boxCell.setCellStyle(boxCellStyle);
 
 					cell = row.createCell(cellCount++);
@@ -293,7 +290,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 						style.setAlignment(HorizontalAlignment.RIGHT);
 						style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 						cell.setCellValue(amount);
-						cell.setCellType(CellType.NUMERIC);
 					}
 				}
 			}
