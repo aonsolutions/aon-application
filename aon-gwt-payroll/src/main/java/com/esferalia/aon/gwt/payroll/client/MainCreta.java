@@ -259,7 +259,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 		
 		private Date getStartDate() {
-		    return DateUtils.addDays2Date(new Date(), -45);
+		    return DateUtils.addDays2Date(DateUtils.getFirstDayOfMonth(), -45);
 		}
 
 		private Date getEndDate() {
