@@ -165,7 +165,9 @@ public abstract class Mod111Declaration {
 		if (existsCurrentSalaries) {
 			mod111.addMessage("Se encontraron " + currentSalaries.size() + " n\u00F3minas no declaradas en el periodo de la declaraci\u00F3n.");
 		}
-		mod111.setMustIncludeSalariesOnGeneration(existsPreviousSalaries || existsCurrentSalaries);
+		if (!mod111.isComplementary() && mod111.isReplacement() ) {
+			mod111.setMustIncludeSalariesOnGeneration(existsPreviousSalaries || existsCurrentSalaries);
+		}
 	}
 
 //	private void initializePreviousData(AONContext ctx, Mod111 mod111) {
@@ -197,8 +199,13 @@ public abstract class Mod111Declaration {
 				mod111.setComplementary( mod111.isComplementaryDeclarationAvailable() );
 				mod111.setReplacement( mod111.isReplacementDeclarationAvailable() && !mod111.isComplementary() );
 				mod111.setReplacedNumber(previous.getNumber());
-				mod111.setMustIncludeInvoicesOnGeneration( previous.mustIncludeInvoicesOnGeneration() );
-				mod111.setMustIncludeSalariesOnGeneration( previous.mustIncludeSalariesOnGeneration() );
+				if (mod111.getMap().containsKey( Mod111Key.CM_004.getValue() )) {
+					mod111.setMustIncludeInvoicesOnGeneration( previous.mustIncludeInvoicesOnGeneration() );
+					mod111.setMustIncludeSalariesOnGeneration( previous.mustIncludeSalariesOnGeneration() );
+				} else {
+					mod111.setMustIncludeInvoicesOnGeneration( true );
+					mod111.setMustIncludeSalariesOnGeneration( true );
+				}
 			} else {
 				mod111.setComplementary( false );
 				mod111.setReplacement( false );
