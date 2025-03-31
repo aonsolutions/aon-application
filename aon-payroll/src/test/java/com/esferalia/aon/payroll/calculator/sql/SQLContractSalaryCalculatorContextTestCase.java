@@ -1,21 +1,18 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DATE;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -23,13 +20,12 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,12 +43,11 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -69,7 +64,6 @@ import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.TimedResult;
 //import com.esferalia.aon.salary.expression.CompileException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -166,6 +160,7 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		
 		org.junit.Assert.assertEquals(defaultIrpf, systemIrpf, 0.00);
 	}
+
 
 	@Test
 	public void testWorkedFactorOffDays() throws SQLException, AonException {
@@ -1390,5 +1385,48 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		
 	}
 	// ------------------------------------------------------------------------
+	
+	@Test
+	public void testSystemFunctionIrpfPercentChargeDate() throws SQLException, AonException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, 
+				new HashMap<String,String>(){
+			{
+			}
+		});
+		
+		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		ContractRecord contract = newContract(
+				aonContext
+				,firstDayOfMonth
+				, new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION", "\"10\"");
+						put("PORCENTAJE_IRPF", "SISTEMA('PORCENTAJE_IRPF')");
+					}
+				}
+				, new String[] {
+					"3333.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}
+				, new String[] {
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00",
+				}
+				,null
+				);
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		Date nextLastDayOfMonth = add(lastDayOfMonth, Calendar.MONTH, 1 );
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() ).calculate(getContractSalaryCalculatorContext(connection, firstDayOfMonth, lastDayOfMonth, lastDayOfMonth, nextLastDayOfMonth, contract));
+		String porcentajeIrpf = salary.getSalaryData("PORCENTAJE_IRPF");
+		
+		assertNotNull(porcentajeIrpf);
+		
+		
+	}
+	
 
 }

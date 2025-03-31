@@ -421,7 +421,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					if(cell.getColumnIndex() != ti.getColumns().size()){
 
 						Object object = null ;
-						switch (cell.getCellTypeEnum()) {
+						switch (cell.getCellType()) {
 							case BLANK:
 								break;
 							case BOOLEAN:
@@ -452,7 +452,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 						else if(proposalBool){
 							if(cell.getColumnIndex() !=0){
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
+								if((beforeCell == null || beforeCell.getCellType() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
 										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
@@ -470,7 +470,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 							if(ti.getColumns().get(cell.getColumnIndex()).equals("Cantidad") || ti.getColumns().get(cell.getColumnIndex()).equals("Producto")
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 1") || ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 2")
 									|| ti.getColumns().get(cell.getColumnIndex()).equals("Detalle 3")){
-								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
+								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -594,7 +594,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					if(cell.getColumnIndex() != ti.getColumns().size()){
 
 						Object object = null ;
-						switch (cell.getCellTypeEnum()) {
+						switch (cell.getCellType()) {
 							case BLANK:
 								break;
 							case BOOLEAN:
@@ -630,7 +630,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 									System.out.println("VA A FALLAR!");
 								}
 								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
+								if((beforeCell == null || beforeCell.getCellType() == CellType.BLANK) && isRequiredStock(ti.getColumns().get(cell.getColumnIndex()-1))){
 									if(beforeCell == null){
 										if(ti.getColumns().get(cell.getColumnIndex()-1).equals("Producto") || ti.getColumns().get(cell.getColumnIndex()-1).equals("Almac\u00e9n Destino") ||  ti.getColumns().get(cell.getColumnIndex()-1).equals("Series")){
 											textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -649,7 +649,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 								}
 							}
 							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre") && !ti.getColumns().get(cell.getColumnIndex()).equals("Nombre")){
-								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellTypeEnum());
+								si = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()),ti.getColumns().get(cell.getColumnIndex()),object,si,cell.getCellType());
 								if(si == null){
 									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
 									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n");
@@ -926,7 +926,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 					if(cell.getColumnIndex() != ti.getColumns().size()){
 						Object object = getObjectValue(cell, evaluator);
 						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel
-							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellTypeEnum() != CellType.STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
+							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || cell.getCellType() != CellType.STRING || (!checkInventariable(cell) && !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue()))){
 								// El archivo no es compatible con la plantilla
 								error.setError(false);
 								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
@@ -941,7 +941,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 							if(cell.getColumnIndex() <= ti.getColumns().size()) {
 								if(cell.getColumnIndex() !=0){
 									Cell beforeCell = row.getCell(cell.getColumnIndex()-1);
-									if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
+									if((beforeCell == null || beforeCell.getCellType() == CellType.BLANK) && isRequiredProduct(ti.getColumns().get(cell.getColumnIndex()-1))){
 										if(beforeCell == null){
 											verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
 											textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
@@ -954,7 +954,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 								}
 
 								if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-									pi = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellTypeEnum()
+									pi = check(domain, user, cell.getRowIndex()+1, Utils.getColumn(cell.getColumnIndex()), ti.getColumns().get(cell.getColumnIndex()),object,pi,cell.getCellType()
 										, productCategoryList, brandList, tagList, taxList);
 									if(pi == null){
 										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
@@ -2279,7 +2279,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	private Object getObjectValue(Cell cell, FormulaEvaluator evaluator){
-		switch (cell.getCellTypeEnum()) {
+		switch (cell.getCellType()) {
 			case BLANK:
 				return null;
 			case BOOLEAN:

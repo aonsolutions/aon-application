@@ -1137,7 +1137,7 @@ public class Bases {
 			if (!addedEnterpriseDataMap.containsKey(salary.getEnterpriseCCC()))
 				addedEnterpriseDataMap.put(salary.getEnterpriseCCC(),
 						new Data(salary.getEnterpriseName(),
-								salary.getEmployeeDocument(),
+								salary.getEnterpriseDocument(),
 								salary.getEnterpriseCCC()));
 		};
 

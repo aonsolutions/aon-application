@@ -561,7 +561,6 @@ export class AonOfficePanel extends AonElement {
 
           if (this.getFilterCustomers().type == "false") {
             aonView = new AonTarget();
-            aonView.setCustomer();
             aonView.back = () => {
               searchPanel.style.display = "block";
               this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
@@ -571,7 +570,7 @@ export class AonOfficePanel extends AonElement {
             };
           } else {
             aonView = new AonCustomer();
-            aonView.setCustomer();
+            aonView.setOffice(true);
             aonView.back = () => {
               searchPanel.style.display = "block";
               this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {

@@ -1024,10 +1024,10 @@ export class AonMobileInvoice extends AonInvoice {
 			send.backgroundColor = INVOICE.color;
 			send.fn = () => this.sendInvoice();
 
-			let record = ACTION.RECORD_INVOICE;
-			record.permission = false;
-			record.backgroundColor = INVOICE.color;
-			record.fn = () => this.recordInvoice();
+			// let record = ACTION.RECORD_INVOICE;
+			// record.permission = false;
+			// record.backgroundColor = INVOICE.color;
+			// record.fn = () => this.recordInvoice();
 
 			let reject = ACTION.REJECT_INVOICE;
 			reject.permission = true;
@@ -1076,7 +1076,7 @@ export class AonMobileInvoice extends AonInvoice {
 				actions = [restore, deleteForever];
 			}  else if(this.invoice.isInbox()){
 				if(this.getDur().isAdmin() || this.getDur().isInvoiceManager()){
-					actions = [addComment, send, deleteInvoice, reject, record];
+					actions = [addComment, send, deleteInvoice, reject] //, record];
 				} else {
 					actions = [addComment, deleteInvoice];
 				}

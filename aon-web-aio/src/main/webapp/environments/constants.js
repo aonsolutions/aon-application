@@ -105,6 +105,7 @@ export const DELETE_FOREVER = 'deleteForever';
 export const DELIVERY = 'delivery';
 export const DESCRIPTION = 'description';
 export const DETAILS = 'details';
+export const DIALOG = 'dialog';
 export const DISCARDED = 'discarded';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';

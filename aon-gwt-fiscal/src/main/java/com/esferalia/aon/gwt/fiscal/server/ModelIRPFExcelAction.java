@@ -17,6 +17,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -31,11 +32,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFiscalModelKey> extends AbsExcelAction {
 
-	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81));
-	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4));
-	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49));
-	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42));
-	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195));
+	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81), new DefaultIndexedColorMap());
+	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4), new DefaultIndexedColorMap());
+	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49), new DefaultIndexedColorMap());
+	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42), new DefaultIndexedColorMap());
+	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195), new DefaultIndexedColorMap());
 
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
 			AEAT_BG };
@@ -183,7 +184,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		sheet.setColumnWidth(cellCount++, 30 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		Font modHeaderFont= workbook.createFont();
 		modHeaderFont.setBold(true);
 		modHeaderFont.setFontHeightInPoints((short) 8);

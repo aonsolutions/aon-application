@@ -215,7 +215,7 @@ public class AccountingExpenseDAO {
 		initializeAccountEntry( ctx, expense );
 		saveAccountEntry( ctx, expense );
 		expense.getCreditor()
-			.ifPresent( c -> saveAndRecordFinanace( ctx, c, expense ));
+			.ifPresent( c -> saveAndRecordFinance( ctx, c, expense ));
 		return expense;
 	}
 	
@@ -322,10 +322,10 @@ public class AccountingExpenseDAO {
 		return expense.setAccountEntry(ae);
 	}
 	
-	private static AccountingExpense saveAndRecordFinanace(AONContext ctx, Creditor cred, AccountingExpense expense) {
+	private static AccountingExpense saveAndRecordFinance(AONContext ctx, Creditor cred, AccountingExpense expense) {
 		Finance finance = new Finance();
 		finance.setDomain( expense.getDomain() );
-		finance.setPayment( false );
+		finance.setPayment( true );
 		finance.setRegistry( RegistryDAO.get(ctx,cred.getId() ));
 		finance.setScope( cred.getScope() );
 		finance.setSecurityLevel( cred.getSecurityLevel() );

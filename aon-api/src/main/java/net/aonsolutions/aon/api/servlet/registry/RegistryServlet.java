@@ -152,7 +152,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 		return arr;
 	}
 	
-	public static JSONObject getRegistryAdditionalInfo(JSONObject object, AonApiData api, JSONObject json, Integer registryId, LinkedList<RegistryAdditionalInfo> rais) {
+	public static JSONObject getRegistryAdditionalInfo(JSONObject object, AonApiData api, JSONObject json, Integer registryId, List<RegistryAdditionalInfo> rais) {
 		if(rais == null) {
 			JSONArray addInfo = json.opt("additional_info") != null
 				? json.optJSONArray("additional_info") : new JSONArray();

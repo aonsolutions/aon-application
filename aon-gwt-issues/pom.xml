@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13-beta-1</version>
+			<version>4.13.2</version>
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -127,7 +127,7 @@
 		<dependency>
   		  	<groupId>com.vaadin.polymer</groupId>
     		<artifactId>vaadin-gwt-polymer-elements</artifactId>
-    		<version>1.7.0.0</version>
+    		<version>1.9.3.1</version>
     	 	<scope>provided</scope>
 		</dependency>
 

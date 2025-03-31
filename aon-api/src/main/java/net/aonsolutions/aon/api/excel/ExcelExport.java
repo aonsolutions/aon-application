@@ -15,6 +15,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 public class ExcelExport {
 	
@@ -24,9 +25,9 @@ public class ExcelExport {
 	List<AonExcelColumn> columns = new LinkedList<>();
 	int rowIndex;
 	
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,36,105));
-	protected static final XSSFColor AON_LIGHT_BLUE = new XSSFColor(new java.awt.Color(219,228,244));
-	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240));
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,36,105), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_BLUE = new XSSFColor(new java.awt.Color(219,228,244), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240), new DefaultIndexedColorMap());
 
 	
 	protected void build() {

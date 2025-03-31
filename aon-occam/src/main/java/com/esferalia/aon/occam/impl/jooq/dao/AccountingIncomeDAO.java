@@ -215,7 +215,7 @@ public class AccountingIncomeDAO {
 		initializeAccountEntry( ctx, income );
 		saveAccountEntry( ctx, income );
 		income.getCustomer()
-			.ifPresent( c -> saveAndRecordFinanace( ctx, c, income ));
+			.ifPresent( c -> saveAndRecordFinance( ctx, c, income ));
 		return income;
 	}
 	
@@ -322,7 +322,7 @@ public class AccountingIncomeDAO {
 		return income.setAccountEntry(ae);
 	}
 	
-	private static AccountingIncome saveAndRecordFinanace(AONContext ctx, Customer cust, AccountingIncome income) {
+	private static AccountingIncome saveAndRecordFinance(AONContext ctx, Customer cust, AccountingIncome income) {
 		Finance finance = new Finance();
 		finance.setDomain( income.getDomain() );
 		finance.setPayment( false );

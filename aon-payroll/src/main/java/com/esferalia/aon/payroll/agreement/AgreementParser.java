@@ -1193,7 +1193,7 @@ public class AgreementParser {
 			
 			
 			String agreementCode = cmd.getOptionValue(agreementCodeOpt.getLongOpt());
-			String domainIdStr = cmd.getOptionValue(domainOpt.getLongOpt(), null);
+			String domainIdStr = cmd.getOptionValue(domainOpt.getLongOpt(), (String) null);
 			
 			if(null != domainIdStr)
 				domainId = Integer.parseInt(domainIdStr);

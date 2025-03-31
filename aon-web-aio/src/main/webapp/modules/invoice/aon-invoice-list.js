@@ -1,26 +1,24 @@
 import { AonElement } from '../../components/AonElement.js';
-import { AonSelect } from '../../components/aon-select.js';
-
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
 	 sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices } from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
-
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
-
 import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { formatNumber, isBase64 } from '../../services/utils.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { createList, createSelect } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
-import { formatNumber, isBase64 } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
-import { AonDateUtils } from '../utils/AonDateUtils.js';
-import { createList } from '../../components/CreateComponent.js';
 
 export class AonInvoiceList extends AonElement {
 
 	more;
 	filter;	
 	TABLE;
+
+	fn;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -135,8 +133,9 @@ export class AonInvoiceList extends AonElement {
 			} else invoice.name = value;
 		}
 		if(!invoice.name) invoice.name = '';
+		invoice.icons = this.buildProcessingIcons(invoice);
 
-		let tr = this.getTable().addRow(invoice, () => {}, () => {});
+		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx, this.fn), () => {});
 		tr.id = "aonInvoiceRow";
 	}
 		
@@ -182,6 +181,28 @@ export class AonInvoiceList extends AonElement {
 				});
 			});
 		}
+	}
+
+	buildProcessingIcons(invoice) {
+		let icons = [];
+		if(invoice.status === 'processing'){
+			let icon = {
+				icon: MATERIAL_ICONS.SCHEDULE,
+				title: "Procesando",
+				color: "gray"
+			};
+			icons.push(icon);
+		}
+
+		if(this.getDur().isOcr() && (invoice.invofox || invoice.ocrStatus)) {
+			let icon = {
+				icon: this.getOcrInvoiceStatusIcon(),
+				title: this.getOcrInvoiceStatusIconTitle(invoice),
+				color: this.getOcrInvoiceStatusIconColor(invoice)
+			};
+			icons.push(icon);
+		}
+		return icons;
 	}
 
 	buildRowIcons(invoice) {
@@ -432,7 +453,7 @@ export class AonInvoiceList extends AonElement {
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.ACCEPT);
-		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		let certSelect = createSelect("cert", "Certificado");
 		getAeatCertificates().then(certs => {
 			certSelect.setOptions(certs.map(s => {
 				return {
@@ -505,8 +526,10 @@ export class AonInvoiceList extends AonElement {
 		return value;
 	}
 
-	aonInvoice(invoice, i) {
-		if(this.getFilter().status !== 'accounting') {
+	aonInvoice(invoice, i, fn) {
+		if(this.fn) {
+			this.fn(invoice, i);
+		} else if(this.getFilter().status !== 'accounting') {
 			setIndex(i);
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(invoice.type, invoice);
@@ -544,8 +567,8 @@ export class AonInvoiceList extends AonElement {
 		let download = ACTION.DOWNLOAD_INVOICE;
 	    download.fn = () => this.downloadInvoices();
 
-    	let record = ACTION.RECORD_INVOICE;
-    	record.fn = () => this.getApplication().development(MSG.RECORD_INVOICE);
+	   	// let record = ACTION.RECORD_INVOICE;
+    	// record.fn = () => this.getApplication().development(MSG.RECORD_INVOICE);
 
     	let reject = ACTION.REJECT_INVOICE;
     	reject.fn = () => this.rejectInvoices();
@@ -578,13 +601,14 @@ export class AonInvoiceList extends AonElement {
 	  		actions = [restore, deleteForever];
 	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+	    		// actions = [download, addComment, deleteInvoice, reject, record, rectify, duplicate];
+				actions = [download, addComment, deleteInvoice, reject, rectify, duplicate];
 	  		} else {
 	    	  actions = [download, addComment, deleteInvoice, rectify, duplicate];
 	    	}
 		} else if(inv.isInbox() && number > 1){
 			if(this.getDur().isInvoiceManager()){
-	    		actions = [download, deleteInvoice, reject, record];
+	    		actions = [download, deleteInvoice, reject]; //, record];
 	  		} else {
 	    	  actions = [download, deleteInvoice];
 	    	}
@@ -605,6 +629,10 @@ export class AonInvoiceList extends AonElement {
 
 	setFilter(filter) {
 		return this.filter = filter;
+	}
+
+	setFn(fn) {
+		this.fn = fn;
 	}
 }
 if(!window.customElements.get(TAG.AON_INVOICE_LIST)){

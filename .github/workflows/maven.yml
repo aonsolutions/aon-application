@@ -15,12 +15,34 @@ on:
         type: boolean
         required: true
         default: false
+      javaVersion:
+        description: 'Java version'
+        type: choice
+        options:
+          - 25
+          - 24
+          - 23
+          - 22
+          - 21
+        required: true
+        default: 21
+      javaDistribution:
+        description: 'Java distribution'
+        type: choice
+        options:
+          - temurin
+          - oracle
+          - corretto
+        required: true
+        default: temurin
 
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.event.inputs.skipTests }}
+  SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
+  JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
+  JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   
 jobs:
   build:
@@ -35,11 +57,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK 
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
-        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
         cache: maven
         
     - name: Set up MySQL

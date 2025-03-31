@@ -68,7 +68,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 
 	@Override
 	protected void headerRow() {
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -160,7 +160,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			row = sheet.createRow(rowCount++);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 			
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 			Font vatHeaderFont= workbook.createFont();
 			vatHeaderFont.setBold(true);
 			vatHeaderFont.setFontHeightInPoints((short) 8);

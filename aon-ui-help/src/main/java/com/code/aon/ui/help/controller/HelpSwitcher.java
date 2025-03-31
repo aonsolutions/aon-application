@@ -103,7 +103,7 @@ public class HelpSwitcher implements Serializable {
 	
 	private static  List<HelpData> getHelpData() {
 		try  ( InputStream is = PdfSearcher.class.getResourceAsStream("index.pdf");
-		   PDDocument document = Loader.loadPDF(is) ) {
+		   PDDocument document = Loader.loadPDF(is.readAllBytes()) ) {
 			
 			return 
 			PdfSearcher.search(document, "").stream()
