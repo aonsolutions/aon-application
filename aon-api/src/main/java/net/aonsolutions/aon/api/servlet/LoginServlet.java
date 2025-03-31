@@ -236,16 +236,4 @@ public class LoginServlet extends AonApiHttpServlet{
 	private static Integer[] arrayOf( Integer ...ts ) {
 		return Arrays.stream(ts).filter(Objects::nonNull).toArray(Integer[]::new);
 	}
-	
-	public static void main(String[] args) {
-		String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IntcInNjaGVtYVwiOlwic3VpdGUtYW9uc29sdXRpb25zLW9yZ1wiLFwic2NoZW1hX2ZpcnN0X2RvbWFpblwiOlwiMTYxOTA4NjlsLmFvbnNvbHV0aW9ucy5vcmdcIixcInV1aWRcIjpcIjRENkNGOEExNkRERjExRUJCMzAwMDJCOUY2QzVDNzhEXCJ9IiwiaWF0IjoxNzQzNDE3ODYxLCJleHAiOjE3NDM0MTg3NjF9._m_GPR9NzbdYttGwdq_LfhuDDQppuEnuz3oLF_EHuIk";
-		String token2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoMCIsInN1YiI6IntcInV1aWRcIjpcIjRENkNGOEExNkRERjExRUJCMzAwMDJCOUY2QzVDNzhEXCJ9IiwiaWF0IjoxNzQzNDE4MTA1LCJleHAiOjE3NTEyODA1MDV9.tj6RNNf77pWhVAao4yzKUi7vIxLZZm3a0XVrER9K6qI";
-		JSONObject json = SECURITY.decodeJWT(token, AonSecret.getAonSecret());
-		JSONObject json2 = SECURITY.decodeJWT(token2, AonSecret.getAonSecret());
-		System.out.println(json.toString());
-		System.out.println(json2.toString());
-		
-	}
-	
-
 }
