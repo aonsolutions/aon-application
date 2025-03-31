@@ -371,6 +371,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.jump(15f);
 		table.alignCell(0, CENTER);
 		table.font = HELVETICA_BOLD;
+		table.fontsize = 7.5f;
 
 		boolean painted = false;
 
@@ -406,7 +407,6 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			}
 			table.newRow();
 		}
-		table.fontsize = 9;
 		table.alignCell(0, LEFT);
 		table.font = HELVETICA;
 	}
@@ -728,6 +728,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		ArrayList<Double> totalAon	= t.mg.getAonTotal();
 		ArrayList<Double> totalSs	= t.mg.getSsTotal();
 		table.font = HELVETICA_BOLD;
+		table.fontsize = 7.5f;
 
 		boolean painted = false;
 
