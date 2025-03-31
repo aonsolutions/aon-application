@@ -349,7 +349,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 	
 	
 	private static JSONObject rawdocToJson(AonApiData api, Rawdoc rawdoc) {
-		JSONObject json = new JSONObject(rawdoc.getJson());
+		JSONObject json =AonStringUtils.isNotBlank(rawdoc.getJson()) ? new JSONObject(rawdoc.getJson()) : new JSONObject();
 		json.put(IJsonNames.ID, rawdoc.getId());
 		json.put(IJsonNames.STATUS, rawdoc.getStatus() != null ? rawdoc.getStatus().getName() : IConstants.INBOX);
 		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
