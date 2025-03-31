@@ -16,7 +16,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -223,7 +222,6 @@ public class AuditSessionController extends BasicController {
 			int cellCount = 0;		
 
 			Cell c0 = row.createCell(cellCount++);
-			c0.setCellType(CellType.STRING);
 			c0.setCellValue(session.getSessionId());
 			
 			Cell c1 = row.createCell(cellCount++);
@@ -240,11 +238,9 @@ public class AuditSessionController extends BasicController {
 			
 			String user = session.getUser() == null?"<Desconocido>":session.getUser().getName(); 
 			Cell c3 = row.createCell(cellCount++);
-			c3.setCellType(CellType.STRING);
 			c3.setCellValue(user);
 
 			Cell c4 = row.createCell(cellCount++);
-			c4.setCellType(CellType.STRING);
 			c4.setCellValue(session.getRemoteAddress());
 		}
 

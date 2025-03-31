@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -16,8 +15,8 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -25,9 +24,9 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Cities;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2Deposit;
@@ -147,10 +146,8 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		rowCount = 0;
 		cellCount = 0;
 
-		sheet.setMargin(Sheet.LeftMargin, 0.5);
-		sheet.setMargin(Sheet.RightMargin, 0.5);
-
-		//header();
+		sheet.setMargin(PageMargin.LEFT, 0.5);
+		sheet.setMargin(PageMargin.RIGHT, 0.5);
 	}
 
 	@Override
@@ -252,7 +249,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 						style.setFont(defaulFont );
 						cell.setCellStyle(style);
 						cell.setCellValue(rows.get(rowCount));
-						cell.setCellType(CellType.STRING);
 						sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 						row = sheet.createRow(rowCount++);cellCount=0;
 					}
@@ -280,7 +276,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
 				cell.setCellValue(description);
-				cell.setCellType(CellType.STRING);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 
 				
@@ -293,20 +288,17 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 				cell.setCellStyle(style);
 				cell.setCellValue(innerKeys[0].getCode());
-				cell.setCellType(CellType.STRING);
 			
 				cell = row.createCell(cellCount++);
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(c);
-				cell.setCellType(CellType.STRING);
 			
 				cell = row.createCell(cellCount++);
 				double amount1 = Double.parseDouble(a);
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount1);
-				cell.setCellType(CellType.NUMERIC);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 4, 5));
 
 				cell = row.createCell(cellCount++);
@@ -315,7 +307,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount2);
-				cell.setCellType(CellType.NUMERIC);
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 6, 7));
 			}
 		}
@@ -408,7 +399,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			cell.setCellValue(description);
-			cell.setCellType(CellType.STRING);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 			
 			for(Integer i = 0; i < dif+2; i++)
@@ -425,7 +415,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			if(codelength != 0)
 				code = code.substring(0, codelength);
 			cell.setCellValue(code);
-			cell.setCellType(CellType.STRING);
 			
 			if(secondPart){
 				for(Integer i = 0; i < number; i++){
@@ -436,7 +425,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					style.setAlignment(HorizontalAlignment.RIGHT);
 					style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 					cell.setCellValue(amount);
-					cell.setCellType(CellType.NUMERIC);
 				}
 			} else{
 				for(Integer i = 0; i < number; i++){
@@ -447,7 +435,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					style.setAlignment(HorizontalAlignment.RIGHT);
 					style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 					cell.setCellValue(amount);
-					cell.setCellType(CellType.NUMERIC);
 				}
 			}
 		}
@@ -508,7 +495,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 					style.setFont(defaulFont );
 					cell.setCellStyle(style);
 					cell.setCellValue(rows.get(rowCount));
-					cell.setCellType(CellType.STRING);
 					sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 					row = sheet.createRow(rowCount++);cellCount=0;
 				}
@@ -531,7 +517,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 			cell.setCellStyle(style);
 			cell.setCellValue(description);
-			cell.setCellType(CellType.STRING);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, dif+1));
 			
 			for(Integer i = 0; i < dif+2; i++)
@@ -547,7 +532,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			if(codeLength != 0)
 				code = code.substring(0,codeLength);
 			cell.setCellValue(code);
-			cell.setCellType(CellType.STRING);
 			
 			for(Integer i = 0; i < number; i++){
 				cell = row.createCell(cellCount++);
@@ -557,7 +541,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(CellType.NUMERIC);
 			}
 		}
 	}
@@ -737,7 +720,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(strings[i]);
-			cell.setCellType(CellType.STRING);
 			if(((i*(8/n) +(8/n)-1) - (i*(8/n))) > 0){
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), i*(8/n), i*(8/n) +(8/n)-1));
 				for(Integer j = 0; j < (8/n)-1; j++){
@@ -754,7 +736,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		style.setFont(defaulFont );
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
-		cell.setCellType(CellType.STRING);
 		if((end - start) > 0) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
 			for(Integer j = 0; j < end - start; j++){
@@ -774,7 +755,6 @@ public abstract class CCAAExcelAction extends AbsExcelAction {
 		cell.setCellStyle(style);
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
-		cell.setCellType(CellType.STRING);
 		if((end - start) > 0) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), start, end));
 			for(Integer j = 0; j < end - start; j++){

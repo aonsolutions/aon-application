@@ -7,19 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,6 +26,12 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.impl.jooq.dao.StatDAO;
 import com.esferalia.aon.watson.AonMonth;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "DownloadFeeProjection", urlPatterns = {"/aon_gwt_aio/ms/download_fee_projection/*",
 																"/download_fee_projection/*"})
@@ -304,7 +303,6 @@ public class FeeProjectionDownload extends HttpServlet{
 	
 	private void createFormulaCell(Row row, CellStyle style, String value, Integer columnIndex){
 		Cell c = row.createCell(columnIndex);
-		c.setCellType(CellType.FORMULA);
 		c.setCellFormula(value);
 		c.setCellStyle(style);
 	}

@@ -1318,7 +1318,6 @@ public class RemunerationRecord {
 			}
 		}
 		newCell.setCellStyle(originalCell.getCellStyle());
-		newCell.setCellType(originalCell.getCellType());
 		newCell.setHyperlink(originalCell.getHyperlink());
 	}
 	

@@ -7,15 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -27,9 +20,9 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -43,6 +36,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.DirectSalesChartTypeVisitor;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Udapa Stat Report (excel)", urlPatterns = { "/aon_gwt_stat/ms/UdapaStatExcel",
 																"/aon_gwt_aio/ms/UdapaStatExcel" })
@@ -304,7 +303,6 @@ public class UdapaExcelServlet extends HttpServlet {
 			for ( int colIdx : colIdxs) {
 				Cell cell = totalRow.createCell(colIdx);
 				cell.setCellStyle(totalCellStyle);
-				cell.setCellType(CellType.FORMULA);
 				CellReference ref = new CellReference(cell);
 				String[] parts = ref.getCellRefParts(); // Returns the three parts of the cell reference, the Sheet
 															// name (or null if none supplied),
@@ -331,7 +329,6 @@ public class UdapaExcelServlet extends HttpServlet {
 					} else {
 						percentCell.setCellStyle(currentPercentStyle);
 					}
-					percentCell.setCellType(CellType.FORMULA);
 					String percentFormula = colId + (i + 1) + "/" + totalRef;
 					percentCell.setCellFormula(percentFormula);
 					CellValue percentValue = evaluator.evaluate(percentCell);
@@ -354,7 +351,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				Cell percentCell = curRow.createCell(7);
 				percentCell.setCellStyle(previousMonthPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				CellValue percentValue = evaluator.evaluate(percentCell);
@@ -362,7 +358,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(8);
 				percentCell.setCellStyle(previousYearPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentValue = evaluator.evaluate(percentCell);
@@ -370,7 +365,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(13);
 				percentCell.setCellStyle(currentPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentCell.setCellFormula(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentValue = evaluator.evaluate(percentCell);
@@ -406,7 +400,6 @@ public class UdapaExcelServlet extends HttpServlet {
 			Cell cell = row.createCell(colIdx);
 			cell.setCellStyle(style);
 			cell.setCellValue(number!=null?number:0.0);
-			cell.setCellType(CellType.NUMERIC);
 			return cell;
 		}
 	}

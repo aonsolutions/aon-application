@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -114,7 +113,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 3));
 		} else {
@@ -124,7 +122,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")
 					:AonStringUtils.EMPTY;
 			Cell boxCell = addCell(box);
-			boxCell.setCellType(CellType.STRING);
 			boxCell.setCellStyle(boxCellStyle);
 
 			cell = row.createCell(cellCount++);
@@ -141,7 +138,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(CellType.NUMERIC);
 			}
 
 		}
@@ -166,7 +162,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 	@Override
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod130Key key) {
 		double amount = model.ensureDetail(key).getAmount();
-		cell.setCellType(CellType.STRING);
 		if (key == Mod130Key.P0) {
 			style.setAlignment(HorizontalAlignment.RIGHT);
 			cell.setCellValue(amount == 1
@@ -176,7 +171,6 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 			style.setAlignment(HorizontalAlignment.RIGHT);
 			style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 			cell.setCellValue(amount);
-			cell.setCellType(CellType.NUMERIC);
 		} else if (key == Mod130Key.P2) {
 			cell.getCellStyle().setAlignment(HorizontalAlignment.RIGHT);
 			cell.setCellValue(amount == 1?"SI":"NO");
