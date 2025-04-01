@@ -36,32 +36,32 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 	protected abstract AonTableButton getActionButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
 	
 	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		paintRow(opt, cbk, rawdoc, getStatusLabel(rawdoc));
+		paintRow(opt, cbk, rawdoc, getStatusLabel(rawdoc), false);
 	}
 	
-	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label statusLabel) {
+	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label statusLabel, boolean recorded) {
 		this
 			.addCell(getNatureLabel(rawdoc), AON.CSS.aonTextCenter() )
 			.addCell(getTypeLabel(rawdoc), AON.CSS.aonTextCenter() )
 			.addCell(statusLabel, AON.CSS.aonTextCenter() )
+			.addCell(ensureButton(getViewDocButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getActionButton( opt, cbk, rawdoc)))
 			.addCell(getReferenceLabel(opt, cbk, rawdoc))
 			.addCell(getDateLabel(opt, cbk, rawdoc))
 			.addCell(getDocumentLabel(opt, cbk, rawdoc))
 			.addCell(getNameLabel(opt, cbk, rawdoc))
 			.addCell(getAmountLabel(opt, cbk, rawdoc), AON.CSS.aonTextRight() )
-			.addCell(ensureButton(getViewDocButton(opt, cbk, rawdoc)))
-			.addCell(ensureButton(getLogButton( opt, cbk, rawdoc)))
-			.addCell(ensureButton(getActionButton( opt, cbk, rawdoc)))
-			.addCell(ensureButton(getDeleteButton(opt, cbk, rawdoc)))
-			.addCell(ensureButton(getRejectButton(opt, cbk, rawdoc)))
-			.addCell(ensureButton(getRestoreButton(opt, cbk, rawdoc)))
-			.addCell(ensureButton(getDeleteForeverButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getDeleteButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getRejectButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getRestoreButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getDeleteForeverButton(opt, cbk, rawdoc)))
+			.addCell(recorded?new Label() : ensureButton(getLogButton( opt, cbk, rawdoc)))
 		;
 	}
 	
-	protected void refreshRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label label) {
+	protected void refreshRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label label, boolean recorded) {
 		this.clear();
-		paintRow(opt, cbk, rawdoc, label);
+		paintRow(opt, cbk, rawdoc, label, recorded);
 	}
 
 	private Label getNatureLabel(Rawdoc rawdoc) {
@@ -127,7 +127,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 							public void onSuccess(Void result) {
 								Label label = new Label( "ELIMINADO" );
 								label.setStyleName( AON.CSS.aonColorRed() );
-								refreshRow(opt, cbk, rawdoc, label);
+								refreshRow(opt, cbk, rawdoc, label, false);
 							}
 							
 							@Override
@@ -162,7 +162,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 									public void onSuccess(Rawdoc result) {
 										Label label = new Label( "INBOX" );
 										label.setStyleName( AON.CSS.aonColorRed() );
-										refreshRow(opt, cbk, result, label);
+										refreshRow(opt, cbk, result, label, false);
 									}
 									
 									@Override
@@ -179,7 +179,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getRejectButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton reject = null;
-		if (rawdoc.isInbox()) {
+		if (rawdoc.isInbox() || rawdoc.isPending()) {
 			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(event -> {
@@ -190,7 +190,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 							public void onSuccess(Rawdoc result) {
 								Label label = new Label( "RECHAZADA" );
 								label.setStyleName( AON.CSS.aonColorRed() );
-								refreshRow(opt, cbk, result, label);
+								refreshRow(opt, cbk, result, label, false);
 							}
 						
 							@Override
@@ -210,7 +210,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getDeleteButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton delete = null;
-		if (rawdoc.isInbox() || rawdoc.isRejected()) {
+		if (rawdoc.isInbox() || rawdoc.isRejected() || rawdoc.isPending()) {
 			delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
 			delete.getElement().getStyle().setMarginRight(5, Unit.PX);
 			delete.addClickHandler(event -> {
@@ -223,7 +223,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 							public void onSuccess(Rawdoc result) {
 								Label label = new Label( "PAPELERA" );
 								label.setStyleName( AON.CSS.aonColorRed() );
-								refreshRow(opt, cbk, result, label);
+								refreshRow(opt, cbk, result, label, false);
 							}
 							
 							@Override
