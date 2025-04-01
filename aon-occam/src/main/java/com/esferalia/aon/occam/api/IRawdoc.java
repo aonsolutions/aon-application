@@ -9,6 +9,10 @@ import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 
 public interface IRawdoc {
 	
+	Rawdoc toDraft(AONContext ctx, Integer rawdocId);
+	Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason);
+	Rawdoc toInbox(AONContext ctx, Integer rawdocId);
+	
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
@@ -18,9 +22,6 @@ public interface IRawdoc {
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
 	void rawdocDelete(AONContext ctx, RawdocFilter filter);
 	void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId);
-	void rawdocToDraft(AONContext ctx, Integer rawdocId);
-	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
-	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
 
 }

@@ -25,7 +25,7 @@ class PDFExtracter implements IPersonDocumentExtracter {
 	@Override
 	public boolean accept(byte [] bytes) {
 		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
-			PDDocument doc = Loader.loadPDF(is);
+			PDDocument doc = Loader.loadPDF(is.readAllBytes());
 			return (doc != null);
 		} catch (IOException e) {
 			return false;

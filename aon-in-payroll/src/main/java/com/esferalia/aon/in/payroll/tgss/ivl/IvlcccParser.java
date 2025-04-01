@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -36,7 +37,7 @@ class IvlcccParser {
 	}
 
 	public static void parse( InputStream is ,IvlParserListener listener) throws IOException , UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is))
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes()))
 		{
 			parse(doc, listener);
 		}

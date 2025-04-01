@@ -131,7 +131,7 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 
 			
 		    
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.copy();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			CellUtil.createCell(row, 0, "LISTADO DIARIO DE MOVIMIENTOS", headerStyle);

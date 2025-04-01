@@ -40,7 +40,7 @@ public class IdcplnssParser {
 	}
 
 	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is))
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes()))
 		{
 			parse(doc, listener);
 		}

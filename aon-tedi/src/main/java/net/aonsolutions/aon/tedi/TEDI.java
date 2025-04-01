@@ -2,6 +2,7 @@ package net.aonsolutions.aon.tedi;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -114,11 +115,11 @@ public class TEDI {
 				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida "
 					+ "para el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
 			}
-			Rawdoc rawdoc = RawdocDAO.get(ctx, rawdocId);
-			if (rawdoc == null) {
-				throw new TediException("No se ha encontrado el documento " + rawdocId + "en el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
-			}
-
+			Rawdoc rawdoc = RawdocDAO.get(ctx, rawdocId)
+				.orElseThrow( () -> 
+					new TediException(MessageFormat.format("No se ha encontrado el documento {0} en el dominio ( {1} - {2})"
+							,rawdocId,tctx.getAONContext().getDomainId(),tctx.getAONContext().getDomainName())
+			));
 			String rawdocJson = rawdoc.getJson();
 			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());

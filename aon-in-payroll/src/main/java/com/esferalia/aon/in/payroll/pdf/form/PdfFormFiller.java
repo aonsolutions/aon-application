@@ -18,7 +18,7 @@ public class PdfFormFiller {
 
 	//FILL FORM FIELDS WITH ASSOCIATED VALUES
 	static void fill_form_fields(InputStream pdf, Map<String,String> values, String new_pdf) throws UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(pdf)) {
+		try (PDDocument doc = Loader.loadPDF(pdf.readAllBytes())) {
 			doc.setAllSecurityToBeRemoved(true);
 	
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();

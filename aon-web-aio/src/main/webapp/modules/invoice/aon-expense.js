@@ -120,7 +120,7 @@ export class AonExpense extends AonElement {
         div.appendChild(creditor);
 
         let expAccount = createSelect(this.EXPENSE_EXPACCOUNT, "Tipo de gasto");
-        expAccount.setValue(this.expense.expAccount);
+        expAccount.setValue(this.expense.expAccount?this.expense.expAccount:null);
         expAccount.autocomplete = true;
         expAccount.setAlias("id", "description");
         div.appendChild(expAccount);
@@ -135,7 +135,7 @@ export class AonExpense extends AonElement {
                 if (selectedAccount && !filteredAccounts.some(acc => acc.id === selectedAccount.id)) {
                     filteredAccounts.unshift(selectedAccount); 
                 }
-        
+
                 expAccount.setOptions(filteredAccounts);
                 if (selectedAccount) {
                     expAccount.value = selectedAccount.id; 
@@ -146,7 +146,6 @@ export class AonExpense extends AonElement {
             this.getExpense().setExpAccount(this.getExpAccount());
         });
            
-
         let description = createInput(this.EXPENSE_DESCRIPTION, MSG.CONCEPT, div);
         description.setValue(this.expense.concept);
         description.addEventListener(EVENT.CHANGE, () => {

@@ -414,7 +414,7 @@ public class AyudatInvofoxCounters {
 			entryHeaderStyle.setBorderBottom(BorderStyle.THIN);
 			entryHeaderStyle.setFont(defaulFont);
 
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.copy();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 			row = sheet.createRow(rowCount++);
@@ -434,7 +434,7 @@ public class AyudatInvofoxCounters {
 				,"DOMAIN aonCustomer"
 				,"PARENT ID"
 				,"PARENT NOMBRE"
-				,"PARENT DESCRIPCIÓN"
+				,"PARENT DESCRIPCIÃ“N"
 				,"PARENT aonCustomer"
 			};
 			

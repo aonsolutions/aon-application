@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -24,6 +23,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.junit.AfterClass;
@@ -39,7 +39,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 
 public class FiscalModelsReport2 {
 	private static final String NUMBER_PATTERN = "#,###";
-	private static final XSSFColor HEADER_COLOR = new XSSFColor(new java.awt.Color(80, 80, 80));
+	private static final XSSFColor HEADER_COLOR = new XSSFColor(new java.awt.Color(80, 80, 80), new DefaultIndexedColorMap());
 
 	private static String FILENAME = "/home/ecastellano/TRABAJO/SELECT MODELOS FISCALES/resultado_select_modelos_fiscales.csv";
 	private static String OUTPUT_FILENAME = "/home/ecastellano/TRABAJO/SELECT MODELOS FISCALES/resultado.xlsx";
@@ -233,7 +233,6 @@ public class FiscalModelsReport2 {
 		private Cell addCell(String value) {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellValue(AonStringUtils.trimToEmpty(value));
-			cell.setCellType(CellType.STRING);
 			cell.setCellStyle(defaultStyle);
 			return cell;
 		}
@@ -244,13 +243,12 @@ public class FiscalModelsReport2 {
 			if (value != null) {
 				cell.setCellValue(value);
 			}
-			cell.setCellType(CellType.NUMERIC);
 			return cell;
 		}
 
 		public void finalize(OutputStream out) throws IOException {
 			workbook.write(out);
-			workbook.dispose();
+			workbook.close();
 		}
 
 		private void headerRow() {

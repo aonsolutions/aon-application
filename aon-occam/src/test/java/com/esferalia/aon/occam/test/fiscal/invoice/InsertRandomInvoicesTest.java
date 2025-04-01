@@ -30,7 +30,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 	
 	public static void insertInvoices(Date date) {
 		int year = AonDateUtils.getYear( date );
-		int times = AonRandom.getInt(1, 100);
+		int times = AonRandom.getInt(1, 10);
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
 			if (AonRandom.gt(90)) {

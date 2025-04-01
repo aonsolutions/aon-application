@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -19,6 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFDrawing;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
@@ -45,11 +45,11 @@ public class Mod3902024ExcelAction extends AbsExcelAction {
 				
 	}
 	
-	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81));
-	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4));
-	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49));
-	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42));
-	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195));
+	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81), new DefaultIndexedColorMap());
+	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4), new DefaultIndexedColorMap());
+	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49), new DefaultIndexedColorMap());
+	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42), new DefaultIndexedColorMap());
+	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195), new DefaultIndexedColorMap());
 
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
 			AEAT_BG };
@@ -259,7 +259,6 @@ public class Mod3902024ExcelAction extends AbsExcelAction {
 		
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(style);
-		cell.setCellType(CellType.NUMERIC);
 		cell.setCellValue(amount);
 		
 	}

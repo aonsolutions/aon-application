@@ -367,13 +367,13 @@ public class DeliveryImport {
 	}
 
 	private Object getObjectValue(Cell cell){
-		if(CellType.STRING == cell.getCellTypeEnum())
+		if(CellType.STRING == cell.getCellType())
 			return cell.getStringCellValue();
-		if(CellType.NUMERIC == cell.getCellTypeEnum())
+		if(CellType.NUMERIC == cell.getCellType())
 			return cell.getNumericCellValue();
-		if(CellType.FORMULA == cell.getCellTypeEnum())
+		if(CellType.FORMULA == cell.getCellType())
 			return cell.getCellFormula();
-		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
+		if(CellType.BOOLEAN == cell.getCellType()) {
 			return cell.getBooleanCellValue() ? 1.0 : 0.0;
 		}
 		return null;

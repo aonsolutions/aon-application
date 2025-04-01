@@ -27,73 +27,30 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 	}
 	
 	@Override
-	public void parse(Occam occam, Integer rawdocId, AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
-	}
-	
-	@Override
 	public void delete(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.delete(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	@Override
-	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
-	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Void> callback) {
+	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
-	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	
-	// --------------------------------------------------------------- RAWDOC OLD 
-	@Override
-	public void getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset, int limit,
-			AsyncCallback<LinkedList<Rawdoc>> callback) {
-		AON.start();
-		fsa.getRawdocs(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Rawdoc>>(callback));
-	}
-
-	@Override
-	public void parse(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.parse(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
-	}
-	
-	@Override
-	public void delete(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.delete(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void toDraft(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.toDraft(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void toRejected(String domainName, int domain, String user, Integer rawdocId, String reason, AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.toRejected(domainName, domain, user, rawdocId, reason, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void toInbox(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback) {
-		AON.start();
-		fsa.toInbox(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<Void>(callback));
-	}
-	
+	// --------------------------------------------------------------- PENDING 
 	@Override
 	public void getAccountingInvoice(String domainName, int domain, String user, String invoice, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
@@ -112,4 +69,14 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
 	}
 	
+	@Override
+	public void parse(Occam occam, Integer rawdocId, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
+	}
+	@Override
+	public void parse(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parse(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
+	}
 }

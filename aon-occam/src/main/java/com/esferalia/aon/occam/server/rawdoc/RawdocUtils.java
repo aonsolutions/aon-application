@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.server.rawdoc;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 
 public class RawdocUtils {
 	
@@ -15,7 +16,12 @@ public class RawdocUtils {
 			prop = prop.and(p.getTypeProperty().eq( params.getType().value()));
 		}
 		if (params.getStatus() != null) {
-			prop = prop.and(p.getStatusProperty().eq( params.getStatus().value()));
+			if (params.getStatus() == RawdocStatus.INBOX) {
+				Byte[] statuses = new Byte[] {RawdocStatus.INBOX.value(), RawdocStatus.PENDING.value()};
+				prop = prop.and(p.getStatusProperty().in( statuses ));	
+			} else {
+				prop = prop.and(p.getStatusProperty().eq( params.getStatus().value()));
+			}
 		}
 		return prop;
 	}

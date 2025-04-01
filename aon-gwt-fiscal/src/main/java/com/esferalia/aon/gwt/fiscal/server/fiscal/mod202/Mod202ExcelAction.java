@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -51,7 +50,7 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 		sheet.setColumnWidth(cellCount++, 30 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 		CellUtil.createCell(row, cellCount, "", rightHeaderCellStyle);
@@ -87,7 +86,6 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod202Key key) {
 		double amount = model.ensureDetail(key).getAmount();
 		style.setAlignment(HorizontalAlignment.LEFT);
-		cell.setCellType(CellType.STRING);
 		if (key == Mod202Key.P02) {
 			cell.setCellValue(model.getInitialDate() != null
 					?DATE_FORMAT.format(model.getInitialDate())

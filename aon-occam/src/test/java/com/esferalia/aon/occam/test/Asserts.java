@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Question;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
@@ -1361,6 +1362,24 @@ public class Asserts {
 			assertEquals("BalancingAccountCode",expected.getBalancingAccountCode(), actual.getBalancingAccountCode());
 			assertEquals("BalancingAccountDescription",expected.getBalancingAccountDescription(), actual.getBalancingAccountDescription());
 			assertEquals("DocumentNumber",expected.getDocumentNumber(), actual.getDocumentNumber());
+		}
+	}
+	
+	public static void assertEqualsRawdoc(Rawdoc expected, Rawdoc actual) {
+		assertEqualsNulls( "Rawdoc", expected, actual);
+		if (expected != null) {
+			assertEquals("Id",expected.getId(), actual.getId());
+			assertEquals("Domain",expected.getDomain(), actual.getDomain());
+			assertEquals("Nature",expected.getNature(), actual.getNature());
+			assertEquals("Type",expected.getType(),actual.getType());
+			assertEquals("Status",expected.getStatus(),actual.getStatus());
+			assertEquals("Json",expected.getJson(),actual.getJson());
+			assertEquals("log",expected.getLog(),actual.getLog());
+			assertEquals("mimeType",expected.getMimeType(),actual.getMimeType());
+			assertEquals("data",expected.getData(),actual.getData());
+			assertEquals("s3Key",expected.getS3Key(),actual.getS3Key());
+			// assertEquals("tediInvoice",expected.getTediInvoice(),actual.getTediInvoice());
+			assertEqualsInvoice(expected.getInvoice(),actual.getInvoice());
 		}
 	}
 	
