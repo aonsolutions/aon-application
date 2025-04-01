@@ -55,6 +55,9 @@ public abstract class EmployeeCalendarLeyendDialog extends CustomDialog {
 	@UiField
 	Label peonadasDays;
 	
+	@UiField
+	Label paidLeaveDays;
+	
 	// ------------------------------------ Constructor
 	
 	protected EmployeeCalendarLeyendDialog() {
@@ -100,6 +103,9 @@ public abstract class EmployeeCalendarLeyendDialog extends CustomDialog {
 		
 		Integer peonadasDaysCount = getTotalYearDays(DayType.REAL_DAYS);
 		peonadasDays.setText(0 == peonadasDaysCount ? "" : "(" + peonadasDaysCount + " d\u00EDas)");
+		
+		Integer paidLeaveDaysCount = getTotalYearDays(DayType.PAID_LEAVE);
+		paidLeaveDays.setText(0 == paidLeaveDaysCount ? "" : "(" + paidLeaveDaysCount + " d\u00EDas)");
 	}
 	
 	// ------------------------------------ Abstract methods
