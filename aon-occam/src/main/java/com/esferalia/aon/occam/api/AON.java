@@ -7685,30 +7685,30 @@ public class AON {
 		}
 	}
 
-	public static void rawdocToDraft(Occam occam, Integer rawdocId) {
-		rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	public static Rawdoc rawdocToDraft(Occam occam, Integer rawdocId) {
+		return rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
 	}
-	public static void rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
+	public static Rawdoc rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getRawdoc().rawdocToDraft(ctx, rawdocId);
+			return getRawdoc().toDraft(ctx, rawdocId);
 		}
 	}
 
-	public static void rawdocToRejected(Occam occam, Integer rawdocId, String reason) {
-		rawdocToRejected(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId,reason);
+	public static Rawdoc rawdocToRejected(Occam occam, Integer rawdocId, String reason) {
+		return rawdocToRejected(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId,reason);
 	}
-	public static void rawdocToRejected(String domainName, int domain, String user, Integer rawdocId, String reason) {
+	public static Rawdoc rawdocToRejected(String domainName, int domain, String user, Integer rawdocId, String reason) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getRawdoc().rawdocToRejected(ctx, rawdocId, reason);
+			return getRawdoc().toRejected(ctx, rawdocId, reason);
 		}
 	}
 
-	public static void rawdocToInbox(Occam occam, Integer rawdocId) {
-		rawdocToInbox(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	public static Rawdoc rawdocToInbox(Occam occam, Integer rawdocId) {
+		return rawdocToInbox(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
 	}
-	public static void rawdocToInbox(String domainName, int domain, String user, Integer rawdocId) {
+	public static Rawdoc rawdocToInbox(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getRawdoc().rawdocToInbox(ctx, rawdocId);
+			return getRawdoc().toInbox(ctx, rawdocId);
 		}
 	}
 

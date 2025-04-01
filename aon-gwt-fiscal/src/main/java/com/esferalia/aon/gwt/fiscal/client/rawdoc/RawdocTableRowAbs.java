@@ -36,14 +36,14 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 	protected abstract AonTableButton getActionButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
 	
 	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		paintRow(opt, cbk, rawdoc, getTypeLabel(rawdoc));
+		paintRow(opt, cbk, rawdoc, getStatusLabel(rawdoc));
 	}
 	
-	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label typeLabel) {
+	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label statusLabel) {
 		this
 			.addCell(getNatureLabel(rawdoc), AON.CSS.aonTextCenter() )
-			.addCell(typeLabel, AON.CSS.aonTextCenter() )
-			.addCell(getStatusLabel(rawdoc), AON.CSS.aonTextCenter() )
+			.addCell(getTypeLabel(rawdoc), AON.CSS.aonTextCenter() )
+			.addCell(statusLabel, AON.CSS.aonTextCenter() )
 			.addCell(getReferenceLabel(opt, cbk, rawdoc))
 			.addCell(getDateLabel(opt, cbk, rawdoc))
 			.addCell(getDocumentLabel(opt, cbk, rawdoc))
@@ -156,13 +156,13 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 					?AON.MSG.confirmRestoreRejected()
 					:AON.MSG.confirmRestoreAction()), () -> 
 						RawdocModuleNew.RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
-							, new AsyncCallback<Void>() {
+							, new AsyncCallback<Rawdoc>() {
 								
 									@Override
-									public void onSuccess(Void result) {
+									public void onSuccess(Rawdoc result) {
 										Label label = new Label( "INBOX" );
 										label.setStyleName( AON.CSS.aonColorRed() );
-										refreshRow(opt, cbk, rawdoc, label);
+										refreshRow(opt, cbk, result, label);
 									}
 									
 									@Override
@@ -184,19 +184,21 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(event -> {
 				RawdocRejectPanel rrp = new RawdocRejectPanel(opt,rawdoc, reason -> 
-					RawdocModuleNew.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason , new AsyncCallback<Void>() {
-						@Override
-						public void onSuccess(Void result) {
-							Label label = new Label( "RECHAZADA" );
-							label.setStyleName( AON.CSS.aonColorRed() );
-							refreshRow(opt, cbk, rawdoc, label);
+					RawdocModuleNew.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason 
+						, new AsyncCallback<Rawdoc>() {
+							@Override
+							public void onSuccess(Rawdoc result) {
+								Label label = new Label( "RECHAZADA" );
+								label.setStyleName( AON.CSS.aonColorRed() );
+								refreshRow(opt, cbk, result, label);
+							}
+						
+							@Override
+							public void onFailure(Throwable caught) {
+								cbk.showError(caught.getMessage());
+							}
 						}
-					
-						@Override
-						public void onFailure(Throwable caught) {
-							cbk.showError(caught.getMessage());
-						}
-					})
+					)
 				);
 				Scheduler.get().scheduleDeferred(() -> rrp.setFocus(true));
 				rrp.center();
@@ -215,13 +217,13 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDraftAction(), () -> 
 					RawdocModuleNew.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
-						, new AsyncCallback<Void>() {
+						, new AsyncCallback<Rawdoc>() {
 							
 							@Override
-							public void onSuccess(Void result) {
+							public void onSuccess(Rawdoc result) {
 								Label label = new Label( "PAPELERA" );
 								label.setStyleName( AON.CSS.aonColorRed() );
-								refreshRow(opt, cbk, rawdoc, label);
+								refreshRow(opt, cbk, result, label);
 							}
 							
 							@Override

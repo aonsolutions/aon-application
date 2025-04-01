@@ -18,9 +18,9 @@ public interface RawdocService extends RemoteService {
 	// --------------------------------------------------------------- RAWDOC
 	LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset,int limit) throws AonCoreException;
 	void delete(Occam occam, Integer rawdocId);
-	void toDraft(Occam occam, Integer rawdocId) throws AonCoreException;
-	void toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
-	void toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
+	Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException;
+	Rawdoc toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
+	Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
 	
 	// --------------------------------------------------------------- PENDING 
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);

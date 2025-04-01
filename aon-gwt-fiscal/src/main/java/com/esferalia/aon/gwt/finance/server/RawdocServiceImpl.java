@@ -49,18 +49,18 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		AON.rawdocDelete(occam,rawdocId);
 	}
 	@Override
-	public void toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToDraft(occam,rawdocId);
+	public Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToDraft(occam,rawdocId);
 	}
 
 	@Override
-	public void toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
-		AON.rawdocToRejected(occam,rawdocId,reason);
+	public Rawdoc toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
+		return AON.rawdocToRejected(occam,rawdocId,reason);
 	}
 
 	@Override
-	public void toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToInbox(occam,rawdocId);
+	public Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToInbox(occam,rawdocId);
 	}
 	
 	//	************************************************* OLD

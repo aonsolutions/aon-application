@@ -697,10 +697,10 @@ public class RawdocModule extends MainEntryPoint {
 						@Override
 						public void onAccept() {
 							RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
-								, new AsyncCallback<Void>() {
+								, new AsyncCallback<Rawdoc>() {
 										
 									@Override
-									public void onSuccess(Void result) {
+									public void onSuccess(Rawdoc result) {
 										refreshCell("PAPELERA",row);
 									}
 									
@@ -770,10 +770,10 @@ public class RawdocModule extends MainEntryPoint {
 								okButton.setEnabled(false);
 								toast.hide();
 								RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason.getValue()
-									, new AsyncCallback<Void>() {
+									, new AsyncCallback<Rawdoc>() {
 									
 										@Override
-										public void onSuccess(Void result) {
+										public void onSuccess(Rawdoc result) {
 											refreshCell("RECHAZADA",row);
 										}
 										
@@ -844,10 +844,10 @@ public class RawdocModule extends MainEntryPoint {
 						@Override
 						public void onAccept() {
 							RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
-								, new AsyncCallback<Void>() {
+								, new AsyncCallback<Rawdoc>() {
 									
 									@Override
-									public void onSuccess(Void result) {
+									public void onSuccess(Rawdoc result) {
 										refreshCell("INBOX",row);
 									}
 									

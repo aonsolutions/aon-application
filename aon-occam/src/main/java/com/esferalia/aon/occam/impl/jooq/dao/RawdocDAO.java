@@ -392,31 +392,39 @@ public class RawdocDAO {
 		return rawdocUserData;
 	}
 
-	private static void updateStatus( AONContext ctx, Rawdoc rawdoc, RawdocStatus status, String reason) {
+	private static Rawdoc updateStatus( AONContext ctx, Rawdoc rawdoc, RawdocStatus status, String reason) {
 		int count = ctx.getDslContext()
-				.update(RAWDOC)
-					.set(RAWDOC.STATUS,status.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, rawdoc, status, reason ) )
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdoc.getId()))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC ({0}) id: {1} ({2} filas)",status.name(),rawdoc.getId(),count);
+			.update(RAWDOC)
+				.set(RAWDOC.STATUS,status.value())
+				.set(RAWDOC.LOG, getLogArray(ctx, rawdoc, status, reason ) )
+				.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+				.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.where(RAWDOC.ID.equal(rawdoc.getId()))
+				.execute();
+		ctx.log().info("UPDATE RAWDOC ({0}) id: {1} ({2} filas)",status.name(),rawdoc.getId(),count);
+		return get(ctx, rawdoc.getId())
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
-	public static void toDraft(AONContext ctx, Integer rawdocId) {
+	public static Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
-		get(ctx, rawdocId).ifPresent( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null));
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 
-	public static void toRejected(AONContext ctx, Integer rawdocId, String reason) {
+	public static Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason) {
 		ctx.checkWrite();
-		get(ctx, rawdocId).ifPresent( r -> updateStatus(ctx,r,RawdocStatus.REJECTED,reason));
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.REJECTED,reason))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 
-	public static void toInbox(AONContext ctx, Integer rawdocId) {
+	public static Rawdoc toInbox(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
-		get(ctx, rawdocId).ifPresent( r -> updateStatus(ctx,r,RawdocStatus.INBOX, null));
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.INBOX, null))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
 	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {

@@ -32,21 +32,21 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.delete(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	@Override
-	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toDraft(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
-	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Void> callback) {
+	public void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toRejected(occam, rawdocId, reason, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	@Override
-	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Void> callback) {
+	public void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
-		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
+		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
 	

@@ -60,11 +60,8 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		assertNotNull( rawdoc );
 		String reason = AonRandom.lorem(0,50);
 		
-		RawdocDAO.toRejected(ctx, rawdoc.getId(), reason);
-		Optional<Rawdoc> optRejected = RawdocDAO.get(ctx, rawdoc.getId());
-		assertNotNull( optRejected );
-		assertTrue( optRejected.isPresent() );
-		Rawdoc rejected =  optRejected.get();		
+		Rawdoc rejected =  RawdocDAO.toRejected(ctx, rawdoc.getId(), reason);
+		assertNotNull( rejected );
 		assertTrue( AonStringUtils.isNotBlank( rejected.getLog()) );
 		JSONArray jsonRejectedLog = new JSONArray( rejected.getLog() );
 		assertFalse( jsonRejectedLog.isEmpty() );
@@ -76,11 +73,8 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		RawdocStatus sRejected = RawdocStatus.safeValueOf( jsonRejected.getString(IJsonNames.STATUS) );
 		assertEquals( RawdocStatus.REJECTED, sRejected );
 		
-		RawdocDAO.toDraft(ctx, rawdoc.getId());
-		Optional<Rawdoc> optDraft= RawdocDAO.get(ctx, rawdoc.getId());
-		assertNotNull( optDraft );
-		assertTrue( optDraft.isPresent() );
-		Rawdoc draft =  optDraft.get();		
+		Rawdoc draft =  RawdocDAO.toDraft(ctx, rawdoc.getId());
+		assertNotNull( draft );
 		assertTrue( AonStringUtils.isNotBlank( draft.getLog()) );
 		JSONArray jsonDraftLog = new JSONArray( draft.getLog() );
 		assertFalse( jsonDraftLog.isEmpty() );
@@ -92,11 +86,8 @@ public class RawdocDAOTest extends AbstractOccamTest {
 		RawdocStatus sDraft = RawdocStatus.safeValueOf( jsonDraft.getString(IJsonNames.STATUS) );
 		assertEquals( RawdocStatus.DRAFT, sDraft );
 		
-		RawdocDAO.toInbox(ctx, rawdoc.getId());
-		Optional<Rawdoc> optInbox= RawdocDAO.get(ctx, rawdoc.getId());
-		assertNotNull( optInbox );
-		assertTrue( optInbox.isPresent() );
-		Rawdoc inbox =  optInbox.get();		
+		Rawdoc inbox =  RawdocDAO.toInbox(ctx, rawdoc.getId());
+		assertNotNull( inbox );
 		assertTrue( AonStringUtils.isNotBlank( inbox.getLog()) );
 		JSONArray jsonInboxLog = new JSONArray( inbox.getLog() );
 		assertFalse( jsonInboxLog.isEmpty() );

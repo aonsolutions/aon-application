@@ -69,29 +69,26 @@ public class RawdocImpl implements IRawdoc {
 	}
 	
 	@Override
-	public void rawdocToDraft(AONContext ctx, Integer rawdocId) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toDraft(ctx, rawdocId);
-		} );			
+	public Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.toDraft(ctx, rawdocId));
 	}
 
 	@Override
-	public void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toRejected(ctx, rawdocId, reason);
-		} );			
+	public Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.toRejected(ctx, rawdocId, reason));
 	}
 
 	@Override
-	public void rawdocToInbox(AONContext ctx, Integer rawdocId) {
-		ctx.getDslContext().transaction(configuration -> {
-			RawdocDAO.toInbox(ctx, rawdocId);
-		} );			
+	public Rawdoc toInbox(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.toInbox(ctx, rawdocId));
 	}
 	@Override
 	public boolean rawdocHasData(AONContext ctx, Integer rawdocId) {
-		return ctx.getDslContext().transactionResult(configuration
-				-> RawdocDAO.hasData(ctx, rawdocId));
+		return ctx.getDslContext().transactionResult(configuration -> 
+			RawdocDAO.hasData(ctx, rawdocId));
 	}
 
 }
