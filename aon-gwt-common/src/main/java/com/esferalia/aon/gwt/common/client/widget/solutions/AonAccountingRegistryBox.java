@@ -128,8 +128,10 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			return accountingRegistry;
 		}
 	}
-	
 	public AonAccountingRegistryBox(AonModuleOptions<?> options, boolean showDescription) {
+		this( options, showDescription, true );
+	}
+	public AonAccountingRegistryBox(AonModuleOptions<?> options, boolean showDescription, boolean enableAddButton) {
 		
 		dataBisButton = new AonTableButton(AON.MSG.titular(),AON.CSS.aonIconAdd());
 		
@@ -178,7 +180,6 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		descriptionLabel.addStyleName(AON.CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
 		
-		dataBisButton.getElement().setTabIndex(-1);
 		
 		accountingRegistryBox.addSelectionHandler(event -> {
 			AccountingRegistrySuggestion selected = (AccountingRegistrySuggestion) event.getSelectedItem();
@@ -195,14 +196,17 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 			}
 		});
 		
-		dataBisButton.addClickHandler(event -> showNewDialog(options));
 
 		rooPanel = new FlowPanel();
 		rooPanel.setStyleName(AON.CSS.aonNowrap() );
 		rooPanel.addStyleName(AON.CSS.aonFlexBlockInline());
 		rooPanel.addStyleName(AON.CSS.aonInline() );
 		rooPanel.add(accountingRegistryBox);
-		rooPanel.add(dataBisButton);
+		if (enableAddButton) {
+			dataBisButton.getElement().setTabIndex(-1);
+			dataBisButton.addClickHandler(event -> showNewDialog(options));
+			rooPanel.add(dataBisButton);
+		}
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
 	}
@@ -443,29 +447,35 @@ public class AonAccountingRegistryBox extends ResizeComposite implements HasValu
 		
 		Scheduler.get().scheduleDeferred(() -> accountPanel.setFocus(true));		
 	}
+//	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar) {
+//		return getAonAccountingRegistryPanel(options, ar, null);
+//	}
 	
-	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar) {
-		return getAonAccountingRegistryPanel(options, ar, new AonAccountingRegistryPanelCallback() {
+	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar, AonAccountingRegistryPanelCallback cbk) {
+		return getRegistryPanel(options, ar, new AonAccountingRegistryPanelCallback() {
 					
 					@Override
 					public void onCancel() {
 						setFocus(true);
+						if (cbk != null) cbk.onCancel();
 					}
 					
 					@Override
 					public void onAccept(AccountingRegistry registry) {
 						setValue(registry,false);
 						select(registry);
+						if (cbk != null) cbk.onAccept(registry);
 					}
 
 					@Override
 					public void setFocus(boolean b) {
 						AonAccountingRegistryBox.this.setFocus(b);
+						if (cbk != null) cbk.setFocus( b );
 					}
 				});
 	}
 	
-	public AonAccountingRegistryPanel getAonAccountingRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar, AonAccountingRegistryPanelCallback callback) {
+	private AonAccountingRegistryPanel getRegistryPanel(AonModuleOptions<?> options, AccountingRegistry ar, AonAccountingRegistryPanelCallback callback) {
 		return new AonAccountingRegistryPanel( 
 				options.getDomainName(), 
 				options.getDomain(), 

@@ -8,33 +8,13 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 public enum AccountingRegistryType implements Serializable {
 	
 	CREDITOR ("Acreedor",InvoiceType.EXPENSES, AccountEntryType.EXPENSE_INVOICE, "4100"
-			, new IAccountingRegistryTypeVisitorWalker() {
-				@Override
-				public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-					visitor.visitCreditor(reg);
-				}
-			})
+		, (reg, visitor) -> visitor.visitCreditor(reg))
 	,SUPPLIER ("Proveedor",InvoiceType.PURCHASE, AccountEntryType.PURCHASE_INVOICE, "4000"
-		,new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitSupplier(reg);
-			}
-		})
+		,(reg, visitor) -> visitor.visitSupplier(reg))
 	,CUSTOMER ("Cliente",InvoiceType.SALES, AccountEntryType.SALES_INVOICE, "4300"
-		, new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitCustomer(reg);
-			}
-		})
+		, (reg, visitor) -> visitor.visitCustomer(reg))
 	,UNDED_CREDITOR ("Acreedor",InvoiceType.UNDEDUCTIBLE, AccountEntryType.EXPENSE_INVOICE, "4100"
-		, new IAccountingRegistryTypeVisitorWalker() {
-			@Override
-			public void visit(AccountingRegistry reg,IAccountingRegistryTypeVisitor visitor) {
-				visitor.visitUndedCreditor(reg);
-			}
-		})
+		, (reg, visitor) -> visitor.visitUndedCreditor(reg))
 	;
 	
 	public interface IAccountingRegistryTypeVisitorWalker {
