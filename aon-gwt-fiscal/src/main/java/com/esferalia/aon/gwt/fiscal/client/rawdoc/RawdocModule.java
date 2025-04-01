@@ -474,32 +474,32 @@ public class RawdocModule extends MainEntryPoint {
 
 	private void search(final RawdocModuleOptions opt, RawdocParams params, final int ofs) {
 		if (!isMoreData()) return; 
-		RAWDOC_SERVICE.getRawdocs(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
-				, new AsyncCallback<LinkedList<Rawdoc>>() {
+		RAWDOC_SERVICE.getRawdocs(opt.getOccam(), params, ofs, limit
+			, new AsyncCallback<LinkedList<Rawdoc>>() {
 					
-					@Override
-					public void onSuccess(LinkedList<Rawdoc> result) {
-						if (result != null && !result.isEmpty()) {
-							result.forEach( rawdoc -> paintRow(opt,rawdoc));
-							offset.setValue(ofs + result.size());
-							enableMoreData();
-						} else {
-							Label label = new Label(AON.MSG.noData());
-							label.setStyleName(AON.CSS.aonBlockMessage());
-							label.addStyleName(AON.CSS.aonBlockInfoMessage());
-							label.addStyleName(AON.CSS.aonMarginTop());
-							container.add(label);
-							disableMoreData();
-						}
-						enableSearch();
+				@Override
+				public void onSuccess(LinkedList<Rawdoc> result) {
+					if (result != null && !result.isEmpty()) {
+						result.forEach( rawdoc -> paintRow(opt,rawdoc));
+						offset.setValue(ofs + result.size());
+						enableMoreData();
+					} else {
+						Label label = new Label(AON.MSG.noData());
+						label.setStyleName(AON.CSS.aonBlockMessage());
+						label.addStyleName(AON.CSS.aonBlockInfoMessage());
+						label.addStyleName(AON.CSS.aonMarginTop());
+						container.add(label);
+						disableMoreData();
 					}
+					enableSearch();
+				}
 					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());
-					}
-				});
-		
+				@Override
+				public void onFailure(Throwable caught) {
+					showError(caught.getMessage());
+				}
+			}
+		);
 	}
 	
 	public void showViewer( MimeType mimeType, String url ) {
@@ -696,19 +696,20 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-								RAWDOC_SERVICE.toDraft(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-										, new AsyncCallback<Void>() {
-											
-											@Override
-											public void onSuccess(Void result) {
-												refreshCell("PAPELERA",row);
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {
-												showError(caught.getMessage());
-											}
-										});
+							RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Void>() {
+										
+									@Override
+									public void onSuccess(Void result) {
+										refreshCell("PAPELERA",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 					});
 				}
@@ -768,19 +769,20 @@ public class RawdocModule extends MainEntryPoint {
 							} else {
 								okButton.setEnabled(false);
 								toast.hide();
-								RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), reason.getValue()
-										, new AsyncCallback<Void>() {
+								RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason.getValue()
+									, new AsyncCallback<Void>() {
 									
-									@Override
-									public void onSuccess(Void result) {
-										refreshCell("RECHAZADA",row);
+										@Override
+										public void onSuccess(Void result) {
+											refreshCell("RECHAZADA",row);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											showError(caught.getMessage());
+										}
 									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										showError(caught.getMessage());
-									}
-								});
+								);
 							}
 						}
 					});
@@ -841,19 +843,20 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-							RAWDOC_SERVICE.toInbox(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-									, new AsyncCallback<Void>() {
-										
-										@Override
-										public void onSuccess(Void result) {
-											refreshCell("INBOX",row);
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											showError(caught.getMessage());
-										}
-									});
+							RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										refreshCell("INBOX",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 	
 						@Override
@@ -880,19 +883,19 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-							RAWDOC_SERVICE.delete(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-									, new AsyncCallback<Void>() {
-										
-										@Override
-										public void onSuccess(Void result) {
-											refreshCell("ELIMINADO",row);
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											showError(caught.getMessage());
-										}
-									});
+							RAWDOC_SERVICE.delete(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Void>() {
+									@Override
+									public void onSuccess(Void result) {
+										refreshCell("ELIMINADO",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 	
 						@Override

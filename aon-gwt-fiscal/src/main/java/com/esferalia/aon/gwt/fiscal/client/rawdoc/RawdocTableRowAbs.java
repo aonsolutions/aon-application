@@ -214,7 +214,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			delete.addClickHandler(event -> {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDraftAction(), () -> 
-					RawdocModuleNew.RAWDOC_SERVICE.toDraft(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
+					RawdocModuleNew.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
 						, new AsyncCallback<Void>() {
 							
 							@Override
@@ -228,7 +228,8 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 							public void onFailure(Throwable caught) {
 								cbk.showError(caught.getMessage());
 							}
-						}));
+					})
+				);
 			});
 		}
 		return delete;

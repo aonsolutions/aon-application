@@ -43,10 +43,6 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset, int limit) throws AonCoreException {
 		return AON.getRawdocs(occam, params, offset, limit );
 	}
-	@Override
-	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
-		return parse(occam.getDomainName(), occam.getDomain(), occam.getUser(), rawdocId);	
-	}
 
 	@Override
 	public void delete(Occam occam, Integer rawdocId) {
@@ -70,11 +66,50 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	//	************************************************* OLD
 	
 	@Override
-	public LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset,
-			int limit) throws AonCoreException {
-		return AON.getRawdocs(domainName, domain,user, params, offset, limit );
+	public AccountingInvoice getAccountingInvoice(String domainName, int domainId, String login, String invoiceStr) {
+		JSONObject json = new JSONObject(invoiceStr);
+		return Rawdoc2AccountingInvoice.getAccountingInvoice(domainName, domainId, login, json);
 	}
 	
+	@Override
+	public Boolean processInvoiceFile(String domainName, int domainId, String login, String invoiceStr, Invoice invoice) {
+		JSONObject json = new JSONObject(invoiceStr);
+		JSONObject fileJSON = JsonUtils.getJSONObject(json, IJsonNames.FILE);
+		if(!fileJSON.isEmpty()) {
+			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
+			String contentType = JsonUtils.getString(fileJSON, "content_type");
+			try {
+				byte[] data = S3.download("aon-upload-post", s3Key);
+				if(data != null) {
+					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+					Attach attach = new Attach()
+							.setDate(new Date())
+							.setDomain(new Domain().setId(invoice.getDomain()))
+							.setAttachModule(invoice.getId())
+							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+							.setAttachType(AttachType.INVOICE)
+							.setType(InvoiceAttachmentType.INVOICE.value())
+							.setData(data);
+
+					AON.insertAttach(domainName, domainId, login, attach);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public String getS3Url(Rawdoc rawdoc) {
+		return S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+	}
+
+	@Override
+	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
+		return parse(occam.getDomainName(), occam.getDomain(), occam.getUser(), rawdocId);	
+	}
+
 	@Override
 	public TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
 		String url = null;
@@ -125,62 +160,6 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			throw new AonCoreException(t);
 		}			
 	}
-	@Override
-	public void delete(String domainName, int domain, String user, Integer rawdocId) {
-		AON.rawdocDelete(domainName, domain,user,rawdocId);
-	}
-	@Override
-	public void toDraft(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToDraft(domainName, domain,user,rawdocId);
-	}
-
-	@Override
-	public void toRejected(String domainName, int domain, String user, Integer rawdocId, String reason) throws AonCoreException {
-		AON.rawdocToRejected(domainName, domain,user,rawdocId,reason);
-	}
-
-	@Override
-	public void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToInbox(domainName, domain,user,rawdocId);
-	}
-
-	@Override
-	public AccountingInvoice getAccountingInvoice(String domainName, int domainId, String login, String invoiceStr) {
-		JSONObject json = new JSONObject(invoiceStr);
-		return Rawdoc2AccountingInvoice.getAccountingInvoice(domainName, domainId, login, json);
-	}
 	
-	@Override
-	public Boolean processInvoiceFile(String domainName, int domainId, String login, String invoiceStr, Invoice invoice) {
-		JSONObject json = new JSONObject(invoiceStr);
-		JSONObject fileJSON = JsonUtils.getJSONObject(json, IJsonNames.FILE);
-		if(!fileJSON.isEmpty()) {
-			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
-			String contentType = JsonUtils.getString(fileJSON, "content_type");
-			try {
-				byte[] data = S3.download("aon-upload-post", s3Key);
-				if(data != null) {
-					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-					Attach attach = new Attach()
-							.setDate(new Date())
-							.setDomain(new Domain().setId(invoice.getDomain()))
-							.setAttachModule(invoice.getId())
-							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-							.setAttachType(AttachType.INVOICE)
-							.setType(InvoiceAttachmentType.INVOICE.value())
-							.setData(data);
 
-					AON.insertAttach(domainName, domainId, login, attach);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public String getS3Url(Rawdoc rawdoc) {
-		return S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
-	}
 }
