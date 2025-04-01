@@ -17,12 +17,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTabLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.booking.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTableRow.DeleteAsyncCallback;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModulePanel;
-import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -64,6 +62,7 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	private static final String CONTENT_TYPE = "Content-type";
 	private static final String DOMAIN_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainFlatStreamServlet");
 	private static final String CHECK_DOMAIN_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainCheckIntegrityServlet");
+	private static final String CHECK_DOMAIN_SCOPE_INTEGRITY_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainCheckScopeIntegrityServlet");
 	private static final String DOMAIN_DELETE_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/ConsoleDomainDeleteServlet");
 	private static final String DOMAIN_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainReportExcelPrint";
 	private static final String DOMAIN_INFO_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/ConsoleDomainInfoReportExcelPrint";
@@ -150,29 +149,6 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			}
 		}
 
-		private void showEntry() {
-			AonCustomPopup entryDialog = new AonCustomPopup();
-			entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-			entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-			entryDialog.setAnimationEnabled(true);
-			entryDialog.setGlassEnabled(true);
-			entryDialog.setModal(true);
-			entryDialog.setCaption(AON.MSG.accountEntries());
-			CustomerBookingResumeModule module = new CustomerBookingResumeModule();
-			RegistryModuleOptions opts = new RegistryModuleOptions()
-					.setParentWidget(entryDialog)
-					.setDomainName(ConsoleDomainModule.this.options.getDomainName())
-					.setUser(ConsoleDomainModule.this.options.getUser())
-					.setDomain(ConsoleDomainModule.this.options.getDomain())
-					.setRegistryId( 10540 );
-			Window.alert( "opts");
-			Window.alert( "" + opts.getRegistryId() );
-			module.onModuleLoad( opts );
-			entryDialog.center();
-			entryDialog.show();
-		}
-		
-		
 		// -----------------------------------------------------------------------
 		// 												  				  [DELETE]
 		// -----------------------------------------------------------------------
@@ -276,6 +252,32 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 			}
 		}
 		
+		// -----------------------------------------------------------------------
+		// 												  		  [SCOPE VALIDATE]
+		// -----------------------------------------------------------------------
+		@Override
+		public void onScopeValidate(Integer domainId, String name, String description, AsyncCallback<Boolean> cbk) {
+			String tabLabel = AonStringUtils.abbreviate(description, 30);
+			scopeValidate(domainId, tabLabel, cbk);
+		}
+
+		private void scopeValidate(Integer domainId, String tabLabel, AsyncCallback<Boolean> cbk) {
+			try {
+				hideErrorPanel();
+				final AonConsoleProgress aonConsole = getAonConsoleProgress(tabLabel); 
+				XMLHttpRequest xhreq = XMLHttpRequest.create();
+				xhreq.open(FormPanel.METHOD_POST, CHECK_DOMAIN_SCOPE_INTEGRITY_SERVLET);
+				xhreq.setRequestHeader(CONTENT_TYPE,APPLICATION_X_WWW_FORM_URLENCODED);
+				xhreq.setOnReadyStateChange(  new ConsoleReadyStateChangeHandler( aonConsole, cbk));
+				StringBuilder requestData = new StringBuilder();
+				DomainParams params = filterPanel.getParams(options).setId(domainId);
+				requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert(params));
+				xhreq.send(requestData.toString());
+			} catch (Exception e){
+				cbk.onFailure(e);		
+			}
+		}
+
 		// -----------------------------------------------------------------------
 		// 												  				   [CHECK]
 		// -----------------------------------------------------------------------
@@ -778,15 +780,15 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		this.schemasOffsets = new int[ConsoleSchema.values().length];
 		for ( int i = 0; i < schemasOffsets.length; i++ ) schemasOffsets[i] = 0;
 	}
-	private int getOffset( ConsoleSchema cs ) {
-		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
-		return schemasOffsets[ cs.ordinal() ]; 
-	}
-	private int setOffset( ConsoleSchema cs, int offset ) {
-		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
-		schemasOffsets[ cs.ordinal() ] = offset;
-		return schemasOffsets[ cs.ordinal() ]; 
-	}
+//	private int getOffset( ConsoleSchema cs ) {
+//		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
+//		return schemasOffsets[ cs.ordinal() ]; 
+//	}
+//	private int setOffset( ConsoleSchema cs, int offset ) {
+//		if (cs == null) throw new IllegalArgumentException("ConsoleSchema is mandatory");
+//		schemasOffsets[ cs.ordinal() ] = offset;
+//		return schemasOffsets[ cs.ordinal() ]; 
+//	}
 	private int addOffset( ConsoleSchema cs ) {
 		return addOffset(cs, 1);
 	}

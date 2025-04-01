@@ -715,6 +715,7 @@ public final class IJsonNames {
 	public static final String WORKPLACE = "workplace";
 	public static final String WORKPLACE_IDS = "workplaceIds";
 	public static final String WRONG_DOMAIN_ID = "wrongDomainId";
+	public static final String WRONG_SCOPE_ID = "wrongScopeId";
 	// ---------------------------------------------------------------------------------------------	[Y]
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 
