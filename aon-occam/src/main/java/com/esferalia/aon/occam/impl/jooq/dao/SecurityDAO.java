@@ -821,6 +821,7 @@ public class SecurityDAO {
 	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE_PROPERTIES.getConditions(filter))
+				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
@@ -830,11 +831,13 @@ public class SecurityDAO {
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
 				.where(SCOPE_PROPERTIES.getConditions(filter))
 				.and(USER_SCOPE.USER_ID.eq(userId))
+				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ScopeFiller());
 
 		return ctx.getDslContext().select().from(SCOPE)
 				.join(USER_SCOPE).on(USER_SCOPE.SCOPE.eq(SCOPE.ID))
 				.where(USER_SCOPE.USER_ID.eq(userId))
+				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
