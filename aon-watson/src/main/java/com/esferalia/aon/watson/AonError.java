@@ -24,6 +24,8 @@ public enum AonError implements Serializable{
 	,NULL_FILTER("No se han indicado condiciones de b\u00FAsqueda.")
 	,INVALID_DOMAIN("Dominio no encontrado")
 	,INVALID_USER("Usuario no encontrado")
+	,INVALID_INSERT("Los datos no se han grabado correctamente")
+	,INVALID_UPDATE("Los datos no se han modificado correctamente")
 	,INVALID_COMPANY("Company no encontrado")
 	,NO_SCOPES_DEFINED_FOR_USER("No se han definido \u00E1mbitos para el usuario")
 	,NOT_DIRTY("{0} NOT SAVED! (not dirty) id: {1}")
