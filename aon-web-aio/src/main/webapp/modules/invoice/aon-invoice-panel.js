@@ -144,7 +144,7 @@ export class AonInvoicePanel extends AonElement {
     aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) =>
       this.upload(e.detail)
     );
-    this.buildInvoiceToolbarOptions();
+    this.buildInvoiceHomeToolbarOptions();
     this.buildSidenavOptions();
     if (this.invoice && this.invoice.type) {
       this.aonInvoice(this.invoice.type, this.invoice);
@@ -153,28 +153,30 @@ export class AonInvoicePanel extends AonElement {
     } else this.aonInvoiceHome();
 
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
+  }
 
-    let upload = this.getElement("aonInvoiceToolbarHeaderToolSectionUploadButton");
-    upload.title = MSG.UPLOAD_INVOICE;
-
-    let refresh = this.getElement("aonInvoiceToolbarHeaderToolSectionRefreshButton");
-    refresh.title = MSG.REFRESH;
-
-    let reprocess = this.getElement("aonInvoiceToolbarHeaderToolSectionSyncButton");
-    if(reprocess) reprocess.title = MSG.REPROCESS;
+  buildInvoiceHomeToolbarOptions() {
+     this.clearToolbar();
+    if(!this.isMobile()) {
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());      
+      this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
+      if (this.getDur().isOcr() || this.getDur().isInvofox())
+        this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile()); 
+    } else {
+      this.getApplication().removeFloatOption();
+      this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
+    } 
   }
 
   buildInvoiceToolbarOptions(acceptedInvoices, processing) {
     this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
-      
-      this.getApplication().addToolbarOption("Refresh", "refresh", () => this.refreshInvoicePanel());
-      
+      this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
       if (this.getDur().isOcr() || this.getDur().isInvofox())
-        this.getApplication().addToolbarOption("Upload", "file_upload", () => this.addInvoiceFile());
+        this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
       
-      if(processing) this.getApplication().addToolbarOption("Sync", "sync", () => this.refreshProcessing()); 
+      if(processing) this.getApplication().addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing()); 
  
       if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
       if(this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
@@ -264,7 +266,7 @@ export class AonInvoicePanel extends AonElement {
   buildCreditorToolbarOptions() {
     this.clearToolbar();
     if(!this.isMobile()) {
-      this.getApplication().addToolbarOption("Add", "add", () => this.addCreditor());
+      this.getApplication().addToolbarOption2(ACTION.ADD_CREDITOR, () => this.addCreditor());
     }
     const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
     if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadRegistryExcel('creditor'));
@@ -400,6 +402,9 @@ export class AonInvoicePanel extends AonElement {
       if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
         addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
       }
+      if (r && r.rawdoc && r.rawdoc.pending && r.rawdoc.pending.count && r.rawdoc.pending.count > 0) {
+        addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.pending.count);
+      }
       this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
 
       // A REVISAR
@@ -428,6 +433,8 @@ export class AonInvoicePanel extends AonElement {
   }
 
   updateCounterHome() {
+    // FACTURAS
+
     let issued = getCounter()[OPTION.INVOICE_ISSUED_BETA.id] || 0;
     let invoiceIssuedNumber = this.getElement("invoiceIssuedNumber");
     if(invoiceIssuedNumber) invoiceIssuedNumber.innerHTML = issued;  
@@ -440,6 +447,8 @@ export class AonInvoicePanel extends AonElement {
     let invoiceTicketNumber = this.getElement("invoiceTicketNumber");
     if(invoiceTicketNumber) invoiceTicketNumber.innerHTML = ticket;
 
+    // BORRADORES
+
     let pendingIssuedCounter = getCounter()[OPTION.PROFORMA_INVOICES.id] || 0;
     let pendingIssuedNumber = this.getElement("pendingIssuedNumber");
     if(pendingIssuedNumber) pendingIssuedNumber.innerHTML = pendingIssuedCounter;
@@ -451,6 +460,12 @@ export class AonInvoicePanel extends AonElement {
     let pendingTicketCounter = getCounter()[OPTION.RAWDOC_INBOX_TICKET_NEW.id] || 0;
     let pendingTicketNumber = this.getElement("pendingTicketNumber");
     if(pendingTicketNumber) pendingTicketNumber.innerHTML = pendingTicketCounter;
+
+    // PENDIENTES
+
+    let processingCounter = getCounter()[OPTION.RAWDOC_PROCESSING.id] || 0;
+    let processingNumber = this.getElement("processingNumber");
+    if(processingNumber) processingNumber.innerHTML = processingCounter;
 
     let rejectedCounter = getCounter()[OPTION.RAWDOC_REJECT.id] || 0;
     let rejectedNumber = this.getElement("rejectedNumber");
@@ -839,7 +854,7 @@ export class AonInvoicePanel extends AonElement {
   }
 
   refreshInvoicePanel() {
-    this.buildInvoiceToolbarOptions();
+    this.buildInvoiceHomeToolbarOptions();
     this.aonInvoiceHome();
     this.buildCounter();
   }
