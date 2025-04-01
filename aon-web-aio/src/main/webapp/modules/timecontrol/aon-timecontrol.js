@@ -86,8 +86,7 @@ export class AonTimecontrol extends AonElement {
 
     let data = OPTIONS.TIMECONTROL;
     if(this.isEmployee()) data.options = [OPTIONS.PRESENCE];
-    else if(!this.isBeta()) data.options = [OPTIONS.PRESENCE, OPTIONS.LOCATION];
-     
+    
     this.applicationEl.addSidenavOptions3(data);
 
     const {TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
@@ -348,7 +347,7 @@ export class AonTimecontrol extends AonElement {
     });
 
     return ul;
-}
+  }
 
   createTitleTime(){
     let div = this.createElement(TAG.DIV);
@@ -360,7 +359,7 @@ export class AonTimecontrol extends AonElement {
     return div;
   }
 
-  isEmployee(){
+  isEmployee() {
     return !this.getDur().isTimecontrolManager() && !this.getDur().isTimecontrolPortal();
   }
 
