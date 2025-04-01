@@ -10,6 +10,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -88,6 +89,8 @@ public abstract class EmployeeCalendarPartialityDialog extends CustomDialog {
 			reasonBox.addItem("Cat\u00e1strofes naturales. Restricciones de movilidad");
 			reasonBox.addItem("Riesgo clim\u00e1tico");
 			reasonBox.addItem("Horas sindicales");
+			reasonBox.addItem("Horas sindicales");
+			reasonBox.addItem("Asuntos propios o de libre disposici\u00f3n");
 			reasonBox.addItem("Otras causas no detalladas");
 		}
 		
@@ -160,12 +163,30 @@ public abstract class EmployeeCalendarPartialityDialog extends CustomDialog {
 	// ------------------------------------ Auxiliar methods
 	
 	public double getPercentValue() {
+		Math.abs(percent);
 		return this.percent;
-//		return Math.round(this.percent * 100.0) / 100.0;
 	}
 	
 	public String getPaidLeaveExression() {
-		return "/*inherit*/" + reasonBox.getSelectedValue() + "/**/" + Double.toString(getPercentValue());
+		String percentStr = "1.00";
+	    try {
+	        double value = Double.parseDouble(percentBox.getValue());
+
+	        if (value == 0.00) {
+	            percentStr = "1.00";
+	        } else {
+	            double result = value / 100;
+
+	            // Usamos NumberFormat para formatear con 4 decimales
+	            NumberFormat fmt = NumberFormat.getFormat("0.####");
+	            percentStr = fmt.format(result);
+	            percentStr = percentStr.replace(',', '.');
+	        }
+	    } catch (Exception e) {
+	        percentStr = "1.00";
+	    }
+	    
+		return "/*inherit*/" + reasonBox.getSelectedValue() + "/**/" + percentStr;
 	}
 	
 	public Date getStartDate() {
