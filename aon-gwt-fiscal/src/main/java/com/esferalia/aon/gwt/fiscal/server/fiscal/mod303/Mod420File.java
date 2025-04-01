@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -60,8 +61,7 @@ public class Mod420File extends HttpServlet {
 			System.out.println("PASO 2. xml="+xml);
 			
 			// FALTA - Pasarlo al modulo de impresión para obtener el fichero para la presentación telemática o carga en programa de ayuda
-//			String resultado = PruebaCanarias.obtenerPresentacion(xml);
-//			
+//			String resultado = obtenerPresentacion(xml);
 //			if (resultado == null) {
 //				throw new AonCoreException("RESULTADO ES NULO");
 //			}
@@ -73,7 +73,7 @@ public class Mod420File extends HttpServlet {
 //		    MimeType mime = MimeType.TXT; 
 //		    resp.setCharacterEncoding("ISO-8859-1");
 //			resp.setContentType(mime.getName());
-//			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mime.getExtension()+ "\";");
+//			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");
 //			AonIOUtils.copy(in, resp.getOutputStream());
 //			resp.flushBuffer();
 
@@ -95,21 +95,19 @@ public class Mod420File extends HttpServlet {
 			"</DEC>";
 		return fileXML;
 	}
-//	
-//	// FALTA - OBTENER FICHERO PARA PRESENTACION PASANDO EL XML AL MODULO DE IMPRESION DE LA ATC
+	
+	// FALTA - OBTENER FICHERO PARA PRESENTACION PASANDO EL XML AL MODULO DE IMPRESION DE LA ATC
 //	private static String obtenerPresentacion(String declaracion) {
 //		if (declaracion==null)
 //			return null;
 //		String resultado = null;
 //		try {
 //			System.out.println("PASO 2.1");
-////			Path prueba = Files.createTempDirectory("Temp");
-////			String path = prueba.toString();
+// //			Path prueba = Files.createTempDirectory("Temp");
+// //			String path = prueba.toString();
 //			String path = "C:\\TEMP";
-////			File prueba = createTempDirectory("PRUEBA");
-////			String path = prueba.toString();
 //			System.out.println("PASO 2.2. path="+path);
-//			org.grecasa.ext.pa.mod420.MIModelo420 miModelo420 = new org.grecasa.ext.pa.mod420.MIModelo420(path);
+//			MIModelo420 miModelo420 = new MIModelo420(path);
 //			System.out.println("PASO 2.3");
 //			resultado = miModelo420.getFicheroPresentacion(declaracion);
 //			System.out.println("PASO 2.4. resultado="+resultado);
@@ -117,30 +115,19 @@ public class Mod420File extends HttpServlet {
 //				mostrarMensajes(miModelo420.getMensajes());
 //		} catch (Exception e) {
 //			e.printStackTrace();
-//			/*
-//			 * TODO: procesar la excepcion ...
-//			 */
+//			throw new AonCoreException(e);
 //		}
 //		return resultado;
 //	}
-//	
-//	private static void mostrarMensajes(List<String> mensajes) {
-//		if (mensajes != null && mensajes.size() > 0) {
-//			System.out.println("Nº mensajes error: " + mensajes.size());
-//			for (String m : mensajes)
-//				System.out.println("" + m);
-//		}
-//	}
-//	
-////    public static File createTempDirectory(String prefix) throws IOException {
-////    	// TODO Auto-generated method stub
-////        File dir = new File(System.getProperty("java.io.tmpdir"), prefix);
-////        dir.mkdir();
-////        if (System.getProperty("poi.keep.tmp.files") == null)
-////            dir.deleteOnExit();
-////        return dir;
-////    }
-//	
+	
+	private static void mostrarMensajes(List<String> mensajes) {
+		if (mensajes != null && mensajes.size() > 0) {
+			System.out.println("Nº mensajes error: " + mensajes.size());
+			for (String m : mensajes)
+				System.out.println("" + m);
+		}
+	}
+	
 //	public static void main(String[] args) {
 //		
 //		String xml = obtenerXML();
@@ -159,9 +146,8 @@ public class Mod420File extends HttpServlet {
 //				e.printStackTrace();
 //			}
 //		}
-//		
 //	}
-//	
 	
 }
+
  

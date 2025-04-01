@@ -11,13 +11,14 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
 public enum Model3032025CANARIASIgicScript1 implements IModelScript<Mod303Key> {
 	
-	 DVG01 ("IGIC DEVENGADO",null,TITLE)
-	,DVG02 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C001, Mod303Key.CA_C002, Mod303Key.CA_C003},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DVG03 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C004, Mod303Key.CA_C005, Mod303Key.CA_C006},MODEL_INVOICE_VAT_BREAKDOWN) 
-	,DVG04 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C007, Mod303Key.CA_C008, Mod303Key.CA_C009},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DVG05 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C010, Mod303Key.CA_C011, Mod303Key.CA_C012},MODEL_INVOICE_VAT_BREAKDOWN) 
-	,DVG06 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C013, Mod303Key.CA_C014, Mod303Key.CA_C015},MODEL_INVOICE_VAT_BREAKDOWN)
-	,DVG07 ("IGIC devengado"									, new Mod303Key[]{Mod303Key.CA_C016, Mod303Key.CA_C017, Mod303Key.CA_C018},MODEL_INVOICE_VAT_BREAKDOWN)
+	 DVG00 ("IGIC DEVENGADO",null,TITLE)
+	,DVG01 ("IGIC devengado (1)"								, new Mod303Key[]{Mod303Key.CA_DB01, Mod303Key.CA_DT01, Mod303Key.CA_DC01},MODEL_INVOICE_VAT_BREAKDOWN)
+	,DVG02 ("IGIC devengado (2)"								, new Mod303Key[]{Mod303Key.CA_DB02, Mod303Key.CA_DT02, Mod303Key.CA_DC02},MODEL_INVOICE_VAT_BREAKDOWN) 
+	,DVG03 ("IGIC devengado (3)"								, new Mod303Key[]{Mod303Key.CA_DB03, Mod303Key.CA_DT03, Mod303Key.CA_DC03},MODEL_INVOICE_VAT_BREAKDOWN)
+	,DVG04 ("IGIC devengado (4)"								, new Mod303Key[]{Mod303Key.CA_DB04, Mod303Key.CA_DT04, Mod303Key.CA_DC04},MODEL_INVOICE_VAT_BREAKDOWN) 
+	,DVG05 ("IGIC devengado (5)"								, new Mod303Key[]{Mod303Key.CA_DB05, Mod303Key.CA_DT05, Mod303Key.CA_DC05},MODEL_INVOICE_VAT_BREAKDOWN)
+	,DVG06 ("IGIC devengado (6)"								, new Mod303Key[]{Mod303Key.CA_DB06, Mod303Key.CA_DT06, Mod303Key.CA_DC06},MODEL_INVOICE_VAT_BREAKDOWN)
+	,DVG07 ("IGIC devengado (7)"								, new Mod303Key[]{Mod303Key.CA_DB07, Mod303Key.CA_DT07, Mod303Key.CA_DC07},MODEL_INVOICE_VAT_BREAKDOWN)
 	,DVG08 ("Operaciones con inversi\u00F3n del sujeto pasivo"	, new Mod303Key[]{Mod303Key.CA_C019, null			  , Mod303Key.CA_C020},MODEL_INVOICE_VAT_BREAKDOWN)
 	,DVG09 ("Modificaci\u00F3n bases y cuotas" 					, new Mod303Key[]{Mod303Key.CA_C021, null			  , Mod303Key.CA_C022},MODEL_INVOICE_VAT_BREAKDOWN)
 	,DVG10 ("Cuotas devueltas en r\u00E9gimen de viajeros"		, new Mod303Key[]{Mod303Key.CA_C023, null			  , Mod303Key.CA_C024},NONE)
@@ -66,30 +67,29 @@ public enum Model3032025CANARIASIgicScript1 implements IModelScript<Mod303Key> {
 	}
 	@Override
 	public int getFieldSize(Mod303Key key) {
-		if (key == Mod303Key.CA_C002 ||
-			key == Mod303Key.CA_C005 ||
-			key == Mod303Key.CA_C008 || 
-			key == Mod303Key.CA_C011 || 
-			key == Mod303Key.CA_C014 || 
-			key == Mod303Key.CA_C017 ) {
+		if (key == Mod303Key.CA_DT01 ||
+			key == Mod303Key.CA_DT02 ||
+			key == Mod303Key.CA_DT03 ||
+			key == Mod303Key.CA_DT04 ||
+			key == Mod303Key.CA_DT05 ||
+			key == Mod303Key.CA_DT06 ||
+			key == Mod303Key.CA_DT07) {
 			return PERCENT_FIELD_LENGTH;	
 		}
 		return IModelScript.super.getFieldSize(key);
 	}
 	
-	// FALTA - LOS PORCENTAJES NO SE SI SERAN FIJOS O SE PODRA PONER CUALQUIERA EN CUALQUIER CASILLA
-	//         SI SON FIJOS NO SE PUEDEN MODIFICAR, SI SE PUEDE PONER CUALQUIER PORCENTAJE SE DEJAN MODIFICAR
-	//         POR AHORA SE PONEN QUE SE PUEDAN MODIFICAR
 	@Override
 	public boolean isEnabled(Mod303Key key) {
-//		if (key == Mod303Key.CA_C002 ||
-//				key == Mod303Key.CA_C005 ||
-//				key == Mod303Key.CA_C008 || 
-//				key == Mod303Key.CA_C011 || 
-//				key == Mod303Key.CA_C014 || 
-//				key == Mod303Key.CA_C017 ) {
-//			return false;	
-//		}
+		if (key == Mod303Key.CA_DT01 ||
+			key == Mod303Key.CA_DT02 ||
+			key == Mod303Key.CA_DT03 ||
+			key == Mod303Key.CA_DT04 ||
+			key == Mod303Key.CA_DT05 ||
+			key == Mod303Key.CA_DT06 ||
+			key == Mod303Key.CA_DT07) {
+			return false;	
+		}
 		return IModelScript.super.isEnabled(key);
 	}
 }

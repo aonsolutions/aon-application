@@ -59,7 +59,7 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	}
 	
 	private void registerHandlers(Mod111 model, Model111Callback callback) {
-		admonList = new AdministrationListBox();
+		admonList = new AdministrationListBox(false, false, true);
 		yearBox = new AonIntegerBox();	
 		periodList = new PeriodListBox(true);
 		replacement = new CheckBox();

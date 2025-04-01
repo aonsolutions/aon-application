@@ -1139,24 +1139,28 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CA_X06("303-CAX06",false,null,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")                                      // Fecha en que se dictó el auto de declaración de concurso                                         
 	,CA_X07("303-CAX07",false,null,"Tipo de autoliquidaci\u00F3n si se ha declarado en concurso de acreedores")                 			  // Tipo de autoliquidación si declaración de concurso (preconcursal, postconcursal)
 	
-	,CA_C001("303-CAC001",true ,"01","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (1)  
-	,CA_C002("303-CAC002",false,"02","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (1)
-	,CA_C003("303-CAC003",true ,"03","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (1)
-	,CA_C004("303-CAC004",true ,"04","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (2)
-	,CA_C005("303-CAC005",false,"05","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (2)
-	,CA_C006("303-CAC006",true ,"06","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (2)
-	,CA_C007("303-CAC007",true ,"07","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (3)
-	,CA_C008("303-CAC008",false,"08","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (3)
-	,CA_C009("303-CAC009",true ,"09","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (3)
-	,CA_C010("303-CAC010",true ,"10","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (4)
-	,CA_C011("303-CAC011",false,"11","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (4)
-	,CA_C012("303-CAC012",true ,"12","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (4)
-	,CA_C013("303-CAC013",true ,"13","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (5)
-	,CA_C014("303-CAC014",false,"14","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (5)
-	,CA_C015("303-CAC015",true ,"15","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (5)
-	,CA_C016("303-CAC016",true ,"16","IGIC Devengado - Base imponible")       // IGIC Devengado - Base imponible     (6)
-	,CA_C017("303-CAC017",false,"17","IGIC Devengado - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (6)
-	,CA_C018("303-CAC018",true ,"18","IGIC Devengado - Cuota devengada")      // IGIC Devengado - Cuota devengada    (6)
+	// VOY A PONER CASILLAS PARA LOS SIETE TIPOS POSIBLES DE IGIC QUE EXISTEN, AUNQUE EL MODELO PERMITE SOLO SEIS, A LA HORA DE GENERAR EL FICHERO PARA EL MODULO DE IMPRESION SE PONDRAN COMO SEA NECESARIO 
+	,CA_DB01("303-CADB01",true ,null,"IGIC Devengado (1) - Base imponible")       // IGIC Devengado - Base imponible     (1)  
+	,CA_DT01("303-CADT01",false,null,"IGIC Devengado (1) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (1)
+	,CA_DC01("303-CADC01",true ,null,"IGIC Devengado (1) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (1)
+	,CA_DB02("303-CADB02",true ,null,"IGIC Devengado (2) - Base imponible")       // IGIC Devengado - Base imponible     (2)
+	,CA_DT02("303-CADT02",false,null,"IGIC Devengado (2) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (2)
+	,CA_DC02("303-CADC02",true ,null,"IGIC Devengado (2) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (2)
+	,CA_DB03("303-CADB03",true ,null,"IGIC Devengado (3) - Base imponible")       // IGIC Devengado - Base imponible     (3)
+	,CA_DT03("303-CADT03",false,null,"IGIC Devengado (3) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (3)
+	,CA_DC03("303-CADC03",true ,null,"IGIC Devengado (3) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (3)
+	,CA_DB04("303-CADB04",true ,null,"IGIC Devengado (4) - Base imponible")       // IGIC Devengado - Base imponible     (4)
+	,CA_DT04("303-CADT04",false,null,"IGIC Devengado (4) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (4)
+	,CA_DC04("303-CADC04",true ,null,"IGIC Devengado (4) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (4)
+	,CA_DB05("303-CADB05",true ,null,"IGIC Devengado (5) - Base imponible")       // IGIC Devengado - Base imponible     (5)
+	,CA_DT05("303-CADT05",false,null,"IGIC Devengado (5) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (5)
+	,CA_DC05("303-CADC05",true ,null,"IGIC Devengado (5) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (5)
+	,CA_DB06("303-CADB06",true ,null,"IGIC Devengado (6) - Base imponible")       // IGIC Devengado - Base imponible     (6)
+	,CA_DT06("303-CADT06",false,null,"IGIC Devengado (6) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (6)
+	,CA_DC06("303-CADC06",true ,null,"IGIC Devengado (6) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (6)
+	,CA_DB07("303-CADB07",true ,null,"IGIC Devengado (7) - Base imponible")       // IGIC Devengado - Base imponible     (7)
+	,CA_DT07("303-CADT07",false,null,"IGIC Devengado (7) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (7)
+	,CA_DC07("303-CADC07",true ,null,"IGIC Devengado (7) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (7)
 	,CA_C019("303-CAC019",true ,"19","Operaciones con inversi\u00F3n del sujeto pasivo - Base imponible")	// Operaciones con inversión del sujeto pasivo - Base imponible 
 	,CA_C020("303-CAC020",true ,"20","Operaciones con inversi\u00F3n del sujeto pasivo - Cuota devengada")	// Operaciones con inversión del sujeto pasivo - Cuota devengada
 	,CA_C021("303-CAC021",true ,"21","Modificaci\u00F3n bases y cuotas - Base imponible")               	// Modificación bases y cuotas - Base imponible       
@@ -1181,7 +1185,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CA_C039("303-CAC039",false,"39","Regularizaci\u00F3n por aplicaci\u00F3n del porcentaje definitivo de prorrata")	// Regularización por aplicación del porcentaje definitivo de prorrata
 	,CA_C040("303-CAC040",false,"40","Total cuotas deducibles")  														// Total cuotas deducibles
 	
-	,CA_C041("303-CAC041",false,"41","DIFERENCIA")                                                         				// Diferencia
+	,CA_C041("303-CAC041",false,"41","Diferencia")                                                         				// Diferencia
 	
 	,CA_C042("303-CAC042",false,"42","Regularizaci\u00F3n cuotas cuotas art\u00EDculo 22.8.5\u00AA Ley 20/1991")  		// Regularización cuotas cuotas artículo 22.8.5ª Ley 20/1991
 	,CA_C043("303-CAC043",false,"43","Cuotas de I.G.I.C. a compensar pendientes de per\u00EDodos anteriores")      		// Cuotas de I.G.I.C. a compensar pendientes de períodos anteriores  

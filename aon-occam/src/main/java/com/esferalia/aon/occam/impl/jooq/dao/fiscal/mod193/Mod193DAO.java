@@ -531,7 +531,8 @@ public class Mod193DAO {
 		mod193.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL193.NAME.getDataType().length()));
 		mod193.setYear(year);
 		mod193.setReceipt("1930000000001");
-		mod193.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+//		mod193.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+		mod193.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY, true));
 		mod193.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),FS_MODEL193.CONTACT_PERSON.getDataType().length()));
 		mod193.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
 		mod193.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),FS_MODEL193.CONTACT_MAIL.getDataType().length()));

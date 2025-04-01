@@ -26,12 +26,9 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 class Model303CANARIAS2025 extends Model303Base {
 
-//	protected static final String SI_1 = "(1) SI";
-//	protected static final String NO_2 = "(2) NO";
-	
 	protected AonTextBox receiptBox;
 
-	// FALTA - ULTIMO PERIODO POR AHORA NO SE AÑADE
+	// FALTA - ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE
 //	private ScrollPanel lastPeriodPanel;
 	private TabLayoutPanel tabPanel;
 	
@@ -47,21 +44,8 @@ class Model303CANARIAS2025 extends Model303Base {
 	private AonDateBox x06; // Fecha en que se dictó el auto de declaración de concurso
 	private ListBox x07;    // Tipo de autoliquidación si declaración de concurso (preconcursal, postconcursal)
 	
-//	private ListBox a12;  // Tributacion exclusivamente foral
-//	private CheckBox a09; // Opción por la aplicación de la prorrata especial
-//	private CheckBox a10; // Revocación de la opción por la aplicación de la prorrata especial
-//	private ListBox a02;
-//	private ListBox a13; 
-//	private ListBox a14;
-//	private ListBox a11;
-//	private CheckBox r00;
-//	private CheckBox r01;
-//	private CheckBox r02;
-
-//	private static final int GENERAL_REGIME_TAB = 2;
 	private static final int LIQUIDATION_TAB = 2;
-//	private static final int RESULT_TAB = 3;
-//	private static final int LAST_PERIOD_INFORMATION_TAB = 5;
+//	private static final int LAST_PERIOD_INFORMATION_TAB = 3;
 
 	protected Model303CANARIAS2025(Mod303 mod303,Model303Callback callback) {
 		super(mod303,callback);
@@ -75,10 +59,9 @@ class Model303CANARIAS2025 extends Model303Base {
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
-//		paintResultTab(tabPanel);
 		showPaymentInfo(getModel());
 		paintAdditionalDataTab(tabPanel);
-		// FALTA - POR AHORA NO SE PONE EXONERADOS
+		// FALTA - ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE
 //		if (getModel().isLastPeriod()) {
 //			paintLastPeriodInformationTab(tabPanel);
 //		}
@@ -88,11 +71,6 @@ class Model303CANARIAS2025 extends Model303Base {
 	}
 	
 	private void selectDefaultTab() {
-//		if (getModel().isFinished() || getModel().isSent()) {
-//			tabPanel.selectTab(RESULT_TAB);
-//		} else {
-//			tabPanel.selectTab(GENERAL_REGIME_TAB);
-//		}
 		tabPanel.selectTab(LIQUIDATION_TAB);
 	}
 	
@@ -106,7 +84,7 @@ class Model303CANARIAS2025 extends Model303Base {
 //			event.cancel();
 //			AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 //		}
-		// FALTA - ULTIMO PERIODO SOLO MODELO 417 Y VER SI HAY ALGUNA OTRA CONDICION O DEBE APARECER SIEMPRE
+		// FALTA - ULTIMO PERIODO SOLO MODELO 417 
 //		if (getModel().isLastPeriod()) {
 //			double aa11 = getModel().getAmount(Mod303Key.CT_A11);
 //			if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && aa11 == 0) {
@@ -156,76 +134,8 @@ class Model303CANARIAS2025 extends Model303Base {
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
-//		tabPanel.add(generalRegimeScrollPanel, AON.MSG.generalRegime());
 		tabPanel.add(generalRegimeScrollPanel, AON.MSG.liquidacion());
 	}
-	
-//	private void paintResultTab(TabLayoutPanel tabPanel) {
-//		ScrollPanel resultScrollPanel = new ScrollPanel();
-//		FlexTable table = new FlexTable();
-//		table.setWidth("100%");
-//		table.addStyleName(AON.CSS.aonMarginBottom());
-//		
-//		table.getColumnFormatter().setWidth(0, "auto");
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
-//		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
-//		table.getColumnFormatter().setWidth(1, "40px");
-//		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
-//		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
-//		table.getColumnFormatter().setWidth(3, "50px");
-//		resultScrollPanel.setWidget(table);
-//		tabPanel.add(resultScrollPanel, AON.MSG.result());
-//		
-//		paintDeclaration(table, Model3032025CANARIASResultScript.values(),3);
-//		
-////		if (getModel().isLastPeriod() && AonMathUtils.isNotZero(getModel().getAmount(Mod303Key.CT_C110))) {
-////			Widget c78 = table.getWidget(7, 0);
-////			AonDisplayTable fp78 = new AonDisplayTable();
-////			fp78.addStyleName(AON.CSS.aonWidthAll());
-////			InlineLabel l780 =  new InlineLabel("REVISE CONTENIDO. EDITE SI PROCEDE.");
-////			l780.setStyleName(AON.CSS.aonMarginLeft());
-////			l780.addStyleName(AON.CSS.aonColorRed());
-////			
-////			InlineLabel l781 =  new InlineLabel("[Poner a cero]");
-////			l781.setStyleName(AON.CSS.aonClickableLabel());
-////			l781.addStyleName(AON.CSS.aonMarginLeft());
-////			l781.addClickHandler(event -> getFieldsMap().get(Mod303Key.CT_C78).setValue(0.0,true));
-////			
-////			InlineLabel l782 =  new InlineLabel("Copiar [110]");
-////			l782.setStyleName(AON.CSS.aonClickableLabel());
-////			l782.addStyleName(AON.CSS.aonMarginLeft());
-////			l782.addClickHandler(event -> getFieldsMap().get(Mod303Key.CT_C78).setValue(getModel().getAmount(Mod303Key.CT_C110),true));
-////
-////			InlineLabel l783 =  new InlineLabel("Asignar [066+077]");
-////			l783.setStyleName(AON.CSS.aonClickableLabel());
-////			l783.addStyleName(AON.CSS.aonMarginLeft());
-////			l783.addClickHandler(event -> {
-////				double c66 = AonNumberUtils.todouble( getFieldsMap().get(Mod303Key.CT_C66).getValue());
-////				double c77 = AonNumberUtils.todouble( getFieldsMap().get(Mod303Key.CT_C77).getValue());
-////				double amount = AonMathUtils.round(c66+c77); 
-////				getFieldsMap().get(Mod303Key.CT_C78).setValue(amount,true);
-////			});
-////			
-////			FlowPanel fp = new FlowPanel();
-////			fp.add(l781);
-////			fp.add(l782);
-////			fp.add(l783);
-////			
-////			fp78.addRow()
-////				.addCell(new Label(), AON.CSS.aonWidthAuto())
-////				.addCell(l780, AON.CSS.aonTextCenter(),AON.CSS.aonNowrap(),AON.CSS.aonBold(),AON.CSS.aonWidth80());
-////			fp78.addRow()
-////				.addCell(c78, AON.CSS.aonWidthAuto())
-////				.addCell(fp , AON.CSS.aonTextRight(),AON.CSS.aonNowrap(),AON.CSS.aonWidth80());
-////			table.setWidget(7, 0, fp78);
-////		}
-////		if (getModel().isComplementary()) {
-////			paintEmptyRow(table);
-////			paintEmptyRow(table);
-////			paintScript(table,Model3032024T3AEATResultScript2.values(),3);
-////		}
-//		
-//	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
@@ -257,8 +167,7 @@ class Model303CANARIAS2025 extends Model303Base {
 
 		FlexTable table = createTable();
 		withoutActivityCheck = paintWithoutActivityCheck(table);	// Sin actividad
-		
-		// FALTA - MOSTRAR SOLO CHECKS PARA MODELO 420 Y 417 - POR AHORA CON EL PERIODO TRIMESTRAL 420, MENSUAL 417, VER SI AL FINAL SE HACE CON OTRO CAMPO POR SI ACASO
+
 		if (getModel().isMonthPeriod()) {
 			cm2 = paintCheck(Mod303Key.CM_002,table);  // Inscrito en el Registro de devolución mensual (Solo modelo 417)	
 		} else {
@@ -276,90 +185,6 @@ class Model303CANARIAS2025 extends Model303Base {
 		x07.addItem("(2) SI Postconcursal", "2");
 		paintListBox(x07, Mod303Key.CA_X07, table);
 		
-//		// Tributacion exclusivamente foral
-//		a12 = new ListBox();
-//		a12.setWidth(WIDTH_150PX);
-//		a12.addItem("(0) Para el mes de enero (01)", "0");
-//		a12.addItem(SI_1, "1");
-//		a12.addItem(NO_2, "2");
-//		paintListBox(a12, Mod303Key.CT_A12, table);
-//		paintA02(Mod303Key.CT_A02,table);	// Tributa exclusivamente en régimen simplificado
-//		a09 = paintCheck(Mod303Key.CT_A09,table);	// Opción por la aplicación de la prorrata especial
-//		a10 = paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
-		
-//		// Acogido voluntariamente al SII
-//		a13 = new ListBox();
-//		a13.setWidth(WIDTH_150PX);
-//		a13.addItem("(0) Para el mes de enero (01)", "0");
-//		a13.addItem(SI_1, "1");
-//		a13.addItem(NO_2, "2");
-//		paintListBox(a13, Mod303Key.CT_A13, table);
-		
-//		// Exonerado de la declaracion resumen anual del IVA (modelo 390)
-//		a14 = new ListBox();
-//		a14.setWidth(WIDTH_150PX);
-//		a14.addItem("(0) Para todos los periodos distintos del \u00FAltimo (12 y 4T)", "0");   
-//		a14.addItem(SI_1, "1");
-//		a14.addItem(NO_2, "2");
-//		paintListBox(a14, Mod303Key.CT_A14, table);
-		
-//		// Volumen anual de operaciones distinto de cero
-//		a11 = new ListBox();
-//		a11.setWidth("200px");
-//		a11.addItem("(0) NO exonerado (\u00FAltimo periodo), o la declaraci\u00F3n no es del \u00FAltimo periodo", "0");
-//		a11.addItem("(1) Exonerados, cuando se tiene volumen de operaciones  (art. 121 LIVA)", "1");
-//		a11.addItem("(2) Exonerados, cuando NO se tiene volumen de operaciones  (art. 121 LIVA)", "2");
-//		paintListBox(a11, Mod303Key.CT_A11, table);
-//		a11.setEnabled(getModel().isLastPeriod());
-//		if (getModel().isLastPeriod()) {
-//			a11.addChangeHandler( event -> {
-//				if (a11.getSelectedIndex() != 0 && (
-//					AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_U1D))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_U2D))								
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_U3D))								
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_U4D))
-//				 || AonMathUtils.isNotZero( getModel().getAmount(Mod303Key.CT_C88))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_P1C))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_P2C))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_P3C))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_P4C))
-//				 || AonStringUtils.isNotBlank(getModel().getDescription(Mod303Key.CT_P5C)))) {
-//
-//					Mod303Key[] keys = new Mod303Key[]{
-//							 Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E
-//							,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E
-//							,Mod303Key.CT_U3D,Mod303Key.CT_U3C,Mod303Key.CT_U3E
-//							,Mod303Key.CT_U4D,Mod303Key.CT_U4C,Mod303Key.CT_U4E
-//							,Mod303Key.CT_U5D,Mod303Key.CT_U5C,Mod303Key.CT_U5E
-//							
-//							,Mod303Key.CT_U13,Mod303Key.CT_C89,Mod303Key.CT_C90,Mod303Key.CT_C91,Mod303Key.CT_C92
-//							,Mod303Key.CT_C107
-//							,Mod303Key.CT_C80,Mod303Key.CT_C81,Mod303Key.CT_C93,Mod303Key.CT_C94
-//							,Mod303Key.CT_C83,Mod303Key.CT_C84,Mod303Key.CT_C85,Mod303Key.CT_C86,Mod303Key.CT_C95
-//							,Mod303Key.CT_C96,Mod303Key.CT_C97,Mod303Key.CT_C98,Mod303Key.CT_C79,Mod303Key.CT_C99 
-//							,Mod303Key.CT_C88
-//							
-//							,Mod303Key.CT_P1C,Mod303Key.CT_P1I,Mod303Key.CT_P1D,Mod303Key.CT_P1T,Mod303Key.CT_P1P
-//							,Mod303Key.CT_P2C,Mod303Key.CT_P2I,Mod303Key.CT_P2D,Mod303Key.CT_P2T,Mod303Key.CT_P2P
-//							,Mod303Key.CT_P3C,Mod303Key.CT_P3I,Mod303Key.CT_P3D,Mod303Key.CT_P3T,Mod303Key.CT_P3P
-//							,Mod303Key.CT_P4C,Mod303Key.CT_P4I,Mod303Key.CT_P4D,Mod303Key.CT_P4T,Mod303Key.CT_P4P
-//							,Mod303Key.CT_P5C,Mod303Key.CT_P5I,Mod303Key.CT_P5D,Mod303Key.CT_P5T,Mod303Key.CT_P5P
-//					};
-//					for (Mod303Key key : keys) {
-//						getModel().ensureDetail(key).clear();
-//					}
-//					lastPeriodPanel.clear();
-//					fillLastPeriodInformationScrollPanel();
-//					AonMessageDialog.warning("Se han inicializado los datos de la solapa \"Inf. Exonerados 390\"");
-//				}
-//				
-//				if (a11.getSelectedIndex() != 0) {
-//					AonMessageDialog.warning("Debe rellenar los datos de la solapa \"Inf. Exonerados 390\"");
-//				}
-//			});
-//		}
-		
-		// FALTA - NO SE SI SE NECESITA NUMERO DE JUSTIFICANTE
 		int row = table.getRowCount();
 		paintLabel(table, row, AON.MSG.receipt());
 		
@@ -379,10 +204,6 @@ class Model303CANARIAS2025 extends Model303Base {
 
 		// Complementaria: Numero justificante de la declaración anterior
 		if (getModel().isComplementary()) {
-//			paintEmptyRow(table);
-//			paintEmptyRow(table);
-//			row = table.getRowCount();
-//			paintLabel(table, row, "Autoliquidaci\u00F3n Rectificativa:", true);
 			row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt());
 			
@@ -398,10 +219,6 @@ class Model303CANARIAS2025 extends Model303Base {
 				markAsDirty();
 			});
 			table.setWidget(row, 1, previousReceiptBox);
-			
-//			r00 = paintCheck(Mod303Key.CT_R00,table);	// Rectificativa - Como consecuencia de la presentación de la autoliquidación rectificativa solicito dar de baja/modificar la domiciliación efectuada
-//			r01 = paintCheck(Mod303Key.CT_R01,table);	// Rectificativa - Motivo de la rectificación: Rectificaciones (excepto incluidas en el motivo siguiente)
-//			r02 = paintCheck(Mod303Key.CT_R02,table);	// Rectificativa - Motivo de la rectificación: Discrepancia criterio administrativo
 		}	
 		
 		container.add(addGroupPanel("", table));
@@ -410,14 +227,6 @@ class Model303CANARIAS2025 extends Model303Base {
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 	
-//	private void paintA02(Mod303Key key, FlexTable table) {
-//		a02 = new ListBox();
-//		a02.addItem("S\u00F3lo Reg. Simplificado");
-//		a02.addItem("Reg. General y Reg. Simpl.");
-//		a02.addItem("S\u00F3lo Reg. General");
-//		paintListBox(a02, key, table);
-//	}
-
 	private FlexTable createTable() {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
@@ -430,27 +239,7 @@ class Model303CANARIAS2025 extends Model303Base {
 		return table;
 	}
 	
-//	@Override
-//	protected void populate(Mod303 mod303) {
-//		super.populate(mod303);
-////		simplifiedRegimeActivities.populate(getModel());
-//	}
-	
-//	@Override
-//	protected void save() {
-//		save(new AsyncCallback<Mod303>() {
-//			@Override 
-//			public void onFailure(Throwable caught) { 
-//				// Nothing 
-//			}
-//			@Override
-//			public void onSuccess(Mod303 result) {
-//				simplifiedRegimeActivities.populate( result );
-//			}
-//		});
-//	}
-
-// FALTA - METODOS PARA EL ULTIMO PERIODO POR AHORA NO SE AÑADEN	
+// FALTA - METODOS PARA EL ULTIMO PERIODO (MODELO 417) POR AHORA NO SE AÑADE	
 	
 //	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
 //		lastPeriodPanel = new ScrollPanel();
@@ -676,25 +465,15 @@ class Model303CANARIAS2025 extends Model303Base {
 	protected void decorateDeclarationTab() {
 		super.decorateDeclarationTab();
 		enable( withoutActivityCheck );
-//		enable(a12);
 		enable(cm2);
 		enable(x01);
 		enable(x02);
 		enable(x03);
 		enable(x04);
-//		enable(a09);
-//		enable(a10);
 		enable(x05);
 		enable(x06);
-//		enable(a02);
 		enable(x07);
-//		enable(a13);
-//		enable(a14);
-//		enable(a11);
 		enable(previousReceiptBox);
-//		enable(r00);
-//		enable(r01);
-//		enable(r02);
 		enable(receiptBox);
 		if (receiptBox != null) {
 			receiptBox.setValue( getModel().getNumber() );
@@ -772,6 +551,5 @@ class Model303CANARIAS2025 extends Model303Base {
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);
 			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
-	
 	
 }

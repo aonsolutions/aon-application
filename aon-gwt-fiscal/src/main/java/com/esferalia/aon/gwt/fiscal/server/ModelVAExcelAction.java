@@ -36,9 +36,9 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49));
 	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42));
 	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195));
-
-	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
-			AEAT_BG };
+	protected static final XSSFColor CANARIAS_BG = new XSSFColor(new java.awt.Color(251, 186, 0));
+	
+	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG, AEAT_BG, CANARIAS_BG };
 	
 	protected Font idFont;
 	protected XSSFCellStyle rowStyle;
