@@ -2942,6 +2942,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
 						};
+						
+						protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {};
 					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
@@ -3011,6 +3013,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
 						};
+						
+						protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {};
 					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
@@ -4157,6 +4161,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 					return TaxCalculator.getTaxCalculator(ctx);
 				};
+				
+				protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
+					
+				};
 
 			}.calculate(ctx);
 
@@ -4562,6 +4570,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			});
 
 		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
+
+		if (!this.implicitExpressionContext.containsVariable(MONTHLY, startDate, getEnd())) {
+			this.implicitExpressionContext.putVariable(MONTHLY, new LazyTimedConstant<Boolean>() {
+				@Override
+				public Boolean create() {
+					return isMonthly();
+				}
+			});
+		}
 
 		this.implicitExpressionContext.putVariable(INDEFINITE, new LazyTimedConstant<Boolean>() {
 			@Override
