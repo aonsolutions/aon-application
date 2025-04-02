@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -107,12 +109,14 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
  	
 	private Payment payment;
 	
+	private Set<Payment> allPayments;
+	
 	private Button manualAgreement;
 	private Button acceptBtn;
 	
 	// --------------------- Constructor
 	
-	protected AgreementSuggestPaymentDialog() {
+	protected AgreementSuggestPaymentDialog(Set<Payment> allPayments) {
 		setCaption("Devengos Predefinidos");
 		setWidget(binder.createAndBindUi(this));
 		getButtonsPanel();
@@ -120,6 +124,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		this.showCloseButton(true);
 		setEnabled(acceptBtn, false);
 		setEnabled(manualAgreement, true);
+		
+		this.allPayments = allPayments;
 
 		availablePaymens = new ArrayList<>();
 		paymentDescriptionOracle = new MultiWordSuggestOracle();
@@ -287,10 +293,22 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			Suggestion suggestion = event.getSelectedItem();
 			Payment concept = getPayment(suggestion.getReplacementString());
 			
-			if (concept == null)
-				showError("Error devengo", "No se ha podido obtener el devengo");
+			if (concept == null) {
+				Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equalsIgnoreCase(p.getName(), concept.getName())).findFirst();
+				if(existingCodePayment.isPresent()) {
+					descriptionSuggest.setValue("");
+					AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio");
+				}
+			} else {
+				Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equalsIgnoreCase(p.getName(), concept.getName())).findFirst();
+				if(existingCodePayment.isPresent()) {
+					descriptionSuggest.setValue("");
+					AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio");
+				}
+			}
 			
-			initialiazePaymentByConcept(concept);
+			if(null != concept)
+				initialiazePaymentByConcept(concept);
 
 			setEnabled(acceptBtn, true);
 			setEnabled(manualAgreement, false);
