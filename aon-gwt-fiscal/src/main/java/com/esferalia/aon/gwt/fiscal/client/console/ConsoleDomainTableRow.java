@@ -62,6 +62,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	private AonDisplayTable buttons = new AonDisplayTable();
 	private AonTableButton deleteButton;
 	private AonTableButton validateButton;
+	private AonTableButton validateScopeButton;
 	private AonTableButton infoButton;
 	private AonTableButton remoteAccessButton;
 	private AonTableButton duplicateButton;
@@ -158,6 +159,13 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 				+ " ("+ domain.getDescription() +")."
 			, () -> validate(domain, callback)));
 		
+		validateScopeButton = new AonTableButton("Validar SCOPE", AON.CSS.aonIconValid());
+		validateScopeButton.addClickHandler(e -> AonConfirmDialog.showConfirm("Proceder con la validaci\u00F3n de \u00E1mbitos del dominio " 
+				+ getId(domain) 
+				+ " - " + domain.getName() 
+				+ " ("+ domain.getDescription() +")."
+			, () -> validateScope(domain, callback)));
+
 		infoButton = new AonTableButton("Resumen contrataci\u00F3n", AON.CSS.aonIconInfo());
 		infoButton.addClickHandler(e -> callback.onInfo(domain));
 					
@@ -189,6 +197,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		buttons.addRow()
 			.addCell(deleteButton)
 			.addCell(validateButton)
+			.addCell(validateScopeButton)
 			.addCell(infoButton)
 		;
 		
@@ -442,6 +451,29 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	}
 
 	// -----------------------------------------------------------------------
+	// 																[VALIDATE]
+	// -----------------------------------------------------------------------
+	private void validateScope(JsConsoleDomain domain, ConsoleDomainTableCallback callback) {
+		if (canRunElseNotify(callback)) {
+			Integer domainId = AonNumberUtils.toInteger("" +  domain.getId());
+			String name = domain.getName();
+			String description = domain.getDescription();
+			callback.onScopeValidate(domainId,name, description, new AsyncCallback<Boolean>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.setRunning(false);
+					callback.showError( "No se pudo validar el dominio. ("+ caught.getMessage() +")");
+				}
+
+				@Override
+				public void onSuccess(Boolean result) {
+					callback.setRunning(false);
+				}
+			});
+		}
+	}
+
+	// -----------------------------------------------------------------------
 	// 														   [CHANGE ACTIVE]
 	// -----------------------------------------------------------------------
 	private String getChangeActiveMessage(JsConsoleDomain domain) {
@@ -617,6 +649,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 		buttons.addRow()
 			.addCell(deleteButton)
 			.addCell(validateButton)
+			.addCell(validateScopeButton)
 			.addCell(infoButton)
 		;
 	}

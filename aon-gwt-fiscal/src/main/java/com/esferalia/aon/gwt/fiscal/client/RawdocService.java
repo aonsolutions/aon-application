@@ -22,10 +22,11 @@ public interface RawdocService extends RemoteService {
 	Rawdoc toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
 	Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
 	
+	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
+	
 	// --------------------------------------------------------------- PENDING 
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);
 	Boolean processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice);
 	String getS3Url(Rawdoc rawdoc);
-	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
-	TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
+
 }

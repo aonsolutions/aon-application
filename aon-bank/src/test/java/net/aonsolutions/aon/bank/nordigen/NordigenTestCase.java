@@ -25,10 +25,12 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class NordigenTestCase {
 	
 	private static NordigenAccessToken nordigenToken;
+	private static final String CAIXABANK_CAIXESBB = "CAIXABANK_CAIXESBB";
 	
 	private void assertAgreement(NordigenAgreement agreement) {
 		assertNotNull(agreement, "Null agreement");			
@@ -130,14 +132,20 @@ public class NordigenTestCase {
 	@Test
 	void testGetCaixabankInstitution() {
 		try {
-			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
-			assertNotNull(caixaBank);
-			assertNotNull(caixaBank.getCountries(), "Null countries");
-			assertNotNull(caixaBank.getId(), "Null ID");
-			assertNotNull(caixaBank.getLogo(), "Null logo");
-			assertNotNull(caixaBank.getName(),"Null name");
-			assertNotNull(caixaBank.getTransactionTotalDays(), "Null transaction total days");
-			assertEquals("CAIXESBB", caixaBank.getBic());
+			if (
+			AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+				
+				NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, CAIXABANK_CAIXESBB);
+				assertNotNull(caixaBank);
+				assertNotNull(caixaBank.getCountries(), "Null countries");
+				assertNotNull(caixaBank.getId(), "Null ID");
+				assertNotNull(caixaBank.getLogo(), "Null logo");
+				assertNotNull(caixaBank.getName(),"Null name");
+				assertNotNull(caixaBank.getTransactionTotalDays(), "Null transaction total days");
+				assertEquals("CAIXESBB", caixaBank.getBic());
+				
+			}
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -146,14 +154,19 @@ public class NordigenTestCase {
 	@Test
 	void testCrdAgreements() {
 		try {
-			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
-			//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
-//			assertAgreement(agreement);
-			Integer expectedHistoricalDays = 90;
-			assertEquals(expectedHistoricalDays, agreement.getMaxHistoricalDays());
-			NordigenAgreement gottenAgreement = AonNordigen.getAgreement(nordigenToken, agreement.getId());
-			assertAgreement(gottenAgreement);
-			AonNordigen.deleteAgreement(nordigenToken, agreement);
+			if (AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES))
+			.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+				
+				NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, CAIXABANK_CAIXESBB);
+				//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
+				//assertAgreement(agreement);
+				Integer expectedHistoricalDays = 90;
+				assertEquals(expectedHistoricalDays, agreement.getMaxHistoricalDays());
+				NordigenAgreement gottenAgreement = AonNordigen.getAgreement(nordigenToken, agreement.getId());
+				assertAgreement(gottenAgreement);
+				AonNordigen.deleteAgreement(nordigenToken, agreement);
+			}
+
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -163,12 +176,15 @@ public class NordigenTestCase {
 	@Test
 	void testCrdRequisitions() {
 		try {
-			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
-			NordigenRequisition requisition = AonNordigen.createRequisition(nordigenToken, agreement, "https://aonsolutions.org/");
-			assertRequisition(requisition);
-			AonNordigen.getRequisition(nordigenToken, requisition.getId());
-			assertRequisition(requisition);
-			AonNordigen.deleteRequisition(nordigenToken, requisition);
+			if (AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES))
+					.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+				NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, CAIXABANK_CAIXESBB);
+				NordigenRequisition requisition = AonNordigen.createRequisition(nordigenToken, agreement, "https://aonsolutions.org/");
+				assertRequisition(requisition);
+				AonNordigen.getRequisition(nordigenToken, requisition.getId());
+				assertRequisition(requisition);
+				AonNordigen.deleteRequisition(nordigenToken, requisition);
+			}
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

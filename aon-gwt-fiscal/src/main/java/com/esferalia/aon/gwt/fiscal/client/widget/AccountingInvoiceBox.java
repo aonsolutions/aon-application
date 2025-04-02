@@ -367,7 +367,11 @@ public abstract class AccountingInvoiceBox extends ResizeComposite implements Ha
 		}
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
-		bld.appendHtmlConstant("<span style=\"padding-left: 20px;\" class=\"" + icon + "\" >");
+		bld.appendHtmlConstant("<span style=\"padding-left: 20px;\" class=\"" 
+			+ AON.CSS.aonTabIcon()		
+			+ AonStringUtils.SPACE
+			+ icon 
+			+ "\" >");
 		if (i != -1) {
 			bld.appendEscaped(AonStringUtils.substring(text, 0, i));
 			bld.appendHtmlConstant(BEGIN_STRONG);

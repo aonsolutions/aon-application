@@ -15,7 +15,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public class TediProblems extends ScrollPanel {
 	private static final TediServiceAsync TEDI_SERVICE;
@@ -57,7 +56,7 @@ public class TediProblems extends ScrollPanel {
 				flowPanel.add(msgLabel);
 
 				if (error.canBeFixed()) {
-					SimplePanel container = new SimplePanel();
+					FlowPanel container = new FlowPanel();
 					container.setStyleName(AON.CSS.aonMarginTop());
 					container.addStyleName(AON.CSS.aonMarginBottom());
 					flowPanel.add(container);

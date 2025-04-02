@@ -18,6 +18,9 @@ public class ConsoleDomainMessage implements Serializable {
 	private Integer wrongDomainId;
 	private String message;
 	
+	private Integer wrongScopeId;
+	private Integer count;
+
 	private ConsoleTableField field;
 	
 	public ConsoleDomainMessageType getType() {
@@ -115,5 +118,21 @@ public class ConsoleDomainMessage implements Serializable {
 		this.field = field;
 		return this;
 	}
+	public Integer getWrongScopeId() {
+		return wrongScopeId;
+	}
+	public ConsoleDomainMessage setWrongScopeId(Integer wrongScopeId) {
+		this.wrongScopeId = wrongScopeId;
+		return this;
+	}
+	public Integer getCount() {
+		return count;
+	}
+	public ConsoleDomainMessage setCount(Integer count) {
+		this.count = count;
+		return this;
+	}
+	
+	
 	
 }

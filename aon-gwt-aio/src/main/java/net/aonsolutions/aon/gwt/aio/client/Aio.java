@@ -82,17 +82,17 @@ public class Aio implements EntryPoint {
 		AON.ensureInjected();
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
-		if(isAonSolutions()) {
-			impl.getAonDataToken(getCurrentDomainName(), Integer.toString(getCurrentDomain()), getToken(), new AsyncCallback<AonData>() {
-				
-				@Override public void onSuccess(AonData result) {
-					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
-					selection(entryPoint, result);
-				}
-				
-				@Override public void onFailure(Throwable arg0) {}
-			});
-		} else {
+//		if(isAonSolutions()) {
+//			impl.getAonDataToken(getCurrentDomainName(), Integer.toString(getCurrentDomain()), getToken(), new AsyncCallback<AonData>() {
+//				
+//				@Override public void onSuccess(AonData result) {
+//					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
+//					selection(entryPoint, result);
+//				}
+//				
+//				@Override public void onFailure(Throwable arg0) {}
+//			});
+//		} else {
 			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
@@ -102,7 +102,7 @@ public class Aio implements EntryPoint {
 				
 				@Override public void onFailure(Throwable arg0) {}
 			});			
-		}
+//		}
 
 		
 	}

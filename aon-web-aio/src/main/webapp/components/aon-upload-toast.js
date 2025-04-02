@@ -1,6 +1,7 @@
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { uploadDocument } from '../modules/documental/DocumentalUtils.js';
 import { generateJobId, s3UploadInvoice, uploadInvoice2 } from '../modules/invoice/InvoiceUtils.js';
+import { getCompany } from '../services/companyService.js';
 import {AonElement} from './AonElement.js';
 import { AonCard } from './aon-card.js';
 import { AonIcon } from './aon-icon.js';
@@ -106,10 +107,11 @@ export class AonUploadToast extends AonElement {
 			okDiv.style.display = 'block';
 			loadDiv.style.display = 'none';
 			if(fn) fn();
-		}, () => {
+		}, (msg) => {
 			okDiv.style.display = 'block';
 			okDiv.innerHTML = MATERIAL_ICONS.CANCEL;
 			okDiv.style.color = 'red';
+			okDiv.title = msg;
 			loadDiv.style.display = 'none';
 		});
 
@@ -117,7 +119,11 @@ export class AonUploadToast extends AonElement {
 
 	upload(type, file, data, success, error) {
 		if("invoice" === type){
-			s3UploadInvoice(file, this.JOB_ID, data, success, error);
+			getCompany().then(company => {
+				if(!company.document || company.document == '' || company.document == 'undefined'){
+					error("El Documento de la empresa no es correcto");
+				} else s3UploadInvoice(company, file, this.JOB_ID, data, success, error);
+			});
  		} else if("documental" === type) {
 			const isBetaDoc = this.isBetaDoc();
 			uploadDocument(file, data, success, error, isBetaDoc);

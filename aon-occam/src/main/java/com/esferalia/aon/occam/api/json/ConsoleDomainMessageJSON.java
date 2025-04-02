@@ -43,6 +43,8 @@ public class ConsoleDomainMessageJSON {
 			.setFkColumn(JsonUtils.getString(json, IJsonNames.FK_COLUMN))
 			.setFkId(JsonUtils.getInteger(json, IJsonNames.FK_ID))
 			.setWrongDomainId(JsonUtils.getInteger(json, IJsonNames.WRONG_DOMAIN_ID))
+			.setWrongScopeId(JsonUtils.getInteger(json, IJsonNames.WRONG_SCOPE_ID))
+			.setCount(JsonUtils.getInteger(json, IJsonNames.COUNT))
 			.setMessage(JsonUtils.getString(json, IJsonNames.MESSAGE))
 			;
 	}
@@ -70,6 +72,8 @@ public class ConsoleDomainMessageJSON {
 			.putOpt(IJsonNames.FK_COLUMN, message.getFkColumn())
 			.putOpt(IJsonNames.FK_ID, message.getFkId())
 			.putOpt(IJsonNames.WRONG_DOMAIN_ID, message.getWrongDomainId())
+			.putOpt(IJsonNames.WRONG_SCOPE_ID, message.getWrongScopeId())
+			.putOpt(IJsonNames.COUNT, message.getCount())
 			.putOpt(IJsonNames.MESSAGE, message.getMessage())
 			;		
 	}

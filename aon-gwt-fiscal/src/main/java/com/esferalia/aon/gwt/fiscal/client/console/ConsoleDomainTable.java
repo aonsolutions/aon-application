@@ -42,6 +42,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 		public void onChangeActive(String schema, Integer domainId, boolean active, AsyncCallback<Domain> cbk);
 		public void onChangeExpirationDate(String schema, Integer domainId, Date expireDate, AsyncCallback<Domain> cbk);
 		public void onValidate(Integer domainId, String name, String tabLabel, AsyncCallback<Boolean> cbk);
+		public void onScopeValidate(Integer domainId, String name, String tabLabel, AsyncCallback<Boolean> cbk);
 		public void onSwitchRemoteAccess(String schema, Integer integer, AsyncCallback<Boolean> cbk);
 		public void onAvailableUsers(JsConsoleDomain domain, AsyncCallback<LinkedList<User>> cbk);
 		public void onEditDomain( JsConsoleDomain domain);

@@ -190,7 +190,9 @@ public class Rawdoc implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public boolean isInbox() 	{return (this.getStatus() == RawdocStatus.INBOX);}
-	public boolean isRejected() {return (this.getStatus() == RawdocStatus.REJECTED);}
-	public boolean isDraft() 	{return (this.getStatus() == RawdocStatus.DRAFT);}
+	public boolean isInbox() 		{return (this.getStatus() == RawdocStatus.INBOX);}
+	public boolean isPending() 		{return (this.getStatus() == RawdocStatus.PENDING);}
+	public boolean isRecordable() 	{return (this.isInbox() || isPending());}	
+	public boolean isRejected() 	{return (this.getStatus() == RawdocStatus.REJECTED);}
+	public boolean isDraft() 		{return (this.getStatus() == RawdocStatus.DRAFT);}
 }
