@@ -43,18 +43,16 @@
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
-						value="#{bundle.finance_record_selected}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus == 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						styleClass="aon-finding-toolbar-item aon-icon-add-task"
 						actionListener="#{controller.onRecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="unrecord_selected"
-						value="#{bundle.finance_unrecord_selected}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus != 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						styleClass="aon-finding-toolbar-item aon-icon-add-task"
 						actionListener="#{controller.onUnrecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
