@@ -1714,7 +1714,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onDownloadFromAgreement(Payment payment, String newExpression) {
 			payment.setScope(Scope.SALARY);
-			payment.setExpression(newExpression);
+			payment.setExpression(AonStringUtils.isNotBlank(newExpression) && AonStringUtils.startsWithIgnoreCase(newExpression, "DISABLE") ? null : newExpression);
 			salaryDraftObject.recover(payment, SalaryDraft.this);
 		}
 		
