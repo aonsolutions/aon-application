@@ -4729,7 +4729,7 @@ font-weight: 600;
     justify-content: center;
   }
 
-  table tr.no-hover:hover {
+  .no-hover:hover {
     background-color: transparent !important;
     cursor: default !important; 
 }
