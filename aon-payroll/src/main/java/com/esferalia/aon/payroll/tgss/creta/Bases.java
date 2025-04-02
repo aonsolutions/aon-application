@@ -282,7 +282,7 @@ public class Bases {
 	private static class MonthlySalaryCretaData implements CretaData {
 		@Override
 		public String getComment() {
-			return "COTIZACION_MENSUAL";
+			return ContextVariable.MONTHLY.getName();
 		}
 
 		@Override
@@ -351,10 +351,10 @@ public class Bases {
 		protected boolean getCotizacionMensual(Salary salary, Period p)
 				throws NoSuchVariableException {
 			List<ContextData> datas = salary.getContextData()
-					.get("COTIZACION_MENSUAL");
+					.get(ContextVariable.MONTHLY.getName());
 			
 			if (datas == null)
-				throw new NoSuchVariableException("COTIZACION_MENSUAL");
+				throw new NoSuchVariableException(ContextVariable.MONTHLY.getName());
 
 			for (ContextData data : datas) {
 				Period intersect = p.intersect(
@@ -367,7 +367,7 @@ public class Bases {
 						Boolean.class);
 			}
 
-			throw new NoSuchVariableException("COTIZACION_MENSUAL");
+			throw new NoSuchVariableException(ContextVariable.MONTHLY.getName());
 		}
 		
 		protected int getQuoteGroup(Salary salary, Period p)

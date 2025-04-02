@@ -596,83 +596,84 @@ public class RawdocModule extends MainEntryPoint {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					RAWDOC_SERVICE.parse(opt.getDomainName(), opt.getDomain(), opt.getUser(), rawdoc.getId() , new AsyncCallback<TediResult>() {
-
-						@Override
-						public void onSuccess(TediResult result) {
-							AonCustomPopup entryDialog = new AonCustomPopup();
-							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-							entryDialog.setAnimationEnabled(true);
-							entryDialog.setGlassEnabled(true);
-							entryDialog.setModal(true);
-							entryDialog.setCaption(AON.MSG.accountingDocument());
-							AccountEntryModule module = new AccountEntryModule();
-							module.onModuleLoad(new AccountEntryModuleOptions()
-									.setParentWidget(entryDialog)
-									.setDomainName(opt.getDomainName())
-									.setDomain(opt.getDomain())
-									.setUser(opt.getUser())
-									.setConfiguration(opt.getConfiguration())
-									.setAccountingInvoice(result.getAccountingInvoice())
-									.setTediResult(result)
-									.setBackButtonVisible(false)
-									.setSessionLogTabVisible(false)
-									.setJournalTabVisible(false)
-									.setExtraInfoTabVisible(false)
-									.setExternalCallback(new ModuleCallback() {
-
-										private static final long serialVersionUID = -2947804456883665519L;
-
-										@Override
-										public void onRemove(IAccountEntryWrapper removed) {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onExit() {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onChange(IAccountEntryWrapper changed) {
-											entryDialog.hide();
-											result.setAon((AccountingInvoice) changed);
-											StringBuffer buf = new StringBuffer();
-											if (result.getAccountingInvoice() != null) {
-												if (result.getAccountingInvoice().getAccountEntry() != null) {
-													buf.append(AON.MSG.journal());
-													buf.append(": ");
-													buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
-												}
-												if (result.getInvoice()!= null) {
-													buf.append(" Doc: ");
-													buf.append(result.getInvoice().getDocumentNumber());
-												}
-											} else {
-												buf.append("CONTABILIZADO");
+					RAWDOC_SERVICE.parse(opt.getOccam(), rawdoc.getId() 
+						, new AsyncCallback<TediResult>() {
+							@Override
+							public void onSuccess(TediResult result) {
+								AonCustomPopup entryDialog = new AonCustomPopup();
+								entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+								entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+								entryDialog.setAnimationEnabled(true);
+								entryDialog.setGlassEnabled(true);
+								entryDialog.setModal(true);
+								entryDialog.setCaption(AON.MSG.accountingDocument());
+								AccountEntryModule module = new AccountEntryModule();
+								module.onModuleLoad(new AccountEntryModuleOptions()
+										.setParentWidget(entryDialog)
+										.setDomainName(opt.getDomainName())
+										.setDomain(opt.getDomain())
+										.setUser(opt.getUser())
+										.setConfiguration(opt.getConfiguration())
+										.setAccountingInvoice(result.getAccountingInvoice())
+										.setTediResult(result)
+										.setBackButtonVisible(false)
+										.setSessionLogTabVisible(false)
+										.setJournalTabVisible(false)
+										.setExtraInfoTabVisible(false)
+										.setExternalCallback(new ModuleCallback() {
+	
+											private static final long serialVersionUID = -2947804456883665519L;
+	
+											@Override
+											public void onRemove(IAccountEntryWrapper removed) {
+												entryDialog.hide();
 											}
-												refreshCell(buf.toString(),row);
-										}
-									}));
-							entryDialog.center();
-							entryDialog.show();
+	
+											@Override
+											public void onFailure(Throwable caught) {
+												entryDialog.hide();
+											}
+	
+											@Override
+											public void onExit() {
+												entryDialog.hide();
+											}
+	
+											@Override
+											public void onChange(IAccountEntryWrapper changed) {
+												entryDialog.hide();
+												result.setAon((AccountingInvoice) changed);
+												StringBuffer buf = new StringBuffer();
+												if (result.getAccountingInvoice() != null) {
+													if (result.getAccountingInvoice().getAccountEntry() != null) {
+														buf.append(AON.MSG.journal());
+														buf.append(": ");
+														buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
+													}
+													if (result.getInvoice()!= null) {
+														buf.append(" Doc: ");
+														buf.append(result.getInvoice().getDocumentNumber());
+													}
+												} else {
+													buf.append("CONTABILIZADO");
+												}
+													refreshCell(buf.toString(),row);
+											}
+										}));
+								entryDialog.center();
+								entryDialog.show();
+							}
+	
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessageDialog msg = new AonMessageDialog();
+								msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
+									@Override
+									public void onAccept() {}
+								});
+							}
 						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessageDialog msg = new AonMessageDialog();
-							msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
-								@Override
-								public void onAccept() {}
-							});
-						}
-					});
+					);
 				}
 			});
 			accountEntry.getElement().getStyle().setMarginRight(5, Unit.PX);

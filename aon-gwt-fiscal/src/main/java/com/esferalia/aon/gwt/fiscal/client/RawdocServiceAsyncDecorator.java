@@ -49,6 +49,11 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.toInbox(occam, rawdocId, new AsyncCallbackWrapper<Rawdoc>(callback));
 	}
 
+	@Override
+	public void parse(Occam occam, Integer rawdocId, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
+	}
 	
 	// --------------------------------------------------------------- PENDING 
 	@Override
@@ -69,14 +74,4 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
 	}
 	
-	@Override
-	public void parse(Occam occam, Integer rawdocId, AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
-	}
-	@Override
-	public void parse(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.parse(domainName, domain, user, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
-	}
 }

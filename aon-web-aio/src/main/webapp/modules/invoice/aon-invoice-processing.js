@@ -26,7 +26,7 @@ export class AonInvoiceProcessing extends AonElement {
 
     connectedCallback () {
         this.initialize();
-        this.build();
+        this.buildDur().then(() => this.build());
     }
 
     initialize() {
@@ -62,12 +62,22 @@ export class AonInvoiceProcessing extends AonElement {
             ? new AonMobileInvoiceList()
             : new AonInvoiceList();
         table.id = "aonInvoiceList";
-        table.setFn((invoice, i) => this.showFile(invoice, i));
+        table.setFn((invoice, i) => {
+            if(invoice.status == 'pending' && this.getDur().hasInvofox() && this.getDur().isInvofox()) {
+                this.aonInvoice(invoice, i);
+            } else this.showFile(invoice, i);
+        });
         table.setFilter(filter);
 
         let list = this.getElement(this.LIST);
         this.clearElement(list);
         list.appendChild(table);
+    }
+
+    aonInvoice(invoice, i){
+        setIndex(i);
+        let aip = document.querySelector('aon-invoice-panel');
+        aip.aonInvoice(invoice.type, invoice);
     }
 
     showFile(invoice, i){
@@ -91,7 +101,7 @@ export class AonInvoiceProcessing extends AonElement {
             fileDiv.appendChild(viewer);
         } else {
 			fileDiv.style.display = 'none';
-			dataDiv.style.width = '100%';
+			listDiv.style.width = '100%';
         }
     }
 }

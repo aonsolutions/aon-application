@@ -273,6 +273,13 @@ export const RECTIFY_INVOICE = {
     icon: MATERIAL_ICONS.SWAP_CALLS
 };
 
+export const REFRESH = {
+    id: CONSTANT.REFRESH.initCap(),
+    name: MSG.REFRESH,
+    title: MSG.REFRESH,
+    icon: MATERIAL_ICONS.REFRESH
+}
+
 export const REJECT = {
     id: CONSTANT.REJECT.initCap(),
     name: MSG.REJECT,
@@ -377,6 +384,13 @@ export const SHOW_FILE = {
     name: MSG.SHOW_FILE,
     title: MSG.SHOW_FILE,
     icon: MATERIAL_ICONS.VISIBILITY
+};
+
+export const REPROCESS = {
+    id: CONSTANT.REPROCESS,
+    name: MSG.REPROCESS,
+    title: MSG.REPROCESS,
+    icon: MATERIAL_ICONS.SYNC
 };
 
 export const UPLOAD = {

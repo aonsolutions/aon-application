@@ -93,7 +93,7 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount++, "IT", headerCellStyle);
 		
 		// NR
-		CellUtil.createCell(row, cellCount++, "NR", headerCellStyle);
+		CellUtil.createCell(row, cellCount++, "PR", headerCellStyle);
 		
 		// DA
 		CellUtil.createCell(row, cellCount++, "DA", headerCellStyle);
@@ -148,7 +148,7 @@ public class ContractDaysExcelAction extends AbsExcelAction implements Consumer<
 		CellUtil.createCell(row, cellCount, "", blankCellStyle);
 		sheet.setColumnWidth(cellCount++, 8*256);
 		
-		// NR
+		// PR
 		CellUtil.createCell(row, cellCount, "", blankCellStyle);
 		sheet.setColumnWidth(cellCount++, 8*256);
 		

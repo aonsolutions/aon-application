@@ -60,7 +60,7 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 
 	protected AonTableButton getActionButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton accountEntry = null;
-		if (rawdoc.isInbox()) {
+		if (rawdoc.isRecordable()) {
 			accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAddTask());
 			accountEntry.addClickHandler( event -> RawdocModuleNew.RAWDOC_SERVICE.parse(opt.getOccam(), rawdoc.getId() 
 				, new AsyncCallback<TediResult>() {
@@ -111,22 +111,17 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 										entryDialog.hide();
 										result.setAon((AccountingInvoice) changed);
 										StringBuilder buf = new StringBuilder();
-										if (result.getAccountingInvoice() != null) {
-											if (result.getAccountingInvoice().getAccountEntry() != null) {
+										if (result.getAccountingInvoice() != null 
+										 && result.getAccountingInvoice().getAccountEntry() != null) {
 												buf.append(AON.MSG.journal());
 												buf.append(": ");
 												buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
-											}
-											if (result.getInvoice()!= null) {
-												buf.append(" Doc: ");
-												buf.append(result.getInvoice().getDocumentNumber());
-											}
 										} else {
 											buf.append("CONTABILIZADO");
 										}
 										Label label = new Label( buf.toString() );
-										label.setStyleName( AON.CSS.aonColorRed() );
-										refreshRow(opt, cbk, rawdoc, label);
+										label.setStyleName( AON.CSS.aonColorGreen() );
+										refreshRow(opt, cbk, rawdoc, label, true);
 									}
 								}));
 						entryDialog.center();
