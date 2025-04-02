@@ -1,33 +1,47 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.AonVersion;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorderController extends BasicController {
 	
@@ -39,8 +53,10 @@ public class InvoiceRecorderController extends BasicController {
 	private String invoiceViewer;
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	private String checkOption;
+	private String invoiceAttachURL;
 	private String showBreakDownOption;
 	private String showAccountEntryOption;
+	
 
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -116,6 +132,11 @@ public class InvoiceRecorderController extends BasicController {
 	public void setShowAccountEntryOption(String showAccountEntryOption) {
 		this.showAccountEntryOption = showAccountEntryOption;
 	}
+	
+	public boolean getShowInvoiceAttach() {
+		return AonStringUtils.isNotBlank(invoiceAttachURL) ;
+	}
+	
 	
 	public void onCheckOption(ActionEvent event) throws ManagerBeanException {
 		if(getCheckOption().equals("InvoiceRecorder-checkAll")) {
@@ -599,5 +620,54 @@ public class InvoiceRecorderController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	
+	public void onShowInvoiceAttach(ActionEvent event) {
+		try {
+			InvoiceRecorder  recordController = (InvoiceRecorder) getModel().getRowData();
+			Invoice invoice = recordController.getInvoice();
+			if ( invoice.isSales() ) { 
+				invoiceAttachURL = URLEncoder.encode(getDownloadURL(recordController.getInvoice()), "UTF-8");
+			} else {
+				invoiceAttachURL = URLEncoder.encode(getAttachURL(recordController.getInvoice()), "UTF-8");;
+			}
+		} catch (ManagerBeanException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			invoiceAttachURL = e.getMessage();
+		}
+	}
+	
+	public void onHideInvoiceAttach(ActionEvent event) {
+		invoiceAttachURL = null;
+	}
+	public String getInvoiceAttachURL() {
+		return invoiceAttachURL;
+	}
+	public String getAttachURL(Invoice invoice) throws ManagerBeanException{
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		
+		LinkedList<Attach> invoiceAttachments = AON.getAttachList(domain.getName(), domain.getId(), "", p -> p.getAttachModuleProperty().eq(invoice.getId()), AttachType.INVOICE);
+		
+		return invoiceAttachments.stream().findFirst().map( invoiceAttach -> {
+			JSONObject data = new JSONObject()
+					.put("domain_id", domain.getId())
+					.put("domain_name", domain.getName())
+					.put(IJsonNames.ID, invoiceAttach.getId())
+					.put("attach_type", AttachType.INVOICE.getName());
+			
+			return  "/ms/api/file/" +  Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));	
+		}).orElseThrow(ManagerBeanException::new);
+		
+	}
 
+	public String getDownloadURL(Invoice invoice) {
+		com.esferalia.aon.occam.api.model.Domain domain = AON.getDomain(AonUtil.getDomainName(), DomainManager.getCurrentDomain(), "");
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.ID, invoice.getId())
+				.put(IJsonNames.SOURCE, "invoice")
+				.put("domain_id", domain.getId())
+				.put("domain_name", domain.getName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+	}
 }
