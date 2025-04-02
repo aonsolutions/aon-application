@@ -62,17 +62,17 @@ export const uploadInvoice2 = (file, success, error) => {
     }
 }
 
-export const s3UploadInvoices = (el, files, jobId) => {
+export const s3UploadInvoices = (company, el, files, jobId) => {
     let arr = [];
     let data = { uploaded : 0 };
     for (let file of files) {
-        s3UploadInvoice(file, jobId, data , (f) => alert(f.name + ' ok'), (f) => alert(f.name + ' error'));
+        s3UploadInvoice(company, file, jobId, data , (f) => alert(f.name + ' ok'), (f) => alert(f.name + ' error'));
     }
     el.value = null;
     return arr;
 }
 
-export const s3UploadInvoice = (file, jobId, data, success, error) => {
+export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
     let formData = new FormData();
     let xhr = new XMLHttpRequest();
     let prefix = data.prefix || '';
@@ -95,7 +95,7 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
 
     formData.append('key', 
         'invoices'
-        + `/${LS.getDomainName()}`
+        + `/${company.document}`
         + `/${LS.getDomainDocument()}`
         + `/${LS.getDomainLogin()}`
         + `/${jobId}` 
@@ -111,7 +111,8 @@ export const s3UploadInvoice = (file, jobId, data, success, error) => {
           success(file);
         } else if (xhr.readyState == 4 && xhr.status != 200) {
           // Error. Inform the user
-          error(file, xhr);
+          console.log(e);
+          error("error inesperado");
         }
     });
     xhr.send(formData);

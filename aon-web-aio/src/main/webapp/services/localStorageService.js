@@ -248,7 +248,7 @@ export const removeDomainLogin = () => {
 export const getDomainDocument = () => get(AON_DOMAIN_DOCUMENT);
 
 
-export const setDomainDocumnet = (value) => {
+export const setDomainDocument = (value) => {
     set(AON_DOMAIN_DOCUMENT, value);
 }
 
