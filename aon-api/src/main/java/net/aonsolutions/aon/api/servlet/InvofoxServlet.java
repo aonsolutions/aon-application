@@ -231,6 +231,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	
 	private static JSONObject refreshProcessing(AonApiData api) {
 		String jobId = generateJobId();
+		Company company = AON.getCompany(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 				f -> f.getDomainProperty().eq(api.getDomain().getId())
 					.and(f.getStatusProperty().eq(RawdocStatus.PROCESSING.value())))
@@ -240,8 +241,8 @@ public class InvofoxServlet extends AonApiHttpServlet {
 				String[] keyParams = r.getS3Key().split("/"); 
 				StringBuilder newKey = new StringBuilder()
 						.append(keyParams[0] + "/")
-						.append(keyParams[1] + "/")
-						.append(keyParams[2] + "/")
+						.append(api.getDomain().getName() + "/")
+						.append(company.getDocument() + "/")
 						.append(keyParams[3] + "/")
 						.append(jobId + "/")
 						.append(keyParams[5]);

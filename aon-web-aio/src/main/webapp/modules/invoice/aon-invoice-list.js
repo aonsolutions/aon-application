@@ -528,6 +528,7 @@ export class AonInvoiceList extends AonElement {
 
 	aonInvoice(invoice, i, fn) {
 		if(this.fn) {
+			setIndex(i);
 			this.fn(invoice, i);
 		} else if(this.getFilter().status !== 'accounting') {
 			setIndex(i);

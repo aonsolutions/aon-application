@@ -75,7 +75,6 @@ export class AonInvoiceProcessing extends AonElement {
     }
 
     aonInvoice(invoice, i){
-        setIndex(i);
         let aip = document.querySelector('aon-invoice-panel');
         aip.aonInvoice(invoice.type, invoice);
     }
