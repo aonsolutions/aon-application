@@ -1,11 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
+
+import org.grecasa.ext.pa.mod420.MIModelo420;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,48 +41,27 @@ public class Mod420File extends HttpServlet {
 			
 			System.out.println("PASO 1");
 			
-
-//			ByteArrayOutputStream output = new ByteArrayOutputStream();
-//			OutputStreamWriter wr = null;
-//			try {
-//				wr = new OutputStreamWriter(output,"ISO-8859-1");
-//			} catch (UnsupportedEncodingException e) {
-//				wr = new OutputStreamWriter(output);
-//			}
-//			PrintWriter writer = new PrintWriter(wr);
-//			Mod303Writer.fillWriter(mod303, writer);
-//			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
-//			
-//		    String fileName = AonFiscalFileUtils.getFileName(mod303);
-//		    // MimeType mime = mod303.isAraba()?MimeType.XML:MimeType.TXT;
-//		    MimeType mime = MimeType.TXT;
-//		    resp.setCharacterEncoding("ISO-8859-1");
-//			resp.setContentType(mime.getName());
-//			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mime.getExtension()+ "\";");
-//			AonIOUtils.copy(in, resp.getOutputStream());
-//			resp.flushBuffer();
-			
 			// FALTA - Obtener el XML
 			String xml = obtenerXML();
 			
 			System.out.println("PASO 2. xml="+xml);
 			
 			// FALTA - Pasarlo al modulo de impresión para obtener el fichero para la presentación telemática o carga en programa de ayuda
-//			String resultado = obtenerPresentacion(xml);
-//			if (resultado == null) {
-//				throw new AonCoreException("RESULTADO ES NULO");
-//			}
-//			
-//			System.out.println("PASO 3. resultado="+resultado);
-//			
-//			ByteArrayInputStream in = new ByteArrayInputStream(resultado.getBytes());
-//		    String fileName = AonFiscalFileUtils.getFileName(mod303);
-//		    MimeType mime = MimeType.TXT; 
-//		    resp.setCharacterEncoding("ISO-8859-1");
-//			resp.setContentType(mime.getName());
-//			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");
-//			AonIOUtils.copy(in, resp.getOutputStream());
-//			resp.flushBuffer();
+			String resultado = obtenerPresentacion(xml);
+			if (resultado == null) {
+				throw new AonCoreException("RESULTADO ES NULO");				
+			}
+			
+			System.out.println("PASO 3. resultado="+resultado);
+			
+			ByteArrayInputStream in = new ByteArrayInputStream(resultado.getBytes());
+		    String fileName = AonFiscalFileUtils.getFileName(mod303);
+		    MimeType mime = MimeType.TXT; 
+		    resp.setCharacterEncoding("ISO-8859-1");
+			resp.setContentType(mime.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");
+			AonIOUtils.copy(in, resp.getOutputStream());
+			resp.flushBuffer();
 
 		} catch (Throwable e) {
 			throw new ServletException(e);
@@ -96,29 +82,28 @@ public class Mod420File extends HttpServlet {
 		return fileXML;
 	}
 	
-	// FALTA - OBTENER FICHERO PARA PRESENTACION PASANDO EL XML AL MODULO DE IMPRESION DE LA ATC
-//	private static String obtenerPresentacion(String declaracion) {
-//		if (declaracion==null)
-//			return null;
-//		String resultado = null;
-//		try {
-//			System.out.println("PASO 2.1");
-// //			Path prueba = Files.createTempDirectory("Temp");
-// //			String path = prueba.toString();
-//			String path = "C:\\TEMP";
-//			System.out.println("PASO 2.2. path="+path);
-//			MIModelo420 miModelo420 = new MIModelo420(path);
-//			System.out.println("PASO 2.3");
-//			resultado = miModelo420.getFicheroPresentacion(declaracion);
-//			System.out.println("PASO 2.4. resultado="+resultado);
-//			if (resultado == null)
-//				mostrarMensajes(miModelo420.getMensajes());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new AonCoreException(e);
-//		}
-//		return resultado;
-//	}
+	private static String obtenerPresentacion(String declaracion) {
+		if (declaracion==null)
+			return null;
+		String resultado = null;
+		try {
+			System.out.println("PASO 2.1");
+ //			Path prueba = Files.createTempDirectory("Temp");
+ //			String path = prueba.toString();
+			String path = "C:\\TEMP";
+			System.out.println("PASO 2.2. path="+path);
+			MIModelo420 miModelo420 = new MIModelo420(path);
+			System.out.println("PASO 2.3");
+			resultado = miModelo420.getFicheroPresentacion(declaracion);
+			System.out.println("PASO 2.4. resultado="+resultado);
+			if (resultado == null)
+				mostrarMensajes(miModelo420.getMensajes());
+		} catch (Exception e) {
+			e.printStackTrace();			
+			throw new AonCoreException(e);
+		}
+		return resultado;
+	}
 	
 	private static void mostrarMensajes(List<String> mensajes) {
 		if (mensajes != null && mensajes.size() > 0) {
