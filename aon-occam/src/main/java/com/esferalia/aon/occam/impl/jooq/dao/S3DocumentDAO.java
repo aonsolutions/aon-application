@@ -84,9 +84,9 @@ public class S3DocumentDAO {
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
 		if(category != null) {
 			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
-	                .as(DSL.select(CategoryTree.CATEGORY_TREE.ID_CATEGORY, CategoryTree.CATEGORY_TREE.ID_PARENT)
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.CATEGORY, CategoryTree.CATEGORY_TREE.PARENT)
 	                        .from(CategoryTree.CATEGORY_TREE)
-	                        .where(CategoryTree.CATEGORY_TREE.ID_PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
 	                        .unionAll(
 	                            DSL.select(CategoryTree.CATEGORY_TREE.field("id_category", Integer.class), CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class))
 	                                .from(CategoryTree.CATEGORY_TREE)

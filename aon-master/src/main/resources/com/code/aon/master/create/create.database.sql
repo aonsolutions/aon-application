@@ -9355,7 +9355,7 @@ CREATE TABLE IF NOT EXISTS rdoc (
 	domain            INT NOT NULL COMMENT 'dominio del documento',
 	registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????',
 	category          INT NULL COMMENT 'categoria del documento',
-	size              INT NULL COMMENT 'tamaño en bytes del documento',
+	size              INT NULL COMMENT 'tamaï¿½o en bytes del documento',
 	mimeType          TINYINT NULL DEFAULT 0 COMMENT 'tipo de extension del documento',
 	name              VARCHAR(64) NULL COMMENT 'nombre del documento',
 	real_name         VARCHAR(64) NULL COMMENT 'nombre del documento',
@@ -9386,12 +9386,18 @@ CREATE TABLE IF NOT EXISTS rdoc (
 
 CREATE TABLE IF NOT EXISTS category_tree (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
-    id_parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
+    category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
+    parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
     is_visible BOOLEAN DEFAULT TRUE COMMENT 'indica si sera o no visible para los subdominios',
     is_deletable BOOLEAN DEFAULT TRUE COMMENT 'indica si se puede borrar o no, asi diferenciamos las categorias por defecto de las creadas por usuarios',
-	CONSTRAINT fk_category FOREIGN KEY (id_category) REFERENCES category(id)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creación de jerarquía en las categorias del documental';
+    domain INT NOT NULL COMMENT 'Identificador del Dominio',
+    KEY FK_CATEGORY_TREE_CATEGORY (category),
+    KEY FK_CATEGORY_TREE_PARENT (parent),
+    KEY FK_CATEGORY_TREE_DOMAIN (domain),
+	CONSTRAINT FK_CATEGORY_TREE_CATEGORY FOREIGN KEY (category) REFERENCES category(id),
+  	CONSTRAINT FK_CATEGORY_TREE_PARENT FOREIGN KEY (parent) REFERENCES category(id),
+  	CONSTRAINT FK_CATEGORY_TREE_DOMAIN FOREIGN KEY (domain) REFERENCES domain(id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creaciï¿½n de jerarquï¿½a en las categorias del documental';
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 

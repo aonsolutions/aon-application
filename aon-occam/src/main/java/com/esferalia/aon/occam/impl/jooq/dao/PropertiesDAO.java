@@ -1685,7 +1685,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.DESCRIPTION);}
 		@Override public Property<String> getUrlProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.URL);}
 		@Override public Property<Integer> getRattachProperty() {return new FilterDAO.PropertyDAO<>(CATEGORY.RATTACH);}
-		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CategoryTree.CATEGORY_TREE.ID_PARENT);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(CategoryTree.CATEGORY_TREE.PARENT);}
 	}
 
 }
