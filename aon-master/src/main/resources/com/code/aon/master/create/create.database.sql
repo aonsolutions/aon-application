@@ -9370,6 +9370,7 @@ CREATE TABLE IF NOT EXISTS rdoc (
 	modification_date DATETIME NULL,
 	delete_user VARCHAR(16) NULL,
 	delete_date DATETIME NULL,
+	type TINYINT DEFAULT NULL COMMENT 'Tipo del documento',
 	INDEX idx_rdoc_domain (domain),
 	INDEX idx_rdoc_registry (registry),
 	INDEX idx_rdoc_category (category),

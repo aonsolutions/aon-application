@@ -53,7 +53,11 @@ public class UpdateCategoryTree implements Update {
 			createDomainColumn(dslContext);
 			createDomainFK(dslContext);
 			fillDomainCategoryTree(dslContext);
-		}		
+		}
+		if(!checkRDocColumn(dslContext, "type", database)) {
+			createTypeColumn(dslContext);
+			fillTypeRdoc(dslContext);
+		}
 	}
 	
 	private boolean checkFK(DSLContext dslContext, String fk, String database) {
@@ -112,7 +116,24 @@ public class UpdateCategoryTree implements Update {
 				+ "SET ct.domain = c.domain;");
 	}
 	
+	private void fillTypeRdoc(DSLContext dslContext) {
+		dslContext.execute("UPDATE rdoc "
+				+ "SET rdoc.type = 3;");
+	}
+	
 	private void dropCategoryTreeOldIndex(DSLContext dslContext) {
 		dslContext.execute("ALTER TABLE category_tree DROP INDEX idx_category_parent;");
+	}
+	
+	private boolean checkRDocColumn(DSLContext dslContext, String column, String database) {
+		return dslContext.fetchExists(dslContext.selectOne().from("information_schema.columns")
+		        .where(DSL.field("table_name").eq(DSL.inline("rdoc"))
+		        .and(DSL.field("column_name").eq(DSL.inline(column))
+		        .and(DSL.field("table_schema").eq(DSL.inline(database)))
+		        		)));
+	}
+	
+	private void createTypeColumn(DSLContext dslContext) {
+		dslContext.execute("ALTER TABLE rdoc ADD COLUMN type TINYINT NULL COMMENT 'Tipo del documento';");
 	}
 }

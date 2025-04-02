@@ -257,7 +257,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		System.out.println("POST METHOD");
 		Decoder decoder = Base64.getDecoder();
 		byte[] bytes = decoder.decode(api.getData().optString(IJsonNames.CONTENT));
-		String doc = S3rDoc.uploadObject(bytes, AON_BUCKET_NAME, api.getDomain().getName());
+		String mimetype = MimeType.safeValueFromContenType(api.getData().getString(IJsonNames.CONTENT_TYPE)).getExtension();
+		String doc = S3rDoc.uploadObject(bytes, AON_BUCKET_NAME, api.getDomain().getName(), mimetype);
 		JSONObject json = api.getData();
 		Integer registry = api.getUser().getRegistry().getId(); 
 		if(api.getUser().getRegistry().getId() == null) {
