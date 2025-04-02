@@ -417,13 +417,13 @@ export class AonInvoice extends AonElement {
 		}
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
-			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
 		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
-			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
 		if(this.getInvoice().isRejected()) {
@@ -2984,6 +2984,7 @@ export class AonInvoice extends AonElement {
 		dupInv.status = 'inbox';
 		dupInv.tbai = undefined;
 		dupInv.tbaiUrl = undefined;
+		dupInv.file = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;

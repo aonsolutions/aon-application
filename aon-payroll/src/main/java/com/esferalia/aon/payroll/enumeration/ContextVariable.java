@@ -409,6 +409,10 @@ public enum ContextVariable implements IResourceable {
 
 	IRPF_START("INICIO_IRPF", VariableType.DATE, false),
 	
+	BOE_A_2024_26917_START("INICIO_BOE_A_2024_26917", VariableType.DATE, false),
+	
+	
+	MONTHLY("COTIZACION_MENSUAL", VariableType.BOOLEAN, false)
 	;
 
 	public static final String ALL = "_P";

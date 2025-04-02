@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
@@ -928,9 +930,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		activityItem.ensureDebugId(getId(activity));
 		activityItem.getElement().getStyle().setWidth(100, Unit.PCT);
 		
-		activity.getCccs().forEach( (ccc ) ->{
-			addActivityCCCItem(activityItem, ccc);
-		} );
+		activity.getCccs().stream()
+		.collect(Collectors.toMap(CCC::toString,  p -> p , (p,q) -> p))
+		.forEach( (str, ccc ) -> addActivityCCCItem(activityItem, ccc) );
+		
+//		activity.getCccs().forEach( (ccc ) ->{
+//			addActivityCCCItem(activityItem, ccc);
+//		} );
 	}
 
 	protected <T extends HasTreeItems> void addActivityCCCItem(T activityItem, CCC ccc) {

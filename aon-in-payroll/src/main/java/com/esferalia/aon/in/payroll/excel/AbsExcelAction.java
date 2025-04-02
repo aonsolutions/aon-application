@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -167,19 +166,12 @@ public abstract class AbsExcelAction  {
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);
-		
-		// Note that SXSSF allocates temporary files that you 
-		// must always clean up explicitly, by calling the dispose method.
-		//
-		// http://poi.apache.org/spreadsheet/how-to.html#sxssf
-		//
-		workbook.dispose();
+		workbook.close();
 	}
 
 	protected abstract void headerRow();

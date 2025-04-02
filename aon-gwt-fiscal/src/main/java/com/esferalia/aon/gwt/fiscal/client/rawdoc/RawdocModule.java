@@ -474,32 +474,32 @@ public class RawdocModule extends MainEntryPoint {
 
 	private void search(final RawdocModuleOptions opt, RawdocParams params, final int ofs) {
 		if (!isMoreData()) return; 
-		RAWDOC_SERVICE.getRawdocs(opt.getDomainName(),opt.getDomain(),opt.getUser(), params, ofs, limit
-				, new AsyncCallback<LinkedList<Rawdoc>>() {
+		RAWDOC_SERVICE.getRawdocs(opt.getOccam(), params, ofs, limit
+			, new AsyncCallback<LinkedList<Rawdoc>>() {
 					
-					@Override
-					public void onSuccess(LinkedList<Rawdoc> result) {
-						if (result != null && !result.isEmpty()) {
-							result.forEach( rawdoc -> paintRow(opt,rawdoc));
-							offset.setValue(ofs + result.size());
-							enableMoreData();
-						} else {
-							Label label = new Label(AON.MSG.noData());
-							label.setStyleName(AON.CSS.aonBlockMessage());
-							label.addStyleName(AON.CSS.aonBlockInfoMessage());
-							label.addStyleName(AON.CSS.aonMarginTop());
-							container.add(label);
-							disableMoreData();
-						}
-						enableSearch();
+				@Override
+				public void onSuccess(LinkedList<Rawdoc> result) {
+					if (result != null && !result.isEmpty()) {
+						result.forEach( rawdoc -> paintRow(opt,rawdoc));
+						offset.setValue(ofs + result.size());
+						enableMoreData();
+					} else {
+						Label label = new Label(AON.MSG.noData());
+						label.setStyleName(AON.CSS.aonBlockMessage());
+						label.addStyleName(AON.CSS.aonBlockInfoMessage());
+						label.addStyleName(AON.CSS.aonMarginTop());
+						container.add(label);
+						disableMoreData();
 					}
+					enableSearch();
+				}
 					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());
-					}
-				});
-		
+				@Override
+				public void onFailure(Throwable caught) {
+					showError(caught.getMessage());
+				}
+			}
+		);
 	}
 	
 	public void showViewer( MimeType mimeType, String url ) {
@@ -590,96 +590,99 @@ public class RawdocModule extends MainEntryPoint {
 		}
 		
 		AonTableButton accountEntry = null;
-		if (rawdoc.getStatus() == RawdocStatus.INBOX) {
+		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PENDING) {
 			accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAddTask());
 			accountEntry.addClickHandler( new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					RAWDOC_SERVICE.parse(opt.getDomainName(), opt.getDomain(), opt.getUser(), rawdoc.getId() , new AsyncCallback<TediResult>() {
-
-						@Override
-						public void onSuccess(TediResult result) {
-							AonCustomPopup entryDialog = new AonCustomPopup();
-							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-							entryDialog.setAnimationEnabled(true);
-							entryDialog.setGlassEnabled(true);
-							entryDialog.setModal(true);
-							entryDialog.setCaption(AON.MSG.accountingDocument());
-							AccountEntryModule module = new AccountEntryModule();
-							module.onModuleLoad(new AccountEntryModuleOptions()
-									.setParentWidget(entryDialog)
-									.setDomainName(opt.getDomainName())
-									.setDomain(opt.getDomain())
-									.setUser(opt.getUser())
-									.setConfiguration(opt.getConfiguration())
-									.setAccountingInvoice(result.getAccountingInvoice())
-									.setTediResult(result)
-									.setBackButtonVisible(false)
-									.setSessionLogTabVisible(false)
-									.setJournalTabVisible(false)
-									.setExtraInfoTabVisible(false)
-									.setExternalCallback(new ModuleCallback() {
-
-										private static final long serialVersionUID = -2947804456883665519L;
-
-										@Override
-										public void onRemove(IAccountEntryWrapper removed) {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onExit() {
-											entryDialog.hide();
-										}
-
-										@Override
-										public void onChange(IAccountEntryWrapper changed) {
-											entryDialog.hide();
-											result.setAon((AccountingInvoice) changed);
-											StringBuffer buf = new StringBuffer();
-											if (result.getAccountingInvoice() != null) {
-												if (result.getAccountingInvoice().getAccountEntry() != null) {
-													buf.append(AON.MSG.journal());
-													buf.append(": ");
-													buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
-												}
-												if (result.getInvoice()!= null) {
-													buf.append(" Doc: ");
-													buf.append(result.getInvoice().getDocumentNumber());
-												}
-											} else {
-												buf.append("CONTABILIZADO");
+					RAWDOC_SERVICE.parse(opt.getOccam(), rawdoc.getId() 
+						, new AsyncCallback<TediResult>() {
+							@Override
+							public void onSuccess(TediResult result) {
+								AonCustomPopup entryDialog = new AonCustomPopup();
+								entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+								entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+								entryDialog.setAnimationEnabled(true);
+								entryDialog.setGlassEnabled(true);
+								entryDialog.setModal(true);
+								entryDialog.setCaption(AON.MSG.accountingDocument());
+								AccountEntryModule module = new AccountEntryModule();
+								module.onModuleLoad(new AccountEntryModuleOptions()
+										.setParentWidget(entryDialog)
+										.setDomainName(opt.getDomainName())
+										.setDomain(opt.getDomain())
+										.setUser(opt.getUser())
+										.setConfiguration(opt.getConfiguration())
+										.setAccountingInvoice(result.getAccountingInvoice())
+										.setTediResult(result)
+										.setBackButtonVisible(false)
+										.setSessionLogTabVisible(false)
+										.setJournalTabVisible(false)
+										.setExtraInfoTabVisible(false)
+										.setExternalCallback(new ModuleCallback() {
+	
+											private static final long serialVersionUID = -2947804456883665519L;
+	
+											@Override
+											public void onRemove(IAccountEntryWrapper removed) {
+												entryDialog.hide();
 											}
-												refreshCell(buf.toString(),row);
-										}
-									}));
-							entryDialog.center();
-							entryDialog.show();
+	
+											@Override
+											public void onFailure(Throwable caught) {
+												entryDialog.hide();
+											}
+	
+											@Override
+											public void onExit() {
+												entryDialog.hide();
+											}
+	
+											@Override
+											public void onChange(IAccountEntryWrapper changed) {
+												entryDialog.hide();
+												result.setAon((AccountingInvoice) changed);
+												StringBuffer buf = new StringBuffer();
+												if (result.getAccountingInvoice() != null) {
+													if (result.getAccountingInvoice().getAccountEntry() != null) {
+														buf.append(AON.MSG.journal());
+														buf.append(": ");
+														buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
+													}
+													if (result.getInvoice()!= null) {
+														buf.append(" Doc: ");
+														buf.append(result.getInvoice().getDocumentNumber());
+													}
+												} else {
+													buf.append("CONTABILIZADO");
+												}
+													refreshCell(buf.toString(),row);
+											}
+										}));
+								entryDialog.center();
+								entryDialog.show();
+							}
+	
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessageDialog msg = new AonMessageDialog();
+								msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
+									@Override
+									public void onAccept() {}
+								});
+							}
 						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessageDialog msg = new AonMessageDialog();
-							msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
-								@Override
-								public void onAccept() {}
-							});
-						}
-					});
+					);
 				}
 			});
 			accountEntry.getElement().getStyle().setMarginRight(5, Unit.PX);
 		}
 		
 		AonTableButton delete = null;
-		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.REJECTED) {
+		if (rawdoc.getStatus() == RawdocStatus.INBOX 
+			|| rawdoc.getStatus() == RawdocStatus.PENDING				
+			|| rawdoc.getStatus() == RawdocStatus.REJECTED) {
 			delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
 			delete.getElement().getStyle().setMarginRight(5, Unit.PX);
 			delete.addClickHandler(new ClickHandler() {
@@ -694,19 +697,20 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-								RAWDOC_SERVICE.toDraft(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-										, new AsyncCallback<Void>() {
-											
-											@Override
-											public void onSuccess(Void result) {
-												refreshCell("PAPELERA",row);
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {
-												showError(caught.getMessage());
-											}
-										});
+							RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Rawdoc>() {
+										
+									@Override
+									public void onSuccess(Rawdoc result) {
+										refreshCell("PAPELERA",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 					});
 				}
@@ -714,7 +718,7 @@ public class RawdocModule extends MainEntryPoint {
 		}
 		
 		AonTableButton reject = null;
-		if (rawdoc.getStatus() == RawdocStatus.INBOX) {
+		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PENDING) {
 			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(new ClickHandler() {
@@ -766,19 +770,20 @@ public class RawdocModule extends MainEntryPoint {
 							} else {
 								okButton.setEnabled(false);
 								toast.hide();
-								RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), reason.getValue()
-										, new AsyncCallback<Void>() {
+								RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason.getValue()
+									, new AsyncCallback<Rawdoc>() {
 									
-									@Override
-									public void onSuccess(Void result) {
-										refreshCell("RECHAZADA",row);
+										@Override
+										public void onSuccess(Rawdoc result) {
+											refreshCell("RECHAZADA",row);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											showError(caught.getMessage());
+										}
 									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										showError(caught.getMessage());
-									}
-								});
+								);
 							}
 						}
 					});
@@ -839,19 +844,20 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-							RAWDOC_SERVICE.toInbox(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-									, new AsyncCallback<Void>() {
-										
-										@Override
-										public void onSuccess(Void result) {
-											refreshCell("INBOX",row);
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											showError(caught.getMessage());
-										}
-									});
+							RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Rawdoc>() {
+									
+									@Override
+									public void onSuccess(Rawdoc result) {
+										refreshCell("INBOX",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 	
 						@Override
@@ -878,19 +884,19 @@ public class RawdocModule extends MainEntryPoint {
 	
 						@Override
 						public void onAccept() {
-							RAWDOC_SERVICE.delete(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-									, new AsyncCallback<Void>() {
-										
-										@Override
-										public void onSuccess(Void result) {
-											refreshCell("ELIMINADO",row);
-										}
-										
-										@Override
-										public void onFailure(Throwable caught) {
-											showError(caught.getMessage());
-										}
-									});
+							RAWDOC_SERVICE.delete(opt.getOccam(), rawdoc.getId()
+								, new AsyncCallback<Void>() {
+									@Override
+									public void onSuccess(Void result) {
+										refreshCell("ELIMINADO",row);
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showError(caught.getMessage());
+									}
+								}
+							);
 						}
 	
 						@Override

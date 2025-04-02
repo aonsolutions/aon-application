@@ -286,10 +286,17 @@ public class Enterprises extends ResizeComposite implements
 	}
 	
 	protected void onEnterpriseActivity(Activity activity, TreeItem enterpriseItem) {
-		for ( CCC ccc : activity.getCccs() ) {
+		activity.getCccs().stream()
+		.collect(Collectors.toMap(CCC::toString,  p -> p , (p,q) -> p))
+		.forEach( (str, ccc ) -> { 
 			LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
 			onEnterpriseCCC(activity, ccc, enterpriseItem);
-		}
+		});
+
+//		for ( CCC ccc : activity.getCccs() ) {
+//			LOGGER.info(activity.getDescription() + ", " + ccc.getGeozone() + " " + ccc.getCode());
+//			onEnterpriseCCC(activity, ccc, enterpriseItem);
+//		}
 	}
 	
 	protected void onEnterpriseCCC(Activity activity, CCC ccc, TreeItem enterpriseItem) {

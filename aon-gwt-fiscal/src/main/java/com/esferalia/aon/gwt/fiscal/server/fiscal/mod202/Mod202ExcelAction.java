@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -87,7 +86,6 @@ public class Mod202ExcelAction extends ModelIRPFExcelAction<Mod202,Mod202Key> {
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod202Key key) {
 		double amount = model.ensureDetail(key).getAmount();
 		style.setAlignment(HorizontalAlignment.LEFT);
-		cell.setCellType(CellType.STRING);
 		if (key == Mod202Key.P02) {
 			cell.setCellValue(model.getInitialDate() != null
 					?DATE_FORMAT.format(model.getInitialDate())

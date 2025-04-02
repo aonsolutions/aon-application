@@ -902,7 +902,7 @@ color: #5f6368;
 
 .aonTable tbody tr {
   cursor: pointer;
-  display: table;
+  display: table !important;
   width: 100%;
   height: 54px;
   font-size: 12px;
@@ -4303,7 +4303,8 @@ font-weight: 600;
   justify-content: center;
   gap: 3px;
   text-align: center;
-  padding: 8px;
+  padding-top: 5px;
+  padding-right: 3px;
   display: flex;
   border-radius: 5px;
   margin-bottom: 3px;
@@ -4352,6 +4353,7 @@ font-weight: 600;
 .aonInvoiceHomePendingIssuedDiv:hover{
   background-color: #f1f1f1;
 }
+
 
 .aonInvoiceHomePendingIssuedNumber {
   font-weight: bold;
@@ -4429,6 +4431,60 @@ font-weight: 600;
 }
 
 .aonInvoiceHomePendingTicketName {
+  font-weight: normal;
+  color: gray;
+  line-height: 21px;
+}
+
+.aonInvoiceHomeOptionDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 5px;
+  flex-wrap: wrap;
+  flex-basis: 33%;
+  flex-grow: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeOptionDiv:hover{
+  background-color: #f1f1f1;
+}
+
+
+.aonInvoiceHomeProcessingDiv {
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px;
+  flex: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  background-color: transparent;
+}
+
+.aonInvoiceHomeProcessingDiv:hover {
+  background-color: #f1f1f1;
+}
+
+.aonInvoiceHomeProcessingNumber {
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 47px;
+  color: var(--aonGray);
+}
+
+.aonInvoiceHomeProcessingName {
   font-weight: normal;
   color: gray;
   line-height: 21px;
@@ -4729,3 +4785,7 @@ font-weight: 600;
     justify-content: center;
   }
 
+  table tr.no-hover:hover {
+    background-color: transparent !important;
+    cursor: default !important; 
+}

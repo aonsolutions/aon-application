@@ -36,6 +36,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -216,6 +217,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		COMPENSATION_CAUSE.getName(),
 		
 		BASE_PPE.getName(),
+		
+		MONTHLY.getName(),
 		
 	};
 	

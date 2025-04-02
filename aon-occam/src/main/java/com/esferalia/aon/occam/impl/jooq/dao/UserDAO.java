@@ -56,18 +56,17 @@ public class UserDAO {
 	}
 	
 	public static User get(CloseableAONContext ctx, com.esferalia.aon.occam.api.model.Domain domain, AonToken aonToken) {
-		// Como aqui puede llegar el primer dominio del schema, que no tiene que ser el del user
-		// Buscamos solo por auth o login por que estamos dentro del schema correcto y son datos que deberian ser unicos y no estar repetidos
-		
 		User user = ctx.getDslContext().select()
-				.from(USER)
-				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
-				.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
-				.where(USER.DOMAIN.eq(domain.getId()).or(DOMAIN.PARENT.eq(domain.getId())))
-				.and(USER.AUTH.eq(aonToken.getAuth()).or(USER.LOGIN.eq(aonToken.getUuid())))
-				.fetch()
-				.stream().map(new UserFiller()).findFirst().orElse(new User());
+			.from(USER)
+			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(USER.DOMAIN))
+			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(USER.REGISTRY))
+			.where(USER.DOMAIN.in(domain.getParentId() != null
+				? new Integer[]{domain.getId(), domain.getParentId()} 
+				: new Integer[] {domain.getId()}))
+			.and(USER.AUTH.eq(aonToken.getAuth()).or(USER.LOGIN.eq(aonToken.getUuid())))
+			.fetch()
+			.stream().map(new UserFiller()).findFirst().orElse(new User());
 		
 		user.setTaskHolders(TaskHolderDAO.getList(ctx, f -> f.getUserIdProperty().eq(user.getId())));
 		return user;

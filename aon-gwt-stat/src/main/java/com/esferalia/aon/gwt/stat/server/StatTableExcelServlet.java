@@ -5,14 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -35,6 +28,12 @@ import com.esferalia.aon.occam.api.model.stat.StatType;
 import com.esferalia.aon.occam.api.model.stat.invoice.InvoiceChartType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Stat Table Report (excel)", urlPatterns = { "/aon_gwt_stat/ms/StatTableExcel",
 																"/aon_gwt_aio/ms/StatTableExcel" })
@@ -109,7 +108,6 @@ public class StatTableExcelServlet extends HttpServlet {
 				cell = valueRow.createCell(colIdx);
 				cell.setCellValue(0.0);
 				cell.setCellStyle(decimalStyle);
-				cell.setCellType(CellType.NUMERIC);
 			}
 			double v = cell.getNumericCellValue() +  (value!=null?value:0.0);
 			cell.setCellValue(v);
@@ -122,7 +120,6 @@ public class StatTableExcelServlet extends HttpServlet {
 				int colIdx = colMap.get(colKey);
 				Cell cell = totalRow.createCell(colIdx);
 				cell.setCellStyle(totalCellStyle);
-				cell.setCellType(CellType.FORMULA);
 				CellReference ref = new CellReference(cell);
 				String[] parts = ref.getCellRefParts();  // Returns the three parts of the cell reference, the Sheet name (or null if none supplied), 
 														 // the 1 based row number, and the A based column letter. This will not include any markers 
@@ -138,7 +135,6 @@ public class StatTableExcelServlet extends HttpServlet {
 					Row curRow = sheet.getRow(i);
 					Cell percentCell = curRow.createCell(colIdx+1);
 					percentCell.setCellStyle(percentStyle);
-					percentCell.setCellType(CellType.FORMULA);
 					String percentFormula =  colId + (i+1) + "/" + totalRef;
 					percentCell.setCellFormula(percentFormula);
 					CellValue percentValue = evaluator.evaluate(percentCell);

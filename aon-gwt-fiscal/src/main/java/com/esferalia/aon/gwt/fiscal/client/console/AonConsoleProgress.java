@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessage;
 import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType;
+import com.esferalia.aon.occam.api.model.console.ConsoleDomainMessageType.ConsoleDomainMessageTypeVisitor;
 import com.esferalia.aon.occam.api.model.console.ConsoleMessageType.Visitor;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -193,70 +194,97 @@ class AonConsoleProgress extends DockLayoutPanel {
 				@Override
 				public void visitConsoleMessage() {
 					if (!gridDisabled) {
+						
 						if (message.getConsoleDomainMessage() != null) {
 							JsConsoleDomainMessage domainMessage = message.getConsoleDomainMessage();
-							if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
-								grid.setVisible(true);
-								FlowPanel buttons = new FlowPanel();
+							domainMessage.getType().visit( new ConsoleDomainMessageTypeVisitor<Void>() {
 
-								if (AonConsoleProgress.this.advancedMode) {
-									AonTableButton deleteButton = new AonTableButton("Borrar fila", AON.CSS.aonIconDelete());
-									deleteButton.addClickHandler( event -> {
-										deleteButton.setEnabled(false);
-										ConsoleModule.CONSOLE_SERVICE.delete(getConsoleTableRow(domainMessage), new VisitorCallback(buttons,deleteButton));
-									});
-									buttons.add(deleteButton);
+								@Override
+								public Void visitIntegrity() {
+									if (domainMessage.getType() == ConsoleDomainMessageType.INTEGRITY) {
+										grid.setVisible(true);
+										FlowPanel buttons = new FlowPanel();
+
+										if (AonConsoleProgress.this.advancedMode) {
+											AonTableButton deleteButton = new AonTableButton("Borrar fila", AON.CSS.aonIconDelete());
+											deleteButton.addClickHandler( event -> {
+												deleteButton.setEnabled(false);
+												ConsoleModule.CONSOLE_SERVICE.delete(getConsoleTableRow(domainMessage), new VisitorCallback(buttons,deleteButton));
+											});
+											buttons.add(deleteButton);
+										}
+										
+										FlowPanel idPanel = new FlowPanel();
+										idPanel.setStyleName(AON.CSS.aonNowrap());
+										idPanel.addStyleName(AON.CSS.aonDisplayFlex());
+										InlineLabel idLabel = new InlineLabel( ""+domainMessage.getPkId());
+										idLabel.addStyleName(AON.CSS.aonFlexGrow1());
+										idPanel.add( idLabel);
+										if (AonConsoleProgress.this.advancedMode) {
+											AonTableButton idSearch = new AonTableButton("Ver/Modificar Fila", AON.CSS.aonIconSwap() );
+											idSearch.addClickHandler(e -> showPkRow(domainMessage));
+											idPanel.add( idSearch );
+										}
+										
+										FlowPanel fkPanel = new FlowPanel();
+										fkPanel.setStyleName(AON.CSS.aonNowrap());
+										fkPanel.addStyleName(AON.CSS.aonDisplayFlex());
+										InlineLabel fkLabel = new InlineLabel( ""+domainMessage.getFkId());
+										fkLabel.addStyleName(AON.CSS.aonFlexGrow1());
+										fkPanel.add( fkLabel);
+										if (AonConsoleProgress.this.advancedMode) {
+											AonTableButton fkChange = new AonTableButton("Ver/Modificar datos", AON.CSS.aonIconSwap() );
+											fkChange.addClickHandler(e -> showFkRow(domainMessage));
+											fkPanel.add( fkChange );
+										}
+										
+										grid.addRow()
+											.addCell(new Label("Integridad"))
+											.addCell(buttons)
+											.addCell(new Label(domainMessage.getTable()))
+											.addCell(idPanel)
+											.addCell(new Label(domainMessage.getFkColumn()))
+											.addCell(new Label(domainMessage.getFkTable()))
+											.addCell(fkPanel)
+											.addCell(new Label(""+domainMessage.getWrongDomainId()))
+											.addCell(new Label(domainMessage.getMessage()))
+										;
+										gridCount++;
+						 				if (gridCount >= 500) {
+												gridDisabled = true;
+												Label messageLabel = new Label("Solo se muestran 500 mensajes");
+												messageLabel.setStyleName(AON.CSS.aonColorRed());
+												messageLabel.addStyleName(AON.CSS.aonBold());
+												bottomContainer.add(messageLabel);
+										}
+									}
+									return null;
 								}
-								
-								FlowPanel idPanel = new FlowPanel();
-								idPanel.setStyleName(AON.CSS.aonNowrap());
-								idPanel.addStyleName(AON.CSS.aonDisplayFlex());
-								InlineLabel idLabel = new InlineLabel( ""+domainMessage.getPkId());
-								idLabel.addStyleName(AON.CSS.aonFlexGrow1());
-								idPanel.add( idLabel);
-								if (AonConsoleProgress.this.advancedMode) {
-									AonTableButton idSearch = new AonTableButton("Ver/Modificar Fila", AON.CSS.aonIconSwap() );
-									idSearch.addClickHandler(e -> showPkRow(domainMessage));
-									idPanel.add( idSearch );
+
+								@Override
+								public Void visitScopeIntegrity() {
+									return visitCommon();
 								}
-								
-								FlowPanel fkPanel = new FlowPanel();
-								fkPanel.setStyleName(AON.CSS.aonNowrap());
-								fkPanel.addStyleName(AON.CSS.aonDisplayFlex());
-								InlineLabel fkLabel = new InlineLabel( ""+domainMessage.getFkId());
-								fkLabel.addStyleName(AON.CSS.aonFlexGrow1());
-								fkPanel.add( fkLabel);
-								if (AonConsoleProgress.this.advancedMode) {
-									AonTableButton fkChange = new AonTableButton("Ver/Modificar datos", AON.CSS.aonIconSwap() );
-									fkChange.addClickHandler(e -> showFkRow(domainMessage));
-									fkPanel.add( fkChange );
+
+								@Override
+								public Void visitProduct() {
+									return visitCommon();
 								}
-								
-								grid.addRow()
-									.addCell(new Label("Integridad"))
-									.addCell(buttons)
-									.addCell(new Label(domainMessage.getTable()))
-									.addCell(idPanel)
-									.addCell(new Label(domainMessage.getFkColumn()))
-									.addCell(new Label(domainMessage.getFkTable()))
-									.addCell(fkPanel)
-									.addCell(new Label(""+domainMessage.getWrongDomainId()))
-									.addCell(new Label(domainMessage.getMessage()))
-								;
-								gridCount++;
-			 				if (gridCount >= 500) {
-									gridDisabled = true;
-									Label messageLabel = new Label("Solo se muestran 500 mensajes");
+
+								@Override
+								public Void visitAgreement() {
+									return visitCommon();
+								}
+
+								private Void visitCommon() {
+									Label messageLabel = new Label(message.getMessage());
 									messageLabel.setStyleName(AON.CSS.aonColorRed());
 									messageLabel.addStyleName(AON.CSS.aonBold());
 									bottomContainer.add(messageLabel);
+									return null;
 								}
-							}
+							});
 						} else { 
-							Label messageLabel = new Label(message.getMessage());
-							messageLabel.setStyleName(AON.CSS.aonColorRed());
-							messageLabel.addStyleName(AON.CSS.aonBold());
-							bottomContainer.add(messageLabel);
 						}
 					}
 				}

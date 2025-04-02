@@ -2942,6 +2942,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
 						};
+						
+						protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {};
 					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
@@ -3011,6 +3013,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 							return TaxCalculator.getTaxCalculator(ctx);
 						};
+						
+						protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {};
 					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
@@ -3967,11 +3971,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object br(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
-		switch (leaveType) {
-		case MATERNITY, PATERNITY: {
-			return br(add(date, Calendar.MONTH, -1));
-		}
-		default:
+		if ( leaveType == LeaveType.MATERNITY ||
+				leaveType == LeaveType.PATERNITY ) {
+			return this.br(add(date, Calendar.MONTH, -1));
+		} else if ( isPartialTime() && Period.compare(date,getVariable(BOE_A_2024_26917_START, Date.class)) > 0 ) {
+			return this.br(add(date, Calendar.MONTH, -1));
+		} else {
 			return this.br(date);
 		}
 	}
@@ -4156,6 +4161,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 					return TaxCalculator.getTaxCalculator(ctx);
 				};
+				
+				protected void fillData(IContractSalaryCalculatorContext ctx) throws SalaryException {
+					
+				};
 
 			}.calculate(ctx);
 
@@ -4193,6 +4202,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		return br / count;
+	}
+
+	protected boolean isPartialTime() {
+		try {
+			return !isFullTime();
+		} catch (Throwable t) {
+			return false;
+		}
 	}
 
 	protected boolean isFullTime() {
@@ -4554,6 +4571,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.implicitExpressionContext.putVariable(BONUS_DAYS, bonusDays);
 
+		if (!this.implicitExpressionContext.containsVariable(MONTHLY, startDate, getEnd())) {
+			this.implicitExpressionContext.putVariable(MONTHLY, new LazyTimedConstant<Boolean>() {
+				@Override
+				public Boolean create() {
+					return isMonthly();
+				}
+			});
+		}
+
 		this.implicitExpressionContext.putVariable(INDEFINITE, new LazyTimedConstant<Boolean>() {
 			@Override
 			public Boolean create() {
@@ -4717,6 +4743,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.implicitExpressionContext.setVariable(SENIORITY_START,
 				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
 
+
 		agreementCtx.getVariables(SENIORITY_START.getName(), startDate, getEnd()).forEach(v -> {
 			try {
 				implicitExpressionContext.addExpression(((IExpressionVariable) v).getExpression(), startDate, getEnd());
@@ -4728,6 +4755,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.contractExpressionContext.setVariable(CONTEXT, contractExpressionContext, startDate, getEnd());
 		this.contractExpressionContext.setVariable(SELF, this, startDate, null);
+
+		loadExpression(this.contractExpressionContext, BOE_A_2024_26917_START.getName(), "FECHA(2025,4,1)", this.startDate, this.getEnd());
 
 		// TODO: at implicitExpressionContext ?
 		loadExpression(this.contractExpressionContext, BR, "def(x){ SELF.br(x)};", this.startDate, this.getEnd());

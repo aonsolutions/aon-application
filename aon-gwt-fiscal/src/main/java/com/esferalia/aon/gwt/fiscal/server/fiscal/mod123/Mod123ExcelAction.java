@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod123;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import com.esferalia.aon.gwt.fiscal.server.ModelIRPFExcelAction;
@@ -33,7 +32,6 @@ public class Mod123ExcelAction extends ModelIRPFExcelAction<Mod123,Mod123Key> {
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod123Key key) {
 		double amount = model.ensureDetail(key).getAmount();
 		style.setAlignment(HorizontalAlignment.LEFT);
-		cell.setCellType(CellType.STRING);
 		if (key == Mod123Key.AR_907 || key == Mod123Key.AR_930) {
 			cell.setCellValue(amount == 1?"SI":"NO");
 		} else if (key == Mod123Key.AR_908) {

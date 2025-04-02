@@ -14,22 +14,17 @@ public interface RawdocServiceAsync {
 
 	// --------------------------------------------------------------- INVOICE SERIES
 	void getRawdocs(Occam occam, RawdocParams params, int offset, int limit,AsyncCallback<LinkedList<Rawdoc>> callback);
-	void parse(Occam occam, Integer id, AsyncCallback<TediResult> asyncCallback);
 	void delete(Occam occam, Integer rawdocId, AsyncCallback<Void> callback);
-	void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Void> callback);
-	void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Void> callback);
-	void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Void> callback);
 	
-	void getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset, int limit,AsyncCallback<LinkedList<Rawdoc>> callback);
-	void parse(String domainName, int domain, String user, Integer id, AsyncCallback<TediResult> asyncCallback);
-	void delete(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback);
-	void toDraft(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback);
-	void toRejected(String domainName, int domain, String user, Integer rawdocId, String reason, AsyncCallback<Void> callback);
-	void toInbox(String domainName, int domain, String user, Integer rawdocId, AsyncCallback<Void> callback);
-
+	void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
+	void toRejected(Occam occam, Integer rawdocId, String reason, AsyncCallback<Rawdoc> callback);
+	void toInbox(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback);
+	
+	void parse(Occam occam, Integer id, AsyncCallback<TediResult> asyncCallback);
+	
+	// --------------------------------------------------------------- PENDING 
 	void getAccountingInvoice(String domainName, int domain, String user, String invoice,AsyncCallback<AccountingInvoice> callback);
 	void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice,AsyncCallback<Boolean> callback);
-
 	void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback);
 
 }

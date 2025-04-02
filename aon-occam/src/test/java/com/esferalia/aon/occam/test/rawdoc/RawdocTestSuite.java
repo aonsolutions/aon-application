@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	RawdocValidationTest.class,
+	RawdocDAOTest.class,
 })
 public class RawdocTestSuite {
 

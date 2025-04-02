@@ -8,7 +8,6 @@ import java.util.Date;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -20,9 +19,9 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -129,7 +128,6 @@ public abstract class AbsExcelAction  {
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
@@ -138,7 +136,6 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value.toString());
 		}
-		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
@@ -148,7 +145,6 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value);
 		}
-		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 	
@@ -158,7 +154,6 @@ public abstract class AbsExcelAction  {
 		if ( value != null ) {
 			cell.setCellValue(value);
 		}
-		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 
@@ -175,26 +170,18 @@ public abstract class AbsExcelAction  {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellStyle(decimalStyle);
 		cell.setCellValue(number!=null?number:0.0);
-		cell.setCellType(CellType.NUMERIC);
 		return cell;
 	}
 
 	protected Cell addCell(boolean bool) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(bool?"SI":"NO");
-		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);
-		
-		// Note that SXSSF allocates temporary files that you 
-		// must always clean up explicitly, by calling the dispose method.
-		//
-		// http://poi.apache.org/spreadsheet/how-to.html#sxssf
-		//
-		workbook.dispose();
+		workbook.close();
 	}
 
 	protected abstract void headerRow();

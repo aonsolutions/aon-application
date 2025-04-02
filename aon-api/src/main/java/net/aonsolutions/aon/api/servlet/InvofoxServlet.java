@@ -269,15 +269,17 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	private static RawdocStatus getRawdocStatus(String status) {
-		Optional<OCRSeverity> ocrSeverity = OCRSeverity.safeValueOf(status);
-		if(ocrSeverity.isPresent() && (
-				OCRSeverity.pendingDecission.equals(ocrSeverity.get())
-				|| OCRSeverity.rejected.equals(ocrSeverity.get()))) {
-			return RawdocStatus.REJECTED;
-		} else if(ocrSeverity.isPresent() && OCRSeverity.discarded.equals(ocrSeverity.get())) {
-			return RawdocStatus.DRAFT;
-		}
-		return RawdocStatus.INBOX;
+//		Optional<OCRSeverity> ocrSeverity = OCRSeverity.safeValueOf(status);
+//		if(ocrSeverity.isPresent() && (
+//				OCRSeverity.pendingDecission.equals(ocrSeverity.get())
+//				|| OCRSeverity.rejected.equals(ocrSeverity.get()))) {
+//			return RawdocStatus.REJECTED;
+//		} else if(ocrSeverity.isPresent() && OCRSeverity.discarded.equals(ocrSeverity.get())) {
+//			return RawdocStatus.DRAFT;
+//		}
+//		return RawdocStatus.INBOX;
+		// TODO VA A PENDIENTE PARA QUE EL USUARIO (SIN OCR) NO SEPA QUE PASE EL OCR. REVISAR EN EL FUTURO.
+		return RawdocStatus.PENDING;
 	}
 	
 	private static String getS3Key(JSONObject json) {
