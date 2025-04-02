@@ -15,6 +15,10 @@ import { AonUploadToast } from "../../components/aon-upload-toast.js";
 import { generateJobId } from "./InvoiceUtils.js";
 import { AonTrial } from "./aon-trial.js";
 import { AonDashboardSalesPurchases } from "../accounting/aon-dashboard-sales-purchases.js";
+import { AonIncome } from "./aon-income.js";
+import { Income } from "./Income.js";
+import { AonExpense } from "./aon-expense.js";
+import { Expense } from "./Expense.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
 export class AonInvoiceHome extends AonElement {
@@ -31,6 +35,8 @@ export class AonInvoiceHome extends AonElement {
     NEW_ISSUED_INVOICE;
     NEW_RECEIVED_INVOICE;
     NEW_TICKET_INVOICE;
+	NEW_INCOME;
+	NEW_EXPENSE;
 
 
     get id() {
@@ -58,6 +64,8 @@ export class AonInvoiceHome extends AonElement {
         this.NEW_ISSUED_INVOICE = this.id + 'NewIssuedInvoice';
         this.NEW_RECEIVED_INVOICE = this.id + 'NewReceivedInvoice';
         this.NEW_TICKET_INVOICE = this.id + 'NewTicketInvoice';
+		this.NEW_INCOME = this.id = "NewIncome";
+		this.NEW_EXPENSE = this.id = "NewExpense";
 		this.CHARGE_AND_PAYMENTS = this.id + 'ChargeAndPayments';
 		this.INVOICE_RESUME = this.id + 'InvoiceResume';
     }
@@ -128,6 +136,24 @@ export class AonInvoiceHome extends AonElement {
 			this.aonInvoice('ticket');
 		});
 		fastPanel.appendChild(newTicket);
+
+		let newIncome = new AonDashboardButton();
+		newIncome.setId(this.NEW_INCOME);
+		newIncome.setIcon('add_card');
+		newIncome.setMessage("Nuevo Ingreso");
+		newIncome.addEventListener(EVENT.CLICK, () => {
+			this.getApplication().setContent(new AonIncome(new Income()));
+		});
+		fastPanel.appendChild(newIncome);
+
+		let newExpense = new AonDashboardButton();
+		newExpense.setId(this.NEW_EXPENSE);
+		newExpense.setIcon(MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET);
+		newExpense.setMessage("Nuevo Gasto");
+		newExpense.addEventListener(EVENT.CLICK, () => {
+			this.getApplication().setContent(new AonExpense(new Expense()));
+		});
+		fastPanel.appendChild(newExpense);
     }
 
 	buildCardPanel(dashboard) {

@@ -298,7 +298,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
     icon: MATERIAL_ICONS.GROUP,
-    fn: () => alert("EN DESARROLLO")
+    fn: () => alert("EN DESARROLLO. Use temporalmente la opción de otros gastos.")
   }
 
   // MAIN OPTION
