@@ -556,6 +556,7 @@ public class JooqAgreementTab {
 						update.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
 					
 					update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
+						.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain()).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
 						.execute();
 				}
 				
@@ -596,6 +597,7 @@ public class JooqAgreementTab {
 							update.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
 						
 						update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
+							.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain() ).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
 							.execute();
 				}
 			
