@@ -507,7 +507,8 @@ class Model303CANARIAS2025 extends Model303Base {
 
 					@Override
 					public String getDownloadFileAction() {
-						return "/aon_gwt_fiscal/ms/Model420File";
+//						return "/aon_gwt_fiscal/ms/Model420File";
+						return null;
 					}
 
 					@Override

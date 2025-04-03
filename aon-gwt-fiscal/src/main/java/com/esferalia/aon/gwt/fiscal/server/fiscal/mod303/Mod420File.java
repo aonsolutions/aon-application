@@ -2,16 +2,12 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
-
-import org.grecasa.ext.pa.mod420.MIModelo420;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 import jakarta.servlet.ServletException;
@@ -47,10 +43,11 @@ public class Mod420File extends HttpServlet {
 			System.out.println("PASO 2. xml="+xml);
 			
 			// FALTA - Pasarlo al modulo de impresión para obtener el fichero para la presentación telemática o carga en programa de ayuda
-			String resultado = obtenerPresentacion(xml);
-			if (resultado == null) {
-				throw new AonCoreException("RESULTADO ES NULO");				
-			}
+			String resultado = xml; // PARA PROBAR A DESCARGAR EL XML
+//			String resultado = obtenerPresentacion(xml);
+//			if (resultado == null) {
+//				throw new AonCoreException("RESULTADO ES NULO");				
+//			}
 			
 			System.out.println("PASO 3. resultado="+resultado);
 			
@@ -82,36 +79,36 @@ public class Mod420File extends HttpServlet {
 		return fileXML;
 	}
 	
-	private static String obtenerPresentacion(String declaracion) {
-		if (declaracion==null)
-			return null;
-		String resultado = null;
-		try {
-			System.out.println("PASO 2.1");
- //			Path prueba = Files.createTempDirectory("Temp");
- //			String path = prueba.toString();
-			String path = "C:\\TEMP";
-			System.out.println("PASO 2.2. path="+path);
-			MIModelo420 miModelo420 = new MIModelo420(path);
-			System.out.println("PASO 2.3");
-			resultado = miModelo420.getFicheroPresentacion(declaracion);
-			System.out.println("PASO 2.4. resultado="+resultado);
-			if (resultado == null)
-				mostrarMensajes(miModelo420.getMensajes());
-		} catch (Exception e) {
-			e.printStackTrace();			
-			throw new AonCoreException(e);
-		}
-		return resultado;
-	}
-	
-	private static void mostrarMensajes(List<String> mensajes) {
-		if (mensajes != null && mensajes.size() > 0) {
-			System.out.println("Nº mensajes error: " + mensajes.size());
-			for (String m : mensajes)
-				System.out.println("" + m);
-		}
-	}
+//	private static String obtenerPresentacion(String declaracion) {
+//		if (declaracion==null)
+//			return null;
+//		String resultado = null;
+//		try {
+//			System.out.println("PASO 2.1");
+// //			Path prueba = Files.createTempDirectory("Temp");
+// //			String path = prueba.toString();
+//			String path = "C:\\TEMP";
+//			System.out.println("PASO 2.2. path="+path);
+//			MIModelo420 miModelo420 = new MIModelo420(path);
+//			System.out.println("PASO 2.3");
+//			resultado = miModelo420.getFicheroPresentacion(declaracion);
+//			System.out.println("PASO 2.4. resultado="+resultado);
+//			if (resultado == null)
+//				mostrarMensajes(miModelo420.getMensajes());
+//		} catch (Exception e) {
+//			e.printStackTrace();			
+//			throw new AonCoreException(e);
+//		}
+//		return resultado;
+//	}
+//	
+//	private static void mostrarMensajes(List<String> mensajes) {
+//		if (mensajes != null && mensajes.size() > 0) {
+//			System.out.println("Nº mensajes error: " + mensajes.size());
+//			for (String m : mensajes)
+//				System.out.println("" + m);
+//		}
+//	}
 	
 //	public static void main(String[] args) {
 //		
