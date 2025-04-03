@@ -1131,6 +1131,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	-------------------------------------------------- CANARIAS (Modelos 420/417) ---- 
 	// 	----------------------------------------------------------------------------------
+	,CA_X00("303-CAX00",false,null,"C\u00F3digo de municipio")                                                                                     // Código de municipio
 	,CA_X01("303-CAX01",false,null,"Autoliquidaci\u00F3n conjunta")                                                                           // Autoliquidación conjunta (solo modelo 420)                                                       
 	,CA_X02("303-CAX02",false,null,"Ha optado por el r\u00E9gimen especial del criterio de caja")                                             // Ha optado por el régimen especial del criterio de caja                                           
 	,CA_X03("303-CAX03",false,null,"Ha sido destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja")  // Ha sido destinatario de operaciones a las que se aplique el régimen especial del criterio de caja

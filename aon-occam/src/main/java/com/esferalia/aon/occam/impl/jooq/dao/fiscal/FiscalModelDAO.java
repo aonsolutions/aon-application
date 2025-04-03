@@ -561,6 +561,9 @@ public class FiscalModelDAO {
 			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
 			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
+			if (fm.getModel() == FiscalModelType.M303 && fm.isCanarias()) {
+				fm.setTownCode(AonStringUtils.defaultIfBlank(enterprise.getTown(), "00000"));
+			}
 			fm.setPhone(enterprise.getPhone() );
 		}
 		fm.setContactPerson( conf.fiscal().getContactPerson() );

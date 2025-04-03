@@ -332,7 +332,7 @@ public class Mod420ToDEC {
 //			<xs:documentation>Código de municipio</xs:documentation>
 //		</xs:annotation>
 //	</xs:attribute>
-		// FALTA - NO TENGO EL CODIGO DE MUNICIPIO EN ESTOS MOMENTOS EN EL MODELO 303
+		dp.setCMU(mod.getTownCode());
 //	<xs:attribute name="CP" use="required">
 //		<xs:annotation>
 //			<xs:documentation>
