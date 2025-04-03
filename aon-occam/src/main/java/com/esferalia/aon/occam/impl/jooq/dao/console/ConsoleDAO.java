@@ -4,9 +4,13 @@ import static com.esferalia.aon.jooq.AonMaster.AON_MASTER;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.watson.j2html.TagCreator.div;
+import static com.esferalia.aon.watson.j2html.TagCreator.li;
+import static com.esferalia.aon.watson.j2html.TagCreator.ul;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -19,6 +23,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Named;
+import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Schema;
@@ -27,6 +32,7 @@ import org.jooq.TableField;
 import org.jooq.UpdateConditionStep;
 import org.jooq.UpdateSetFirstStep;
 import org.jooq.UpdateSetMoreStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
@@ -50,6 +56,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.ql.JOOQRenderer;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.j2html.tags.specialized.UlTag;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -68,6 +75,9 @@ public class ConsoleDAO {
 	private static final String SYS = "sys";
 	private static final String PERFORMANCE_SCHEMA = "performance_schema";
 	private static final String DOMAINEXTRACT_SCHEMA = "domainextract-aonsolutions-net";
+	
+	private static final String DOMAIN_LABEL = "domain";
+	private static final String SCOPE_LABEL = "scope";
 	
 	private ConsoleDAO() {
 	}
@@ -516,6 +526,64 @@ public class ConsoleDAO {
 			return update.setNull(field);	
 		}
 	    return update.set(field, field.getType().cast(value));
+	}
+
+	public static String updateScopes(AONContext ctx, Integer domainId, Integer wrongScopeId, Integer newScopeId) {
+		List<String> messages = new LinkedList<>();  
+		ctx.getDslContext()
+			.meta()
+			.getTables()
+			.stream()
+			.filter(Objects::nonNull )
+			.filter(t -> !DOMAIN.getName().equals(t.getName()))
+			.filter(t ->  AonCollectionUtils.stream(t.fields()).anyMatch( f -> SCOPE_LABEL.equals(f.getName()) ) )
+			.filter(t -> ctx.getDslContext().selectOne()
+							.from( t )
+							.where( getDomainField(t).eq(domainId) )
+							.and(getScopeField(t).eq(wrongScopeId))
+							.limit(1)
+							.fetch()
+							.stream()
+							.findFirst()
+							.isPresent()
+			)
+			.forEach( t -> {
+				
+				System.out.println( 
+						
+						ctx.getDslContext()
+						.update( t )
+						.set( getScopeField(t), newScopeId )
+						.where( getDomainField(t).eq(domainId) )
+						.and(getScopeField(t).eq(wrongScopeId))
+						.getSQL( ParamType.INLINED ) 
+						
+						);
+				int count = ctx.getDslContext()
+					.update( t )
+					.set( getScopeField(t), newScopeId )
+					.where( getDomainField(t).eq(domainId) )
+					.and(getScopeField(t).eq(wrongScopeId))
+					.execute();
+				if (count > 0 ) {
+					messages.add( MessageFormat.format( "Modificadas {0} filas de la tabla {1}", count, t.getName())); 
+				}
+			});
+		if ( AonCollectionUtils.isEmpty(messages)) {
+			return div( "No se ha modificado ninguna fila" ).render();
+		}
+		UlTag ul = ul();
+		AonCollectionUtils.stream(messages)
+			.forEach( m -> ul.with( li(m) ));
+		return ul.render();
 	}	
 	
+	@SuppressWarnings("unchecked")
+	private static <T extends Record> Field<Integer> getScopeField(Table<T> table) {
+		return (TableField<T, Integer>) table.field(SCOPE_LABEL);
+	}
+	@SuppressWarnings("unchecked")
+	private static <T extends Record> Field<Integer> getDomainField(Table<T> table) {
+		return (TableField<T, Integer>) table.field(DOMAIN_LABEL);
+	}
 }

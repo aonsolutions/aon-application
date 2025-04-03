@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class AonMessageDialog extends AonCustomDialog {
     
@@ -38,13 +39,15 @@ public class AonMessageDialog extends AonCustomDialog {
     public void show(String msg, final AonMessageDialogCallback callback) {
     	show("", msg, callback);
     }
-    
-	public void show(String header,String msg, final AonMessageDialogCallback callback) {
-    	setCaption(header);
-    	FlowPanel panel = new FlowPanel();
+    public void show(String header,String msg, final AonMessageDialogCallback callback) {
     	Label label = new Label(msg);
     	label.setStyleName(AON.CSS.aonConfirmDialogMsg());
-    	panel.add(label);
+    	show(header, label, callback);
+    }
+	public void show(String header,Widget msgWidget, final AonMessageDialogCallback callback) {
+    	setCaption(header);
+    	FlowPanel panel = new FlowPanel();
+    	panel.add(msgWidget);
     	FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
     	buttons.addStyleName(AON.CSS.aonMarginBottom());
@@ -99,6 +102,12 @@ public class AonMessageDialog extends AonCustomDialog {
 	}
 	public static void error(String msg,final AonMessageDialogCallback callback) {
 		_show(AON.MSG.error(),msg,callback);
+	}
+	public static void info(String msg) {
+		_show(AON.MSG.information(),msg,null);
+	}
+	public static void info(String msg,final AonMessageDialogCallback callback) {
+		_show(AON.MSG.information(),msg,callback);
 	}
 	public static void warning (final String msg) {
 		_show(AON.MSG.warning(),msg,null);

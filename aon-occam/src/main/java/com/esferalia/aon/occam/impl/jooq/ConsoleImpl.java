@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.jooq.Named;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -16,12 +18,14 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainCustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.console.ConsoleDAO;
 
 public class ConsoleImpl implements IConsole {
@@ -135,5 +139,14 @@ public class ConsoleImpl implements IConsole {
 	public Stream<DomainCompany> areDomainsSync(AONContext ctx, DomainFilter filter) {
 		return DomainCustomerDAO.areDomainsSync(ctx, filter);
 	}
+
+	@Override
+	public Stream<Scope> getScopes(AONContext ctx, Integer domainId) {
+		return SecurityDAO.getScopeStream( ctx, domainId);
+	}
 	
+	@Override
+	public String updateScopes(AONContext ctx, Integer domainId, Integer wrongScopeId, Integer newScopeId) {
+		return ConsoleDAO.updateScopes(ctx, domainId, wrongScopeId, newScopeId);
+	}	
 }
