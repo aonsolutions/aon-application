@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
@@ -245,6 +246,18 @@ public class CONSOLE {
 	public static void deleteDomainLink(Domain domain, User user, DomainLinked domainLinked) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getConsole().deleteDomainLink(ctx, domainLinked);
+		}
+	}
+
+	public static Stream<Scope> getScopes(String schema, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			return getConsole().getScopes(ctx,domainId);
+		}
+	}
+
+	public static String updateScopes(String schema, Integer domainId, Integer wrongScopeId, Integer newScopeId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+			return getConsole().updateScopes(ctx,domainId, wrongScopeId, newScopeId);
 		}
 	}
 

@@ -818,6 +818,12 @@ public class SecurityDAO {
 			;
 	}
 
+	public static Stream<Scope> getScopeStream(AONContext ctx, Integer domainId){
+		return ctx.getDslContext().select().from(SCOPE)
+				.where(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx,domainId)))
+				.fetch().stream().map(new ScopeFiller());
+	}
+
 	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE_PROPERTIES.getConditions(filter))
