@@ -138,6 +138,10 @@ export class AonDocumental extends AonElement {
 			this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
 		}
 
+		if(!this.getDur().isDocumentalPortal() && !this.getDur().isDocumentalManager()){
+			this.addDocumentOptions();
+		}
+		
 		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
 			this.addDocumentOptions();
 		this.addTypeOptions();
@@ -172,6 +176,10 @@ export class AonDocumental extends AonElement {
         if (this.isBetaDoc()) {
           // Marcamos la primera opcion
         aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
+		let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
+		aonDocumental.addSidenavOptions3(data2);
+		let data3 = DocumentalSidenav.USER_CATEGORIES;
+		aonDocumental.addSidenavOptions3(data3);
         }
 	}
 
@@ -247,18 +255,30 @@ export class AonDocumental extends AonElement {
 				});
 				let application = this.getApplication();
 				categories.forEach(item => {
-					let option = {
-						name: item.name,
-						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
-						fn: () => {
-							this._filter.tag = undefined;
-							this._filter.category = item.id;
-							this.aonDocumentalList();
-						}
-					};
+					if(item.is_deletable == 0){
+						let optionDefaultCategory = {
+							name: item.name,
+							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
+					}else{
+						let optionUserCategories = {
+							name: item.name,
+							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
+					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
-					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
-					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
 				});
 			});
 		} else {
@@ -560,6 +580,16 @@ export class AonDocumental extends AonElement {
 				if (datePickerElement && datePickerElement.getValue() !== null) {
 					let date = datePickerElement.getValue();
 					data.date = date;
+				}
+
+				let scopeElement = document.getElementById("aonDocumentalUploadScope");
+				if (scopeElement && scopeElement.value !== null) {
+					let scope = scopeElement.value;
+					data.scope = scope;
+				}
+				//usar security level?
+				if(document.getElementById("visibleEmpleadoCheckbox") && document.getElementById("visibleEmpleadoCheckbox").checked){
+					data.type = 1;
 				}
 
 				let uploadToast = this.getElement('aonUploadToast');

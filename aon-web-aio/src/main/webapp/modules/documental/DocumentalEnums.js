@@ -19,19 +19,13 @@ export const DocumentalSidenav = {
   },
   DEFAULT_CATEGORIES: {
     id: 'DefaultCategories',
-    name: 'Categorias por defecto',
-    // name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
-    app: Apps.DOCUMENTAL
-  },
-  DEFAULT_SUB_CATEGORIES: {
-    id: 'DefaultSubCategories',
-    name: 'Subcategorias por defecto',
-    // name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
+    // name: 'Categorias por defecto',
+    name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
   USER_CATEGORIES: {
     id: 'UserCategories',
-    name: 'Categorias del usuario',
+    name: MSG.USER_CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
   TAGS: {
