@@ -500,15 +500,29 @@ function S3DocumentalSelects(dur) {
     selCat.title = MSG.CATEGORY;
 
      if(!oldCategories){
+        let defaultOption = {
+            value: "Seleccione una categoria",
+            name: "Seleccione una categoria",
+            id: "Seleccione una categoria",    
+            is_deletable: 0 ,
+        }
         let data = { parent: null};
         getS3Category(data).then(categories => {
         if (categories.length > 0 ) {
+            categories.unshift(defaultOption);
             selCat.options = JSON.stringify(categories.filter(c => c.is_deletable === 0).map(c => {
                 return {
                     value: c.id,
                     name: c.name
                 };
             }));
+            selCat.value = categories.filter(c => c.is_deletable === 0)[0].id; 
+            selCat.options = JSON.stringify(categories.filter(c => c.id !== 'Seleccione una categoria' && c.is_deletable === 0).map(c => {
+            return {
+                value: c.id,
+                name: c.name,
+            };
+        }));
             loadingOverlay.style.display = 'none';
             uploadedCategory(selCat, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay);
         } else {
