@@ -162,6 +162,14 @@ public interface IFiscalModel extends Serializable {
 	
 	public default boolean isAeatRectification() {
 		return false;
-	}	
+	}
+	
+	// Para codigo de municipio, se usa solo en los modelos de IGIC Canarias (420/417)
+	public default String getTownCode() {
+		return "";
+	}
+	public default IFiscalModel setTownCode(String townCode) {
+		return this;
+	}
 	
 }

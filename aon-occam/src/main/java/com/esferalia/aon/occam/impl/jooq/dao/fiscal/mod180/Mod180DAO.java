@@ -463,7 +463,7 @@ public class Mod180DAO {
 		mod180.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL180.NAME
 				.getDataType().length()));
 		mod180.setYear(year);
-		mod180.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+		mod180.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY, true));
 		mod180.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),
 				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
 		mod180.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),

@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -38,6 +39,7 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 	private AonTextBox town;
 	private ProvinceListBox province;
 	private AonTextBox zip;
+	private AonTextBox townCode;
 
 	public AonFiscalModelIdentificationPanel(T model) {
 		setStyleName(AON.CSS.aonScrollArea());
@@ -138,6 +140,15 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		tab.addRow()
 			.addCell(new Label(AON.MSG.town()),AON.CSS.aonTableLabel())
 			.addCell(town);
+		
+		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+			townCode = new AonTextBox();
+			townCode.setVisibleLength(5);
+			townCode.setMaxLength(5);
+			tab.addRow()
+				.addCell(new Label(AON.MSG.townCode()),AON.CSS.aonTableLabel())
+				.addCell(townCode);
+		}
 
 		province = new ProvinceListBox();
 		tab.addRow()
@@ -274,6 +285,13 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 			model.setZip(zip.getValue());
 			ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
 		});
+		
+		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+			townCode.addValueChangeHandler(event -> {
+				model.setTownCode(townCode.getValue());
+				ValueChangeEvent.fire(AonFiscalModelIdentificationPanel.this, model);
+			});
+		}
 
 		populate(model);
 	}
@@ -312,7 +330,6 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		province.setSelectedIndex( Province.getByName(model.getProvince()).ordinal());
 		zip.setValue(model.getZip());
 		
-		
 		document.setEnabled(model.isEditable());
 		name.setEnabled(model.isEditable());
 		surname.setEnabled(model.isEditable());
@@ -330,7 +347,12 @@ public class AonFiscalModelIdentificationPanel<T extends FiscalModel> extends Sc
 		town.setEnabled(model.isEditable());
 		province.setEnabled(model.isEditable());
 		zip.setEnabled(model.isEditable());
+		
+		if (model.getModel() == FiscalModelType.M303 && model.isCanarias()) {
+			townCode.setValue(model.getTownCode());
+			townCode.setEnabled(model.isEditable());
+		}
+		
 	}
-
 	
 }
