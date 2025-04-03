@@ -95,14 +95,13 @@ export class AonCustomerSuggestion extends AonElement {
       additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
     };
     getCustomer(data).then(r => {
-      if(r.id) {
-        this.updateCustomer(customer);
+      if(r.id) { 
+        this.updateCustomer(r);
       } else {
         if(!this.customer) this.customer = {};
         this.customer.document = document;
+        this.dispatchEvent(new Event(EVENT.CHANGE));
       }
-      this.buildAddress();
-      this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     });
   }
 
@@ -110,7 +109,7 @@ export class AonCustomerSuggestion extends AonElement {
     if(!this.customer) this.customer = {};
     this.customer.name = name;
     this.buildAddress();
-    this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
+    this.dispatchEvent(new Event(EVENT.CHANGE));
   }
 
   onKeyupDocument(event, value) {
@@ -386,6 +385,7 @@ export class AonCustomerSuggestion extends AonElement {
 
   updateCustomer(registry) {
     if(registry) {
+      this.closeOptions();
       this.customer = registry;
       let docCountry = this.getElement(this.DOCUMENT_COUNTRY);
       if(docCountry) docCountry.value = registry.documentCountry;

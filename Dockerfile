@@ -18,25 +18,27 @@ COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
 COPY pool/target/pool-${AON_VERSION}.jar pool.jar
 
 
-ENV SLF4J_API_URL=https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.8.0-beta2/slf4j-api-1.8.0-beta2.jar
-ENV SLF4J_JDK14_URL=https://repo1.maven.org/maven2/org/slf4j/slf4j-jcl/1.7.25/slf4j-jcl-1.7.25.jar
-ENV C3P0_JDBC_URL=https://repo1.maven.org/maven2/com/mchange/c3p0/0.9.5.4/c3p0-0.9.5.4.jar
-ENV COMMONS_LANG_URL=https://repo1.maven.org/maven2/commons-lang/commons-lang/2.5/commons-lang-2.5.jar
+ENV SLF4J_API_URL=https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.1.0-alpha1/slf4j-api-2.1.0-alpha1.jar
+ENV SLF4J_JDK14_URL=https://repo1.maven.org/maven2/org/slf4j/slf4j-jcl/1.7.36/slf4j-jcl-1.7.36.jar
+ENV C3P0_JDBC_URL=https://repo1.maven.org/maven2/com/mchange/c3p0/0.11.0-pre2/c3p0-0.11.0-pre2.jar
+ENV COMMONS_LANG_URL=https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
 ENV COMMONS_DBUTILS_URL=https://repo1.maven.org/maven2/commons-dbutils/commons-dbutils/1.5/commons-dbutils-1.5.jar
+#ENV COMMONS_DBUTILS_URL=https://repo1.maven.org/maven2/commons-dbutils/commons-dbutils/1.8.1/commons-dbutils-1.8.1.jar
 ENV MYSQL_JDBC_URL=https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.13/mysql-connector-java-8.0.13.jar
-ENV MCHANGE_COMMONS_URL=https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar
-ENV COMMONS_LOGGING_URL=https://repo1.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
-ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
+#ENV MYSQL_JDBC_URL=https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.30/mysql-connector-java-8.0.30.jar
+ENV MCHANGE_COMMONS_URL=https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.3.2/mchange-commons-java-0.3.2.jar
+ENV COMMONS_LOGGING_URL=https://repo1.maven.org/maven2/commons-logging/commons-logging/1.3.3/commons-logging-1.3.3-api.jar
+ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar
 #ENV IZENPESIGNER_APPLET=http://aonsolutions.github.io/aon-application/maven/2/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
 ENV IZENPESIGNER_APPLET=https://github.com/aonsolutions/izenpe/raw/master/izenpesigner-applet-1.0.jar
 ENV DYNAMODB_SESSION_MANAGER=https://github.com/aws/aws-dynamodb-session-tomcat/releases/download/v2.0.4/aws-dynamodb-session-tomcat-2.0.4.jar
 
-ENV JAVA_JWT_URL=https://repo1.maven.org/maven2/com/auth0/java-jwt/3.9.0/java-jwt-3.9.0.jar
-ENV JACKSON_ANNOTATIONS_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.10.0.pr3/jackson-annotations-2.10.0.pr3.jar
-ENV JACKSON_CORE_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.10.0.pr3/jackson-core-2.10.0.pr3.jar
-ENV JACKSON_DATABIND_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.10.0.pr3/jackson-databind-2.10.0.pr3.jar
-ENV COMMONS_CODEC_URL=https://repo1.maven.org/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar
-ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20180813/json-20180813.jar
+ENV JAVA_JWT_URL=https://repo1.maven.org/maven2/com/auth0/java-jwt/4.5.0/java-jwt-4.5.0.jar
+ENV JACKSON_ANNOTATIONS_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.18.3/jackson-annotations-2.18.3.jar
+ENV JACKSON_CORE_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.18.2/jackson-core-2.18.2.jar
+ENV JACKSON_DATABIND_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.15.4/jackson-databind-2.15.4.jar
+ENV COMMONS_CODEC_URL=https://repo1.maven.org/maven2/commons-codec/commons-codec/1.17.1/commons-codec-1.17.1.jar
+ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20250107/json-20250107.jar
 
 RUN set -eux; \
 	apt-get update; \

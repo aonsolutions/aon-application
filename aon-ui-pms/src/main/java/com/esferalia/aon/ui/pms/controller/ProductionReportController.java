@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -801,10 +800,10 @@ public class ProductionReportController implements Serializable {
 				ro.setDescription("Hab.Disponibles");
 				availableRoomMap.put("Hab.Disponibles", ro);
 			}
-			if (!roomOcupationMap.containsKey("% Ocupación")) {
+			if (!roomOcupationMap.containsKey("% Ocupaciï¿½n")) {
 				ReportObject ro = new ReportObject();
-				ro.setDescription("% Ocupación");
-				roomOcupationMap.put("% Ocupación", ro);
+				ro.setDescription("% Ocupaciï¿½n");
+				roomOcupationMap.put("% Ocupaciï¿½n", ro);
 			}
 			
 			while (roomsRs.next()) {
@@ -825,32 +824,32 @@ public class ProductionReportController implements Serializable {
 					availableRoomMap.get("Hab.Ocupadas").setYearAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setYearAmount(roomMap.get("Habitaciones").getYearAmount()-roomCount);
 					double availableRoomYear = availableRoomMap.get("Hab.Ocupadas").getYearAmount();
-					roomOcupationMap.get("% Ocupación").setYearAmount(roomYear > 0.0f ? (availableRoomYear * 100 / roomYear) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setYearAmount(roomYear > 0.0f ? (availableRoomYear * 100 / roomYear) : 0.0);
 				} else if (period.equals("ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousYearAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousYearAmount(roomMap.get("Habitaciones").getPreviousYearAmount()-roomCount);
 					double availableRoomPreviousYear = availableRoomMap.get("Hab.Ocupadas").getPreviousYearAmount();
-					roomOcupationMap.get("% Ocupación").setPreviousYearAmount(roomPreviousYear > 0.0f ? (availableRoomPreviousYear * 100 / roomPreviousYear) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setPreviousYearAmount(roomPreviousYear > 0.0f ? (availableRoomPreviousYear * 100 / roomPreviousYear) : 0.0);
 				} else if (period.equals("MES")) {
 					availableRoomMap.get("Hab.Ocupadas").setMonthAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setMonthAmount(roomMap.get("Habitaciones").getMonthAmount()-roomCount);
 					double availableRoomMonth = availableRoomMap.get("Hab.Ocupadas").getMonthAmount();
-					roomOcupationMap.get("% Ocupación").setMonthAmount(roomMonth > 0.0f ? (availableRoomMonth * 100 / roomMonth) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setMonthAmount(roomMonth > 0.0f ? (availableRoomMonth * 100 / roomMonth) : 0.0);
 				} else if (period.equals("MES_ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousMonthAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousMonthAmount(roomMap.get("Habitaciones").getPreviousMonthAmount()-roomCount);
 					double availableRoomPreviousMonth = availableRoomMap.get("Hab.Ocupadas").getPreviousMonthAmount();
-					roomOcupationMap.get("% Ocupación").setPreviousMonthAmount(roomPreviousMonth > 0.0f ? (availableRoomPreviousMonth * 100 / roomPreviousMonth) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setPreviousMonthAmount(roomPreviousMonth > 0.0f ? (availableRoomPreviousMonth * 100 / roomPreviousMonth) : 0.0);
 				} else if (period.equals("DIA")) {
 					availableRoomMap.get("Hab.Ocupadas").setDayAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setDayAmount(roomMap.get("Habitaciones").getDayAmount()-roomCount);
 					double availableRoomDay = availableRoomMap.get("Hab.Ocupadas").getDayAmount();
-					roomOcupationMap.get("% Ocupación").setDayAmount(roomDay > 0.0f ? (availableRoomDay * 100 / roomDay) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setDayAmount(roomDay > 0.0f ? (availableRoomDay * 100 / roomDay) : 0.0);
 				} else if (period.equals("DIA_ANIO_ANTERIOR")) {
 					availableRoomMap.get("Hab.Ocupadas").setPreviousDayAmount(roomCount);
 					availableRoomMap.get("Hab.Disponibles").setPreviousDayAmount(roomMap.get("Habitaciones").getPreviousDayAmount()-roomCount);
 					double availableRoomPreviousDay = availableRoomMap.get("Hab.Ocupadas").getPreviousDayAmount();
-					roomOcupationMap.get("% Ocupación").setPreviousDayAmount(roomPreviousDay > 0.0f ? (availableRoomPreviousDay * 100 / roomPreviousDay) : 0.0);
+					roomOcupationMap.get("% Ocupaciï¿½n").setPreviousDayAmount(roomPreviousDay > 0.0f ? (availableRoomPreviousDay * 100 / roomPreviousDay) : 0.0);
 				}
 			}
 			
@@ -1092,9 +1091,9 @@ public class ProductionReportController implements Serializable {
 			fillPaxRatioMapObject(key, productionMap, productionRatioMap);
 		});
 		
-		fillRoomPaxRatioMapObject("PAX", " PAX por Habitación", paxMap, productionRatioMap);
+		fillRoomPaxRatioMapObject("PAX", " PAX por Habitaciï¿½n", paxMap, productionRatioMap);
 		
-		fillRoomPaxRatioMapObject("1.VENTAS", " VENTAS/Habitación", pendingProductionMap, productionRatioMap);
+		fillRoomPaxRatioMapObject("1.VENTAS", " VENTAS/Habitaciï¿½n", pendingProductionMap, productionRatioMap);
 		
 		fillPaxRatioMapObject("1.VENTAS", pendingProductionMap, productionRatioMap);
 		
@@ -1265,8 +1264,8 @@ public class ProductionReportController implements Serializable {
 		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_DAY",Types.DOUBLE,"Dia (" +previousYear+ ")",15));
 		metadata.getColumns().add(new ReportColumnMetadata("MONTH",Types.DOUBLE,"Mes",15));
 		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_MONTH",Types.DOUBLE,"Mes (" +previousYear+ ")",15));
-		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.DOUBLE,"Año",15));
-		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.DOUBLE,"Año (" +previousYear+ ")",15));
+		metadata.getColumns().add(new ReportColumnMetadata("YEAR",Types.DOUBLE,"Aï¿½o",15));
+		metadata.getColumns().add(new ReportColumnMetadata("PREVIOUS_YEAR",Types.DOUBLE,"Aï¿½o (" +previousYear+ ")",15));
 		return metadata;
 	}
 
@@ -1353,7 +1352,7 @@ public class ProductionReportController implements Serializable {
 	public HSSFCell addEmptyDecimalCell(ExcelReportExporter exporter, HSSFCellStyle cellStyle) {
 		HSSFCell cell = exporter.addCell();
 		cell.setCellStyle(cellStyle);
-		cell.setCellType(CellType.BLANK);
+		cell.setBlank();
 		return cell;
 	}
 	

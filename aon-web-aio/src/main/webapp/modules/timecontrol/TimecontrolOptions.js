@@ -27,7 +27,7 @@ import * as JSF from "../aon-jsf-app.js";
     name: MSG.LOCATIONS,
     title: MSG.LOCATIONS,
     icon: MATERIAL_ICONS.LOCATION_ON,
-    fn: () => showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
+    fn: () => showView(SIGNIN_VIEWS.AON_LOCATION_LIST)
   };
 
   export const TASK_HOLDER = {

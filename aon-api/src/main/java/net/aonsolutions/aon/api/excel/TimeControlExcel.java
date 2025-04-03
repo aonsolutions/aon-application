@@ -11,12 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -27,7 +26,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -142,14 +143,12 @@ public class TimeControlExcel {
 		Row row = sheet.createRow(sheet.getLastRowNum()+1);
 		
 		Cell totalCell = row.createCell(0);
-		totalCell.setCellType(CellType.STRING);
 		totalCell.setCellValue("TOTAL");
 		totalCell.setCellStyle(headerCellStyle);
 
 		
 		for (int i = 1; i < lastColumn; i++) {
 			Cell cell = UtilsExcel.createCellDouble(row, i, null, formulaCellStyle);
-			cell.setCellType(CellType.FORMULA);
 			cell.setCellFormula("sum("+CellReference.convertNumToColString(i)+1+":"+CellReference.convertNumToColString(i)+row.getRowNum()+")");
 		}
 
@@ -247,13 +246,11 @@ public class TimeControlExcel {
 		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
 		Row row = sheet.createRow(sheet.getLastRowNum()+1);
 		Cell totalCell = row.createCell(0);
-		totalCell.setCellType(CellType.STRING);
 		totalCell.setCellValue("TOTAL");
 		totalCell.setCellStyle(headerCellStyle);
 
 		for (int i = 1; i < lastColumn; i++) {
 			Cell cell = UtilsExcel.createCellDouble(row, i, null, formulaCellStyle);
-			cell.setCellType(CellType.FORMULA);
 			cell.setCellFormula("sum("+CellReference.convertNumToColString(i)+1+":"+CellReference.convertNumToColString(i)+row.getRowNum()+")");
 		}
 		

@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -68,7 +67,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 
 	@Override
 	protected void headerRow() {
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
@@ -114,8 +113,6 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
-//		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		
 		int l = AonStringUtils.length(concept);
 		int conceptLength = 90;
@@ -129,7 +126,6 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 					?AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")
 					:AonStringUtils.EMPTY;
 			Cell boxCell = addCell(box);
-			boxCell.setCellType(CellType.STRING);
 			boxCell.setCellStyle(boxCellStyle);
 
 			cell = row.createCell(cellCount++);
@@ -146,7 +142,6 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 				style.setAlignment(HorizontalAlignment.RIGHT);
 				style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 				cell.setCellValue(amount);
-				cell.setCellType(CellType.NUMERIC);
 			}
 		}
 		if (l != 0) {
@@ -160,7 +155,7 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 			row = sheet.createRow(rowCount++);
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 			
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 			Font vatHeaderFont= workbook.createFont();
 			vatHeaderFont.setBold(true);
 			vatHeaderFont.setFontHeightInPoints((short) 8);
@@ -216,7 +211,6 @@ public class Mod131ExcelAction extends ModelIRPFExcelAction<Mod131,Mod131Key> {
 	@Override
 	protected void fillParticularityCell(Cell cell ,CellStyle style,Mod131Key key) {
 		double amount = model.ensureDetail(key).getAmount();
-		cell.setCellType(CellType.STRING);
 		if (key == Mod131Key.P2) {
 			cell.getCellStyle().setAlignment(HorizontalAlignment.RIGHT);
 			cell.setCellValue(amount == 1?"SI":"NO");

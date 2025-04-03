@@ -115,7 +115,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 				}
     		}    		
     		DomainUserRoles dur = getDomainUserRoles(s3UploadEventObject);
-    		if(dur.isInvofox()) {
+    		if(dur.hasInvofox()) {
         		Integer rawdocId = null;
         		try {
         			rawdocId = createRawdoc(s3UploadEventObject, RawdocStatus.PROCESSING);

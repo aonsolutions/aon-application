@@ -1077,8 +1077,6 @@ public class SalaryDraft extends ResizeComposite
 						return "FIN_TEMPORAL";
 					case WORK_END:
 						return "FIN_OBRA";
-					case DEFINITE_END:
-						return "FIN";
 					case OBJECTIVE:
 						return "PROCEDENTE";
 					case RETIREMENT:
@@ -1716,7 +1714,7 @@ public class SalaryDraft extends ResizeComposite
 		@Override
 		void onDownloadFromAgreement(Payment payment, String newExpression) {
 			payment.setScope(Scope.SALARY);
-			payment.setExpression(newExpression);
+			payment.setExpression(AonStringUtils.isNotBlank(newExpression) && AonStringUtils.startsWithIgnoreCase(newExpression, "DISABLE") ? null : newExpression);
 			salaryDraftObject.recover(payment, SalaryDraft.this);
 		}
 		
@@ -8397,8 +8395,6 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.TEMP_END.getDescription();
 		else if ( AonStringUtils.equals("FIN_OBRA",obj.toString()))
 			return Dismissal.WORK_END.getDescription();
-		else if ( AonStringUtils.equals("FIN",obj.toString()))
-			return Dismissal.DEFINITE_END.getDescription();
 		else if ( AonStringUtils.equals("PROCEDENTE",obj.toString()))
 			return Dismissal.OBJECTIVE.getDescription();
 		else if ( AonStringUtils.equals("CAMBIO_CONDICIONES",obj.toString()))
@@ -8411,8 +8407,6 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.TEMP_END.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.WORK_END.name(),obj.toString()))
 			return Dismissal.WORK_END.getDescription();
-		else if ( AonStringUtils.equals(Dismissal.DEFINITE_END.name(),obj.toString()))
-			return Dismissal.DEFINITE_END.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.OBJECTIVE.name(),obj.toString()))
 			return Dismissal.OBJECTIVE.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.CONDITIONS_CHANGE.name(),obj.toString()))

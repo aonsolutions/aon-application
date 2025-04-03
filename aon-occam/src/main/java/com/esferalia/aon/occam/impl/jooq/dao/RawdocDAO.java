@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -18,15 +20,18 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.records.RawdocRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
@@ -40,7 +45,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
-import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.ewok.TediInvoiceType;
@@ -48,11 +54,7 @@ import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
 	
-	private static final String ACTION_DATE = "date";
-	private static final String ACTION_USER = "user";
-	private static final String ACTION_STATUS = "status";
-	private static final String ACTION_REASON = "reason";
-	private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy HH:mm:ss";
+	private static final String LOG_DATE_FORMAT_PATTERN = "dd/MM/yyyy HH:mm:ss";
 
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
 	
@@ -88,33 +90,26 @@ public class RawdocDAO {
 		
 		public static Rawdoc build(Record r) {
 			return new Rawdoc()
-					.setId(getValue(r, RAWDOC.ID))
-					.setDomain(getValue(r, RAWDOC.DOMAIN))
-					.setNature(RawdocNature.safeValueOf(getValue(r, RAWDOC.NATURE)))
-					.setType(RawdocType.safeValueOf(getValue(r, RAWDOC.TYPE)))
-					.setStatus(RawdocStatus.safeValueOf(getValue(r, RAWDOC.STATUS)))
-					.setJson(getValue(r, RAWDOC.JSON))
-					.setTediInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON)) 
-							? null 
-							: TediInvoiceJSON.fromJSON( new JSONObject(r.getValue(RAWDOC.JSON) ) ) )
-					.setInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON))
-							? new Invoice()
-							: InvoiceJSON.fromJSON(getValue(r, RAWDOC.JSON)))
-					.setLog(getValue(r, RAWDOC.LOG))
-					.setMimeType(MimeType.safeValueOf(getValue(r, RAWDOC.MIME_TYPE)))
-					.setS3Key(getValue(r, RAWDOC.S3_KEY))
-					.setCreationUser(getValue(r, RAWDOC.CREATION_USER))
-					.setCreationDate(getValue(r, RAWDOC.CREATION_DATE))
-					.setModificationUser(getValue(r, RAWDOC.MODIFICATION_USER))
-					.setModificationDate(getValue(r, RAWDOC.MODIFICATION_DATE));
-		}
-	}
-	
-	private static class FullRawdocFiller  extends RawdocFiller {
-		@Override
-		public Rawdoc apply(Record r) {
-			return super.apply(r)
-				.setData(r.getValue(RAWDOC.DATA));
+			.setId(getValue(r, RAWDOC.ID))
+			.setDomain(getValue(r, RAWDOC.DOMAIN))
+			.setNature(RawdocNature.safeValueOf(getValue(r, RAWDOC.NATURE)))
+			.setType(RawdocType.safeValueOf(getValue(r, RAWDOC.TYPE)))
+			.setStatus(RawdocStatus.safeValueOf(getValue(r, RAWDOC.STATUS)))
+			.setJson(getValue(r, RAWDOC.JSON))
+			.setTediInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON)) 
+					? null 
+					: TediInvoiceJSON.fromJSON( new JSONObject(r.getValue(RAWDOC.JSON) ) ) )
+			.setInvoice(AonStringUtils.isBlank(getValue(r, RAWDOC.JSON))
+					? new Invoice()
+					: InvoiceJSON.fromJSON(getValue(r, RAWDOC.JSON)))
+			.setLog(getValue(r, RAWDOC.LOG))
+			.setMimeType(MimeType.safeValueOf(getValue(r, RAWDOC.MIME_TYPE)))
+			.setData(getValue(r,RAWDOC.DATA))
+			.setS3Key(getValue(r, RAWDOC.S3_KEY))
+			.setCreationUser(getValue(r, RAWDOC.CREATION_USER))
+			.setCreationDate(getValue(r, RAWDOC.CREATION_DATE))
+			.setModificationUser(getValue(r, RAWDOC.MODIFICATION_USER))
+			.setModificationDate(getValue(r, RAWDOC.MODIFICATION_DATE));
 		}
 	}
 	
@@ -163,16 +158,15 @@ public class RawdocDAO {
 				.map(new RawdocFiller());
 	}
 
-	public static Rawdoc get(AONContext ctx, Integer id) {
+	public static Optional<Rawdoc> get(AONContext ctx, Integer id) {
 		return ctx.getDslContext()
-				.select( SELECT_FIELDS )
-				.from(RAWDOC)
-				.where(RAWDOC.ID.eq(id))
-				.fetch()
-				.stream()
-				.map(new RawdocFiller())
-				.findFirst()
-				.orElse(null);
+			.select( SELECT_FIELDS )
+			.from(RAWDOC)
+			.where(RAWDOC.ID.eq(id))
+			.fetch()
+			.stream()
+			.map(new RawdocFiller())
+			.findFirst();
 	}
 
 	public static Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter){	
@@ -188,7 +182,7 @@ public class RawdocDAO {
 				.limit(offset,limit)
 				.fetch()
 				.stream()
-				.map(new FullRawdocFiller());
+				.map(new RawdocFiller());
 	}
 	
 	public static Rawdoc getFull(AONContext ctx, Integer id) {
@@ -198,7 +192,7 @@ public class RawdocDAO {
 				.where(RAWDOC.ID.eq(id))
 				.fetch()
 				.stream()
-				.map(new FullRawdocFiller())
+				.map(new RawdocFiller())
 				.findFirst()
 				.orElse(null);
 	}
@@ -223,19 +217,20 @@ public class RawdocDAO {
 			.fetchOne()
 			.getValue(RAWDOC.ID);
 		ctx.log().info("INSERT RAWDOC id: " + id);
-		return get(ctx, id);
+		return get(ctx, id)
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_INSERT.getMessage()));
 	}
 	
 	private static Rawdoc update(AONContext ctx, Rawdoc rawdoc) {
 		ctx.checkWrite();
 
-		Rawdoc r = get(ctx, rawdoc.getId());
-		if(r == null || r.getId() == null) {
+		Rawdoc r = get(ctx, rawdoc.getId()).orElse(null);
+		if (r == null || r.getId() == null) {
 			return insert(ctx, rawdoc);
 		}
-
+		
 		RawdocValidation.validateRawdoc(ctx, rawdoc);
-		ctx.getDslContext()
+		UpdateSetMoreStep<RawdocRecord> stmt = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.DOMAIN,rawdoc.getDomain())
 			.set(RAWDOC.NATURE,rawdoc.getNature().value())
@@ -245,24 +240,15 @@ public class RawdocDAO {
 			.set(RAWDOC.LOG, rawdoc.getLog() != null ? rawdoc.getLog() : getLogArray(ctx, r, rawdoc.getStatus(), null))
 			.set(RAWDOC.S3_KEY, rawdoc.getS3Key())
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-			.where(RAWDOC.ID.eq(rawdoc.getId()))
-			.execute();
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()));
 		if (rawdoc.getData() != null && rawdoc.getMimeType() != null) {
-			updateFile(ctx, rawdoc);
+			stmt.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
+				.set(RAWDOC.DATA,rawdoc.getData());
 		}
+		stmt.where(RAWDOC.ID.eq(rawdoc.getId())).execute();
 		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());
-		return get(ctx, rawdoc.getId());
-	}
-	
-	private static void updateFile(AONContext ctx, Rawdoc rawdoc) {
-		ctx.checkWrite();
-		ctx.getDslContext()
-			.update(RAWDOC)
-			.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
-			.set(RAWDOC.DATA,rawdoc.getData())
-			.where(RAWDOC.ID.eq(rawdoc.getId()))
-			.execute();
+		return get(ctx, rawdoc.getId())
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
 	public static Rawdoc save(AONContext ctx, Rawdoc rawdoc) {
@@ -406,68 +392,55 @@ public class RawdocDAO {
 		return rawdocUserData;
 	}
 
-	public static void toDraft(AONContext ctx, Integer rawdocId) {
+	private static Rawdoc updateStatus( AONContext ctx, Rawdoc rawdoc, RawdocStatus status, String reason) {
+		int count = ctx.getDslContext()
+			.update(RAWDOC)
+				.set(RAWDOC.STATUS,status.value())
+				.set(RAWDOC.LOG, getLogArray(ctx, rawdoc, status, reason ) )
+				.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+				.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+				.where(RAWDOC.ID.equal(rawdoc.getId()))
+				.execute();
+		ctx.log().info("UPDATE RAWDOC ({0}) id: {1} ({2} filas)",status.name(),rawdoc.getId(),count);
+		return get(ctx, rawdoc.getId())
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
+	}
+	
+	public static Rawdoc toDraft(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
-		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-				.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.DRAFT, null ) )
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (DRAFT) id: {0} ({1} filas)",rawdocId,count);
-		}
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.DRAFT, null))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 
-	public static void toRejected(AONContext ctx, Integer rawdocId, String reason) {
+	public static Rawdoc toRejected(AONContext ctx, Integer rawdocId, String reason) {
 		ctx.checkWrite();
-		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-					.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.REJECTED, reason ))
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
-		}
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.REJECTED,reason))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 
-	public static void toInbox(AONContext ctx, Integer rawdocId) {
+	public static Rawdoc toInbox(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
-		Rawdoc r = get(ctx, rawdocId);
-		if (r != null) {
-			int count = ctx.getDslContext()
-					.update(RAWDOC)
-					.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
-					.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.INBOX, null ) )
-					.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-					.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
-					.where(RAWDOC.ID.equal(rawdocId))
-					.execute();
-			ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");
-		}
+		return get(ctx, rawdocId)
+			.map( r -> updateStatus(ctx,r,RawdocStatus.INBOX, null))
+			.orElseThrow(() -> new AonCoreException( AonError.INVALID_UPDATE.getMessage()));
 	}
 	
 	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {
 		JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
 		HashMap<String,String> map = new HashMap<>();
-		map.put(ACTION_DATE  ,new SimpleDateFormat(DATE_FORMAT_PATTERN).format(new Date()));
-		map.put(ACTION_USER  ,ctx.getUser() );
-		map.put(ACTION_STATUS,status.getDescription() );
+		map.put(IJsonNames.DATE,new SimpleDateFormat(LOG_DATE_FORMAT_PATTERN).format(new Date()));
+		map.put(IJsonNames.USER,ctx.getUser() );
+		map.put(IJsonNames.STATUS,status.getDescription() );
 		if (reason != null) {
-			map.put(ACTION_REASON,reason );
+			map.put(IJsonNames.REASON,reason );
 		}
 		JSONObject json = new JSONObject(map);
 		jsonLog.put(json);
 		return jsonLog.toString();
 	}
-
+	
 	public static boolean hasData(AONContext ctx, Integer rawdocId ) {
 		return ctx.getDslContext()
 				.select( RAWDOC.ID )
@@ -480,4 +453,64 @@ public class RawdocDAO {
 				.isPresent();
 	}
 	
+	private static  class RawdocValidation {
+
+		/**
+		 * El dominio del apunte no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_DOMAIN = rc -> {
+			if (rc.rawdoc.getDomain() == null) 
+				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		};
+		
+		/**
+		 * La naturaleza del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_NATURE = rc -> {
+			if (rc.rawdoc.getNature() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_NATURE.getMessage());
+		};
+		
+		/**
+		 * El tipo del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_TYPE = rc -> {
+			if (rc.rawdoc.getType() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_TYPE.getMessage());
+		};
+
+		/**
+		 * El status del documento no puede estar vacio.
+		 */
+		private static final Consumer<RawdocContext> EMPTY_STATUS = rc -> {
+			if (rc.rawdoc.getStatus() == null) 
+				throw new AonCoreException(AonError.EMPTY_RAWDOC_STATUS.getMessage());
+		};
+		
+		private record RawdocContext(AONContext ctx, Rawdoc rawdoc) {}
+		private static void validateRawdoc(AONContext ctx, Rawdoc rawdoc) throws AonCoreException {
+			EMPTY_DOMAIN
+				.andThen(EMPTY_NATURE)
+				.andThen(EMPTY_TYPE)
+				.andThen(EMPTY_STATUS)
+				.accept(new RawdocContext(ctx, rawdoc));
+
+		}
+	}
+	
+	// *************************************************
+	// ********** TEST PURPOSE METHODS *****************
+	// *************************************************
+	public static Rawdoc getRandom(AONContext ctx, RawdocFilter filter) {
+		return ctx.getDslContext()
+			.select( RAWDOC.fields() )
+			.from(RAWDOC)
+			.where(RAWDOC_PROPERTIES.getConditions(filter))
+			.orderBy( DSL.rand() )
+			.fetch()
+			.stream()
+			.map(new RawdocFiller())
+			.findFirst()
+			.orElse(null);
+	}
 }

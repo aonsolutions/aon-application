@@ -40,32 +40,7 @@ public class ConsoleDomainCheckIntegrityServlet extends ConsoleAbstractServlet {
 		DomainParams domainParams = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
-			try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(domainParams.getDbSchema())) {
-				Schema schema = ctx.getDslContext().meta()
-					.getSchemas(domainParams.getDbSchema())
-					.stream()
-					.findFirst()
-					.orElse(null);
-				ConsoleConnectionParams conParams = new ConsoleConnectionParams()
-					.setAONContext(ctx)
-					.setSchema(schema)
-					.setSchemaName(domainParams.getDbSchema())
-					.setDomain(new Domain().setId(domainParams.getId()));
-				consoleParams.setFromConnection(conParams);
-				ConsoleDomainCheckIntegrity.check(consoleParams);
-				resp.flushBuffer();
-			} catch (Exception e) {
-				e.printStackTrace();
-				consoleParams.getPrinter().println(e.getMessage());
-				consoleParams.getPrinter().println();
-				resp.flushBuffer();
-				LOGGER.log(Level.SEVERE, "ConsoleDomainCheckIntegrityServlet {0}!",e.getMessage());
-			} finally {
-				consoleParams.getPrinter().println("Request ended.");
-				consoleParams.getPrinter().println();
-				resp.flushBuffer();
-				LOGGER.log(Level.INFO, "ConsoleDomainCheckIntegrityServlet finished!");
-			}
+			validate(domainParams, consoleParams, resp);
 		} catch (ParseException | java.text.ParseException e1) {
 			consoleParams.getPrinter().println("Params parse Problem.");
 			consoleParams.getPrinter().println("Request ended.");
@@ -73,6 +48,35 @@ public class ConsoleDomainCheckIntegrityServlet extends ConsoleAbstractServlet {
 			consoleParams.getPrinter().flush();
 			LOGGER.log(Level.INFO, "ConsoleDomainCheckIntegrityServlet finished!");
 			resp.flushBuffer();
+		}
+	}
+
+	private void validate(DomainParams domainParams, ConsoleParams consoleParams, HttpServletResponse resp) throws IOException {
+		try (UnpooledCloseableAONContext ctx = AONContext.getUnpooledAONContext(domainParams.getDbSchema())) {
+			Schema schema = ctx.getDslContext().meta()
+				.getSchemas(domainParams.getDbSchema())
+				.stream()
+				.findFirst()
+				.orElse(null);
+			ConsoleConnectionParams conParams = new ConsoleConnectionParams()
+				.setAONContext(ctx)
+				.setSchema(schema)
+				.setSchemaName(domainParams.getDbSchema())
+				.setDomain(new Domain().setId(domainParams.getId()));
+			consoleParams.setFromConnection(conParams);
+			ConsoleDomainCheckIntegrity.check(consoleParams);
+			resp.flushBuffer();
+		} catch (Exception e) {
+			e.printStackTrace();
+			consoleParams.getPrinter().println(e.getMessage());
+			consoleParams.getPrinter().println();
+			resp.flushBuffer();
+			LOGGER.log(Level.SEVERE, "ConsoleDomainCheckIntegrityServlet {0}!",e.getMessage());
+		} finally {
+			consoleParams.getPrinter().println("Request ended.");
+			consoleParams.getPrinter().println();
+			resp.flushBuffer();
+			LOGGER.log(Level.INFO, "ConsoleDomainCheckIntegrityServlet finished!");
 		}
 	}
 }

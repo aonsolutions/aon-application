@@ -7,15 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -27,6 +20,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
@@ -42,6 +36,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.stat.DirectSalesChartTypeVisitor;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Udapa Stat Report (excel)", urlPatterns = { "/aon_gwt_stat/ms/UdapaStatExcel",
 																"/aon_gwt_aio/ms/UdapaStatExcel" })
@@ -119,7 +119,7 @@ public class UdapaExcelServlet extends HttpServlet {
 		private static final SimpleDateFormat YEAR_FORMATTER = new SimpleDateFormat("yyyy");
 		private static final String DECIMAL_PATTERN = "#,##0.00";
 		private static final String PERCENT_PATTERN = "##0.0000%";
-		private static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,0,0));
+		private static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,0,0), new DefaultIndexedColorMap());
 		
 		private Map<String, UdapaStatRow> map;
 		private StatParams params;
@@ -152,9 +152,9 @@ public class UdapaExcelServlet extends HttpServlet {
 		    sheet = (XSSFSheet) workbook.createSheet(name);
 		    dataFormat = workbook.getCreationHelper().createDataFormat();
 		    
-		    XSSFColor currentColor = new XSSFColor(new java.awt.Color(255, 255, 153));
-		    XSSFColor previousYearColor = new XSSFColor(new java.awt.Color(220, 220, 220));
-		    XSSFColor previousMonthColor = new XSSFColor(new java.awt.Color(204, 255, 204));
+		    XSSFColor currentColor = new XSSFColor(new java.awt.Color(255, 255, 153), new DefaultIndexedColorMap());
+		    XSSFColor previousYearColor = new XSSFColor(new java.awt.Color(220, 220, 220), new DefaultIndexedColorMap());
+		    XSSFColor previousMonthColor = new XSSFColor(new java.awt.Color(204, 255, 204), new DefaultIndexedColorMap());
 		    
 		    boldFont= workbook.createFont();
 			boldFont.setFontHeightInPoints((short) 9);
@@ -303,7 +303,6 @@ public class UdapaExcelServlet extends HttpServlet {
 			for ( int colIdx : colIdxs) {
 				Cell cell = totalRow.createCell(colIdx);
 				cell.setCellStyle(totalCellStyle);
-				cell.setCellType(CellType.FORMULA);
 				CellReference ref = new CellReference(cell);
 				String[] parts = ref.getCellRefParts(); // Returns the three parts of the cell reference, the Sheet
 															// name (or null if none supplied),
@@ -330,7 +329,6 @@ public class UdapaExcelServlet extends HttpServlet {
 					} else {
 						percentCell.setCellStyle(currentPercentStyle);
 					}
-					percentCell.setCellType(CellType.FORMULA);
 					String percentFormula = colId + (i + 1) + "/" + totalRef;
 					percentCell.setCellFormula(percentFormula);
 					CellValue percentValue = evaluator.evaluate(percentCell);
@@ -353,7 +351,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				Cell percentCell = curRow.createCell(7);
 				percentCell.setCellStyle(previousMonthPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, lastMonthId));
 				CellValue percentValue = evaluator.evaluate(percentCell);
@@ -361,7 +358,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(8);
 				percentCell.setCellStyle(previousYearPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentCell.setCellFormula(MessageFormat.format(formula, currentMonthId, previousYearMonthId));
 				percentValue = evaluator.evaluate(percentCell);
@@ -369,7 +365,6 @@ public class UdapaExcelServlet extends HttpServlet {
 				
 				percentCell = curRow.createCell(13);
 				percentCell.setCellStyle(currentPercentStyle);
-				percentCell.setCellType(CellType.FORMULA);
 				System.out.println(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentCell.setCellFormula(MessageFormat.format(formula2, currentYearId, previousYearId,currentMonth));
 				percentValue = evaluator.evaluate(percentCell);
@@ -405,7 +400,6 @@ public class UdapaExcelServlet extends HttpServlet {
 			Cell cell = row.createCell(colIdx);
 			cell.setCellStyle(style);
 			cell.setCellValue(number!=null?number:0.0);
-			cell.setCellType(CellType.NUMERIC);
 			return cell;
 		}
 	}

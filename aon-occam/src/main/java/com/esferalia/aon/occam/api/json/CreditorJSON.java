@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -16,6 +17,11 @@ public class CreditorJSON {
 	
 	private CreditorJSON() {
 	
+	}
+	
+	public static Optional<Creditor> from(JSONObject json) {
+		if (JsonUtils.isEmpty(json)) return Optional.empty();
+		return Optional.of(fromJSON(json));
 	}
 	
 	public static List<Creditor> fromJSON(JSONArray json) {

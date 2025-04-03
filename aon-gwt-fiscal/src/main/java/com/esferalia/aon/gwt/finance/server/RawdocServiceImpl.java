@@ -43,47 +43,51 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset, int limit) throws AonCoreException {
 		return AON.getRawdocs(occam, params, offset, limit );
 	}
-	@Override
-	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
-		return parse(occam.getDomainName(), occam.getDomain(), occam.getUser(), rawdocId);	
-	}
 
 	@Override
 	public void delete(Occam occam, Integer rawdocId) {
 		AON.rawdocDelete(occam,rawdocId);
 	}
 	@Override
-	public void toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToDraft(occam,rawdocId);
+	public Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToDraft(occam,rawdocId);
 	}
 
 	@Override
-	public void toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
-		AON.rawdocToRejected(occam,rawdocId,reason);
+	public Rawdoc toRejected(Occam occam, Integer rawdocId, String reason) throws AonCoreException {
+		return AON.rawdocToRejected(occam,rawdocId,reason);
 	}
 
 	@Override
-	public void toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToInbox(occam,rawdocId);
-	}
-	
-	//	************************************************* OLD
-	
-	@Override
-	public LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset,
-			int limit) throws AonCoreException {
-		return AON.getRawdocs(domainName, domain,user, params, offset, limit );
+	public Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException {
+		return AON.rawdocToInbox(occam,rawdocId);
 	}
 	
 	@Override
-	public TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
+	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
+		try {
+			String url = getRawdocAttachURL(occam,rawdocId);
+			TediContext tctx = new TediContext()
+				.setDomainName(occam.getDomainName())
+				.setDomain(occam.getDomain())
+				.setUser(occam.getUser());
+			TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
+			result.getAccountingInvoice()
+				.setFromRawdoc(true)
+				.setTediParsed(true)
+				.getAttach().setAttachURL(url);
+			return result;
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		}			
+	}
+
+	private String getRawdocAttachURL(Occam occam, Integer rawdocId) {
 		String url = null;
-		Rawdoc rawdoc = AON.getRawdocFull(domainName, domain, user, rawdocId);
-		
+		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId);
 		if (rawdoc.getData() != null) {
-//			StringBuilder baseURL = new StringBuilder();
-//			baseURL.append( getThreadLocalRequest().getContextPath() );
-// ---------------------
+
 			HttpServletRequest req = getThreadLocalRequest();
 			String serverName = req.getServerName();
 			int serverPort = req.getServerPort();
@@ -96,54 +100,22 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 					.append(":").append(serverPort);
 			}
 			baseURL.append( getThreadLocalRequest().getContextPath() );
-//----------------------
-			String params = "domain="+ domain + "&id=" +  rawdocId;
+
+			String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
 			params = Base64.getEncoder().encodeToString(params.getBytes());
 			url = baseURL.toString() + "/ms/download_rawdoc" 
-					+ "/" + domainName 
-					+ "/" + user 
+					+ "/" + occam.getDomainName() 
+					+ "/" + occam.getUser() 
 					+ "/" +  params;
 		}
-		
 		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
 			url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 		}
-		
-		try {
-			TediContext tctx = new TediContext()
-				.setDomainName(domainName)
-				.setDomain(domain)
-				.setUser(user);
-			TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
-			result.getAccountingInvoice()
-				.setFromRawdoc(true)
-				.setTediParsed(true)
-				.getAttach().setAttachURL(url);
-			return result;
-		} catch ( TediException t) {
-			t.printStackTrace();
-			throw new AonCoreException(t);
-		}			
+		return url;
 	}
-	@Override
-	public void delete(String domainName, int domain, String user, Integer rawdocId) {
-		AON.rawdocDelete(domainName, domain,user,rawdocId);
-	}
-	@Override
-	public void toDraft(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToDraft(domainName, domain,user,rawdocId);
-	}
-
-	@Override
-	public void toRejected(String domainName, int domain, String user, Integer rawdocId, String reason) throws AonCoreException {
-		AON.rawdocToRejected(domainName, domain,user,rawdocId,reason);
-	}
-
-	@Override
-	public void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
-		AON.rawdocToInbox(domainName, domain,user,rawdocId);
-	}
-
+	
+	//	************************************************* OLD
+	
 	@Override
 	public AccountingInvoice getAccountingInvoice(String domainName, int domainId, String login, String invoiceStr) {
 		JSONObject json = new JSONObject(invoiceStr);
@@ -183,4 +155,5 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public String getS3Url(Rawdoc rawdoc) {
 		return S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 	}
+
 }

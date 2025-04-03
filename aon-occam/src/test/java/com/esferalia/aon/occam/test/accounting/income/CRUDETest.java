@@ -32,7 +32,7 @@ public class CRUDETest extends AbstractOccamTest {
 		exp.setDomain(DOMAIN_ID);
 		Date date = AonRandom.getPastDate(-1);
 		exp.setDate( date );
-		Account expAccount = AonRandom.getAccountExpense(ctx);
+		Account expAccount = AonRandom.getAccountIncome(ctx);
 		exp.setExpAccount( expAccount );
 		exp.setConcept(AonRandom.string(-1, 1, 64));
 		exp.setReferenceCode( AonRandom.string(32) );

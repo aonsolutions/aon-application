@@ -1346,6 +1346,12 @@
 	.aon-icon-accept[value='Enviar']{
 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"&gt;&lt;path d="M172-238v-484l574 242-574 242Zm28-42 474-200-474-200v160l180 40-180 40v160Zm0 0v-400 400Z"/&gt;&lt;/svg&gt;') ;
 	}
+	
+	.aon-icon-add-task{
+		background-size: 24px;
+ 		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor, black)"&gt;&lt;path d="M479.63-120q-74.5 0-140.03-28.42-65.52-28.43-114.18-76.99-48.66-48.56-77.04-114.2Q120-405.26 120-479.91q0-74.64 28.35-140.38 28.35-65.73 76.95-114.36 48.6-48.63 114.3-76.99Q405.3-840 480-840q61.41 0 116.2 19 54.8 19 99.95 53l-28.77 29.77q-39.53-29.39-86.98-45.58Q532.96-800 480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q35.08 0 68.15-7.54 33.08-7.54 63.39-20.84l30 30.23q-36.39 18.46-77.16 28.3-40.76 9.85-84.75 9.85Zm300-60v-120H660v-40h120v-120h40v120h120v40H820v120h-40ZM422.46-323.69 280.15-466l28.31-28.31 114 114 389.23-389.46L840-741.46 422.46-323.69Z"/&gt;&lt;/svg&gt;');
+  		background-repeat: no-repeat;
+	}
 
 	.aon-icon-cancel{
 		background-size: 24px;
@@ -1545,6 +1551,7 @@
 	input.aon-finding-toolbar-item.aon-icon-audit,
 	input.aon-finding-toolbar-item.aon-icon-reset,
 	input.aon-finding-toolbar-item.aon-icon-accept,
+	input.aon-finding-toolbar-item.aon-icon-add-task,
 	input.aon-finding-toolbar-item.aon-icon-cancel,
 	input.aon-finding-toolbar-item.aon-icon-rubber,
 	input.aon-finding-toolbar-item.aon-icon-search,
@@ -1644,7 +1651,8 @@
 	.aon-finding-toolbar-item.aon-icon-attach-file:hover,
 	.aon-finding-toolbar-item.aon-icon-task-assume:hover,
 	.aon-finding-toolbar-item.aon-icon-task-liberate:hover,
-	.aon-finding-toolbar-item.aon-icon-close:hover
+	.aon-finding-toolbar-item.aon-icon-close:hover,
+	.aon-finding-toolbar-item.aon-icon-add-task:hover
 	{
 		background-color: #eee
 	}
@@ -1843,11 +1851,11 @@
 	}
 	
 	.aon-icon-filter {
-		background-image: url(#{aonResource.resolve['/images/aon-icon-filter.svg']}) ;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M470.77-200q-13.15 0-21.96-8.81T440-230.77v-223.08L224.15-726.77q-8.07-10.77-2.19-22Q227.85-760 240.77-760h478.46q12.92 0 18.81 11.23 5.88 11.23-2.19 22L520-453.85v223.08q0 13.15-8.81 21.96T489.23-200h-18.46ZM480-468l198-252H282l198 252Z"/&gt;&lt;/svg&gt;');	
 	}
 	
 	.aon-icon-filter-off {
-		background-image: url(#{aonResource.resolve['/images/aon-icon-filter-off.svg']}) ;
+		background-image: url('data:image/svg+xml;utf-8,&lt;svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="--var(aonIconColor,black)"&gt;&lt;path d="M563.54-509.46 535-538l143-182H353l-40-40h406.23q12.69 0 18.69 11.23 6 11.23-2.07 22L563.54-509.46Zm229.77 399.61L520-383.15v152.38q0 13.15-8.81 21.96T489.23-200h-18.46q-13.15 0-21.96-8.81T440-230.77v-232.38L109.85-793.31l28.3-28.54 683.7 683.7-28.54 28.38ZM535-538Z"/&gt;&lt;/svg&gt;');
 	}
 	           
 	.aon-spin-control-element {
@@ -3149,6 +3157,11 @@
 	tr:has(td:empty):not(:has(td:not(:empty))) {
 	    display: none;
 	}
+	
+	.aon-finding-toolbar-item.aon-icon-search {	
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='%23000'%3E%3Cpath d='M200-800v253.31-1V-160v-640 160-160Zm100 380h143.85q5.92-11.46 12.77-21.08 6.84-9.61 14.61-18.92H300v40Zm0 160h115.46q-1.92-10-2.65-20t-.27-20H300v40Zm-75.38 140q-27.62 0-46.12-18.5Q160-157 160-184.62v-590.76q0-27.62 18.5-46.12Q197-840 224.62-840H540l180 180v120.77q-9.77-3.39-19.77-4.81-10-1.42-20.23-2.65V-640H520v-160H224.62q-9.24 0-16.93 7.69-7.69 7.69-7.69 16.93v590.76q0 9.24 7.69 16.93 7.69 7.69 16.93 7.69h231q7.53 11.69 16.76 21.42 9.24 9.73 19.39 18.58H224.62ZM660-187.69q47.38 0 79.85-32.46 32.46-32.47 32.46-79.85 0-47.38-32.46-79.85-32.47-32.46-79.85-32.46-47.38 0-79.85 32.46-32.46 32.47-32.46 79.85 0 47.38 32.46 79.85 32.47 32.46 79.85 32.46ZM864-68.46 752.92-179.54q-19.46 15.54-43.19 23.69-23.73 8.16-49.73 8.16-63.46 0-107.88-44.43-44.43-44.42-44.43-107.88 0-63.46 44.43-107.88 44.42-44.43 107.88-44.43 63.46 0 107.88 44.43 44.43 44.42 44.43 107.88 0 26-8.16 49.73-8.15 23.73-23.69 43.19L891.54-96 864-68.46Z'/%3E%3C/svg%3E") !important; 
+	}
+	
 	</style>
 
 	<script type="text/javascript">

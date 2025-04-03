@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -27,7 +28,7 @@ public abstract class AbsExcelAction  {
 	protected static final String DECIMAL_PATTERN = "#,##0.00";
 	protected static final String PERCENT_PATTERN = "##0.0000%";
 	protected static final String NUMBER_PATTERN = "#,###";
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207));
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(0,114,207), new DefaultIndexedColorMap());
 	
 	protected XSSFWorkbook workbook;
 	protected XSSFSheet sheet;
@@ -114,52 +115,9 @@ public abstract class AbsExcelAction  {
 		return cell;
 	}
 
-	
-//	protected Cell addCell(String value) {
-//		Cell cell = row.createCell(cellCount++);
-//		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-//		cell.setCellType(CellType.STRING);
-//		return cell;
-//	}
-//
-//	protected Cell addCell(Enum<?> value) {
-//		Cell cell = row.createCell(cellCount++);
-//		if ( value != null ) {
-//			cell.setCellValue(value.toString());
-//		}
-//		cell.setCellType(CellType.STRING);
-//		return cell;
-//	}
-//
-//	protected Cell addCell(Short value) {
-//		Cell cell = row.createCell(cellCount++);
-//		cell.setCellStyle(numberStyle);
-//		if ( value != null ) {
-//			cell.setCellValue(value);
-//		}
-//		cell.setCellType(CellType.NUMERIC);
-//		return cell;
-//	}
-//	
-//	protected Cell addCell(Date value) {
-//		Cell cell = row.createCell(cellCount++);
-//		cell.setCellStyle(dateStyle);
-//		if ( value != null ) {
-//			cell.setCellValue(value);
-//		}
-//		return cell;
-//	}
-//
-//	protected Cell addCell(Double number) {
-//		Cell cell = row.createCell(cellCount++);
-//		cell.setCellStyle(decimalStyle);
-//		cell.setCellValue(number!=null?number:0.0);
-//		cell.setCellType(CellType.NUMERIC);
-//		return cell;
-//	}
-
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);
+		workbook.close();
 	}
 
 	protected abstract void headerRow();

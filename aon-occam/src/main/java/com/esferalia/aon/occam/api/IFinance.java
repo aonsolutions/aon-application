@@ -19,14 +19,10 @@ import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
-import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
-import com.esferalia.aon.occam.api.model.Rawdoc;
-import com.esferalia.aon.occam.api.model.RawdocInvoiceCounter;
-import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
@@ -200,22 +196,6 @@ public interface IFinance {
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);
 	
-	// 	***********************************************
-	// 	************************** RAWDOC *************
-	// 	***********************************************
-	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
-	public Stream<Rawdoc> getRawdocFullStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
-	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
-	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);
-	public RawdocInvoiceCounter getRawdocInvoiceCounter(AONContext ctx);
-	public Rawdoc getRawdocFull(AONContext ctx, int id);
-	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
-	void rawdocDelete(AONContext ctx, RawdocFilter filter);
-	void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId);
-	void rawdocToDraft(AONContext ctx, Integer rawdocId);
-	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
-	void rawdocToInbox(AONContext ctx, Integer rawdocId);
-	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
 	
 	// 	***********************************************
 	// 	************************** PAY_METHOD *********

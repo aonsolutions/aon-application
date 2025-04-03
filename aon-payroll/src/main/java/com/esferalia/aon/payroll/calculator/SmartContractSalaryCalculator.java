@@ -7,7 +7,6 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.calculator.TaxCalculator.getMonth;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -78,21 +76,18 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
-import com.esferalia.aon.salary.expression.DisableException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
-import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -1786,15 +1781,24 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
 		
-		return dslContext.fetchCount(
-		dslContext
-		.select(SALARY.ID)
-		.from(SALARY)
-		.innerJoin(SALARY_PAYMENT).onKey()
-		.where(SALARY.CONTRACT.eq(contractId))
-		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
-		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
-		.and(SALARY.ISSUE_DATE.eq(new java.sql.Date(issueDate.getTime())))) > 0;
+		return dslContext
+				.selectCount()
+				.from(SALARY)
+				.innerJoin(SALARY_PAYMENT).onKey()
+				.where(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+				.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+				.and(SALARY.ISSUE_DATE.eq(new java.sql.Date(issueDate.getTime()))).fetchOne().value1() > 0;
+		
+//		return dslContext.fetchCount(
+//		dslContext
+//		.select(SALARY.ID)
+//		.from(SALARY)
+//		.innerJoin(SALARY_PAYMENT).onKey()
+//		.where(SALARY.CONTRACT.eq(contractId))
+//		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+//		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+//		.and(SALARY.ISSUE_DATE.eq(new java.sql.Date(issueDate.getTime())))) > 0;
 		
 	}
 
@@ -1806,15 +1810,26 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		java.sql.Date lastDayOfMonth = new java.sql.Date(AonDateUtils.getLastDayOfMonth(issueMonth).getTime());
 		
 		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
-		return dslContext.fetchCount(
-		dslContext
-		.select(SALARY.ID)
-		.from(SALARY)
-		.innerJoin(SALARY_PAYMENT).onKey()
-		.where(SALARY.CONTRACT.eq(contractId))
-		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
-		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
-		.and(SALARY.ISSUE_DATE.between(firstDayOfMonth, lastDayOfMonth))) > 0;
+		
+		return 
+				dslContext
+				.selectCount()
+				.from(SALARY)
+				.innerJoin(SALARY_PAYMENT).onKey()
+				.where(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+				.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+				.and(SALARY.ISSUE_DATE.between(firstDayOfMonth, lastDayOfMonth)).fetchOne().value1() > 0;
+		
+//		return dslContext.fetchCount(
+//		dslContext
+//		.select(SALARY.ID)
+//		.from(SALARY)
+//		.innerJoin(SALARY_PAYMENT).onKey()
+//		.where(SALARY.CONTRACT.eq(contractId))
+//		.and(SALARY.TYPE.eq((byte) SalaryType.EXTRA.ordinal()))
+//		.and(SALARY_PAYMENT.DESCRIPTION.eq(payment.getDescription())) 			//TODO: sounds like.
+//		.and(SALARY.ISSUE_DATE.between(firstDayOfMonth, lastDayOfMonth))) > 0;
 		
 	}
 

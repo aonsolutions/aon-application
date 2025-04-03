@@ -55,6 +55,13 @@
 		.partialityColor{
 			background-color: #9c85ee;
 		}
+		
+		.paidLeaveColor{
+			color: black;
+			border: 1.5px solid #80bc70 !important;
+			background-color: #f6f6f6;
+			border-radius: 3px;
+		}
 
 		.colorButton{
 			border-radius: 8%;
@@ -212,6 +219,17 @@
 				</td>
 				<td>
 					<g:Label ui:field="peonadasDays"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label styleName="{style.paidLeaveColor} {style.colorButton}"/>
+				</td>
+				<td>
+					<g:Label>Perm. Retribuido</g:Label>
+				</td>
+				<td>
+					<g:Label ui:field="paidLeaveDays"/>
 				</td>
 			</tr>
 		</table>

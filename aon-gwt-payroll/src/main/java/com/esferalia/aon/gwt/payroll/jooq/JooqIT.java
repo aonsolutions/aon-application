@@ -293,6 +293,12 @@ public class JooqIT {
 		    } catch (Exception e) {
 			// Unknow expression, must be FECHA(yyyy,MM,dd);
 		    }
+		    
+		    try {
+				Optional.ofNullable(r.get(BASE_REGULADORA.EXPRESSION)).ifPresent(expression -> it.setRegulationBase(Double.parseDouble(expression)));
+		    } catch (Exception e) {
+		    	// Unknow expression, must be a double;
+		    }
 
 		    
 		    Optional.ofNullable(itsMap.get(r.get(CONTRACT.ID)).get(r.get(CONTRACT_LEAVE.PARENT)))
@@ -561,6 +567,13 @@ public class JooqIT {
 				.setDirectPayDate(getDirectPayDateByExpression(r.get(INICIO_PAGO_DIRECTO.EXPRESSION))));
 		    } catch (Exception e) {
 			// Unknow expression, must be FECHA(yyyy,MM,dd);
+		    }
+		    
+		    try {
+		    	Optional.ofNullable(r.get(BASE_REGULADORA.EXPRESSION))
+				.ifPresent(expression -> it.setRegulationBase(Double.parseDouble(expression)));
+		    } catch (Exception e) {
+			// Unknow expression, must be a double;
 		    }
 
 		    
@@ -893,23 +906,6 @@ public class JooqIT {
 						.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
 						.returning(CONTRACT_LEAVE_DETAIL.ID)
 						.fetchOne();
-					
-//					if(itPart.getType() == (byte)0 && (null != it.isComunicate() && it.isComunicate())) {
-//						LeaveBatchRecord leaveBatchRecord = dslContext.insertInto(LEAVE_BATCH)
-//							.set(LEAVE_BATCH.DOMAIN, domainId)
-//							.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
-//							.set(LEAVE_BATCH.STATUS, (byte)1)
-//							.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
-//							.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
-//							.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
-//							.returning(LEAVE_BATCH.ID).fetchOne();
-//						
-//						dslContext.insertInto(LEAVE_BATCH_DETAIL)
-//							.set(LEAVE_BATCH_DETAIL.DOMAIN, domainId)
-//							.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
-//							.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, contractLeaveDetail.getId())
-//							.execute();
-//					}
 				}
 				
 				Double baseReg = it.getRegulationBase();

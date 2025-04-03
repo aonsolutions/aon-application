@@ -55,6 +55,10 @@ import { generateJobId } from '../modules/invoice/InvoiceUtils.js';
 
 import { getApplicationParameters } from '../services/applicationParameterService.js';
 import { AonSuiteMenu } from './aon-suite-menu.js';
+import { AonIncome } from './invoice/aon-income.js';
+import { AonExpense } from './invoice/aon-expense.js';
+import { Income } from './invoice/Income.js';
+import { Expense } from './invoice/Expense.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -1184,6 +1188,18 @@ export class AonNewMenu extends AonElement {
 					}
 				});
 			}
+
+			let otherOptions = [
+				{
+					name: 'Nuevo ingreso',
+					icon: 'add_card',
+					fn: () => this.getApplication().setContent(new AonIncome(new Income()))
+				}, {
+					name: "Nuevo gasto",
+					icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
+					fn: () => this.getApplication().setContent(new AonExpense(new Expense()))
+				}
+			];
 			
 			newMenuOptions.push({
 				fn: () => {},
@@ -1191,7 +1207,15 @@ export class AonNewMenu extends AonElement {
 				name: MSG.NEW_INVOICE,
 				options : optionsMenu
 			});
+			
+			newMenuOptions.push({
+				fn: () => {},
+				icon: MATERIAL_ICONS.ACCOUNT_BALANCE_WALLET,
+				name: 'Otros gastos/ingresos',
+				options: otherOptions
+			});
 		}
+
 		if(this.getDur().isDocumental() && !this.isBetaDoc()){
 			newMenuOptions.push({
 				fn: () => {

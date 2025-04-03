@@ -195,6 +195,13 @@ export const DOWNLOAD_EXCEL_INVOICE = {
     aonIcon: "aon_excel"
 };
 
+export const DOWNLOAD_EXCEL = {
+    id: CONSTANT.DOWNLOAD_EXCEL.initCap(),
+    name: MSG.DOWNLOAD_EXCEL,
+    title: MSG.DOWNLOAD_EXCEL,
+    aonIcon: "aon_excel"
+};
+
 export const DUPLICATE = {
     id: CONSTANT.DUPLICATE.initCap(),
     name: MSG.DUPLICATE,
@@ -265,6 +272,13 @@ export const RECTIFY_INVOICE = {
     title: MSG.RECTIFY_INVOICE,
     icon: MATERIAL_ICONS.SWAP_CALLS
 };
+
+export const REFRESH = {
+    id: CONSTANT.REFRESH.initCap(),
+    name: MSG.REFRESH,
+    title: MSG.REFRESH,
+    icon: MATERIAL_ICONS.REFRESH
+}
 
 export const REJECT = {
     id: CONSTANT.REJECT.initCap(),
@@ -370,6 +384,13 @@ export const SHOW_FILE = {
     name: MSG.SHOW_FILE,
     title: MSG.SHOW_FILE,
     icon: MATERIAL_ICONS.VISIBILITY
+};
+
+export const REPROCESS = {
+    id: CONSTANT.REPROCESS,
+    name: MSG.REPROCESS,
+    title: MSG.REPROCESS,
+    icon: MATERIAL_ICONS.SYNC
 };
 
 export const UPLOAD = {

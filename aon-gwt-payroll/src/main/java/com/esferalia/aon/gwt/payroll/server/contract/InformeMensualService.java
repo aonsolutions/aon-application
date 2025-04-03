@@ -402,7 +402,7 @@ public class InformeMensualService {
                 DSL.dateDiff(DSL.val(Date.valueOf(evalEnd)), DSL.val(Date.valueOf(evalStart))).plus(1)
         )))).from(CONTRACT_DATA)
                 .where(CONTRACT_DATA.CONTRACT.eq(contratoId))
-                .and(CONTRACT_DATA.NAME.eq("DIAS_NO_RECUPERABLES"))
+                .and(CONTRACT_DATA.NAME.eq("PERMISO_RETRIBUIDO"))
                 .and(CONTRACT_DATA.DOMAIN.eq(domainId))
                 .and(CONTRACT_DATA.START_DATE.le(Date.valueOf(evalEnd)))
                 .and(CONTRACT_DATA.END_DATE.ge(Date.valueOf(evalStart)).or(CONTRACT_DATA.END_DATE.isNull()))

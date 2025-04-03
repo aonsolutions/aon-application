@@ -746,8 +746,8 @@ public class SistemaRED2AON {
 						.setType(getDeductionType(d.getName())))
 				.toArray(Deduction[]::new);
 
-		startDate = Arrays.stream(deductions).map(b -> b.getStartDate()).reduce(start, (d1, d2) -> max(d1, d2));
-		endDate = Arrays.stream(deductions).map(b -> b.getEndDate()).reduce(end, (d1, d2) -> min(d1, d2));
+		startDate = Arrays.stream(deductions).map(b -> b.getStartDate()).reduce(start, (d1, d2) -> min(d1, d2));
+		endDate = Arrays.stream(deductions).map(b -> b.getEndDate()).reduce(end, (d1, d2) -> max(d1, d2));
 
 		PAYROLL.setDeductions(domainName, domainId, userLogin, ccc, naf, startDate, endDate, deductions);
 
@@ -758,8 +758,8 @@ public class SistemaRED2AON {
 						.setType(getDeductionType(c.getName())))
 				.toArray(Cost[]::new);
 
-		startDate = Arrays.stream(costs).map(b -> b.getStartDate()).reduce(start, (d1, d2) -> max(d1, d2));
-		endDate = Arrays.stream(costs).map(b -> b.getEndDate()).reduce(end, (d1, d2) -> min(d1, d2));
+		startDate = Arrays.stream(costs).map(b -> b.getStartDate()).reduce(start, (d1, d2) -> min(d1, d2));
+		endDate = Arrays.stream(costs).map(b -> b.getEndDate()).reduce(end, (d1, d2) -> max(d1, d2));
 
 		PAYROLL.setCosts(domainName, domainId, userLogin, ccc, naf, startDate, endDate, costs);
 

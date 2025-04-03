@@ -218,7 +218,8 @@ export class AonAccountingMenu extends AonSuiteMenu {
 			},{
 				description: "Agregador Bancario",
 				title: "Agregador Bancario",
-				action: () => GWT.iLoad(GWT.NORDIGEN)
+				action: () => GWT.iLoad(GWT.NORDIGEN),
+				filter: () => this.hasBank()
 			},{
 				description: "Cartera de cobros y pagos",
 				title: "Cartera de cobros y pagos",

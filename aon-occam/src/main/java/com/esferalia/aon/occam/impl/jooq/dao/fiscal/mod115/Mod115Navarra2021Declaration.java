@@ -16,7 +16,8 @@ public class Mod115Navarra2021Declaration extends Mod115Declaration {
 	}
 
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
-		NF_C01(Mod115Key.NF_C01
+		 CM_003(Mod115Key.CM_003,null,null,null,null,null)
+		,NF_C01(Mod115Key.NF_C01
 			, (mod,br) -> isRenting(br) 
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.NF_C01, mod, br)
 			,null,null,null)

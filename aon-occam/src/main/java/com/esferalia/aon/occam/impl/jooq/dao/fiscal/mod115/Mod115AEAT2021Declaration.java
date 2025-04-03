@@ -16,7 +16,8 @@ public class Mod115AEAT2021Declaration extends Mod115Declaration {
 	}
 	
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
-		 CT_C01(Mod115Key.CT_C01
+		 CM_003(Mod115Key.CM_003,null,null,null,null,null)
+		,CT_C01(Mod115Key.CT_C01
 			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod115Key.CT_C01,mod,docs,pdocs,br)
 			,null,null,null)

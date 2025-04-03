@@ -196,6 +196,14 @@ public class FiscalFaker {
 			(m) -> MODEL111.initialize( params.getOccam(), m));
 	}
 
+	public static Mod111 simulateMod111( FiscalFakerParams params) {
+		Mod111 mod111 = getMod111( params );
+		mod111.setMustIncludeInvoicesOnGeneration( true );
+		mod111.setMustIncludeSalariesOnGeneration( true );
+		MODEL111.simulate(params.getOccam(), mod111);
+		return mod111;
+	}
+
 	public static Mod111 createMod111( FiscalFakerParams params) {
 		Mod111 mod111 = getMod111( params );
 		MODEL111.create(params.getOccam(), mod111);
@@ -207,6 +215,13 @@ public class FiscalFaker {
 			(m) -> MODEL115.initialize( params.getOccam(), m));
 	}
 
+	public static Mod115 simulateMod115( FiscalFakerParams params) {
+		Mod115 mod115 = getMod115( params );
+		mod115.setMustIncludeInvoicesOnGeneration( true );
+		MODEL115.simulate(params.getOccam(), mod115);
+		return mod115;
+	}
+
 	public static Mod115 createMod115( FiscalFakerParams params) {
 		Mod115 mod115 = getMod115( params );
 		MODEL115.create(params.getOccam(), mod115);
@@ -216,6 +231,13 @@ public class FiscalFaker {
 	public static Mod123 getMod123( FiscalFakerParams params) {
 		return getFiscalModel(params,Mod123::new,
 			(m) -> MODEL123.initialize( params.getOccam(), m));
+	}
+
+	public static Mod123 simulateMod123( FiscalFakerParams params) {
+		Mod123 mod123 = getMod123( params );
+		mod123.setMustIncludeInvoicesOnGeneration( true );
+		MODEL123.simulate(params.getOccam(), mod123);
+		return mod123;
 	}
 
 	public static Mod123 createMod123( FiscalFakerParams params) {

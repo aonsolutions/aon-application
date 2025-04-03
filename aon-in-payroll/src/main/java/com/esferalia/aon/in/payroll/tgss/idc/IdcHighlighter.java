@@ -264,7 +264,7 @@ public class IdcHighlighter {
 	}
 
  	public static void highlight( InputStream is , OutputStream os,IdcHighlighterListener listener) throws IOException , UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is)){
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes())){
 			highlight(doc, listener);
 			doc.save(os);
 		}

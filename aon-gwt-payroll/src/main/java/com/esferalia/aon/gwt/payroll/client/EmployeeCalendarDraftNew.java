@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -46,7 +47,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
-public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHandler {
+public abstract class EmployeeCalendarDraftNew extends Composite implements ContextMenuHandler {
 	
 	// -------------------------------------------- UiBinder
 
@@ -212,6 +213,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				public Void visitFreeDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
 					calendarGrid.getWidget(row, col).addStyleName(style.freeDayStyle());	
+					return null;
+				}
+				
+				@Override
+				public Void visitPaidLeave(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
+					calendarGrid.getWidget(row, col).addStyleName(style.paidLeaveDayStyle());	
 					return null;
 				}
 				
@@ -626,6 +634,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		String peonadasStyle();
 		String partialityStyle();
 		String freeDayStyle();
+		String paidLeaveDayStyle();
 		String effectiveStyle();
 		// Out of contract
 		String outOfContractStyle();
@@ -678,6 +687,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	@UiField
 	Button peonadasDayButton;
+	
+	@UiField
+	Button paidLeaveDayButton;
 	
 	// ---------------------------- Days Hours (UiField)
 	
@@ -894,6 +906,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		initiAgrarianDialog(DayType.REAL_DAYS);
 	}
 	
+	@UiHandler("paidLeaveDayButton")
+	public void onPaidLeaveDayButtonClick(ClickEvent event) {
+		initPartialityDialog(DayType.PAID_LEAVE);
+	}
+	
 	// --------------------------- Days Hours
 	
 	@UiHandler("hourButton")
@@ -1042,6 +1059,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					
 					// Add day type
 					DayType dayType = this.employeeCalendarDraftObject.getDayTypeByDate(currentDay);
+					
 					
 					// Si es un dia sin tipo y es un dia con parcialidad
 					if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isPartialityDayTypeByDate(currentDay)) {
@@ -1455,10 +1473,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			
 			@Override
 			protected void onAccept() {
+				hide();
 				Date startDate = getStartDate();
 				Date endDate = getEndDate();
-				String coefficient = Double.toString(getPercentValue());
-				addPartialityDayType(startDate, endDate, dayType, coefficient);
+				if(dayType.equals(DayType.PAID_LEAVE)) {
+					String expression = getPaidLeaveExression();
+					addDayType(startDate, endDate, dayType, expression);
+				} else {
+					String coefficient = Double.toString(getPercentValue());
+					addPartialityDayType(startDate, endDate, dayType, coefficient);
+				}
 			}
 		};
 	}
@@ -1643,6 +1667,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			return "DIAS LABORABLES";
 		case NOTYPEDAY:
 			return "LIMPIAR DIAS";
+		case PAID_LEAVE:
+			return "PERMISO RETRIBUIDO";
 		default:
 			return "";
 		}
@@ -1836,6 +1862,24 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		if(dayType == DayType.FREEDAY) {
 			labelDay.setTitle(this.employeeCalendarDraftObject.getExpressionByDate(currentDay));
 		}
+		
+		if(dayType == DayType.PAID_LEAVE) {
+			labelDay.setTitle(getPaidLeaveExpression(this.employeeCalendarDraftObject.getExpressionByDate(currentDay)));
+		}
+	}
+	
+	private String getPaidLeaveExpression(String value) {
+		if(AonStringUtils.isBlank(value)) return "";
+		
+		try {
+			String reason = value.replaceAll("^.*?/\\*inherit\\*/(.*?)/\\*\\*/.*$", "$1").trim();
+	
+	        String coef = value.replaceAll("^.*?/\\*\\*/", "").trim();
+	        
+	        return "Perm. Retribuido: " + reason + " (coef:" + coef + ")";
+		} catch (Exception e) {
+			return "Error formato expresi\u00f3n Permiso Retribuido";
+		}
 	}
 	
 	// -------------------------------------------- Auxiliar methods
@@ -1967,14 +2011,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	public void onSave() {
+		
+		showLoadingMessage("Guardando calendario...");
+		
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s ->
 					this.employeeCalendarDraftObject.initCalendarInfo(t -> {
+						showSuccessMessage("Calendario", "guardado correctamente");
 						// Init save and undo all
 						onSaved();
 						changeYear();
-					}, f -> {}),
-				f -> {}
+					}, f -> {
+						showErrorMessage("Error inicializando calendario", f.getMessage());
+					}),
+				f -> {
+					showErrorMessage("Error guardado", f.getMessage());
+				}
 		);
 	}
 	
@@ -1997,4 +2049,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
 		daysTypePanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
+
+	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showSuccessMessage(String title, String message);
+	protected abstract void showLoadingMessage(String message);
+	protected abstract void onHideMessage();
+	
+	
 }

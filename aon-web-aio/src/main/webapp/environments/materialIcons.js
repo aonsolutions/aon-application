@@ -243,6 +243,7 @@ export const QR_CODE_SCANNER = 'qr_code_scanner';
 // ----- R
 
 export const RECEIPT = 'receipt';
+export const REFRESH = 'refresh';
 export const REMOVE = 'remove';
 export const REMOVE_CIRCLE = 'remove_circle';
 export const REPORT = 'report';

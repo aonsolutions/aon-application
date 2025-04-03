@@ -1,24 +1,19 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	 signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
-	getPaymethod, getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, recordSelfconta, getRegistrySuggestedAccount } from '../../services/service.js';
-import { getCompany } from '../../services/companyService.js';
-	 import { Invoice, getDocumentNumber } from './Invoice.js';
+	getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
+	signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
+	getPaymethod} from '../../services/service.js';
+import { Invoice, getDocumentNumber } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
-
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-
-import * as GWT from '../../gwt/gwt.js';
-import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
 import { ErrCode, ErrKey, getTaxPercentageOption, getTaxType, getTaxTypeName, getVatLabel, getVats, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
-import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
@@ -28,9 +23,12 @@ import { AonTab } from '../../components/aon-tab.js';
 import {INVOICE} from  '../../services/app.js';
 import { AonRegistrySuggestion } from '../registry/aon-registry-suggestion.js';
 import { addCounter, transferCounter } from './InvoiceCounter.js';
-
-import * as OPTION from './InvoiceOptions.js';
 import { createDate, createEmail, createInput, createNumber, createSelect, createSuggestion, createTextarea } from '../../components/CreateComponent.js';
+
+import * as GWT from '../../gwt/gwt.js';
+import * as ACTION from '../actions.js';
+import * as OPTION from './InvoiceOptions.js';
+import * as LS from '../../services/localStorageService.js';
 
 export class AonInvoice extends AonElement {
 
@@ -87,37 +85,16 @@ export class AonInvoice extends AonElement {
 		this.initializeFunctions();
 		this.configuration = await getInvoiceConfiguration();
 
+		this.getInvoice().surcharge = this.getInvoice().surcharge || this.getCompany().surcharge;
+		this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || this.getCompany().vatAccrualPayment;
+
 		this.buildDur().then(r => {
 			this.build();
-		});		
-		
-		getCompany().then(company => {
-			const registry = this.getInvoice().isEmitida()
-				? this.getInvoice().getRegistry().id 
-				: company.id;
-			this.company = company;
-			this.getInvoice().surcharge = this.getInvoice().surcharge || company.surcharge;
-			this.getInvoice().vatAccrualPayment = this.getInvoice().vatAccrualPayment || company.vatAccrualPayment;
-			if(registry) {
-				let data = {
-					id: registry,
-					registry: registry,
-					additional_info: ['banks', 'paymethods']
-				};
-
-				getRegistry(data).then(r => {
-					this.rbanks = r.banks;
-					this.rpaymethods = r.paymethods;
-				});
-			}
 		});
-
-
 	}
 
 	initialize(){
 		this.accept = true;
-		this.rbanks = [];
 		this.fileOpened = this.fileOpened || false;
 		this.id = this.id || 'aonInvoiceSheet';
 		this.TOOLBAR = this.id + 'Toolbar';
@@ -231,6 +208,14 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	getConfiguration() {
+		return this.configuration;
+	}
+
+	getCompany() {
+		return this.configuration.company;
+	}
+
 	getInvoice() {
 		return this.invoice;
 	}
@@ -300,8 +285,10 @@ export class AonInvoice extends AonElement {
 	}
 
 	focus() {
-		if(this.focusId)
-			this.getElement(this.focusId).focus();
+		if(this.focusId){
+			let focusElement = this.getElement(this.focusId);
+			if(focusElement) focusElement.focus();
+		}
 	}
 
 	buildInputFile() {
@@ -430,13 +417,13 @@ export class AonInvoice extends AonElement {
 		}
 
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
-			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		} 
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
 		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
-			invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
+			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
 		if(this.getInvoice().isRejected()) {
@@ -447,14 +434,14 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -468,7 +455,7 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		
 		if(this.getInvoice().file || this.invoice.isEmitida() ){
-			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile());
+			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile(true));
 		} else {
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} 
@@ -497,7 +484,7 @@ export class AonInvoice extends AonElement {
 		this.buildFileContent();
 
 		if(this.fileOpened) {
-			this.showFile();
+			this.showFile(false);
 		}
 	}
 
@@ -1319,39 +1306,7 @@ export class AonInvoice extends AonElement {
 			registry.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
 				this.invoice.receiver.address = registry.getRegistry().address;
 			});
-			table.addCell(registry, '6');
-			
-			// registry.readonly = this.invoice.isReadonly();
-			// registry.addEventListener(EVENT.CHANGE, () => {
-			// 	this.invoice.setRegistry(registry.getRegistry());
-			// 	if(this.autosave) this.save();
-			// });
-			// registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
-			// 	this.invoice.setRegistry(registry.getRegistry());
-			// 	getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
-			// 		this.invoice.setPaymethod(rpm.paymethod.id);
-			// 		getPaymethod(rpm.paymethod.id).then(pm => {
-			// 			if(pm.type === 'NEGOTIABLE_DOCUMENT') {
-			// 				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-			// 					this.invoice.setBankAccount(crpm.bank.bank_account);
-			// 					this.reload();
-			// 				});
-			// 				// getRegistryBanks(this.company.id).then(r => {
-			// 				// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
-			// 				// 	this.reload();
-			// 				// });	
-			// 			} else if(pm.type === 'BANK_TRANSFER'){
-			// 				this.invoice.setBankAccount(rpm.bank.bank_account);
-			// 				this.reload();
-			// 			} else {
-			// 				this.invoice.setBankAccount("");
-			// 				this.reload();
-			// 			}
-			// 		});
-			// 	});
-			// 	if(this.autosave) this.save();
-			// });
-			// table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');	
+			table.addCell(registry, '6');	
 		}
 
 		table.addRow(); // ----- ROW 3
@@ -1654,43 +1609,31 @@ export class AonInvoice extends AonElement {
 		} 
 	}
 
+	getIban(invoice, registry) {
+		let firstIban = "";
+		let pm = registry.paymethod.paymethod;
+		if((invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
+			firstIban = registry.banks && registry.banks.length > 0 ? registry.banks[0].bank_account : "";			
+		} else if((!invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
+			firstIban = this.configuration.company.banks && this.configuration.company.banks.length > 0 
+				? this.configuration.company.banks[0].bank_account : "";
+		}
+		return registry.paymethod && registry.paymethod.bank && registry.paymethod.bank.bank_account
+			   ? registry.paymethod.bank.bank_account : firstIban;
+	}
+
 	async onChangeRegistry(registry) { 
 		this.invoice.setRegistry(registry);
 		if(registry.paymethod) {
-			this.invoice.setPaymethod(registry.paymethod.paymethod.id);
-			this.invoice.finances.forEach((finance, i) => {
-				let pm = registry.paymethod.paymethod;
-				if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-					getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						if(ba) {
-							ba.value = crpm.bank.bank_account;
-							finance.bank_account = ba.value;
-							this.invoice.setFinance(finance, i);
-						}	
-					});
-					// getRegistryBanks(this.company.id).then(r => {
-				   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-				   	// 	ba.value = r[0] ? r[0].bank_account : "";
-				   	// 	finance.bank_account = ba.value;
-				   	// 	this.invoice.setFinance(finance, i);
-					// });	
-			   	} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-				 		|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
-				   	getRegistryBanks(this.invoice.getRegistry().id).then(r => {
-						let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-						if(ba) {
-							ba.value = r[0] ? r[0].bank_account : "";
-							finance.bank_account = ba.value;
-							this.invoice.setFinance(finance, i); 
-						}
-				   	});
-				} else {
-					finance.bank_account = "";
-					this.invoice.setFinance(finance, i);
-				}
-			});				
+			let pm = registry.paymethod.paymethod;
+			this.invoice.setPaymethod(pm.id);
+			let finance = {
+				due_date: this.invoice.date,
+				paymethod: this.invoice.paymethod,
+				amount: this.total,
+				bank_account: this.getIban(this.invoice, registry)
+			};
+			this.invoice.finances = [finance];				
 		}
 		if(registry.transaction) this.invoice.setTransaction(registry.transaction);
 		else {
@@ -2287,8 +2230,7 @@ export class AonInvoice extends AonElement {
 		table.removeRows();
 		for(let i = 0; i < this.invoice.finances.length; i++) {
 			let finance = this.invoice.finances[i];
-			if(this.fileOpened) this.printMinimizeFinance(table, finance, i)
-			else this.printFinance(table, finance, i);
+			this.printFinance(table, finance, i);
 		}
 
 		let div = this.createElement(TAG.DIV);
@@ -2304,7 +2246,7 @@ export class AonInvoice extends AonElement {
 				this.setFocus(this.FINANCE_DUE_DATE + this.invoice.finances.length);
 				this.invoice.addFinance();
 				this.reload();
-				if(this.fileOpened) {
+				if(this.isMinimize()) {
 					const i = this.invoice.finances.length -1;
 					const finance = this.invoice.finances[i];
 					this.printFinanceDialog(finance, i);
@@ -2315,21 +2257,16 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-
-	onChangeFinanceAmount(finance, value, i, dialog) {
-		this.setFocus(this.FINANCE_AMOUNT + i);
-		finance.amount = value;
-		this.invoice.setFinance(finance, i);
-		if(this.autosave) this.save();		
-	}
-
 	printFinanceDialog(finance, i) {
 		let dialog = this.getApplication().getDialog();
 		dialog.setTitle("VENCIMIENTO");
 		dialog.addAcceptAction(() => {
-			
+			let date = this.getElement(this.FINANCE_DUE_DATE + i);
+			if(date) date.setDate(finance.due_date);
+
+			let amount = this.getElement(this.FINANCE_AMOUNT + i);
+			if(amount) amount.value = finance.amount;
 		});
-		
 
 		let div = this.createElement(TAG.DIV);
 		div.style.margin = '15px';
@@ -2342,23 +2279,13 @@ export class AonInvoice extends AonElement {
 		table.addRow(); // ----- ROW 1
 
 		// ----- FINANCE DUE DATE
-
-		let date = createDate(this.FINANCE_DUE_DATE + 'Dialog' + i, MSG.DATE); //MSG.DUE_DATE;
-		date.readonly = this.invoice.isReadonly();
-		date.setDate(finance.due_date);
-		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.getDateValue();
-			this.setFocus(date.id);
-			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(date);
+		this.buildFinanceDate(table, this.FINANCE_DUE_DATE + CONSTANT.DIALOG.initCap() + i, finance, i);
 
 		table.addRow(); // ----- ROW 2
 
 		// ----- FINANCE PAYMETHOD
 
-		let paymethod = createSelect(this.FINANCE_PAYMETHOD + 'Dialog' + i, MSG.PAYMETHOD);
+		let paymethod = createSelect(this.FINANCE_PAYMETHOD + CONSTANT.DIALOG.initCap() + i, MSG.PAYMETHOD);
 		paymethod.autocomplete = true;
 		// paymethod.options = JSON.stringify(Paymethods);
 		paymethod.readonly = this.invoice.isReadonly();
@@ -2381,7 +2308,7 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE BANK ACCOUNT | RBANK
 		
-		let bankAccount = createSuggestion(this.FINANCE_BANK_ACCOUNT + 'Dialog' + i, 'Cuenta Bancaria'); //MSG.BANK_ACCOUNT;
+		let bankAccount = createSuggestion(this.FINANCE_BANK_ACCOUNT + CONSTANT.DIALOG.initCap() + i, 'Cuenta Bancaria'); //MSG.BANK_ACCOUNT;
 		bankAccount.readonly = this.invoice.isReadonly();
 		bankAccount.addEventListener(EVENT.KEYUP, () => {
 
@@ -2405,49 +2332,119 @@ export class AonInvoice extends AonElement {
 
 		// ----- FINANCE AMOUNT
 	
-		let amount = this.createAonNumber(this.FINANCE_AMOUNT + 'Dialog' + i, MSG.AMOUNT, finance.amount);
-		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i, true));
-		table.addCell(amount);
-		amount.readonly = this.invoice.isReadonly()
+		this.buildFinanceAmount(table, this.FINANCE_AMOUNT + CONSTANT.DIALOG.initCap() + i, finance, i);
+
 		dialog.open();
 	}
 
-	printMinimizeFinance(table, finance, i) {
+	isMinimize() {
+		return this.fileOpened;
+	}
+
+	async printFinance(table, finance, i) {
+		// Rellenamos finance.banks para añadir opciones a BankAccountSuggestion.
+		let fpm = await getPaymethod(finance.paymethod);
+		if((!this.invoice.isEmitida() && fpm.type === 'NEGOTIABLE_DOCUMENT') || (this.invoice.isEmitida() && fpm.type === 'BANK_TRANSFER')) {
+			finance.banks = this.getCompany().banks;
+		} else if((this.invoice.isEmitida() && fpm.type === 'NEGOTIABLE_DOCUMENT') || (!this.invoice.isEmitida() && fpm.type === 'BANK_TRANSFER')) { 
+			getRegistryBanks(this.invoice.getRegistry().id).then(r => {
+				finance.banks = r;
+			});
+		} else finance.banks = [];
+
 		table.addRow(); // ----- ROW i
-		
+
 		// ----- FINANCE DUE DATE
 
-		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE); //MSG.DUE_DATE;
-		date.readonly = this.invoice.isReadonly();
-		date.setDate(finance.due_date);
-		date.addEventListener(EVENT.CHANGE, () => {
-			finance.due_date = date.getDateValue();
-			this.setFocus(date.id);
-			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(date);
+		let dateCell = this.buildFinanceDate(table, this.FINANCE_DUE_DATE + i, finance, i);
+		if(!this.isMinimize())dateCell.style.width = '15%';
+
+		// ----- FINANCE PAYMETHOD
+
+		if(!this.isMinimize()){
+			let paymethod = createSelect(this.FINANCE_PAYMETHOD + i, MSG.PAYMETHOD);
+			paymethod.autocomplete = true;
+			paymethod.setAlias("id", "name");
+			// paymethod.options = JSON.stringify(Paymethods);
+			paymethod.readonly = this.invoice.isReadonly();
+			
+			let paymethodCell = table.addCell(paymethod);
+			paymethodCell.style.width = '25%';
+	
+			getPaymethods({}).then(paymethods => {
+				paymethod.setOptions(paymethods);
+				paymethod.value = finance.paymethod;
+			});
+	
+			// ----- FINANCE BANK ACCOUNT | RBANK
+			let bankAccount = createSuggestion(this.FINANCE_BANK_ACCOUNT + i, 'Cuenta Bancaria'); //MSG.BANK_ACCOUNT;
+			bankAccount.readonly = this.invoice.isReadonly();
+			bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
+				bankAccount.buildOptions(finance.banks.filter(f => f.bank_account.includes(bankAccount.value))
+					.map(r => {return {
+							name: r.bank_account,
+							value: r.bank_account,
+							rbank: r};}));
+			});
+	
+			bankAccount.addEventListener(EVENT.CHANGE, () => {
+				this.setFocus(this.FINANCE_AMOUNT + i);
+				finance.bank_account = bankAccount.value;
+				this.invoice.setFinance(finance, i);
+			});
+	
+			// bankAccount.addEventListener(EVENT.SELECT,() => {
+			// 	this.setFocus(this.FINANCE_AMOUNT + i);
+			// })
+	
+			let ibanCell = table.addCell(bankAccount);
+			ibanCell.style.width = '50%';
+			finance.bank_account = finance.bank_account || finance.iban;
+			bankAccount.value = finance.bank_account || '';
+			bankAccount.disabled = fpm.type !== 'NEGOTIABLE_DOCUMENT' && fpm.type !== 'BANK_TRANSFER';
+	
+			paymethod.addEventListener(EVENT.SELECT, () => {
+				this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
+				finance.paymethod = paymethod.value;
+				this.invoice.setFinance(finance, i);
+				if(this.autosave) this.save();
+				const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
+				bankAccount.disabled = pm.type !== 'NEGOTIABLE_DOCUMENT' && pm.type !== 'BANK_TRANSFER';
+				if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
+					finance.banks = this.getCompany().banks;
+					finance.bank_account = this.getCompany().banks && this.getCompany().banks.length > 0 
+						? this.getCompany().banks[0].bank_account : "";
+				} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
+					getRegistryBanks(this.invoice.getRegistry().id).then(r => {
+						finance.banks = r;
+						finance.bank_account = r[0] ? r[0].bank_account : "";
+					});
+				} else {
+					finance.banks = [];
+					finance.bank_account = "";
+				}
+				this.invoice.setFinance(finance, i);
+				bankAccount.value = finance.bank_account;
+			});
+		}
 
 		// ----- FINANCE AMOUNT
 
-		let amount = this.createAonNumber(this.FINANCE_AMOUNT + i, MSG.AMOUNT, finance.amount);
-		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i));
-		table.addCell(amount);
-		amount.readonly = this.invoice.isReadonly()
+		this.buildFinanceAmount(table, this.FINANCE_AMOUNT + i, finance, i);
 
 		// ----- FINANCE OPTIONS
-
-		let financeOptions = new AonIconButton();
-		financeOptions.id = this.FINANCE_OPTIONS + i;
-		financeOptions.title = MSG.OPTIONS;
-		financeOptions.icon = MATERIAL_ICONS.EDIT;
-		financeOptions.addEventListener(EVENT.CLICK, () => {
-			this.printFinanceDialog(finance, i);
-		});
-		table.addCell(financeOptions);
-
+		if(this.isMinimize()){
+			let financeOptions = new AonIconButton();
+			financeOptions.id = this.FINANCE_OPTIONS + i;
+			financeOptions.title = MSG.OPTIONS;
+			financeOptions.icon = MATERIAL_ICONS.EDIT;
+			financeOptions.addEventListener(EVENT.CLICK, () => {
+				this.printFinanceDialog(finance, i);
+			});
+			table.addCell(financeOptions);
+		}
 		// ----- FINANCE DELETE
-		
+
 		if(!this.invoice.isReadonly()) {
 			let financeDelete = new AonIconButton();
 			financeDelete.id = this.FINANCE_DELETE + i;
@@ -2462,12 +2459,8 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	printFinance(table, finance, i) {
-		table.addRow(); // ----- ROW i
-
-		// ----- FINANCE DUE DATE
-
-		let date = createDate(this.FINANCE_DUE_DATE + i, MSG.DATE); //MSG.DUE_DATE;
+	buildFinanceDate(table, id, finance, i) {
+		let date = createDate(id, MSG.DATE);
 		date.readonly = this.invoice.isReadonly();
 		date.setDate(finance.due_date);
 		date.addEventListener(EVENT.CHANGE, () => {
@@ -2476,114 +2469,19 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		let dateCell = table.addCell(date);
-		dateCell.style.width = '15%';
+		return table.addCell(date);
+	}
 
-		// ----- FINANCE PAYMETHOD
-
-		let paymethod = createSelect(this.FINANCE_PAYMETHOD + i, MSG.PAYMETHOD);
-		paymethod.autocomplete = true;
-		paymethod.setAlias("id", "name");
-		// paymethod.options = JSON.stringify(Paymethods);
-		paymethod.readonly = this.invoice.isReadonly();
-		paymethod.addEventListener(EVENT.SELECT, () => {
-			this.setFocus(this.FINANCE_BANK_ACCOUNT + i);
-			finance.paymethod = paymethod.value;
+	buildFinanceAmount(table, id, finance, i) {
+		let amount = this.createAonNumber(id, MSG.AMOUNT, finance.amount);
+		amount.onChange(() => {
+			this.setFocus(amount.id);
+			finance.amount = amount.value;
 			this.invoice.setFinance(finance, i);
-			if(this.autosave) this.save();
-			const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
-			if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-				 	|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-
-				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
-					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					if(ba) {
-						ba.value = crpm.bank.bank_account;
-						finance.bank_account = ba.value;
-						this.invoice.setFinance(finance, i);
-					}
-				});
-				// getRegistryBanks(this.company.id).then(r => {
-				// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-				// 	ba.value = r[0] ? r[0].bank_account : "";
-				// 	finance.bank_account = ba.value;
-				// 	this.invoice.setFinance(finance, i);
-				// });	
-			} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
-				|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
-				getRegistryBanks(this.invoice.getRegistry().id).then(r => {
-					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					if(ba) {
-						ba.value = r[0] ? r[0].bank_account : "";
-						finance.bank_account = ba.value;
-						this.invoice.setFinance(finance, i);
-					}
-				});
-			} else {
-				let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-				if(ba) {
-					ba.value = "";
-					finance.bank_account = "";
-					this.invoice.setFinance(finance, i);
-				}
-			}
+			if(this.autosave) this.save();		
 		});
-		let paymethodCell = table.addCell(paymethod);
-		paymethodCell.style.width = '25%';
-
-		getPaymethods({}).then(paymethods => {
-			paymethod.setOptions(paymethods);
-			paymethod.value = finance.paymethod;
-		});
-
-		// ----- FINANCE BANK ACCOUNT | RBANK
-
-		let bankAccount = createSuggestion(this.FINANCE_BANK_ACCOUNT + i, 'Cuenta Bancaria'); //MSG.BANK_ACCOUNT;
-		bankAccount.readonly = this.invoice.isReadonly();
-		bankAccount.addEventListener(EVENT.AON_KEYUP, () => {
-			bankAccount.buildOptions(this.rbanks.filter(f => f.bank_account.includes(bankAccount.value))
-				.map(r => {return {
-						name: r.bank_account,
-						value: r.bank_account,
-						rbank: r};}));
-		});
-
-		bankAccount.addEventListener(EVENT.CHANGE, () => {
-			this.setFocus(this.FINANCE_AMOUNT + i);
-			finance.bank_account = bankAccount.value;
-			this.invoice.setFinance(finance, i);
-		});
-
-		// bankAccount.addEventListener(EVENT.SELECT,() => {
-		// 	this.setFocus(this.FINANCE_AMOUNT + i);
-		// })
-
-		let ibanCell = table.addCell(bankAccount);
-		ibanCell.style.width = '50%';
-		finance.bank_account = finance.bank_account || finance.iban;
-		bankAccount.value = finance.bank_account || '';
-
-		// ----- FINANCE AMOUNT
-
-		let amount = this.createAonNumber(this.FINANCE_AMOUNT + i, MSG.AMOUNT, finance.amount);
-		amount.onChange(() => this.onChangeFinanceAmount(finance, amount.value, i));
 		table.addCell(amount);
 		amount.readonly = this.invoice.isReadonly()
-
-		// ----- FINANCE DELETE
-
-		if(!this.invoice.isReadonly()) {
-			let financeDelete = new AonIconButton();
-			financeDelete.id = this.FINANCE_DELETE + i;
-			financeDelete.title = MSG.DELETE_FINANCE;
-			financeDelete.icon = MATERIAL_ICONS.REMOVE_CIRCLE;
-			financeDelete.addEventListener(EVENT.CLICK, () => {
-				this.invoice.deleteFinance(finance, i);
-				this.reload();
-				if(this.autosave) this.save();
-			});
-			table.addCell(financeDelete);
-		}
 	}
 
 	getInvoiceTitle() {
@@ -2635,7 +2533,7 @@ export class AonInvoice extends AonElement {
 		d.open();
 	}
 
-	showFile(){
+	showFile(reload){
 		let invoiceToolbar = this.getElement(this.TOOLBAR);
 		let button = this.getElement(invoiceToolbar.TITLE_SECTION + 'ShowFileButton');
 		let visible = 'visibility_off' === button.icon;
@@ -2689,7 +2587,7 @@ export class AonInvoice extends AonElement {
 			fileDiv.appendChild(viewer);
 		}
 		this.buildDetailCard();
-		this.buildFinanceCard();
+		if(reload) this.buildFinanceCard();
 	}
 
 	previousInvoice() {
@@ -3086,6 +2984,7 @@ export class AonInvoice extends AonElement {
 		dupInv.status = 'inbox';
 		dupInv.tbai = undefined;
 		dupInv.tbaiUrl = undefined;
+		dupInv.file = undefined;
 		if(dupInv.finances) {
 			dupInv.finances.forEach((item, i) => {
 				dupInv.finances[i].id = undefined;

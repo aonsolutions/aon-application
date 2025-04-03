@@ -29,7 +29,6 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -90,7 +89,7 @@ public abstract class AgreementPreview extends Composite {
 
 		@Override
 		public void execute() {
-			AgreementSuggestPaymentDialog paymentDialog = new AgreementSuggestPaymentDialog() {
+			AgreementSuggestPaymentDialog paymentDialog = new AgreementSuggestPaymentDialog(agreement.getPayments()) {
 
 				@Override
 				protected void onAccept(Payment payment) {
@@ -502,7 +501,7 @@ public abstract class AgreementPreview extends Composite {
 
 			private void updatePaymentExpresion(boolean isHide, Payment selectedPayment, Payment updatedPayment) {
 				selectedPayment.setExpression(Boolean.TRUE.equals(isHide)
-						? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression())
+						? showHidePayment(updatedPayment)
 						: updatedPayment.getExpression());
 				selectedPayment.setScope(Scope.SALARY);
 				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
@@ -531,31 +530,17 @@ public abstract class AgreementPreview extends Composite {
 				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE");
 	}
 
-	public String showHidePayment(String description, String expression) {
-		if (!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE"))
-			expression = expression.replaceAll("DISABLE\\(.*\\);\\s", "");
-		else
-			expression = "DISABLE(); " + expression;
-//			expression = "DISABLE(\"<div>" + description
-//					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-//					+ expression;
-
-		return expression;
-	}
-
-	public void showHidePayment(Payment payment) {
+	public String showHidePayment(Payment payment) {
 		String expression = payment.getExpression();
-
-		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE")
-						? expression.replaceAll("DISABLE\\(.*\\);\\s", "")
-						: "DISABLE(); " + expression;
-//						: "DISABLE(\"<div>" + payment.getDescription()
-//								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-//								+ expression;
-
+		
+		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE") && AonStringUtils.startsWithIgnoreCase(expression, "DISABLE"))
+			expression = AonStringUtils.substringAfter(expression, "DISABLE();");
+		else
+			expression = "DISABLE();" + expression;
+		
 		payment.setExpression(expression);
+		
+		return expression;
 	}
 
 	private void getEnableDisableButton(Button button, boolean disabled, boolean readOnly) {
@@ -2449,6 +2434,11 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getParsedExpression(String expression) {
+		try {
+			if(AonStringUtils.containsIgnoreCase(expression, "DISABLE();")) 
+				expression = AonStringUtils.substringAfter(expression, "DISABLE();");
+		} catch (Exception e) {}
+		
 		return SpecialExpresion.parse(expression).getInput();
 	}
 

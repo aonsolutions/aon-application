@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisitions;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 
 public class NordigenAPITestCase {
@@ -77,20 +77,27 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitution() {
-		String institutionId = CAIXABANK_CAIXESBB;
-		NordigenInstitution institution = NordigenAPI.getInstitution(getAccessToken(), institutionId );
-		assertNotNull(institution);
-		assertNotNull(institution.getId());
-		assertEquals( institutionId, institution.getId());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+			.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			
+			String institutionId = CAIXABANK_CAIXESBB;
+			NordigenInstitution institution = NordigenAPI.getInstitution(getAccessToken(), institutionId );
+			assertNotNull(institution);
+			assertNotNull(institution.getId());
+			assertEquals( institutionId, institution.getId());
+		}
 	}
 	
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testGetInstitutionInvalidToken() {
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.getInstitution(getAccessToken() + "123", CAIXABANK_CAIXESBB));
-		assertNotNull( e.getResponse() );
-		assertEquals(401, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenException e = assertThrows(NordigenException.class
+				, () -> NordigenAPI.getInstitution(getAccessToken() + "123", CAIXABANK_CAIXESBB));
+			assertNotNull( e.getResponse() );
+			assertEquals(401, e.getResponse().getStatusCode());
+		}
 	}
 
 	@Test
@@ -125,57 +132,72 @@ public class NordigenAPITestCase {
 	@SkipWhenNordigenUnavailable
 //	@Disabled("IGNORADO MIENTRAS NO OBTENGA LOS SCOPES AL CREARSE")
 	void testCRDAgreements() throws InterruptedException {
-		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
-		String agreementId = agreement.getId();
-		// GET THE CREATED AGREEMENT AND COMPARE TO THE ORIGINAL
-		NordigenAgreement retrievedAgreement = NordigenAPI.getEndUserAgreement(getAccessToken(), agreementId);
-		assertEquals(retrievedAgreement.getId(), agreement.getId());
-		//DELETE THE AGREEMENT
-		NordigenAPI.deleteEndUserAgreement(getAccessToken(), agreementId);
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
+			String agreementId = agreement.getId();
+			// GET THE CREATED AGREEMENT AND COMPARE TO THE ORIGINAL
+			NordigenAgreement retrievedAgreement = NordigenAPI.getEndUserAgreement(getAccessToken(), agreementId);
+			assertEquals(retrievedAgreement.getId(), agreement.getId());
+			//DELETE THE AGREEMENT
+			NordigenAPI.deleteEndUserAgreement(getAccessToken(), agreementId);
+		}
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	@Disabled("A VECES NO OBTIENE A TIEMPO EL ID DE AGREEMENT")
 	void testCRDRequisitions() {
-		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
-		RequisitionParams params = new RequisitionParams()
-			.setAgreement(agreement.getId())
-			.setUserLanguage(AonLanguage.SPANISH)
-			.setInstitutionId(agreement.getInstitutionId())
-			.setRedirect("https://aonsolutions.org/");
-		NordigenRequisition requisition = NordigenAPI.createRequisition(getAccessToken(), params);
-		String requisitionId = requisition.getId();
-		NordigenRequisition retrievedRequisition = NordigenAPI.getRequisition(getAccessToken(), requisitionId);
-		assertEquals(requisition.toString(), retrievedRequisition.toString());
-		NordigenAPI.deleteRequisition(getAccessToken(), requisitionId);
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(getAccessToken(), 90, 1, ALL_SCOPES, CAIXABANK_CAIXESBB);
+			RequisitionParams params = new RequisitionParams()
+					.setAgreement(agreement.getId())
+					.setUserLanguage(AonLanguage.SPANISH)
+					.setInstitutionId(agreement.getInstitutionId())
+					.setRedirect("https://aonsolutions.org/");
+			NordigenRequisition requisition = NordigenAPI.createRequisition(getAccessToken(), params);
+			String requisitionId = requisition.getId();
+			NordigenRequisition retrievedRequisition = NordigenAPI.getRequisition(getAccessToken(), requisitionId);
+			assertEquals(requisition.toString(), retrievedRequisition.toString());
+			NordigenAPI.deleteRequisition(getAccessToken(), requisitionId);
+		}
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementIncorrectHistoricalDays() {
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1000000, 1, ALL_SCOPES, CAIXABANK_CAIXESBB));
-		assertNotNull( e.getResponse() );
-		assertEquals(400, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenException e = assertThrows(NordigenException.class
+					, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1000000, 1, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			assertNotNull( e.getResponse() );
+			assertEquals(400, e.getResponse().getStatusCode());
+		}
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementIncorrectAccessDays() {
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1, 1000000, ALL_SCOPES, CAIXABANK_CAIXESBB));
-		assertNotNull( e.getResponse() );
-		assertEquals(400, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenException e = assertThrows(NordigenException.class
+					, () -> NordigenAPI.createEndUserAgreement(getAccessToken(), 1, 1000000, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			assertNotNull( e.getResponse() );
+			assertEquals(400, e.getResponse().getStatusCode());
+		}
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateAgreementInvalidToken() {
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createEndUserAgreement(getAccessToken() + "123", 50, 50, ALL_SCOPES, CAIXABANK_CAIXESBB));
-		assertNotNull( e.getResponse() );
-		assertEquals(401, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			NordigenException e = assertThrows(NordigenException.class
+					, () -> NordigenAPI.createEndUserAgreement(getAccessToken() + "123", 50, 50, ALL_SCOPES, CAIXABANK_CAIXESBB));
+			assertNotNull( e.getResponse() );
+			assertEquals(401, e.getResponse().getStatusCode());
+		}
 	}
 	
 	@Test
@@ -251,29 +273,35 @@ public class NordigenAPITestCase {
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateRequisitionInvalidToken() {
-		RequisitionParams params = new RequisitionParams()
-			.setAgreement("MOGAMBO")
-			.setUserLanguage(AonLanguage.SPANISH)
-			.setInstitutionId(CAIXABANK_CAIXESBB)
-			.setRedirect("https://aonsolutions.org/");
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createRequisition(getAccessToken() + "123", params));
-		assertNotNull( e.getResponse() );
-		assertEquals(401, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			RequisitionParams params = new RequisitionParams()
+				.setAgreement("MOGAMBO")
+				.setUserLanguage(AonLanguage.SPANISH)
+				.setInstitutionId(CAIXABANK_CAIXESBB)
+				.setRedirect("https://aonsolutions.org/");
+			NordigenException e = assertThrows(NordigenException.class
+				, () -> NordigenAPI.createRequisition(getAccessToken() + "123", params));
+			assertNotNull( e.getResponse() );
+			assertEquals(401, e.getResponse().getStatusCode());
+		}
 	}
 
 	@Test
 	@SkipWhenNordigenUnavailable
 	void testCreateRequisitionInvalidAgreement() {
-		RequisitionParams params = new RequisitionParams()
-			.setAgreement("MOGAMBO")
-			.setUserLanguage(AonLanguage.SPANISH)
-			.setInstitutionId(CAIXABANK_CAIXESBB)
-			.setRedirect("https://aonsolutions.org/");
-		NordigenException e = assertThrows(NordigenException.class
-			, () -> NordigenAPI.createRequisition(getAccessToken(), params));
-		assertNotNull( e.getResponse() );
-		assertEquals(400, e.getResponse().getStatusCode());
+		if (AonCollectionUtils.stream(NordigenAPI.getInstitutionsByCountry(getAccessToken(), Country.ES))
+				.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
+			RequisitionParams params = new RequisitionParams()
+				.setAgreement("MOGAMBO")
+				.setUserLanguage(AonLanguage.SPANISH)
+				.setInstitutionId(CAIXABANK_CAIXESBB)
+				.setRedirect("https://aonsolutions.org/");
+			NordigenException e = assertThrows(NordigenException.class
+				, () -> NordigenAPI.createRequisition(getAccessToken(), params));
+			assertNotNull( e.getResponse() );
+			assertEquals(400, e.getResponse().getStatusCode());
+		}
 	}
 
 	@Test

@@ -7,15 +7,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -30,6 +23,12 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "OperationReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelPrint" })
 public class OperationReportExcelPrint extends HttpServlet {
@@ -301,7 +300,6 @@ public class OperationReportExcelPrint extends HttpServlet {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-			cell.setCellType(CellType.STRING);
 			return cell;
 		}
 		
@@ -309,7 +307,6 @@ public class OperationReportExcelPrint extends HttpServlet {
 			Cell cell = row.createCell(cellCount++);
 			cell.setCellStyle(style);
 			cell.setCellValue(number!=null?number:0.0);
-			cell.setCellType(CellType.NUMERIC);
 			return cell;
 		}
 		

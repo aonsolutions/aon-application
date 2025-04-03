@@ -112,7 +112,8 @@ export class AonTreasuryMenu extends AonSuiteMenu {
             }, {
                 description: "Agregador Bancario",
                 title: "Agregador Bancario",
-                action: () => GWT.iLoad(GWT.NORDIGEN)
+                action: () => GWT.iLoad(GWT.NORDIGEN),
+				filter: () => this.hasBank()
             }, {
                 description: "Gestión de Suplidos",
                 title: "Gestión de Suplidos",

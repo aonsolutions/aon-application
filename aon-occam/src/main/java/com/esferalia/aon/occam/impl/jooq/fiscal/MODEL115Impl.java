@@ -101,6 +101,12 @@ public class MODEL115Impl implements IMODEL115 {
 	}
 	
 	@Override
+	public Mod115 simulate(AONContext ctx, Mod115 mod115) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod115DAO.simulate(ctx,mod115));
+	}
+
+	@Override
 	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod115InfoDAO.getInfo(ctx,mod115,script,infoKey);
 	}

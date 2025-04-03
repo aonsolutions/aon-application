@@ -26,6 +26,7 @@ import { AonDate } from '../../components/aon-date.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { getCompanyBanks } from '../../services/companyService.js';
 
 export class AonReg extends AonElement {
 
@@ -484,28 +485,57 @@ export class AonReg extends AonElement {
 		paymethodSelect.id = this.PAYMETHOD_PAYMETHOD;
 		paymethodSelect.title = MSG.PAYMETHOD;
 		table.addCell(paymethodSelect, 4);
+
+		table.addRow();
+
+		let pm = this.registry.getPaymethod().getPaymethod();
+		let banks = (this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')
+			? [] : this.registry.getBanks();
+
+		let bankSelect = new AonSelect()
+		bankSelect.id = this.PAYMETHOD_BANK;
+		bankSelect.title = MSG.BANK_ACCOUNT;
+		bankSelect.setAlias('id', 'fullName');
+		bankSelect.disabled = pm.type !== 'BANK_TRANSFER' && pm.type !== 'NEGOTIABLE_DOCUMENT'
+		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().getBank().id = bankSelect.value);
+		table.addCell(bankSelect, 4);
+		if((this.isCustomer() && pm.type === 'BANK_TRANSFER') || (!this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT')) {
+			getCompanyBanks().then(banks => {
+				bankSelect.setOptions(banks.map(b => {
+					b.fullName = b.bank_account + ' - ' + b.alias;
+					return b;
+				}));
+				bankSelect.value = this.registry.getPaymethod().getBank().id;
+			});		
+		} else if((this.isCustomer() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pm.type === 'BANK_TRANSFER')){
+			bankSelect.setOptions(this.registry.getBanks());
+			bankSelect.value = this.registry.getPaymethod().getBank().id;
+		}
+		
 		getPaymethods({}).then(paymethods => {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod().id || paymethods[0].id;
 		});
 		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
 			this.registry.getPaymethod().getPaymethod().id = paymethodSelect.value;
-			// TODO SI ES TRANSFERENCIA ACTUALIZAR DATOS BANK
+
+			let pmType = e.detail.type;
+
+			if((this.isCustomer() && pmType === 'BANK_TRANSFER') || (!this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT')) {
+				getCompanyBanks().then(banks => {
+					bankSelect.setOptions(banks.map(b => {
+						b.fullName = b.bank_account + ' - ' + b.alias;
+						return b;
+					}));
+					bankSelect.value = this.registry.getPaymethod().getBank().id;
+				});		
+			} else if((this.isCustomer() && pmType === 'NEGOTIABLE_DOCUMENT') || (!this.isCustomer() && pmType === 'BANK_TRANSFER')){
+				bankSelect.setOptions(this.registry.getBanks());
+				bankSelect.value = this.registry.getPaymethod().getBank().id;
+			} else bankSelect.value = undefined;
+			bankSelect.disabled = pmType !== 'BANK_TRANSFER' && pmType !== 'NEGOTIABLE_DOCUMENT';
 		});
 
-
-		table.addRow();
-
-		let bankSelect = new AonSelect()
-		bankSelect.id = this.PAYMETHOD_BANK;
-		bankSelect.title = MSG.BANK_ACCOUNT;
-		bankSelect.setAlias('id', 'fullName');
-		bankSelect.setOptions(this.registry.getBanks());
-		bankSelect.value = this.registry.getPaymethod().getBank().id;
-		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().getBank().id = bankSelect.value);
-		table.addCell(bankSelect, 4);
-		
-		
 
 		table.addRow();
 

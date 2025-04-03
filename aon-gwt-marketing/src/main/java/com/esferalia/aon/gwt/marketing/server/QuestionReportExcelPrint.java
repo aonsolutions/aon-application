@@ -104,7 +104,7 @@ public class QuestionReportExcelPrint extends HttpServlet {
 			entryHeaderStyle.setBorderBottom(BorderStyle.THIN);
 			entryHeaderStyle.setFont(defaulFont);
 	
-			XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerStyle.clone();
+			XSSFCellStyle rightHeaderCellStyle = headerStyle.copy();
 			rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 	
 			row = sheet.createRow(rowCount++);

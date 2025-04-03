@@ -223,11 +223,9 @@ export class AonToolbar extends AonElement {
 	}
 
 	addButton2(action, fn) {
-		const id = this.TOOL_SECTION + action.id + 'Button';
 		let aib = new AonIconButton();
-		aib.id = id;
-		if(!this.getElement(id)){
-
+		aib.id = this.TOOL_SECTION + action.id + 'Button';;
+		if(!this.getElement(aib.id)){
 			let span = this.createElement(TAG.SPAN);
 
 			aib.title = action.name;

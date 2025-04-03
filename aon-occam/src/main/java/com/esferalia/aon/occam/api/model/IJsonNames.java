@@ -520,6 +520,7 @@ public final class IJsonNames {
 	public static final String RATTACH = "rattach";
 	public static final String RAWDOC = "rawdoc";
 	public static final String RDOCUMENT = "rdocument";
+	public static final String REASON = "reason";
 	public static final String RECEIVER = "receiver";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
@@ -714,6 +715,7 @@ public final class IJsonNames {
 	public static final String WORKPLACE = "workplace";
 	public static final String WORKPLACE_IDS = "workplaceIds";
 	public static final String WRONG_DOMAIN_ID = "wrongDomainId";
+	public static final String WRONG_SCOPE_ID = "wrongScopeId";
 	// ---------------------------------------------------------------------------------------------	[Y]
 	public static final String YEAR = "year";
 	// ---------------------------------------------------------------------------------------------	[Z] 

@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2025;
 import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -2747,10 +2748,15 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 				@Override
 				public String apply(FiscalModel fm) {
 					setSomething(true);
+
+					boolean isToCompensate = (fm.canBeSent() || fm.isSent()) && fm.getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE;
 					sum(fm.getAmount(Mod303Key.CT_C87));
-					sum(fm.getDeclarationResult());
-					sum(fm.getAmount(Mod303Key.CT_C111));
-					return new StringBuilder().append("<tr>")
+					if (isToCompensate) {
+						sum(AonMathUtils.absRounded(fm.getDeclarationResult()));
+						sum((-1)*fm.getAmount(Mod303Key.CT_C111));
+					}
+					
+					StringBuilder sb = new StringBuilder().append("<tr>")
 						.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border+width500) )
 							.append(fm.getModelFullName())
 						.append("</td>")
@@ -2762,25 +2768,27 @@ class Mod303AEAT2025Declaration extends Mod303AEAT {
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
 							.append(DEC2.format(fm.getAmount(Mod303Key.CT_C87)))
 						.append("</td>")
-					.append("</tr>")
-					.append("<tr>")
-						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
-							.append("Resultado " +
-								AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> "(" + t.getDescription() + ")"))
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
-							.append(DEC2.format(fm.getDeclarationResult()))
-						.append("</td>")
-					.append("</tr>")					
-					.append("<tr>")
-						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
-							.append("Importe a devolver a consecuencia de la rectificación ")
-						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
-							.append(DEC2.format(fm.getAmount(Mod303Key.CT_C111)))
-						.append("</td>")
-					.append("</tr>")
-					.toString();
+					.append("</tr>");
+					if (isToCompensate) {
+						sb.append("<tr>")
+							.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+								.append("Resultado " +
+									AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> "(" + t.getDescription() + ")"))
+							.append("</td>")
+							.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+								.append(DEC2.format(AonMathUtils.absRounded(fm.getDeclarationResult())))
+							.append("</td>")
+						.append("</tr>")					
+						.append("<tr>")
+							.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+								.append("Importe a devolver a consecuencia de la rectificación ")
+							.append("</td>")
+							.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+								.append(DEC2.format((-1)*fm.getAmount(Mod303Key.CT_C111)))
+							.append("</td>")
+						.append("</tr>");
+					}
+					return sb.toString();
 				}
 			});	
 	}

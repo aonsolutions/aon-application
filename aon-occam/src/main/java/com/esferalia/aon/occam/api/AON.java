@@ -244,6 +244,7 @@ import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
+import com.esferalia.aon.occam.impl.jooq.RawdocImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SalaryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
@@ -291,6 +292,10 @@ public class AON {
 
 	private static IFinance getFinance() {
 		return new FinanceImpl();
+	}
+
+	private static IRawdoc getRawdoc() {
+		return new RawdocImpl();
 	}
 
 	private static IManagement getManagement() {
@@ -7599,50 +7604,44 @@ public class AON {
 	}
 	public static Stream<Rawdoc> getRawdocStream(String domainName, int domain, String user, RawdocFilter filter,int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getFinance().getRawdocStream(ctx, filter,offset,limit);
+			return getRawdoc().getRawdocStream(ctx, filter,offset,limit);
 		} 
 	}
-	
 	public static Stream<Rawdoc> getRawdocFullStream(String domainName, int domain, String user, RawdocFilter filter) {
 		return getRawdocFullStream(domainName, domain, user, filter,0,Integer.MAX_VALUE); 
 	}
-	
 	public static Stream<Rawdoc> getRawdocFullStream(String domainName, int domain, String user, RawdocFilter filter,int offset, int limit) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getFinance().getRawdocFullStream(ctx, filter,offset,limit);
+			return getRawdoc().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
-
+	public static Rawdoc getRawdocFull(Occam occam, int id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getRawdoc().getRawdocFull(ctx, id);
+		}
+	}
 	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().getRawdocFull(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getRawdoc().getRawdocFull(ctx, id);
 		}
 	}
-
 	public static RawdocInvoiceCounter getRawdocInvoiceCounter(Domain domain, User user) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
-			return getFinance().getRawdocInvoiceCounter(ctx);
+			return getRawdoc().getRawdocInvoiceCounter(ctx);
 		}
 	}
-	
 	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {	
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getFinance().getRawdocUserData(ctx, domainId);
+			return getRawdoc().getRawdocUserData(ctx, domainId);
 		}
 	}
-	
 	public static RawdocUserData getRawdocUserData(String token, String schema) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		String domain = AONContext.getSchemaFirstDomain(schema);
 		
 		if(!AonStringUtils.isBlank(domain)) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-				return getFinance().getRawdocUserData(ctx, aonToken.getAuth());
+				return getRawdoc().getRawdocUserData(ctx, aonToken.getAuth());
 			}
 		} 
 		return new RawdocUserData();
@@ -7666,7 +7665,7 @@ public class AON {
 
 	public static Rawdoc rawdocSave(String domainName, int domain, String user, Rawdoc rawdoc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			return getFinance().rawdocSave(ctx, rawdoc);
+			return getRawdoc().rawdocSave(ctx, rawdoc);
 		}	
 	}
 	
@@ -7676,51 +7675,46 @@ public class AON {
 	
 	public static void rawdocDelete(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getFinance().rawdocDelete(ctx, domain, rawdocId);
+			getRawdoc().rawdocDelete(ctx, domain, rawdocId);
 		}
 	}
 	
 	public static void rawdocDelete(String domainName, int domain, String user, RawdocFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getFinance().rawdocDelete(ctx, filter);
+			getRawdoc().rawdocDelete(ctx, filter);
 		}
 	}
 
-	public static void rawdocToDraft(Occam occam, Integer rawdocId) {
-		rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	public static Rawdoc rawdocToDraft(Occam occam, Integer rawdocId) {
+		return rawdocToDraft(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
 	}
-	public static void rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
+	public static Rawdoc rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getFinance().rawdocToDraft(ctx, rawdocId);
+			return getRawdoc().toDraft(ctx, rawdocId);
 		}
 	}
 
-	public static void rawdocToRejected(Occam occam, Integer rawdocId, String reason) {
-		rawdocToRejected(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId,reason);
+	public static Rawdoc rawdocToRejected(Occam occam, Integer rawdocId, String reason) {
+		return rawdocToRejected(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId,reason);
 	}
-	public static void rawdocToRejected(String domainName, int domain, String user, Integer rawdocId, String reason) {
+	public static Rawdoc rawdocToRejected(String domainName, int domain, String user, Integer rawdocId, String reason) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getFinance().rawdocToRejected(ctx, rawdocId, reason);
+			return getRawdoc().toRejected(ctx, rawdocId, reason);
 		}
 	}
 
-	public static void rawdocToInbox(Occam occam, Integer rawdocId) {
-		rawdocToInbox(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
+	public static Rawdoc rawdocToInbox(Occam occam, Integer rawdocId) {
+		return rawdocToInbox(occam.getDomainName(), occam.getDomain(), occam.getUser(),rawdocId);
 	}
-	public static void rawdocToInbox(String domainName, int domain, String user, Integer rawdocId) {
+	public static Rawdoc rawdocToInbox(String domainName, int domain, String user, Integer rawdocId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
-			getFinance().rawdocToInbox(ctx, rawdocId);
+			return getRawdoc().toInbox(ctx, rawdocId);
 		}
 	}
 
 	public static boolean rawdocHasData(String domainName, int domain, String user, Integer rawdocId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().rawdocHasData(ctx, rawdocId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getRawdoc().rawdocHasData(ctx, rawdocId);
 		}
 	}
 	

@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchaseDetailPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PurchasePropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class PurchaseDAO {
@@ -321,7 +322,7 @@ public class PurchaseDAO {
 				.set(PURCHASE.SHIPPING_ALTERNATIVE_PHONE, purchase.getShippingAlternativePhone())
 				.set(PURCHASE.SHIPPING_ALTERNATIVE_RECIPIENT, purchase.getShippingAlternativeRecipient())
 				.set(PURCHASE.SHIPPING_CONTACT, purchase.getShippingContact())
-				.set(PURCHASE.SHIPPING_PERIOD, purchase.getShippingPeriod() != null ? purchase.getShippingPeriod().byteValue() : null)
+				.set(PURCHASE.SHIPPING_PERIOD, AonNumberUtils.toNullableByte( purchase.getShippingPeriod() ) )
 				.set(PURCHASE.CREATION_USER, purchase.getCreationUser())
 				.set(PURCHASE.CREATION_DATE, AonDateUtils.toTimestamp(purchase.getCreationDate()))
 				.set(PURCHASE.MODIFICATION_USER, purchase.getModificationUser())
@@ -395,7 +396,7 @@ public class PurchaseDAO {
 				.set(PURCHASE_DETAIL.DISCOUNT_EXPR, purchaseDetail.getDiscountExpression())
 				.set(PURCHASE_DETAIL.TAXES, purchaseDetail.getTaxes())
 				.set(PURCHASE_DETAIL.STATUS, purchaseDetail.getStatus().value())
-				.set(PURCHASE_DETAIL.SOURCE, purchaseDetail.getSource() != null ? purchaseDetail.getSource().value() : null)
+				.set(PURCHASE_DETAIL.SOURCE, AonEnumUtils.getByte(purchaseDetail.getSource()))
 				.set(PURCHASE_DETAIL.SOURCE_ID, purchaseDetail.getSourceId())
 				.set(PURCHASE_DETAIL.PROPOSAL_DETAIL, purchaseDetail.getProposalDetail())
 				.set(PURCHASE_DETAIL.DELIVERED, purchaseDetail.getDelivered())

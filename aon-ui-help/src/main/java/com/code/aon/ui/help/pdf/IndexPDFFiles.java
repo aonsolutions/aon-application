@@ -35,7 +35,7 @@ public class IndexPDFFiles {
 	    System.out.println(" INDEXING " + filename);
 	    System.out.println("---------------------------------------------------");
 
-	    PDDocument doc = Loader.loadPDF(file);
+	    PDDocument doc = Loader.loadPDF(file.readAllBytes());
 	    doc.getDocumentCatalog().setDocumentOutline(new PDDocumentOutline());
 
 	    // Create file outline item, add name to names and set action

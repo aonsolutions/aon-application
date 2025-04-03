@@ -27,7 +27,6 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -65,9 +64,6 @@ public class RawdocModuleNew extends MainEntryPoint {
 	
 	private AonToolbar toolbar;
 	
-	private FlowPanel progressContainer = new FlowPanel();
-	private FlowPanel progress = new FlowPanel();
-
 	private boolean minimizedByUser;
 	private int extraInfoTabIndex;
 
@@ -117,9 +113,9 @@ public class RawdocModuleNew extends MainEntryPoint {
 			.setDomain(getCurrentDomain())
 			.setUser(getCurrentUser())
 			.setParams(new RawdocParams()
-					.setDomain(getCurrentDomain())
-					.setDomainName(getCurrentDomainName())
-					.setStatus(RawdocStatus.INBOX))
+				.setDomain(getCurrentDomain())
+				.setDomainName(getCurrentDomainName())
+				.setStatus(RawdocStatus.INBOX))
 		;
 		this.onModuleLoad( options );
 	}
@@ -148,9 +144,7 @@ public class RawdocModuleNew extends MainEntryPoint {
 	
 	private void loadModule( final RawdocModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
-		progressContainer.setVisible(false);
-		progressContainer.add(progress);
-		dockLayoutPanel.addNorth(progressContainer, 5);
+
 		splitLayoutPanel = new SplitLayoutPanel();
 		dockLayoutPanel.add(splitLayoutPanel);
 		
@@ -236,13 +230,13 @@ public class RawdocModuleNew extends MainEntryPoint {
 		centerLayoutPanel.setWidget( table );
 	}
 
-	public void clearFootInfo( ) {
+	private void clearFootInfo( ) {
 		closeFootPanel();
 		clearExtraInfo();
 		attachPanel.clear();
 	}
 	
-	public void clearExtraInfo( ) {
+	private void clearExtraInfo( ) {
 		extraInfoContainer.setWidget(new Label());
 	}
 	
@@ -264,7 +258,7 @@ public class RawdocModuleNew extends MainEntryPoint {
 		splitLayoutPanel.animate(500);
 	}
 
-	
+	// ------------------------------- [LAUNCHER]		
 	public static void run() {
 		GWT.runAsync(RawdocModuleNew.class, new RunAsyncCallback() {
 			

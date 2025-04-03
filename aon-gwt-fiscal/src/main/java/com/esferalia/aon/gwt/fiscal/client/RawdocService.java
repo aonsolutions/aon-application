@@ -17,21 +17,16 @@ public interface RawdocService extends RemoteService {
 	
 	// --------------------------------------------------------------- RAWDOC
 	LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset,int limit) throws AonCoreException;
-	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
 	void delete(Occam occam, Integer rawdocId);
-	void toDraft(Occam occam, Integer rawdocId) throws AonCoreException;
-	void toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
-	void toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
+	Rawdoc toDraft(Occam occam, Integer rawdocId) throws AonCoreException;
+	Rawdoc toRejected(Occam occam, Integer rawdocId,String reason) throws AonCoreException;
+	Rawdoc toInbox(Occam occam, Integer rawdocId) throws AonCoreException;
 	
-	LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String  user, RawdocParams params, int offset,int limit) throws AonCoreException;
-	TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
-	void delete(String domainName, int domain, String user, Integer rawdocId);
-	void toDraft(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
-	void toRejected(String domainName, int domain, String user, Integer rawdocId,String reason) throws AonCoreException;
-	void toInbox(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException;
-
+	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
+	
+	// --------------------------------------------------------------- PENDING 
 	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);
 	Boolean processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice);
-
 	String getS3Url(Rawdoc rawdoc);
+
 }

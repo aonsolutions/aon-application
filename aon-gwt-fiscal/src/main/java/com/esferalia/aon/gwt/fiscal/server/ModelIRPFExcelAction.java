@@ -5,16 +5,16 @@ import java.text.DecimalFormat;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
@@ -31,11 +31,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFiscalModelKey> extends AbsExcelAction {
 
-	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81));
-	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4));
-	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49));
-	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42));
-	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195));
+	protected static final XSSFColor ARABA_BG = new XSSFColor(new java.awt.Color(163, 12, 81), new DefaultIndexedColorMap());
+	protected static final XSSFColor BIZKAIA_BG = new XSSFColor(new java.awt.Color(215, 0, 4), new DefaultIndexedColorMap());
+	protected static final XSSFColor GIPUZKOA_BG = new XSSFColor(new java.awt.Color(161, 192, 49), new DefaultIndexedColorMap());
+	protected static final XSSFColor NAVARRA_BG = new XSSFColor(new java.awt.Color(218, 0, 42), new DefaultIndexedColorMap());
+	protected static final XSSFColor AEAT_BG = new XSSFColor(new java.awt.Color(58, 133, 195), new DefaultIndexedColorMap());
 
 	protected  static final XSSFColor[] COLORS = new XSSFColor[] { ARABA_BG, BIZKAIA_BG, GIPUZKOA_BG, NAVARRA_BG,
 			AEAT_BG };
@@ -99,8 +99,8 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		idCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		idCellStyle.setFont(idFont);
 
-		sheet.setMargin(Sheet.LeftMargin, 0.5);
-		sheet.setMargin(Sheet.RightMargin, 0.5);
+		sheet.setMargin(PageMargin.LEFT, 0.5);
+		sheet.setMargin(PageMargin.RIGHT, 0.5);
 
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
@@ -183,7 +183,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		sheet.setColumnWidth(cellCount++, 30 * 256);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 1));
 		
-		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
+		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.copy();
 		Font modHeaderFont= workbook.createFont();
 		modHeaderFont.setBold(true);
 		modHeaderFont.setFontHeightInPoints((short) 8);
@@ -243,7 +243,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		style.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.index);
 		cell.setCellStyle(style);
 		cell.setCellValue(concept);
-		cell.setCellType(CellType.STRING);
 		if (ms.getKeys() == null) {
 			sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 7));
 		} else {
@@ -275,7 +274,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 					Cell boxCell = addCell((key.getBox() == 0
 							?""
 							:AonStringUtils.leftPad(AonNumberUtils.toString(key.getBox()), 3, "0")));
-					boxCell.setCellType(CellType.STRING);
 					boxCell.setCellStyle(boxCellStyle);
 
 					cell = row.createCell(cellCount++);
@@ -292,7 +290,6 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 						style.setAlignment(HorizontalAlignment.RIGHT);
 						style.setDataFormat(dataFormat.getFormat(DECIMAL_PATTERN));
 						cell.setCellValue(amount);
-						cell.setCellType(CellType.NUMERIC);
 					}
 				}
 			}

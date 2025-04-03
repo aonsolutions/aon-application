@@ -3,22 +3,15 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { createList } from '../../components/CreateComponent.js';
 import { AonExampleObject } from '../example/aon-example-object.js';
 import { getExpenses, getIncomes } from '../../services/accountingService.js';
+import { AonIncome } from './aon-income.js';
+import * as LS from '../../services/localStorageService.js';
+import { Income } from './Income.js';
 import { AonExpense } from './aon-expense.js';
 import { Expense } from './Expense.js';
+import { AonList } from '../../components/aon-list.js';
+export class AonExpenseList extends AonList {
 
-export class AonExpenseList extends AonElement {
-
-    get id() {
-        return this.getAttribute(CONSTANT.ID);
-    }
-
-    set id(id) {
-        this.setAttribute(CONSTANT.ID, id);
-    }
-
-    TABLE;
-    more;
-    filter;
+    expenses;
 
     constructor () {
         super();
@@ -26,119 +19,108 @@ export class AonExpenseList extends AonElement {
 
     connectedCallback () {
         this.initialize();
-        this.build();
-    }
-
-    moreFn = () => {
-        if(this.more)
-            this.loadMore()
-    };
-
-    disconnectedCallback() {
-        let table = this.getElement(this.TABLE);
-        if(table) table.removeEventListener('more', this.moreFn);
+        this.buildExpenseList();
     }
 
     initialize() {
-        this.id = this.id || 'aonExampleList';
+        this.id = this.id || 'aonExpenseList';
         this.TABLE = this.id + CONSTANT.TABLE.initCap();
         this.filter = this.filter || {
-            page: 1,
-            perPage: 30
-        };
-        this.more = true;
+            page:1,
+            perPage:30
+        }
+        this.more = this.expenses ? false : true;
+        this.columns = [{
+                name: MSG.DATE,
+                type: 'date',
+                id: 'date',
+                width: '150px'
+            }, {
+                name: MSG.REFERENCE,
+                type: 'string',
+                id: 'referenceCode',
+                width: '150px'
+            }, {
+                name: 'Gasto',
+                type: 'string',
+                id: 'expenseDescription',
+                width: '300px'
+            }, {
+                name: MSG.CONCEPT,
+                type: 'string',
+                id: 'concept',
+                width: '300px'
+            }, {
+                name: MSG.PAYMETHOD,
+                type: 'string',
+                id: 'paymethodDescription',
+                width: '300px'
+            }, {
+                name: MSG.AMOUNT,
+                type: 'double',
+                id: 'formattedAmount',
+                width: '200px'
+            }];
     }
 
-    expenseObject(incomingExpense) {
-        let expense = new AonExpense();
-        expense.setExpense(new Expense(incomingExpense));
+    buildExpenseList() {
+        this.build();
+        const btnadd = this.getApplication().addOption("add","add", () => this.add());
+    }
+
+    aonObject(incomingExpense) {
+        let expense = new AonExpense( new Expense(incomingExpense) );
         this.getApplication().setContent(expense);
     }
+
+    getObjects() {
+        return new Promise((resolve, reject) => {
+            let table = this.getElement(this.TABLE);
+            getExpenses(this.filter)
+                .then(expenses => {  
+                    if (!Array.isArray(expenses)) {
+                        expenses = []; 
+                    }
+                    table.removeRows();
+                    expenses.forEach(expense => {
+                        if (expense.expAccount) 
+                            expense.incomeDescription = expense.expAccount.description;
+                        
+                        if (expense.bank && expense.bank.alias)
+                            expense.paymethodDescription = expense.bank.alias;
+                        else
+                        expense.paymethodDescription = expense.cashAccount?.description || "N/A"
     
-    setFilter(filter) {
-        this.filter = filter;
-    }
-
-    build() {
-        let table = createList(this.TABLE);
-        table.selectable = 'true';
-        this.appendChild(table);
-
-        const btnadd = this.getApplication().addOption("add","add", () => this.add());
-
-        const btnSearch = this.getApplication().addSearchOption();
-        let searchFn = (event) => this.search(event.detail);
-        btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
-
-        table.addColumn(MSG.DATE, 'date', 'date', '120px');
-        table.addColumn(MSG.CONCEPT, 'string', 'concept', '825px');
-        table.addColumn(MSG.AMOUNT, 'double', 'amount', 'auto');
-        
-
-        table.addEventListener(EVENT.MORE, this.moreFn);
-        this.init();
-    }
-
-    search(detail) {
-        if(detail.search) this.filter.value = detail.search;
-        this.init();
-    }
-
-    init() {
-        let table = this.getElement(this.TABLE);
-        if(table) {
-            getExpenses().then(expenses => {
-                if(expenses.length == 0){   
-                    this.empty();
-                }
-                table.removeRows();
-
-                expenses.forEach((expense, i) => {
-                    console.log(expense);
-                    table.addRow(expense, () => this.expenseObject(expense));
+                        expense.formattedAmount = this.formatAmount(expense.amount);
+                        table.addRow(expense, () => this.expenseObject(expense));
+                    });
+    
+                    resolve(expenses); 
+                })
+                .catch(error => {
+                    console.error("Error en getObjects():", error);
+                    resolve([]);
                 });
-
-            });
-        }
-    }
-
-    loadMore() {
-        this.more = false;
-        let table = this.getElement(this.TABLE);
-        if(table && this.filter.page) {
-            this.filter.page = this.filter.page + 1;
-            this.getExamples(this.filter).then(examples => {
-                if(examples.length == 0)
-                    this.more = false;
-                else this.more = true;
-                examples.forEach((example, i) => {
-                    table.addRow(example, () => this.expenseObject(example));
-                });
-            });
-        }
-    }
-
-    // SERVICE
-
-    getExamples(filter) {
-        return new Promise((resolve, reject) => {
-              resolve([
-                {id:1, date: '01-01-2025', example: 'Example 1'},
-                {id:2, date: '01-01-2025', example: 'Example 2'},
-                {id:3, date: '01-01-2025', example: 'Example 3'},
-                {id:4, date: '01-01-2025', example: 'Example 4'}
-            ]);
-        }); 
-    }
-
-    getExample(filter) {
-        return new Promise((resolve, reject) => {
-            resolve({id: filter.id, date: '01-01-2025', example: `Example ${filter.id}`});
         });
     }
-    
+
+    formatAmount(amount) {
+        const num = parseFloat(amount);  
+        if (isNaN(num)) return amount; 
+        return num.toLocaleString('es-ES', { useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €';
+    }
+
     add(){
-        this.getApplication().setContent(new AonExpense());
+        let inc = new AonExpense( new Expense() );
+        this.getApplication().setContent(inc);
+    }
+
+    getExpenses() {
+        return this.expenses;
+    }
+
+    setExpenses(expenses) {
+        this.expenses = expenses;
     }
 }
 

@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -225,7 +226,7 @@ public class AggregatedAnnualSummary {
 				periods = QUARTERS;
 			
 			wb.createSheet(TOTAL_NAME);
-			((XSSFSheet)wb.getSheet(TOTAL_NAME)).setTabColor(new XSSFColor(Color.GRAY));
+			((XSSFSheet)wb.getSheet(TOTAL_NAME)).setTabColor(new XSSFColor(Color.GRAY,  new DefaultIndexedColorMap()));
 			
 			int firstDataRow = 0;
 			
@@ -257,7 +258,7 @@ public class AggregatedAnnualSummary {
 					workplaces.forEach(w -> {
 						totalsFormulas.put(w, new LinkedHashMap<>());
 						Sheet sh = wb.createSheet(WorkbookUtil.createSafeSheetName(w));
-						((XSSFSheet)sh).setTabColor(new XSSFColor(Color.LIGHT_GRAY));
+						((XSSFSheet)sh).setTabColor(new XSSFColor(Color.LIGHT_GRAY , new DefaultIndexedColorMap()));
 					});
 				}
 			}
@@ -278,7 +279,6 @@ public class AggregatedAnnualSummary {
 				
 				Cell cell = row.createCell(0);
 				
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
 				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
@@ -441,7 +441,6 @@ public class AggregatedAnnualSummary {
 				
 				Cell cell = row.createCell(0);
 				
-				cell.setCellType(CellType.STRING);
 				cell.setCellValue("PERÍODO ANUAL DE 01/"+year+" A 12/"+year);
 				cell.setCellStyle(stylesMap.get("headerInfoCellStyle"));
 				
@@ -585,7 +584,6 @@ public class AggregatedAnnualSummary {
 					
 					totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 					cell = row.createCell(0);
-					cell.setCellType(CellType.STRING);
 					cell.setCellValue("INFORMACIÓN ADICIONAL");
 					
 					dahSet.stream().filter(str -> !AonArrayUtils.constainsIgnoreCase(topConcepts, str)).forEach(dah -> {
@@ -648,7 +646,6 @@ public class AggregatedAnnualSummary {
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		
 		cell = row.createCell(0);
-		cell.setCellType(CellType.STRING);
 		cell.setCellValue("TOTAL DEDUCCIONES");
 		
 		int[] totalDeductionCellNum = {3};
@@ -660,14 +657,12 @@ public class AggregatedAnnualSummary {
 			String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(totalDedCell.getColumnIndex()) + (totalDedCell.getRowIndex()+1);
 			putDeductionFormula(entry.getWorkplace(), totalsFormulas, "TOTAL DEDUCCIONES", period, formula, complete);
 			
-			totalDedCell.setCellType(CellType.NUMERIC);
 			if (ent != null && ent.getTotalDeduction() != null)
 				totalDedCell.setCellValue(ent.getTotalDeduction());
 			totalDedCell.setCellStyle(stylesMap.get("boldNumberCellStyle"));
 		});
 		
 		Cell totalCell = row.createCell(totalDeductionCellNum[0]);
-		totalCell.setCellType(CellType.FORMULA);
 		int rRowNum = totalCell.getRowIndex()+1;
 		totalCell.setCellFormula("SUM(D"+rRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+rRowNum+")");
 	}
@@ -682,7 +677,6 @@ public class AggregatedAnnualSummary {
 			Row deductionRow = sheet.createRow(sheet.getLastRowNum()+1);
 			sheet.addMergedRegion(new CellRangeAddress(deductionRow.getRowNum(), deductionRow.getRowNum(), 0, 2));
 			Cell deductionCell = deductionRow.createCell(0);
-			deductionCell.setCellType(CellType.STRING);
 			if (concept != null)
 				deductionCell.setCellValue(spaDeduction(concept));
 			deductionSet.add(concept);
@@ -700,7 +694,6 @@ public class AggregatedAnnualSummary {
 					
 					AggregatedAnnualEntry periodEntry = entry.getMonthlyEntries().get(period);
 					
-					amountCell.setCellType(CellType.NUMERIC);
 					
 					double amount = callback.getAmount(periodEntry);
 					if (amount != 0d) {
@@ -714,7 +707,7 @@ public class AggregatedAnnualSummary {
 				}
 			});
 			Cell totalCell = deductionRow.createCell(amountCellNum[0]);
-			totalCell.setCellType(CellType.FORMULA);
+
 			int realRowNum = totalCell.getRowIndex()+1;
 			totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
 			
@@ -733,7 +726,7 @@ public class AggregatedAnnualSummary {
 			Row paymentRow = sheet.createRow(sheet.getLastRowNum()+1);
 			sheet.addMergedRegion(new CellRangeAddress(paymentRow.getRowNum(), paymentRow.getRowNum(), 0, 2));
 			Cell paymentCell = paymentRow.createCell(0);
-			paymentCell.setCellType(CellType.STRING);
+
 			//WRITE PAYMENT NAME
 			if (concept != null) {
 				String definitive = getDefinitivePaymentConcept(concept);
@@ -756,7 +749,7 @@ public class AggregatedAnnualSummary {
 				
 				
 				if (entry.getMonthlyEntries().get(period) != null) {
-					amountCell.setCellType(CellType.NUMERIC);
+
 					Collection<Payment> paym = entry.getMonthlyEntries().get(period).getPayments();
 					
 					double amount = paym.stream().filter(p -> {
@@ -781,7 +774,7 @@ public class AggregatedAnnualSummary {
 				}
 			});
 			Cell totalCell = paymentRow.createCell(amountCellNum[0]);
-			totalCell.setCellType(CellType.FORMULA);
+
 			int realRowNum = totalCell.getRowIndex()+1;
 			totalCell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(totalCell.getColumnIndex()-1)+realRowNum+")");
 			
@@ -793,19 +786,19 @@ public class AggregatedAnnualSummary {
 		row = sheet.createRow(sheet.getLastRowNum()+1);
 		sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		cell = row.createCell(0);
-		cell.setCellType(CellType.STRING);
+
 		cell.setCellValue("CONCEPTO");
 		cell.setCellStyle(stylesMap.get("importantCellStyle"));
 		int[] cellNum = {3};
 		Arrays.stream(periods).forEach(period -> {
 			Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]++);
-			monthCell.setCellType(CellType.STRING);
+
 			monthCell.setCellValue(period);
 			monthCell.setCellStyle(stylesMap.get("monthCellStyle"));
 		});
 		
 		Cell monthCell = sheet.getRow(sheet.getLastRowNum()).createCell(cellNum[0]);
-		monthCell.setCellType(CellType.STRING);
+
 		monthCell.setCellValue("TOTAL");
 		monthCell.setCellStyle(stylesMap.get("topRightBorderCellStyle"));
 		
@@ -840,7 +833,7 @@ public class AggregatedAnnualSummary {
 				
 				sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 				cell = row.createCell(0);
-				cell.setCellType(CellType.STRING);
+
 				cell.setCellValue("INFORMACIÓN ADICIONAL");
 				
 				
@@ -906,7 +899,7 @@ public class AggregatedAnnualSummary {
 			AggregatedAnnualYearlyEntry entry, Sheet sheet, LinkedHashSet<String> dahSet, String dahName, Row dahRow) {
 		sheet.addMergedRegion(new CellRangeAddress(dahRow.getRowNum(), dahRow.getRowNum(), 0, 2));
 		Cell dahCell = dahRow.createCell(0);
-		dahCell.setCellType(CellType.STRING);
+
 		dahCell.setCellValue(removeUnderscore(dahName));
 		dahSet.add(dahName);
 		
@@ -919,8 +912,7 @@ public class AggregatedAnnualSummary {
 			String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
 			
 			putPaymentAndDaHFormula(entry.getWorkplace(), totalsFormulas, dahName, period, formula, complete);
-			
-			dCell.setCellType(CellType.NUMERIC);
+
 			dCell.setCellStyle(stylesMap.get(AonStringUtils.equalsIgnoreCase(dahName, "COSTE_DIARIO") ? "boldNumberCellStyle" : "numberCellStyle"));
 			if (dah != null && dah.get(dahName) != null) {
 				dCell.setCellValue(dah.get(dahName));
@@ -999,7 +991,7 @@ public class AggregatedAnnualSummary {
 		Cell cell;
 		{
 			cell = row.createCell(0);
-			cell.setCellType(CellType.STRING);
+
 			cell.setCellValue(dataName);
 			
 			int cellInd = 3;
@@ -1008,8 +1000,7 @@ public class AggregatedAnnualSummary {
 				CellStyle amountCellStyle = stylesMap.get("numberCellStyle");
 				AggregatedAnnualEntry ent = entry.getMonthlyEntries().get(period);
 				cell = row.createCell(cellInd++);
-				
-				cell.setCellType(CellType.NUMERIC);
+
 
 				Double amount = null;
 				if (ent != null) {
@@ -1072,7 +1063,7 @@ public class AggregatedAnnualSummary {
 				cell.setCellStyle(amountCellStyle);
 			}
 			cell = row.createCell(cellInd);
-			cell.setCellType(CellType.FORMULA);
+
 			int realRowNum = cell.getRowIndex()+1;
 			cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
 			if (!hasContent)
@@ -1209,7 +1200,7 @@ public class AggregatedAnnualSummary {
 				cel = r.getCell(0) != null ? r.getCell(0) : r.createCell(0);
 				
 				CellStyle conceptStyle = stylesMap.get("leftBorderCellStyle");
-				if (cel.getCellTypeEnum() == CellType.STRING) {
+				if (cel.getCellType() == CellType.STRING) {
 					switch (cel.getStringCellValue()) {
 						case "TOTAL BRUTO":
 						case "TOTAL LÍQUIDO":
@@ -1267,7 +1258,7 @@ public class AggregatedAnnualSummary {
 		LinkedHashMap<String, String> rawFormulas = totalsFormulas.get(field);
 		totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
 		cell = row.createCell(0);
-		cell.setCellType(CellType.STRING);
+
 		if (field != null && (AonStringUtils.contains(field, "CRA_00") || AonArrayUtils.constainsIgnoreCase(CRA1_CONCEPT_ORDER, field))) {
 			cell.setCellValue(getDefinitivePaymentConcept(field));
 		} else {
@@ -1278,7 +1269,7 @@ public class AggregatedAnnualSummary {
 			for (String month : months) {
 				String formula = rawFormulas.get(month);
 				Cell formulaCell = row.createCell(cNum[0]++);
-				formulaCell.setCellType(CellType.FORMULA);
+
 				formulaCell.setCellStyle(stylesMap.get(important ? "boldNumberCellStyle" : "numberCellStyle"));
 				formulaCell.setCellFormula(formula);
 			}
@@ -1637,7 +1628,7 @@ public class AggregatedAnnualSummary {
 		for (Row row : sheet) {
 			if (row.getLastCellNum() > 0) {
 				Cell cell0 = row.getCell(0);
-				if (cell0.getCellTypeEnum() == CellType.STRING && AonStringUtils.equalsIgnoreCase("CONCEPTO", cell0.getStringCellValue())) {
+				if (cell0.getCellType() == CellType.STRING && AonStringUtils.equalsIgnoreCase("CONCEPTO", cell0.getStringCellValue())) {
 					return  row;
 				}
 			}

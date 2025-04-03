@@ -224,6 +224,20 @@
 			background-color: #445a69;
 		}
 		
+		.paidLeaveColor{ 
+			color: black;
+			border: 1.5px solid #80bc70;
+			background-color: #f6f6f6;
+			border-radius: 3px;
+		}
+
+		.paidLeaveDayStyle{
+			color: black;
+			border: 1.5px solid #80bc70;
+			background-color: #f6f6f6;
+			border-radius: 3px;
+		}
+		
 		.effectiveStyle{
 			background-color: #77e1d2;
 		}
@@ -305,7 +319,8 @@
 			    
 				<g:HTMLPanel ui:field="daysTypePanel" styleName="{style.daysTypePanel}">
 					<g:HTMLPanel>
-						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton">Laborable</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.workingColor}" ui:field="workingDayButton">Laborables</g:Button>
+						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.paidLeaveColor}" ui:field="paidLeaveDayButton">Perm. Retribuido</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">No Laborables</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.effectiveColor}" ui:field="effectiveDayButton">Efectivos</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.inactivityColor}" ui:field="inactivityDayButton">Inactividad</g:Button>

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -16,6 +15,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -25,15 +25,16 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public abstract class AbsExcelAction  {
 	
 	protected static final String FONT_FAMILY = "DejaVu Sans Mono";
-	
-	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(186,186,186));
-	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240));
-	protected static final XSSFColor AON_TEAL = new XSSFColor(new java.awt.Color(152,210,192));
-	protected static final XSSFColor AON_LIGHT_TEAL = new XSSFColor(new java.awt.Color(202,223,225));
-	protected static final XSSFColor AON_LIGHT_BLUE = new XSSFColor(new java.awt.Color(224,241,236));
-	protected static final XSSFColor AON_WHITE = new XSSFColor(new java.awt.Color(255,255,255));
-	
-	protected static final XSSFColor AON_TOTAL = new XSSFColor(new java.awt.Color(182,223,210));
+	protected static final String DATE_PATTERN = "dd/MM/yyyy";
+	protected static final String DECIMAL_PATTERN = "#,##0.00";
+	protected static final String NUMBER_PATTERN = "#,###";
+	protected static final XSSFColor AON_BLUE = new XSSFColor(new java.awt.Color(186,186,186), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_GRAY = new XSSFColor(new java.awt.Color(240,240,240),  new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_TEAL = new XSSFColor(new java.awt.Color(79,149,157), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_TEAL = new XSSFColor(new java.awt.Color(152,210,192), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_LIGHT_BLUE = new XSSFColor(new java.awt.Color(224,241,236), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_WHITE = new XSSFColor(new java.awt.Color(255,255,255), new DefaultIndexedColorMap());
+	protected static final XSSFColor AON_TOTAL = new XSSFColor(new java.awt.Color(182,223,210), new DefaultIndexedColorMap());
 	
 	protected SXSSFWorkbook workbook;
 	protected SXSSFSheet sheet;
@@ -165,19 +166,12 @@ public abstract class AbsExcelAction  {
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
-		cell.setCellType(CellType.STRING);
 		return cell;
 	}
 
 	public void finalize(OutputStream out) throws IOException {
 		workbook.write(out);
-		
-		// Note that SXSSF allocates temporary files that you 
-		// must always clean up explicitly, by calling the dispose method.
-		//
-		// http://poi.apache.org/spreadsheet/how-to.html#sxssf
-		//
-		workbook.dispose();
+		workbook.close();
 	}
 
 	protected abstract void headerRow();

@@ -25,7 +25,11 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		int year = AonDateUtils.getYear( getTestDate() );
+		insertInvoices(getTestDate());
+	}
+	
+	public static void insertInvoices(Date date) {
+		int year = AonDateUtils.getYear( date );
 		int times = AonRandom.getInt(1, 10);
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
@@ -53,18 +57,16 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 					FinanceTrackingDAO.pay(ctx, tracking);
 				}
 			}
-			System.out.println(MessageFormat.format("\t\t ["
-					+ AonStringUtils.repeat("-", count)
-					+ AonStringUtils.repeat(" ", times - count)+"] "
-					+ AonMathUtils.round( count * 100 / times)
-					+ " %"
-					,times));
+			System.out.println(
+				MessageFormat.format("\t\t [{0}{1}] {2} %"
+					,AonStringUtils.repeat("-", count)
+					,AonStringUtils.repeat(" ", times - count)
+					,AonMathUtils.round( count * 100 / times)));
 			count++;
 		}
-		System.out.println(MessageFormat.format("\t\t ["
-				+ AonStringUtils.repeat("-", times)
-				+ "] ("
-				+ times + " facturas creadas.)"
+		System.out.println(
+			MessageFormat.format("\t\t [{0}] ({1} facturas creadas.)"
+				,AonStringUtils.repeat("-", times)
 				,times));
 		Assert.assertTrue( 
 			AON.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)

@@ -16,7 +16,8 @@ public class Mod115Bizkaia2021Declaration extends Mod115Declaration {
 	}
 
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
-		 BZ_C01(Mod115Key.BZ_C01
+		 CM_003(Mod115Key.CM_003,null,null,null,null,null)
+		,BZ_C01(Mod115Key.BZ_C01
 			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod115Key.BZ_C01,mod,docs,pdocs,br)
 			,null,null,null)

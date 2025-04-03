@@ -1,8 +1,8 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
-import { PAYROLL } from "../../environments/msg-en.js";
-import { INCOMES } from "../../environments/msg.js";
 import * as GWT from "../../gwt/gwt.js";
 import * as JSF from "aio/modules/aon-jsf-app.js";
+import { AonInvoiceIssued } from "./aon-invoice-issued.js";
+import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
   export const jsfOfferLoad = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
@@ -18,7 +18,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
   export const newInvoice = (type) => {
     let application = document.querySelector(TAG.AON_APPLICATION);
     let parent = application.getParent();
-    parent.aonInvoice(type)
+    parent.aonInvoice(type);
   }
 
   export const invoiceList = (filter) => {
@@ -26,6 +26,16 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     let parent = application.getParent();
     parent.buildInvoiceToolbarOptions(filter && filter.status === 'accounting', filter && filter.status === CONSTANT.PROCESSING);
     parent.aonInvoiceList(filter);
+  }
+
+  export const invoiceIssued = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new AonInvoiceIssued());
+  }
+
+  export const invoiceProcessing = () => {
+    let application = document.querySelector(TAG.AON_APPLICATION);
+    application.setContent(new AonInvoiceProcessing());
   }
 
   export const income = (filter) => {
@@ -122,12 +132,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.INVOICE_ISSUED.initCap(),
     name: MSG.ISSUED,
     icon: MATERIAL_ICONS.UNARCHIVE,
-    fn: () => invoiceList({
-      status: "accounting",
-      type: "sales",
-      page: 1,
-      per_page: 50,
-    })
+    fn: () => invoiceIssued()
   }
 
   export const INVOICE_ISSUED_BETA = {
@@ -243,7 +248,7 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.RAWDOC_PROCESSING.initCap(),
     name: MSG.PROCCESSING,
     icon: MATERIAL_ICONS.SCHEDULE,
-    fn: () => invoiceList({ status: CONSTANT.PROCESSING })
+    fn: () => invoiceProcessing()
   }
 
   export const RAWDOC_REJECT = {
@@ -286,31 +291,42 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
     id: CONSTANT.OTHER_EXPENSES.initCap(),
     name: MSG.OTHER_EXPENSES,
     icon: "account_balance_wallet",
-    fn: () => alert("EN DESARROLLO")
+    fn: () => expense()
   }
 
   export const STAFF_EXPENSES = {
     id: CONSTANT.STAFF_EXPENSES.initCap(),
     name: MSG.STAFF_EXPENSES,
     icon: MATERIAL_ICONS.GROUP,
-    fn: () => alert("EN DESARROLLO")    
+    fn: () => alert("EN DESARROLLO. Use temporalmente la opción de otros gastos.")
   }
 
   // MAIN OPTION
-
-  export const INVOICES = {
-    id: CONSTANT.INVOICES.initCap(),
-    title: MSG.INVOICES,
-    name: MSG.INVOICES,
-    options: [INVOICE_ISSUED, INVOICE_RECEIVED, INVOICE_TICKET,
-      INVOICE_PENDINGS, RAWDOC_PROCESSING, RAWDOC_REJECT, RAWDOC_TRASH]
-  }
 
   export const MAIN_INCOMES = {
     id: CONSTANT.INCOMES.initCap(),
     title: MSG.INCOMES,
     name: MSG.INCOMES,
     options: [INVOICE_ISSUED_BETA, PROFORMA_INVOICES, OTHER_INCOMES, OFFERS ],
+    button: {
+      id: CONSTANT.INCOMES.initCap() + 'Info',
+      title: MSG.INFO_INCOMES,
+      icon: 'info',
+      fn: () => info(
+          MSG.INCOMES,
+          `<b>Facturas Emitidas:</b> Facturas que envías a tus clientes por los servicios prestados o por la venta de tus productos.<br><br>
+           <b>Facturas Proforma:</b> Borrador de factura en elaboración y que se pueden enviar al cliente como "PROFORMA" para que conozcan el coste del servicio o productos y las condiciones del mismo antes de emitir la factura definitiva para su evaluación y conformidad previa a la emisión de la factura definitiva.<br><br>
+           <b>Otros Ingresos:</b> Son aquellos ingresos que recibes que no provienen de tu actividad económica como por ejemplo subvenciones, intereses bancarios, etc.<br><br>
+           <b>Presupuestos:</b> Documento que detalla el coste del servicio o venta de productos que se va a realizar con un cliente.`
+      )
+    }
+  }
+
+  export const MAIN_INCOMES_BETA = {
+    id: CONSTANT.INCOMES.initCap(),
+    title: MSG.INCOMES,
+    name: MSG.INCOMES,
+    options: [INVOICE_ISSUED, OTHER_INCOMES, OFFERS ],
     button: {
       id: CONSTANT.INCOMES.initCap() + 'Info',
       title: MSG.INFO_INCOMES,
@@ -523,7 +539,10 @@ import * as JSF from "aio/modules/aon-jsf-app.js";
   // ********************    
 
   export const getOptions = (beta) => {
-    return [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT] ;
+    // return beta 
+    //   ? [MAIN_INCOMES_BETA, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT]
+    //   : [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
+    return [MAIN_INCOMES, MAIN_EXPENSES, MAIN_DOCUMENTS, MANAGEMENT];
   }
 
   export const getNewOptions = () => {

@@ -29,7 +29,7 @@ public class PdfFieldDisplayer {
 
 	//DISPLAY PDF INPUT NAMES
 	static void display_pdf_form_names(InputStream is, String new_pdf) throws UnknownPDFException {
-		try (PDDocument doc = Loader.loadPDF(is)) {
+		try (PDDocument doc = Loader.loadPDF(is.readAllBytes())) {
 			doc.setAllSecurityToBeRemoved(true);
 
 			PDDocumentCatalog pdCatalog = doc.getDocumentCatalog();
