@@ -56,6 +56,7 @@ public class InvoiceRecorderController extends BasicController {
 	private String invoiceAttachURL;
 	private String showBreakDownOption;
 	private String showAccountEntryOption;
+	private String typeOption;
 	
 
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
@@ -133,16 +134,24 @@ public class InvoiceRecorderController extends BasicController {
 		this.showAccountEntryOption = showAccountEntryOption;
 	}
 	
+	public String getTypeOption() {
+		return typeOption;
+	}
+	
+	public void setTypeOption(String typeOption) {
+		this.typeOption = typeOption;
+	}
+	
 	public boolean getShowInvoiceAttach() {
 		return AonStringUtils.isNotBlank(invoiceAttachURL) ;
 	}
 	
 	
 	public void onCheckOption(ActionEvent event) throws ManagerBeanException {
-		if(getCheckOption().equals("InvoiceRecorder-checkAll")) {
-			this.onCheckAll(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-checkNothing")) {
+		if(getCheckOption() == null) {
 			this.onCheckNone(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-checkAll")) {
+			this.onCheckAll(null);
 		}else if(getCheckOption().equals("InvoiceRecorder-checkBrokenDown")) {
 			this.onCheckBrokendown(null);
 		}else if(getCheckOption().equals("InvoiceRecorder-checkUnBrokenDown")) {
@@ -175,6 +184,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckBrokendown(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked(ir.isShowTaxBreakDowns() ? true : ir.isChecked());
@@ -182,6 +192,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckUnbrokendown(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked(!ir.isShowTaxBreakDowns() ? true : ir.isChecked());
@@ -189,6 +200,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckRight(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked((ir.isRecordable() && !ir.isWarned()) ? true : ir.isChecked());
@@ -196,6 +208,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckWarned(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked((ir.isRecordable() && ir.isWarned()) ? true : ir.isChecked());
@@ -203,6 +216,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckEntryVisible(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked(ir.isShowAccountEntry() ? true : ir.isChecked());
@@ -210,6 +224,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onCheckEntryInvisible(ActionEvent event) {
+		this.onCheckNone(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setChecked(!ir.isShowAccountEntry() ? true : ir.isChecked());
@@ -328,10 +343,10 @@ public class InvoiceRecorderController extends BasicController {
 	}
 	
 	public void onShowAccountEntryOption(ActionEvent event) throws ManagerBeanException {
-		if(getCheckOption().equals("InvoiceRecorder-showAllAccountEntry")) {
-			this.onShowAllAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showNothingAccountEntry")) {
+		if(getCheckOption() == null) {
 			this.onHideAllAccountEntry(null);
+		}else if(getCheckOption().equals("InvoiceRecorder-showAllAccountEntry")) {
+			this.onShowAllAccountEntry(null);
 		}else if(getCheckOption().equals("InvoiceRecorder-showCheckedAccountEntry")) {
 			this.onShowCheckedAccountEntry(null);
 		}else if(getCheckOption().equals("InvoiceRecorder-showUnCheckedAccountEntry")) {
@@ -343,12 +358,13 @@ public class InvoiceRecorderController extends BasicController {
 		}else if(getCheckOption().equals("InvoiceRecorder-showWarnedAccountEntry")) {
 			this.onShowWarnedAccountEntry(null);
 		}else {
-			this.onCheckNone(null);
+			this.onHideAllAccountEntry(null);
 		}
 	}
 
 	public void onShowAllAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setDetails(obtaingAccountEntryDetailList(ir.getInvoice()));
@@ -364,6 +380,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onShowCheckedAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry(ir.isChecked() ? true : ir.isShowAccountEntry());
@@ -381,6 +398,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onShowUncheckedAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry(!ir.isChecked() ? true : ir.isShowAccountEntry());
@@ -398,6 +416,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onShowCorrectAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((ir.isRecordable() && !ir.isWarned()) ? true : ir.isShowAccountEntry());
@@ -415,6 +434,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onShowIncorrectAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((!ir.isRecordable()) ? true : ir.isShowAccountEntry());
@@ -432,6 +452,7 @@ public class InvoiceRecorderController extends BasicController {
 
 	public void onShowWarnedAccountEntry(ActionEvent event) {
 		try {
+			this.onHideAllAccountEntry(null);
 			List<InvoiceRecorder> list = getCurrentList();
 			for (InvoiceRecorder ir : list) {
 				ir.setShowAccountEntry((ir.isRecordable() && ir.isWarned()) ? true : ir.isShowAccountEntry());
@@ -505,10 +526,10 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowBreakDownOption(ActionEvent event) throws ManagerBeanException {
-		if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownAll")) {
-			this.onShowAllTaxBreakDowns(null);
-		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownNothing")) {
+		if(getShowBreakDownOption() == null) {
 			this.onHideAllTaxBreakDowns(null);
+		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownAll")) {
+			this.onShowAllTaxBreakDowns(null);
 		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownChecked")) {
 			this.onShowCheckedTaxBreakDowns(null);
 		}else if(getShowBreakDownOption().equals("InvoiceRecorder-showBreakDownUnChecked")) {
@@ -539,6 +560,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowCheckedTaxBreakDowns(ActionEvent event) {
+		this.onHideAllTaxBreakDowns(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setShowTaxBreakDowns(ir.isChecked() ? true : ir.isShowTaxBreakDowns());
@@ -546,6 +568,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowUncheckedTaxBreakDowns(ActionEvent event) {
+		this.onHideAllTaxBreakDowns(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setShowTaxBreakDowns(!ir.isChecked() ? true : ir.isShowTaxBreakDowns());
@@ -553,6 +576,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowCorrectTaxBreakDowns(ActionEvent event) {
+		this.onHideAllTaxBreakDowns(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setShowTaxBreakDowns((ir.isRecordable() && !ir.isWarned()) ? true : ir.isShowTaxBreakDowns());
@@ -560,6 +584,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowIncorrectTaxBreakDowns(ActionEvent event) {
+		this.onHideAllTaxBreakDowns(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setShowTaxBreakDowns((!ir.isRecordable()) ? true : ir.isShowTaxBreakDowns());
@@ -567,6 +592,7 @@ public class InvoiceRecorderController extends BasicController {
 	}
 
 	public void onShowWarnedTaxBreakDowns(ActionEvent event) {
+		this.onHideAllTaxBreakDowns(null);
 		List<InvoiceRecorder> list = getCurrentList();
 		for (InvoiceRecorder ir : list) {
 			ir.setShowTaxBreakDowns((ir.isRecordable() && ir.isWarned()) ? true : ir.isShowTaxBreakDowns());
@@ -670,4 +696,35 @@ public class InvoiceRecorderController extends BasicController {
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
+	
+//	public void onTypeOption(ActionEvent event) throws ManagerBeanException {
+//		if(getTypeOption().equals("InvoiceRecorder-sales")) {
+//			this.onTypeSales(null);
+//		}else if(getTypeOption().equals("InvoiceRecorder-purchases")) {
+//			this.onTypePurchases(null);
+//		}else if(getTypeOption().equals("InvoiceRecorder-expenses")) {
+//			this.onTypeExpenses(null);
+//		}else if(getTypeOption().equals("InvoiceRecorder-undeductible_invoice_management_module")) {
+//			this.onTypeUndeductibleInvoiceManagementModule(null);
+//		}else {
+//			this.onTypeSales(null);
+//		}
+//	}
+//	
+//	public void onTypeSales(ActionEvent event) {
+//		
+//	}
+//	
+//	public void onTypePurchases(ActionEvent event) {
+//		
+//	}
+//
+//	public void onTypeExpenses(ActionEvent event) {
+//	
+//	}
+//
+//	public void onTypeUndeductibleInvoiceManagementModule(ActionEvent event) {
+//	
+//	}
+
 }

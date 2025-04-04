@@ -31,11 +31,13 @@
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="filterButton"
+						title="#{bundle.aon_show_filter}"
 				        styleClass="aon-finding-toolbar-item aon-icon-filter"
 				        onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'inline-table'; document.querySelector('[id$=filterButton]').style.display = 'none'; document.querySelector('[id$=noFilterButton]').style.display = 'inline'; 
 				        		return false;"
 				       	style="display:none;"/>
 					<aon:commandButton id="noFilterButton"
+						title="#{bundle.aon_hide_filter}"
 					    styleClass="aon-finding-toolbar-item aon-icon-filter-off"
 					    onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; 
 			            		return false;"
@@ -43,16 +45,18 @@
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
+						title="#{bundle.finance_record}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus == 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-add-task"
+						styleClass="aon-finding-toolbar-item aon-icon-done-all"
 						actionListener="#{controller.onRecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="unrecord_selected"
+						title="#{bundle.finance_unrecord}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus != 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-add-task"
+						styleClass="aon-finding-toolbar-item aon-icon-remove-done"
 						actionListener="#{controller.onUnrecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -63,7 +67,22 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">   
 					<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important;">
-						<aon:div>						
+						<aon:div>	
+							<!-- <aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
+								<aon:selectOneMenu id="filterType"
+									value="#{controller.typeOption}"
+									styleClass="aon-margin-left" >
+										<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="InvoiceRecorder-sales" />
+									    <f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="InvoiceRecorder-purchases" />
+									    <f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="InvoiceRecorder-expenses" />
+									    <f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="InvoiceRecorder-undeductible_invoice_management_module" />
+									    <a4j:support event="onchange"
+									    actionListener="#{controller.onTypeOption}"
+									    reRender="invoiceRecorderList"
+									    onsubmit="Richfaces.showModalPanel('waitProccess')"
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+								</aon:selectOneMenu> -->
+								
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
 							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
 								value="#{controller.checkOption}"
