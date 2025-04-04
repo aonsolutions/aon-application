@@ -45,6 +45,8 @@ export class AonParent extends AonElement {
 		this.INBOX_INVOICES = `${CONSTANT.INVOICES.initCap()}Inbox`;
 		this.PENDING_INVOICES = `${CONSTANT.INVOICES.initCap()}Pending`;
 		this.REJECTED_INVOICES = `${CONSTANT.INVOICES.initCap()}Rejected`;
+		this.TRAMIT_INVOICES = `${CONSTANT.INVOICES.initCap()}Tramit`;
+		this.PROCESSING_INVOICES = `${CONSTANT.INVOICES.initCap()}Processing`;
 		this.filter = {	id: 'active', active: true, name: MSG.ACTIVES,};
 	}
 
@@ -238,6 +240,7 @@ export class AonParent extends AonElement {
 		let inboxCount = 0;
 		let rejectedCount = 0;
 		let pendingCount = 0;
+		let processingCount = 0;
 		let application = this.getApplication();
 		
 		if(this.notice?.invoice?.inbox?.count > 0) 
@@ -249,9 +252,14 @@ export class AonParent extends AonElement {
 		if(this.notice?.invoice?.pending?.count > 0) 
 			pendingCount = this.notice.invoice.pending.count;
 
+		if(this.notice?.invoice?.processing?.count >0)
+			processingCount = this.notice.invoice.processing.count 
+
 		application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
 		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
 		application.updateSidenavCount(this.PENDING_INVOICES, pendingCount);
+		application.updateSidenavCount(this.PROCESSING_INVOICES, processingCount);
+		application.updateSidenavCount(this.TRAMIT_INVOICES, pendingCount);
 		application.updateSidenavTitle(CONSTANT.INVOICES, `${MSG.ACTIVITY}`); 
 	}
 	
@@ -443,40 +451,63 @@ export class AonParent extends AonElement {
 		this.getApplication().addSidenavOptions3(enterprisesOptions);
 
 		let invoiceOptions = {
-		  id: CONSTANT.INVOICES,
-		  app: Apps.INVOICE,
-		  name: `<span class="${CSS.AON_COMPANY_FILTER_LOADING}">${MSG.ACTIVITY.toUpperCase()}</span>`,
-		  options: [{
-			    id: this.INBOX_INVOICES,
-			    name: MSG.PENDING_INVOICES,
-			    icon: MATERIAL_ICONS.INBOX,
-			    app: Apps.INVOICE,
-			    fn: () => {
-					let inboxFilter = {ids:this.notice?.invoice?.inbox?.domains, count:this.notice?.invoice?.inbox?.domainCount};
-					this.select({...this.getFilter(),...inboxFilter }, companies => this.decorateTabs(companies, inboxFilter));
-			    },
-			  },
-			  {
-			    id: this.REJECTED_INVOICES,
-			    name: MSG.REJECTED_INVOICES,
-			    icon: MATERIAL_ICONS.REPORT,
-				app: Apps.INVOICE,
-			    fn: () => {
-					let rejectedFilter = {ids:this.notice?.invoice?.rejected?.domains, count:this.notice?.invoice?.rejected?.domainCount};
-					this.select({...this.getFilter(),...rejectedFilter}, companies => this.decorateTabs(companies, rejectedFilter ));
-			    },
-			  },
-			  {
-			    id: this.PENDING_INVOICES,
-			    name: MSG.UNACCOUNT_INVOICES,
-			    icon: MATERIAL_ICONS.LABEL_IMPORTANT,
-				app: Apps.INVOICE,
-			    fn: () => {
-					let pendingFilter = {ids:this.notice?.invoice?.pending?.domains, count:this.notice?.invoice?.pending?.domainCount}; 
-					this.select({...this.getFilter(),...pendingFilter}, companies => this.decorateTabs(companies, pendingFilter));
-			    },
-			  }]
+			id: CONSTANT.INVOICES,
+			app: Apps.INVOICE,
+			name: `<span class="${CSS.AON_COMPANY_FILTER_LOADING}">${MSG.ACTIVITY.toUpperCase()}</span>`,
+			options: [
+				{
+					id: this.TRAMIT_INVOICES,
+					name: "Documentos en trámite",
+					icon: "edit_document",
+					app: Apps.INVOICE,
+					fn: () => {
+						let tramitFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
+						this.select({...this.getFilter(), ...tramitFilter}, companies => this.decorateTabs(companies, tramitFilter));																  
+					},
+				},
+				{
+					id: this.REJECTED_INVOICES,
+					name: "Documentos en revisión",
+					icon: MATERIAL_ICONS.REPORT,
+					app: Apps.INVOICE,
+					fn: () => {
+						let reviewFilter = { ids: this.notice?.invoice?.rejected?.domains, count: this.notice?.invoice?.rejected?.domainCount };
+						this.select({...this.getFilter(), ...reviewFilter}, companies => this.decorateTabs(companies, reviewFilter));
+					},
+				},
+				{
+					id: this.PENDING_INVOICES,
+					name: "Facturas sin contabilizar",
+					icon: MATERIAL_ICONS.LABEL_IMPORTANT,
+					app: Apps.INVOICE,
+					fn: () => {
+						let unaccountedFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
+						this.select({...this.getFilter(), ...unaccountedFilter}, companies => this.decorateTabs(companies, unaccountedFilter));
+					},
+				},
+				{
+					id: this.INBOX_INVOICES,
+					name: "Borradores/Proforma",
+					icon: MATERIAL_ICONS.INBOX,
+					app: Apps.INVOICE,
+					fn: () => {
+						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
+						this.select({...this.getFilter(), ...draftsFilter}, companies => this.decorateTabs(companies, draftsFilter));
+					},
+				},
+				{
+					id: this.PROCESSING_INVOICES,
+					name: "Documentos en proceso",
+					icon: MATERIAL_ICONS.SCHEDULE,
+					app: Apps.INVOICE,
+					fn: () => {
+						let processingFilter = { ids: this.notice?.invoice?.processing?.domains, count: this.notice?.invoice?.processing?.domainCount };
+						this.select({...this.getFilter(), ...processingFilter}, companies => this.decorateTabs(companies, processingFilter));
+					},
+				}
+			]
 		};
+		
 		
 		this.getApplication().addSidenavOptions3(invoiceOptions);
 		
@@ -577,6 +608,7 @@ export class AonParent extends AonElement {
 
 		let countSpan = this.createElement(TAG.SPAN);
 		countSpan.className = 'aonLiSpanSubtitle';
+		countSpan.style.fontWeight = "bold";
 		countSpan.innerHTML = count || '';
 		li.appendChild(countSpan);
 
