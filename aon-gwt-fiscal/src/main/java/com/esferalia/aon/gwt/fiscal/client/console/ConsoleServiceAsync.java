@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -27,6 +28,9 @@ public interface ConsoleServiceAsync {
 	void getTableRowMetadata(ConsoleTableRow row, AsyncCallback<ConsoleTableRow> callback);
 	void update(ConsoleTableRow row, ConsoleTableField field, AsyncCallback<ConsoleTableRow> callback);
 	void delete(ConsoleTableRow row, AsyncCallback<Boolean> callback);
+	
+	void getScopes(String schema, Integer domainId, AsyncCallback<LinkedList<Scope>> asyncCallback);
+	void updateScopes(String schema, Integer domainId, Integer wrongScopeId, Integer newScopeId, AsyncCallback<String> asyncCallback);
 	
 	void testConnections(AsyncCallback<String> callback);
 }

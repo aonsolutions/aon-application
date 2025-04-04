@@ -622,7 +622,7 @@ public class Mod184DAO {
 		mod184.setYear(year);
 		mod184.setReceipt("1840000000001");
 		mod184.setStatus(FiscalStatus.PENDING);
-		mod184.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+		mod184.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY, true));
 		mod184.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),
 				FS_MODEL184.CONTACT_PERSON.getDataType().length()));
 		mod184.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),

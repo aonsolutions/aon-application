@@ -217,4 +217,17 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return tempMap;
 	}
 	
+	@Override
+	public String getTownCode() {
+    	return isCanarias() ? ensureDetail(Mod303Key.CA_X00).getDescription() : "";
+	}
+	
+	@Override
+	public FiscalModel setTownCode(String townCode) {
+		if (isCanarias()) {
+			ensureDetail(Mod303Key.CA_X00).setDescription(townCode);	
+		}
+		return this;
+	}
+	
 }

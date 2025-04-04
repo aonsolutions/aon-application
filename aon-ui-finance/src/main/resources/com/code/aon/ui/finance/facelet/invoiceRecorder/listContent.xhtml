@@ -31,11 +31,13 @@
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="filterButton"
+						title="#{bundle.aon_show_filter}"
 				        styleClass="aon-finding-toolbar-item aon-icon-filter"
 				        onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'inline-table'; document.querySelector('[id$=filterButton]').style.display = 'none'; document.querySelector('[id$=noFilterButton]').style.display = 'inline'; 
 				        		return false;"
 				       	style="display:none;"/>
 					<aon:commandButton id="noFilterButton"
+						title="#{bundle.aon_hide_filter}"
 					    styleClass="aon-finding-toolbar-item aon-icon-filter-off"
 					    onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; 
 			            		return false;"
@@ -43,16 +45,18 @@
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
+						title="#{bundle.finance_record}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus == 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-add-task"
+						styleClass="aon-finding-toolbar-item aon-icon-done-all"
 						actionListener="#{controller.onRecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="unrecord_selected"
+						title="#{bundle.finance_unrecord}"
 						rendered="#{controller.model.rowCount > 0 and invoiceRecorderSearch.defaultStatus != 'PENDING'}"
 						reRender="invoiceRecorderDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-add-task"
+						styleClass="aon-finding-toolbar-item aon-icon-remove-done"
 						actionListener="#{controller.onUnrecordSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />

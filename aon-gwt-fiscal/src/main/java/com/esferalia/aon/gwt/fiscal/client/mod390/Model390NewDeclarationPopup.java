@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.ListBox;
 public class Model390NewDeclarationPopup extends AonCustomDialog {
 	
 	protected int row = 0;
-	private AdministrationListBox admonList = new AdministrationListBox();
+	private AdministrationListBox admonList = new AdministrationListBox(false, false, true);
 	private AonIntegerBox yearBox = new AonIntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
