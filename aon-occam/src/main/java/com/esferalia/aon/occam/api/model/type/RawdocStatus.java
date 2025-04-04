@@ -10,7 +10,7 @@ public enum RawdocStatus implements Serializable {
 	,REJECTED("Rechazado", "refused")
 	,DRAFT("Papelera", "trash")
 	,PROCESSING("Procesando", "processing")
-	,PENDING("Pendiente", "pending")
+	,PROCESSED("Procesado", "processed")
 	;
 
 	private String description;

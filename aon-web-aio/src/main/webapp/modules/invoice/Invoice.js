@@ -387,7 +387,11 @@ export class Invoice {
 
   isInbox() {
     return this.status.toLowerCase() === 'inbox'
-      || this.isPending(); // provisional
+      || this.isProcessed(); // provisional
+  }
+
+  isProcessed() {
+    return this.status.toLowerCase() === 'processed';    
   }
 
   isPending() {
