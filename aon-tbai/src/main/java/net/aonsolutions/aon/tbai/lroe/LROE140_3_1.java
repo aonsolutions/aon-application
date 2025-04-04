@@ -55,6 +55,7 @@ public class LROE140_3_1 extends LROE140 {
 		if(investAsset.getActivity().getEpigraph().equals("183320")) investAsset.getActivity().setEpigraph("183321");
 		if(investAsset.getActivity().getEpigraph().equals("183310")) investAsset.getActivity().setEpigraph("183311");
 		if(investAsset.getActivity().getEpigraph().equals("184950")) investAsset.getActivity().setEpigraph("1849501"); // o 1849502 ??
+		if(investAsset.getActivity().getEpigraph().equals("185900")) investAsset.getActivity().setEpigraph("1859001"); // o 1859002 ??
 		if(investAsset.getActivity().getEpigraph().equals("192210") || investAsset.getActivity().getEpigraph().equals("192220") )
 			investAsset.getActivity().setEpigraph("192200");
 		
