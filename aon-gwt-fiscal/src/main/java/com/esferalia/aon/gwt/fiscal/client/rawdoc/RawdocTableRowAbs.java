@@ -179,7 +179,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getRejectButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton reject = null;
-		if (rawdoc.isInbox() || rawdoc.isPending()) {
+		if (rawdoc.isInbox() || rawdoc.isProcessed()) {
 			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(event -> {
@@ -210,7 +210,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 
 	private AonTableButton getDeleteButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		AonTableButton delete = null;
-		if (rawdoc.isInbox() || rawdoc.isRejected() || rawdoc.isPending()) {
+		if (rawdoc.isInbox() || rawdoc.isRejected() || rawdoc.isProcessed()) {
 			delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
 			delete.getElement().getStyle().setMarginRight(5, Unit.PX);
 			delete.addClickHandler(event -> {

@@ -590,7 +590,7 @@ public class RawdocModule extends MainEntryPoint {
 		}
 		
 		AonTableButton accountEntry = null;
-		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PENDING) {
+		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PROCESSED) {
 			accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAddTask());
 			accountEntry.addClickHandler( new ClickHandler() {
 				
@@ -681,7 +681,7 @@ public class RawdocModule extends MainEntryPoint {
 		
 		AonTableButton delete = null;
 		if (rawdoc.getStatus() == RawdocStatus.INBOX 
-			|| rawdoc.getStatus() == RawdocStatus.PENDING				
+			|| rawdoc.getStatus() == RawdocStatus.PROCESSED				
 			|| rawdoc.getStatus() == RawdocStatus.REJECTED) {
 			delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
 			delete.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -718,7 +718,7 @@ public class RawdocModule extends MainEntryPoint {
 		}
 		
 		AonTableButton reject = null;
-		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PENDING) {
+		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.PROCESSED) {
 			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(new ClickHandler() {

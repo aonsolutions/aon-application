@@ -125,7 +125,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 
 		// TODO AÑADIR POSIBILIDAD DE RECIBIR MÁS DE UN ESTADO EN LA PETICIÓN
 		Byte[] statuses = RawdocStatus.PROCESSING.equals(rs) 
-			? new Byte[] {RawdocStatus.PROCESSING.value(), RawdocStatus.PENDING.value()} 
+			? new Byte[] {RawdocStatus.PROCESSING.value(), RawdocStatus.PROCESSED.value()} 
 			: new Byte[] {rs.value()}; 
 		
 		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
