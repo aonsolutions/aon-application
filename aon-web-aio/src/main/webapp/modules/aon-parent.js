@@ -25,6 +25,7 @@ export class AonParent extends AonElement {
 	REJECTED_INVOICES;
 	COMPANY_FILTER_TAB;
 	COMPANY_TITLE_SPAN;
+	TRAMIT_INVOICES;
 	
 	setFilter(filter){
 		this.filter = filter;
@@ -46,7 +47,6 @@ export class AonParent extends AonElement {
 		this.PENDING_INVOICES = `${CONSTANT.INVOICES.initCap()}Pending`;
 		this.REJECTED_INVOICES = `${CONSTANT.INVOICES.initCap()}Rejected`;
 		this.TRAMIT_INVOICES = `${CONSTANT.INVOICES.initCap()}Tramit`;
-		this.PROCESSING_INVOICES = `${CONSTANT.INVOICES.initCap()}Processing`;
 		this.filter = {	id: 'active', active: true, name: MSG.ACTIVES,};
 	}
 
@@ -240,6 +240,7 @@ export class AonParent extends AonElement {
 		let inboxCount = 0;
 		let rejectedCount = 0;
 		let pendingCount = 0;
+		let processedCount = 0;
 		let processingCount = 0;
 		let application = this.getApplication();
 		
@@ -252,14 +253,16 @@ export class AonParent extends AonElement {
 		if(this.notice?.invoice?.pending?.count > 0) 
 			pendingCount = this.notice.invoice.pending.count;
 
+		if(this.notice?.invoice?.processed?.count > 0) 
+			processedCount = this.notice.invoice.processed.count;
+
 		if(this.notice?.invoice?.processing?.count >0)
 			processingCount = this.notice.invoice.processing.count 
 
 		application.updateSidenavCount(this.INBOX_INVOICES, inboxCount);
 		application.updateSidenavCount(this.REJECTED_INVOICES, rejectedCount);
 		application.updateSidenavCount(this.PENDING_INVOICES, pendingCount);
-		application.updateSidenavCount(this.PROCESSING_INVOICES, processingCount);
-		application.updateSidenavCount(this.TRAMIT_INVOICES, pendingCount);
+		application.updateSidenavCount(this.TRAMIT_INVOICES, processedCount + processingCount);
 		application.updateSidenavTitle(CONSTANT.INVOICES, `${MSG.ACTIVITY}`); 
 	}
 	
@@ -461,7 +464,24 @@ export class AonParent extends AonElement {
 					icon: "edit_document",
 					app: Apps.INVOICE,
 					fn: () => {
-						let tramitFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
+						let processedDomains = this.notice?.invoice?.processed?.domains || [];
+						let processingDomains = this.notice?.invoice?.processing?.domains || [];
+						let domains = processedDomains.concat(processingDomains);
+						domains = [...new Set(domains)];
+						
+						let domainCount = {};
+						let processedCount = this.notice?.invoice?.processed?.domainCount || [];
+						let processingCount = this.notice?.invoice?.processing?.domainCount || [];
+						for (var key in processedCount){
+							domainCount[key] = domainCount[key] ? domainCount[key] + processedCount[key] : processedCount[key];
+						}
+
+
+						for (var key in processingCount){
+							domainCount[key] = domainCount[key] ? domainCount[key] + processingCount[key] : processingCount[key];
+						}
+
+						let tramitFilter = { ids: domains, count: domainCount };
 						this.select({...this.getFilter(), ...tramitFilter}, companies => this.decorateTabs(companies, tramitFilter));																  
 					},
 				},
@@ -493,16 +513,6 @@ export class AonParent extends AonElement {
 					fn: () => {
 						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
 						this.select({...this.getFilter(), ...draftsFilter}, companies => this.decorateTabs(companies, draftsFilter));
-					},
-				},
-				{
-					id: this.PROCESSING_INVOICES,
-					name: "Documentos en proceso",
-					icon: MATERIAL_ICONS.SCHEDULE,
-					app: Apps.INVOICE,
-					fn: () => {
-						let processingFilter = { ids: this.notice?.invoice?.processing?.domains, count: this.notice?.invoice?.processing?.domainCount };
-						this.select({...this.getFilter(), ...processingFilter}, companies => this.decorateTabs(companies, processingFilter));
 					},
 				}
 			]
