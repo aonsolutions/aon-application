@@ -3019,8 +3019,6 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
-		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
-		if(!this.getInvoice().isRejected() && !invofoxRejected)
 		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
