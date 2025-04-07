@@ -152,7 +152,7 @@ export class AonToolbar extends AonElement {
 
 	addSeparator() {
 		let span = this.createElement(TAG.SPAN);
-		let hr = this.createElement(TAG.TR);
+		let hr = this.createElement('hr');
 		hr.className = 'aonSeparator';
 		span.appendChild(hr);
 
