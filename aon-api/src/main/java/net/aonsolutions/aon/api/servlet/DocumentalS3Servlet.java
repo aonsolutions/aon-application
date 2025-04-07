@@ -20,13 +20,16 @@ import org.json.JSONObject;
 import com.code.aon.common.AonException;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.S3DocumentProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -137,8 +140,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				AON_SOLUTIONS.getCountS3Document(
 						api.getDomain(), 
 						api.getUser(), 
-						f -> generateFilter(f, api), 
-						f -> generateFilterRAttach(f, api)));
+						f -> generateFilter(f, api, getScopes(api)), 
+						f -> generateFilterRAttach(f, api, getScopes(api))));
 	}
 	
 	private static Attach getFile(AonApiData api) throws Exception {
@@ -235,7 +238,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Optional<Integer> page = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		Optional<Integer> perPage = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
 		Integer category = JsonUtils.getInteger(api.getData(), IJsonNames.CATEGORY);
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api), f -> generateFilterRAttach(f, api), null, category, page, perPage)
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api, getScopes(api)), f -> generateFilterRAttach(f, api, getScopes(api)), null, category, page, perPage)
 		.forEach(document -> {
 			jsArray.put(fullDocumentToJson(document));
 		});
@@ -257,7 +260,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		System.out.println("POST METHOD");
 		Decoder decoder = Base64.getDecoder();
 		byte[] bytes = decoder.decode(api.getData().optString(IJsonNames.CONTENT));
-		String doc = S3rDoc.uploadObject(bytes, AON_BUCKET_NAME, api.getDomain().getName());
+		String mimetype = MimeType.safeValueFromContenType(api.getData().getString(IJsonNames.CONTENT_TYPE)).getExtension();
+		String doc = S3rDoc.uploadObject(bytes, AON_BUCKET_NAME, api.getDomain().getName(), mimetype);
 		JSONObject json = api.getData();
 		Integer registry = api.getUser().getRegistry().getId(); 
 		if(api.getUser().getRegistry().getId() == null) {
@@ -272,6 +276,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setMimetype(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)))
 				.setName(json.getString(IJsonNames.NAME))
 				.setS3key(doc)
+				.setRegistryType(getRegistryAttachmentType(api))
 				.setS3bucket(AON_BUCKET_NAME)
 				.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 				.setSecurityLevel((byte) 0)
@@ -295,6 +300,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 				.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY))
 				.setDocumentDate(JsonUtils.getDate(json, IJsonNames.DATE))
+				.setRegistryType(getRegistryAttachmentType(api))
 				.setMimetype(mime)
 				.setName(JsonUtils.getString(json, IJsonNames.NAME))
 				.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
@@ -321,13 +327,13 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		return new JSONObject("{ result: OK }");
 	}
 	
-	private static Filter generateFilter(S3DocumentProperties f, AonApiData api) {
+	private static Filter generateFilter(S3DocumentProperties f, AonApiData api, Integer[] scopes) {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		JSONObject json = api.getData();
-//		if(json.has(IJsonNames.CATEGORY))
-//			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
-		if(json.has(IJsonNames.SCOPE))
-			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
+		String type = json.optString("registryType", null) != null ? json.optString("registryType") : "all";
+		if(scopes != null)
+    		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
 		if(json.has(IJsonNames.START_DATE))
 			filter = filter.and(f.getDocumentDateProperty().ge(JsonUtils.getDate(json, IJsonNames.START_DATE)));
 		if(json.has(IJsonNames.END_DATE))
@@ -340,16 +346,41 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			filter = filter.and(f.getMimeTypeProperty().eq(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)).value()));
 		if(json.has(IJsonNames.NAME))
 			filter = filter.and(f.getNameProperty().like("%" + json.getString(IJsonNames.NAME) + "%"));
+		if(!dur.isConfidential()) {
+    		filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
+    	}
+		if(type != null) {
+        	if("system".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value()));
+        	} else if("enterprise".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
+        	} else if("employee".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));
+        	} else if("asesor".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()));
+        	} else if("all".equalsIgnoreCase(type)) {
+        		if(dur.isDocumentalManager()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
+            			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()))
+            			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value())));
+            	} else if(dur.isDocumentalPortal()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
+               			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value())));
+            	} else if(dur.isDocumental()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));    		
+            	} else filter = filter.and(f.getTypeProperty().isNull());
+        	}
+    	}
 		return filter;
 	}
 	
-	private static Filter generateFilterRAttach(AttachProperties f, AonApiData api) {
+	private static Filter generateFilterRAttach(AttachProperties f, AonApiData api, Integer[] scopes) {
+		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		JSONObject json = api.getData();
-//		if(json.has(IJsonNames.CATEGORY))
-//			filter = filter.and(f.getCategoryProperty().eq(json.getInt(IJsonNames.CATEGORY)));
-		if(json.has(IJsonNames.SCOPE))
-			filter = filter.and(f.getScopeProperty().eq(json.getInt(IJsonNames.SCOPE)));
+		String type = json.optString("registryType", null) != null ? json.optString("registryType") : "all";
+		if(scopes != null)
+    		filter = filter.and(f.getScopeProperty().in(scopes).or(f.getScopeProperty().isNull()));
 		if(json.has(IJsonNames.START_DATE))
 			filter = filter.and(f.getCreationDateTimeStampProperty().ge(new Timestamp(JsonUtils.getDate(json, IJsonNames.START_DATE).getTime())));
 		if(json.has(IJsonNames.END_DATE))
@@ -362,6 +393,31 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			filter = filter.and(f.getMimeTypeProperty().eq(MimeType.safeValueFromContenType(json.getString(IJsonNames.CONTENT_TYPE)).value()));
 		if(json.has(IJsonNames.NAME))
 			filter = filter.and(f.getDescriptionProperty().like("%" + json.getString(IJsonNames.NAME) + "%"));
+		if(!dur.isConfidential()) {
+    		filter = filter.and(f.getSecurityLevelProperty().eq((byte) 0));
+    	}
+		if(type != null) {
+        	if("system".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.SYSTEM_MESSAGE.value()));
+        	} else if("enterprise".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value()));
+        	} else if("employee".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));
+        	} else if("asesor".equalsIgnoreCase(type)) {
+        		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()));
+        	} else if("all".equalsIgnoreCase(type)) {
+        		if(dur.isDocumentalManager()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
+            			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_ASESOR.value()))
+            			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value())));
+            	} else if(dur.isDocumentalPortal()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.CORPORATE_IDENTITY.value())
+               			.or(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value())));
+            	} else if(dur.isDocumental()) {
+            		filter = filter.and(f.getTypeProperty().eq(RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value()));    		
+            	} else filter = filter.and(f.getTypeProperty().isNull());
+        	}
+    	}
 		return filter;
 	}
 	
@@ -381,8 +437,58 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		json.put(IJsonNames.CREATION_DATE, document.getCreationDate());
 		json.put(IJsonNames.MODIFICATION_USER, document.getModificationUser());
 		json.put(IJsonNames.MODIFICATION_DATE, document.getModificationDate());
+		json.put("registryType", getRegistryAttachmentType(document));
 		json.put(IJsonNames.TYPE, document.getType());
 		return json;
+	}
+
+	private static Integer[] getScopes(AonApiData api) {
+		Integer[] scopes = null;
+		try {
+			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
+			if(api.getUser().getDomain().getId().equals(api.getDomain().getParentId())) {
+				Integer[] scopes2 = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+						r -> r.getDomainProperty().eq(api.getDomain().getId())).map(r -> r.getId()).toArray(Integer[]::new);
+				Integer[] scopes3 = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getParentId(), api.getUser().getLogin(), api.getUser().getId());
+				if(scopes == null && scopes3 == null) {
+					scopes = scopes2;
+				} else if(scopes == null) {
+					scopes = new Integer[scopes2.length + scopes3.length];
+					for (Integer i = 0; i< scopes2.length; i++) {
+						scopes[i] = scopes2[i];
+					}
+					for (Integer i = 0; i< scopes3.length; i++) {
+						scopes[i + scopes2.length] = scopes3[i];
+					}
+				}
+			}
+		} catch (Exception e) {
+			scopes = null;
+		}
+		return scopes;
+	}
+
+	private static Byte getRegistryAttachmentType(AonApiData api) {
+		if(api.getData().optString("registryType").equals("asesor")) {
+			return 24;
+		} else if(api.getData().optString("registryType").equals("enterprise")) {
+			return 3;
+		} else if(api.getData().optString("registryType").equals("employee")) {
+			return 25;
+		}
+		return 3;
+	}
+	
+	private static String getRegistryAttachmentType(S3Document document) {
+		if(document.getRegistryType() != null)
+			if(document.getRegistryType() == 24) {
+				return "asesor";
+			} else if(document.getRegistryType() == 3) {
+				return "enterprise";
+			} else if(document.getRegistryType() == 25) {
+				return "employee";
+			}
+		return "enterprise";
 	}
 	
 }

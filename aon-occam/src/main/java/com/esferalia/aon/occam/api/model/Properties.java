@@ -1980,6 +1980,8 @@ public interface Properties {
 //		Property<Integer> getRattachProperty();
 		Property<Integer> getRegistryProperty();
 		Property<Timestamp> getCreationDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getSecurityLevelProperty();
 	}
 	
 	public interface S3CategoryProperties{

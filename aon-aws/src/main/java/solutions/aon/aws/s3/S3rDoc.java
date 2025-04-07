@@ -84,11 +84,11 @@ public class S3rDoc{
 		}
 	}
 	
-	public static String uploadObject(byte[] bytes, String bucket, String domain) {
+	public static String uploadObject(byte[] bytes, String bucket, String domain, String mimetype) {
 		try {
 			S3Client client = getClient(bucket);
 			Date date = new Date();
-			String key = domain + "/" + UUID.randomUUID().toString().replace("-", "") + date.getTime();
+			String key = domain + "/" + UUID.randomUUID().toString().replace("-", "") + date.getTime() + mimetype != null ? "." + mimetype : "";
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 			client.putObject(request, RequestBody.fromBytes(bytes));
 			return key;
