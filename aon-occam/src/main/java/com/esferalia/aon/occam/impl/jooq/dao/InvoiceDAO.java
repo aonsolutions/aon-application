@@ -2027,4 +2027,31 @@ public class InvoiceDAO {
 			.thenComparing(InvoiceBreakdown::getPercentage)		
 			.compare(b1, b2));
 	}
+	
+	
+	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+	private static final Field<Byte> MAX_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+	
+	public static Optional<InvoiceSource> getInvoiceSource(AONContext ctx, Integer invoiceId) {
+		
+		return ctx.getDslContext()
+			.select( MIN_SOURCE, MAX_SOURCE)
+				.from(INVOICE_DETAIL)
+				.where(INVOICE_DETAIL.INVOICE.eq(invoiceId))
+				.groupBy( INVOICE_DETAIL.INVOICE )
+				.fetch()
+				.stream()
+				.filter( rec -> AonNumberUtils.equals(rec.getValue(MIN_SOURCE),rec.getValue(MAX_SOURCE)))
+				.map( rec -> InvoiceSource.safeValueOf( rec.getValue(MIN_SOURCE)) )
+				.findFirst();
+	}
+
+	public static void unrecord(AONContext ctx, Integer invoiceId) {
+		int count = ctx.getDslContext().update(INVOICE)
+			.set(INVOICE.STATUS, InvoiceStatus.PENDING.value() )
+			.where(INVOICE.ID.eq(invoiceId))
+			.execute();
+		ctx.log().info("UPDATE UNRECORD: Invoice {0}: {1} filas.",invoiceId, count);
+	}
+	
 }
