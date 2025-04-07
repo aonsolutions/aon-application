@@ -49,6 +49,15 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/rawdoc/rawdocNew.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== RAWDOC ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_invoice_console</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/invoice/invoiceConsole.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 
 	<!-- =================== REGISTRY ========================== -->
 	<navigation-rule>

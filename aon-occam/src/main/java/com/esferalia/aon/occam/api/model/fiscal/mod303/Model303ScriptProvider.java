@@ -164,6 +164,18 @@ public class Model303ScriptProvider {
 				return Model3032022NAVARRARGScript.values();
 			}
 		}
+		,CANARIAS_2025 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isCanarias() && mod303.getYear() >= 2025;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032025CANARIASPrintScript.values();
+			}
+		}
+
 		;
 		abstract boolean accept(Mod303 mod303);
 		abstract IModelScript<Mod303Key>[] getScript();

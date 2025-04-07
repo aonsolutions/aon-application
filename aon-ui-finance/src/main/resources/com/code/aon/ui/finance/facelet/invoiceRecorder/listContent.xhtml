@@ -61,92 +61,77 @@
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>
-	
+	 
 			</ui:decorate>
+	
+			<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important; background-color: white !important;">
+				<aon:div>						
+					<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
+					<aon:selectOneMenu id="filterSelectionCheckRadioAon"
+						value="#{controller.checkOption}"
+						styleClass="aon-margin-left" >
+							<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-checkNothing" />
+						    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-checkAll" />
+						    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-checkRight" />
+						    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-checkWarned" />
+						    <f:selectItem itemLabel="#{bundle.finance_brokendown}" itemValue="InvoiceRecorder-checkBrokenDown" />
+						    <f:selectItem itemLabel="#{bundle.finance_unbrokendown}" itemValue="InvoiceRecorder-checkUnBrokenDown" />
+						    <f:selectItem itemLabel="#{bundle.finance_entry_visible}" itemValue="InvoiceRecorder-checkEntryVisible" />
+						    <f:selectItem itemLabel="#{bundle.finance_entry_invisible}" itemValue="InvoiceRecorder-checkEntryInvisible"/>
+						    <a4j:support event="onchange"
+						    actionListener="#{controller.onCheckOption}"
+						    reRender="invoiceRecorderList"
+						    onsubmit="Richfaces.showModalPanel('waitProccess')"
+						    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+					</aon:selectOneMenu>
+			
+					<aon:outputText value="#{bundle.finance_tobreakdown}:"
+						styleClass="aon-bold aon-margin-left" />
+					<aon:selectOneMenu id="filterSelectionShowBreakDownRadioAon"
+						value="#{controller.showBreakDownOption}"
+						styleClass="aon-margin-left" >
+							<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showBreakDownNothing" />
+						    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showBreakDownAll" />
+						    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showBreakDownChecked" />
+						    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showBreakDownUnChecked" />
+						    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showBreakDownRight" />
+						    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showBreakDownIncorrect" />
+						    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showBreakDownWarned" />
+						    <a4j:support event="onchange"
+						    actionListener="#{controller.onShowBreakDownOption}"
+						    reRender="invoiceRecorderList"
+						    onsubmit="Richfaces.showModalPanel('waitProccess')"
+						    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+					</aon:selectOneMenu>
+						
+					<aon:outputText value="#{bundle.finance_view_entry}:"
+						styleClass="aon-bold aon-margin-left" />
+					<aon:selectOneMenu id="filterSelectionShowAccountEntryRadioAon"
+						value="#{controller.showAccountEntryOption}"
+						styleClass="aon-margin-left" >
+							<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showNothingAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showAllAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showCheckedAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showUnCheckedAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showRightAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showIncorrectAccountEntry" />
+						    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showWarnedAccountEntry" />
+						    <a4j:support event="onchange"
+						    actionListener="#{controller.onShowAccountEntryOption}"
+						    reRender="invoiceRecorderList"
+						    onsubmit="Richfaces.showModalPanel('waitProccess')"
+						    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+					</aon:selectOneMenu>
+				</aon:div>
+				<aon:div style="text-align: right;">
+					<aon:commandButton id="InvoiceRecorder-close"
+						styleClass="aon-finding-toolbar-item aon-icon-close"
+						onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; return false;"/>
+				</aon:div>
+			</aon:panelGrid>
 	
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">   
-					<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important;">
-						<aon:div>	
-							<!-- <aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
-								<aon:selectOneMenu id="filterType"
-									value="#{controller.typeOption}"
-									styleClass="aon-margin-left" >
-										<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="InvoiceRecorder-sales" />
-									    <f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="InvoiceRecorder-purchases" />
-									    <f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="InvoiceRecorder-expenses" />
-									    <f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="InvoiceRecorder-undeductible_invoice_management_module" />
-									    <a4j:support event="onchange"
-									    actionListener="#{controller.onTypeOption}"
-									    reRender="invoiceRecorderList"
-									    onsubmit="Richfaces.showModalPanel('waitProccess')"
-									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-								</aon:selectOneMenu> -->
-								
-							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
-							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
-								value="#{controller.checkOption}"
-								styleClass="aon-margin-left" >
-									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-checkNothing" />
-								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-checkAll" />
-								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-checkRight" />
-								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-checkWarned" />
-								    <f:selectItem itemLabel="#{bundle.finance_brokendown}" itemValue="InvoiceRecorder-checkBrokenDown" />
-								    <f:selectItem itemLabel="#{bundle.finance_unbrokendown}" itemValue="InvoiceRecorder-checkUnBrokenDown" />
-								    <f:selectItem itemLabel="#{bundle.finance_entry_visible}" itemValue="InvoiceRecorder-checkEntryVisible" />
-								    <f:selectItem itemLabel="#{bundle.finance_entry_invisible}" itemValue="InvoiceRecorder-checkEntryInvisible"/>
-								    <a4j:support event="onchange"
-								    actionListener="#{controller.onCheckOption}"
-								    reRender="invoiceRecorderList"
-								    onsubmit="Richfaces.showModalPanel('waitProccess')"
-								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-							</aon:selectOneMenu>
-					
-							<aon:outputText value="#{bundle.finance_tobreakdown}:"
-								styleClass="aon-bold aon-margin-left" />
-							<aon:selectOneMenu id="filterSelectionShowBreakDownRadioAon"
-								value="#{controller.showBreakDownOption}"
-								styleClass="aon-margin-left" >
-									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showBreakDownNothing" />
-								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showBreakDownAll" />
-								    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showBreakDownChecked" />
-								    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showBreakDownUnChecked" />
-								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showBreakDownRight" />
-								    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showBreakDownIncorrect" />
-								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showBreakDownWarned" />
-								    <a4j:support event="onchange"
-								    actionListener="#{controller.onShowBreakDownOption}"
-								    reRender="invoiceRecorderList"
-								    onsubmit="Richfaces.showModalPanel('waitProccess')"
-								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-							</aon:selectOneMenu>
-								
-							<aon:outputText value="#{bundle.finance_view_entry}:"
-								styleClass="aon-bold aon-margin-left" />
-							<aon:selectOneMenu id="filterSelectionShowAccountEntryRadioAon"
-								value="#{controller.showAccountEntryOption}"
-								styleClass="aon-margin-left" >
-									<f:selectItem itemLabel="#{bundle.finance_none}" itemValue="InvoiceRecorder-showNothingAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_all}" itemValue="InvoiceRecorder-showAllAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_checked}" itemValue="InvoiceRecorder-showCheckedAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_unchecked}" itemValue="InvoiceRecorder-showUnCheckedAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_right}" itemValue="InvoiceRecorder-showRightAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_incorrect}" itemValue="InvoiceRecorder-showIncorrectAccountEntry" />
-								    <f:selectItem itemLabel="#{bundle.finance_warned}" itemValue="InvoiceRecorder-showWarnedAccountEntry" />
-								    <a4j:support event="onchange"
-								    actionListener="#{controller.onShowAccountEntryOption}"
-								    reRender="invoiceRecorderList"
-								    onsubmit="Richfaces.showModalPanel('waitProccess')"
-								    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-							</aon:selectOneMenu>
-						</aon:div>
-						<aon:div style="text-align: right;">
-							<aon:commandButton id="InvoiceRecorder-close"
-								styleClass="aon-finding-toolbar-item aon-icon-close"
-								onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; return false;"/>
-						</aon:div>
-					</aon:panelGrid>
-	
 				<aon:panelGrid id="invoiceRecorderPanel" columns="2" styleClass="aon-width-all" 
 				columnClasses="aon-vertical-align-top ,aon-vertical-align-top ">
 					<aon:div id="invoiceRecorderDataDiv" >
@@ -320,7 +305,7 @@
 										<aon:commandLink value="#{bundle.finance_hide}"
 											reRender="#{dataTableId},showTaxBreakDowns"
 											rendered="#{to.showTaxBreakDowns}"
-											actionListener="#{controller.onHideTaxBreakDowns}" />
+											actionListener="#{controlller.onHideTaxBreakDowns}" />
 									</aon:div>
 								</aon:column>
 		
@@ -370,7 +355,7 @@
 														<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 													</aon:outputText>
 													<aon:outputText value="%" />
-												</aon:div>
+												</aon:div>l
 		
 												<aon:div rendered="#{to.invoice.surcharge}">
 													<aon:outputText value="#{taxBreakDown.surchargeQuota}">
@@ -448,11 +433,12 @@
 							</ui:define>
 						</ui:decorate>
 					</aon:div>
-					<aon:div id="invoiceAttachDiv">
+					<aon:div id="invoiceAttachDiv" style="position: sticky; top: 20px;">
 						<aon:div id="invoiceAttachGroup"
 							styleClass="aon-group"
-							style="min-width: calc(40vw)"
-							rendered="#{controller.showInvoiceAttach}"  >
+							style="min-width:calc(40vw);"
+							rendered="#{controller.showInvoiceAttach}"  
+							>
 							<aon:div styleClass="aon-group-title">
 								<aon:commandButton 
 									id="showInvoiceAttachVisibilityOff"
@@ -470,7 +456,7 @@
 							</aon:div>
 							<aon:div styleClass="aon-group-body"> 
 								<aon:div styleClass="aon-group-body-internal">
-									<aon:div id="invoiceAttachContent" style="overflow: auto; height: calc(100vh - 350px);">
+									<aon:div id="invoiceAttachContent" style="overflow: auto; height: calc(100vh - 220px);">
 										<c:set var="PDF_VIEWER_URL"
 											value="#{aonResource.resolveLocal['/aon_gwt_fiscal/pdfjs/web/viewer.html']}"/>
 										<iframe id="invoiceAttachIframe"

@@ -280,7 +280,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 //		}
 //		return RawdocStatus.INBOX;
 		// TODO VA A PENDIENTE PARA QUE EL USUARIO (SIN OCR) NO SEPA QUE PASE EL OCR. REVISAR EN EL FUTURO.
-		return RawdocStatus.PENDING;
+		return RawdocStatus.PROCESSED;
 	}
 	
 	private static String getS3Key(JSONObject json) {

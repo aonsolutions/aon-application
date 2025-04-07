@@ -990,78 +990,88 @@ public class AgreementParser {
 				}
 			}
 			
-			if(!hasSummerPay || !hasSummerPay) {
+			if(!hasSummerPay) {
+				
+				System.out.println("Create default summer extra payment");
+				
 				// Create PaymentConcept
 				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 						.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 						.set(PAYMENT_CONCEPT.CODE, "PAGA_EXTRA")
-						.set(PAYMENT_CONCEPT.DESCRIPTION, "[90] PAGA EXTRA")
+						.set(PAYMENT_CONCEPT.DESCRIPTION, "[90] PAGA VERANO")
 						.set(PAYMENT_CONCEPT.TYPE, (byte)4)
 						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-						.set(PAYMENT_CONCEPT.EXPRESSION, "/*inherit*/" + "INPUT(\"/*user*/MENSUALIDAD/**/\",PAGA_EXTRA_HELP)" + "/**/")
+						.set(PAYMENT_CONCEPT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 						.returning(PAYMENT_CONCEPT.ID)
 						.fetchOne();
 				
-				if(!hasSummerPay) {
-					
-					System.out.println("Create default summer extra payment");
-					
-					AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-							.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
-							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptRecord.getId())
-							.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA EXTRA VERANO")
-							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
-							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
-							.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-							.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
-							.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
-							.returning(AGREEMENT_PAYMENT.ID)
-							.fetchOne();
-					
-					dslContext.insertInto(AGREEMENT_EXTRA)
-						.set(AGREEMENT_EXTRA.DOMAIN, domainId)
-						.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
-						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentRecord.getId())
-						.set(AGREEMENT_EXTRA.START_DATE, "01/01")
-						.set(AGREEMENT_EXTRA.END_DATE, "30/06")
-						.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
-						.execute();
-					
-				}
+				AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
+						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptRecord.getId())
+						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
+						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+						.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
+						.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
+						.returning(AGREEMENT_PAYMENT.ID)
+						.fetchOne();
 				
-				if(!hasWinterPay) {
-				
-					System.out.println("Create default winter extra payment");
-					
-					AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
-							.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
-							.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
-							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptRecord.getId())
-							.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
-							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
-							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
-							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
-							.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-							.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
-							.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
-							.returning(AGREEMENT_PAYMENT.ID)
-							.fetchOne();
-					
-					dslContext.insertInto(AGREEMENT_EXTRA)
+				dslContext.insertInto(AGREEMENT_EXTRA)
 					.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 					.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
 					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentRecord.getId())
-					.set(AGREEMENT_EXTRA.START_DATE, "01/07")
-					.set(AGREEMENT_EXTRA.END_DATE, "31/12")
-					.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
+					.set(AGREEMENT_EXTRA.START_DATE, "01/01")
+					.set(AGREEMENT_EXTRA.END_DATE, "30/06")
+					.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/7")
 					.execute();
-					
-				}
+				
+			}
+			
+			if(!hasWinterPay) {
+			
+				System.out.println("Create default winter extra payment");
+				
+				// Create PaymentConcept
+				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+						.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+						.set(PAYMENT_CONCEPT.CODE, "PAGA_EXTRA")
+						.set(PAYMENT_CONCEPT.DESCRIPTION, "[91] PAGA NAVIDAD")
+						.set(PAYMENT_CONCEPT.TYPE, (byte)4)
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+						.set(PAYMENT_CONCEPT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
+						.returning(PAYMENT_CONCEPT.ID)
+						.fetchOne();
+				
+				AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
+						.set(AGREEMENT_PAYMENT.AGREEMENT, agreementId)
+						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptRecord.getId())
+						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
+						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
+						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
+						.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+						.set(AGREEMENT_PAYMENT.CREATION_USER, userLogin)
+						.set(AGREEMENT_PAYMENT.CREATION_DATE, creationDate)
+						.returning(AGREEMENT_PAYMENT.ID)
+						.fetchOne();
+				
+				dslContext.insertInto(AGREEMENT_EXTRA)
+				.set(AGREEMENT_EXTRA.DOMAIN, domainId)
+				.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
+				.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, agreementPaymentRecord.getId())
+				.set(AGREEMENT_EXTRA.START_DATE, "01/07")
+				.set(AGREEMENT_EXTRA.END_DATE, "31/12")
+				.set(AGREEMENT_EXTRA.ISSUE_DATE, "31/12")
+				.execute();
+				
 			}
 			
 			// Set agreement_data is ServiAgreement

@@ -13,7 +13,6 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.DataResource;
-import com.google.gwt.resources.client.ImageResource;
 
 public class FiscalModelUtils {
 	
@@ -23,6 +22,15 @@ public class FiscalModelUtils {
 	
 	public static String getModelName(IFiscalModel fm) {
 		return  com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getModelName(fm);
+	}
+
+	public static String getModelDescription(IFiscalModel m) {
+		if (m.isCanarias() && m.isMonthPeriod())
+			return "I.G.I.C. Suministro Inmediato de Informaci\u00F3n. Autoliquidaci\u00F3n.";
+		else if (m.isCanarias() && m.isQuarterPeriod())
+			return "I.G.I.C. R\u00E9gimen General. Autoliquidaci\u00F3n Trimestral.";
+		else
+			return AON.MSG.fiscalModelDescriptionlong(m.getModel());
 	}
 	
 	public static String getPeriodDescription(IFiscalModel fm) {
@@ -513,6 +521,7 @@ public class FiscalModelUtils {
 		
 		return buff.toString();
 	}
+
 	
 
 }
