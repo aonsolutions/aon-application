@@ -84,9 +84,9 @@ public class S3DocumentDAO {
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
 		if(category != null) {
 			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
-	                .as(DSL.select(CategoryTree.CATEGORY_TREE.ID_CATEGORY, CategoryTree.CATEGORY_TREE.ID_PARENT)
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.CATEGORY, CategoryTree.CATEGORY_TREE.PARENT)
 	                        .from(CategoryTree.CATEGORY_TREE)
-	                        .where(CategoryTree.CATEGORY_TREE.ID_PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
 	                        .unionAll(
 	                            DSL.select(CategoryTree.CATEGORY_TREE.field("id_category", Integer.class), CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class))
 	                                .from(CategoryTree.CATEGORY_TREE)
@@ -145,6 +145,7 @@ public class S3DocumentDAO {
 		.set(Rdoc.RDOC.NAME, document.getName())
 		.set(Rdoc.RDOC.REAL_NAME, document.getName())
 		.set(Rdoc.RDOC.SIZE, document.getSize())
+		.set(Rdoc.RDOC.TYPE, document.getRegistryType())
 		.set(Rdoc.RDOC.SCOPE, document.getScope())
 		.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
 		.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
@@ -170,6 +171,7 @@ public class S3DocumentDAO {
 				.set(Rdoc.RDOC.CATEGORY, document.getCategory())
 				.set(Rdoc.RDOC.MIMETYPE, document.getMimetype().value())
 				.set(Rdoc.RDOC.NAME, document.getName())
+				.set(Rdoc.RDOC.TYPE, document.getRegistryType())
 				.set(Rdoc.RDOC.SCOPE, document.getScope())
 				.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
 				.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
@@ -184,6 +186,7 @@ public class S3DocumentDAO {
 				.set(Rattach.RATTACH.REGISTRY, document.getRegistry())
 				.set(Rattach.RATTACH.CATEGORY, document.getCategory())
 				.set(Rattach.RATTACH.MIMETYPE, document.getMimetype().value())
+				.set(Rattach.RATTACH.TYPE, document.getRegistryType())
 				.set(Rattach.RATTACH.DESCRIPTION, document.getName())
 				.set(Rattach.RATTACH.SCOPE, document.getScope())
 				.set(Rattach.RATTACH.SECURITY_LEVEL, document.getSecurityLevel())

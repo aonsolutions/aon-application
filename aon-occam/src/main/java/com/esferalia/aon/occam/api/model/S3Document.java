@@ -24,7 +24,17 @@ public class S3Document implements Serializable {
 	private String s3key;
 	private String s3bucket;
 	private Integer category;
+	private Byte registryType;
 	
+	public Byte getRegistryType() {
+		return registryType;
+	}
+
+	public S3Document setRegistryType(Byte registryType) {
+		this.registryType = registryType;
+		return this;
+	}
+
 	private String creationUser;
 	private String modificationUser;
 	private Date creationDate;
