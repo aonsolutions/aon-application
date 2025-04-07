@@ -88,16 +88,16 @@ public class S3DocumentDAO {
 	                        .from(CategoryTree.CATEGORY_TREE)
 	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
 	                        .unionAll(
-	                            DSL.select(CategoryTree.CATEGORY_TREE.field("id_category", Integer.class), CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class))
+	                            DSL.select(CategoryTree.CATEGORY_TREE.field("category", Integer.class), CategoryTree.CATEGORY_TREE.field("parent", Integer.class))
 	                                .from(CategoryTree.CATEGORY_TREE)
 	                                .join(DSL.table("category_hierarchy"))
-	                                .on(CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class).eq(DSL.field("category_hierarchy.id_category", Integer.class)))
+	                                .on(CategoryTree.CATEGORY_TREE.field("parent", Integer.class).eq(DSL.field("category_hierarchy.category", Integer.class)))
 	                        )
 	                )
-	                .select(DSL.field("id_category", Integer.class))
+	                .select(DSL.field("category", Integer.class))
 	                .from(DSL.table("category_hierarchy"))
 	                .unionAll(
-	                        DSL.select(DSL.val(category).as("id_category"))
+	                        DSL.select(DSL.val(category).as("category"))
 	                    )
 	                .fetch();
 			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
