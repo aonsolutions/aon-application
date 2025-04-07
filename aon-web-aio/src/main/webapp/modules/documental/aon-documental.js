@@ -1,7 +1,9 @@
 import { AonElement } from '../../components/AonElement.js';
 import {
 	DocumentalSidenav, ASESOR_TYPE_OPTION,
-	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
+	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION,
+	EMPLOYEE_TYPE,
+	ASESOR_TYPE
 } from './DocumentalEnums.js';
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
@@ -283,6 +285,11 @@ export class AonDocumental extends AonElement {
 								this.aonDocumentalList();
 							}
 						};
+						optionUserCategories.actions = [{
+							id: 'Edit',
+							icon: 'edit',
+							action: () => this.editCategory(item)
+						}];
 						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
 					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
@@ -670,9 +677,9 @@ export class AonDocumental extends AonElement {
 				}
 				
 				if(document.getElementById("visibleEmpleadoCheckbox") && document.getElementById("visibleEmpleadoCheckbox").checked){
-					data.registryType = 'employee';
+					data.registryType = EMPLOYEE_TYPE;
 				} else if(document.getElementById("visibleEmpresaCheckbox") && document.getElementById("visibleEmpresaCheckbox").checked){
-					data.registryType = 'asesor';
+					data.registryType = ASESOR_TYPE;
 				}
 
 				let uploadToast = this.getElement('aonUploadToast');
