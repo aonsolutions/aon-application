@@ -9,8 +9,10 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -30,6 +32,9 @@ public interface ConsoleService extends RemoteService {
 	ConsoleTableRow getTableRowMetadata(ConsoleTableRow row) throws AonCoreException;
 	ConsoleTableRow update(ConsoleTableRow row, ConsoleTableField field) throws AonCoreException;
 	Boolean delete(ConsoleTableRow row) throws AonCoreException;
+	
+	LinkedList<Scope> getScopes(String schema, Integer domainId) throws AonCoreException;
+	String updateScopes(String schema, Integer domainId, Integer wrongScopeId, Integer newScopeId) throws AonCoreException;
 	
 	String testConnections();	
 }

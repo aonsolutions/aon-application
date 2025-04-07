@@ -50,6 +50,15 @@ public class FiscalConfig implements Serializable {
 		}
 		return Administration.values()[getAdministration()];
 	}
+	public Administration getAdministration(Administration ifnullAdministration, boolean ignoreCanarias) {
+		if (getAdministration() == null || AonNumberUtils.equals(getAdministration(), Administration.UNKNOWN.ordinal())) {
+			return ifnullAdministration;
+		} else if (ignoreCanarias && AonNumberUtils.equals(getAdministration(), Administration.CANARIAS.ordinal())) {
+			return ifnullAdministration;
+		} else {
+			return Administration.values()[getAdministration()];
+		}
+	}
 	public FiscalConfig setAdministration(Integer administration) {
 		this.administration = administration;
 		return this;

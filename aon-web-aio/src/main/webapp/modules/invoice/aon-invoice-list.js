@@ -121,16 +121,18 @@ export class AonInvoiceList extends AonElement {
 	paintProcessingRow(idx, invoice) {
 		if(invoice.file) {
 			let key = invoice.file.s3Key;
-			let keyValues = key.split("/");
-			let value = keyValues[keyValues.length - 1];
-			let array = value.split("_");
-			let base64 = array[array.length - 1];
-			let re = /(?:\.([^.]+))?$/;
-			let ext = re.exec(base64)[0];
-			base64 = base64.replace(ext, '');
-			if(isBase64(base64)) {
-				invoice.name = atob(base64) + ext;
-			} else invoice.name = value;
+			if(key) {
+				let keyValues = key.split("/");
+				let value = keyValues[keyValues.length - 1];
+				let array = value.split("_");
+				let base64 = array[array.length - 1];
+				let re = /(?:\.([^.]+))?$/;
+				let ext = re.exec(base64)[0];
+				base64 = base64.replace(ext, '');
+				if(isBase64(base64)) {
+					invoice.name = atob(base64) + ext;
+				} else invoice.name = value;
+			}
 		}
 		if(!invoice.name) invoice.name = '';
 		invoice.icons = this.buildProcessingIcons(invoice);

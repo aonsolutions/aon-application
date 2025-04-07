@@ -80,6 +80,19 @@ public class MainEntryPoint implements EntryPoint {
 	}
 	
 	//
+	//    ================================================================== CONSOLE
+	//
+	private enum FinanceEntryPoint {
+		InvoiceConsoleModule {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleModule.run();
+			}
+		},
+		;
+		abstract void run();
+	}
+	
+	//
 	//    ================================================================== FISCAL
 	//
 	private enum FiscalEntryPoint {
@@ -340,12 +353,22 @@ public class MainEntryPoint implements EntryPoint {
 		} catch (IllegalArgumentException e) {
 			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
 		}
+		
 		try {
 			AccountingEntryPoint accountingEntryPoint = AccountingEntryPoint.valueOf(entryPoint);
 			accountingEntryPoint.run();
 		} catch (IllegalArgumentException e) {
 			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
 		}
+		
+		try {
+			FinanceEntryPoint financeEntryPoint = FinanceEntryPoint.valueOf(entryPoint);
+			financeEntryPoint.run();
+		} catch (IllegalArgumentException e) {
+			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
+		}
+		
+		
 		try {
 			RawdocEntryPoint rawdocEntryPoint = RawdocEntryPoint.valueOf(entryPoint);
 			rawdocEntryPoint.run();

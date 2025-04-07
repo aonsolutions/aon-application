@@ -95,8 +95,8 @@ export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
 
     formData.append('key', 
         'invoices'
+        + `/${LS.getDomainName()}`
         + `/${company.document}`
-        + `/${LS.getDomainDocument()}`
         + `/${LS.getDomainLogin()}`
         + `/${jobId}` 
         + `/${fileOrder}_${prefix}_${base64}`);

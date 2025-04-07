@@ -46,7 +46,6 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 		logoCell.addStyleName(AON.CSS.aonTextCenter());
 		logoCell.getElement().getStyle().setWidth(HEIGTH - 20.0, Unit.PX);
 		logoCell.add(logo);
-
 		
 		// MODEL CODE
 		AonDisplayTableCell modelCodeCell = row.addCell( styles);
@@ -56,15 +55,15 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 		modelCode.setStyleName(AON.CSS.aonFontLarger());
 		modelCodeCell.add(modelCode);
 
-		// MODEL NAME
+		// MODEL DESCRIPTION
 		modelNameCell = row.addCell(styles);
 		modelNameCell.getElement().getStyle().setProperty("border-radius", "8px");
 		modelNameCell.setWidth("auto");
-		Label modelName = new Label( AON.MSG.fiscalModelDescriptionlong(m.getModel() ));
+//		Label modelName = new Label( AON.MSG.fiscalModelDescriptionlong(m.getModel() ));
+		Label modelName = new Label( FiscalModelUtils.getModelDescription(m) );
 		modelNameCell.add(modelName);
 		
-		
-		// MODEL NAME
+		// PERIOD DESCRIPTION
 		AonDisplayTableCell yearPeriodCell = row.addCell( styles);
 		yearPeriodCell.getElement().getStyle().setProperty("border-radius", "8px");
 		yearPeriodCell.getElement().getStyle().setWidth(80, Unit.PX);

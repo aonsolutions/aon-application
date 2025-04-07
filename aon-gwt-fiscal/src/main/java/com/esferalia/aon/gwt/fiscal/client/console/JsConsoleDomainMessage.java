@@ -51,6 +51,14 @@ public class JsConsoleDomainMessage extends JavaScriptObject {
 		return this.wrongDomainId;
 	}-*/;
 	
+	public final native Integer getWrongScopeId() /*-{
+		return this.wrongScopeId;
+	}-*/;
+	
+	public final native Integer getCount() /*-{
+		return this.count;
+	}-*/;
+	
 	public final native String getMessage() /*-{
 		return this.message;
 	}-*/;

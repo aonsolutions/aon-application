@@ -606,7 +606,8 @@ public class Mod190DAO {
 		mod190.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL190.NAME.getDataType().length()));
 		mod190.setYear(year);
 		mod190.setReceipt("1900000000001");
-		mod190.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+//		mod190.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+		mod190.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY, true));
 		mod190.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),FS_MODEL190.CONTACT_PERSON.getDataType().length()));
 		mod190.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),FS_MODEL190.CONTACT_PHONE.getDataType().length()));
 		mod190.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),FS_MODEL190.CONTACT_MAIL.getDataType().length()));
