@@ -434,14 +434,14 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -3019,8 +3019,6 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
-		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
-		if(!this.getInvoice().isRejected() && !invofoxRejected)
 		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();

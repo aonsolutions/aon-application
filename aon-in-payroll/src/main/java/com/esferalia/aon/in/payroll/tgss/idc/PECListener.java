@@ -445,7 +445,7 @@ class PECListener  implements IdcParserListener {
 		}
 		
 		if ( UNKNOWN_COST_QUOTA_PROVIDERS_MAP.containsKey(code+"-"+quota)) {
-			UNKNOWN_COST_QUOTA_PROVIDERS_MAP.get( code+"-"+ quota ).forEach(f -> f.newCost(nss, ccc, portTipo, quota, quota, description, start, pecEnd).addTo(PECListener.this));
+			UNKNOWN_COST_QUOTA_PROVIDERS_MAP.get( code+"-"+ quota ).forEach(f -> f.newCost(nss, ccc, code, quota, portTipo,  description, start, pecEnd).addTo(PECListener.this));
 		}
 	}
 	
@@ -603,7 +603,7 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static CostProvider newMinusPercentCost( ContextVariable costVar, ContextVariable baseVar ) {
+	private static CostProvider newMinusPercentCost( ContextVariable costVar, ContextVariable baseVar) {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
 	}
 
@@ -659,7 +659,7 @@ class PECListener  implements IdcParserListener {
 			Date start, 
 			Date end ,
 			ContextVariable costVar,
-			ContextVariable percentVar
+			ContextVariable baseVar
 			){
 			
 			double percent;
@@ -680,11 +680,11 @@ class PECListener  implements IdcParserListener {
 					pec, 
 					quota,
 					costVar.getName(),
-					percentVar.getName(),
+					baseVar.getName(),
 					percent
 					));
 			cost.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(costVar), portTipo));
-			cost.setName(costVar.getName());
+			cost.setName("RED_" + costVar.getName());
 			
 			return cost;
 		}

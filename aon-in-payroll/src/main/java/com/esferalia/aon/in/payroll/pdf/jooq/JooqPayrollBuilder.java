@@ -93,7 +93,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqPayrollBuilder {
 
 	private static String[] WEEK_DAYS = { "DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO" };
-	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE");
+	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE", "PERIODO_CARENCIA");
 
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the

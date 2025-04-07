@@ -34,6 +34,8 @@ import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBatch;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationTracking;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
@@ -298,5 +300,10 @@ public interface IFinance {
 	void saveInvoiceClosing(CloseableAONContext ctx, InvoiceBatch invoiceBatch);
 	
 
+	// 	***********************************************
+	// 	************** INVOICE CONSOLE ****************
+	// 	***********************************************
+	Stream<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);	
+	
 }
 	

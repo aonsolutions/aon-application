@@ -63,7 +63,8 @@ export class AonInvoiceProcessing extends AonElement {
             : new AonInvoiceList();
         table.id = "aonInvoiceList";
         table.setFn((invoice, i) => {
-            if(invoice.status == 'pending' && this.getDur().hasInvofox() && this.getDur().isInvofox()) {
+            if((invoice.status == 'pending' || invoice.status == 'processed') && this.getDur().hasInvofox() && this.getDur().isInvofox()) {
+                invoice.status = 'processed';
                 this.aonInvoice(invoice, i);
             } else this.showFile(invoice, i);
         });
@@ -75,7 +76,6 @@ export class AonInvoiceProcessing extends AonElement {
     }
 
     aonInvoice(invoice, i){
-        setIndex(i);
         let aip = document.querySelector('aon-invoice-panel');
         aip.aonInvoice(invoice.type, invoice);
     }

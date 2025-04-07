@@ -71,24 +71,26 @@ export class AonList extends AonElement {
 		this.init();
 	}
 
-	init() {
-		let table = this.getElement(this.TABLE);
-		if(table) {
+    init() {
+        let table = this.getElement(this.TABLE);
+        if (table) {
             initializeObjects();
             this.getObjects().then(objects => {
-                addObjects(objects);
-                if(objects.length == 0){   
+                if (Array.isArray(objects) && objects.length === 0) {   
                     this.empty();
+                }else{
+                    table.removeRows();
+                    objects.forEach((object, i) => {
+                        table.addRow(object, () => this.aonObject(object, i));
+                    });
                 }
-                table.removeRows();
-
-                objects.forEach((object, i) => {
-                    table.addRow(object, () => this.aonObject(object, i));
-                });
-
+            }).catch(error => {
+                console.error("Error al obtener los objetos en init():", error);
             });
-		}
-	}
+        }
+    }
+    
+    
 
 	loadMore() {
 		this.more = false;
@@ -105,6 +107,38 @@ export class AonList extends AonElement {
         }
 	}
 
+    empty() {
+        let tableWrapper = this.getTable();
+        if (!tableWrapper) return;
+    
+        let table = tableWrapper.querySelector("table");
+        if (!table) return;
+    
+        let tbody = table.querySelector("tbody");
+        if (!tbody) {
+            tbody = document.createElement("tbody");
+            table.appendChild(tbody);
+        } else {
+            tbody.innerHTML = ""; 
+        }
+        let columnsCount = (this.columns && this.columns.length) ? this.columns.length : 1;
+        let tr = document.createElement("tr");
+        let td = document.createElement("td");
+    
+        td.colSpan = columnsCount;
+        td.textContent = "No hay datos disponibles";
+
+        tr.style.border = "0px";
+        tr.classList.add("no-hover");
+        
+        td.style.textAlign = "center";
+        td.style.padding = "10px";
+        td.style.border = "0px";
+        
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    }
+    
     getTable() {
         return this.getElement(this.TABLE);
     }

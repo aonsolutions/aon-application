@@ -386,7 +386,16 @@ export class Invoice {
   }
 
   isInbox() {
-    return this.status.toLowerCase() === 'inbox';
+    return this.status.toLowerCase() === 'inbox'
+      || this.isProcessed(); // provisional
+  }
+
+  isProcessed() {
+    return this.status.toLowerCase() === 'processed';    
+  }
+
+  isPending() {
+    return this.status.toLowerCase() === 'pending';
   }
 
   isRejected() {

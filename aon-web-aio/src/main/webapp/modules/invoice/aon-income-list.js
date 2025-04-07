@@ -6,178 +6,119 @@ import { getIncomes } from '../../services/accountingService.js';
 import { AonIncome } from './aon-income.js';
 import * as LS from '../../services/localStorageService.js';
 import { Income } from './Income.js';
+import { AonList } from '../../components/aon-list.js';
+export class AonIncomeList extends AonList {
 
-export class AonIncomeList extends AonElement {
-
-    get id() {
-        return this.getAttribute(CONSTANT.ID);
-    }
-
-    set id(id) {
-        this.setAttribute(CONSTANT.ID, id);
-    }
-
-    TABLE;
-    more;
-    filter;
+    incomes;
 
     constructor () {
         super();
     }
-
     connectedCallback () {
         this.initialize();
-        this.build();
-    }
-
-    moreFn = () => {
-        if(this.more)
-            this.loadMore()
-    };
-
-    disconnectedCallback() {
-        let table = this.getElement(this.TABLE);
-        if(table) table.removeEventListener('more', this.moreFn);
+        this.buildIncomeList();
     }
 
     initialize() {
-        this.id = this.id || 'aonExampleList';
+        this.id = this.id || 'aonIncomeList';
         this.TABLE = this.id + CONSTANT.TABLE.initCap();
         this.filter = this.filter || {
-            page: 1,
-            perPage: 30
-        };
-        this.more = true;
+            page:1,
+            perPage:30
+        }
+        this.more = this.incomes ? false : true;
+        this.columns = [{
+                name: MSG.DATE,
+                type: 'date',
+                id: 'date',
+                width: '150px'
+            }, {
+                name: MSG.REFERENCE,
+                type: 'string',
+                id: 'referenceCode',
+                width: '150px'
+            }, {
+                name: 'Ingreso',
+                type: 'string',
+                id: 'incomeDescription',
+                width: '300px'
+            }, {
+                name: MSG.CONCEPT,
+                type: 'string',
+                id: 'concept',
+                width: '300px'
+            }, {
+                name: MSG.PAYMETHOD,
+                type: 'string',
+                id: 'paymethodDescription',
+                width: '300px'
+            }, {
+                name: MSG.AMOUNT,
+                type: 'double',
+                id: 'formattedAmount',
+                width: '200px'
+            }];
     }
 
-    incomeObject(incomingIncome) {
+    buildIncomeList() {
+        const btnadd = this.getApplication().addOption("add","add", () => this.add());
+        this.build();
+    }
+    
+    aonObject(incomingIncome) {
         let income = new AonIncome( new Income(incomingIncome) );
         this.getApplication().setContent(income);
     }
-    
-    setFilter(filter) {
-        this.filter = filter;
-    }
 
-    build() {
-        let table = createList(this.TABLE);
-        table.selectable = 'true';
-        this.appendChild(table);
-
-        const btnadd = this.getApplication().addOption("add","add", () => this.add());
-
-        const btnSearch = this.getApplication().addSearchOption();
-        let searchFn = (event) => this.search(event.detail);
-        btnSearch.addEventListener(EVENT.SEARCH_NEW, searchFn);
-
-        table.addColumn(MSG.DATE, 'date', 'date', '150px');
-        table.addColumn(MSG.REFERENCE, 'string', 'referenceCode', '150px');
-        table.addColumn("Ingreso", 'string', 'incomeDescription', '300px');
-        table.addColumn(MSG.CONCEPT, 'string', 'concept', '300px');
-        table.addColumn(MSG.PAYMETHOD, 'string', 'paymethodDescription', '300px');
-        table.addColumn(MSG.AMOUNT, 'double', 'formattedAmount', '200px');
-    
-        table.addEventListener(EVENT.MORE, this.moreFn);
-        this.init();
-    }
-
-    search(detail) {
-        if(detail.search) this.filter.value = detail.search;
-        this.init();
-    }
-
-    init() {
-        let table = this.getElement(this.TABLE);
-        if(table) {
-            getIncomes( this.filter ).then(incomes => {
-                if(incomes.length == 0){              
-                    let row = table.addRow({ 
-                        date: '',
-                        referenceCode: '',
-                        incomeDescription: 'No hay datos disponibles',
-                        concept: '',
-                        paymethodDescription: '',
-                        formattedAmount: '' 
-                    });
-
-                    document.querySelectorAll('table td').forEach(td => {
-                        if (td.style.width === '5%') 
-                            td.remove();
-                    });
-
-                    document.querySelectorAll('table th:nth-child(3), table td:nth-child(3)').forEach(el => {
-                        el.style.width = "180px";
-                    });  
-
-                    row.style.border = "0px";
-                    row.style.alignContent = "center";
-                    row.style.alignItems = "self-end";
-                    row.style.display = "flex";
-                    row.style.justifyContent = "right";
-                    row.classList.add('no-hover');   
-                }
-                else{
-                    table.removeRows();
-                    incomes.forEach((income) => {
-                        if(income.expAccount)
+    getObjects() {
+        return new Promise((resolve, reject) => {
+            getIncomes(this.filter)
+                .then(incomes => {  
+                    if (!Array.isArray(incomes)) {
+                        incomes = []; 
+                    }
+                    incomes.forEach(income => {
+                        if (income.expAccount) 
                             income.incomeDescription = income.expAccount.description;
-                        if(income.bank && income.bank.alias)
-                            income.paymethodDescription = income.bank.alias
+                        
+                        if (income.bank && income.bank.alias)
+                            income.paymethodDescription = income.bank.alias;
                         else
-                            income.paymethodDescription = income.cashAccount.description;
+                            income.paymethodDescription = income.cashAccount?.description || "N/A"
+    
                         income.formattedAmount = this.formatAmount(income.amount);
-                        table.addRow(income, () => this.incomeObject(income));
+    
                     });
-                }
-            });
-        }
-    }
-
-    loadMore() {
-        this.more = false;
-        let table = this.getElement(this.TABLE);
-        if(table && this.filter.page) {
-            this.filter.page = this.filter.page + 1;
-            this.getExamples(this.filter).then(examples => {
-                if(examples.length == 0)
-                    this.more = false;
-                else this.more = true;
-                examples.forEach((example, i) => {
-                    table.addRow(example, () => this.incomeObject(example, i));
+                    resolve(incomes); 
+                })
+                .catch(error => {
+                    console.error("Error en getObjects():", error);
+                    resolve([]);
                 });
-            });
-        }
-    }
-
-    // SERVICE
-
-    getExamples(filter) {
-        return new Promise((resolve, reject) => {
-              resolve([
-                {id:1, date: '01-01-2025', example: 'Example 1'},
-                {id:2, date: '01-01-2025', example: 'Example 2'},
-                {id:3, date: '01-01-2025', example: 'Example 3'},
-                {id:4, date: '01-01-2025', example: 'Example 4'}
-            ]);
-        }); 
-    }
-
-    getExample(filter) {
-        return new Promise((resolve, reject) => {
-            resolve({id: filter.id, date: '01-01-2025', example: `Example ${filter.id}`});
         });
     }
+    
+    
 
     formatAmount(amount) {
         const num = parseFloat(amount);  
         if (isNaN(num)) return amount; 
         return num.toLocaleString('es-ES', { useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' €';
     }
-    
+
     add(){
         let inc = new AonIncome( new Income() );
         this.getApplication().setContent(inc);
     }
+
+    getIncomes() {
+        return this.incomes;
+    }
+
+    setIncomes(incomes) {
+        this.incomes = incomes;
+    }
+    
 }
 
 if(!window.customElements.get(TAG.AON_INCOME_LIST)) {

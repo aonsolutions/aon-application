@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
@@ -12,6 +14,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -40,4 +43,6 @@ public interface IConsole {
 	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId);
 	public DomainLinked saveDomainLink(AONContext ctx, DomainLinked domainLinked);
 	public void deleteDomainLink(AONContext ctx, DomainLinked domainLinked);
+	public Stream<Scope> getScopes(AONContext ctx, Integer domainId);
+	public String updateScopes(AONContext ctx, Integer domainId, Integer wrongScopeId, Integer newScopeId);
 }

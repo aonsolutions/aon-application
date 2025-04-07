@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
@@ -36,7 +37,10 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
@@ -172,6 +176,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 	private AonToolbarButton backPDFButton;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton pdfButton;
+	private AonToolbarButton downloadButton;
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
 	
@@ -393,6 +398,10 @@ public class SalaryWidget extends AonCustomDockLayout {
 		pdfButton.setEnabled(false);
 		pdfButton.addClickHandler(e -> onPDF(null));
 		
+		downloadButton = new AonToolbarButton("Descargar", AON.CSS.aonIconDownload());
+		downloadButton.setEnabled(false);
+		downloadButton.addClickHandler(e -> onDownload());
+		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
 		email.setEnabled(false);
 		email.addClickHandler(e -> {
@@ -409,6 +418,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		addToolbarButton(backPDFButton);
 		addToolbarButton(deleteButton);
 		addToolbarButton(pdfButton);
+		addToolbarButton(downloadButton);
 		addToolbarButton(email);
 		addToolbarButton(bidoqPublishButton);
 		
@@ -457,6 +467,52 @@ public class SalaryWidget extends AonCustomDockLayout {
 
 	private void onBidoqPublish() {
 		onPublish("bidoq");
+	}
+	
+	private void onDownload() {
+		AonMessagePanel.showLoading(messagePanel, "Descargando n\u00f3mina(s)...");
+		
+		List<Integer> salaryIds = new ArrayList<>();
+		Integer enterpriseId = null;
+		
+		this.selectPdfSalaries.clear();
+		
+		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++)
+			salaryIds.add(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
+		enterpriseId = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
+		
+		String salaryIdsStr = salaryIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+		String salaryDownloadURL = URL.encode(GWT.getModuleBaseURL() + "salary_download/");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(salaryDownloadURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		
+		flowPanel.add(new Hidden("domainName", Wnd.getCurrentDomainNameURL()));
+		flowPanel.add(new Hidden("user", Wnd.getCurrentUser()));
+		
+		flowPanel.add(new Hidden("enterpriseId", String.valueOf(enterpriseId)));
+		flowPanel.add(new Hidden("salaryIds", salaryIdsStr));
+		
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			getToolbar().remove(formPanel);
+			AonMessagePanel.hideMessage(messagePanel);
+		});
+		
+		getToolbar().add(formPanel);
+		
+		formPanel.submit();
+		
+		new Timer() {
+			@Override public void run() { AonMessagePanel.hideMessage(messagePanel); }
+		}.schedule(3500);
 	}
 	
 	// --------------------------------------------- onSearch
@@ -649,6 +705,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 	private void enableDisableButtons(boolean isSomethingSelected) {
 		deleteButton.setEnabled(isSomethingSelected);
     	pdfButton.setEnabled(isSomethingSelected);
+    	downloadButton.setEnabled(isSomethingSelected);
     	
     	if(null != this.dur && this.dur.isBidoq()){
     		bidoqPublishButton.setVisible(isSomethingSelected && null != this.dur && this.dur.isBidoq());
@@ -665,6 +722,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		
 		deleteButton.setVisible(true);
 		pdfButton.setVisible(true);
+		downloadButton.setVisible(true);
 		email.setVisible(true);
 		
 		boolean isSomethingSelected = null != salaryTable && !salaryTable.getSelectedSalaries().isEmpty();
@@ -681,6 +739,7 @@ public class SalaryWidget extends AonCustomDockLayout {
 		
 		deleteButton.setVisible(false);
 		pdfButton.setVisible(false);
+		downloadButton.setVisible(false);
 		email.setVisible(false);
 		bidoqPublishButton.setVisible(false);
 		
