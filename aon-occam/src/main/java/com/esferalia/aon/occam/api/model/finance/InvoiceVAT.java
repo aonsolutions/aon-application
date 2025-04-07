@@ -358,7 +358,9 @@ public class InvoiceVAT implements Serializable {
 	}
 	public boolean isAccountingSource() {
 		return this.invoiceDetail == null
-		   || this.invoiceDetail.getSource() == InvoiceSource.ACCOUNT;
+		   || this.invoiceDetail.getSource() == InvoiceSource.ACCOUNT
+		   || this.invoiceDetail.getSource() == InvoiceSource.TEDI
+		   ;
 	}
 	
 	public InvoiceVAT clone() {

@@ -237,7 +237,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
 				LOGGER.info(detail.getSource().getDescription());
-				if (detail.getSource() != InvoiceSource.ACCOUNT) {
+				if (detail.getSource() != InvoiceSource.ACCOUNT
+				 && detail.getSource() != InvoiceSource.TEDI) {
 					sourceAccount = false;
 					break;
 				}
