@@ -2030,7 +2030,7 @@ public class InvoiceDAO {
 	
 	
 	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
-	private static final Field<Byte> MAX_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+	private static final Field<Byte> MAX_SOURCE = DSL.maxDistinct( INVOICE_DETAIL.SOURCE);
 	
 	public static Optional<InvoiceSource> getInvoiceSource(AONContext ctx, Integer invoiceId) {
 		
