@@ -294,10 +294,10 @@
 
 								<aon:column styleClass="aon-editDataTable-iconColumn">
 									<f:facet name="header">
-										<aon:outputText value="&#160;" />
+										<aon:outputText value="#{bundle.account_entry}" />
 									</f:facet>
 									<aon:div id="showAccountEntry">
-										<aon:commandLink value="Apunte"
+										<aon:commandLink value="#{bundle.aon_show}"
 											reRender="#{dataTableId},showAccountEntry"
 											rendered="#{!to.showAccountEntry}"
 											actionListener="#{controller.onShowAccountEntry}" />
@@ -310,10 +310,10 @@
 		
 								<aon:column styleClass="aon-editDataTable-iconColumn">
 									<f:facet name="header">
-										<aon:outputText value="&#160;" />
+										<aon:outputText value="#{bundle.finance_breakdown}" />
 									</f:facet>
 									<aon:div id="showTaxBreakDowns">
-										<aon:commandLink value="#{bundle.finance_breakdown}"
+										<aon:commandLink value="#{bundle.aon_show}"
 											reRender="#{dataTableId},showTaxBreakDowns"
 											rendered="#{!to.showTaxBreakDowns}"
 											actionListener="#{controller.onShowTaxBreakDowns}" />
@@ -454,6 +454,12 @@
 							style="min-width: calc(40vw)"
 							rendered="#{controller.showInvoiceAttach}"  >
 							<aon:div styleClass="aon-group-title">
+								<aon:commandButton 
+									id="showInvoiceAttachVisibilityOff"
+									reRender="invoiceAttachDiv"
+									actionListener="#{controller.onHideInvoiceAttach}"
+									styleClass="aon-finding-toolbar-item aon-icon-visibility-off"
+								/>
 								<aon:outputText value="#{bundle.aon_preview}"/>
 								<aon:commandButton 
 									id="showInvoiceAttachClose"
