@@ -139,12 +139,20 @@ export class AonDocumentalList extends AonElement {
         parent: null,
         domain: LS.getDomainId()
       };
-      const listCategoryOld = await getCategories(data);
+      const listCategoryOld = await getS3Category(data);
       // solo si tiene creadas
       if(listCategoryOld.length > 0){
         // rellenar
         let categoryOld = this.getElement("categoryOld");
-        categoryOld.setOptions(listCategoryOld.map((category) => ({ name: category.name, value: category.id})));
+//        categoryOld.setOptions(listCategoryOld.map((category) => ({ name: category.name, value: category.id})));
+		categoryOld.setOptions(
+          listCategoryOld.filter((category)=> {
+            // Categoria antiguas o que se pueden borrar (si se pueden borrar son creadas por la empresa)
+            return !category.hasOwnProperty('is_deletable') || category.is_deletable === 1;
+          }).map((category) => {
+            return {name: category.name, value: category.id };
+          })
+        );
         // mostrar o no
         categoryOldEl.addEventListener(EVENT.CHANGE, () => {
           let category    = this.getElement("category");
@@ -190,13 +198,13 @@ export class AonDocumentalList extends AonElement {
 //		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
 		categoryEl.setOptions(
           categories.filter((category)=> {
-            return category.is_deletable;
+            // Categoria nuevas y que no se pueden borrar (Son las categorias de despacho)
+            return category.hasOwnProperty('is_deletable') && category.is_deletable === 0;
           }).map((category) => {
             return {name: category.name, value: category.id };
           })
         );
-        
-        
+
 		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
 			this.getElement("category2").hidden = true;
 			this.getElement("category3").hidden = true;

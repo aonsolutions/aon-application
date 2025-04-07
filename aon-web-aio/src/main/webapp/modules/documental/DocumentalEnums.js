@@ -40,13 +40,13 @@ export const DOCUMENTAL_FILTER = [
       type: "checkbox",
       id: "categoryOldFilter",
       name: "categoryOldFilter",
-      title: "Buscar en tus "+MSG.CATEGORY+"s"
+      title: "Buscar en mis "+MSG.CATEGORY+"s"
     },
 	{
       type: "select",
       id: "categoryOld",
       name: "categoryOld",
-      title: "Tus "+MSG.CATEGORY+"s",
+      title: "Mis "+MSG.CATEGORY+"s",
 	  hidden: "true"
     },
 	{
