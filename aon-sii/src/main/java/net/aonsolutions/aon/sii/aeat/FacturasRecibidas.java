@@ -255,10 +255,7 @@ public class FacturasRecibidas extends SIIBuilt {
 				AppParam.SII_INCLUDE_DATE);
 		
 		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : AonDateUtils.getDate(2017, 6, 1);
-		System.out.println("SII FR GENERANDO XML - DATES");
-		System.out.println("SII - opDate is null ? " + opDate == null);
-		System.out.println("SII - siiDate is null ? " + siiDate == null);
-		if(siiDate == null) AonDateUtils.getDate(2017, 6, 1); 
+		if(siiDate == null) siiDate = AonDateUtils.getDate(2017, 6, 1); 
 		if (opDate != null && siiDate != null && opDate.compareTo(siiDate) < 0) {
 			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 		}

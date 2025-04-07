@@ -493,7 +493,12 @@ public class FiscalModelDAO {
 	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, AonConfiguration conf, T fm) {
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		if (fm.getAdministration() == null || fm.getAdministration() == Administration.UNKNOWN) {
-			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+			// Administración por defecto Canarias, solo el modelo de IGIC se inicializa con la ATCanaria, los de IRPF son de la AEAT
+			if (conf.fiscal().getAdministration() != null && conf.fiscal().getAdministration() == Administration.CANARIAS.ordinal() && fm.getModel() != FiscalModelType.M303) {
+				fm.setAdministration(Administration.COMMON_TERRITORY);
+			} else {
+				fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));	
+			}
 		}
 		if (fm.getYear() < 2005 || fm.getYear() > 2050) {
 			Date today = new Date();
@@ -556,6 +561,9 @@ public class FiscalModelDAO {
 			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
 			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
+			if (fm.getModel() == FiscalModelType.M303 && fm.isCanarias()) {
+				fm.setTownCode(AonStringUtils.defaultIfBlank(enterprise.getTown(), "00000"));
+			}
 			fm.setPhone(enterprise.getPhone() );
 		}
 		fm.setContactPerson( conf.fiscal().getContactPerson() );

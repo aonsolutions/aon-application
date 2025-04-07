@@ -26,11 +26,13 @@ export class AonJsfApp extends AonElement {
 	}
 
 	build() {
+		
         let iframe = this.createElement(TAG.IFRAME, this.IFRAME);
         iframe.name = this.IFRAME;
         iframe.style.border = 'none';
         iframe.style.width = '100%';
-        iframe.style.height = 'calc(100vh - 69px)';
+		let top = this.getBoundingClientRect().top;
+        iframe.style.height = `calc(100vh - ${top + 10}px)`;
         
 
         this.appendChild(iframe);
@@ -88,7 +90,7 @@ export class AonJsfApp extends AonElement {
     
      setViewId(viewId){
 		this.viewId = viewId;
-	}
+	}AonJsfApp
 	
 	
 }

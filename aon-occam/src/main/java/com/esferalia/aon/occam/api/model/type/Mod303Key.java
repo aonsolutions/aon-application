@@ -1127,6 +1127,81 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,NF_062("303-NF062",false,"062","Cuotas a compensar de periodos anteriores")
 	,NF_069("303-NF069",false,"069","Resultado regularizaci\u00F3n anual")
 	,NF_063("303-NF063",false,"063","Resultado")
+
+	// 	----------------------------------------------------------------------------------  
+	// 	-------------------------------------------------- CANARIAS (Modelos 420/417) ---- 
+	// 	----------------------------------------------------------------------------------
+	,CA_X00("303-CAX00",false,null,"C\u00F3digo de municipio")                                                                                     // Código de municipio
+	,CA_X01("303-CAX01",false,null,"Autoliquidaci\u00F3n conjunta")                                                                           // Autoliquidación conjunta (solo modelo 420)                                                       
+	,CA_X02("303-CAX02",false,null,"Ha optado por el r\u00E9gimen especial del criterio de caja")                                             // Ha optado por el régimen especial del criterio de caja                                           
+	,CA_X03("303-CAX03",false,null,"Ha sido destinatario de operaciones a las que se aplique el r\u00E9gimen especial del criterio de caja")  // Ha sido destinatario de operaciones a las que se aplique el régimen especial del criterio de caja
+	,CA_X04("303-CAX04",false,null,"Es una entidad no establecida con obligaciones peri\u00F3dicas")                                          // Es una entidad no establecida con obligaciones periódicas                               
+	,CA_X05("303-CAX05",false,null,"Ha sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n")             // Ha sido declarado en concurso de acreedores en el presente período de liquidación                
+	,CA_X06("303-CAX06",false,null,"Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")                                      // Fecha en que se dictó el auto de declaración de concurso                                         
+	,CA_X07("303-CAX07",false,null,"Tipo de autoliquidaci\u00F3n si se ha declarado en concurso de acreedores")                 			  // Tipo de autoliquidación si declaración de concurso (preconcursal, postconcursal)
+	
+	// VOY A PONER CASILLAS PARA LOS SIETE TIPOS POSIBLES DE IGIC QUE EXISTEN, AUNQUE EL MODELO PERMITE SOLO SEIS, A LA HORA DE GENERAR EL FICHERO PARA EL MODULO DE IMPRESION SE PONDRAN COMO SEA NECESARIO 
+	,CA_DB01("303-CADB01",true ,null,"IGIC Devengado (1) - Base imponible")       // IGIC Devengado - Base imponible     (1)  
+	,CA_DT01("303-CADT01",false,null,"IGIC Devengado (1) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (1)
+	,CA_DC01("303-CADC01",true ,null,"IGIC Devengado (1) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (1)
+	,CA_DB02("303-CADB02",true ,null,"IGIC Devengado (2) - Base imponible")       // IGIC Devengado - Base imponible     (2)
+	,CA_DT02("303-CADT02",false,null,"IGIC Devengado (2) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (2)
+	,CA_DC02("303-CADC02",true ,null,"IGIC Devengado (2) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (2)
+	,CA_DB03("303-CADB03",true ,null,"IGIC Devengado (3) - Base imponible")       // IGIC Devengado - Base imponible     (3)
+	,CA_DT03("303-CADT03",false,null,"IGIC Devengado (3) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (3)
+	,CA_DC03("303-CADC03",true ,null,"IGIC Devengado (3) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (3)
+	,CA_DB04("303-CADB04",true ,null,"IGIC Devengado (4) - Base imponible")       // IGIC Devengado - Base imponible     (4)
+	,CA_DT04("303-CADT04",false,null,"IGIC Devengado (4) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (4)
+	,CA_DC04("303-CADC04",true ,null,"IGIC Devengado (4) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (4)
+	,CA_DB05("303-CADB05",true ,null,"IGIC Devengado (5) - Base imponible")       // IGIC Devengado - Base imponible     (5)
+	,CA_DT05("303-CADT05",false,null,"IGIC Devengado (5) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (5)
+	,CA_DC05("303-CADC05",true ,null,"IGIC Devengado (5) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (5)
+	,CA_DB06("303-CADB06",true ,null,"IGIC Devengado (6) - Base imponible")       // IGIC Devengado - Base imponible     (6)
+	,CA_DT06("303-CADT06",false,null,"IGIC Devengado (6) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (6)
+	,CA_DC06("303-CADC06",true ,null,"IGIC Devengado (6) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (6)
+	,CA_DB07("303-CADB07",true ,null,"IGIC Devengado (7) - Base imponible")       // IGIC Devengado - Base imponible     (7)
+	,CA_DT07("303-CADT07",false,null,"IGIC Devengado (7) - Tipo de gravamen %")   // IGIC Devengado - Tipo de gravamen % (7)
+	,CA_DC07("303-CADC07",true ,null,"IGIC Devengado (7) - Cuota devengada")      // IGIC Devengado - Cuota devengada    (7)
+	,CA_C019("303-CAC019",true ,"19","Operaciones con inversi\u00F3n del sujeto pasivo - Base imponible")	// Operaciones con inversión del sujeto pasivo - Base imponible 
+	,CA_C020("303-CAC020",true ,"20","Operaciones con inversi\u00F3n del sujeto pasivo - Cuota devengada")	// Operaciones con inversión del sujeto pasivo - Cuota devengada
+	,CA_C021("303-CAC021",true ,"21","Modificaci\u00F3n bases y cuotas - Base imponible")               	// Modificación bases y cuotas - Base imponible       
+	,CA_C022("303-CAC022",true ,"22","Modificaci\u00F3n bases y cuotas - Cuota devengada")      			// Modificación bases y cuotas - Cuota devengada      
+	,CA_C023("303-CAC023",false,"23","Cuotas devueltas en r\u00E9gimen de viajeros - Base imponible")      	// Cuotas devueltas en régimen de viajeros - Base imponible   
+	,CA_C024("303-CAC024",false,"24","Cuotas devueltas en r\u00E9gimen de viajeros - Cuota devengada")      // Cuotas devueltas en régimen de viajeros - Cuota devengada  
+	,CA_C025("303-CAC025",false,"25","Total cuotas devengadas")      										// Total cuotas devengadas
+	
+	,CA_C026("303-CAC026",true ,"26","IGIC deducible en operaciones interiores bienes y servicios corrientes - Base")  	// IGIC deducible en operaciones interiores bienes y servicios corrientes - Base
+	,CA_C027("303-CAC027",true ,"27","IGIC deducible en operaciones interiores bienes y servicios corrientes - Cuota")	// IGIC deducible en operaciones interiores bienes y servicios corrientes - Cuota
+	,CA_C028("303-CAC028",true ,"28","IGIC deducible en operaciones interiores bienes de inversi\u00F3n - Base")      	// IGIC deducible en operaciones interiores bienes de inversión - Base    
+	,CA_C029("303-CAC029",true ,"29","IGIC deducible en operaciones interiores bienes de inversi\u00F3n - Cuota")  		// IGIC deducible en operaciones interiores bienes de inversión - Cuota  	
+	,CA_C030("303-CAC030",true ,"30","IGIC deducible por importaciones de bienes corrientes - Base")  					// IGIC deducible por importaciones de bienes corrientes - Base  				          
+	,CA_C031("303-CAC031",true ,"31","IGIC deducible por importaciones de bienes corrientes - Cuota")  					// IGIC deducible por importaciones de bienes corrientes - Cuota  				         
+	,CA_C032("303-CAC032",true ,"32","IGIC deducible por importaciones de bienes de inversi\u00F3n - Base")  			// IGIC deducible por importaciones de bienes de inversión - Base  		     
+	,CA_C033("303-CAC033",true ,"33","IGIC deducible por importaciones de bienes de inversi\u00F3n - Cuota")  			// IGIC deducible por importaciones de bienes de inversión - Cuota  		    
+	,CA_C034("303-CAC034",true ,"34","Rectificaci\u00F3n de deducciones - Base")  										// Rectificación de deducciones - Base  									                         
+	,CA_C035("303-CAC035",true ,"35","Rectificaci\u00F3n de deducciones - Cuota")  										// Rectificación de deducciones - Cuota  									                        
+	,CA_C036("303-CAC036",true ,"36","Compensaciones r\u00E9gimen especial de agricultura, ganader\u00EDa y pesca")  	// Compensaciones régimen especial de agricultura, ganadería y pesca 
+	,CA_C037("303-CAC037",false,"37","Regularizaci\u00F3n de cuotas soportadas por bienes de inversi\u00F3n")  			// Regularización de cuotas soportadas por bienes de inversión	      
+	,CA_C038("303-CAC038",false,"38","Regularizaci\u00F3n de cuotas soportadas antes del inicio de la actividad")  		// Regularización de cuotas soportadas antes del inicio de la actividad		 
+	,CA_C039("303-CAC039",false,"39","Regularizaci\u00F3n por aplicaci\u00F3n del porcentaje definitivo de prorrata")	// Regularización por aplicación del porcentaje definitivo de prorrata
+	,CA_C040("303-CAC040",false,"40","Total cuotas deducibles")  														// Total cuotas deducibles
+	
+	,CA_C041("303-CAC041",false,"41","Diferencia")                                                         				// Diferencia
+	
+	,CA_C042("303-CAC042",false,"42","Regularizaci\u00F3n cuotas cuotas art\u00EDculo 22.8.5\u00AA Ley 20/1991")  		// Regularización cuotas cuotas artículo 22.8.5ª Ley 20/1991
+	,CA_C043("303-CAC043",false,"43","Cuotas de I.G.I.C. a compensar pendientes de per\u00EDodos anteriores")      		// Cuotas de I.G.I.C. a compensar pendientes de períodos anteriores  
+	,CA_C044("303-CAC044",false,"44","A deducir (exclusivamente en caso de autoliquidaci\u00F3n complementaria)")  		// A deducir (exclusivamente en caso de autoliquidación complementaria)
+	,CA_C045("303-CAC045",false,"45","Resultado de la autoliquidaci\u00F3n")  											// Resultado de la autoliquidación
+	
+	,CA_C046("303-CAC046",true ,"46","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")  								// Exportaciones y otras operaciones exentas con derecho a deducción                              
+	,CA_C047("303-CAC047",true ,"47","Operaciones no sujetas con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")  	// Operaciones no sujetas con inversión del sujeto pasivo que originan el derecho a deducción
+	,CA_C048("303-CAC048",true ,"48","Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles aplicado el r\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base ") // Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base                                                                                                                                                           
+	,CA_C049("303-CAC049",true ,"49","Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles aplicado el r\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota") // Importes de las entregas de bienes y prestaciones de servicios a las que habiéndoles aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota                                                                                                                                                           
+	,CA_C050("303-CAC050",true ,"50","Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el r\u00E9gimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base")       									// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Base
+	,CA_C051("303-CAC051",true ,"51","Importes de las adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el r\u00E9gimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota")  										// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el régimen especial del criterio de caja conforme a la regla general de devengo contenida en el art. 18 de la Ley 20/1991 - Cuota                                        
+
+//	,CA_C000("303-CAC000",true ,"00","")  //
+	
 	;
 	private String value;
 	private boolean diffEnabled;

@@ -353,6 +353,9 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	enum Mod303Declarations {
+		
+// AEAT ----------------------------------------------------------------------------------------		
+		
 		AEAT_2024_T3 {
 			@Override
 			public boolean accept(Mod303 mod303) {
@@ -398,40 +401,6 @@ public class Model303 extends MainEntryPoint {
 				return new Model303AEAT2023(mod303,cbk);
 			}
 		},
-		BIZKAIA_2023 {
-			@Override
-			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia() && mod303.getYear() >= 2023);
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
-				return new Model303BIZKAIA2023(mod303,cbk);
-			}
-		},
-		ARABA_2023 {
-			@Override
-			public boolean accept(Mod303 mod303) {
-				return (mod303.isAraba() && mod303.getYear() >= 2023);
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
-				return new Model303ARABA2023(mod303,cbk);
-			}
-		},
-		GIPUZKOA_2023 {
-			@Override
-			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && mod303.getYear() >= 2023);
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
-				return new Model303GIPUZKOA2023(mod303,cbk);
-			}
-		},
-		// Ejercicio anteriores
 		AEAT_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
@@ -499,8 +468,22 @@ public class Model303 extends MainEntryPoint {
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303AEAT2017(mod303,cbk);
 			}
-		}
-		,ARABA_2022 {
+		},
+		
+// ARABA ------------------------------------------------------------------------------------------
+
+		ARABA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303ARABA2023(mod303,cbk);
+			}
+		},
+		ARABA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
 				return (mod303.isAraba() && mod303.getYear() == 2022);
@@ -532,8 +515,22 @@ public class Model303 extends MainEntryPoint {
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303ARABA2017(mod303,cbk);
 			}
-		}
-		,BIZKAIA_2022 {
+		},
+		
+// BIZKAIA ----------------------------------------------------------------------------------------
+		
+		BIZKAIA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isBizkaia() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303BIZKAIA2023(mod303,cbk);
+			}
+		},
+		BIZKAIA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
 				return (mod303.isBizkaia() && mod303.getYear() == 2022);
@@ -543,8 +540,8 @@ public class Model303 extends MainEntryPoint {
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303BIZKAIA2022(mod303,cbk);
 			}
-		}
-		,BIZKAIA {
+		},
+		BIZKAIA {
 			@Override
 			public boolean accept(Mod303 mod303) {
 				return (mod303.isBizkaia() && mod303.getYear()<2022);
@@ -553,6 +550,20 @@ public class Model303 extends MainEntryPoint {
 			@Override
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303BIZKAIA2017(mod303,cbk);
+			}
+		},
+		
+// GIPUZKOA ---------------------------------------------------------------------------------------
+
+		GIPUZKOA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2023(mod303,cbk);
 			}
 		},
 		GIPUZKOA_2022 {
@@ -564,6 +575,17 @@ public class Model303 extends MainEntryPoint {
 			@Override
 			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
 				return new Model303GIPUZKOA2022(mod303,cbk);
+			}
+		},
+		GIPUZKOA_2021_LAST_SEMESTER {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2021(mod303,cbk);
 			}
 		},
 		GIPUZKOA_2017 {
@@ -578,17 +600,9 @@ public class Model303 extends MainEntryPoint {
 				return new Model303GIPUZKOA2017(mod303,cbk);
 			}
 		},
-		GIPUZKOA_2021_LAST_SEMESTER {
-			@Override
-			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
-				return new Model303GIPUZKOA2021(mod303,cbk);
-			}
-		},
+		
+// NAVARRA ----------------------------------------------------------------------------------------
+		
 		NAVARRA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
@@ -600,7 +614,22 @@ public class Model303 extends MainEntryPoint {
 				return new Model303NAVARRA2022(mod303,cbk);
 			}
 		},
+		
+// CANARIAS ---------------------------------------------------------------------------------------
+		
+		CANARIAS_2025 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isCanarias() && mod303.getYear() >= 2025);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303CANARIAS2025(mod303,cbk);
+			}
+		},
 		;
+		
 		public abstract boolean accept(Mod303 mod303);
 		public abstract Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk);
 	}
