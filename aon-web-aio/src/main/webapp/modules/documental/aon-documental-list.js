@@ -11,7 +11,10 @@ import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
 import { clearFields } from './DocumentalUtils.js'
-import { DOCUMENTAL_FILTER_ASESOR, DOCUMENTAL_FILTER_ENTERPRISE, DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
+import { 
+  DOCUMENTAL_FILTER_ASESOR, DOCUMENTAL_FILTER_ENTERPRISE, DOCUMENTAL_FILTER,
+  ASESOR_TYPE, EMPLOYEE_TYPE
+} from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
 	more;
@@ -94,6 +97,31 @@ export class AonDocumentalList extends AonElement {
           timeOut = setTimeout(() => {
 	        this._list = [];
 	        if(detail) {
+              // El tipo de permiso
+                if(detail[ASESOR_TYPE] && detail[ASESOR_TYPE] !== 'false'){
+                  // Buscar solo asesor
+                    detail.categoryType = ASESOR_TYPE;
+					delete detail[ASESOR_TYPE];
+                } else if (detail[ASESOR_TYPE]){
+					delete detail[ASESOR_TYPE];
+                }
+                if(detail[EMPLOYEE_TYPE] && detail[EMPLOYEE_TYPE] !== 'false'){
+                  // Buscar solo empleado
+                    detail.categoryType = EMPLOYEE_TYPE;
+					delete detail[EMPLOYEE_TYPE];
+                } else if (detail[EMPLOYEE_TYPE]){
+					delete detail[EMPLOYEE_TYPE];
+                }
+              // Mis categorias
+                if(detail.categoryOldFilter && detail.categoryOldFilter !== 'false'){
+                    detail.category = detail.categoryOld;
+					delete detail.categoryOld;
+					delete detail.categoryOldFilter;
+                } else if (detail.categoryOldFilter){
+					delete detail.categoryOld;
+					delete detail.categoryOldFilter;
+                }
+              // El tipo de category despacho
 				if(detail.category2){					
 					detail.category = detail.category2;
 					delete detail.category2;
@@ -130,8 +158,30 @@ export class AonDocumentalList extends AonElement {
 	    this.searchValueDefault();
         // tus categorias (creadas por la empresa)
         this.categoryOldFilter();
+        // Visible solo
+        this.visibleOnly();
 	}
 	
+    async visibleOnly(){
+      let asesor   = this.getElement(ASESOR_TYPE);
+      let employee = this.getElement(EMPLOYEE_TYPE);
+      
+      asesor.addEventListener(EVENT.CLICK, () => {
+        // Estado que estaba y el que esta el empleado
+        if(asesor.value === 'false' && employee.value === 'true'){
+          employee.value    = 'false';
+          employee.checked  = false;
+        }
+      });
+      employee.addEventListener(EVENT.CLICK, () => {
+        // Estado que estaba y el que esta el asesor
+        if(employee.value === 'false' && asesor.value === 'true'){
+          asesor.value    = 'false';
+          asesor.checked  = false;
+        }
+      });
+    }
+      
     async categoryOldFilter(){
       let categoryOldEl = this.getElement("categoryOldFilter");
       // Datos

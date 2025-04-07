@@ -33,7 +33,26 @@ export const DocumentalSidenav = {
     name: MSG.TAGS.toUpperCase(),
     app: Apps.DOCUMENTAL
   }
-}
+};
+
+export const ENTERPRISE_TYPE  = 'enterprise';
+export const EMPLOYEE_TYPE    = 'employee';
+export const ASESOR_TYPE      = 'asesor';
+
+export const ASESOR_TYPE_OPTION = [
+  {value: ENTERPRISE_TYPE, name: MSG.ENTERPRISES},
+  {value: EMPLOYEE_TYPE,   name: MSG.EMPLOYEE},
+  {value: ASESOR_TYPE,     name: MSG.ASESOR}
+];
+
+export const ENTERPRISE_TYPE_OPTION = [
+  {value: ENTERPRISE_TYPE, name: MSG.ENTERPRISES},
+  {value: EMPLOYEE_TYPE,   name: MSG.EMPLOYEE}
+];
+
+export const EMPLOYEE_TYPE_OPTION = [
+  {value: EMPLOYEE_TYPE, name: MSG.EMPLOYEE}
+];
 
 export const DOCUMENTAL_FILTER = [
     {
@@ -91,37 +110,22 @@ export const DOCUMENTAL_FILTER = [
 ];
 export const DOCUMENTAL_FILTER_ENTERPRISE = [
     {
-      type: "checkbox",
-      id: "employee",
-      name: "employee",
+      type : "checkbox",
+      id   : EMPLOYEE_TYPE,
+      name : EMPLOYEE_TYPE,
       title: "Visible solo para "+MSG.EMPLOYEE
     },
     ...DOCUMENTAL_FILTER
 ];
 export const DOCUMENTAL_FILTER_ASESOR = [
     {
-      type: "checkbox",
-      id: "asesor",
-      name: "asesor",
+      type : "checkbox",
+      id   : ASESOR_TYPE,
+      name : ASESOR_TYPE,
       title: "Visible solo para "+MSG.ASESOR
     },
     ...DOCUMENTAL_FILTER_ENTERPRISE
 ];
-
-export const ASESOR_TYPE_OPTION = [
-  {value: 'enterprise', name: 'Empresa'},
-  {value: 'employee', name: 'Empleado'},
-  {value: 'asesor', name: 'Asesor'}
-];
-
-export const ENTERPRISE_TYPE_OPTION = [
-  {value: 'enterprise', name: 'Empresa'},
-  {value: 'employee', name: 'Empleado'}
-];
-
-export const EMPLOYEE_TYPE_OPTION = [
-  {value: 'employee', name: 'Empleado'}
-]
 
 export const DOCUMENTAL_VIEWS = {
   AON_DOCUMENT_AYUDAT:"aonDocumentAyudat",

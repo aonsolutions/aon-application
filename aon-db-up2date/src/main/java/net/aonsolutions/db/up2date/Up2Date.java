@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
 import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
+import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
@@ -528,7 +529,8 @@ public class Up2Date {
 			//DocumentalRDoc.DOCUMENTAL_RDOC,
 			// AgreementPaymentsMonthFix.AGREEMENTPAYMENTSMONTHFIX,
 			// RealDecreeLaw1782025Art28300Fix.REALDECREELAW1782025ART28300FIX
-			AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX
+			AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX,
+			UpdateCategoryTree.UPDATE_CATEGORY_TREE
 			
 	};
 
