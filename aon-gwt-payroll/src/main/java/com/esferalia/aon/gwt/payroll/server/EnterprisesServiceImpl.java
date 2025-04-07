@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -257,6 +258,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -772,8 +774,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
-
-			return getCCCEmployees(connection, new java.sql.Date(startMonth.getTime()), new java.sql.Date(endMonth.getTime()), cccIds);
+			List<Integer> equalsCCCIds = getEqualsCCCs(connection, cccIds);
+			return getCCCEmployees(connection, new java.sql.Date(startMonth.getTime()), new java.sql.Date(endMonth.getTime()), equalsCCCIds);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1631,6 +1633,40 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			return costs;
 
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+	}
+
+	private static List<Integer> getEqualsCCCs(Connection connection, List<Integer> cccIds) throws SQLException {
+		ResultSet rs = null ;
+		Statement stmt = null ;
+		try {
+//			SELECT copy_ccc.* FROM enterprise_ccc AS src_ccc INNER JOIN enterprise_ccc AS copy_ccc ON ( src_ccc.ccc = copy_ccc.ccc AND IF( src_ccc.type < 0, copy_ccc.type < 6, src_ccc.type = copy_ccc.type  ))  WHERE  src_ccc.id = 12125 ;
+			String sql = " SELECT copy_ccc." + EnterpriseCccColumns.ID
+					+ " FROM " + ContractColumns.ENTERPRISE_CCC + " AS src_ccc"
+					+ " INNER JOIN " + ContractColumns.ENTERPRISE_CCC + " AS copy_ccc "
+					+ " ON ( src_ccc." + EnterpriseCccColumns.CCC + " = copy_ccc."  + EnterpriseCccColumns.CCC 
+					+  " AND IF( src_ccc."+ EnterpriseCccColumns.TYPE  +" < 6, copy_ccc." +  EnterpriseCccColumns.TYPE + " < 6, src_ccc." +  EnterpriseCccColumns.TYPE + " = copy_ccc." +  EnterpriseCccColumns.TYPE + "))"
+					+ " WHERE src_ccc." + EnterpriseCccColumns.ID + " IN ( " + cccIds.stream().map(AonNumberUtils::toString).collect(Collectors.joining(",")) + ")";
+					;
+			
+			HashSet<Integer> allCCCIds = new HashSet<>();
+			allCCCIds.addAll(cccIds);
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(sql);	
+			while (rs.next()) {
+				allCCCIds.add(rs.getInt(1));
+			}
+			return allCCCIds.stream().toList();
+			
+		} catch ( Exception e ) {
+			return cccIds;
 		} finally {
 			if (rs != null) {
 				rs.close();
