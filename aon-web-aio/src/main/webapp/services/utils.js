@@ -1,5 +1,6 @@
-import { AON_TAGS } from "../environments/aonTag.js";
+import { AON_TAGS, AON_NEW_DATE } from "../environments/aonTag.js";
 import { Attach } from "../models/Attach.js";
+import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 
 export const getReader = (file) =>  new Promise((resolve) => {
   const READER = new FileReader();
@@ -142,7 +143,19 @@ export const round = (value) => {
 export const serializeForm = (form) => {
   let inputs = [...form.querySelectorAll(AON_TAGS)];
   let obj = {};
-  inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
+//  inputs.filter(({name, value})=> value && value!= "undefined" && name!=null).map(({ name, value }) => obj[name] = value);
+  inputs.filter(({name, value, tagName, date})=> {
+    if (tagName.toLowerCase() === AON_NEW_DATE) {
+      return !!date; // incluir si tiene date
+    }
+    return value && value !== "undefined" && name != null;
+  }).map((input) => {
+    if (input.tagName.toLowerCase() === AON_NEW_DATE) {
+      obj[input.name] = AonDateUtils.formatDate(input.date, 'yyyy-MM-dd');
+    } else {
+      obj[input.name] = input.value;
+    }
+  });
   return obj;
 }
 

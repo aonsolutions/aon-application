@@ -34,7 +34,6 @@ export class AonDocumental extends AonElement {
 	_tags;
 	_categories;
 	_scopes;
-
 	dur;
 
 	DOCUMENTAL;
@@ -132,8 +131,11 @@ export class AonDocumental extends AonElement {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()) {
 				aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
 			}
-			const btnSearch = aonDocumental.addSearchOption();
-			btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+            if(!this.isBetaDoc()){
+              // como se carga el boton de buscar aqui
+              const btnSearch = aonDocumental.addSearchOption();
+              btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+            }
 		}
 
 		if (this.isMobile()) {
@@ -498,13 +500,12 @@ export class AonDocumental extends AonElement {
 	}
 
 	aonDocumentById(id) {
-	if(this.isBetaDoc()){
-		getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-	}else{
-		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-		}
+      if(this.isBetaDoc()){
+          getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+      }else{
+          getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+      }
 	}
-	
 
 	aonDocument(doc) {
 		let application = this.getApplication();

@@ -25,11 +25,24 @@ export const DocumentalSidenav = {
 }
 
 export const DOCUMENTAL_FILTER = [
+    {
+      type: "checkbox",
+      id: "categoryOldFilter",
+      name: "categoryOldFilter",
+      title: "Buscar en tus "+MSG.CATEGORY+"s"
+    },
+	{
+      type: "select",
+      id: "categoryOld",
+      name: "categoryOld",
+      title: "Tus "+MSG.CATEGORY+"s",
+	  hidden: "true"
+    },
 	{
       type: "select",
       id: "category",
       name: "category",
-      title: MSG.CATEGORY,
+      title: MSG.CATEGORY+"s despacho"
     },
 	{
       type: "select",
@@ -53,17 +66,35 @@ export const DOCUMENTAL_FILTER = [
 	  hidden: "true"
 	},	  
 	{
-      type: "date",
+      type: "newDate",
       name: "start_date",
       id: "start_date",
       title: "Fecha del documento - desde",
     },
     {
-      type: "date",
+      type: "newDate",
       name: "end_date",
       id: "end_date",
       title: "Fecha del documento - hasta",
+    }
+];
+export const DOCUMENTAL_FILTER_ENTERPRISE = [
+    {
+      type: "checkbox",
+      id: "employee",
+      name: "employee",
+      title: "Visible solo para "+MSG.EMPLOYEE
     },
+    ...DOCUMENTAL_FILTER
+];
+export const DOCUMENTAL_FILTER_ASESOR = [
+    {
+      type: "checkbox",
+      id: "asesor",
+      name: "asesor",
+      title: "Visible solo para "+MSG.ASESOR
+    },
+    ...DOCUMENTAL_FILTER_ENTERPRISE
 ];
 
 export const ASESOR_TYPE_OPTION = [
