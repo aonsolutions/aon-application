@@ -139,6 +139,7 @@ export const EXPAND_CIRCLE_RIGHT = 'expand_circle_right';
 export const FILE_COPY = 'file_copy';
 export const FILE_DOWNLOAD = 'file_download';
 export const FILE_UPLOAD = 'file_upload';
+export const FILTER_ALT = 'filter_alt';
 export const FILTER_LIST = 'filter_list';
 export const FOLDER = 'folder';
 export const FOLDER_OPEN = 'folder_open';

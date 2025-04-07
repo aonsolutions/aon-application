@@ -1,5 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
+import {
+  getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
+  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories 
+} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
 
@@ -8,7 +11,7 @@ import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
 import { clearFields } from './DocumentalUtils.js'
-import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
+import { DOCUMENTAL_FILTER_ASESOR, DOCUMENTAL_FILTER_ENTERPRISE, DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
 
 export class AonDocumentalList extends AonElement {
 	more;
@@ -83,12 +86,12 @@ export class AonDocumentalList extends AonElement {
 	}
 	
 	buildToolbarSearch(){
-	    const btnSearch = this.getApplication().addSearchOption();
+	    const btnSearch = this.getApplication().addSearchOption(true, true);
 	    let timeOut = null;
 	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-				clearTimeout(timeOut);
+          clearTimeout(timeOut);
 				
-				timeOut = setTimeout(() => {
+          timeOut = setTimeout(() => {
 	        this._list = [];
 	        if(detail) {
 				if(detail.category2){					
@@ -104,21 +107,96 @@ export class AonDocumentalList extends AonElement {
 					delete detail.category4;
 				}
 				detail.name = detail.search;
-				this.setFilter(detail)
+				this.setFilter(detail);
 				this.init();	
 			} // this.getApplicationParent().setDataFilter(detail);
-				}, 300);
+          }, 300);
 	    });
-	    btnSearch.buildOptionsFilter([
-	      ...DOCUMENTAL_FILTER
-	    ]);
+        // Rango por encima de empresa, ve el permiso de asesor (documentos que solo ve el asesor)
+        if (this._roles.isDocumentalManager()) {
+          btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER_ASESOR
+          ]);
+        } else if (this._roles.isDocumentalPortal()){
+          btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER_ENTERPRISE
+          ]);
+        } else {
+          btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER
+          ]);
+        }
+        // Categoria despacho(categorias predefinidas)
 	    this.searchValueDefault();
+        // tus categorias (creadas por la empresa)
+        this.categoryOldFilter();
 	}
 	
+    async categoryOldFilter(){
+      let categoryOldEl = this.getElement("categoryOldFilter");
+      // Datos
+      const data = {
+        parent: null,
+        domain: LS.getDomainId()
+      };
+      const listCategoryOld = await getCategories(data);
+      // solo si tiene creadas
+      if(listCategoryOld.length > 0){
+        // rellenar
+        let categoryOld = this.getElement("categoryOld");
+        categoryOld.setOptions(listCategoryOld.map((category) => ({ name: category.name, value: category.id})));
+        // mostrar o no
+        categoryOldEl.addEventListener(EVENT.CHANGE, () => {
+          let category    = this.getElement("category");
+          let category2   = this.getElement("category2");
+          let category3   = this.getElement("category3");
+          let category4   = this.getElement("category4");
+
+          if(categoryOldEl.value === 'true'){
+            // Mostramos las creadas por el usuario
+            categoryOld.hidden = false;
+            // Ocultamos las nuevas categorias
+            category.hidden  = true;
+            category2.hidden = true;
+            category3.hidden = true;
+            category4.hidden = true;
+            // limpiamos
+            let inputElement   = category.querySelector("input[type='select']");
+            categoryOld.value  = '';
+            inputElement.value = '';
+          } else {
+            // Mostramos las nuevas categorias
+            category.hidden = false;
+            // Ocultamos las creadas por el usuario
+            categoryOld.hidden = true;
+            // limpiamos
+            let inputElement   = categoryOld.querySelector("input[type='select']");
+            categoryOld.value  = '';
+            inputElement.value = '';
+          }
+        });
+      } else {
+        categoryOldEl.hidden  = true;
+      }
+	}
+    
 	async searchValueDefault(){
-		let categories = await getS3Category({"parent":"null"});
+        const data = {
+          parent: null,
+          domain: LS.getDomainId()
+        };
+		let categories = await getS3Category(data);
 		let categoryEl = this.getElement("category");
-		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+//		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+		categoryEl.setOptions(
+          categories.filter((category)=> {
+            return category.is_deletable;
+          }).map((category) => {
+            return {name: category.name, value: category.id };
+          })
+        );
+        
+        
 		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
 			this.getElement("category2").hidden = true;
 			this.getElement("category3").hidden = true;
@@ -129,15 +207,20 @@ export class AonDocumentalList extends AonElement {
 	
 	async getSubcategories(detail){
 	    try {
-	      let categoryEl = this.getElement("category2");
+	      let categoryEl   = this.getElement("category2");
+          let inputElement = categoryEl.querySelector("input[type='select']");
+          // limpiamos
+          categoryEl.value    = '';
+          inputElement.value  = '';
+          // traemos
 	      let categories = await getS3Category({parent: detail.value});
 	      if(categories.length>0) {
 	        categoryEl.setOptions(
 	          categories.map((category)=> ({name:category.name, value:category.id}))
 	        );
-	        categoryEl.hidden =  false;
-	      }
-	      else categoryEl.hidden =  true;
+	        categoryEl.hidden   = false;
+	      } else 
+            categoryEl.hidden = true;
 		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
 			this.getElement("category3").hidden = true;
 			this.getElement("category4").hidden = true;
@@ -148,40 +231,50 @@ export class AonDocumentalList extends AonElement {
 	    }
 	}
 	async getAdministrations(detail){
-	  	    try {
-	  	      let categoryEl = this.getElement("category3");
-	  	      let categories = await getS3Category({parent: detail.value});
-	  	      if(categories.length>0) {
-	  	        categoryEl.setOptions(
-	  	          categories.map((category)=> ({name:category.name, value:category.id}))
-	  	        );
-	  	        categoryEl.hidden =  false;
-	  	      }
-	  	      else categoryEl.hidden =  true;
-	  		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-				this.getElement("category4").hidden = true;
-	  		  	if(detail) this.getModels(detail);
-	  		  });
-	  	    } catch (error) {
-	  	      console.log(error);
-	  	    }
-	  }
+      try {
+        let categoryEl = this.getElement("category3");
+        let inputElement = categoryEl.querySelector("input[type='select']");
+        // limpiamos
+        categoryEl.value    = '';
+        inputElement.value  = '';
+        // traemos
+        let categories = await getS3Category({parent: detail.value});
+        if(categories.length>0) {
+          categoryEl.setOptions(
+            categories.map((category)=> ({name:category.name, value:category.id}))
+          );
+          categoryEl.hidden =  false;
+        }
+        else categoryEl.hidden =  true;
+        categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+          this.getElement("category4").hidden = true;
+          if(detail) this.getModels(detail);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
 			  
-	  async getModels(detail){
-		    try {
-		      let categoryEl = this.getElement("category4");
-		      let categories = await getS3Category({parent: detail.value});
-		      if(categories.length>0) {
-		        categoryEl.setOptions(
-		          categories.map((category)=> ({name:category.name, value:category.id}))
-		        );
-		        categoryEl.hidden =  false;
-		      }
-		      else categoryEl.hidden =  true;
-		    } catch (error) {
-		      console.log(error);
-		    }
-	  }
+    async getModels(detail){
+        try {
+          let categoryEl = this.getElement("category4");
+          let inputElement = categoryEl.querySelector("input[type='select']");
+          // limpiamos
+          categoryEl.value    = '';
+          inputElement.value  = '';
+          // traemos
+          let categories = await getS3Category({parent: detail.value});
+          if(categories.length>0) {
+            categoryEl.setOptions(
+              categories.map((category)=> ({name:category.name, value:category.id}))
+            );
+            categoryEl.hidden =  false;
+          }
+          else categoryEl.hidden =  true;
+        } catch (error) {
+          console.log(error);
+        }
+    }
 	  
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
@@ -196,7 +289,6 @@ export class AonDocumentalList extends AonElement {
         this.more = true;
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-		console.log("filter", filter);
         if (aonDocumentalTable) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
         }
