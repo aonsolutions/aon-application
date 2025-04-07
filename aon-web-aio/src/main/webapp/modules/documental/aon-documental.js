@@ -142,6 +142,10 @@ export class AonDocumental extends AonElement {
 			this.addDocumentOptions();
 		}
 		
+		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createOptions());
+		}
+
 		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
 			this.addDocumentOptions();
 		this.addTypeOptions();
@@ -176,10 +180,10 @@ export class AonDocumental extends AonElement {
         if (this.isBetaDoc()) {
           // Marcamos la primera opcion
         aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
-		let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
-		aonDocumental.addSidenavOptions3(data2);
-		let data3 = DocumentalSidenav.USER_CATEGORIES;
-		aonDocumental.addSidenavOptions3(data3);
+		// let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
+		// aonDocumental.addSidenavOptions3(data2);
+		// let data3 = DocumentalSidenav.USER_CATEGORIES;
+		// aonDocumental.addSidenavOptions3(data3);
         }
 	}
 
@@ -247,39 +251,62 @@ export class AonDocumental extends AonElement {
 		};
 		if (this.isBetaDoc()) {
 			getS3Category(data).then(categories => {
-				this._categories = categories.map(c => {
+				// Filtramos las categorías del despacho y las del usuario
+				let defaultCategories = categories.filter(c => c.is_deletable === 0);
+				let userCategories = categories.filter(c => c.is_deletable !== 0);
+	
+				// Combinamos las categorías del despacho y las del usuario
+				let allCategories = [...defaultCategories, ...userCategories];
+	
+				// Ahora procesamos las categorías combinadas
+				this._categories = allCategories.map(c => {
 					return {
 						value: c.id,
 						name: c.name
 					};
 				});
+	
 				let application = this.getApplication();
-				categories.forEach(item => {
-					if(item.is_deletable == 0){
-						let optionDefaultCategory = {
-							name: item.name,
-							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
-							fn: () => {
-								this._filter.tag = undefined;
-								this._filter.category = item.id;
-								this.aonDocumentalList();
-							}
-						};
-						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
-					}else{
-						let optionUserCategories = {
-							name: item.name,
-							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
-							fn: () => {
-								this._filter.tag = undefined;
-								this._filter.category = item.id;
-								this.aonDocumentalList();
-							}
-						};
-						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
-					}
-					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
+	
+				// Procesamos las categorías por defecto del despacho
+				defaultCategories.forEach(item => {
+					let optionDefaultCategory = {
+						name: item.name,
+						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+						fn: () => {
+							this._filter.tag = undefined;
+							this._filter.category = item.id;
+							this.aonDocumentalList();
+						}
+					};
+					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, optionDefaultCategory);
 				});
+	
+				// Procesamos las categorías del usuario
+				userCategories.forEach(item => {
+					let optionUserCategories = {
+						name: item.name,
+						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+						fn: () => {
+							this._filter.tag = undefined;
+							this._filter.category = item.id;
+							this.aonDocumentalList();
+						}
+					};
+	
+					// Si es un usuario con permisos de gestión documental con categorias creadas, agregamos las acciones de eliminar o editar a dichas categorias
+					if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+						optionUserCategories.actions = [
+						{
+							id: 'Edit',
+							icon: 'edit',
+							action: () => this.editCategory(item)
+						}];
+					}
+	
+					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, optionUserCategories);
+				});
+				// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
 			});
 		} else {
 			getCategories(data).then(categories => {
@@ -331,24 +358,135 @@ export class AonDocumental extends AonElement {
 		});
 	}
 
-	createCategory() {
-		let d = document.getElementById(this.getApplication().DIALOG);
-		d.clear();
-		if (!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.ADD_CATEGORY);
-		let input = new AonInput();
-		input.id = "aonDocumentalAddCategory";
-		input.description = MSG.CATEGORY;
-		d.setContent(input);
-		d.addAcceptAction(() => {
-			if (!input.value.isEmpty()) {
-				createCategory({ name: input.value }).then(() => {
-					this.loadCategories();
-				});
-			}
-		});
-		d.open();
+	createOptions() {
+		if(document.getElementById('aonDocumentalDialogDialogActionAccept')){
+			let btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
+			btnAccept.remove();
+		}
+
+		if(document.getElementById('aonDocumentalDialogDialogActionCancel')){
+			let btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
+			btnCancel.remove();
+		}
+
+		let doc = document.getElementById(this.getApplication().DIALOG);
+		doc.clear(); 
+		if (!this.isMobile()) doc.width = '400px';
+		doc.setTitle("¿Qué quiere crear?");
+	
+		// Crear los radio buttons
+		let radioCategory = document.createElement('input');
+		radioCategory.type = 'radio';
+		radioCategory.name = 'categoryRadio'; 
+		radioCategory.id = 'radioId';
+		radioCategory.addEventListener('change', this.handleRadioChange.bind(this));
+	
+		let radiotag = document.createElement('input');
+		radiotag.type = 'radio';
+		radiotag.name = 'tagRadio';
+		radiotag.id = 'radioId2';
+		radiotag.addEventListener('change', this.handleRadioChange.bind(this));
+	
+		// Crear las etiquetas
+		let labelCategory = document.createElement('label');
+		labelCategory.setAttribute('for', 'radioId');
+		labelCategory.textContent = 'Crear categoria';
+	
+		let labelTag = document.createElement('label');
+		labelTag.setAttribute('for', 'radioId2');
+		labelTag.textContent = 'Crear etiqueta';
+	
+		// Crear un contenedor para los radio buttons y etiquetas
+		let container = document.createElement('div');
+	
+		// Crear contenedores para cada radio button y su respectiva etiqueta
+		let categoryContainer = document.createElement('div');
+		categoryContainer.appendChild(radioCategory);
+		categoryContainer.appendChild(labelCategory);
+	
+		let tagContainer = document.createElement('div');
+		tagContainer.appendChild(radiotag);
+		tagContainer.appendChild(labelTag);
+	
+		// Añadir los contenedores al contenedor principal
+		container.appendChild(categoryContainer);
+		container.appendChild(tagContainer);
+	
+		// Establecer el contenido del modal (sin el botón de aceptar)
+		doc.setContent(container);
+	
+		// No se agrega ningún botón de aceptar aquí
+		doc.open();
 	}
+	
+	handleRadioChange(event) {
+		// Verificar cuál radio button fue seleccionado
+		if (event.target.id === 'radioId') {
+			// Si se selecciona "Crear categoría"
+			this.createCategory();
+		} else if (event.target.id === 'radioId2') {
+			// Si se selecciona "Crear etiqueta"
+			this.createTag();
+		}
+	}
+	
+	createCategory() {
+		if (this.isBetaDoc()) {
+			let doc = document.getElementById(this.getApplication().DIALOG);
+			doc.clear();
+			if (!this.isMobile()) doc.width = '400px';
+			doc.setTitle(MSG.ADD_CATEGORY);
+			let input = new AonInput();
+			input.id = "aonDocumentalAddCategory";
+			input.description = MSG.CATEGORY;
+	
+			let container = document.createElement('div');
+			container.appendChild(input);
+			doc.setContent(container);
+
+			let btn = undefined;
+			btn = {
+				id:this.ACCEPT,
+				title : MSG.ACCEPT,
+				icon:MATERIAL_ICONS.DONE,
+				position: "right"
+			}
+			doc.addAction(btn);
+
+			// doc.addAcceptAction(() => {
+			// 	if (!input.value.isEmpty()) {
+			// 		createCategory({ name: input.value }).then(() => {
+			// 			this.createOptions();
+			// 		});
+			// 	}
+			// });
+	
+			// doc.addCancelAction(() => {
+				// console.log('cancel action category')
+				// const button = document.getElementById('aonDocumentalDialogDialogActionCancel');
+				// button.onclick(this.createOptions());
+			// });
+			doc.open();
+		} else {
+			let d = document.getElementById(this.getApplication().DIALOG);
+			d.clear();
+			if (!this.isMobile()) d.width = '400px';
+			d.setTitle(MSG.ADD_CATEGORY);
+			let input = new AonInput();
+			input.id = "aonDocumentalAddCategory";
+			input.description = MSG.CATEGORY;
+			d.setContent(input);
+	
+			d.addAcceptAction(() => {
+				if (!input.value.isEmpty()) {
+					createCategory({ name: input.value }).then(() => {
+						this.loadCategories();
+					});
+				}
+			});
+			d.open();
+		}
+	}	
 
 	editCategory(category) {
 		let d = document.getElementById(this.getApplication().DIALOG);
@@ -436,6 +574,36 @@ export class AonDocumental extends AonElement {
 	}
 
 	createTag() {
+		if(this.isBetaDoc()){
+			let doc = document.getElementById(this.getApplication().DIALOG);
+			doc.clear();
+			if (!this.isMobile()) doc.width = '400px';
+			doc.setTitle(MSG.ADD_TAG);
+			let input = new AonInput();
+			input.id = "aonDocumentalAddTag";
+			input.description = MSG.TAG;
+
+			let container = document.createElement('div');
+			container.appendChild(input);
+			doc.setContent(container);
+
+			// doc.addAcceptAction(() => {
+			// 	if (!input.value.isEmpty()) {
+			// 		createTag({ name: input.value }).then(() => {
+			// 			this.loadCategories();
+			// 		});
+			// 	}
+			// })
+
+			// doc.addCancelAction(() => {
+				// console.log('cancel action tag')
+				// const button = document.getElementById('aonDocumentalDialogDialogActionCancel');
+				// button.onclick(this.createOptions());
+			// });
+
+			doc.open();
+		}else{
+			
 		let d = document.getElementById(this.getApplication().DIALOG);
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
@@ -452,6 +620,7 @@ export class AonDocumental extends AonElement {
 			}
 		});
 		d.open();
+	}
 	}
 
 	editTag(tag) {

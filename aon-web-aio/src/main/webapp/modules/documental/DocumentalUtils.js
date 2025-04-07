@@ -373,7 +373,7 @@ function S3DocumentalSelects(dur) {
     loadingOverlay.style.left = '0';
     loadingOverlay.style.width = '100%';
     loadingOverlay.style.height = '100%';
-    loadingOverlay.style.backgroundColor = 'rgba(170, 161, 161, 0.8)';
+    loadingOverlay.style.backgroundColor = 'rgba(218, 209, 209, 0.8)';
     loadingOverlay.style.display = 'flex';
     loadingOverlay.style.alignItems = 'center';
     loadingOverlay.style.justifyContent = 'center';
