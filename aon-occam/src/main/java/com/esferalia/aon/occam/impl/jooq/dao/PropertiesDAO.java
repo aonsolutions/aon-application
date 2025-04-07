@@ -1662,6 +1662,8 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() { return new FilterDAO.TimestampPropertyDAO(Rdoc.RDOC.CREATION_DATE); }
 		@Override public Property<String> getS3Property() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.S3); }
 		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.REGISTRY); }
+		@Override public Property<Byte> getTypeProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.TYPE); }
+		@Override public Property<Byte> getSecurityLevelProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.SECURITY_LEVEL); }
 //		@Override public Property<Integer> getRattachProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.); }
 	}
 	
