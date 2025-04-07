@@ -19,6 +19,7 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
 				tag: data.tag,
 				scope: data.scope,
 				type: data.type,
+                ...(isBetaDoc ? { registryType: data.registryType } : {}),
 				// Añadir `date` solo si es beta y `data.date` existe
 				...(isBetaDoc && data.date ? { date: data.date } : {})
 			};
@@ -267,12 +268,12 @@ function handleRadioButtonChange(event) {
     let table = document.getElementById("table");
     let trScope = document.getElementById("trScope");
     let trCategory = document.getElementById("trCategory");
-    let trTag = document.getElementById("trTag");
+    // let trTag = document.getElementById("trTag");
     let trDatePicker = document.getElementById("trDatePicker");
     let select = document.getElementById("aonDocumentalUploadCategory");
 
     // Llamamos a clearFields para eliminar las filas generadas (subcategoría, administración, etc.)
-    clearFields(table, [trScope, trCategory, trTag, trDatePicker], 
+    clearFields(table, [trScope, trCategory, trDatePicker], 
         ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
     // Si se selecciona 'oldCategoriesRadio', desmarcamos 's3CategoriesRadio' y cargamos categorías antiguas
@@ -303,7 +304,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     let table = document.getElementById("table");
     let trScope = document.getElementById("trScope");
     let trCategory = document.getElementById("trCategory");
-    let trTag = document.getElementById("trTag");
+    // let trTag = document.getElementById("trTag");
     let trDatePicker = document.getElementById("trDatePicker");
     let loadingOverlay = document.getElementById("aonDocumentalLoadingOverlay");
 
@@ -347,7 +348,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     }
 
     if (categoryType === 's3' && select.options) {
-    uploadedCategory(select, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay);
+    uploadedCategory(select, table, trScope, trCategory, trDatePicker, loadingOverlay);
     }
 }
 
@@ -459,28 +460,28 @@ function S3DocumentalSelects(dur) {
     });
   
     // TAG
-    let trTag = document.createElement('tr');
-    trTag.id = 'trTag';
-    table.appendChild(trTag);
+    // let trTag = document.createElement('tr');
+    // trTag.id = 'trTag';
+    // table.appendChild(trTag);
   
-    let tdTag = document.createElement('td');
-    tdTag.setAttribute('colspan', '1');
-    let selTag = new AonNewSelect();
-    selTag.id = "aonDocumentalUploadTag";
-    selTag.title = MSG.TAG;
-    tdTag.appendChild(selTag);
+    // let tdTag = document.createElement('td');
+    // tdTag.setAttribute('colspan', '1');
+    // let selTag = new AonNewSelect();
+    // selTag.id = "aonDocumentalUploadTag";
+    // selTag.title = MSG.TAG;
+    // tdTag.appendChild(selTag);
   
-    getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-		if (tags && tags.length > 0) {		
-        selTag.options = JSON.stringify(tags.map(t => {
-            return {
-                value: t.id,
-                name: t.name
-            };
-        }));
-		trTag.appendChild(tdTag);
-	}
-    });
+    // getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+	// 	if (tags && tags.length > 0) {		
+    //     selTag.options = JSON.stringify(tags.map(t => {
+    //         return {
+    //             value: t.id,
+    //             name: t.name
+    //         };
+    //     }));
+	// 	trTag.appendChild(tdTag);
+	// }
+    // });
 	
         // CATEGORY	
 
@@ -524,7 +525,9 @@ function S3DocumentalSelects(dur) {
             };
         }));
             loadingOverlay.style.display = 'none';
-            uploadedCategory(selCat, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay);
+            //cuando se traten las categorias habra que poner trTag de nuevo
+            uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay);
+            // uploadedCategory(selCat, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay);
         } else {
             loadingOverlay.style.display = 'none';
             console.log('No hay categorias disponibles.');
@@ -538,7 +541,7 @@ function S3DocumentalSelects(dur) {
     // filtros para subir
     return table;
 }
-  function uploadedCategory(selCat, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay){
+  function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay){
     // Botton de aceptar oculto
     var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
     button.disabled = true;
@@ -547,7 +550,7 @@ function S3DocumentalSelects(dur) {
       button.disabled = true;
       const selectedCategoryId = event.target.value;
       // Limpiar los campos antes de generar nuevos select
-      clearFields(table, [trScope, trCategory, trTag, trDatePicker] ,
+      clearFields(table, [trScope, trCategory, trDatePicker] ,
          ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
       if (selectedCategoryId !== null && selectedCategoryId !== undefined && selectedCategoryId !== 'Seleccione una categoria') {
         // Crear un nuevo tr para Subcategoria solo si hay subcategorias
@@ -583,7 +586,7 @@ function S3DocumentalSelects(dur) {
 				const selectedSubCategoryId = event.target.value;
 
 				// Limpiar los campos de administración y modelos antes de generar nuevos
-				clearFields(table, [trScope, trCategory, trTag, trDatePicker, trSubCategory] ,
+				clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
                      ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
                      console.log('llega hasta selectedSubCategoryId',selectedSubCategoryId);
 				if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
@@ -619,7 +622,7 @@ function S3DocumentalSelects(dur) {
                                 const selectedAdministrationId = event.target.value;
 
                                 // Limpiar el campo de modelos antes de generar nuevos
-                                clearFields(table, [trScope, trCategory, trTag, trDatePicker, trSubCategory, trAdministration] ,
+                                clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
                                      ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
                                 if (selectedAdministrationId != null && selectedAdministrationId != undefined) {

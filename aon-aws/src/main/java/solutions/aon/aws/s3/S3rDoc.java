@@ -88,7 +88,7 @@ public class S3rDoc{
 		try {
 			S3Client client = getClient(bucket);
 			Date date = new Date();
-			String key = domain + "/" + UUID.randomUUID().toString().replace("-", "") + date.getTime() + mimetype != null ? "." + mimetype : "";
+			String key = domain + "/" + UUID.randomUUID().toString().replace("-", "") + date.getTime() + (mimetype != null ? "." + mimetype : "");
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 			client.putObject(request, RequestBody.fromBytes(bytes));
 			return key;
