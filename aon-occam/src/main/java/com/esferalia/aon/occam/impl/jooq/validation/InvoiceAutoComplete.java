@@ -662,13 +662,19 @@ public class InvoiceAutoComplete {
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_SCOPE = (inv,ctx) -> {
 		if((inv.getScope() == null || inv.getScope().getId() == null) && inv.getRegistry() != null)  {
 			if(inv.isSales()) {
-				Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistry());
+				Customer customer = CustomerDAO.get(ctx.getContext(), f -> 
+					f.getDomainProperty().eq(inv.getDomain())
+					.and(f.getRegistryProperty().eq(inv.getRegistry())));
 				inv.setScope(customer.getScope());
 			} else if(inv.isPurchase()) {
-				Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistry());
+				Supplier supplier = SupplierDAO.get(ctx.getContext(), f -> 
+					f.getDomainProperty().eq(inv.getDomain())
+					.and(f.getRegistryProperty().eq(inv.getRegistry())));
 				inv.setScope(supplier.getScope());				
 			} else if(inv.isExpenses() || inv.isUndeductible()){
-				Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistry());
+				Creditor creditor = CreditorDAO.get(ctx.getContext(), f -> 
+					f.getDomainProperty().eq(inv.getDomain())
+					.and(f.getRegistryProperty().eq(inv.getRegistry())));
 				inv.setScope(creditor.getScope());
 			}
 		}

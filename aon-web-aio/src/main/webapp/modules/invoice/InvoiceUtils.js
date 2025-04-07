@@ -3,6 +3,7 @@ import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
 import { Invoice } from "./Invoice.js";
 import * as LS from '../../services/localStorageService.js';
+import * as OPTION from './InvoiceOptions.js';
 
 export const uploadInvoices = async(el, files) => {
     let arr = [];
@@ -132,4 +133,38 @@ export const generateJobId = () => {
 
 export const zeros = (val) => {
     return val < 10 ? `0${val}` : val;
+}
+
+export const getTrashPendingFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.isEmitida()) {
+        return OPTION.INVOICE_ISSUED_BETA;
+    } else if (invoice.isTicket()){
+        return OPTION.INVOICE_TICKET;
+    } else return OPTION.INVOICE_RECEIVED_BETA;
+}
+
+export const getRejectFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.isEmitida()) {
+        return OPTION.PROFORMA_INVOICES;
+    } else if(invoice.isTicket()) {
+        return OPTION.RAWDOC_INBOX_TICKET_NEW;
+    } else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
+}
+
+export const getRestoreFromOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.isRejected()) {
+        return OPTION.RAWDOC_REJECT;
+    } else return OPTION.RAWDOC_TRASH;
+}
+    
+export const getRestoreToOption = (invoice) => {
+    invoice = new Invoice(invoice);
+    if(invoice.isEmitida()) {
+        return OPTION.PROFORMA_INVOICES;
+    } else if(invoice.isTicket()) {
+        return OPTION.RAWDOC_INBOX_TICKET_NEW;
+    } else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 }
