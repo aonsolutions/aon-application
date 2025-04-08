@@ -165,30 +165,29 @@ export class AonDocumental extends AonElement {
 
 	addDocumentOptions() {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
-		let documentOptions = [
-			{
-				id  : MSG.ALL_FILES,
-				name: MSG.ALL_FILES,
-				icon: 'insert_drive_file',
-				fn: () => {
-					this._filter.category = undefined;
-					this._filter.tag = undefined;
-					this._filter.type = 'all';
-					this.aonDocumentalList();
-				}
-			}
-		];
-		
+
         if (this.isBetaDoc()) {
 			let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
-			data2.options = documentOptions;
 			aonDocumental.addSidenavOptions3(data2);
 			let data3 = DocumentalSidenav.USER_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data3);
         }else{
-			let data = DocumentalSidenav.DOCUMENTS;
-			data.options = documentOptions;
-			aonDocumental.addSidenavOptions3(data);
+          let documentOptions = [
+              {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                      this._filter.category = undefined;
+                      this._filter.tag = undefined;
+                      this._filter.type = 'all';
+                      this.aonDocumentalList();
+                  }
+              }
+          ];
+          let data = DocumentalSidenav.DOCUMENTS;
+          data.options = documentOptions;
+          aonDocumental.addSidenavOptions3(data);
 		}
 	}
 
@@ -266,6 +265,19 @@ export class AonDocumental extends AonElement {
                 // Limpiamos
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
+                // Metemos el todo los documentos
+                let documentOptions = {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                    this._filter.category = undefined;
+                    this._filter.tag = undefined;
+                    this._filter.type = 'all';
+                    this.aonDocumentalList();
+                  }
+                };
+                application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
                 // Relenamos
 				categories.forEach(item => {
 					if(item.is_deletable === 0){
