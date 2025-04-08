@@ -70,29 +70,12 @@ public class InvoiceConsoleDAO {
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
-				,INVOICE.ACTIVITY
 				,INVOICE.TYPE
-				,INVOICE.TRANSACTION
-				,INVOICE.SERIES
-				,INVOICE.NUMBER
-				,INVOICE.REFERENCE_CODE
 				,INVOICE.ISSUE_DATE
-				,INVOICE.TAX_DATE
-				,INVOICE.REGISTRY
-				,INVOICE.RDOCUMENT
-				,INVOICE.RDOCUMENT_TYPE
-				,INVOICE.RDOCUMENT_COUNTRY
-				,INVOICE.RNAME
-				,INVOICE.SECURITY_LEVEL
-				,INVOICE.STATUS
-				,ENTERPRISE_ACTIVITY.DESCRIPTION
-				,IAE.EPIGRAPH
+				,INVOICE.REFERENCE_CODE
 				,TEDI_FIELD
 			)
 			.from(INVOICE)
-			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
-			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.eq(INVOICE.ACTIVITY))
-			.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 			.where(getWhere(params))
 			.and( TEDI_FIELD.in(
 				ctx.getDslContext().select( MAX_SOURCE )
@@ -104,7 +87,9 @@ public class InvoiceConsoleDAO {
 			.limit(params.getOffset() , params.getLimit())
 			.fetch()
 			.stream()
-			.map(new HeaderInvoiceFiller())
+			.map( r -> r.getValue(INVOICE.ID) )
+			.map( id -> InvoiceDAO.getFullInvoice( ctx, id) )
+			.filter( i -> i != null)
 			.map(i -> new InvoiceConsole().setInvoice(i))
 			.map( ic -> fillAttach(ctx, ic))
 			.map( ic -> fillSource(ctx, ic))

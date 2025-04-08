@@ -34,7 +34,7 @@ public class InvoiceConsoleServiceImpl extends AonStatelessRemoteServiceServlet 
 	
 	@Override
 	public AccountingInvoice getAccountingInvoice(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException {
-		return INVOICECONSOLE.getAccountingInvoice(occam, domain, invoiceId);
+		return INVOICECONSOLE.getOrInitializeAccountingInvoiceFromInvoice(occam, domain, invoiceId);
 	}
 
 }

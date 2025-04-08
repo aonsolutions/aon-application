@@ -35,9 +35,9 @@ public class INVOICECONSOLE {
 		}
 	}
 
-	public static AccountingInvoice getAccountingInvoice(Occam occam, int domain, Integer invoiceId) {
+	public static AccountingInvoice getOrInitializeAccountingInvoiceFromInvoice(Occam occam, Integer domain, Integer invoiceId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getAccounting().getAccountingInvoiceFromInvoice(ctx, invoiceId);
+			return getAccounting().getOrInitializeAccountingInvoiceFromInvoice(ctx, invoiceId);
 		}
 	}
 
