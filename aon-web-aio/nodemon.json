@@ -1,0 +1,10 @@
+{
+  "watch": [
+	"src",
+	"../aon-solutions/src"
+  ],
+  "ext": "js",
+  "exec": "npm run build-dev",
+  "ignore": ["node_modules", "dist"]
+}
+

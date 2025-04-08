@@ -2,8 +2,7 @@ import { AonElement } from '../../components/AonElement.js';
 import {
 	DocumentalSidenav, ASESOR_TYPE_OPTION,
 	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION,
-	EMPLOYEE_TYPE,
-	ASESOR_TYPE
+	EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
 } from './DocumentalEnums.js';
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
@@ -15,6 +14,7 @@ import { AonSelect } from '../../components/aon-select.js';
 import { MSG, MATERIAL_ICONS, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input';
 import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
@@ -165,30 +165,29 @@ export class AonDocumental extends AonElement {
 
 	addDocumentOptions() {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
-		let documentOptions = [
-			{
-				id  : MSG.ALL_FILES,
-				name: MSG.ALL_FILES,
-				icon: 'insert_drive_file',
-				fn: () => {
-					this._filter.category = undefined;
-					this._filter.tag = undefined;
-					this._filter.type = 'all';
-					this.aonDocumentalList();
-				}
-			}
-		];
-		
+
         if (this.isBetaDoc()) {
 			let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
-			data2.options = documentOptions;
 			aonDocumental.addSidenavOptions3(data2);
 			let data3 = DocumentalSidenav.USER_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data3);
         }else{
-			let data = DocumentalSidenav.DOCUMENTS;
-			data.options = documentOptions;
-			aonDocumental.addSidenavOptions3(data);
+          let documentOptions = [
+              {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                      this._filter.category = undefined;
+                      this._filter.tag = undefined;
+                      this._filter.type = 'all';
+                      this.aonDocumentalList();
+                  }
+              }
+          ];
+          let data = DocumentalSidenav.DOCUMENTS;
+          data.options = documentOptions;
+          aonDocumental.addSidenavOptions3(data);
 		}
 	}
 
@@ -201,7 +200,7 @@ export class AonDocumental extends AonElement {
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
-						this._filter.type = 'enterprise';
+						this._filter.type = ENTERPRISE_TYPE;
 						this.aonDocumentalList();
 					}
 				}, {
@@ -210,7 +209,7 @@ export class AonDocumental extends AonElement {
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
-						this._filter.type = 'employee';
+						this._filter.type = EMPLOYEE_TYPE;
 						this.aonDocumentalList();
 					}
 				}];
@@ -221,7 +220,7 @@ export class AonDocumental extends AonElement {
 						fn: () => {
 							this._filter.category = undefined;
 							this._filter.tag = undefined;
-							this._filter.type = 'asesor';
+							this._filter.type = ASESOR_TYPE;
 							this.aonDocumentalList();
 						}
 					});
@@ -263,11 +262,28 @@ export class AonDocumental extends AonElement {
 					};
 				});
 				let application = this.getApplication();
+                // Limpiamos
+                this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
+                this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
+                // Metemos el todo los documentos
+                let documentOptions = {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                    this._filter.category = undefined;
+                    this._filter.tag = undefined;
+                    this._filter.type = 'all';
+                    this.aonDocumentalList();
+                  }
+                };
+                application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
+                // Relenamos
 				categories.forEach(item => {
-					if(item.is_deletable == 0){
+					if(item.is_deletable === 0){
 						let optionDefaultCategory = {
 							name: item.name,
-							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							icon: 'insert_drive_file',
 							fn: () => {
 								this._filter.tag = undefined;
 								this._filter.category = item.id;
@@ -278,7 +294,7 @@ export class AonDocumental extends AonElement {
 					}else{
 						let optionUserCategories = {
 							name: item.name,
-							icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+							icon: 'insert_drive_file',
 							fn: () => {
 								this._filter.tag = undefined;
 								this._filter.category = item.id;
@@ -309,7 +325,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+						icon: 'label',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -419,23 +435,27 @@ export class AonDocumental extends AonElement {
 	// }
 	
 	createCategory() {
-			let d = document.getElementById(this.getApplication().DIALOG);
-			d.clear();
-			if (!this.isMobile()) d.width = '400px';
-			d.setTitle(MSG.ADD_CATEGORY);
-			let input = new AonInput();
-			input.id = "aonDocumentalAddCategory";
-			input.description = MSG.CATEGORY;
-			d.setContent(input);
-	
-			d.addAcceptAction(() => {
-				if (!input.value.isEmpty()) {
-					createCategory({ name: input.value }).then(() => {
-						this.loadCategories();
-					});
-				}
-			});
-			d.open();
+        let d = document.getElementById(this.getApplication().DIALOG);
+        d.clear();
+        if (!this.isMobile()) d.width = '400px';
+        d.setTitle(MSG.ADD_CATEGORY);
+        let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
+        input.id = "aonDocumentalAddCategory";
+        if(this.isBetaDoc()){
+          input.title = MSG.CATEGORY; 
+        } else {
+          input.description = MSG.CATEGORY;
+        }
+        d.setContent(input);
+
+        d.addAcceptAction(() => {
+            if (!input.value.isEmpty()) {
+                createCategory({ name: input.value }).then(() => {
+                    this.loadCategories();
+                });
+            }
+        });
+        d.open();
 	}	
 
 	editCategory(category) {
@@ -443,9 +463,13 @@ export class AonDocumental extends AonElement {
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.EDIT_CATEGORY);
-		let input = new AonInput();
+		let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
 		input.id = "aonDocumentalAddCategory";
-		input.description = MSG.CATEGORY;
+        if(this.isBetaDoc()){
+          input.title = MSG.CATEGORY; 
+        } else {
+          input.description = MSG.CATEGORY;
+        }
 		if (category.name) input.value = category.name;
 		d.setContent(input);
 		d.addAcceptAction(() => {

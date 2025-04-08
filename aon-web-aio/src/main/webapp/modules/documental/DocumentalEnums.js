@@ -131,4 +131,4 @@ export const DOCUMENTAL_VIEWS = {
   AON_DOCUMENT_MOBILE_AYUDAT:"aonDocumentMobileAyudat",
   AON_DOCUMENTAL_LIST_AYUDAT:"aonDocumentalListAyudat",
   AON_DOCUMENTAL_AYUDAT:"aonDocumentalAyudat",
-}
+};
