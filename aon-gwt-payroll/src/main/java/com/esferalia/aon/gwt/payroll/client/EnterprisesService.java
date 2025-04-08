@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -71,7 +72,6 @@ import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -491,5 +491,9 @@ public interface EnterprisesService extends RemoteService {
 	void createSystemVariable(String currentDomainName, String currentUser, Integer domainId, SystemVariable systemVariable) throws IllegalArgumentException ;
 	
 	void updateSystemVariables(String currentDomainName, String currentUser, Integer domainId, List<SystemVariable> systemVariables) throws IllegalArgumentException ;
+
+	// ------------------------------------------------ AgreementIntegrity
+	
+	AgreementIntegrity checkAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
 }

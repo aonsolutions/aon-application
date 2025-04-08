@@ -1484,5 +1484,11 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_contract_large_card")
 	String aonContractLargeCard();
+	
+	@ClassName("aon_dialog_glass")
+	String aonDialogGlass();
+	
+	@ClassName("aon_badge")
+	String aonBadge();
 }
 
