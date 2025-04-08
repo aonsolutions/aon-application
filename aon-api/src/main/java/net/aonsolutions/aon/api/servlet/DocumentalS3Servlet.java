@@ -439,6 +439,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		json.put(IJsonNames.MODIFICATION_DATE, document.getModificationDate());
 		json.put("registryType", getRegistryAttachmentType(document));
 		json.put(IJsonNames.TYPE, document.getType());
+		json.put(IJsonNames.SIZE, document.getSize());
 		return json;
 	}
 

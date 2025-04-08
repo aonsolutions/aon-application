@@ -19,6 +19,7 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
 				tag: data.tag,
 				scope: data.scope,
 				type: data.type,
+                // Añadir `registryType` solo si es beta y `data.registryType` existe
                 ...(isBetaDoc ? { registryType: data.registryType } : {}),
 				// agregar `date` solo si es beta y `data.date` existe
 				...(isBetaDoc && data.date ? { date: data.date } : {})
@@ -485,11 +486,12 @@ function S3DocumentalSelects(dur) {
 	
         // CATEGORY	
 
-    let oldCategories = loadOldCategories();
-    if(oldCategories){
-        createRadioButtonRow(table, 's3CategoriesRadio', 'Categorias despacho', handleRadioButtonChange);
-		createRadioButtonRow(table, 'oldCategoriesRadio', 'Tus categorias', handleRadioButtonChange);
-	}
+
+	 let oldCategories = loadOldCategories();
+	 if(oldCategories){
+        createRadioButtonRow(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
+		createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
+	 }
     let trCategory = document.createElement('tr');
     trCategory.id = 'trCategory';
     table.appendChild(trCategory);
@@ -568,7 +570,6 @@ function S3DocumentalSelects(dur) {
         // Mostrar el overlay
         loadingOverlay.style.display = 'flex';
         getS3Category(data).then(subcategories => {
-            console.log('aqui petaso');
           if (subcategories.length > 0) {
             selSubCat.options = JSON.stringify(subcategories.map(sc => {
               return {
@@ -588,8 +589,8 @@ function S3DocumentalSelects(dur) {
 				// Limpiar los campos de administración y modelos antes de generar nuevos
 				clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
                      ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
-                     console.log('llega hasta selectedSubCategoryId',selectedSubCategoryId);
-				if (selectedSubCategoryId !== null && selectedSubCategoryId !== undefined) {
+
+				if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
 					// Crear un nuevo tr para Administración solo si hay administraciones
 					let trAdministration = document.createElement('tr');
 					table.appendChild(trAdministration);
