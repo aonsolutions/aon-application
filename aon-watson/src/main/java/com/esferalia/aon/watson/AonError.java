@@ -217,6 +217,14 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_MODEL("Imposible borrar o modificar, la factura ha sido declarada en modelos fiscales: {0}")
 	,TRACKING_CANT_DELETE_MODEL("Imposible borrar o modificar, el vto. ha sido declarada en modelos fiscales: {0}")
 	
+	// --------------------------------------------- RECORDER
+	,INVOICE_RECORDER_INVESTMENT("Factura marcada como inversi\u00F3n")
+	,INVOICE_RECORDER_SURCHARGE("Factura con recargo de equivalencia")
+	,INVOICE_RECORDER_TRANSACTION("Factura de tipo {0}")
+	,INVOICE_RECORDER_WITHHOLDING("Factura con retenci\u00F3n")
+	,INVOICE_RECORDER_PREPAYMENT("Factura con suplidos")
+	,INVOICE_RECORDER_EXPENSE_ACCOUNT("Existen gastos sin cuenta asociada.")
+	
 	// --------------------------------------------- CALCULATOR
 	,INVOICE_CALC_REV_MORE("No se puede realizar el c\u00E1clulo inverso. Hay m\u00E1s de un detalle de fatura")
 	,INVOICE_CALC_REV_ZERO("No se puede realizar el c\u00E1lculo inverso. No hay detalles de factura.")

@@ -688,7 +688,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
-	@DefaultMessage("Mostrar mas datos")
+	@DefaultMessage("No se han m\u00E1s encontrado datos")
+	String noMoreData();
+
+	@DefaultMessage("Mostrar m\u00E1s datos")
 	String showMoreData();
 
 	@DefaultMessage("{0} - {1} de {2}")

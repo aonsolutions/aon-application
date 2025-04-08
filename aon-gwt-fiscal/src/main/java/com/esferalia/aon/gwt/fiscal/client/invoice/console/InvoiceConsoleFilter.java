@@ -49,6 +49,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 	private ListBox farmerRegimeBox = new ListBox();
 	private ListBox surchargeBox = new ListBox();
 	private ListBox rectificationTypeBox = new ListBox();
+	
+	private ListBox recordedBox = new ListBox();
 
 	
 	InvoiceConsoleFilter( InvoiceConsoleModuleOptions opts ) {
@@ -58,6 +60,7 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		initToDateBox(opts);
 		initConfidentialBox(opts);
 		initActivityBox(opts);
+		initRecordedBox(opts);
 		initRegistryBox(opts);
 		initOutputBox(opts);
 		initTransactionOutputBox(opts);
@@ -90,6 +93,8 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 				.addCell(toDateBox)
 				.addCellIf(hasActivities,new Label(AON.MSG.activity()),AON.CSS.aonItalic())
 				.addCellIf(hasActivities,activityBox)
+				.addCell(new Label(AON.MSG.recorded()),AON.CSS.aonItalic())
+				.addCell(recordedBox)
 				.addCell(new Label(AON.MSG.titular()),AON.CSS.aonSearchPanelLabel() )
 				.addCell(registryBox)
 				.addCell(new Label(), AON.CSS.aonFlexGrow1())
@@ -214,6 +219,14 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		transactionBox.addChangeHandler(event -> fire(opts));
 	}
 	
+	private void initRecordedBox(InvoiceConsoleModuleOptions opts) {
+		recordedBox = new ListBox();
+		recordedBox.addItem(TODAS);
+		recordedBox.addItem(AON.MSG.no());
+		recordedBox.addItem(AON.MSG.yes());
+		recordedBox.addChangeHandler(event -> fire(opts));
+	}
+
 	private void initRegistryBox(InvoiceConsoleModuleOptions opts) {
 		registryBox = new AonAccountingRegistryBox(opts,true);
 		registryBox.setRequired(false);
@@ -327,6 +340,9 @@ class InvoiceConsoleFilter extends SimpleLayoutPanel implements HasValueChangeHa
 		if (serviceBox.getSelectedIndex() == 1) params.setService(false);
 		if (serviceBox.getSelectedIndex() == 2) params.setService(true);
 			
+		if (recordedBox.getSelectedIndex() == 1) params.setRecorded(false);
+		if (recordedBox.getSelectedIndex() == 2) params.setRecorded(true);	
+
 		return params;
 	}
 

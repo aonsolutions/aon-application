@@ -9,6 +9,18 @@ public enum InvoiceErrorKey implements Serializable {
 			visitor.visitDomain(t);
 		}
 	},
+	INVESTMENT("Inversi\u00F3n") { 
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitInvestment(t);
+		}
+	},
+	SURCHARGE("Recargo de equivalencia") { 
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitSurcharge(t);
+		}
+	},
 	WORKPLACE("Centro de trabajo") {
 		@Override
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
@@ -200,7 +212,26 @@ public enum InvoiceErrorKey implements Serializable {
 		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
 			visitor.visitPayMethod(t);
 		}
-	};
+	},
+	GENERIC("Gen\u00E9rico"){
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitGeneric(t);
+		}
+	},
+	WITHHOLDING("Retenci\u00F3n"){
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitWithholding(t);
+		}
+	},
+	EXPENSE_ACCOUNT("Cuenta contable de gasto"){
+		@Override
+		public <T> void visit(InvoiceErrorKeyVisitor<T> visitor, T t) {
+			visitor.visitExpenseAccount(t);
+		}
+	}
+	;
 
 	private String description;
 

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceConsoleService;
 import com.esferalia.aon.occam.api.INVOICECONSOLE;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
@@ -22,9 +23,7 @@ public class InvoiceConsoleServiceImpl extends AonStatelessRemoteServiceServlet 
 
 	@Override
 	public LinkedList<InvoiceConsole> getInvoices(Occam occam, InvoiceConsoleParams params) throws AonCoreException {
-		return INVOICECONSOLE
-			.getInvoiceConsoles( occam, params)
-			.collect( Collectors.toCollection(LinkedList::new));
+		return new LinkedList<>( INVOICECONSOLE.getInvoiceConsoles( occam, params) );
 	}
 
 	@Override
@@ -33,6 +32,9 @@ public class InvoiceConsoleServiceImpl extends AonStatelessRemoteServiceServlet 
 			.getInvoice(occam, domain,   invoiceId);
 	}
 	
-	
+	@Override
+	public AccountingInvoice getAccountingInvoice(Occam occam, Integer domain, Integer invoiceId) throws AonCoreException {
+		return INVOICECONSOLE.getAccountingInvoice(occam, domain, invoiceId);
+	}
 
 }

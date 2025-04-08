@@ -664,12 +664,17 @@ public class AccountEntryDAO {
 						.findFirst()
 						.orElse( Integer.MIN_VALUE );
 				if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
+					InvoiceSource source  = InvoiceDAO.getInvoiceSource(ctx, invoiceId).orElse(null);
 					int count = ctx.getDslContext()
-						.delete(ACCOUNT_ENTRY_INVOICE)
-						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
-						.execute();
+							.delete(ACCOUNT_ENTRY_INVOICE)
+							.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
+							.execute();
 					ctx.log().debug("DELETE ACCOUNT_ENTRY_INVOICE ({0} filas.)",count);
-					InvoiceDAO.delete(ctx, invoiceId);
+					if (source == InvoiceSource.ACCOUNT) {
+						InvoiceDAO.delete(ctx, invoiceId);
+					} else {
+						InvoiceDAO.unrecord(ctx, invoiceId);
+					}
 				}
 			}
 			
