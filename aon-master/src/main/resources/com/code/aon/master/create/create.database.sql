@@ -9350,7 +9350,7 @@ CREATE TABLE `fs_model369_detail` (
 # Table structure for table `rdoc`
 #
 
-CREATE TABLE IF NOT EXISTS rdoc (
+CREATE TABLE rdoc (
 	id                INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	domain            INT NOT NULL COMMENT 'dominio del documento',
 	registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????',
@@ -9385,7 +9385,7 @@ CREATE TABLE IF NOT EXISTS rdoc (
 # Table structure for table `category_tree`
 #
 
-CREATE TABLE IF NOT EXISTS category_tree (
+CREATE TABLE category_tree (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
     parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
@@ -9399,6 +9399,24 @@ CREATE TABLE IF NOT EXISTS category_tree (
   	CONSTRAINT FK_CATEGORY_TREE_PARENT FOREIGN KEY (parent) REFERENCES category(id),
   	CONSTRAINT FK_CATEGORY_TREE_DOMAIN FOREIGN KEY (domain) REFERENCES domain(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creaci�n de jerarqu�a en las categorias del documental';
+
+#
+# Table structure for table `rdoc_tag`
+#
+
+CREATE TABLE `rdoc_tag` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain` int NOT NULL COMMENT 'identificador del dominio',
+  `rdoc` int NOT NULL COMMENT 'identificador del documento almacenado en rdoc',
+  `tag` int NOT NULL COMMENT 'identificador del tag',
+  PRIMARY KEY (`id`),
+  KEY `FK_RDOC_TAG_DOMAIN` (`domain`),
+  KEY `FK_RDOC_TAG_RDOC` (`rdoc`),
+  KEY `FK_RDOC_TAG_TAG` (`tag`),
+  CONSTRAINT `FK_RDOC_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RDOC_TAG_RDOC` FOREIGN KEY (`rdoc`) REFERENCES `rdoc` (`id`),
+  CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asociacion N:N de rdocs con tags.';
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 
