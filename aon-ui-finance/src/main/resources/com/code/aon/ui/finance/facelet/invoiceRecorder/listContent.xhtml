@@ -68,7 +68,7 @@
 			<aon:div styleClass="aon-scroll-area">   
 					<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important;">
 						<aon:div>	
-							<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
+							<!-- <aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
 								<aon:selectOneMenu id="filterType"
 									value="#{controller.typeOption}"
 									styleClass="aon-margin-left" >
@@ -81,7 +81,7 @@
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
 									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-								</aon:selectOneMenu>
+								</aon:selectOneMenu> -->
 								
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
 							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
