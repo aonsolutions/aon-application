@@ -68,6 +68,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivitySummary;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAddress;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementTab;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementsClean;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
@@ -81,7 +82,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqDomainSystemVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
-import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -102,6 +102,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
@@ -5204,6 +5205,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			SystemVariable systemVariable) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqDomainSystemVariables.createSystemVariable(connection, domainId, systemVariable);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	// ------------------------------------------------ AgreementIntegrity
+	
+	@Override
+	public AgreementIntegrity checkAgreementIntegrity(String domainName, Integer agreementId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqAgreementIntegrity.checkIntegrity(connection, domainId, agreementId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}

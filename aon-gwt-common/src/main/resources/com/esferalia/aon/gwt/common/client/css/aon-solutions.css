@@ -1424,6 +1424,7 @@
 
 .aon_toolbar_small_button_container {
 	display: flex;
+	align-items: center;
 }
 
 .aon_toolbar_message_container {
@@ -2486,4 +2487,24 @@
 	max-width: 75rem;
     min-height: 5rem;
     width: 100%;
+}
+
+.aon_dialog_glass{
+	z-index: 7;
+	background-color: #000;
+	opacity: 0.2;
+	filter: opacity(45%);
+}
+
+.aon_badge{
+	padding:.5rem;
+  	background-color: #ed3e3e;
+  	border-radius: 50%;
+  	height: 1.5rem;
+  	width: 1.5rem;
+  	color: white;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	font-size: .7rem;
 }
