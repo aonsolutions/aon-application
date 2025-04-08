@@ -255,7 +255,6 @@ export class AonDocument extends AonElement {
       let tr5 = this.createElement(TAG.TR);
       table.appendChild(tr5);
 
-
       let containerTags = this.createElement(TAG.DIV);
       containerTags.style.display = "flex";
       containerTags.style.flexWrap = "wrap";

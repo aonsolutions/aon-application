@@ -93,7 +93,7 @@ export class AonDocumentalList extends AonElement {
 	    let timeOut = null;
 	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
           clearTimeout(timeOut);
-				
+
           timeOut = setTimeout(() => {
 	        this._list = [];
 	        if(detail) {
@@ -122,21 +122,21 @@ export class AonDocumentalList extends AonElement {
 					delete detail.categoryOldFilter;
                 }
               // El tipo de category despacho
-				if(detail.category2){					
+				if(detail.category2){
 					detail.category = detail.category2;
 					delete detail.category2;
 				}
-				if(detail.category3){					
+				if(detail.category3){
 					detail.category = detail.category3;
 					delete detail.category3;
 				}
-				if(detail.category4){					
+				if(detail.category4){
 					detail.category = detail.category4;
 					delete detail.category4;
 				}
 				detail.name = detail.search;
 				this.setFilter(detail);
-				this.init();	
+				this.init();
 			} // this.getApplicationParent().setDataFilter(detail);
           }, 300);
 	    });

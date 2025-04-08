@@ -20,7 +20,7 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
 				scope: data.scope,
 				type: data.type,
                 ...(isBetaDoc ? { registryType: data.registryType } : {}),
-				// Añadir `date` solo si es beta y `data.date` existe
+				// agregar `date` solo si es beta y `data.date` existe
 				...(isBetaDoc && data.date ? { date: data.date } : {})
 			};
             const uploadDocumentsUse = isBetaDoc ? postS3Document : uploadFileDocumental;
@@ -29,7 +29,7 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
               .catch((e) => error(file, e));
     	}).catch((e) => error(file, e));
 	}
-}
+};
 
 export const uploadDocuments = (el, files, dur) => {
 	let d = new AonDialog();
@@ -45,7 +45,7 @@ export const uploadDocuments = (el, files, dur) => {
 			scope: document.getElementById("aonDocumentalUploadScope").value,
 			tag: document.getElementById("aonDocumentalUploadTag").value,
 			type: document.getElementById("aonDocumentalUploadType").value
-		}
+		};
 
 		let uploadToast = document.getElementById('aonUploadToast');
 		if(!uploadToast) {
@@ -57,12 +57,12 @@ export const uploadDocuments = (el, files, dur) => {
 		}
 	});
 	d.open();
-}
+};
 
 export const uploadOption = (dur, beta) => {
 	let table = beta ? S3DocumentalSelects(dur) : oldDocumentalSelects(dur);
 	return table;
-}
+};
 
 function oldDocumentalSelects(dur) {
 	let table = document.createElement('table');
@@ -84,7 +84,7 @@ function oldDocumentalSelects(dur) {
 			return {
 				value: c.id,
 				name: c.name
-			}
+			};
 		}));
 	});
 
@@ -105,7 +105,7 @@ function oldDocumentalSelects(dur) {
 			return {
 				value: s.id,
 				name: s.name
-			}
+			};
 		}));
 	});
 
@@ -126,7 +126,7 @@ function oldDocumentalSelects(dur) {
 			return {
 				value: t.id,
 				name: t.name
-			}
+			};
 		}));
 	});
 
@@ -163,7 +163,7 @@ function clearFields(table, fieldsToKeep = [], checkboxIds = []) {
 	trElements.forEach((tr) => {
 	  // Verificar si el tr tiene algún checkbox dentro y si su id está en checkboxIds
 	  const checkboxInTr = tr.querySelector('input[type="checkbox"]');
-        const radioInTr = tr.querySelector('input[type="radio"]');  
+        const radioInTr = tr.querySelector('input[type="radio"]');
         const shouldKeep = fieldsToKeep.includes(tr) || 
                            (checkboxInTr && checkboxIds.includes(checkboxInTr.id)) || 
                            radioInTr;  
@@ -312,22 +312,22 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
         value: "Seleccione una categoria",
         name: "Seleccione una categoria",
         id: "Seleccione una categoria",    
-        is_deletable: 0 ,
-    }
+        is_deletable: 0
+    };
     categoriesToLoad.unshift(defaultOption);
     // Crear las nuevas opciones basadas en el tipo de categoría seleccionada
     if (categoryType === 'old') {
             select.options = JSON.stringify(categoriesToLoad.map(c => {
                 return {
                     value: c.id,
-                    name: c.name,
+                    name: c.name
                 };
             }));
             select.value = categoriesToLoad[0].id;
             select.options = JSON.stringify(categoriesToLoad.filter(c => c.id !== 'Seleccione una categoria').map(c => {
                 return {
                     value: c.id,
-                    name: c.name,
+                    name: c.name
                 };
             }));
     } 
@@ -342,13 +342,13 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
         select.options = JSON.stringify(categoriesToLoad.filter(c => c.id !== 'Seleccione una categoria' && c.is_deletable === 0).map(c => {
             return {
                 value: c.id,
-                name: c.name,
+                name: c.name
             };
         }));
     }
 
     if (categoryType === 's3' && select.options) {
-    uploadedCategory(select, table, trScope, trCategory, trDatePicker, loadingOverlay);
+      uploadedCategory(select, table, trScope, trCategory, trDatePicker, loadingOverlay);
     }
 }
 
@@ -404,7 +404,7 @@ function S3DocumentalSelects(dur) {
         }
     `;
     document.head.appendChild(style);
-  
+
     loadingOverlay.appendChild(spinner);
     table.appendChild(loadingOverlay);
 
@@ -458,7 +458,7 @@ function S3DocumentalSelects(dur) {
             trScope.appendChild(tdScope);
         }
     });
-  
+
     // TAG
     // let trTag = document.createElement('tr');
     // trTag.id = 'trTag';
@@ -485,11 +485,11 @@ function S3DocumentalSelects(dur) {
 	
         // CATEGORY	
 
-	 let oldCategories = loadOldCategories();
-	 if(oldCategories){
+    let oldCategories = loadOldCategories();
+    if(oldCategories){
         createRadioButtonRow(table, 's3CategoriesRadio', 'Categorias despacho', handleRadioButtonChange);
 		createRadioButtonRow(table, 'oldCategoriesRadio', 'Tus categorias', handleRadioButtonChange);
-	 }
+	}
     let trCategory = document.createElement('tr');
     trCategory.id = 'trCategory';
     table.appendChild(trCategory);
@@ -504,8 +504,8 @@ function S3DocumentalSelects(dur) {
         let defaultOption = {
             value: "Seleccione una categoria",
             name: "Seleccione una categoria",
-            id: "Seleccione una categoria",    
-            is_deletable: 0 ,
+            id: "Seleccione una categoria",
+            is_deletable: 0
         }
         let data = { parent: null};
         getS3Category(data).then(categories => {
@@ -574,7 +574,7 @@ function S3DocumentalSelects(dur) {
               return {
                 value: sc.id,
                 name: sc.name
-              }
+              };
             }));
             trSubCategory.appendChild(tdSubCategory);
             // Oculta el overlay
@@ -589,7 +589,7 @@ function S3DocumentalSelects(dur) {
 				clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
                      ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
                      console.log('llega hasta selectedSubCategoryId',selectedSubCategoryId);
-				if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
+				if (selectedSubCategoryId !== null && selectedSubCategoryId !== undefined) {
 					// Crear un nuevo tr para Administración solo si hay administraciones
 					let trAdministration = document.createElement('tr');
 					table.appendChild(trAdministration);
@@ -610,7 +610,7 @@ function S3DocumentalSelects(dur) {
 								return {
 									value: adm.id,
 									name: adm.name
-								}
+								};
 							}));
 							trAdministration.appendChild(tdAdministration);
                             // Oculta el overlay
@@ -625,7 +625,7 @@ function S3DocumentalSelects(dur) {
                                 clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
                                      ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
-                                if (selectedAdministrationId != null && selectedAdministrationId != undefined) {
+                                if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
                                     // Crear un nuevo tr para Modelos solo si hay modelos
                                     let trModel = document.createElement('tr');
                                     table.appendChild(trModel);
@@ -646,7 +646,7 @@ function S3DocumentalSelects(dur) {
                                                 return {
                                                     value: mod.id,
                                                     name: mod.name
-                                                }
+                                                };
                                             }));
                                             trModel.appendChild(tdModel);
                                             // Oculta el overlay
@@ -701,4 +701,4 @@ const attach = async (reader, d) => {
 		type: d.type
 	};
 	return await uploadFileDocumental(data).catch(e => null);
-}
+};
