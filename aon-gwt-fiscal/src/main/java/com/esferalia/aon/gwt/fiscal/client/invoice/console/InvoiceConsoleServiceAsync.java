@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 import java.util.LinkedList;
-import java.util.Optional;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;

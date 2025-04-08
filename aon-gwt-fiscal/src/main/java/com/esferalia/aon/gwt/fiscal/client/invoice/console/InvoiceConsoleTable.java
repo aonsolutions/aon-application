@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -13,7 +12,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -97,6 +95,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 		grid.addHeaderRow()
 			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label(""),AON.CSS.aonWidth20())
+			.addCell(new Label(""),AON.CSS.aonWidth20())
 			.addCell(new Label("Cont"),AON.CSS.aonWidth40())
 			.addCell(new Label("Orig."),AON.CSS.aonWidth40())
 			.addCell(new Label("Tipo"),AON.CSS.aonWidth40())
@@ -108,6 +107,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 			.addCell(new Label("Fec. Fac."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Fec. Imp."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 			.addCell(new Label("Fec. Crea."),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
+			.addCell(new Label("Total"),AON.CSS.aonWidth80(),AON.CSS.aonNowrap())
 		;
 	}
 
@@ -155,8 +155,8 @@ class InvoiceConsoleTable extends ScrollPanel{
 				String creationDate = ensure(inv.getCreationDate(), () -> AON.DATE_FORMAT.format(inv.getCreationDate()), AonStringUtils.EMPTY);
 				Label creationDateLabel = new Label(creationDate);
 				
-				AonTableButton viewInvoice = new AonTableButton(AON.MSG.documentViewer(),AON.CSS.aonIconSearch());
-				viewInvoice.addClickHandler( event -> showInvoice(opts, inv.getId()));
+				AonTableButton debugInvoice = new AonTableButton("DEBUG",AON.CSS.aonIconWrench());
+				debugInvoice.addClickHandler( event -> debugInvoice(inv));
 				
 				AonTableButton recordInvoice = new AonTableButton(AON.MSG.record(),AON.CSS.aonIconAccountingRecord());
 				recordInvoice.addClickHandler( event -> showEntry(opts, inv.getId()) );
@@ -166,7 +166,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 
 				return row
 					.addCell( getInfoContainer(invConsole) )
-					.addCellIf( invConsole.hastAttach(), viewInvoice)
+					.addCellIf( invConsole.hastAttach(), debugInvoice)
 					
 					.addCellIf(!inv.isRecorded(), recordInvoice)	
 					.addCellIf(inv.isRecorded(), showEntry)
@@ -181,6 +181,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 					.addCell(issueDateLabel)
 					.addCell(taxDateLabel)
 					.addCell(creationDateLabel)
+					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() )
 				;
 			}
 
@@ -361,36 +362,17 @@ class InvoiceConsoleTable extends ScrollPanel{
 		
 	}
 	
-	
-	private void showInvoice(InvoiceConsoleModuleOptions options,Integer invoiceId) {
-		InvoiceConsoleModule.INVOICE_SERVICE.getInvoice(options.getOccam(), options.getOccam().getDomain(), invoiceId
-			,new AsyncCallback<Invoice>() {
-				@Override
-				public void onSuccess(Invoice inv) {
-					Optional.ofNullable(inv)
-						.ifPresentOrElse(
-							i -> {
-								AonCustomPopup dialog = new AonCustomPopup();
-								dialog.setWidth((Window.getClientWidth() - 100) + "px");
-								dialog.setHeight((Window.getClientHeight() - 100) + "px");
-								dialog.setAnimationEnabled(true);
-								dialog.setGlassEnabled(true);
-								dialog.setModal(true);
-								dialog.setCaption(AON.MSG.invoice());
-								dialog.add(new AonInvoiceViewer(i));
-								dialog.center();
-								dialog.show();
-							}
-					, () -> AonMessageDialog.error( "Factura no encontrada")
-					);
-				}
-	
-				@Override
-				public void onFailure(Throwable e) {
-					AonMessageDialog.error( "Error inexperado: " + e.getMessage());
-				}
-			}
-		);
+	private void debugInvoice(Invoice invoice) {
+		AonCustomPopup dialog = new AonCustomPopup();
+		dialog.setWidth((Window.getClientWidth() - 100) + "px");
+		dialog.setHeight((Window.getClientHeight() - 100) + "px");
+		dialog.setAnimationEnabled(true);
+		dialog.setGlassEnabled(true);
+		dialog.setModal(true);
+		dialog.setCaption(AON.MSG.invoice());
+		dialog.add(InvoiceConsoleTextPrinter.print(invoice));
+		dialog.center();
+		dialog.show();
 	}
 	
 }

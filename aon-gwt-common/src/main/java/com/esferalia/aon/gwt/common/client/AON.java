@@ -216,6 +216,7 @@ public class AON {
 	public static final NumberFormat ACCOUNT_FMT = NumberFormat.getFormat("#,##0.00;(#,##0.00)",MSG.currencyCode());
 	public static final NumberFormat FMT_INT = NumberFormat.getFormat(MSG.integerPattern());
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat.getFormat("#,##0.00");
+	public static final NumberFormat FMT_BASE = NumberFormat.getFormat("#,##0.0000");
 	public static final DateTimeFormat MONTH_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
 	public static final DateTimeFormat YEAR_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR);
 	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
