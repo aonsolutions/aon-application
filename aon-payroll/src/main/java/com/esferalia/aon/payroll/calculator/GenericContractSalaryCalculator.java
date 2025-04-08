@@ -44,6 +44,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_PRORRATED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PLUS_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -896,7 +897,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Double ereBase = quoteCalculator.getEreBase();
 			Double maternityBase = quoteCalculator.getMaternityBase();
 			Double rawMaternityBase = quoteCalculator.getRawMaternityBase();
-			Double additionalBase = quoteCalculator.getAdditionalBase();
 
 			Double directPayBase = quoteCalculator.getDirectPayBase();
 			Double rawDirectPayBase = quoteCalculator.getRawDirectPayBase();
@@ -930,7 +930,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 
 
-			addVars(expressionContext, CGC_BASE_RAW,  ADDITIONAL_BASE);
+			addVars(expressionContext, PLUS_BASE,  ADDITIONAL_BASE, BASE_PPE);
+			addVars(expressionContext, CGC_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
 			quoteCalculator.limit(CGC_BASE, expressionContext, start, end);
 			cgcBase = getValue(expressionContext, CGC_BASE);
 
@@ -958,7 +959,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
 			}
 
-			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE);
+			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
 			quoteCalculator.limit(CGP_BASE, expressionContext, start, end);
 			cgpBase = getValue(expressionContext, CGP_BASE);
 
