@@ -198,7 +198,7 @@ export class AonFutureTax extends AonElement {
     return {
       ...model,
       resultFormat: !isNaN(model.amount)
-        ? formatNumber(model.amount, 2, "EUR")
+        ? formatNumber(model.amount, 2, 2, "EUR")
         : null,
       periodText: this.filter.periodText,
       modelText: model.description,
@@ -215,7 +215,7 @@ export class AonFutureTax extends AonElement {
 
   getTotal(models) {
     let total = models.reduce((t, model) => t + model.result, 0);
-    return formatNumber(total, 2, "EUR");
+    return formatNumber(total, 2, 2, "EUR");
   }
 
   // Dialog

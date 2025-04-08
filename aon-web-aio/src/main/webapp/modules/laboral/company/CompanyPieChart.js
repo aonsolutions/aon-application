@@ -4,7 +4,7 @@ import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 
 // const customLenged = (data, total) => {
 //      for (let i = 0; i < data.length; i++) {
-//       let format = formatNumber(data[i][1],2);
+//       let format = formatNumber(data[i][1],2, 2);
 //       data[i][0] = `${data[i][0]} ${format} (${ ((data[i][1] / total) * 100).toFixed(1)}%)`;
 //     }
 // }
@@ -69,7 +69,7 @@ const paintPieChart = async (data, parent, aonIframe, leyend) => {
 
   newColor[2].valueColor = newColor[3].valueColor =  newColor[4].valueColor = "black";
   
-  let newData = fields.map(el=> [el[0], formatNumber(el[1], 2, "EUR")]);
+  let newData = fields.map(el=> [el[0], formatNumber(el[1], 2, 2, "EUR")]);
 
   if(leyend)
     await addLegend(parent, aonIframe, newData, newColor, (evClick)=>console.log(evClick));

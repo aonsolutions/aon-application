@@ -208,9 +208,9 @@ export class AonPayrollList extends AonElement {
             ...res,
             name: res.employeeName,
             lettersHtml: this.getDivIconStyle(res.type),
-            totalDeduction: formatNumber(res.totalDeduction, 2, "EUR"),
-            totalLiquid: formatNumber(res.totalLiquid, 2, "EUR"),
-            totalPayment: formatNumber(res.totalPayment, 2, "EUR"),
+            totalDeduction: formatNumber(res.totalDeduction, 2, 2, "EUR"),
+            totalLiquid: formatNumber(res.totalLiquid, 2, 2, "EUR"),
+            totalPayment: formatNumber(res.totalPayment, 2, 2, "EUR"),
           }));
           this._list = data;
           if(this.searchFilter) data = this.filterSearch(["name", "workplaceName"], data);

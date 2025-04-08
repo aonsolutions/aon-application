@@ -116,7 +116,7 @@ export class AonInvoiceList extends AonElement {
 		invoice.date = AonDateUtils.parse(invoice.date);
 		invoice.dateTable = AonDateUtils.formatDate(invoice.date);
 		invoice.documentNumber =  getDocumentNumber(invoice);
-		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+		invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
 		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
 		if(invoice.altered) {
