@@ -10,11 +10,11 @@ import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
-import { clearFields } from './DocumentalUtils.js'
 import { 
   DOCUMENTAL_FILTER_ASESOR, DOCUMENTAL_FILTER_ENTERPRISE, DOCUMENTAL_FILTER,
   ASESOR_TYPE, EMPLOYEE_TYPE
 } from "./DocumentalEnums.js";
+import { formatBytes } from '../../services/utils.js';
 
 export class AonDocumentalList extends AonElement {
 	more;
@@ -69,7 +69,7 @@ export class AonDocumentalList extends AonElement {
         } else {
           aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
         }
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '60%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '50%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
 		// Iniciar tabla
@@ -355,7 +355,7 @@ export class AonDocumentalList extends AonElement {
     loadDocumentsIntoTable(table, filter, isInit = false) {
         const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
 
-        fetchDocuments(filter).then(documents => {
+        fetchDocuments(filter).then(documents => {	
             if (isInit) {
                 table.removeRows();               // Limpiar la tabla si es la inicializaci�n
                 table.selected = [];              // Limpiar la selecci�n
@@ -374,6 +374,9 @@ export class AonDocumentalList extends AonElement {
 
             // Insertar los documentos en la tabla
             documents.forEach((doc, i) => {
+				if(this.isBetaDoc() && documents[i].size){
+					documents[i].size = formatBytes(documents[i].size);
+				}
                 let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
                 tr.id = "aonDocumentalRow";
             });
@@ -519,13 +522,13 @@ export class AonDocumentalList extends AonElement {
 	aonDocumentContextMenu(e, doc, i) {
 		e.preventDefault();
 		let rect = e.target.getBoundingClientRect();
-    let x = e.clientX - rect.left;
+    	let x = e.clientX - rect.left;
 		let y = e.clientY - rect.top;
 
-	  const top  = rect.top + y;
-	  const left = rect.left + x;
+	  	const top  = rect.top + y;
+	  	const left = rect.left + x;
 
-    let aonDocumental = this.getElement('aonDocumental');
+    	let aonDocumental = this.getElement('aonDocumental');
 		let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
 		let send = ACTION.SEND_FILE;
