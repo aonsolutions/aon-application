@@ -9410,9 +9410,9 @@ CREATE TABLE `rdoc_tag` (
   `rdoc` int NOT NULL COMMENT 'identificador del documento almacenado en rdoc',
   `tag` int NOT NULL COMMENT 'identificador del tag',
   PRIMARY KEY (`id`),
-  KEY `FK_RDOC_TAG_DOMAIN` (`domain`),
-  KEY `FK_RDOC_TAG_RDOC` (`rdoc`),
-  KEY `FK_RDOC_TAG_TAG` (`tag`),
+  KEY `IDX_RDOC_TAG_DOMAIN` (`domain`),
+  KEY `IDX_RDOC_TAG_RDOC` (`rdoc`),
+  KEY `IDX_RDOC_TAG_TAG` (`tag`),
   CONSTRAINT `FK_RDOC_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RDOC_TAG_RDOC` FOREIGN KEY (`rdoc`) REFERENCES `rdoc` (`id`),
   CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
