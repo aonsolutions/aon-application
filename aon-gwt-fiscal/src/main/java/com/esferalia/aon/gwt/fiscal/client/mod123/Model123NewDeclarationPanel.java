@@ -56,7 +56,7 @@ public class Model123NewDeclarationPanel extends DockLayoutPanel {
 	}
 	
 	private void registerHandlers(Mod123 model, Model123Callback callback) {
-		admonList = new AdministrationListBox();
+		admonList = new AdministrationListBox(false, false, true);
 		yearBox = new AonIntegerBox();	
 		periodList = new PeriodListBox(true);
 		replacement = new CheckBox();

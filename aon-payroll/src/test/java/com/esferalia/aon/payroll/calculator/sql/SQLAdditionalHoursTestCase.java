@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
+		
 		@SuppressWarnings("serial")
 		ContractRecord contract = newContract(aonContext, getFirstDayOfMonth(getToday()),
 				new HashMap<String, String>() {
@@ -62,9 +64,10 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 						put(ContextVariable.CGP_BASE_MIN.getName(), ContextVariable.CGC_BASE_MIN.getName());
 						put(ContextVariable.CGC_BASE_MIN.getName(), "1166.70 * 0.50");
 						put("BASE_CGC_MIN_HORA", "7.03");
-
 					}
 				});
+		addSystemData(aonContext, contract.getStartDate(), null, Collections.singletonMap(ContextVariable.SALARY_HOURS.getName(), 
+				"MAX(1,FLOOR(MIN(HORAS_TRABAJADAS, MIN(BASE_CGC,BASE_CGP)/BASE_CGC_MIN_HORA - (isdef HORAS_COMPLEMENTARIAS ? HORAS_COMPLEMENTARIAS : 0.00))))"));
 
 		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), "SALARIO_BASE",
 				"100.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001, SalaryType.SALARY);
@@ -103,6 +106,10 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 //		String cgpBaseEnterprise = salary.getSalaryData(ContextVariable.CGP_BASE_ENTERPRISE.getName());
 //		Assert.assertEquals(1100.00, Double.parseDouble(cgpBaseEnterprise), DELTA);
 
+		String salaryHours = salary.getSalaryData(ContextVariable.SALARY_HOURS.getName());
+		Assert.assertTrue(Double.parseDouble(cgcBase) / 7.03  + " > " +  (Double.parseDouble(salaryHours) + 10.00 )  
+				,Double.parseDouble(cgcBase) / 7.03 > (Double.parseDouble(salaryHours) + 10.00 ) );
+		Assert.assertTrue(Double.parseDouble(cgcBase) > ((Double.parseDouble(salaryHours) )* 7.03) );
 	}
 
 	@Test

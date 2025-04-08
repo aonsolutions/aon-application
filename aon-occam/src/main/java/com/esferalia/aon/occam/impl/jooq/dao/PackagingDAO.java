@@ -172,7 +172,8 @@ public class PackagingDAO {
 		
 		if(item.isEmpty()) {
 			packaging.getItem().setDescription(packaging.getBase().getProduct().getName() 
-					+ " #" + packaging.getItem().getSerialNumber());
+					+ " #" + packaging.getItem().getSerialNumber())
+				.setStatus(ProductStatus.ACTIVE);
 			item = ItemDAO.save(ctx, packaging.getItem());
 			packaging.setItem(item);			
 		} else packaging.setItem(item);
@@ -724,7 +725,7 @@ public class PackagingDAO {
 			String sscc = generateSSCC(ctx);
 			System.out.println(sscc);
 			Item container = packaging.getContainer().copy();
-			container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date());
+			container.setId(null).setBarcode(null).setSerialNumber(sscc).setSerialDate(new Date()).setStatus(ProductStatus.ACTIVE);
 			container = ItemDAO.save(ctx, container);
 			if(container.getProduct().isPerishable()) {
 				Date expireDate = AonDateUtils.addDays(container.getSerialDate(), 

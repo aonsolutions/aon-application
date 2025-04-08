@@ -322,6 +322,12 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 	@Override public void visitIrpfRate(ICallback callback ){noVisit();}
 	@Override public void visitPayMethod(ICallback callback){noVisit();}
 	@Override public void visitIrpfQuota(ICallback callback ){noVisit();}
+	@Override public void visitInvestment(ICallback callback ){noVisit();}
+	@Override public void visitSurcharge(ICallback callback ){noVisit();}
+	@Override public void visitGeneric(ICallback callback ){noVisit();}
+	@Override public void visitWithholding(ICallback callback ){noVisit();}
+	@Override public void visitExpenseAccount(ICallback callback ){noVisit();}
+	
 
 	//--------------------------------------------------------------------------- 
 	// ---------------------------------------------------------------- [PRIVATE]
@@ -370,35 +376,41 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 			String n = Optional.ofNullable( reg ).map( r -> AonStringUtils.defaultString(reg.getName())).orElse(null);
 			InvoiceType invoiceType = callback.getCallback().getResult().getInvoice().getType();
 			StringBuilder buf = new StringBuilder("Crear el ");
-			AccountingRegistryType type = invoiceType.visit(null, new IInvoiceTypeVisitor<AccountingRegistryType>() {
-
-				@Override
-				public AccountingRegistryType visitPurchase(Invoice invoice) {
-					buf.append("proveedor");
-					return AccountingRegistryType.SUPPLIER;
-				}
-
-				@Override
-				public AccountingRegistryType visitSales(Invoice invoice) {
-					buf.append("cliente");
-					return AccountingRegistryType.CUSTOMER;
-				}
-
-				@Override
-				public AccountingRegistryType visitExpenses(Invoice invoice) {
-					buf.append("acreedor");
-					return AccountingRegistryType.CREDITOR;
-				}
-
-				@Override
-				public AccountingRegistryType visitUndeductible(Invoice invoice) {
-					return visitExpenses(invoice);
-				}
-			});
+			AccountingRegistryType tempType = null; 
+			if (invoiceType == null) {
+				buf.append("titular");
+			} else {
+				tempType = invoiceType.visit(null, new IInvoiceTypeVisitor<AccountingRegistryType>() {
+					
+					@Override
+					public AccountingRegistryType visitPurchase(Invoice invoice) {
+						buf.append("proveedor");
+						return AccountingRegistryType.SUPPLIER;
+					}
+					
+					@Override
+					public AccountingRegistryType visitSales(Invoice invoice) {
+						buf.append("cliente");
+						return AccountingRegistryType.CUSTOMER;
+					}
+					
+					@Override
+					public AccountingRegistryType visitExpenses(Invoice invoice) {
+						buf.append("acreedor");
+						return AccountingRegistryType.CREDITOR;
+					}
+					
+					@Override
+					public AccountingRegistryType visitUndeductible(Invoice invoice) {
+						return visitExpenses(invoice);
+					}
+				});
+			}
 			buf.append(" - ")
 				.append(AonStringUtils.defaultString(d))
 				.append(" ")
 				.append(AonStringUtils.defaultString(n));
+			AccountingRegistryType type = tempType;
 			Button newRegistry = new Button(buf.toString());
 			newRegistry.setStyleName(AON.CSS.aonTabButton());
 			newRegistry.addStyleName(AON.CSS.aonWidthAutoImportant());

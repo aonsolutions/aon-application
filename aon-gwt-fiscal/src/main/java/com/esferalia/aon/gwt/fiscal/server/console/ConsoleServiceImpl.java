@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -111,5 +112,16 @@ public class ConsoleServiceImpl extends AonStatelessRemoteServiceServlet impleme
 				return div( "Testing ...: " + cs.getSchema()  + " --> " + result);
 			}) 
 		).render();
+	}
+
+	@Override
+	public LinkedList<Scope> getScopes(String schema, Integer domainId) throws AonCoreException {
+		return CONSOLE.getScopes(schema, domainId)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	@Override
+	public String updateScopes(String schema, Integer domainId, Integer wrongScopeId, Integer newScopeId) throws AonCoreException {
+		return CONSOLE.updateScopes(schema, domainId, wrongScopeId, newScopeId);
 	}
 }

@@ -246,7 +246,7 @@ public class FacturasRecibidas extends SIIBuilt{
 				AppParam.SII_INCLUDE_DATE);
 		
 		Date siiDate = ap2 != null && ap2.getId() != null ? AonDateUtils.parse(ap2.getValue(), "yyyy-MM-dd") : AonDateUtils.getDate(2018, 0, 1);
-		if(siiDate == null) AonDateUtils.getDate(2018, 0, 1); 
+		if(siiDate == null) siiDate = AonDateUtils.getDate(2018, 0, 1); 
 		if (opDate.compareTo(siiDate) < 0) {
 			frt.setClaveRegimenEspecialOTrascendencia(ClaveRegimenEspecialOTrascendenciaRecibidasType._14.getName());
 		}

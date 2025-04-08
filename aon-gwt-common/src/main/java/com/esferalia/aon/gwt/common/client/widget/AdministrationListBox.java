@@ -5,7 +5,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class AdministrationListBox extends ListBox {
-
 	
 	public AdministrationListBox() {
 		this(false, false);
@@ -14,8 +13,12 @@ public class AdministrationListBox extends ListBox {
 	public AdministrationListBox(boolean onlyForal) {
 		this(onlyForal, false);
 	}
+	
+	public AdministrationListBox(boolean onlyForal, boolean hideNavarra) {
+		this(onlyForal, hideNavarra, false);
+	}
 
-	public AdministrationListBox( boolean onlyForal, boolean hideNavarra) {
+	public AdministrationListBox(boolean onlyForal, boolean hideNavarra, boolean hideCanarias) {
 		setWidth("130px");
 		this.addItem( Administration.ALAVA.getDescription());
 		this.addItem( Administration.BIZKAIA.getDescription());
@@ -25,7 +28,9 @@ public class AdministrationListBox extends ListBox {
 		}
 		if (!onlyForal) {
 			this.addItem( Administration.COMMON_TERRITORY.getDescription());
-			this.addItem( Administration.CANARIAS.getDescription());
+			if (!hideCanarias) {
+				this.addItem( Administration.CANARIAS.getDescription());	
+			}
 		}
 	}
 

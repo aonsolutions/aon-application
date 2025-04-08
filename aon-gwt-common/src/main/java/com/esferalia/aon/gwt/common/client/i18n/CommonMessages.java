@@ -175,6 +175,7 @@ public interface CommonMessages extends Messages {
 		,"GIPUZKOA"			,"Diputaci\u00F3n foral Gipuzkoa"
 		,"NAVARRA"			,"Gobierno foral de Navarra"
 		,"COMMON_TERRITORY"	,"Agencia Tributaria"
+		,"CANARIAS"			,"Agencia Tributaria Canaria"
 		})	
 	String administrationName(@Select Administration administration);
 
@@ -687,7 +688,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
 
-	@DefaultMessage("Mostrar mas datos")
+	@DefaultMessage("No se han m\u00E1s encontrado datos")
+	String noMoreData();
+
+	@DefaultMessage("Mostrar m\u00E1s datos")
 	String showMoreData();
 
 	@DefaultMessage("{0} - {1} de {2}")

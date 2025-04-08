@@ -64,8 +64,8 @@ export class AonInvoiceHome extends AonElement {
         this.NEW_ISSUED_INVOICE = this.id + 'NewIssuedInvoice';
         this.NEW_RECEIVED_INVOICE = this.id + 'NewReceivedInvoice';
         this.NEW_TICKET_INVOICE = this.id + 'NewTicketInvoice';
-		this.NEW_INCOME = this.id = "NewIncome";
-		this.NEW_EXPENSE = this.id = "NewExpense";
+		this.NEW_INCOME = this.id + "NewIncome";
+		this.NEW_EXPENSE = this.id + "NewExpense";
 		this.CHARGE_AND_PAYMENTS = this.id + 'ChargeAndPayments';
 		this.INVOICE_RESUME = this.id + 'InvoiceResume';
     }

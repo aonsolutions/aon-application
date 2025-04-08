@@ -111,14 +111,6 @@ public class ConsoleDomainCheckScopeIntegrity {
 				.groupBy( getScopeField(t) )
 				.fetch()
 				.stream()
-				.map( r -> {
-					String m = MessageFormat.format("Checking {0} table", t.getName());
-					ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId
-						,params.getPartialCount()
-						,params.getPartialProgress() )
-						.setMessage(m));					
-					return r;
-				})
 				.forEach( r -> {
 					Integer s  = r.getValue( getScopeField(t) );
 					Integer c = r.getValue( count );

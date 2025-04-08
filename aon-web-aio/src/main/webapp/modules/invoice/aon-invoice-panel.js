@@ -402,8 +402,8 @@ export class AonInvoicePanel extends AonElement {
       if (r && r.rawdoc && r.rawdoc.processing && r.rawdoc.processing.count && r.rawdoc.processing.count > 0) {
         addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processing.count);
       }
-      if (r && r.rawdoc && r.rawdoc.pending && r.rawdoc.pending.count && r.rawdoc.pending.count > 0) {
-        addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.pending.count);
+      if (r && r.rawdoc && r.rawdoc.processed && r.rawdoc.processed.count && r.rawdoc.processed.count > 0) {
+        addCounter(OPTION.RAWDOC_PROCESSING, r.rawdoc.processed.count);
       }
       this.updateCounterSpan(OPTION.RAWDOC_PROCESSING);
 

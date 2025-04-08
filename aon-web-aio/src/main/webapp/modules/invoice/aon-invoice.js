@@ -29,6 +29,7 @@ import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
+import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoice extends AonElement {
 
@@ -419,7 +420,6 @@ export class AonInvoice extends AonElement {
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-			invoiceToolbar.addSeparator();
 		} 
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
 		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
@@ -434,14 +434,16 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || this.getInvoice().isEmitida()) 
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || this.getInvoice().isEmitida())
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -2746,7 +2748,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
-			this.updateCounter(this.getRejectFromOption(), OPTION.RAWDOC_REJECT, 1);
+			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -2754,15 +2756,6 @@ export class AonInvoice extends AonElement {
 		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
-	}
-
-	getRejectFromOption() {
-		// (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.RAWDOC_INBOX_ISSUED;
-		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED;
 	}
 
 	addInvoiceRemarks() {
@@ -3019,8 +3012,6 @@ export class AonInvoice extends AonElement {
 
 	trashInvoice() {
 		this.updateCounter(this.getTrashFromOption(), OPTION.RAWDOC_TRASH, 1);
-		let invofoxRejected = this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION);
-		if(!this.getInvoice().isRejected() && !invofoxRejected)
 		this.getInvoice().status = CONSTANT.DRAFT;
 		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
@@ -3057,7 +3048,7 @@ export class AonInvoice extends AonElement {
 				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
-					this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
+					this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
 				}).catch(e => this.showError(e));
@@ -3065,40 +3056,18 @@ export class AonInvoice extends AonElement {
 			d.open();
 		} else {
 			deleteInvoice(data).then(() => {
-				this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
+				this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 				this.showMessage(MSG.DELETED_DATA);
 				this.back();
 			}).catch(e => this.showError(e));
 		}
 	}
-
-	getTrashPendingFromOption() {
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.INVOICE_ISSUED_BETA;
-		} else if (this.getInvoice().isTicket()){
-			return OPTION.INVOICE_TICKET;
-		} else return OPTION.INVOICE_RECEIVED_BETA;
-	}
 	
 	restoreInvoice() {
+		this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
 		this.getInvoice().status = CONSTANT.INBOX;
 		this.save(MSG.RESTORED_DATA);
-		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
 		this.reload();
-	}
-
-	getRestoreFromOption() {
-		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
-			return OPTION.RAWDOC_REJECT;
-		} else return OPTION.RAWDOC_TRASH;
-	}
-	
-	getRestoreToOption() {
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.PROFORMA_INVOICES;
-		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET_NEW;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	removeInvoice() {

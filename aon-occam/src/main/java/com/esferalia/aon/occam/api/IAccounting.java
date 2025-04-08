@@ -94,6 +94,7 @@ public interface IAccounting {
 	public void delete(AONContext ctx,Integer id);
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
+	public AccountingInvoice getOrInitializeAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
 	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query);
 	public LinkedList<AccountingInvoice> getRegistryNotRectifiedAccountingInvoices(AONContext ctx, Integer registry, String query);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);

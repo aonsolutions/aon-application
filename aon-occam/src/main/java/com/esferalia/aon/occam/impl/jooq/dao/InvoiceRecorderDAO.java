@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import java.util.stream.Stream;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
@@ -10,20 +13,18 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public class InvoiceRecorderDAO {
 	
 	private InvoiceRecorderDAO() {
 		
-	}
-	
-	public static Stream<Invoice> getUnrecordedInvoices(AONContext ctx, InvoiceFilter filter) {
-		return InvoiceDAO.getInvoiceStream(ctx, filter)
-			.filter( Invoice::isRecorded )
-			.map( i -> InvoiceDAO.getFullInvoice(ctx, i.getId()) )
-			.map( i -> fillRecorderMessages(ctx, i) );
 	}
 	
 	public static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx, Invoice invoice) {
@@ -69,155 +70,96 @@ public class InvoiceRecorderDAO {
 		return accountEntry;
 	}
 
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	// ************************************************************************************** 	
-	private static Invoice fillRecorderMessages(AONContext ctx, Invoice inv) {
-		return inv;
-	}
-	/*
-	private static Invoice fillRecorderMessages(AONContext ctx, Invoice inv) {
-		inv.clearMessages();
-		inv.setRecordable(true);
-		if (!inv.isRecorded()) {
-				checkFinanceInaccuracyPresent(ctx, inv);
-				checkInvestmentAmortizationFormPresent();
-				InvoiceType type = getInvoice().getType();
-	
-				if ( getInvoice().isWithholding()) {
-					addMessage("Factura con retenciones I.R.P.F.");
-				}
-				if ( getInvoice().isSurcharge()) {
-					addMessage("Factura con Recargo de Equivalencia.");
-				}
-				if ( getInvoice().getTransaction() != InvoiceTransactionType.NATIONAL) {
-					Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-					addMessage("Factura de tipo " + getInvoice().getTransaction().getName(locale));
-				}
-				if ( getInvoice().isInvestment() ) {
-					addMessage("Factura marcada como inversión.");
-				}
-				if (!isDateEquals()) {
-					addMessage("Fecha de IVA diferente a fecha de factura.");
-				}
-				
-				if (type == InvoiceType.SALES) {
-					setAccount( getAccountBridgeUtil().getCustomerAccount(getInvoice().getRegistry()));	
-				} else if (type == InvoiceType.PURCHASE) {
-					setAccount( getAccountBridgeUtil().getSupplierAccount(getInvoice().getRegistry()));	
-				} else if (type == InvoiceType.EXPENSES) {
-					setAccount( getAccountBridgeUtil().getCreditorAccount(getInvoice().getRegistry()));	
-				}
-				if (getAccount() != null &&  (invoice.getType() == InvoiceType.EXPENSES || invoice.getType() == InvoiceType.UNDEDUCTIBLE)) {
-					checkExpenseAccount();
-				}
-			} catch (ManagerBeanException ex) {
-				addMessage("Error en el chequeo. " +  ex.getMessage());
-			}
-		}
-		setRefresh(false);
-	}
-	
-	private void checkExpenseAccount() throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
-		boolean wrong = false;
-		for (ITransferObject to: list) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
-			if (invoiceDetail.getItem() != null) {
-				Account expenseAccount = invoiceDetail.getItem().getProduct().getPurchaseAccount();
-				if (invoiceDetail.getItem().getProduct().getType() == ProductType.EXPENSE) {
-					if (expenseAccount == null || expenseAccount.getId() == null) {
-						wrong = true;
-						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
-					} else {
-						Connection connection = null; 
-						try {
-//							IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-							connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-							DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
-							AggregateFunction<Integer> countFunc = DSL.countDistinct(ACCOUNT_ENTRY_DETAIL.ID);
-							Result<Record4<Integer,String,String,Integer>> r = 
-								ctx.select(ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT.CODE,ACCOUNT.DESCRIPTION,countFunc)
-									.from(ACCOUNT_ENTRY_DETAIL)
-									.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-									.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ACCOUNT_ENTRY_DETAIL.DOMAIN))
-									.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(DomainManager.getCurrentDomain()))
-									.and(ACCOUNT.DOMAIN.in(DOMAIN.ID, DOMAIN.PARENT))
-									.and(ACCOUNT.CODE.like(getAccount().getCode()))
-									.groupBy(ACCOUNT_ENTRY_DETAIL.ACCOUNT)
-									.orderBy(countFunc.desc())
-									.fetch();
-							Account first = null;
-							boolean used = false;
-							for (Record4<Integer,String,String,Integer> step : r) {
-								Integer id = step.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
-								String code = step.getValue(ACCOUNT.CODE);
-								if (first == null && "6".startsWith(code)) {
-									first = new Account();
-									first.setId(id);
-									first.setCode(code);
-									first.setDescription(step.getValue(ACCOUNT.DESCRIPTION));
-								}
-								if (id.equals(expenseAccount.getId()) ) {
-									used = true;
-									break;
-								}
-							}
-							if (!used) {
-								String msg = "Este acreedor nunca ha registrado una factura de gasto \"" + invoiceDetail.getDescription() + "\""; 
-								if (first != null) {
-									msg += " y su cuenta de gastos más utilizada es \"" + first.getFullDescription() +"\".";
-								}
-								addMessage(msg);
-							}
-						} catch (AonConnectionException e) {
-							throw new ManagerBeanException(e.getMessage(), e);
-						} finally {
-							DatabaseUtil.closeQuietly(connection);
-						}
-					}
-					
-				}
-			}
-		}
-		if (wrong) {
-			setRecordable(false);
-		}
+	private record InvoicePreRecordContext( AONContext ctx, int domain, InvoiceConsole ic ) {};
+	static InvoiceConsole fillMessages(AONContext ctx, int domain, InvoiceConsole ic) {
+		CHECK_IF_INVESTMENT
+			.andThen(CHECK_IF_SURCHARGE)
+			.andThen(CHECK_IF_WITHHOLDING)
+			.andThen(CHECK_TRANSACTION)
+			.andThen(CHECK_PREPAYMENT)
+			.andThen(CHECK_EXPENSES)
+			.accept(new InvoicePreRecordContext(ctx, domain, ic));
+		return ic;
 	}
 
-	private void checkFinanceInaccuracyPresent(AONContext ctx, Invoice inv) {
-		double total = inv.getTotal();
-		double financeTotal = AonMathUtils.round(AonCollectionUtils.stream(inv.getFinances()).mapToDouble( f -> f.getAmount()).sum());
-		boolean ok = !inv.isRecorded() && (financeTotal == 0 || total == financeTotal);
-		if (!ok) {
-			inv.setRecordable(false);
-			inv.addMessage(TediErrorMessages.C200.err(TediContextKey.FINANCE_TOTAL_AMOUNT));
+	// ************************************************************************************** 	
+	// *************************************************************************** [CHECK] ** 	
+	// ************************************************************************************** 	
+	private static final Consumer<InvoicePreRecordContext> CHECK_IF_INVESTMENT = c -> {
+		if (c.ic.getInvoice().isInvestment()) {
+			InvoiceError error = new InvoiceError(
+				InvoiceErrorKey.INVESTMENT
+				,InvoiceErrorLevel.INF
+				,AonError.INVOICE_RECORDER_INVESTMENT.getMessage());
+			c.ic.getInvoice().addMessage(error);
 		}
-		if (financeTotal == 0) {
-			addMessage("Factura sin Vencimientos.");			
+	};
+
+	private static final Consumer<InvoicePreRecordContext> CHECK_IF_SURCHARGE = c -> {
+		if (c.ic.getInvoice().isSurcharge()) {
+			InvoiceError error = new InvoiceError(
+				InvoiceErrorKey.SURCHARGE
+				,InvoiceErrorLevel.INF
+				,AonError.INVOICE_RECORDER_SURCHARGE.getMessage());
+			c.ic.getInvoice().addMessage(error);
 		}
-	}
+	};
 	
-	private void checkInvestmentAmortizationFormPresent() throws ManagerBeanException {
-		if (getInvoice().isInvestment() && !hasAmortizationLinked()) {
-			setRecordable(false);
-			addFinanceNoAmortizationForm();
+	private static final Consumer<InvoicePreRecordContext> CHECK_IF_WITHHOLDING = c -> {
+		if (c.ic.getInvoice().isWithholding()) {
+			InvoiceError error = new InvoiceError(
+				InvoiceErrorKey.WITHHOLDING
+				,InvoiceErrorLevel.INF
+				,AonError.INVOICE_RECORDER_WITHHOLDING.getMessage());
+			c.ic.getInvoice().addMessage(error);
 		}
-	}
-	
-	
-*/	
+	};
+
+	private static final Consumer<InvoicePreRecordContext> CHECK_TRANSACTION = c -> {
+		if (!c.ic.getInvoice().isNational()) {
+			InvoiceError error = new InvoiceError(
+				InvoiceErrorKey.TRANSACTION
+				,InvoiceErrorLevel.INF
+				,AonError.INVOICE_RECORDER_TRANSACTION.format(c.ic.getInvoice().getTransaction().getDescription()));
+			c.ic.getInvoice().addMessage(error);
+		}
+	};
+
+	private static final Consumer<InvoicePreRecordContext> CHECK_PREPAYMENT = c -> {
+		if (c.ctx.getDslContext()
+			.select( INVOICE_DETAIL.ID )
+			.from(INVOICE_DETAIL)
+			.where( INVOICE_DETAIL.INVOICE.eq(c.ic.getInvoice().getId()))
+			.and(INVOICE_DETAIL.PREPAYMENT.eq((byte) 1))
+			.limit(1)
+			.fetch()
+			.stream()
+			.findFirst()
+			.isPresent()) {
+			InvoiceError error = new InvoiceError(
+				InvoiceErrorKey.GENERIC
+				,InvoiceErrorLevel.INF
+				,AonError.INVOICE_RECORDER_PREPAYMENT.getMessage());
+			c.ic.getInvoice().addMessage(error);
+		}
+	};
+
+	private static final Consumer<InvoicePreRecordContext> CHECK_EXPENSES = c -> {
+		if ( c.ic.getInvoice().isExpenses() || c.ic.getInvoice().isUndeductible() ) {
+			Optional.ofNullable( InvoiceDAO.getFullInvoice(c.ctx, c.ic.getInvoice().getId()) )
+				.ifPresent( i-> {
+					AonCollectionUtils.stream( i.getDetails() )
+						.filter( d -> d.getAccount() == null )
+						.findAny()
+						.ifPresent( d -> {
+							InvoiceError error = new InvoiceError(
+								InvoiceErrorKey.EXPENSE_ACCOUNT
+								,InvoiceErrorLevel.ERR
+								,AonError.INVOICE_RECORDER_EXPENSE_ACCOUNT.getMessage());
+							c.ic.getInvoice().addMessage(error);
+						})
+						;
+				});
+		}
+	};
 }

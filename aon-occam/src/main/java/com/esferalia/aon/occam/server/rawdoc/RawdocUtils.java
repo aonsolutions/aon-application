@@ -17,7 +17,7 @@ public class RawdocUtils {
 		}
 		if (params.getStatus() != null) {
 			if (params.getStatus() == RawdocStatus.INBOX) {
-				Byte[] statuses = new Byte[] {RawdocStatus.INBOX.value(), RawdocStatus.PENDING.value()};
+				Byte[] statuses = new Byte[] {RawdocStatus.INBOX.value(), RawdocStatus.PROCESSED.value()};
 				prop = prop.and(p.getStatusProperty().in( statuses ));	
 			} else {
 				prop = prop.and(p.getStatusProperty().eq( params.getStatus().value()));

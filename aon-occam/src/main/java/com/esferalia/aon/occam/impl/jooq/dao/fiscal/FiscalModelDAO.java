@@ -493,7 +493,12 @@ public class FiscalModelDAO {
 	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, AonConfiguration conf, T fm) {
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		if (fm.getAdministration() == null || fm.getAdministration() == Administration.UNKNOWN) {
-			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+			// Administración por defecto Canarias, solo el modelo de IGIC se inicializa con la ATCanaria, los de IRPF son de la AEAT
+			if (conf.fiscal().getAdministration() != null && conf.fiscal().getAdministration() == Administration.CANARIAS.ordinal() && fm.getModel() != FiscalModelType.M303) {
+				fm.setAdministration(Administration.COMMON_TERRITORY);
+			} else {
+				fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));	
+			}
 		}
 		if (fm.getYear() < 2005 || fm.getYear() > 2050) {
 			Date today = new Date();
@@ -507,7 +512,10 @@ public class FiscalModelDAO {
 			if (fm.getModel().isYearly()) {
 				fm.setPeriod( Period.YEAR );
 			}else {
-				fm.setPeriod( Period.getQuarterlyPeriod(month-1));
+				if (fm.getModel() == FiscalModelType.M202)
+					fm.setPeriod(getMod202Period(month-1));
+				else
+					fm.setPeriod(Period.getQuarterlyPeriod(month-1));
 			}
 		}
 		fm.setStatus(FiscalStatus.PENDING);
@@ -526,6 +534,14 @@ public class FiscalModelDAO {
 		}
 		return fm; 
 	}
+	
+	private static Period getMod202Period(int month) {
+		if (month>=0 && month<3) return Period.T1;
+		else if (month>=3 && month<9) return Period.T2;
+		else if (month>=9 && month<12) return Period.T3;
+		throw new IllegalArgumentException("Invalid month!");
+	}
+
 	
 	protected static <T extends FiscalModel> T initializeIdentificationData(AONContext ctx, T fm) {
 		return initializeIdentificationData(ctx, fm, ConfigurationDAO.getConfiguration(ctx));	
@@ -556,6 +572,9 @@ public class FiscalModelDAO {
 			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
 			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
+			if (fm.getModel() == FiscalModelType.M303 && fm.isCanarias()) {
+				fm.setTownCode(AonStringUtils.defaultIfBlank(enterprise.getTown(), "00000"));
+			}
 			fm.setPhone(enterprise.getPhone() );
 		}
 		fm.setContactPerson( conf.fiscal().getContactPerson() );
