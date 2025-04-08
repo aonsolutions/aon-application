@@ -122,7 +122,7 @@ export const DOCUMENTAL_FILTER_ASESOR = [
       type : "checkbox",
       id   : ASESOR_TYPE,
       name : ASESOR_TYPE,
-      title: "Visible solo para "+MSG.ASESOR
+      title: "No visible para "+MSG.ENTERPRISE
     },
     ...DOCUMENTAL_FILTER_ENTERPRISE
 ];
