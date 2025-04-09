@@ -218,9 +218,6 @@ export class AonSearch extends AonElement {
 
 	openOrClose(){
 		let divOpts = this.getElement(this.OPTIONS);
-//		console.log('divOpts en openOrClose' , divOpts);
-//	    console.log('divOpts.innerHTML',divOpts.innerHTML);
-//		console.log('divOpts.innerHTML.length',divOpts.innerHTML.length );
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){

@@ -301,11 +301,13 @@ export class AonDocumental extends AonElement {
 								this.aonDocumentalList();
 							}
 						};
-						optionUserCategories.actions = [{
-							id: 'Edit',
-							icon: 'edit',
-							action: () => this.editCategory(item)
-						}];
+						if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+							optionUserCategories.actions = [{
+								id: 'Edit',
+								icon: 'edit',
+								action: () => this.editCategory(item)
+							}];
+						}
 						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
 					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
