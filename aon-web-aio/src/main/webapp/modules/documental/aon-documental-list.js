@@ -20,6 +20,7 @@ export class AonDocumentalList extends AonElement {
 	more;
 	_roles;
 	TABLE;
+    btnSearch;
 
 	static get observedAttributes() {
 		return [];
@@ -89,9 +90,14 @@ export class AonDocumentalList extends AonElement {
 	}
 	
 	buildToolbarSearch(){
-	    const btnSearch = this.getApplication().addSearchOption(true, true);
+	    this.btnSearch = this.getApplication().addSearchOption(true, true);
 	    let timeOut = null;
-	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+        // Mostramos si esta oculto
+        if(this.btnSearch.hidden){
+          this.btnSearch.hidden = false;
+        }
+        // Montamos el filtro
+	    this.btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
           clearTimeout(timeOut);
 
           timeOut = setTimeout(() => {
@@ -142,15 +148,15 @@ export class AonDocumentalList extends AonElement {
 	    });
         // Rango por encima de empresa, ve el permiso de asesor (documentos que solo ve el asesor)
         if (this._roles.isDocumentalManager()) {
-          btnSearch.buildOptionsFilter([
+          this.btnSearch.buildOptionsFilter([
             ...DOCUMENTAL_FILTER_ASESOR
           ]);
         } else if (this._roles.isDocumentalPortal()){
-          btnSearch.buildOptionsFilter([
+          this.btnSearch.buildOptionsFilter([
             ...DOCUMENTAL_FILTER_ENTERPRISE
           ]);
         } else {
-          btnSearch.buildOptionsFilter([
+          this.btnSearch.buildOptionsFilter([
             ...DOCUMENTAL_FILTER
           ]);
         }
@@ -384,8 +390,12 @@ export class AonDocumentalList extends AonElement {
     }
 
 	aonDocument(doc, i) {
-		this.removeDocumentalActions();
-		this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
+      // Al ver un documento ocultamos el buscar
+      if( this.isBetaDoc() ){
+        this.btnSearch.hidden = true;
+      } 
+      this.removeDocumentalActions();
+      this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
 	}
 
 	downloadFiles() {
