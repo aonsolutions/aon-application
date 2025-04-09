@@ -226,11 +226,12 @@ export class AonStatistics extends AonElement {
 
   timeToDecimal(tm) {
     let t = timeHour(Number(tm));
-    let arr = t.split(":");
-    let dec = parseInt((arr[1] / 6) * 10, 10);
-    return parseFloat(parseInt(arr[0], 10) + "." + (dec < 10 ? "0" : "") + dec);
+    let [hours, minutes] = t.split(":").map(Number);
+    let base60Decimal = +(minutes / 60).toFixed(2); 
+    let pseudoDecimal = Math.floor(base60Decimal * 100 / 1.6667) / 100;
+    return +(hours + pseudoDecimal).toFixed(2); 
   }
-
+  
   getFirstLettersDay(date){
     let dayInt = date.getDay();
     let day = DAYS[dayInt];
