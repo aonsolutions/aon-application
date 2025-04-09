@@ -126,7 +126,12 @@ export class AonDocumentalList extends AonElement {
                 } else if (detail.categoryOldFilter){
 					delete detail.categoryOld;
 					delete detail.categoryOldFilter;
-                }
+                } 
+              // Enviamos un evento con la categoria marcada, principal (antes de meter en el valor de las subcategorias)
+                const selectCategory = detail.category ? detail.category : MSG.ALL_FILES;
+                const miValor = 'category_filter';
+                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory }});
+                window.dispatchEvent(evento);
               // El tipo de category despacho
 				if(detail.category2){
 					detail.category = detail.category2;
