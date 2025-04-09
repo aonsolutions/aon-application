@@ -237,9 +237,9 @@ export class AonEventList extends AonElement {
               if (group.value === "WEEK") {
                 prefix = "S" + numbDate;
               } else if (group.value === "MONTH") {
-                prefix = numbDate; // ya es Ene, Feb, etc.
+                prefix = numbDate; 
               } else if (group.value === "DAY") {
-                const dayLetter = ["D", "L", "M", "X", "J", "V", "S"]; // Domingo = 0
+                const dayLetter = ["D", "L", "M", "X", "J", "V", "S"]; 
                 const dt = new Date(r.start_date);
                 prefix = dayLetter[dt.getDay()];
               }
