@@ -1,52 +1,35 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class InvoiceConsoleDAO {
 	
@@ -55,7 +38,7 @@ public class InvoiceConsoleDAO {
 	}
 
 	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
-	private static final Field<Byte> MAX_SOURCE = DSL.maxDistinct( INVOICE_DETAIL.SOURCE);
+	private static final Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
 	
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
@@ -63,52 +46,36 @@ public class InvoiceConsoleDAO {
 	
 	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
-		Field<Integer> orderedType = getOrderedType();
-		Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
+		Field<Integer> orderedType = InvoiceDAO.getOrderedType();
 		return ctx.getDslContext()
 			.select(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
-				,INVOICE.ACTIVITY
 				,INVOICE.TYPE
-				,INVOICE.TRANSACTION
-				,INVOICE.SERIES
-				,INVOICE.NUMBER
-				,INVOICE.REFERENCE_CODE
 				,INVOICE.ISSUE_DATE
-				,INVOICE.TAX_DATE
-				,INVOICE.REGISTRY
-				,INVOICE.RDOCUMENT
-				,INVOICE.RDOCUMENT_TYPE
-				,INVOICE.RDOCUMENT_COUNTRY
-				,INVOICE.RNAME
-				,INVOICE.SECURITY_LEVEL
-				,INVOICE.STATUS
-				,ENTERPRISE_ACTIVITY.DESCRIPTION
-				,IAE.EPIGRAPH
+				,INVOICE.REFERENCE_CODE
 				,TEDI_FIELD
 			)
 			.from(INVOICE)
-			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
-			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.eq(INVOICE.ACTIVITY))
-			.leftOuterJoin(IAE).on(IAE.ID.eq(ENTERPRISE_ACTIVITY.IAE))
 			.where(getWhere(params))
 			.and( TEDI_FIELD.in(
-				ctx.getDslContext().select( MAX_SOURCE )
+				ctx.getDslContext().select( MIN_SOURCE )
 					.from(INVOICE_DETAIL)
 					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
 					.groupBy( INVOICE_DETAIL.INVOICE )
-					.having(MAX_SOURCE.eq(InvoiceSource.TEDI.value()))))
+					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
 			.orderBy(getOrderBy(params))
 			.limit(params.getOffset() , params.getLimit())
 			.fetch()
 			.stream()
-			.map(new HeaderInvoiceFiller())
+			.map( r -> r.getValue(INVOICE.ID) )
+			.map( id -> InvoiceDAO.getFullInvoice( ctx, id) )
+			.filter( i -> i != null)
 			.map(i -> new InvoiceConsole().setInvoice(i))
 			.map( ic -> fillAttach(ctx, ic))
-			.map( ic -> fillSource(ctx, ic))
-			.map( ic -> checkInvoice(ctx, ic.getInvoice().getDomain(), ic))
+			.map( ic -> fillSource(ic))
+			.map( ic -> InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -131,69 +98,21 @@ public class InvoiceConsoleDAO {
 					.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
 					.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
 					)
-				.map( a -> ic.setAttach(a) )
+				.map( ic::setAttach )
 				.findFirst()
 				.orElse(ic)
 		;
 	}
 
-	private static InvoiceConsole fillSource(AONContext ctx, InvoiceConsole ic) {
-		
-		return ctx.getDslContext()
-			.select( MIN_SOURCE, MAX_SOURCE)
-				.from(INVOICE_DETAIL)
-				.where(INVOICE_DETAIL.INVOICE.eq(ic.getInvoice().getId()))
-				.groupBy( INVOICE_DETAIL.INVOICE )
-				.fetch()
-				.stream()
-				.filter( rec -> AonNumberUtils.equals(rec.getValue(MIN_SOURCE),rec.getValue(MAX_SOURCE)))
-				.map( rec -> InvoiceSource.safeValueOf( rec.getValue(MIN_SOURCE)) )
-				.map( ic::setSource )
-				.findFirst()
-				.orElse(ic)
-		;
-	}
-	
-	private static class HeaderInvoiceFiller  extends Filler implements Function<Record,Invoice> {
-
-		@Override
-		public Invoice apply(Record r) {
-			return new Invoice()
-				.setId(getValue(r,INVOICE.ID))
-				.setDomain(getValue(r,INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,getValue(r,INVOICE.TYPE)))
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,getValue(r,INVOICE.TRANSACTION)))
-				.setSeries(getValue(r,INVOICE.SERIES))
-				.setNumber(getValue(r,INVOICE.NUMBER))
-				.setReferenceCode(getValue(r,INVOICE.REFERENCE_CODE))
-				.setIssueDate(getValue(r,INVOICE.ISSUE_DATE))
-				.setTaxDate(getValue(r,INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,getValue(r,INVOICE.SECURITY_LEVEL)))
-				.setRegistry(getValue(r,INVOICE.REGISTRY))
-				.setRegistryDocument(getValue(r,INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,getValue(r,INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(getValue(r,INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(getValue(r,INVOICE.RNAME))
-				.setRecorded( getValue(r,INVOICE.STATUS) == 1)
-				.setActivity(
-					getValue(r,INVOICE.ACTIVITY) == null
-						?null
-						:new EnterpriseActivity()
-							.setId(getValue(r,INVOICE.ACTIVITY))
-							.setDescription(getValue(r,ENTERPRISE_ACTIVITY.DESCRIPTION))
-							.setEpigraph(getValue(r,IAE.EPIGRAPH)))
-			;
-		}
-		
-	}
-	
-	private static Field<Integer> getOrderedType() {
-		return DSL.decode()
-		   .when(INVOICE.TYPE.equal((byte) 0), 0)
-		   .when(INVOICE.TYPE.equal((byte) 1), 1)
-		   .when(INVOICE.TYPE.equal((byte) 2), 0)
-		   .when(INVOICE.TYPE.equal((byte) 3), 0);
-
+	private static InvoiceConsole fillSource(InvoiceConsole ic) {
+		return ic.setSource( 
+			AonCollectionUtils.stream( ic.getInvoice().getDetails())
+			 	.map( id -> id.getSource() )
+			 	.distinct()
+	            .limit(2)
+	            .reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
+	            .orElse( null )
+        );
 	}
 	
 	public static Condition getWhere(InvoiceConsoleParams params) {
@@ -202,7 +121,7 @@ public class InvoiceConsoleDAO {
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Sï¿½lo las comunes. Los "sin activdad".
+				// Solo las comunes. Los "sin activdad".
 				condition = condition.and( INVOICE.ACTIVITY.isNull());
 			} else {
 				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
@@ -292,15 +211,22 @@ public class InvoiceConsoleDAO {
 
 				private static final long serialVersionUID = 5981585563515519217L;
 
+				private void visitManagement(InvoiceDetail detail) {
+					condition
+						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value()))
+						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value()));
+				}
+
 				@Override public void visitDirectExpense(InvoiceDetail detail) { visitManagement(detail); }
-				@Override public void visitPurchase(InvoiceDetail detail) { }
-				@Override public void visitSales(InvoiceDetail detail) { }
-				@Override public void visitDelivery(InvoiceDetail detail) { }
-				@Override public void visitIncome(InvoiceDetail detail) { }
-				@Override public void visitFee(InvoiceDetail detail) {}
-				@Override public void visitDirectInvoice(InvoiceDetail detail) {}
-				@Override public void visitOffer(InvoiceDetail detail) { }
-				@Override public void visitReservation(InvoiceDetail detail) {}
+				@Override public void visitPurchase(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitSales(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitDelivery(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitIncome(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitFee(InvoiceDetail detail) {visitManagement(detail); }
+				@Override public void visitDirectInvoice(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitOffer(InvoiceDetail detail) {  visitManagement(detail); }
+				@Override public void visitReservation(InvoiceDetail detail) { visitManagement(detail); }
+				
 				@Override 
 				public void visitAccount(InvoiceDetail detail) {
 					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.ACCOUNT.value() ) );
@@ -310,11 +236,6 @@ public class InvoiceConsoleDAO {
 					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.TEDI.value() ) );
 				}
 				
-				private void visitManagement(InvoiceDetail detail) {
-					condition.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value() ) )
-						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value() ) );
-				}
-				
 			});
 		}
 		return condition;
@@ -322,102 +243,13 @@ public class InvoiceConsoleDAO {
 
 	
 	private static OrderField<?>[] getOrderBy(InvoiceConsoleParams params) {
-		// TODO implement order field in params and ask user.
+		// implementar order field in params and ask user.
 		return new OrderField<?>[] {
-			 getOrderedType()
+			 InvoiceDAO.getOrderedType()
 			,INVOICE.TYPE
 			,INVOICE.ISSUE_DATE.desc()
 			,INVOICE.REFERENCE_CODE
 		};
 	}
 	
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_INVESTMENT = c -> {
-		if (c.ic.getInvoice().isInvestment()) {
-			InvoiceError error = new InvoiceError(
-				InvoiceErrorKey.INVESTMENT
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_INVESTMENT.getMessage());
-			c.ic.getInvoice().addMessage(error);
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_SURCHARGE = c -> {
-		if (c.ic.getInvoice().isSurcharge()) {
-			InvoiceError error = new InvoiceError(
-				InvoiceErrorKey.SURCHARGE
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_SURCHARGE.getMessage());
-			c.ic.getInvoice().addMessage(error);
-		}
-	};
-	
-	private static final Consumer<InvoicePreRecordContext> CHECK_IF_WITHHOLDING = c -> {
-		if (c.ic.getInvoice().isWithholding()) {
-			InvoiceError error = new InvoiceError(
-				InvoiceErrorKey.WITHHOLDING
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_WITHHOLDING.getMessage());
-			c.ic.getInvoice().addMessage(error);
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_TRANSACTION = c -> {
-		if (!c.ic.getInvoice().isNational()) {
-			InvoiceError error = new InvoiceError(
-				InvoiceErrorKey.TRANSACTION
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_TRANSACTION.format(c.ic.getInvoice().getTransaction().getDescription()));
-			c.ic.getInvoice().addMessage(error);
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_PREPAYMENT = c -> {
-		if (c.ctx.getDslContext()
-			.select( INVOICE_DETAIL.ID )
-			.from(INVOICE_DETAIL)
-			.where( INVOICE_DETAIL.INVOICE.eq(c.ic.getInvoice().getId()))
-			.and(INVOICE_DETAIL.PREPAYMENT.eq((byte) 1))
-			.limit(1)
-			.fetch()
-			.stream()
-			.findFirst()
-			.isPresent()) {
-			InvoiceError error = new InvoiceError(
-				InvoiceErrorKey.GENERIC
-				,InvoiceErrorLevel.INF
-				,AonError.INVOICE_RECORDER_PREPAYMENT.getMessage());
-			c.ic.getInvoice().addMessage(error);
-		}
-	};
-
-	private static final Consumer<InvoicePreRecordContext> CHECK_EXPENSES = c -> {
-		if ( c.ic.getInvoice().isExpenses() || c.ic.getInvoice().isUndeductible() ) {
-			Optional.ofNullable( InvoiceDAO.getFullInvoice(c.ctx, c.ic.getInvoice().getId()) )
-				.ifPresent( i-> {
-					AonCollectionUtils.stream( i.getDetails() )
-						.filter( d -> d.getAccount() == null )
-						.findAny()
-						.ifPresent( d -> {
-							InvoiceError error = new InvoiceError(
-								InvoiceErrorKey.EXPENSE_ACCOUNT
-								,InvoiceErrorLevel.ERR
-								,AonError.INVOICE_RECORDER_EXPENSE_ACCOUNT.getMessage());
-							c.ic.getInvoice().addMessage(error);
-						})
-						;
-				});
-		}
-	};
-
-	private record InvoicePreRecordContext( AONContext ctx, int domain, InvoiceConsole ic ) {};
-	private static InvoiceConsole checkInvoice(AONContext ctx, int domain, InvoiceConsole ic) {
-		CHECK_IF_INVESTMENT
-			.andThen(CHECK_IF_SURCHARGE)
-			.andThen(CHECK_IF_WITHHOLDING)
-			.andThen(CHECK_TRANSACTION)
-			.andThen(CHECK_PREPAYMENT)
-			.andThen(CHECK_EXPENSES)
-			.accept(new InvoicePreRecordContext(ctx, domain, ic));
-		return ic;
-	}
 }

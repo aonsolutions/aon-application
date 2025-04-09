@@ -512,7 +512,10 @@ public class FiscalModelDAO {
 			if (fm.getModel().isYearly()) {
 				fm.setPeriod( Period.YEAR );
 			}else {
-				fm.setPeriod( Period.getQuarterlyPeriod(month-1));
+				if (fm.getModel() == FiscalModelType.M202)
+					fm.setPeriod(getMod202Period(month-1));
+				else
+					fm.setPeriod(Period.getQuarterlyPeriod(month-1));
 			}
 		}
 		fm.setStatus(FiscalStatus.PENDING);
@@ -531,6 +534,14 @@ public class FiscalModelDAO {
 		}
 		return fm; 
 	}
+	
+	private static Period getMod202Period(int month) {
+		if (month>=0 && month<3) return Period.T1;
+		else if (month>=3 && month<9) return Period.T2;
+		else if (month>=9 && month<12) return Period.T3;
+		throw new IllegalArgumentException("Invalid month!");
+	}
+
 	
 	protected static <T extends FiscalModel> T initializeIdentificationData(AONContext ctx, T fm) {
 		return initializeIdentificationData(ctx, fm, ConfigurationDAO.getConfiguration(ctx));	

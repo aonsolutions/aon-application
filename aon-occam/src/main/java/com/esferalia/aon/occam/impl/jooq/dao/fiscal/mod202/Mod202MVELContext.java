@@ -82,34 +82,34 @@ public class Mod202MVELContext extends ModelMVELContext implements Map<String, O
 	}
 
 	// Casilla [21] Porcentaje 1 de la Modalidad B2
-//	public double computeC21() {
-//		double x08 = getPercent1();
-//		Double c20 = (Double) get(Mod202Key.C20.toString());
-//		double c21 = 0.0;
-//		if (c20 != 0.0) {
-//			if (isX09Empty()) {
-//				c21 = AonMathUtils.floor((5.0/7.0) * x08,0);	
-//			} else {
-//				c21 = AonMathUtils.ceil((19.0/20.0) * x08,0);
-//			}
-//		}
-//		return c21;
-//	}
+	public double computeC21() {
+		double x08 = getPercent1();
+		Double c20 = (Double) get(Mod202Key.C20.toString());
+		double c21 = 0.0;
+		if (c20 != 0.0) {
+			if (isX09Empty()) {
+				c21 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+			} else {
+				c21 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+			}
+		}
+		return c21;
+	}
 
 	// Casilla [24] Porcentaje 2 de la Modalidad B2
-//	public double computeC24() {
-//		double x08 = getPercent2();
-//		double c24 = 0.0;
-//		Double c23 = (Double) get(Mod202Key.C23.toString());
-//		if (c23 != 0) {
-//			if (isX09Empty()) {
-//				c24 = AonMathUtils.floor((5.0/7.0) * x08,0);	
-//			} else {
-//				c24 = AonMathUtils.ceil((19.0/20.0) * x08,0);
-//			}
-//		}
-//		return c24;
-//	}
+	public double computeC24() {
+		double x08 = getPercent2();
+		double c24 = 0.0;
+		Double c23 = (Double) get(Mod202Key.C23.toString());
+		if (c23 != 0) {
+			if (isX09Empty()) {
+				c24 = AonMathUtils.floor((5.0/7.0) * x08,0);	
+			} else {
+				c24 = AonMathUtils.ceil((19.0/20.0) * x08,0);
+			}
+		}
+		return c24;
+	}
 	
 	// Casilla [62] Porcentaje 3 de la Modalidad B2
 //	public double computeC62() {
