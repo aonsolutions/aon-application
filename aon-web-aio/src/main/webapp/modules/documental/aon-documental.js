@@ -146,7 +146,7 @@ export class AonDocumental extends AonElement {
 			this.addDocumentOptions();
 		}
 		
-		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+		if (this.isBetaDoc() && this.getDur().isDocumentalManager() || this.isBetaDoc() && this.getDur().isDocumentalPortal() ) {
 			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
 		}
 
