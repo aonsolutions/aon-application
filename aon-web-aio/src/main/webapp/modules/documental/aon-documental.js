@@ -42,7 +42,12 @@ export class AonDocumental extends AonElement {
 	INPUTFILE;
 
 	constructor() {
-		super();
+      super();
+      // Coger la category seleccionada del filtro
+        // Enlazamos el método al contexto de la clase
+        this.categoryEvento = this.categoryEvento.bind(this);
+        // Nos aseguramos de escuchar el evento
+        window.addEventListener('category_filter', this.categoryEvento);
 	}
 
 	connectedCallback() {
@@ -248,6 +253,20 @@ export class AonDocumental extends AonElement {
 		this.loadCategories();
 	}
 
+    // Categoria pasada desde el filtro
+    categoryEvento(event) {
+      let application = this.getApplication();
+      // Quitamos el marcado
+      application.removeBackgroundSidenavAll(DocumentalSidenav.DOCUMENTS.app.color);
+      // Marcamos la opcion que se esta filtrando
+      application.addBackgroundSidenav(event.detail.category, DocumentalSidenav.DOCUMENTS.app.color);
+    }
+
+    // Metodo para limpiar el evento
+    eliminarEvento() {
+      window.removeEventListener('category_filter', this.categoryEvento);
+    }
+
 	loadCategories() {
 		let data = {
 			parent: null,
@@ -278,10 +297,13 @@ export class AonDocumental extends AonElement {
                   }
                 };
                 application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
+                // Marcamos la primera opcion
+                application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
                 // Relenamos
 				categories.forEach(item => {
 					if(item.is_deletable === 0){
 						let optionDefaultCategory = {
+                            id  : item.id,
 							name: item.name,
 							icon: 'insert_drive_file',
 							fn: () => {
@@ -293,6 +315,7 @@ export class AonDocumental extends AonElement {
 						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
 					}else{
 						let optionUserCategories = {
+                            id  : item.id,
 							name: item.name,
 							icon: 'insert_drive_file',
 							fn: () => {

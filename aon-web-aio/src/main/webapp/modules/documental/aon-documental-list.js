@@ -126,7 +126,12 @@ export class AonDocumentalList extends AonElement {
                 } else if (detail.categoryOldFilter){
 					delete detail.categoryOld;
 					delete detail.categoryOldFilter;
-                }
+                } 
+              // Enviamos un evento con la categoria marcada, principal (antes de meter en el valor de las subcategorias)
+                const selectCategory = detail.category ? detail.category : MSG.ALL_FILES;
+                const miValor = 'category_filter';
+                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory }});
+                window.dispatchEvent(evento);
               // El tipo de category despacho
 				if(detail.category2){
 					detail.category = detail.category2;
@@ -372,8 +377,8 @@ export class AonDocumentalList extends AonElement {
                 this.setFilter(filter);
             }
 
-            if (documents.length === 0) {
-                this.more = false;  // Si no hay documentos, no se puede cargar m�s
+            if (isInit && documents.length === 0) {
+                this.more = false;  // Si no hay documentos, no se puede cargar mas
                 // Mostrar mensaje si no hay documentos
                 table.addRowNoData("No existen documentos disponibles");
             }
