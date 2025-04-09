@@ -219,8 +219,13 @@ export class AonMobilePackaging extends AonElement {
 			let val = r.base.description || r.base.name;
 			product.setValue(val || '');
 			container.setOptions(r.containers);
-			if(r.item.serialNumber) lote.setValue(r.item.serialNumber);
-			if(r.item.serialDate) date.setDate(r.item.serialDate);
+			if(r.item.serialNumber) {
+				lote.setValue(r.item.serialNumber);
+				lote.setDisabled(true);
+			}
+			if(r.item.serialDate) {
+				date.setDate(r.item.serialDate);
+			}
 			container.value = r.containers[0].id;
 			this.item = r.item.id;
 			this.contenedor = container.value;
