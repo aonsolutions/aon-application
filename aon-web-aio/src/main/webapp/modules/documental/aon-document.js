@@ -65,7 +65,7 @@ export class AonDocument extends AonElement {
 
   async build() {
     let title   = this.isBetaDoc() ? this.document.name : this.document.title;
-    let toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${title}"> </aon-toolbar>`
+    let toolbar = ` <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${title}"> </aon-toolbar>`;
 
     this.innerHTML = toolbar +`
       <div style="display:flex;">
