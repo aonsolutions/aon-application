@@ -521,8 +521,10 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-        if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
-			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+        if(this.isBetaDoc()){
+			if(!this._roles.isEmployee() && !this._roles.isEnterprise()){
+				aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+			}
             aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
 		}else if(!this.isBetaDoc() && (this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())){
 			// El boton este de editar  no hace nada??

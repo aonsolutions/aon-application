@@ -1,15 +1,21 @@
 import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
-   EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
+   EMPLOYEE_TYPE_OPTION, 
+   ASESOR_TYPE,
+   EMPLOYEE_TYPE,
+   ENTERPRISE_TYPE} from './DocumentalEnums.js';
 import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents } from '../../services/service.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
 import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 import { createDate, createInput, createSelect } from '../../components/CreateComponent.js';
+import { setAttributes, setEvents } from '../../services/utilsComponents.js';
+import { AonSwitch } from '../../components/aon-switch.js';
+import { AonNewSelect } from '../../components/aon-new-select.js';
 export class AonDocument extends AonElement {
   doc;
   docS3;
@@ -268,13 +274,139 @@ export class AonDocument extends AonElement {
       this.setTagsAvaible();
     }
   }
+
+  getInput(attributes) {
+    let html = undefined;
+    let switchAon = new AonSwitch();
+ 
+    attributes.forEach(attribute => {
+        if (attribute.type === 'checkbox') {
+            // Asegurándonos de que el checkbox se crea con su estado correcto
+            html = setAttributes(switchAon, attribute);
+        }
+    });
+ 
+    return html;
+ }
+ 
+
+async visibleOnly(){
+  let asesor   = this.getElement(ASESOR_TYPE + "_checkbox");
+  let employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+
+  asesor.addEventListener(EVENT.CLICK, (event) => {
+    // Estado que estaba y el que esta el empleado
+    if(asesor.value === 'false' && employee.value === 'true'){
+      employee.value    = 'false';
+      employee.checked  = false;
+      asesor.value    = 'true';
+      asesor.checked  = true;
+      this.updateType(ASESOR_TYPE);
+    }else if(asesor.value === 'true' && employee.value === 'false'){      
+      asesor.value    = 'false';
+      asesor.checked  = false;
+      this.updateType(ENTERPRISE_TYPE);
+    }else if(asesor.value === 'false'){
+      asesor.value    = 'true';
+      asesor.checked  = true;
+      this.updateType(ASESOR_TYPE);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  employee.addEventListener(EVENT.CLICK, (event) => {   
+    // Estado que estaba y el que esta el asesor
+    if(employee.value === 'false' && asesor.value === 'true'){
+      asesor.value    = 'false';
+      asesor.checked  = false;
+      employee.value    = 'true';
+      employee.checked  = true;
+      this.updateType(EMPLOYEE_TYPE);
+    }else if(employee.value === 'true' && asesor.value === 'false'){
+      employee.value    = 'false';
+      employee.checked  = false;
+      this.updateType(ENTERPRISE_TYPE);
+    }else if(employee.value === 'false'){
+      employee.value    = 'true';
+      employee.checked  = true;
+      this.updateType(EMPLOYEE_TYPE);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
+}
+
+setCheckboxesBasedOnRegistryType(document) {
+  let employeeCheckbox = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+  let asesorCheckbox = this.getElement(ASESOR_TYPE + "_checkbox");
+
+  let registryType = document.registryType;
   
+  if (registryType === 'employee') {
+      employeeCheckbox.checked = true;  
+      asesorCheckbox.checked = false; 
+  } else if (registryType === 'asesor') {
+      employeeCheckbox.checked = false; 
+      asesorCheckbox.checked = true; 
+  } else {
+      employeeCheckbox.checked = false;  
+      asesorCheckbox.checked = false;
+  }
+}
+
   buildDataS3() {
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
     let table = this.createElement(TAG.TABLE);
     table.style.width = '100%';
     card.setContent(table);
+    let attributes = [];
+    if (this.getDur().isDocumentalManager()) {
+        attributes = [
+            {
+                type: "checkbox",
+                id: ASESOR_TYPE + "_checkbox",
+                name: ASESOR_TYPE,
+                title: "No visible para " + MSG.ENTERPRISE
+            },
+            {
+                type: "checkbox",
+                id: EMPLOYEE_TYPE + "_checkbox",
+                name: EMPLOYEE_TYPE,
+                title: "Visible solo para " + MSG.EMPLOYEE,
+            }
+        ];
+    } else if (this.getDur().isDocumentalPortal()) {
+        attributes = [
+            {
+                type: "checkbox",
+                id: EMPLOYEE_TYPE + "_checkbox",
+                name: EMPLOYEE_TYPE,
+                title: "Visible solo para " + MSG.EMPLOYEE,
+            }
+        ];
+    }
+
+    attributes.forEach(attribute => {
+        let trCheckbox = this.createElement('tr');
+        table.appendChild(trCheckbox);
+
+        let tdCheckbox = this.createElement('td');
+        trCheckbox.appendChild(tdCheckbox);
+
+        // Crear el input usando getInput
+        let el = this.getInput([attribute]);
+        if (el) {
+            tdCheckbox.appendChild(el);
+        }
+    });
+
+    // Aquí pasamos el documento a la función de visibilidad
+    this.setCheckboxesBasedOnRegistryType(this.document);
+
+    // Llamamos a la función para manejar la visibilidad después
+    this.visibleOnly();
 
     // Fecha
       let tr = this.createElement(TAG.TR);
@@ -308,6 +440,26 @@ export class AonDocument extends AonElement {
       }
       name.setValue(this.document.name);
       name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
+
+    //Scope
+      let trScope = this.createElement(TAG.TR);
+      table.appendChild(trScope)
+      trScope.setAttribute('colspan', '2');
+      let scopeSelect =  createSelect(this.SCOPE, MSG.SCOPE + ' (solo visible...)', trScope);
+      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
+        scopeSelect.readonly = 'true';
+      }
+      getScopes().then( scopes => {
+        scopeSelect.setOptions(scopes.map(s => {
+          return {
+            value: s.id,
+            name: s.name
+          }
+        }));
+        if(this.document.scope)
+          scopeSelect.value = this.document.scope;
+        scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
+      });
   }
 
   addTag(tag){
@@ -350,9 +502,11 @@ export class AonDocument extends AonElement {
     documentToolbar.removeButtons();
     if(!this.isMobile()){
       documentToolbar.addSeparator();
-      if(this.isBetaDoc() && (!this.getDur().isEmployee() && !this.getDur().isEnterprise())){
+      if(this.isBetaDoc()){
         // Solo si no eres empleado o empresa, entiendo que es este permiso
-        documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+        if (!this.getDur().isEmployee() && !this.getDur().isEnterprise()){
+          documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
+        }
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
       } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
         documentToolbar.addButton2(ACTION.NEXT, () => this.next());
@@ -463,14 +617,22 @@ export class AonDocument extends AonElement {
   }
 
   updateScope(scope) {
-    if(!this.doc.scope)
-      this.doc.scope = {};
-    this.doc.scope.id = scope;
+    if(this.isBetaDoc()){
+      this.doc.scope = scope
+    }else{
+      if(!this.doc.scope)
+        this.doc.scope = {};
+        this.doc.scope.id = scope;
+    }
     this.save();
   }
 
   updateType(type) {
-    this.doc.type = type;
+    if(this.isBetaDoc()){
+      this.doc.registryType = type
+    }else{
+      this.doc.type = type;
+    }
     this.save();
   }
 
