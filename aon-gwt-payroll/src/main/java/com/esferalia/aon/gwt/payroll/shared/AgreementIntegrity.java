@@ -68,19 +68,34 @@ public class AgreementIntegrity implements Serializable {
 	private Integer domain;
 
 	private List<Payment> agreementPayments;
-	private List<Payment> otherDomainAgreementPayments;
-	private List<Payment> noPaymentConceptAgreementPayments;
-	private List<Payment> otherDomainPaymentConcepts;
-	private List<Payment> paymentConceptsNoCode;
-	private List<Payment> codeInExpression;
+	private List<String> otherDomainAgreementPayments;
+	private List<String> noPaymentConceptAgreementPayments;
+	private List<String> otherDomainPaymentConcepts;
+	private List<String> paymentConceptsNoCode;
+	private List<String> codeInExpression;
 	
 	private List<String> variableLikeCodes;
 	
-	private List<Payment> otherDomainPaymentConceptContracts;
-	private List<Payment> paymentConceptsNoCodeContracts;
-	private List<Payment> paymentConceptsNoRef;
+	private List<String> otherDomainPaymentConceptContracts;
+	private List<String> paymentConceptsNoCodeContracts;
+	private List<String> paymentConceptsNoRef;
 	
-	private List<AgreementExtra> agreementExtras;
+	private List<String> agreementExtras;
+	
+//	private List<Payment> agreementPayments;
+//	private List<Payment> otherDomainAgreementPayments;
+//	private List<Payment> noPaymentConceptAgreementPayments;
+//	private List<Payment> otherDomainPaymentConcepts;
+//	private List<Payment> paymentConceptsNoCode;
+//	private List<Payment> codeInExpression;
+//	
+//	private List<String> variableLikeCodes;
+//	
+//	private List<Payment> otherDomainPaymentConceptContracts;
+//	private List<Payment> paymentConceptsNoCodeContracts;
+//	private List<Payment> paymentConceptsNoRef;
+//	
+//	private List<AgreementExtra> agreementExtras;
 	
 	public AgreementIntegrity() {
 		super();
@@ -113,47 +128,47 @@ public class AgreementIntegrity implements Serializable {
 		return this;
 	}
 
-	public List<Payment> getOtherDomainAgreementPayments() {
+	public List<String> getOtherDomainAgreementPayments() {
 		return otherDomainAgreementPayments;
 	}
 
-	public AgreementIntegrity setOtherDomainAgreementPayments(List<Payment> otherDomainAgreementPayments) {
+	public AgreementIntegrity setOtherDomainAgreementPayments(List<String> otherDomainAgreementPayments) {
 		this.otherDomainAgreementPayments = otherDomainAgreementPayments;
 		return this;
 	}
 
-	public List<Payment> getNoPaymentConceptAgreementPayments() {
+	public List<String> getNoPaymentConceptAgreementPayments() {
 		return noPaymentConceptAgreementPayments;
 	}
 
-	public AgreementIntegrity setNoPaymentConceptAgreementPayments(List<Payment> noPaymentConceptAgreementPayments) {
+	public AgreementIntegrity setNoPaymentConceptAgreementPayments(List<String> noPaymentConceptAgreementPayments) {
 		this.noPaymentConceptAgreementPayments = noPaymentConceptAgreementPayments;
 		return this;
 	}
 
-	public List<Payment> getOtherDomainPaymentConcepts() {
+	public List<String> getOtherDomainPaymentConcepts() {
 		return otherDomainPaymentConcepts;
 	}
 
-	public AgreementIntegrity setOtherDomainPaymentConcepts(List<Payment> otherDomainPaymentConcepts) {
+	public AgreementIntegrity setOtherDomainPaymentConcepts(List<String> otherDomainPaymentConcepts) {
 		this.otherDomainPaymentConcepts = otherDomainPaymentConcepts;
 		return this;
 	}
 
-	public List<Payment> getPaymentConceptsNoCode() {
+	public List<String> getPaymentConceptsNoCode() {
 		return paymentConceptsNoCode;
 	}
 
-	public AgreementIntegrity setPaymentConceptsNoCode(List<Payment> paymentConceptsNoCode) {
+	public AgreementIntegrity setPaymentConceptsNoCode(List<String> paymentConceptsNoCode) {
 		this.paymentConceptsNoCode = paymentConceptsNoCode;
 		return this;
 	}
 
-	public List<Payment> getCodeInExpression() {
+	public List<String> getCodeInExpression() {
 		return codeInExpression;
 	}
 
-	public AgreementIntegrity setCodeInExpression(List<Payment> codeInExpression) {
+	public AgreementIntegrity setCodeInExpression(List<String> codeInExpression) {
 		this.codeInExpression = codeInExpression;
 		return this;
 	}
@@ -167,40 +182,139 @@ public class AgreementIntegrity implements Serializable {
 		return this;
 	}
 
-	public List<Payment> getOtherDomainPaymentConceptContracts() {
+	public List<String> getOtherDomainPaymentConceptContracts() {
 		return otherDomainPaymentConceptContracts;
 	}
 
-	public AgreementIntegrity setOtherDomainPaymentConceptContracts(List<Payment> otherDomainPaymentConceptContracts) {
+	public AgreementIntegrity setOtherDomainPaymentConceptContracts(List<String> otherDomainPaymentConceptContracts) {
 		this.otherDomainPaymentConceptContracts = otherDomainPaymentConceptContracts;
 		return this;
 	}
 
-	public List<Payment> getPaymentConceptsNoCodeContracts() {
+	public List<String> getPaymentConceptsNoCodeContracts() {
 		return paymentConceptsNoCodeContracts;
 	}
 
-	public AgreementIntegrity setPaymentConceptsNoCodeContracts(List<Payment> paymentConceptsNoCodeContracts) {
+	public AgreementIntegrity setPaymentConceptsNoCodeContracts(List<String> paymentConceptsNoCodeContracts) {
 		this.paymentConceptsNoCodeContracts = paymentConceptsNoCodeContracts;
 		return this;
 	}
 
-	public List<Payment> getPaymentConceptsNoRef() {
+	public List<String> getPaymentConceptsNoRef() {
 		return paymentConceptsNoRef;
 	}
 
-	public AgreementIntegrity setPaymentConceptsNoRef(List<Payment> paymentConceptsNoRef) {
+	public AgreementIntegrity setPaymentConceptsNoRef(List<String> paymentConceptsNoRef) {
 		this.paymentConceptsNoRef = paymentConceptsNoRef;
 		return this;
 	}
 
-	public List<AgreementExtra> getAgreementExtras() {
+	public List<String> getAgreementExtras() {
 		return agreementExtras;
 	}
 
-	public AgreementIntegrity setAgreementExtras(List<AgreementExtra> agreementExtras) {
+	public AgreementIntegrity setAgreementExtras(List<String> agreementExtras) {
 		this.agreementExtras = agreementExtras;
 		return this;
 	}
+	
+//	public List<Payment> getAgreementPayments() {
+//		return agreementPayments;
+//	}
+//
+//	public AgreementIntegrity setAgreementPayments(List<Payment> agreementPayments) {
+//		this.agreementPayments = agreementPayments;
+//		return this;
+//	}
+//
+//	public List<Payment> getOtherDomainAgreementPayments() {
+//		return otherDomainAgreementPayments;
+//	}
+//
+//	public AgreementIntegrity setOtherDomainAgreementPayments(List<Payment> otherDomainAgreementPayments) {
+//		this.otherDomainAgreementPayments = otherDomainAgreementPayments;
+//		return this;
+//	}
+//
+//	public List<Payment> getNoPaymentConceptAgreementPayments() {
+//		return noPaymentConceptAgreementPayments;
+//	}
+//
+//	public AgreementIntegrity setNoPaymentConceptAgreementPayments(List<Payment> noPaymentConceptAgreementPayments) {
+//		this.noPaymentConceptAgreementPayments = noPaymentConceptAgreementPayments;
+//		return this;
+//	}
+//
+//	public List<Payment> getOtherDomainPaymentConcepts() {
+//		return otherDomainPaymentConcepts;
+//	}
+//
+//	public AgreementIntegrity setOtherDomainPaymentConcepts(List<Payment> otherDomainPaymentConcepts) {
+//		this.otherDomainPaymentConcepts = otherDomainPaymentConcepts;
+//		return this;
+//	}
+//
+//	public List<Payment> getPaymentConceptsNoCode() {
+//		return paymentConceptsNoCode;
+//	}
+//
+//	public AgreementIntegrity setPaymentConceptsNoCode(List<Payment> paymentConceptsNoCode) {
+//		this.paymentConceptsNoCode = paymentConceptsNoCode;
+//		return this;
+//	}
+//
+//	public List<Payment> getCodeInExpression() {
+//		return codeInExpression;
+//	}
+//
+//	public AgreementIntegrity setCodeInExpression(List<Payment> codeInExpression) {
+//		this.codeInExpression = codeInExpression;
+//		return this;
+//	}
+//
+//	public List<String> getVariableLikeCodes() {
+//		return variableLikeCodes;
+//	}
+//
+//	public AgreementIntegrity setVariableLikeCodes(List<String> variableLikeCodes) {
+//		this.variableLikeCodes = variableLikeCodes;
+//		return this;
+//	}
+//
+//	public List<Payment> getOtherDomainPaymentConceptContracts() {
+//		return otherDomainPaymentConceptContracts;
+//	}
+//
+//	public AgreementIntegrity setOtherDomainPaymentConceptContracts(List<Payment> otherDomainPaymentConceptContracts) {
+//		this.otherDomainPaymentConceptContracts = otherDomainPaymentConceptContracts;
+//		return this;
+//	}
+//
+//	public List<Payment> getPaymentConceptsNoCodeContracts() {
+//		return paymentConceptsNoCodeContracts;
+//	}
+//
+//	public AgreementIntegrity setPaymentConceptsNoCodeContracts(List<Payment> paymentConceptsNoCodeContracts) {
+//		this.paymentConceptsNoCodeContracts = paymentConceptsNoCodeContracts;
+//		return this;
+//	}
+//
+//	public List<Payment> getPaymentConceptsNoRef() {
+//		return paymentConceptsNoRef;
+//	}
+//
+//	public AgreementIntegrity setPaymentConceptsNoRef(List<Payment> paymentConceptsNoRef) {
+//		this.paymentConceptsNoRef = paymentConceptsNoRef;
+//		return this;
+//	}
+//
+//	public List<AgreementExtra> getAgreementExtras() {
+//		return agreementExtras;
+//	}
+//
+//	public AgreementIntegrity setAgreementExtras(List<AgreementExtra> agreementExtras) {
+//		this.agreementExtras = agreementExtras;
+//		return this;
+//	}
 	
 }
