@@ -15,14 +15,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
-import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity.AgreementExtra;
-import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -73,6 +72,9 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		body.clear();
 		body.addStyleName(AON.CSS.aonItemFlex());
 		body.addStyleName(AON.CSS.aonFlexColumn());
+		body.getElement().getStyle().setProperty("width", "100%");
+		body.getElement().getStyle().setProperty("height", "100%");
+		body.getElement().getStyle().setProperty("overflow", "auto");
 		
 		messagePanel.setWidth("100%");
 		body.add(messagePanel);
@@ -81,6 +83,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		container.addStyleName(AON.CSS.aonItemFlex());
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		container.getElement().getStyle().setProperty("padding", "1rem");
+		container.setWidth("100%");
 		
 		body.add(container);
 		
@@ -108,6 +111,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 	private void onAgreementChange() {
 		if(AonStringUtils.isBlank(agreementLB.getValue())) {
 			scrollPanel.clear();
+			center();
 			return;
 		}
 		
@@ -127,6 +131,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		integrityContainer.addStyleName(AON.CSS.aonItemFlex());
 		integrityContainer.addStyleName(AON.CSS.aonFlexColumn());
 		integrityContainer.setWidth("100%");
+		integrityContainer.getElement().getStyle().setProperty("max-height", "30rem");
 		
 		isPaymentOpen.put(0, false);
 		isPaymentOpen.put(1, false);
@@ -153,7 +158,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		integrityContainer.add(createAgreementExtrasPanel());
 		
 		scrollPanel = new ScrollPanel(integrityContainer);
-		scrollPanel.getElement().getStyle().setProperty("max-height", "25rem");
+		scrollPanel.setWidth("100%");
 		
 		container.add(scrollPanel);
 		
@@ -161,46 +166,46 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 	}
 
 	private Widget createPaymentDomainsPanel() {
-		return createPaymentsPanel("Devengos en otro dominio", agreementIntegrity.getOtherDomainAgreementPayments(), 0);
+		return createMessagesPanel("Devengos convenio en otro dominio", agreementIntegrity.getOtherDomainAgreementPayments(), 0);
 	}
 	
 	private Widget createNoPaymentConceptAgreementPaymentsPanel() {
-		return createPaymentsPanel("Devengos sin concepto", agreementIntegrity.getNoPaymentConceptAgreementPayments(), 1);
+		return createMessagesPanel("Devengos convenio sin concepto", agreementIntegrity.getNoPaymentConceptAgreementPayments(), 1);
 	}
 	
 	private Widget createOtherDomainPaymentConceptsPanel() {
-		return createPaymentsPanel("Conceptos en otro dominio", agreementIntegrity.getOtherDomainPaymentConcepts(), 2);
+		return createMessagesPanel("Conceptos en otro dominio", agreementIntegrity.getOtherDomainPaymentConcepts(), 2);
 	}
 
 	private Widget createPaymentConceptsNoCodePanel() {
-		return createPaymentsPanel("Conceptos sin c\u00f3digo", agreementIntegrity.getPaymentConceptsNoCode(), 3);
+		return createMessagesPanel("Conceptos sin c\u00f3digo / C\u00f3digo err\u00f3neo", agreementIntegrity.getPaymentConceptsNoCode(), 3);
 	}
 
 	private Widget createCodeInExpressionPanel() {
-		return createPaymentsPanel("C\u00f3digo en expresi\u00f3n", agreementIntegrity.getCodeInExpression(), 4);
+		return createMessagesPanel("C\u00f3digo concepto en expresiones", agreementIntegrity.getCodeInExpression(), 4);
 	}
 	
 	private Widget createVariablesLikeCodePanel() {
-		return createVariablesPanel("Variables iguales a c\u00f3digos", agreementIntegrity.getVariableLikeCodes(), 5);
+		return createMessagesPanel("Variables iguales a c\u00f3digos conceptos", agreementIntegrity.getVariableLikeCodes(), 5);
 	}
 
 	private Widget createOtherDomainPaymentConceptContractsPanel() {
-		return createPaymentsPanel("Devengos contrato con conceptos en otro dominio", agreementIntegrity.getOtherDomainPaymentConceptContracts(), 6);
+		return createMessagesPanel("Devengos contrato con conceptos en otro dominio", agreementIntegrity.getOtherDomainPaymentConceptContracts(), 6);
 	}
 
 	private Widget createPaymentConceptsNoCodeContractsPanel() {
-		return createPaymentsPanel("Devengos contrato con conceptos sin c\u00f3digo", agreementIntegrity.getPaymentConceptsNoCodeContracts(), 7);
+		return createMessagesPanel("Devengos contrato con conceptos sin c\u00f3digo", agreementIntegrity.getPaymentConceptsNoCodeContracts(), 7);
 	}
 
 	private Widget createPaymentConceptsNoRefPanel() {
-		return createPaymentsPanel("Conceptos del dominio sin referencia al convenio o contrato", agreementIntegrity.getPaymentConceptsNoRef(), 8);
+		return createMessagesPanel("Conceptos del dominio sin referencia al convenio o contrato", agreementIntegrity.getPaymentConceptsNoRef(), 8);
 	}
 	
 	private Widget createAgreementExtrasPanel() {
-		return createExtrasPanel("Extras con formato err\u00f3neo en las fechas", agreementIntegrity.getAgreementExtras(), 9);
+		return createMessagesPanel("Extras con formato err\u00f3neo en las fechas / Fechas > 12 meses", agreementIntegrity.getAgreementExtras(), 9);
 	}
 	
-	private Widget createPaymentsPanel(String title, List<Payment> payments, Integer isOpenIdx) {
+	private Widget createMessagesPanel(String title, List<String> messages, Integer isOpenIdx) {
 		HTMLPanel paymentDiscPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		paymentDiscPanel.getElement().getStyle().setCursor(Cursor.POINTER);
 		paymentDiscPanel.getElement().getStyle().setProperty("justify-content", "center");
@@ -223,17 +228,22 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		HTMLPanel toolbarTitle = new HTMLPanel(AonStringUtils.EMPTY);
 		toolbarTitle.addStyleName(AON.CSS.aonItemFlex());
 		toolbarTitle.addStyleName(AON.CSS.aonAlignItemsCenter());
+		toolbarTitle.setWidth("100%");
 		toolbar.add(toolbarTitle);
 		
 		AonToolbarSmallButton paymentDiscBtn = new AonToolbarSmallButton(
-				payments.isEmpty() ? "Integridad correcta" : "Desplegar Devengos", 
-				payments.isEmpty() ? AON.CSS.aonIconCircleGreen() : AON.CSS.aonIconDown()
+				messages.isEmpty() ? "Integridad correcta" : "Desplegar Devengos", 
+				messages.isEmpty() ? AON.CSS.aonIconCircleGreen() : AON.CSS.aonIconRight()
 		);
+		
+		AonToolbarSmallButton fixIntegrity = new AonToolbarSmallButton("Corregir integridad correcta", AON.CSS.aonIconFix());
+		fixIntegrity.addClickHandler(e -> Window.alert("En desarrollo..."));
+		fixIntegrity.setVisible(false);
 		
 		Label titleLabel = new Label(title);
 		titleLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
-		if(!payments.isEmpty()) {
+		if(!messages.isEmpty()) {
 			toolbarTitle.add(paymentDiscBtn);
 		} else titleLabel.getElement().getStyle().setProperty("padding-left", "2rem");
 		
@@ -241,179 +251,35 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		
 		paymentDiscPanel.add(toolbar);
 		
-		if(!payments.isEmpty()) {
-			Label paymentCount = new Label(payments.size() + "");
+		if(!messages.isEmpty()) {
+			toolbar.add(fixIntegrity);
+			
+			Label paymentCount = new Label(messages.size() + "");
 			paymentCount.addStyleName(AON.CSS.aonBadge());
 			toolbar.add(paymentCount);
 			
-			toolbar.addDomHandler(new ClickHandler() {
+			toolbarTitle.addDomHandler(new ClickHandler() {
 			    @Override
 			    public void onClick(ClickEvent event) {
 			    	isPaymentOpen.put(isOpenIdx, !isPaymentOpen.get(isOpenIdx));
 					handleIcon(paymentDiscBtn, isPaymentOpen.get(isOpenIdx));
-					if(isPaymentOpen.get(isOpenIdx))
+					if(isPaymentOpen.get(isOpenIdx)) {
 						paymentPanel.getElement().getStyle().clearDisplay();
-					else
+						fixIntegrity.setVisible(true);
+					} else {
 						paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
+						fixIntegrity.setVisible(false);
+					}
+					center();
 			    }
 			}, ClickEvent.getType());
 			
 		} else toolbar.add(paymentDiscBtn);
 		
 		// Content
-		payments.forEach(payment -> {
-			Label description = new Label("(" + payment.getId() + ") - " + payment.getDescription());
-			description.getElement().getStyle().setProperty("padding-left", "1rem");
-			description.setWidth("100%");
-			
-			paymentPanel.add(description);
-		});
-		paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
-		
-		paymentDiscPanel.add(paymentPanel);
-		
-		return paymentDiscPanel;
-	}
-	
-	private Widget createExtrasPanel(String title, List<AgreementExtra> payments, Integer isOpenIdx) {
-		HTMLPanel paymentDiscPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		paymentDiscPanel.getElement().getStyle().setCursor(Cursor.POINTER);
-		paymentDiscPanel.getElement().getStyle().setProperty("justify-content", "center");
-		paymentDiscPanel.addStyleName(AON.CSS.aonItemFlex());
-		paymentDiscPanel.addStyleName(AON.CSS.aonFlexColumn());
-		paymentDiscPanel.setWidth("100%");
-		
-		HTMLPanel paymentPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		paymentPanel.addStyleName(AON.CSS.aonItemFlex());
-		paymentPanel.addStyleName(AON.CSS.aonFlexColumn());
-		paymentPanel.setWidth("100%");
-		
-		// Toolbar
-		HTMLPanel toolbar = new HTMLPanel(AonStringUtils.EMPTY);
-		toolbar.addStyleName(AON.CSS.aonItemFlex());
-		toolbar.addStyleName(AON.CSS.aonFlexBetween());
-		toolbar.addStyleName(AON.CSS.aonAlignItemsCenter());
-		toolbar.setWidth("100%");
-		
-		HTMLPanel toolbarTitle = new HTMLPanel(AonStringUtils.EMPTY);
-		toolbarTitle.addStyleName(AON.CSS.aonItemFlex());
-		toolbarTitle.addStyleName(AON.CSS.aonAlignItemsCenter());
-		toolbar.add(toolbarTitle);
-		
-		AonToolbarSmallButton paymentDiscBtn = new AonToolbarSmallButton(
-				payments.isEmpty() ? "Integridad correcta" : "Desplegar Devengos", 
-				payments.isEmpty() ? AON.CSS.aonIconCircleGreen() : AON.CSS.aonIconDown()
-		);
-		
-		Label titleLabel = new Label(title);
-		titleLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		
-		if(!payments.isEmpty()) {
-			toolbarTitle.add(paymentDiscBtn);
-		} else titleLabel.getElement().getStyle().setProperty("padding-left", "2rem");
-		
-		toolbarTitle.add(titleLabel);
-		
-		paymentDiscPanel.add(toolbar);
-		
-		if(!payments.isEmpty()) {
-			Label paymentCount = new Label(payments.size() + "");
-			paymentCount.addStyleName(AON.CSS.aonBadge());
-			toolbar.add(paymentCount);
-			
-			toolbar.addDomHandler(new ClickHandler() {
-			    @Override
-			    public void onClick(ClickEvent event) {
-			    	isPaymentOpen.put(isOpenIdx, !isPaymentOpen.get(isOpenIdx));
-					handleIcon(paymentDiscBtn, isPaymentOpen.get(isOpenIdx));
-					if(isPaymentOpen.get(isOpenIdx))
-						paymentPanel.getElement().getStyle().clearDisplay();
-					else
-						paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
-			    }
-			}, ClickEvent.getType());
-			
-		} else toolbar.add(paymentDiscBtn);
-		
-		// Content
-		payments.forEach(payment -> {
-			Label description = new Label("(" + payment.getId() + ") - F. Cobro : " + payment.getIssueDate() + ", F. Inicio : " + payment.getStartDate() + ", F. Fin : " + payment.getEndDate() + " - " + payment.getAgreementPayment().getDescription());
-			description.getElement().getStyle().setProperty("padding-left", "1rem");
-			description.setWidth("100%");
-			
-			paymentPanel.add(description);
-		});
-		paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
-		
-		paymentDiscPanel.add(paymentPanel);
-		
-		return paymentDiscPanel;
-	}
-	
-	private Widget createVariablesPanel(String title, List<String> variables, Integer isOpenIdx) {
-		HTMLPanel paymentDiscPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		paymentDiscPanel.getElement().getStyle().setCursor(Cursor.POINTER);
-		paymentDiscPanel.getElement().getStyle().setProperty("justify-content", "center");
-		paymentDiscPanel.addStyleName(AON.CSS.aonItemFlex());
-		paymentDiscPanel.addStyleName(AON.CSS.aonFlexColumn());
-		paymentDiscPanel.setWidth("100%");
-		
-		HTMLPanel paymentPanel = new HTMLPanel(AonStringUtils.EMPTY);
-		paymentPanel.addStyleName(AON.CSS.aonItemFlex());
-		paymentPanel.addStyleName(AON.CSS.aonFlexColumn());
-		paymentPanel.setWidth("100%");
-		
-		// Toolbar
-		HTMLPanel toolbar = new HTMLPanel(AonStringUtils.EMPTY);
-		toolbar.addStyleName(AON.CSS.aonItemFlex());
-		toolbar.addStyleName(AON.CSS.aonFlexBetween());
-		toolbar.addStyleName(AON.CSS.aonAlignItemsCenter());
-		toolbar.setWidth("100%");
-		
-		HTMLPanel toolbarTitle = new HTMLPanel(AonStringUtils.EMPTY);
-		toolbarTitle.addStyleName(AON.CSS.aonItemFlex());
-		toolbarTitle.addStyleName(AON.CSS.aonAlignItemsCenter());
-		toolbar.add(toolbarTitle);
-		
-		AonToolbarSmallButton paymentDiscBtn = new AonToolbarSmallButton(
-				variables.isEmpty() ? "Integridad correcta" : "Desplegar Devengos", 
-				variables.isEmpty() ? AON.CSS.aonIconCircleGreen() : AON.CSS.aonIconDown()
-		);
-		
-		Label titleLabel = new Label(title);
-		titleLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		
-		if(!variables.isEmpty()) {
-			toolbarTitle.add(paymentDiscBtn);
-		} else titleLabel.getElement().getStyle().setProperty("padding-left", "2rem");
-		
-		toolbarTitle.add(titleLabel);
-		
-		paymentDiscPanel.add(toolbar);
-		
-		if(!variables.isEmpty()) {
-			Label paymentCount = new Label(variables.size() + "");
-			paymentCount.addStyleName(AON.CSS.aonBadge());
-			toolbar.add(paymentCount);
-			
-			toolbar.addDomHandler(new ClickHandler() {
-			    @Override
-			    public void onClick(ClickEvent event) {
-			    	isPaymentOpen.put(isOpenIdx, !isPaymentOpen.get(isOpenIdx));
-					handleIcon(paymentDiscBtn, isPaymentOpen.get(isOpenIdx));
-					if(isPaymentOpen.get(isOpenIdx))
-						paymentPanel.getElement().getStyle().clearDisplay();
-					else
-						paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
-			    }
-			}, ClickEvent.getType());
-			
-		} else toolbar.add(paymentDiscBtn);
-		
-		// Content
-		variables.forEach(variable -> {
+		messages.forEach(variable -> {
 			Label description = new Label(variable);
-			description.getElement().getStyle().setProperty("padding-left", "1rem");
+			description.getElement().getStyle().setProperty("padding", "0 2rem");
 			description.setWidth("100%");
 			
 			paymentPanel.add(description);
