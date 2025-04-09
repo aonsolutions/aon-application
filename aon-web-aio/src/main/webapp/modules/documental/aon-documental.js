@@ -11,7 +11,7 @@ import {
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSelect } from '../../components/aon-select.js';
-import { MSG, MATERIAL_ICONS, EVENT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, EVENT, CONSTANT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
 import { AonNewInput } from '../../components/aon-new-input';
@@ -256,6 +256,8 @@ export class AonDocumental extends AonElement {
     // Categoria pasada desde el filtro
     categoryEvento(event) {
       let application = this.getApplication();
+      // Nombre que va al lado del titulo
+      application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', event.detail.categoryName);
       // Quitamos el marcado
       application.removeBackgroundSidenavAll(DocumentalSidenav.DOCUMENTS.app.color);
       // Marcamos la opcion que se esta filtrando
@@ -298,6 +300,7 @@ export class AonDocumental extends AonElement {
                 };
                 application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
                 // Marcamos la primera opcion
+                application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', MSG.ALL_FILES);
                 application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
                 // Relenamos
 				categories.forEach(item => {

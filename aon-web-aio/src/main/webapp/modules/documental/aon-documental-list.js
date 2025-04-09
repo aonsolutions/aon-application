@@ -101,7 +101,7 @@ export class AonDocumentalList extends AonElement {
           clearTimeout(timeOut);
 
           timeOut = setTimeout(() => {
-	        this._list = [];
+            this._list = [];
 	        if(detail) {
               // El tipo de permiso
                 if(detail[ASESOR_TYPE] && detail[ASESOR_TYPE] !== 'false'){
@@ -119,7 +119,8 @@ export class AonDocumentalList extends AonElement {
 					delete detail[EMPLOYEE_TYPE];
                 }
               // Mis categorias
-                if(detail.categoryOldFilter && detail.categoryOldFilter !== 'false'){
+                const myCategory = detail.categoryOldFilter && detail.categoryOldFilter !== 'false';
+                if(myCategory){
                     detail.category = detail.categoryOld;
 					delete detail.categoryOld;
 					delete detail.categoryOldFilter;
@@ -128,9 +129,17 @@ export class AonDocumentalList extends AonElement {
 					delete detail.categoryOldFilter;
                 } 
               // Enviamos un evento con la categoria marcada, principal (antes de meter en el valor de las subcategorias)
-                const selectCategory = detail.category ? detail.category : MSG.ALL_FILES;
+                const selectCategory   = detail.category ? detail.category : MSG.ALL_FILES;
+                let selectCategoryName = MSG.ALL_FILES;
+                if( selectCategory !== MSG.ALL_FILES){
+                  // El nombre de la categoria de despcho o las creadas por la empresa
+                  const category        = myCategory ? this.getElement("categoryOld") : this.getElement("category");
+                  const categoryOptions = JSON.parse(category.options);
+                  const selectedOption  = categoryOptions.find(opt => opt.value === parseInt(selectCategory));
+                  selectCategoryName    = selectedOption.name;
+                }
                 const miValor = 'category_filter';
-                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory }});
+                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory, categoryName: selectCategoryName}});
                 window.dispatchEvent(evento);
               // El tipo de category despacho
 				if(detail.category2){
