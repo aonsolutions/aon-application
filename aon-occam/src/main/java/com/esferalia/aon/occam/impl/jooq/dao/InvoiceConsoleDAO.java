@@ -75,7 +75,7 @@ public class InvoiceConsoleDAO {
 			.map(i -> new InvoiceConsole().setInvoice(i))
 			.map( ic -> fillAttach(ctx, ic))
 			.map( ic -> fillSource(ic))
-			.map( ic -> InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic))
+			.map( ic -> fillMessages(ctx, ic))
 			.collect(Collectors.toCollection(LinkedList::new))
 		;
 	}
@@ -113,6 +113,10 @@ public class InvoiceConsoleDAO {
 	            .reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
 	            .orElse( null )
         );
+	}
+	private static InvoiceConsole fillMessages(AONContext ctx, InvoiceConsole ic) {
+		InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic.getInvoice());
+		return ic;
 	}
 	
 	public static Condition getWhere(InvoiceConsoleParams params) {

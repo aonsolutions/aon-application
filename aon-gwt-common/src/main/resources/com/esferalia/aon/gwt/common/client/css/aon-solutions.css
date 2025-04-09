@@ -83,6 +83,12 @@
 .aon_icon_image { background-image: iconImage;}
 @url iconExcel aonIconExcel;
 .aon_icon_excel { background-image: iconExcel;}
+@url iconCircleBlue aonIconCircleBlue;
+.aon_icon_circle_blue { background-image: iconCircleBlue;}
+@url iconCircleYellow aonIconCircleYellow;
+.aon_icon_circle_yellow { background-image: iconCircleYellow;}
+@url iconCircleOrange aonIconCircleOrange;
+.aon_icon_circle_orange { background-image: iconCircleOrange;}
 @url iconCircleGreen aonIconCircleGreen ;
 .aon_icon_circle_green { background-image: iconCircleGreen ;}
 @url iconCircleRed aonIconCircleRed;

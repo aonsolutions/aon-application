@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.watson.mutable.MutableBoolean;
@@ -29,7 +28,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class InvoiceConsoleTable extends ScrollPanel{
@@ -165,7 +163,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 				showEntry.addClickHandler( event -> showEntry(opts, inv.getId()));
 
 				return row
-					.addCell( getInfoContainer(invConsole) )
+					.addCell( new InvoiceMessagesLabel( inv )  )
 					.addCellIf( invConsole.hastAttach(), debugInvoice)
 					
 					.addCellIf(!inv.isRecorded(), recordInvoice)	
@@ -184,39 +182,6 @@ class InvoiceConsoleTable extends ScrollPanel{
 					.addCell(new Label( AON.FMT.format(inv.getTotal())), AON.CSS.aonTextRight() )
 				;
 			}
-
-			private Label getInfoContainer(InvoiceConsole ic) {
-				Label infoContainer = new Label();
-				if ( !ic.getInvoice().isRecorded()) {
-					infoContainer.addStyleName(AON.CSS.aonClickableLabel());
-					if ( ic.getInvoice().hasMessages()) {
-						ic.getMoreSeriousLevel()
-							.map( l -> {
-								infoContainer.setText( l.getLabel() );
-								infoContainer.setTitle( l.getLabel() );
-								return l;
-							}) 
-							.map( l -> l.visit(new BackgroundErrorLevelVisitor()) )
-							.ifPresent(s -> {
-								
-								infoContainer.addStyleName(s);	
-							})
-						;
-						infoContainer.addClickHandler(event -> {
-							final PopupPanel infoPanel = new PopupPanel( true, true );
-							infoPanel.setWidth( "600px");
-							infoPanel.setHeight("400px");
-							infoPanel.add(new InvoiceRecorderMessagesPanel( ic ));
-							infoPanel.center();
-							infoPanel.show();
-							event.stopPropagation();
-						});
-					}
-				}
-				return infoContainer;
-			}
-			
-			
 
 			private String getSourceDescription(InvoiceSource source) {
 				if (source == null) return null;
@@ -319,48 +284,6 @@ class InvoiceConsoleTable extends ScrollPanel{
 				});
 	}
 				
-	
-	static class BackgroundErrorLevelVisitor implements InvoiceErrorLevelVisitor<String> {
-		@Override public String visitINF() {return AON.CSS.aonBackgroundYellow();}
-		@Override public String visitWRN() {return AON.CSS.aonBackgroundOrange();}
-		@Override public String visitERR() {return AON.CSS.aonNavarraBackgroundColor();}
-	}		
-	static class ForegroundErrorLevelVisitor implements InvoiceErrorLevelVisitor<String> {
-		@Override public String visitINF() {return AON.CSS.aonColorBlack();}
-		@Override public String visitWRN() {return AON.CSS.aonColorBlack();}
-		@Override public String visitERR() {return AON.CSS.aonColorWhite();}
-	}
-
-	private static class InvoiceRecorderMessagesPanel extends FlowPanel {
-		public InvoiceRecorderMessagesPanel( InvoiceConsole ic) {
-			setStyleName(AON.CSS.aonWidthAll());
-			addStyleName(AON.CSS.aonPadding());
-			
-			AonDisplayGrid errors = new AonDisplayGrid();
-			errors.addStyleName(AON.CSS.aonWidthAlmostAll());
-			errors.addStyleName(AON.CSS.aonBlockCenter());
-			errors.addHeaderRow()
-				.addCell(new Label(""), AON.CSS.aonWidth30())
-				.addCell(new Label(AON.MSG.message()), AON.CSS.aonWidthAuto())
-			;
-			AonCollectionUtils.stream(ic.getInvoice().getMessages())
-				.forEach( e -> {
-					Label errorIcon = new Label("");
-					errorIcon.setStyleName(AON.CSS.aonIconLabel());
-					errorIcon.addStyleName( e.getLevel().visit(new BackgroundErrorLevelVisitor())  );
-					
-					Label errorMsg = new Label(AonStringUtils.abbreviate(e.getMessage(), 40));
-					errorMsg.setTitle(e.getMessage());
-					errorMsg.addStyleName( e.getLevel().visit(new ForegroundErrorLevelVisitor())  );
-					errors.addRow()
-						.addCell(errorIcon, AON.CSS.aonWidth20())
-						.addCell(errorMsg, AON.CSS.aonWidthAuto());
-				})
-			;
-			this.add(errors);
-		}
-		
-	}
 	
 	private void debugInvoice(Invoice invoice) {
 		AonCustomPopup dialog = new AonCustomPopup();
