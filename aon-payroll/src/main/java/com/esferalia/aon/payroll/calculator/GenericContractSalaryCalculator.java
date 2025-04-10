@@ -2123,7 +2123,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			Date prevStart = prev.getPeriod().getStart();
 			Date prevEnd = prev.getPeriod().getEnd();
 			
-			long prevDays = getDays(prevStart, prevEnd);
 			
 			try {
 				Number prevValue  ;
@@ -2140,6 +2139,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				valueStart = Period.max(valueStart, prevStart);
 				Date valueEnd = Period.min(prevEnd, resultEnd);
 				long valueDays = getDays(valueStart, valueEnd);
+
+				long prevDays = getDays(prevStart, prevEnd);
 				if (prev instanceof IExpressionVariable<?>) {
 					expressionContext.putVariable(name, new ResultVariable(resultValue / resultDays * valueDays, valueStart, valueEnd));
 				}
@@ -2195,6 +2196,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	private static long getDays(Date valueStart, Date valueEnd) {
+		if ( valueEnd == null ) {
+			throw new IllegalArgumentException();
+		}
 		return new Period(valueStart, valueEnd ).daysStream().count();
 	}
 
