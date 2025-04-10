@@ -276,65 +276,68 @@ export class AonDocument extends AonElement {
   }
 
   getInput(attributes) {
-    let html = undefined;
-    let switchAon = new AonSwitch();
- 
+    let container = document.createDocumentFragment(); 
+
     attributes.forEach(attribute => {
         if (attribute.type === 'checkbox') {
-            // Asegurándonos de que el checkbox se crea con su estado correcto
-            html = setAttributes(switchAon, attribute);
+            let switchAon = new AonSwitch(); 
+            let el = setAttributes(switchAon, attribute);
+            if (el) container.appendChild(el);
         }
     });
- 
-    return html;
- }
+
+    return container.childNodes.length === 1 ? container.firstChild : container;
+}
+
  
 
 async visibleOnly(){
-  let asesor   = this.getElement(ASESOR_TYPE + "_checkbox");
+  let asesor = this.getElement(ASESOR_TYPE + "_checkbox");
   let employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
 
-  asesor.addEventListener(EVENT.CLICK, (event) => {
-    // Estado que estaba y el que esta el empleado
-    if(asesor.value === 'false' && employee.value === 'true'){
-      employee.value    = 'false';
-      employee.checked  = false;
-      asesor.value    = 'true';
-      asesor.checked  = true;
-      this.updateType(ASESOR_TYPE);
-    }else if(asesor.value === 'true' && employee.value === 'false'){      
-      asesor.value    = 'false';
-      asesor.checked  = false;
-      this.updateType(ENTERPRISE_TYPE);
-    }else if(asesor.value === 'false'){
-      asesor.value    = 'true';
-      asesor.checked  = true;
-      this.updateType(ASESOR_TYPE);
-    }
-    event.preventDefault();
-    event.stopPropagation();
-  });
+  if (asesor && employee) {
+    asesor.addEventListener(EVENT.CLICK, (event) => {
+      if (asesor.value === 'false' && employee.value === 'true') {
+        employee.value = 'false';
+        employee.checked = false;
+        asesor.value = 'true';
+        asesor.checked = true;
+        this.updateType(ASESOR_TYPE);
+      } else if (asesor.value === 'true' && employee.value === 'false') {
+        asesor.value = 'false';
+        asesor.checked = false;
+        this.updateType(ENTERPRISE_TYPE);
+      } else if (asesor.value === 'false') {
+        asesor.value = 'true';
+        asesor.checked = true;
+        this.updateType(ASESOR_TYPE);
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    });
 
-  employee.addEventListener(EVENT.CLICK, (event) => {   
-    // Estado que estaba y el que esta el asesor
-    if(employee.value === 'false' && asesor.value === 'true'){
-      asesor.value    = 'false';
-      asesor.checked  = false;
-      employee.value    = 'true';
-      employee.checked  = true;
-      this.updateType(EMPLOYEE_TYPE);
-    }else if(employee.value === 'true' && asesor.value === 'false'){
-      employee.value    = 'false';
-      employee.checked  = false;
-      this.updateType(ENTERPRISE_TYPE);
-    }else if(employee.value === 'false'){
-      employee.value    = 'true';
-      employee.checked  = true;
-      this.updateType(EMPLOYEE_TYPE);
-    }
-    event.preventDefault();
-    event.stopPropagation();
-  });
+    employee.addEventListener(EVENT.CLICK, (event) => {
+      if (employee.value === 'false' && asesor.value === 'true') {
+        asesor.value = 'false';
+        asesor.checked = false;
+        employee.value = 'true';
+        employee.checked = true;
+        this.updateType(EMPLOYEE_TYPE);
+      } else if (employee.value === 'true' && asesor.value === 'false') {
+        employee.value = 'false';
+        employee.checked = false;
+        this.updateType(ENTERPRISE_TYPE);
+      } else if (employee.value === 'false') {
+        employee.value = 'true';
+        employee.checked = true;
+        this.updateType(EMPLOYEE_TYPE);
+      }
+      event.preventDefault();
+      event.stopPropagation();
+    });
+  } else {
+    console.error("Los checkboxes de asesor o employee no se encuentran en el DOM.");
+  }
 }
 
 setCheckboxesBasedOnRegistryType(document) {
@@ -342,125 +345,129 @@ setCheckboxesBasedOnRegistryType(document) {
   let asesorCheckbox = this.getElement(ASESOR_TYPE + "_checkbox");
 
   let registryType = document.registryType;
-  
+
   if (registryType === 'employee') {
-      employeeCheckbox.checked = true;  
-      asesorCheckbox.checked = false; 
+      if (employeeCheckbox) employeeCheckbox.checked = true;
+      if (asesorCheckbox) asesorCheckbox.checked = false;
   } else if (registryType === 'asesor') {
-      employeeCheckbox.checked = false; 
-      asesorCheckbox.checked = true; 
+      if (employeeCheckbox) employeeCheckbox.checked = false;
+      if (asesorCheckbox) asesorCheckbox.checked = true;
   } else {
-      employeeCheckbox.checked = false;  
-      asesorCheckbox.checked = false;
+      if (employeeCheckbox) employeeCheckbox.checked = false;
+      if (asesorCheckbox) asesorCheckbox.checked = false;
   }
 }
 
-  buildDataS3() {
-    let card = this.getElement(this.DATA_CARD);
-    card.setContentHTML('');
-    let table = this.createElement(TAG.TABLE);
-    table.style.width = '100%';
-    card.setContent(table);
-    let attributes = [];
-    if (this.getDur().isDocumentalManager()) {
-        attributes = [
-            {
-                type: "checkbox",
-                id: ASESOR_TYPE + "_checkbox",
-                name: ASESOR_TYPE,
-                title: "No visible para " + MSG.ENTERPRISE
-            },
-            {
-                type: "checkbox",
-                id: EMPLOYEE_TYPE + "_checkbox",
-                name: EMPLOYEE_TYPE,
-                title: "Visible solo para " + MSG.EMPLOYEE,
-            }
-        ];
-    } else if (this.getDur().isDocumentalPortal()) {
-        attributes = [
-            {
-                type: "checkbox",
-                id: EMPLOYEE_TYPE + "_checkbox",
-                name: EMPLOYEE_TYPE,
-                title: "Visible solo para " + MSG.EMPLOYEE,
-            }
-        ];
-    }
 
-    attributes.forEach(attribute => {
-        let trCheckbox = this.createElement('tr');
-        table.appendChild(trCheckbox);
-
-        let tdCheckbox = this.createElement('td');
-        trCheckbox.appendChild(tdCheckbox);
-
-        // Crear el input usando getInput
-        let el = this.getInput([attribute]);
-        if (el) {
-            tdCheckbox.appendChild(el);
-        }
-    });
-
-    // Aquí pasamos el documento a la función de visibilidad
-    this.setCheckboxesBasedOnRegistryType(this.document);
-
-    // Llamamos a la función para manejar la visibilidad después
-    this.visibleOnly();
-
-    // Fecha
-      let tr = this.createElement(TAG.TR);
-      table.appendChild(tr);
-      let tdDate = this.createElement(TAG.TD);
-      tdDate.setAttribute('colspan', '1');
-      tr.appendChild(tdDate);
-
-      let date = createDate(this.DATE, MSG.DATE+' del documento');
-      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-        date.readonly = 'true';
-      }
-      if(this.document.date) {
-        let d = this.document.date.split('-');
-        date.setDate(new Date(d[0], d[1] - 1, d[2]));
-      }
-      tdDate.appendChild(date);
-      // Si se modifica la fecha
-      date.addEventListener(EVENT.CHANGE, (event) => this.updateDate(date.getDateValue()));
-
-    // Nombre
-      let tr2 = this.createElement(TAG.TR);
-      table.appendChild(tr2);
-      let tdName = this.createElement(TAG.TD);
-      tdName.setAttribute('colspan', '2');
-      tr2.appendChild(tdName);
-      let name = createInput(this.NAME, MSG.NAME, tdName);
-      
-      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-        name.readonly = 'true';
-      }
-      name.setValue(this.document.name);
-      name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
-
-    //Scope
-      let trScope = this.createElement(TAG.TR);
-      table.appendChild(trScope)
-      trScope.setAttribute('colspan', '2');
-      let scopeSelect =  createSelect(this.SCOPE, MSG.SCOPE + ' (solo visible...)', trScope);
-      if(!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()){
-        scopeSelect.readonly = 'true';
-      }
-      getScopes().then( scopes => {
-        scopeSelect.setOptions(scopes.map(s => {
-          return {
-            value: s.id,
-            name: s.name
+buildDataS3() {
+  let card = this.getElement(this.DATA_CARD);
+  card.setContentHTML('');
+  let table = this.createElement(TAG.TABLE);
+  table.style.width = '100%';
+  card.setContent(table);
+  let attributes = [];
+  
+  if (this.getDur().isDocumentalManager()) {
+      attributes = [
+          {
+              type: "checkbox",
+              id: ASESOR_TYPE + "_checkbox",
+              name: ASESOR_TYPE,
+              title: "No visible para " + MSG.ENTERPRISE
+          },
+          {
+              type: "checkbox",
+              id: EMPLOYEE_TYPE + "_checkbox",
+              name: EMPLOYEE_TYPE,
+              title: "Visible solo para " + MSG.EMPLOYEE,
           }
-        }));
-        if(this.document.scope)
-          scopeSelect.value = this.document.scope;
-        scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
-      });
+      ];
+  } else if (this.getDur().isDocumentalPortal()) {
+      attributes = [
+          {
+              type: "checkbox",
+              id: EMPLOYEE_TYPE + "_checkbox",
+              name: EMPLOYEE_TYPE,
+              title: "Visible solo para " + MSG.EMPLOYEE,
+          }
+      ];
   }
+
+  // Crear checkboxes si existen
+  attributes.forEach(attribute => {
+      let trCheckbox = this.createElement('tr');
+      table.appendChild(trCheckbox);
+
+      let tdCheckbox = this.createElement('td');
+      trCheckbox.appendChild(tdCheckbox);
+
+      // Crear el input usando getInput
+      let el = this.getInput([attribute]);
+      if (el) {
+          tdCheckbox.appendChild(el);
+      }
+  });
+
+  // Aquí pasamos el documento a la función de visibilidad
+  this.setCheckboxesBasedOnRegistryType(this.document);
+
+  // Llamamos a la función para manejar la visibilidad después
+  this.visibleOnly();
+
+  // Fecha
+  let tr = this.createElement(TAG.TR);
+  table.appendChild(tr);
+  let tdDate = this.createElement(TAG.TD);
+  tdDate.setAttribute('colspan', '1');
+  tr.appendChild(tdDate);
+
+  let date = createDate(this.DATE, MSG.DATE + ' del documento');
+  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+      date.readonly = 'true';
+  }
+  if (this.document.date) {
+      let d = this.document.date.split('-');
+      date.setDate(new Date(d[0], d[1] - 1, d[2]));
+  }
+  tdDate.appendChild(date);
+  // Si se modifica la fecha
+  date.addEventListener(EVENT.CHANGE, (event) => this.updateDate(date.getDateValue()));
+
+  // Nombre
+  let tr2 = this.createElement(TAG.TR);
+  table.appendChild(tr2);
+  let tdName = this.createElement(TAG.TD);
+  tdName.setAttribute('colspan', '2');
+  tr2.appendChild(tdName);
+  let name = createInput(this.NAME, MSG.NAME, tdName);
+  
+  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+      name.readonly = 'true';
+  }
+  name.setValue(this.document.name);
+  name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
+
+  // Scope
+  let trScope = this.createElement(TAG.TR);
+  table.appendChild(trScope);
+  trScope.setAttribute('colspan', '2');
+  let scopeSelect = createSelect(this.SCOPE, MSG.SCOPE + ' (solo visible...)', trScope);
+  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+      scopeSelect.readonly = 'true';
+  }
+
+  getScopes().then(scopes => {
+      scopeSelect.setOptions(scopes.map(s => {
+          return {
+              value: s.id,
+              name: s.name
+          };
+      }));
+      if (this.document.scope)
+          scopeSelect.value = this.document.scope;
+      scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
+  });
+}
 
   addTag(tag){
     let containerTags = this.getElement("containerTags");
