@@ -2503,14 +2503,14 @@
 }
 
 .aon_badge{
-	padding:.5rem;
+	padding: 0.5rem;
   	background-color: #ed3e3e;
   	border-radius: 50%;
-  	height: 1.5rem;
-  	width: 1.5rem;
+  	height: .5rem;
+  	width: .5rem;
   	color: white;
   	display: flex;
   	align-items: center;
   	justify-content: center;
-  	font-size: .7rem;
+  	font-size: 0.6rem;
 }
