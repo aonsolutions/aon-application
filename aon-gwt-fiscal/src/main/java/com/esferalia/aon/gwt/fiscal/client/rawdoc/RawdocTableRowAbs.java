@@ -28,6 +28,8 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 	}
 	
 	protected abstract Optional<T> getDoc(Rawdoc rawdoc);
+	protected abstract Widget getValidationInfo(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
+	protected abstract boolean isCheckEnabled(Rawdoc rawdoc);
 	protected abstract Label getDocumentLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
 	protected abstract Label getNameLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
 	protected abstract Label getAmountLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc);
@@ -40,7 +42,25 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 	}
 	
 	private void paintRow(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc, Label statusLabel, boolean recorded) {
+		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), cbk.getSelectedItems().contains(rawdoc.getId())?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
+		checkButton.addClickHandler(event -> {
+			if (cbk.getSelectedItems().contains(rawdoc.getId())) {
+				rawdoc.setSelected(false);
+				checkButton.addStyleName(AON.CSS.aonIconCheck());
+				checkButton.removeStyleName(AON.CSS.aonIconChecked());
+			} else {
+				rawdoc.setSelected(true);
+				checkButton.addStyleName(AON.CSS.aonIconChecked());
+				checkButton.removeStyleName(AON.CSS.aonIconCheck());
+			}
+			cbk.manageSelection( rawdoc );
+			event.stopPropagation();
+		});
 		this
+			.addCellIf(isCheckEnabled( rawdoc ), checkButton)
+			.addCellIf(!isCheckEnabled( rawdoc ), new Label())
+			
+			.addCell(getValidationInfo(opt, cbk, rawdoc), AON.CSS.aonTextCenter() )
 			.addCell(getNatureLabel(rawdoc), AON.CSS.aonTextCenter() )
 			.addCell(getTypeLabel(rawdoc), AON.CSS.aonTextCenter() )
 			.addCell(statusLabel, AON.CSS.aonTextCenter() )
@@ -278,6 +298,5 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 	private static native String b64encode(String a) /*-{
 	  return window.btoa(a);
 	}-*/;	
-
 	
 }

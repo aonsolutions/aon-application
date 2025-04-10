@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorderDAO {
@@ -74,7 +75,7 @@ public class InvoiceRecorderDAO {
 	}
 
 	private record InvoicePreRecordContext( AONContext ctx, int domain, Invoice inv) {}
-	static Invoice fillMessages(AONContext ctx, int domain, Invoice inv) {
+	public static Invoice fillMessages(AONContext ctx, int domain, Invoice inv) {
 		InvoicePreRecordContext iprc = new InvoicePreRecordContext(ctx, domain, inv);
 		if (inv.getId() == null) {
 			EMPTY_INVOICE_DOMAIN
@@ -89,6 +90,10 @@ public class InvoiceRecorderDAO {
 				.andThen(EMPTY_INVOICE_TAX_DATE)
 				.andThen(EMPTY_INVOICE_TYPE)
 				.andThen(EMPTY_INVOICE_REGISTRY)
+				.andThen(EMPTY_REGISTRY_DOCUMENT)
+				.andThen(OVERFLOW_REGISTRY_DOCUMENT)
+				.andThen(INVALID_REGISTRY_DOCUMENT)
+				.andThen(OVERFLOW_REGISTRY_NAME)
 				.accept(iprc);
 		}
 		
@@ -350,64 +355,85 @@ public class InvoiceRecorderDAO {
 		}
 	};
 
-//	/**
-//	 * El document del titular de la factura es un dato obligatorio.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_DOCUMENT = (ctx) -> {
-//		if (c.inv.getRegistry() != null && AonStringUtils.isBlank(c.inv.getRegistryDocument())) {
-//			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RDOCUMENT) );
-//		}
-//	};
-//	/**
-//	 * El documento del titular no debe superar caracters definido en BD.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_DOCUMENT = (ctx) -> {
-//		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
-//			if (willOverflow(INVOICE.RDOCUMENT, c.inv.getRegistryDocument())) {
-//				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RDOCUMENT, InvoiceErrorKey.RDOCUMENT.getDescription(), INVOICE.RDOCUMENT.getDataType().length()));
-//			}
-//		}
-//	};
-//
-//	/**
-//	 * El documento del titular debería validarse correctamente.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> INVALID_REGISTRY_DOCUMENT = (ctx) -> {
-//		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
-//			String country = c.inv.getRegistryDocumentCountry() == null ? null : 
-//				c.inv.getRegistryDocumentCountry().getIso2();
-//			if ("ES".equals( country )) {
-//				if (!AonDocumentUtil.isValid(c.inv.getRegistryDocument())) {
-//					ctx.add( InvoiceErrorMessages.C004.wrn(InvoiceErrorKey.RDOCUMENT) );
-//				}
-//			} else if (!AonDocumentUtil.isValidComunitaryCode(country,c.inv.getRegistryDocument())) {
-//				ctx.add( InvoiceErrorMessages.C004.wrn(InvoiceErrorKey.RDOCUMENT) );
-//			}
-//		}
-//	};
-//	/**
-//	 * La razon social del titular de la factura es un dato obligatorio.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_NAME = (ctx) -> {
-//		if (c.inv.getRegistry() != null &&  AonStringUtils.isBlank(c.inv.getRegistryName())) {
-//			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RNAME) );
-//		}
-//	};
-//	/**
-//	 * La razon social del titular no debe superar caracters definido en BD.
-//	 */
-//	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_NAME = (ctx) -> {
-//		if (AonStringUtils.isNotBlank(c.inv.getRegistryName())) {
-//			if (willOverflow(INVOICE.RNAME, c.inv.getRegistryName())) {
-//				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RNAME, InvoiceErrorKey.RNAME.getDescription(), INVOICE.RNAME.getDataType().length()));
-//			}
-//		}
-//	};
+	/**
+	 * El document del titular de la factura es un dato obligatorio.
+	 */
+	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_DOCUMENT = c -> {
+		if (c.inv.getRegistry() != null && AonStringUtils.isBlank(c.inv.getRegistryDocument())) {
+			c.inv.addMessage(new InvoiceError(
+				InvoiceErrorKey.RDOCUMENT
+				,InvoiceErrorLevel.WRN
+				,AonError.REGISTRY_EMPTY_DOCUMENT.getMessage()));
+		}
+	};
+	
+	/**
+	 * El documento del titular no debe superar caracters definido en BD.
+	 */
+	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_DOCUMENT = c -> {
+		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
+			if (willOverflow(INVOICE.RDOCUMENT, c.inv.getRegistryDocument())) {
+				c.inv.addMessage(new InvoiceError(
+					InvoiceErrorKey.RDOCUMENT
+					,InvoiceErrorLevel.WRN
+					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.REGISTRY.getDescription(),INVOICE.INVOICE.RDOCUMENT.getDataType().length()) ));
+			}
+		}
+	};
+
+	/**
+	 * El documento del titular debería validarse correctamente.
+	 */
+	private static final Consumer<InvoicePreRecordContext> INVALID_REGISTRY_DOCUMENT = c -> {
+		if (AonStringUtils.isNotBlank(c.inv.getRegistryDocument())) {
+			String country = c.inv.getRegistryDocumentCountry() == null ? null : 
+				c.inv.getRegistryDocumentCountry().getIso2();
+			if ("ES".equals( country )) {
+				if (!AonDocumentUtil.isValid(c.inv.getRegistryDocument())) {
+					c.inv.addMessage(new InvoiceError(
+						InvoiceErrorKey.RDOCUMENT
+						,InvoiceErrorLevel.WRN
+						,AonError.REGISTRY_INVALID_DOCUMENT.getMessage()) );
+				}
+			} else if (!AonDocumentUtil.isValidComunitaryCode(country,c.inv.getRegistryDocument())) {
+				c.inv.addMessage(new InvoiceError(
+					InvoiceErrorKey.RDOCUMENT
+					,InvoiceErrorLevel.WRN
+					,AonError.REGISTRY_INVALID_DOCUMENT.getMessage()) );
+			}
+		}
+	};
+	
+	/**
+	 * La razon social del titular de la factura es un dato obligatorio.
+	 */
+	private static final Consumer<InvoicePreRecordContext> EMPTY_REGISTRY_NAME = c -> {
+		if (c.inv.getRegistry() != null &&  AonStringUtils.isBlank(c.inv.getRegistryName())) {
+			c.inv.addMessage(new InvoiceError(
+				InvoiceErrorKey.RNAME
+				,InvoiceErrorLevel.WRN
+				,AonError.REGISTRY_EMPTY_NAME.getMessage()));
+		}
+	};
+	
+	/**
+	 * La razon social del titular no debe superar caracters definido en BD.
+	 */
+	private static final Consumer<InvoicePreRecordContext> OVERFLOW_REGISTRY_NAME = c -> {
+		if (AonStringUtils.isNotBlank(c.inv.getRegistryName())) {
+			if (willOverflow(INVOICE.RNAME, c.inv.getRegistryName())) {
+				c.inv.addMessage(new InvoiceError(
+					InvoiceErrorKey.REGISTRY
+					,InvoiceErrorLevel.WRN
+					,AonError.INVALID_LENGTH.format(InvoiceErrorKey.RNAME.getDescription(),INVOICE.INVOICE.RNAME.getDataType().length()) ));
+			}
+		}
+	};
 //
 //	/**
 //	 * La dirección de la factura no debe superar caracters definido en BD.
 //	 */
-//	private static final Consumer<InvoicePreRecordContext> OVERFLOW_ADDRESS = (ctx) -> {
+//	private static final Consumer<InvoicePreRecordContext> OVERFLOW_ADDRESS = c -> {
 //		if (AonStringUtils.isNotBlank(c.inv.getAddress().getAddress())) {
 //			if (willOverflow(RADDRESS.ADDRESS, c.inv.getAddress().getAddress())) {
 //				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.ADDRESS, InvoiceErrorKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
@@ -427,7 +453,7 @@ public class InvoiceRecorderDAO {
 //		}
 //	};
 //
-//	private static final Consumer<InvoicePreRecordContext> DETAILS_VALIDATION = (ctx) -> {
+//	private static final Consumer<InvoicePreRecordContext> DETAILS_VALIDATION = c -> {
 //		if (c.inv.getDetails() != null) {
 //			for (InvoiceDetail detail : c.inv.getDetails()) {
 //				OVERFLOW_DETAIL_DESCRIPTION
@@ -455,7 +481,7 @@ public class InvoiceRecorderDAO {
 //		}
 //	};
 //	
-//	private static final Consumer<InvoicePreRecordContext> FINANCES_VALIDATION = (ctx) -> {
+//	private static final Consumer<InvoicePreRecordContext> FINANCES_VALIDATION = c -> {
 //		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getInvoice().getFinances() != null) {
 //			for (Finance finance : ctx.getResult().getAccountingInvoice().getInvoice().getFinances()) {
 //				CHECK_FINANCE_AMOUNT_ZERO
@@ -469,7 +495,7 @@ public class InvoiceRecorderDAO {
 //	/**
 //	 * Si el año de la factura no es anterior en cinco años al actual.
 //	 */
-//	private static final Consumer<InvoicePreRecordContext> CHECK_FIVE_YEARS = (ctx) -> {
+//	private static final Consumer<InvoicePreRecordContext> CHECK_FIVE_YEARS = c -> {
 //		if (c.inv.getIssueDate() != null) {
 //			int thisYear = AonDateUtils.getYear(new Date());
 //			int invoiceYear = AonDateUtils.getYear(c.inv.getIssueDate());
@@ -479,7 +505,7 @@ public class InvoiceRecorderDAO {
 //		}
 //	};
 //
-//	private static final Consumer<InvoicePreRecordContext> CHECK_LINES = (ctx) -> {
+//	private static final Consumer<InvoicePreRecordContext> CHECK_LINES = c -> {
 //		if (c.inv.getDetails() == null || c.inv.getDetails().size() == 0) {
 //			ctx.add( InvoiceErrorMessages.C010.err(InvoiceErrorKey.DETAILS) );
 //		}

@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.accounting.AccountingIncome;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 class RawdocTableRowIncome extends RawdocTableRowAbs<AccountingIncome> {
 
@@ -56,6 +57,16 @@ class RawdocTableRowIncome extends RawdocTableRowAbs<AccountingIncome> {
 	protected AonTableButton getActionButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		// TODO Contabilizar un ingreso
 		return null;
+	}
+	@Override
+	protected Widget getValidationInfo(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
+		// TODO Auto-generated method stub
+		return new Label();
+	}
+	
+	@Override
+	protected boolean isCheckEnabled(Rawdoc rawdoc) {
+		return false;
 	}
 	
 }

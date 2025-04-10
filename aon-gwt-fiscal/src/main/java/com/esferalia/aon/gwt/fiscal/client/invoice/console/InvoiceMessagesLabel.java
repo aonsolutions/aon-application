@@ -63,7 +63,7 @@ public class InvoiceMessagesLabel extends AonTableButton {
 					errorIcon.setStyleName(AON.CSS.aonIconLabel());
 					errorIcon.addStyleName( e.getLevel().visit(new BackgroundErrorLevelVisitor())  );
 					
-					Label errorMsg = new Label(AonStringUtils.abbreviate(e.getMessage(), 40));
+					Label errorMsg = new Label(e.getMessage() );
 					errorMsg.setTitle(e.getMessage());
 					errors.addRow()
 						.addCell(errorIcon, AON.CSS.aonWidth20())
