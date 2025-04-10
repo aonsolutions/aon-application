@@ -183,7 +183,7 @@ export class AonBankCard extends AonElement {
         amount.style.fontWeight = "bold";
         amount.style.minWidth = "5rem";
         amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(total - accumulatedBanks, 2, "EUR");
+        amount.innerHTML = formatNumber(total - accumulatedBanks, 2, 2, "EUR");
         rightContent.appendChild(amount);
 
         row.appendChild(leftContent);
@@ -206,12 +206,12 @@ export class AonBankCard extends AonElement {
   }
 
   formatNumber(number){
-    return number || number === 0 ? formatNumber(number, 2, "EUR") : "No disponible";
+    return number || number === 0 ? formatNumber(number, 2, 2, "EUR") : "No disponible";
   }
 
   getTotal(banks){
     let total = banks.reduce((t, bank) => t + bank.balance, 0);
-    return total > 0 ? formatNumber(total, 2, "EUR") : "No disponible";
+    return total > 0 ? formatNumber(total, 2, 2, "EUR") : "No disponible";
   }
 
   formatDate(inputDate) {

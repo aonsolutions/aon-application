@@ -434,7 +434,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			if(this.isBeta() || this.getInvoice().isEmitida()) 
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox())) 
 				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
@@ -442,7 +442,7 @@ export class AonInvoice extends AonElement {
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			if(this.isBeta() || this.getInvoice().isEmitida())
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox()))
 				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
@@ -564,8 +564,7 @@ export class AonInvoice extends AonElement {
 				let history = requests[i];
 				this.printTbaiHistory(table, history, i);
 			}
-		})
-
+		});
 	}
 
 	printTbaiHistory(table, history, i) {
@@ -1857,10 +1856,12 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	createAonNumber(id, title, value) {
+	createAonNumber(id, title, value, decimals) {
 		let aonNumber = createNumber(id, title);
 		aonNumber.format = CONSTANT.TRUE;
 		aonNumber.decimals = "2";
+		aonNumber.minDecimal = "2";
+		aonNumber.maxDecimal = decimals || "2";
 		aonNumber.readonly = this.invoice.isReadonly();
 		aonNumber.value = value || 0.0;
 		return aonNumber;
@@ -2359,7 +2360,7 @@ export class AonInvoice extends AonElement {
 		// ----- FINANCE DUE DATE
 
 		let dateCell = this.buildFinanceDate(table, this.FINANCE_DUE_DATE + i, finance, i);
-		if(!this.isMinimize())dateCell.style.width = '15%';
+		if(!this.isMinimize()) dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
 

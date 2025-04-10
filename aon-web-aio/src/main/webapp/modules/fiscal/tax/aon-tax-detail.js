@@ -804,11 +804,11 @@ export class AonTaxDetail extends AonElement {
           if(taxableBase == 0) taxableBase = invoice.taxableBase;
           if(vatQuota == 0) vatQuota = invoice.vatQuota;
 
-          invoice.baseParse = formatNumber(taxableBase, 2, "EUR");
-          invoice.vatParse = formatNumber(vatQuota, 2, "EUR");
+          invoice.baseParse = formatNumber(taxableBase, 2, 2, "EUR");
+          invoice.vatParse = formatNumber(vatQuota, 2, 2, "EUR");
         } else {
-          invoice.baseParse = formatNumber(invoice.taxableBase, 2, "EUR");
-          invoice.vatParse = formatNumber(invoice.vatQuota, 2, "EUR");
+          invoice.baseParse = formatNumber(invoice.taxableBase, 2, 2, "EUR");
+          invoice.vatParse = formatNumber(invoice.vatQuota, 2, 2, "EUR");
         }
 
         // IRPF
@@ -820,9 +820,9 @@ export class AonTaxDetail extends AonElement {
 
           if(withholdingQuota == 0) withholdingQuota = invoice.retentionQuota;
 
-          invoice.irpfParse = formatNumber(withholdingQuota, 2, "EUR");
+          invoice.irpfParse = formatNumber(withholdingQuota, 2, 2, "EUR");
         } else {
-          invoice.irpfParse = formatNumber(0, 2, "EUR");
+          invoice.irpfParse = formatNumber(0, 2, 2, "EUR");
         }
 
         // Exempt
@@ -831,12 +831,12 @@ export class AonTaxDetail extends AonElement {
             totals.exemptQuota += detail.amount || 0;
             return totals;
           }, { exemptQuota: 0});
-          invoice.exemptParse = formatNumber(exemptQuota, 2, "EUR");
+          invoice.exemptParse = formatNumber(exemptQuota, 2, 2, "EUR");
         } else {
-          invoice.exemptParse = formatNumber(0, 2, "EUR");
+          invoice.exemptParse = formatNumber(0, 2, 2, "EUR");
         }
 
-        invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+        invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 
        
         let icons = [];
@@ -934,10 +934,10 @@ export class AonTaxDetail extends AonElement {
       salaries.forEach((salary, index) => {
         index = this.salaries.length > 100 ? (this.salaries.length + index) : index;
 
-        salary.paymentParse = formatNumber(salary.totalPayment, 2, "EUR");
-        salary.deductionParse = formatNumber(salary.totalDeduction, 2, "EUR");
-        salary.irpfParse =  formatNumber(salary.irpf, 2, "EUR");
-        salary.totalParse = formatNumber(salary.totalLiquid, 2, "EUR");
+        salary.paymentParse = formatNumber(salary.totalPayment, 2, 2, "EUR");
+        salary.deductionParse = formatNumber(salary.totalDeduction, 2, 2, "EUR");
+        salary.irpfParse =  formatNumber(salary.irpf, 2, 2, "EUR");
+        salary.totalParse = formatNumber(salary.totalLiquid, 2, 2, "EUR");
 
         let icons = [];
         let icon = {
@@ -1147,21 +1147,19 @@ export class AonTaxDetail extends AonElement {
   getAmount(sepaDetail) {
     return formatNumber(
       !sepaDetail.finance ? 0 : sepaDetail.finance.amount,
-      2,
-      "EUR"
-    );
+      2, 2, "EUR");
   }
 
   getTotal(sepaDoc) {
     if (!sepaDoc.fbatch_details || sepaDoc.fbatch_details.length === 0) {
-      return formatNumber(0, 2, "EUR");
+      return formatNumber(0, 2, 2, "EUR");
     }
 
     let total = sepaDoc.fbatch_details.reduce(
       (t, detail) => t + detail.amount,
       0
     );
-    return formatNumber(total, 2, "EUR");
+    return formatNumber(total, 2, 2, "EUR");
   }
 
   getPdf({ id: source_id, newModel }) {
@@ -1255,7 +1253,7 @@ export class AonTaxDetail extends AonElement {
 	    const divAeatRectificationOneTextTwo = this.createElement(TAG.DIV);
 	    divAeatRectificationOneTextTwo.style.textAlign = "end";
 	    divAeatRectificationOneTextTwo.style.color = "black";
-	    divAeatRectificationOneTextTwo.textContent = formatNumber(Math.abs(resp.result)-resp.amountRectification, 2, "EUR");
+	    divAeatRectificationOneTextTwo.textContent = formatNumber(Math.abs(resp.result)-resp.amountRectification, 2, 2, "EUR");
 	    divAeatRectificationOne.appendChild(divAeatRectificationOneTextTwo);
 	    div.appendChild(divAeatRectificationOne);
 	    
@@ -1270,7 +1268,7 @@ export class AonTaxDetail extends AonElement {
 	    const divAeatRectificationTwoTextTwo = this.createElement(TAG.DIV);
 	    divAeatRectificationTwoTextTwo.style.textAlign = "end";
 	    divAeatRectificationTwoTextTwo.style.color = "black";
-	    divAeatRectificationTwoTextTwo.textContent = formatNumber(resp.amountRectification, 2, "EUR");
+	    divAeatRectificationTwoTextTwo.textContent = formatNumber(resp.amountRectification, 2, 2, "EUR");
 	    divAeatRectificationTwo.appendChild(divAeatRectificationTwoTextTwo);
 	    div.appendChild(divAeatRectificationTwo);
 	}

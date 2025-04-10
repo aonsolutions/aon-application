@@ -166,8 +166,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     static boolean isImage(S3EventObject s3UploadEventObject) {
+    	System.out.println(s3UploadEventObject.getBucket());
+    	System.out.println(s3UploadEventObject.getKey());
     	String contentType = solutions.aon.aws.s3.S3.getContentType(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
-    	return contentType.toLowerCase().contains("image");
+    	System.out.println(contentType);
+    	return contentType != null && contentType.toLowerCase().contains("image");
     }
     
     static byte[] imageToPdf(byte[] image) throws IOException, CanNotCreatePdfException {

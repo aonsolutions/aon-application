@@ -1,6 +1,6 @@
 
 export const Transactions = [
-  {value: 'NAC', name: 'Nacional'},
+  {value: 'NAC', name: 'Op. Interiores'},
   {value: 'INTR', name: 'Intracomunitaria'},
   {value: 'EXTR', name: 'Extracomunitaria'},
   {value: 'CCM', name: 'Canarias, Ceuta y Melilla'},

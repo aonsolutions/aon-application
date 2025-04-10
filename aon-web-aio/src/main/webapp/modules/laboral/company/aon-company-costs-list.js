@@ -196,7 +196,7 @@ export class AonCompanyCostsList extends AonElement {
         title = `${title} ${startDateText} - ${endDateText}`;
       }
 
-      title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+      title = `${title}<br> ${workplaceText} <span style="color:black;font-weight:600;">${formatNumber(total, 2, 2, "EUR")}<span>`;
 
       divTitle.innerHTML = title;
     } catch (error) {

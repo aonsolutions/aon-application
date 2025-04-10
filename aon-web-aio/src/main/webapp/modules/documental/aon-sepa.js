@@ -117,21 +117,19 @@ export class AonSepa extends AonElement {
   getAmount(sepaDetail) {
     return formatNumber(
       !sepaDetail.finance ? 0 : sepaDetail.finance.amount,
-      2,
-      "EUR"
-    );
+      2, 2, "EUR");
   }
 
   getTotal(sepaDoc) {
     if (!sepaDoc.fbatch_details || sepaDoc.fbatch_details.length === 0) {
-      return formatNumber(0, 2, "EUR");
+      return formatNumber(0, 2, 2, "EUR");
     }
 
     let total = sepaDoc.fbatch_details.reduce(
       (t, detail) => t + detail.amount,
       0
     );
-    return formatNumber(total, 2, "EUR");
+    return formatNumber(total, 2, 2, "EUR");
   }
 
   back() {
