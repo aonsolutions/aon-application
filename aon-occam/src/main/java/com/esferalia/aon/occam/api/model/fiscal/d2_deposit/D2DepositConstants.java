@@ -36,6 +36,7 @@ public class D2DepositConstants {
 		
 	};
 	
+    // I. Titular real persona física - % de participación. I.a Con % de participación en el capital superior al 25%
 	public static D2DepositHeaderKey[] ITR_KEYS_4 = new D2DepositHeaderKey[]{
 			D2DepositHeaderKey.ITR8230001, D2DepositHeaderKey.ITR8230002, D2DepositHeaderKey.ITR8230003,
 			D2DepositHeaderKey.ITR8230004, D2DepositHeaderKey.ITR8230005, D2DepositHeaderKey.ITR8230006,
@@ -50,6 +51,7 @@ public class D2DepositConstants {
 			D2DepositHeaderKey.ITR8230027, D2DepositHeaderKey.ITR8230028, D2DepositHeaderKey.ITR8230029,
 	};
 	
+	// I. Titular real persona física - % de participación. I.b Con % de participación por derechos de voto superior al 25%	
 	public static D2DepositHeaderKey[] ITR_KEYS_5 = new D2DepositHeaderKey[]{
 			D2DepositHeaderKey.ITR8230101, D2DepositHeaderKey.ITR8230102, D2DepositHeaderKey.ITR8230103,
 			D2DepositHeaderKey.ITR8230104, D2DepositHeaderKey.ITR8230105, D2DepositHeaderKey.ITR8230106,
@@ -79,6 +81,7 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.ITR8213008, D2DepositHeaderKey.ITR8214008		
 	};
 	
+	// II. Titular real persona física asimilada
 	public static D2DepositHeaderKey[] ITR_KEYS_6 = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.ITR8210005, D2DepositHeaderKey.ITR8215005, D2DepositHeaderKey.ITR8216005,
 		D2DepositHeaderKey.ITR8211005, D2DepositHeaderKey.ITR8212005, D2DepositHeaderKey.ITR8213005, D2DepositHeaderKey.ITR8214005, 
