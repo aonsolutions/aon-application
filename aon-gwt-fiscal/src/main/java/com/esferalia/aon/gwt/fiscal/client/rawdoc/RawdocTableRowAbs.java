@@ -6,7 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -105,7 +105,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			viewDoc.getElement().getStyle().setMarginRight(5, Unit.PX);
 			viewDoc.addClickHandler(event -> {
 				if(rawdoc.getS3Key() != null) {
-					RawdocModuleNew.RAWDOC_SERVICE.getS3Url(rawdoc, new AsyncCallback<String>() {
+					RawdocModule.RAWDOC_SERVICE.getS3Url(rawdoc, new AsyncCallback<String>() {
 						@Override
 						public void onSuccess(String url) {
 							cbk.showViewer(MimeType.PDF, url);
@@ -140,7 +140,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			deleteForever.addClickHandler(event -> {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDeleteForever(), () -> 
-					RawdocModuleNew.RAWDOC_SERVICE.delete(opt.getOccam(), rawdoc.getId()
+					RawdocModule.RAWDOC_SERVICE.delete(opt.getOccam(), rawdoc.getId()
 						, new AsyncCallback<Void>() {
 							
 							@Override
@@ -175,7 +175,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 				cd.confirm((rawdoc.getStatus() == RawdocStatus.REJECTED
 					?AON.MSG.confirmRestoreRejected()
 					:AON.MSG.confirmRestoreAction()), () -> 
-						RawdocModuleNew.RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
+						RawdocModule.RAWDOC_SERVICE.toInbox(opt.getOccam(), rawdoc.getId()
 							, new AsyncCallback<Rawdoc>() {
 								
 									@Override
@@ -204,7 +204,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
 			reject.addClickHandler(event -> {
 				RawdocRejectPanel rrp = new RawdocRejectPanel(opt,rawdoc, reason -> 
-					RawdocModuleNew.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason 
+					RawdocModule.RAWDOC_SERVICE.toRejected(opt.getOccam(), rawdoc.getId(), reason 
 						, new AsyncCallback<Rawdoc>() {
 							@Override
 							public void onSuccess(Rawdoc result) {
@@ -236,7 +236,7 @@ abstract class RawdocTableRowAbs<T> extends AonDisplayGridRow {
 			delete.addClickHandler(event -> {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.confirmDraftAction(), () -> 
-					RawdocModuleNew.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
+					RawdocModule.RAWDOC_SERVICE.toDraft(opt.getOccam(), rawdoc.getId()
 						, new AsyncCallback<Rawdoc>() {
 							
 							@Override
