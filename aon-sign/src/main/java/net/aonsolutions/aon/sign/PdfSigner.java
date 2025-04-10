@@ -51,8 +51,8 @@ public class PdfSigner extends Signer {
 	
     public Properties getExtraParams() {
     	final Properties xParams = new Properties();
-    	xParams.put("tsaURL", CATCERT_TSA_URL);
-    	xParams.put("tsType", TsaParams.TS_SIGN);
+//    	xParams.put("tsaURL", CATCERT_TSA_URL);
+//    	xParams.put("tsType", TsaParams.TS_SIGN);
     	return xParams;
     }
 	
