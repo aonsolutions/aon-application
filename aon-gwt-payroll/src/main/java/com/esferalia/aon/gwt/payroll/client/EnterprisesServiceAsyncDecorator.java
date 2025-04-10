@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -1313,6 +1314,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkAgreementIntegrity(String domainName, Integer agreementId, AsyncCallback<AgreementIntegrity> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkAgreementIntegrity(domainName, agreementId, callback);
+	}
+	
+	@Override
+	public void agreementIntegrityFix(String domainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.agreementIntegrityFix(domainName, agreementId, agreementIntegrityFix, callback);
 	}
 	
 }
