@@ -292,12 +292,12 @@ export class AonTimecontrol extends AonElement {
       div3.appendChild(aonSign);
       this.applicationEl.setContent(div3);
       if(this.isMobile()){
-        const {YESTERDAY, THIS_WEEK, LAST_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
+        const {TODAY, YESTERDAY, THIS_WEEK, THIS_MONTH}  = SigninSidenav.PERIOD;
         let div = this.getElement("aonSigninContent");
         const apps = [
+          {title: "Hoy", fn: () => this.setDataFilter({period:TODAY.id})},
           {title: "Ayer", fn: () => this.setDataFilter({period:YESTERDAY.id})},
           {title: "Semana actual", fn: () => this.setDataFilter({period:THIS_WEEK.id})},
-          {title: "Semana pasada", fn: () => this.setDataFilter({period:LAST_WEEK.id})},
           {title: "Mes actual", fn: () => this.setDataFilter({period:THIS_MONTH.id})}
         ]
         div.appendChild(this.createApps(apps));
@@ -311,7 +311,7 @@ export class AonTimecontrol extends AonElement {
 
     apps.forEach(({ title, fn }) => {
         let li = this.createElement(TAG.LI);
-        li.id = "aonMobileTcApp-" + title;
+        li.id = "aonMobileTcApp" + title;
         li.classList.add(CSS.AON_LIST_GROUP_ITEM, CSS.AON_APP_LI, "fixLi");
         li.style.borderRight = "0px";
         li.style.borderLeft = "0px";
@@ -324,7 +324,7 @@ export class AonTimecontrol extends AonElement {
 
         let icon = this.createElement(TAG.SPAN); 
         icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-        icon.id = "aonMobileSelectionIcon-" + title;
+        icon.id = "aonMobileSelectionIcon" + title;
         icon.innerHTML = "today"; 
         icon.style.backgroundColor = "var(--aonTimecontrol)";
         icon.style.color = "white";
@@ -336,7 +336,7 @@ export class AonTimecontrol extends AonElement {
         icon.style.height = "32px";
 
         let span2 = this.createElement(TAG.SPAN);
-        span2.id = "aonMobileTcTitle-" + title;
+        span2.id = "aonMobileTcTitle" + title;
         span2.className = "aonAppTitle";
         span2.innerHTML = title;
 
