@@ -927,6 +927,16 @@ public class InvoiceDAO {
 			}
 			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
 		}
+		
+		invoice.getDetails().stream().forEach(detail ->
+			detail.getInvoiceTaxes().stream().forEach(tax -> 
+				ctx.getDslContext().delete(INVOICE_TAX_ACCOUNT)
+					.where(INVOICE_TAX_ACCOUNT.DOMAIN.eq(tax.getDomain()))
+					.and(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(tax.getId()))
+				.execute()
+			)
+		);
+		
 		return invoice;
 	}
 	
@@ -1520,15 +1530,15 @@ public class InvoiceDAO {
 						.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
 						.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 						.execute();
-					if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-						ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {						
 						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
-							.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
-							.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
-							.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
-							.execute();
-						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
+							ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+								.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+								.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+								.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount() != null ? tax.getAccount() : detail.getAccount())
+								.execute();
+							ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
 						}
 					} else {
 						ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
