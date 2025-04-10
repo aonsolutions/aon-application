@@ -58,6 +58,7 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.CATEGORY)
 				.select(Rdoc.RDOC.REGISTRY)
 				.select(Rdoc.RDOC.SCOPE)
+			    .select(Rdoc.RDOC.TYPE) 
 				.from(Rdoc.RDOC)
 				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
 				.and(Rdoc.RDOC.DELETE_DATE.isNull())
@@ -80,6 +81,7 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.CATEGORY.as(Rdoc.RDOC.CATEGORY))
 				.select(Rattach.RATTACH.REGISTRY.as(Rdoc.RDOC.REGISTRY))
 				.select(Rattach.RATTACH.SCOPE.as(Rdoc.RDOC.SCOPE))
+				.select(DSL.inline((Integer) null).as(Rdoc.RDOC.TYPE))
 				.from(Rattach.RATTACH)
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
 		if(category != null) {
@@ -242,6 +244,7 @@ public class S3DocumentDAO {
 					.setRegistry(r.get(Rdoc.RDOC.REGISTRY))
 					.setType(r.get(TYPE_DOC))
 					.setScope(r.get(Rdoc.RDOC.SCOPE))
+					.setRegistryType(r.get(Rdoc.RDOC.TYPE))
 					;
 		}
 	}
