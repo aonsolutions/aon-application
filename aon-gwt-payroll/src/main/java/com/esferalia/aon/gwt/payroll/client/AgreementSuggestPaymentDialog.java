@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -49,7 +51,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 
 		@Override
 		Payment getItem(String replacementString) {
-			for (Payment paymentIt : availablePaymens) {
+			for (Payment paymentIt : availablePaymentConcepts) {
 				String suggestion = getSuggestionString(paymentIt);
 				if (AonStringUtils.equals(replacementString, suggestion))
 					return paymentIt;
@@ -81,6 +83,9 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	HTMLPanel suggestPanel;
 	
 	@UiField
+	TextBox paymentCodeTB;
+	
+	@UiField
 	HTMLPanel paymentTypePanel;
 	
 	@UiField
@@ -98,7 +103,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	// --------------------- Variables
 	
 	private DomainEmployeesServiceAsync impl = DomainEmployeesServiceAsync.newInstance();
-	List<Payment> availablePaymens;
+	List<Payment> availablePaymentConcepts;
 	MultiWordSuggestOracle paymentDescriptionOracle;
 	PaymentSuggestionDisplay paymentSuggestionDisplay;
 	SuggestBox descriptionSuggest;
@@ -107,26 +112,32 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
  	
 	private Payment payment;
 	
+	private Set<Payment> allPayments;
+	private List<String> contextVariables;
+	
 	private Button manualAgreement;
 	private Button acceptBtn;
 	
 	// --------------------- Constructor
 	
-	protected AgreementSuggestPaymentDialog() {
+	protected AgreementSuggestPaymentDialog(Set<Payment> allPayments, List<String> contextVariables) {
 		setCaption("Devengos Predefinidos");
 		setWidget(binder.createAndBindUi(this));
-		getButtonsPanel();
+		showCloseButton(true);
 		
-		this.showCloseButton(true);
-		setEnabled(acceptBtn, false);
-		setEnabled(manualAgreement, true);
+		this.allPayments = allPayments;
+		this.contextVariables = contextVariables;
 
-		availablePaymens = new ArrayList<>();
+		availablePaymentConcepts = new ArrayList<>();
 		paymentDescriptionOracle = new MultiWordSuggestOracle();
 		paymentSuggestionDisplay = new PaymentSuggestionDisplay();
 		
+		getButtonsPanel();
+		
 		initializePaymentType();
 		initializeSalaryType();
+		
+		initializePayment();
 		
 		impl.getAvailablePayments(Integer.MAX_VALUE, new AsyncCallback<List<Payment>>() {
 			
@@ -143,6 +154,45 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		});
 	}
 	
+	private void getButtonsPanel() {
+		manualAgreement = new Button();
+		manualAgreement.setText("Modo avanzado");
+		manualAgreement.setStyleName(AON.CSS.aonIconEditNote());
+		manualAgreement.addStyleName(style.button());
+		manualAgreement.setEnabled(true);
+		manualAgreement.addClickHandler(e -> {
+			hide();
+			onManualEdition();
+		});
+		buttonsPanel.add(manualAgreement);
+		
+		acceptBtn = new Button();
+		acceptBtn.setText("Aceptar");
+		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtn.ensureDebugId("acceptNewPaymentButton");
+		manualAgreement.setEnabled(false);
+		acceptBtn.addClickHandler(e -> {
+			hide();
+			onAccept(payment);
+		});
+		
+		buttonsPanel.add(acceptBtn);
+	}
+	
+	private void initializePaymentType() {
+		paymentTypeLB = new TypeListBox<>(Payment.Type.class, 10);
+		paymentTypeLB.setSelected(Payment.Type.DEFAULT);
+		paymentTypeLB.addStyleName("aon-selectOneMenu");
+		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
+		paymentTypeLB.setHeight("1.5rem");
+		paymentTypeLB.addChangeHandler(e -> {
+			payment.setType(paymentTypeLB.getSelected());
+			checkQuoteAndTaxedByCra();
+		});
+		paymentTypePanel.clear();
+		paymentTypePanel.add(paymentTypeLB);
+	}
+	
 	private void initializeSalaryType() {
 		paymentSalaryTypeLB.addStyleName("aon-selectOneMenu");
 		paymentSalaryTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
@@ -156,18 +206,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		paymentSalaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
 		paymentSalaryTypeLB.addChangeHandler(e -> payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]));
 	}
-
-	@UiHandler("paymentDescriptionTB")
-	void onPaymentDescriptionChange(ValueChangeEvent<String> event) {
-		setPaymentDescription(event.getValue());
-	}
-	
-	@UiHandler("paymentExpressionTB")
-	void onPaymentExpressionChange(ValueChangeEvent<String> event) {
-		setPaymentExpression(event.getValue());
-	}
-	
-	// --------------------- Payment
 	
 	private void initializePayment() {
 		payment = new Payment();
@@ -178,14 +216,122 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		this.payment.setId(newPaymentId);
 		
 		this.payment.setSalaryType(Salary.Type.SALARY);
+		this.payment.setType(Type.CRA_0001);
+		
+		this.payment.setIrpfExpression("_P");
+		this.payment.setQuoteExpression("_P");
 		
 		Date defaultStartDate = new Date(1970 - 1900, 0, 1);
 		payment.setStartDate(defaultStartDate);
 	}
 	
-	private void initialiazePaymentByConcept(Payment concept) {
-		initializePayment();
+	private void createSuggestBox(List<Payment> payments) {
+		suggestPanel.clear();
 		
+		initSuggestBox(payments);
+		
+		TextBox descriptionBox = new TextBox();
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
+		
+		descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
+		descriptionSuggest.setAutoSelectEnabled(false);
+		descriptionSuggest.getElement().getStyle().setWidth(99, Unit.PCT);
+		descriptionSuggest.addStyleName(style.inputHeight());
+		
+		descriptionSuggest.addSelectionHandler(event -> {
+			Suggestion suggestion = event.getSelectedItem();
+			
+			Payment concept = getPayment(suggestion.getReplacementString());
+			
+			if (concept != null) {
+				initialiazePaymentByConcept(concept);
+				
+				Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), concept.getName())).findFirst();
+				if(existingCodePayment.isPresent()) {
+					paymentCodeTB.setValue("");
+					AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+				}
+				
+			}
+				
+			acceptBtn.setEnabled(true);
+			manualAgreement.setEnabled(false);
+		});
+		
+		descriptionSuggest.addKeyDownHandler(event -> {
+			if (KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode())
+				paymentSuggestionDisplay.hideSuggestions();
+			else if (event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode())
+				descriptionSuggest.showSuggestionList();
+		});
+		
+		descriptionSuggest.getElement().setPropertyString("placeholder", "Ctrl + espacio para ver sugerencias");
+		descriptionSuggest.ensureDebugId("descriptionSuggest");
+		
+		suggestPanel.add(descriptionSuggest);
+	}
+	
+	// --------------------- Initialize PaymentSuggestionDisplay
+	
+	private void initSuggestBox(List<Payment> paymentsList) {
+		availablePaymentConcepts.addAll(paymentsList);
+		paymentDescriptionOracle.clear();
+		
+		List<String> suggestionList = new ArrayList<>();
+		
+		for (Payment paymentIt : availablePaymentConcepts) {
+			String suggestion = getSuggestionString(paymentIt);
+			if (AonStringUtils.isEmpty(suggestion))
+				continue;
+			
+			suggestionList.add(suggestion);
+			paymentDescriptionOracle.add(suggestion);
+		}
+		
+		paymentDescriptionOracle.setDefaultSuggestionsFromText(suggestionList);
+	}
+	
+	// --------------------- Handler
+
+	@UiHandler("paymentCodeTB")
+	void oPaymentCodeChange(ValueChangeEvent<String> event) {
+		checkPaymentCode();
+	}
+	
+	private void checkPaymentCode() {
+		String value = paymentCodeTB.getValue();
+		
+		if(AonStringUtils.isBlank(value)) AonMessagePanel.showError(messagePanel, "El c\u00f3digo del concepto es obligatorio");
+		else {
+			String cleanNewCode = value.replaceAll(" ", "_").trim().toUpperCase();
+			
+			Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), cleanNewCode)).findFirst();
+			if(existingCodePayment.isPresent()) {
+				paymentCodeTB.setValue("");
+				AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+			} else if(contextVariables.contains(cleanNewCode)) {
+				paymentCodeTB.setValue("");
+				AonMessagePanel.showError(messagePanel, "No se puede usar el nombre de una variable de contexto como c\u00f3digo de un concepto. Elija otro nombre para el c\u00f3digo");
+			} else {
+				payment.setName(cleanNewCode);
+				paymentCodeTB.setValue(cleanNewCode);
+			}
+		}
+	}
+
+	@UiHandler("paymentDescriptionTB")
+	void onPaymentDescriptionChange(ValueChangeEvent<String> event) {
+		payment.setDescription(paymentDescriptionTB.getValue());
+	}
+	
+	@UiHandler("paymentExpressionTB")
+	void onPaymentExpressionChange(ValueChangeEvent<String> event) {
+		payment.setExpression(paymentExpressionTB.getValue());
+	}
+	
+	// --------------------- Payment
+	
+	private void initialiazePaymentByConcept(Payment concept) {
 		payment.setType(concept.getType());
 		payment.setName(concept.getName());
 		payment.setConceptId(concept.getId());
@@ -197,39 +343,9 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
 		
 		paymentTypeLB.setSelected(payment.getType());
+		paymentCodeTB.setValue(payment.getName());
 		paymentDescriptionTB.setValue(payment.getDescription());
 		paymentExpressionTB.setValue(payment.getExpression());
-	}
-	
-	private void initialiazePaymentByConceptDescription(String conceptDescription) {
-		initializePayment();
-		
-		payment.setType(Payment.Type.CRA_0001);
-		payment.setName(conceptDescription);
-		payment.setSalaryType(Salary.Type.SALARY);
-		payment.setIrpfExpression("_P");
-		payment.setQuoteExpression("_P");
-		
-		paymentTypeLB.setSelected(payment.getType());
-		paymentDescriptionTB.setValue(payment.getDescription());
-		paymentExpressionTB.setValue(payment.getExpression());
-		
-	}
-
-	private void setPaymentType(Type type) {
-		if(null == payment) initializePayment();
-		payment.setType(type);
-		checkQuoteAndTaxedByCra();
-	}
-	
-	private void setPaymentDescription(String description) {
-		if(null == payment) initializePayment();
-		payment.setDescription(description);
-	}
-	
-	private void setPaymentExpression(String expression) {
-		if(null == payment) initializePayment();
-		payment.setExpression(expression);
 	}
 	
 	private void checkQuoteAndTaxedByCra() {
@@ -256,108 +372,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		}
 	}
 	
-	// --------------------- PaymentType
-	
-	private void initializePaymentType() {
-		paymentTypeLB = new TypeListBox<>(Payment.Type.class, 10);
-		paymentTypeLB.setSelected(Payment.Type.DEFAULT);
-		paymentTypeLB.addStyleName("aon-selectOneMenu");
-		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
-		paymentTypeLB.setHeight("1.5rem");
-		paymentTypeLB.addChangeHandler(e -> setPaymentType(paymentTypeLB.getSelected()));
-		paymentTypePanel.clear();
-		paymentTypePanel.add(paymentTypeLB);
-	}
-
-	// --------------------- CreateSuggestBox
-
-	private void createSuggestBox(List<Payment> payments) {
-		suggestPanel.clear();
-		initSuggestBox(payments);
-		
-		TextBox descriptionBox = new TextBox();
-		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
-		
-		descriptionSuggest = new SuggestBox(paymentDescriptionOracle, descriptionBox, paymentSuggestionDisplay);
-		descriptionSuggest.setAutoSelectEnabled(false);
-		descriptionSuggest.getElement().getStyle().setWidth(99, Unit.PCT);
-		descriptionSuggest.addStyleName(style.inputHeight());
-		
-		descriptionSuggest.addSelectionHandler(event -> {
-			Suggestion suggestion = event.getSelectedItem();
-			Payment concept = getPayment(suggestion.getReplacementString());
-			
-			if (concept == null)
-				showError("Error devengo", "No se ha podido obtener el devengo");
-			
-			initialiazePaymentByConcept(concept);
-
-			setEnabled(acceptBtn, true);
-			setEnabled(manualAgreement, false);
-		});
-		
-		descriptionSuggest.getValueBox().addBlurHandler(event -> {
-			if(AonStringUtils.isNotBlank(descriptionSuggest.getValue()) && AonStringUtils.startsWith(descriptionSuggest.getValue(), "00") && AonStringUtils.endsWith(descriptionSuggest.getValue(), ")")) {
-				Payment concept = getPayment(descriptionSuggest.getValue());
-				
-				if (concept == null)
-					showError("Error devengo", "No se ha podido obtener el devengo");
-	
-				initialiazePaymentByConcept(concept);
-				
-				setEnabled(acceptBtn, true);
-				setEnabled(manualAgreement, false);
-				
-			} else if(payment == null) {
-				hideMessage();
-				initialiazePaymentByConceptDescription(descriptionSuggest.getValue());
-				
-				setEnabled(acceptBtn, true);
-				setEnabled(manualAgreement, true);
-			} else if(payment != null && AonStringUtils.isBlank(payment.getName()) && payment.getConceptId() == null) {
-				hideMessage();
-				payment.setName(descriptionSuggest.getValue());
-				
-				setEnabled(acceptBtn, true);
-				setEnabled(manualAgreement, true);
-			} else if(AonStringUtils.isBlank(descriptionSuggest.getValue()) && payment.getConceptId() != null) {
-				setEnabled(acceptBtn, false);
-				setEnabled(manualAgreement, true);
-			}
-		});
-		
-		descriptionSuggest.addKeyDownHandler(event -> {
-			if (KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode())
-				paymentSuggestionDisplay.hideSuggestions();
-			else if (event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode())
-				descriptionSuggest.showSuggestionList();
-		});
-		
-		descriptionSuggest.getElement().setPropertyString("placeholder", "Ctrl + espacio para ver sugerencias");
-		descriptionSuggest.ensureDebugId("descriptionSuggest");
-		
-		suggestPanel.add(descriptionSuggest);
-	}
-
-	// --------------------- Initialize PaymentSuggestionDisplay
-	
-	private void initSuggestBox(List<Payment> paymentsList) {
-		availablePaymens.addAll(paymentsList);
-		paymentDescriptionOracle.clear();
-		
-		List<String> suggestionList = new ArrayList<>();
-		
-		for (Payment paymentIt : availablePaymens) {
-			String suggestion = getSuggestionString(paymentIt);
-			if (AonStringUtils.isEmpty(suggestion))
-				continue;
-			suggestionList.add(suggestion);
-			paymentDescriptionOracle.add(suggestion);
-		}
-		
-		paymentDescriptionOracle.setDefaultSuggestionsFromText(suggestionList);
-	}
-	
 	// --------------------- Auxiliar methods
 	
 	private static String getExpression4Payment(Payment concept) {
@@ -372,44 +386,11 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	}
 	
 	private Payment getPayment(String suggestionString) {
-		for (Payment paymentIt : availablePaymens) {
+		for (Payment paymentIt : availablePaymentConcepts) {
 			if (AonStringUtils.equalsIgnoreCase(suggestionString, getSuggestionString(paymentIt)))
 				return paymentIt;
 		}
 		return null;
-	}
-	
-	private void setEnabled(Button button, boolean enabled) {
-		button.setEnabled(enabled);
-//		if(!enabled) {
-//			button.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-//			button.getElement().getStyle().setDisplay(Display.BLOCK);
-//		}
-	}
-	
-	// --------------------- Accept dialog method
-	
-	private void getButtonsPanel() {
-		manualAgreement = new Button();
-		manualAgreement.setText("Modo avanzado");
-		manualAgreement.setStyleName(AON.CSS.aonIconEditNote());
-		manualAgreement.addStyleName(style.button());
-		manualAgreement.addClickHandler(e -> {
-			hide();
-			onManualEdition();
-		});
-		buttonsPanel.add(manualAgreement);
-		
-		acceptBtn = new Button();
-		acceptBtn.setText("Aceptar");
-		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtn.ensureDebugId("acceptNewPaymentButton");
-		acceptBtn.addClickHandler(e -> {
-			hide();
-			onAccept(payment);
-		});
-		
-		buttonsPanel.add(acceptBtn);
 	}
 	
 	// --------------------- Show dialog
@@ -428,10 +409,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messagePanel, errorMap);
-	}
-	
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messagePanel);
 	}
 	
 	// --------------------- Abstract method
