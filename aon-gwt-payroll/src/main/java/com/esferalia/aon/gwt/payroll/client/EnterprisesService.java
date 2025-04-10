@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -496,4 +497,6 @@ public interface EnterprisesService extends RemoteService {
 	
 	AgreementIntegrity checkAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
 
+	void agreementIntegrityFix(String currentDomainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix) throws IllegalArgumentException ;
+	
 }

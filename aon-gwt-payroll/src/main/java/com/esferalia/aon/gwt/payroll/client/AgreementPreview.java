@@ -89,7 +89,7 @@ public abstract class AgreementPreview extends Composite {
 
 		@Override
 		public void execute() {
-			AgreementSuggestPaymentDialog paymentDialog = new AgreementSuggestPaymentDialog() {
+			AgreementSuggestPaymentDialog paymentDialog = new AgreementSuggestPaymentDialog(agreement.getPayments(), agreement.getContextVariables()) {
 
 				@Override
 				protected void onAccept(Payment payment) {
@@ -453,7 +453,7 @@ public abstract class AgreementPreview extends Composite {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
+//		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
 		
 		levelSalaryToolbar.addStyleName(style.p0());
 		paymentToolbar.addStyleName(style.p0());
@@ -474,7 +474,7 @@ public abstract class AgreementPreview extends Composite {
 		if(!agreement.getSortedDates().isEmpty())
 			startDate = agreement.getSortedDates().stream().findFirst().get();
 		
-		AgreementPaymentEditor paymentDialog = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate) {
+		AgreementPaymentEditor paymentDialog = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate, agreement.getContextVariables()) {
 			
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment,
@@ -501,7 +501,7 @@ public abstract class AgreementPreview extends Composite {
 
 			private void updatePaymentExpresion(boolean isHide, Payment selectedPayment, Payment updatedPayment) {
 				selectedPayment.setExpression(Boolean.TRUE.equals(isHide)
-						? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression())
+						? showHidePayment(updatedPayment)
 						: updatedPayment.getExpression());
 				selectedPayment.setScope(Scope.SALARY);
 				selectedPayment.setSalaryType(updatedPayment.getSalaryType());
@@ -530,31 +530,17 @@ public abstract class AgreementPreview extends Composite {
 				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE");
 	}
 
-	public String showHidePayment(String description, String expression) {
-		if (!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE"))
-			expression = expression.replaceAll("DISABLE\\(.*\\);\\s", "");
-		else
-			expression = "DISABLE(); " + expression;
-//			expression = "DISABLE(\"<div>" + description
-//					+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-//					+ expression;
-
-		return expression;
-	}
-
-	public void showHidePayment(Payment payment) {
+	public String showHidePayment(Payment payment) {
 		String expression = payment.getExpression();
-
-		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE")
-				&& AonStringUtils.startsWithIgnoreCase(expression, "DISABLE")
-						? null
-						: "DISABLE();";
-//						: "DISABLE(\"<div>" + payment.getDescription()
-//								+ " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); "
-//								+ expression;
-
+		
+		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "DISABLE") && AonStringUtils.startsWithIgnoreCase(expression, "DISABLE"))
+			expression = AonStringUtils.substringAfter(expression, "DISABLE();");
+		else
+			expression = "DISABLE();" + expression;
+		
 		payment.setExpression(expression);
+		
+		return expression;
 	}
 
 	private void getEnableDisableButton(Button button, boolean disabled, boolean readOnly) {
@@ -2448,6 +2434,11 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getParsedExpression(String expression) {
+		try {
+			if(AonStringUtils.containsIgnoreCase(expression, "DISABLE();")) 
+				expression = AonStringUtils.substringAfter(expression, "DISABLE();");
+		} catch (Exception e) {}
+		
 		return SpecialExpresion.parse(expression).getInput();
 	}
 

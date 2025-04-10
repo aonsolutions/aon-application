@@ -4788,4 +4788,10 @@ font-weight: 600;
   .no-hover:hover {
     background-color: transparent !important;
     cursor: default !important; 
-}
+  }
+  
+  .aon_badge{
+	height: 24px;
+  	width: 24px;
+  	font-size: 0.7rem;
+  }

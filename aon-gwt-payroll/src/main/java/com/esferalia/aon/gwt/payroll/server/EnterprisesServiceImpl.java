@@ -103,6 +103,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
@@ -5217,6 +5218,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqAgreementIntegrity.checkIntegrity(connection, domainId, agreementId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void agreementIntegrityFix(String domainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqAgreementIntegrity.agreementIntegrityFix(connection, domainId, agreementId, agreementIntegrityFix);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}

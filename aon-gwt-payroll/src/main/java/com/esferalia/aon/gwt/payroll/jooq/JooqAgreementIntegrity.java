@@ -29,8 +29,10 @@ import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqAgreementIntegrity {
@@ -74,7 +76,7 @@ public class JooqAgreementIntegrity {
 		
 		// Agreement Payments from other domain
 		List<Record> otherDomainAgreementPayments = agreementPayments.stream()
-				.filter(agreementPayment -> agreementPayment.get(AGREEMENT_PAYMENT.DOMAIN) != agreementDomain)
+				.filter(agreementPayment -> !agreementPayment.get(AGREEMENT_PAYMENT.DOMAIN).equals(agreementDomain))
 				.collect(Collectors.toList());
 		
 		agreementIntegrity.setOtherDomainAgreementPayments(parseOtherDomainAgreementPayments(agreementDomain, otherDomainAgreementPayments));
@@ -88,7 +90,7 @@ public class JooqAgreementIntegrity {
 		
 		// Agreement Payments with payment_concept from other domain
 		List<Record> otherDomainPaymentConcepts = agreementPayments.stream()
-				.filter(agreementPayment -> agreementPayment.get(PAYMENT_CONCEPT.ID) != null && agreementPayment.get(PAYMENT_CONCEPT.DOMAIN) != agreementDomain)
+				.filter(agreementPayment -> agreementPayment.get(PAYMENT_CONCEPT.ID) != null && !agreementPayment.get(PAYMENT_CONCEPT.DOMAIN).equals(agreementDomain))
 				.collect(Collectors.toList());
 		
 		agreementIntegrity.setOtherDomainPaymentConcepts(parseOtherDomainPaymentConcepts(agreementDomain, otherDomainPaymentConcepts));
@@ -128,7 +130,7 @@ public class JooqAgreementIntegrity {
 				.filter(agreementPayment -> 
 						agreementPayment.get(PAYMENT_CONCEPT.ID) != null && 
 						null != agreementPayment.get(PAYMENT_CONCEPT.CODE) && 
-						expressionCodeCheck(agreementPayment.get(PAYMENT_CONCEPT.CODE), agreementPayments)
+						expressionCodeCheck(agreementPayment, agreementPayments)
 				)
 				.collect(Collectors.toList());
 		
@@ -146,6 +148,21 @@ public class JooqAgreementIntegrity {
 		
 		agreementIntegrity.setVariableLikeCodes(variableLikeCodes);
 		
+		// Variables or cocepts like contextVariables
+		Set<String> variablesCodes = new HashSet<String>();
+		variablesCodes.addAll(variables);
+		
+		variablesCodes.addAll(
+				agreementPayments.stream()
+					.filter(agreementPayment -> 
+						agreementPayment.get(PAYMENT_CONCEPT.ID) != null && 
+						null != agreementPayment.get(PAYMENT_CONCEPT.CODE)
+					).map(agreementPayment -> agreementPayment.get(PAYMENT_CONCEPT.CODE))
+					.collect(Collectors.toSet())
+		);
+		
+		agreementIntegrity.setVariableCodeLikeContext(parseVariableCodeLikeContext(variablesCodes));
+		
 		// Contract Payments
 		Result<Record> contractPayments = dslContext.select()
 				.from(CONTRACT_PAYMENT)
@@ -159,7 +176,7 @@ public class JooqAgreementIntegrity {
 				.filter(contractPayment -> 
 					contractPayment.get(PAYMENT_CONCEPT.ID) != null && 
 					contractPayment.get(PAYMENT_CONCEPT.DOMAIN) != agreementDomain &&
-					contractPayment.get(PAYMENT_CONCEPT.DOMAIN) != contractPayment.get(CONTRACT.DOMAIN))
+					!contractPayment.get(PAYMENT_CONCEPT.DOMAIN).equals(contractPayment.get(CONTRACT.DOMAIN)))
 				.collect(Collectors.toList());
 		
 		
@@ -238,8 +255,8 @@ public class JooqAgreementIntegrity {
 	    
 	    byte type = null == agreementExtrasDate.get(AGREEMENT_PAYMENT.TYPE) ? agreementExtrasDate.get(PAYMENT_CONCEPT.TYPE) : agreementExtrasDate.get(AGREEMENT_PAYMENT.TYPE);
 	    
-	    return (type == (byte)4 && (!ymEnd.minusMonths(12).equals(ymStart) || !ymEnd.minusMonths(6).equals(ymStart))) ||
-	    		(type == (byte)5 && !ymEnd.minusMonths(12).equals(ymStart));
+	    return (type == (byte)4 && !ymEnd.minusMonths(11).equals(ymStart) && !ymEnd.minusMonths(5).equals(ymStart)) ||
+	    		(type == (byte)5 && !ymEnd.minusMonths(11).equals(ymStart));
 	}
 
 	private static boolean checkPaymentConceptCode(String code) {
@@ -248,13 +265,15 @@ public class JooqAgreementIntegrity {
 	    return !code.matches("^[A-Za-z_].*") || !code.matches("^[A-Za-z_][A-Za-z0-9_]*$");
 	}
 
-	private static boolean expressionCodeCheck(String code, Result<Record> agreementPayments) {
+	private static boolean expressionCodeCheck(Record agreementPayment, Result<Record> agreementPayments) {
+		String code = agreementPayment.get(PAYMENT_CONCEPT.CODE);
+		
 		if(AonStringUtils.isBlank(code) || agreementPayments.isEmpty()) return false;
 		
 		List<Record> appearence = new ArrayList<Record>();
 		
-		agreementPayments.forEach(agreementPayment -> {
-			String expression = AonStringUtils.isBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) ? agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION) : agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION);
+		agreementPayments.forEach(agreementPaymentIt -> {
+			String expression = AonStringUtils.isBlank(agreementPaymentIt.get(AGREEMENT_PAYMENT.EXPRESSION)) ? agreementPaymentIt.get(PAYMENT_CONCEPT.EXPRESSION) : agreementPaymentIt.get(AGREEMENT_PAYMENT.EXPRESSION);
 			
 			// Compilar la expresión
 	        ParserContext context = new ParserContext();
@@ -263,12 +282,10 @@ public class JooqAgreementIntegrity {
 	        // Obtener las variables
 	        Set<String> variables = context.getInputs().keySet();
 	        
-	        if(variables.contains(code)) appearence.add(agreementPayment);
+	        if(variables.contains(code)) appearence.add(agreementPaymentIt);
 		});
 		
-		
-        
-		return !appearence.isEmpty() && appearence.size() > 1;
+		return !appearence.isEmpty() && appearence.size() > 1 && appearence.stream().filter(a -> a.get(AGREEMENT_PAYMENT.ID).equals(agreementPayment.get(AGREEMENT_PAYMENT.ID))).count() > 0;
 	}
 	
 	private static List<String> parseOtherDomainAgreementPayments(Integer agreementDomain, List<Record> payments) {
@@ -298,7 +315,7 @@ public class JooqAgreementIntegrity {
 		
 		payments.forEach(paymentIt -> {
 			String description = AonStringUtils.isBlank(paymentIt.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? paymentIt.get(PAYMENT_CONCEPT.DESCRIPTION) : paymentIt.get(AGREEMENT_PAYMENT.DESCRIPTION);
-			messages.add("El concepto (Dom.: " + paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ") esta en otro dominio al del devengo " + description + " (Dom.: " + paymentIt.get(AGREEMENT_PAYMENT.DOMAIN) + ")");
+			messages.add("El concepto " + paymentIt.get(PAYMENT_CONCEPT.CODE) + " (Dom.: " + paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ") esta en otro dominio al del devengo " + description + " (Dom.: " + paymentIt.get(AGREEMENT_PAYMENT.DOMAIN) + ")");
 		});
 		
 		return messages;
@@ -324,7 +341,18 @@ public class JooqAgreementIntegrity {
 		List<String> messages = new ArrayList<String>();
 		
 		payments.forEach(paymentIt -> {
-			messages.add("El concepto con c\u00f3digo " + paymentIt.get(PAYMENT_CONCEPT.CODE) + " aparece como variable en mas de dos devengos");
+			messages.add("El concepto con c\u00f3digo " + paymentIt.get(PAYMENT_CONCEPT.CODE) + " aparece como variable en mas de un devengo, a parte del suyo propio");
+		});
+		
+		return messages;
+	}
+	
+	private static List<String> parseVariableCodeLikeContext(Set<String> variablesCodes) {
+		List<String> messages = new ArrayList<String>();
+		
+		variablesCodes.forEach(variablesCode -> {
+			if(ContextVariable.isContextVariable(variablesCode))
+				messages.add("El c\u00f3digo de concepto / variable " + variablesCode + " no se puede usar ya que es una variable de contexto");
 		});
 		
 		return messages;
@@ -402,33 +430,225 @@ public class JooqAgreementIntegrity {
 		
 		return otherDomainAgreementPayments;
 	}
-
-//	private static List<AgreementExtra> parseAgreementExtras(Result<Record> agreementExtras) {
-//		List<AgreementExtra> agreementExtraList = new ArrayList<AgreementExtra>();
-//		
-//		agreementExtras.forEach(agreementExtraIt -> {
-//			Payment payment = new Payment();
-//			payment.setId(null != agreementExtraIt.get(AGREEMENT_PAYMENT.ID) ? agreementExtraIt.get(AGREEMENT_PAYMENT.ID) : agreementExtraIt.get(PAYMENT_CONCEPT.ID));
-//			payment.setDomain(null != agreementExtraIt.get(AGREEMENT_PAYMENT.DOMAIN) ? agreementExtraIt.get(AGREEMENT_PAYMENT.DOMAIN) : agreementExtraIt.get(PAYMENT_CONCEPT.DOMAIN));
-//			
-//			String description = AonStringUtils.isBlank(agreementExtraIt.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? agreementExtraIt.get(PAYMENT_CONCEPT.DESCRIPTION) : agreementExtraIt.get(AGREEMENT_PAYMENT.DESCRIPTION);
-//			payment.setDescription(description);
-//			
-//			AgreementExtra extra = new AgreementExtra()
-//					.setId(agreementExtraIt.get(AGREEMENT_EXTRA.ID))
-//					.setAgreementPayment(payment)
-//					.setStartDate(agreementExtraIt.get(AGREEMENT_EXTRA.START_DATE))
-//					.setEndDate(agreementExtraIt.get(AGREEMENT_EXTRA.END_DATE))
-//					.setIssueDate(agreementExtraIt.get(AGREEMENT_EXTRA.ISSUE_DATE))
-//					;
-//			
-//			agreementExtraList.add(extra);
-//		});
-//		
-//		return agreementExtraList;
-//	}
 	
-	// ------------------------------- Database Methods
+	// ------------------------------- agreementIntegrityFix Methods
+
+	public static void agreementIntegrityFix(Connection connection, Integer domainId, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		AgreementRecord agreement = dslContext.selectFrom(AGREEMENT).where(AGREEMENT.ID.eq(agreementId)).fetchOne();
+		
+		dslContext.transaction(configuration -> {
+			switch (agreementIntegrityFix) {
+				case OTHER_DOMAIN_AGREEMENT_PAYMENTS:
+					fixOtherDomainAgreementPayments(dslContext, domainId, agreement);
+					break;
+				case AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT:
+					fixAgreementPaymentsWithoutPaymentConcept(dslContext, domainId, agreement);
+					break;
+				case AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT:
+					fixAgreementPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
+					break;
+				case NO_CODE_WRONG_CODE_PAYMENT_CONCEPT:
+					fixNoCodeWrongCodePaymentConcept(dslContext, domainId, agreement);
+					break;
+				case PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION:
+					fixPaymentConceptCodeInExpression(dslContext, domainId, agreement);
+					break;
+				case AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE:
+					fixAgreementVariablesAsPaymentConceptCode(dslContext, domainId, agreement);
+					break;
+				case AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE:
+					fixAgreementVariablesPaymentConceptCodeAsContextVariable(dslContext, domainId, agreement);
+					break;
+				case CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT:
+					fixContractPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
+					break;
+				case CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE:
+					fixContractPaymentsPaymentConceptWithoutCode(dslContext, domainId, agreement);
+					break;
+				case PAYMENT_CONCEPT_NO_REFERENCE:
+					fixPaymentConceptNoReferences(dslContext, domainId, agreement);
+					break;
+				case AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD:
+					fixAgreementExtraWrongFormatPeriod(dslContext, domainId, agreement);
+					break;
+				default:
+					throw new IllegalArgumentException("No se ha podido encontrar : " + agreementIntegrityFix);
+			}
+		});
+		
+	}
+
+	private static void fixOtherDomainAgreementPayments(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> agreementPayments = dslContext.select()
+				.from(AGREEMENT_PAYMENT)
+				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_PAYMENT.DOMAIN.ne(agreement.getDomain()))
+				.fetch();
+		
+		agreementPayments.forEach(agreementPayment -> {
+			dslContext.update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, agreement.getDomain())
+				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+				.execute();
+		});
+	}
+
+	private static void fixAgreementPaymentsWithoutPaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> agreementPayments = dslContext.select()
+				.from(AGREEMENT_PAYMENT)
+				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+				.and(PAYMENT_CONCEPT.ID.isNull())
+				.fetch();
+		
+		agreementPayments.forEach(agreementPayment -> {
+			// Create payment_concept with agreement_payment info, the code is __agreementPaymentId, then set null agreement_payment fields
+			Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
+				.set(PAYMENT_CONCEPT.CODE, "__" + agreementPayment.get(AGREEMENT_PAYMENT.ID))
+				.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION))
+				.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(AGREEMENT_PAYMENT.TYPE))
+				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
+				.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+				.returning(PAYMENT_CONCEPT.ID)
+				.fetchOne(PAYMENT_CONCEPT.ID);
+			
+			dslContext.update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
+				.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE))
+				.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
+				.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION))
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+				.execute();
+		});
+	}
+
+	private static void fixAgreementPaymentsWithOtherDomainPaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> agreementPayments = dslContext.select()
+				.from(AGREEMENT_PAYMENT)
+				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+				.and(PAYMENT_CONCEPT.ID.isNotNull())
+				.and(PAYMENT_CONCEPT.DOMAIN.ne(agreement.getDomain()))
+				.fetch();
+		
+		agreementPayments.forEach(agreementPayment -> {
+			// If payment_concept domain 0, create copy and set to agreement_payment
+			// If payment_concept domain other, check if it used, 
+			// 		If true create copy and set to agreement_payment
+			//	 	If false update domain payment_concept
+			
+			Integer paymentConceptDomain = agreementPayment.get(PAYMENT_CONCEPT.DOMAIN);
+			if(paymentConceptDomain.equals(0)) {
+				Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
+						.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
+						.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+						.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+						.returning(PAYMENT_CONCEPT.ID)
+						.fetchOne(PAYMENT_CONCEPT.ID);
+				
+				dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+					.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+					.execute();
+			} else {
+				List<Integer> agreementPaymentDomains = dslContext.selectDistinct(AGREEMENT_PAYMENT.DOMAIN)
+					.from(AGREEMENT_PAYMENT)
+					.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+					.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
+					.fetch(AGREEMENT_PAYMENT.DOMAIN);
+				
+				List<Integer> contractPaymentDomains = dslContext.selectDistinct(CONTRACT_PAYMENT.DOMAIN)
+					.from(CONTRACT_PAYMENT)
+					.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(CONTRACT_PAYMENT.PAYMENT_CONCEPT))
+					.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
+					.fetch(CONTRACT_PAYMENT.DOMAIN);
+				
+				Set<Integer> uniqueDomains = new HashSet<Integer>();
+				uniqueDomains.addAll(agreementPaymentDomains);
+				uniqueDomains.addAll(contractPaymentDomains);
+				
+				// Update payment_concept domain
+				if(uniqueDomains.size() == 1) {
+					dslContext.update(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
+						.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
+						.execute();
+				} else {
+					// Duplicate payment_concept domain
+					Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
+							.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
+							.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
+							.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
+							.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
+							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+							.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
+							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+							.returning(PAYMENT_CONCEPT.ID)
+							.fetchOne(PAYMENT_CONCEPT.ID);
+					
+					dslContext.update(AGREEMENT_PAYMENT)
+						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+						.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+						.execute();
+				}
+			}
+		});
+	}
+
+	private static void fixNoCodeWrongCodePaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixPaymentConceptCodeInExpression(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixAgreementVariablesAsPaymentConceptCode(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixAgreementVariablesPaymentConceptCodeAsContextVariable(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixContractPaymentsWithOtherDomainPaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixContractPaymentsPaymentConceptWithoutCode(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixPaymentConceptNoReferences(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void fixAgreementExtraWrongFormatPeriod(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }
