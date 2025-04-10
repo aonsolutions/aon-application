@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceMessagesLabel;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -65,7 +65,7 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 		AonTableButton accountEntry = null;
 		if (rawdoc.isRecordable()) {
 			accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAddTask());
-			accountEntry.addClickHandler( event -> RawdocModuleNew.RAWDOC_SERVICE.parse(opt.getOccam(), rawdoc.getId() 
+			accountEntry.addClickHandler( event -> RawdocModule.RAWDOC_SERVICE.parse(opt.getOccam(), rawdoc.getId() 
 				, new AsyncCallback<TediResult>() {
 
 					@Override

@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.type.RawdocNature.RawdocNatureVisitor;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -88,8 +88,7 @@ class RawdocTable extends ScrollPanel {
 	
 	private void search(RawdocModuleOptions opt, RawdocCallback cbk, final int ofs) {
 		if (!isMoreData()) return;
-		RawdocModuleNew.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT
-			, new AsyncCallback<LinkedList<Rawdoc>>() {
+		RawdocModule.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT			, new AsyncCallback<LinkedList<Rawdoc>>() {
 				@Override
 				public void onSuccess(LinkedList<Rawdoc> rawdocs) {
 					paintRows( opt, cbk, ofs, rawdocs );
