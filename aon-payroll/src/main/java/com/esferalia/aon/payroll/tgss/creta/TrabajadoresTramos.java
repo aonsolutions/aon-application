@@ -634,6 +634,7 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("601");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
 																
 							}
 							
@@ -1297,7 +1298,16 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("54");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								return new MainSalaryVisitor();
+								return new MainSalaryVisitor() {
+									@Override
+									public void visitFormacionNormal() {
+										this.visitTiempoCompletoNormal();
+									}
+									@Override
+									public void visitFormacionEnAlternanciaNormal() {
+										this.visitTiempoCompletoNormal();
+									}
+								};
 							}
 
 							@Override

@@ -120,6 +120,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_excel")
 	String aonIconExcel();
 	
+	@ClassName("aon_icon_circle_blue")
+	String aonIconCircleBlue();
+	
+	@ClassName("aon_icon_circle_yellow")
+	String aonIconCircleYellow();
+	
+	@ClassName("aon_icon_circle_orange")
+	String aonIconCircleOrange();
+	
 	@ClassName("aon_icon_circle_green")
 	String aonIconCircleGreen();
 	
@@ -1484,5 +1493,11 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_contract_large_card")
 	String aonContractLargeCard();
+	
+	@ClassName("aon_dialog_glass")
+	String aonDialogGlass();
+	
+	@ClassName("aon_badge")
+	String aonBadge();
 }
 

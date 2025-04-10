@@ -2658,6 +2658,24 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestPPe() throws Exception {
+
+		if (!isDisplayed("base_minima,_ppe"))
+			open("ppe");
+
+
+		wait4Id("base_minima,_ppe");
+
+		draft("BASE MÍNIMA, PPE");
+		
+		calculate(Calendar.APRIL, 2025);
+		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
+		assertDisplay("eventsCheck", false);
+		
+		
+	}
+
+	@Test
 	public void TestIrpfEstatal() throws Exception {
 		
 

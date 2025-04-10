@@ -43,14 +43,5 @@ public class InvoiceConsole implements Serializable {
 		return this;
 	}
 	
-	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
-		if (getInvoice() == null) return Optional.empty();
-		return AonCollectionUtils.stream( getInvoice().getMessages() )
-			.map(ie -> ie.getLevel().ordinal())
-			.max( Integer::compare )
-			.flatMap( InvoiceErrorLevel::value )
-		;
-	}
-	
 }
 

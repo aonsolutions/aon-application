@@ -66,7 +66,10 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	// --------------------- REGISTRY --------------------------
 	// -----------------------------------------------------------
+	,REGISTRY_EMPTY_DOCUMENT("El documento del titular est\u00E1 vac\u00EDo.")
+	,REGISTRY_INVALID_DOCUMENT("Formato inv\u00E1lido en el dato documento del titular.")
 	,REGISTRY_OVERFLOW_DOCUMENT("El documento no puede tener m\u00E1s de 16 caracteres.")
+	,REGISTRY_EMPTY_NAME("El nombre/raz\u00F3n social del titular est\u00E1 vac\u00EDo.")
 	
 	// -----------------------------------------------------------
 	// --------------------- COMPANY ----------------------------
@@ -224,6 +227,26 @@ public enum AonError implements Serializable{
 	,INVOICE_RECORDER_WITHHOLDING("Factura con retenci\u00F3n")
 	,INVOICE_RECORDER_PREPAYMENT("Factura con suplidos")
 	,INVOICE_RECORDER_EXPENSE_ACCOUNT("Existen gastos sin cuenta asociada.")
+	,INVOICE_RECORDER_EMPTY_DOMAIN("No se ha indicado un dominio y es obligatorio")
+	,INVOICE_RECORDER_EMPTY_SCOPE("No se ha indicado un \u00E1mbito y es obligatorio")
+	,INVOICE_RECORDER_REGISTRY_NOT_FOUND("No se ha encontrado un {0} v\u00E1lido para el titular \"{1}\"")
+//	C003("El sistema ha inicializado el dato \"{0}\" con el valor [{1}]"),
+//	C004("Formato inv\u00E1lido en el dato \"{0}\""),
+//	C005("Ya existe una factura con esa Serie/N\u00FAmero."),
+//	C006("Ya existe una factura del titular con ese N\u00FAmero de referencia."),
+//	C007("La fecha de la factura rebasa la fecha l\u00EDmite de operaciones indicada en la configuraci\u00F3n de empresa. "),
+//	C008("El a\u00F1o de la factura no es v\u00E1lido, es anterior cinco a\u00F1os al actual"),
+//	C010("La factura no tiene l\u00EDneas de detalle"),
+//	C011("La factura tiene varios posibles titulares"),
+//	C012("Apunte contable descuadrado"),
+//	C013("Apunte contable vacio"),
+//	C014("El importe del vencimiento no puede ser cero."),
+//	C015("Cuenta Bancaria incorrecta."),
+//	C016("No se ha podido determinar un centro de trabajo (workplace)"),
+//	C017("No se han podido determinar bases y cuotas de la factura"),
+//	C018("No se ha podido determinar el tipo de factura"),
+//	C019("La fecha del vencimiento no es correcta."),
+	
 	
 	// --------------------------------------------- CALCULATOR
 	,INVOICE_CALC_REV_MORE("No se puede realizar el c\u00E1clulo inverso. Hay m\u00E1s de un detalle de fatura")
