@@ -53,6 +53,7 @@
 					value="#{bundle.aon_purchase_account}" />
 				<aon:selectOneMenu id="ACC_default_purchase_account"
 					value="#{accAppParams.parameters['ACC_DEFAULT_PURCHASE_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
 					<f:selectItems value="#{accountCollections.purchaseAccountsIds}" />
 				</aon:selectOneMenu>
 	
@@ -60,6 +61,7 @@
 					value="#{bundle.accounting_def_cash_acc}" />
 				<aon:selectOneMenu id="ACC_default_cash_account"
 					value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
 					<f:selectItems value="#{accountCollections.cashAccountsIds}" />
 				</aon:selectOneMenu>
 	
@@ -111,6 +113,7 @@
 					value="#{bundle.accounting_def_paid_ret_acc}" />
 				<aon:selectOneMenu id="ACC_default_paid_retention_account"
 					value="#{accAppParams.parameters['ACC_DEFAULT_PAID_RET_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
 					<f:selectItems value="#{accountCollections.paidRetentionAccountsIds}" />
 				</aon:selectOneMenu>
 	
@@ -118,8 +121,8 @@
 					value="#{bundle.accounting_def_charged_ret_acc}" />
 				<aon:selectOneMenu id="ACC_default_charged_retention_account"
 					value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_RET_ACC'].value}">
-					<f:selectItems
-						value="#{accountCollections.chargedRetentionAccountsIds}" />
+					<f:selectItem itemValue="{null}" itemLabel=" " />
+					<f:selectItems value="#{accountCollections.chargedRetentionAccountsIds}" />
 				</aon:selectOneMenu>
 	
 				<aon:outputLabel
@@ -156,6 +159,7 @@
 					value="#{bundle.accounting_def_prepayment_acc}" />
 				<aon:selectOneMenu id="ACC_default_prepayment"
 					value="#{accAppParams.parameters['ACC_DEFAULT_PREPAYMENT_ACC'].value}">
+					<f:selectItem itemValue="{null}" itemLabel=" " />
 					<f:selectItems value="#{accountCollections.prepaymentAccountsIds}" />
 				</aon:selectOneMenu>
 	

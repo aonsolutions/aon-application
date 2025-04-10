@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -1304,6 +1305,14 @@ public class EnterprisesServiceAsyncDecorator implements
 			SystemVariable systemVariable, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.createSystemVariable(currentDomainName, currentUser, domainId, systemVariable, asyncCallback);
+	}
+	
+	// ------------------------------------------------ AgreementIntegrity
+
+	@Override
+	public void checkAgreementIntegrity(String domainName, Integer agreementId, AsyncCallback<AgreementIntegrity> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.checkAgreementIntegrity(domainName, agreementId, callback);
 	}
 	
 }

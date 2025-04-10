@@ -233,8 +233,19 @@ export class AonEventList extends AonElement {
               const newStatus = r.status.toLowerCase();
               const textStatus = getStatus(newStatus);
               const numbDate   = this.getTimeNumber(group.value, r.start_date);
-              const lettersHtml = `<div id = "aonTimeControlTableDiv" class="profile-letters ${ numbDate ? "font": ""} ${newStatus}">${group.name.substr(0,1)+numbDate}</div>`;
+              let prefix = "";
+              if (group.value === "WEEK") {
+                prefix = "S" + numbDate;
+              } else if (group.value === "MONTH") {
+                prefix = numbDate; 
+              } else if (group.value === "DAY") {
+                const dayLetter = ["D", "L", "M", "X", "J", "V", "S"]; 
+                const dt = new Date(r.start_date);
+                prefix = dayLetter[dt.getDay()];
+              }
 
+              const lettersHtml = `<div id="aonTimeControlTableDiv" class="profile-letters ${prefix ? "font" : ""} ${newStatus}">${prefix}</div>`;
+              
               const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
 
               let dateParse = r.dateParse = firstLetters(AonDateUtils.setFullDate(r.start_date));
@@ -272,20 +283,21 @@ export class AonEventList extends AonElement {
     return gv;
   }
 
-  getTimeNumber(gv, date){
+  getTimeNumber(gv, date) {
     const dt = new Date(date);
     let v = "";
-    switch(gv){
+    switch (gv) {
       case "WEEK":
         v = dt.getWeekNumber();
-      break;
+        break;
       case "MONTH":
-        v = dt.getMonth() + 1;
-      break;
+        const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        v = monthNames[dt.getMonth()];
+        break;
     }
     return v;
   }
-
+  
   getGroups(data) {
     let jsonValues = [
       {

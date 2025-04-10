@@ -605,7 +605,8 @@ public class Contrata {
 				}
 			}
 
-			{// --------------------OTHERS DATA CONTRACT (OPTIONAL)-----------------
+			{
+				// --------------------OTHERS DATA CONTRACT (OPTIONAL)-----------------
 				if (cto.getDateFinContract() != null) {
 					DomNode endDay = form.querySelector("[name=\"diafechafin\"]");
 					if (endDay != null) {
@@ -619,7 +620,8 @@ public class Contrata {
 					}
 				}
 				
-				{ //------------------ DATA JORNADA--------------------
+				{ 
+					//------------------ DATA JORNADA--------------------
 					DomNode tipoJornada = form.querySelector("select[name=codtipojornada]");
 					if (cto.getJndType() != null && tipoJornada!=null) {
 						((HtmlSelect) tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
@@ -663,6 +665,12 @@ public class Contrata {
 							((HtmlInput)formationMin).setValueAttribute(cto.getDurationFormationMin());
 						}
 					}
+				}
+				
+				// DATA PRESTACION (ERE)
+				DomNode pregEre = form.querySelector("#pregERE");
+				if (pregEre != null) {
+					((HtmlSelect) pregEre).setSelectedAttribute("N", true);
 				}
 			
 				// Titulacion academica

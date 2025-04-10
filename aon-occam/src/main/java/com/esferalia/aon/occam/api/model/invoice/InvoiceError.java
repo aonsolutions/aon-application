@@ -14,6 +14,9 @@ public class InvoiceError implements Serializable {
 	public InvoiceError() {
 		
 	}
+	public InvoiceError(InvoiceErrorKey key,InvoiceErrorLevel level,String message) {
+		this(new InvoiceErrorContext(key), level, null, message); 
+	}
 	public InvoiceError(InvoiceErrorContext context,InvoiceErrorLevel level,String code,String message) {
 		this.context = context; 
 		this.code = code;

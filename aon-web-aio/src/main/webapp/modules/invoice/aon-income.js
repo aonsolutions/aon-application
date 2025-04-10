@@ -9,7 +9,6 @@ import { getCompanyActivities, getCompanyBanks } from '../../services/companySer
 import { deleteIncome, getAccounts, setIncome } from '../../services/accountingService.js';
 import { AonIncomeList } from './aon-income-list.js';
 import { Income } from './Income.js';
-import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonIncome extends AonElement {
 

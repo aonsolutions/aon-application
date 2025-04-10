@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -846,6 +847,12 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getScopes(AsyncCallback<Map<Integer, String>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getScopes(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	// ------------------------------------------------ AgreementIntegrity
+
+	public void checkAgreementIntegrity(Integer agreementId, AsyncCallback<AgreementIntegrity> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.checkAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

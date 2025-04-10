@@ -18,6 +18,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.UNPAID;
@@ -505,7 +506,9 @@ public abstract class QuoteCalculator {
 
 			if (payment.getType() == PaymentType.CRA_0057 
 					|| payment.getType() == PaymentType.CRA_0058
-					|| AonStringUtils.equals(ADDITIONAL.getName(), name) ) {
+					|| AonStringUtils.equals(PPE, name)
+					|| AonStringUtils.equals(ADDITIONAL.getName(), name)
+					) {
 				bases.put(name, quote + bases.getOrDefault(name, 0.00));
 				add(String.format("BASE_%s", name), quote, context, start, end);
 				return quotesImpl;

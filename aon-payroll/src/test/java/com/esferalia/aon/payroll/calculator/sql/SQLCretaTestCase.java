@@ -652,6 +652,80 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
     }
 
     @Test
+    public void testCretaFormacionEnAlternanciaNormalTutoriaAtrasos()
+	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException,
+	    XMLStreamException, FactoryConfigurationError {
+	Connection connection = getConnection();
+	AONContext aonContext = new AONContext(connection);
+
+	cleanSalaries(aonContext);
+
+	String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+	ContractRecord contract = newContract(aonContext, ccc, ContractCode.C421, "10");
+
+	Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+	Date endDate = getLastDayOfMonth(startDate);
+	addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_C737, "737.66");
+	addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H06, "6");
+	
+	calculateAndSave(connection, getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+	
+	addPayment(aonContext, contract, startDate, endDate, "100.00 *DIAS_TRABAJADOS / DIAS_MES");
+	
+	Criteria criteria = new Criteria();
+	criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+	SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+			startDate, 
+			endDate, 
+			endDate, 
+			criteria);
+	delayCtx.next();
+	
+	calculateAndSave(connection, delayCtx);
+	
+
+	net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos = getTrabajadoresTramos(
+		connection, startDate, endDate, ccc, "L03", contract);
+	LiquidacionMes liquidacionMes = trabajadoresYTramos.getLiquidacion().getLiquidacionMes().get(0);
+	Trabajador trabajador = liquidacionMes.getTrabajadores().getTrabajador().get(0);
+	Tramo tramo = trabajador.getTramos().getTramo().get(0);
+
+	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+	assertDatosSolicitado(datoSolicitados, "I", "54", "B");
+	assertDatosSolicitado(datoSolicitados, "C", "500", "B");
+//	assertDatosSolicitado(datoSolicitados, "C", "301", "P");
+	assertDatosSolicitado(datoSolicitados, "C", "601", "B");
+	assertDatosSolicitado(datoSolicitados, "C", "501", "P");
+
+	assertNoDatoSolicitado(datoSolicitados, "I", "51");
+	assertNoDatoSolicitado(datoSolicitados, "H", "03");
+	assertNoDatoSolicitado(datoSolicitados, "H", "04");
+	assertNoDatoSolicitado(datoSolicitados, "H", "06");
+	assertNoDatoSolicitado(datoSolicitados, "C", "737");
+
+	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresYTramos);
+
+	org.junit.Assert.assertEquals(1, bases.size());
+
+	List<Dato> datos = bases.get(0).getDatosTramo().getDato();
+
+	org.junit.Assert.assertEquals(2, datos.size());
+	// 500 , 601 
+
+	double c500 = datos.stream().filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+
+	org.junit.Assert.assertEquals(10000, c500, DELTA);
+
+	double c601 = datos.stream().filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+
+	org.junit.Assert.assertEquals(10000, c601, DELTA);
+
+
+    }
+
+    @Test
     public void testCretaFormacionEnAlternanciaNormalTutoriaTramosI()
 	    throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException,
 	    XMLStreamException, FactoryConfigurationError {

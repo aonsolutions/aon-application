@@ -3165,7 +3165,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		try {
 			// @formatter:off
-			String sql = "SELECT * " + " FROM " + ENTERPRISE_CCC + " INNER JOIN " + SQLConstants.GEOZONE + " ON ( "
+			String sql = "SELECT * " + " FROM " + ENTERPRISE_CCC + " LEFT JOIN " + SQLConstants.GEOZONE + " ON ( "
 					+ SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.GEOZONE + " = " + SQLConstants.GEOZONE
 					+ "." + GeozoneColumns.ID + ")" + " WHERE " + EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = ? ";
 			// @formatter:on
@@ -3175,10 +3175,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
-
+				String code =  rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC);
+				String geozone = rs.getString(SQLConstants.GEOZONE + "." + GeozoneColumns.CODE);
+				
+				
 				CCC ccc = new CCC();
 				ccc.setId(rs.getInt(EnterpriseCccColumns.ID));
-				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE + "." + GeozoneColumns.CODE));
+				ccc.setGeozone(AonStringUtils.defaultIfBlank(geozone, AonStringUtils.substring(code, 0,2)));
 				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC));
 				ccc.setRegime(JooqEnterprise
 						.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.TYPE))

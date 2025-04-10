@@ -169,19 +169,20 @@ public class Mod202DAO extends FiscalModelDAO {
 		if (mod202 == null) {
 			mod202 = new Mod202();
 			mod202.setDomain(ctx.getDomainId());
-			mod202.setAdministration(Administration.COMMON_TERRITORY);
-			
-			initializeFiscalModel(ctx, mod202);
-			if (mod202.getPeriod() == Period.T2) {
-				mod202.setPeriod(Period.T1);
-			}
-			if (mod202.getPeriod() == Period.T3) {
-				mod202.setPeriod(Period.T2);
-			}
-			if (mod202.getPeriod() == Period.T4) {
-				mod202.setPeriod(Period.T3);
-			}
+//			mod202.setAdministration(Administration.COMMON_TERRITORY);
+//			initializeFiscalModel(ctx, mod202);
+//			if (mod202.getPeriod() == Period.T2) {
+//				mod202.setPeriod(Period.T1);
+//			}
+//			if (mod202.getPeriod() == Period.T3) {
+//				mod202.setPeriod(Period.T2);
+//			}
+//			if (mod202.getPeriod() == Period.T4) {
+//				mod202.setPeriod(Period.T3);
+//			}
 		}
+		mod202.setAdministration(Administration.COMMON_TERRITORY);
+		initializeFiscalModel(ctx, mod202);
 		Mod202Declaration dec = Mod202Declaration.getInstance(mod202);
 		dec.initialize( ctx, mod202 );
 		dec.ensureDetails(mod202);

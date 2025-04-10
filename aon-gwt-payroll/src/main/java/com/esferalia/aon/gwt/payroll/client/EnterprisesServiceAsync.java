@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryParams;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
 import com.esferalia.aon.gwt.payroll.shared.Attach;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -355,5 +356,9 @@ public interface EnterprisesServiceAsync {
 	void createSystemVariable(String currentDomainName, String currentUser, Integer domainId, SystemVariable systemVariable, AsyncCallback<Void> asyncCallback ) throws IllegalArgumentException ;
 	
 	void updateSystemVariables(String currentDomainName, String currentUser, Integer domainId, List<SystemVariable> systemVariables, AsyncCallback<Void> asyncCallback  ) throws IllegalArgumentException ;
+	
+	// ------------------------------------------------ AgreementIntegrity
+	
+	void checkAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<AgreementIntegrity> asyncCallback) throws IllegalArgumentException ;
 
 }

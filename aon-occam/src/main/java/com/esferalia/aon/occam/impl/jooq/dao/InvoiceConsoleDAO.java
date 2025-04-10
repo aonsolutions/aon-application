@@ -1,31 +1,33 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
-import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -35,92 +37,86 @@ public class InvoiceConsoleDAO {
 
 	}
 
+	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+	private static final Field<Byte> TEDI_FIELD = DSL.inline( InvoiceSource.TEDI.value());
+	
 	// ---------------------------------------------------------------------	
 	// --------------------------------------------------------- [PUBLIC] --	
 	// ---------------------------------------------------------------------
 	
-	public static Stream<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
+	public static List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		ctx.checkRead();
-		Field<Integer> orderedType = getOrderedType();
+		Field<Integer> orderedType = InvoiceDAO.getOrderedType();
 		return ctx.getDslContext()
 			.select(
 				 INVOICE.ID
 				,INVOICE.DOMAIN
 				,orderedType
-				,INVOICE.ACTIVITY
 				,INVOICE.TYPE
-				,INVOICE.TRANSACTION
-				,INVOICE.SERIES
-				,INVOICE.NUMBER
-				,INVOICE.REFERENCE_CODE
 				,INVOICE.ISSUE_DATE
-				,INVOICE.TAX_DATE
-				,INVOICE.REGISTRY
-				,INVOICE.RDOCUMENT
-				,INVOICE.RDOCUMENT_TYPE
-				,INVOICE.RDOCUMENT_COUNTRY
-				,INVOICE.RNAME
-				,INVOICE.SECURITY_LEVEL
-				
-				,ENTERPRISE_ACTIVITY.DESCRIPTION
-				,IAE.EPIGRAPH				
+				,INVOICE.REFERENCE_CODE
+				,TEDI_FIELD
 			)
 			.from(INVOICE)
-			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
-			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
-			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.where(getWhere(params))
+			.and( TEDI_FIELD.in(
+				ctx.getDslContext().select( MIN_SOURCE )
+					.from(INVOICE_DETAIL)
+					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
+					.groupBy( INVOICE_DETAIL.INVOICE )
+					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
 			.orderBy(getOrderBy(params))
 			.limit(params.getOffset() , params.getLimit())
 			.fetch()
 			.stream()
-			.map(new HeaderInvoiceFiller())
+			.map( r -> r.getValue(INVOICE.ID) )
+			.map( id -> InvoiceDAO.getFullInvoice( ctx, id) )
+			.filter( i -> i != null)
 			.map(i -> new InvoiceConsole().setInvoice(i))
-			;
+			.map( ic -> fillAttach(ctx, ic))
+			.map( ic -> fillSource(ic))
+			.map( ic -> fillMessages(ctx, ic))
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
 	}
 
 	// ---------------------------------------------------------------------	
 	// -------------------------------------------------------- [PRIVATE] --	
 	// ---------------------------------------------------------------------
 	
-	private static class HeaderInvoiceFiller  extends Filler implements Function<Record,Invoice> {
-
-		@Override
-		public Invoice apply(Record r) {
-			return new Invoice()
-				.setId(getValue(r,INVOICE.ID))
-				.setDomain(getValue(r,INVOICE.DOMAIN))
-				.setType(AonEnumUtils.enumValue(InvoiceType.class,getValue(r,INVOICE.TYPE)))
-				.setSeries(getValue(r,INVOICE.SERIES))
-				.setNumber(getValue(r,INVOICE.NUMBER))
-				.setReferenceCode(getValue(r,INVOICE.REFERENCE_CODE))
-				.setIssueDate(getValue(r,INVOICE.ISSUE_DATE))
-				.setTaxDate(getValue(r,INVOICE.TAX_DATE))
-				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,getValue(r,INVOICE.SECURITY_LEVEL)))
-				.setRegistry(getValue(r,INVOICE.REGISTRY))
-				.setRegistryDocument(getValue(r,INVOICE.RDOCUMENT))
-				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,getValue(r,INVOICE.RDOCUMENT_TYPE)))
-				.setRegistryDocumentCountry(Country.safeValueOf(getValue(r,INVOICE.RDOCUMENT_COUNTRY)))
-				.setRegistryName(getValue(r,INVOICE.RNAME))
-				.setActivity(
-					getValue(r,INVOICE.ACTIVITY) == null
-						?null
-						:new EnterpriseActivity()
-							.setId(getValue(r,INVOICE.ACTIVITY))
-							.setDescription(getValue(r,ENTERPRISE_ACTIVITY.DESCRIPTION))
-							.setEpigraph(getValue(r,IAE.EPIGRAPH)))
-			;
-		}
-		
+	private static InvoiceConsole fillAttach(AONContext ctx, InvoiceConsole ic) {
+		return ctx.getDslContext()
+			.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.INVOICE,INVOICE_ATTACH.DRIVEID,INVOICE_ATTACH.MIMETYPE)
+				.from(INVOICE_ATTACH)
+				.where(INVOICE_ATTACH.INVOICE.eq(ic.getInvoice().getId()))
+				.fetch()
+				.stream()
+				.map(rec -> new Attach()
+					.setId(rec.getValue(INVOICE_ATTACH.ID))
+					.setAttachModule(rec.getValue(INVOICE_ATTACH.INVOICE))
+					.setAttachType(AttachType.INVOICE)
+					.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
+					.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
+					)
+				.map( ic::setAttach )
+				.findFirst()
+				.orElse(ic)
+		;
 	}
-	
-	private static Field<Integer> getOrderedType() {
-		return DSL.decode()
-		   .when(INVOICE.TYPE.equal((byte) 0), 0)
-		   .when(INVOICE.TYPE.equal((byte) 1), 1)
-		   .when(INVOICE.TYPE.equal((byte) 2), 0)
-		   .when(INVOICE.TYPE.equal((byte) 3), 0);
 
+	private static InvoiceConsole fillSource(InvoiceConsole ic) {
+		return ic.setSource( 
+			AonCollectionUtils.stream( ic.getInvoice().getDetails())
+			 	.map( id -> id.getSource() )
+			 	.distinct()
+	            .limit(2)
+	            .reduce((a, b) -> null) // Si hay más de uno, devuelve null. Factura con más de un source.
+	            .orElse( null )
+        );
+	}
+	private static InvoiceConsole fillMessages(AONContext ctx, InvoiceConsole ic) {
+		InvoiceRecorderDAO.fillMessages(ctx, ic.getInvoice().getDomain(), ic.getInvoice());
+		return ic;
 	}
 	
 	public static Condition getWhere(InvoiceConsoleParams params) {
@@ -129,7 +125,7 @@ public class InvoiceConsoleDAO {
 		
 		if (params.getActivity() != null) {
 			if (AonMathUtils.isNegative(params.getActivity())) {
-				// Sï¿½lo las comunes. Los "sin activdad".
+				// Solo las comunes. Los "sin activdad".
 				condition = condition.and( INVOICE.ACTIVITY.isNull());
 			} else {
 				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
@@ -171,6 +167,14 @@ public class InvoiceConsoleDAO {
 			}
 		}
 		
+		if (params.getRecorded() != null) {
+			if ( params.getRecorded().booleanValue() ) {
+				condition = condition.and( INVOICE.STATUS.eq( InvoiceStatus.SCORED.value()));
+			} else {
+				condition = condition.and( INVOICE.STATUS.eq( InvoiceStatus.PENDING.value()));
+			}
+		}
+
 		if (params.getOutput() != null) {
 			if (params.getOutput().booleanValue()) {
 				condition = condition.and( INVOICE.TYPE.eq( InvoiceType.SALES.value() ));
@@ -201,11 +205,51 @@ public class InvoiceConsoleDAO {
 		}
 		return condition;
 	}
+	public static boolean mustReadDetails(InvoiceConsoleParams params) {
+		return ( params.getSource() != null);
+	}
+	public static Condition getDetailWhere(InvoiceConsoleParams params) {
+		Condition condition = INVOICE_DETAIL.DOMAIN.equal( params.getDomain() );
+		if ( params.getSource() != null) {
+			params.getSource().visit(null, new IInvoiceSourceVisitor() {
+
+				private static final long serialVersionUID = 5981585563515519217L;
+
+				private void visitManagement(InvoiceDetail detail) {
+					condition
+						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.ACCOUNT.value()))
+						.and( INVOICE_DETAIL.SOURCE.notEqual( InvoiceSource.TEDI.value()));
+				}
+
+				@Override public void visitDirectExpense(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitPurchase(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitSales(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitDelivery(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitIncome(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitFee(InvoiceDetail detail) {visitManagement(detail); }
+				@Override public void visitDirectInvoice(InvoiceDetail detail) { visitManagement(detail); }
+				@Override public void visitOffer(InvoiceDetail detail) {  visitManagement(detail); }
+				@Override public void visitReservation(InvoiceDetail detail) { visitManagement(detail); }
+				
+				@Override 
+				public void visitAccount(InvoiceDetail detail) {
+					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.ACCOUNT.value() ) );
+				}
+				@Override 
+				public void visitTedi(InvoiceDetail detail) {
+					condition.and( INVOICE_DETAIL.SOURCE.equal( InvoiceSource.TEDI.value() ) );
+				}
+				
+			});
+		}
+		return condition;
+	}
+
 	
 	private static OrderField<?>[] getOrderBy(InvoiceConsoleParams params) {
-		// TODO implement order field in params and ask user.
+		// implementar order field in params and ask user.
 		return new OrderField<?>[] {
-			 getOrderedType()
+			 InvoiceDAO.getOrderedType()
 			,INVOICE.TYPE
 			,INVOICE.ISSUE_DATE.desc()
 			,INVOICE.REFERENCE_CODE
