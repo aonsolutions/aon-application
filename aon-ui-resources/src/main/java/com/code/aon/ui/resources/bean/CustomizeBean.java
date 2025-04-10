@@ -206,7 +206,7 @@ public class CustomizeBean implements Serializable {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Object[]> h = new ArrayHandler();
-			Object[] values = run.query( connection, "SELECT id, MD5(data) FROM rattach WHERE registry = ? and description = ? and type = 2", h, this.companyId, name);
+			Object[] values = run.query( connection, "SELECT id, MD5(data) FROM rattach WHERE domain = ? and registry = ? and description = ? and type = 2", h, this.domainId, this.companyId, name);
 			if (! ArrayUtils.isEmpty(values) ) {
 				ref = AON_DOCUMENTS_PREFFIX + values[0] + "-" + getMD5(values[1]);
 			}
