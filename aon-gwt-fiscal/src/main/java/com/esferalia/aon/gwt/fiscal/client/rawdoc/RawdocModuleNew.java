@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.rawdoc;
 
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -7,7 +9,10 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
@@ -16,9 +21,12 @@ import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.RawdocServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocAttachPanel.RawdocAttachPanelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -27,7 +35,10 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -67,7 +78,14 @@ public class RawdocModuleNew extends MainEntryPoint {
 	private boolean minimizedByUser;
 	private int extraInfoTabIndex;
 
+	private LinkedHashSet<Integer> selectedItems = new LinkedHashSet<>();
+	private InlineLabel selectedCount;
+
+	private boolean recording;
+
+
 	class RawdocCallback {
+	
 		void showError(String msg) {
 			if (AonStringUtils.isBlank(msg)) {
 				msg = "Se ha producido un error no codificado.";
@@ -101,6 +119,31 @@ public class RawdocModuleNew extends MainEntryPoint {
 				} 
 			);
 		}
+		public InlineLabel getSelectedCount() {
+			return selectedCount;
+		}
+		
+		public LinkedHashSet<Integer> getSelectedItems() {
+			return selectedItems;
+		}
+
+		public void manageSelection( Rawdoc rawdoc) {
+			if (rawdoc.isSelected()) {
+				getSelectedItems().add(rawdoc.getId());
+			} else {
+				getSelectedItems().remove(rawdoc.getId());
+			}
+			refreshCounterLabel();
+		}
+		
+		private void refreshCounterLabel() {
+			selectedCount.setText( (!selectedItems.isEmpty())?  AonNumberUtils.toString(selectedItems.size()) :"");
+		}
+
+		public void resetCounters() {
+			selectedItems = new LinkedHashSet<>();
+			refreshCounterLabel();
+		}
 		
 	}
 
@@ -122,6 +165,7 @@ public class RawdocModuleNew extends MainEntryPoint {
 	
 	public void onModuleLoad( final RawdocModuleOptions opt ) {
 		AON.ensureInjected();
+		selectedCount = new InlineLabel();
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
 		if ( opt.getConfiguration() == null) {
@@ -142,6 +186,59 @@ public class RawdocModuleNew extends MainEntryPoint {
 		}
 	}
 	
+	private void checkConfiguration(AonConfiguration config) {
+		LinkedList<String> messages = new LinkedList<>();
+		if ( config.accounting().getDefaultChargedVatAccount() == null ) {
+			messages.add( "Cuenta contable de IVA soportado por defecto." );	
+		}
+		if (config.accounting().getDefaultPaidVatAccount() == null ) {
+			messages.add( "Cuenta contable de IVA repercutido por defecto." );	
+		}
+		if (config.accounting().getDefaultSalesAccount() == null ) {
+			messages.add( "Cuenta contable de ventas por defecto." );
+		}
+		if (config.accounting().getDefaultPurchaseAccount() == null) {
+			messages.add( "Cuenta contable de compras por defecto." );
+		}
+		if (config.accounting().getDefaultPrepayment() == null) {
+			messages.add( "Cuenta contable de suplidos por defecto." );
+		}
+		if (config.accounting().getDefaultChargedRetAccount() == null) {
+			messages.add( "Cuenta contable de retenci\u00F3n para facturas recibidas por defecto." );
+		}
+		if (config.accounting().getDefaultPaidRetAccount() == null) {
+			messages.add( "Cuenta contable de retenci\u00F3n para facturas emitidas por defecto." );
+		}
+		if (AonCollectionUtils.isNotEmpty(messages)) {
+			final PopupPanel infoPanel = new PopupPanel( true, true );
+			infoPanel.setWidth( "600px");
+			infoPanel.setHeight("400px");
+			FlowPanel configCheck = new FlowPanel();
+			configCheck.setStyleName(AON.CSS.aonWidthAll());
+			configCheck.addStyleName(AON.CSS.aonPadding());
+			
+			Label msg = new Label("Defina correctamente los siguientes valores en configuraci\u00F3n de empresa:");
+			msg.setStyleName(AON.CSS.aonMargin());
+			msg.addStyleName(AON.CSS.aonBold());
+			msg.addStyleName(AON.CSS.aonFontMedium());
+			msg.addStyleName(AON.CSS.aonColorRed());
+			configCheck.add(msg);
+			
+			AonDisplayGrid errors = new AonDisplayGrid();
+			errors.addStyleName(AON.CSS.aonWidthAlmostAll());
+			errors.addStyleName(AON.CSS.aonBlockCenter());
+			errors.addStyleName(AON.CSS.aonMarginTop());
+			AonCollectionUtils.stream(messages)
+				.forEach( e -> errors.addRow().addCell(new Label(e), AON.CSS.aonWidthAuto()))
+			;
+			configCheck.add(errors);
+			
+			infoPanel.add(configCheck);
+			infoPanel.center();
+			infoPanel.show();
+		}
+	}
+	
 	private void loadModule( final RawdocModuleOptions opt ) {
 		dockLayoutPanel.addNorth(getToolbarPanel( opt ), AonToolbar.HEIGTH );
 
@@ -156,6 +253,7 @@ public class RawdocModuleNew extends MainEntryPoint {
 		centerLayoutPanel = new SimpleLayoutPanel();
 		splitLayoutPanel.add(centerLayoutPanel);
 		search(opt);
+		checkConfiguration( opt.getConfiguration() );
 	}
 
 
@@ -183,9 +281,77 @@ public class RawdocModuleNew extends MainEntryPoint {
 		draftButton.addClickHandler(event -> search( opt , RawdocStatus.DRAFT));
 		toolbar.add(draftButton);
 
+		AonToolbarButton recordButton = new AonToolbarButton( AON.MSG.record(), AON.CSS.aonIconAccountingRecord() );
+		recordButton.addClickHandler(event -> record( opt ));
+		toolbar.add(recordButton);
+
 		return toolbar;
 	}
 	
+	private void record(RawdocModuleOptions opt) {
+		if (recording) return;
+		recording = true;
+		if ( AonCollectionUtils.isEmpty( selectedItems) ) {
+			AonMessageDialog.error( "No se ha seleccionado ning\u00FAn documento" );
+			recording = false;
+		} else {
+			final PopupPanel popup = new PopupPanel(false, true);
+			popup.add( new AonSplash());
+			popup.setGlassEnabled(true);
+			popup.setAnimationEnabled(true);
+			popup.center();
+			
+			RAWDOC_SERVICE.saveToAccounting( opt.getOccam(), selectedItems, new AsyncCallback<LinkedList<String>>() {
+				
+				@Override
+				public void onSuccess(LinkedList<String> ret) {
+					popup.hide();
+					if ( AonCollectionUtils.isNotEmpty(ret) ) {
+						final PopupPanel infoPanel = new PopupPanel( true, true );
+						infoPanel.setWidth( "600px");
+						infoPanel.setHeight("400px");
+						FlowPanel configCheck = new FlowPanel();
+						configCheck.setStyleName(AON.CSS.aonWidthAll());
+						configCheck.addStyleName(AON.CSS.aonPadding());
+						
+						Label msg = new Label("Resultado de la contabilizaci\u00F3n masiva:");
+						msg.setStyleName(AON.CSS.aonMargin());
+						msg.addStyleName(AON.CSS.aonBold());
+						msg.addStyleName(AON.CSS.aonFontMedium());
+						msg.addStyleName(AON.CSS.aonColorRed());
+						configCheck.add(msg);
+						
+						AonDisplayGrid errors = new AonDisplayGrid();
+						errors.addStyleName(AON.CSS.aonWidthAlmostAll());
+						errors.addStyleName(AON.CSS.aonBlockCenter());
+						errors.addStyleName(AON.CSS.aonMarginTop());
+						AonCollectionUtils.stream(ret)
+						.forEach( e -> errors.addRow().addCell(new Label(e), AON.CSS.aonWidthAuto()))
+						;
+						configCheck.add(errors);
+						
+						infoPanel.add(configCheck);
+						infoPanel.center();
+						infoPanel.show();
+					} else {
+						AonMessageDialog.info("Proceso terminado correctamente");
+					}
+					recording = false;
+					search( opt , RawdocStatus.INBOX);
+				}
+				
+				@Override
+				public void onFailure(Throwable t) {
+					toolbar.showErrorMessage(t.getMessage());
+					popup.hide();
+					recording = false;
+				}
+			});
+			
+				
+		}
+	}
+
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
 		footPanel.addMinimizeHandler(event -> {

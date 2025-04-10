@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -8,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface RawdocServiceAsync {
@@ -26,5 +28,8 @@ public interface RawdocServiceAsync {
 	void getAccountingInvoice(String domainName, int domain, String user, String invoice,AsyncCallback<AccountingInvoice> callback);
 	void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice,AsyncCallback<Boolean> callback);
 	void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback);
+	
+	void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback);
+	
 
 }

@@ -27,7 +27,7 @@ class RawdocTable extends ScrollPanel {
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
-
+	
 	RawdocTable(RawdocModuleOptions opt, RawdocCallback cbk) {
 		this.setStyleName(AON.CSS.aonScrollArea());
 		
@@ -80,7 +80,8 @@ class RawdocTable extends ScrollPanel {
 		container.clear();
 		container.add(grid);
 		grid.clear();
-		paintHeader();
+		cbk.resetCounters();
+		paintHeader( cbk );
 		offset.setValue(0);
 		search( opt, cbk, offset.getValue());
 	}
@@ -102,8 +103,10 @@ class RawdocTable extends ScrollPanel {
 		);
 	}
 	
-	private void paintHeader() {
+	private void paintHeader(RawdocCallback cbk) {
 		grid.addHeaderRow()
+			.addCell(cbk.getSelectedCount(),AON.CSS.aonWidth20(),AON.CSS.aonTextCenter())
+			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(AON.MSG.status()), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())

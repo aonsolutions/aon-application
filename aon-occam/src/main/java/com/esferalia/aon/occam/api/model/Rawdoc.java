@@ -15,6 +15,8 @@ public class Rawdoc implements Serializable, HasAudit {
 
 	private static final long serialVersionUID = -3954007129622239737L;
 	private static final String BUCKET = "aon-upload-post"; //"aon-rawdoc";
+	
+	private boolean selected;
 
 	private Integer id;
 	private Integer domain;
@@ -187,6 +189,14 @@ public class Rawdoc implements Serializable, HasAudit {
 	
 	public Rawdoc setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	public Rawdoc setSelected(boolean selected) {
+		this.selected = selected;
 		return this;
 	}
 	

@@ -836,12 +836,22 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@Override
 	public void onSettingsButtonClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
+		
+		if (nativeEvent.getCtrlKey() || nativeEvent.getMetaKey()) {
+	        openIntegrityAgreement();
+	        return;
+	    }
+		 
 		int offset = 225;
 		settingsContextMenu.setPopupPosition(nativeEvent.getClientX() - offset, nativeEvent.getClientY());
 		settingsContextMenu.show();
 		
 	}
 	
+	private void openIntegrityAgreement() {
+		new AgreementIntegrityDialog();
+	}
+
 	private void getAgreement(Integer agreementId, Consumer<AgreementInfo> success) {
 		impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
 

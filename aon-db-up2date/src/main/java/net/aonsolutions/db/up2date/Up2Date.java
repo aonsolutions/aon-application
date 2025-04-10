@@ -19,12 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
-import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
-import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursFixIV;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursFixV;
 
 public class Up2Date {
 
@@ -171,7 +166,7 @@ public class Up2Date {
 			// TaskAttachCreation.TASK_ATTACH_CREATION
 			// ContractCostCreation.CONTRACTCOSTCREATION,
 			// CRA0062Insert.CRA0062INSERT
-			// IrpfHomeUpdate.IRPFHOMEUPDATE
+			// IrpfHomeUpdate.IRPFHOMEUPDBASE_HORAS_COMPLATE
 			// TrainningPercentages2019FixII.TRAINNINGPERCENTAGES2021FIXII
 			// BaseCgcMin2019Fix.BASECGCMIN2019FIX
 			// OvertimeCostsFix.OVERTIMECOSTSFIX
@@ -530,8 +525,8 @@ public class Up2Date {
 			// AgreementPaymentsMonthFix.AGREEMENTPAYMENTSMONTHFIX,
 			// RealDecreeLaw1782025Art28300Fix.REALDECREELAW1782025ART28300FIX
 			// AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX
-			
-			SalaryHoursFixIV.SALARYHOURSFIXIV
+			// SalaryHoursFixIV.SALARYHOURSFIXIV
+			SalaryHoursFixV.SALARYHOURSFIXV
 			
 	};
 

@@ -9,15 +9,18 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.invoice.console.InvoiceMessagesLabel;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import es.translogia.tedi.ewok.TediInvoice;
 
@@ -139,4 +142,21 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 		}
 		return accountEntry;
 	}
+	
+	@Override
+	protected Widget getValidationInfo(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
+		if ( rawdoc.isInbox() || rawdoc.isProcessed()) {
+			return new InvoiceMessagesLabel( rawdoc.getInvoice() );
+		}
+		return new Label();
+	}
+	
+	@Override
+	protected boolean isCheckEnabled(Rawdoc rawdoc) {
+		if (rawdoc.getInvoice() == null) return false;
+		InvoiceErrorLevel level = rawdoc.getInvoice().getMoreSeriousLevel().orElse( null );
+		if (level == InvoiceErrorLevel.WRN) return false;
+		if (level == InvoiceErrorLevel.ERR) return false;
+		return true;
+	}	
 }

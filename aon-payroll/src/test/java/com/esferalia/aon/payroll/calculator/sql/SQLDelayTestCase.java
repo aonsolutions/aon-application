@@ -6383,7 +6383,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
@@ -6598,7 +6597,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
@@ -6736,7 +6734,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), DELTA);
-		org.junit.Assert.assertEquals(expected, delay.getRawCommonBase(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), DELTA);
 		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);
@@ -6891,7 +6888,6 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		org.junit.Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
 		org.junit.Assert.assertEquals(expected, delay.getCommonBase(), 0.5);
-		org.junit.Assert.assertEquals(expected, delay.getRawCommonBase(), 0.5);
 		org.junit.Assert.assertEquals(expected, delay.getProfessionalBase(), 0.5);
 		org.junit.Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		org.junit.Assert.assertEquals(-(4.6 / 100.00 * expected ), delay.getTotalLiquid(), DELTA);

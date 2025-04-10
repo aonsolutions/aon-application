@@ -124,6 +124,7 @@ export const DONE = 'done';
 // ----- E
 
 export const EDIT = 'edit';
+export const EDIT_DOCUMENT = 'edit_document';
 export const EQUALIZER = 'equalizer';
 export const ERROR = 'error';
 export const EURO = 'euro';
