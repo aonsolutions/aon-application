@@ -67,12 +67,10 @@ export const loadTheme = async  () => {
 		cookieTheme: getCookie("theme") || '', 
 		lsAonTheme: LS.AON_THEME || ''
 	};
-
-	let url =  await getThemeUrl(params);
-	console.log(url);
+	
 	let themeUrl = UA.isMobile() 
         ? LS.AON_MOBILE_ANDROID 
-        : 	url;
+        : await getThemeUrl(params);
 	console.log(themeUrl);
 		
 		
