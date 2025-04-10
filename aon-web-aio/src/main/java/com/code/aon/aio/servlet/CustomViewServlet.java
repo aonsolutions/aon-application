@@ -53,7 +53,7 @@ public class CustomViewServlet extends HttpServlet {
 	}
 	
 	private void get(HttpServletRequest req, HttpServletResponse resp) throws SQLException {
-		String domainStr = req.getParameter(IJsonNames.DOMAIN);
+		String domainStr = req.getServerName();
 		
 		resp.setContentType(MimeType.CSS.getName());
 
