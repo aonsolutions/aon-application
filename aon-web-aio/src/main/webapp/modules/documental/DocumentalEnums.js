@@ -95,16 +95,20 @@ export const DOCUMENTAL_FILTER = [
 	  hidden: "true"
 	},	  
 	{
-      type: "newDate",
-      name: "start_date",
-      id: "start_date",
-      title: "Fecha del documento - desde",
+      type : "newDate",
+      name : "start_date",
+      id   : "start_date",
+//      date: new Date(2025, 0, 1), // pasar fecha
+      date: '',
+      title: "Fecha del documento - desde"
     },
     {
-      type: "newDate",
-      name: "end_date",
-      id: "end_date",
-      title: "Fecha del documento - hasta",
+      type : "newDate",
+      name : "end_date",
+      id   : "end_date",
+//      date: new Date(2025, 0, 1), // pasar fecha
+      date: '',
+      title: "Fecha del documento - hasta"
     }
 ];
 export const DOCUMENTAL_FILTER_ENTERPRISE = [
