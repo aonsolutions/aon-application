@@ -238,6 +238,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconRepair aonIconRepair;
+.aon_icon_repair { background-image: iconRepair;}
 @url iconMoveGroup aonIconMoveGroup;
 .aon_icon_move_group { background-image: iconMoveGroup;}
 @url iconWork aonIconWork;
@@ -2513,4 +2515,14 @@
   	align-items: center;
   	justify-content: center;
   	font-size: 0.6rem;
+}
+
+.aon_button_icon_text{
+	background-repeat: no-repeat;
+  	padding-left: 1.5rem;
+  	border: 1px solid #999696;
+  	background-color: transparent;
+  	height: 2rem;
+  	background-position: left;
+  	border-radius: 5px;
 }
