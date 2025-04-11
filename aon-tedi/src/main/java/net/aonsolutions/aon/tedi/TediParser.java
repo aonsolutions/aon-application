@@ -51,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -257,17 +258,18 @@ public class TediParser {
 			}
 			if (invoice.getDetails() != null) {
 				for (InvoiceDetail detail : invoice.getDetails()) {
-					InvoiceVAT vat = null;
 					if (detail.getInvoiceTaxes() != null && detail.getInvoiceTaxes().size() > 0) {
 						for (InvoiceTax tax : detail.getInvoiceTaxes()) {
 							if (tax.getTaxType() == TaxType.VAT) {
-								vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,expAccount, withholding);					
+								InvoiceVAT vat = getInvoiceVAT( detail, tax,outputAccount,inputAccount,adjAccount,expAccount, withholding);
+								ai.addVat( vat );
 							}
 						}
-					} else {
-						vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,expAccount, withholding);
+					} 
+					if (AonCollectionUtils.isEmpty( ai.getVats())) {
+						InvoiceVAT vat = getInvoiceVAT( detail, new InvoiceTax(),outputAccount,inputAccount,adjAccount,expAccount, withholding);
+						ai.addVat(vat);
 					}
-					ai.addVat(vat);
 				}
 			}
 		}
