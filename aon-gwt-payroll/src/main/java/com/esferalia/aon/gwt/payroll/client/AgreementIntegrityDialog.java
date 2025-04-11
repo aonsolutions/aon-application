@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
@@ -23,6 +24,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -43,9 +46,10 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 	private ScrollPanel scrollPanel;
 	private HTMLPanel integrityContainer = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	private Map<Integer, Boolean> isPaymentOpen = new HashMap<Integer, Boolean>();
+	private Map<AgreementIntegrityFix, Boolean> isPaymentOpen = new HashMap<AgreementIntegrityFix, Boolean>();
 	
 	// Variables
+	private Integer domain;
 	private List<Agreement> agreements = new ArrayList<Agreement>();
 	private AgreementIntegrity agreementIntegrity;
 
@@ -90,7 +94,25 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		
 		initAgreementListBox();
 		
+		body.add(createFixButton());
+		
 		add(body);
+	}
+
+	private Widget createFixButton() {
+		HTMLPanel buttonPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		buttonPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
+		buttonPanel.getElement().getStyle().setProperty("padding", "0 1rem 1rem");
+		
+		Button fixIntegrityBtn = new Button();
+		fixIntegrityBtn.setStyleName(AON.CSS.aonIconRepair());
+		fixIntegrityBtn.addStyleName(AON.CSS.aonButtonIconText());
+		fixIntegrityBtn.setText("Corregir integirdad convenio");
+		fixIntegrityBtn.addClickHandler(e -> fixIntegrityAgreement());
+		
+		buttonPanel.add(fixIntegrityBtn);
+		
+		return buttonPanel;
 	}
 
 	private void initAgreementListBox() {
@@ -102,7 +124,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		
 		agreementLB.clearItems();
 		agreementLB.addItem("-", "");
-		agreements.forEach(agreement -> agreementLB.addItem(agreement.getDescription().toUpperCase(), agreement.getId().toString()));
+		agreements.forEach(agreement -> agreementLB.addItem((agreement.getDomain() != domain ? "(C) " : "=> ") + agreement.getDescription().toUpperCase(), agreement.getId().toString()));
 		
 		agreementLB.addChangeHandler(e -> onAgreementChange());
 		
@@ -134,17 +156,17 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		integrityContainer.setWidth("100%");
 		integrityContainer.getElement().getStyle().setProperty("max-height", "30rem");
 		
-		isPaymentOpen.put(0, false);
-		isPaymentOpen.put(1, false);
-		isPaymentOpen.put(2, false);
-		isPaymentOpen.put(3, false);
-		isPaymentOpen.put(4, false);
-		isPaymentOpen.put(5, false);
-		isPaymentOpen.put(6, false);
-		isPaymentOpen.put(7, false);
-		isPaymentOpen.put(8, false);
-		isPaymentOpen.put(9, false);
-		isPaymentOpen.put(10, false);
+		isPaymentOpen.put(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
+		isPaymentOpen.put(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT, false);
+		isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
+		isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD, false);
 		
 		integrityContainer.add(createPaymentDomainsPanel());
 		integrityContainer.add(createNoPaymentConceptAgreementPaymentsPanel());
@@ -169,50 +191,50 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 	}
 
 	private Widget createPaymentDomainsPanel() {
-		return createMessagesPanel("Devengos de convenio en otro dominio", agreementIntegrity.getOtherDomainAgreementPayments(), 0);
+		return createMessagesPanel(agreementIntegrity.getOtherDomainAgreementPayments(), AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS);
 	}
 	
 	private Widget createNoPaymentConceptAgreementPaymentsPanel() {
-		return createMessagesPanel("Devengos de convenio sin concepto", agreementIntegrity.getNoPaymentConceptAgreementPayments(), 1);
+		return createMessagesPanel(agreementIntegrity.getNoPaymentConceptAgreementPayments(), AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT);
 	}
 	
 	private Widget createOtherDomainPaymentConceptsPanel() {
-		return createMessagesPanel("Conceptos de convenio en otro dominio", agreementIntegrity.getOtherDomainPaymentConcepts(), 2);
+		return createMessagesPanel(agreementIntegrity.getOtherDomainPaymentConcepts(), AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT);
 	}
 
 	private Widget createPaymentConceptsNoCodePanel() {
-		return createMessagesPanel("Conceptos sin c\u00f3digo / C\u00f3digo err\u00f3neo", agreementIntegrity.getPaymentConceptsNoCode(), 3);
+		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoCode(), AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT);
 	}
 
 	private Widget createCodeInExpressionPanel() {
-		return createMessagesPanel("C\u00f3digo concepto usado en expresiones", agreementIntegrity.getCodeInExpression(), 4);
+		return createMessagesPanel(agreementIntegrity.getCodeInExpression(), AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION);
 	}
 	
 	private Widget createVariablesLikeCodePanel() {
-		return createMessagesPanel("Variables no usadas en expres\u00f3n iguales a c\u00f3digos conceptos", agreementIntegrity.getVariableLikeCodes(), 5);
+		return createMessagesPanel(agreementIntegrity.getVariableLikeCodes(), AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE);
 	}
 	
 	private Widget createVariableCodeLikeContextPanel() {
-		return createMessagesPanel("C\u00f3digo concepto / Variables iguales a variables de contexto", agreementIntegrity.getVariableCodeLikeContext(), 6);
+		return createMessagesPanel(agreementIntegrity.getVariableCodeLikeContext(), AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE);
 	}
 
 	private Widget createOtherDomainPaymentConceptContractsPanel() {
-		return createMessagesPanel("Devengos contrato con conceptos en otro dominio", agreementIntegrity.getOtherDomainPaymentConceptContracts(), 7);
+		return createMessagesPanel(agreementIntegrity.getOtherDomainPaymentConceptContracts(), AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT);
 	}
 
 	private Widget createPaymentConceptsNoCodeContractsPanel() {
-		return createMessagesPanel("Devengos contrato con conceptos sin c\u00f3digo", agreementIntegrity.getPaymentConceptsNoCodeContracts(), 8);
+		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoCodeContracts(), AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE);
 	}
 
 	private Widget createPaymentConceptsNoRefPanel() {
-		return createMessagesPanel("Conceptos del dominio sin referencia al convenio o contrato", agreementIntegrity.getPaymentConceptsNoRef(), 9);
+		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoRef(), AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE);
 	}
 	
 	private Widget createAgreementExtrasPanel() {
-		return createMessagesPanel("Extras con formato err\u00f3neo en las fechas / Fechas > 12 meses", agreementIntegrity.getAgreementExtras(), 10);
+		return createMessagesPanel(agreementIntegrity.getAgreementExtras(), AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD);
 	}
 	
-	private Widget createMessagesPanel(String title, List<String> messages, Integer isOpenIdx) {
+	private Widget createMessagesPanel(List<String> messages, AgreementIntegrityFix agreementIntegrityFix) {
 		HTMLPanel paymentDiscPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		paymentDiscPanel.getElement().getStyle().setCursor(Cursor.POINTER);
 		paymentDiscPanel.getElement().getStyle().setProperty("justify-content", "center");
@@ -242,11 +264,11 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 				messages.isEmpty() ? AON.CSS.aonIconCircleGreen() : AON.CSS.aonIconRight()
 		);
 		
-		AonToolbarSmallButton fixIntegrity = new AonToolbarSmallButton("Corregir integridad correcta", AON.CSS.aonIconFix());
-		fixIntegrity.addClickHandler(e -> onAgreementIntegrityFix(isOpenIdx));
+		AonToolbarSmallButton fixIntegrity = new AonToolbarSmallButton("Corregir integridad correcta", AON.CSS.aonIconRepair());
+		fixIntegrity.addClickHandler(e -> onAgreementIntegrityFix(agreementIntegrityFix));
 		fixIntegrity.setVisible(false);
 		
-		Label titleLabel = new Label(title);
+		Label titleLabel = new Label(agreementIntegrityFix.getTitle());
 		titleLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
 		if(!messages.isEmpty()) {
@@ -267,11 +289,11 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 			toolbarTitle.addDomHandler(new ClickHandler() {
 			    @Override
 			    public void onClick(ClickEvent event) {
-			    	isPaymentOpen.put(isOpenIdx, !isPaymentOpen.get(isOpenIdx));
-					handleIcon(paymentDiscBtn, isPaymentOpen.get(isOpenIdx));
-					if(isPaymentOpen.get(isOpenIdx)) {
+			    	isPaymentOpen.put(agreementIntegrityFix, !isPaymentOpen.get(agreementIntegrityFix));
+					handleIcon(paymentDiscBtn, isPaymentOpen.get(agreementIntegrityFix));
+					if(isPaymentOpen.get(agreementIntegrityFix)) {
 						paymentPanel.getElement().getStyle().clearDisplay();
-						fixIntegrity.setVisible(/* true */ isIntegrityAviable(isOpenIdx));
+						fixIntegrity.setVisible(/* true */ isIntegrityAviable(agreementIntegrityFix));
 					} else {
 						paymentPanel.getElement().getStyle().setDisplay(Display.NONE);
 						fixIntegrity.setVisible(false);
@@ -279,8 +301,8 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 					center();
 			    }
 
-				private boolean isIntegrityAviable(Integer idx) {
-					return idx == 0 || idx == 1 || idx == 2;
+				private boolean isIntegrityAviable(AgreementIntegrityFix agreementIntegrityFix) {
+					return agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE;
 				}
 				
 			}, ClickEvent.getType());
@@ -311,30 +333,65 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		}
 	}
 	
-	private void onAgreementIntegrityFix(Integer agreementIntegrityFixIdx) {
-		AonMessagePanel.showLoading(messagePanel, "Arreglando integridad del convenio...");
-		
-		AgreementIntegrityFix agreementIntegrityFix = null;
-		if(null != agreementIntegrityFixIdx)
-			agreementIntegrityFix = AgreementIntegrityFix.values()[agreementIntegrityFixIdx];
-		
-		agreementIntegrityFix(agreementIntegrityFix, end -> onAgreementChange());
-	}
+	private void onAgreementIntegrityFix(AgreementIntegrityFix agreementIntegrityFix) {
+		AonDialog dialog = new AonDialog("Integridad Convenio", new HTML(agreementIntegrityFix.getDeleteMessage()));
+		dialog.confirm(new AonAcceptDialogCallback() {
 
-	private void getAgreements(Consumer<List<Agreement>> consumer) {
-		impl.getAgreements(false, new AsyncCallback<List<Agreement>>() {
-			
 			@Override
-			public void onSuccess(List<Agreement> agreementsDB) {
-				agreements = agreementsDB;
-				consumer.accept(agreementsDB);
-			}
-			
+			public void onCancel() {}
+
 			@Override
-			public void onFailure(Throwable caught) {
-				new AonDialog("Convenios", new Label("Error obteniendo convenios")).info();
+			public void onAccept() {
+				AonMessagePanel.showLoading(messagePanel, "Arreglando integridad del convenio...");
+				
+				agreementIntegrityFix(agreementIntegrityFix, end -> onAgreementChange());
 			}
 		});
+	}
+
+	private void fixIntegrityAgreement() {
+		AonDialog dialog = new AonDialog("Integridad Convenio", new HTML("\u00bfDesea arreglar la integridad del convenio\u003f"));
+		dialog.confirm(new AonAcceptDialogCallback() {
+
+			@Override
+			public void onCancel() {}
+
+			@Override
+			public void onAccept() {
+				AonMessagePanel.showLoading(messagePanel, "Arreglando integridad del convenio...");
+				agreementIntegrityFix(null, end -> onAgreementChange());
+			}
+		});
+	}
+	
+	private void getAgreements(Consumer<List<Agreement>> consumer) {
+		impl.getDomain(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer currentDomain) {
+				domain = currentDomain;
+				
+				impl.getAgreements(false, new AsyncCallback<List<Agreement>>() {
+					
+					@Override
+					public void onSuccess(List<Agreement> agreementsDB) {
+						agreements = agreementsDB;
+						agreements.sort((o1, o2) -> o2.getDomain().compareTo(o1.getDomain()));
+						consumer.accept(agreementsDB);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						new AonDialog("Convenios", new Label("Error obteniendo convenios")).info();
+					}
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+		
+		
 	}
 	
 	private void checkAgreementIntegrity(Consumer<AgreementIntegrity> consumer) {
