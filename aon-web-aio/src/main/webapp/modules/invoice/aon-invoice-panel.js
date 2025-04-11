@@ -501,6 +501,12 @@ export class AonInvoicePanel extends AonElement {
     }
   }
 
+
+  aonInvoiceProcessing() {
+    this.getApplication().setContent(new AonInvoiceProcessing());
+  }
+
+
   aonInvoiceList(filter, invofoxFilter) {
     this.filter = filter;
     this.invofoxFilter = invofoxFilter;

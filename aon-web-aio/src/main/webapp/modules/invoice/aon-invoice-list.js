@@ -203,7 +203,7 @@ export class AonInvoiceList extends AonElement {
 			icons.push(icon);
 		}
 
-		if(this.getDur().isOcr() && (invoice.invofox || invoice.ocrStatus)) {
+		if(this.getDur().isInvofox() && (invoice.invofox || invoice.ocrStatus)) {
 			let icon = {
 				icon: this.getOcrInvoiceStatusIcon(),
 				title: this.getOcrInvoiceStatusIconTitle(invoice),
