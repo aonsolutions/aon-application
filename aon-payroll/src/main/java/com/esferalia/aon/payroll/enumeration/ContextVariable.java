@@ -622,6 +622,10 @@ public enum ContextVariable implements IResourceable {
 	public static boolean isContextVariable(String name) {
 		return getVariableByName(name) != null  || NAMES.contains(name);
 	}
+	
+	public static List<String> getNames() {
+		return NAMES;
+	}
 
 	public static Date parse(String str) throws ParseException {
 		return StringUtils.isBlank(str) ? null : DATE_FORMAT.parse(str);
