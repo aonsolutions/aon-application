@@ -110,7 +110,9 @@ public class JooqAgreementTab {
 		}
 		agreement.setNoConceptVariables(noConceptVariables);
 		
-		agreement.setContextVariables(Arrays.asList(ContextVariable.values()).stream().map(cv -> cv.getName()).collect(Collectors.toList()));
+		List<String> contextVariables = Arrays.asList(ContextVariable.values()).stream().map(cv -> cv.getName()).collect(Collectors.toList());
+		contextVariables.addAll( ContextVariable.getNames() );
+		agreement.setContextVariables(contextVariables);
 		
 		return agreement;
 	}

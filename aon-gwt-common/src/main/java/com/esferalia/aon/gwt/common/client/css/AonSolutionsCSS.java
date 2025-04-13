@@ -336,6 +336,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_repair")
+	String aonIconRepair();
+	
 	@ClassName("aon_icon_work")
 	String aonIconWork();
 	
@@ -690,6 +693,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_display_flex_end")
 	String aonDisplayFlexEnd();
+	
+	@ClassName("aon_button_icon_text")
+	String aonButtonIconText();
 	
 	@ClassName("aon_display_table")
 	String aonDisplayTable();
