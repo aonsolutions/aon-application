@@ -44,10 +44,9 @@ import { getReader } from "../../services/utils.js";
 import { AonImageEditor } from "../../components/aon-image-editor.js";
 import { createSelect } from "../../components/CreateComponent.js";
 import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
-import { AonIncome } from "./aon-income.js";
-import { AonExpense } from "./aon-expense.js";
 import { AonIncomeList } from "./aon-income-list.js";
 import { AonExpenseList } from "./aon-expense-list.js";
+import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -500,6 +499,12 @@ export class AonInvoicePanel extends AonElement {
       this.aonInvoiceList(this.filter, this.invofoxFilter);
     }
   }
+
+
+  aonInvoiceProcessing() {
+    this.getApplication().setContent(new AonInvoiceProcessing());
+  }
+
 
   aonInvoiceList(filter, invofoxFilter) {
     this.filter = filter;

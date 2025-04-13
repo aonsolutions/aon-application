@@ -2603,7 +2603,9 @@ export class AonInvoice extends AonElement {
 		let parent = this.getApplication().getParent();
 		if(this.isMobile())
 			parent.buildToolbarOptions();
-		parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
+		if(this.invoice.status == 'processed') {
+			parent.aonInvoiceProcessing();
+		} else parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
 	}
 
 	more(e) {
