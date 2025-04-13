@@ -302,7 +302,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 			    }
 
 				private boolean isIntegrityAviable(AgreementIntegrityFix agreementIntegrityFix) {
-					return agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE;
+					return agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE;
 				}
 				
 			}, ClickEvent.getType());
