@@ -666,6 +666,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setWrapper(ai);
 		getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
+			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 			innerPaintEntry();
 			editInvoice();
 			getCallback().getModule().onPreview(getWrapper());
