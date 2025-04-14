@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.dom.client.Style.Unit;
@@ -22,43 +23,41 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import es.translogia.tedi.ewok.TediInvoice;
-
-class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
+class RawdocTableRowInvoice extends RawdocTableRowAbs<Invoice> {
 
 	RawdocTableRowInvoice(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
 		super( opt, cbk, rawdoc);
 	}
 
 	@Override
-	protected Optional<TediInvoice> getDoc(Rawdoc rawdoc) {
+	protected Optional<Invoice> getDoc(Rawdoc rawdoc) {
 		if (rawdoc == null) return Optional.empty();
-		return Optional.ofNullable( rawdoc.getTediInvoice() );
+		return Optional.ofNullable( rawdoc.getInvoice() );
 	}
 
 	@Override
 	protected Label getDocumentLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		return new Label( getDoc(rawdoc).map( i -> i.getRegistry() ).map( r -> r.getDocument() ).orElse( "" ));
+		return new Label( getDoc(rawdoc).map( Invoice::getRegistryDocument ).orElse( "" ));
 	}
 
 	@Override
 	protected Label getNameLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		return new Label( getDoc(rawdoc).map( i -> i.getRegistry() ).map( r -> r.getName() ).orElse( "" ));
+		return new Label( getDoc(rawdoc).map( Invoice::getRegistryName ).orElse( "" ));
 	}
 	
 	@Override
 	protected Label getAmountLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		return new Label( getDoc(rawdoc).map( i -> i.getTotal() ).map( AON.FMT::format ).orElse( "" ));
+		return new Label( getDoc(rawdoc).map( Invoice::getTotal ).map( AON.FMT::format ).orElse( "" ));
 	}
 
 	@Override
 	protected Label getDateLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		return new Label( getDoc(rawdoc).map( i -> i.getDate() ).map( AON.DATE_FORMAT::format ).orElse( "" ));
+		return new Label( getDoc(rawdoc).map( Invoice::getIssueDate ).map( AON.DATE_FORMAT::format ).orElse( "" ));
 	}
 
 	@Override
 	protected Label getReferenceLabel(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
-		return new Label( getDoc(rawdoc).map( i -> i.getReference() ).orElse( "" ) );
+		return new Label( getDoc(rawdoc).map( Invoice::getReferenceCode ).orElse( "" ) );
 	}
 
 	protected AonTableButton getActionButton(RawdocModuleOptions opt, RawdocCallback cbk, Rawdoc rawdoc) {
@@ -155,8 +154,6 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<TediInvoice> {
 	protected boolean isCheckEnabled(Rawdoc rawdoc) {
 		if (rawdoc.getInvoice() == null) return false;
 		InvoiceErrorLevel level = rawdoc.getInvoice().getMoreSeriousLevel().orElse( null );
-		if (level == InvoiceErrorLevel.WRN) return false;
-		if (level == InvoiceErrorLevel.ERR) return false;
-		return true;
+		return  (level != InvoiceErrorLevel.WRN && level != InvoiceErrorLevel.ERR);
 	}	
 }
