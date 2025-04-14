@@ -384,6 +384,12 @@ export class AonNewInput extends AonElement {
         }
     }
 
+    setMaxlength(maxlength) {
+        this.maxlength = maxlength;
+        let input  = this.getElement(this.INPUT);
+        if(input) input.setAttribute("maxlength", this.maxlength);
+    }
+
     focus() {
         this.getElement(this.INPUT).focus();
     }

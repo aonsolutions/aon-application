@@ -188,7 +188,8 @@ export class AonElement extends HTMLElement{
       || href.includes('console-udapa.aonsolutions.net')
       || href.includes('console-etl.aonsolutions.net')
       || href.includes('console-ayudat.aonsolutions.net')
-      || href.includes('console-grupoayudat.aonsolutions.net');
+      || href.includes('console-grupoayudat.aonsolutions.net')
+      || href.includes('console-demos.aonsolutions.org');
 	}
 
   showMessage(msg) {
