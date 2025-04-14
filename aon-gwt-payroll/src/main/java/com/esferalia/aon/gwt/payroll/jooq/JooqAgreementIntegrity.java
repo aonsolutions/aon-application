@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.mvel2.MVEL;
@@ -181,9 +180,8 @@ public class JooqAgreementIntegrity {
 		
 		agreementIntegrity.setVariableLikeCodes(variableLikeCodes);
 		
-		// Variables or concepts like contextVariables
+		// Concept codes like contextVariables
 		Set<String> variablesCodes = new HashSet<String>();
-		variablesCodes.addAll(variables);
 		
 		variablesCodes.addAll(
 				agreementPayments.stream()
@@ -408,7 +406,7 @@ public class JooqAgreementIntegrity {
 		
 		variablesCodes.forEach(variablesCode -> {
 			if(ContextVariable.isContextVariable(variablesCode))
-				messages.add("El c\u00f3digo de concepto / variable " + variablesCode + " no se puede usar ya que es una variable de contexto");
+				messages.add("El c\u00f3digo de concepto " + variablesCode + " no se puede usar ya que es una variable de contexto");
 		});
 		
 		return messages;
@@ -527,9 +525,9 @@ public class JooqAgreementIntegrity {
 					case AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE:
 						fixAgreementVariablesAsPaymentConceptCode(dslContext, domainId, agreement);
 						break;
-					case AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE:
-						fixAgreementVariablesPaymentConceptCodeAsContextVariable(dslContext, domainId, agreement);
-						break;
+//					case AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE:
+//						fixAgreementVariablesPaymentConceptCodeAsContextVariable(dslContext, domainId, agreement);
+//						break;
 					case CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT:
 						fixContractPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
 						break;
