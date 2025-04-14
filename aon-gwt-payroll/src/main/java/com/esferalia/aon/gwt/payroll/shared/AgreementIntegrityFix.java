@@ -10,7 +10,7 @@ public enum AgreementIntegrityFix implements Serializable {
 	NO_CODE_WRONG_CODE_PAYMENT_CONCEPT("Conceptos sin c\u00f3digo / C\u00f3digo err\u00f3neo", "\u00bfDesea arreglar conceptos sin c\u00f3digo / c\u00f3digo err\u00f3neo\u003f"),
 	PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION("C\u00f3digo concepto usado en expresiones", "\u00bfDesea arreglar c\u00f3digo concepto usado en expresiones\u003f"),
 	AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE("Variables no usadas en expresi\u00f3n iguales a c\u00f3digos conceptos", "\u00bfDesea arreglar variables no usadas en expres\u00f3n iguales a c\u00f3digos conceptos\u003f"),
-	AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE("C\u00f3digo concepto / Variables iguales a variables de contexto", "\u00bfDesea arreglar c\u00f3digo concepto / variables iguales a variables de contexto\u003f"),
+	AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE("C\u00f3digo concepto iguales a variables de contexto", "\u00bfDesea arreglar c\u00f3digo concepto / variables iguales a variables de contexto\u003f"),
 	CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT("Devengos contrato con conceptos en otro dominio", "\u00bfDesea arreglar devengos contrato con conceptos en otro dominio\u003f"),
 	CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE("Devengos contrato con conceptos sin c\u00f3digo", "\u00bfDesea arreglar devengos contrato con conceptos sin c\u00f3digo\u003f"),
 	PAYMENT_CONCEPT_NO_REFERENCE("Conceptos del dominio sin referencia al convenio o contrato", "\u00bfDesea arreglar conceptos del dominio sin referencia al convenio o contrato\u003f"),
