@@ -18,7 +18,6 @@ import { AonMobileCustomerList } from "../registry/customer/aon-mobile-customer-
 import { AonCustomer } from "../registry/customer/aon-customer.js";
 import { AonSupplier } from "../registry/supplier/aon-supplier.js";
 import { AonCreditor } from "../registry/creditor/aon-creditor.js";
-import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { AonInvestList } from "../product/aon-invest-list.js";
 import { AonInvest } from "../product/aon-invest.js";
 import { AonSelect } from "../../components/aon-select.js";
@@ -174,10 +173,8 @@ export class AonInvoicePanel extends AonElement {
       this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
       if (this.getDur().isOcr() || this.getDur().isInvofox())
         this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
-      
       if(processing) this.getApplication().addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing()); 
- 
-      if(acceptedInvoices) this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () => this.downloadInvoiceExcel());
+      if(acceptedInvoices) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL_INVOICE, () => this.downloadInvoiceExcel());
       if(this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
     } else {
       this.getApplication().removeFloatOption();
