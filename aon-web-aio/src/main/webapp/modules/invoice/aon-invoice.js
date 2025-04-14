@@ -1131,8 +1131,6 @@ export class AonInvoice extends AonElement {
 				thirdPart.setWidth('150px');
 				thirdPart.setMarginBottom('10px');
 			}
-
-			
 		});
 
 		let table = new AonBasicTable();
@@ -1150,8 +1148,8 @@ export class AonInvoice extends AonElement {
 		div.appendChild(serieSpan);
 
 		let serie = createSuggestion(this.SERIE, MSG.SERIE);
-		serieSpan.appendChild(serie);
 		serie.setMaxlength(5);
+		serieSpan.appendChild(serie);
 		serie.addEventListener(EVENT.AON_KEYUP, (e) => {
 			serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
 				name: r.description,
@@ -1168,8 +1166,8 @@ export class AonInvoice extends AonElement {
 		let numberSpan = this.createTableSpan("30%", "2px");
 		div.appendChild(numberSpan);
 
-		let number = createInput(this.NUMBER, MSG.NUMBER);
-		if(this.invoice.number > -1)
+		let number = createNumber(this.NUMBER, MSG.NUMBER);
+		if(this.invoice.number && this.invoice.number > -1)
 			number.value = this.invoice.number;
 		number.readonly = CONSTANT.READONLY;
 		number.disabled = CONSTANT.TRUE;
@@ -1181,9 +1179,13 @@ export class AonInvoice extends AonElement {
 			} else {
 				getSalesSeries({}).then(r => {
 					this.series = r;
-					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
+					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.series).length === 0;
 					number.setReadonly(!enabled );
-					number.setDisabled(!enabled );					
+					number.setDisabled(!enabled );
+					if(!enabled){
+						this.invoice.number =  '';
+						this.getElement(this.NUMBER).value = '';
+					}
 				});
 			}
 
@@ -1355,13 +1357,13 @@ export class AonInvoice extends AonElement {
 	onChangeSerie(value) {	
 		this.invoice.setSeries(value);
 		if(this.invoice.isInbox()) {
-			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
-			this.getElement(this.NUMBER).readonly = !enabled;
-			this.getElement(this.NUMBER).disabled = !enabled;
-			if(!enabled || this.invoice.series == '') {
+			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.series).length === 0;
+			this.getElement(this.NUMBER).setReadonly(!enabled);
+			this.getElement(this.NUMBER).setDisabled(!enabled);
+			if(!enabled) {
 				this.invoice.number = '';
 				this.getElement(this.NUMBER).value = '';
-			} else {
+			} else if(this.invoice.number == '') {
 				this.invoice.number = '1';
 				this.getElement(this.NUMBER).value = '1';
 			}

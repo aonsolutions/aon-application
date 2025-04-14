@@ -345,7 +345,7 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
     id: CONSTANT.EXPENSES.initCap(),
     title: MSG.EXPENSES,
     name: MSG.EXPENSES,
-    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES, STAFF_EXPENSES],
+    options: [INVOICE_RECEIVED_BETA, RAWDOC_INBOX_RECEIVED_NEW, INVOICE_TICKET, RAWDOC_INBOX_TICKET_NEW, OTHER_EXPENSES], //, STAFF_EXPENSES],
     button: {
       id: CONSTANT.EXPENSES.initCap() + 'Info',
       title: MSG.INFO_EXPENSES,
@@ -357,7 +357,8 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
          <b>Fra. Simplificadas/Ticket:</b> Documento sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket.<br><br>
          <b>Borrador Fra.Simp/Ticket:</b> Documento en proceso de revisión y registro, sin datos del titular receptor del mismo, por lo que se considera factura simplificada, generalmente en formato ticket, que una vez aceptado pasa a Fra. Simplificadas/Ticket.<br><br>
          <b>Otros Gastos:</b> Son aquellos gastos que tienes por tu actividad, pero del cual no existe factura simplificada/ticket como seguros, tasas municipales, intereses de prestamos, cuotas de  suscripcion a un colegio profesional, etc.<br><br>
-         <b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
+         `
+         //<b>Gastos de Personal:</b> Gastos de las nominas de los trabajadores o de las cuotas de autónomo.`
       )
     }
 
