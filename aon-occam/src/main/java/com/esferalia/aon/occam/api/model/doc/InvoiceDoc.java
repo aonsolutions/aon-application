@@ -7,7 +7,12 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
 
+	private static final String INVOICE_DOC = "invoice_doc";
 	private Integer invoice;
+	
+	public InvoiceDoc() {
+		super.setAonTable(INVOICE_DOC);
+	}
 	
 	public Integer getInvoice() {
 		return invoice;
@@ -19,8 +24,8 @@ public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
 	}
 	
 	@Override
-	public InvoiceDoc setS3Bucket(String s3Key) {
-		super.setS3Key(s3Key);
+	public InvoiceDoc setS3Bucket(String s3Bucket) {
+		super.setS3Bucket(s3Bucket);
 		return this;
 	}
 	

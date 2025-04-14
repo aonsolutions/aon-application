@@ -87,6 +87,7 @@ public class InvoiceDocDAO {
 			.set(INVOICE_DOC.DESCRIPTION, doc.getDescription())
 			.set(INVOICE_DOC.TYPE, doc.getType().value())
 			.set(INVOICE_DOC.ATTACH_DATE, AonDateUtils.toSql(doc.getDate()))
+			.set(INVOICE_DOC.S3_BUCKET, doc.getS3Key())
 			.set(INVOICE_DOC.S3_KEY, doc.getS3Key())
 			.where(INVOICE_DOC.ID.eq(doc.getId()))
 			.execute();
@@ -108,6 +109,7 @@ public class InvoiceDocDAO {
 					.setDate(getValue(r, INVOICE_DOC.ATTACH_DATE))
 					.setMimeType(MimeType.safeValueOf(getByte(r, INVOICE_DOC.MIMETYPE)))
 					.setType(InvoiceAttachmentType.safeValueOf(getByte(r, INVOICE_DOC.TYPE)))
+					.setS3Bucket(getValue(r, INVOICE_DOC.S3_BUCKET))
 					.setS3Key(getValue(r, INVOICE_DOC.S3_KEY));
 		}
 	}
