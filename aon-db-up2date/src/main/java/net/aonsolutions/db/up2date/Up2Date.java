@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.MoveAgreementPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursFixV;
 
 public class Up2Date {
@@ -520,14 +522,18 @@ public class Up2Date {
 			// DropDaysFix.DROPDAYSFIX
 			
 			// MEITrainingFix2025.MEITRAININGFIX2025,
-			//DocumentalCategoryTree.DOCUMENTAL_CATEGORY_TREE,
-			//DocumentalRDoc.DOCUMENTAL_RDOC,
+			// DocumentalCategoryTree.DOCUMENTAL_CATEGORY_TREE,
+			// DocumentalRDoc.DOCUMENTAL_RDOC,
 			// AgreementPaymentsMonthFix.AGREEMENTPAYMENTSMONTHFIX,
 			// RealDecreeLaw1782025Art28300Fix.REALDECREELAW1782025ART28300FIX
 			// AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX
 			// SalaryHoursFixIV.SALARYHOURSFIXIV
-			SalaryHoursFixV.SALARYHOURSFIXV
+			// SalaryHoursFixV.SALARYHOURSFIXV,
 			
+			// ----------------------------------------------------------------
+			// Warning. Don't delete or comment following instructions 
+			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
+			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS
 	};
 
 	// ------------------------------------------------------------------------
