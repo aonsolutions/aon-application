@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class WorkplaceJSON {
 	
@@ -33,7 +34,7 @@ public class WorkplaceJSON {
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setAddress(JsonUtils.getInteger(json, IJsonNames.ADDRESS))
 			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
-			.setEconomicagreement(JsonUtils.getByte(json, IJsonNames.ECONOMIC_AGREEMENT))
+			.setEconomicAgreement(Administration.safeValueOf(JsonUtils.getString(json, IJsonNames.ECONOMIC_AGREEMENT)))
 			.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 			;
 	}
@@ -58,7 +59,7 @@ public class WorkplaceJSON {
 				.put(IJsonNames.DESCRIPTION, object.getDescription())
 				.put(IJsonNames.ADDRESS, object.getAddress())
 				.put(IJsonNames.SCOPE, object.getScope())
-				.put(IJsonNames.ECONOMIC_AGREEMENT, object.getEconomicagreement())
+				.put(IJsonNames.ECONOMIC_AGREEMENT, object.getEconomicAgreement())
 				.put(IJsonNames.ACTIVE, object.isActive())
 				;
 	}
