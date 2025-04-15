@@ -2557,7 +2557,7 @@ public class TrabajadoresTramos {
 
 			@Override
 			public Collection<ContextData> visitL03() {
-				return new FilterCollection<>(d -> AonNumberUtils.isNumber(d.getExpression()) && AonNumberUtils.todouble(d.getExpression()) > 1.00 , contextDatas);
+				return new FilterCollection<>(d -> AonNumberUtils.isNumber(d.getExpression()) && AonNumberUtils.todouble(d.getExpression()) > 0.00 , contextDatas);
 			}
 
 			@Override
