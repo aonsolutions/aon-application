@@ -11,6 +11,8 @@ public class MIModelo420Request {
     private String body;
     private String version;
     private String rawQueryString;
+    
+    private String declaracion;
 	
     
     public Object getHeaders() {
@@ -67,6 +69,14 @@ public class MIModelo420Request {
 	}
 	public void setRawQueryString(String rawQueryString) {
 		this.rawQueryString = rawQueryString;
+	}
+	
+	public String getDeclaracion() {
+		return declaracion;
+	}
+	
+	public void setDeclaracion(String declaracion) {
+		this.declaracion = declaracion;
 	}
 
 }

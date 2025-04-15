@@ -1,26 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.code.aon</groupId>
-    <artifactId>aon.parent</artifactId>
-    <version>9.23-SNAPSHOT</version>
-  </parent>
-  <groupId>net.aonsolutions.core</groupId>
-  <artifactId>aon.aws.atc</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions.core</groupId>
+	<artifactId>aon.aws.atc</artifactId>
 	<build>
-	  <plugins>
+		<plugins>
 			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-compiler-plugin</artifactId>
-			  <configuration>
-			    <source>1.8</source>
-			    <target>1.8</target>
-    			    <encoding>ISO-8859-1</encoding>
-                            <compilerArgs>
-				<arg>-verbose</arg>
-                            </compilerArgs>
-	                  </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>ISO-8859-1</encoding>
+					<compilerArgs>
+						<arg>-verbose</arg>
+					</compilerArgs>
+				</configuration>
 			</plugin>
+			<!--
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-assembly-plugin</artifactId>
@@ -45,10 +48,25 @@
 			        </execution>
 			    </executions>
 			</plugin>
-	  </plugins>
-  </build>
-  <dependencies>
-  	<!--
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<!--
 	<dependency>
 		<groupId>com.esferalia.aon</groupId>
 		<artifactId>aon.watson</artifactId>
@@ -56,13 +74,13 @@
 		<scope>compile</scope>
 	</dependency>
 	-->
-	<dependency>
-	  <groupId>org.grecasa</groupId>
-	  <artifactId>pa-mod420</artifactId>
-	  <version>9.2.0</version>
-	  <scope>compile</scope>
-	</dependency>
-	<!--
+		<dependency>
+			<groupId>org.grecasa</groupId>
+			<artifactId>pa-mod420</artifactId>
+			<version>9.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--
 	<dependency>
 	  <groupId>org.apache.logging.log4j</groupId>
 	  <artifactId>log4j-api</artifactId>
@@ -79,32 +97,39 @@
 	  <version>2.7.15</version>
 	</dependency>
 	-->
-    <dependency>
-     <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-lambda</artifactId>
-      <version>1.12.780</version>
-    </dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-lambda</artifactId>
+			<version>1.12.780</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.780</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-     <groupId>com.amazonaws</groupId>
-      <artifactId>aws-lambda-java-core</artifactId>
-      <version>1.2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-lambda-java-events</artifactId>
-      <version>3.14.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-lambda-java-log4j2</artifactId>
-      <version>1.6.0</version>
-    </dependency>
-	<dependency>
-		<groupId>software.amazon.awssdk</groupId>
-	    <artifactId>s3</artifactId>
-	    <version>2.28.23</version>
-		<scope>compile</scope>
- 	</dependency>
-  </dependencies>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-core</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-events</artifactId>
+			<version>3.14.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-log4j2</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-runtime-interface-client</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+
+	</dependencies>
 </project>
