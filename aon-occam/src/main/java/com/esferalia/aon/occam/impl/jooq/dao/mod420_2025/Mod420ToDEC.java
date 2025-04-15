@@ -218,6 +218,7 @@ public class Mod420ToDEC {
 		}
 		
 		// FALTA - SI LE PONGO FORMA DE PAGO 2 ADEUDO EN CUENTA EN INGRESO, ME DA EL SIGUIENTE ERROR (AUQUE LE PONGA IBAN):
+		//         LE VOY A PONER PAGO TELEMATICO 
 		// [forma de pago] erróneo (incoherente con [opción de presentación elegida en los parámetros de entrada])
 		
 		// Forma de pago ingresos
@@ -228,7 +229,8 @@ public class Mod420ToDEC {
 		// 5 - Pago telemático
 		// 6 - Aplazamiento 6 meses medidas Covid
 		if (mod.getDeclarationResult() > 0) {
-			String paymentMethod = "2"; // Adeudo en cuenta
+//			String paymentMethod = "2"; // Adeudo en cuenta
+			String paymentMethod = "5"; // Pago telemático
 			if (mod.getDeclarationResultType() == FiscalModelDeclarationType.BANK) {
 				paymentMethod = "4"; // Domiciliación
 			}
