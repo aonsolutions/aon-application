@@ -162,25 +162,32 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		isPaymentOpen.put(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT, false);
 		isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION, false);
 		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE, false);
-		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, false);
+		
 		isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
 		isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE, false);
+		
 		isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE, false);
+		
 		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD, false);
+		isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END, false);
 		
-		integrityContainer.add(createPaymentDomainsPanel());
-		integrityContainer.add(createNoPaymentConceptAgreementPaymentsPanel());
-		integrityContainer.add(createOtherDomainPaymentConceptsPanel());
-		integrityContainer.add(createPaymentConceptsNoCodePanel());
-		integrityContainer.add(createCodeInExpressionPanel());
-		integrityContainer.add(createVariablesLikeCodePanel());
-		integrityContainer.add(createVariableCodeLikeContextPanel());
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION));
 		
-		integrityContainer.add(createOtherDomainPaymentConceptContractsPanel());
-		integrityContainer.add(createPaymentConceptsNoCodeContractsPanel());
-		integrityContainer.add(createPaymentConceptsNoRefPanel());
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE));
+		integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE));
 		
-		integrityContainer.add(createAgreementExtrasPanel());
+		integrityContainer.add(createMessagesPanel( AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD));
+		integrityContainer.add(createMessagesPanel( AgreementIntegrityFix.AGREEMENT_EXTRA_START_END));
 		
 		scrollPanel = new ScrollPanel(integrityContainer);
 		scrollPanel.setWidth("100%");
@@ -189,52 +196,10 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		
 		center();
 	}
-
-	private Widget createPaymentDomainsPanel() {
-		return createMessagesPanel(agreementIntegrity.getOtherDomainAgreementPayments(), AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS);
-	}
 	
-	private Widget createNoPaymentConceptAgreementPaymentsPanel() {
-		return createMessagesPanel(agreementIntegrity.getNoPaymentConceptAgreementPayments(), AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT);
-	}
-	
-	private Widget createOtherDomainPaymentConceptsPanel() {
-		return createMessagesPanel(agreementIntegrity.getOtherDomainPaymentConcepts(), AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT);
-	}
-
-	private Widget createPaymentConceptsNoCodePanel() {
-		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoCode(), AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT);
-	}
-
-	private Widget createCodeInExpressionPanel() {
-		return createMessagesPanel(agreementIntegrity.getCodeInExpression(), AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION);
-	}
-	
-	private Widget createVariablesLikeCodePanel() {
-		return createMessagesPanel(agreementIntegrity.getVariableLikeCodes(), AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE);
-	}
-	
-	private Widget createVariableCodeLikeContextPanel() {
-		return createMessagesPanel(agreementIntegrity.getVariableCodeLikeContext(), AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE);
-	}
-
-	private Widget createOtherDomainPaymentConceptContractsPanel() {
-		return createMessagesPanel(agreementIntegrity.getOtherDomainPaymentConceptContracts(), AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT);
-	}
-
-	private Widget createPaymentConceptsNoCodeContractsPanel() {
-		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoCodeContracts(), AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE);
-	}
-
-	private Widget createPaymentConceptsNoRefPanel() {
-		return createMessagesPanel(agreementIntegrity.getPaymentConceptsNoRef(), AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE);
-	}
-	
-	private Widget createAgreementExtrasPanel() {
-		return createMessagesPanel(agreementIntegrity.getAgreementExtras(), AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD);
-	}
-	
-	private Widget createMessagesPanel(List<String> messages, AgreementIntegrityFix agreementIntegrityFix) {
+	private Widget createMessagesPanel(AgreementIntegrityFix agreementIntegrityFix) {
+		List<String> messages = agreementIntegrity.getMessages().get(agreementIntegrityFix);
+		
 		HTMLPanel paymentDiscPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		paymentDiscPanel.getElement().getStyle().setCursor(Cursor.POINTER);
 		paymentDiscPanel.getElement().getStyle().setProperty("justify-content", "center");
@@ -302,7 +267,10 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 			    }
 
 				private boolean isIntegrityAviable(AgreementIntegrityFix agreementIntegrityFix) {
-					return agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_VARIABLES_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE;
+					return  agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE && 
+							agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && 
+							agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE &&
+							agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION;
 				}
 				
 			}, ClickEvent.getType());

@@ -942,6 +942,7 @@ public abstract class AgreementPreview extends Composite {
 			label.addStyleName(style.textCenter());
 			label.addStyleName(style.cellWidth());
 			label.addStyleName(style.headerFSize());
+//			label.addDoubleClickHandler(e -> Window.alert(variable));
 			salaryGrid.setWidget(row, col, label);
 
 			salaryGrid.getColumnFormatter().removeStyleName(col, style.widthAll());
@@ -1543,7 +1544,13 @@ public abstract class AgreementPreview extends Composite {
 			if (!readOnly) {
 				editCell = new AonToolbarSmallButton("Editar devengo",
 						payment.isModify() ? AON.CSS.aonIconArrowRightModify() : AON.CSS.aonIconRight());
-				((AonToolbarSmallButton) editCell).addClickHandler(e -> openDialog(payment));
+				((AonToolbarSmallButton) editCell).addClickHandler(e -> {
+					if(isHideExpression(payment)) {
+						AonDialog dialog = new AonDialog("Devengo deshabilitado", new HTML("No se puede editar un devengo deshabilitado."));
+						dialog.info();
+					} else
+						openDialog(payment);
+				});
 			}
 			checkRowAndModify(paymentGrid, row, payment, editCell);
 
@@ -1757,7 +1764,13 @@ public abstract class AgreementPreview extends Composite {
 			if (!readOnly) {
 				editCell = new AonToolbarSmallButton("Editar devengo",
 						payment.isModify() ? AON.CSS.aonIconArrowRightModify() : AON.CSS.aonIconRight());
-				((AonToolbarSmallButton) editCell).addClickHandler(e -> openDialog(payment));
+				((AonToolbarSmallButton) editCell).addClickHandler(e -> {
+					if(isHideExpression(payment)) {
+						AonDialog dialog = new AonDialog("Devengo deshabilitado", new HTML("No se puede editar un devengo deshabilitado."));
+						dialog.info();
+					} else
+						openDialog(payment);
+				});
 			}
 			checkRowAndModify(extraGrid, row, payment, editCell);
 
