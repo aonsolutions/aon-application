@@ -1348,7 +1348,7 @@ export class AonInvoice extends AonElement {
 				if(this.autosave) this.save();
 			});
 			table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-		} else if(r.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
+		} else if(this.configuration.workplaces.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
 	}
 
 	onChangeSerie(value) {	
