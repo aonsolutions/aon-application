@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -792,18 +794,24 @@ public class Invoice implements Serializable, HasAudit {
 	    }
 	    return messages;
 	}
-	
 	public Invoice setMessages(LinkedList<InvoiceError> messages) {
 	    this.messages = messages;
 	    return this;
 	}
-	
 	public Invoice addMessage(InvoiceError message) {
 	    if ( messages == null ) {
 		messages = new LinkedList<>();
 	    }
 	    messages.add(message);
 	    return this;
+	}
+	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
+		if (!hasMessages()) return Optional.empty();
+		return AonCollectionUtils.stream( getMessages() )
+			.map(ie -> ie.getLevel().ordinal())
+			.max( Integer::compare )
+			.flatMap( InvoiceErrorLevel::value )
+		;
 	}
 
 	public void clearMessages() {

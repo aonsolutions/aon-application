@@ -1,7 +1,8 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:p='urn:import:com.esferalia.aon.gwt.payroll.client'>
     
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementSuggestPaymentDialog.MyStyle">
@@ -81,6 +82,11 @@
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel styleName="{style.element}">
+			<g:Label styleName="{style.title}">Código</g:Label>
+			<g:TextBox ui:field="paymentCodeTB" styleName="{style.inputHeight}"/>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.element}">
 			<g:Label styleName="{style.title}">Tipo</g:Label>
 			<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
 		</g:HTMLPanel>
@@ -90,7 +96,7 @@
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.element}">
 			<g:Label styleName="{style.title}">Expresión</g:Label>
-			<g:TextArea visibleLines="3" ui:field="paymentExpressionTB"/>
+			<p:ExpressionCodeArea visibleLines="3" ui:field="paymentExpressionTB"/>
 		</g:HTMLPanel>
 		<g:HTMLPanel styleName="{style.element}">
 			<g:Label styleName="{style.title}">Tipo Nómina/Recibo</g:Label>

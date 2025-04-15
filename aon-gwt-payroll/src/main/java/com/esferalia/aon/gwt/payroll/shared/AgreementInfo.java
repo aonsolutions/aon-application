@@ -311,6 +311,8 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	
 	private Level selectedLevel;
 	
+	private List<String> contextVariables;
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -932,5 +934,16 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		Optional<LevelData> levelDataOpt = levelDatas.get(0).stream().filter(levelData -> AonStringUtils.equalsIgnoreCase(levelData.getName(), "INICIO_ANTIGUEDAD")).findFirst();
 		return levelDataOpt.isPresent() ? levelDataOpt.get().getExpression() : null;
 	}
+
+	public List<String> getContextVariables() {
+		return contextVariables;
+	}
+
+	public AgreementInfo setContextVariables(List<String> contextVariables) {
+		this.contextVariables = contextVariables;
+		return this;
+	}
+	
+	
 
 }

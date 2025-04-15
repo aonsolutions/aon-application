@@ -910,7 +910,8 @@ public class FinanceModule extends MainEntryPoint {
 		
 		table.addRow(row, ( !isPayroll || (finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? checkButton : new Label() ), ( !isPayroll || (finance.hasSalary() && null != finance.getSalaryTotalLiquid() && (finance.getAmount() + finance.getExpenses()) == finance.getSalaryTotalLiquid()) ? COLS.CHK.getColWidth() : "1rem" ));
 		
-		Label dueDate = new Label(AON.DATE_FORMAT.format(finance.getDueDate()));
+		String dd = finance.getDueDate()==null?"??/??/????":AON.DATE_FORMAT.format(finance.getDueDate());
+		Label dueDate = new Label(dd);
 		table.addRow(row, dueDate, COLS.DDT.getColWidth());
 		
 		Label numDoc  = new Label();
@@ -1292,8 +1293,9 @@ public class FinanceModule extends MainEntryPoint {
 							@Override
 							public void onSuccess(LinkedList<FinanceTracking> list) {
 								if (list == null || list.size() == 0) {
+									String dd = finance.getDueDate()==null?"??/??/????":AON.DATE_FORMAT.format(finance.getDueDate());
 									AonDialog deleteDialog = new AonDialog("Eliminaci\u00f3n Vencimiento",
-											new HTML("Se va a proceder a eliminar el vencimiento <b>" + finance.getRegistryDocument() + " - " + AON.DATE_FORMAT.format(finance.getDueDate()) + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
+											new HTML("Se va a proceder a eliminar el vencimiento <b>" + finance.getRegistryDocument() + " - " + dd + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 
 									deleteDialog.confirm(new AonAcceptDialogCallback() {
 

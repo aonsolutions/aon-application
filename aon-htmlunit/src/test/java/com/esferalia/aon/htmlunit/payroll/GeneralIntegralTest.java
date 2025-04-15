@@ -2648,6 +2648,29 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1260.00 * 0.5 + 7.59 * 10.00);
 		
 		
+		calculate(Calendar.JANUARY, 2025);
+		assertValue("quote-label-2", 8.32 * 10.00);
+		assertValue("quote-label-3", 1381.20 * 0.5 - 50.00);
+		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 8.32 * 10.00);
+		assertDisplay("eventsCheck", false);
+		
+		
+	}
+
+	@Test
+	public void TestPPe() throws Exception {
+
+		if (!isDisplayed("base_minima,_ppe"))
+			open("ppe");
+
+
+		wait4Id("base_minima,_ppe");
+
+		draft("BASE MÍNIMA, PPE");
+		
+		calculate(Calendar.APRIL, 2025);
+		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
+		assertDisplay("eventsCheck", false);
 		
 		
 	}

@@ -343,19 +343,19 @@ public class InvoiceRecorderController extends BasicController {
 	}
 	
 	public void onShowAccountEntryOption(ActionEvent event) throws ManagerBeanException {
-		if(getCheckOption() == null) {
+		if(getShowAccountEntryOption() == null) {
 			this.onHideAllAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showAllAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showAllAccountEntry")) {
 			this.onShowAllAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showCheckedAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showCheckedAccountEntry")) {
 			this.onShowCheckedAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showUnCheckedAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showUnCheckedAccountEntry")) {
 			this.onShowUncheckedAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showRightAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showRightAccountEntry")) {
 			this.onShowCorrectAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showIncorrectAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showIncorrectAccountEntry")) {
 			this.onShowIncorrectAccountEntry(null);
-		}else if(getCheckOption().equals("InvoiceRecorder-showWarnedAccountEntry")) {
+		}else if(getShowAccountEntryOption().equals("InvoiceRecorder-showWarnedAccountEntry")) {
 			this.onShowWarnedAccountEntry(null);
 		}else {
 			this.onHideAllAccountEntry(null);

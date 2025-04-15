@@ -1,25 +1,29 @@
 package com.esferalia.aon.occam.api;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
+import com.esferalia.aon.occam.impl.jooq.AccountingImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 
 public class INVOICECONSOLE {
 	
 	private INVOICECONSOLE() {
-		
 	}
 	
+	private static IAccounting getAccounting() {
+		return new AccountingImpl();
+	}
 	private static IFinance getFinance() {
 		return new FinanceImpl();
 	}
 
-	public static Stream<InvoiceConsole> getInvoiceConsoles(Occam occam, InvoiceConsoleParams params) {
+	public static List<InvoiceConsole> getInvoiceConsoles(Occam occam, InvoiceConsoleParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceHeaders(ctx, params);
 		}
@@ -28,6 +32,12 @@ public class INVOICECONSOLE {
 	public static Invoice getInvoice(Occam occam, Integer domain, Integer invoiceId){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getFullInvoice(ctx, invoiceId);
+		}
+	}
+
+	public static AccountingInvoice getOrInitializeAccountingInvoiceFromInvoice(Occam occam, Integer domain, Integer invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getAccounting().getOrInitializeAccountingInvoiceFromInvoice(ctx, invoiceId);
 		}
 	}
 

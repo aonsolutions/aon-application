@@ -1,4 +1,3 @@
-import { AonElement } from './AonElement.js';
 import { formatNumber } from '../services/utils.js';
 import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import './aon-icon-button.js';
@@ -26,6 +25,22 @@ export class AonNewNumber extends AonNewInput {
 
     set decimals(decimals) {
         this.setAttribute('decimals', decimals);
+    }
+
+    get minDecimal() {
+        return this.getAttribute('minDecimal');
+    }
+
+    set minDecimal(minDecimal) {
+        this.setAttribute('minDecimal', minDecimal);
+    }
+
+    get maxDecimal() {
+        return this.getAttribute('maxDecimal');
+    }
+
+    set maxDecimal(maxDecimal) {
+        this.setAttribute('maxDecimal', maxDecimal);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -161,9 +176,11 @@ export class AonNewNumber extends AonNewInput {
     
     onBlur2(value) {
         let newValue = value;
-        let decimals = this.decimals || 0;
         if (this.format && !value.includes(',')) {
-            newValue = formatNumber(value, decimals);
+            let decimals = this.decimals || 0;
+            let minDecimal = this.minDecimal || decimals;
+            let maxDecimal = this.maxDecimal || decimals;
+            newValue = formatNumber(value, minDecimal, maxDecimal);
         }
         return newValue;
     }

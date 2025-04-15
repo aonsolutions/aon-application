@@ -90,7 +90,7 @@ export class AonBookingInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
-					invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+					invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 					aonInvoiceTable.addRow(invoice, () => {}, (e) => {});
 				});
 			});
@@ -128,7 +128,7 @@ export class AonBookingInvoiceList extends AonElement {
 						let month = date.getMonth() + 1;
 						let year = date.getFullYear();
 						invoice.dateTable = day + '/' + month + '/' + year;
-						invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+						invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 
 						aonInvoiceTable.addRow(invoice, () => {}, (e) => {});
 					});

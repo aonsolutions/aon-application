@@ -37,6 +37,8 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
+import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Cabecera;
@@ -45,7 +47,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -262,8 +263,8 @@ public class Utils {
 	}
 	
 	
-	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year) {
-		Esquema  schema = createXml(enterprise, name, type, domain, year);
+	public static byte[] CreateXml(Map<D2DepositHeaderKey, Double> ctx, Map<D2DepositKey, Double> ctxMem, Map<D2DepositKey, String> ctxFreeText, Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
+		Esquema  schema = createXml(enterprise, name, type, domain, year, cnae, recordData);
 		
 		for (D2DepositHeaderKey key : ctx.keySet()) {
 			Clave clave = new Clave();
@@ -295,16 +296,17 @@ public class Utils {
 		return b;
 	}
 	
-	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain, Integer year) {
-		Esquema  schema = createXml(enterprise, name, type, domain, year);
-		byte[] b = null;
-		try {
-			b = writeXml(schema);
-		} catch (JAXBException | IOException e) {
-			e.printStackTrace();
-		}
-		return b;
-	}
+// NO SE USA	
+//	public static byte[] CreateXml(Enterprise enterprise, String name, String type , String domain, Integer year) {
+//		Esquema  schema = createXml(enterprise, name, type, domain, year);
+//		byte[] b = null;
+//		try {
+//			b = writeXml(schema);
+//		} catch (JAXBException | IOException e) {
+//			e.printStackTrace();
+//		}
+//		return b;
+//	}
 	
 	public static Esquema changeType(Esquema schema, String type) {
 		schema.getCabecera().setTipoCuestionario(type);
@@ -372,7 +374,7 @@ public class Utils {
 		return schema;
 	}
 	
-	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year){
+	public static Esquema createXml(Enterprise enterprise, String name, String type , String domain, Integer year, String cnae, RecordData recordData) {
 		Esquema schema = new Esquema();
 		Cabecera header = new Cabecera();
 		Claves keys = new Claves();
@@ -462,21 +464,38 @@ public class Utils {
 		c1037.setCodigo(BigInteger.valueOf(1037));
 		c1037.setValor(enterprise.getEmail() != null ? enterprise.getEmail() : "");
 		keys.getClave().add(c1037);
-		
-/*		// TODO CNAE
 
-		Clave c2001 = new Clave();
-		c2001.setCodigo(BigInteger.valueOf(2001));
-		c2001.setValor("");
-		keys.getClave().add(c2001);
+		// CNAE
+		CNAE2009 cnae2009 = CNAE2009.valueOfCode(cnae);
+		if (cnae2009 != null) {
+			Clave c2001 = new Clave();
+			c2001.setCodigo(BigInteger.valueOf(2001));
+			c2001.setValor(cnae2009.getCodeWithoutPoint());
+			keys.getClave().add(c2001);
+			
+			Clave c2009 = new Clave();
+			c2009.setCodigo(BigInteger.valueOf(2009));
+			c2009.setValor(cnae2009.getDescription());
+			keys.getClave().add(c2009);
+		}
 		
-		Clave c2009 = new Clave();
-		c2009.setCodigo(BigInteger.valueOf(2009));
-		c2009.setValor("");
-		keys.getClave().add(c2009);
-*/		
-		
-		//---------- //
+		// Datos Registrales (Tomo, Folio, Nº Hoja)
+		if (recordData != null) {
+			Clave c8081002 = new Clave();
+			c8081002.setCodigo(BigInteger.valueOf(8081002));
+			c8081002.setValor(recordData.getVolume());
+			keys.getClave().add(c8081002);
+			
+			Clave c8081003 = new Clave();
+			c8081003.setCodigo(BigInteger.valueOf(8081003));
+			c8081003.setValor(recordData.getPage());
+			keys.getClave().add(c8081003);
+			
+			Clave c8081004 = new Clave();
+			c8081004.setCodigo(BigInteger.valueOf(8081004));
+			c8081004.setValor(recordData.getSheet());
+			keys.getClave().add(c8081004);
+		}
 		
 		Clave c11021 = new Clave();
 		c11021.setCodigo(BigInteger.valueOf(11021));

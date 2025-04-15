@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
@@ -25,6 +26,8 @@ public class InvoiceConsoleParams implements Serializable {
 	private Boolean accrualRegime;
 	private Boolean investment;
 	private Boolean service;
+	private Boolean recorded;
+	private InvoiceSource source;
 
 	private SecurityLevel securityLevel;
 	
@@ -146,6 +149,22 @@ public class InvoiceConsoleParams implements Serializable {
 	}
 	public InvoiceConsoleParams setService(Boolean service) {
 		this.service = service;
+		return this;
+	}
+	
+	public Boolean getRecorded() {
+		return recorded;
+	}
+	public InvoiceConsoleParams setRecorded(Boolean recorded) {
+		this.recorded = recorded;
+		return this;
+	}
+	
+	public InvoiceSource getSource() {
+		return source;
+	}
+	public InvoiceConsoleParams setSource(InvoiceSource source) {
+		this.source = source;
 		return this;
 	}
 	
