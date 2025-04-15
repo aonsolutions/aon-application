@@ -120,7 +120,7 @@ export class AonInvoiceList extends AonElement {
 		invoice.icons = this.buildRowIcons(invoice); 
 		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
 		if(invoice.altered) {
-			tr.style.backgroundColor = '#ffe3e3';
+			// tr.style.backgroundColor = '#ffe3e3';
 		}
 		tr.id = "aonInvoiceRow";
 	}

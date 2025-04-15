@@ -713,6 +713,7 @@ public final class IJsonNames {
 	public static final String WORKGROUP = "workgroup";
 	public static final String WORKGROUPS = "workgroups";
 	public static final String WORKPLACE = "workplace";
+	public static final String WORKPLACES = "workplaces";
 	public static final String WORKPLACE_IDS = "workplaceIds";
 	public static final String WRONG_DOMAIN_ID = "wrongDomainId";
 	public static final String WRONG_SCOPE_ID = "wrongScopeId";

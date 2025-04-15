@@ -1033,7 +1033,7 @@ public class Asserts {
 			assertEquals("Customer", expected.getCustomer(), actual.getCustomer());
 			assertEquals("Description", expected.getDescription(), actual.getDescription());
 			assertEquals("Domain", expected.getDomain(), actual.getDomain());
-			assertEquals("Economicagreement", expected.getEconomicagreement(), actual.getEconomicagreement());
+			assertEquals("Economicagreement", expected.getEconomicAgreement(), actual.getEconomicAgreement());
 			assertEquals("Enterprise", expected.getEnterprise(), actual.getEnterprise());
 			assertEquals("Id", expected.getId(), actual.getId());
 			assertEquals("Scope", expected.getScope(), actual.getScope());

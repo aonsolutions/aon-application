@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
+	signInvoice, getInvoiceConfiguration, getAeatCertificates, getTbaiHistory, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
 	getPaymethod} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
@@ -1331,27 +1331,24 @@ export class AonInvoice extends AonElement {
 			});
 		}
 
-		getWorkplaces().then(r => {
-			if(!this.invoice.workplace && r.length > 0) {
-				this.invoice.setWorkplace(r[0].id);
-			}
-			if(r.length > 1) {
-				table.addRow();
-				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
-				let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
-				workplace.autocomplete = true;
-				workplace.readonly = this.invoice.isReadonly();
-				workplace.options = JSON.stringify(workplaces);
-				workplace.value = this.invoice.getWorkplace();
-				workplace.addEventListener(EVENT.SELECT, () => {
-					this.invoice.setWorkplace(workplace.value);
-					if(this.autosave) this.save();
-				});
-				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
-		}).catch(e => {
-			console.error(e);
-		});
+		if(!this.invoice.workplace && this.configuration.workplaces.length > 0) {
+			this.invoice.setWorkplace(this.configuration.workplaces[0].id);
+		} 
+
+		if(this.configuration.workplaces.length > 1) {
+			table.addRow();
+			let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
+			workplace.setAlias("id", "description");
+			workplace.autocomplete = true;
+			workplace.readonly = this.invoice.isReadonly();
+			workplace.setOptions(this.configuration.workplaces);
+			workplace.value = this.invoice.getWorkplace();
+			workplace.addEventListener(EVENT.SELECT, () => {
+				this.invoice.setWorkplace(workplace.value);
+				if(this.autosave) this.save();
+			});
+			table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+		} else if(this.configuration.workplaces.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
 	}
 
 	onChangeSerie(value) {	

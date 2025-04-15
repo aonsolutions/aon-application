@@ -131,7 +131,7 @@ public class InvoiceAsserts {
 			assertEquals("Scope",expected.getScope(), actual.getScope());
 			assertEquals("Address",expected.getAddress(), actual.getAddress());
 			assertEquals("Customer",expected.getCustomer(), actual.getCustomer());
-			assertEquals("Economicagreement",expected.getEconomicagreement(), actual.getEconomicagreement());
+			assertEquals("Economicagreement",expected.getEconomicAgreement(), actual.getEconomicAgreement());
 			assertEquals("Enterprise",expected.getEnterprise(), actual.getEnterprise());
 		}
 	}
