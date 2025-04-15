@@ -112,6 +112,8 @@ public class JooqAgreementTab {
 		
 		List<String> contextVariables = Arrays.asList(ContextVariable.values()).stream().map(cv -> cv.getName()).collect(Collectors.toList());
 		contextVariables.addAll( ContextVariable.getNames() );
+		// Remove allowed ones
+		contextVariables.removeAll(getAllowedConceptContextVars());
 		agreement.setContextVariables(contextVariables);
 		
 		return agreement;
@@ -786,5 +788,31 @@ public class JooqAgreementTab {
 	private static Salary.Type getSalaryType(Byte type) {
 		return type != null ? Salary.Type.values()[type.intValue()] : null;
 	}
+	
+    private static Set<String> getAllowedConceptContextVars(){
+    	Set<String> allowedVars = new HashSet<String>();
+    	
+    	allowedVars.add("ADVERTENCIA");
+    	allowedVars.add("ANTIGUEDAD");
+    	allowedVars.add("A_CUENTA_CONVENIO");
+    	allowedVars.add("DEVENGO_TEMPORAL");
+    	allowedVars.add("GARANTIZADO");
+    	allowedVars.add("GEROA");
+    	allowedVars.add("HORAS_COMPL");
+    	allowedVars.add("HORAS_EXTRAS");
+    	allowedVars.add("INFO");
+    	allowedVars.add("MEJORA");
+    	allowedVars.add("NOTA");
+    	allowedVars.add("PAGA_BENEFICIOS");
+    	allowedVars.add("PAGA_EXTRA");
+    	allowedVars.add("PLUS_EXTRA_SALARIAL");
+    	allowedVars.add("PLUS_SALARIAL");
+    	allowedVars.add("PLUS_XS");
+    	allowedVars.add("PPE");
+    	allowedVars.add("SALARIO_BASE");
+    	allowedVars.add("SEGURO_AT");
+    	
+    	return allowedVars;
+    } 
 
 }

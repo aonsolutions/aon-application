@@ -508,6 +508,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			
 			final FxDialog fxDialog = new FxDialog(contextProvider);
 			fxDialog.setExpression(this.payment.getExpression());
+			fxDialog.getElement().getStyle().setProperty("z-index", "70");
 			fxDialog.center();
 			fxDialog.show();
 		
@@ -515,6 +516,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				if (fxDialog.isAccepted()) {
 					payment.setExpression(fxDialog.getExpression());
 					paymentExpressionCA.setText(payment.getExpression());
+					paymentExpressionCA.setValue(payment.getExpression());
 				}
 			});
 		});
