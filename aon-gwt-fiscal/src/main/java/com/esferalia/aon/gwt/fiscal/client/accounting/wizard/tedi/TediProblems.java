@@ -2,9 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class TediProblems extends ScrollPanel {
-	private static final TediServiceAsync TEDI_SERVICE;
+	private static final AccountEntryServiceAsync SERVICE;
 	static {
-		TediServiceAsync serviceRaw = GWT.create(TediService.class);
-		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
+		AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
+		SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw);
 	}
 
 	public interface ITediProblemsCallback  extends IAccountEntryModuleCallback {
@@ -80,7 +80,7 @@ public class TediProblems extends ScrollPanel {
 
 						@Override
 						public void onAccept(TediResult result) {
-							TEDI_SERVICE.validateInvoice(
+							SERVICE.validateInvoice(
 								callback.getOccam().getDomainName()
 								,callback.getOccam().getUser()
 								,callback.getOccam().getDomain()

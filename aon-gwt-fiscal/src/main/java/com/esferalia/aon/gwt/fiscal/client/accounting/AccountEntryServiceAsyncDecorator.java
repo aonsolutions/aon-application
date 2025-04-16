@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,6 +74,18 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		fsa.rectifyInvoice(occam, invoiceId, data, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void parseInvoice(String domainName, String user, int domain, String fileName, String content, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parseInvoice(domainName, user, domain, fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
+	}
+
+	@Override
+	public void validateInvoice(String domainName, String user, int domain, TediResult result, AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.validateInvoice(domainName, user, domain, result, new AsyncCallbackWrapper<TediResult>(callback));
+	}
+
 	// *************************************	
 	// *************************************	
 	// *************************************	
