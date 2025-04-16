@@ -285,6 +285,11 @@ public class InvoiceRecorderController extends BasicController {
 		}
 	}
 
+	public void onSearchList(ActionEvent event) {
+		this.onEditSearch(event);		
+		this.onSearch(null);
+	}
+	
 	public void onUnrecordSelected(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -696,35 +701,4 @@ public class InvoiceRecorderController extends BasicController {
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
-	
-//	public void onTypeOption(ActionEvent event) throws ManagerBeanException {
-//		if(getTypeOption().equals("InvoiceRecorder-sales")) {
-//			this.onTypeSales(null);
-//		}else if(getTypeOption().equals("InvoiceRecorder-purchases")) {
-//			this.onTypePurchases(null);
-//		}else if(getTypeOption().equals("InvoiceRecorder-expenses")) {
-//			this.onTypeExpenses(null);
-//		}else if(getTypeOption().equals("InvoiceRecorder-undeductible_invoice_management_module")) {
-//			this.onTypeUndeductibleInvoiceManagementModule(null);
-//		}else {
-//			this.onTypeSales(null);
-//		}
-//	}
-//	
-//	public void onTypeSales(ActionEvent event) {
-//		
-//	}
-//	
-//	public void onTypePurchases(ActionEvent event) {
-//		
-//	}
-//
-//	public void onTypeExpenses(ActionEvent event) {
-//	
-//	}
-//
-//	public void onTypeUndeductibleInvoiceManagementModule(ActionEvent event) {
-//	
-//	}
-
 }
