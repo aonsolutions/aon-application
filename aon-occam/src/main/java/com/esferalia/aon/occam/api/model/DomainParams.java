@@ -25,6 +25,7 @@ public class DomainParams implements Serializable {
 	private Date fromExpirationDate;
 	private Date toExpirationDate;
 	private boolean advancedMode;
+	private String select;
 	
 	private boolean validate;
 	private boolean mustFlatten;
@@ -215,6 +216,13 @@ public class DomainParams implements Serializable {
 		return this;
 	}
 	
+	public String getSelect() {
+		return select;
+	}
+	public DomainParams setSelect(String select) {
+		this.select = select;
+		return this;
+	}
 	
 	
 }

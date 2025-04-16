@@ -872,6 +872,11 @@ public class JsonParser {
 			params.setMustFlatten(mustFlatten==1);
 		}
 
+		String select = (String) jsonParams.get(IRequestParamsNames.SELECT);
+		if (AonStringUtils.isNotBlank(select)) {
+			params.setSelect(select);
+		}
+		
 		return params;
 		
 	}
