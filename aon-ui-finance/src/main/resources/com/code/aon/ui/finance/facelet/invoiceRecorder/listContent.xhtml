@@ -68,20 +68,21 @@
 			<aon:div styleClass="aon-scroll-area">   
 					<aon:panelGrid id="invoiceRecorderCommandContainer" columns="2" rendered="#{controller.model.rowCount > 0}" style="width: 100% !important;">
 						<aon:div>	
-							<!-- <aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
+							<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-bold aon-margin-left" />									
 								<aon:selectOneMenu id="filterType"
-									value="#{controller.typeOption}"
+									value="#{invoiceRecorderSearch.defaultType}"
 									styleClass="aon-margin-left" >
-										<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="InvoiceRecorder-sales" />
-									    <f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="InvoiceRecorder-purchases" />
-									    <f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="InvoiceRecorder-expenses" />
-									    <f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="InvoiceRecorder-undeductible_invoice_management_module" />
+										<f:selectItem itemLabel="#{bundle.aon_sales}" itemValue="SALES" />
+										<f:selectItem itemLabel="#{bundle.aon_purchases}" itemValue="PURCHASE" />
+										<f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="EXPENSES" />
+										<f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="UNDEDUCTIBLE" />
 									    <a4j:support event="onchange"
-									    actionListener="#{controller.onTypeOption}"
+									    action="#{controller.afterSearchAction}"
+										actionListener="#{controller.onSearchList}"
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
 									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-								</aon:selectOneMenu> -->
+								</aon:selectOneMenu>
 								
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold aon-margin-left" />									
 							<aon:selectOneMenu id="filterSelectionCheckRadioAon"
