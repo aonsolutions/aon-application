@@ -20,8 +20,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.MoveAgreementPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursFixV;
 
 public class Up2Date {
 
