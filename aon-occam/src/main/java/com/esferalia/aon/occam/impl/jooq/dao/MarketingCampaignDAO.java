@@ -51,8 +51,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProjectActivityDAO.ProjectActivityF
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SurveyDAO.SurveyFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
