@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024InsertFaseIII;
 
 public class Up2Date {
 
@@ -527,6 +528,7 @@ public class Up2Date {
 			// AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX
 			// SalaryHoursFixIV.SALARYHOURSFIXIV
 			// SalaryHoursFixV.SALARYHOURSFIXV,
+			TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
