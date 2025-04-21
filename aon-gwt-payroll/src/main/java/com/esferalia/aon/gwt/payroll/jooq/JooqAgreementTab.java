@@ -577,6 +577,7 @@ public class JooqAgreementTab {
 						dslContext.delete(PAYMENT_CONCEPT)
 						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
 						.and(PAYMENT_CONCEPT.DOMAIN.ne(0))
+						.and(PAYMENT_CONCEPT.DOMAIN.ne(agreementInfo.getDomain()))
 						.execute();
 					}
 				}
@@ -649,7 +650,7 @@ public class JooqAgreementTab {
 							.fetchOne();
 					
 					// Se crear un paymentConcept en el dominio actual si es del dominio 0
-					if(null != paymentConceptRecord && paymentConceptRecord.getDomain() == 0) {
+					if(null != paymentConceptRecord && (paymentConceptRecord.getDomain() == 0 || !paymentConceptRecord.getDomain().equals(agreementInfo.getDomain()))) {
 						payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
 					
 					// Se actualizar el paymentConcept si no es del dominio 0	
