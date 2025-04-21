@@ -99,21 +99,21 @@ public class Mod420ToDEC {
 		}
 		
 		DATOSPERSONALES dp = new DATOSPERSONALES();
-		dp.setNIF(mod.getDocument());        // Nif de la persona
-		dp.setNRS(mod.getFullName());        // Nombre o razón social
-		dp.setSVP(mod.getStreetInitial());   // Siglas vía pública
-		dp.setNVP(mod.getStreetName());      // Nombre de la vía pública
-		dp.setNPK(mod.getStreetNumber());    // Número de edificio/pto kilométrico
-		dp.setESC(mod.getStreetStair());     // Escalera
-		dp.setPIS(mod.getStreetFloor());     // Piso
-		dp.setPUE(mod.getStreetDoor());      // Puerta
-		dp.setLOC(mod.getTown());            // Localidad
-		dp.setTEL(mod.getPhone());       	 // Teléfono
-		dp.setMOV(mod.getContactCellular()); // Teléfono móvil
-		dp.setEMA(mod.getContactEmail());    // Email
+		dp.setNIF(mod.getDocument());                          // Nif de la persona
+		dp.setNRS(changeCharacters(mod.getFullName()));        // Nombre o razón social
+		dp.setSVP(changeCharacters(mod.getStreetInitial()));   // Siglas vía pública
+		dp.setNVP(changeCharacters(mod.getStreetName()));      // Nombre de la vía pública
+		dp.setNPK(changeCharacters(mod.getStreetNumber()));    // Número de edificio/pto kilométrico
+		dp.setESC(changeCharacters(mod.getStreetStair()));     // Escalera
+		dp.setPIS(changeCharacters(mod.getStreetFloor()));     // Piso
+		dp.setPUE(changeCharacters(mod.getStreetDoor()));      // Puerta
+		dp.setLOC(changeCharacters(mod.getTown()));            // Localidad
+		dp.setTEL(mod.getPhone());       	                   // Teléfono
+		dp.setMOV(mod.getContactCellular());                   // Teléfono móvil
+		dp.setEMA(mod.getContactEmail());                      // Email
 		dp.setPOP(AonFiscalFileUtils.unsigned(Province.getByName(mod.getProvince()).ordinal(), 2)); // Código de provincia
-		dp.setCMU(mod.getTownCode());        // Código de municipio
-		dp.setCP(mod.getZip());              // Código Postal
+		dp.setCMU(mod.getTownCode());                          // Código de municipio
+		dp.setCP(mod.getZip());                                // Código Postal
 		ide.setOTP(dp);
 		
 		return ide;
@@ -217,8 +217,7 @@ public class Mod420ToDEC {
 			res.setIMP(AonFiscalFileUtils.unsigned(mod.getDeclarationResult(),3));	
 		}
 		
-		// FALTA - SI LE PONGO FORMA DE PAGO 2 ADEUDO EN CUENTA EN INGRESO, ME DA EL SIGUIENTE ERROR (AUQUE LE PONGA IBAN):
-		//         LE VOY A PONER PAGO TELEMATICO 
+		// SI LE PONGO FORMA DE PAGO 2 ADEUDO EN CUENTA EN INGRESO, ME DA EL SIGUIENTE ERROR (AUNQUE LE PONGA IBAN), POR ESO LE PONGO PAGO TELEMATICO:
 		// [forma de pago] erróneo (incoherente con [opción de presentación elegida en los parámetros de entrada])
 		
 		// Forma de pago ingresos
@@ -309,6 +308,21 @@ public class Mod420ToDEC {
 			}
 		}
 		return false;
+	}
+	
+	// CAMBIAR CARACTERES NO PERMITIDOS (ACENTOS, &, ', ETC.) Y PONER EN MAYUSCULAS
+	private static String changeCharacters(String fileString) {
+		fileString = AonStringUtils.trimToEmpty(fileString);
+		fileString = AonStringUtils.upperCase(fileString);
+		fileString = fileString.replace("'", " ");
+		fileString = fileString.replace("&", "Y");	
+		fileString = fileString.replace("Á", "A");
+		fileString = fileString.replace("É", "E");
+		fileString = fileString.replace("Í", "I");
+		fileString = fileString.replace("Ó", "O");
+		fileString = fileString.replace("Ú", "U");
+		fileString = fileString.replace("Ü", "U");		
+		return fileString;
 	}
 
 }

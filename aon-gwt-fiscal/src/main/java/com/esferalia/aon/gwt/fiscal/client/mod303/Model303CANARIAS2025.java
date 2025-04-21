@@ -506,11 +506,8 @@ class Model303CANARIAS2025 extends Model303Base {
 					}
 
 					@Override
-					public String getDownloadFileAction() {
-						if (getModel().isQuarterPeriod())
-							return "/aon_gwt_fiscal/ms/Model420File"; // Por ahora solo para el modelo 420
-						else 
-							return null;
+					public String getDownloadFileAction() {						
+						return "/aon_gwt_fiscal/ms/Model420File";						
 					}
 
 					@Override

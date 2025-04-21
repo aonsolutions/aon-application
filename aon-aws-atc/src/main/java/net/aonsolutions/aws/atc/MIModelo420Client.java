@@ -62,8 +62,8 @@ public class MIModelo420Client {
 		System.out.println(invokeResult.getStatusCode());
 	}
 
-	private static String obtenerXML() {
-		String fileXML =
+//	private static String obtenerXML() {
+//		String fileXML =
 //			"<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>" +
 //			"<DEC PER=\"1T\" ANY=\"2025\" MOD=\"420\">" +
 //			"<IDE>" +
@@ -71,27 +71,17 @@ public class MIModelo420Client {
 //			"</IDE>" +
 //			"<RES TIP=\"S\"/>" +
 //			"</DEC>"
-		"<DEC NJA=\"4200000000000\" COM=\"X\" PER=\"1T\" ANY=\"2025\" MOD=\"420\" >"
-		+ "	<IDE TAC=\"PR\" FAC=\"01/02/2019\" ACR=\"S\">"
-		+ "		<OTP PAI=\"ES\" CP=\"35003\" CMU=\"35016\" POP=\"35\" TEL=\"928999999\" PUE=\"B\" PIS=\"10\" ESC=\"A\" NPK=\"2\" NVP=\"AGENCIA TRIBUTARIA\" SVP=\"BO\" NRS=\"SUJETO PASIVO - COMPENSAR \" NIF=\"B50111111\" />"
-		+ "	</IDE>"
-		+ "	<IGI_DED TOT=\"-3900\">"
-		+ "		<RBI CUO=\"-3900\"/>"
-		+ "	</IGI_DED>"
-		+ "	<LIQ RLI=\"-21100\" DAC=\"25000\" DIF=\"3900\"/>"
-		+ "	<RES IMP=\"21100\" TIP=\"C\"/>"
-		+ "</DEC>"
-		;
-		return fileXML;
-	}
+//		;
+//		return fileXML;
+//	}
 
-	public static void main(String[] args) throws IOException {
-		call("aon-aws-atc" , obtenerXML().getBytes());
-		//try ( InputStream is = new FileInputStream(args[0])) {
-			//arn:aws:lambda:eu-west-1:083580179390:function:aon-atc-mod420
-			//call("aon-atc-mod420" , is.readAllBytes());
-		//}
-	}
+//	public static void main(String[] args) throws IOException {
+//		call("aon-aws-atc" , obtenerXML().getBytes());
+//		//try ( InputStream is = new FileInputStream(args[0])) {
+//			//arn:aws:lambda:eu-west-1:083580179390:function:aon-atc-mod420
+//			//call("aon-atc-mod420" , is.readAllBytes());
+//		//}
+//	}
 	
 	
 }
