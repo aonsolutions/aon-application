@@ -154,7 +154,7 @@ public class S3DocumentDAO {
 		.set(Rdoc.RDOC.S3, document.getS3key())
 		.set(Rdoc.RDOC.S3_BUCKET, document.getS3bucket())
 		.set(Rdoc.RDOC.CREATION_DATE, new Timestamp(document.getCreationDate().getTime()))
-		.set(Rdoc.RDOC.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
+		.set(Rdoc.RDOC.MODIFICATION_DATE, document.getModificationDate() != null ? new Timestamp(document.getModificationDate().getTime()) : null)
 		.set(Rdoc.RDOC.CREATION_USER, document.getCreationUser())
 		.set(Rdoc.RDOC.MODIFICATION_USER, document.getModificationUser())
 		.returning(Rdoc.RDOC.ID).fetchOne().getId()

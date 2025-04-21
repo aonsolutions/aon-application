@@ -3,6 +3,7 @@ package solutions.aon.aws.s3;
 import java.io.File;
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -10,11 +11,14 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 public class S3rDoc{
@@ -36,6 +40,37 @@ public class S3rDoc{
 				createBucket(client, bucket);
 			}
 			return client;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	private static S3Client getClientWithoutBucket() {
+		try {
+			S3Client client = S3Client.builder()
+			.endpointOverride(URI.create("https://s3.fr-par.scw.cloud"))
+			.credentialsProvider(StaticCredentialsProvider.create(
+	                AwsBasicCredentials.create("SCWR9W8EA2KZNBXF4SP9", "fef9cd73-0431-4eee-97c9-01748ea3ec6b")))
+			.region(Region.of(SCALEWAY_REGION))
+			.build();
+			return client;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public static String[] listBucket() {
+		ListBucketsRequest request = ListBucketsRequest.builder().build();
+		try {
+			S3Client client = getClientWithoutBucket();
+			ListBucketsResponse response = client.listBuckets(request);
+			List<Bucket> list =  response.buckets();
+			String [] buckets = new String[list.size()];
+			for(int i = 0; i < list.size(); i++) {
+				Bucket bucket = list.get(i);
+				buckets[i] = bucket.name();
+			}
+			return buckets;
 		} catch (Exception e) {
 			throw e;
 		}

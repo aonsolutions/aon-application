@@ -73,6 +73,7 @@ public class S3CategoryDAO {
 				.returning(CATEGORY.ID).fetchOne().getId();
 		ctx.getDslContext()
 				.insertInto(CategoryTree.CATEGORY_TREE)
+				.set(CategoryTree.CATEGORY_TREE.DOMAIN, category.getDomain())
 				.set(CategoryTree.CATEGORY_TREE.CATEGORY, id)
 				.set(CategoryTree.CATEGORY_TREE.PARENT, category.getParent())
 				.set(CategoryTree.CATEGORY_TREE.IS_DELETABLE, (byte) 1)
@@ -109,12 +110,12 @@ public class S3CategoryDAO {
 				.where(S3CATEGORY_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new S3CategoryFiller()).findFirst();
 		if(cat.isPresent() && cat.get().getIsDeletable() == 1) {
-			ctx.getDslContext().delete(Category.CATEGORY)
-					.where(S3CATEGORY_PROPERTIES.getConditions(filter))
-					.execute();
 			ctx.getDslContext().delete(CategoryTree.CATEGORY_TREE)
 				.where(CategoryTree.CATEGORY_TREE.CATEGORY.eq(cat.get().getId()))
 				.execute();
+			ctx.getDslContext().delete(Category.CATEGORY)
+					.where(S3CATEGORY_PROPERTIES.getConditions(filter))
+					.execute();
 			Integer nullvalue = null;
 			ctx.getDslContext().update(Rattach.RATTACH)
 				.set(Rattach.RATTACH.CATEGORY, nullvalue)

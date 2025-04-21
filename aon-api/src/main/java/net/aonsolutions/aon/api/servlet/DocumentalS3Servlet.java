@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -11,9 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,6 +35,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
 import com.esferalia.aon.occam.api.model.Properties.S3DocumentProperties;
+import com.esferalia.aon.occam.api.model.S3Category;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -48,8 +58,12 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	public static final String DOCUMENT_FILE = "/file";
 	public static final String DOCUMENT_FILE_MULTIPLE = "/file_multiple";
 	public static final String COUNT = "/count";
+	public static final String BIDOQ = "/bidoq";
 	
 	private static final String AON_BUCKET_NAME = "aon-documental";
+	private static final String BIDOQ_BUCKET_NAME = "ayudat-mispapeles-dev-01";
+	private static final String NO_FOLDER = "No_folder";
+	private static final String BIDOQ_NO_FOLDER = "Bidoq/No_folder";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -87,6 +101,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 					break;
 				case COUNT:
 					response(req, resp, getCount(api));
+					break;
+				case BIDOQ:
+					response(req, resp, getBidoqDocumentsToAon(api));
 					break;
 			}
 		} catch (Exception e) {
@@ -150,7 +167,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 			byte[] data = null;
 			if(type == 0 && document.getS3key() != null) {
-				data = S3rDoc.download(document.getS3key(), AON_BUCKET_NAME);
+				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 			} else if(type == 1){
 				data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
 			}
@@ -187,7 +204,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			for(S3Document document: documents) {
 				byte[] data = null;
 				if(document.getType() == 0 && document.getS3key() != null) {
-					data = S3rDoc.download(document.getS3key(), AON_BUCKET_NAME);
+					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 				} else if(document.getType() == 1){
 					data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
 				}
@@ -491,5 +508,134 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			}
 		return "enterprise";
 	}
+	
+	private static JSONObject getBidoqDocumentsToAon(AonApiData api) {
+		String document = api.getData().getString(IJsonNames.DOCUMENT);
+		JSONObject json = callBidoq(document);
+		if(json.has("datos")) {		
+			JSONObject folders = json.getJSONObject("datos");
+			for(String folder : JSONObject.getNames(folders)) {
+				if(!folder.equals("no_folders")) {
+					if(!checkBidoqCategory(api, folders.getJSONObject(folder).getString("nombre")) && folders.getJSONObject(folder).has("docs")) {
+						S3Category category = createBidoqCategory(api, folders.getJSONObject(folder).getString("nombre"));
+						AON_SOLUTIONS.insertS3Category(api.getDomain(), api.getUser(), category);
+					}
+					if(folders.getJSONObject(folder).has("docs")) {
+						JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
+						for(int i = 0; i < array.length(); i++) {
+							if(array.get(i) instanceof JSONObject) {								
+								JSONObject doc = (JSONObject) array.get(i); 
+								if(!checkBidoqDocument(api, doc.getString("rutaS3"))) {
+									S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
+									AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
+								}
+							}
+						}
+					}
+					
+				} else if(folder.equals("no_folders")){
+					if(!checkBidoqCategory(api, NO_FOLDER) && folders.getJSONArray(folder).length() > 0) {
+						S3Category category = createBidoqCategory(api, NO_FOLDER);
+						AON_SOLUTIONS.insertS3Category(api.getDomain(), api.getUser(), category);
+						JSONArray array = folders.getJSONArray(folder);
+						for(int i = 0; i < array.length(); i++) {
+							if(array.get(i) instanceof JSONObject) {
+								JSONObject doc = (JSONObject) array.get(i);
+								if(!checkBidoqDocument(api, doc.getString("rutaS3"))) {
+									S3Document docu = createBidoqDocument(api, doc, BIDOQ_NO_FOLDER);
+									AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
+								}
+							}
+						}
+					}
+				}
+			}
+			return folders;
+		}
+		return new JSONObject().put("result", "OK");
+	}
+	
+	private static S3Document createBidoqDocument(AonApiData api, JSONObject json, String category) {
+		Integer registry = api.getUser().getRegistry().getId(); 
+		if(api.getUser().getRegistry().getId() == null) {
+			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+		}
+		String name = json.getString("nombreArchivo");
+		String [] split = name.split("\\.");
+		MimeType mime = MimeType.safeValueFromExtension(split[split.length-1]);
+		Stream<S3Category> list = AON_SOLUTIONS.getS3CategoryStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().eq("Bidoq/" + category)), Optional.ofNullable(null), Optional.ofNullable(null));
+		Optional<S3Category> s3category = list.findFirst();
+		return new S3Document()
+				.setCategory(s3category.isPresent() ? s3category.get().getId() : null)
+				.setCreationDate(new Date())
+				.setCreationUser(api.getUser().getLogin())
+				.setDocumentDate(new Date())
+				.setDomain(api.getDomain().getId())
+				.setMimetype(mime)
+				.setModificationDate(null)
+				.setModificationUser(null)
+				.setName(json.getString("nombreArchivo"))
+				.setRegistry(registry)
+				.setRegistryType((byte) 3)
+				.setS3bucket(BIDOQ_BUCKET_NAME)
+				.setS3key(json.getString("rutaS3"))
+				.setScope(null)
+				.setSize(json.getInt("tamano"))
+				.setSecurityLevel((byte) 0)
+				;
+	}
+	
+	private static S3Category createBidoqCategory(AonApiData api, String name) {
+		S3Category category = new S3Category()
+				.setDescription("Bidoq/" + name)
+				.setName("Bidoq/" + name)
+				.setDomain(api.getDomain().getId())
+				.setIsDeletable((byte) 1)
+				.setIsVisible((byte) 1)
+				.setParent(null)
+				.setScope(null);
+		return category;
+	}
+	
+	private static boolean checkBidoqCategory(AonApiData api, String category) {
+		Stream<S3Category> list = AON_SOLUTIONS.getS3CategoryStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().eq("Bidoq/" + category)), Optional.ofNullable(null), Optional.ofNullable(null));
+		if(list.count() == 0)
+			return false;
+		else 
+			return true;
+	}
+	
+	private static boolean checkBidoqDocument(AonApiData api, String s3key) {
+		Stream<S3Document> list = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(s3key)).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null));
+		if(list.count() == 0)
+			return false;
+		else 
+			return true;
+	}
+	
+	private static JSONObject callBidoq(String document) {
+        String url = "https://mispapeles.es/api/v2/";
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpPost post = new HttpPost(url);
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setCharset(StandardCharsets.UTF_8);
+            builder.addTextBody("method", "transfer_document_aon");
+            builder.addTextBody("operating_system_version", "0.5");
+            builder.addTextBody("app_version", "1990");
+            builder.addTextBody("device_info", "AON");
+            builder.addTextBody("app_code", "1");
+            builder.addTextBody("_token", "AZLD6JvKigwVf@BMKPKtvheQ69UCCtv*t75NXX!nr8X*i6!Dvxh9RW9G3SW3L4L");
+            builder.addTextBody("enterprise", document);
+            HttpEntity multipart = builder.build();
+            post.setEntity(multipart);
+            try (CloseableHttpResponse response = client.execute(post)) {
+                String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                return new JSONObject(responseBody);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONObject().put("error", "falló la llamada");
+        }
+    }
 	
 }

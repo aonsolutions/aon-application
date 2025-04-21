@@ -58,6 +58,14 @@ public class UpdateCategoryTree implements Update {
 			createTypeColumn(dslContext);
 			fillTypeRdoc(dslContext);
 		}
+		if(checkRDocColumn(dslContext, "name", database)) {			
+			modifyNameColumn(dslContext);
+		}
+		if(!checkRDocColumn(dslContext, "real_name", database)) {			
+			createRealNameColumn(dslContext);
+		} else {
+			modifyRealNameColumn(dslContext);
+		}
 	}
 	
 	private boolean checkFK(DSLContext dslContext, String fk, String database) {
@@ -136,4 +144,17 @@ public class UpdateCategoryTree implements Update {
 	private void createTypeColumn(DSLContext dslContext) {
 		dslContext.execute("ALTER TABLE rdoc ADD COLUMN type TINYINT NULL COMMENT 'Tipo del documento';");
 	}
+	
+	private void modifyNameColumn(DSLContext dslContext) {
+		dslContext.execute("ALTER TABLE rdoc MODIFY name VARCHAR(128) COMMENT 'nombre del documento';");
+	}
+	
+	private void modifyRealNameColumn(DSLContext dslContext) {
+		dslContext.execute("ALTER TABLE rdoc MODIFY real_name VARCHAR(128) COMMENT 'nombre del documento';");
+	}
+	
+	private void createRealNameColumn(DSLContext dslContext) {
+		dslContext.execute("ALTER TABLE rdoc ADD COLUMN real_name VARCHAR(128) COMMENT 'nombre del documento';");
+	}
+	
 }
