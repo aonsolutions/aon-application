@@ -234,10 +234,6 @@ export class AonNewSuggestion extends AonNewInput {
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 
-
-  setMaxlength(maxlength) {
-    this.getElement(this.INPUT).maxlength = maxlength;
-  }
 }
 if(!window.customElements.get(TAG.AON_NEW_SUGGESTION)){
   window.customElements.define(TAG.AON_NEW_SUGGESTION, AonNewSuggestion);

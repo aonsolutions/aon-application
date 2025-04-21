@@ -282,7 +282,7 @@ export class Invoice {
     return this.total;
   }
 
-  setTotal(total){
+  setTotal(total) {
     this.total = round(Number(total));
     this.calculateTaxFromTotal();
     this.calculateFinances();
@@ -831,7 +831,7 @@ export class Invoice {
 
   calculateTax(tax) {
     tax.quota = round(tax.base / 100 * tax.percentage);
-    if(TaxType.IVA === tax.tax){
+    if(TaxType.IVA === tax.tax) {
       tax.type = this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA;
       tax.surcharge = this.isSurcharge() ? getSurchargeByVat(tax.percentage) : 0.0;
       tax.surcharge_quota = round(tax.base / 100 * tax.surcharge);
@@ -865,12 +865,12 @@ export class Invoice {
       if(this.isWithholding() && withholdingPercentage > 0){
         div = div - (withholdingPercentage/100);
       }
-      base = round(Number(this.total) / div);
+      base = round(Number(this.total) / div, 4);
 			let tax = {
 				tax: TaxType.IVA,
 				type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,
 				percentage: 21.0,
-				base: base,
+				base: round(base),
 				quota: round(base * 0.21),
         surcharge: this.isSurcharge() ? 5.2 : 0.0,
         surcharge_quota: this.isSurcharge() ? round(base * 0.052) : 0.0
@@ -884,11 +884,11 @@ export class Invoice {
       if(this.isWithholding() && withholdingPercentage > 0){
         p0 = p0 - (withholdingPercentage/100);
       }
-      base = round(Number(this.total) / p0);
-      tax.base = base;
+      base = round(Number(this.total) / p0, 4);
+      tax.base = round(base);
 			tax.quota = round(tax.base / 100 * tax.percentage);
 			tax.surcharge = this.isSurcharge() ? getSurchargeByVat(tax.percentage) : 0.0;
-      tax.surcharge_quota = round(tax.base / 100 * tax.surcharge);
+      tax.surcharge_quota = round(base / 100 * tax.surcharge);
       this.taxes.push(tax);
 		}
 

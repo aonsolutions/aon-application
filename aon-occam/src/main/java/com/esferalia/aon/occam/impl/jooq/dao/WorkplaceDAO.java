@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.LinkedList;
@@ -15,9 +15,9 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
-import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.validation.WorkplaceAutoComplete;
 
 public class WorkplaceDAO {
@@ -81,7 +81,7 @@ public class WorkplaceDAO {
 			.set(WORKPLACE.ADDRESS, workplace.getAddress())
 			.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
 			.set(WORKPLACE.SCOPE, workplace.getScope())
-			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicagreement())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
 			.set(WORKPLACE.ACTIVE, workplace.isActive() ? (byte) 1 : 0)
 			.returning(WORKPLACE.ID).fetchOne().getValue(WORKPLACE.ID);
 		workplace.setId(id);
@@ -96,7 +96,7 @@ public class WorkplaceDAO {
 		.set(WORKPLACE.ADDRESS, workplace.getAddress())
 		.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
 		.set(WORKPLACE.SCOPE, workplace.getScope())
-		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicagreement())
+		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicAgreement().value())
 		.set(WORKPLACE.ACTIVE, workplace.isActive() ? (byte) 1 : 0)
 		.where(WORKPLACE.ID.eq(workplace.getId()))
 		.execute();
@@ -119,7 +119,7 @@ public class WorkplaceDAO {
 					.setAddress(getValue(r, WORKPLACE.ADDRESS))
 					.setCustomer(getValue(r, WORKPLACE.CUSTOMER))
 					.setDescription(getValue(r, WORKPLACE.DESCRIPTION))
-					.setEconomicagreement(getValue(r, WORKPLACE.ECONOMICAGREEMENT))
+					.setEconomicAgreement(Administration.safeValueOf(getValue(r, WORKPLACE.ECONOMICAGREEMENT)))
 					.setEnterprise(getValue(r, WORKPLACE.ENTERPRISE))
 					.setScope(getValue(r, WORKPLACE.SCOPE));
 		}

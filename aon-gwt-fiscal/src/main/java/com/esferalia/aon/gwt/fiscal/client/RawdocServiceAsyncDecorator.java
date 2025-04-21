@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -73,5 +74,10 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		AON.start();
 		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
 	}
-	
+
+	@Override
+	public void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback) {
+		AON.start();
+		fsa.saveToAccounting(occam, rawdocIds, new AsyncCallbackWrapper<LinkedList<String>>(callback));
+	}
 }

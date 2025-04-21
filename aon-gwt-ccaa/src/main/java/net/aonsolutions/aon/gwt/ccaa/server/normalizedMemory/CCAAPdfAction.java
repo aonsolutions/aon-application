@@ -65,11 +65,13 @@ public abstract class CCAAPdfAction {
 			if(d2Deposit.getYear() >= 2016){
 				if(options.substring(index, index+1).equals("T")) ap3();index++;
 			}
-			if(d2Deposit.getYear() >= 2020) {
-				if(options.substring(index, index+1).equals("T"))  cva();index++;
+			if(d2Deposit.getYear() == 2020 || d2Deposit.getYear() == 2021) { 
+				if(options.substring(index, index+1).equals("T")) cva(); index++; // Hoja COVID
 			}
 			
-	    	if(d2Deposit.getYear() >= 2017) {
+	    	if(d2Deposit.getYear() >= 2023) {
+	    		if(options.substring(index, index+1).equals("T")) itr2023();index++;
+	    	} else if(d2Deposit.getYear() >= 2017) {
 	    		if(options.substring(index, index+1).equals("T")) itr();index++;
 	    	}
 	    	
@@ -81,7 +83,7 @@ public abstract class CCAAPdfAction {
 			if(d2Deposit.getYear() < 2016){
 				if(options.substring(index, index+1).equals("T")) ecpn();index++;
 			}
-			if(options.substring(index, index+1).equals("T")) dm();index++;
+			if(options.substring(index, index+1).equals("T")) dm();index++; // Declaración medioambiental
 			
 			if(!isMemory){
 				for(Integer pos = 0; pos < MemoryItem.getInstance().getApartadosSize(d2Deposit.getYear()); pos++){	
@@ -603,6 +605,162 @@ public abstract class CCAAPdfAction {
 		
 		document.newPage();
 	}
+	
+	private void itr2023() throws DocumentException, IOException {
+		document.add(header());
+		document.add(subHeader());
+		
+		PdfPTable itr0 = new PdfPTable(8);
+		itr0.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr0.setWidthPercentage(100);
+  
+		itr0.addCell(tableHeader("Identificación del Titular Real", 8, 10));
+		String ITR8080829 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8080829.getCode());
+		itr0.addCell(tableCell("La sociedad está obligada a presentar la identificación del titular real por no cotizar en un mercado regulado de la UE o de un país tercero equivalente: " + getBoolText(ITR8080829), 8));
+		itr0.addCell(tableCell("La sociedad presenta por primera vez o actualiza los datos de indentificaci\u00f3n del titular real: " + getBoolText(ITR8080829), 8));
+		
+		String ITR8234001 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234001.getCode());
+		String ITR8234001TXT = "-";
+		if("1".equals(ITR8234001)) ITR8234001TXT = "Primera";
+		else if("2".equals(ITR8234001)) ITR8234001TXT = "Actualizaci\u00f3n";
+		else if("3".equals(ITR8234001)) ITR8234001TXT = "Rectificaci\u00f3n";
+		itr0.addCell(tableCell("Indique el tipo de actualizaci\u00f3n de los datos de indentificaci\u00f3n del titular real: " + ITR8234001TXT, 8));
+	
+		String ITR8234002 = d2Deposit.getMap().get(D2DepositHeaderKey.ITR8234002.getCode());
+		itr0.addCell(tableCell("Fecha en la que debe reputarse que se ha producido el cambio de datos: " + (ITR8234002==null?"-":ITR8234002), 8));
+		
+		document.add(new Paragraph(" "));
+		document.add(itr0);
+		
+		PdfPTable itr1a = new PdfPTable(9);
+		itr1a.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr1a.setWidthPercentage(100);
+  
+		itr1a.addCell(tableHeader("Titular real persona física con porcentaje de participación en el capital superior al 25%", 9, 10));
+		itr1a.addCell(tableHeader("Apellidos, Nombre", 1, 8));
+		itr1a.addCell(tableHeader("Pais Expedición Documento", 1, 8));
+		itr1a.addCell(tableHeader("Tipo Documento", 1, 8));
+		itr1a.addCell(tableHeader("Documento", 1, 8));
+		itr1a.addCell(tableHeader("Fecha Nacimiento", 1, 8));
+		itr1a.addCell(tableHeader("Nacionalidad", 1, 8));
+		itr1a.addCell(tableHeader("Pais de Residencia", 1, 8));
+		itr1a.addCell(tableHeader("% Participación Directa", 1, 8));
+		itr1a.addCell(tableHeader("% Participación Indirecta", 1, 8));
+		
+		for(Integer i = 0; i < D2DepositConstants.ITR_KEYS_4.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_4[i],
+					D2DepositConstants.ITR_KEYS_4[i+1],
+					D2DepositConstants.ITR_KEYS_4[i+2],
+					D2DepositConstants.ITR_KEYS_4[i+3],
+					D2DepositConstants.ITR_KEYS_4[i+4],
+					D2DepositConstants.ITR_KEYS_4[i+5],
+					D2DepositConstants.ITR_KEYS_4[i+6],
+					D2DepositConstants.ITR_KEYS_4[i+7],
+					D2DepositConstants.ITR_KEYS_4[i+8]
+			};
+			for (Integer j = 0; j < d2.length; j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				if (j==2)
+					txt = documentType(txt);
+				itr1a.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr1a);
+		
+		PdfPTable itr1b = new PdfPTable(9);
+		itr1b.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr1b.setWidthPercentage(100);
+  
+		itr1b.addCell(tableHeader("Titular real persona física con porcentaje de participación por derechos de voto superior al 25%", 9, 10));
+		itr1b.addCell(tableHeader("Apellidos, Nombre", 1, 8));
+		itr1b.addCell(tableHeader("Pais Expedición Documento", 1, 8));
+		itr1b.addCell(tableHeader("Tipo Documento", 1, 8));
+		itr1b.addCell(tableHeader("Documento", 1, 8));
+		itr1b.addCell(tableHeader("Fecha Nacimiento", 1, 8));
+		itr1b.addCell(tableHeader("Nacionalidad", 1, 8));
+		itr1b.addCell(tableHeader("Pais de Residencia", 1, 8));
+		itr1b.addCell(tableHeader("% Participación Directa", 1, 8));
+		itr1b.addCell(tableHeader("% Participación Indirecta", 1, 8));
+		
+		for(Integer i = 0; i < D2DepositConstants.ITR_KEYS_5.length; i+=9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_5[i],
+					D2DepositConstants.ITR_KEYS_5[i+1],
+					D2DepositConstants.ITR_KEYS_5[i+2],
+					D2DepositConstants.ITR_KEYS_5[i+3],
+					D2DepositConstants.ITR_KEYS_5[i+4],
+					D2DepositConstants.ITR_KEYS_5[i+5],
+					D2DepositConstants.ITR_KEYS_5[i+6],
+					D2DepositConstants.ITR_KEYS_5[i+7],
+					D2DepositConstants.ITR_KEYS_5[i+8]
+			};
+			
+			for (Integer j = 0; j < d2.length; j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				if (j==2)
+					txt = documentType(txt);
+				itr1b.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr1b);
+		
+		PdfPTable itr2 = new PdfPTable(7);
+		itr2.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		itr2.setWidthPercentage(100);
+		
+		itr2.addCell(tableHeader("Titular real persona física asimilada", 7, 10));
+		itr2.addCell(tableHeader("Apellidos, Nombre", 1, 8));
+		itr2.addCell(tableHeader("Pais Expedición Documento", 1, 8));
+		itr2.addCell(tableHeader("Tipo Documento", 1, 8));
+		itr2.addCell(tableHeader("Documento", 1, 8));
+		itr2.addCell(tableHeader("Fecha Nacimiento", 1, 8));
+		itr2.addCell(tableHeader("Nacionalidad", 1, 8));
+		itr2.addCell(tableHeader("Pais de Residencia", 1, 8));
+		
+		for(Integer i = 0; i < D2DepositConstants.ITR_KEYS_6.length; i+=7){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_6[i],
+					D2DepositConstants.ITR_KEYS_6[i+1],
+					D2DepositConstants.ITR_KEYS_6[i+2],
+					D2DepositConstants.ITR_KEYS_6[i+3],
+					D2DepositConstants.ITR_KEYS_6[i+4],
+					D2DepositConstants.ITR_KEYS_6[i+5],
+					D2DepositConstants.ITR_KEYS_6[i+6]
+			};
+			
+			for (Integer j = 0; j < d2.length; j++) {
+				String txt = d2Deposit.getMap().get(d2[j].getCode());
+				if (j==2)
+					txt = documentType(txt);
+				itr2.addCell(tableCell(txt, 1));
+			}
+		}
+
+		document.add(new Paragraph(" "));
+		document.add(itr2);
+		
+		document.newPage();
+	}
+	
+	private String documentType(String code) {
+		if (code==null)
+			return "";
+		else 
+			return switch (code) {
+				case "1" -> "DNI";
+				case "2" -> "NIF";
+				case "3" -> "NIE";
+				case "4" -> "TIN";
+				case "5" -> "PASAPORTE";
+			    case "6" -> "OTRO";
+				default -> "";
+			};
+	}
 
 	public void sra() throws DocumentException, IOException {
 		document.add(header());
@@ -666,13 +824,13 @@ public abstract class CCAAPdfAction {
 		ma.addCell(tableHeader("Modelo de autocartera", 8, 10));
 		
 		String A18009050 = d2Deposit.getMap().get(D2DepositFooterKey.A18009050.getCode());
-		ma.addCell(tableCell("Solicitud de ERTE durante el ejercicio y motivado por la pandemia: " + getBoolText(A18009050), 8));
+		ma.addCell(tableCell("La sociedad no ha realizado durante el presente ejercicio operación alguna sobre acciones / participaciones propias: " + getBoolText(A18009050), 8));
 		
 		document.add(new Paragraph(" "));
 		document.add(ma);
 		document.newPage();
 		
-		if(getBool(A18009050)) {
+		if(!getBool(A18009050)) {
 			ma1();
 			ma11();
 			ma2();
@@ -1161,12 +1319,13 @@ public abstract class CCAAPdfAction {
 		D2DepositKey[][] keys3 = D2DepositConstants.MRN5_ABREVIATE_PYMES_KEYS_3;
 		
 		three("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio actual",
-				null, null, keys, "Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias", 8);
+				 "Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias", keys, 8);
 		
 		three("Estado de movimientos del inmovilizado material, intangible e inversiones inmobiliarias del ejercicio anterior",
-				null, null, keys2, "Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias", 8);
+				 "Inmovilizado Intangible", "Inmovilizado Material", "Inversiones Inmobiliarias", keys2, 8);
 
 		one("Arrendamientos financieros y otras operaciones de naturaleza similar sobre activos no corrientes", keys3, "Total Contratos", 8);
+		
 		document.newPage();
 	}
 	
@@ -1450,16 +1609,18 @@ public abstract class CCAAPdfAction {
 		document.add(table);
 	}
 	
+	// Tres columnas: D2DepositHeaderKey[] {Importe Ej.Actual, Importe Ej.Anterior, Notas} 
+	// Salen en el PDF: Notas, ImporteEjAct, ImporteEjAnt	
 	private void three(String title, D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2) throws DocumentException {
-		three(title, keys, keys2, null, "notas", "Ejercicio " + d2Deposit.getYear(), "Ejercicio " + (d2Deposit.getYear() -1), 10);
-	}
+		String column1 = "notas";
+		String column2 = "Ejercicio " + d2Deposit.getYear();
+		String column3 = "Ejercicio " + (d2Deposit.getYear() -1);
+		int size = 10;
 	
-	private void three(String title, D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2, 
-			D2DepositKey[][] keys3, String column1, String column2, String column3, Integer size) throws DocumentException {
 		PdfPTable table = new PdfPTable(8);
 		table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		table.setWidthPercentage(100);
-        
+	    
 		table.addCell(tableHeader(title, 4, size));
 		table.addCell(tableHeader(" ", 1, size));
 		table.addCell(tableHeader(column1, 1, size));
@@ -1487,15 +1648,83 @@ public abstract class CCAAPdfAction {
 				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
 			}
 		}
-		if(keys3 != null) {
-			for (D2DepositKey[] innerKeys : keys3) {
+	
+		document.add(new Paragraph(" "));
+		document.add(table);
+	}
+	
+//	private void three(String title, D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2) throws DocumentException {
+//		three(title, keys, keys2, null, "notas", "Ejercicio " + d2Deposit.getYear(), "Ejercicio " + (d2Deposit.getYear() -1), 10);
+//	}	
+//	private void three(String title, D2DepositHeaderKey[][] keys, D2DepositHeaderKey[][] keys2, 
+//			D2DepositKey[][] keys3, String column1, String column2, String column3, Integer size) throws DocumentException {
+//		PdfPTable table = new PdfPTable(8);
+//		table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+//		table.setWidthPercentage(100);
+//        
+//		table.addCell(tableHeader(title, 4, size));
+//		table.addCell(tableHeader(" ", 1, size));
+//		table.addCell(tableHeader(column1, 1, size));
+//		table.addCell(tableHeader(column2, 1, size));
+//		table.addCell(tableHeader(column3, 1, size));
+//		if(keys != null) {
+//			for (D2DepositHeaderKey[] innerKeys : keys) {
+//				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
+//				table.addCell(tableCell(description, 3));
+//				table.addCell(tableCell(" ", 1));
+//				table.addCell(tableCell(innerKeys[0].getCode(), 1));
+//				table.addCell(tableCell(d2Deposit.getMap().get(innerKeys[2].getCode()), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[0].getCode())), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
+//			}
+//		}
+//		if(keys2 != null) {
+//			for (D2DepositHeaderKey[] innerKeys : keys2) {
+//				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP_HEADER.get(innerKeys[0]));
+//				table.addCell(tableCell(description, 3));
+//				table.addCell(tableCell(" ", 1));
+//				table.addCell(tableCell(innerKeys[0].getCode(), 1));
+//				table.addCell(tableCell(d2Deposit.getMap().get(innerKeys[2].getCode()), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[0].getCode())), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
+//			}
+//		}
+//		if(keys3 != null) {
+//			for (D2DepositKey[] innerKeys : keys3) {
+//				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
+//				table.addCell(tableCell(description, 3));
+//				table.addCell(tableCell(" ", 1));
+//				table.addCell(tableCell(innerKeys[0].getCode(), 1));
+//				table.addCell(tableCell(d2Deposit.getMap().get(innerKeys[2].getCode()), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[0].getCode())), 1));
+//				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
+//			}
+//		}
+//
+//		document.add(new Paragraph(" "));
+//		document.add(table);
+//	}
+	
+	// Tres columnas de importes, salen (1) (2) (3)
+	private void three(String title, String column1, String column2, String column3, D2DepositKey[][] keys, Integer size) throws DocumentException {
+		PdfPTable table = new PdfPTable(8);
+		table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		table.setWidthPercentage(100);
+        
+		table.addCell(tableHeader(title, 4, size));
+		table.addCell(tableHeader(" ", 1, size));
+		table.addCell(tableHeader(column1, 1, size));
+		table.addCell(tableHeader(column2, 1, size));
+		table.addCell(tableHeader(column3, 1, size));
+		if(keys != null) {
+			for (D2DepositKey[] innerKeys : keys) {
 				String description = getDescription(D2DepositDescription.DESCRIPTION_MAP.get(innerKeys[0]));
 				table.addCell(tableCell(description, 3));
 				table.addCell(tableCell(" ", 1));
 				table.addCell(tableCell(innerKeys[0].getCode(), 1));
-				table.addCell(tableCell(d2Deposit.getMap().get(innerKeys[2].getCode()), 1));
 				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[0].getCode())), 1));
 				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[1].getCode())), 1));
+				table.addCell(tableCell(number(d2Deposit.getMap().get(innerKeys[2].getCode())), 1));
 			}
 		}
 
@@ -1642,10 +1871,11 @@ public abstract class CCAAPdfAction {
 		String text = d2Deposit.getMap().get(key.getCode());
 		if(text == null) text = "";
 		
-		free.addCell(tableCell(text, 1));
+//		free.addCell(tableCell(text, 1));
 		
 		document.add(new Paragraph(" "));
 		document.add(free);
+		document.add(new Paragraph(text, getFont3()));
 		
 		document.newPage();
 	}

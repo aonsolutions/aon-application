@@ -83,7 +83,7 @@ export class AonMobileInvoiceList extends AonMobileList {
     let liValue = {
         icon,
         title: inv.name,
-        subtitle: inv.getDateStr() + ' - ' + formatNumber(inv.total, 2, "EUR")
+        subtitle: inv.getDateStr() + ' - ' + formatNumber(inv.total, 2, 2, "EUR")
     }
     this.addLi(liValue, i, () => this.aonInvoice(invoice, i));
   }

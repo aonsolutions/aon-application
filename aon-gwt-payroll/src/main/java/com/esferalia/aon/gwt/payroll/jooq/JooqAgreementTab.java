@@ -8,12 +8,15 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEV
 import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,6 +50,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -105,6 +109,12 @@ public class JooqAgreementTab {
 			if(!agreement.getAllVariables().contains(agreementDataVariable)) noConceptVariables.add(agreementDataVariable);
 		}
 		agreement.setNoConceptVariables(noConceptVariables);
+		
+		List<String> contextVariables = Arrays.asList(ContextVariable.values()).stream().map(cv -> cv.getName()).collect(Collectors.toList());
+		contextVariables.addAll( ContextVariable.getNames() );
+		// Remove allowed ones
+		contextVariables.removeAll(getAllowedConceptContextVars());
+		agreement.setContextVariables(contextVariables);
 		
 		return agreement;
 	}
@@ -312,7 +322,7 @@ public class JooqAgreementTab {
 			payment.setName(agreementPaymentRecord.get(PAYMENT_CONCEPT.CODE));
 			payment.setType(null != agreementPaymentRecord.get(AGREEMENT_PAYMENT.TYPE) ? getPaymentType(agreementPaymentRecord.get(AGREEMENT_PAYMENT.TYPE)) : getPaymentType(agreementPaymentRecord.get(PAYMENT_CONCEPT.TYPE)));
 			payment.setDescription(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.DESCRIPTION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.DESCRIPTION));
-			payment.setExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
+			payment.setExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION)) ? (agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION) + agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION)) : agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
 			payment.setStartDate(parseToJavaDate(agreementPaymentRecord.get(AGREEMENT_PAYMENT.START_DATE)));
 			payment.setEndDate(parseToJavaDate(agreementPaymentRecord.get(AGREEMENT_PAYMENT.END_DATE)));
 			payment.setMonth(null == agreementPaymentRecord.get(AGREEMENT_PAYMENT.MONTH) ? null : (short)agreementPaymentRecord.get(AGREEMENT_PAYMENT.MONTH));
@@ -535,18 +545,65 @@ public class JooqAgreementTab {
 	
 	private static void setAgreementPayments(DSLContext dslContext, AgreementInfo agreementInfo) {
 		agreementInfo.getPayments().forEach(payment -> {
-			if(payment.isDeleted())
+			//Delete
+			if(payment.isDeleted()) {
+				
+				// Check if need to delete paymentConcept
+				if(null != payment.getConceptId()) {
+					Result<Record1<Integer>> agreementPaymentsWithPaymentConcept = dslContext.selectDistinct(AGREEMENT_PAYMENT.ID)
+						.from(AGREEMENT_PAYMENT)
+						.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+						.fetch();
+					
+					Result<Record1<Integer>> contractPaymentsWithPaymentConcept = dslContext.selectDistinct(CONTRACT_PAYMENT.ID)
+							.from(CONTRACT_PAYMENT)
+							.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+							.fetch();
+					
+					Result<Record1<Integer>> systemPaymentsWithPaymentConcept = dslContext.selectDistinct(SYSTEM_PAYMENT.ID)
+							.from(SYSTEM_PAYMENT)
+							.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+							.fetch();
+					
+					if(
+							contractPaymentsWithPaymentConcept.isEmpty() && 
+							systemPaymentsWithPaymentConcept.isEmpty() && 
+							agreementPaymentsWithPaymentConcept.isNotEmpty() && 
+							agreementPaymentsWithPaymentConcept.size() == 1 &&
+							agreementPaymentsWithPaymentConcept.get(0).get(AGREEMENT_PAYMENT.ID) == payment.getId()
+					) {
+						dslContext.delete(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
+						.and(PAYMENT_CONCEPT.DOMAIN.ne(0))
+						.execute();
+					}
+				}
+				
+				// Delete agreementPayment
 				dslContext.delete(AGREEMENT_PAYMENT)
 					.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
 					.execute();
-			else if(null == payment.getId() || payment.getId() < 0) {
+			
+			// Create
+			} else if(null == payment.getId() || payment.getId() < 0) {
 				
-				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
-					payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
+				// Create PaymentConcept
+				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, agreementInfo.getDomain())
+						.set(PAYMENT_CONCEPT.CODE, payment.getName())
+						.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+						.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+						.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression())
+						.returning(PAYMENT_CONCEPT.ID)
+						.fetchOne();
 				
-				PaymentConceptRecord paymentConceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId())).fetchOne();
+				payment.setConceptId(paymentConceptRecord.getId());
 				
-				InsertSetMoreStep<AgreementPaymentRecord> select = dslContext.insertInto(AGREEMENT_PAYMENT)
+				// Create AgreementPayment
+				InsertSetMoreStep<AgreementPaymentRecord> insertAgreementPayment = dslContext.insertInto(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreementInfo.getDomain())
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementInfo.getId())
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.getConceptId())
@@ -556,50 +613,58 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE,AonEnumUtils.getByte(payment.getSalaryType()))
 					;
 				
-				if(null != payment.getType() && (byte) payment.getType().ordinal() != paymentConceptRecord.getType())
-					select.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal());
+				// If disable set agreementPaymente expression else null
+				if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))
+					insertAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
 				else
-					select.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE));
+					insertAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
 				
-				if(AonStringUtils.isNotBlank(payment.getDescription()) && !AonStringUtils.equalsIgnoreCase(payment.getDescription(), paymentConceptRecord.getDescription()))
-					select.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription());
-				else
-					select.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION));
-				
-				if(AonStringUtils.isNotBlank(payment.getExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getExpression(), paymentConceptRecord.getExpression()))
-					select.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression());
-				else
-					select.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
-				
-				if(AonStringUtils.isNotBlank(payment.getIrpfExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getIrpfExpression(), paymentConceptRecord.getIrpfExpression()))
-					select.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression());
-				else
-					select.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION));
-				
-				if(AonStringUtils.isNotBlank(payment.getQuoteExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getQuoteExpression(), paymentConceptRecord.getQuoteExpression()))
-					select.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression());
-				else
-					select.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
-					
-				
-				Integer newPaymentId = select.returning(AGREEMENT_PAYMENT.ID)
-					.fetchOne(AGREEMENT_PAYMENT.ID);
+				Integer newPaymentId = insertAgreementPayment
+						.returning(AGREEMENT_PAYMENT.ID)
+						.fetchOne(AGREEMENT_PAYMENT.ID);
 				
 				if(payment.hasExtra())
 					agreementInfo.updateExtraPaymentId(payment.getId(), newPaymentId);
+				
+			// Update
 			} else {
 				
-				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
+				// Se crea un paymentConcept
+				if(null == payment.getConceptId()) {
 					payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
-				else
-					dslContext.update(PAYMENT_CONCEPT)
-						.set(PAYMENT_CONCEPT.CODE, payment.getName())
-						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
-						.execute();
 				
-				PaymentConceptRecord paymentConceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId())).fetchOne();
+				} else {
+					
+					// Get paymentConcept
+					PaymentConceptRecord paymentConceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT)
+							.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
+							.fetchOne();
+					
+					// Se crear un paymentConcept en el dominio actual si es del dominio 0
+					if(null != paymentConceptRecord && paymentConceptRecord.getDomain() == 0) {
+						payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
+					
+					// Se actualizar el paymentConcept si no es del dominio 0	
+					} else {
+						UpdateSetMoreStep<PaymentConceptRecord> update = dslContext.update(PAYMENT_CONCEPT)
+								.set(PAYMENT_CONCEPT.CODE, payment.getName())
+								.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+								.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
+								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+								.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
+								.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression());
+						
+						if(!(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE")))
+							update.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
+						
+						update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
+							.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain() ).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
+							.execute();
+					}
+							
+				}
 			
-				UpdateSetMoreStep<AgreementPaymentRecord> update = dslContext.update(AGREEMENT_PAYMENT)
+				UpdateSetMoreStep<AgreementPaymentRecord> updateAgreementPayment = dslContext.update(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.getConceptId())
 					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
@@ -607,32 +672,13 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, AonEnumUtils.getByte(payment.getSalaryType()))
 					;
 				
-				if(null != payment.getType() && (byte) payment.getType().ordinal() != paymentConceptRecord.getType())
-					update.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal());
+				if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))
+					updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
 				else
-					update.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE));
+					updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
 				
-				if(AonStringUtils.isNotBlank(payment.getDescription()) && !AonStringUtils.equalsIgnoreCase(payment.getDescription(), paymentConceptRecord.getDescription()))
-					update.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription());
-				else
-					update.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION));
-				
-				if(AonStringUtils.isNotBlank(payment.getExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getExpression(), paymentConceptRecord.getExpression()))
-					update.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression());
-				else
-					update.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
-				
-				if(AonStringUtils.isNotBlank(payment.getIrpfExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getIrpfExpression(), paymentConceptRecord.getIrpfExpression()))
-					update.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, payment.getIrpfExpression());
-				else
-					update.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION));
-				
-				if(AonStringUtils.isNotBlank(payment.getQuoteExpression()) && !AonStringUtils.equalsIgnoreCase(payment.getQuoteExpression(), paymentConceptRecord.getQuoteExpression()))
-					update.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, payment.getQuoteExpression());
-				else
-					update.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
-				
-				update.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
+				updateAgreementPayment
+					.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
 					.execute();
 			}
 		});
@@ -742,5 +788,31 @@ public class JooqAgreementTab {
 	private static Salary.Type getSalaryType(Byte type) {
 		return type != null ? Salary.Type.values()[type.intValue()] : null;
 	}
+	
+    private static Set<String> getAllowedConceptContextVars(){
+    	Set<String> allowedVars = new HashSet<String>();
+    	
+    	allowedVars.add("ADVERTENCIA");
+    	allowedVars.add("ANTIGUEDAD");
+    	allowedVars.add("A_CUENTA_CONVENIO");
+    	allowedVars.add("DEVENGO_TEMPORAL");
+    	allowedVars.add("GARANTIZADO");
+    	allowedVars.add("GEROA");
+    	allowedVars.add("HORAS_COMPL");
+    	allowedVars.add("HORAS_EXTRAS");
+    	allowedVars.add("INFO");
+    	allowedVars.add("MEJORA");
+    	allowedVars.add("NOTA");
+    	allowedVars.add("PAGA_BENEFICIOS");
+    	allowedVars.add("PAGA_EXTRA");
+    	allowedVars.add("PLUS_EXTRA_SALARIAL");
+    	allowedVars.add("PLUS_SALARIAL");
+    	allowedVars.add("PLUS_XS");
+    	allowedVars.add("PPE");
+    	allowedVars.add("SALARIO_BASE");
+    	allowedVars.add("SEGURO_AT");
+    	
+    	return allowedVars;
+    } 
 
 }

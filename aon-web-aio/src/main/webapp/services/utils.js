@@ -118,21 +118,22 @@ export const waitEl = (selector, doc = undefined)=> new Promise((resolve,reject)
 
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
-export const round = (value) => {
-    const type = 'round';
-    let exp = -2;
+export const round = (value, decimals) => {
+  decimals = decimals || 2;
+  const type = 'round';
+  let exp = decimals * -1;
 
-    if (typeof exp === 'undefined' || +exp === 0)  return Math[type](value);
-    value = +value;
-    exp = +exp;
-    // Si el valor no es un número o el exp no es un entero...
-    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
-    // Shift
-    value = value.toString().split('e');
-    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-    // Shift back
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+  if (typeof exp === 'undefined' || +exp === 0)  return Math[type](value);
+  value = +value;
+  exp = +exp;
+  // Si el valor no es un número o el exp no es un entero...
+  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
+  // Shift
+  value = value.toString().split('e');
+  value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+  // Shift back
+  value = value.toString().split('e');
+  return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
 
 /**
@@ -175,9 +176,9 @@ export const addZero = (value, length) => value.toString().length < length ? add
  * @param {*} locale pais (opcional)
  * @returns 
  */
-export const formatNumber = (value = 0, decimals = 0, simbolo = undefined, locale = "de-DE") => {
+export const formatNumber = (value = 0, minDecimals = 0, maxDecimals = 0, simbolo = undefined, locale = "es-ES") => {
   value = value || 0;
-  let options = { minimumFractionDigits: decimals, maximumFractionDigits: decimals};
+  let options = { minimumFractionDigits: minDecimals, maximumFractionDigits: maxDecimals};
   if(simbolo) { options.style = 'currency'; options.currency = simbolo;  }
   return  new Intl.NumberFormat(locale, options).format(value.toString().replace(",", "."));
 }

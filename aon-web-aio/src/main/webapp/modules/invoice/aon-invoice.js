@@ -1,7 +1,7 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	getCompanyActivities, getPaymethods, getRegistry, getRegistryBanks, sendInvoice2Mail, getRegistryPaymethod, getSalesSeries, 
-	signInvoice, getInvoiceConfiguration, getAeatCertificates, getWorkplaces, getTbaiHistory, downloadFacturae, getCustomerEmails,
+	getCompanyActivities, getPaymethods,  getRegistryBanks, sendInvoice2Mail, getSalesSeries, 
+	signInvoice, getInvoiceConfiguration, getAeatCertificates, getTbaiHistory, downloadFacturae, getCustomerEmails,
 	getInvofoxTextContent, getSupplierTransaction, getCreditorTransaction, getRegistrySuggestedAccount, 
 	getPaymethod} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
@@ -29,6 +29,7 @@ import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
+import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoice extends AonElement {
 
@@ -419,7 +420,6 @@ export class AonInvoice extends AonElement {
 		if(this.getInvoice().isInbox() && this.getDur().isInvoiceManager()) {
 			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
-			invoiceToolbar.addSeparator();
 		} 
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
 		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
@@ -434,14 +434,16 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox())) 
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		} else if (this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) ) {
-			if(this.getInvoice().isEmitida()) invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox()))
+				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
 		} else if(this.getInvoice().isOcrStatus(CONSTANT.PENDING_DECISSION, CONSTANT.REJECTED)) {
@@ -562,8 +564,7 @@ export class AonInvoice extends AonElement {
 				let history = requests[i];
 				this.printTbaiHistory(table, history, i);
 			}
-		})
-
+		});
 	}
 
 	printTbaiHistory(table, history, i) {
@@ -1130,8 +1131,6 @@ export class AonInvoice extends AonElement {
 				thirdPart.setWidth('150px');
 				thirdPart.setMarginBottom('10px');
 			}
-
-			
 		});
 
 		let table = new AonBasicTable();
@@ -1149,8 +1148,8 @@ export class AonInvoice extends AonElement {
 		div.appendChild(serieSpan);
 
 		let serie = createSuggestion(this.SERIE, MSG.SERIE);
-		serieSpan.appendChild(serie);
 		serie.setMaxlength(5);
+		serieSpan.appendChild(serie);
 		serie.addEventListener(EVENT.AON_KEYUP, (e) => {
 			serie.buildOptions(this.series.filter(f => f.description && f.description.includes(serie.value)).map(r => {return {
 				name: r.description,
@@ -1167,8 +1166,8 @@ export class AonInvoice extends AonElement {
 		let numberSpan = this.createTableSpan("30%", "2px");
 		div.appendChild(numberSpan);
 
-		let number = createInput(this.NUMBER, MSG.NUMBER);
-		if(this.invoice.number > -1)
+		let number = createNumber(this.NUMBER, MSG.NUMBER);
+		if(this.invoice.number && this.invoice.number > -1)
 			number.value = this.invoice.number;
 		number.readonly = CONSTANT.READONLY;
 		number.disabled = CONSTANT.TRUE;
@@ -1180,9 +1179,13 @@ export class AonInvoice extends AonElement {
 			} else {
 				getSalesSeries({}).then(r => {
 					this.series = r;
-					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
+					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.series).length === 0;
 					number.setReadonly(!enabled );
-					number.setDisabled(!enabled );					
+					number.setDisabled(!enabled );
+					if(!enabled){
+						this.invoice.number =  '';
+						this.getElement(this.NUMBER).value = '';
+					}
 				});
 			}
 
@@ -1328,39 +1331,36 @@ export class AonInvoice extends AonElement {
 			});
 		}
 
-		getWorkplaces().then(r => {
-			if(!this.invoice.workplace && r.length > 0) {
-				this.invoice.setWorkplace(r[0].id);
-			}
-			if(r.length > 1) {
-				table.addRow();
-				let workplaces = r.map(w => {return {name: w.description, value: w.id};});
-				let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
-				workplace.autocomplete = true;
-				workplace.readonly = this.invoice.isReadonly();
-				workplace.options = JSON.stringify(workplaces);
-				workplace.value = this.invoice.getWorkplace();
-				workplace.addEventListener(EVENT.SELECT, () => {
-					this.invoice.setWorkplace(workplace.value);
-					if(this.autosave) this.save();
-				});
-				table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
-			} else if(r.length === 1) this.invoice.setWorkplace(r[0].id);
-		}).catch(e => {
-			console.error(e);
-		});
+		if(!this.invoice.workplace && this.configuration.workplaces.length > 0) {
+			this.invoice.setWorkplace(this.configuration.workplaces[0].id);
+		} 
+
+		if(this.configuration.workplaces.length > 1) {
+			table.addRow();
+			let workplace = createSelect(this.WORKPLACE, MSG.WORKPLACE);
+			workplace.setAlias("id", "description");
+			workplace.autocomplete = true;
+			workplace.readonly = this.invoice.isReadonly();
+			workplace.setOptions(this.configuration.workplaces);
+			workplace.value = this.invoice.getWorkplace();
+			workplace.addEventListener(EVENT.SELECT, () => {
+				this.invoice.setWorkplace(workplace.value);
+				if(this.autosave) this.save();
+			});
+			table.addCell(workplace, this.invoice.isEmitida() ? '4' : '6');
+		} else if(this.configuration.workplaces.length === 1) this.invoice.setWorkplace(this.configuration.workplaces[0].id);
 	}
 
 	onChangeSerie(value) {	
 		this.invoice.setSeries(value);
 		if(this.invoice.isInbox()) {
-			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
-			this.getElement(this.NUMBER).readonly = !enabled;
-			this.getElement(this.NUMBER).disabled = !enabled;
-			if(!enabled || this.invoice.series == '') {
+			let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.series).length === 0;
+			this.getElement(this.NUMBER).setReadonly(!enabled);
+			this.getElement(this.NUMBER).setDisabled(!enabled);
+			if(!enabled) {
 				this.invoice.number = '';
 				this.getElement(this.NUMBER).value = '';
-			} else {
+			} else if(this.invoice.number == '') {
 				this.invoice.number = '1';
 				this.getElement(this.NUMBER).value = '1';
 			}
@@ -1855,10 +1855,12 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	createAonNumber(id, title, value) {
+	createAonNumber(id, title, value, decimals) {
 		let aonNumber = createNumber(id, title);
 		aonNumber.format = CONSTANT.TRUE;
 		aonNumber.decimals = "2";
+		aonNumber.minDecimal = "2";
+		aonNumber.maxDecimal = decimals || "2";
 		aonNumber.readonly = this.invoice.isReadonly();
 		aonNumber.value = value || 0.0;
 		return aonNumber;
@@ -2357,7 +2359,7 @@ export class AonInvoice extends AonElement {
 		// ----- FINANCE DUE DATE
 
 		let dateCell = this.buildFinanceDate(table, this.FINANCE_DUE_DATE + i, finance, i);
-		if(!this.isMinimize())dateCell.style.width = '15%';
+		if(!this.isMinimize()) dateCell.style.width = '15%';
 
 		// ----- FINANCE PAYMETHOD
 
@@ -2512,7 +2514,9 @@ export class AonInvoice extends AonElement {
 		let parent = this.getApplication().getParent();
 		if(this.isMobile())
 			parent.buildToolbarOptions();
-		parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
+		if(this.invoice.status == 'processed') {
+			parent.aonInvoiceProcessing();
+		} else parent.aonInvoiceList(parent.filter, parent.invofoxFilter);
 	}
 
 	more(e) {
@@ -2746,7 +2750,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.status = CONSTANT.REJECTED;
 			this.build();
 			this.save();
-			this.updateCounter(this.getRejectFromOption(), OPTION.RAWDOC_REJECT, 1);
+			this.updateCounter(getRejectFromOption(this.invoice), OPTION.RAWDOC_REJECT, 1);
 		});
 
 		let ta = this.getElement('commentTextArea');
@@ -2754,15 +2758,6 @@ export class AonInvoice extends AonElement {
 		ta.style.width = '100%';
 		ta.style.height = '100px';
 		d.open();
-	}
-
-	getRejectFromOption() {
-		// (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.RAWDOC_INBOX_ISSUED;
-		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED;
 	}
 
 	addInvoiceRemarks() {
@@ -3055,7 +3050,7 @@ export class AonInvoice extends AonElement {
 				data.cert = certSelect.value;
 				deleteInvoice(data).then(() => {
 					this.getApplication().stopLoader(); 
-					this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
+					this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 					this.showMessage(MSG.DELETED_DATA);
 					this.back();
 				}).catch(e => this.showError(e));
@@ -3063,40 +3058,18 @@ export class AonInvoice extends AonElement {
 			d.open();
 		} else {
 			deleteInvoice(data).then(() => {
-				this.updateCounter(this.getTrashPendingFromOption(), OPTION.RAWDOC_TRASH, 1);
+				this.updateCounter(getTrashPendingFromOption(this.invoice), OPTION.RAWDOC_TRASH, 1);
 				this.showMessage(MSG.DELETED_DATA);
 				this.back();
 			}).catch(e => this.showError(e));
 		}
 	}
-
-	getTrashPendingFromOption() {
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.INVOICE_ISSUED_BETA;
-		} else if (this.getInvoice().isTicket()){
-			return OPTION.INVOICE_TICKET;
-		} else return OPTION.INVOICE_RECEIVED_BETA;
-	}
 	
 	restoreInvoice() {
+		this.updateCounter(getRestoreFromOption(this.invoice), getRestoreToOption(this.invoice), 1);
 		this.getInvoice().status = CONSTANT.INBOX;
 		this.save(MSG.RESTORED_DATA);
-		this.updateCounter(this.getRestoreFromOption(), this.getRestoreToOption(), 1);
 		this.reload();
-	}
-
-	getRestoreFromOption() {
-		if(this.getInvoice().isRejected() || (this.isInvofoxInvoice() && this.getInvoice().isOcrStatus(CONSTANT.DISCARDED, CONSTANT.PENDING_DECISSION))) {
-			return OPTION.RAWDOC_REJECT;
-		} else return OPTION.RAWDOC_TRASH;
-	}
-	
-	getRestoreToOption() {
-		if(this.getInvoice().isEmitida()) {
-			return OPTION.PROFORMA_INVOICES;
-		} else if(this.getInvoice().isTicket()) {
-			return OPTION.RAWDOC_INBOX_TICKET_NEW;
-		} else return OPTION.RAWDOC_INBOX_RECEIVED_NEW;
 	}
 
 	removeInvoice() {

@@ -217,7 +217,7 @@ export class AonFiscalCard extends AonElement {
         amount.style.fontWeight = "bold";
         amount.style.minWidth = "5rem";
         amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
+        amount.innerHTML = formatNumber(modelData.result, 2, 2, "EUR");
         rightContent.appendChild(amount);
 
         accumulatedModels += modelData.amount;
@@ -283,7 +283,7 @@ export class AonFiscalCard extends AonElement {
         amount.style.fontWeight = "bold";
         amount.style.minWidth = "5rem";
         amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(modelData.result, 2, "EUR");
+        amount.innerHTML = formatNumber(modelData.result, 2, 2, "EUR");
         rightContent.appendChild(amount);
 
         accumulatedModels += modelData.result;
@@ -327,7 +327,7 @@ export class AonFiscalCard extends AonElement {
         amount.style.fontWeight = "bold";
         amount.style.minWidth = "5rem";
         amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
+        amount.innerHTML = formatNumber(total - accumulatedModels, 2, 2, "EUR");
         rightContent.appendChild(amount);
 
         row.appendChild(leftContent);
@@ -383,8 +383,8 @@ export class AonFiscalCard extends AonElement {
       amount.style.fontWeight = "bold";
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
-      amount.innerHTML = formatNumber(modelData.amount, 2, "EUR");
-      if(formatNumber(modelData.amount, 2, "EUR").includes('-')) amount.style.color = "green";
+      amount.innerHTML = formatNumber(modelData.amount, 2, 2, "EUR");
+      if(formatNumber(modelData.amount, 2, 2, "EUR").includes('-')) amount.style.color = "green";
       rightContent.appendChild(amount);
 
       accumulatedModels += modelData.amount;
@@ -426,7 +426,7 @@ export class AonFiscalCard extends AonElement {
       amount.style.fontWeight = "bold";
       amount.style.minWidth = "5rem";
       amount.style.textAlign = "right";
-      amount.innerHTML = formatNumber(total - accumulatedModels, 2, "EUR");
+      amount.innerHTML = formatNumber(total - accumulatedModels, 2, 2, "EUR");
       rightContent.appendChild(amount);
 
       row.appendChild(leftContent);
@@ -470,12 +470,12 @@ export class AonFiscalCard extends AonElement {
 
   getTotal(models, total390) {
     let total = models.reduce((t, model) => t + model.result, 0);
-    return formatNumber(total + total390, 2, "EUR");
+    return formatNumber(total + total390, 2, 2, "EUR");
   }
 
   getEstimationTotal(models) {
     let total = models.reduce((t, model) => t + model.amount, 0);
-    return formatNumber(total, 2, "EUR");
+    return formatNumber(total, 2, 2, "EUR");
   }
 
   createStatus(status) {

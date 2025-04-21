@@ -274,6 +274,13 @@
 		<scope>compile</scope>
     </dependency>
     
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-lambda</artifactId>
+      <version>1.12.780</version>
+	  <scope>compile</scope>
+    </dependency>
+    
     <!-- TEST DEPENDENCIES -->
 	<dependency>
 	  <groupId>junit</groupId>

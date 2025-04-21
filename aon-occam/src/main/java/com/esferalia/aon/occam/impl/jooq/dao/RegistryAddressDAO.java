@@ -16,9 +16,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Geozone;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
+import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -122,21 +122,20 @@ public class RegistryAddressDAO {
 							.execute();
 						ctx.log().debug("\t saving registry address: Setting new Main address, updating olders: {0}. ({1} rows)",adr.getId(),count);				
 					});
-			} else {
-				int count = ctx.getDslContext().fetchCount(
-						ctx.getDslContext().select( RADDRESS.ID )
-							.from(RADDRESS)
-							.where(RADDRESS.REGISTRY.eq(address.getRegistry()))
-							.and(address.getId() == null
-								?DSL.trueCondition()
-								:RADDRESS.ID.ne(address.getId()))
-							.and(RADDRESS.TYPE.eq( MAIN_ADDRESS ))
-					);
-				if (count == 0) {
+			} else if ( ctx.getDslContext()
+				.select( RADDRESS.ID )
+				.from(RADDRESS)
+				.where(RADDRESS.REGISTRY.eq(address.getRegistry()))
+				.and(address.getId() == null
+					?DSL.noCondition()
+					:RADDRESS.ID.ne(address.getId()))
+				.and(RADDRESS.TYPE.eq( MAIN_ADDRESS ))
+				.fetch()
+				.stream()
+				.findFirst()
+				.isEmpty() ) {
 					address.setMain(true);
 					ctx.log().debug("\t saving registry address: autocomplete main flag: {0}",address.isMain());
-				}
-				
 			}
 		};
 		

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,6 +18,7 @@ import javax.xml.bind.JAXBException;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
@@ -30,6 +32,7 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositPreviousToCurrentConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.DepositType;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
@@ -754,6 +757,21 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 	private Map<String, String> createD2Deposit(AonData aonData, Integer companyId, String name, String type,Integer year) {
 		Enterprise enterprise = AON.getEnterprise(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), companyId);
 		
+		// CNAE de la actividad principal, solo si es de longitud 4
+		String cnae = null;
+		AonConfiguration configuration = AON.getConfiguration(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin());
+		if (configuration.getMainActivity() != null) {
+			String c = configuration.getMainActivity().getCnaeCode();
+			if (c != null && c.length() == 4) {
+				cnae = c.substring(0, 2) + "." + c.substring(2);
+			}
+		}
+		
+		// Datos registrales (Tomo, Folio, Nº Hoja). Si hay varios, se coge el último según la fecha de registro
+		RecordData recordData = AON.getRecordDataStream(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getRegistryProperty().eq(companyId))
+				.sorted(Comparator.comparing(RecordData::getRecordDate).reversed())
+				.findFirst().orElse(null);
+		
 		Map<D2DepositKey,String> mapFreeText = new HashMap<D2DepositKey, String>();
 		Map<D2DepositKey, Double> ctxMem = new LinkedHashMap<D2DepositKey, Double>();
 		Map<D2DepositHeaderKey, Double> ctx = new LinkedHashMap<D2DepositHeaderKey, Double>();
@@ -768,7 +786,7 @@ public class NormalizedMemoryServlet extends AonStatelessRemoteServiceServlet im
 			mapFreeText = getFreeTextKeySchema(previousSchema);
 		}
 		
-		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year);
+		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year, cnae, recordData);
 		
 		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);

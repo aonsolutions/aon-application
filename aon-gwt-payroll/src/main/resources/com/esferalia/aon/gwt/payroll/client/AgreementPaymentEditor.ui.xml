@@ -116,6 +116,8 @@
 	
 		<!-- PAYMENT -->
 		
+		<g:HTMLPanel ui:field="messagePanel" />
+		
 		<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Tipo</g:Label>
@@ -123,7 +125,7 @@
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Concepto</g:Label>
-				<g:SuggestBox ui:field="paymentConceptSB" styleName="{style.inputHeight}"/>
+				<g:TextBox ui:field="paymentConceptCodeTB" styleName="{style.inputHeight}"/>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}">
 				<g:Label styleName="{style.title}">Descripción</g:Label>

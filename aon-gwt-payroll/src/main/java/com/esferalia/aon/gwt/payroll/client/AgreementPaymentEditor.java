@@ -1,22 +1,21 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
-import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Result;
@@ -26,6 +25,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -35,9 +35,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -75,6 +72,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- UiFields
 
+	@UiField
+	HTMLPanel messagePanel;
+	
 	// PAYMENT
 
 	@UiField
@@ -84,7 +84,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	HTMLPanel paymentTypePanel;
 
 	@UiField
-	SuggestBox paymentConceptSB;
+	TextBox paymentConceptCodeTB;
 
 	@UiField
 	TextBox paymentDescriptionTB;
@@ -169,10 +169,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- Variables
 
-	private DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 	private DomainEmployeesServiceAsync employeeService = DomainEmployeesServiceAsync.newInstance();
-	private ContractConcepts contractConcepts;
-	private ContractConcept selectedConcept;
 	private Payment payment;
 	private AgreementExtra extra;
 	private AgreementExtra associatedExtra;
@@ -188,10 +185,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	
 	private int fxLevel = 0;
 	private Date startDate;
+	
+	private List<String> contextVariables;
 
 	// ----------------------------------------- Constructor
 
-	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Date startDate) {
+	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Date startDate, List<String> contextVariables) {
 		setCaption("Devengo");
 		
 		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconFx());
@@ -206,6 +205,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		this.extra = extra;
 		
 		this.allPayments = allPayments;
+		this.contextVariables = contextVariables;
 		
 		advancePanel.setAnimationEnabled(true);
 		advancePanel.setOpen(false);
@@ -219,8 +219,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() + 80);
 			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
-
-//		paymentExpressionCA.setAdvancedMode(false);
 		
 		getEnableDisableButton(enterpriseTaxed, false);
 		enterpriseTaxed.addClickHandler(e -> {
@@ -241,28 +239,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		initializeMonthPayment();
 		
-		enterpriseService.getAllConcepts(new AsyncCallback<ContractConcepts>() {
-
-			@Override
-			public void onSuccess(ContractConcepts contractConceptsIn) {
-				contractConcepts = contractConceptsIn;
-				providedPayment();
-				fillPayment();
-				checkDatesPanelShown();
-				
-				if(null != extra && !extra.isDeleted()) fillExtra();
-				extraPeriodPanel.setVisible(null != extra && !extra.isDeleted());
-				
-				showHideAdvanceOptions();
-				showDialog();
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// Failure
-			}
-
-		});
+		providedPayment();
+		fillPayment();
+		checkDatesPanelShown();
+		
+		if(null != extra && !extra.isDeleted()) fillExtra();
+		extraPeriodPanel.setVisible(null != extra && !extra.isDeleted());
+		
+		showHideAdvanceOptions();
+		showDialog();
 	}
 
 	private void initializeMonthPayment() {
@@ -299,7 +284,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentSalaryTypeLB.addItem("Extra", Salary.Type.EXTRA.ordinal() + "");
 		paymentSalaryTypeLB.addItem("Finiquito", Salary.Type.SETTLE.ordinal() + "");
 		paymentSalaryTypeLB.addItem("Atraso", Salary.Type.DELAY.ordinal() + "");
-//		paymentSalaryTypeLB.addChangeHandler(e -> payment.setSalaryType(Salary.Type.values()[Integer.parseInt(paymentSalaryTypeLB.getSelectedValue())]));
 	}
 
 	private void checkDatesPanelShown() {
@@ -371,7 +355,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void providedPayment() {
 		initializePaymentType();
-		initializeSB(paymentConceptSB, paymentDescriptionTB, paymentExpressionCA);
 		initializeTaxed();
 		initializeQuote();
 	}
@@ -383,7 +366,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
 		paymentTypeLB.setHeight("1.5rem");
 		paymentTypeLB.addChangeHandler(e -> {
-			initializeTaxed();
 			checkQuoteAndTaxedByCra();
 		});
 		paymentTypePanel.clear();
@@ -405,33 +387,27 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			// Importe integro
 			paymentTaxedTypeLB.setSelectedIndex(0);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB);
-			paymentTaxedTypeLB.setVisible(false);
 			
 			paymentQuoteTypeLB.setSelectedIndex(0);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB);
-			paymentQuoteTypeLB.setVisible(false);
 			
 		} else if(!craType.isBBCCIncluded() && craType.isBBCCExcluded()) {
 			
 			// Exento
-			paymentTaxedTypeLB.setSelectedIndex(1);
+			paymentTaxedTypeLB.setSelectedIndex(0);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB);
-			paymentTaxedTypeLB.setVisible(false);
 			
 			paymentQuoteTypeLB.setSelectedIndex(1);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB);
-			paymentQuoteTypeLB.setVisible(false);
 			
 		} else if(craType.isBBCCIncluded() && craType.isBBCCExcluded()) {
 			
 			// Personalizado
 			paymentTaxedTypeLB.setSelectedIndex(2);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB);
-			paymentTaxedTypeLB.setVisible(true);
 			
 			paymentQuoteTypeLB.setSelectedIndex(3);
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB);
-			paymentQuoteTypeLB.setVisible(true);
 			
 		}
 	}
@@ -463,8 +439,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				break;
 			}
 		});
-		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTaxedTypeLB);
 	}
 
 	private void initializeQuote() {
@@ -495,8 +469,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				break;
 			}
 		});
-		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentQuoteTypeLB);
 	}
 	
 	private String getTaxedQuoteType(String expression) {
@@ -518,84 +490,17 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		}
 	}
 
-	// ----------------------------------------- SuggestBox
-
-	private void initializeSB(SuggestBox suggestBox, TextBox descriptionTB, TextArea expressionTB) {
-		List<String> conceptsSuggest = new ArrayList<>();
-		for (ContractConcept contractConcept : contractConcepts.getPaymentConcepts()) {
-			String suggestDisplay = AonStringUtils.isBlank(contractConcept.getCode()) ? ""
-					: contractConcept.getCode() + " - ";
-			suggestDisplay += contractConcept.getDescription();
-			conceptsSuggest.add(suggestDisplay);
-		}
-
-		MultiWordSuggestOracle orclConcepts = (MultiWordSuggestOracle) suggestBox.getSuggestOracle();
-		orclConcepts.clear();
-		orclConcepts.addAll(conceptsSuggest);
-		suggestBox.setAutoSelectEnabled(false);
-		suggestBox.addValueChangeHandler(value -> {
-			selectedConcept = getConcept(suggestBox);
-
-			if (null != selectedConcept) {
-				descriptionTB.setValue(selectedConcept.getDescription());
-				expressionTB.setValue(selectedConcept.getExpression());
-			}
-		});
-	}
-
-	private ContractConcept getConcept(SuggestBox suggestBox) {
-		Set<ContractConcept> concepts = contractConcepts.getPaymentConcepts();
-		String code = null;
-		String description = null;
-
-		if (suggestBox.getValue().contains("-")) {
-			code = suggestBox.getValue().split("-")[0].trim();
-			description = suggestBox.getValue().split("-")[1].trim();
-
-			for (ContractConcept contractConcept : concepts)
-				if (isIdentical(contractConcept, code, description))
-					return contractConcept;
-		} else {
-			code = suggestBox.getValue();
-			description = suggestBox.getValue();
-
-			for (ContractConcept contractConcept : concepts)
-				if (isSimilar(contractConcept, code, description))
-					return contractConcept;
-		}
-
-		return null;
-	}
-
-	private boolean isIdentical(ContractConcept contractConcept, String code, String description) {
-		return AonStringUtils.equalsIgnoreCase(code, contractConcept.getCode())
-				&& AonStringUtils.equalsIgnoreCase(description, contractConcept.getDescription());
-	}
-
-	private boolean isSimilar(ContractConcept contractConcept, String code, String description) {
-		return (AonStringUtils.equalsIgnoreCase(code, contractConcept.getCode())
-				&& AonStringUtils.isBlank(contractConcept.getDescription()))
-				|| (AonStringUtils.equalsIgnoreCase(description, contractConcept.getDescription())
-						&& AonStringUtils.isBlank(contractConcept.getCode()));
-	}
-
 	// ----------------------------------------- Fill Payment
-	
-	public void setContextProvider(ContextProvider context) {
-//		this.contextProvider = context;
-	}
 
 	private void fillPayment() {
 		paymentTypeLB.setSelected(this.payment.getType());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
 		
-		paymentConceptSB.setValue(this.payment.getName());
-		paymentConceptSB.addSelectionHandler(e -> selectedConcept = getConcept(paymentConceptSB));
-//		selectedConcept = getConcept(paymentConceptSB);
+		paymentConceptCodeTB.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
+		paymentConceptCodeTB.setValue(this.payment.getName());
+		paymentConceptCodeTB.addValueChangeHandler(e -> checkPaymentCode());
 		
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionCA.setText(this.payment.getExpression());
-//		paymentExpressionCA.setText(getParsedExpression(this.payment.getExpression()));
 		checkSeniorityExpresion();
 		expresssionVisibilityBtn.addClickHandler(e -> {
 			if(null == contextProvider)
@@ -603,7 +508,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			
 			final FxDialog fxDialog = new FxDialog(contextProvider);
 			fxDialog.setExpression(this.payment.getExpression());
-//			fxDialog.setExpression(getExpression(this.payment.getExpression()));
+			fxDialog.getElement().getStyle().setProperty("z-index", "70");
 			fxDialog.center();
 			fxDialog.show();
 		
@@ -611,7 +516,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				if (fxDialog.isAccepted()) {
 					payment.setExpression(fxDialog.getExpression());
 					paymentExpressionCA.setText(payment.getExpression());
-//					paymentExpressionCA.setText(getParsedExpression(payment.getExpression()));
+					paymentExpressionCA.setValue(payment.getExpression());
 				}
 			});
 		});
@@ -638,16 +543,29 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		getEnableDisableButton(enterpriseTaxed, AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "BASE_CTA_ESP=_P"));
 		if(isActiveToggleButton(enterpriseTaxed)) paymentTaxedExpression.setValue("BASE_CTA_ESP=_P");
+		
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
+	}
+	
+	private void checkPaymentCode() {
+		String newCode = paymentConceptCodeTB.getValue();
+		if(!AonStringUtils.isBlank(newCode)) {
+			String cleanNewCode = newCode.replaceAll(" ", "_").trim().toUpperCase();
+			
+			Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), cleanNewCode)).findFirst();
+			if(existingCodePayment.isPresent()) {
+				paymentConceptCodeTB.setValue("");
+				AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+			} else if(contextVariables.contains(cleanNewCode)) {
+				paymentConceptCodeTB.setValue("");
+				AonMessagePanel.showError(messagePanel, "No se puede usar el nombre de una variable de contexto como c\u00f3digo de un concepto. Elija otro nombre para el c\u00f3digo");
+			} else {
+				paymentConceptCodeTB.setValue(cleanNewCode);
+			}
+				
+		} else AonMessagePanel.showError(messagePanel, "El c\u00f3digo del concepto es obligatorio");
 	}
 
-//	private String getParsedExpression(String expression) {
-//		return SpecialExpresion.parse(expression).getInput();
-//	}
-//	
-//	private String getExpression(String expression) {
-//		return SpecialExpresion.parse(expression).getExpression();
-//	}
-	
 	private void checkSeniorityExpresion() {
 		String expression = this.payment.getExpression();
 		seniorityPanel.setVisible(AonStringUtils.isNotBlank(expression) && expression.contains("ANTIG") && expression.contains("EDAD"));
@@ -694,18 +612,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private void getFooterButtons() {
 		buttonsPanel.clear();
 		
-		Button closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.addClickHandler(e -> hide());
-		
-		buttonsPanel.add(closeBtnDialog);
-
 		acceptDialog = new Button();
 		acceptDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
 			hide();
+			
 			// Seniority
 			if(seniorityPanel.isVisible()) onSeniority(seniorityType.getSelectedValue());
 			
@@ -715,6 +627,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005)) {
 				createExtra();
 			}
+			
 			onAccept(payment, extra, associatedPayment, associatedExtra);
 		});
 
@@ -723,28 +636,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void showHideAdvanceOptions() {
 		expresssionVisibilityBtn.setVisible(advancePanel.isOpen());
-//		paymentExpressionCA.setText(advancePanel.isOpen() ? getExpression(this.payment.getExpression()) : getParsedExpression(this.payment.getExpression()));
 	}
 	
 	private void createPayment() {
-		if(null == this.payment || null == this.payment.getId()) {
-			this.payment = new Payment();
-			Random rand = new Random();
-			int newPaymentId = rand.nextInt(1000) * -1;
-			if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
-			this.payment.setId(newPaymentId);
-		}
-		
 		payment.setType(paymentTypeLB.getSelected());
-		
-		if (null != selectedConcept) {
-			payment.setConceptId(selectedConcept.getId());
-			payment.setName(selectedConcept.getCode());
-		} else if(null == payment.getConceptId()) {
-			payment.setConceptId(null);
-			payment.setName(paymentConceptSB.getValue());
-		}
-		
+		payment.setName(paymentConceptCodeTB.getValue());
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionCA.getText());
 		
@@ -761,7 +657,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			
 		payment.setIrpfExpression(irpfExpression);
 		payment.setQuoteExpression(quoteExpression);
-		payment.setMonth(null);
 		
 		payment.setMonth(AonStringUtils.isBlank(monthPaymentLB.getSelectedValue()) ? null : Short.parseShort(monthPaymentLB.getSelectedValue()));
 		payment.setStartDate(startDateBx.getValue());
@@ -780,16 +675,17 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		}
 		
 		extra.setDeleted(AonStringUtils.isBlank(extraIssueDate.getValue()));
+		
 		if(!extra.isDeleted()) {
 			String startMonth = extraStartDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(startMonth, "01")) startMonth = "01/01";
 			else if(AonStringUtils.equalsIgnoreCase(startMonth, "07")) startMonth = "01/07";
-			extra.setStartDate("01/" + startMonth + extraStartDateYear.getSelectedValue());
+			extra.setStartDate( (startMonth.length() == 2 ? "01/" : "") + startMonth + extraStartDateYear.getSelectedValue());
 			
 			String endMonth = extraEndDateMonth.getSelectedValue();
 			if(AonStringUtils.equalsIgnoreCase(endMonth, "06")) endMonth = "30/06";
 			else if(AonStringUtils.equalsIgnoreCase(endMonth, "12")) endMonth = "31/12";
-			extra.setEndDate(getMaxDayMonth(endMonth) + "/" + endMonth + extraEndDateYear.getSelectedValue());
+			extra.setEndDate(  (endMonth.length() == 2 ? (getMaxDayMonth(endMonth) + "/") : "") + endMonth + extraEndDateYear.getSelectedValue());
 			extra.setIssueDate(extraIssueDate.getValue());
 		}
 		

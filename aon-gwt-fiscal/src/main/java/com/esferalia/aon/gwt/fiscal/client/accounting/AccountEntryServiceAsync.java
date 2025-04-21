@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -29,6 +30,10 @@ public interface AccountEntryServiceAsync {
 	void save(Occam occam, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback);
 	void getFinanceEntry(Occam occam, Integer accountEntry, AsyncCallback<FinanceEntry> asyncCallback);
 	void rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data, AsyncCallback<AccountingInvoice> asyncCallback);
+	
+	void parseInvoice(String domainName, String user, int domain, String fileName, String content, AsyncCallback<TediResult> callback);
+	void validateInvoice(String domainName, String user, int domain, TediResult result, AsyncCallback<TediResult> callback);
+	
 	//	-----------------------------------
 	
 	void getAccountEntries(String domainName, int domain, String user, AccountEntryParams params, int offset, int limit, AsyncCallback<LinkedList<AccountEntry>> callback);

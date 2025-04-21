@@ -174,7 +174,7 @@ const paintCompanyCostPieChart = async () => {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
 
-    title = `${title}<br> ${workplaceText} <span id= "aonCompanyCostCardSpan" style="color:black;font-weight:600;">${formatNumber(total, 2, "EUR")}<span>`;
+    title = `${title}<br> ${workplaceText} <span id= "aonCompanyCostCardSpan" style="color:black;font-weight:600;">${formatNumber(total, 2, 2, "EUR")}<span>`;
 
     let divTitle = document.getElementById("aon-company-costs-cardtitleDiv");
     divTitle.innerHTML = title;

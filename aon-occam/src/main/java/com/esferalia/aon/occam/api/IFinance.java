@@ -303,7 +303,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************** INVOICE CONSOLE ****************
 	// 	***********************************************
-	Stream<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);	
+	List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params);	
 	
 }
 	

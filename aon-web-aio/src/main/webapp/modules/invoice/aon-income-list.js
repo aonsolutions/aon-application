@@ -1,10 +1,6 @@
-import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
-import { createList } from '../../components/CreateComponent.js';
-import { AonExampleObject } from '../example/aon-example-object.js';
 import { getIncomes } from '../../services/accountingService.js';
 import { AonIncome } from './aon-income.js';
-import * as LS from '../../services/localStorageService.js';
 import { Income } from './Income.js';
 import { AonList } from '../../components/aon-list.js';
 export class AonIncomeList extends AonList {

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -31,6 +32,9 @@ public interface AccountEntryService extends RemoteService {
 	FinanceEntry save(Occam occam, FinanceEntry financeEntry) throws AonCoreException;
 	FinanceEntry getFinanceEntry(Occam occam, Integer accountEntry) throws AonCoreException;
 	AccountingInvoice rectifyInvoice(Occam occam, Integer invoiceId, InvoiceRectificationData data) throws AonCoreException;
+	
+	TediResult parseInvoice(String domainName, String user, int domain, String fileName, String content) throws AonCoreException;
+	TediResult validateInvoice(String domainName, String user, int domain,TediResult result) throws AonCoreException;
 
 	//	-----------------------------------
 

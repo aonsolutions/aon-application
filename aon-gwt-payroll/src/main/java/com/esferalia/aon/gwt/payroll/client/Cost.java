@@ -830,48 +830,6 @@ public class Cost extends ResizeComposite {
 		formPanel.submit();
 	}
 	
-	public void __syncCalcs () {
-		
-		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
-		
-		String printURL = URL.encode(GWT.getModuleBaseURL() + "seg-social/" + SistemaREDService.CALCS);
-		
-		FormPanel formPanel = new FormPanel();
-		formPanel.setAction(printURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
-		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL()));
-		flowPanel.add(new Hidden(SistemaREDService.Parameter.DATE.name(),"01" + "/" + AonStringUtils.leftPad(Integer.toString(cost.getMonth()+1), 2 , "0") + "/" +cost.getYear()));
-		
-		
-		formPanel.add(flowPanel);
-		
-		formPanel.addSubmitCompleteHandler(event -> {
-			onFinishSLD();
-			
-			mainPanel.remove(formPanel);
-			
-			costDocuments.addType(Salary.Type.L00);
-			setCheckedStyle(seeMenu.getL00(), true);
-			costDocuments.addType(Salary.Type.L13);
-			setCheckedStyle(seeMenu.getL13(), true);
-			costDocuments.addType(Salary.Type.L03);
-			setCheckedStyle(seeMenu.getL03(), true);
-
-			getAsHTML();
-		});
-		
-		
-		
-		mainPanel.add(formPanel);
-		
-		formPanel.submit();
-		
-		onStartSLD();
-		
-	}
 
 	public void syncCalcs () {
 		

@@ -192,14 +192,14 @@ export const DOWNLOAD_EXCEL_INVOICE = {
     id: CONSTANT.DOWNLOAD_EXCEL_INVOICE.initCap(),
     name: MSG.DOWNLOAD_EXCEL_INVOICE,
     title: MSG.DOWNLOAD_EXCEL_INVOICE,
-    aonIcon: "aon_excel"
+    aonIcon: "excel"
 };
 
 export const DOWNLOAD_EXCEL = {
     id: CONSTANT.DOWNLOAD_EXCEL.initCap(),
     name: MSG.DOWNLOAD_EXCEL,
     title: MSG.DOWNLOAD_EXCEL,
-    aonIcon: "aon_excel"
+    aonIcon: "excel"
 };
 
 export const DUPLICATE = {

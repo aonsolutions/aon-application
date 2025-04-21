@@ -905,7 +905,7 @@ public class FinanceImpl implements IFinance {
 
 	// ------------------------------------- INVOICE CONSOLE
 	@Override
-	public Stream<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
+	public List<InvoiceConsole> getInvoiceHeaders(AONContext ctx, InvoiceConsoleParams params) {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceConsoleDAO.getInvoiceHeaders(ctx, params)
 		);

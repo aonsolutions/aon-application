@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.type.Country;
 
 public class RegistryExcelExport extends ExcelExport {
 
@@ -21,6 +22,9 @@ public class RegistryExcelExport extends ExcelExport {
 	private static final String DOCUMENTO = "Documento";
 	private static final String RAZON_SOCIAL = "Razón Social";
 	private static final String DIRECCION = "Dirección";
+	private static final String CODIGO_POSTAL = "Código Postal";
+	private static final String PROVINCIA = "Provincia";
+	private static final String PAIS = "País";
 	
 	List<CustomerFull> customers;
 	List<SupplierFull> suppliers;
@@ -86,6 +90,9 @@ public class RegistryExcelExport extends ExcelExport {
 		columns.add(new AonExcelColumn(DOCUMENTO, 12));
 		columns.add(new AonExcelColumn(RAZON_SOCIAL, 12));
 		columns.add(new AonExcelColumn(DIRECCION, 12));
+		columns.add(new AonExcelColumn(CODIGO_POSTAL, 12));
+		columns.add(new AonExcelColumn(PROVINCIA, 12));
+		columns.add(new AonExcelColumn(PAIS, 12));
 	}
 	
 	private void buildContentCustomer() {
@@ -135,6 +142,14 @@ public class RegistryExcelExport extends ExcelExport {
 			return registry.getName();
 		case DIRECCION:
 			return address.getFullAddress();
+		case CODIGO_POSTAL:
+			return address.getZip();
+		case PROVINCIA:
+			return address.getProvince();
+		case PAIS:
+			return address.getCountry() != null 
+				? address.getCountry().getName()
+				: Country.ES.getName();
 		default:
 			return "";
 		}

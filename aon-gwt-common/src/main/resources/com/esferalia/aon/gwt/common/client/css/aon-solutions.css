@@ -83,6 +83,12 @@
 .aon_icon_image { background-image: iconImage;}
 @url iconExcel aonIconExcel;
 .aon_icon_excel { background-image: iconExcel;}
+@url iconCircleBlue aonIconCircleBlue;
+.aon_icon_circle_blue { background-image: iconCircleBlue;}
+@url iconCircleYellow aonIconCircleYellow;
+.aon_icon_circle_yellow { background-image: iconCircleYellow;}
+@url iconCircleOrange aonIconCircleOrange;
+.aon_icon_circle_orange { background-image: iconCircleOrange;}
 @url iconCircleGreen aonIconCircleGreen ;
 .aon_icon_circle_green { background-image: iconCircleGreen ;}
 @url iconCircleRed aonIconCircleRed;
@@ -232,6 +238,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconRepair aonIconRepair;
+.aon_icon_repair { background-image: iconRepair;}
 @url iconMoveGroup aonIconMoveGroup;
 .aon_icon_move_group { background-image: iconMoveGroup;}
 @url iconWork aonIconWork;
@@ -1424,6 +1432,7 @@
 
 .aon_toolbar_small_button_container {
 	display: flex;
+	align-items: center;
 }
 
 .aon_toolbar_message_container {
@@ -2486,4 +2495,34 @@
 	max-width: 75rem;
     min-height: 5rem;
     width: 100%;
+}
+
+.aon_dialog_glass{
+	z-index: 7;
+	background-color: #000;
+	opacity: 0.2;
+	filter: opacity(45%);
+}
+
+.aon_badge{
+	padding: 0.5rem;
+  	background-color: #ed3e3e;
+  	border-radius: 50%;
+  	height: .5rem;
+  	width: .5rem;
+  	color: white;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	font-size: 0.6rem;
+}
+
+.aon_button_icon_text{
+	background-repeat: no-repeat;
+  	padding-left: 1.5rem;
+  	border: 1px solid #999696;
+  	background-color: transparent;
+  	height: 2rem;
+  	background-position: left;
+  	border-radius: 5px;
 }

@@ -634,6 +634,7 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("601");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
 																
 							}
 							
@@ -1297,7 +1298,16 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("54");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
-								return new MainSalaryVisitor();
+								return new MainSalaryVisitor() {
+									@Override
+									public void visitFormacionNormal() {
+										this.visitTiempoCompletoNormal();
+									}
+									@Override
+									public void visitFormacionEnAlternanciaNormal() {
+										this.visitTiempoCompletoNormal();
+									}
+								};
 							}
 
 							@Override
@@ -2292,6 +2302,8 @@ public class TrabajadoresTramos {
 		
 		boolean formacion = false; //"420".equals(tc2) ;
 		
+		boolean fijoDiscontinuo = AonStringUtils.contains("300",tc2) ;
+
 		boolean formacionEnAlternancia = AonStringUtils.contains("421,521",tc2) ;
 		
 		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
@@ -2390,6 +2402,8 @@ public class TrabajadoresTramos {
 			visitor.visitJornadasRealesNormal();
 		else if ( artistas )
 			visitor.visitRegimenArtistasNormal();
+		else if ( fijoDiscontinuo ) 
+			visitor.visitTiempoParcialNormal();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
 		else 
@@ -2436,7 +2450,7 @@ public class TrabajadoresTramos {
 		else if ( artistas )
 			;		
 		else if (tiempoCompleto)
-			grupoCotizacion.visit();		
+			grupoCotizacion.visit();
 		else 
 			grupoCotizacion.visit();	
 		
@@ -2547,7 +2561,7 @@ public class TrabajadoresTramos {
 
 			@Override
 			public Collection<ContextData> visitL03() {
-				return new FilterCollection<>(d -> AonNumberUtils.isNumber(d.getExpression()) && AonNumberUtils.todouble(d.getExpression()) > 1.00 , contextDatas);
+				return new FilterCollection<>(d -> AonNumberUtils.isNumber(d.getExpression()) && AonNumberUtils.todouble(d.getExpression()) > 0.00 , contextDatas);
 			}
 
 			@Override

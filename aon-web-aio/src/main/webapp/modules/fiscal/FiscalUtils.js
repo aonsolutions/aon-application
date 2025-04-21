@@ -75,7 +75,7 @@ const getModelNew = (model)=> {
   
   return {
     ...model,
-    resultFormat: !isNaN(model.result) ? formatNumber(model.result, 2, "EUR") : null,
+    resultFormat: !isNaN(model.result) ? formatNumber(model.result, 2, 2, "EUR") : null,
     periodText: TAX_ENUMS.TAX_PERIOD[model.period],
     modelText: TAX_ENUMS.TAX_MODEL_TEXT[newModel],
     typeText: TAX_ENUMS.TAX_TYPE[model.type],

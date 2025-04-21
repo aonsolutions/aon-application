@@ -221,7 +221,7 @@ export class AonPresenceList extends AonElement {
 
     let options = [{
       name: "Registro de jornada",
-      aonIcon: 'aon_excel',
+      aonIcon: 'excel',
       permission:true,
       backgroundColor: Apps.TIMECONTROL.color,
       fn: () => modalReport(this.applicationEl, this, "excel")
