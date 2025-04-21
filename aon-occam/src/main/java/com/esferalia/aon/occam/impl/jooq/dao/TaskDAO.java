@@ -608,7 +608,7 @@ public class TaskDAO {
 		if( task.getSource().equals(TaskSource.GROUPED) ) {
 			List<Task> childs = task.getChilds();
 			if(!childs.isEmpty()) {
-				List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(task.getId()) ).collect(Collectors.toList());
+				List<Task> childsOld = getStream(ctx,  f-> f.getParentProperty().eq(task.getId()).and( f.getDomainProperty().eq( task.getDomain().getId() )) ).collect(Collectors.toList());
 				
 				updateParentChilds(ctx, null, childsOld);
 

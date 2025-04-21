@@ -10,8 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryType;
@@ -55,7 +57,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 				.replace("\"", "")
 				.split(",");
 		LinkedList<RegistryType> list = new LinkedList<>();
-		if (types != null) {
+		if(AonStringUtils.isNotBlank(types)) {
 			for (Integer i = 0; i < types2.length; i++) {
 				RegistryType rt = RegistryType.safeValueOf(types2[i]);
 				if(rt != null) list.add(rt);
@@ -74,8 +76,8 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 	private Filter rfilter(AonApiData api, RegistryProperties f) {
     	Filter filter =  f.getDomainProperty().eq(api.getDomain().getId());
  
-    	String name = api.getData().optString("name");
-		String document = api.getData().optString("document");
+    	String name = JsonUtils.getString(api.getData(), IJsonNames.NAME);
+		String document = JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT);
 		
 		if(!AonStringUtils.isBlank(document)) {
 			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
@@ -99,9 +101,10 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
-	
-	private JSONObject registryToJSON(Registry reg, Boolean global) {
-		return RegistryJSON.toJSON(reg).put("global", global);
+	private JSONObject registryToJSON(Registry reg, boolean global) {
+		JSONObject registryJSON = RegistryJSON.toJSON(reg).put(IJsonNames.GLOBAL, global);
+		if(global) registryJSON.remove(IJsonNames.ID);
+		return registryJSON;
 	}
 
 	private static String toBooleanMode(String str) {

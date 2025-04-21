@@ -460,8 +460,8 @@ export class AonParent extends AonElement {
 			options: [
 				{
 					id: this.TRAMIT_INVOICES,
-					name: "Documentos en trámite",
-					icon: "edit_document",
+					name: MSG.DOCUMENTS_IN_PROCESS,
+					icon: MATERIAL_ICONS.EDIT_DOCUMENT,
 					app: Apps.INVOICE,
 					fn: () => {
 						let processedDomains = this.notice?.invoice?.processed?.domains || [];
@@ -487,7 +487,7 @@ export class AonParent extends AonElement {
 				},
 				{
 					id: this.REJECTED_INVOICES,
-					name: "Documentos en revisión",
+					name: MSG.DOCUMENTS_UNDER_REVIEW,
 					icon: MATERIAL_ICONS.REPORT,
 					app: Apps.INVOICE,
 					fn: () => {
@@ -497,7 +497,7 @@ export class AonParent extends AonElement {
 				},
 				{
 					id: this.PENDING_INVOICES,
-					name: "Facturas sin contabilizar",
+					name: MSG.UNACCOUNT_INVOICES,
 					icon: MATERIAL_ICONS.LABEL_IMPORTANT,
 					app: Apps.INVOICE,
 					fn: () => {
@@ -507,7 +507,7 @@ export class AonParent extends AonElement {
 				},
 				{
 					id: this.INBOX_INVOICES,
-					name: "Borradores/Proforma",
+					name: MSG.DRAFTS+"/"+MSG.PROFORMA,
 					icon: MATERIAL_ICONS.INBOX,
 					app: Apps.INVOICE,
 					fn: () => {

@@ -1403,6 +1403,67 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 	}	
 
 	@Test
+	public void testBaseCgcMinPPE()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES","30.00");
+				
+				put("BASE_CGP_MIN",
+						"1381.20");
+				put("BASE_CGP_MAX",
+						"4099.50");
+				put("BASE_CGC_MIN",
+						"1381.20");
+				put("BASE_CGC_MAX",
+						"4099.50");
+				
+			}
+		});
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION","\"01\"");
+					}
+				},
+				new String[] { 
+						"1300.20 * DIAS_TRABAJADOS / DIAS_MES"
+				},
+				new String[] { 
+				}, 
+				null);
+		
+		PaymentConceptRecord ppeConcept = addConcept(aonContext, "PPE", PaymentType.CRA_0000);
+		addPayment(aonContext, contract, ppeConcept, "TOTAL_DEVENGADO; __PPE =(/*user*/100.00/**/); 0.00", "__PPE");
+		
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder() );
+		
+		ISalary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(1300.20, salary.getTotalPayment());
+		Assert.assertEquals(1481.20, salary.getCommonBase());
+		Assert.assertEquals(1481.20, salary.getProfessionalBase());
+		Assert.assertEquals(1300.20, salary.getIrpfBase());
+		
+		
+	}	
+
+	@Test
 	public void testDeferred()
 			throws ExpressionException, SQLException, SalaryException {
 

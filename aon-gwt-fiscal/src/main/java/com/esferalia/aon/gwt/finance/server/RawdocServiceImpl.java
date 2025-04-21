@@ -3,15 +3,20 @@ package com.esferalia.aon.gwt.finance.server;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.RawdocService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -23,8 +28,13 @@ import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.RawdocImpl;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.server.accounting.Rawdoc2AccountingInvoice;
+import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -32,6 +42,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
+import net.aonsolutions.aon.tedi.TediParser;
 import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "Rawdoc Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Rawdoc" })
@@ -39,9 +50,27 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private static final long serialVersionUID = 1249978088517559976L;
 
+//	@Override
+//	public LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset, int limit) throws AonCoreException {
+//		return AON.getRawdocs(occam, params, offset, limit );
+//	}
+
 	@Override
 	public LinkedList<Rawdoc> getRawdocs(Occam occam, RawdocParams params, int offset, int limit) throws AonCoreException {
-		return AON.getRawdocs(occam, params, offset, limit );
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
+			return new RawdocImpl().getRawdocStream(ctx, p -> RawdocUtils.getFilter(p, params),offset,limit)
+				.map( r -> {
+					if (r.isInbox() || r.isProcessed() ) {
+						TediResult tr = TediParser.toAccountingInvoice(ctx, config, r );
+						r.setInvoice( tr.getAccountingInvoice().getInvoice() );
+						// InvoiceRecorderDAO.fillMessages( ctx, occam.getDomain(), r.getInvoice() );
+					}
+					return r;
+				}) 
+				.collect(Collectors.toCollection(LinkedList::new))
+				;
+		}
 	}
 
 	@Override
@@ -83,33 +112,68 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		}			
 	}
 
+	@Override
+	public LinkedList<String> saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds) throws AonCoreException {
+		LinkedList<String> ret = new LinkedList<>();
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			AonConfiguration config = ConfigurationDAO.getConfiguration( ctx );
+			AonCollectionUtils.stream(rawdocIds)
+			.forEach( rawdocId -> {
+				try {
+					String url = getRawdocAttachURL(occam,rawdocId);
+					TediContext tctx = new TediContext()
+						.setAONContext(ctx)
+						.setAonConfiguration( config)
+						.setDomainName(occam.getDomainName())
+						.setDomain(occam.getDomain())
+						.setUser(occam.getUser());
+					TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
+					result.getAccountingInvoice()
+						.setFromRawdoc(true)
+						.setTediParsed(true)
+						.getAttach().setAttachURL(url);
+					AccountingInvoiceDAO.save(ctx, config , result.getAccountingInvoice());					
+				} catch ( TediException | AonCoreException e) {
+					e.printStackTrace();
+					ret.add( e.getMessage() );
+				}			
+			});
+		}
+
+			return ret;
+	}
+
 	private String getRawdocAttachURL(Occam occam, Integer rawdocId) {
 		String url = null;
 		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId);
-		if (rawdoc.getData() != null) {
-
-			HttpServletRequest req = getThreadLocalRequest();
-			String serverName = req.getServerName();
-			int serverPort = req.getServerPort();
-			StringBuilder baseURL = new StringBuilder();
-			if (serverPort != 80 && serverPort != 443) {
-				String scheme = req.getScheme();
-				baseURL
+		if (rawdoc != null) {
+			if (rawdoc.getData() != null) {
+				
+				HttpServletRequest req = getThreadLocalRequest();
+				String serverName = req.getServerName();
+				int serverPort = req.getServerPort();
+				StringBuilder baseURL = new StringBuilder();
+				if (serverPort != 80 && serverPort != 443) {
+					String scheme = req.getScheme();
+					baseURL
 					.append(scheme).append(":")
 					.append("//").append(serverName)
 					.append(":").append(serverPort);
+				}
+				baseURL.append( getThreadLocalRequest().getContextPath() );
+				
+				String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
+				params = Base64.getEncoder().encodeToString(params.getBytes());
+				url = baseURL.toString() + "/ms/download_rawdoc" 
+						+ "/" + occam.getDomainName() 
+						+ "/" + occam.getUser() 
+						+ "/" +  params;
 			}
-			baseURL.append( getThreadLocalRequest().getContextPath() );
-
-			String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
-			params = Base64.getEncoder().encodeToString(params.getBytes());
-			url = baseURL.toString() + "/ms/download_rawdoc" 
-					+ "/" + occam.getDomainName() 
-					+ "/" + occam.getUser() 
-					+ "/" +  params;
-		}
-		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
-			url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+			if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
+				url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+			}
+		} else {
+			System.out.println( "Rawdoc Not found" + rawdocId);
 		}
 		return url;
 	}

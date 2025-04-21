@@ -271,7 +271,7 @@ const paintCompanyCostPieChart = async () => {
       title = `${title} ${startDateText} - ${endDateText}`;
     }
 
-    title = `${title}<br> ${workplaceText} <span class="aonCompanyCostListNewTitle";">${formatNumber(total, 2, "EUR")}<span>`;
+    title = `${title}<br> ${workplaceText} <span class="aonCompanyCostListNewTitle";">${formatNumber(total, 2, 2, "EUR")}<span>`;
 
     let divTitle = document.getElementById("aon-company-costs-listtitleDiv");
     divTitle.innerHTML = title;
@@ -308,7 +308,7 @@ const createLeyend = (leyends) => {
     let amount = createElement(TAG.DIV);
     amount.style.minWidth = "7rem";
     amount.style.textAlign = "right";
-    amount.innerHTML = formatNumber(leyend.amount, 2, "EUR");
+    amount.innerHTML = formatNumber(leyend.amount, 2, 2, "EUR");
     row.appendChild(amount);
 
     if(leyend.breakdown){
@@ -338,7 +338,7 @@ const createLeyend = (leyends) => {
         let amount = createElement(TAG.DIV);
         amount.style.minWidth = "7rem";
         amount.style.textAlign = "right";
-        amount.innerHTML = formatNumber(leyendBreakdown.amount, 2, "EUR");
+        amount.innerHTML = formatNumber(leyendBreakdown.amount, 2, 2, "EUR");
         row.appendChild(amount);
       }
 

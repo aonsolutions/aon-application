@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
+import java.io.ByteArrayInputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -23,11 +25,19 @@ import com.esferalia.aon.occam.api.model.accounting.AmortizationType;
 import com.esferalia.aon.occam.api.model.accounting.AmortizationTypeParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.io.DataUrl;
+import com.esferalia.aon.watson.server.io.DataUrlSerializer;
+import com.esferalia.aon.watson.server.io.IDataUrlSerializer;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.tedi.TEDI;
+import net.aonsolutions.aon.tedi.TediContext;
+import net.aonsolutions.aon.tedi.TediException;
 
 @WebServlet(name = "Account Entry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/AccountEntry" })
 public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet implements AccountEntryService {
@@ -64,6 +74,37 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 		return ACCOUNTING.rectifyInvoice(occam, invoiceId, data);
 	}
 
+	@Override
+	public TediResult parseInvoice(String domainName, String user, int domain, String fileName, String content) throws AonCoreException {
+		try {
+			IDataUrlSerializer serializer = new DataUrlSerializer();
+			DataUrl unserialized = serializer.unserialize(content);
+			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
+			String extension = AonStringUtils.substringAfterLast(fileName, ".");
+			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input, MimeType.getByExtension(extension));
+			result.getAccountingInvoice()
+				.setFromRawdoc(false)
+				.setTediParsed(true);
+			return result;
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
+		}
+	}
+	
+	@Override
+	public TediResult validateInvoice(String domainName, String user, int domain, TediResult result ) throws AonCoreException {
+		try {
+			return TEDI.validateInvoice(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), result);
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		} 	
+	}
+	
 	// *************************************	
 	// *************************************	
 	// *************************************	

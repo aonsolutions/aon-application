@@ -412,7 +412,10 @@ public enum ContextVariable implements IResourceable {
 	BOE_A_2024_26917_START("INICIO_BOE_A_2024_26917", VariableType.DATE, false),
 	
 	
-	MONTHLY("COTIZACION_MENSUAL", VariableType.BOOLEAN, false)
+	MONTHLY("COTIZACION_MENSUAL", VariableType.BOOLEAN, false),
+	
+	
+	PLUS_BASE("BASE_ADICIONAL", VariableType.DOUBLE)
 	;
 
 	public static final String ALL = "_P";
@@ -618,6 +621,10 @@ public enum ContextVariable implements IResourceable {
 
 	public static boolean isContextVariable(String name) {
 		return getVariableByName(name) != null  || NAMES.contains(name);
+	}
+	
+	public static List<String> getNames() {
+		return NAMES;
 	}
 
 	public static Date parse(String str) throws ParseException {

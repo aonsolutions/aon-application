@@ -754,10 +754,23 @@ export class AonReg extends AonElement {
 		parent.appendChild(table);
 
 		if(!this.registry.getBanks() || this.registry.getBanks().length <= 0)
-			this.registry.addBank(new Bank().setRegistry(this.registry.getId()));
-		
-		this.registry.getBanks().forEach((bank, i) => 
-			this.buildBank(table, bank, i));
+			this.buildEmptyBank(table);
+		else this.registry.getBanks().forEach((bank, i) => this.buildBank(table, bank, i));
+	}
+
+	buildEmptyBank(table) {
+		table.addRow(); 
+		let addBank = new AonIconButton();
+		addBank.id = this.BANK_ADD;
+		addBank.title = MSG.ADD;
+		addBank.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		addBank.addEventListener(EVENT.CLICK, () => {
+			let bank = new Bank().setRegistry(this.registry.getId());
+			this.registry.addBank(bank);
+			table.removeRows();
+			this.buildBank(table, bank, 0);
+		});
+		table.addCell(addBank);
 	}
 
 	buildBank(table, bank, i) {
@@ -791,9 +804,9 @@ export class AonReg extends AonElement {
 
 			aonBank.addEventListener(EVENT.DELETE, () => {
 				if(table.getRowsCount() === 1) {
-					let aux = new Bank().setRegistry(this.registry.getId())
-					aonBank.setBank(aux);
-					this.registry.getBanks()[i] = aux;
+					this.registry.setBanks([]);
+					table.removeRows();
+					this.buildEmptyBank(table);
 				} else {
 					let last = this.getElement(this.BANK_ADD + i).isVisible();
 					this.registry.getBanks()[i].remove();

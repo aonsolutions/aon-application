@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.Administration;
+
 public class Workplace implements Serializable {
 	
 	private static final long serialVersionUID = -6673378118872331822L;
@@ -12,7 +14,7 @@ public class Workplace implements Serializable {
 	private boolean active;
 	private Integer address;
 	private Integer customer;
-	private Byte economicagreement;
+	private Administration economicAgreement;
 	private Integer enterprise;
 	private Integer scope;
 	
@@ -51,11 +53,11 @@ public class Workplace implements Serializable {
 		this.domain = domain;
 		return this;
 	}
-	public Byte getEconomicagreement() {
-		return economicagreement;
+	public Administration getEconomicAgreement() {
+		return economicAgreement;
 	}
-	public Workplace setEconomicagreement(Byte economicagreement) {
-		this.economicagreement = economicagreement;
+	public Workplace setEconomicAgreement(Administration economicAgreement) {
+		this.economicAgreement = economicAgreement;
 		return this;
 	}
 	public Integer getEnterprise() {
@@ -79,6 +81,4 @@ public class Workplace implements Serializable {
 		this.scope = scope;
 		return this;
 	}
-	
-	
 }

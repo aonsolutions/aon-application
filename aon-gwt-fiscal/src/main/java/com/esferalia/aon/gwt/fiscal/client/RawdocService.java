@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -25,8 +26,10 @@ public interface RawdocService extends RemoteService {
 	TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException;
 	
 	// --------------------------------------------------------------- PENDING 
-	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice);
-	Boolean processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice);
+	AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, String invoice) throws AonCoreException;
+	Boolean processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice) throws AonCoreException;
 	String getS3Url(Rawdoc rawdoc);
+	
+	LinkedList<String> saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds) throws AonCoreException;
 
 }

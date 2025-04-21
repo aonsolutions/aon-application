@@ -12,6 +12,7 @@ import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon-figma.css';
+import { getThemeUrl } from './services/companyService.js';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -55,12 +56,25 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).")
 }
 
-export const loadTheme = () => {
+export const loadTheme = async  () => {
     // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
 	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
+	
+	let params = {
+		domain: document.domain, 
+		paramTheme: getParam("theme") || '', 
+		lsTheme: LS.getTheme() || '', 
+		cookieTheme: getCookie("theme") || '', 
+		lsAonTheme: LS.AON_THEME || ''
+	};
+	
 	let themeUrl = UA.isMobile() 
         ? LS.AON_MOBILE_ANDROID 
-        : location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;
+        : await getThemeUrl(params);
+	console.log(themeUrl);
+		
+		
+		/* location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;*/
 
 	return new Promise((resolve, reject) => {
 		try {

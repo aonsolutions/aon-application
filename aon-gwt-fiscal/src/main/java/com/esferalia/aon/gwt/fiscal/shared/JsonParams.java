@@ -20,6 +20,7 @@ import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.user.client.Window;
 
 public class JsonParams extends JSONObject {
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -293,6 +294,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.VALIDATE,new JSONNumber( AonNumberUtils.toInteger( params.isValidate())));
 		json.put(IRequestParamsNames.MUST_FLATTEN,new JSONNumber( AonNumberUtils.toInteger( params.mustFlatten())));
 		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
+		json.put(IRequestParamsNames.SELECT,AonStringUtils.isBlank(params.getSelect())? JSON_NULL : new JSONString( params.getSelect()));
 		JSONArray schemasOffsets = new JSONArray();
 		for (int i = 0; i < ConsoleSchema.values().length ; i++) {
 			schemasOffsets.set(i, new JSONNumber((i < params.getSchemasOffsets().length)?params.getSchemasOffsets()[i]:0));  

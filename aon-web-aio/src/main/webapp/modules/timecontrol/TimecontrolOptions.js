@@ -1,6 +1,6 @@
 import { CONSTANT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments";
 import Apps from "../../services/app";
-import { SIGNIN_VIEWS } from "./signinEnums";
+import { SIGNIN_VIEWS, SigninSidenav } from "./signinEnums";
 import * as JSF from "../aon-jsf-app.js";
 
   export const showView = (view) => {
@@ -19,7 +19,10 @@ import * as JSF from "../aon-jsf-app.js";
     name: MSG.PRESENCE,
     title: MSG.PRESENCE,
     icon: MATERIAL_ICONS.ACCOUNT_BOX,
-    fn: () => showView(SIGNIN_VIEWS.AON_PRESENCE_LIST)
+    fn: () => {
+      let tc = document.querySelector("aon-timecontrol");
+      tc.setDataFilter({period: SigninSidenav.PERIOD.TODAY.id});
+    }
   };
 
   export const LOCATION = {

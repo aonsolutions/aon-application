@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
-import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.RawdocCallback;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.RawdocCallback;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.type.RawdocNature.RawdocNatureVisitor;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -27,7 +27,7 @@ class RawdocTable extends ScrollPanel {
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 ); 
 	private int lastScrollPos = 0;
-
+	
 	RawdocTable(RawdocModuleOptions opt, RawdocCallback cbk) {
 		this.setStyleName(AON.CSS.aonScrollArea());
 		
@@ -80,15 +80,15 @@ class RawdocTable extends ScrollPanel {
 		container.clear();
 		container.add(grid);
 		grid.clear();
-		paintHeader();
+		cbk.resetCounters();
+		paintHeader( cbk );
 		offset.setValue(0);
 		search( opt, cbk, offset.getValue());
 	}
 	
 	private void search(RawdocModuleOptions opt, RawdocCallback cbk, final int ofs) {
 		if (!isMoreData()) return;
-		RawdocModuleNew.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT
-			, new AsyncCallback<LinkedList<Rawdoc>>() {
+		RawdocModule.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT			, new AsyncCallback<LinkedList<Rawdoc>>() {
 				@Override
 				public void onSuccess(LinkedList<Rawdoc> rawdocs) {
 					paintRows( opt, cbk, ofs, rawdocs );
@@ -102,8 +102,10 @@ class RawdocTable extends ScrollPanel {
 		);
 	}
 	
-	private void paintHeader() {
+	private void paintHeader(RawdocCallback cbk) {
 		grid.addHeaderRow()
+			.addCell(cbk.getSelectedCount(),AON.CSS.aonWidth20(),AON.CSS.aonTextCenter())
+			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())
 			.addCell( new Label(AON.MSG.status()), AON.CSS.aonWidth40() ,AON.CSS.aonTextCenter())

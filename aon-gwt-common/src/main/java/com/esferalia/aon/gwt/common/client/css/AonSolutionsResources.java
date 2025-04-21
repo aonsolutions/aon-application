@@ -185,6 +185,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-repair.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRepair();
+	
 	@Source("icons/aon-icon-move-group.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMoveGroup();
@@ -415,6 +419,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-excel.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconExcel();
+	
+	@Source("icons/aon-icon-circle-yellow.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCircleYellow();
+
+	@Source("icons/aon-icon-circle-orange.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCircleOrange();
+
+	@Source("icons/aon-icon-circle-blue.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCircleBlue();
 	
 	@Source("icons/aon-icon-circle-green.svg")
 	@MimeType("image/svg+xml")

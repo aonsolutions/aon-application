@@ -283,7 +283,7 @@ export class AonNumber extends AonElement {
         let newValue = value;
         let decimals = this.decimals || 0;
         if (this.format) {
-            newValue = formatNumber(value, decimals);
+            newValue = formatNumber(value, decimals, decimals);
         }
         return newValue;
     }

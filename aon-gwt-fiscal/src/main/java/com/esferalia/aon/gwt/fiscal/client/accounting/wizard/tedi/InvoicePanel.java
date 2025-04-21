@@ -10,14 +10,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.TediProblems.ITediProblemsCallback;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -32,7 +29,6 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -57,12 +53,6 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
 	
-	private static final TediServiceAsync TEDI_SERVICE;
-	static {
-		TediServiceAsync serviceRaw = GWT.create(TediService.class);
-		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
-	}
-
 	private static final Logger LOGGER = Logger.getLogger(InvoicePanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
@@ -237,7 +227,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		if (getWrapper().getInvoice() != null && getWrapper().getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : getWrapper().getInvoice().getDetails()) {
 				LOGGER.info(detail.getSource().getDescription());
-				if (detail.getSource() != InvoiceSource.ACCOUNT) {
+				if (detail.getSource() != InvoiceSource.ACCOUNT
+				 && detail.getSource() != InvoiceSource.TEDI) {
 					sourceAccount = false;
 					break;
 				}
@@ -615,7 +606,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			
 			if ( allowParse && invoiceCallback.getConfiguration().isOCRActive() ) {
 				final MimeType attachMimeType = mimeType;
-				TEDI_SERVICE.parseInvoice(
+				getAccountEntryService().parseInvoice(
 					invoiceCallback.getOccam().getDomainName()
 					,invoiceCallback.getOccam().getUser(), 
 					invoiceCallback.getOccam().getDomain()
@@ -665,6 +656,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		setWrapper(ai);
 		getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
+			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 			innerPaintEntry();
 			editInvoice();
 			getCallback().getModule().onPreview(getWrapper());

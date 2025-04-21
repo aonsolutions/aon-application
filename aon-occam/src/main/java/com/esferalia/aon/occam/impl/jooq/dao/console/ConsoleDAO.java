@@ -27,6 +27,7 @@ import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Schema;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UpdateConditionStep;
@@ -122,12 +123,25 @@ public class ConsoleDAO {
 					.asTable()
 					.as("userCount");
 			
-			return ctx.getDslContext().select()
+			SelectOnConditionStep<Record> sentence = ctx.getDslContext().select()
 				.from(DOMAIN)
 				.leftOuterJoin(userCount).on(DOMAIN.ID.eq(USER_COUNT_DOMAIN))
 				.leftOuterJoin(childCount).on(DOMAIN.ID.eq(childCountParent))
 				.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.AON_SUPPORT_ENABLED.toString())))
-				.where( getFilter(params) )
+			;			
+			if ( AonStringUtils.isNotEmpty( params.getSelect() )  ) {
+				String subTableName = "ConsoleSubTable";
+				Field<Integer> subTableDomain = DSL.field( DSL.name( subTableName, DOMAIN_LABEL ), Integer.class );
+				Table<?> subTable = ctx.getDslContext()
+					.parser()
+					.parseSelect( params.getSelect() )
+					.asTable(subTableName);
+				sentence = sentence
+					.innerJoin(subTable).on(DOMAIN.ID.eq(subTableDomain));
+			}
+			
+			return sentence
+				.where( getFilter( params) )
 				.offset(params.getOffset( cs ))
 				.limit(params.getLimit())
 				.fetch()
@@ -136,12 +150,14 @@ public class ConsoleDAO {
 					ConsoleDomain consoleDomain = new ConsoleDomain();
 					DomainFiller.fillDomain(rec, consoleDomain,  DOMAIN);
 					BigDecimal activeCount = rec.getValue(childActiveCount);
+					Number userCo = rec.getValue(USER_COUNT);
+					Integer definedUsers = userCo==null?null: userCo.intValue();
 					consoleDomain
 						.setSchema( cs.getSchema() )
 						.setRemoteAccessEnabled( rec.getValue(APP_PARAM.ID) != null)
 						.setChildCount( AonNumberUtils.zeroIfNull(rec.getValue(childCountField)) )
 						.setActiveChildCount( activeCount==null?0:activeCount.intValue()  )
-						.setDefinedUsers( AonNumberUtils.zeroIfNull(rec.getValue(USER_COUNT)) )
+						.setDefinedUsers( AonNumberUtils.zeroIfNull(definedUsers) )
 					;	
 					return consoleDomain; 
 				});
@@ -212,7 +228,7 @@ public class ConsoleDAO {
 		return (a==null)?b:a.and(b);
 	}
 	private static Condition getFilter(DomainParams params) {
-		Condition c = DSL.trueCondition();
+		Condition c = DSL.noCondition();
 		if (params.getId() != null ) {
 			c = and(c, DOMAIN.ID.eq(params.getId()));
 		}

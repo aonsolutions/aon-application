@@ -10,7 +10,10 @@ import { AonDateUtils } from '../utils/AonDateUtils.js';
 import { createList, createSelect } from '../../components/CreateComponent.js';
 
 import * as ACTION from '../actions.js';
+import * as OPTION from './InvoiceOptions.js';
 import * as LS from '../../services/localStorageService.js';
+import { addCounter, transferCounter } from './InvoiceCounter.js';
+import { getRejectFromOption, getRestoreFromOption, getRestoreToOption, getTrashPendingFromOption } from './InvoiceUtils.js';
 
 export class AonInvoiceList extends AonElement {
 
@@ -37,6 +40,10 @@ export class AonInvoiceList extends AonElement {
 		this.initialize();
 		this.buildDur().then(() => this.build());
  	}
+
+	disconnectedCallback() {
+		this.removeInvoiceActions();
+	}
 
 	initialize() {
 		this.id = this.id || 'aonInvoiceList';
@@ -109,11 +116,11 @@ export class AonInvoiceList extends AonElement {
 		invoice.date = AonDateUtils.parse(invoice.date);
 		invoice.dateTable = AonDateUtils.formatDate(invoice.date);
 		invoice.documentNumber =  getDocumentNumber(invoice);
-		invoice.totalParse = formatNumber(invoice.total, 2, "EUR");
+		invoice.totalParse = formatNumber(invoice.total, 2, 2, "EUR");
 		invoice.icons = this.buildRowIcons(invoice); 
 		let tr = this.getTable().addRow(invoice, () => this.aonInvoice(invoice, idx), (e) => this.aonInvoiceContextMenu(e, invoice, idx));
 		if(invoice.altered) {
-			tr.style.backgroundColor = '#ffe3e3';
+			// tr.style.backgroundColor = '#ffe3e3';
 		}
 		tr.id = "aonInvoiceRow";
 	}
@@ -196,7 +203,7 @@ export class AonInvoiceList extends AonElement {
 			icons.push(icon);
 		}
 
-		if(this.getDur().isOcr() && (invoice.invofox || invoice.ocrStatus)) {
+		if(this.getDur().isInvofox() && (invoice.invofox || invoice.ocrStatus)) {
 			let icon = {
 				icon: this.getOcrInvoiceStatusIcon(),
 				title: this.getOcrInvoiceStatusIconTitle(invoice),
@@ -339,27 +346,26 @@ export class AonInvoiceList extends AonElement {
 		this.removeInvoiceActions();
 		let aonInvoice = this.getElement('aonInvoice');
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
-		toolbar.addSeparator();
 
 		if(this.getFilter().status === 'inbox') {
-			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			//aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
 			toolbar.addSeparator();
-			// aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
-			// aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(ACTION.REJECT_INVOICE, () => this.rejectInvoices());
+			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 		} else if(this.getFilter().status === CONSTANT.REFUSED || this.getFilter().status === CONSTANT.REJECTED){
-			//aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
-			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
+			toolbar.addSeparator();
+			aonInvoice.addToolbarOption2(ACTION.DELETE_TO_TRASH, () => this.deleteInvoices());
+			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status ===  CONSTANT.TRASH || this.getFilter().status === CONSTANT.DRAFT){
-			// aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
-			//aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
+			toolbar.addSeparator();
+			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
+			aonInvoice.addToolbarOption2(ACTION.RESTORE_INVOICE, () => this.restoreInvoices());
 		} else if(this.getFilter().status === 'accounting'){
+			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
-			//if(this.isBeta()) {
-			//	aonInvoice.addToolbarOption2(ACTION.DELETE_INVOICES, () => this.nullInvoices());
-			//}
 		} else if(this.isProcessing()) {
+			toolbar.addSeparator();
 			aonInvoice.addToolbarOption2(ACTION.DELETE_FOREVER, () => this.deleteForeverInvoices());
 		}
 	}
@@ -368,6 +374,7 @@ export class AonInvoiceList extends AonElement {
 		let cont = 0;
 		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
+			this.updateCounter(getTrashPendingFromOption(invoice), OPTION.RAWDOC_TRASH, 1);
 			invoice.status = CONSTANT.DRAFT;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
@@ -385,7 +392,10 @@ export class AonInvoiceList extends AonElement {
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
-		d.addAcceptAction(() => deleteRawdocInvoices(this.getTable().selected.map(r => r.id)).then(() => this.init()));
+		d.addAcceptAction(() => {
+			this.updateCounter(OPTION.RAWDOC_TRASH, undefined, -1 * this.getTable().selected.length);
+			deleteRawdocInvoices(this.getTable().selected.map(r => r.id)).then(() => this.init())
+		});
 		d.open();
 	}
 
@@ -393,6 +403,7 @@ export class AonInvoiceList extends AonElement {
 		let cont = 0;
 		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
+			this.updateCounter(getRejectFromOption(invoice), OPTION.RAWDOC_REJECT, 1);
 			invoice.status = CONSTANT.REJECTED;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
@@ -484,6 +495,7 @@ export class AonInvoiceList extends AonElement {
 		let cont = 0;
 		let aonInvoiceTable = this.getTable();
 		aonInvoiceTable.selected.forEach((invoice, i) => {
+			this.updateCounter(getRestoreFromOption(invoice), getRestoreToOption(invoice), 1);
 			invoice.status = CONSTANT.INBOX;
 			insertInvoice(invoice).then(() => {
 				cont = cont + 1;
@@ -493,6 +505,18 @@ export class AonInvoiceList extends AonElement {
 			});
 		});
 	}
+
+	updateCounter(from, to, count) {
+		if(!to) {
+			addCounter(from, count);
+			this.getApplication().getParent().updateCounterSpan(from);
+		}  else {
+			transferCounter(from, to, count);
+			this.getApplication().getParent().updateCounterSpan(from);
+			this.getApplication().getParent().updateCounterSpan(to);
+		}
+	}
+	
 
 	removeInvoiceActions() {
 		let aonInvoice = this.getElement('aonInvoice');

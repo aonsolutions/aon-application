@@ -218,16 +218,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== RAWDOC
 	//
 	private enum RawdocEntryPoint {
-		RawdocModule {
+		RawdocModule{
 			@Override
 			void run() {
 				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.run();
-			}
-		},
-		RawdocModuleNew {
-			@Override
-			void run() {
-				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModuleNew.run();
 			}
 		},
 		RawdocRecordModule {

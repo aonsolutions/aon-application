@@ -1,32 +1,45 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainTypeBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
  
 public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<DomainParams>{
 	
 	public static final double HEIGTH = 115;
 	
 	private static final String ALL = "-- TODOS --";
+
+	private static final int[] AMK_ARRAY = {52, 48, 110, 115, 48, 108, 117, 116, 49, 48, 110, 115};
+	private static final String AMK = 
+		AonCollectionUtils.stream(AMK_ARRAY)
+			.mapToObj(i -> String.valueOf((char) i))
+			.reduce("", String::concat);
 	
 	private ListBox schemaBox;
 	private AonIntegerBox idBox;
@@ -45,9 +58,9 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	private InlineLabel advancedModeLabel;
 	private boolean advancedMode;
 	private String[] schemas;
+	private String select;
 	
-	private AonSearchPanelButton cleanButton;
-	private AonSearchPanelButton refreshButton;
+	private FlowPanel advancedButtonsPanel;
 	
 	public ConsoleDomainFilterPanel(final ConsoleModuleOptions opt) {
 		setStyleName(AON.CSS.aonSearchPanel());
@@ -167,6 +180,12 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		advancedModePassword.addValueChangeHandler(e -> checkAdvanced(opt));
 		
 		advancedModeLabel = new InlineLabel("Modo avanzado");
+		advancedModeLabel.addMouseDownHandler( e -> {
+			if (e.isControlKeyDown()) {
+				advancedModePassword.setValue( AMK, false);
+				checkAdvanced(opt);
+			}
+		});
 		advancedModeLabel.addStyleName( AON.CSS.aonBold() );
 	}
 
@@ -175,16 +194,28 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 		mainTab.setStyleName( AON.CSS.aonBlockCenter());
 		mainTab.addStyleName( AON.CSS.aonWidthAlmostAll());
 		
-		cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
+		AonSearchPanelButton cleanButton = new AonSearchPanelButton(AON.MSG.clean(),AON.CSS.aonIconClear());
 		cleanButton.addClickHandler(event -> clean(opt));
 
-		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		AonSearchPanelButton refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refreshButton.addClickHandler(event -> fire(opt));
 		
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
+		
+		advancedButtonsPanel = new FlowPanel();
+		advancedButtonsPanel.setStyleName(AON.CSS.aonNowrap());
+		advancedButtonsPanel.addStyleName(AON.CSS.aonBackgroundHighlightedGreen());
+		advancedButtonsPanel.addStyleName(AON.CSS.aonPaddingLeft());
+		advancedButtonsPanel.addStyleName(AON.CSS.aonPaddingRight());
+		advancedButtonsPanel.addStyleName(AON.CSS.aonMarginRight());
+		advancedButtonsPanel.addStyleName(AON.CSS.aonTextCenter());
+		advancedButtonsPanel.setVisible( advancedMode );
+		AonSearchPanelButton selectButton = new AonSearchPanelButton("Editar SELECT",AON.CSS.aonIconEdit());
+		selectButton.addClickHandler(event -> onEditSelect(opt));
+		advancedButtonsPanel.add( selectButton );
 		
 		FlowPanel advancedModelPanel = new FlowPanel();
 		advancedModelPanel.add( advancedModeLabel );
@@ -230,11 +261,34 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			.addCell(new Label(" hasta "))
 			.addCell(toExpirationDateBox)
 			.addCell(buttonsPanel)
+			.addCell(advancedButtonsPanel)
 			.addCell(advancedModelPanel, AON.CSS.aonTextRight() , AON.CSS.aonWidthAuto())
 			;
 		mainTab.add(rowTable3);
 		
 		setWidget(mainTab);
+	}
+
+	private void onEditSelect(ConsoleModuleOptions opt) {
+		EditSelectPanel rrp = new EditSelectPanel(opt, new EditSelectPanelCallback() {
+			
+			@Override
+			public void onAccept() {
+				fire( opt );
+			}
+			
+			@Override
+			public String getSelect() {
+				return ConsoleDomainFilterPanel.this.select;
+			}
+			@Override
+			public void setSelect(String select) {
+				ConsoleDomainFilterPanel.this.select = select;
+			}
+		});
+		Scheduler.get().scheduleDeferred(() -> rrp.setFocus(true));
+		rrp.center();
+		rrp.show();
 	}
 
 	private void clean(ConsoleModuleOptions opt) {
@@ -253,12 +307,13 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	}
 	
 	private void checkAdvanced(final ConsoleModuleOptions opt) {
-		advancedMode = ("40ns0lut10ns".equals(advancedModePassword.getValue()));
+		advancedMode = (AMK.equals(advancedModePassword.getValue()));
 		refreshAdvancedModePanel();
 		fire(opt);
 	}
 
 	private void refreshAdvancedModePanel() {
+		advancedButtonsPanel.setVisible( advancedMode );
 		if (advancedMode) {
 			advancedModeLabel.addStyleName( AON.CSS.aonColorGreen() );
 			advancedModeLabel.removeStyleName( AON.CSS.aonColorRed() );
@@ -282,7 +337,8 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			.setToLastAccess(toLastAccessBox.getValue())
 			.setFromExpirationDate(fromExpirationDateBox.getValue())
 			.setToExpirationDate(toExpirationDateBox.getValue())
-			.setAdvancedMode(advancedMode);
+			.setAdvancedMode(advancedMode)
+			.setSelect( select );
 		
 		if ( parentBox.getDomain() != null) {
 			params.setParent(parentBox.getDomain().getId());
@@ -346,5 +402,105 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 	public boolean isAdvancedMode() {
 		return advancedMode;
 	}
+
+	static interface EditSelectPanelCallback {
+		String getSelect();
+		void setSelect( String reason);
+		void onAccept();
+		default void onCancel() {
+		}
+	}
+	
+	static class EditSelectPanel extends AonCustomDialog implements Focusable {
+		
+		final TextArea select;
+				
+		EditSelectPanel(ConsoleModuleOptions opt, EditSelectPanelCallback callback) {
+			this.setCaption("Edit SELECT");
+			FlowPanel reasonPanel = new FlowPanel();
+			reasonPanel.setStyleName(AON.CSS.aonTextCenter());
+			reasonPanel.addStyleName(AON.CSS.aonPadding());
+			
+			select = new TextArea();
+			select.setWidth("800px");
+			select.setHeight("300px");
+			if (AonStringUtils.isNotEmpty( callback.getSelect() )) {
+				select.setValue( callback.getSelect() );
+			}
+			select.addKeyUpHandler(event1 -> {
+				if (event1.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					this.hide();
+					callback.onCancel();
+				}
+			});
+		
+			FlowPanel buttons = new FlowPanel();
+			buttons.setStyleName(AON.CSS.aonTextCenter());
+			buttons.addStyleName(AON.CSS.aonMarginTop());
+		
+			final Button okButton = new Button();
+			okButton.setStyleName(AON.CSS.aonOkButton());
+			okButton.setText( AON.MSG.accept());
+			okButton.addKeyUpHandler(event1 -> {
+				if (event1.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					this.hide();
+					callback.onCancel();
+				}
+			});
+			
+			okButton.addClickHandler(event1 -> {
+				if (AonStringUtils.isBlank( select.getValue() )) {
+					AonMessageDialog msg = new AonMessageDialog();
+					msg.show("ERROR", "Debe indicar una raz\u00F3n para proceder a rechazar el documento.", () -> {});
+				} else {
+					okButton.setEnabled(false);
+					this.hide();
+					callback.setSelect( select.getValue() );
+					callback.onAccept();
+				}
+			});
+			buttons.add(okButton);
+		
+			final Button cancelButton = new Button();
+			cancelButton.setStyleName(AON.CSS.aonCancelButton());
+			cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+			cancelButton.setText( AON.MSG.cancelAction());
+			cancelButton.addClickHandler(event1 -> {
+				cancelButton.setEnabled(false);
+				this.hide();
+				callback.onCancel();
+			});
+			cancelButton.addKeyUpHandler(event1 -> {
+				if (event1.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					this.hide();
+					callback.onCancel();
+				}
+			});
+			buttons.add(cancelButton);
+			Label helpLabel1 = new Label();
+			helpLabel1.setStyleName( AON.CSS. aonMarginTop() );
+			helpLabel1.setText("Se debe realizar una SELECT correcta cuya columna de selección sea \"domain\" solo. Por ejemplo: ");
+			Label helpLabel2 = new Label();
+			helpLabel2.setStyleName( AON.CSS.aonMargin() );
+			helpLabel2.addStyleName( AON.CSS.aonItalic() );
+			helpLabel2.addStyleName( AON.CSS.aonPaddingLeft() );
+			helpLabel2.setText("SELECT domain FROM <table> <WHERE ... > group by domain having count(id) > 0" );
+			reasonPanel.add(select);
+			reasonPanel.add(helpLabel1);
+			reasonPanel.add(helpLabel2);
+			reasonPanel.add(buttons);
+			this.add(reasonPanel);
+		}
+
+		@Override
+		public void setFocus(boolean focused) {
+			select.setFocus( focused );
+		}
+		
+		@Override public int getTabIndex() {return 0;}
+		@Override public void setAccessKey(char arg0) {/*Nothing*/}
+		@Override public void setTabIndex(int arg0) {/*Nothing*/}
+	}
+
 
 }

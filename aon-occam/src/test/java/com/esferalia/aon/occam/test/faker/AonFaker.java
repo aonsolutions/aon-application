@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CarrierStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
@@ -960,15 +961,14 @@ public class AonFaker {
 	public static Workplace getWorkplace() {
 		Random random = new Random();
 		
-		byte[] bytes = {0,1};
-		
+		Administration[] administrations = Administration.values();
 		return new Workplace()
 				.setActive(random.nextBoolean())
 				.setAddress(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setCustomer(getCustomer().getId())
 				.setDescription(Faker.instance().zelda().game())
 				.setDomain(getDomain().getId())
-				.setEconomicagreement(bytes[random.nextInt(bytes.length)])
+				.setEconomicAgreement(administrations[random.nextInt(administrations.length)])
 				.setEnterprise(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setId(Integer.parseInt(Faker.instance().numerify("#####")))
 				.setScope(getScope().getId())

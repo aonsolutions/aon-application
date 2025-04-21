@@ -15,6 +15,8 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -293,11 +295,12 @@ public class AyudatInvofoxCounters {
 	}
 	
 	private static void readExcel() throws IOException {
-		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/February_2025.xlsx" );
+		FileOutputStream fos = new FileOutputStream( "/home/ecastellano/TRABAJO/INVOFOX/USAGE/March_2025.xlsx" );
 		ExcelAction action = new ExcelAction( );
 		action.initialize("USAGE");
 		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
 		LinkedHashMap<String, Invofox> map = new LinkedHashMap<>();
+		DataFormatter dataFormatter = new DataFormatter();
 		try (FileInputStream fis = new FileInputStream(f)) {
 			try (XSSFWorkbook workbook = new XSSFWorkbook(fis)){
 				XSSFSheet sheet = workbook.getSheetAt(0);
@@ -307,7 +310,10 @@ public class AyudatInvofoxCounters {
 					System.out.print("Line ..: " + line);
 					Row row =  rowIterator.next();
 					if (line > 0) {
-						String document = row.getCell( 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK ).getStringCellValue();
+						Cell cell = row.getCell( 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK );
+						String document = (cell.getCellType() == CellType.NUMERIC)
+							?dataFormatter.formatCellValue( cell )
+							:cell.getStringCellValue();
 						System.out.print(" " + document + " ---> ");
 						if (AonStringUtils.isNotBlank( document )) {
 							double processed = row.getCell( 3 ).getNumericCellValue();
@@ -321,6 +327,8 @@ public class AyudatInvofoxCounters {
 							} else {
 								invofox.addProcessed( processed );
 							}
+						} else {
+							System.out.print(" EMPTY");
 						}
 					}
 					System.out.println();

@@ -239,7 +239,7 @@ export class AonTax extends AonElement {
 
   getTotal(models) {
     let total = models.reduce((t, model) => t + model.result, 0);
-    return formatNumber(total, 2, "EUR");
+    return formatNumber(total, 2, 2, "EUR");
   }
 
   openDialog(resp) {
@@ -307,7 +307,7 @@ export class AonTax extends AonElement {
 	    const divAeatRectificationOneTextTwo = this.createElement(TAG.DIV);
 	    divAeatRectificationOneTextTwo.style.textAlign = "end";
 	    divAeatRectificationOneTextTwo.style.color = "black";
-	    divAeatRectificationOneTextTwo.textContent = formatNumber(Math.abs(resp.result)-resp.amountRectification, 2, "EUR");
+	    divAeatRectificationOneTextTwo.textContent = formatNumber(Math.abs(resp.result)-resp.amountRectification, 2, 2, "EUR");
 	    divAeatRectificationOne.appendChild(divAeatRectificationOneTextTwo);
 	    div.appendChild(divAeatRectificationOne);
 	    
@@ -322,7 +322,7 @@ export class AonTax extends AonElement {
 	    const divAeatRectificationTwoTextTwo = this.createElement(TAG.DIV);
 	    divAeatRectificationTwoTextTwo.style.textAlign = "end";
 	    divAeatRectificationTwoTextTwo.style.color = "black";
-	    divAeatRectificationTwoTextTwo.textContent = formatNumber(resp.amountRectification, 2, "EUR");
+	    divAeatRectificationTwoTextTwo.textContent = formatNumber(resp.amountRectification, 2, 2, "EUR");
 	    divAeatRectificationTwo.appendChild(divAeatRectificationTwoTextTwo);
 	    div.appendChild(divAeatRectificationTwo);
 	}

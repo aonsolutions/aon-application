@@ -322,6 +322,12 @@ public class TediContextVisitor implements InvoiceErrorKeyVisitor<ICallback> {
 	@Override public void visitIrpfRate(ICallback callback ){noVisit();}
 	@Override public void visitPayMethod(ICallback callback){noVisit();}
 	@Override public void visitIrpfQuota(ICallback callback ){noVisit();}
+	@Override public void visitInvestment(ICallback callback ){noVisit();}
+	@Override public void visitSurcharge(ICallback callback ){noVisit();}
+	@Override public void visitGeneric(ICallback callback ){noVisit();}
+	@Override public void visitWithholding(ICallback callback ){noVisit();}
+	@Override public void visitExpenseAccount(ICallback callback ){noVisit();}
+	
 
 	//--------------------------------------------------------------------------- 
 	// ---------------------------------------------------------------- [PRIVATE]

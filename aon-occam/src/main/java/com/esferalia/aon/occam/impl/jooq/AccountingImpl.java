@@ -253,6 +253,11 @@ public class AccountingImpl implements IAccounting {
 		return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, invoiceId);
 	}
 	@Override
+	public AccountingInvoice getOrInitializeAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId) {
+		return AccountingInvoiceDAO.getOrInitializeAccountingInvoiceFromInvoice(ctx, invoiceId);
+	}
+	
+	@Override
 	public AccountingInvoice getRegistryLastAccountingInvoice(AONContext ctx, Integer registryId) {
 		return AccountingInvoiceDAO.duplicateLastAccountingInvoice(ctx, registryId);
 	}
