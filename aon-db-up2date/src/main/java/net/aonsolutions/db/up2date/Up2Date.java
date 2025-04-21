@@ -30,7 +30,6 @@ import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 =======
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024InsertFaseIII;
->>>>>>> master
 
 public class Up2Date {
 
