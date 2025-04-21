@@ -322,7 +322,9 @@ public class JooqAgreementTab {
 			payment.setName(agreementPaymentRecord.get(PAYMENT_CONCEPT.CODE));
 			payment.setType(null != agreementPaymentRecord.get(AGREEMENT_PAYMENT.TYPE) ? getPaymentType(agreementPaymentRecord.get(AGREEMENT_PAYMENT.TYPE)) : getPaymentType(agreementPaymentRecord.get(PAYMENT_CONCEPT.TYPE)));
 			payment.setDescription(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.DESCRIPTION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.DESCRIPTION));
-			payment.setExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION)) ? (agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION) + agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION)) : agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
+			payment.setExpression(
+					AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION)) 
+						?  agreementPaymentRecord.get(AGREEMENT_PAYMENT.EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
 			payment.setStartDate(parseToJavaDate(agreementPaymentRecord.get(AGREEMENT_PAYMENT.START_DATE)));
 			payment.setEndDate(parseToJavaDate(agreementPaymentRecord.get(AGREEMENT_PAYMENT.END_DATE)));
 			payment.setMonth(null == agreementPaymentRecord.get(AGREEMENT_PAYMENT.MONTH) ? null : (short)agreementPaymentRecord.get(AGREEMENT_PAYMENT.MONTH));
@@ -588,16 +590,22 @@ public class JooqAgreementTab {
 			} else if(null == payment.getId() || payment.getId() < 0) {
 				
 				// Create PaymentConcept
-				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+				InsertSetMoreStep<PaymentConceptRecord> insertPaymentConcept = dslContext.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, agreementInfo.getDomain())
 						.set(PAYMENT_CONCEPT.CODE, payment.getName())
 						.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
 						.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
 						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-						.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
 						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression())
-						.returning(PAYMENT_CONCEPT.ID)
+						;
+				
+				if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))
+					insertPaymentConcept.set(PAYMENT_CONCEPT.EXPRESSION, AonStringUtils.substringAfter(payment.getExpression(), "DISABLE();"));
+				else
+					insertPaymentConcept.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
+				
+				PaymentConceptRecord paymentConceptRecord = insertPaymentConcept.returning(PAYMENT_CONCEPT.ID)
 						.fetchOne();
 				
 				payment.setConceptId(paymentConceptRecord.getId());
@@ -685,16 +693,23 @@ public class JooqAgreementTab {
 	}
 	
 	private static Integer createPaymentConcept(DSLContext dslContext, Integer domain, Payment payment) {
-		PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+		// Create PaymentConcept
+		InsertSetMoreStep<PaymentConceptRecord> insertPaymentConcept = dslContext.insertInto(PAYMENT_CONCEPT)
 				.set(PAYMENT_CONCEPT.DOMAIN, domain)
 				.set(PAYMENT_CONCEPT.CODE, payment.getName())
 				.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
 				.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
 				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-				.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression())
-				.returning(PAYMENT_CONCEPT.ID)
+				;
+		
+		if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))
+			insertPaymentConcept.set(PAYMENT_CONCEPT.EXPRESSION, AonStringUtils.substringAfter(payment.getExpression(), "DISABLE();"));
+		else
+			insertPaymentConcept.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
+		
+		PaymentConceptRecord paymentConceptRecord = insertPaymentConcept.returning(PAYMENT_CONCEPT.ID)
 				.fetchOne();
 		
 		 return paymentConceptRecord.getId();
