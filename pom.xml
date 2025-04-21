@@ -19,7 +19,7 @@
     <aonCoreLibsVersion>8.112</aonCoreLibsVersion>
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
     <jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
-    <jasperReportsVersion>6.20.5</jasperReportsVersion>
+    <jasperReportsVersion>6.7.0</jasperReportsVersion>
     <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
     <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
     <jasperreportsMavenPluginVersion>8.2-SNAPSHOT</jasperreportsMavenPluginVersion>
