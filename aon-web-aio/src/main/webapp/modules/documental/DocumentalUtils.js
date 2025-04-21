@@ -264,14 +264,13 @@ function handleCheckboxChange(event) {
 	}
 }
 
-function handleRadioButtonChange(event) {
+export function handleRadioButtonChange(event) {
     // Primero eliminamos las filas generadas anteriormente
     let table = document.getElementById("table");
     let trScope = document.getElementById("trScope");
     let trCategory = document.getElementById("trCategory");
     // let trTag = document.getElementById("trTag");
     let trDatePicker = document.getElementById("trDatePicker");
-    let select = document.getElementById("aonDocumentalUploadCategory");
 
     // Llamamos a clearFields para eliminar las filas generadas (subcategoría, administración, etc.)
     clearFields(table, [trScope, trCategory, trDatePicker], 
@@ -284,12 +283,9 @@ function handleRadioButtonChange(event) {
         }).catch(err => {
             console.error("Error al obtener categorías:", err);
         });
-
     }
-
     // Si se selecciona 's3CategoriesRadio', desmarcamos 'oldCategoriesRadio' y cargamos categorías S3
     if (event.target.id === 's3CategoriesRadio') {
-        // select.value = "Probando2";
         let data = { parent: null };
         getS3Category(data).then(categories => {
             clearPreviousSelectOptions(categories, 's3');
@@ -353,7 +349,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     }
 }
 
-async function loadOldCategories() {
+export async function loadOldCategories() {
 	try {
 	  return await getCategories({ domain: localStorage.getItem('aon_domain_id') });
 	} catch (error) {
@@ -410,7 +406,7 @@ function S3DocumentalSelects(dur) {
     table.appendChild(loadingOverlay);
 
     // Lógica de los checkboxes
-	if (dur.isDocumentalPortal() && !dur.isDocumentalManager()) {
+    if (dur.isDocumentalPortal() && !dur.isDocumentalManager()) {
         createCheckboxRow(table, 'visibleEmpleadoCheckbox', 'Visible Empleado');
     }
 
@@ -437,15 +433,16 @@ function S3DocumentalSelects(dur) {
     });
 
     // SCOPE
-	let trScope = document.createElement('tr');
+    let trScope = document.createElement('tr');
     trScope.id = 'trScope';
     table.appendChild(trScope);
-            let tdScope = document.createElement('td');
-            tdScope.setAttribute('colspan', '1');
-            let selScope = new AonNewSelect();
-            selScope.id = "aonDocumentalUploadScope";
-            selScope.title = MSG.SCOPE + ' (Solo visible...)';
-            tdScope.appendChild(selScope);
+
+    let tdScope = document.createElement('td');
+    tdScope.setAttribute('colspan', '1');
+    let selScope = new AonNewSelect();
+    selScope.id = "aonDocumentalUploadScope";
+    selScope.title = MSG.SCOPE + ' (Solo visible...)';
+    tdScope.appendChild(selScope);
 
     getScopes({ domain: localStorage.getItem('aon_domain_id') }).then(scopes => {
         if (scopes && scopes.length > 0) {
@@ -460,88 +457,99 @@ function S3DocumentalSelects(dur) {
         }
     });
 
-    // TAG
-    // let trTag = document.createElement('tr');
-    // trTag.id = 'trTag';
-    // table.appendChild(trTag);
+    //     // TAG
+//     // let trTag = document.createElement('tr');
+//     // trTag.id = 'trTag';
+//     // table.appendChild(trTag);
   
-    // let tdTag = document.createElement('td');
-    // tdTag.setAttribute('colspan', '1');
-    // let selTag = new AonNewSelect();
-    // selTag.id = "aonDocumentalUploadTag";
-    // selTag.title = MSG.TAG;
-    // tdTag.appendChild(selTag);
+//     // let tdTag = document.createElement('td');
+//     // tdTag.setAttribute('colspan', '1');
+//     // let selTag = new AonNewSelect();
+//     // selTag.id = "aonDocumentalUploadTag";
+//     // selTag.title = MSG.TAG;
+//     // tdTag.appendChild(selTag);
   
-    // getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-	// 	if (tags && tags.length > 0) {		
-    //     selTag.options = JSON.stringify(tags.map(t => {
-    //         return {
-    //             value: t.id,
-    //             name: t.name
-    //         };
-    //     }));
-	// 	trTag.appendChild(tdTag);
-	// }
-    // });
-	
-        // CATEGORY	
+//     // getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+// 	// 	if (tags && tags.length > 0) {		
+//     //     selTag.options = JSON.stringify(tags.map(t => {
+//     //         return {
+//     //             value: t.id,
+//     //             name: t.name
+//     //         };
+//     //     }));
+// 	// 	trTag.appendChild(tdTag);
+// 	// }
+//     // });
+
+    loadingOverlay.style.display = 'none';
+    // Crear la sección de categorías
+    createCategorySection(table, loadingOverlay, trScope, trDatePicker);
+    // filtros para subir
+    return table;
+}
 
 
-	 let oldCategories = loadOldCategories();
-	 if(oldCategories){
+function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
+    let oldCategories = loadOldCategories();
+    
+    // Crear la fila de categorías (Radio buttons)
+    if (oldCategories) {
         createRadioButtonRow(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
-		createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
-	 }
+        createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
+    }
+
     let trCategory = document.createElement('tr');
     trCategory.id = 'trCategory';
     table.appendChild(trCategory);
-  
+
     let tdCategory = document.createElement('td');
     tdCategory.setAttribute('colspan', '1');
     let selCat = new AonNewSelect();
     selCat.id = "aonDocumentalUploadCategory";
     selCat.title = MSG.CATEGORY;
 
-     if(!oldCategories){
+    if (!oldCategories) {
         let defaultOption = {
             value: "Seleccione una categoria",
             name: "Seleccione una categoria",
             id: "Seleccione una categoria",
             is_deletable: 0
-        }
-        let data = { parent: null};
-        getS3Category(data).then(categories => {
-        if (categories.length > 0 ) {
-            categories.unshift(defaultOption);
-            selCat.options = JSON.stringify(categories.filter(c => c.is_deletable === 0).map(c => {
-                return {
-                    value: c.id,
-                    name: c.name
-                };
-            }));
-            selCat.value = categories.filter(c => c.is_deletable === 0)[0].id; 
-            selCat.options = JSON.stringify(categories.filter(c => c.id !== 'Seleccione una categoria' && c.is_deletable === 0).map(c => {
-            return {
-                value: c.id,
-                name: c.name,
-            };
-        }));
-            loadingOverlay.style.display = 'none';
-            //cuando se traten las categorias habra que poner trTag de nuevo
-            uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay);
-            // uploadedCategory(selCat, table, trScope, trCategory, trTag, trDatePicker, loadingOverlay);
-        } else {
-            loadingOverlay.style.display = 'none';
-            console.log('No hay categorias disponibles.');
-        }
-    });
-    }
-     loadingOverlay.style.display = 'none';
-	 tdCategory.appendChild(selCat);
-     trCategory.appendChild(tdCategory);
+        };
 
-    // filtros para subir
-    return table;
+        let data = { parent: null };
+
+        getS3Category(data).then(categories => {
+            if (categories.length > 0) {
+                categories.unshift(defaultOption);
+                selCat.options = JSON.stringify(categories.filter(c => c.is_deletable === 0).map(c => {
+                    return {
+                        value: c.id,
+                        name: c.name
+                    };
+                }));
+                selCat.value = categories.filter(c => c.is_deletable === 0)[0].id;
+
+                selCat.options = JSON.stringify(categories.filter(c => c.id !== 'Seleccione una categoria' && c.is_deletable === 0).map(c => {
+                    return {
+                        value: c.id,
+                        name: c.name,
+                    };
+                }));
+
+                loadingOverlay.style.display = 'none';
+                
+                // Cuando se traten las categorias, se tendrá que manejar la visibilidad de otras partes
+                uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay);
+            } else {
+                loadingOverlay.style.display = 'none';
+                console.log('No hay categorias disponibles.');
+            }
+        });
+    }
+    
+    // Agregar el selector de categorías a la tabla
+    tdCategory.appendChild(selCat);
+    trCategory.appendChild(tdCategory);
 }
   function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay){
     // Botton de aceptar oculto
