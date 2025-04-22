@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Date;
@@ -266,10 +267,17 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		System.out.println("GET ONE METHOD");
 		JSONArray jsArray = new JSONArray();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
+		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
-			jsArray.put(fullDocumentToJson(document));
+			JSONObject doc = fullDocumentToJson(document);
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), 6, 0).forEach(id -> {
+				array.put(new JSONObject().put("id", id));
+			});
+			doc.put(IJsonNames.TAGS, array);
+			jsArray.put(doc);
 		});
+		
 		return jsArray.length() > 0 ? jsArray.getJSONObject(0) : new JSONObject();
 	}
 	
@@ -283,6 +291,14 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Integer registry = api.getUser().getRegistry().getId(); 
 		if(api.getUser().getRegistry().getId() == null) {
 			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
+		}
+		ArrayList<Integer> tags = new ArrayList<Integer>();
+		if(api.getData().has(IJsonNames.TAG)) {			
+			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
+			if(tagsArray.length() > 0) {
+				for(int i = 0; i < tagsArray.length(); i++)
+					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));
+			}
 		}
 		S3Document rdoc = new S3Document()
 				.setCategory(json.getInt(IJsonNames.CATEGORY))
@@ -301,6 +317,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setCreationUser(api.getUser().getLogin())
 				.setModificationDate(new Date())
 				.setModificationUser(api.getUser().getLogin())
+				.setTags(tags)
 				;
 		S3Document document = AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), rdoc);
 		return fullDocumentToJson(document);
@@ -311,6 +328,14 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		JSONObject json = api.getData();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
 		MimeType mime = JsonUtils.getString(json, IJsonNames.CONTENT_TYPE) != null ? MimeType.safeValueFromContenType(JsonUtils.getString(json, IJsonNames.CONTENT_TYPE)) : null;
+		ArrayList<Integer> tags = new ArrayList<Integer>();
+		if(api.getData().has(IJsonNames.TAG)) {			
+			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
+			if(tagsArray.length() > 0) {
+				for(int i = 0; i < tagsArray.length(); i++)
+					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));
+			}
+		}
 		S3Document rdoc = new S3Document()
 				.setId(json.getInt(IJsonNames.ID))
 				.setCategory(JsonUtils.getInteger(json, IJsonNames.CATEGORY))
@@ -324,6 +349,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setSecurityLevel(JsonUtils.getByte(json, IJsonNames.SECURITY_LEVEL))
 				.setModificationDate(new Date())
 				.setModificationUser(api.getUser().getLogin())
+				.setTags(tags)
 				;
 		S3Document document = AON_SOLUTIONS.updateS3Document(api.getDomain(), api.getUser(), rdoc, type);
 		return fullDocumentToJson(document);
@@ -388,6 +414,15 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             	} else filter = filter.and(f.getTypeProperty().isNull());
         	}
     	}
+		if(api.getData().has(IJsonNames.TAG)) {			
+			JSONArray tags = new JSONArray(api.getData().getString(IJsonNames.TAG));
+			if(tags.length() > 0) {
+				Integer[] idsTags = new Integer[tags.length()];
+				for(int i = 0; i < tags.length(); i++)
+					idsTags[i] = tags.getJSONObject(i).getInt(IJsonNames.ID);
+				filter = filter.and(f.getTagProperty().in(idsTags));
+			}
+		}
 		return filter;
 	}
 	
@@ -435,6 +470,15 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             	} else filter = filter.and(f.getTypeProperty().isNull());
         	}
     	}
+		if(api.getData().has(IJsonNames.TAG)) {			
+			JSONArray tags = new JSONArray(api.getData().getString(IJsonNames.TAG));
+			if(tags.length() > 0) {
+				Integer[] idsTags = new Integer[tags.length()];
+				for(int i = 0; i < tags.length(); i++)
+					idsTags[i] = tags.getJSONObject(i).getInt(IJsonNames.ID);
+				filter = filter.and(f.getTagProperty().in(idsTags));
+			}
+		}
 		return filter;
 	}
 	

@@ -70,6 +70,7 @@ import org.jooq.SelectJoinStep;
 import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.jooq.tables.Rdoc;
+import com.esferalia.aon.jooq.tables.RdocTag;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
@@ -1665,6 +1666,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRegistryProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.REGISTRY); }
 		@Override public Property<Byte> getTypeProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.TYPE); }
 		@Override public Property<Byte> getSecurityLevelProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.SECURITY_LEVEL); }
+		@Override public Property<Integer> getTagProperty() { return new FilterDAO.PropertyDAO<>(RdocTag.RDOC_TAG.TAG); }
 //		@Override public Property<Integer> getRattachProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.); }
 	}
 	

@@ -1269,4 +1269,10 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<Integer> getDocumentTags(Domain domain, User user, Integer id, Integer type) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getAttachment().getDocumentTags(ctx, id, type);
+		}
+	}
+	
 }

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -25,6 +26,11 @@ public class S3Document implements Serializable {
 	private String s3bucket;
 	private Integer category;
 	private Byte registryType;
+	private ArrayList<Integer> tags;
+	private String creationUser;
+	private String modificationUser;
+	private Date creationDate;
+	private Date modificationDate;
 	
 	public Byte getRegistryType() {
 		return registryType;
@@ -34,11 +40,15 @@ public class S3Document implements Serializable {
 		this.registryType = registryType;
 		return this;
 	}
+	
+	public ArrayList<Integer> getTags() {
+		return tags;
+	}
 
-	private String creationUser;
-	private String modificationUser;
-	private Date creationDate;
-	private Date modificationDate;
+	public S3Document setTags(ArrayList<Integer> tags) {
+		this.tags = tags;
+		return this;
+	}
 
 	public Integer getId() {
 		return id;

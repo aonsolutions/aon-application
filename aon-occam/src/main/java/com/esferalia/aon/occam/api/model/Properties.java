@@ -1983,6 +1983,7 @@ public interface Properties {
 		Property<Timestamp> getCreationDateProperty();
 		Property<Byte> getTypeProperty();
 		Property<Byte> getSecurityLevelProperty();
+		Property<Integer> getTagProperty();
 	}
 	
 	public interface S3CategoryProperties{
