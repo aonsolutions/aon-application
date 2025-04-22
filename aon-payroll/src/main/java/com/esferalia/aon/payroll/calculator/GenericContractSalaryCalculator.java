@@ -932,7 +932,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			addVars(expressionContext, PLUS_BASE,  ADDITIONAL_BASE, BASE_PPE);
 			addVars(expressionContext, CGC_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
-			quoteCalculator.limit(CGC_BASE, expressionContext, start, end);
+			limit(quoteCalculator,CGC_BASE, expressionContext, start, end);
 			cgcBase = getValue(expressionContext, CGC_BASE);
 
 			if (ereBase != null)
@@ -960,7 +960,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 
 			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
-			quoteCalculator.limit(CGP_BASE, expressionContext, start, end);
+			limit(quoteCalculator, CGP_BASE, expressionContext, start, end);
 			cgpBase = getValue(expressionContext, CGP_BASE);
 
 			evalVar(ctx, SALARY_HOURS);
@@ -2213,6 +2213,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		.forEach( v -> addResult(expressionContext, dest, v.getPeriod().getStart(), v.getPeriod().getEnd(), v.getValue(v.getPeriod()).doubleValue()));
 	}
 	
+	public static void limit(QuoteCalculator quoteCalculator, ContextVariable limit, ExpressionContext expressionContext, Date start, Date end){
+		expressionContext.getVariables(limit == ContextVariable.CGC_BASE ? ContextVariable.CGC_BASE_RAW : ContextVariable.CGP_BASE_RAW, start, end).stream()
+		.filter(v -> AonNumberUtils.todouble(v.getValue(v.getPeriod())) > 0 )
+		.forEach(v -> quoteCalculator.limit(limit, expressionContext, v.getPeriod().getStart(), v.getPeriod().getEnd()))
+		;
+//		quoteCalculator.limit(limit, expressionContext, start, end);
+	}
+
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";

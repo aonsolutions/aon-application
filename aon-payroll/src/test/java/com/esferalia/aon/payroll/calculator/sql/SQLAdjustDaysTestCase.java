@@ -5,12 +5,14 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
@@ -96,6 +98,7 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -108,6 +111,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import junit.framework.Assert;
 
@@ -228,6 +232,52 @@ public class SQLAdjustDaysTestCase extends AbstractSQLTestCase {
 	}
 	
 	
+	@Test
+	public void testZeroDaysNoQuote() throws ExpressionException,
+			SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = 
+		newContract(aonContext, 
+				firstDayOfYear,
+				new HashMap<String, String>() {
+					{
+					    put(TC2.getName(), "\"100\"");
+					    put(QUOTE_GROUP.getName(), "\"04\"");
+					    put(MONTH_DAYS.getName(), "30.00");
+					    put(CGC_BASE_MIN.getName(), "MAX(8.32, (1381.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) ))") ;
+					}
+				} 
+				, new String[] {
+				"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				}
+				, new String[] {}
+			,null
+		);
+		Date startDate = firstDayOfYear;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SQLITTestCase.addPrestITs(aonContext, contract);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, endDate, endDate, 1000.00 / 30.00);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() ).calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		List<SalaryData> cgcBases = salary.getSalaryDatas().stream()
+		.filter( d -> d.getName().equalsIgnoreCase(ContextVariable.CGC_BASE.getName()))
+		.peek( d -> System.out.println(d.getName() + " = " + d.getExpression() ) )
+		.toList();
+		
+		assertEquals(1000.00, cgcBases.stream().collect(Collectors.summingDouble(v -> AonNumberUtils.todouble(v.getExpression()))), DELTA);
+		
+	}
+
 	private Double eval(ISQLContractSalaryCalculatorContext ctx, String expression )
 		throws UndefinedVariablesException, ExpressionException {
 	    return ctx.getExpressionContext()
