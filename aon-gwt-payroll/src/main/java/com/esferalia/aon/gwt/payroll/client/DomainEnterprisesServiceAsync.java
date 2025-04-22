@@ -858,7 +858,11 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void agreementIntegrityFix(Integer agreementId, AgreementIntegrityFix agreementIntegrityFix, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.agreementIntegrityFix(getCurrentDomainName(), agreementId, agreementIntegrityFix, asyncCallback);
-	} 
+	}
+	
+	public void fixAgreementIntegrity(Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.fixAgreementIntegrity(getCurrentDomainName(), agreementId, asyncCallback);
+		}
 	
 	// ----------------------------------------------------------------- static
 	
