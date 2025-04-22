@@ -4,12 +4,14 @@ import { setAttributes } from '../services/utilsComponents.js';
 import { AonIconButton } from './aon-icon-button.js';
 import {AonElement} from './AonElement.js';
 
+import { AonSwitch } from './aon-switch.js';
 import {AonInput} from './aon-input.js';
 import {AonDate} from './aon-date.js';
 import {AonSelect} from './aon-select.js';
 
 import '../css/aon-search.css';
 import { AonNewDate } from './aon-new-date.js';
+import { AonNewSelect } from "./aon-new-select.js";
 
 export class AonSearch extends AonElement {
 
@@ -17,8 +19,9 @@ export class AonSearch extends AonElement {
 		return [CONSTANT.DISABLED];
 	}
 
-	constructor () {
+	constructor (newStyle = false) {
 		super();
+        this.newStyle = newStyle;
 	}
 
 	get id() {
@@ -93,39 +96,56 @@ export class AonSearch extends AonElement {
 		input.style.display = 'none';
 		span.appendChild(input);
 
-		let advancedButton = new AonIconButton();
-		advancedButton.style.display = 'none';
-		advancedButton.id = this.ADVANCED_BUTTON;
-		advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
-		span.appendChild(advancedButton);
+        // El boton de filtro
+        let advancedButton = new AonIconButton();
+        if(this.newStyle){
+          // El boton de filtro lo modificamos
+          advancedButton.id   = this.ADVANCED_BUTTON;
+          advancedButton.icon = MATERIAL_ICONS.FILTER_ALT;
+          this.appendChild(advancedButton);
+        } else {
+          // Dejamos el boton de filtro como estaba
+          advancedButton.style.display = 'none';
+          advancedButton.id = this.ADVANCED_BUTTON;
+          advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
+          span.appendChild(advancedButton);
+        }
 
 		advancedButton.addEventListener(EVENT.CLICK, () => {
 			this.openOrClose();
-		})
+		});
 		
 		input.addEventListener(EVENT.KEYUP, () => {
 			this.dispatchEventSearch(input.value, EVENT.KEYUP);
 		});
 
-		searchButton.addEventListener(EVENT.CLICK, () => {
-			if(input.style.display === 'none'){
-				this.openSearch();
-				if(this.disabled) {
-					this.openOrClose();
-				} else {
-					input.focus();
-				}
-			} else {
-				this.closeSearch();
-			}
-		});
+        if(!this.newStyle){
+          // La lupa sea un boton fuera del documental
+          searchButton.addEventListener(EVENT.CLICK, () => {
+              if(input.style.display === 'none'){
+                  this.openSearch();
+                  if(this.disabled) {
+                      this.openOrClose();
+                  } else {
+                      input.focus();
+                  }
+              } else {
+                  this.closeSearch();
+              }
+          });
+      }
 
 		let divOpts = this.createElement(TAG.DIV);
 		divOpts.id = this.OPTIONS;
 		divOpts.className = CSS.AON_INPUT_LIST_OPTIONS;
 		divOpts.style.maxHeight = "none";
 		divOpts.style.padding = "10px";
-		divOpts.style.display = "none";
+        if(!this.newStyle){
+          divOpts.style.display = "none";
+        } else {
+          divOpts.style.display = "grid";
+          divOpts.style.gap     = ".5rem";
+        }
 		if(!isMobile){
 			input.style.width = "300px";
 			divOpts.style.width = "380px";
@@ -134,7 +154,6 @@ export class AonSearch extends AonElement {
 		this.appendChild(divOpts);
 
 		this.disabledInputSearch();
-
 	}
 
 	dispatchEventSearch(value, event=undefined){
@@ -147,7 +166,6 @@ export class AonSearch extends AonElement {
 				...this.getValues()
 			}
 		}));
-
 
 		this.buildBadge();
 	}
@@ -200,19 +218,24 @@ export class AonSearch extends AonElement {
 
 	openOrClose(){
 		let divOpts = this.getElement(this.OPTIONS);
-		console.log('divOpts en openOrClose' , divOpts);
-	    console.log('divOpts.innerHTML',divOpts.innerHTML);
-		console.log('divOpts.innerHTML.length',divOpts.innerHTML.length );
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
 				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
-				advanceButton.icon =  MATERIAL_ICONS.FILTER_LIST;
+                if(this.newStyle){
+                  advanceButton.icon =  MATERIAL_ICONS.FILTER_ALT;
+                } else {
+                  advanceButton.icon =  MATERIAL_ICONS.FILTER_LIST;
+                } 
 				this.closeOptions();
 			} else {
 				let advanceButton  = this.getElement(this.ADVANCED_BUTTON);
 				advanceButton.icon =  MATERIAL_ICONS.CLOSE;
-				divOpts.style.display = "block";
+                if(!this.newStyle){
+                  divOpts.style.display = "block";
+                } else {
+                  divOpts.style.display = "grid";
+                }
 				divOpts.classList.add('is-visible');
 			}
 		}
@@ -220,8 +243,14 @@ export class AonSearch extends AonElement {
 
 	openSearch(){
 		let span = this.getElement(this.SPAN);
-		let advancedButton = this.getElement(this.ADVANCED_BUTTON);
-		console.log('advancedButton ? ' , advancedButton);
+        let advancedButton = this.getElement(this.ADVANCED_BUTTON);
+		if(this.newStyle){
+          const searchButton = this.getElement(this.SEARCH_BUTTON);
+          // Que no tenga opcion del cursor el hijo
+          const searchButtonSelector        = searchButton.querySelector('button');  
+          searchButtonSelector.style.cursor = 'default';
+        }
+        
 		let input = this.getElement(this.SEARCH_INPUT);
 		if(span && advancedButton && input){
 			if(this.isMobile()) {
@@ -233,7 +262,9 @@ export class AonSearch extends AonElement {
 				advancedButton.style.right = '0px';		
 			}
 			input.style.display = 'block';
-			advancedButton.style.display = 'block';
+            if(!this.newStyle){
+              advancedButton.style.display = 'block';
+            } 
 			span.style.borderBottom = '2px solid #002469';
 		}
 	}
@@ -256,7 +287,9 @@ export class AonSearch extends AonElement {
 			input.value = '';
 			this.dispatchEventSearch(input.value, EVENT.CLOSE);
 			input.style.display = 'none';
-			advancedButton.style.display = 'none';
+            if(!this.newStyle){
+              advancedButton.style.display = 'none';
+            }
 			span.style.borderBottom = '0px';
 			this.closeOptions();
 		}
@@ -303,7 +336,6 @@ export class AonSearch extends AonElement {
 	}]
 	*/
 	buildOptionsFilter(inputs){
-		console.log('inputs', inputs);
 		let divOpts = this.getElement(this.OPTIONS);
 		divOpts.innerHTML = "";
 
@@ -327,7 +359,7 @@ export class AonSearch extends AonElement {
 		reset.style.border = "1px solid var(--aonBlue)";
 		reset.style.color = "black";
 		reset.addEventListener(EVENT.CLICK, ()=>{
-			this.dispatchCleanEventSearch(input.value, EVENT.CLICK)
+			this.dispatchCleanEventSearch(input.value, EVENT.CLICK);
 			this.openOrClose();
 		});
 		buttonsPanel.appendChild(reset);
@@ -360,11 +392,16 @@ export class AonSearch extends AonElement {
 	getInput(attributes) {
 		let html = undefined;
 		switch (attributes.type) {
+			case CONSTANT.CHECKBOX:
+				html = setAttributes(new AonSwitch(), attributes);
+			break;
 			case CONSTANT.TEXT:
 				html = setAttributes(new AonInput(), attributes);
 			break;
 			case CONSTANT.SELECT:
-				html = setAttributes(new AonSelect(), attributes);
+				html = !this.newStyle 
+                  ? setAttributes(new AonSelect(), attributes)
+                  : setAttributes(new AonNewSelect(), attributes);
 			break;
 			case CONSTANT.DATE:
 				html = setAttributes(new AonDate(), attributes);
@@ -389,18 +426,18 @@ export class AonSearch extends AonElement {
 		}
 	}
 
- 	 getValues() {
+    getValues() {
 		let divOpts = this.getElement(this.OPTIONS);
 		return divOpts ? serializeForm(divOpts) : {};
-	 }
+    }
 
-     closeOptions() {
+    closeOptions() {
 		let divOpts = this.getElement(this.OPTIONS);
 		if (divOpts && divOpts.classList.contains('is-visible')) {
 		  divOpts.style.display = "none";
 		  divOpts.classList.remove('is-visible');
 		}
-	  }
+    }
 }
 if(!window.customElements.get(TAG.AON_SEARCH)){
 	window.customElements.define(TAG.AON_SEARCH, AonSearch);

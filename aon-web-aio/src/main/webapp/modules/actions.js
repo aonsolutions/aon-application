@@ -413,3 +413,10 @@ export const SUBTRACT = {
     title: 'Restar',
     icon: MATERIAL_ICONS.REMOVE
 }
+
+export const BIDOQ_IMPORT = {
+    id: 'BidoqImport',
+    name: 'Importar Bidoq',
+    title: 'Importar Bidoq',
+    image: "../assets/apps/bidoq.png"
+}

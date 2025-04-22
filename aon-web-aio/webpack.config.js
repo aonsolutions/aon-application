@@ -18,8 +18,8 @@ module.exports = {
       rules: [
         {
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
-        },
+          use: [MiniCssExtractPlugin.loader, 'css-loader']
+        }
       ]
     },
     optimization: {
@@ -29,10 +29,10 @@ module.exports = {
 	},
 	resolve: {
     	alias: {
-      	aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
-      	//aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
-        aonparent: path.resolve(__dirname, 'src/main/webapp/modules/aon-parent.js'),
-        aio: path.resolve(__dirname, 'src/main/webapp/')
+          aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
+          //aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
+          aonparent: path.resolve(__dirname, 'src/main/webapp/modules/aon-parent.js'),
+          aio: path.resolve(__dirname, 'src/main/webapp/')
     	}
   	}
 };

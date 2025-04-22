@@ -575,6 +575,9 @@ public class AonExporter extends GenericExporter{
 		map.put("WarehouseTransfer","com.code.aon.warehouse.WarehouseTransfer");
 		map.put("WarehouseTransferDetail","com.code.aon.warehouse.WarehouseTransferDetail");
 		
+		//AON-DOCUMENTAL
+		map.put("Rdoc","com.code.aon.documental.Rdoc");
+		
 		//AON-MESSAGING
 		//map.put("Message","com.code.aon.messaging.Message");
 		//map.put("MessageContent","com.code.aon.messaging.MessageContent");

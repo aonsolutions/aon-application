@@ -10,20 +10,25 @@ export const AonDateUtils = {
   */
   formatDate: function (d, format) {
     format = format || 'dd/MM/yyyy';
-    const date = new Date(d);
-    const day = addZero(date.getDate(), 2);
-    const month = addZero(date.getMonth() + 1, 2);
-    const year = date.getFullYear();
-
-    switch (format) {
-      case 'dd-MM-yyyy':
-        return day + "-" + month + '-' + year;
-      case 'yyyy-MM-dd':
-        return year + "-" + month + '-' + day;
-      case 'yyyy/MM/dd':
-        return year + "/" + month + '/' + day;
-      default:
-        return day + "/" + month + '/' + year;
+    if(d !== undefined){
+      const date = new Date(d);
+      const day = addZero(date.getDate(), 2);
+      const month = addZero(date.getMonth() + 1, 2);
+      const year = date.getFullYear();
+      
+      switch (format) {
+        case 'dd-MM-yyyy':
+          return day + "-" + month + '-' + year;
+        case 'yyyy-MM-dd':
+          return year + "-" + month + '-' + day;
+        case 'yyyy/MM/dd':
+          return year + "/" + month + '/' + day;
+        default:
+          return day + "/" + month + '/' + year;
+      }
+    } else {
+      // No tiene fecha
+      return "";
     }
   },
   /**

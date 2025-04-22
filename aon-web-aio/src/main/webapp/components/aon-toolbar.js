@@ -182,14 +182,12 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
-	addSearchButton(opened=false) {
+	addSearchButton(opened=false, filterDocumental=false) {
 		let search = this.getSearchButton();
 		if(!search) {
-			search = new AonSearch();
+			search = new AonSearch(filterDocumental);
 			search.id = this.TOOL_SECTION + 'Search';
 			const searchFn = (event) => this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: event.detail}));
-
-
 			search.addEventListener(EVENT.SEARCH, searchFn);
 
 			let aonMenu = this.getElement('aonMenu');
@@ -232,8 +230,11 @@ export class AonToolbar extends AonElement {
 			aib.addEventListener(EVENT.CLICK, fn);
 			if(action.aonIcon){
 				aib.aonIcon = action.aonIcon;
-			} else 
+			} else if (action.image)  {
+				aib.image = action.image;
+			} else{
 				aib.icon = action.icon;
+			}
 			
 			span.appendChild(aib);
 
@@ -340,7 +341,6 @@ export class AonToolbar extends AonElement {
 	getTitleSection(){
 		return this.getElement(this.TITLE_SECTION);
 	}
-
 	getToolSection(){
 		return this.getElement(this.TOOL_SECTION);
 	}

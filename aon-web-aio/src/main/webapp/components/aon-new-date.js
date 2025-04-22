@@ -4,14 +4,12 @@ import { AonIconButton } from './aon-icon-button.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 
 export class AonNewDate extends AonNewInput {
-
   date;
   day;
   month;
   year;
-
+  today = new Date();
   INPUT;
-  
   SPAN;
   DATEPICKER;
   DATEPICKER_PREVIOUS;
@@ -20,19 +18,16 @@ export class AonNewDate extends AonNewInput {
   DATEPICKER_YEAR;
   DATEPICKER_DAYS;
 
-
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     this.build();
-    this.buildDate()
+    this.buildDate();
     this.buildDatepicker();
-	}
+  }
 
   initialize() {
     super.initialize();
     this.id = this.id || 'aonDate';
-
-
     this.DATEPICKER = this.id + 'Datepicker';
     this.SPAN = this.DATEPICKER + 'Span';
     this.DATEPICKER_PREVIOUS = this.DATEPICKER + 'Previous';
@@ -40,12 +35,27 @@ export class AonNewDate extends AonNewInput {
     this.DATEPICKER_MONTH = this.DATEPICKER + 'Month';
     this.DATEPICKER_YEAR = this.DATEPICKER + 'Year';
     this.DATEPICKER_DAYS = this.DATEPICKER + 'Days';
-
-    this.date =  this.date || new Date(Date.now());
-    this.day = this.date.getDate();
-    this.month = this.date.getMonth();
-    this.year = this.date.getFullYear();
+    this.getDate();
+    // Si no tiene date, cogemos la fecha de hoy para montar el calendario
+    this.day   = this.date ? this.date.getDate()    : this.today.getDate();
+    this.month = this.date ? this.date.getMonth()   : this.today.getMonth();
+    this.year  = this.date ? this.date.getFullYear(): this.today.getFullYear();
     this.maxlength = 10;
+  }
+
+  getDate(){
+    // Si le pasamos un date
+    const dateAttr = this.getAttribute('date');
+    if (dateAttr && dateAttr.trim() !== ''){
+      // Si tiene fecha pasada
+      const parsedDate = new Date(dateAttr);
+      if (!isNaN(parsedDate.getTime())) {
+        this.date = parsedDate;
+      }
+    } else if (dateAttr === null || dateAttr.trim() !== ''){
+      // Si no se le pasa el valor date
+      this.date  = this.date || this.today;
+    }
   }
 
   buildDate() {
@@ -54,49 +64,56 @@ export class AonNewDate extends AonNewInput {
     this.addIcon(MATERIAL_ICONS.CALENDAR_TODAY, undefined, () => this.openDatepicker());
   }
 
-
   onBlur = ({target}) => {
     this.checkRequired();
 
-    const input = target.value;
-    const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
-    let output = '';
-    if (values.length === 3) {
-      let year = parseInt(values[2]);
-      if(values[2].length === 2) {
-        let now = new Date(Date.now());
-        let y = now.getFullYear() + '';
-        let a = parseInt(y.substring(2,4));
-        year = a >= year ? year + 2000 : year + 1900;
-      }
-      const month = parseInt(values[1]) - 1;
-      const day = parseInt(values[0]);
-       
-      const d = new Date(year, month, day);
-      
-      if (!isNaN(d)) {          
-        this.setDate(d);
-        const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
-        output = dates.map((v) =>{
-          v = v.toString();
-          return v.length === 1 ? '0' + v : v;
-        }).join('/');
-      }
-    }
-    target.value = output.replaceAll(" ", "");
+    const input = target.value || "";
+    if (input) {
+      const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
+      let output = '';
+      if (values.length === 3) {
+        let year = parseInt(values[2]);
+        if(values[2].length === 2) {
+          let now = new Date(Date.now());
+          let y = now.getFullYear() + '';
+          let a = parseInt(y.substring(2,4));
+          year = a >= year ? year + 2000 : year + 1900;
+        }
+        const month = parseInt(values[1]) - 1;
+        const day = parseInt(values[0]);
 
-    this.dispatchEvent(new Event(EVENT.BLUR));
+        const d = new Date(year, month, day);
+
+        if (!isNaN(d)) {          
+          this.setDate(d);
+          const dates = [d.getDate(), d.getMonth() + 1, d.getFullYear()];
+          output = dates.map((v) =>{
+            v = v.toString();
+            return v.length === 1 ? '0' + v : v;
+          }).join('/');
+        }
+      }
+      target.value = output.replaceAll(" ", "");
+
+      this.dispatchEvent(new Event(EVENT.BLUR));
+    } else {
+      target.value = "";
+    }
   };
 
   onInput = ({target}) => {
-    let value = target.value;
-    if (/\D\/$/.test(value)) value = value.substr(0, value.length - 3);
-    const values = value.split('/').map((v)=>  v.replace(/\D/g, ''));
-    if (values[0]) values[0] = this.checkValue(values[0], 31);
-    if (values[1]) values[1] = this.checkValue(values[1], 12);
-    const output = values.map((v, i)=> v.length == 2 && i < 2 ? v + '/' : v);
-    target.value = output.join('').substr(0, 14);
-    if(value.length>=14) target.blur();
+    let value = target.value || "";
+    if (value) {
+      if (/\D\/$/.test(value)) value = value.substr(0, value.length - 3);
+      const values = value.split('/').map((v) => v.replace(/\D/g, ''));
+      if (values[0]) values[0] = this.checkValue(values[0], 31);
+      if (values[1]) values[1] = this.checkValue(values[1], 12);
+      const output = values.map((v, i) => v.length === 2 && i < 2 ? v + '/' : v);
+      target.value = output.join('').substr(0, 14);
+      if (value.length >= 14) target.blur();
+    } else {
+      target.value = "";
+    }
   };
 
   checkValue(str, max){
@@ -209,7 +226,6 @@ export class AonNewDate extends AonNewInput {
       trDays.appendChild(td);
     }
 
-
     for(let i = 0; i < 6; i++) {
       let tr = this.createElement(TAG.TR);
       datepickerDaysTable.appendChild(tr);
@@ -222,7 +238,7 @@ export class AonNewDate extends AonNewInput {
     }
 
     let line = 0;
-    let day = 1;
+    let day  = 1;
     let date = new Date(this.year, this.month, day);
 
     while(date.getMonth() === this.month) {
@@ -334,9 +350,11 @@ export class AonNewDate extends AonNewInput {
   }
 
   isSameDate(date) {
-    return date.getDate() === this.date.getDate()
-      && date.getMonth() === this.date.getMonth()
-      && date.getFullYear() === this.date.getFullYear();
+    // Tenga en cuenta la fecha de hoy si no se le pasa datos
+    const reference = this.date || this.today;
+    return date.getDate() === reference.getDate() &&
+           date.getMonth() === reference.getMonth() &&
+           date.getFullYear() === reference.getFullYear();
   }
 
   setDate(date) {
