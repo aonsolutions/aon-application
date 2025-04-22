@@ -839,10 +839,23 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 			.addCell( childMen18Hours);
 
 		flowPanel.add(tab);
+		
+		Label noStaffLabel1 = new Label("Compute como m\u00E1ximo 1.800 horas por persona");
+		noStaffLabel1.setStyleName(AON.CSS.aonFontSmaller());
+		noStaffLabel1.addStyleName(AON.CSS.aonBold());
+		noStaffLabel1.addStyleName(AON.CSS.aonMarginLeft());
+		flowPanel.add(noStaffLabel1);
+		
+		Label noStaffLabel2 = new Label("(*) Por el c\u00F3nyuge y los hijos menores de 18 a\u00F1os que tengan un grado de discapacidad igual o superior al 33 por 100 se reflejar\u00E1 el 75 por 100 de las horas trabajadas por ellos");
+		noStaffLabel2.setStyleName(AON.CSS.aonFontSmaller());
+		noStaffLabel2.addStyleName(AON.CSS.aonMarginLeft());
+		flowPanel.add(noStaffLabel2);
+		
 		scroll.setWidget(flowPanel);
 		return scroll;
 	}
 
+	// PERSONAL ASALARIADO
 	private void calculateStaff(IModel131ActivityCallback callback ) {
 		int staffIndex = staffModuleIndex(callback);
 		if (staffIndex != -1) {
@@ -857,6 +870,8 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 			if (staffIndex >= 0 && staffIndex <= 5 )  {
 				values[staffIndex].setValue(value, false);
 				onFieldChange( callback );
+				// El calculo del personal asalariado, puede afectar al calculo del personal no asalariado
+				calculateNoStaff(callback);
 			}
 		} else {
 			AonMessageDialog.show("Aviso", "No procede");
@@ -870,7 +885,7 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 				rsYearHours.setValue(1800 , false);
 				callback.getActivity().setRsYearHours( 1800 );
 			}
-			double v0 = AonMathUtils.floor(callback.getActivity().getRsMay19Hours() / callback.getActivity().getRsYearHours());
+			double v0 = AonMathUtils.floor((double) callback.getActivity().getRsMay19Hours() / callback.getActivity().getRsYearHours());
 			double v1 = AonMathUtils.floor(((double) callback.getActivity().getRsMen19Hours() / callback.getActivity().getRsYearHours()) * 0.60);
 			double v2 = AonMathUtils.floor(((double) callback.getActivity().getRsDisHours() / callback.getActivity().getRsYearHours()) * 0.40);
 			double value = AonMathUtils.round(AonMathUtils.floor(v0 + v1 + v2, 2));
@@ -883,13 +898,29 @@ public class Model131Activity2025 extends DockLayoutPanel implements HasValueCha
 		}
 	}
 	
+	// PERSONAL NO ASALARIADO
 	private void calculateNoStaff(IModel131ActivityCallback callback ) {
 		int noStaffIndex = noStaffModuleIndex(callback);
 		if (noStaffIndex != -1) {
+			// Se computará como una persona no asalariada la que trabaje en la actividad al menos mil ochocientas horas/año.
+			// Cuando el número de horas de trabajo al año sea inferior a mil ochocientas, se estimará como cuantía de la persona 
+			// no asalariada la proporción existente entre número de horas efectivamente trabajadas en el año y mil ochocientas.
+			// La Agencia Tributaria lo calcula redondeando siempre a la baja
 			int yh = 1800;
-			double v3 = AonMathUtils.floor(callback.getActivity().getOwnerHours() / yh);
-			double v4 = AonMathUtils.floor((((double) callback.getActivity().getSpouseHours() / yh) * 0.50));
-			double v5 = AonMathUtils.floor((((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50));
+			double v3 = AonMathUtils.floor((double) callback.getActivity().getOwnerHours() / yh);
+			double v4 = AonMathUtils.floor((double) callback.getActivity().getSpouseHours() / yh);
+			double v5 = AonMathUtils.floor((double) callback.getActivity().getChildMen18Hours() / yh);
+			// Cuando el cónyuge o los hijos menores tengan la condición de no asalariados se computarán
+			// al 50 por 100, siempre que el titular de la actividad se compute por entero y no haya más de una persona asalariada
+			int staffIndex = staffModuleIndex(callback);
+			double staffValue = 0.0;
+			if (staffIndex != -1) {
+				staffValue = callback.getActivity().getModules().get(staffIndex).getValue();
+			}
+			if (callback.getActivity().getOwnerHours() >= yh && staffValue <= 1.0) {
+				v4 = AonMathUtils.floor((((double) callback.getActivity().getSpouseHours() / yh) * 0.50));
+				v5 = AonMathUtils.floor((((double) callback.getActivity().getChildMen18Hours() / yh) * 0.50));
+			}
 			double value = AonMathUtils.round(AonMathUtils.floor(v3 + v4 + v5 , 2));
 			if (noStaffIndex >= 0 && noStaffIndex <= 5 )  {
 				values[noStaffIndex].setValue(value, false);
