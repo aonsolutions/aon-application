@@ -3170,6 +3170,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						throw new ExpressionExceptionWrapper(e);
 					}
 				}
+				
+				@Override
+				public Collection<IContractEmbargo> getContractEmbargos() throws AonException {
+					return Collections.emptyList();
+				}
 
 			};
 			ctx.leaveLoader = leaveLoader;
