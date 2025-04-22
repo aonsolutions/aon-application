@@ -115,3 +115,7 @@ export const downloadS3Documents = (data) => getFileBlob(`${API_URL}/s3/file_mul
 //LLamadas al nuevo servlet de categorias
 export const getS3Category 		= (data) => get(`${API_URL}/s3category`, data);
 export const getS3CategoryCount = (data) => get(`${API_URL}/s3category/count`, data);
+
+//LLamadas a Bidoq
+export const getBidoqDocuments = (data) => get(`${API_URL}/s3/bidoq`, data);
+export const checkBidoq       = (data) => get(`${API_URL}/s3/check_bidoq`, data);

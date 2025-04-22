@@ -163,15 +163,16 @@ public class S3DocumentDAO {
 		.set(Rdoc.RDOC.MODIFICATION_USER, document.getModificationUser())
 		.returning(Rdoc.RDOC.ID).fetchOne().getId()
 		;
-		for(Integer idTag : document.getTags()) {
-			ctx.getDslContext()
-			.insertInto(RdocTag.RDOC_TAG)
-			.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
-			.set(RdocTag.RDOC_TAG.RDOC, id)
-			.set(RdocTag.RDOC_TAG.TAG, idTag)
-			.execute()
-			;
-		}
+		if(document.getTags() != null)
+			for(Integer idTag : document.getTags()) {
+				ctx.getDslContext()
+				.insertInto(RdocTag.RDOC_TAG)
+				.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
+				.set(RdocTag.RDOC_TAG.RDOC, id)
+				.set(RdocTag.RDOC_TAG.TAG, idTag)
+				.execute()
+				;
+			}
 		return document.setId(id).setType(0);
 	}
 	
@@ -195,15 +196,16 @@ public class S3DocumentDAO {
 			.where(Rdoc.RDOC.ID.eq(document.getId()))
 			.execute();
 			ctx.getDslContext().deleteFrom(RdocTag.RDOC_TAG).where(RdocTag.RDOC_TAG.RDOC.eq(document.getId())).execute();
-			for(Integer idTag : document.getTags()) {
-				ctx.getDslContext()
-				.insertInto(RdocTag.RDOC_TAG)
-				.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
-				.set(RdocTag.RDOC_TAG.RDOC, document.getId())
-				.set(RdocTag.RDOC_TAG.TAG, idTag)
-				.execute()
-				;
-			}
+			if(document.getTags() != null)
+				for(Integer idTag : document.getTags()) {
+					ctx.getDslContext()
+					.insertInto(RdocTag.RDOC_TAG)
+					.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
+					.set(RdocTag.RDOC_TAG.RDOC, document.getId())
+					.set(RdocTag.RDOC_TAG.TAG, idTag)
+					.execute()
+					;
+				}
 		}
 		else if(type == 1) {			
 			ctx.getDslContext()
@@ -222,15 +224,16 @@ public class S3DocumentDAO {
 			.where(Rattach.RATTACH.ID.eq(document.getId()))
 			.execute();
 			ctx.getDslContext().deleteFrom(RattachTag.RATTACH_TAG).where(RattachTag.RATTACH_TAG.RATTACH.eq(document.getId())).execute();
-			for(Integer idTag : document.getTags()) {
-				ctx.getDslContext()
-				.insertInto(RattachTag.RATTACH_TAG)
-				.set(RattachTag.RATTACH_TAG.DOMAIN, document.getDomain())
-				.set(RattachTag.RATTACH_TAG.RATTACH, document.getId())
-				.set(RattachTag.RATTACH_TAG.TAG, idTag)
-				.execute()
-				;
-			}
+			if(document.getTags() != null)
+				for(Integer idTag : document.getTags()) {
+					ctx.getDslContext()
+					.insertInto(RattachTag.RATTACH_TAG)
+					.set(RattachTag.RATTACH_TAG.DOMAIN, document.getDomain())
+					.set(RattachTag.RATTACH_TAG.RATTACH, document.getId())
+					.set(RattachTag.RATTACH_TAG.TAG, idTag)
+					.execute()
+					;
+				}
 		}
 		return document;
 	}

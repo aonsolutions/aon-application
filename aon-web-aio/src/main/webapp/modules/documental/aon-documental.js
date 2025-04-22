@@ -7,7 +7,8 @@ import {
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
 	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File
+	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File,
+	getBidoqDocuments, checkBidoq
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSelect } from '../../components/aon-select.js';
@@ -44,7 +45,7 @@ export class AonDocumental extends AonElement {
 	constructor() {
       super();
       // Coger la category seleccionada del filtro
-        // Enlazamos el mÈtodo al contexto de la clase
+        // Enlazamos el mÔøΩtodo al contexto de la clase
         this.categoryEvento = this.categoryEvento.bind(this);
         // Nos aseguramos de escuchar el evento
         window.addEventListener('category_filter', this.categoryEvento);
@@ -100,7 +101,7 @@ export class AonDocumental extends AonElement {
 		return this.dur;
 	}
 
-	build() {
+	async build() {
 		let aonDocumental = this.getApplication();
 		if(this.isBeta()) {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
@@ -155,6 +156,12 @@ export class AonDocumental extends AonElement {
 			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
 		}
 
+		let bool = await this.hasBidoq();
+
+		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager() && this.getDur().isBidoq()){
+			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
+		}
+		
 		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
 			this.addDocumentOptions();
 		this.addTypeOptions();
@@ -632,6 +639,98 @@ export class AonDocumental extends AonElement {
 	search(value) {
 		this._filter.description = value;
 		this.aonDocumentalList();
+	}
+
+	async importBidoqDocumentsToAon() {
+		// Crear overlay
+		let loadingOverlay = document.createElement('div');
+		loadingOverlay.id = 'aonDocumentalLoadingOverlay';
+		loadingOverlay.style.position = 'absolute';
+		loadingOverlay.style.top = '0';
+		loadingOverlay.style.left = '0';
+		loadingOverlay.style.width = '100%';
+		loadingOverlay.style.height = '100%';
+		loadingOverlay.style.backgroundColor = 'rgba(241, 236, 236, 0.8)';
+		loadingOverlay.style.display = 'flex';
+		loadingOverlay.style.alignItems = 'center';
+		loadingOverlay.style.justifyContent = 'center';
+		loadingOverlay.style.zIndex = '10';
+	
+		// Contenedor del spinner + texto
+		let spinnerContainer = document.createElement('div');
+		spinnerContainer.style.display = 'flex';
+		spinnerContainer.style.flexDirection = 'column';
+		spinnerContainer.style.alignItems = 'center';
+	
+		// Spinner
+		let spinner = document.createElement('div');
+		spinner.classList.add('preloader-wrapper', 'active');
+		spinner.innerHTML = `
+			<span class="material-symbols-outlined">
+				refresh
+			</span>
+		`;
+	
+		let icon = spinner.querySelector('.material-symbols-outlined');
+		icon.style.fontSize = '48px';
+		icon.style.animation = 'rotate 2s linear infinite';
+	
+		// Texto
+		let text = document.createElement('div');
+		text.textContent = 'Importando documentos desde Bidoq...';
+		text.style.marginTop = '12px';
+		text.style.fontSize = '16px';
+		text.style.color = '#333';
+		text.style.fontFamily = 'Arial, sans-serif';
+	
+		// Estilo para la animaci√≥n del spinner (una sola vez idealmente)
+		if (!document.getElementById('spinner-style')) {
+			let style = document.createElement('style');
+			style.id = 'spinner-style';
+			style.innerHTML = `
+				@keyframes rotate {
+					0% {
+						transform: rotate(0deg);
+					}
+					100% {
+						transform: rotate(360deg);
+					}
+				}
+			`;
+			document.head.appendChild(style);
+		}
+	
+		// Armar estructura
+		spinnerContainer.appendChild(spinner);
+		spinnerContainer.appendChild(text);
+		loadingOverlay.appendChild(spinnerContainer);
+	
+		// Agregar overlay al contenedor
+		let container = document.body; 
+		container.appendChild(loadingOverlay);
+	
+		try {
+			let data = {
+				document: localStorage.getItem('aon_domain_document'),
+			};
+			let response = await getBidoqDocuments(data);
+			if (response) {
+				this.loadCategories();
+			}
+		} catch (error) {
+			console.error("Error al importar documentos:", error);
+		} finally {
+			// Quitar el spinner
+			loadingOverlay.remove();
+		}
+	}
+
+	async hasBidoq(){
+		let data = {
+			document: localStorage.getItem('aon_domain_document'),
+		};
+		let response = await checkBidoq(data);
+		return response;
 	}
 
 	aonDocumentalList(filter) {

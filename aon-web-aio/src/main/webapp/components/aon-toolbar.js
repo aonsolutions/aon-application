@@ -230,8 +230,11 @@ export class AonToolbar extends AonElement {
 			aib.addEventListener(EVENT.CLICK, fn);
 			if(action.aonIcon){
 				aib.aonIcon = action.aonIcon;
-			} else 
+			} else if (action.image)  {
+				aib.image = action.image;
+			} else{
 				aib.icon = action.icon;
+			}
 			
 			span.appendChild(aib);
 
