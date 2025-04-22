@@ -24,6 +24,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 public class S3rDoc{
 
 	private static final String SCALEWAY_REGION = "fr-par";
+	private static final String USER = "SCWPHPGAFS9GFT4K3JXR";
+	private static final String PASS = "1e3474fc-1c51-445a-931d-30f5d1eb92b7";
 	
 	private S3rDoc() {
 	}
@@ -33,7 +35,7 @@ public class S3rDoc{
 			S3Client client = S3Client.builder()
 			.endpointOverride(URI.create("https://s3.fr-par.scw.cloud"))
 			.credentialsProvider(StaticCredentialsProvider.create(
-	                AwsBasicCredentials.create("SCWR9W8EA2KZNBXF4SP9", "fef9cd73-0431-4eee-97c9-01748ea3ec6b")))
+	                AwsBasicCredentials.create(USER, PASS)))
 			.region(Region.of(SCALEWAY_REGION))
 			.build();
 			if(!existBucket(client, bucket)) {				
@@ -50,7 +52,7 @@ public class S3rDoc{
 			S3Client client = S3Client.builder()
 			.endpointOverride(URI.create("https://s3.fr-par.scw.cloud"))
 			.credentialsProvider(StaticCredentialsProvider.create(
-	                AwsBasicCredentials.create("SCWR9W8EA2KZNBXF4SP9", "fef9cd73-0431-4eee-97c9-01748ea3ec6b")))
+	                AwsBasicCredentials.create(USER, PASS)))
 			.region(Region.of(SCALEWAY_REGION))
 			.build();
 			return client;
