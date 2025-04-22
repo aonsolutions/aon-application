@@ -99,7 +99,6 @@ export class AonDocumentalList extends AonElement {
         // Montamos el filtro
 	    this.btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
           clearTimeout(timeOut);
-
           timeOut = setTimeout(() => {
             this._list = [];
 	        if(detail) {
@@ -138,7 +137,6 @@ export class AonDocumentalList extends AonElement {
                   const selectedOption  = categoryOptions.find(opt => opt.value === parseInt(selectCategory));
                   selectCategoryName    = selectedOption.name;
                 }
-                const miValor = 'category_filter';
                 const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory, categoryName: selectCategoryName}});
                 window.dispatchEvent(evento);
               // El tipo de category despacho
@@ -183,23 +181,27 @@ export class AonDocumentalList extends AonElement {
 	}
 	
     async visibleOnly(){
-      let asesor   = this.getElement(ASESOR_TYPE);
-      let employee = this.getElement(EMPLOYEE_TYPE);
-      
-      asesor.addEventListener(EVENT.CLICK, () => {
-        // Estado que estaba y el que esta el empleado
-        if(asesor.value === 'false' && employee.value === 'true'){
-          employee.value    = 'false';
-          employee.checked  = false;
-        }
-      });
-      employee.addEventListener(EVENT.CLICK, () => {
-        // Estado que estaba y el que esta el asesor
-        if(employee.value === 'false' && asesor.value === 'true'){
-          asesor.value    = 'false';
-          asesor.checked  = false;
-        }
-      });
+		if(this.getElement(ASESOR_TYPE + "_checkbox")){			
+			let asesor = this.getElement(ASESOR_TYPE + "_checkbox");
+			asesor.addEventListener(EVENT.CLICK, () => {
+				// Estado que estaba y el que esta el empleado
+				if(asesor.value === 'false' && employee.value === 'true'){
+				  employee.value    = 'false';
+				  employee.checked  = false;
+				}
+			});
+		}
+		
+		if(this.getElement(EMPLOYEE_TYPE + "_checkbox")){
+			let employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+			employee.addEventListener(EVENT.CLICK, () => {
+				// Estado que estaba y el que esta el asesor
+				if(employee.value === 'false' && asesor.value === 'true'){
+				  asesor.value    = 'false';
+				  asesor.checked  = false;
+				}
+			});
+		}
     }
       
     async categoryOldFilter(){
@@ -357,7 +359,6 @@ export class AonDocumentalList extends AonElement {
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-
         if (aonDocumentalTable && filter.page) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, false);
         }
@@ -374,24 +375,21 @@ export class AonDocumentalList extends AonElement {
 
     loadDocumentsIntoTable(table, filter, isInit = false) {
         const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
-
         fetchDocuments(filter).then(documents => {	
             if (isInit) {
                 table.removeRows();               // Limpiar la tabla si es la inicializaci�n
                 table.selected = [];              // Limpiar la selecci�n
                 this.removeDocumentalActions();   // Eliminar acciones de documentos
-            } else {
+            } 
               // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
                 filter.page = filter.page + 1;
-                this.setFilter(filter);
-            }
-
-            if (isInit && documents.length === 0) {
+				this.setFilter(filter);
+            if (isInit && documents.length === 0 ) {
                 this.more = false;  // Si no hay documentos, no se puede cargar mas
                 // Mostrar mensaje si no hay documentos
                 table.addRowNoData("No existen documentos disponibles");
             }
-
+			
             // Insertar los documentos en la tabla
             documents.forEach((doc, i) => {
 				if(this.isBetaDoc() && documents[i].size){

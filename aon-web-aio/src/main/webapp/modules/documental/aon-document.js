@@ -5,8 +5,8 @@ import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    ASESOR_TYPE,
    EMPLOYEE_TYPE,
    ENTERPRISE_TYPE} from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents } from '../../services/service.js';
-import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
+import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
 import '../../components/aon-viewer.js';
@@ -16,6 +16,7 @@ import { createDate, createInput, createSelect } from '../../components/CreateCo
 import { setAttributes, setEvents } from '../../services/utilsComponents.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
+import { loadOldCategories } from './DocumentalUtils.js';
 export class AonDocument extends AonElement {
   doc;
   docS3;
@@ -266,7 +267,6 @@ export class AonDocument extends AonElement {
       containerTags.style.flexWrap = "wrap";
       containerTags.id = "containerTags";
       card.setContent(containerTags);
-      //revisar los tags en document al recibir
       // this.document.tags.forEach((item) => {
       //   this.addTag(item);
       // });
@@ -285,16 +285,19 @@ export class AonDocument extends AonElement {
             if (el) container.appendChild(el);
         }
     });
-
     return container.childNodes.length === 1 ? container.firstChild : container;
 }
 
  
 
 async visibleOnly(){
-  let asesor = this.getElement(ASESOR_TYPE + "_checkbox");
-  let employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+  if(this.getElement(ASESOR_TYPE + "_checkbox")){
+    var asesor = this.getElement(ASESOR_TYPE + "_checkbox");
+  }
 
+  if(this.getElement(EMPLOYEE_TYPE + "_checkbox")){
+    var employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+  }
   if (asesor && employee) {
     asesor.addEventListener(EVENT.CLICK, (event) => {
       if (asesor.value === 'false' && employee.value === 'true') {
@@ -335,6 +338,20 @@ async visibleOnly(){
       event.preventDefault();
       event.stopPropagation();
     });
+  } else if(!asesor && employee) {
+    employee.addEventListener(EVENT.CLICK, (event) => {
+      if (employee.value === 'false') {
+        employee.value = 'true';
+        employee.checked = true;
+        this.updateType(EMPLOYEE_TYPE);
+      } else if (employee.value === 'true') {
+        employee.value = 'false';
+        employee.checked = false;
+        this.updateType(ENTERPRISE_TYPE);
+      } 
+      event.preventDefault();
+      event.stopPropagation();
+    });
   } else {
     console.error("Los checkboxes de asesor o employee no se encuentran en el DOM.");
   }
@@ -359,116 +376,587 @@ setCheckboxesBasedOnRegistryType(document) {
 }
 
 
-buildDataS3() {
-  let card = this.getElement(this.DATA_CARD);
-  card.setContentHTML('');
-  let table = this.createElement(TAG.TABLE);
-  table.style.width = '100%';
-  card.setContent(table);
-  let attributes = [];
-  
-  if (this.getDur().isDocumentalManager()) {
-      attributes = [
-          {
-              type: "checkbox",
-              id: ASESOR_TYPE + "_checkbox",
-              name: ASESOR_TYPE,
-              title: "No visible para " + MSG.ENTERPRISE
-          },
-          {
-              type: "checkbox",
-              id: EMPLOYEE_TYPE + "_checkbox",
-              name: EMPLOYEE_TYPE,
-              title: "Visible solo para " + MSG.EMPLOYEE,
-          }
-      ];
-  } else if (this.getDur().isDocumentalPortal()) {
-      attributes = [
-          {
-              type: "checkbox",
-              id: EMPLOYEE_TYPE + "_checkbox",
-              name: EMPLOYEE_TYPE,
-              title: "Visible solo para " + MSG.EMPLOYEE,
-          }
-      ];
-  }
-
-  // Crear checkboxes si existen
-  attributes.forEach(attribute => {
-      let trCheckbox = this.createElement('tr');
-      table.appendChild(trCheckbox);
-
-      let tdCheckbox = this.createElement('td');
-      trCheckbox.appendChild(tdCheckbox);
-
-      // Crear el input usando getInput
-      let el = this.getInput([attribute]);
-      if (el) {
-          tdCheckbox.appendChild(el);
+async buildDataS3() { 
+      let card = this.getElement(this.DATA_CARD);
+      card.setContentHTML('');
+      let table = this.createElement(TAG.TABLE);
+      table.style.width = '100%';
+      table.id = 'documentTable';
+      card.setContent(table);
+      let attributes = [];
+      
+      if (this.getDur().isDocumentalManager()) {
+          attributes = [
+              {
+                  type: "checkbox",
+                  id: ASESOR_TYPE + "_checkbox",
+                  name: ASESOR_TYPE,
+                  title: "No visible para " + MSG.ENTERPRISE
+              },
+              {
+                  type: "checkbox",
+                  id: EMPLOYEE_TYPE + "_checkbox",
+                  name: EMPLOYEE_TYPE,
+                  title: "Visible solo para " + MSG.EMPLOYEE,
+              }
+          ];
+      } else if (this.getDur().isDocumentalPortal()) {
+          attributes = [
+              {
+                  type: "checkbox",
+                  id: EMPLOYEE_TYPE + "_checkbox",
+                  name: EMPLOYEE_TYPE,
+                  title: "Visible solo para " + MSG.EMPLOYEE,
+              }
+          ];
       }
-  });
 
-  // Aquí pasamos el documento a la función de visibilidad
-  this.setCheckboxesBasedOnRegistryType(this.document);
+      // Crear checkboxes si existen
+      attributes.forEach(attribute => {
+          let trCheckbox = this.createElement('tr');
+          table.appendChild(trCheckbox);
 
-  // Llamamos a la función para manejar la visibilidad después
-  this.visibleOnly();
+          let tdCheckbox = this.createElement('td');
+          trCheckbox.appendChild(tdCheckbox);
 
-  // Fecha
-  let tr = this.createElement(TAG.TR);
-  table.appendChild(tr);
-  let tdDate = this.createElement(TAG.TD);
-  tdDate.setAttribute('colspan', '1');
-  tr.appendChild(tdDate);
+          // Crear el input usando getInput
+          let el = this.getInput([attribute]);
+          if (el) {
+              tdCheckbox.appendChild(el);
+          }
+      });
 
-  let date = createDate(this.DATE, MSG.DATE + ' del documento');
-  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-      date.readonly = 'true';
-  }
-  if (this.document.date) {
-      let d = this.document.date.split('-');
-      date.setDate(new Date(d[0], d[1] - 1, d[2]));
-  }
-  tdDate.appendChild(date);
-  // Si se modifica la fecha
-  date.addEventListener(EVENT.CHANGE, (event) => this.updateDate(date.getDateValue()));
+      if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
+        // Aquí pasamos el documento a la función de visibilidad
+        this.setCheckboxesBasedOnRegistryType(this.document);
+        // Llamamos a la función para manejar la visibilidad después
+        this.visibleOnly();
+      }
+      
+      // Fecha
+      let tr = this.createElement(TAG.TR);
+      tr.id = 'trDate';
+      table.appendChild(tr);
+      let tdDate = this.createElement(TAG.TD);
+      tdDate.setAttribute('colspan', '1');
+      tr.appendChild(tdDate);
 
-  // Nombre
-  let tr2 = this.createElement(TAG.TR);
-  table.appendChild(tr2);
-  let tdName = this.createElement(TAG.TD);
-  tdName.setAttribute('colspan', '2');
-  tr2.appendChild(tdName);
-  let name = createInput(this.NAME, MSG.NAME, tdName);
+      let date = createDate(this.DATE, MSG.DATE + ' del documento');
+      if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+          date.readonly = 'true';
+      }
+      if (this.document.date) {
+          let d = this.document.date.split('-');
+          date.setDate(new Date(d[0], d[1] - 1, d[2]));
+      }
+      tdDate.appendChild(date);
+      // Si se modifica la fecha
+      date.addEventListener(EVENT.CHANGE,
+         (event) => this.updateDate(date.getDateValue()));
+
+      // Nombre
+      let tr2 = this.createElement(TAG.TR);
+      tr2.id = 'trName';
+      table.appendChild(tr2);
+      let tdName = this.createElement(TAG.TD);
+      tdName.setAttribute('colspan', '2');
+      tr2.appendChild(tdName);
+      let name = createInput(this.NAME, MSG.NAME, tdName);
+      name.setValue(this.document.name);
+
+      if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+          name.setDisabled(true)
+      }
+      name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
+      // Scope
+      let trScope = this.createElement(TAG.TR);
+      trScope.id = 'trScope';
+      table.appendChild(trScope);
+      trScope.setAttribute('colspan', '2');
+      let scopeSelect = createSelect(this.SCOPE, MSG.SCOPE + ' (solo visible...)', trScope);
+      if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+          scopeSelect.disabled = true;
+      }
+
+      getScopes().then(scopes => {
+          scopeSelect.setOptions(scopes.map(s => {
+              return {
+                  value: s.id,
+                  name: s.name
+              };
+          }));
+          if (this.document.scope)
+              scopeSelect.value = this.document.scope;
+          scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
+      });
+
+      //Category
+      let oldCategories = await loadOldCategories();
+      if(oldCategories){
+        
+        this.createCategoryRadio(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, this.handleCategoryChange.bind(this));
+        this.createCategoryRadio(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, this.handleCategoryChange.bind(this));
+
+        let radioS3 = document.getElementById('s3CategoriesRadio');
+        let radioOld = document.getElementById('oldCategoriesRadio');
+        if(!this.getDur().isDocumentalManager()) {
+          radioS3.hidden = true;
+          radioOld.hidden = true;
+        }
+    // Cargar ruta de categorías si existe
+    if (this.document.category) {
+      const s3Categories = await getS3Category(); // Carga todas las S3
+      const isS3Category = s3Categories.some(cat => cat.id === this.document.category && cat.is_deletable === 0);
+      if (isS3Category) {
+        // === Categoría tipo S3 ===
+        const path = await this.getCategoryPath(this.document.category);
+        const s3Radio = document.getElementById('s3CategoriesRadio');
+        s3Radio.checked = true;
+        if(!this.getDur().isDocumentalManager()) {
+          s3Radio.hidden = true;
+        }
+
+        const trCategory = document.createElement('tr');
+        trCategory.id = 'trCategory';
+        table.appendChild(trCategory);
+
+        const td = document.createElement('td');
+        td.setAttribute('colspan', '1');
+        trCategory.appendChild(td);
+
+        const select = new AonNewSelect();
+        select.id = "aonDocumentalSheetCategory";
+        select.title = MSG.CATEGORY;
+        td.appendChild(select);
+        if(!this.getDur().isDocumentalManager()) {
+          select.disabled = true;
+        }
+
+        const rootCategories = await getS3Category({ parent: null });
+        select.options = JSON.stringify(rootCategories.filter(c => c.is_deletable === 0).map(c => ({
+          value: c.id,
+          name: c.name
+        })));
+
+        select.value = path[0].id;
+        this.s3CategoryTree(select, table);
+
+        for (let i = 1; i < path.length; i++) {
+          const current = path[i];
+          const parent = path[i - 1];
+          const children = await getS3Category({ parent: parent.id });
+          if (!children.length){
+            break;
+          } 
+
+          const levelNames = ['Subcategoria', 'Administración', 'Modelos'];
+          const levelIds = ['SubcategoriaSelect', 'AdministracionSelect', 'ModelosSelect'];
+
+          const tr = document.createElement('tr');
+          tr.id = `tr${levelNames[i - 1]}`;
+          table.appendChild(tr);
+
+          const td = document.createElement('td');
+          td.setAttribute('colspan', '1');
+          tr.appendChild(td);
+
+          const sel = new AonNewSelect();
+          sel.id = levelIds[i - 1];
+          sel.title = levelNames[i - 1];
+          sel.options = JSON.stringify(children.map(opt => ({
+            value: opt.id,
+            name: opt.name
+          })));
+          sel.value = current.id;
+          sel.disabled = true;
+
+          td.appendChild(sel);
+        }
+
+      } else {
+        // === Categoría antigua ===
+        const oldRadio = document.getElementById('oldCategoriesRadio');
+        oldRadio.checked = true;
+        if(!this.getDur().isDocumentalManager()) {
+          oldRadio.hidden = true;
+        }
+
+        const trCategory = document.createElement('tr');
+        trCategory.id = 'trCategory';
+        table.appendChild(trCategory);
+
+        const td = document.createElement('td');
+        td.setAttribute('colspan', '1');
+        trCategory.appendChild(td);
+
+        const categorySelect = new AonNewSelect();
+        categorySelect.id = "aonDocumentalSheetCategory";
+        categorySelect.title = MSG.CATEGORY;
+        if (!this.getDur().isDocumentalManager()) {
+          // categorySelect.readonly = 'true';
+          categorySelect.disabled = true;
+        }
+        td.appendChild(categorySelect);
+
+
+        const categories = await getCategories({ domain: localStorage.getItem('aon_domain_id') });
+        categorySelect.options = JSON.stringify(categories.map(c => ({
+          value: c.id,
+          name: c.name
+        })));
+
+        // Esperamos a que se monten las options antes de asignar valor
+        setTimeout(() => {
+          categorySelect.value = this.document.category;
+          this.updateCategory(categorySelect.value);
+        }, 0);
+      }
+    }
+  } else {
+    // Solo cargamos S3 ya que no hay categorías antiguas
+    this.createCategoryRadio(table, 's3CategoriesRadio', '', this.handleCategoryChange.bind(this));
+    let radio = document.getElementById('s3CategoriesRadio');
+    radio.hidden = true;  
+    if (this.document.category) {
+      const s3Categories = await getS3Category();
+      const isS3Category = s3Categories.some(cat => cat.id === this.document.category && cat.is_deletable === 0);
+      if (isS3Category) {
+        const path = await this.getCategoryPath(this.document.category);
+        const s3Radio = document.getElementById('s3CategoriesRadio');
+        s3Radio.checked = true;
   
-  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-      name.readonly = 'true';
+        const trCategory = document.createElement('tr');
+        trCategory.id = 'trCategory';
+        table.appendChild(trCategory);
+  
+        const td = document.createElement('td');
+        td.setAttribute('colspan', '1');
+        trCategory.appendChild(td);
+  
+        const select = new AonNewSelect();
+        select.id = "aonDocumentalSheetCategory";
+        select.title = MSG.CATEGORY;
+        td.appendChild(select);
+  
+        const rootCategories = await getS3Category({ parent: null });
+        select.options = JSON.stringify(rootCategories.filter(c => c.is_deletable === 0).map(c => ({
+          value: c.id,
+          name: c.name
+        })));
+  
+        select.value = path[0].id;
+        this.s3CategoryTree(select, table);
+      }
+    }
   }
-  name.setValue(this.document.name);
-  name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
-
-  // Scope
-  let trScope = this.createElement(TAG.TR);
-  table.appendChild(trScope);
-  trScope.setAttribute('colspan', '2');
-  let scopeSelect = createSelect(this.SCOPE, MSG.SCOPE + ' (solo visible...)', trScope);
-  if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-      scopeSelect.readonly = 'true';
-  }
-
-  getScopes().then(scopes => {
-      scopeSelect.setOptions(scopes.map(s => {
-          return {
-              value: s.id,
-              name: s.name
-          };
-      }));
-      if (this.document.scope)
-          scopeSelect.value = this.document.scope;
-      scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
-  });
 }
 
+async getCategoryPath(categoryId) {
+
+  const categories = await getS3Category();
+  const categoryMap = new Map();
+
+  // Mapeamos por ID para acceso rápido
+  categories.forEach(cat => {
+    categoryMap.set(cat.id, {
+      id: cat.id,
+      parent: cat.parent,
+      name: cat.name
+    });
+  });
+
+  let path = [];
+
+  let current = categoryMap.get(categoryId);
+
+  while (current) {
+    path.unshift(current); // Lo ponemos al principio para construir desde la raíz
+    current = categoryMap.get(current.parent);
+  }
+  return path;
+}
+
+  createCategoryRadio(table, radioId, labelText, onChangeCallback){
+    let trRadio = this.createElement(TAG.TR);
+    let tdRadio = this.createElement(TAG.TD);
+    tdRadio.setAttribute('colspan', '2');
+    tdRadio.style.marginTop = '10px';
+    tdRadio.style.marginBottom = '10px';
+
+    let radio = this.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'categoryRadioGroup';
+    radio.id = radioId;
+
+    let label = this.createElement('label');
+    label.setAttribute('for', radioId);
+    if(!this.getDur().isDocumentalManager()) {
+      label.textContent = '';
+    }else{
+      label.textContent = labelText;
+    }
+
+    tdRadio.appendChild(radio);
+    tdRadio.appendChild(label);
+
+    trRadio.appendChild(tdRadio);
+    table.appendChild(trRadio);
+
+    if (onChangeCallback) {
+      radio.addEventListener('change', onChangeCallback);
+    }
+  }
+
+  handleCategoryChange(event) {
+    const table = this.getElement('documentTable');
+  
+    this.clearFields(table);
+  
+    const existingCategoryTr = document.getElementById('trCategory');
+    if (existingCategoryTr) {
+      existingCategoryTr.remove();
+    }
+  
+    const radioId = event.target.id;
+    const isS3 = radioId === 's3CategoriesRadio';
+  
+    const tr = document.createElement('tr');
+    tr.id = 'trCategory';
+    table.appendChild(tr);
+  
+    const td = document.createElement('td');
+    td.setAttribute('colspan', '1');
+    tr.appendChild(td);
+  
+    const select = new AonNewSelect();
+    select.id = "aonDocumentalSheetCategory";
+    select.title = MSG.CATEGORY;
+    if (!this.getDur().isDocumentalManager()) {
+      select.readonly = 'true';
+    }
+    td.appendChild(select);
+
+  
+    if (isS3) {
+      getS3Category({ parent: null }).then(categories => {
+        select.options = JSON.stringify(categories.filter(c => c.is_deletable === 0).map(c => ({
+          value: c.id,
+          name: c.name
+        })));
+        this.s3CategoryTree(select, table);
+      });
+    } else {
+      getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(categories => {
+        select.options = JSON.stringify(categories.map(c => ({
+          value: c.id,
+          name: c.name
+        })));
+        select.value = this.document.category; 
+        select.addEventListener('change', () => {
+          this.updateCategory(select.value);
+        });
+      });
+    }
+  }
+  
+  clearPreviewSelectOptions(categoriesToLoad, categoryType) {
+    let select = document.getElementById("aonDocumentalSheetCategory");
+    let table = document.getElementById("documentTable");
+
+    if(categoryType === 'old'){
+      select.options = JSON.stringify(categoriesToLoad.map(c => {
+        return {
+            value: c.id,
+            name: c.name
+        };
+      }));
+    }
+
+    if(categoryType === 's3'){
+      select.options = JSON.stringify(categoriesToLoad.filter(c => c.is_deletable === 0).map(c => {
+        return {
+            value: c.id,
+            name: c.name
+        };
+      }));
+    }
+
+    if(categoryType === 's3' && select.options){
+      this.s3CategoryTree(select, table)
+    }
+  }
+
+  s3CategoryTree(select, table) {
+    // Nivel 1: Categoría
+    select.addEventListener('change', (event) => {
+      const selectedCategoryId = event.target.value;
+      this.clearFields(table);
+  
+      // Aplica el readonly si no es documental manager
+      if (!this.getDur().isDocumentalManager()) {
+        select.readonly = 'true';
+      }
+      if (selectedCategoryId !== null && selectedCategoryId !== undefined) {
+        this.checkAndUpdateCategory(); // por si no hay subniveles
+  
+        let trSubCategory = document.createElement('tr');
+        trSubCategory.id = 'trSubcategory';
+        table.appendChild(trSubCategory);
+  
+        let tdSubCategory = document.createElement('td');
+        tdSubCategory.setAttribute('colspan', '1');
+  
+        let selSubCat = new AonNewSelect();
+        selSubCat.title = 'Subcategoria';
+        selSubCat.id = 'SubcategoriaSelect';
+  
+        // Aplica el readonly si no es documental manager
+        if (!this.getDur().isDocumentalManager()) {
+          selSubCat.readonly = 'true';
+        }
+  
+        tdSubCategory.appendChild(selSubCat);
+  
+        let data = { parent: selectedCategoryId };
+        getS3Category(data).then(subcategories => {
+          if (subcategories.length > 0) {
+            selSubCat.options = JSON.stringify(subcategories.map(sc => ({
+              value: sc.id,
+              name: sc.name
+            })));
+            trSubCategory.appendChild(tdSubCategory);
+  
+            // Nivel 2: Subcategoría
+            selSubCat.addEventListener('change', (event) => {
+              const selectedSubCategoryId = event.target.value;
+              this.clearFields(table, [trSubCategory]);
+              if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
+                this.checkAndUpdateCategory(); //si no hay administración ni modelo
+  
+                let trAdministration = document.createElement('tr');
+                trAdministration.id = 'trAdministration';
+                table.appendChild(trAdministration);
+  
+                let tdAdministration = document.createElement('td');
+                tdAdministration.setAttribute('colspan', '1');
+  
+                let selAdministration = new AonNewSelect();
+                selAdministration.title = "Administración";
+                selAdministration.id = 'AdministracionSelect';
+  
+                // Aplica el readonly si no es documental manager
+                if (!this.getDur().isDocumentalManager()) {
+                  selAdministration.readonly = 'true';
+                }
+  
+                tdAdministration.appendChild(selAdministration);
+  
+                let data = { parent: selectedSubCategoryId };
+                getS3Category(data).then(administrations => {
+                  if (administrations.length > 0) {
+                    selAdministration.options = JSON.stringify(administrations.map(adm => ({
+                      value: adm.id,
+                      name: adm.name
+                    })));
+                    trAdministration.appendChild(tdAdministration);
+  
+                    // Nivel 3: Administración
+                    selAdministration.addEventListener('change', (event) => {
+                      const selectedAdministrationId = event.target.value;
+                      this.clearFields(table, [trSubCategory, trAdministration]);
+                      if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
+                        this.checkAndUpdateCategory(); // por si no hay modelo
+  
+                        let trModel = document.createElement('tr');
+                        trModel.id = 'trModel';
+                        table.appendChild(trModel);
+  
+                        let tdModel = document.createElement('td');
+                        tdModel.setAttribute('colspan', '1');
+  
+                        let selModel = new AonNewSelect();
+                        selModel.id = "ModelosSelect";
+                        selModel.title = "Modelos";
+  
+                        if (!this.getDur().isDocumentalManager()) {
+                          selModel.readonly = 'true';
+                        }
+  
+                        tdModel.appendChild(selModel);
+  
+                        let data = { parent: selectedAdministrationId };
+                        getS3Category(data).then(models => {
+                          selModel.options = JSON.stringify(models.map(mod => ({
+                            value: mod.id,
+                            name: mod.name
+                          })));
+                          trModel.appendChild(tdModel);
+  
+                          // Nivel 4: Modelo
+                          selModel.addEventListener('change', () => {
+                            this.checkAndUpdateCategory(); // definitivo
+                          });
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+  
+
+  checkAndUpdateCategory() {
+    const modelSelect = document.getElementById("ModelosSelect");
+    const adminSelect = document.getElementById("AdministracionSelect");
+    const subcatSelect = document.getElementById("SubcategoriaSelect");
+  
+    let categoryId = null;
+  
+    if (modelSelect && modelSelect.value) {
+      categoryId = modelSelect.value;
+    } else if (adminSelect && adminSelect.value) {
+      categoryId = adminSelect.value;
+    } else if (subcatSelect && subcatSelect.value) {
+      categoryId = subcatSelect.value;
+    }
+  
+    if (categoryId !== null) {
+      this.updateCategory(categoryId);
+    }
+  }
+
+  clearFields(table, subFieldsToKeep = []) {
+    const trElements = table.querySelectorAll('tr');
+    let checkBoxAsesor = document.getElementById(ASESOR_TYPE + '_checkbox');
+    let checkBoxEmployee = document.getElementById(EMPLOYEE_TYPE + "_checkbox");
+    let trDate = document.getElementById('trDate');
+    let trName = document.getElementById('trName');
+    let trScope = document.getElementById('trScope'); 
+    let trCategory = document.getElementById('trCategory');
+  
+    // Filtramos por si alguno no existe
+    let fieldsToKeep = [trCategory, trDate, trName, trScope].filter(Boolean);
+  
+    trElements.forEach((tr) => {
+      const radioInTr = tr.querySelector('input[type="radio"]');
+  
+      const shouldKeep =
+        fieldsToKeep.includes(tr) ||
+        subFieldsToKeep.includes(tr) ||
+        (checkBoxAsesor && tr.contains(checkBoxAsesor)) ||
+        (checkBoxEmployee && tr.contains(checkBoxEmployee)) ||
+        radioInTr;
+  
+      if (!shouldKeep) {
+        tr.remove();
+      }
+    });
+  }
   addTag(tag){
     let containerTags = this.getElement("containerTags");
     let t = {
@@ -617,9 +1105,13 @@ buildDataS3() {
 		URL.revokeObjectURL(url);
   }
   updateCategory(category) {
-    if(!this.doc.category)
+    if(this.isBetaDoc()){
+      this.doc.category = category
+    }else{
+      if(!this.doc.category)
       this.doc.category = {};
-    this.doc.category.id = category;
+      this.doc.category.id = category;
+    }
     this.save();
   }
 
