@@ -60,6 +60,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	public static final String DOCUMENT_FILE_MULTIPLE = "/file_multiple";
 	public static final String COUNT = "/count";
 	public static final String BIDOQ = "/bidoq";
+	public static final String CHECK_BIDOQ = "/check_bidoq";
 	
 	private static final String AON_BUCKET_NAME = "aon-documental";
 	private static final String BIDOQ_BUCKET_NAME = "ayudat-mispapeles-dev-01";
@@ -105,6 +106,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 					break;
 				case BIDOQ:
 					response(req, resp, getBidoqDocumentsToAon(api));
+					break;
+				case CHECK_BIDOQ:
+					response(req, resp, checkBidoqDocumentsToAon(api));
 					break;
 			}
 		} catch (Exception e) {
@@ -681,5 +685,15 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             return new JSONObject().put("error", "falló la llamada");
         }
     }
+	
+	private static boolean checkBidoqDocumentsToAon(AonApiData api) {
+		String document = api.getData().getString(IJsonNames.DOCUMENT);
+		JSONObject json = callBidoq(document);
+		if(json.has("code") && json.getInt("code") == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }
