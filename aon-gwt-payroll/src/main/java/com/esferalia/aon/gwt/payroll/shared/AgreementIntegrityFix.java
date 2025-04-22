@@ -19,7 +19,15 @@ public enum AgreementIntegrityFix implements Serializable {
 	PAYMENT_CONCEPT_NO_REFERENCE("Conceptos del dominio sin referencia al convenio o contrato", "\u00bfDesea arreglar conceptos del dominio sin referencia al convenio o contrato\u003f"),
 	
 	AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD("Extras con formato err\u00f3neo en las fechas / Fechas > 12 meses", "\u00bfDesea arreglar extras con formato err\u00f3neo en las fechas / fechas > 12 meses\u003f"),
-	AGREEMENT_EXTRA_START_END("Extras error dia fecha incio o fecha fin", "\u00bfDesea arreglar extras con error en las fechas de incio o fin\u003f")
+	AGREEMENT_EXTRA_START_END("Extras error dia fecha incio o fecha fin", "\u00bfDesea arreglar extras con error en las fechas de incio o fin\u003f"),
+	
+	AGREEMENT_DATA_INHERIT("Inherit en el nivel 0 del convenio", "\u00bfDesea eliminar 'inherit' de las expresiones del nivel 0\u003f"),
+	AGREEMENT_LEVEL_DATA_INHERIT("Inherit en niveles retributivos del convenio", "\u00bfDesea eliminar 'inherit' de los niveles retributivos del convenio\u003f"),
+	AGREEMENT_PAYMENT_INHERIT("Inherit en devengos del convenio", "\u00bfDesea eliminar 'inherit' de los devengos del convenio\u003f"),
+	
+	CONTRACT_PAYMENT_INHERIT("Inherit en devengos de contratos asociados al convenio", "\u00bfDesea eliminar 'inherit' de los devengos de los contratos asociados al convenio\u003f"),
+	
+	AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR("Devengos con la misma expresi\u00f3n que el concepto asociado", "\u00bfDesea dejar unicamente la expresi\u00f3n del concepto\u003f")
 	;
 	
 	private String title;

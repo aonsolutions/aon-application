@@ -363,5 +363,7 @@ public interface EnterprisesServiceAsync {
 	void checkAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<AgreementIntegrity> asyncCallback) throws IllegalArgumentException ;
 	
 	void agreementIntegrityFix(String currentDomainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	
+	void fixAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 
 }

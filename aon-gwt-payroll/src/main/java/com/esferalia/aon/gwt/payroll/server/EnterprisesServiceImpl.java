@@ -5232,6 +5232,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+
+	@Override
+	public void fixAgreementIntegrity(String domainName, Integer agreementId) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqAgreementIntegrity.fixAgreementIntegrity(connection, domainId, agreementId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 	
 	
 }
