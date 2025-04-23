@@ -22,6 +22,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -143,6 +144,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		agreementLB.addChangeHandler(e -> onAgreementChange());
 		row.add(agreementLB);
 		
+		errorCB.getElement().getStyle().setProperty("max-width", "7rem");
 		errorCB.setValue(true);
 		errorCB.addValueChangeHandler(e -> createAgreementIntegrity());
 		row.add(errorCB);
@@ -358,6 +360,7 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		messages.forEach(variable -> {
 			Label description = new Label(variable);
 			description.getElement().getStyle().setProperty("padding", "0 2rem");
+			description.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_LINE); 
 			
 			paymentPanel.add(description);
 		});
@@ -395,33 +398,46 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 	}
 
 	private void fixIntegrityAgreement() {
-		AonDialog dialog = new AonDialog("Integridad Convenio", new HTML("\u00bfDesea arreglar la integridad del convenio\u003f"));
-		dialog.confirm(new AonAcceptDialogCallback() {
+		List<String> wrongExpressions = agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION);
+		if(wrongExpressions.isEmpty()) {
+			AonDialog dialog = new AonDialog("Integridad Convenio", new HTML("\u00bfDesea arreglar la integridad del convenio\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
 
-			@Override
-			public void onCancel() {}
+				@Override
+				public void onCancel() {}
 
-			@Override
-			public void onAccept() {
-				AonMessagePanel.showLoading(messagePanel, "Arreglando integridad del convenio...");
-				agreementIntegrityFix(null, end -> onAgreementChange());
-			}
-		});
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel, "Arreglando integridad del convenio...");
+					agreementIntegrityFix(null, end -> onAgreementChange());
+				}
+			});
+		} else {
+			AonDialog dialog = new AonDialog("Devengo formato err\u00f3neo", new HTML("Para poder arreglar la integridad del convenio es necesario arreglar manualmente las 'Expresiones con formato err\u00f3neo'"));
+			dialog.info();
+		}
+		
 	}
 	
 	private void fixPartialIntegrityAgreement() {
-		AonDialog dialog = new AonDialog("Integridad Convenio", new HTML("\u00bfDesea actualizar la versi\u00f3n del convenio\u003f"));
-		dialog.confirm(new AonAcceptDialogCallback() {
-
-			@Override
-			public void onCancel() {}
-
-			@Override
-			public void onAccept() {
-				AonMessagePanel.showLoading(messagePanel, "Actualizando versi\u00f3n del convenio...");
-				fixAgreement(end -> onAgreementChange());		
-			}
-		});
+		List<String> wrongExpressions = agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION);
+		if(wrongExpressions.isEmpty()) {
+			AonDialog dialog = new AonDialog("Integridad Convenio", new HTML("\u00bfDesea actualizar la versi\u00f3n del convenio\u003f"));
+			dialog.confirm(new AonAcceptDialogCallback() {
+	
+				@Override
+				public void onCancel() {}
+	
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel, "Actualizando versi\u00f3n del convenio...");
+					fixAgreement(end -> onAgreementChange());		
+				}
+			});
+		} else {
+			AonDialog dialog = new AonDialog("Devengo formato err\u00f3neo", new HTML("Para poder actualizar la versi\u00f3n del convenio es necesario arreglar manualmente las 'Expresiones con formato err\u00f3neo'"));
+			dialog.info();
+		}
 	}
 
 	private void getAgreements(Consumer<List<Agreement>> consumer) {
