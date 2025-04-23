@@ -171,9 +171,13 @@ export class AonElement extends HTMLElement{
   }
 
   isBetaDoc(){
-    return this.isBeta() && LS.isBetaDoc();   
+    return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
   }
-
+  
+  isAyudaTorInfoautonomos(){
+	const href = localStorage.getItem("aon_domain_name")
+			return href.includes('ayudat') || href.includes('infoautonomos')
+  }
 
   isSig(){
     const href = window.location.href;
