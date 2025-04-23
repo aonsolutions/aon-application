@@ -2,7 +2,13 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -174,7 +180,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 			} else if(type == 1){
-				data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
+				data = getRattachFile(api);
 			}
 			if(data != null) {				
 				Attach attach = new Attach()
@@ -188,6 +194,36 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		} catch(Exception e) {
 			throw e;
 		}
+	}
+	
+	private static byte [] getRattachFile(AonApiData api) {
+		byte [] data = null;
+		String base64 = "domain=" + api.getDomain().getId() + "&id=" + api.getData().getInt(IJsonNames.ID) + "&attach_type=registry";
+		base64 = Base64.getEncoder().encodeToString(base64.getBytes());
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
+						+ "ms/download_attachment/"
+						+ api.getDomain().getName()
+						+ "/"
+						+ api.getUser().getLogin()
+						+ "/"
+						+ base64
+						))
+				.headers("Content-Type", "text/plain;charset=UTF-8")
+				.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<InputStream> response = null;
+		HttpClient http = HttpClient.newHttpClient();
+		try {
+			response = http.send(request, BodyHandlers.ofInputStream());
+			InputStream is = response.body();
+			data = is.readAllBytes();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return data;
 	}
 	
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
@@ -211,7 +247,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				if(document.getType() == 0 && document.getS3key() != null) {
 					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 				} else if(document.getType() == 1){
-					data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
+					data = getRattachFile(api);
 				}
 				files.add(data);
 				filenames.add(document.getName());
