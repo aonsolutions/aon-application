@@ -71,6 +71,7 @@ export const CATEGORY_NAME = 'categoryName';
 export const CHANGE_PASSWORD = 'changePassword';
 export const CHANGE_TYPE = 'changeType';
 export const CHARGES_PAYMENTS = 'chargesPayments';
+export const CHECKBOX = 'checkbox';
 export const CHECKED = 'checked';
 export const CLOSED = 'closed';
 export const CODE = 'code';

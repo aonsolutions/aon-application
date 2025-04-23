@@ -17,7 +17,9 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.CategoryTree;
 import com.esferalia.aon.jooq.tables.Rattach;
+import com.esferalia.aon.jooq.tables.RattachTag;
 import com.esferalia.aon.jooq.tables.Rdoc;
+import com.esferalia.aon.jooq.tables.RdocTag;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -41,7 +43,7 @@ public class S3DocumentDAO {
 		Result<Record1<Integer>> recursiveIds = null;
 		ctx.checkRead();
 		SelectConditionStep<Record> queryRDoc = ctx.getDslContext()
-				.select(Rdoc.RDOC.ID)
+				.selectDistinct(Rdoc.RDOC.ID)
 				.select(DSL.inline((Integer) 0).as(TYPE_DOC))
 				.select(Rdoc.RDOC.NAME)
 				.select(Rdoc.RDOC.DOMAIN)
@@ -58,12 +60,14 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.CATEGORY)
 				.select(Rdoc.RDOC.REGISTRY)
 				.select(Rdoc.RDOC.SCOPE)
+			    .select(Rdoc.RDOC.TYPE) 
 				.from(Rdoc.RDOC)
+				.leftJoin(RdocTag.RDOC_TAG).on(Rdoc.RDOC.ID.eq(RdocTag.RDOC_TAG.RDOC))
 				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
 				.and(Rdoc.RDOC.DELETE_DATE.isNull())
 				;
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
-				.select(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
+				.selectDistinct(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.select(DSL.inline((Integer) 1).as(TYPE_DOC))
 				.select(Rattach.RATTACH.DESCRIPTION.as(Rdoc.RDOC.NAME))
 				.select(Rattach.RATTACH.DOMAIN.as(Rdoc.RDOC.DOMAIN))
@@ -80,24 +84,26 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.CATEGORY.as(Rdoc.RDOC.CATEGORY))
 				.select(Rattach.RATTACH.REGISTRY.as(Rdoc.RDOC.REGISTRY))
 				.select(Rattach.RATTACH.SCOPE.as(Rdoc.RDOC.SCOPE))
+				.select(Rattach.RATTACH.TYPE.as(Rdoc.RDOC.TYPE))
 				.from(Rattach.RATTACH)
+				.leftJoin(RattachTag.RATTACH_TAG).on(Rattach.RATTACH.ID.eq(RattachTag.RATTACH_TAG.RATTACH))
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
 		if(category != null) {
 			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
-	                .as(DSL.select(CategoryTree.CATEGORY_TREE.ID_CATEGORY, CategoryTree.CATEGORY_TREE.ID_PARENT)
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.CATEGORY, CategoryTree.CATEGORY_TREE.PARENT)
 	                        .from(CategoryTree.CATEGORY_TREE)
-	                        .where(CategoryTree.CATEGORY_TREE.ID_PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
 	                        .unionAll(
-	                            DSL.select(CategoryTree.CATEGORY_TREE.field("id_category", Integer.class), CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class))
+	                            DSL.select(CategoryTree.CATEGORY_TREE.field("category", Integer.class), CategoryTree.CATEGORY_TREE.field("parent", Integer.class))
 	                                .from(CategoryTree.CATEGORY_TREE)
 	                                .join(DSL.table("category_hierarchy"))
-	                                .on(CategoryTree.CATEGORY_TREE.field("id_parent", Integer.class).eq(DSL.field("category_hierarchy.id_category", Integer.class)))
+	                                .on(CategoryTree.CATEGORY_TREE.field("parent", Integer.class).eq(DSL.field("category_hierarchy.category", Integer.class)))
 	                        )
 	                )
-	                .select(DSL.field("id_category", Integer.class))
+	                .select(DSL.field("category", Integer.class))
 	                .from(DSL.table("category_hierarchy"))
 	                .unionAll(
-	                        DSL.select(DSL.val(category).as("id_category"))
+	                        DSL.select(DSL.val(category).as("category"))
 	                    )
 	                .fetch();
 			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
@@ -145,53 +151,90 @@ public class S3DocumentDAO {
 		.set(Rdoc.RDOC.NAME, document.getName())
 		.set(Rdoc.RDOC.REAL_NAME, document.getName())
 		.set(Rdoc.RDOC.SIZE, document.getSize())
+		.set(Rdoc.RDOC.TYPE, document.getRegistryType())
 		.set(Rdoc.RDOC.SCOPE, document.getScope())
 		.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
 		.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
 		.set(Rdoc.RDOC.S3, document.getS3key())
 		.set(Rdoc.RDOC.S3_BUCKET, document.getS3bucket())
 		.set(Rdoc.RDOC.CREATION_DATE, new Timestamp(document.getCreationDate().getTime()))
-		.set(Rdoc.RDOC.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
+		.set(Rdoc.RDOC.MODIFICATION_DATE, document.getModificationDate() != null ? new Timestamp(document.getModificationDate().getTime()) : null)
 		.set(Rdoc.RDOC.CREATION_USER, document.getCreationUser())
 		.set(Rdoc.RDOC.MODIFICATION_USER, document.getModificationUser())
 		.returning(Rdoc.RDOC.ID).fetchOne().getId()
 		;
+		if(document.getTags() != null)
+			for(Integer idTag : document.getTags()) {
+				ctx.getDslContext()
+				.insertInto(RdocTag.RDOC_TAG)
+				.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
+				.set(RdocTag.RDOC_TAG.RDOC, id)
+				.set(RdocTag.RDOC_TAG.TAG, idTag)
+				.execute()
+				;
+			}
 		return document.setId(id).setType(0);
 	}
 	
 	public static S3Document update(AONContext ctx, S3Document document, Integer type){
 		ctx.checkWrite();
 		validate(ctx,document);
-		if(type == 0)
+		if(type == 0) {			
 			ctx.getDslContext()
-				.update(Rdoc.RDOC)
-				.set(Rdoc.RDOC.DOMAIN, document.getDomain())
-				.set(Rdoc.RDOC.REGISTRY, document.getRegistry())
-				.set(Rdoc.RDOC.CATEGORY, document.getCategory())
-				.set(Rdoc.RDOC.MIMETYPE, document.getMimetype().value())
-				.set(Rdoc.RDOC.NAME, document.getName())
-				.set(Rdoc.RDOC.SCOPE, document.getScope())
-				.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
-				.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
-				.set(Rdoc.RDOC.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
-				.set(Rdoc.RDOC.MODIFICATION_USER, document.getModificationUser())
-				.where(Rdoc.RDOC.ID.eq(document.getId()))
-				.execute();
-		else if(type == 1)
+			.update(Rdoc.RDOC)
+			.set(Rdoc.RDOC.DOMAIN, document.getDomain())
+			.set(Rdoc.RDOC.REGISTRY, document.getRegistry())
+			.set(Rdoc.RDOC.CATEGORY, document.getCategory())
+			.set(Rdoc.RDOC.MIMETYPE, document.getMimetype().value())
+			.set(Rdoc.RDOC.NAME, document.getName())
+			.set(Rdoc.RDOC.TYPE, document.getRegistryType())
+			.set(Rdoc.RDOC.SCOPE, document.getScope())
+			.set(Rdoc.RDOC.SECURITY_LEVEL, document.getSecurityLevel())
+			.set(Rdoc.RDOC.DOCUMENT_DATE, new Date(document.getDocumentDate().getTime()))
+			.set(Rdoc.RDOC.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
+			.set(Rdoc.RDOC.MODIFICATION_USER, document.getModificationUser())
+			.where(Rdoc.RDOC.ID.eq(document.getId()))
+			.execute();
+			ctx.getDslContext().deleteFrom(RdocTag.RDOC_TAG).where(RdocTag.RDOC_TAG.RDOC.eq(document.getId())).execute();
+			if(document.getTags() != null)
+				for(Integer idTag : document.getTags()) {
+					ctx.getDslContext()
+					.insertInto(RdocTag.RDOC_TAG)
+					.set(RdocTag.RDOC_TAG.DOMAIN, document.getDomain())
+					.set(RdocTag.RDOC_TAG.RDOC, document.getId())
+					.set(RdocTag.RDOC_TAG.TAG, idTag)
+					.execute()
+					;
+				}
+		}
+		else if(type == 1) {			
 			ctx.getDslContext()
-				.update(Rattach.RATTACH)
-				.set(Rattach.RATTACH.DOMAIN, document.getDomain())
-				.set(Rattach.RATTACH.REGISTRY, document.getRegistry())
-				.set(Rattach.RATTACH.CATEGORY, document.getCategory())
-				.set(Rattach.RATTACH.MIMETYPE, document.getMimetype().value())
-				.set(Rattach.RATTACH.DESCRIPTION, document.getName())
-				.set(Rattach.RATTACH.SCOPE, document.getScope())
-				.set(Rattach.RATTACH.SECURITY_LEVEL, document.getSecurityLevel())
-				.set(Rattach.RATTACH.ATTACH_DATE, new Date(document.getDocumentDate().getTime()))
-				.set(Rattach.RATTACH.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
-				.set(Rattach.RATTACH.MODIFICATION_USER, document.getModificationUser())
-				.where(Rattach.RATTACH.ID.eq(document.getId()))
-				.execute();
+			.update(Rattach.RATTACH)
+			.set(Rattach.RATTACH.DOMAIN, document.getDomain())
+			.set(Rattach.RATTACH.REGISTRY, document.getRegistry())
+			.set(Rattach.RATTACH.CATEGORY, document.getCategory())
+			.set(Rattach.RATTACH.MIMETYPE, document.getMimetype().value())
+			.set(Rattach.RATTACH.TYPE, document.getRegistryType())
+			.set(Rattach.RATTACH.DESCRIPTION, document.getName())
+			.set(Rattach.RATTACH.SCOPE, document.getScope())
+			.set(Rattach.RATTACH.SECURITY_LEVEL, document.getSecurityLevel())
+			.set(Rattach.RATTACH.ATTACH_DATE, new Date(document.getDocumentDate().getTime()))
+			.set(Rattach.RATTACH.MODIFICATION_DATE, new Timestamp(document.getModificationDate().getTime()))
+			.set(Rattach.RATTACH.MODIFICATION_USER, document.getModificationUser())
+			.where(Rattach.RATTACH.ID.eq(document.getId()))
+			.execute();
+			ctx.getDslContext().deleteFrom(RattachTag.RATTACH_TAG).where(RattachTag.RATTACH_TAG.RATTACH.eq(document.getId())).execute();
+			if(document.getTags() != null)
+				for(Integer idTag : document.getTags()) {
+					ctx.getDslContext()
+					.insertInto(RattachTag.RATTACH_TAG)
+					.set(RattachTag.RATTACH_TAG.DOMAIN, document.getDomain())
+					.set(RattachTag.RATTACH_TAG.RATTACH, document.getId())
+					.set(RattachTag.RATTACH_TAG.TAG, idTag)
+					.execute()
+					;
+				}
+		}
 		return document;
 	}
 	
@@ -212,6 +255,15 @@ public class S3DocumentDAO {
 	public static byte[] getFile(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		return ctx.getDslContext().select(Rattach.RATTACH.DATA).from(Rattach.RATTACH).where(Rattach.RATTACH.ID.eq(id)).fetch().getFirst().value1();
+	}
+	
+	public static Stream<Integer> getDocumentTags(AONContext ctx, Integer id, Integer type) {
+		ctx.checkRead();
+		if(type == 0) {
+			return ctx.getDslContext().select(RdocTag.RDOC_TAG.TAG).from(RdocTag.RDOC_TAG).where(RdocTag.RDOC_TAG.RDOC.eq(id)).fetch().stream().map(Record1::value1);
+		} else {			
+			return ctx.getDslContext().select(RattachTag.RATTACH_TAG.TAG).from(RattachTag.RATTACH_TAG).where(RattachTag.RATTACH_TAG.RATTACH.eq(id)).fetch().stream().map(Record1::value1);
+		}
 	}
 	
 	public static class S3DocumentFiller extends Filler implements Function<Record, S3Document> {
@@ -239,6 +291,7 @@ public class S3DocumentDAO {
 					.setRegistry(r.get(Rdoc.RDOC.REGISTRY))
 					.setType(r.get(TYPE_DOC))
 					.setScope(r.get(Rdoc.RDOC.SCOPE))
+					.setRegistryType(r.get(Rdoc.RDOC.TYPE))
 					;
 		}
 	}

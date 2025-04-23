@@ -2302,6 +2302,8 @@ public class TrabajadoresTramos {
 		
 		boolean formacion = false; //"420".equals(tc2) ;
 		
+		boolean fijoDiscontinuo = AonStringUtils.contains("300",tc2) ;
+
 		boolean formacionEnAlternancia = AonStringUtils.contains("421,521",tc2) ;
 		
 		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
@@ -2400,6 +2402,8 @@ public class TrabajadoresTramos {
 			visitor.visitJornadasRealesNormal();
 		else if ( artistas )
 			visitor.visitRegimenArtistasNormal();
+		else if ( fijoDiscontinuo ) 
+			visitor.visitTiempoParcialNormal();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
 		else 
@@ -2446,7 +2450,7 @@ public class TrabajadoresTramos {
 		else if ( artistas )
 			;		
 		else if (tiempoCompleto)
-			grupoCotizacion.visit();		
+			grupoCotizacion.visit();
 		else 
 			grupoCotizacion.visit();	
 		

@@ -399,6 +399,78 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testLiquidAndEmbargo() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"( P_1 + P_2 )* 0.10 ",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"NETO(3333.00)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 2.00/100" 
+				}, category);
+		//@formatter:on
+		
+		addEmbargo(aonContext, contract, "1000.00");
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		jooqSalaryBuilder.execute();
+
+
+		startDate = add(startDate, Calendar.MONTH,1);
+		endDate = getLastDayOfMonth(startDate);
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		salary.getEmbargoS().forEach(e -> System.out.println(e.getDescription() + " = " + e.getAmount() ));
+		
+		//@formatter:off
+		Assert.assertEquals(
+				3333.00 - 1000.00, 
+				salary.getTotalLiquid() 
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
 	protected static PaymentConceptRecord addPrestITs(AONContext aonContext, ContractRecord contract) {
 		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
 		addPayment(aonContext, contract, prestIT, 

@@ -171,8 +171,9 @@ export class AonElement extends HTMLElement{
   }
 
   isBetaDoc(){
-    return this.isBeta() && LS.isBetaDoc(); 
+    return this.isBeta() && LS.isBetaDoc();   
   }
+
 
   isSig(){
     const href = window.location.href;

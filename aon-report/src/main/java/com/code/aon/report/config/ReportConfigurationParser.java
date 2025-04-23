@@ -141,7 +141,7 @@ public class ReportConfigurationParser {
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
 	 */
-	public ReportConfigurationManager getConfigurationManager() throws ReportException {
+	public synchronized static ReportConfigurationManager getConfigurationManager() throws ReportException {
 		if (configurationManager == null) {
 	        ClassLoader cl = Thread.currentThread().getContextClassLoader();
 	        try {
@@ -172,7 +172,7 @@ public class ReportConfigurationParser {
 	 * @throws ReportException
 	 *             When an IOException or a SAXException ocurred.
 	 */
-	private void parse(InputStream in) throws ReportException {
+	private static void parse(InputStream in) throws ReportException {
 		try {
 			Digester digester = getDigester();
 			digester.push(configurationManager);

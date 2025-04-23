@@ -207,7 +207,7 @@ public class Mod420File extends HttpServlet {
 	// FALTA - PRUEBA LLAMAR FUNCION LAMBDA AWS
 	private void llamarAWS(String xml, Mod303 mod303, HttpServletResponse resp) throws IOException {
 
-		// FALTA - POR AHORA LE VAMOS A PASAR UNICAMENTE EL FICHERO XML DE UN MODELO 420, LA IDEA ES QUE LA FUNCION SIRVA PARA VARIOS MODELOS
+		// FALTA - POR AHORA LE VAMOS A PASAR UNICAMENTE EL FICHERO XML DE UN MODELO 420/417, LA IDEA ES QUE LA FUNCION SIRVA PARA VARIOS MODELOS
 		// ENTONCES SE LE PASARA UN JSON CON EL MODELO, EJERCICIO Y EL XML
 //		JSONObject params = new JSONObject();
 //		params.put("modelo", mod303.isMonthPeriod()?"417":"420");
@@ -268,12 +268,12 @@ public class Mod420File extends HttpServlet {
 					}
 					manageWrongResponse(resp, aeatResponse);
 			} else {
-					giveExceptionBack(resp, "ERROR INDEFINIDO");
+					giveExceptionBack(resp, "ERROR INDEFINIDO (Mod420File)");
 			}		
 		
 		} catch (Exception e) {
 			System.out.println(e);
-			giveExceptionBack(resp, "EXCEPTION ERROR: " + e.getMessage());
+			giveExceptionBack(resp, "EXCEPTION ERROR (Mod420File): " + e.getMessage());
 		}
 
 //		System.out.println(invokeResult.getStatusCode());

@@ -76,7 +76,8 @@
 	color: var(--gray-50);
 }
 
-.aonHeaderAppSpan{
+.aonHeaderAppSpan,
+.aonHeaderAppIcon {
 	color: black;
 }
 

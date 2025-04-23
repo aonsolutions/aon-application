@@ -137,6 +137,7 @@ public interface IRequestParamsNames {
 	String SCHEMA = "schema";
 	String SCHEMAS_OFFSETS = "schemasOffsets";
 	String SECURITY_LEVEL = "securityLevel";
+	String SELECT = "select";
 	String SELECTED = "selected";
 	String SELLER_IDS = "sellerIds";
 	String SERVICE = "service";

@@ -1977,9 +1977,13 @@ public interface Properties {
 		Property<Integer> getCategoryProperty();
 		Property<java.util.Date> getDocumentDateProperty();
 		Property<String> getS3Property();
+		Property<String> getS3BucketProperty();
 //		Property<Integer> getRattachProperty();
 		Property<Integer> getRegistryProperty();
 		Property<Timestamp> getCreationDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getSecurityLevelProperty();
+		Property<Integer> getTagProperty();
 	}
 	
 	public interface S3CategoryProperties{

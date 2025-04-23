@@ -34,7 +34,7 @@ public class S3CategoryDAO {
 				.select()
 				.from(Category.CATEGORY)
 				.leftJoin(CategoryTree.CATEGORY_TREE)
-				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.ID_CATEGORY))
+				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.CATEGORY))
 				.where(S3CATEGORY_PROPERTIES.getConditions(filter));
 		if(page.isPresent() && perPage.isPresent())
 			return query.limit(perPage.get()).offset(perPage.get() * (page.get() - 1))
@@ -54,7 +54,7 @@ public class S3CategoryDAO {
 				.select(Category.CATEGORY.ID)
 				.from(Category.CATEGORY)
 				.join(CategoryTree.CATEGORY_TREE)
-				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.ID_CATEGORY))
+				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.CATEGORY))
 				.where(S3CATEGORY_PROPERTIES.getConditions(filter)).fetch().stream().count();
 	}
 	
@@ -73,8 +73,9 @@ public class S3CategoryDAO {
 				.returning(CATEGORY.ID).fetchOne().getId();
 		ctx.getDslContext()
 				.insertInto(CategoryTree.CATEGORY_TREE)
-				.set(CategoryTree.CATEGORY_TREE.ID_CATEGORY, id)
-				.set(CategoryTree.CATEGORY_TREE.ID_PARENT, category.getParent())
+				.set(CategoryTree.CATEGORY_TREE.DOMAIN, category.getDomain())
+				.set(CategoryTree.CATEGORY_TREE.CATEGORY, id)
+				.set(CategoryTree.CATEGORY_TREE.PARENT, category.getParent())
 				.set(CategoryTree.CATEGORY_TREE.IS_DELETABLE, (byte) 1)
 				.set(CategoryTree.CATEGORY_TREE.IS_VISIBLE, (byte) 1)
 				.execute()
@@ -95,7 +96,7 @@ public class S3CategoryDAO {
 			.execute();
 		ctx.getDslContext().update(CategoryTree.CATEGORY_TREE)
 			.set(CategoryTree.CATEGORY_TREE.IS_VISIBLE, category.getIsVisible())
-			.where(CategoryTree.CATEGORY_TREE.ID_CATEGORY.eq(category.getId()))
+			.where(CategoryTree.CATEGORY_TREE.CATEGORY.eq(category.getId()))
 			.execute();
 		return category;
 	}
@@ -105,16 +106,16 @@ public class S3CategoryDAO {
 		Optional<S3Category> cat = ctx.getDslContext().select()
 				.from(CATEGORY)
 				.leftJoin(CategoryTree.CATEGORY_TREE)
-				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.ID_CATEGORY))
+				.on(Category.CATEGORY.ID.eq(CategoryTree.CATEGORY_TREE.CATEGORY))
 				.where(S3CATEGORY_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new S3CategoryFiller()).findFirst();
 		if(cat.isPresent() && cat.get().getIsDeletable() == 1) {
+			ctx.getDslContext().delete(CategoryTree.CATEGORY_TREE)
+				.where(CategoryTree.CATEGORY_TREE.CATEGORY.eq(cat.get().getId()))
+				.execute();
 			ctx.getDslContext().delete(Category.CATEGORY)
 					.where(S3CATEGORY_PROPERTIES.getConditions(filter))
 					.execute();
-			ctx.getDslContext().delete(CategoryTree.CATEGORY_TREE)
-				.where(CategoryTree.CATEGORY_TREE.ID_CATEGORY.eq(cat.get().getId()))
-				.execute();
 			Integer nullvalue = null;
 			ctx.getDslContext().update(Rattach.RATTACH)
 				.set(Rattach.RATTACH.CATEGORY, nullvalue)
@@ -145,7 +146,7 @@ public static class S3CategoryFiller extends Filler implements Function<Record, 
 					.setScope(r.getValue(CATEGORY.SCOPE))
 					.setUrl(r.getValue(CATEGORY.URL))
 					.setRattach(r.getValue(CATEGORY.RATTACH))
-					.setParent(r.getValue(CategoryTree.CATEGORY_TREE.ID_PARENT))
+					.setParent(r.getValue(CategoryTree.CATEGORY_TREE.PARENT))
 					.setIsDeletable(r.getValue(CategoryTree.CATEGORY_TREE.IS_DELETABLE))
 					.setIsVisible(r.getValue(CategoryTree.CATEGORY_TREE.IS_VISIBLE));
 		}

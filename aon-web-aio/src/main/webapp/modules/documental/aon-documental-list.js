@@ -1,5 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
+import {
+  getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
+  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories 
+} from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
 
@@ -7,13 +10,17 @@ import { CONSTANT, MSG, EVENT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import * as LS from '../../services/localStorageService.js';
 import { createList } from '../../components/CreateComponent.js';
-import { clearFields } from './DocumentalUtils.js'
-import { DOCUMENTAL_FILTER } from "./DocumentalEnums.js";
+import { 
+  DOCUMENTAL_FILTER_ASESOR, DOCUMENTAL_FILTER_ENTERPRISE, DOCUMENTAL_FILTER,
+  ASESOR_TYPE, EMPLOYEE_TYPE
+} from "./DocumentalEnums.js";
+import { formatBytes } from '../../services/utils.js';
 
 export class AonDocumentalList extends AonElement {
 	more;
 	_roles;
 	TABLE;
+    btnSearch;
 
 	static get observedAttributes() {
 		return [];
@@ -63,7 +70,7 @@ export class AonDocumentalList extends AonElement {
         } else {
           aonDocumentalTable.addColumn(MSG.DATE, 'date', 'date', '20%');
         }
-		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '60%');
+		aonDocumentalTable.addColumn(MSG.NAME, 'string', this.isBetaDoc() ? 'name' : 'title', '50%');
 		aonDocumentalTable.addColumn(MSG.SIZE, 'string', 'size', '15%');
 
 		// Iniciar tabla
@@ -83,42 +90,193 @@ export class AonDocumentalList extends AonElement {
 	}
 	
 	buildToolbarSearch(){
-	    const btnSearch = this.getApplication().addSearchOption();
+	    this.btnSearch = this.getApplication().addSearchOption(true, true);
 	    let timeOut = null;
-	    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-				clearTimeout(timeOut);
-				
-				timeOut = setTimeout(() => {
-	        this._list = [];
+        // Mostramos si esta oculto
+        if(this.btnSearch.hidden){
+          this.btnSearch.hidden = false;
+        }
+        // Montamos el filtro
+	    this.btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+          clearTimeout(timeOut);
+          timeOut = setTimeout(() => {
+            this._list = [];
 	        if(detail) {
-				if(detail.category2){					
+              // El tipo de permiso
+                if(detail[ASESOR_TYPE] && detail[ASESOR_TYPE] !== 'false'){
+                  // Buscar solo asesor
+                    detail.categoryType = ASESOR_TYPE;
+					delete detail[ASESOR_TYPE];
+                } else if (detail[ASESOR_TYPE]){
+					delete detail[ASESOR_TYPE];
+                }
+                if(detail[EMPLOYEE_TYPE] && detail[EMPLOYEE_TYPE] !== 'false'){
+                  // Buscar solo empleado
+                    detail.categoryType = EMPLOYEE_TYPE;
+					delete detail[EMPLOYEE_TYPE];
+                } else if (detail[EMPLOYEE_TYPE]){
+					delete detail[EMPLOYEE_TYPE];
+                }
+              // Mis categorias
+                const myCategory = detail.categoryOldFilter && detail.categoryOldFilter !== 'false';
+                if(myCategory){
+                    detail.category = detail.categoryOld;
+					delete detail.categoryOld;
+					delete detail.categoryOldFilter;
+                } else if (detail.categoryOldFilter){
+					delete detail.categoryOld;
+					delete detail.categoryOldFilter;
+                } 
+              // Enviamos un evento con la categoria marcada, principal (antes de meter en el valor de las subcategorias)
+                const selectCategory   = detail.category ? detail.category : MSG.ALL_FILES;
+                let selectCategoryName = MSG.ALL_FILES;
+                if( selectCategory !== MSG.ALL_FILES){
+                  // El nombre de la categoria de despcho o las creadas por la empresa
+                  const category        = myCategory ? this.getElement("categoryOld") : this.getElement("category");
+                  const categoryOptions = JSON.parse(category.options);
+                  const selectedOption  = categoryOptions.find(opt => opt.value === parseInt(selectCategory));
+                  selectCategoryName    = selectedOption.name;
+                }
+                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory, categoryName: selectCategoryName}});
+                window.dispatchEvent(evento);
+              // El tipo de category despacho
+				if(detail.category2){
 					detail.category = detail.category2;
 					delete detail.category2;
 				}
-				if(detail.category3){					
+				if(detail.category3){
 					detail.category = detail.category3;
 					delete detail.category3;
 				}
-				if(detail.category4){					
+				if(detail.category4){
 					detail.category = detail.category4;
 					delete detail.category4;
 				}
 				detail.name = detail.search;
-				this.setFilter(detail)
-				this.init();	
+				this.setFilter(detail);
+				this.init();
 			} // this.getApplicationParent().setDataFilter(detail);
-				}, 300);
+          }, 300);
 	    });
-	    btnSearch.buildOptionsFilter([
-	      ...DOCUMENTAL_FILTER
-	    ]);
+        // Rango por encima de empresa, ve el permiso de asesor (documentos que solo ve el asesor)
+        if (this._roles.isDocumentalManager()) {
+          this.btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER_ASESOR
+          ]);
+        } else if (this._roles.isDocumentalPortal()){
+          this.btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER_ENTERPRISE
+          ]);
+        } else {
+          this.btnSearch.buildOptionsFilter([
+            ...DOCUMENTAL_FILTER
+          ]);
+        }
+        // Categoria despacho(categorias predefinidas)
 	    this.searchValueDefault();
+        // tus categorias (creadas por la empresa)
+        this.categoryOldFilter();
+        // Visible solo
+        this.visibleOnly();
 	}
 	
+    async visibleOnly(){
+		if(this.getElement(ASESOR_TYPE + "_checkbox")){			
+			let asesor = this.getElement(ASESOR_TYPE + "_checkbox");
+			asesor.addEventListener(EVENT.CLICK, () => {
+				// Estado que estaba y el que esta el empleado
+				if(asesor.value === 'false' && employee.value === 'true'){
+				  employee.value    = 'false';
+				  employee.checked  = false;
+				}
+			});
+		}
+		
+		if(this.getElement(EMPLOYEE_TYPE + "_checkbox")){
+			let employee = this.getElement(EMPLOYEE_TYPE + "_checkbox");
+			employee.addEventListener(EVENT.CLICK, () => {
+				// Estado que estaba y el que esta el asesor
+				if(employee.value === 'false' && asesor.value === 'true'){
+				  asesor.value    = 'false';
+				  asesor.checked  = false;
+				}
+			});
+		}
+    }
+      
+    async categoryOldFilter(){
+      let categoryOldEl = this.getElement("categoryOldFilter");
+      // Datos
+      const data = {
+        parent: null,
+        domain: LS.getDomainId()
+      };
+      const listCategoryOld = await getS3Category(data);
+      // solo si tiene creadas
+      if(listCategoryOld.length > 0){
+        // rellenar
+        let categoryOld = this.getElement("categoryOld");
+//        categoryOld.setOptions(listCategoryOld.map((category) => ({ name: category.name, value: category.id})));
+		categoryOld.setOptions(
+          listCategoryOld.filter((category)=> {
+            // Categoria antiguas o que se pueden borrar (si se pueden borrar son creadas por la empresa)
+            return !category.hasOwnProperty('is_deletable') || category.is_deletable === 1;
+          }).map((category) => {
+            return {name: category.name, value: category.id };
+          })
+        );
+        // mostrar o no
+        categoryOldEl.addEventListener(EVENT.CHANGE, () => {
+          let category    = this.getElement("category");
+          let category2   = this.getElement("category2");
+          let category3   = this.getElement("category3");
+          let category4   = this.getElement("category4");
+
+          if(categoryOldEl.value === 'true'){
+            // Mostramos las creadas por el usuario
+            categoryOld.hidden = false;
+            // Ocultamos las nuevas categorias
+            category.hidden  = true;
+            category2.hidden = true;
+            category3.hidden = true;
+            category4.hidden = true;
+            // limpiamos
+            let inputElement   = category.querySelector("input[type='select']");
+            categoryOld.value  = '';
+            inputElement.value = '';
+          } else {
+            // Mostramos las nuevas categorias
+            category.hidden = false;
+            // Ocultamos las creadas por el usuario
+            categoryOld.hidden = true;
+            // limpiamos
+            let inputElement   = categoryOld.querySelector("input[type='select']");
+            categoryOld.value  = '';
+            inputElement.value = '';
+          }
+        });
+      } else {
+        categoryOldEl.hidden  = true;
+      }
+	}
+    
 	async searchValueDefault(){
-		let categories = await getS3Category({"parent":"null"});
+        const data = {
+          parent: null,
+          domain: LS.getDomainId()
+        };
+		let categories = await getS3Category(data);
 		let categoryEl = this.getElement("category");
-		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+//		categoryEl.setOptions(categories.map((category) => ({ name: category.name, value: category.id})));
+		categoryEl.setOptions(
+          categories.filter((category)=> {
+            // Categoria nuevas y que no se pueden borrar (Son las categorias de despacho)
+            return category.hasOwnProperty('is_deletable') && category.is_deletable === 0;
+          }).map((category) => {
+            return {name: category.name, value: category.id };
+          })
+        );
+
 		categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
 			this.getElement("category2").hidden = true;
 			this.getElement("category3").hidden = true;
@@ -129,15 +287,20 @@ export class AonDocumentalList extends AonElement {
 	
 	async getSubcategories(detail){
 	    try {
-	      let categoryEl = this.getElement("category2");
+	      let categoryEl   = this.getElement("category2");
+          let inputElement = categoryEl.querySelector("input[type='select']");
+          // limpiamos
+          categoryEl.value    = '';
+          inputElement.value  = '';
+          // traemos
 	      let categories = await getS3Category({parent: detail.value});
 	      if(categories.length>0) {
 	        categoryEl.setOptions(
 	          categories.map((category)=> ({name:category.name, value:category.id}))
 	        );
-	        categoryEl.hidden =  false;
-	      }
-	      else categoryEl.hidden =  true;
+	        categoryEl.hidden   = false;
+	      } else 
+            categoryEl.hidden = true;
 		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
 			this.getElement("category3").hidden = true;
 			this.getElement("category4").hidden = true;
@@ -148,45 +311,54 @@ export class AonDocumentalList extends AonElement {
 	    }
 	}
 	async getAdministrations(detail){
-	  	    try {
-	  	      let categoryEl = this.getElement("category3");
-	  	      let categories = await getS3Category({parent: detail.value});
-	  	      if(categories.length>0) {
-	  	        categoryEl.setOptions(
-	  	          categories.map((category)=> ({name:category.name, value:category.id}))
-	  	        );
-	  	        categoryEl.hidden =  false;
-	  	      }
-	  	      else categoryEl.hidden =  true;
-	  		  categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-				this.getElement("category4").hidden = true;
-	  		  	if(detail) this.getModels(detail);
-	  		  });
-	  	    } catch (error) {
-	  	      console.log(error);
-	  	    }
-	  }
+      try {
+        let categoryEl = this.getElement("category3");
+        let inputElement = categoryEl.querySelector("input[type='select']");
+        // limpiamos
+        categoryEl.value    = '';
+        inputElement.value  = '';
+        // traemos
+        let categories = await getS3Category({parent: detail.value});
+        if(categories.length>0) {
+          categoryEl.setOptions(
+            categories.map((category)=> ({name:category.name, value:category.id}))
+          );
+          categoryEl.hidden =  false;
+        }
+        else categoryEl.hidden =  true;
+        categoryEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+          this.getElement("category4").hidden = true;
+          if(detail) this.getModels(detail);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
 			  
-	  async getModels(detail){
-		    try {
-		      let categoryEl = this.getElement("category4");
-		      let categories = await getS3Category({parent: detail.value});
-		      if(categories.length>0) {
-		        categoryEl.setOptions(
-		          categories.map((category)=> ({name:category.name, value:category.id}))
-		        );
-		        categoryEl.hidden =  false;
-		      }
-		      else categoryEl.hidden =  true;
-		    } catch (error) {
-		      console.log(error);
-		    }
-	  }
+    async getModels(detail){
+        try {
+          let categoryEl = this.getElement("category4");
+          let inputElement = categoryEl.querySelector("input[type='select']");
+          // limpiamos
+          categoryEl.value    = '';
+          inputElement.value  = '';
+          // traemos
+          let categories = await getS3Category({parent: detail.value});
+          if(categories.length>0) {
+            categoryEl.setOptions(
+              categories.map((category)=> ({name:category.name, value:category.id}))
+            );
+            categoryEl.hidden =  false;
+          }
+          else categoryEl.hidden =  true;
+        } catch (error) {
+          console.log(error);
+        }
+    }
 	  
     loadMore() {
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-
         if (aonDocumentalTable && filter.page) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, false);
         }
@@ -196,7 +368,6 @@ export class AonDocumentalList extends AonElement {
         this.more = true;
         let aonDocumentalTable = this.getElement(this.TABLE);
         let filter = this.getFilter();
-		console.log("filter", filter);
         if (aonDocumentalTable) {
             this.loadDocumentsIntoTable(aonDocumentalTable, filter, true);
         }
@@ -204,26 +375,26 @@ export class AonDocumentalList extends AonElement {
 
     loadDocumentsIntoTable(table, filter, isInit = false) {
         const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
-
-        fetchDocuments(filter).then(documents => {
+        fetchDocuments(filter).then(documents => {	
             if (isInit) {
                 table.removeRows();               // Limpiar la tabla si es la inicializaci�n
                 table.selected = [];              // Limpiar la selecci�n
                 this.removeDocumentalActions();   // Eliminar acciones de documentos
-            } else {
+            } 
               // Si no es el inicio (es loadMore), actualizar el filtro para la siguiente p�gina
                 filter.page = filter.page + 1;
-                this.setFilter(filter);
-            }
-
-            if (documents.length === 0) {
-                this.more = false;  // Si no hay documentos, no se puede cargar m�s
+				this.setFilter(filter);
+            if (isInit && documents.length === 0 ) {
+                this.more = false;  // Si no hay documentos, no se puede cargar mas
                 // Mostrar mensaje si no hay documentos
                 table.addRowNoData("No existen documentos disponibles");
             }
-
+			
             // Insertar los documentos en la tabla
             documents.forEach((doc, i) => {
+				if(this.isBetaDoc() && documents[i].size){
+					documents[i].size = formatBytes(documents[i].size);
+				}
                 let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
                 tr.id = "aonDocumentalRow";
             });
@@ -231,8 +402,12 @@ export class AonDocumentalList extends AonElement {
     }
 
 	aonDocument(doc, i) {
-		this.removeDocumentalActions();
-		this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
+      // Al ver un documento ocultamos el buscar
+      if( this.isBetaDoc() ){
+        this.btnSearch.hidden = true;
+      } 
+      this.removeDocumentalActions();
+      this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
 	}
 
 	downloadFiles() {
@@ -344,8 +519,10 @@ export class AonDocumentalList extends AonElement {
 		let aonDocumental = this.getApplication();
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
-        if(this.isBetaDoc() && (!this._roles.isEmployee() && !this._roles.isEnterprise())){
-			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+        if(this.isBetaDoc()){
+			if(!this._roles.isEmployee() && !this._roles.isEnterprise()){
+				aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
+			}
             aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
 		}else if(!this.isBetaDoc() && (this._roles.isDocumentalManager() || this._roles.isDocumentalPortal())){
 			// El boton este de editar  no hace nada??
@@ -369,13 +546,13 @@ export class AonDocumentalList extends AonElement {
 	aonDocumentContextMenu(e, doc, i) {
 		e.preventDefault();
 		let rect = e.target.getBoundingClientRect();
-    let x = e.clientX - rect.left;
+    	let x = e.clientX - rect.left;
 		let y = e.clientY - rect.top;
 
-	  const top  = rect.top + y;
-	  const left = rect.left + x;
+	  	const top  = rect.top + y;
+	  	const left = rect.left + x;
 
-    let aonDocumental = this.getElement('aonDocumental');
+    	let aonDocumental = this.getElement('aonDocumental');
 		let d = document.getElementById(aonDocumental.OPTION_DIALOG);
 
 		let send = ACTION.SEND_FILE;
