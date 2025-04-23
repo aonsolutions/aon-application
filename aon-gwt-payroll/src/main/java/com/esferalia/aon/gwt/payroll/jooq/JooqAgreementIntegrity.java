@@ -10,6 +10,8 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
@@ -79,7 +81,7 @@ public class JooqAgreementIntegrity {
 	
 	private static Set<String> allowedVars;
 	
-	private static Set<String> wrongExpressions = new HashSet<String>();
+	private static Set<Record> wrongExpressions;
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 	
@@ -101,6 +103,7 @@ public class JooqAgreementIntegrity {
 
 	public static AgreementIntegrity checkIntegrity(Connection connection, Integer domainId, Integer agreementId) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		wrongExpressions = new HashSet<Record>();
 		
 		allowedVars = getAllowedConceptContextVars();
 		
@@ -213,6 +216,8 @@ public class JooqAgreementIntegrity {
 		Result<Record> contractPayments = dslContext.select()
 				.from(CONTRACT_PAYMENT)
 				.join(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
 				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(CONTRACT_PAYMENT.PAYMENT_CONCEPT))
 				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId)).fetch();
@@ -285,7 +290,7 @@ public class JooqAgreementIntegrity {
 		messages.put(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END, parseAgreementExtrasStartEndDatesMessage(agreementExtrasStartEndDates));
 		
 		// Wrong expressions
-		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, parseAgreementPaymentWrongExpressionMessage(wrongExpressions));
+		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, parseAgreementPaymentWrongExpressionMessage());
 		
 		// AgreementData with inherit expresion
 		Result<AgreementDataRecord> agreementInheritDatas = dslContext.selectFrom(AGREEMENT_DATA)
@@ -423,7 +428,8 @@ public class JooqAgreementIntegrity {
 		        
 		        if(variables.contains(code)) appearence.add(agreementPaymentIt);
 			} catch (Exception e) {
-				wrongExpressions.add(expression);
+				System.out.println("expressionCodeCheck --> Wrong expression from agreement_payment: " + agreementPaymentIt.get(AGREEMENT_PAYMENT.ID));
+				wrongExpressions.add(agreementPaymentIt);
 			}
 		});
 		
@@ -448,7 +454,8 @@ public class JooqAgreementIntegrity {
 		        
 		        if(variables.contains(code)) appearence.add(agreementPaymentIt);
 			} catch (Exception e) {
-				wrongExpressions.add(expression);
+				System.out.println("containsExpression --> Wrong expression from agreement_payment: " + agreementPaymentIt.get(AGREEMENT_PAYMENT.ID));
+				wrongExpressions.add(agreementPaymentIt);
 			}
 		});
 		
@@ -530,8 +537,8 @@ public class JooqAgreementIntegrity {
 		
 		payments.forEach(paymentIt -> {
 			String description = AonStringUtils.isBlank(paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION)) ? paymentIt.get(PAYMENT_CONCEPT.DESCRIPTION) : paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION);
-			messages.add("El devengo " + description + " del contrato (Dom. Contr.: " + paymentIt.get(CONTRACT_PAYMENT.DOMAIN) + ", Dom. Conv.: " + agreementDomain + ") esta en otro dominio al del concepto (Dom.: " +  paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ")");
-		});
+			messages.add("En el contrato de "+ paymentIt.get(REGISTRY.NAME) + " (Dom.: " + paymentIt.get(CONTRACT.DOMAIN) + ") existe el devengo \n" + description + " que esta en otro dominio al del concepto (Dom.: " +  paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ")");
+			});
 		
 		return messages;
 	}
@@ -541,7 +548,7 @@ public class JooqAgreementIntegrity {
 		
 		payments.forEach(paymentIt -> {
 			String description = AonStringUtils.isBlank(paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION)) ? paymentIt.get(PAYMENT_CONCEPT.DESCRIPTION) : paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION);
-			messages.add("El devengo del contrato " + description + " tiene un concepto sin c\u00f3digo");
+			messages.add("En el contrato de "+ paymentIt.get(REGISTRY.NAME) + " existe el devengo \n" + description + " que  tiene un concepto sin c\u00f3digo");
 		});
 		
 		return messages;
@@ -590,11 +597,14 @@ public class JooqAgreementIntegrity {
 		return messages;
 	}
 	
-	private static List<String> parseAgreementPaymentWrongExpressionMessage(Set<String> wrongExpressions) {
+	private static List<String> parseAgreementPaymentWrongExpressionMessage() {
 		List<String> messages = new ArrayList<String>();
 		
 		wrongExpressions.forEach(wrongExpression -> {
-			messages.add("La expresi\u00f3n " + wrongExpression + " tiene un formato que no es valido");
+			String expression = AonStringUtils.isBlank(wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION)) || AonStringUtils.containsIgnoreCase(wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE") ? wrongExpression.get(PAYMENT_CONCEPT.EXPRESSION) : wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION);
+			String description = AonStringUtils.isBlank(wrongExpression.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? wrongExpression.get(PAYMENT_CONCEPT.DESCRIPTION) : wrongExpression.get(AGREEMENT_PAYMENT.DESCRIPTION);
+			
+			messages.add("El devengo " + description + " (Id: " + wrongExpression.get(AGREEMENT_PAYMENT.ID) + ") cuya expresi\u00f3n es \n" + expression + " tiene un formato que no es valido");
 		});
 		
 		return messages;
