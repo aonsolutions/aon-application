@@ -18,9 +18,8 @@ import { AonDialog } from '../../components/aon-dialog.js';
 import { getSalesDetails } from '../../services/salesService.js';
 
 import { AonMobileDeliveryPackagingList } from './aon-mobile-delivery-packaging-list.js';
-import { createCard, createInput,createQuantity, createSelect } from '../../components/CreateComponent.js';
+import { createCard, createInput, createQuantity, createSelect } from '../../components/CreateComponent.js';
 import { round } from '../../services/utils.js';
-import { MATERIAL } from '../../environments/constants.js';
 
 export class AonMobileDelivery extends AonElement {
 

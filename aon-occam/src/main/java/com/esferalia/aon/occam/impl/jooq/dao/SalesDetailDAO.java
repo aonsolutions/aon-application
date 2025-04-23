@@ -6,6 +6,10 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.SalesDetail.SALES_DETAIL;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_FORMAT_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_MEASUREMENT_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.PACK_UNITS_TAG;
+import static com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.STOCK_UNIT_TAG;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -73,13 +77,17 @@ public class SalesDetailDAO {
 	}
 	
 	
-	private static SelectConditionStep<Record> select(AONContext ctx, SalesDetailFilter filter) {
-		 return ctx.getDslContext().select().from(SALES_DETAIL)
+	private static SelectConditionStep<Record> select(AONContext ctx, SalesDetailFilter filter) {		
+		return ctx.getDslContext().select().from(SALES_DETAIL)
 			.join(ITEM).on(SALES_DETAIL.ITEM.eq(ITEM.ID))
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.join(SALES).on(SALES_DETAIL.SALES.eq(SALES.ID))
 			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
 			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.leftOuterJoin(STOCK_UNIT_TAG).on(STOCK_UNIT_TAG.ID.eq(ITEM.STOCK_UNIT_TAG))
+			.leftOuterJoin(PACK_FORMAT_TAG).on(PACK_FORMAT_TAG.ID.eq(ITEM.PACK_FORMAT_TAG))
+			.leftOuterJoin(PACK_UNITS_TAG).on(PACK_UNITS_TAG.ID.eq(ITEM.PACK_UNITS_TAG))
+			.leftOuterJoin(PACK_MEASUREMENT_TAG).on(PACK_MEASUREMENT_TAG.ID.eq(ITEM.PACK_MEASUREMENT_TAG))
 			.where(SALES_DETAIL_PROPERTIES.getConditions(filter));
 	}
 

@@ -52,7 +52,7 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ItemAddInfoFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ItemAddInfoPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductOldValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 

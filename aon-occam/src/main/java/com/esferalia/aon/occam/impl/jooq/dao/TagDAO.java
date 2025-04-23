@@ -4,20 +4,24 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 
-import com.esferalia.aon.jooq.tables.records.TagRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Properties.TagProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.type.TagType;
 
 public class TagDAO {
+	
+	private TagDAO() {
+	
+	}
+	
 	private static final TagPropertiesDAO TAG_PROPERTIES = new TagPropertiesDAO();
 
 	protected static class TagPropertiesDAO implements TagProperties {
@@ -26,25 +30,25 @@ public class TagDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TAG.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TAG.DOMAIN);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TAG.TYPE);}
-		@Override public Property<String> getColorProperty(){return new FilterDAO.PropertyDAO<String>(TAG.COLOR);}
-		@Override public Property<String> getNameProperty(){return new FilterDAO.PropertyDAO<String>(TAG.NAME);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TAG.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TAG.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TAG.TYPE);}
+		@Override public Property<String> getColorProperty(){return new FilterDAO.PropertyDAO<>(TAG.COLOR);}
+		@Override public Property<String> getNameProperty(){return new FilterDAO.PropertyDAO<>(TAG.NAME);}
 	}
 	
 	public static Tag getTag(AONContext ctx, Integer tagId){
-		return ctx.getDslContext().select().from(TAG).where(TAG.ID.eq(tagId)).fetchInto(TAG)
-				.stream().map(new FullTagFiller()).findFirst().orElse(new Tag());
+		return ctx.getDslContext().select().from(TAG).where(TAG.ID.eq(tagId)).fetch()
+				.stream().map(new TagFiller()).findFirst().orElse(new Tag());
 	}
 	
 	public static Stream<Tag> getTagStream(AONContext ctx, TagFilter filter){
 		return ctx.getDslContext().select().from(TAG).where(TAG_PROPERTIES.getConditions(filter))
-				.fetchInto(TAG).stream().map(new FullTagFiller());
+				.fetch().stream().map(new TagFiller());
 	}
 	
 	public static List<Tag> getList(AONContext ctx, TagFilter filter) {
-		return getTagStream(ctx, filter).collect(Collectors.toList());
+		return getTagStream(ctx, filter).toList();
 	}
 	
 	public static Tag updateTag(AONContext ctx, Tag tag){
@@ -59,46 +63,40 @@ public class TagDAO {
 	}
 	
 	public static Tag insertTag(AONContext ctx, Tag tag) {
-		TagRecord tagRecord = ctx.getDslContext()
+		ctx.getDslContext()
 				.insertInto(TAG)
 				.set(TAG.DOMAIN, ctx.getDomainId())
 				.set(TAG.NAME, tag.getName())
 				.set(TAG.TYPE, tag.getType())
-				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
-				.returning()
-				.fetchOne();
-		return new FullTagFiller().apply(tagRecord);
+				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null);
+		return tag;
 	}
 
 	public static void deleteTag(AONContext ctx, TagFilter filter){
 		ctx.getDslContext().delete(TAG).where(TAG_PROPERTIES.getConditions(filter)).execute();
 	}
 	
-	public static class FullTagFiller implements Function<TagRecord, Tag> {
+	public static class TagFiller extends Filler implements Function<Record, Tag> {
+
 		@Override
-		public Tag apply(TagRecord r) {
-			return new Tag().setId(r.getId())
-					.setColor(r.getColor())
-					.setDomain(r.getDomain())
-					.setName(r.getName())
-					.setType(r.getType())
-					;		
-		}
-		
-		public static Tag build(Record r) {
-			return buildTag(r, TAG);
-		}
-		
-		private static Tag buildTag(Record r, com.esferalia.aon.jooq.tables.Tag tagTable) {
-			return fillTag(r, new Tag(), tagTable);
+		public Tag apply(Record r) {
+			return build(r, TAG);
 		}
 
-		private static Tag fillTag(Record r, Tag tag, com.esferalia.aon.jooq.tables.Tag tagTable) {
-			return tag.setId(r.getValue(tagTable.ID))
-					.setColor(r.getValue(tagTable.COLOR))
-					.setDomain(r.getValue(tagTable.DOMAIN))
-					.setName(r.getValue(tagTable.NAME))
-					.setType(r.getValue(tagTable.TYPE));	
+		public static Tag build(Record r) {
+			return build(r, TAG);
 		}
+		
+		public static Tag build(Record r, com.esferalia.aon.jooq.tables.Tag alias) {
+			return new Tag()
+					.setId(r.getValue(alias.ID))
+					.setColor(r.getValue(alias.COLOR))
+					.setDomain(r.getValue(alias.DOMAIN))
+					.setName(r.getValue(alias.NAME))
+					.setTagType(TagType.safeValueOf(r.getValue(alias.TYPE)));
+		}
+	
 	}
+	
+	
 }
