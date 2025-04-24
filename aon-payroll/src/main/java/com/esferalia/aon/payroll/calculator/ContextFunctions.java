@@ -1190,8 +1190,8 @@ public class ContextFunctions {
 			}
 				
 			for ( Period p: Period.sub(new Period(startDate,endDate), workedPeriods )) {
-				context.setVariable(_FRACTIONATE, _FractionateStub, p.getStart(), p.getEnd());
-				context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
+				//context.setVariable(_FRACTIONATE, _FractionateStub, p.getStart(), p.getEnd());
+				//context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
 			}
 
 //			context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, startDate, endDate);

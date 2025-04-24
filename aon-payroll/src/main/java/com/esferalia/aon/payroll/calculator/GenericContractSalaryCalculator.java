@@ -1744,7 +1744,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& contractPaymentType != PaymentType.CRA_0055 
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
-					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() != 0.00*/)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
 					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
@@ -2214,11 +2214,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 	
 	public static void limit(QuoteCalculator quoteCalculator, ContextVariable limit, ExpressionContext expressionContext, Date start, Date end){
-		expressionContext.getVariables(limit == ContextVariable.CGC_BASE ? ContextVariable.CGC_BASE_RAW : ContextVariable.CGP_BASE_RAW, start, end).stream()
-		.filter(v -> AonNumberUtils.todouble(v.getValue(v.getPeriod())) > 0 )
-		.forEach(v -> quoteCalculator.limit(limit, expressionContext, v.getPeriod().getStart(), v.getPeriod().getEnd()))
-		;
-//		quoteCalculator.limit(limit, expressionContext, start, end);
+		quoteCalculator.limit(limit, expressionContext, start, end);
 	}
 
 	public static final String DAY_FOMAT = "%s ( %te )";

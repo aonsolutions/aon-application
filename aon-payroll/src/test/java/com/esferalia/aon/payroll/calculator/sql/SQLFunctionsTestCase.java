@@ -1042,7 +1042,7 @@ public class SQLFunctionsTestCase extends
 				,endDate, 
 				Double.class);
 	
-		Assert.assertEquals(3, results.size());
+		Assert.assertEquals(2, results.size());
 		
 		double monthDays = get(endDate, DAY_OF_MONTH);
 		double workedDays = monthDays - 10;
@@ -1051,9 +1051,9 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(add(startIT, DAY_OF_MONTH,-1), results.get(0).getPeriod().getEnd());
 		Assert.assertEquals(1000.00*10/workedDays, results.get(0).getValue());
 
-		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(2).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
-		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(2).getValue());
+		Assert.assertEquals(add(endIT, DAY_OF_MONTH,1), results.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
+		Assert.assertEquals(1000.00*(monthDays-20)/workedDays, results.get(1).getValue());
 	}
 
 	@Test
@@ -1115,24 +1115,29 @@ public class SQLFunctionsTestCase extends
 				contract);
 		//@formatter:on
 		
-		ctx.getExpressionContext().eval("KILOMETROS=FRACCIONAR(CONTEXT,KILOMETROS)", 
+//		ctx.getExpressionContext().eval("KILOMETROS=FRACCIONAR(CONTEXT,KILOMETROS)", 
+//				startDate
+//				,endDate, 
+//				Double.class);
+
+		ctx.getExpressionContext().eval("KMS=FRACCIONAR(CONTEXT,KILOMETROS)", 
 				startDate
 				,endDate, 
 				Double.class);
 	
-		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("KILOMETROS", 
+		List<ITimedResult<Double>> results =  ctx.getExpressionContext().eval("KMS", 
 				startDate
 				,endDate, 
 				Double.class);
-		Assert.assertEquals(3, results.size());
+		Assert.assertEquals(2, results.size());
 		
 		Assert.assertEquals(startDate, results.get(0).getPeriod().getStart());
 		Assert.assertEquals(add(startOffDate, Calendar.DAY_OF_MONTH, -1), results.get(0).getPeriod().getEnd());
 
-		Assert.assertEquals(add(endOffDate, Calendar.DAY_OF_MONTH, 1), results.get(2).getPeriod().getStart());
-		Assert.assertEquals(endDate, results.get(2).getPeriod().getEnd());
+		Assert.assertEquals(add(endOffDate, Calendar.DAY_OF_MONTH, 1), results.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, results.get(1).getPeriod().getEnd());
 		
-		Assert.assertEquals(10.00, results.get(0).getValue() + results.get(1).getValue() + results.get(2).getValue());
+		Assert.assertEquals(10.00, results.get(0).getValue() + results.get(1).getValue() /*+ results.get(2).getValue()*/);
 
 	}
 

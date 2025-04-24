@@ -367,6 +367,21 @@ public class TrabajadoresTramos {
 					//Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
 					
+					// Particularidades: Situaciones de IT de pago delegado, en las que procede la compensación de IT. 
+					//  * Grupos de cotización diario con indicador mensual.
+					for ( ContextData itDays: filterValid(tipo, salary.getContextData().getOrDefault(ContextVariable.REGULATORY_BASE.getName(), Collections.emptyList()))) {
+						if ( AonNumberUtils.isNumber(itDays.getExpression()) && AonNumberUtils.todouble(itDays.getExpression()) > 0.00 ) {
+							String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, itDays.getStartDate(), itDays.getEndDate(), "00");
+							if ( AonNumberUtils.toint(quoteGroup ) > 7 ) {
+								cgcBasePeriods = insert(cgcBasePeriods, new Period(itDays.getStartDate(), itDays.getEndDate()));
+							}
+						}
+					}
+					
+					//  * Situaciones de IT de pago delegado, en las que procede la compensación de IT por ese día.	
+					for ( ContextData prestIt: filterValid(tipo, salary.getContextData().getOrDefault(ContextVariable.PREST_IT, Collections.emptyList())))
+						if ( AonNumberUtils.isNumber(prestIt.getExpression()) && AonNumberUtils.todouble(prestIt.getExpression()) > 0.00 )
+							cgcBasePeriods = insert(cgcBasePeriods, new Period(prestIt.getStartDate(), prestIt.getEndDate()));
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
 						for ( ContextData cgcData: filterValid(tipo, salary.getContextData().getOrDefault(var.getName(), Collections.emptyList())))
@@ -1424,7 +1439,7 @@ public class TrabajadoresTramos {
 				insert.add(p.intersect(period));
 			insert.addAll(p.sub(period));
 		}
-		insert.addAll(period.sub(period, periods));
+		insert.addAll(Period.sub(period, periods));
 		
 		Collections.sort(insert);
 		
