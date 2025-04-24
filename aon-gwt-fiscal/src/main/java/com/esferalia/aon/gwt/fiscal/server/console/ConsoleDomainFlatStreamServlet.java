@@ -35,8 +35,23 @@ public class ConsoleDomainFlatStreamServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Stream<ConsoleDomain> stream = null;
 		try {
-			String domainParams = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
-			DomainParams params = JsonParser.parseDomainParams(domainParams);
+			
+			StringBuilder bld = new StringBuilder();
+			try {
+				String line = "";
+				while((line = req.getReader().readLine()) != null){
+					bld.append(" " + line);
+				}
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage());
+			}
+			String domainParams = bld.toString();
+			org.json.JSONObject jsonParams = new org.json.JSONObject( domainParams );
+			String dp = jsonParams.getJSONObject( IRequestParamsNames.DOMAIN_PARAMS ).toString();
+			
+			
+//			String domainParams = req.getParameter(IRequestParamsNames.DOMAIN_PARAMS);
+			DomainParams params = JsonParser.parseDomainParams(dp);
 			resp.setContentType(MimeType.JSON.getName());
 			PrintWriter out = resp.getWriter();
 			final MutableBoolean first = new MutableBoolean(true);
@@ -47,6 +62,7 @@ public class ConsoleDomainFlatStreamServlet extends HttpServlet {
 			out.write(']');
 			
 		} catch (ParseException | java.text.ParseException e) {
+			resp.getWriter().write(']');
 			e.printStackTrace();
 			LOGGER.log(Level.SEVERE, "Console Domain Flat [{0}]",e.getMessage());
 		} finally {

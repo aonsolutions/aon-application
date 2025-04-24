@@ -39,6 +39,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -116,12 +117,11 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		}
 		@Override
 		public boolean isRunning() {
-			return processRunning;
+			return ConsoleDomainModule.this.isRunning();
 		}
 		@Override
 		public void setRunning(boolean run) {
-			processRunning = run;
-			runningLabel.setVisible(processRunning);
+			ConsoleDomainModule.this.setRunning(run);
 		}
 		@Override
 		public void showError(String message) {
@@ -500,6 +500,14 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 		splitLayoutPanel.add(mainTabLayout);
 	}
 	
+	public boolean isRunning() {
+		return processRunning;
+	}
+	public void setRunning(boolean run) {
+		processRunning = run;
+		runningLabel.setVisible(processRunning);
+	}
+	
 	private void disableMoreData() {
 		moreData.setValue(-1);
 	}
@@ -643,7 +651,8 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 	}
 
 	private void search(DomainParams params, ConsoleDomainTable grid) {
-		if (!isMoreData()) return;
+		if (!isMoreData() || isRunning()) return;
+		setRunning( true );
 		ConsoleDomainTableCallbackImpl innerCallback = new ConsoleDomainTableCallbackImpl();
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, DOMAIN_STREAM_SERVLET);
@@ -681,13 +690,14 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 					LOGGER.info("onReadyStateChange (disableMoreData)");
 				}
 				enableSearch();
+				setRunning( false );
 				LOGGER.info("onReadyStateChange (enableSearch)");
 			}
 		});
-		StringBuilder requestData = new StringBuilder();
 		params.setSchemasOffsets( schemasOffsets );
-		requestData.append("&"+IRequestParamsNames.DOMAIN_PARAMS +"=" + JsonParams.convert( params ) );
-		xhr.send(requestData.toString());
+		JSONObject r = new JSONObject();
+		r.put(IRequestParamsNames.DOMAIN_PARAMS, JsonParams.convert2Object( params ));
+		xhr.send(r.toString());
 	}
 	
 	private ConsoleDomainTable getTable() {

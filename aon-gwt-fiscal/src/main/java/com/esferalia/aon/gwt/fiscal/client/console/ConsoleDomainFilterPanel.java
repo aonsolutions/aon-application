@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDomainTypeBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonPasswordTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -449,15 +448,10 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			});
 			
 			okButton.addClickHandler(event1 -> {
-				if (AonStringUtils.isBlank( select.getValue() )) {
-					AonMessageDialog msg = new AonMessageDialog();
-					msg.show("ERROR", "Debe indicar una raz\u00F3n para proceder a rechazar el documento.", () -> {});
-				} else {
-					okButton.setEnabled(false);
-					this.hide();
-					callback.setSelect( select.getValue() );
-					callback.onAccept();
-				}
+				okButton.setEnabled(false);
+				this.hide();
+				callback.setSelect( select.getValue() );
+				callback.onAccept();
 			});
 			buttons.add(okButton);
 		
@@ -479,15 +473,27 @@ public class ConsoleDomainFilterPanel extends SimpleLayoutPanel implements Focus
 			buttons.add(cancelButton);
 			Label helpLabel1 = new Label();
 			helpLabel1.setStyleName( AON.CSS. aonMarginTop() );
-			helpLabel1.setText("Se debe realizar una SELECT correcta cuya columna de selección sea \"domain\" solo. Por ejemplo: ");
+			helpLabel1.setText("Se debe realizar una SELECT correcta cuya columna de selecci\u00F3n sea \"domain\" solo. Por ejemplo: ");
 			Label helpLabel2 = new Label();
 			helpLabel2.setStyleName( AON.CSS.aonMargin() );
 			helpLabel2.addStyleName( AON.CSS.aonItalic() );
 			helpLabel2.addStyleName( AON.CSS.aonPaddingLeft() );
-			helpLabel2.setText("SELECT domain FROM <table> <WHERE ... > group by domain having count(id) > 0" );
+			helpLabel2.setText("select domain from registry where name like \"%GARCIA%\" group by domain having count(id) > 1" );
+			ListBox recorded = new ListBox();
+			recorded.addItem("---", "");
+			recorded.addItem("SELECT B\u00E1sica"
+				,"select domain from <TABLE> WHERE <CONDITION> group by domain having count(id) > 0" );
+			recorded.addItem("Apuntes descuadrados"
+				,"select domain from account_entry_detail aed group by domain having sum(aed.debit) <> sum(aed.credit)" );
+			recorded.addChangeHandler( e -> {
+				String v = recorded.getSelectedValue();
+				if (v != null) select.setValue( recorded.getSelectedValue() );
+			});
+			
 			reasonPanel.add(select);
 			reasonPanel.add(helpLabel1);
 			reasonPanel.add(helpLabel2);
+			reasonPanel.add(recorded);
 			reasonPanel.add(buttons);
 			this.add(reasonPanel);
 		}

@@ -20,7 +20,6 @@ import com.google.gwt.json.client.JSONNull;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.user.client.Window;
 
 public class JsonParams extends JSONObject {
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
@@ -272,8 +271,8 @@ public class JsonParams extends JSONObject {
 		json.put("isPayroll"		,	new JSONNumber( params.isPayroll() ? 1 : 0 ));	
 		return json.toString();
 	}
-
-	public static String convert(DomainParams params) {
+	
+	public static JSONObject convert2Object(DomainParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.SCHEMA	,AonStringUtils.isBlank(params.getDbSchema())? JSON_NULL : new JSONString( params.getDbSchema()));
@@ -294,12 +293,18 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.VALIDATE,new JSONNumber( AonNumberUtils.toInteger( params.isValidate())));
 		json.put(IRequestParamsNames.MUST_FLATTEN,new JSONNumber( AonNumberUtils.toInteger( params.mustFlatten())));
 		json.put(IRequestParamsNames.LIMIT,new JSONNumber( params.getLimit()));
-		json.put(IRequestParamsNames.SELECT,AonStringUtils.isBlank(params.getSelect())? JSON_NULL : new JSONString( params.getSelect()));
+		if (AonStringUtils.isNotEmpty(params.getSelect())) {
+			json.put(IRequestParamsNames.SELECT,new JSONString( params.getSelect() ));
+		}
 		JSONArray schemasOffsets = new JSONArray();
 		for (int i = 0; i < ConsoleSchema.values().length ; i++) {
 			schemasOffsets.set(i, new JSONNumber((i < params.getSchemasOffsets().length)?params.getSchemasOffsets()[i]:0));  
 		}
 		json.put(IRequestParamsNames.SCHEMAS_OFFSETS,schemasOffsets);
-		return json.toString();
+		return json;
+	}
+
+	public static String convert(DomainParams params) {
+		return convert2Object(params).toString();
 	}
 }
