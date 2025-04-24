@@ -2307,27 +2307,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	List<ContextData> cgcBases = datas.get(ContextVariable.CGC_BASE.getName());
 
-	Assert.assertEquals(2, cgcBases.size());
-	Collections.sort(cgcBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgcBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgcBases.get(0).getEndDate(), itDate);
-	Assert.assertEquals(cgcBases.get(1).getStartDate(), workStartDate);
-	Assert.assertEquals(cgcBases.get(1).getEndDate(), endDate);
-
-	Assert.assertEquals(0.00, Double.parseDouble(cgcBases.get(0).getExpression()));
-	Assert.assertEquals(1500.00, Double.parseDouble(cgcBases.get(1).getExpression()), DELTA);
+	Assert.assertEquals(1, cgcBases.size());
+	Assert.assertEquals(cgcBases.get(0).getStartDate(), workStartDate);
+	Assert.assertEquals(cgcBases.get(0).getEndDate(), endDate);
+	Assert.assertEquals(1500.00, Double.parseDouble(cgcBases.get(0).getExpression()), DELTA);
 
 	List<ContextData> cgpBases = datas.get(ContextVariable.CGP_BASE.getName());
 
-	Assert.assertEquals(2, cgpBases.size());
-	Collections.sort(cgpBases, (d1, d2) -> d1.getStartDate().compareTo(d2.getStartDate()));
-	Assert.assertEquals(cgpBases.get(0).getStartDate(), startDate);
-	Assert.assertEquals(cgpBases.get(0).getEndDate(), itDate);
-	Assert.assertEquals(cgpBases.get(1).getStartDate(), workStartDate);
-	Assert.assertEquals(cgpBases.get(1).getEndDate(), endDate);
-
-	Assert.assertEquals(0.00, Double.parseDouble(cgpBases.get(0).getExpression()));
-	Assert.assertEquals(1500.00, Double.parseDouble(cgpBases.get(1).getExpression()), DELTA);
+	Assert.assertEquals(1, cgpBases.size());
+	Assert.assertEquals(cgpBases.get(0).getStartDate(), workStartDate);
+	Assert.assertEquals(cgpBases.get(0).getEndDate(), endDate);
+	Assert.assertEquals(1500.00, Double.parseDouble(cgpBases.get(0).getExpression()), DELTA);
     }
 
     // -------------------------------------------------------------------------
@@ -4004,6 +3994,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals("26", tramo2.getFechaDesde().getDia());
 	Assert.assertEquals("26", tramo2.getFechaHasta().getDia());
 	assertTramoITPagoDelegado(tramo2);
+	//assertZeroTramoITPagoDelegado(tramo2);
 
 	Tramo tramo3 = tramos.get(3);
 	Assert.assertEquals("27", tramo3.getFechaDesde().getDia());
@@ -6145,23 +6136,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(2, datas.size());
+		    Assert.assertEquals(1, datas.size());
 		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
 		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
 		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(2, datas.size());
+		    Assert.assertEquals(1, datas.size());
 		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
 		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
 		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
@@ -6198,6 +6183,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	Assert.assertEquals("07", tramos.get(1).getFechaHasta().getMes());
 	Assert.assertEquals("0", tramos.get(1).getDiasCotizados());
 	assertTramoIT15PrimerosDiasDiario(tramos.get(1));
+	//assertZeroTramoIT15PrimerosDiasDiario(tramos.get(1));
 
 	cleanSalaries(aonContext);
 
@@ -6267,23 +6253,17 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		    // 500 Base de contingencias comunes.
 		    List<ContextData> datas = salary.getContextData().get(CGC_BASE.getName());
 
-		    Assert.assertEquals(2, datas.size());
+		    Assert.assertEquals(1, datas.size());
 		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
 		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
 		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 601 o 611 Base de Accidentes de Trabajo.
 		    datas = salary.getContextData().get(CGP_BASE.getName());
-		    Assert.assertEquals(2, datas.size());
+		    Assert.assertEquals(1, datas.size());
 		    Assert.assertEquals(startDate, datas.get(0).getStartDate());
 		    Assert.assertEquals(endActive, datas.get(0).getEndDate());
 		    Assert.assertEquals(1750.00, Double.parseDouble(datas.get(0).getExpression()));
-		    Assert.assertEquals(endDate, datas.get(1).getStartDate());
-		    Assert.assertEquals(endDate, datas.get(1).getEndDate());
-		    Assert.assertEquals(0.00, Double.parseDouble(datas.get(1).getExpression()));
 
 		    // 501 Base de Horas Extras Fuerza Mayor
 		    datas = salary.getContextData().get(STRUCTURAL_OVERTIME_BASE.getName());
@@ -9287,9 +9267,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
     }
 
+
     private static void assertTramoIT15PrimerosDiasDiario(Tramo tramo) {
 	assertTramoIT15PrimerosDias(tramo);
 	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+	assertDatosSolicitado(datoSolicitados, "I", "51", "P");
+    }
+
+    private static void assertZeroTramoIT15PrimerosDiasDiario(Tramo tramo) {
+	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+	assertEquals(1, datoSolicitados.size());
 	assertDatosSolicitado(datoSolicitados, "I", "51", "P");
     }
 
@@ -9297,6 +9284,12 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	assertTramoIT15PrimerosDias(tramo);
 	List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 	assertDatosSolicitado(datoSolicitados, "C", "563", "B");
+    }
+
+    private static void assertZeroTramoITPagoDelegado(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertEquals(1, datoSolicitados.size());
+		assertDatosSolicitado(datoSolicitados, "C", "563", "B");
     }
 
     private static void assertTramoITATEPPagoDelegado(Tramo tramo) {

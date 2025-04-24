@@ -801,6 +801,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Date end, 
 			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
 		
+		if ( 
+			results.size() == 1 
+			&& results.get(0).getValue() == 0 
+			&& contractPayment.getType() == PaymentType.CRA_0004
+			&& contractPayment.getSalaryType() == SalaryType.SALARY
+			&& contractPayment.getMonth() == contractPayment.getMonth() )
+			return results;
+		
 		if (results.size() == 1 
 				&& ( contractPayment.getType() == PaymentType.CRA_0002 
 				|| contractPayment.getType() == PaymentType.CRA_0003 
@@ -808,19 +816,42 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| results.get(0).getContext().containsKey(ContextVariable.LIQUID)))
 				return  shareResults(results.get(0), its);
 		
+
 		try {
 			Date startIt = getStartIT(expressionContext);
 			List<ITimedResult<Double>> brResults = getPaymentBR(startIt, contractPayment);
+			ITimedResult<Double> quote = quote(results.get(0), contractPayment);
 			
-			if ( results.size() == 1
+			if (
+					results.size() == 1 
+					&& quote.getValue() == 0 
+					&& results.get(0).getValue() == 0) {
+				return zeroITPart(results, its, contractPayment);
+			} 
+			else if (
+					results.size() == 1 
+					&& results.get(0).getValue() == 0
+					&& contractPayment.getType().ordinal() >= 42
+					&& contractPayment.getType().ordinal() <= 50
+					) {
+				return zeroITPart(results, its, contractPayment);
+			} 
+			else if (
+					results.size() == 1 
+					&& quote.getValue() != 0 
+					&& results.get(0).getValue() == 0) {
+				return results;
+			} 
+			else if ( results.size() == 1
 				&& ( contains(brResults, results.get(0))
-					|| contains(brResults, quote(results.get(0), contractPayment)))
+					|| contains(brResults, quote))
 					) {
 				// It's a constant that already is included at BR, 
 				// so we'll subtract the proportional part of IT.
 				
 				return subtractITPart(results, its, expressionContext);
-			} else if (results.size() == 1 
+			} 
+			else if (results.size() == 1 
 					&& results.get(0).getContext().isEmpty()  
 					&& notOnly4ThisMonth(startIt, contractPayment)
 					) {
@@ -836,6 +867,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					) {
 				
 				return subtractITPart(results, its, expressionContext);
+			} 
+			else if (
+					results.size() == 1 
+					&& results.get(0).getContext().isEmpty()  
+					&& startThisMonth(startIt, contractPayment)) {
+				return moveITPart(results, its, contractPayment);
+			} 
+			else if (
+					results.size() == 1 
+					&& contractPayment.getType() == PaymentType.CRA_0050 ) {
+				return moveITPart(results, its, contractPayment);
 			} 
 			else if (
 					results.size() == 1 
@@ -997,6 +1039,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return fixed;
 	}
 	
+	protected List<ITimedResult<Double>> zeroITPart(List<ITimedResult<Double>> results, List<Period> its, IContractPayment contractPayment) throws UndefinedVariablesException, ExpressionException {
+		Period period = results.get(0).getPeriod();
+		Map<String,ITimedVariable<?>> context = results.get(0).getContext();
+		
+		List<Period> actives = Period.sub(period, its);
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(actives.size());
+		
+		for ( Period active : actives  ) {
+			fixed.add( new TimedResult<Double>(0.00, active, context));
+		}
+		return fixed;
+	}
+
 	protected List<ITimedResult<Double>> moveITPart(List<ITimedResult<Double>> results, List<Period> its, IContractPayment contractPayment) throws UndefinedVariablesException, ExpressionException {
 		Period period = results.get(0).getPeriod();
 		Double value = results.get(0).getValue();
@@ -1834,24 +1890,28 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 
 	private ITimedResult<Double> quote(ITimedResult<Double> result, IContractPayment contractPayment) throws ExpressionException {
-		ExpressionContext expressionContext = new ExpressionContext();
-		expressionContext.putVariable(ContextVariable.ALL, result);
-		if ( !AonStringUtils.isEmpty(contractPayment.getName()) )
-			expressionContext.putVariable(contractPayment.getName(), result);
-		expressionContext.setVariable(ContextVariable.CONTEXT, expressionContext, result.getPeriod().getStart(), result.getPeriod().getEnd());
-		expressionContext.setVariable(ContextVariable.PAYMENT_VARIABLE, contractPayment, result.getPeriod().getStart(), result.getPeriod().getEnd());
-		ContextFunctions.loadFunctions(expressionContext, result.getPeriod().getStart(), result.getPeriod().getEnd());
-		
-		String quoteExpression = contractPayment.getQuoteExpression();
-		if ( AonStringUtils.isBlank(quoteExpression)) 
-			quoteExpression = ContextVariable.ALL;
-		
-		Double value = 0.00;
-		for ( ITimedResult<Number> quote : expressionContext.eval(quoteExpression, result.getPeriod().getStart(), result.getPeriod().getEnd(), Number.class) )
-			value += quote.getValue().doubleValue();
-		
-		
-		return new TimedResult<Double>(value, result.getPeriod(), result.getContext());
+		try  {
+			ExpressionContext expressionContext = new ExpressionContext();
+			expressionContext.putVariable(ContextVariable.ALL, result);
+			if ( !AonStringUtils.isEmpty(contractPayment.getName()) )
+				expressionContext.putVariable(contractPayment.getName(), result);
+			expressionContext.setVariable(ContextVariable.CONTEXT, expressionContext, result.getPeriod().getStart(), result.getPeriod().getEnd());
+			expressionContext.setVariable(ContextVariable.PAYMENT_VARIABLE, contractPayment, result.getPeriod().getStart(), result.getPeriod().getEnd());
+			ContextFunctions.loadFunctions(expressionContext, result.getPeriod().getStart(), result.getPeriod().getEnd());
+			
+			String quoteExpression = contractPayment.getQuoteExpression();
+			if ( AonStringUtils.isBlank(quoteExpression)) 
+				quoteExpression = ContextVariable.ALL;
+			
+			Double value = 0.00;
+			for ( ITimedResult<Number> quote : expressionContext.eval(quoteExpression, result.getPeriod().getStart(), result.getPeriod().getEnd(), Number.class) )
+				value += quote.getValue().doubleValue();
+			
+			
+			return new TimedResult<Double>(value, result.getPeriod(), result.getContext());
+		} catch ( ExpressionException e ) {
+			return new TimedResult<Double>(Double.MIN_VALUE, result.getPeriod(), Collections.emptyMap());
+		}
 	}
 	
 
@@ -2150,6 +2210,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return false;
 	}
 	
+	private static boolean startThisMonth ( Date date, IContractPayment payment) {
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+		Date endDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+		if ( Period.compare(payment.getStartDate(), firstDayOfMonth) >= 0 
+				&& Period.compare(payment.getStartDate(), endDayOfMonth) <= 0 )
+			return true;
+				
+		return false;
+	}
+
 	private static Map<String, PaymentType> PAYMENTS_DESCRIPTIONS = new HashMap<String, PaymentType>();
 	private static Set<String> PAYMENTS_DATABASES = new HashSet<String>();
 	

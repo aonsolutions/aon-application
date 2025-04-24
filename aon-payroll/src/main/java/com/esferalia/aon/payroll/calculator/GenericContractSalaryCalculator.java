@@ -932,7 +932,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			addVars(expressionContext, PLUS_BASE,  ADDITIONAL_BASE, BASE_PPE);
 			addVars(expressionContext, CGC_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
-			quoteCalculator.limit(CGC_BASE, expressionContext, start, end);
+			limit(quoteCalculator,CGC_BASE, expressionContext, start, end);
 			cgcBase = getValue(expressionContext, CGC_BASE);
 
 			if (ereBase != null)
@@ -960,7 +960,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 
 			addVars(expressionContext, CGP_BASE_RAW,  ADDITIONAL_BASE, BASE_PPE);
-			quoteCalculator.limit(CGP_BASE, expressionContext, start, end);
+			limit(quoteCalculator, CGP_BASE, expressionContext, start, end);
 			cgpBase = getValue(expressionContext, CGP_BASE);
 
 			evalVar(ctx, SALARY_HOURS);
@@ -1744,7 +1744,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					&& contractPaymentType != PaymentType.CRA_0055 
 					&& !AonStringUtils.equals(ContextVariable.GUARENTEED, name)
 					&& !AonStringUtils.equals(ContextVariable.PREST_IT, name)
-					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null /*&& r.getValue() != 0.00*/)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
 				try {
 					results = fixItResults(contractPayment, results, leavePeriods, start, end, expressionContext);
@@ -2213,6 +2213,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		.forEach( v -> addResult(expressionContext, dest, v.getPeriod().getStart(), v.getPeriod().getEnd(), v.getValue(v.getPeriod()).doubleValue()));
 	}
 	
+	public static void limit(QuoteCalculator quoteCalculator, ContextVariable limit, ExpressionContext expressionContext, Date start, Date end){
+		quoteCalculator.limit(limit, expressionContext, start, end);
+	}
+
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";

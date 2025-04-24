@@ -639,7 +639,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		;
 		
 		for ( SalaryPayment p : salary.getSalaryPayments() ) {
-			System.out.println(p.getExpression() + " = " + p.getAmount());
+			System.out.println("1-." + p.getExpression() + " = " + p.getAmount());
 		}
 		
 		
@@ -654,7 +654,7 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		;
 		
 		for ( SalaryPayment p : salary.getSalaryPayments() ) {
-			System.out.println(p.getExpression() + " = " + p.getAmount());
+			System.out.println("2-." + p.getExpression() + " = " + p.getAmount());
 		}
 		
 		

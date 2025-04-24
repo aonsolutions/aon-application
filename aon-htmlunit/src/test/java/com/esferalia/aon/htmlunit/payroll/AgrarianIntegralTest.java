@@ -2,6 +2,7 @@ package com.esferalia.aon.htmlunit.payroll;
 
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
@@ -56,6 +57,13 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1847.40);
 		calculate(Calendar.JUNE, 2025);
 		assertValue("cgcBaseLabel", 1929.00);
+
+		draft("CORTA DURACION, ART 28");
+		calculate(Calendar.APRIL,2025);
+		click("costsCheck-input");
+		assertNotElement("cgc_e_tempPercentLabel");
+		assertEquals(1,getElementsById("common_contingency_cost").size());
+		click("costsCheck-input");
 	}
 
 	@Test

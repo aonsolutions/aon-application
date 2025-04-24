@@ -27,6 +27,7 @@ import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.tgss.AgriculturalRealDecreeLaw1782025Art28Fix;
 import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024InsertFaseIII;
 
 public class Up2Date {
@@ -537,6 +538,7 @@ public class Up2Date {
 			// SalaryHoursFixIV.SALARYHOURSFIXIV,
 			// SalaryHoursFixV.SALARYHOURSFIXV,
 			TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
+			AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
