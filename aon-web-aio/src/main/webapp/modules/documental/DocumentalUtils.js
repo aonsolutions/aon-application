@@ -488,12 +488,11 @@ function S3DocumentalSelects(dur) {
     return table;
 }
 
+async function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
+    let oldCategories =  await loadOldCategories();
 
-function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
-    let oldCategories = loadOldCategories();
-    
     // Crear la fila de categorías (Radio buttons)
-    if (oldCategories) {
+    if (oldCategories.length > 0) {
         createRadioButtonRow(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
         createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
     }
@@ -508,7 +507,7 @@ function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
     selCat.id = "aonDocumentalUploadCategory";
     selCat.title = MSG.CATEGORY;
 
-    if (!oldCategories) {
+    if (oldCategories.length < 1) {
         let defaultOption = {
             value: "Seleccione una categoria",
             name: "Seleccione una categoria",
@@ -532,7 +531,7 @@ function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
                 selCat.options = JSON.stringify(categories.filter(c => c.id !== 'Seleccione una categoria' && c.is_deletable === 0).map(c => {
                     return {
                         value: c.id,
-                        name: c.name,
+                        name: c.name
                     };
                 }));
 
@@ -546,158 +545,159 @@ function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
             }
         });
     }
-    
+
     // Agregar el selector de categorías a la tabla
     tdCategory.appendChild(selCat);
     trCategory.appendChild(tdCategory);
 }
-  function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay){
-    // Botton de aceptar oculto
-    var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
+
+function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay){
+  // Botton de aceptar oculto
+  var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
+  button.disabled = true;
+  // Se escoge una categoria
+  selCat.addEventListener('change', (event) => {
     button.disabled = true;
-    // Se escoge una categoria
-	selCat.addEventListener('change', (event) => {
-      button.disabled = true;
-      const selectedCategoryId = event.target.value;
-      // Limpiar los campos antes de generar nuevos select
-      clearFields(table, [trScope, trCategory, trDatePicker] ,
-         ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
-      if (selectedCategoryId !== null && selectedCategoryId !== undefined && selectedCategoryId !== 'Seleccione una categoria') {
-        // Crear un nuevo tr para Subcategoria solo si hay subcategorias
-        let trSubCategory = document.createElement('tr');
-        table.appendChild(trSubCategory);
-        let tdSubCategory = document.createElement('td');
-        tdSubCategory.setAttribute('colspan', '1');
-        let selSubCat = new AonNewSelect();
-        selSubCat.id = "aonDocumentalUploadSubCategory";
-        // selSubCat.title = MSG.SUBCATEGORY; //TODO
-		selSubCat.title = "Subcategoria"; //TODO
-        tdSubCategory.appendChild(selSubCat);
+    const selectedCategoryId = event.target.value;
+    // Limpiar los campos antes de generar nuevos select
+    clearFields(table, [trScope, trCategory, trDatePicker] ,
+       ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+    if (selectedCategoryId !== null && selectedCategoryId !== undefined && selectedCategoryId !== 'Seleccione una categoria') {
+      // Crear un nuevo tr para Subcategoria solo si hay subcategorias
+      let trSubCategory = document.createElement('tr');
+      table.appendChild(trSubCategory);
+      let tdSubCategory = document.createElement('td');
+      tdSubCategory.setAttribute('colspan', '1');
+      let selSubCat = new AonNewSelect();
+      selSubCat.id = "aonDocumentalUploadSubCategory";
+      // selSubCat.title = MSG.SUBCATEGORY; //TODO
+      selSubCat.title = "Subcategoria"; //TODO
+      tdSubCategory.appendChild(selSubCat);
 
-        let data = { parent: selectedCategoryId };
-        // Mostrar el overlay
-        loadingOverlay.style.display = 'flex';
-        getS3Category(data).then(subcategories => {
-          if (subcategories.length > 0) {
-            selSubCat.options = JSON.stringify(subcategories.map(sc => {
-              return {
-                value: sc.id,
-                name: sc.name
-              };
-            }));
-            trSubCategory.appendChild(tdSubCategory);
-            // Oculta el overlay
-            loadingOverlay.style.display = 'none';
+      let data = { parent: selectedCategoryId };
+      // Mostrar el overlay
+      loadingOverlay.style.display = 'flex';
+      getS3Category(data).then(subcategories => {
+        if (subcategories.length > 0) {
+          selSubCat.options = JSON.stringify(subcategories.map(sc => {
+            return {
+              value: sc.id,
+              name: sc.name
+            };
+          }));
+          trSubCategory.appendChild(tdSubCategory);
+          // Oculta el overlay
+          loadingOverlay.style.display = 'none';
 ///////////////////////////////////////////////////
-			// Event listener para la selección de la subcategoría
-			selSubCat.addEventListener('change', (event) => {
-                button.disabled = true;
-				const selectedSubCategoryId = event.target.value;
+          // Event listener para la selección de la subcategoría
+          selSubCat.addEventListener('change', (event) => {
+              button.disabled = true;
+              const selectedSubCategoryId = event.target.value;
 
-				// Limpiar los campos de administración y modelos antes de generar nuevos
-				clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
-                     ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+              // Limpiar los campos de administración y modelos antes de generar nuevos
+              clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
+                   ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
-				if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
-					// Crear un nuevo tr para Administración solo si hay administraciones
-					let trAdministration = document.createElement('tr');
-					table.appendChild(trAdministration);
+              if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
+                  // Crear un nuevo tr para Administración solo si hay administraciones
+                  let trAdministration = document.createElement('tr');
+                  table.appendChild(trAdministration);
 
-					let tdAdministration = document.createElement('td');
-					tdAdministration.setAttribute('colspan', '1');
-					let selAdministration = new AonNewSelect();
-					selAdministration.id = "aonDocumentalAdministration";
-					selAdministration.title = "Administración";
-					tdAdministration.appendChild(selAdministration);
+                  let tdAdministration = document.createElement('td');
+                  tdAdministration.setAttribute('colspan', '1');
+                  let selAdministration = new AonNewSelect();
+                  selAdministration.id = "aonDocumentalAdministration";
+                  selAdministration.title = "Administración";
+                  tdAdministration.appendChild(selAdministration);
 
-					let data = { parent: selectedSubCategoryId };
-                    // Mostrar el overlay
-                    loadingOverlay.style.display = 'flex';
-					getS3Category(data).then(administrations => {
-						if (administrations.length > 0) {
-							selAdministration.options = JSON.stringify(administrations.map(adm => {
-								return {
-									value: adm.id,
-									name: adm.name
-								};
-							}));
-							trAdministration.appendChild(tdAdministration);
-                            // Oculta el overlay
-                            loadingOverlay.style.display = 'none';
-                        ///////////////////////////////////////////////////
-                            // Event listener para la selección de la administración
-                            selAdministration.addEventListener('change', (event) => {
-                                button.disabled = true;
-                                const selectedAdministrationId = event.target.value;
-
-                                // Limpiar el campo de modelos antes de generar nuevos
-                                clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
-                                     ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
-
-                                if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
-                                    // Crear un nuevo tr para Modelos solo si hay modelos
-                                    let trModel = document.createElement('tr');
-                                    table.appendChild(trModel);
-
-                                    let tdModel = document.createElement('td');
-                                    tdModel.setAttribute('colspan', '1');
-                                    let selModel = new AonNewSelect();
-                                    selModel.id = "aonDocumentalModels";
-                                    selModel.title = "Modelos";
-                                    tdModel.appendChild(selModel);
-
-                                    let data = { parent: selectedAdministrationId };
-                                    // Mostrar el overlay
-                                    loadingOverlay.style.display = 'flex';
-                                    getS3Category(data).then(models => {
-                                        if (models.length > 0) {
-                                            selModel.options = JSON.stringify(models.map(mod => {
-                                                return {
-                                                    value: mod.id,
-                                                    name: mod.name
-                                                };
-                                            }));
-                                            trModel.appendChild(tdModel);
-                                            // Oculta el overlay
-                                            loadingOverlay.style.display = 'none';
-                                            // Cuando se escoge un modelo
-                                            selModel.addEventListener('change', (event) => {
-                                                button.disabled = false;
-                                            });
-                                        } else {
-                                          button.disabled = false;
-                                          // Oculta el overlay
-                                          loadingOverlay.style.display = 'none';
-                                          console.log('No hay modelos disponibles.');
-                                        }
-                                    });
-                                }
-                            });
-                        ///////////////////////////////////////////////////
-						} else {
-                          button.disabled = false;
+                  let data = { parent: selectedSubCategoryId };
+                  // Mostrar el overlay
+                  loadingOverlay.style.display = 'flex';
+                  getS3Category(data).then(administrations => {
+                      if (administrations.length > 0) {
+                          selAdministration.options = JSON.stringify(administrations.map(adm => {
+                              return {
+                                  value: adm.id,
+                                  name: adm.name
+                              };
+                          }));
+                          trAdministration.appendChild(tdAdministration);
                           // Oculta el overlay
                           loadingOverlay.style.display = 'none';
-                          console.log('No hay administraciones disponibles.');
-						}
-					});
-				}
-			});
+                      ///////////////////////////////////////////////////
+                          // Event listener para la selección de la administración
+                          selAdministration.addEventListener('change', (event) => {
+                              button.disabled = true;
+                              const selectedAdministrationId = event.target.value;
+
+                              // Limpiar el campo de modelos antes de generar nuevos
+                              clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
+                                   ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+
+                              if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
+                                  // Crear un nuevo tr para Modelos solo si hay modelos
+                                  let trModel = document.createElement('tr');
+                                  table.appendChild(trModel);
+
+                                  let tdModel = document.createElement('td');
+                                  tdModel.setAttribute('colspan', '1');
+                                  let selModel = new AonNewSelect();
+                                  selModel.id = "aonDocumentalModels";
+                                  selModel.title = "Modelos";
+                                  tdModel.appendChild(selModel);
+
+                                  let data = { parent: selectedAdministrationId };
+                                  // Mostrar el overlay
+                                  loadingOverlay.style.display = 'flex';
+                                  getS3Category(data).then(models => {
+                                      if (models.length > 0) {
+                                          selModel.options = JSON.stringify(models.map(mod => {
+                                              return {
+                                                  value: mod.id,
+                                                  name: mod.name
+                                              };
+                                          }));
+                                          trModel.appendChild(tdModel);
+                                          // Oculta el overlay
+                                          loadingOverlay.style.display = 'none';
+                                          // Cuando se escoge un modelo
+                                          selModel.addEventListener('change', (event) => {
+                                              button.disabled = false;
+                                          });
+                                      } else {
+                                        button.disabled = false;
+                                        // Oculta el overlay
+                                        loadingOverlay.style.display = 'none';
+                                        console.log('No hay modelos disponibles.');
+                                      }
+                                  });
+                              }
+                          });
+                      ///////////////////////////////////////////////////
+                      } else {
+                        button.disabled = false;
+                        // Oculta el overlay
+                        loadingOverlay.style.display = 'none';
+                        console.log('No hay administraciones disponibles.');
+                      }
+                  });
+              }
+          });
 ///////////////////////////////////////////////////
-          } else {
-            button.disabled = false;
-            // Oculta el overlay
-            loadingOverlay.style.display = 'none';
-            console.log('No hay subcategorías disponibles.');
-          }
-        });
-      } else if(selectedCategoryId === 'Seleccione una categoria') {
-        button.disabled = true;
-      }else{
-        button.disabled = false;
-      }
-	});
-  }
+        } else {
+          button.disabled = false;
+          // Oculta el overlay
+          loadingOverlay.style.display = 'none';
+          console.log('No hay subcategorías disponibles.');
+        }
+      });
+    } else if(selectedCategoryId === 'Seleccione una categoria') {
+      button.disabled = true;
+    }else{
+      button.disabled = false;
+    }
+  });
+}
 
 const attach = async (reader, d) => {
 	const data = {

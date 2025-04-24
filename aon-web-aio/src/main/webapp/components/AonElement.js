@@ -84,6 +84,18 @@ export class AonElement extends HTMLElement{
     const elem = this.getElement(id);
     if(elem) elem.style.display = 'block';
   }
+  
+  // Mostrar y Ocultar
+  // Para nos cargamos el valor de display en cada caso. (display: flex, )
+  hideElementByVisibility(id) {
+    const elem = document.getElementById(id);
+    if (elem) elem.style.visibility = 'hidden';
+  }
+
+  showElementByVisibility(id) {
+    const elem = document.getElementById(id);
+    if (elem) elem.style.visibility = 'visible';
+  }
 
   isSab() {
     const sab = getComputedStyle(document.documentElement).getPropertyValue("--sab");

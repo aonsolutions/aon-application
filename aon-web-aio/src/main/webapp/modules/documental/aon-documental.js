@@ -282,6 +282,12 @@ export class AonDocumental extends AonElement {
 			domain: LS.getDomainId()
 		};
 		if (this.isBetaDoc()) {
+            let application = this.getApplication();
+            // Las categorias del cliente, las ponemos como ocultas si no tiene
+            let yourCategoriesVisibility = false;
+            if (!yourCategoriesVisibility)
+              this.hideElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
+            // llamamos a las categorias
 			getS3Category(data).then(categories => {
 				this._categories = categories.map(c => {
 					return {
@@ -289,7 +295,7 @@ export class AonDocumental extends AonElement {
 						name: c.name
 					};
 				});
-				let application = this.getApplication();
+				
                 // Limpiamos
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
@@ -324,6 +330,8 @@ export class AonDocumental extends AonElement {
 						};
 						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
 					}else{
+                        // Tiene datos en tus catogiras 
+                        yourCategoriesVisibility = true;
 						let optionUserCategories = {
                             id  : item.id,
 							name: item.name,
@@ -345,6 +353,9 @@ export class AonDocumental extends AonElement {
 					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
 				});
+                // Mostrar tus categorias
+                if (yourCategoriesVisibility)
+                  this.showElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
 			});
 		} else {
 			getCategories(data).then(categories => {
