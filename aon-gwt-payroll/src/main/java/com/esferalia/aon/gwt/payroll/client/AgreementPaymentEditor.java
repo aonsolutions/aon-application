@@ -92,7 +92,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	@UiField (provided = true)
 	AonToolbarSmallButton expresssionVisibilityBtn;
 
-	@UiField
+	@UiField (provided = true)
 	ExpressionCodeArea paymentExpressionCA;
 	
 	@UiField
@@ -194,6 +194,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		setCaption("Devengo");
 		
 		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconFx());
+		paymentExpressionCA = new ExpressionCodeArea(true);
 		
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
@@ -212,12 +213,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		advancePanel.addOpenHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 80);
-			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
+//			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
 		advancePanel.addCloseHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() + 80);
-			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
+//			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
 		
 		getEnableDisableButton(enterpriseTaxed, false);
@@ -247,6 +248,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		extraPeriodPanel.setVisible(null != extra && !extra.isDeleted());
 		
 		showHideAdvanceOptions();
+		
 		showDialog();
 	}
 
