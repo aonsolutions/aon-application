@@ -30,6 +30,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -41,6 +42,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.error.AonCoreException;
 
+import net.aonsolutions.aon.sign.PdfSigner;
+import net.aonsolutions.aon.sign.exception.AonSignerException;
 import net.esle.sinadura.core.certificado.Certificado;
 import net.esle.sinadura.core.firma.DocumentFactory;
 import net.esle.sinadura.core.firma.DocumentIFace;
@@ -59,7 +62,7 @@ public class CertificateController implements Serializable {
 	private static final String ACCV_TSA_URL = "http://tss.accv.es:8318/tsa";
 
 	private static final String CATCERT = "Catcert";
-	private static final String CATCERT_TSA_URL = "http://psis.catcert.net/psis/catcert/tsp";
+	private static final String CATCERT_TSA_URL = "https://psis.aoc.cat/psis/catcert/tsp";
 
 	private static final String SIGN_IMAGE_PATH = "sign.png";
 	
@@ -397,7 +400,16 @@ public class CertificateController implements Serializable {
 		byte[] signedData = null;
 		MimeType type = attachment.getMimeType();
 		if ( type == MimeType.MIME_PDF ) {
-			signedData = getSignedFileData( attachment.getData() );
+			Certificate cert = AON.getCertificates(getDomain(), getUser(), f -> f.getIdProperty().eq(getKeystore()))
+					.findFirst().orElse(null);
+			if(cert != null) {
+				try {
+					signedData = PdfSigner.getInstance().sign(cert, attachment.getData());
+				} catch (AonSignerException e) {
+					e.printStackTrace();
+					signedData = getSignedFileData( attachment.getData());
+				}
+			} else signedData = getSignedFileData( attachment.getData() );
 			attachment.setMimeType(MimeType.MIME_SIGNED_PDF);
 		} else if ( (type == MimeType.MIME_XML) || (type == MimeType.MIME_XSIG) ) {
 			FacturaeSigner signer = new FacturaeSigner();

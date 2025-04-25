@@ -504,8 +504,15 @@ public class RegistryController extends BasicController {
 		}
 		pojoMapping.put("Project", Project.class);
 		pojoMapping.put("ProjectActivity", ProjectActivity.class);
-
-		return CriteriaUtilities.toSQLString(getCriteria(), true, pojoMapping, tableMapping);
+		/** TODO REVISAR
+		 *  En la pantalla se orderna por updateDate
+		 *  y falla al construir el SQLRenderer
+		 *  cuando se descarga un listado.
+		 **/
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		/****/
+		return CriteriaUtilities.toSQLString(criteria, true, pojoMapping, tableMapping);
 	}
 
 	@Override

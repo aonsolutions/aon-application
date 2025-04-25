@@ -26,7 +26,7 @@ public class PdfSigner extends Signer {
     private static final AOSigner SIGNER = new AOPDFSigner();
 //	private static final String IZENPE_TSA_URL = "http://ocsp.izenpe.com:8093"; 
 //	private static final String ACCV_TSA_URL = "http://tss.accv.es:8318/tsa";
-	private static final String CATCERT_TSA_URL = "http://psis.catcert.net/psis/catcert/tsp";
+	private static final String CATCERT_TSA_URL = "https://psis.aoc.cat/psis/catcert/tsp";
 	
 	public byte[] sign(Certificate certificate, byte[] data) throws AonSignerException {
 		return sign(certificate, data, getExtraParams());
@@ -51,8 +51,8 @@ public class PdfSigner extends Signer {
 	
     public Properties getExtraParams() {
     	final Properties xParams = new Properties();
-//    	xParams.put("tsaURL", CATCERT_TSA_URL);
-//    	xParams.put("tsType", TsaParams.TS_SIGN);
+    	xParams.put("tsaURL", CATCERT_TSA_URL);
+    	xParams.put("tsType", TsaParams.TS_SIGN);
     	return xParams;
     }
 	
