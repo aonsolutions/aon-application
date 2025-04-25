@@ -209,16 +209,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		advancePanel.setAnimationEnabled(true);
 		advancePanel.setOpen(false);
-		paymentExpressionCA.setAdvancedMode(true);
 		advancePanel.addOpenHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 80);
-//			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
+			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
 		advancePanel.addCloseHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() + 80);
-//			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
+			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
 		
 		getEnableDisableButton(enterpriseTaxed, false);
