@@ -3007,6 +3007,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    return "SOLIDARIDAD";
 			}
 			
+			@Override
+			public String visitSEA(DeductionType deductionType) {
+				return "REDUCCIONES SEA A CARGO TGSS";
+			}
+			
 		});
 	}
 

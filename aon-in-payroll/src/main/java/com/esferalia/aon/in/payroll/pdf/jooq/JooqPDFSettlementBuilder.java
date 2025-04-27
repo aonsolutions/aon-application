@@ -78,7 +78,7 @@ public class JooqPDFSettlementBuilder {
 		};
 	} 
 	
-	private static final Locale LOCALE_ES = new Locale("es", "ES");
+	private static final Locale LOCALE_ES = Locale.of("es", "ES");
 	private static final String INDEMN_CAUSE = "CAUSA_INDEMNIZACION";
 	private static final String PERCENT_PROFIX = "PORCENTAJE_";
 	
@@ -308,6 +308,11 @@ public class JooqPDFSettlementBuilder {
 						return null;
 					}
 					
+					@Override
+					public Double visitSEA(DeductionType deductionType) {
+						return AonNumberUtils.zeroIfNull(salary.getCommonContingenciesBase()) > 0 ? deduction.getAmount() / salary.getCommonContingenciesBase() * 100: null;
+					}
+					
 				});
 
 			} else if (salary.getIrpfBase() != null && salary.getIrpfBase() > 0){
@@ -343,6 +348,11 @@ public class JooqPDFSettlementBuilder {
 			@Override
 			public String visitCommonContigency(DeductionType deductionType) {
 				return "Contingencias Comunes";
+			}
+			
+			@Override
+			public String visitSEA(DeductionType deductionType) {
+				return "Reducciones SEA a Cargo TGSS";
 			}
 			
 			@Override
@@ -438,10 +448,15 @@ public class JooqPDFSettlementBuilder {
 				return 1;
 			}
 
-		    	@Override
-		    	public Integer visitMEI(DeductionType deductionType) {
-		    	    return 1;
-		    	}
+	    	@Override
+	    	public Integer visitMEI(DeductionType deductionType) {
+	    	    return 1;
+	    	}
+
+			@Override
+			public Integer visitSEA(DeductionType deductionType) {
+				return 1;
+			}
 
 			@Override
 			public Integer visitProfessionalContigency(DeductionType deductionType) {
@@ -517,6 +532,7 @@ public class JooqPDFSettlementBuilder {
 			public Integer visitSolidarity(DeductionType deductionType) {
 				return 7;
 			}
+			
 		});
 	}
 	

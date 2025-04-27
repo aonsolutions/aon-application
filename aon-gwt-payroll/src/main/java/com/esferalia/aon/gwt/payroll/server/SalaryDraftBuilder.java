@@ -446,6 +446,7 @@ public class SalaryDraftBuilder
 		salaryDraft
 				.setSsNonHExtraBase(ssSalary.getNonEstructuralOvertimeBase());
 		salaryDraft.setSsProrationBase(ssSalary.getExtraPayProration());
+		salaryDraft.setSsTotalEnterprise(ssSalary.getTotalEnterprise());
 
 
 		// match up draft deductions & ss deductions
