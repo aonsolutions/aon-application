@@ -777,6 +777,8 @@
 															changeDisplayStyleName="{style.value-changed}" ui:field="totalEnterpriseLabel" debugId="totalEnterpriseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 														<g:InlineHTML debugId="dbTotalEnterpriseLabel" ui:field="dbTotalEnterpriseLabel"
 															visible="false" />
+														<g:InlineHTML debugId="ssTotalEnterpriseLabel" ui:field="ssTotalEnterpriseLabel"
+															visible="false" />
 													</g:HTMLPanel>
 												</g:HTMLPanel>
 											</g:customCell>

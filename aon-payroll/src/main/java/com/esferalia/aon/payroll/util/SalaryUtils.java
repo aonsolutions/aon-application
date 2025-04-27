@@ -8,6 +8,11 @@ public class SalaryUtils {
 	
 	
 	public static boolean equalsAmounts( ISalary salary1, ISalary salary2) {
+		return AonNumberUtils.equals(salary1.getTotalEnterprise(), salary2.getTotalEnterprise())
+				&& equalsEmployeeAmounts(salary1, salary2);
+	}
+
+	public static boolean equalsEmployeeAmounts( ISalary salary1, ISalary salary2) {
 		return
 		AonNumberUtils.equals(salary1.getCommonBase(), salary2.getCommonBase())
 		&& AonNumberUtils.equals(salary1.getProfessionalBase(), salary2.getProfessionalBase())
@@ -23,12 +28,11 @@ public class SalaryUtils {
 		&& AonNumberUtils.equals(salary1.getTotalLiquid(), salary2.getTotalLiquid())
 		&& AonNumberUtils.equals(salary1.getTotalPayment(), salary2.getTotalPayment())
 		&& AonNumberUtils.equals(salary1.getTotalDeduction(), salary2.getTotalDeduction())
-		&& AonNumberUtils.equals(salary1.getTotalEnterprise(), salary2.getTotalEnterprise())
 		;
 		
 	}
 
 	public static boolean equalsIrpfAmounts( ISalary salary1, ISalary salary2) {
-		return equalsAmounts(salary1, salary2);
+		return equalsEmployeeAmounts(salary1, salary2);
 	}
 }

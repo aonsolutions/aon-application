@@ -354,6 +354,11 @@ public class DCL {
 				    return visit(Deduction::isSolidarity);
 				}
 				
+				@Override
+				public Double visitSEA(DeductionType deductionType) {
+				    return 0.00;
+				}
+				
 				private Double visit(Predicate<Deduction> filter) {
 					return salary.getDeductions().stream().filter(filter)
 							.collect(Collectors.summingDouble(deduction -> deduction.getAmount() * 100.00));
@@ -398,6 +403,11 @@ public class DCL {
 				@Override
 				public Double visitSolidarity(DeductionType deductionType) {
 				    return visit(Cost::isSolidarity);
+				}
+				
+				@Override
+				public Double visitSEA(DeductionType deductionType) {
+					return visit(Cost::isSEA);
 				}
 
 				private Double visit(Predicate<Cost> filter) {

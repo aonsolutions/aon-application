@@ -3,17 +3,22 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 
@@ -54,54 +59,59 @@ public class Idc {
 
 	public static interface IdcListener{
 		void onSSPECs(Date startDate, Date endDate, Collection<PEC> SSPecs);
-		void onContractData( Date startDate, Date endDate, Map<ContextVariable,Object> contractData);
+		void onContractData( Date startDate, Date endDate, Map<ContextVariable,IdcContractData> contractData);
 	}
+
+	public static record IdcContractData (Object data, Date startDate, Date endDate) {}; 
 	
 	private static class ContractDataListener implements IdcParserListener{
 		
+		private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance(Locale.of("es", "ES"));
+
 		private Date endDate;
 		private Date startDate;
 		
-		private Map<ContextVariable,Object> contractData = new HashMap<ContextVariable, Object>();
+		
+		private Map<ContextVariable,IdcContractData> contractData = new HashMap<>();
 		
 		@Override
 		public void onContractType(String contractType) {
-			contractData.put(ContextVariable.TC2, contractType);
+			contractData.put(ContextVariable.TC2, new IdcContractData(contractType, startDate, endDate));
 		}
 		
 		@Override
 		public void onRlce(String rlce) {
 			if(AonStringUtils.containsIgnoreCase(rlce, "PRACT. NO LAB. EMP"))
-				contractData.put(ContextVariable.TC2, "000");
+				contractData.put(ContextVariable.TC2, new IdcContractData("000", startDate, endDate));
 		}
 
 		@Override
 		public void onContractOcupation(String ocupation) {
-			contractData.put(ContextVariable.OCCUPATION, ocupation.toLowerCase());
+			contractData.put(ContextVariable.OCCUPATION, new IdcContractData(ocupation.toLowerCase(), startDate, endDate));
 		}
 		
 		@Override
 		public void onContractPartialCoeficient(String coeficient) {
-			contractData.put(ContextVariable.PARTIAL_FACTOR, Integer.parseInt(coeficient.trim())/1000.00);
+			contractData.put(ContextVariable.PARTIAL_FACTOR, new IdcContractData(AonNumberUtils.todouble(coeficient)/1000.00, startDate, endDate) );
 		}
 		
 		@Override
 		public void onContractQuoteGroup(String quoteGroup) {
-			contractData.put(ContextVariable.QUOTE_GROUP, quoteGroup);
+			contractData.put(ContextVariable.QUOTE_GROUP, new IdcContractData(quoteGroup, startDate, endDate) );
 		}
 				
 		@Override
 		public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 			if (Objects.nonNull(it)) {
-				contractData.put(ContextVariable.IT_PERCENT, it);
+				contractData.put(ContextVariable.IT_PERCENT, new IdcContractData(it, startDate, endDate) );
 			}
 			if (Objects.nonNull(ims)) {
-				contractData.put(ContextVariable.IMS_PERCENT, ims);
+				contractData.put(ContextVariable.IMS_PERCENT, new IdcContractData(ims, startDate, endDate));
 			}
 			
 			if (Objects.nonNull(unemployment)) {
-				contractData.put(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, unemployment == 7.05 ? 1.55 : 1.60);
-				contractData.put(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, unemployment == 7.05 ? 5.50 : 6.70);
+				contractData.put(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT,  new IdcContractData(unemployment == 7.05 ? 1.55 : 1.60, startDate, endDate) );
+				contractData.put(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, new IdcContractData(unemployment == 7.05 ? 5.50 : 6.70, startDate, endDate));
 			}
 		}
 		
@@ -111,6 +121,26 @@ public class Idc {
 			this.endDate = endDate;
 		}
 		
+		@Override
+		public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
+				String quota, Date start, Date end) {
+			// 06 DECREMENTO DE TIPOS  03 CONT.COMUN-C.EMPRESA
+			if ( AonStringUtils.equals(code, "06") && AonStringUtils.equals(quota, "03") ) {
+					try {
+						double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+						contractData.put(ContextVariable.CGC_ENTERPRISE_PERCENT, 
+						new IdcContractData(new Object() { 
+							@Override
+							public String toString() {
+								return String.format(Locale.ROOT,"%s - %.2f", ContextVariable.CGC_ENTERPRISE_PERCENT, percent );
+							} 
+						}, start, end));
+					} catch (ParseException e) {
+					}
+			}
+		}
+
+		
 		public Date getEndDate() {
 			return endDate;
 		}
@@ -119,7 +149,7 @@ public class Idc {
 			return startDate;
 		}
 		
-		public Map<ContextVariable, Object> getContractData() {
+		public Map<ContextVariable, IdcContractData> getContractData() {
 			return contractData;
 		}
 		
@@ -140,13 +170,13 @@ public class Idc {
 		idcListener.onContractData(contractDataListener.getStartDate(), contractDataListener.getEndDate(), contractDataListener.getContractData());
 	}
 
-	public static  Map<ContextVariable,Object> getContractData(byte data []) throws IOException, UnknownPDFException {
+	public static  Map<ContextVariable,IdcContractData> getContractData(byte data []) throws IOException, UnknownPDFException {
 		try ( InputStream is = new ByteArrayInputStream(data)) {
 			return getContractData(is);
 		}
 	}
 
-	public static  Map<ContextVariable,Object> getContractData(InputStream is) throws IOException, UnknownPDFException {
+	public static  Map<ContextVariable,IdcContractData> getContractData(InputStream is) throws IOException, UnknownPDFException {
 		ContractDataListener contractDataListener = new ContractDataListener();
 		IdcParser.parse(is, contractDataListener);
 		return contractDataListener.getContractData();

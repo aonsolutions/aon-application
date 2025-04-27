@@ -43,6 +43,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcContractData;
 import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
@@ -623,6 +624,8 @@ public class SistemaRED2AON {
 		case FP_EMPLOYEE:
 		case FP_ENTERPRISE:
 			return DeductionType.JOB_TRAINING;
+		case SEA_ENTERPRISE:
+			return DeductionType.SEA;
 		case UNEMPLOY_EMPLOYEE:
 		case UNEMPLOY_ENTERPRISE:
 			return DeductionType.UNEMPLOYMENT;
@@ -670,7 +673,7 @@ public class SistemaRED2AON {
 
 					@Override
 					public void onContractData(Date startDate, Date endDate,
-							Map<ContextVariable, Object> contractData) {
+							Map<ContextVariable, IdcContractData> contractData) {
 						addData(contractData, userLogin, domainName, domainId, startDate, endDate, ccc, naf);
 					}
 				});
@@ -713,7 +716,7 @@ public class SistemaRED2AON {
 				}
 
 				@Override
-				public void onContractData(Date startDate, Date endDate, Map<ContextVariable, Object> contractData) {
+				public void onContractData(Date startDate, Date endDate, Map<ContextVariable, IdcContractData> contractData) {
 				}
 			});
 
@@ -765,12 +768,12 @@ public class SistemaRED2AON {
 
 	}
 
-	public static void addData(Map<ContextVariable, Object> data, String userLogin, String domainName, Integer domainId,
+	public static void addData(Map<ContextVariable, IdcContractData> data, String userLogin, String domainName, Integer domainId,
 			Date startDate, Date endDate, String ccc, String naf) {
 
 		ContractData contractDatas[] = data
-				.entrySet().stream().map(e -> new ContractData().setEndDate(endDate).setStartDate(startDate)
-						.setName(e.getKey().getName()).setExpression(toString(e.getValue())))
+				.entrySet().stream().map(e -> new ContractData().setStartDate(e.getValue().startDate()).setEndDate(e.getValue().endDate())
+						.setName(e.getKey().getName()).setExpression(toString(e.getValue().data())))
 				.toArray(ContractData[]::new);
 
 		PAYROLL.setData(domainName, domainId, userLogin, ccc, naf, startDate, endDate, contractDatas);

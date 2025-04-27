@@ -23,7 +23,8 @@ public class Deduction extends Item<Deduction.Type> implements Reports.Deduction
 		EMBARGO, // TODO: ???
 		BONUS,
 		MEI,
-		SOLIDARITY
+		SOLIDARITY,
+		SEA
 		;
 		
 		public String getDescription() {

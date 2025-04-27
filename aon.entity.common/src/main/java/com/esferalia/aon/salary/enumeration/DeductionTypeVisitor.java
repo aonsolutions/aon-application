@@ -31,4 +31,6 @@ public interface DeductionTypeVisitor {
 	void visitBonus(DeductionType deductionType);
 
 	void visitSolidarity(DeductionType deductionType);
+
+	void visitSEA(DeductionType deductionType);
 }

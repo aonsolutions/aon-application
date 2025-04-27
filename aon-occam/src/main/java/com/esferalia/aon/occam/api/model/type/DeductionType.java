@@ -106,6 +106,13 @@ public enum DeductionType {
 			return visitor.visitSolidarity(this);
 		}
 		
+	},
+	SEA {
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitSEA(this);
+		}
+		
 	}
 	;
 	
@@ -178,7 +185,13 @@ public enum DeductionType {
 			return null;
 		}
 		
-		T visitSolidarity(DeductionType deductionType);
+		default T visitSolidarity(DeductionType deductionType) {
+			return null;
+		};
+
+		default T visitSEA(DeductionType deductionType) {
+			return null;
+		};
 
 	}
 	
