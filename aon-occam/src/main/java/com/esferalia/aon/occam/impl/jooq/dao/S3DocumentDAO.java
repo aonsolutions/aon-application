@@ -112,14 +112,14 @@ public class S3DocumentDAO {
 		Select<Record> fullQuery;
 		if(type == null) {
 			if(page != null && perPage != null && page.isPresent() && perPage.isPresent())
-				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.CREATION_DATE.desc()).limit(perPage.get()).offset(perPage.get() * (page.get() - 1));
+				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.ID.desc()).limit(perPage.get()).offset(perPage.get() * (page.get() - 1));
 			else
-				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.CREATION_DATE.desc());
+				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.ID.desc());
 		}
 		else if(type == 0)
-			fullQuery = queryRDoc.orderBy(Rdoc.RDOC.CREATION_DATE.desc());
+			fullQuery = queryRDoc.orderBy(Rdoc.RDOC.ID.desc());
 		else
-			fullQuery = queryRAttach.orderBy(Rattach.RATTACH.CREATION_DATE.desc());
+			fullQuery = queryRAttach.orderBy(Rattach.RATTACH.ID.desc());
 		return fullQuery
 			.fetch()
 			.stream()

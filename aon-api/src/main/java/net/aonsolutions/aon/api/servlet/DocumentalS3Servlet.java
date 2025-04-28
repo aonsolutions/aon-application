@@ -68,8 +68,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	public static final String BIDOQ = "/bidoq";
 	public static final String CHECK_BIDOQ = "/check_bidoq";
 	
-	private static final String AON_BUCKET_NAME = "aon-documental";
-	private static final String BIDOQ_BUCKET_NAME = "ayudat-mispapeles-dev-01";
+	private static final String AON_BUCKET_NAME = "aon-documental-pro-01";
+	private static final String BIDOQ_BUCKET_NAME = "ayudat-mispapeles-docs-pro-02";
 	private static final String NO_FOLDER = "No_folder";
 	private static final String BIDOQ_NO_FOLDER = "Bidoq/No_folder";
 	
