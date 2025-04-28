@@ -1048,6 +1048,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getDbTotalEnterprise();
 	}
 
+	public Double getSsTotalEnterprise() {
+		return salaryDraft.getSsTotalEnterprise();
+	}
+
 	public boolean hasDbSalary() {
 		return salaryDraft.hasDbSalary();
 	}

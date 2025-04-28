@@ -161,6 +161,11 @@ public class AggregatedAnnualSummary {
 		public String visitSolidarity(DeductionType deductionType) {
 			return "SOLIDARIDAD";
 		}
+		
+		@Override
+		public String visitSEA(DeductionType deductionType) {
+			return "REDUCCIONES SEA A CARGO TGSS";
+		}
 	};
 
 	public static void writeExcel (OutputStream oos, String domainName, String user, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, SummaryType type, boolean complete) {
@@ -930,7 +935,7 @@ public class AggregatedAnnualSummary {
 			if (concept.contains("CRA_00")) {
 				try {
 					PaymentType type = PaymentType.valueOf(concept);
-					definitive = CraTypes.getType(type.ordinal(), new Locale("es", "ES"));
+					definitive = CraTypes.getType(type.ordinal(), Locale.of("es", "ES"));
 					String craNum = "[" + concept.substring(concept.indexOf('_') + 1) + "] ";
 					definitive = craNum + definitive;
 				} catch (Exception e) {}
@@ -1300,7 +1305,7 @@ public class AggregatedAnnualSummary {
 				.filter(s -> s.getSalaryType() != null && s.getSalaryType().ordinal() <= SalaryType.DELAY.ordinal());
 		LinkedHashMap<String, AggregatedAnnualYearlyEntry> entries = new LinkedHashMap<>();
 		
-		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", new Locale("es", "ES"));
+		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", Locale.of("es", "ES"));
 		salaries
 		.filter(Objects::nonNull)
 		.sorted(Comparator.comparing(s -> s.getEmployeeDocument() != null ? s.getEmployeeDocument() : ""))

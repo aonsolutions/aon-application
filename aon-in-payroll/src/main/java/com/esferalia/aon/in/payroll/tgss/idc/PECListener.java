@@ -304,7 +304,9 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, Collection<CostProvider>> UNKNOWN_COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
-			put("06-03", collection(newMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
+			// Override PORCENTAJE_CGC_E = PORCENTAJE_CGC_E  - % 
+			//put("06-03", collection(newMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
+			put("40-62", collection(newSEAMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
 		}
 	};
 
@@ -329,7 +331,7 @@ class PECListener  implements IdcParserListener {
 			put("03", "RED.CUOTA SS-PORCENT");
 			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
-			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
+			//put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
 		}
 	};
 
@@ -340,7 +342,7 @@ class PECListener  implements IdcParserListener {
 			put("06", "DECREMENTO DE TIPOS");
 			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
-			put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
+			//put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
 		}
 	};
 
@@ -607,6 +609,10 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
 	}
 
+	private static CostProvider newSEAMinusPercentCost( ContextVariable costVar, ContextVariable baseVar) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newSEAMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
+	}
+
 	private static NegativeDeduction newNegativeDeduction(
 			String nss, 
 			String ccc, 
@@ -689,6 +695,63 @@ class PECListener  implements IdcParserListener {
 			return cost;
 		}
 
+	private static Cost newSEAMinusPercentCost(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable costVar,
+			ContextVariable baseVar
+			){
+		
+			//         _                                                            _
+			//        |														        |
+			//        | 						BASE - 987.70                       |              6.15
+			// 7.36 x | 1 +  _______________________________________________________| x 2.52 * ___________
+			//        |                                                             |
+			//        |                            BASE                             |              7.36 
+			//        |_                                                           _|
+			//
+		
+			
+			//   % reduccion de 2021 a la base mes o jornada de 2025
+			//    _                                                             _
+			//   |																 |
+			//   | 8.10% - % reduccion de 2021 a la base mes o jornada de 2025   |
+			// + | ___________________________________________________________   | x 4
+			//   |                                                               |
+			//   |                              10                               |
+			//   |_                                                             _|
+			//
+			
+			String red2021 = String.format("7.36 * ( 1 + ( %1$s - 986.70) / %1$s  * 2.52 * 6.15 / 7.36 )", baseVar.getName()); 
+			String percent = String.format("( SEA_21=%1$s )  + ( 8.10 - SEA_21 ) / 10  * 4", red2021 );
+			
+			Cost cost =  new Cost();	
+			cost.setCcc(ccc);
+			cost.setNss(nss);
+			cost.setStartDate(start);
+			cost.setEndDate(end);
+			cost.setDescription("Reducciones SEA a Cargo TGSS");
+			cost.setFormula(String.format(Locale.ROOT,
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/SEA = (%s * ( %s ) / 100.0); ( (%s - SEA ) > 163.84 ) ? -1 * SEA : -1 * MAX(%s - 163.84,0) /**/", 
+					Calendar.getInstance().getTimeInMillis(),
+					pec, 
+					quota,
+					baseVar.getName(),
+					percent,
+					costVar.getName(),
+					costVar.getName()
+					).replace(" ",""));
+			cost.setName("SEA_E");
+			
+			return cost;
+		}
+
 	private static Cost newCgcITCost(
 		String nss, 
 		String ccc, 
@@ -699,7 +762,7 @@ class PECListener  implements IdcParserListener {
 		Date start, 
 		Date end ,
 		ContextVariable var){
-        	Cost cost =  new Cost();	
+        Cost cost =  new Cost();	
 		cost.setCcc(ccc);
 		cost.setNss(nss);
 		cost.setStartDate(start);
