@@ -1009,7 +1009,7 @@ async getCategoryPath(categoryId) {
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
-      documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
+      // documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
     }
     documentToolbar.addButton2(ACTION.BACK, () => this.back());
   }
