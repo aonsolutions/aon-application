@@ -5,7 +5,7 @@ import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    ASESOR_TYPE,
    EMPLOYEE_TYPE,
    ENTERPRISE_TYPE} from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -21,6 +21,8 @@ export class AonDocument extends AonElement {
   doc;
   docS3;
   _tags;
+  //nuevo tag para s3 document
+  tag;
 
   TOOLBAR;
   DATA;
@@ -61,6 +63,7 @@ export class AonDocument extends AonElement {
     this.FILE = this.id + 'File';
     this.doc = this.document;
     this._tags = [];
+    this.tag = [];
 
     this.DATE = this.id + 'Date';
     this.NAME = this.id + 'Name';
@@ -373,7 +376,16 @@ export class AonDocument extends AonElement {
     }
   }
 
+  async getS3Doc() {
+    let data = {
+      id: this.document.id
+    };
+    const doc = await getS3Document(data);
+    return doc;
+  }
+
   async buildDataS3() {
+    let s3Doc = await this.getS3Doc();
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
     let table = this.createElement(TAG.TABLE);
@@ -425,7 +437,7 @@ export class AonDocument extends AonElement {
 
     if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
       // Aquí pasamos el documento a la función de visibilidad
-      this.setCheckboxesBasedOnRegistryType(this.document);
+      this.setCheckboxesBasedOnRegistryType(s3Doc);
       // Llamamos a la función para manejar la visibilidad después
       this.visibleOnly();
     }
@@ -442,8 +454,8 @@ export class AonDocument extends AonElement {
     if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
         date.readonly = 'true';
     }
-    if (this.document.date) {
-        let d = this.document.date.split('-');
+    if (s3Doc.date) {
+        let d = s3Doc.date.split('-');
         date.setDate(new Date(d[0], d[1] - 1, d[2]));
     }
     tdDate.appendChild(date);
@@ -459,7 +471,7 @@ export class AonDocument extends AonElement {
     tdName.setAttribute('colspan', '2');
     tr2.appendChild(tdName);
     let name = createInput(this.NAME, MSG.NAME, tdName);
-    name.setValue(this.document.name);
+    name.setValue(s3Doc.name);
 
     if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
         name.setDisabled(true)
@@ -482,8 +494,8 @@ export class AonDocument extends AonElement {
           name: s.name
         };
       }));
-      if (this.document.scope)
-        scopeSelect.value = this.document.scope;
+      if (s3Doc.scope)
+        scopeSelect.value = s3Doc.scope;
       scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
     });
 
@@ -500,12 +512,12 @@ export class AonDocument extends AonElement {
         radioOld.hidden = true;
       }
       // Cargar ruta de categorías si existe
-      if (this.document.category) {
+      if (s3Doc.category) {
         const s3Categories = await getS3Category(); // Carga todas las S3
-        const isS3Category = s3Categories.some(cat => cat.id === this.document.category && cat.is_deletable === 0);
+        const isS3Category = s3Categories.some(cat => cat.id === s3Doc.category && cat.is_deletable === 0);
         if (isS3Category) {
           // === Categoría tipo S3 ===
-          const path = await this.getCategoryPath(this.document.category);
+          const path = await this.getCategoryPath(s3Doc.category);
           const s3Radio = document.getElementById('s3CategoriesRadio');
           s3Radio.checked = true;
           if(!this.getDur().isDocumentalManager()) {
@@ -603,7 +615,7 @@ export class AonDocument extends AonElement {
 
           // Esperamos a que se monten las options antes de asignar valor
           setTimeout(() => {
-            categorySelect.value = this.document.category;
+            categorySelect.value = s3Doc.category;
             this.updateCategory(categorySelect.value);
           }, 0);
         }
@@ -613,11 +625,11 @@ export class AonDocument extends AonElement {
       this.createCategoryRadio(table, 's3CategoriesRadio', '', this.handleCategoryChange.bind(this));
       let radio = document.getElementById('s3CategoriesRadio');
       radio.hidden = true;  
-      if (this.document.category) {
+      if (s3Doc.category) {
         const s3Categories = await getS3Category();
-        const isS3Category = s3Categories.some(cat => cat.id === this.document.category && cat.is_deletable === 0);
+        const isS3Category = s3Categories.some(cat => cat.id === s3Doc.category && cat.is_deletable === 0);
         if (isS3Category) {
-          const path = await this.getCategoryPath(this.document.category);
+          const path = await this.getCategoryPath(s3Doc.category);
           const s3Radio = document.getElementById('s3CategoriesRadio');
           s3Radio.checked = true;
 
@@ -645,6 +657,74 @@ export class AonDocument extends AonElement {
         }
       }
     }
+
+    let trTag = this.createElement(TAG.TR);
+    trTag.id = 'trTag';
+    table.appendChild(trTag);
+    trTag.setAttribute('colspan', '2');
+    let tagSelect = createSelect(this.TAG_SELECT, MSG.TAGS, trTag);
+    if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+      tagSelect.setDisabled(true)
+    }
+    tagSelect.multiple = true;
+    getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+      if (Array.isArray(tags)) {
+        tagSelect.setOptions(tags.map(t => ({
+          value: t.id,
+          name: t.name
+        })));
+        const input = tagSelect.getElement(tagSelect.INPUT);
+
+        if (s3Doc.tags?.length) {
+          const names = s3Doc.tags
+            .map(tag => {
+              const fullTag = tags.find(t => t.id === tag.id); // Busca el nombre real
+              return fullTag ? fullTag.name : '';
+            })
+            .filter(Boolean) // Elimina los vacíos por si no encuentra algo
+            .join(', ');
+        
+          if (input) {
+            input.value = names;
+          }
+        }
+               
+        let clickHandled = false;  // Bandera para controlar la ejecución
+
+        input.addEventListener(EVENT.CLICK, () => {
+          if (clickHandled) return;  // Si el evento ya se ha ejecutado, no hacer nada
+                  
+          if (Array.isArray(s3Doc.tags)) {
+            s3Doc.tags.forEach(tag => {
+              const checkbox = document.getElementById(`checkbox${tag.id}`);
+              if (checkbox) {
+                checkbox.value = true; // Activa visualmente el checkbox personalizado  
+              }
+            });
+          }
+        
+          clickHandled = true;  // Marca el evento como manejado
+        
+          // Agregar el evento SELECT
+          tagSelect.addEventListener(EVENT.SELECT, () => {
+            const selectedTags = tagSelect.getSelectable(); 
+        
+            const selectedIds = selectedTags.map(tag => tag.value).sort();
+            const currentIds = (s3Doc.tags || []).map(tag => tag.id).sort();
+        
+            const isSame = selectedIds.length === currentIds.length && selectedIds.every((id, idx) => id === currentIds[idx]);
+        
+            if (!isSame) {
+              this.updateTags(selectedTags); // Solo si cambio la selección
+            } else {
+              console.log("No se actualizan los tags: no hay cambios.");
+            }
+          });
+        });                  
+      } else {
+        console.error('Error: tags no es un array', tags);
+      }
+    }); 
   }
 
   async getCategoryPath(categoryId) {
@@ -746,8 +826,8 @@ export class AonDocument extends AonElement {
           value: c.id,
           name: c.name
         })));
-        select.value = this.document.category; 
-        select.addEventListener('change', () => {
+        select.value = s3Doc.category; 
+        select.addEventListener(EVENT.SELECT, () => {
           this.updateCategory(select.value);
         });
       });
@@ -933,9 +1013,10 @@ export class AonDocument extends AonElement {
     let trName = document.getElementById('trName');
     let trScope = document.getElementById('trScope'); 
     let trCategory = document.getElementById('trCategory');
+    let trTag = document.getElementById('trTag');
   
     // Filtramos por si alguno no existe
-    let fieldsToKeep = [trCategory, trDate, trName, trScope].filter(Boolean);
+    let fieldsToKeep = [trCategory, trDate, trName, trScope, trTag].filter(Boolean);
   
     trElements.forEach((tr) => {
       const radioInTr = tr.querySelector('input[type="radio"]');
@@ -1135,7 +1216,7 @@ export class AonDocument extends AonElement {
     this.save();
   }
 
-  updateName(name) {
+  updateName(name) { 
     if(this.isBetaDoc()){ 
       this.doc.name = name;
     } else {
@@ -1150,6 +1231,15 @@ export class AonDocument extends AonElement {
     this.save();
   }
 
+  updateTags(tags) {  
+    const tagsArray = Array.isArray(tags)
+      ? tags.map(tag => ({ id: parseInt(tag.value) })) 
+      : [{ id: parseInt(tags.value) }];
+  
+    this.doc.tag = tagsArray;
+    this.save();
+  }
+  
   save() {
     if(this.isBetaDoc()){
       putS3DocumentUpdate(this.doc);

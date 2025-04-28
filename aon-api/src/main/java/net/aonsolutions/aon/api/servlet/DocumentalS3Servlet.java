@@ -206,15 +206,25 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
 			List<byte[]> files = new LinkedList<byte[]>();
 			List<String> filenames = new LinkedList<String>();
-			for(S3Document document: documents) {
+			for (S3Document document : documents) {
 				byte[] data = null;
-				if(document.getType() == 0 && document.getS3key() != null) {
+				if (document.getType() == 0 && document.getS3key() != null) {
 					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
-				} else if(document.getType() == 1){
+				} else if (document.getType() == 1) {
 					data = AON_SOLUTIONS.getFileS3Document(api.getDomain(), api.getUser(), document.getId());
 				}
 				files.add(data);
-				filenames.add(document.getName());
+
+				String filename = document.getName();
+				String type = document.getMimetype().toString(); 
+
+				if (type != null && !type.isEmpty()) {
+					String extension = "." + type.toLowerCase();
+					if (!filename.toLowerCase().endsWith(extension)) {
+						filename += extension;
+					}
+				}
+				filenames.add(filename);
 			}
 			byte[] i = createZipFromByteArrays(files, filenames);
 			Attach attach = new Attach()
@@ -275,7 +285,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			JSONObject doc = fullDocumentToJson(document);
-			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), 6, 0).forEach(id -> {
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), 0).forEach(id -> {
 				array.put(new JSONObject().put("id", id));
 			});
 			doc.put(IJsonNames.TAGS, array);
@@ -297,8 +307,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
 		}
 		ArrayList<Integer> tags = new ArrayList<Integer>();
-		if(api.getData().has(IJsonNames.TAG)) {			
-			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
+		if(api.getData().has(IJsonNames.TAGS)) {			
+			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAGS);
 			if(tagsArray.length() > 0) {
 				for(int i = 0; i < tagsArray.length(); i++)
 					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));

@@ -22,7 +22,9 @@ export const uploadDocument = (file, data, success, error, isBetaDoc = false) =>
                 // Añadir `registryType` solo si es beta y `data.registryType` existe
                 ...(isBetaDoc ? { registryType: data.registryType } : {}),
 				// agregar `date` solo si es beta y `data.date` existe
-				...(isBetaDoc && data.date ? { date: data.date } : {})
+				...(isBetaDoc && data.date ? { date: data.date } : {}),
+                // agregar `tags` solo si es beta y `data.tags` existe
+                ...(isBetaDoc && data.tags ? { tags: data.tags } : {})
 			};
             const uploadDocumentsUse = isBetaDoc ? postS3Document : uploadFileDocumental;
 			uploadDocumentsUse(doc)
@@ -269,11 +271,11 @@ export function handleRadioButtonChange(event) {
     let table = document.getElementById("table");
     let trScope = document.getElementById("trScope");
     let trCategory = document.getElementById("trCategory");
-    // let trTag = document.getElementById("trTag");
+    let trTag = document.getElementById("trTag");
     let trDatePicker = document.getElementById("trDatePicker");
 
     // Llamamos a clearFields para eliminar las filas generadas (subcategoría, administración, etc.)
-    clearFields(table, [trScope, trCategory, trDatePicker], 
+    clearFields(table, [trScope, trCategory, trTag, trDatePicker], 
         ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
     // Si se selecciona 'oldCategoriesRadio', desmarcamos 's3CategoriesRadio' y cargamos categorías antiguas
@@ -301,7 +303,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     let table = document.getElementById("table");
     let trScope = document.getElementById("trScope");
     let trCategory = document.getElementById("trCategory");
-    // let trTag = document.getElementById("trTag");
+    let trTag = document.getElementById("trTag");
     let trDatePicker = document.getElementById("trDatePicker");
     let loadingOverlay = document.getElementById("aonDocumentalLoadingOverlay");
 
@@ -345,7 +347,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     }
 
     if (categoryType === 's3' && select.options) {
-      uploadedCategory(select, table, trScope, trCategory, trDatePicker, loadingOverlay);
+      uploadedCategory(select, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay);
     }
 }
 
@@ -357,7 +359,7 @@ export async function loadOldCategories() {
 	}
   }
 
-function S3DocumentalSelects(dur) {
+  function S3DocumentalSelects(dur) {
     // Se monta la tabla
     let table = document.createElement('table');
     table.style.width = '100%';
@@ -457,38 +459,39 @@ function S3DocumentalSelects(dur) {
         }
     });
 
-    //     // TAG
-//     // let trTag = document.createElement('tr');
-//     // trTag.id = 'trTag';
-//     // table.appendChild(trTag);
+    // TAG
+    let trTag = document.createElement('tr');
+    trTag.id = 'trTag';
+    table.appendChild(trTag);
   
-//     // let tdTag = document.createElement('td');
-//     // tdTag.setAttribute('colspan', '1');
-//     // let selTag = new AonNewSelect();
-//     // selTag.id = "aonDocumentalUploadTag";
-//     // selTag.title = MSG.TAG;
-//     // tdTag.appendChild(selTag);
+    let tdTag = document.createElement('td');
+    tdTag.setAttribute('colspan', '1');
+    let selTag = new AonNewSelect();
+    selTag.id = "aonDocumentalUploadTag";
+    selTag.title = MSG.TAG;
+    tdTag.appendChild(selTag);
+    selTag.multiple = true;
   
-//     // getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-// 	// 	if (tags && tags.length > 0) {		
-//     //     selTag.options = JSON.stringify(tags.map(t => {
-//     //         return {
-//     //             value: t.id,
-//     //             name: t.name
-//     //         };
-//     //     }));
-// 	// 	trTag.appendChild(tdTag);
-// 	// }
-//     // });
+    getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+		if (tags && tags.length > 0) {		
+        selTag.options = JSON.stringify(tags.map(t => {
+            return {
+                value: t.id,
+                name: t.name
+            };
+        }));
+		trTag.appendChild(tdTag);
+	}
+    });
 
     loadingOverlay.style.display = 'none';
     // Crear la sección de categorías
-    createCategorySection(table, loadingOverlay, trScope, trDatePicker);
+    createCategorySection(table, loadingOverlay, trScope, trTag, trDatePicker);
     // filtros para subir
     return table;
 }
 
-async function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
+async function createCategorySection(table, loadingOverlay, trScope, trTag, trDatePicker) {
     let oldCategories =  await loadOldCategories();
 
     // Crear la fila de categorías (Radio buttons)
@@ -538,7 +541,7 @@ async function createCategorySection(table, loadingOverlay, trScope, trDatePicke
                 loadingOverlay.style.display = 'none';
                 
                 // Cuando se traten las categorias, se tendrá que manejar la visibilidad de otras partes
-                uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay);
+                uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay);
             } else {
                 loadingOverlay.style.display = 'none';
                 console.log('No hay categorias disponibles.');
@@ -551,7 +554,7 @@ async function createCategorySection(table, loadingOverlay, trScope, trDatePicke
     trCategory.appendChild(tdCategory);
 }
 
-function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, loadingOverlay){
+function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay){
   // Botton de aceptar oculto
   var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
   button.disabled = true;
@@ -560,7 +563,7 @@ function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, load
     button.disabled = true;
     const selectedCategoryId = event.target.value;
     // Limpiar los campos antes de generar nuevos select
-    clearFields(table, [trScope, trCategory, trDatePicker] ,
+    clearFields(table, [trScope, trTag, trCategory, trDatePicker] ,
        ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
     if (selectedCategoryId !== null && selectedCategoryId !== undefined && selectedCategoryId !== 'Seleccione una categoria') {
       // Crear un nuevo tr para Subcategoria solo si hay subcategorias
@@ -595,7 +598,7 @@ function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, load
               const selectedSubCategoryId = event.target.value;
 
               // Limpiar los campos de administración y modelos antes de generar nuevos
-              clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory] ,
+              clearFields(table, [trScope, trTag, trCategory,  trDatePicker, trSubCategory] ,
                    ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
               if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
@@ -631,7 +634,7 @@ function uploadedCategory(selCat, table, trScope, trCategory, trDatePicker, load
                               const selectedAdministrationId = event.target.value;
 
                               // Limpiar el campo de modelos antes de generar nuevos
-                              clearFields(table, [trScope, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
+                              clearFields(table, [trScope, trTag, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
                                    ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
 
                               if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
