@@ -203,7 +203,7 @@ public class SLDSalaries {
 		calcs.forEach((description, calc) -> {
 			Optional.ofNullable(calc.getEnterprise()).ifPresent(amount -> {
 				getReductionType(description).ifPresent(deductionType -> 
-					salary.addCost(deductionType,  deductionType == DeductionType.SEA ? "SEA_E" : "REDUCCION_TGSS_E", -amount, description));
+					salary.addCost(deductionType,  getReductionName(description), -amount, description));
 			});
 		});
 
@@ -349,9 +349,21 @@ public class SLDSalaries {
 		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		case "REDUCCIONES SEA A CARGO TGSS":
+		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 			return Optional.of(DeductionType.SEA);
 		default:
 			return Optional.empty();
+		}
+	}
+
+	private static String  getReductionName(String description) {
+		switch (description) {
+		case "REDUCCIONES SEA A CARGO TGSS":
+			return ContextVariable.SEA_ENTERPRISE.getName();
+		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
+			return "RED_SEA_E";
+		default:
+			return "REDUCCION_TGSS_E";
 		}
 	}
 
@@ -389,6 +401,7 @@ public class SLDSalaries {
 		case "COMP.IT POR ACCIDENTE DE TRABAJO" :
 		case "BONIF.Y SUBVENC.CON CARGO AL INEM":
 		case "REDUCCIONES SEA A CARGO TGSS":
+		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 		case "REDUCCIONES A CARGO DE LA TGSS":
 		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.empty();

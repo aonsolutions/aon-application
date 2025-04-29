@@ -594,6 +594,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillEmployeeData(contractSalaryCalculatorContext);
 		fillSalaryData(contractSalaryCalculatorContext);
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
+		sectionAndDeductionByCost(contractSalaryCalculatorContext);
 		sectionAndDeductionByBonus(contractSalaryCalculatorContext);
 		Double totalSS = fillSSDeductions(contractSalaryCalculatorContext);
 		Double totalIrpf = fillIrpf(contractSalaryCalculatorContext);
@@ -1330,9 +1331,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				Date costEnd = Period.min(contractCost.getEndDate(), end);
 
 				try {
-				    	sectionByItem(start, end, expressionContext, contractCost);
-
-				    	List<ITimedResult<Double>> amounts = expressionContext.addExpression(contractCost, costStart,
+				    List<ITimedResult<Double>> amounts = expressionContext.addExpression(contractCost, costStart,
 							costEnd, Double.class);
 					double cost = 0.00;
 					for (ITimedResult<Double> amount : amounts) {
@@ -1381,6 +1380,26 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		}
 
 		return total;
+	}
+
+	protected void sectionAndDeductionByCost(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		try {
+
+			Date start = ctx.getStartDate();
+			Date end = ctx.getEndDate();
+
+			ExpressionContext expressionContext = ctx.getExpressionContext();
+
+			Collection<IContractCost> contractCosts = ctx.getContractCosts();
+
+			for (IContractCost contractCost : contractCosts) {
+				sectionByItem(start, end, expressionContext, contractCost);
+			}
+
+		} catch (AonException e) {
+			throw new SalaryException(e.getMessage(), e);
+		}
+
 	}
 
 	protected void sectionAndDeductionByBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {

@@ -277,6 +277,8 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, Collection<CostProvider>> COST_QUOTA_PROVIDERS_MAP = new HashMap<String, Collection<CostProvider>>() {
 		{
 			put("01", REMOVE_ALL_COSTS );
+			put("03", collection(
+					newMinusPercentCost(ContextVariable.CGC_ENTERPRISE)));
 			put("10", collection(
 				newCgcITCost(ContextVariable.CGC_ENTERPRISE),
 				//newRemoveCost(ContextVariable.CGC_ENTERPRISE),
@@ -307,6 +309,7 @@ class PECListener  implements IdcParserListener {
 			// Override PORCENTAJE_CGC_E = PORCENTAJE_CGC_E  - % 
 			//put("06-03", collection(newMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
 			put("40-62", collection(newSEAMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE)));
+			put("40-63", collection(newSEAMinusPercentCost(ContextVariable.CGC_ENTERPRISE, ContextVariable.CGC_BASE_ENTERPRISE), newSEAITMinusPercentCost(ContextVariable.UNEMPLOY_ENTERPRISE, ContextVariable.CGP_BASE_ENTERPRISE, "Reducciones SEA en IT a Cargo del SPEE", 2.75)));
 		}
 	};
 
@@ -314,7 +317,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
-			put("03", "RED.CUOTA SS-PORCENT");
+			//put("03", "RED.CUOTA SS-PORCENT"); Not a Bonus 
 			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
 			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
 			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
@@ -339,7 +342,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_COST_MAP = new HashMap<String, String>() {
 		{
 			put("03", "RED.CUOTA SS-PORCENT");
-			put("06", "DECREMENTO DE TIPOS");
+			// put("06", "DECREMENTO DE TIPOS"); 
 			put("07", "EXONERACIÓN");
 			put("09", "EXCLUSIONES");
 			//put("40", "TIPO COTIZACIÓN ESPECIAL.SEA");
@@ -439,10 +442,22 @@ class PECListener  implements IdcParserListener {
 			if ( COST_QUOTA_PROVIDERS_MAP.containsKey(quota)) {
 				COST_QUOTA_PROVIDERS_MAP.get(quota).forEach( f -> f.newCost(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;
 			}
+			else if ( COST_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
+				try {
+					newCost(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this);
+				} catch (ParseException e) {
+				}
+			}				
 		}
 		if ( PEC_DEDUCTION_MAP.containsKey(code )) {
 			if ( DEDUCTION_QUOTA_PROVIDER_MAP.containsKey(quota)) {
 				DEDUCTION_QUOTA_PROVIDER_MAP.get(quota).forEach(f -> f.newDeduction(nss, ccc, code, quota, portTipo, description, start, pecEnd).addTo(PECListener.this)) ;			
+			}
+			else if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota)) {
+				try {
+					newDeduction(nss, ccc, code, description, portTipo, quota, start, pecEnd).addTo(this);
+				} catch (ParseException e) {
+				} ;
 			}
 		}
 		
@@ -605,8 +620,12 @@ class PECListener  implements IdcParserListener {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newRemoveCost(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
-	private static CostProvider newMinusPercentCost( ContextVariable costVar, ContextVariable baseVar) {
-		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar, baseVar);
+	private static CostProvider newMinusPercentCost( ContextVariable costVar) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newMinusPercentCost(nss, ccc, pec, quota, portTipo, description, start, end, costVar);
+	}
+
+	private static CostProvider newSEAITMinusPercentCost( ContextVariable costVar, ContextVariable baseVar, String description,  double percent) {
+		return (nss, ccc, pec, quota, portTipo, _description, start, end) -> newSEAITMinusPercentCost(nss, ccc, pec, quota, percent, description, start, end, costVar, baseVar);
 	}
 
 	private static CostProvider newSEAMinusPercentCost( ContextVariable costVar, ContextVariable baseVar) {
@@ -664,8 +683,7 @@ class PECListener  implements IdcParserListener {
 			String description, 
 			Date start, 
 			Date end ,
-			ContextVariable costVar,
-			ContextVariable baseVar
+			ContextVariable costVar
 			){
 			
 			double percent;
@@ -681,16 +699,48 @@ class PECListener  implements IdcParserListener {
 			cost.setStartDate(start);
 			cost.setEndDate(end);
 			cost.setFormula(String.format(Locale.ROOT,
-					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/-1 * MIN(%s, %s * %.2f / 100.00)/**/", 
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/-1 * %s * %.2f / 100.00/**/", 
 					Calendar.getInstance().getTimeInMillis(),
 					pec, 
 					quota,
 					costVar.getName(),
-					baseVar.getName(),
 					percent
 					));
 			cost.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(costVar), portTipo));
 			cost.setName("RED_" + costVar.getName());
+			
+			return cost;
+		}
+
+	private static Cost newSEAITMinusPercentCost(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			double percent,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable costVar,
+			ContextVariable baseVar
+			){
+			
+			
+			Cost cost =  new Cost();	
+			cost.setCcc(ccc);
+			cost.setNss(nss);
+			cost.setStartDate(start);
+			cost.setEndDate(end);
+			cost.setFormula(String.format(Locale.ROOT,
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/isdef DIAS_IT ? ( -1 * %s * %.2f / 100.00 ) : HIDE() /**/", 
+					Calendar.getInstance().getTimeInMillis(),
+					pec, 
+					quota,
+					baseVar.getName(),
+					percent
+					));
+			cost.setDescription(description);
+			cost.setName("RED_SEA_E");
 			
 			return cost;
 		}
@@ -728,8 +778,8 @@ class PECListener  implements IdcParserListener {
 			//   |_                                                             _|
 			//
 			
-			String red2021 = String.format("7.36 * ( 1 + ( %1$s - 986.70) / %1$s  * 2.52 * 6.15 / 7.36 )", baseVar.getName()); 
-			String percent = String.format("( SEA_21=%1$s )  + ( 8.10 - SEA_21 ) / 10  * 4", red2021 );
+			String red2021 = String.format("7.36 * ( 1 + ( %1$s - 986.7 / DIAS_MES * DIAS_NOMINA) / %1$s * 2.52 * 6.15 / 7.36 )", baseVar.getName()); 
+			String percent = String.format("SELF.isDef(\"DIAS_TRABAJADOS\") ? ROUND(((SEA_21=%1$s) + (8.1 - SEA_21) / 10 * 4),2) : 18.21", red2021 );
 			
 			Cost cost =  new Cost();	
 			cost.setCcc(ccc);
@@ -738,7 +788,7 @@ class PECListener  implements IdcParserListener {
 			cost.setEndDate(end);
 			cost.setDescription("Reducciones SEA a Cargo TGSS");
 			cost.setFormula(String.format(Locale.ROOT,
-					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/SEA = (%s * ( %s ) / 100.0); ( (%s - SEA ) > 163.84 ) ? -1 * SEA : -1 * MAX(%s - 163.84,0) /**/", 
+					"/*epoch:%d,pec:%s,quota:%s*//*read-only*/SEA = (%s * ( %s ) / 100.0); ( !SELF.isDef(\"DIAS_TRABAJADOS\") || (%s - SEA ) > L=(163.84 / DIAS_MES * DIAS_NOMINA) ) ? -1 * SEA : -1 * MAX(%s - L,0)/**/", 
 					Calendar.getInstance().getTimeInMillis(),
 					pec, 
 					quota,
@@ -746,11 +796,15 @@ class PECListener  implements IdcParserListener {
 					percent,
 					costVar.getName(),
 					costVar.getName()
-					).replace(" ",""));
+					)
+					.trim()
+					)
+			;
 			cost.setName("SEA_E");
 			
 			return cost;
 		}
+
 
 	private static Cost newCgcITCost(
 		String nss, 
