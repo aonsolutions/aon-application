@@ -257,6 +257,7 @@ public class Salary implements Serializable {
 		}
 	}
 
+
 	public static class Cost {
 		
 		String name;
@@ -290,6 +291,10 @@ public class Salary implements Serializable {
 		}
 
 		public boolean isIMS() {
+			return false;
+		}
+
+		public boolean isSEA() {
 			return false;
 		}
 
@@ -420,6 +425,18 @@ public class Salary implements Serializable {
 
 		@Override
 		public boolean isSolidarity() {
+			return true;
+		}
+	}
+
+	public static class SEACost extends Cost {
+
+		public SEACost(Double amount, String name, String description) {
+			super(amount, description, name, DeductionType.SEA);
+		}
+
+		@Override
+		public boolean isSEA() {
 			return true;
 		}
 	}
@@ -926,6 +943,11 @@ public class Salary implements Serializable {
 					return new SolidarityCost(amount, code, description);
 				}
 				
+				@Override
+				public Cost visitSEA(DeductionType deductionType) {
+					return new SEACost(amount, code, description);
+				}
+				
 			});
 		} catch (Exception e) {
 		}
@@ -994,7 +1016,6 @@ public class Salary implements Serializable {
 					return new SolidarityDeduction(amount, code, description);
 				}
 				
-
 			});
 		} catch (Exception e) {
 		}

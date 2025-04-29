@@ -11,12 +11,15 @@ import static com.esferalia.aon.watson.j2html.TagCreator.ul;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +38,7 @@ import org.jooq.UpdateSetFirstStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
+import org.jooq.impl.ParserException;
 import org.jooq.impl.SQLDataType;
 
 import com.code.aon.ql.util.ExpressionException;
@@ -65,6 +69,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleDAO {
+
+	private static final String QUOTES_REGEX = "\"(.*?)\"";
 
 	private static final Logger LOGGER = Logger.getLogger( ConsoleDAO.class.getName());
 	
@@ -132,14 +138,20 @@ public class ConsoleDAO {
 			if ( AonStringUtils.isNotEmpty( params.getSelect() )  ) {
 				String subTableName = "ConsoleSubTable";
 				Field<Integer> subTableDomain = DSL.field( DSL.name( subTableName, DOMAIN_LABEL ), Integer.class );
-				Table<?> subTable = ctx.getDslContext()
-					.parser()
-					.parseSelect( params.getSelect() )
-					.asTable(subTableName);
+				Object[] bindings = getBindings( params.getSelect() );
+				Table<?> subTable = (bindings == null)
+					? ctx.getDslContext()
+						.parser()
+						.parseSelect( params.getSelect() )
+						.asTable(subTableName)
+					: ctx.getDslContext()
+						.parser()
+						.parseSelect( parseSelect(params.getSelect()), bindings )
+						.asTable(subTableName)
+				;
 				sentence = sentence
 					.innerJoin(subTable).on(DOMAIN.ID.eq(subTableDomain));
 			}
-			
 			return sentence
 				.where( getFilter( params) )
 				.offset(params.getOffset( cs ))
@@ -161,6 +173,11 @@ public class ConsoleDAO {
 					;	
 					return consoleDomain; 
 				});
+		} catch (ParserException e) {
+			e.printStackTrace();
+			String msg = "PARSE Schema " + cs.getSchema() + " [Exception: "+ e.getMessage() +"]";
+			LOGGER.severe( msg );
+			return Stream.empty();
 		} catch (Exception e) {
 			String msg = "Schema " + cs.getSchema() + " [Exception: "+ e.getMessage() +"]";
 			LOGGER.severe( msg );
@@ -168,6 +185,23 @@ public class ConsoleDAO {
 		}
 	}
 	
+	private static String parseSelect(String select) {
+		return select.replaceAll(QUOTES_REGEX, "?");
+	}
+
+	private static Object[] getBindings( String sentence) {
+        Pattern pattern = Pattern.compile(QUOTES_REGEX);
+        Matcher matcher = pattern.matcher(sentence);
+        List<String> result = new ArrayList<>();
+        while (matcher.find()) {
+            result.add(matcher.group(1));
+        }         
+        return AonCollectionUtils.isEmpty( result ) 
+        	?null
+			:result.toArray(new String[0])
+		;
+	}
+
 	private static Stream<Schema> getSchemas(AONContext ctx) {
 		return  ctx.getDslContext()
 			.meta()

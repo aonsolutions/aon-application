@@ -3,6 +3,7 @@ package com.esferalia.aon.watson.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.DoubleStream;
@@ -58,6 +59,11 @@ public class AonCollectionUtils {
 	public static <T> Stream<T> stream( Set<T> list) {
 		if (list == null) return Stream.empty();
 		return list.stream();
+	}
+
+	public static <K,V> Stream<Entry<K,V>> stream( Map<K,V> map) {
+		if (map == null) return Stream.empty();
+		return map.entrySet().stream();
 	}
 
 	public static <K,V> Stream<K> keysStream( Map<K,V> map) {

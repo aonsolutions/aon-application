@@ -530,7 +530,7 @@ export class AonDocumentalList extends AonElement {
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
 			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		}
-		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
+		// aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
 	removeDocumentalActions() {

@@ -541,6 +541,7 @@ public class AccountEntryDAO {
 				if(account.length() > 0) putAccountBalance(map,type,account.substring(0,1), debit,credit);
 				if(account.length() > 1) putAccountBalance(map,type,account.substring(0,2), debit,credit);
 				if(account.length() > 2) putAccountBalance(map,type,account.substring(0,3), debit,credit);
+				if(account.length() > 3) putAccountBalance(map,type,account.substring(0,4), debit,credit);
 				putAccountBalance(map,type,account, debit,credit);
 			});
 		return map;

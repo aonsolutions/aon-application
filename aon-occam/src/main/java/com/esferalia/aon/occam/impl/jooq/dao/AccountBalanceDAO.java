@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.server.accounting.BalanceScript;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -145,6 +147,7 @@ public class AccountBalanceDAO {
 		mParams.setStartDate(params.getFromDate());
 		mParams.setEndDate(params.getToDate());
 		mParams.setSecurityLevel(params.getSecurityLevel());
+		mParams.setAccountLevel( 5 );
 		if (params.isConsolidation()) {
 			Integer[] domains = new Integer[params.getDomains().size()];
 			for (int i = 0; i < params.getDomains().size();i++) {
@@ -222,22 +225,19 @@ public class AccountBalanceDAO {
 
 		String[] tokens = AonStringUtils.split(expressionParsed,'|');
 		if (tokens != null && tokens.length > 0) {
-			Condition c = null;
-			List<String> saPositivoTokens = new LinkedList<>(); 
-			List<String> sdPositivoTokens = new LinkedList<>();
-			for (String token : tokens ) {
-				if (isSaPositivo(token, key.getInitialExpression() )) {
-					saPositivoTokens.add(token);		
-				}
-				if (isSdPositivo(token, key.getInitialExpression() )) {
-					sdPositivoTokens.add(token);		
-				}
-				Condition c1 = ACCOUNT.CODE.like(token + "%");
-				c = c==null?c1:c.or(c1);
-			}
-			Condition c2 = DSL.length(ACCOUNT.CODE).eq(4);
-			c = c==null?c2:c.and(c2);
-			AccountDAO.getAccounts(ctx, c)
+			List<String> saPositivoTokens = AonCollectionUtils.stream(tokens)
+				.filter( t -> isSaPositivo(t, key.getInitialExpression() ))
+				.collect(Collectors.toCollection(LinkedList::new))
+			;
+			List<String> sdPositivoTokens = AonCollectionUtils.stream(tokens)
+				.filter( t -> isSdPositivo(t, key.getInitialExpression() ))
+				.collect(Collectors.toCollection(LinkedList::new))
+			;
+			Condition cond = AonCollectionUtils.stream(tokens)
+				.map( t -> (Condition) ACCOUNT.CODE.like(t + "%"))
+				.reduce(DSL.noCondition(), Condition::or)
+				.and(DSL.length(ACCOUNT.CODE).in(4,5));
+			AccountDAO.getAccounts(ctx, cond)
 				.forEach(account -> {
 					AccountBalance b = mvelCtx.getAccounts().get(account.getCode());
 					if (b != null) {
@@ -267,24 +267,22 @@ public class AccountBalanceDAO {
 		}
 	}
 
-	private static LinkedList<AccountBalance> getUnreadAccounts(AONContext ctx, AccMiningMVELContext mvelCtx) {
-		// Se chequean las cuentas que no se han tenido en cuenta, para facilitar al
-		// cliene la búsqueda del descuadre.
-		LinkedList<AccountBalance> unreadBalances = new LinkedList<>();
-		for (String code : mvelCtx.getAccounts().keySet()) {
-			AccountBalance accountBalance = mvelCtx.getAccounts().get(code);
-			if (!accountBalance.isChecked() &&  (AonStringUtils.length(code) == 4
-				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 3)).isChecked()
-				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 2)).isChecked()
-				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 1)).isChecked())) {
-				
-				Account account = AccountDAO.get(ctx, code);
-				accountBalance.setAccountDescription(account != null ? account.getDescription() : null);
-				accountBalance.setAccountCode(code);
-				unreadBalances.add(accountBalance);
-			}
-		}
-		return unreadBalances;
+	private static LinkedList<AccountBalance> getUnreadAccounts(final AONContext ctx, final AccMiningMVELContext mvelCtx) {
+		// Se chequean las cuentas que no se han tenido en cuenta, para facilitar al cliene la búsqueda del descuadre.
+		return AonCollectionUtils.stream( mvelCtx.getAccounts() )
+			.filter( e -> !e.getValue().isChecked() )
+			.filter( e -> IntStream.range(0, e.getKey().length())
+				.mapToObj( i -> AonStringUtils.substring(e.getKey(), 0, i+1))
+				.noneMatch( x -> !mvelCtx.getAccounts().get(x).isChecked() )
+			)
+			.map( e -> {
+				Account account = AccountDAO.get(ctx, e.getKey());
+				e.getValue().setAccountDescription(account != null ? account.getDescription() : null);
+				e.getValue().setAccountCode(e.getKey());
+				return e.getValue();
+			})
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
 	}
 
 	private static String parseExpression(String initialExpression) {
@@ -311,4 +309,5 @@ public class AccountBalanceDAO {
 		Pattern pattern = Pattern.compile( pat, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 		return pattern.matcher(expression).find();
 	}
+	
 }

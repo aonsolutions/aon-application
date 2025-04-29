@@ -2528,6 +2528,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 			
 			@Override
+			public void visitSEA(DeductionType deductionType) {
+				add();
+			}
+			
+			@Override
 			public void visitBonus(DeductionType deductionType) {
 				add();
 			}

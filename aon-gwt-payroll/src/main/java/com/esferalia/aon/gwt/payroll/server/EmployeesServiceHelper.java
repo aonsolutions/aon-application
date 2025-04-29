@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import static com.esferalia.aon.in.payroll.tgss.idc.Idc.isBonus;
 import static com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.ERROR;
 import static com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.WARN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
@@ -92,6 +93,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
 import com.esferalia.aon.in.payroll.tgss.idc.AllIdcHighlighter;
+import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcContractData;
 import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter;
 import com.esferalia.aon.in.payroll.tgss.idc.IdcHighlighter.Setup;
 import com.esferalia.aon.occam.api.AON;
@@ -159,7 +161,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 //import com.google.api.client.util.Objects;
 
-import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -1015,8 +1016,8 @@ public class EmployeesServiceHelper {
 		
 		List<Date> dates  = idcDates.stream().map(idc -> idc.getFecha() ).filter( d -> d.compareTo(date)>=0).sorted((d1,d2) -> d2.compareTo(d1)).collect(Collectors.toList());
 		
-		ContextVariable numberVars  [] = new ContextVariable [] {PARTIAL_FACTOR};
 		ContextVariable stringVars  [] = new ContextVariable [] {QUOTE_GROUP, OCCUPATION, TC2};
+		ContextVariable numberVars  [] = new ContextVariable [] {PARTIAL_FACTOR, CGC_ENTERPRISE_PERCENT};
 		
 		
 		for ( ContextVariable v : stringVars )
@@ -1029,14 +1030,15 @@ public class EmployeesServiceHelper {
 			byte data[] = null;
 			try {
 				data = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
-				Map<ContextVariable, Object> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
+				Map<ContextVariable, IdcContractData> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
 				for ( ContextVariable v : stringVars ) {
 					if ( contractData.containsKey(v) ) {					
 						StringVariable variable = new StringVariable();
 						variable.setName(v.getName());
-						variable.setValue(contractData.get(v));
-						variable.setStartDate(startDate);
-						variable.setEndDate(endDate);				
+						IdcContractData idcContractData = contractData.get(v);
+						variable.setValue(idcContractData.data());
+						variable.setStartDate(idcContractData.startDate());
+						variable.setEndDate(idcContractData.endDate());				
 						ssContractData.get(v.getName()).add(variable);
 						variable.setExpression(String.format("\"%s\"", contractData.get(v).toString()));
 					}
@@ -1045,9 +1047,10 @@ public class EmployeesServiceHelper {
 					if ( contractData.containsKey(v) ) {
 						NumberVariable variable = new NumberVariable();
 						variable.setName(v.getName());
-						variable.setValue(contractData.get(v));
-						variable.setStartDate(startDate);
-						variable.setEndDate(endDate);				
+						IdcContractData idcContractData = contractData.get(v);
+						variable.setValue(idcContractData.data());
+						variable.setStartDate(idcContractData.startDate());
+						variable.setEndDate(idcContractData.endDate());				
 						ssContractData.get(v.getName()).add(variable);
 						variable.setExpression(contractData.get(v).toString());
 					}

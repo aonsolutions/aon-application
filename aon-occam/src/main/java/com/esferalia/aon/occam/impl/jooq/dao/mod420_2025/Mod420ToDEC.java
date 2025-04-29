@@ -1,6 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod420_2025;
 
+import java.io.StringWriter;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -37,8 +42,19 @@ public class Mod420ToDEC {
 	
 	private Mod420ToDEC() {
 	}
+	
+	public static String getDeclaration(Mod303 mod303) throws JAXBException {
+		DEC dec = Mod420ToDEC.getDEC(mod303);
+		StringWriter writer = new StringWriter();
+		JAXBContext context = JAXBContext.newInstance(DEC.class);
+		Marshaller um = context.createMarshaller();
+		um.setProperty("jaxb.encoding", "ISO-8859-1");
+		um.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		um.marshal(dec, writer);
+		return writer.toString();		
+	}
 
-	public static DEC getDEC(Mod303 mod) {
+	private static DEC getDEC(Mod303 mod) {
 		DEC dec = new DEC();
 		
 		// Identificador del modelo

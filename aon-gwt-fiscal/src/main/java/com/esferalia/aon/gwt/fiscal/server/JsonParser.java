@@ -770,112 +770,57 @@ public class JsonParser {
 	}
 	
 	public static DomainParams parseDomainParams(String domainParams) throws ParseException, java.text.ParseException {
+		org.json.JSONObject jsonParams = new org.json.JSONObject( domainParams );
 		DomainParams params = new DomainParams();
-		JSONParser parser = new JSONParser();
-		JSONObject jsonParams =  (JSONObject) parser.parse(domainParams);
 		
-		String schema = (String) jsonParams.get(IRequestParamsNames.SCHEMA);
+		String schema = JsonUtils.getString( jsonParams, IRequestParamsNames.SCHEMA);
 		if (AonStringUtils.isNotBlank(schema)) {
 			params.setDbSchema(schema);
 		}
 		
-		Long id = (Long) jsonParams.get(IRequestParamsNames.ID);
-		if (id!= null) {
-			params.setId(id.intValue());	
-		}
-		
-		String query = (String) jsonParams.get(IRequestParamsNames.QUERY);
-		if (AonStringUtils.isNotBlank(query)) {
-			params.setQuery(query);
-		}
+		params.setId(JsonUtils.getInteger( jsonParams, IRequestParamsNames.ID));	
+		params.setQuery(JsonUtils.getString( jsonParams, IRequestParamsNames.QUERY));
+		params.setName(JsonUtils.getString( jsonParams, IRequestParamsNames.NAME));
+		params.setDescription(JsonUtils.getString( jsonParams, IRequestParamsNames.DESCRIPTION));
+		params.setType(JsonUtils.getInteger( jsonParams, IRequestParamsNames.TYPE));	
+		params.setParent(JsonUtils.getInteger( jsonParams, IRequestParamsNames.PARENT));	
+		params.setOrphan(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.ORPHAN));
+		params.setActive(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.ACTIVE));
+		params.setEnableHeredity(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.ENABLE_HEREDITY));
+		params.setDomainManagement(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.DOMAIN_MANAGEMENT));
 
-		String name = (String) jsonParams.get(IRequestParamsNames.NAME);
-		if (AonStringUtils.isNotBlank(name)) {
-			params.setName(name);
-		}
-
-		String description = (String) jsonParams.get(IRequestParamsNames.DESCRIPTION);
-		if (AonStringUtils.isNotBlank(description)) {
-			params.setDescription(description);
-		}
-
-		Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
-		if (type!= null) {
-			params.setType(type.intValue());	
-		}
-
-		Long parent = (Long) jsonParams.get(IRequestParamsNames.PARENT);
-		if (parent!= null) {
-			params.setParent(parent.intValue());	
-		}
-		
-		Long orphan = (Long) jsonParams.get(IRequestParamsNames.ORPHAN);
-		if (orphan != null) {
-			params.setOrphan(orphan == 1);
-		}
-
-		Long active = (Long) jsonParams.get(IRequestParamsNames.ACTIVE);
-		if (active != null) {
-			params.setActive(active==1);
-		}
-
-		Long enableHeredity = (Long) jsonParams.get(IRequestParamsNames.ENABLE_HEREDITY);
-		if (enableHeredity != null) {
-			params.setEnableHeredity(enableHeredity==1);
-		}
-		
-		Long domainManagement = (Long) jsonParams.get(IRequestParamsNames.DOMAIN_MANAGEMENT);
-		if (domainManagement != null) {
-			params.setDomainManagement(domainManagement==1);
-		}
-
-		String fromLastAccess = (String) jsonParams.get(IRequestParamsNames.FROM_LAST_ACCESS_DATE);
+		String fromLastAccess = JsonUtils.getString( jsonParams, IRequestParamsNames.FROM_LAST_ACCESS_DATE); 
 		if (AonStringUtils.isNotBlank(fromLastAccess)) {
 			params.setFromLastAccess(FORMATTER.parse(fromLastAccess));			
 		}
 		
-		String toLastAccess = (String) jsonParams.get(IRequestParamsNames.TO_LAST_ACCESS_DATE);
+		String toLastAccess = JsonUtils.getString( jsonParams, IRequestParamsNames.TO_LAST_ACCESS_DATE); 
 		if (AonStringUtils.isNotBlank(toLastAccess)) {
 			params.setToLastAccess(FORMATTER.parse(toLastAccess));	
 		}
 
-		String fromExpirationDate = (String) jsonParams.get(IRequestParamsNames.FROM_EXPIRATION_DATE);
+		String fromExpirationDate = JsonUtils.getString( jsonParams, IRequestParamsNames.FROM_EXPIRATION_DATE); 
 		if (AonStringUtils.isNotBlank(fromExpirationDate)) {
 			params.setFromExpirationDate(FORMATTER.parse(fromExpirationDate));			
 		}
 
-		String toExpirationDate = (String) jsonParams.get(IRequestParamsNames.TO_EXPIRATION_DATE);
+		String toExpirationDate = JsonUtils.getString( jsonParams, IRequestParamsNames.TO_EXPIRATION_DATE);
 		if (AonStringUtils.isNotBlank(toExpirationDate)) {
 			params.setToExpirationDate(FORMATTER.parse(toExpirationDate));			
 		}
 		
-		JSONArray schemasOffsets = (JSONArray) jsonParams.get(IRequestParamsNames.SCHEMAS_OFFSETS);
-		if (schemasOffsets != null && schemasOffsets.size() > 0) {
-			for ( int i = 0; i < schemasOffsets.size(); i++) {
-				Object v = schemasOffsets.get(i);
-				params.setOffset( ConsoleSchema.values()[i], ((Long) v).intValue());
+		org.json.JSONArray schemasOffsets = jsonParams.optJSONArray(IRequestParamsNames.SCHEMAS_OFFSETS,null);
+		if (schemasOffsets != null && schemasOffsets.length() > 0) {
+			for ( int i = 0; i < schemasOffsets.length(); i++) {
+				Integer v = schemasOffsets.optIntegerObject(i);
+				params.setOffset( ConsoleSchema.values()[i], v);
 			}
 		}
 
-		Long limit = (Long) jsonParams.get(IRequestParamsNames.LIMIT);
-		if (parent!= null) {
-			params.setLimit(limit.intValue());
-		}
-
-		Long validate = (Long) jsonParams.get(IRequestParamsNames.VALIDATE);
-		if (validate != null) {
-			params.setValidate(validate == 1);
-		}
-
-		Long mustFlatten = (Long) jsonParams.get(IRequestParamsNames.MUST_FLATTEN);
-		if (mustFlatten != null) {
-			params.setMustFlatten(mustFlatten==1);
-		}
-
-		String select = (String) jsonParams.get(IRequestParamsNames.SELECT);
-		if (AonStringUtils.isNotBlank(select)) {
-			params.setSelect(select);
-		}
+		params.setLimit(JsonUtils.getInteger( jsonParams, IRequestParamsNames.LIMIT));
+		params.setValidate(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.VALIDATE));
+		params.setMustFlatten(JsonUtils.getBooleanNumber( jsonParams, IRequestParamsNames.MUST_FLATTEN));
+		params.setSelect(JsonUtils.getString( jsonParams, IRequestParamsNames.SELECT));
 		
 		return params;
 		

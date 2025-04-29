@@ -264,9 +264,16 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private static Deduction.Type SYSTEM_DEDUCTION[] = { 
-			Deduction.Type.IRPF, Deduction.Type.COMMON_CONTINGENCY,
-			Deduction.Type.PROFESSIONAL_CONTINGENCY, Deduction.Type.UNEMPLOYMENT, Deduction.Type.JOB_TRAINING,
-			Deduction.Type.STRUCTURAL_OVERTIME, Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA , Deduction.Type.MEI};
+			Deduction.Type.IRPF, 
+			Deduction.Type.COMMON_CONTINGENCY,
+			Deduction.Type.PROFESSIONAL_CONTINGENCY, 
+			Deduction.Type.UNEMPLOYMENT, 
+			Deduction.Type.JOB_TRAINING,
+			Deduction.Type.STRUCTURAL_OVERTIME, 
+			Deduction.Type.NON_STRUCTURAL_OVERTIME, 
+			Deduction.Type.FOGASA , 
+			Deduction.Type.MEI
+	};
 
 
 	private List<Scope> SCOPE_STEPS = Arrays.asList(Scope.CONTRACT, Scope.AGREEMENT, Scope.SYSTEM);
@@ -2878,6 +2885,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	Label dbTotalEnterpriseLabel;
 	@UiField
+	Label ssTotalEnterpriseLabel;
+	@UiField
 	ValueLabel totalLabel;
 	@UiField
 	Label dbTotalLabel;
@@ -3492,6 +3501,8 @@ public class SalaryDraft extends ResizeComposite
 		ssCgpBaseLabel.setVisible(visible);
 		ssHExtraBaseLabel.setVisible(visible);
 		ssNonHExtraBaseLabel.setVisible(visible);
+		ssTotalEnterpriseLabel.setVisible(visible);
+		
 
 		for (HasVisibility obj : ssUIObjects)
 			obj.setVisible(visible);
@@ -3709,6 +3720,8 @@ public class SalaryDraft extends ResizeComposite
 		totalEnterpriseLabel.setText(format(salaryDraftObject.getTotalEnterprise()), displayChanges);
 		dbTotalEnterpriseLabel.setText(format(salaryDraftObject.getDbTotalEnterprise()));
 		setDbStyleName(dbTotalEnterpriseLabel, totalEnterpriseLabel);
+		ssTotalEnterpriseLabel.setText(format(salaryDraftObject.getSsTotalEnterprise()));
+		setDbStyleName(ssTotalEnterpriseLabel, totalEnterpriseLabel);
 
 		double total =  0.00; 
 		total += AonNumberUtils.todouble(salaryDraftObject.getTotalPayment());
@@ -5471,8 +5484,12 @@ public class SalaryDraft extends ResizeComposite
 		setDbStyleName(dbAmountLabel, amountLabel);
 
 		InlineLabel ssAmountLabel = new InlineLabel();
-		ssAmountLabel.setText(format(item.getSsAmount()));
-		setDbStyleName(ssAmountLabel, amountLabel);
+		if ( isSSDeduction(item) ) {
+			ssAmountLabel.setText( format(item.getSsAmount()));
+			setDbStyleName(ssAmountLabel, amountLabel);
+		} else {
+			ssAmountLabel.setText( "" );
+		}
 
 		if( item instanceof Bonus ) {
 			addBonusAmountItem(amountLabel, amountsPanel);
@@ -5495,12 +5512,8 @@ public class SalaryDraft extends ResizeComposite
 		dbVisibilityImpl.setVisible(salaryDraftObject.hasDbSalary() && dbSalaryCheck.getValue());
 		
 		VisibilityImpl ssVisibilityImpl = new VisibilityImpl(ssAmountLabel.getElement().getParentElement());
-		if ( isSSDeduction(item) || isSSBonus(item)) {
-			addSsWidget(ssVisibilityImpl);
-			ssVisibilityImpl.setVisible(salaryDraftObject.hasSsSalary() && tgssCheck.getValue());
-		} else {
-			ssVisibilityImpl.setVisible(false);
-		}
+		addSsWidget(ssVisibilityImpl);
+		ssVisibilityImpl.setVisible(salaryDraftObject.hasSsSalary() && tgssCheck.getValue());
 
 		paymentsTable.setWidget(row, 4, amountsPanel);
 
@@ -6993,12 +7006,16 @@ public class SalaryDraft extends ResizeComposite
 		double hExtraBase = parse(format(salaryDraftObject.gethExtraBase()));
 		double ssHExtraBase = parse(format(salaryDraftObject.getSsHExtraBase()));
 		double nonHExtraBase = parse(format(salaryDraftObject.getNonHExtraBase()));
-		double ssnonHExtraBase = parse(format(salaryDraftObject.getNonHExtraBase()));
+		double ssnonHExtraBase = parse(format(salaryDraftObject.getSsNonHExtraBase()));
+		
+		double totalEnterprise = parse(format(salaryDraftObject.getTotalEnterprise()));
+		double ssTotalEnterprise = parse(format(salaryDraftObject.getSsTotalEnterprise()));
 		
 		diffs  +=  Math.abs( cgcBase - ssCgcBase );
 		diffs  +=  Math.abs( cgpBase - ssCgpBase );
 		diffs  +=  Math.abs( hExtraBase - ssHExtraBase );
 		diffs  +=  Math.abs( nonHExtraBase - ssnonHExtraBase );
+		diffs  +=  Math.abs( totalEnterprise - ssTotalEnterprise );
 		
 		Deduction[] ssDeductions = salaryDraftObject.getDeductions()
 		.stream().filter(SalaryDraft::isSSDeduction).toArray(Deduction[]::new);
@@ -8097,8 +8114,10 @@ public class SalaryDraft extends ResizeComposite
 		Enum<?> type = item.getType();
 		if (
 			type == Deduction.Type.MEI
+			|| type == Deduction.Type.SEA
 			|| type == Deduction.Type.BONUS
 			|| type == Deduction.Type.FOGASA
+			|| type == Deduction.Type.SOLIDARITY
 			|| type == Deduction.Type.JOB_TRAINING
 			|| type == Deduction.Type.UNEMPLOYMENT
 			|| type == Deduction.Type.COMMON_CONTINGENCY

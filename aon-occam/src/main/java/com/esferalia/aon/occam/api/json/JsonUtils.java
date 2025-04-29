@@ -67,6 +67,11 @@ public class JsonUtils {
 		return null;
 	}
 	
+	public static Boolean getBooleanNumber(JSONObject json, String key ) {
+		Integer i = getInteger( json, key);
+		return i == null? null : AonNumberUtils.equals( i, 1);
+	}
+
 	public static boolean getboolean(JSONObject json, String key ) {
 		String value = json != null && json.opt(key) != null ? json.optString(key,null) : null;
 		if (AonStringUtils.isNotBlank(value)) {

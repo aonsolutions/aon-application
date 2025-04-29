@@ -501,13 +501,14 @@ class Model303CANARIAS2025 extends Model303Base {
 
 					@Override
 					public String getValidatePrintAction() {
-						//return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod303ValidatePrintAEAT";
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod420ValidatePrintATC";
+//						return null;
 					}
 
 					@Override
 					public String getDownloadFileAction() {						
-						return "/aon_gwt_fiscal/ms/Model420File";						
+//						return "/aon_gwt_fiscal/ms/Model420File";						
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Model420File";
 					}
 
 					@Override
