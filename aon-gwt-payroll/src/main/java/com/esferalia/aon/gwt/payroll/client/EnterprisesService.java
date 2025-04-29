@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -499,4 +500,6 @@ public interface EnterprisesService extends RemoteService {
 
 	void agreementIntegrityFix(String currentDomainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix) throws IllegalArgumentException ;
 	
+	void fixAgreementIntegrity(String currentDomainName, Integer agreementId) throws IllegalArgumentException ;
+
 }

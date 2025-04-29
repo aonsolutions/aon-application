@@ -56,9 +56,9 @@ import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
-import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TaskAutoComplete;
@@ -688,24 +688,6 @@ public class TaskDAO {
 				.setModificationDate(r.getValue(TASK.MODIFICATION_DATE))
 				.setParent(r.getValue(TASK.PARENT));
 		}
-	}
-	
-	public static class TagFiller extends Filler implements Function<Record, Tag> {
-
-		@Override
-		public Tag apply(Record r) {
-			return build(r);
-		}
-		
-		public static Tag build(Record r) {
-			return new Tag()
-					.setId(r.getValue(TAG.ID))
-					.setColor(r.getValue(TAG.COLOR))
-					.setDomain(r.getValue(TAG.DOMAIN))
-					.setName(r.getValue(TAG.NAME))
-					.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)));
-		}
-	
 	}
 	
 	private static void setParent(AONContext ctx, List<Task> tasks) {

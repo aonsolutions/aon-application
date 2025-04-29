@@ -482,4 +482,10 @@ public class AttachmentImpl implements IAttachment{
 				configuration -> S3DocumentDAO.getCount(ctx, filter, attachFilter));
 	}
 	
+	@Override
+	public Stream<Integer> getDocumentTags(AONContext ctx, Integer id, Integer type) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> S3DocumentDAO.getDocumentTags(ctx, id, type));
+	}
+	
 }

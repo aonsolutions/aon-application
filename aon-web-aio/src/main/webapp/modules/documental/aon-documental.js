@@ -1,18 +1,21 @@
 import { AonElement } from '../../components/AonElement.js';
 import {
 	DocumentalSidenav, ASESOR_TYPE_OPTION,
-	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION
+	ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION,
+	EMPLOYEE_TYPE, ASESOR_TYPE, ENTERPRISE_TYPE
 } from './DocumentalEnums.js';
 import {
 	getCategories, getTags, createTag, createCategory, editCategory,
 	deleteCategory, editTag, deleteTag, uploadFileDocumental, getScopes,
-	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File
+	getDomainUserRoles, getDocument, getS3Category, getS3Document, getS3Document_File,
+	getBidoqDocuments, checkBidoq
 } from '../../services/service.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSelect } from '../../components/aon-select.js';
-import { MSG, MATERIAL_ICONS, EVENT } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, EVENT, CONSTANT } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
+import { AonNewInput } from '../../components/aon-new-input';
 import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
@@ -34,14 +37,18 @@ export class AonDocumental extends AonElement {
 	_tags;
 	_categories;
 	_scopes;
-
 	dur;
 
 	DOCUMENTAL;
 	INPUTFILE;
 
 	constructor() {
-		super();
+      super();
+      // Coger la category seleccionada del filtro
+        // Enlazamos el m�todo al contexto de la clase
+        this.categoryEvento = this.categoryEvento.bind(this);
+        // Nos aseguramos de escuchar el evento
+        window.addEventListener('category_filter', this.categoryEvento);
 	}
 
 	connectedCallback() {
@@ -94,9 +101,9 @@ export class AonDocumental extends AonElement {
 		return this.dur;
 	}
 
-	build() {
+	async build() {
 		let aonDocumental = this.getApplication();
-		if(this.isBeta()) {
+		if(this.isBeta() ||  this.isAyudaTorInfoautonomos()) {
 			let titleSection = aonDocumental.getToolbar().getTitleSection();
 
 			let newView = new AonSwitch();
@@ -108,11 +115,9 @@ export class AonDocumental extends AonElement {
 				LS.setBetaDoc(newView.checked);
 				this.rootPanel(new AonDocumental());
 			});
-
 			titleSection.appendChild(newView);
 		}
 
-		
 		this.getElement("aonDocumentalToolbarHeaderTitleSection");
 
 		if (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()) {
@@ -132,14 +137,31 @@ export class AonDocumental extends AonElement {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()) {
 				aonDocumental.addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());
 			}
-			const btnSearch = aonDocumental.addSearchOption();
-			btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+            if(!this.isBetaDoc()){
+              // como se carga el boton de buscar aqui
+              const btnSearch = aonDocumental.addSearchOption();
+              btnSearch.addEventListener(EVENT.SEARCH, (event) => this.search(event.detail));
+            }
 		}
 
 		if (this.isMobile()) {
 			this.getApplication().addMobileSidenavHeader(Apps.DOCUMENTAL);
 		}
 
+		if(!this.getDur().isDocumentalPortal() && !this.getDur().isDocumentalManager()){
+			this.addDocumentOptions();
+		}
+		
+		if (this.isBetaDoc() && this.getDur().isDocumentalManager() || this.isBetaDoc() && this.getDur().isDocumentalPortal() ) {
+			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
+		}
+
+		let bool = await this.hasBidoq();
+
+		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
+			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
+		}
+		
 		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
 			this.addDocumentOptions();
 		this.addTypeOptions();
@@ -155,26 +177,30 @@ export class AonDocumental extends AonElement {
 
 	addDocumentOptions() {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
-		let documentOptions = [
-			{
-				id  : MSG.ALL_FILES,
-				name: MSG.ALL_FILES,
-				icon: 'insert_drive_file',
-				fn: () => {
-					this._filter.category = undefined;
-					this._filter.tag = undefined;
-					this._filter.type = 'all';
-					this.aonDocumentalList();
-				}
-			}
-		];
-		let data = DocumentalSidenav.DOCUMENTS;
-		data.options = documentOptions;
-		aonDocumental.addSidenavOptions3(data);
+
         if (this.isBetaDoc()) {
-          // Marcamos la primera opcion
-          aonDocumental.addBackgroundSidenav(MSG.ALL_FILES, data.app.color);
-        }
+			let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
+			aonDocumental.addSidenavOptions3(data2);
+			let data3 = DocumentalSidenav.USER_CATEGORIES;
+			aonDocumental.addSidenavOptions3(data3);
+        }else{
+          let documentOptions = [
+              {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                      this._filter.category = undefined;
+                      this._filter.tag = undefined;
+                      this._filter.type = 'all';
+                      this.aonDocumentalList();
+                  }
+              }
+          ];
+          let data = DocumentalSidenav.DOCUMENTS;
+          data.options = documentOptions;
+          aonDocumental.addSidenavOptions3(data);
+		}
 	}
 
 	addTypeOptions() {
@@ -186,7 +212,7 @@ export class AonDocumental extends AonElement {
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
-						this._filter.type = 'enterprise';
+						this._filter.type = ENTERPRISE_TYPE;
 						this.aonDocumentalList();
 					}
 				}, {
@@ -195,7 +221,7 @@ export class AonDocumental extends AonElement {
 					fn: () => {
 						this._filter.category = undefined;
 						this._filter.tag = undefined;
-						this._filter.type = 'employee';
+						this._filter.type = EMPLOYEE_TYPE;
 						this.aonDocumentalList();
 					}
 				}];
@@ -206,7 +232,7 @@ export class AonDocumental extends AonElement {
 						fn: () => {
 							this._filter.category = undefined;
 							this._filter.tag = undefined;
-							this._filter.type = 'asesor';
+							this._filter.type = ASESOR_TYPE;
 							this.aonDocumentalList();
 						}
 					});
@@ -234,6 +260,22 @@ export class AonDocumental extends AonElement {
 		this.loadCategories();
 	}
 
+    // Categoria pasada desde el filtro
+    categoryEvento(event) {
+      let application = this.getApplication();
+      // Nombre que va al lado del titulo
+      application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', event.detail.categoryName);
+      // Quitamos el marcado
+      application.removeBackgroundSidenavAll(DocumentalSidenav.DOCUMENTS.app.color);
+      // Marcamos la opcion que se esta filtrando
+      application.addBackgroundSidenav(event.detail.category, DocumentalSidenav.DOCUMENTS.app.color);
+    }
+
+    // Metodo para limpiar el evento
+    eliminarEvento() {
+      window.removeEventListener('category_filter', this.categoryEvento);
+    }
+
 	loadCategories() {
 		let data = {
 			parent: null,
@@ -248,19 +290,60 @@ export class AonDocumental extends AonElement {
 					};
 				});
 				let application = this.getApplication();
+                // Limpiamos
+                this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
+                this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
+                // Metemos el todo los documentos
+                let documentOptions = {
+                  id  : MSG.ALL_FILES,
+                  name: MSG.ALL_FILES,
+                  icon: 'insert_drive_file',
+                  fn: () => {
+                    this._filter.category = undefined;
+                    this._filter.tag = undefined;
+                    this._filter.type = 'all';
+                    this.aonDocumentalList();
+                  }
+                };
+                application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
+                // Marcamos la primera opcion
+                application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', MSG.ALL_FILES);
+                application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
+                // Relenamos
 				categories.forEach(item => {
-					let option = {
-						name: item.name,
-						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
-						fn: () => {
-							this._filter.tag = undefined;
-							this._filter.category = item.id;
-							this.aonDocumentalList();
+					if(item.is_deletable === 0){
+						let optionDefaultCategory = {
+                            id  : item.id,
+							name: item.name,
+							icon: 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
+					}else{
+						let optionUserCategories = {
+                            id  : item.id,
+							name: item.name,
+							icon: 'insert_drive_file',
+							fn: () => {
+								this._filter.tag = undefined;
+								this._filter.category = item.id;
+								this.aonDocumentalList();
+							}
+						};
+						if(this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal()){
+							optionUserCategories.actions = [{
+								id: 'Edit',
+								icon: 'edit',
+								action: () => this.editCategory(item)
+							}];
 						}
-					};
+						application.addSidenavOptionsListValue(DocumentalSidenav.USER_CATEGORIES, optionUserCategories);
+					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
-					application.addSidenavOptionsListValue(DocumentalSidenav.DOCUMENTS, option);
-					application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
 				});
 			});
 		} else {
@@ -277,7 +360,7 @@ export class AonDocumental extends AonElement {
 				categories.forEach(item => {
 					let option = {
 						name: item.name,
-						icon: !this.isBetaDoc() ? 'label' : 'insert_drive_file',
+						icon: 'label',
 						fn: () => {
 							this._filter.tag = undefined;
 							this._filter.category = item.id;
@@ -313,33 +396,115 @@ export class AonDocumental extends AonElement {
 		});
 	}
 
+	//A LA ESPERA DE LA NUEVA TABLA TAGS
+	// createOptions() {
+	// 	if(document.getElementById('aonDocumentalDialogDialogActionAccept')){
+	// 		let btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
+	// 		btnAccept.remove();
+	// 	}
+
+	// 	if(document.getElementById('aonDocumentalDialogDialogActionCancel')){
+	// 		let btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
+	// 		btnCancel.remove();
+	// 	}
+
+	// 	let doc = document.getElementById(this.getApplication().DIALOG);
+	// 	doc.clear(); 
+	// 	if (!this.isMobile()) doc.width = '400px';
+	// 	doc.setTitle("¿Qué quiere crear?");
+	
+	// 	// Crear los radio buttons
+	// 	let radioCategory = document.createElement('input');
+	// 	radioCategory.type = 'radio';
+	// 	radioCategory.name = 'categoryRadio'; 
+	// 	radioCategory.id = 'radioId';
+	// 	radioCategory.addEventListener('change', this.handleRadioChange.bind(this));
+	
+	// 	let radiotag = document.createElement('input');
+	// 	radiotag.type = 'radio';
+	// 	radiotag.name = 'tagRadio';
+	// 	radiotag.id = 'radioId2';
+	// 	radiotag.addEventListener('change', this.handleRadioChange.bind(this));
+	
+	// 	// Crear las etiquetas
+	// 	let labelCategory = document.createElement('label');
+	// 	labelCategory.setAttribute('for', 'radioId');
+	// 	labelCategory.textContent = 'Crear categoria';
+	
+	// 	let labelTag = document.createElement('label');
+	// 	labelTag.setAttribute('for', 'radioId2');
+	// 	labelTag.textContent = 'Crear etiqueta';
+	
+	// 	// Crear un contenedor para los radio buttons y etiquetas
+	// 	let container = document.createElement('div');
+	
+	// 	// Crear contenedores para cada radio button y su respectiva etiqueta
+	// 	let categoryContainer = document.createElement('div');
+	// 	categoryContainer.appendChild(radioCategory);
+	// 	categoryContainer.appendChild(labelCategory);
+	
+	// 	let tagContainer = document.createElement('div');
+	// 	tagContainer.appendChild(radiotag);
+	// 	tagContainer.appendChild(labelTag);
+	
+	// 	// Añadir los contenedores al contenedor principal
+	// 	container.appendChild(categoryContainer);
+	// 	container.appendChild(tagContainer);
+	
+	// 	// Establecer el contenido del modal (sin el botón de aceptar)
+	// 	doc.setContent(container);
+	
+	// 	// No se agrega ningún botón de aceptar aquí
+	// 	doc.open();
+	// }
+	
+	// handleRadioChange(event) {
+	// 	// Verificar cuál radio button fue seleccionado
+	// 	if (event.target.id === 'radioId') {
+	// 		// Si se selecciona "Crear categoría"
+	// 		this.createCategory();
+	// 	} else if (event.target.id === 'radioId2') {
+	// 		// Si se selecciona "Crear etiqueta"
+	// 		this.createTag();
+	// 	}
+	// }
+	
 	createCategory() {
-		let d = document.getElementById(this.getApplication().DIALOG);
-		d.clear();
-		if (!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.ADD_CATEGORY);
-		let input = new AonInput();
-		input.id = "aonDocumentalAddCategory";
-		input.description = MSG.CATEGORY;
-		d.setContent(input);
-		d.addAcceptAction(() => {
-			if (!input.value.isEmpty()) {
-				createCategory({ name: input.value }).then(() => {
-					this.loadCategories();
-				});
-			}
-		});
-		d.open();
-	}
+        let d = document.getElementById(this.getApplication().DIALOG);
+        d.clear();
+        if (!this.isMobile()) d.width = '400px';
+        d.setTitle(MSG.ADD_CATEGORY);
+        let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
+        input.id = "aonDocumentalAddCategory";
+        if(this.isBetaDoc()){
+          input.title = MSG.CATEGORY; 
+        } else {
+          input.description = MSG.CATEGORY;
+        }
+        d.setContent(input);
+
+        d.addAcceptAction(() => {
+            if (!input.value.isEmpty()) {
+                createCategory({ name: input.value }).then(() => {
+                    this.loadCategories();
+                });
+            }
+        });
+        d.open();
+	}	
 
 	editCategory(category) {
 		let d = document.getElementById(this.getApplication().DIALOG);
 		d.clear();
 		if (!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.EDIT_CATEGORY);
-		let input = new AonInput();
+		let input = this.isBetaDoc() ? new AonNewInput() : new AonInput();
 		input.id = "aonDocumentalAddCategory";
-		input.description = MSG.CATEGORY;
+        if(this.isBetaDoc()){
+          input.title = MSG.CATEGORY; 
+        } else {
+          input.description = MSG.CATEGORY;
+        }
 		if (category.name) input.value = category.name;
 		d.setContent(input);
 		d.addAcceptAction(() => {
@@ -476,6 +641,98 @@ export class AonDocumental extends AonElement {
 		this.aonDocumentalList();
 	}
 
+	async importBidoqDocumentsToAon() {
+		// Crear overlay
+		let loadingOverlay = document.createElement('div');
+		loadingOverlay.id = 'aonDocumentalLoadingOverlay';
+		loadingOverlay.style.position = 'absolute';
+		loadingOverlay.style.top = '0';
+		loadingOverlay.style.left = '0';
+		loadingOverlay.style.width = '100%';
+		loadingOverlay.style.height = '100%';
+		loadingOverlay.style.backgroundColor = 'rgba(241, 236, 236, 0.8)';
+		loadingOverlay.style.display = 'flex';
+		loadingOverlay.style.alignItems = 'center';
+		loadingOverlay.style.justifyContent = 'center';
+		loadingOverlay.style.zIndex = '10';
+	
+		// Contenedor del spinner + texto
+		let spinnerContainer = document.createElement('div');
+		spinnerContainer.style.display = 'flex';
+		spinnerContainer.style.flexDirection = 'column';
+		spinnerContainer.style.alignItems = 'center';
+	
+		// Spinner
+		let spinner = document.createElement('div');
+		spinner.classList.add('preloader-wrapper', 'active');
+		spinner.innerHTML = `
+			<span class="material-symbols-outlined">
+				refresh
+			</span>
+		`;
+	
+		let icon = spinner.querySelector('.material-symbols-outlined');
+		icon.style.fontSize = '48px';
+		icon.style.animation = 'rotate 2s linear infinite';
+	
+		// Texto
+		let text = document.createElement('div');
+		text.textContent = 'Importando documentos desde Bidoq...';
+		text.style.marginTop = '12px';
+		text.style.fontSize = '16px';
+		text.style.color = '#333';
+		text.style.fontFamily = 'Arial, sans-serif';
+	
+		// Estilo para la animación del spinner (una sola vez idealmente)
+		if (!document.getElementById('spinner-style')) {
+			let style = document.createElement('style');
+			style.id = 'spinner-style';
+			style.innerHTML = `
+				@keyframes rotate {
+					0% {
+						transform: rotate(0deg);
+					}
+					100% {
+						transform: rotate(360deg);
+					}
+				}
+			`;
+			document.head.appendChild(style);
+		}
+	
+		// Armar estructura
+		spinnerContainer.appendChild(spinner);
+		spinnerContainer.appendChild(text);
+		loadingOverlay.appendChild(spinnerContainer);
+	
+		// Agregar overlay al contenedor
+		let container = document.body; 
+		container.appendChild(loadingOverlay);
+	
+		try {
+			let data = {
+				document: localStorage.getItem('aon_domain_document'),
+			};
+			let response = await getBidoqDocuments(data);
+			if (response) {
+				this.loadCategories();
+			}
+		} catch (error) {
+			console.error("Error al importar documentos:", error);
+		} finally {
+			// Quitar el spinner
+			loadingOverlay.remove();
+		}
+	}
+
+	async hasBidoq(){
+		let data = {
+			document: localStorage.getItem('aon_domain_document'),
+		};
+		let response = await checkBidoq(data);
+		return response;
+	}
+
 	aonDocumentalList(filter) {
 		filter = filter || this._filter;
 		this._filter = filter;
@@ -498,13 +755,12 @@ export class AonDocumental extends AonElement {
 	}
 
 	aonDocumentById(id) {
-	if(this.isBetaDoc()){
-		getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-	}else{
-		getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
-		}
+      if(this.isBetaDoc()){
+          getS3Document(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+      }else{
+          getDocument(id).then(doc => this.aonDocument(doc)).catch(error => this.showToast(error));
+      }
 	}
-	
 
 	aonDocument(doc) {
 		let application = this.getApplication();
@@ -552,16 +808,29 @@ export class AonDocumental extends AonElement {
 					data.category = model;  // Se sobrescribe 'category' si modelo existe
 				}
 
-				let tagElement = document.getElementById("aonDocumentalUploadTag");
-				if (tagElement && tagElement.value !== null) {
-					let tag = tagElement.value;
-					data.tag = tag;
-				}
+				//a la espera nueva tabla
+				// let tagElement = document.getElementById("aonDocumentalUploadTag");
+				// if (tagElement && tagElement.value !== null) {
+				// 	let tag = tagElement.value;
+				// 	data.tag = tag;
+				// }
 
 				let datePickerElement = document.getElementById("aonDocumentalUploadDatePicker");
 				if (datePickerElement && datePickerElement.getValue() !== null) {
 					let date = datePickerElement.getValue();
 					data.date = date;
+				}
+
+				let scopeElement = document.getElementById("aonDocumentalUploadScope");
+				if (scopeElement && scopeElement.value !== null) {
+					let scope = scopeElement.value;
+					data.scope = scope;
+				}
+				
+				if(document.getElementById("visibleEmpleadoCheckbox") && document.getElementById("visibleEmpleadoCheckbox").checked){
+					data.registryType = EMPLOYEE_TYPE;
+				} else if(document.getElementById("visibleEmpresaCheckbox") && document.getElementById("visibleEmpresaCheckbox").checked){
+					data.registryType = ASESOR_TYPE;
 				}
 
 				let uploadToast = this.getElement('aonUploadToast');

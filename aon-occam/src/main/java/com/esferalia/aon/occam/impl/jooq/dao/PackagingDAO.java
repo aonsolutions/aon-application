@@ -815,7 +815,10 @@ public class PackagingDAO {
 	private static String calculateSerialNumber(String barcode) {
 		if(barcode.length() > 14) {
 			Barcode b = new Barcode().setValue(barcode).setType(BarcodeType.GS1_128);
-			return b.parseGS1128().get(GS1128Codes.CODE_10).replaceFirst("0", "");
+			String serialNumber = b.parseGS1128().get(GS1128Codes.CODE_10);
+			if(!AonStringUtils.isBlank(serialNumber) && serialNumber.length() > 5 && serialNumber.substring(0, 1).equals("0"))
+				serialNumber = serialNumber.substring(1);
+			return serialNumber;
 		}
 		return null;
 	}

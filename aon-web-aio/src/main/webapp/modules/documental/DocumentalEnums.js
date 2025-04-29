@@ -17,19 +17,61 @@ export const DocumentalSidenav = {
     name: MSG.CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
+  DEFAULT_CATEGORIES: {
+    id: 'DefaultCategories',
+    name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
+    app: Apps.DOCUMENTAL
+  },
+  USER_CATEGORIES: {
+    id: 'UserCategories',
+    name: MSG.USER_CATEGORIES.toUpperCase(),
+    app: Apps.DOCUMENTAL
+  },
   TAGS: {
     id: 'Tags',
     name: MSG.TAGS.toUpperCase(),
     app: Apps.DOCUMENTAL
   }
-}
+};
+
+export const ENTERPRISE_TYPE  = 'enterprise';
+export const EMPLOYEE_TYPE    = 'employee';
+export const ASESOR_TYPE      = 'asesor';
+
+export const ASESOR_TYPE_OPTION = [
+  {value: ENTERPRISE_TYPE, name: MSG.ENTERPRISES},
+  {value: EMPLOYEE_TYPE,   name: MSG.EMPLOYEE},
+  {value: ASESOR_TYPE,     name: MSG.ASESOR}
+];
+
+export const ENTERPRISE_TYPE_OPTION = [
+  {value: ENTERPRISE_TYPE, name: MSG.ENTERPRISES},
+  {value: EMPLOYEE_TYPE,   name: MSG.EMPLOYEE}
+];
+
+export const EMPLOYEE_TYPE_OPTION = [
+  {value: EMPLOYEE_TYPE, name: MSG.EMPLOYEE}
+];
 
 export const DOCUMENTAL_FILTER = [
+    {
+      type: "checkbox",
+      id: "categoryOldFilter",
+      name: "categoryOldFilter",
+      title: "Buscar en mis "+MSG.CATEGORY+"s"
+    },
+	{
+      type: "select",
+      id: "categoryOld",
+      name: "categoryOld",
+      title: "Mis "+MSG.CATEGORY+"s",
+	  hidden: "true"
+    },
 	{
       type: "select",
       id: "category",
       name: "category",
-      title: MSG.CATEGORY,
+      title: MSG.CATEGORY+"s despacho"
     },
 	{
       type: "select",
@@ -53,37 +95,44 @@ export const DOCUMENTAL_FILTER = [
 	  hidden: "true"
 	},	  
 	{
-      type: "date",
-      name: "start_date",
-      id: "start_date",
-      title: "Fecha del documento - desde",
+      type : "newDate",
+      name : "start_date",
+      id   : "start_date",
+//      date: new Date(2025, 0, 1), // pasar fecha
+      date: '',
+      title: "Fecha del documento - desde"
     },
     {
-      type: "date",
-      name: "end_date",
-      id: "end_date",
-      title: "Fecha del documento - hasta",
+      type : "newDate",
+      name : "end_date",
+      id   : "end_date",
+//      date: new Date(2025, 0, 1), // pasar fecha
+      date: '',
+      title: "Fecha del documento - hasta"
+    }
+];
+export const DOCUMENTAL_FILTER_ENTERPRISE = [
+    {
+      type : "checkbox",
+      id   : EMPLOYEE_TYPE,
+      name : EMPLOYEE_TYPE,
+      title: "Visible solo para "+MSG.EMPLOYEE
     },
+    ...DOCUMENTAL_FILTER
 ];
-
-export const ASESOR_TYPE_OPTION = [
-  {value: 'enterprise', name: 'Empresa'},
-  {value: 'employee', name: 'Empleado'},
-  {value: 'asesor', name: 'Asesor'}
+export const DOCUMENTAL_FILTER_ASESOR = [
+    {
+      type : "checkbox",
+      id   : ASESOR_TYPE,
+      name : ASESOR_TYPE,
+      title: "No visible para "+MSG.ENTERPRISE
+    },
+    ...DOCUMENTAL_FILTER_ENTERPRISE
 ];
-
-export const ENTERPRISE_TYPE_OPTION = [
-  {value: 'enterprise', name: 'Empresa'},
-  {value: 'employee', name: 'Empleado'}
-];
-
-export const EMPLOYEE_TYPE_OPTION = [
-  {value: 'employee', name: 'Empleado'}
-]
 
 export const DOCUMENTAL_VIEWS = {
   AON_DOCUMENT_AYUDAT:"aonDocumentAyudat",
   AON_DOCUMENT_MOBILE_AYUDAT:"aonDocumentMobileAyudat",
   AON_DOCUMENTAL_LIST_AYUDAT:"aonDocumentalListAyudat",
   AON_DOCUMENTAL_AYUDAT:"aonDocumentalAyudat",
-}
+};

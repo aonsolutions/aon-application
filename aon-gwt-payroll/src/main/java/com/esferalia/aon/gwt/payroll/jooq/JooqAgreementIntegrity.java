@@ -10,11 +10,15 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.mvel2.MVEL;
@@ -37,6 +42,8 @@ import org.mvel2.ParserContext;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrityFix;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.jooq.tables.records.AgreementDataRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -74,7 +81,9 @@ public class JooqAgreementIntegrity {
 	
 	private static Set<String> allowedVars;
 	
-	private static Set<String> wrongExpressions = new HashSet<String>();
+	private static Set<Record> wrongExpressions;
+	
+	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 	
 	// ------------------------------- Construtor
 	
@@ -94,6 +103,7 @@ public class JooqAgreementIntegrity {
 
 	public static AgreementIntegrity checkIntegrity(Connection connection, Integer domainId, Integer agreementId) {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		wrongExpressions = new HashSet<Record>();
 		
 		allowedVars = getAllowedConceptContextVars();
 		
@@ -206,6 +216,8 @@ public class JooqAgreementIntegrity {
 		Result<Record> contractPayments = dslContext.select()
 				.from(CONTRACT_PAYMENT)
 				.join(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+				.join(PERSON).on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
+				.join(REGISTRY).on(REGISTRY.ID.eq(CONTRACT.PERSON))
 				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
 				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(CONTRACT_PAYMENT.PAYMENT_CONCEPT))
 				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId)).fetch();
@@ -278,7 +290,63 @@ public class JooqAgreementIntegrity {
 		messages.put(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END, parseAgreementExtrasStartEndDatesMessage(agreementExtrasStartEndDates));
 		
 		// Wrong expressions
-		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, parseAgreementPaymentWrongExpressionMessage(wrongExpressions));
+		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, parseAgreementPaymentWrongExpressionMessage());
+		
+		// AgreementData with inherit expresion
+		Result<AgreementDataRecord> agreementInheritDatas = dslContext.selectFrom(AGREEMENT_DATA)
+				.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_DATA.EXPRESSION.like("%inherit%"))
+				.fetch();
+		
+		List<String> agreementInheritDataMessages = new ArrayList<String>();
+		agreementInheritDatas.forEach(data -> agreementInheritDataMessages.add("La expresi\u00f3n " + data.getExpression() + " contiene 'inherit'"));
+		messages.put(AgreementIntegrityFix.AGREEMENT_DATA_INHERIT, agreementInheritDataMessages);
+		
+		// AgreementLevelData with inherit expresion
+		Result<Record> agreementInheritLevelDatas = dslContext.select().from(AGREEMENT_LEVEL_DATA)
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_LEVEL_DATA.EXPRESSION.like("%inherit%"))
+				.fetch();
+		
+		List<String> agreementInheritLevelDataMessages = new ArrayList<String>();
+		agreementInheritLevelDatas.forEach(data -> agreementInheritLevelDataMessages.add("La expresi\u00f3n " + data.get(AGREEMENT_LEVEL_DATA.EXPRESSION) + " del nivel " + data.get(AGREEMENT_LEVEL.DESCRIPTION) + " contiene 'inherit'"));
+		messages.put(AgreementIntegrityFix.AGREEMENT_LEVEL_DATA_INHERIT, agreementInheritLevelDataMessages);
+		
+		// AgreementPayment with inherit expresion
+		Result<AgreementPaymentRecord> agreementInheritPayments = dslContext.selectFrom(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+			.and(AGREEMENT_PAYMENT.EXPRESSION.like("%inherit%"))
+			.fetch();
+		
+		List<String> agreementInheritPaymentMessages = new ArrayList<String>();
+		agreementInheritPayments.forEach(data -> agreementInheritPaymentMessages.add("La expresi\u00f3n " + data.get(AGREEMENT_PAYMENT.EXPRESSION) + " contiene 'inherit'"));
+		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_INHERIT, agreementInheritPaymentMessages);
+		
+		// ContractPayment with inherit expresion
+		Result<Record> contractInheritPayments = dslContext.select().from(CONTRACT_PAYMENT)
+			.join(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+			.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+			.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+			.and(CONTRACT_PAYMENT.EXPRESSION.like("%inherit%"))
+			.fetch();
+		
+		List<String> contractInheritPaymentMessages = new ArrayList<String>();
+		contractInheritPayments.forEach(data -> contractInheritPaymentMessages.add("La expresi\u00f3n, del contrato " + data.get(CONTRACT_PAYMENT.CONTRACT) + ", " + data.get(CONTRACT_PAYMENT.EXPRESSION) + " contiene 'inherit'"));
+		messages.put(AgreementIntegrityFix.CONTRACT_PAYMENT_INHERIT, contractInheritPaymentMessages);
+		
+		// AgreementPayment expression same as paymentConcept expresion
+		Result<Record> agreementPaymentPaymentConceptsSameExpr = dslContext.select().from(AGREEMENT_PAYMENT)
+				.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_PAYMENT.EXPRESSION.eq(PAYMENT_CONCEPT.EXPRESSION))
+				.and(AGREEMENT_PAYMENT.DOMAIN.eq(PAYMENT_CONCEPT.DOMAIN))
+				.fetch();
+		
+		List<String> agreementPaymentPaymentConceptsSameExprMessages = new ArrayList<String>();
+		agreementPaymentPaymentConceptsSameExpr.forEach(data -> agreementPaymentPaymentConceptsSameExprMessages.add("La expresi\u00f3n " + data.get(AGREEMENT_PAYMENT.EXPRESSION) + " es igual a la expresi\u00f3n de su concepto"));
+		messages.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR, agreementPaymentPaymentConceptsSameExprMessages);
+		
 		
 		agreementIntegrity.setMessages(messages);
 		
@@ -360,7 +428,8 @@ public class JooqAgreementIntegrity {
 		        
 		        if(variables.contains(code)) appearence.add(agreementPaymentIt);
 			} catch (Exception e) {
-				wrongExpressions.add(expression);
+				System.out.println("expressionCodeCheck --> Wrong expression from agreement_payment: " + agreementPaymentIt.get(AGREEMENT_PAYMENT.ID));
+				wrongExpressions.add(agreementPaymentIt);
 			}
 		});
 		
@@ -385,7 +454,8 @@ public class JooqAgreementIntegrity {
 		        
 		        if(variables.contains(code)) appearence.add(agreementPaymentIt);
 			} catch (Exception e) {
-				wrongExpressions.add(expression);
+				System.out.println("containsExpression --> Wrong expression from agreement_payment: " + agreementPaymentIt.get(AGREEMENT_PAYMENT.ID));
+				wrongExpressions.add(agreementPaymentIt);
 			}
 		});
 		
@@ -467,8 +537,8 @@ public class JooqAgreementIntegrity {
 		
 		payments.forEach(paymentIt -> {
 			String description = AonStringUtils.isBlank(paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION)) ? paymentIt.get(PAYMENT_CONCEPT.DESCRIPTION) : paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION);
-			messages.add("El devengo " + description + " del contrato (Dom. Contr.: " + paymentIt.get(CONTRACT_PAYMENT.DOMAIN) + ", Dom. Conv.: " + agreementDomain + ") esta en otro dominio al del concepto (Dom.: " +  paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ")");
-		});
+			messages.add("En el contrato de "+ paymentIt.get(REGISTRY.NAME) + " (Dom.: " + paymentIt.get(CONTRACT.DOMAIN) + ") existe el devengo \n" + description + " que esta en otro dominio al del concepto (Dom.: " +  paymentIt.get(PAYMENT_CONCEPT.DOMAIN) + ")");
+			});
 		
 		return messages;
 	}
@@ -478,7 +548,7 @@ public class JooqAgreementIntegrity {
 		
 		payments.forEach(paymentIt -> {
 			String description = AonStringUtils.isBlank(paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION)) ? paymentIt.get(PAYMENT_CONCEPT.DESCRIPTION) : paymentIt.get(CONTRACT_PAYMENT.DESCRIPTION);
-			messages.add("El devengo del contrato " + description + " tiene un concepto sin c\u00f3digo");
+			messages.add("En el contrato de "+ paymentIt.get(REGISTRY.NAME) + " existe el devengo \n" + description + " que  tiene un concepto sin c\u00f3digo");
 		});
 		
 		return messages;
@@ -527,11 +597,14 @@ public class JooqAgreementIntegrity {
 		return messages;
 	}
 	
-	private static List<String> parseAgreementPaymentWrongExpressionMessage(Set<String> wrongExpressions) {
+	private static List<String> parseAgreementPaymentWrongExpressionMessage() {
 		List<String> messages = new ArrayList<String>();
 		
 		wrongExpressions.forEach(wrongExpression -> {
-			messages.add("La expresi\u00f3n " + wrongExpression + " tiene un formato que no es valido");
+			String expression = AonStringUtils.isBlank(wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION)) || AonStringUtils.containsIgnoreCase(wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE") ? wrongExpression.get(PAYMENT_CONCEPT.EXPRESSION) : wrongExpression.get(AGREEMENT_PAYMENT.EXPRESSION);
+			String description = AonStringUtils.isBlank(wrongExpression.get(AGREEMENT_PAYMENT.DESCRIPTION)) ? wrongExpression.get(PAYMENT_CONCEPT.DESCRIPTION) : wrongExpression.get(AGREEMENT_PAYMENT.DESCRIPTION);
+			
+			messages.add("El devengo " + description + " (Id: " + wrongExpression.get(AGREEMENT_PAYMENT.ID) + ") cuya expresi\u00f3n es \n" + expression + " tiene un formato que no es valido");
 		});
 		
 		return messages;
@@ -567,17 +640,26 @@ public class JooqAgreementIntegrity {
 		
 		dslContext.transaction(configuration -> {
 			if(null == agreementIntegrityFix) {
+				fixAgreementDataInherit(dslContext, domainId, agreement);
+				fixAgreementLevelDataInherit(dslContext, domainId, agreement);
+				fixAgreementPaymentDataInherit(dslContext, domainId, agreement);
+				fixContractPaymentDataInherit(dslContext, domainId, agreement);
+				
 				fixOtherDomainAgreementPayments(dslContext, domainId, agreement);
 				fixAgreementPaymentsWithoutPaymentConcept(dslContext, domainId, agreement);
 				fixAgreementPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
 				fixNoCodeWrongCodePaymentConcept(dslContext, domainId, agreement);
 				fixPaymentConceptCodeInExpression(dslContext, domainId, agreement);
 				fixAgreementVariablesAsPaymentConceptCode(dslContext, domainId, agreement);
-				fixAgreementVariablesPaymentConceptCodeAsContextVariable(dslContext, domainId, agreement);
+				
+//				fixAgreementVariablesPaymentConceptCodeAsContextVariable(dslContext, domainId, agreement);
+				
 				fixContractPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
 				fixContractPaymentsPaymentConceptWithoutCode(dslContext, domainId, agreement);
 				fixPaymentConceptNoReferences(dslContext, domainId, agreement);
 				fixAgreementExtraWrongFormatPeriod(dslContext, domainId, agreement);
+
+				fixAgreementPaymentExpression(dslContext, domainId, agreement);
 			} else {
 				switch (agreementIntegrityFix) {
 					case OTHER_DOMAIN_AGREEMENT_PAYMENTS:
@@ -616,6 +698,21 @@ public class JooqAgreementIntegrity {
 					case AGREEMENT_EXTRA_START_END:
 						fixAgreementExtraStartEndDates(dslContext, domainId, agreement);
 						break;
+					case AGREEMENT_DATA_INHERIT:
+						fixAgreementDataInherit(dslContext, domainId, agreement);
+						break;
+					case AGREEMENT_LEVEL_DATA_INHERIT:
+						fixAgreementLevelDataInherit(dslContext, domainId, agreement);
+						break;
+					case AGREEMENT_PAYMENT_INHERIT:
+						fixAgreementPaymentDataInherit(dslContext, domainId, agreement);
+						break;
+					case CONTRACT_PAYMENT_INHERIT:
+						fixContractPaymentDataInherit(dslContext, domainId, agreement);
+						break;
+					case AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR:
+						fixAgreementPaymentExpression(dslContext, domainId, agreement);
+						break;
 					default:
 						throw new IllegalArgumentException("No se ha podido encontrar : " + agreementIntegrityFix);
 				}
@@ -638,6 +735,8 @@ public class JooqAgreementIntegrity {
 				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
 				.execute();
 		});
+		
+		System.out.println("Agreement Integrity : agreement payments relocated from other domains --> " + agreementPayments.size());
 	}
 
 	private static void fixAgreementPaymentsWithoutPaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
@@ -656,23 +755,39 @@ public class JooqAgreementIntegrity {
 				.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION))
 				.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(AGREEMENT_PAYMENT.TYPE))
 				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
-				.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+				.set(PAYMENT_CONCEPT.EXPRESSION, 
+						AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE")
+							? removeInheritExpr( AonStringUtils.substringAfter(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE();") )
+							: removeInheritExpr(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
+				)
 				.returning(PAYMENT_CONCEPT.ID)
 				.fetchOne(PAYMENT_CONCEPT.ID);
 			
-			dslContext.update(AGREEMENT_PAYMENT)
-				.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
+			// AgreementPayment
+			UpdateSetMoreStep<AgreementPaymentRecord> updateAgreementPayment = dslContext.update(AGREEMENT_PAYMENT)
+//				.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
 				.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE))
-				.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
-				.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION))
+				.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, (byte)0)
 				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
 				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
 				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				;
+			
+			// If disable set agreementPaymente expression else null
+			if(AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE"))
+				updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
+			else
+				updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+			
+			updateAgreementPayment
 				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
 				.execute();
+			
 		});
+		
+		System.out.println("Agreement Integrity : payment concept inserted for agreement payment without payment concept --> " + agreementPayments.size());
 	}
 
 	private static void fixAgreementPaymentsWithOtherDomainPaymentConcept(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
@@ -685,79 +800,79 @@ public class JooqAgreementIntegrity {
 				.fetch();
 		
 		agreementPayments.forEach(agreementPayment -> {
-			// If payment_concept domain 0, create copy and set to agreement_payment
-			// If payment_concept domain other, check if it used, 
-			// 		If true create copy and set to agreement_payment
-			//	 	If false update domain payment_concept
+			Integer oldPaymentConceptId = agreementPayment.get(PAYMENT_CONCEPT.ID);
 			
-			Integer paymentConceptDomain = agreementPayment.get(PAYMENT_CONCEPT.DOMAIN);
-			if(paymentConceptDomain.equals(0)) {
-				Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
-						.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
-						.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
-						.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
-						.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
-						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
-						.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
-						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
-						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
-						.returning(PAYMENT_CONCEPT.ID)
-						.fetchOne(PAYMENT_CONCEPT.ID);
+			// Si tienen expression el agreement_payment se usa esta como expresion del nueveo paymentConcept (ojo el disabled, eliminarlo si es necesario)
+			// Si no tiene se usa la expresion del antiguo payment_concept (el que estamos copiando)
+			
+			Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
+					.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
+					.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
+					.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
+					.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
+					.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+					.set(PAYMENT_CONCEPT.EXPRESSION, 
+							AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
+								? (
+										AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE")
+											? removeInheritExpr(AonStringUtils.substringAfter(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE();"))
+											: removeInheritExpr(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
+								)
+								: removeInheritExpr(agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
+					)
+					.returning(PAYMENT_CONCEPT.ID)
+					.fetchOne(PAYMENT_CONCEPT.ID);
+			
+			// AgreementPayment
+			UpdateSetMoreStep<AgreementPaymentRecord> updateAgreementPayment = dslContext.update(AGREEMENT_PAYMENT)
+//				.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
+				.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE))
+				.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, (byte)0)
+				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				;
+			
+			// If disable set agreementPaymente expression else null
+			if(AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE"))
+				updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
+			else
+				updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+			
+			updateAgreementPayment
+				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+				.execute();
+			
+			// ContractPayment
+			List<Record> contractPayments = dslContext.select().from(CONTRACT_PAYMENT)
+				.join(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+				.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(oldPaymentConceptId))
+				.fetch();
+			
+			contractPayments.forEach(contractPayment -> {
 				
-				dslContext.update(AGREEMENT_PAYMENT)
-					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-					.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+				// Si el contractPayment ha modificar esta redefinido se deja, si no, se arrastra la expression del antiguo paymentConcept
+				
+				String oldPaymentConceptExpr = agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION);
+				
+				dslContext.update(CONTRACT_PAYMENT)
+					.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+					.set(CONTRACT_PAYMENT.EXPRESSION, 
+							AonStringUtils.isNotBlank(contractPayment.get(CONTRACT_PAYMENT.EXPRESSION))
+								? contractPayment.get(CONTRACT_PAYMENT.EXPRESSION) 
+								: oldPaymentConceptExpr
+					)
+					.where(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(oldPaymentConceptId))
+					.and(CONTRACT_PAYMENT.ID.eq(contractPayment.get(CONTRACT_PAYMENT.ID)))
 					.execute();
-			} else {
-				List<Integer> agreementPaymentDomains = dslContext.selectDistinct(AGREEMENT_PAYMENT.DOMAIN)
-					.from(AGREEMENT_PAYMENT)
-					.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
-					.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
-					.fetch(AGREEMENT_PAYMENT.DOMAIN);
-				
-				List<Integer> contractPaymentDomains = dslContext.selectDistinct(CONTRACT_PAYMENT.DOMAIN)
-					.from(CONTRACT_PAYMENT)
-					.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(CONTRACT_PAYMENT.PAYMENT_CONCEPT))
-					.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
-					.fetch(CONTRACT_PAYMENT.DOMAIN);
-				
-				List<Integer> systemPaymentDomains = dslContext.selectDistinct(SYSTEM_PAYMENT.DOMAIN)
-						.from(SYSTEM_PAYMENT)
-						.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(SYSTEM_PAYMENT.PAYMENT_CONCEPT))
-						.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
-						.fetch(SYSTEM_PAYMENT.DOMAIN);
-				
-				Set<Integer> uniqueDomains = new HashSet<Integer>();
-				uniqueDomains.addAll(agreementPaymentDomains);
-				uniqueDomains.addAll(contractPaymentDomains);
-				uniqueDomains.addAll(systemPaymentDomains);
-				
-				// Update payment_concept domain
-				if(uniqueDomains.size() == 1) {
-					dslContext.update(PAYMENT_CONCEPT)
-						.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
-						.where(PAYMENT_CONCEPT.ID.eq(agreementPayment.get(PAYMENT_CONCEPT.ID)))
-						.execute();
-				} else {
-					// Duplicate payment_concept domain
-					Integer paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
-							.set(PAYMENT_CONCEPT.DOMAIN, agreement.getDomain())
-							.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
-							.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
-							.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
-							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
-							.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
-							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
-							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
-							.returning(PAYMENT_CONCEPT.ID)
-							.fetchOne(PAYMENT_CONCEPT.ID);
-					
-					dslContext.update(AGREEMENT_PAYMENT)
-						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-						.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
-						.execute();
-				}
-			}
+			});
+			
+			System.out.println("Agreement Integrity : payment concept " + oldPaymentConceptId + ", download from domain 0 to agreement (PC: " + paymentConceptId + ")");
+			System.out.println("Agreement Integrity : contract payments update new payment concept --> " + contractPayments.size());
 		});
 	}
 
@@ -1241,6 +1356,8 @@ public class JooqAgreementIntegrity {
 				.where(AGREEMENT_EXTRA.ID.eq(agreementExtra.get(AGREEMENT_EXTRA.ID)))
 				.execute();
 		});
+		
+		System.out.println("Agreement Integrity : agreement extra wrong format dates --> " + records.size());
 	}
 	
 	private static void fixAgreementExtraStartEndDates(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
@@ -1294,7 +1411,146 @@ public class JooqAgreementIntegrity {
 		        	.where(AGREEMENT_EXTRA.ID.eq(agreementExtra.get(AGREEMENT_EXTRA.ID)))
 		        	.execute();
 			});
+			
+			System.out.println("Agreement Integrity : agreement extra wrong start/end dates --> " + agreementExtrasStartEndDates.size());
 		}
+	}
+	
+	private static void fixAgreementDataInherit(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<AgreementDataRecord> agreementDatas = dslContext.selectFrom(AGREEMENT_DATA)
+			.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
+			.and(AGREEMENT_DATA.EXPRESSION.like("%inherit%"))
+			.fetch();
+		
+		agreementDatas.forEach(agreementData -> {
+			dslContext.update(AGREEMENT_DATA)
+				.set(AGREEMENT_DATA.EXPRESSION, removeInheritExpr(agreementData.getExpression()))
+				.where(AGREEMENT_DATA.ID.eq(agreementData.getId()))
+				.execute();
+		});
+		
+		System.out.println("Agreement Integrity : remove inherit from agreement payment --> " + agreementDatas.size());
+		
+	}
+
+	private static void fixAgreementLevelDataInherit(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> agreementLevelDatas = dslContext.select().from(AGREEMENT_LEVEL_DATA)
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_LEVEL_DATA.EXPRESSION.like("%inherit%"))
+				.fetch();
+		
+		agreementLevelDatas.forEach(agreementLevelData -> {
+			dslContext.update(AGREEMENT_LEVEL_DATA)
+				.set(AGREEMENT_LEVEL_DATA.EXPRESSION, removeInheritExpr(agreementLevelData.get(AGREEMENT_LEVEL_DATA.EXPRESSION)))
+				.where(AGREEMENT_LEVEL_DATA.ID.eq(agreementLevelData.get(AGREEMENT_LEVEL_DATA.ID)))
+				.execute();
+		});
+		
+		System.out.println("Agreement Integrity : remove inherit from agreement level data --> " + agreementLevelDatas.size());
+	}
+
+	private static void fixAgreementPaymentDataInherit(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<AgreementPaymentRecord> agreementPayments = dslContext.selectFrom(AGREEMENT_PAYMENT)
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+			.and(AGREEMENT_PAYMENT.EXPRESSION.like("%inherit%"))
+			.fetch();
+		
+		agreementPayments.forEach(agreementPayment -> {
+			dslContext.update(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.EXPRESSION, removeInheritExpr(agreementPayment.getExpression()))
+				.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.getId()))
+				.execute();
+		});
+		
+		System.out.println("Agreement Integrity : remove inherit from agreement payment --> " + agreementPayments.size());
+	}
+	
+	private static void fixContractPaymentDataInherit(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> contractPayments = dslContext.select().from(CONTRACT_PAYMENT)
+				.join(CONTRACT).on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+				.join(AGREEMENT_LEVEL).on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreement.getId()))
+				.and(CONTRACT_PAYMENT.EXPRESSION.like("%inherit%"))
+				.fetch();
+		
+		contractPayments.forEach(contractPayment -> {
+			dslContext.update(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.EXPRESSION, removeInheritExpr(contractPayment.get(CONTRACT_PAYMENT.EXPRESSION)))
+				.where(CONTRACT_PAYMENT.ID.eq(contractPayment.get(CONTRACT_PAYMENT.ID)))
+				.execute();
+		});
+		
+		System.out.println("Agreement Integrity : remove inherit from contract payments --> " + contractPayments.size());
+	}
+	
+	private static void fixAgreementPaymentExpression(DSLContext dslContext, Integer domainId, AgreementRecord agreement) {
+		Result<Record> agreementPayments = dslContext.select().from(AGREEMENT_PAYMENT)
+			.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+			.and(AGREEMENT_PAYMENT.DOMAIN.eq(PAYMENT_CONCEPT.DOMAIN))
+			.fetch();
+		
+		agreementPayments.forEach(agreementPayment -> {
+			if(AonStringUtils.equals(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))) {
+				dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION))
+					.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
+					.execute();
+				
+				System.out.println("Agreement Integrity : remove agreement payment expression, same as payment concept (id: " + agreementPayment.get(AGREEMENT_PAYMENT.ID) + ")");
+			}
+		});
+	
+	}
+
+	private static String removeInheritExpr(String expression) {
+		if(!AonStringUtils.contains(expression, "inherit")) return expression;
+		
+		String inheritTag = "/*inherit*/";
+        String endTag = "/**/";
+
+        int inheritPos = expression.indexOf(inheritTag);
+        if (inheritPos == -1) return null;
+
+        int contentStart = inheritPos + inheritTag.length();
+
+        // Buscar el cierre /**/ correspondiente (ignorando si está dentro de paréntesis)
+        int openParens = 0;
+        int endPos = -1;
+        int i = contentStart;
+
+        while (i < expression.length()) {
+            char c = expression.charAt(i);
+            if (c == '(') openParens++;
+            else if (c == ')') openParens = Math.max(0, openParens - 1);
+            else if (expression.startsWith(endTag, i) && openParens == 0) {
+                endPos = i;
+                break;
+            }
+            i++;
+        }
+
+        if (endPos == -1) return null;
+
+        // Tomar contenido sin el /*inherit*/ ni /**/
+        String before = expression.substring(0, inheritPos).trim();
+        String middle = expression.substring(contentStart, endPos).trim();
+        String after = expression.substring(endPos + endTag.length()).trim();
+
+        // Armar expresión limpia
+        String expresion = (before + " " + middle + " " + after).replaceAll("\\s+", " ").trim();
+        
+        return expresion;
+		
+//		Pattern pattern = Pattern.compile("/\\*inherit\\*/(.*?)/\\*\\*/");
+//        Matcher matcher = pattern.matcher(exrpression);
+//
+//        if (matcher.find()) {
+//            return matcher.group(1).trim();
+//        }
+//
+//        return exrpression;
 	}
 
 	private static Set<String> getAgreementVariables(DSLContext dslContext, Integer agreementId){
@@ -1518,6 +1774,49 @@ public class JooqAgreementIntegrity {
     	allowedVars.add("SEGURO_AT");
     	
     	return allowedVars;
-    } 
+    }
+    
+ // ----------- fixAgreementIntegrity
+
+	public static void fixAgreementIntegrity(Connection connection, Integer domainId, Integer agreementId) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		allowedVars = getAllowedConceptContextVars();
+		
+		AgreementRecord agreement = dslContext.selectFrom(AGREEMENT).where(AGREEMENT.ID.eq(agreementId)).fetchOne();
+		
+		dslContext.transaction(configuration -> {
+			
+			AgreementDataRecord aonAutoUpdate = dslContext.selectFrom(AGREEMENT_DATA)
+				.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_DATA.NAME.eq("AON_AUTO_UPDATE"))
+				.fetchOne();
+			
+			if(null == aonAutoUpdate) {
+				fixAgreementDataInherit(dslContext, domainId, agreement);
+				fixAgreementLevelDataInherit(dslContext, domainId, agreement);
+				fixAgreementPaymentDataInherit(dslContext, domainId, agreement);
+				fixContractPaymentDataInherit(dslContext, domainId, agreement);
+				
+				fixOtherDomainAgreementPayments(dslContext, domainId, agreement);
+				fixAgreementPaymentsWithoutPaymentConcept(dslContext, domainId, agreement);
+				fixAgreementPaymentsWithOtherDomainPaymentConcept(dslContext, domainId, agreement);
+				fixAgreementExtraWrongFormatPeriod(dslContext, domainId, agreement);
+				fixAgreementExtraStartEndDates(dslContext, domainId, agreement);
+				
+				fixAgreementPaymentExpression(dslContext, domainId, agreement);
+				
+				dslContext.insertInto(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.DOMAIN, agreement.getDomain())
+					.set(AGREEMENT_DATA.NAME, "AON_AUTO_UPDATE")
+					.set(AGREEMENT_DATA.AGREEMENT, agreement.getId())
+					.set(AGREEMENT_DATA.EXPRESSION, formatter.format(new java.util.Date()))
+					.set(AGREEMENT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(AGREEMENT_DATA.END_DATE, new Date(new java.util.Date().getTime()))
+					.execute();
+			}
+			
+		});
+	}
     
 }

@@ -33,7 +33,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSelectStep;
-import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.AuthAttachRecord;
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
@@ -65,7 +64,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachTagPrope
 import com.esferalia.aon.occam.impl.jooq.dao.CategoryDAO.CategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskDAO.TagFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 

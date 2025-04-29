@@ -11,10 +11,20 @@ public class MIModelo420RequestHandler implements RequestHandler<MIModelo420Requ
 	public MIModelo420Result handleRequest(MIModelo420Request input, Context context) {
 		String declaracion = new String(Base64.getDecoder().decode(input.getDeclaracion()));
 		System.out.println(declaracion);
-		if (declaracion.contains("MOD=\"417\""))
-			return new MIModelo420Handler().obtenerPresentacion417(declaracion);
-		else
-			return new MIModelo420Handler().obtenerPresentacion420(declaracion);
+		if (declaracion.contains("MOD=\"417\"")) {
+			// Modelo 417
+			if (input.isBorrador())
+				return new MIModelo420Handler().obtenerBorrador417(declaracion); // Borrador
+			else
+				return new MIModelo420Handler().obtenerPresentacion417(declaracion); // Fichero para presentación
+		}
+		else {
+			// Modelo 420
+			if (input.isBorrador())
+				return new MIModelo420Handler().obtenerBorrador420(declaracion); // Borrador
+			else
+				return new MIModelo420Handler().obtenerPresentacion420(declaracion); // Fichero para presentación
+		}
 	}
 	
 //	private static String obtenerXML(String modelo) {

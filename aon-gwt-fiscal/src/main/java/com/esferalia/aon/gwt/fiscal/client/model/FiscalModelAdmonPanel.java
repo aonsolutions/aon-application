@@ -83,7 +83,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
 	private AonLink boeDownloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n. [Formato BOE]");
 
-	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
+	private AonLink validateLink;
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
 	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n en AEAT.");
 	private AonLink viewDocumentLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Consultar Presentaci\u00F3n guardada.");
@@ -126,7 +126,12 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		modelInfoLinklink.addClickHandler(event -> 
 			Window.open(getCallback().getModelInformationURL(), "", "")); 
 		cards.add( modelInfoLinklink );
-
+		
+		if (callback.getModel().isCanarias()) {
+			validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via ATC");
+		} else {
+			validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
+		}
 		validateLink.addClickHandler(event -> validateAEAT()); 
 		cards.add( validateLink );
 
@@ -243,14 +248,69 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		downloadFile(false);	
 	}
 
-	private void downloadFile (boolean boeFormat) {
+	private void downloadFile(boolean boeFormat) {
 		if (getCallback().getModel().canBeSent() || getCallback().getModel().isSent()) {
 			boeFormatHidden.setValue(Boolean.toString(boeFormat));
-			submitForm(getCallback().getDownloadFileAction());
+			if (getCallback().getModel().isCanarias()) {
+				downloadFileATC();
+			}
+			else {
+				submitForm(getCallback().getDownloadFileAction());
+			}
 		} else {
 			getCallback().showError(AON.MSG.mustFinishModel());
 		}
 	}
+	
+	// Agencia Tributaria Canaria: Obtener fichero (se hace a través del modulo de impresión de la ATC)
+	private void downloadFileATC() {
+		if (!validating) {
+			validating = true;
+			AEATParams params =new AEATParams()
+				.setDomainName(getCallback().getOptions().getDomainName())
+				.setDomainId(getCallback().getOptions().getDomain())
+				.setUser(getCallback().getOptions().getUser())
+				.setMod(getCallback().getModel().getId());
+		
+			final PopupPanel popup = new PopupPanel(false, true);
+			popup.add( new AonSplash());
+			popup.setGlassEnabled(true);
+			popup.setAnimationEnabled(true);
+			popup.center();
+			
+			cleanViewers();
+			XMLHttpRequest xhr = XMLHttpRequest.create();
+			xhr.open(FormPanel.METHOD_POST, getCallback().getDownloadFileAction());
+			xhr.setRequestHeader(AonHttpUtils.CONTENT_TYPE, AonHttpUtils.APPLICATION_FORM_URLENCODED);
+			xhr.setOnReadyStateChange(xhreq -> {
+				int state = xhreq.getReadyState();
+				if (state == XMLHttpRequest.DONE) {
+					ArrayBuffer buff = xhreq.getResponseArrayBuffer();
+					if (AonStringUtils.contains(xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE), MimeType.TXT.getName())) {
+						// CORRECTO VIENE EL FICHERO PARA GUARDARLO
+                        // VIENE ASI: "Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");
+						String fileName = AonStringUtils.trimToEmpty(xhreq.getResponseHeader("Content-disposition")).split("filename=\"")[1].split("\";")[0].trim();
+						save(fileName, buff.toString());
+					} else {
+						showHtml(buff.toString());
+					}
+					validating = false;
+					popup.hide();
+				}
+			});	
+			StringBuilder requestData = new StringBuilder();
+			requestData.append("&"+IRequestParamsNames.AEAT_PARAMS +"=" + JsonParams.convert( params ));
+			xhr.send(requestData.toString());
+		}
+	}
+	
+	public native void save(String fileName, String fileContent) /*-{
+		var blob = new Blob([fileContent], { type: 'text/plain' });
+		var a = document.createElement('a');
+		a.setAttribute('download', fileName);
+		a.setAttribute('href', window.URL.createObjectURL(blob));
+		a.click();
+	}-*/;
 
 	private void sendToAdministration() {
 		if (!sending) {
@@ -536,13 +596,12 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 
 	public void manageLinks() {
 		modelInfoLinklink.setVisible(true);
-		//downloadLink.setVisible( getCallback().getModel().canBeSent() );
 		downloadLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getDownloadFileAction()) );
 		boeDownloadLink.setVisible( getCallback().isBoeFormatEnabled() && getCallback().getModel().canBeSent() );
 		if ((getCallback().getModel().getYear() > 2021) || 
 			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester()) || 
 			(getCallback().getModel().getYear() == 2021 && getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2)) {
-			validateLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			validateLink.setVisible((getCallback().getModel().isAEAT() || getCallback().getModel().isCanarias()) && getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
 			sendLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().getDeclarationResultType() != FiscalModelDeclarationType.DEFERRAL && getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction()));
 			checkLink.setVisible(getCallback().getModel().isAEAT() && getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction()));
 			viewDocumentLink.setVisible(getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction()));

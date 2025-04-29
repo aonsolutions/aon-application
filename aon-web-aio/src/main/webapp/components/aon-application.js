@@ -1013,9 +1013,9 @@ export class AonApplication extends AonElement {
     this.getElement(this.TOOLBAR).addButton(name, icon, fn);
   }
 
-  addSearchOption(opened=false) {
+  addSearchOption(opened=false, filterDocumental=false) {
     let toolbar = this.getElement(this.TOOLBAR);
-    return toolbar.addSearchButton(opened);
+    return toolbar.addSearchButton(opened, filterDocumental);
   }
 
   cleanSearchValue() {
@@ -1194,7 +1194,7 @@ export class AonApplication extends AonElement {
 
   dragoverFn = (event) => {
     event.preventDefault();
-    console.log(EVENT.DRAGOVER);
+//    console.log(EVENT.DRAGOVER);
     this.content.style.border = "2px solid #002469";
     this.content.style.opacity = "0.6";
   };
@@ -1226,7 +1226,7 @@ export class AonApplication extends AonElement {
 
   dropFn = (event) => {
     event.preventDefault();
-    console.log(EVENT.DROP + " aon application");
+//    console.log(EVENT.DROP + " aon application");
     this.content.style.border = "0px";
     this.content.style.opacity = "1";
     if(event && event.dataTransfer && event.dataTransfer.files){

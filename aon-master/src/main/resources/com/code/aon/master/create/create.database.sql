@@ -9350,12 +9350,12 @@ CREATE TABLE `fs_model369_detail` (
 # Table structure for table `rdoc`
 #
 
-CREATE TABLE IF NOT EXISTS rdoc (
+CREATE TABLE rdoc (
 	id                INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	domain            INT NOT NULL COMMENT 'dominio del documento',
 	registry          INT NOT NULL DEFAULT 0 COMMENT 'registry al que pertenece el documento????',
 	category          INT NULL COMMENT 'categoria del documento',
-	size              INT NULL COMMENT 'tamaño en bytes del documento',
+	size              INT NULL COMMENT 'tamaï¿½o en bytes del documento',
 	mimeType          TINYINT NULL DEFAULT 0 COMMENT 'tipo de extension del documento',
 	name              VARCHAR(64) NULL COMMENT 'nombre del documento',
 	real_name         VARCHAR(64) NULL COMMENT 'nombre del documento',
@@ -9370,6 +9370,7 @@ CREATE TABLE IF NOT EXISTS rdoc (
 	modification_date DATETIME NULL,
 	delete_user VARCHAR(16) NULL,
 	delete_date DATETIME NULL,
+	type TINYINT DEFAULT NULL COMMENT 'Tipo del documento',
 	INDEX idx_rdoc_domain (domain),
 	INDEX idx_rdoc_registry (registry),
 	INDEX idx_rdoc_category (category),
@@ -9384,14 +9385,38 @@ CREATE TABLE IF NOT EXISTS rdoc (
 # Table structure for table `category_tree`
 #
 
-CREATE TABLE IF NOT EXISTS category_tree (
+CREATE TABLE category_tree (
     id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
-    id_parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
+    category INT NOT NULL COMMENT 'identificador de la categoria a la que hace referencia',
+    parent INT NULL COMMENT 'identificador de la categoria padre, si es null es un nodo raiz',
     is_visible BOOLEAN DEFAULT TRUE COMMENT 'indica si sera o no visible para los subdominios',
     is_deletable BOOLEAN DEFAULT TRUE COMMENT 'indica si se puede borrar o no, asi diferenciamos las categorias por defecto de las creadas por usuarios',
-	CONSTRAINT fk_category FOREIGN KEY (id_category) REFERENCES category(id)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creación de jerarquía en las categorias del documental';
+    domain INT NOT NULL COMMENT 'Identificador del Dominio',
+    KEY FK_CATEGORY_TREE_CATEGORY (category),
+    KEY FK_CATEGORY_TREE_PARENT (parent),
+    KEY FK_CATEGORY_TREE_DOMAIN (domain),
+	CONSTRAINT FK_CATEGORY_TREE_CATEGORY FOREIGN KEY (category) REFERENCES category(id),
+  	CONSTRAINT FK_CATEGORY_TREE_PARENT FOREIGN KEY (parent) REFERENCES category(id),
+  	CONSTRAINT FK_CATEGORY_TREE_DOMAIN FOREIGN KEY (domain) REFERENCES domain(id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Creaciï¿½n de jerarquï¿½a en las categorias del documental';
+
+#
+# Table structure for table `rdoc_tag`
+#
+
+CREATE TABLE `rdoc_tag` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain` int NOT NULL COMMENT 'identificador del dominio',
+  `rdoc` int NOT NULL COMMENT 'identificador del documento almacenado en rdoc',
+  `tag` int NOT NULL COMMENT 'identificador del tag',
+  PRIMARY KEY (`id`),
+  KEY `IDX_RDOC_TAG_DOMAIN` (`domain`),
+  KEY `IDX_RDOC_TAG_RDOC` (`rdoc`),
+  KEY `IDX_RDOC_TAG_TAG` (`tag`),
+  CONSTRAINT `FK_RDOC_TAG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RDOC_TAG_RDOC` FOREIGN KEY (`rdoc`) REFERENCES `rdoc` (`id`),
+  CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asociacion N:N de rdocs con tags.';
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 

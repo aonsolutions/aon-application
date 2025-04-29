@@ -379,6 +379,7 @@ public class JooqAgreementTab {
 	private static void getAgreementDates(DSLContext dslContext, AgreementInfo agreement) {
 		List<Date> agreementDataDates = dslContext.selectDistinct(AGREEMENT_DATA.START_DATE).from(AGREEMENT_DATA)
 				.where(AGREEMENT_DATA.AGREEMENT.eq(agreement.getId()))
+				.and(AGREEMENT_DATA.NAME.ne("AON_AUTO_UPDATE"))
 				.fetch(AGREEMENT_DATA.START_DATE);
 		
 		List<Integer> agreementLevels = agreement.getLevels().stream().map(level -> level.getId()).collect(Collectors.toList());

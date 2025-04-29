@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.ItemComposition.ITEM_COMPOSITION;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 import static com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.COMPOSITION_ALIAS;
 
@@ -47,6 +48,7 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemCompositionDAO.ItemCompositionFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TagDAO.TagFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -63,6 +65,11 @@ public class ItemDAO {
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	private static final RItemPropertiesDAO RITEM_PROPERTIES = new RItemPropertiesDAO();
 
+	public static final com.esferalia.aon.jooq.tables.Tag STOCK_UNIT_TAG = TAG.as("stokUnitTag");
+	public static final com.esferalia.aon.jooq.tables.Tag PACK_FORMAT_TAG = TAG.as("packFormatTag");
+	public static final com.esferalia.aon.jooq.tables.Tag PACK_UNITS_TAG = TAG.as("packUnitsTag");
+	public static final com.esferalia.aon.jooq.tables.Tag PACK_MEASUREMENT_TAG = TAG.as("packMeasurementTag");
+	
 	protected static class ItemPropertiesDAO implements ItemProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, ItemFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -161,7 +168,7 @@ public class ItemDAO {
 		Map<Item, List<ItemComposition>> map =  selectFull(ctx, filter)
 				.groupBy(ITEM.ID, ITEM_COMPOSITION.ID)
 				.fetchGroups(new ItemFiller()::apply, new ItemCompositionFiller()::apply);
-		map.forEach((object, composition) -> composition.forEach(c -> object.addItemComposition(c)));
+		map.forEach((object, composition) -> composition.forEach(object::addItemComposition));
 		return map.keySet().stream(); 
 	}
 	
@@ -464,11 +471,9 @@ public class ItemDAO {
 			).toArray(RegistryItem[]::new);
 			
 		}
-		
 		return ritems;
 	}
 	
-
 	public static class ItemFiller extends Filler implements Function<Record, Item> {
 		
 		@Override
@@ -502,12 +507,20 @@ public class ItemDAO {
 				.setPurchasePrice(getDouble(r, alias.PURCHASE_PRICE))				
 				.setInternet(getBoolean(r, alias.INTERNET))
 				.setBarcode(getValue(r, alias.BARCODE))
-				.setPackFormatTag(new Tag().setId(getValue(r, alias.PACK_FORMAT_TAG)))
+				.setPackFormatTag(checkField(r, PACK_FORMAT_TAG.ID)
+						? TagFiller.build(r, PACK_FORMAT_TAG)
+						: new Tag().setId(getValue(r, alias.PACK_FORMAT_TAG)))
 				.setPackUnits(getInteger(r, alias.PACK_UNITS))
-				.setPackUnitsTag(new Tag().setId(getValue(r, alias.PACK_UNITS_TAG)))
+				.setPackUnitsTag(checkField(r, PACK_UNITS_TAG.ID)
+						? TagFiller.build(r, PACK_UNITS_TAG)
+						: new Tag().setId(getValue(r, alias.PACK_UNITS_TAG)))
 				.setPackMeasurement(getDouble(r, alias.PACK_MEASUREMENT))
-				.setPackMeasurementTag(new Tag().setId(getValue(r, alias.PACK_MEASUREMENT_TAG)))
-				.setStockUnitTag(new Tag().setId(getValue(r, alias.STOCK_UNIT_TAG)))
+				.setPackMeasurementTag(checkField(r, PACK_MEASUREMENT_TAG.ID)
+						? TagFiller.build(r, PACK_MEASUREMENT_TAG)
+						: new Tag().setId(getValue(r, alias.PACK_MEASUREMENT_TAG)))
+				.setStockUnitTag(checkField(r, STOCK_UNIT_TAG.ID)
+						? TagFiller.build(r, STOCK_UNIT_TAG)
+						: new Tag().setId(getValue(r, alias.STOCK_UNIT_TAG)))
 				.setCreationUser(getValue(r, alias.CREATION_USER))
 				.setCreationDate(getValue(r, alias.CREATION_DATE))
 				.setModificationUser(getValue(r, alias.MODIFICATION_USER))
