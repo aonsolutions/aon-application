@@ -399,9 +399,10 @@ public class CertificateController implements Serializable {
 	public void signAttachment( IAttachment attachment ) throws AonCoreException {
 		byte[] signedData = null;
 		MimeType type = attachment.getMimeType();
+		Certificate cert = AON.getCertificates(getDomain(), getUser(), f -> f.getIdProperty().eq(getKeystore()))
+				.findFirst().orElse(null);
 		if ( type == MimeType.MIME_PDF ) {
-			Certificate cert = AON.getCertificates(getDomain(), getUser(), f -> f.getIdProperty().eq(getKeystore()))
-					.findFirst().orElse(null);
+
 			if(cert != null) {
 				try {
 					signedData = PdfSigner.getInstance().sign(cert, attachment.getData());
@@ -412,9 +413,21 @@ public class CertificateController implements Serializable {
 			} else signedData = getSignedFileData( attachment.getData() );
 			attachment.setMimeType(MimeType.MIME_SIGNED_PDF);
 		} else if ( (type == MimeType.MIME_XML) || (type == MimeType.MIME_XSIG) ) {
-			FacturaeSigner signer = new FacturaeSigner();
-			signedData = signer.sign(getKeyStoreData(), attachment.getData());
-			attachment.setMimeType(MimeType.MIME_SIGNED_FACTURAE);
+			if(cert != null) {
+				try {
+					signedData = net.aonsolutions.aon.sign.FacturaeSigner.getInstance().sign(cert, attachment.getData());
+				} catch (AonSignerException e) {
+					e.printStackTrace();
+					FacturaeSigner signer = new FacturaeSigner();
+					signedData = signer.sign(getKeyStoreData(), attachment.getData());
+					attachment.setMimeType(MimeType.MIME_SIGNED_FACTURAE);
+				}
+				attachment.setMimeType(MimeType.MIME_SIGNED_FACTURAE);
+			} else {
+				FacturaeSigner signer = new FacturaeSigner();
+				signedData = signer.sign(getKeyStoreData(), attachment.getData());
+				attachment.setMimeType(MimeType.MIME_SIGNED_FACTURAE);
+			}
 		}
 		attachment.setData( signedData );
 	}
