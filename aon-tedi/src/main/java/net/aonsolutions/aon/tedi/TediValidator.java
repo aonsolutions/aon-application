@@ -327,10 +327,10 @@ public class TediValidator {
 				}
 			}
 			if (empty) {
-				ctx.add( InvoiceErrorMessages.C013.err(InvoiceErrorKey.ACCOUNT_ENTRY) );
+				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
 			}
 			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
-				ctx.add( InvoiceErrorMessages.C012.err(InvoiceErrorKey.ACCOUNT_ENTRY) );
+				ctx.add( InvoiceErrorMessages.C012.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
 			}
 		}
 	};
