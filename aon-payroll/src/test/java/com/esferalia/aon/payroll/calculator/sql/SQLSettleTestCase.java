@@ -119,7 +119,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = 
 				getSQLContractSettleContext(connection, seniority, contract);
 		
-		double fix29Feb = 0; //Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
+		double fix29Feb = Math.min(1, Math.abs(get(seniority, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 		Assert.assertEquals(seniority, ctx.getStartDate());
 		for ( ITimedResult<Object> result:  ctx.getExpressionContext().eval("AÑOS_TRABAJADOS", seniority, getToday()))
 			Assert.assertEquals( (2.00 + 2/12.00 + fix29Feb/12.00), result.getValue());
@@ -244,10 +244,11 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		settle.getSalaryPayments().forEach( p -> System.out.println( p.getExpression() + " = " + p.getAmount() + " [ " + p.getType() + " ]") );
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		double fix28Feb = Math.min(1, Math.abs(get(contractStart, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 		
 
-		Assert.assertEquals( 12 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
-		Assert.assertEquals( 12 * (2/12.00) * br , settle.getTotalLiquid(), DELTA);
+		Assert.assertEquals( 12 * (2/12.00 + fix28Feb/12.00) * br, settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 12 * (2/12.00 + fix28Feb / 12.00) * br , settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -332,12 +333,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Salary settle = new ContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
-
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalPayment(), DELTA);
 		
-		System.out.println( (20 * (2/12.00) * br ) + " = " + settle.getTotalPayment() );
+		double fix28Feb = Math.min(1, Math.abs(get(contractStart, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 		
-		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid(), DELTA);
+		Assert.assertEquals( 20 * (2/12.00 + fix28Feb / 12.00 ) * br, settle.getTotalPayment(), DELTA);
+		
+		System.out.println( (20 * (2/12.00 + fix28Feb / 12.00) * br ) + " = " + settle.getTotalPayment() );
+		
+		Assert.assertEquals( 20 * (2/12.00 + fix28Feb / 12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
 	@Test
@@ -545,8 +548,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
+		double fix28Feb = Math.min(1, Math.abs(get(contractStart, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 20 * (2/12.00 + fix28Feb / 12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
 		
 		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
 		
@@ -604,8 +608,10 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 //		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
 //		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
 
+		double fix28Feb = Math.min(1, Math.abs(get(contractStart, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
+
 		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 20 * (2/12.00 + fix28Feb / 12.00) * br + ( br * 4 ), settle.getTotalPayment(), DELTA);
 		Assert.assertEquals( settle.getCommonBase() * 1.60 / 100 , settle.getTotalDeduction(), DELTA);
 	
 		
@@ -775,8 +781,9 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		settle.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount()+ "," + p.getQuote() ));
 		
 		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; 
+		double fix28Feb = Math.min(1, Math.abs(get(contractStart, DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH)));
 
-		Assert.assertEquals( 20 * (2/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
+		Assert.assertEquals( 20 * (2/12.00 + fix28Feb/12.00) * br + ( br * (10 + noHolidays) ), settle.getTotalPayment(), DELTA);
 		
 		Assert.assertEquals( br * ( 10 + noHolidays ) , settle.getRawCommonBase(), DELTA);
 		// TODO: 

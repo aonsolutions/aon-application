@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -52,7 +53,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
-	private final MutableInt searchEnabled = new MutableInt( 0 );
+	private final MutableBoolean searchEnabled = new MutableBoolean( true );
 	private FlowPanel container;
 	private AccountEntryPanel entryPanel;
 	private int lastScrollPos = 0;
@@ -86,13 +87,13 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	}
 
 	public boolean isSearchEnabled() {
-		return (searchEnabled.getValue() == 0 );
+		return searchEnabled.getValue();
 	}
 	public void disableSearch() {
-		searchEnabled.setValue(-1);
+		searchEnabled.setValue( false );
 	}
 	public void enableSearch() {
-		searchEnabled.setValue(0);
+		searchEnabled.setValue( true );
 	}
 	public boolean isMoreData() {
 		return (moreData.getValue() == 0 );
@@ -127,7 +128,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open(FormPanel.METHOD_POST, ACCOUNT_ENTRY_STREAM_SERVLET);
 		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-		xhr.setOnReadyStateChange(new JournalReadyStateChangeHandler(ofs) );
+		xhr.setOnReadyStateChange(new JournalReadyStateChangeHandler(ofs, params.hasDetailProperties()) );
 		
 		StringBuilder requestData = new StringBuilder();
 		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + options.getDomainName()  );
@@ -235,9 +236,11 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	
 	private class JournalReadyStateChangeHandler implements ReadyStateChangeHandler {
 		final int ofs;
+		final boolean detailProperties;
 		
-		JournalReadyStateChangeHandler(int ofs) {
+		JournalReadyStateChangeHandler(int ofs, boolean detailProperties) {
 			this.ofs = ofs;
+			this.detailProperties = detailProperties; 
 		}
 		
 		@Override
@@ -267,6 +270,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 				}
 				addMessage( AON.MSG.noData() );
 			} else {
+				int accountEntries = 0;
 				for (; count < array.length(); count++ ) {
 					JsFlatAccountEntry flatEntry = array.get(count);
 					if (!AonNumberUtils.equals( flatEntry.getEntryId(), oldId)) {
@@ -278,11 +282,16 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 						container.add(entrycontainer);
 						entryPanel = getAccountEntryPanel(entrycontainer, newAccountEntry(flatEntry));
 						entrycontainer.add(entryPanel);
+						++accountEntries;
 					}
 					AccountEntryDetail detail = newAccountEntryDetail(flatEntry);
 					entryPanel.addDetail( detail );
 				}
-				offset.setValue(ofs + count);
+				if (detailProperties) {
+					offset.setValue(ofs + accountEntries);
+				} else {
+					offset.setValue(ofs + count);
+				}
 				enableMoreData();
 			}
 		}

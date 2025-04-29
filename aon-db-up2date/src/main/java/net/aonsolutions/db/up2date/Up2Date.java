@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AlterContractCostExpression;
 import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
 import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
 import net.aonsolutions.db.up2date.attach.RdocTag;
@@ -27,8 +28,6 @@ import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.tgss.AgriculturalRealDecreeLaw1782025Art28Fix;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductions2024InsertFaseIII;
 
 public class Up2Date {
 
@@ -537,8 +536,9 @@ public class Up2Date {
 			// AgriculturalPercentageCgcE2025Fix.AGRICULTURALPERCENTAGECGCE2025FIX
 			// SalaryHoursFixIV.SALARYHOURSFIXIV,
 			// SalaryHoursFixV.SALARYHOURSFIXV,
-			TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
-			AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
+			// TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
+			// AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
+			AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
