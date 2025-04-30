@@ -609,7 +609,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
 			if(s3Key != null) {
 				try {
-					byte[] data = S3.download("aon-upload-post", s3Key);
+					byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
 					if(data != null) {
 						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
 						Attach attach = new Attach()

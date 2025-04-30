@@ -222,7 +222,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 			// TEDI PARSER!!!		    
 		    if(!api.getDur().isInvofox() && api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 		    	try {
-		    		byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+		    		byte[] data = S3.getInstance().download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 			    	
 			    	InputStream input = new ByteArrayInputStream(data);
 			    	TediContext tctx = new TediContext()
@@ -353,7 +353,7 @@ public class RawdocServlet extends AonApiHttpServlet {
 		json.put(IJsonNames.ID, rawdoc.getId());
 		json.put(IJsonNames.STATUS, rawdoc.getStatus() != null ? rawdoc.getStatus().getName() : IConstants.INBOX);
 		if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
-			URL url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+			URL url = S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 			JSONObject f = new JSONObject();
 			f.put("url", url.toExternalForm());
 			f.put("path", url.toExternalForm());

@@ -170,7 +170,7 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 						+ "/" +  params;
 			}
 			if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
-				url = S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+				url = S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 			}
 		} else {
 			System.out.println( "Rawdoc Not found" + rawdocId);
@@ -194,7 +194,7 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
 			try {
-				byte[] data = S3.download("aon-upload-post", s3Key);
+				byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
 				if(data != null) {
 					MimeType mimetype = MimeType.safeValueFromContenType(contentType);
 					Attach attach = new Attach()
@@ -217,7 +217,7 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public String getS3Url(Rawdoc rawdoc) {
-		return S3.getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+		return S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 	}
 
 }

@@ -40,15 +40,15 @@ public class S3Doc<T extends Enum<?>> extends Doc<T> {
 	@Override
 	public URL getDownloadURL() {
 		return s3Bucket != null
-			? S3.getDownloadURL(s3Bucket, s3Key)
-			: S3.getAonTableDownloadURL(aonTable, s3Key);
+			? S3.getInstance().getDownloadURL(s3Bucket, s3Key)
+			: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key);
 	}
 	
 	@Override
 	public URL getDownloadURL(String contentDisposition) {
 		return s3Bucket != null
-			? S3.getDownloadURL(s3Bucket, s3Key, contentDisposition)
-			: S3.getAonTableDownloadURL(aonTable, s3Key, contentDisposition);
+			? S3.getInstance().getDownloadURL(s3Bucket, s3Key, contentDisposition)
+			: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key, contentDisposition);
 	}
 	
 }

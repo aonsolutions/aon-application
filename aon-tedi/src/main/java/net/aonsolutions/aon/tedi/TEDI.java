@@ -122,7 +122,7 @@ public class TEDI {
 			));
 			String rawdocJson = rawdoc.getJson();
 			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
-				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+				byte[] data = S3.getInstance().download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 				rawdoc.setData(data);
 				rawdoc.setMimeType(MimeType.PDF);
 				//rawdoc.setJson(null);
