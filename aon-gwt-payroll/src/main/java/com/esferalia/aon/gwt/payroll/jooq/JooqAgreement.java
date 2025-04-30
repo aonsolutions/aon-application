@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.Keys.FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.Keys.FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL;
-import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementData.AGREEMENT_DATA;
 import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
@@ -38,7 +35,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -71,57 +67,79 @@ import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
-import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
-import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class JooqAgreement extends org.jooq.impl.AbstractKeys {
+public class JooqAgreement {
 
 	private static final java.sql.Date SQL_FOREVER = (java.sql.Date) null;
 	private static final Date EPOCH = new Date(0);
 	private static final java.sql.Date SQL_EPOCH = new java.sql.Date(EPOCH.getTime());
 
-	public static void moveAgreement2ParentDomain(Connection conn,
-			Integer parentDomain, Integer id) throws SQLException {
+	public static void moveAgreement2ParentDomain(Connection conn, Integer parentDomain, Integer id) throws SQLException {
 
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
-
-		dslContext.update(AGREEMENT_DATA)
-				.set(AGREEMENT_DATA.DOMAIN, parentDomain)
-				.where(AGREEMENT_DATA.AGREEMENT.eq(id)).execute();
-
-		dslContext.update(AGREEMENT_EXTRA)
-				.set(AGREEMENT_EXTRA.DOMAIN, parentDomain)
-				.where(AGREEMENT_EXTRA.AGREEMENT.eq(id)).execute();
 		
-		dslContext
-				.update(AGREEMENT_LEVEL_DATA)
-				.set(AGREEMENT_LEVEL_DATA.DOMAIN, parentDomain)
-				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.in(dslContext
-						.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))).execute();
+		dslContext.transaction(config -> {
+			Integer originalDomain = dslContext.select(AGREEMENT.DOMAIN).from(AGREEMENT).where(AGREEMENT.ID.eq(id)).fetchOne(AGREEMENT.DOMAIN);
 
-		dslContext
-				.update(AGREEMENT_LEVEL_CATEGORY)
-				.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, parentDomain)
-				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(dslContext
-						.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-						.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))).execute();
+			dslContext.update(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.DOMAIN, parentDomain)
+					.where(AGREEMENT_DATA.AGREEMENT.eq(id)).execute();
 
-		dslContext.update(AGREEMENT_LEVEL)
-				.set(AGREEMENT_LEVEL.DOMAIN, parentDomain)
-				.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)).execute();
+			dslContext.update(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.DOMAIN, parentDomain)
+					.where(AGREEMENT_EXTRA.AGREEMENT.eq(id)).execute();
+			
+			dslContext
+					.update(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.DOMAIN, parentDomain)
+					.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.in(
+						dslContext
+							.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+							.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))
+					).execute();
 
-		dslContext.update(AGREEMENT_PAYMENT)
-				.set(AGREEMENT_PAYMENT.DOMAIN, parentDomain)
-				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(id)).execute();
+			dslContext
+					.update(AGREEMENT_LEVEL_CATEGORY)
+					.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, parentDomain)
+					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(
+						dslContext
+							.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+							.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)))
+					).execute();
 
-		dslContext.update(AGREEMENT).set(AGREEMENT.DOMAIN, parentDomain)
-				.where(AGREEMENT.ID.eq(id)).execute();
+			dslContext.update(AGREEMENT_LEVEL)
+					.set(AGREEMENT_LEVEL.DOMAIN, parentDomain)
+					.where(AGREEMENT_LEVEL.AGREEMENT.eq(id)).execute();
 
+			dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.DOMAIN, parentDomain)
+					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(id))
+					.execute();
+
+			dslContext.update(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, parentDomain)
+				.where(PAYMENT_CONCEPT.ID.in(
+					dslContext
+						.select(AGREEMENT_PAYMENT.PAYMENT_CONCEPT)
+						.from(AGREEMENT_PAYMENT)
+						.where(AGREEMENT_PAYMENT.AGREEMENT.eq(id)))
+				)
+				.and(PAYMENT_CONCEPT.DOMAIN.ne(0))
+				.and(PAYMENT_CONCEPT.DOMAIN.eq(originalDomain))
+				.execute();
+			
+			
+			dslContext.update(AGREEMENT)
+					.set(AGREEMENT.DOMAIN, parentDomain)
+					.where(AGREEMENT.ID.eq(id))
+					.execute();
+		});
+		
 	}
 
 	public static void updatePayment(Connection conn, Integer domainId, Integer agreementId, Payment payment, String userLogin)
@@ -606,10 +624,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		return agreements;
 	}
 
-	public static List<Agreement> getTrashAgreements(DSLContext dslContext,
-			int offset, int limit, Integer... domains) throws SQLException {
+	public static List<Agreement> getTrashAgreements(DSLContext dslContext, int offset, int limit, Integer... domains) throws SQLException {
 		
-		// @formatter:off
 		Result<AgreementRecord> result = dslContext.select().from(AGREEMENT)
 				.where(AGREEMENT.DOMAIN.in(domains))
 				.and(AGREEMENT.ID.lt(0))				
@@ -617,17 +633,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.offset(offset)
 				.limit(limit)
 				.fetchInto(AGREEMENT);
-		// @formatter:on
 		
-		Result<Record> resultContracts = dslContext.select().from(AGREEMENT)
-				.join(AGREEMENT_LEVEL)
-				.on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
-				.join(CONTRACT)
-				.on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
-				.where(AGREEMENT.ID.lt(0))	
-				.and(CONTRACT.DOMAIN.in(domains))
-				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
-				.fetch();
 
 		List<Agreement> agreements = new LinkedList<Agreement>();
 		for (AgreementRecord record : result) {
@@ -647,30 +653,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		}
 		
-		for (Record record : resultContracts) {
-			if(!containAgreement(record.get(AGREEMENT.ID), agreements)) {
-				Agreement agreement = new Agreement();
-
-				agreement.setId(record.get(AGREEMENT.ID)); // Not NULL
-				agreement.setDomain(record.get(AGREEMENT.DOMAIN));
-				agreement.setDescription(record.get(AGREEMENT.DESCRIPTION));
-				agreement.setSSNumber(record.get(AGREEMENT.SS_NUMBER));
-				agreement.setOwner(null == record.get(AGREEMENT.OWNER) || (byte)0 == record.get(AGREEMENT.OWNER) ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
-				
-				agreement.setLevels(Collections.emptySet());
-
-				boolean hasContracts = hasContract(dslContext, record.get(AGREEMENT.ID), domains[0]);
-				agreement.setHasContract(hasContracts);
-				agreements.add(agreement);
-			}
-		}
-		
 		return agreements;
-	}
-
-	private static boolean containAgreement(Integer agreementId, List<Agreement> agreements) {
-		Optional<Agreement> agreementOpt = agreements.stream().filter(agreement -> agreement.getId() == agreementId).findAny();
-		return agreementOpt.isPresent();
 	}
 
 	public static Agreement getAgreement(DSLContext dslContext,
@@ -804,292 +787,138 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 
 		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
 				getDefaultSettings());
-
-		SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
-				.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
-				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
-
-		// Poner a null todos los contratos que apuntan al convenio borrado
-		dslContext.update(CONTRACT)
-			.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
-			.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
-			.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
-			.execute();
 		
-		dslContext
-				.delete(AGREEMENT_LEVEL_CATEGORY)
-				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
-						.in(agreementLevelId)).execute();
+		dslContext.transaction(config -> {
 
-		dslContext
-				.delete(AGREEMENT_LEVEL_DATA)
-				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
-						.in(agreementLevelId)).execute();
-
-		dslContext.delete(AGREEMENT_LEVEL)
-				.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()))
+			SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
+					.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()));
+	
+			// Poner a null todos los contratos que apuntan al convenio borrado
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.AGREEMENT_LEVEL, DSL.val(null, CONTRACT.AGREEMENT_LEVEL))
+				.set(CONTRACT.CATEGORY_DESCRIPTION, DSL.val(null, CONTRACT.CATEGORY_DESCRIPTION))
+				.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
 				.execute();
-
-		dslContext.delete(AGREEMENT_EXTRA)
-				.where(AGREEMENT_EXTRA.AGREEMENT.in(agreement.getId()))
+			
+			dslContext
+					.delete(AGREEMENT_LEVEL_CATEGORY)
+					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL
+							.in(agreementLevelId)).execute();
+	
+			dslContext
+					.delete(AGREEMENT_LEVEL_DATA)
+					.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL
+							.in(agreementLevelId)).execute();
+	
+			dslContext.delete(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.in(agreement.getId()))
+					.execute();
+	
+			dslContext.delete(AGREEMENT_EXTRA)
+					.where(AGREEMENT_EXTRA.AGREEMENT.in(agreement.getId()))
+					.execute();
+	
+			dslContext.delete(AGREEMENT_DATA)
+					.where(AGREEMENT_DATA.AGREEMENT.in(agreement.getId()))
+					.execute();
+			
+			// All paymentConcepts not from domain 0, where not appears in contracts
+			List<Integer> paymentConceptIds = dslContext.selectDistinct(PAYMENT_CONCEPT.ID).from(AGREEMENT_PAYMENT)
+				.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.leftOuterJoin(CONTRACT_PAYMENT).on(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(PAYMENT_CONCEPT.ID))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
+				.and(CONTRACT_PAYMENT.ID.isNull())
+				.and(PAYMENT_CONCEPT.DOMAIN.gt(0))
+				.fetch(PAYMENT_CONCEPT.ID);
+				
+			dslContext.delete(PAYMENT_CONCEPT)
+				.where(PAYMENT_CONCEPT.ID.in(paymentConceptIds))
 				.execute();
-
-		dslContext.delete(AGREEMENT_DATA)
-				.where(AGREEMENT_DATA.AGREEMENT.in(agreement.getId()))
-				.execute();
-
-		dslContext.delete(AGREEMENT_PAYMENT)
-				.where(AGREEMENT_PAYMENT.AGREEMENT.in(agreement.getId()))
-				.execute();
-
-		dslContext.delete(PAYROLL_WORKPLACE)
-				.where(PAYROLL_WORKPLACE.AGREEMENT.in(agreement.getId()))
-				.execute();
-
-		dslContext.delete(AGREEMENT).where(AGREEMENT.ID.in(agreement.getId()))
-				.execute();
+	
+			dslContext.delete(AGREEMENT_PAYMENT)
+					.where(AGREEMENT_PAYMENT.AGREEMENT.in(agreement.getId()))
+					.execute();
+	
+			dslContext.delete(PAYROLL_WORKPLACE)
+					.where(PAYROLL_WORKPLACE.AGREEMENT.in(agreement.getId()))
+					.execute();
+	
+			dslContext.delete(AGREEMENT).where(AGREEMENT.ID.in(agreement.getId()))
+					.execute();
+			
+		});
 	}
 
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 
 	public static void trashRestoreAgreement(Connection conn, Integer agreementId, boolean delete) {
-		Statement fkStmt = null;
-		try { 
-			fkStmt = conn.createStatement();
-			fkStmt.execute(SET_FOREIGN_KEY_CHECKS_0);
-	
-			DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
-					getDefaultSettings());
+		DSLContext dslContext = DSL.using(conn, SQLDialect.MYSQL,
+				getDefaultSettings());
+		
+		dslContext.transaction(config -> {
 			
-			Integer oldId =agreementId;
-			Integer newId =agreementId*-1;
+			dslContext.execute(SET_FOREIGN_KEY_CHECKS_0);
 			
-			Optional<AgreementRecord> mirrorAgreement = 
-			dslContext
-			.select()
-			.from(AGREEMENT)
-			.where(AGREEMENT.ID.eq(newId))
-			.fetchOptionalInto(AGREEMENT);
-			mirrorAgreement
-			.ifPresent(a -> 
-				a.delete());
-			dslContext
-			.select()
-			.from(AGREEMENT)
-			.where(AGREEMENT.ID.eq(oldId))
-			.fetchOptionalInto(AGREEMENT)
-			.ifPresent(a ->  {
-				if ( delete )
-					a.delete();
-				AgreementRecord copy = a.copy(); 
-				copy.setId(newId) ; 
-				copy.insert(); });
-			
-			mirrorAgreement.ifPresent(a -> { 
-				AgreementRecord copy = a.copy(); 
-				copy.setId(oldId) ; 
-				copy.insert(); });
-			
-			// payments
-			Result<AgreementPaymentRecord> mirrorPayments = 
-					dslContext.select()
-					.from(AGREEMENT_PAYMENT)
-					.where(AGREEMENT_PAYMENT.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_PAYMENT);
-			mirrorPayments.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_PAYMENT)
-			.where(AGREEMENT_PAYMENT.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_PAYMENT)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementPaymentRecord copy = p.copy();
-				copy.setAgreement(newId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorPayments.forEach(p -> {
-				AgreementPaymentRecord copy = p.copy();
-				copy.setAgreement(oldId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			
-			// extras
-			Result<AgreementExtraRecord> mirrorExtras = 
-					dslContext.select()
-					.from(AGREEMENT_EXTRA)
-					.where(AGREEMENT_EXTRA.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_EXTRA);
-			mirrorExtras.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_EXTRA)
-			.where(AGREEMENT_EXTRA.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_EXTRA)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementExtraRecord copy = p.copy();
-				copy.setAgreement(newId);
-				copy.setAgreementPayment(p.getAgreementPayment()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorExtras.forEach(p -> {
-				AgreementExtraRecord copy = p.copy();
-				copy.setAgreement(oldId);
-				copy.setAgreementPayment(p.getAgreementPayment()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
+			SelectConditionStep<Record1<Integer>> agreementLevelId = dslContext
+					.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+					.where(AGREEMENT_LEVEL.AGREEMENT.in(agreementId));
 
-			// datas
-			Result<AgreementDataRecord> mirrorDatas = 
-					dslContext.select()
-					.from(AGREEMENT_DATA)
-					.where(AGREEMENT_DATA.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_DATA);
-			mirrorDatas.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_DATA)
-			.where(AGREEMENT_DATA.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_DATA)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementDataRecord copy = p.copy();
-				copy.setAgreement(newId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorDatas.forEach(p -> {
-				AgreementDataRecord copy = p.copy();
-				copy.setAgreement(oldId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-
-			// contracts
-			dslContext.select()
-			.from(CONTRACT)
-			.join(AGREEMENT_LEVEL).onKey(FK_CONTRACT_AGREEMENT_LEVEL)
-			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
-			.and(CONTRACT.AGREEMENT_LEVEL.notIn(DSL.select(AGREEMENT_LEVEL.ID.mul(-1)).from(AGREEMENT_LEVEL).where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))))
-			.fetchInto(CONTRACT)
-			.forEach( c -> {
-				c.setAgreementLevel(c.getAgreementLevel()*-1);
-				c.update();
-			});
-
-			// categories
-			Result<AgreementLevelCategoryRecord> mirrorCategories = 
-					dslContext.select()
-					.from(AGREEMENT_LEVEL_CATEGORY)
-					.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL)
-					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_LEVEL_CATEGORY);
-			mirrorCategories.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_LEVEL_CATEGORY)
-			.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL)
-			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_LEVEL_CATEGORY)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementLevelCategoryRecord copy = p.copy();
-				copy.setAgreementLevel(p.getAgreementLevel()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorCategories.forEach(p -> {
-				AgreementLevelCategoryRecord copy = p.copy();
-				copy.setAgreementLevel(p.getAgreementLevel()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-
-			// level datas
-			Result<AgreementLevelDataRecord> mirrorLDatas = 
-					dslContext.select()
-					.from(AGREEMENT_LEVEL_DATA)
-					.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL)
-					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_LEVEL_DATA);
-			mirrorLDatas.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_LEVEL_DATA)
-			.join(AGREEMENT_LEVEL).onKey(FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL)
-			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_LEVEL_DATA)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementLevelDataRecord copy = p.copy();
-				copy.setAgreementLevel(p.getAgreementLevel()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorLDatas.forEach(p -> {
-				AgreementLevelDataRecord copy = p.copy();
-				copy.setAgreementLevel(p.getAgreementLevel()*-1);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-
-			// levels
-			Result<AgreementLevelRecord> mirrorLevels = 
-					dslContext.select()
-					.from(AGREEMENT_LEVEL)
-					.where(AGREEMENT_LEVEL.AGREEMENT.eq(newId))
-					.fetchInto(AGREEMENT_LEVEL);
-			mirrorLevels.forEach(p -> p.delete() );
-			dslContext.select()
-			.from(AGREEMENT_LEVEL)
-			.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldId))
-			.fetchInto(AGREEMENT_LEVEL)
-			.forEach( p -> {
-				if ( delete )
-					p.delete();
-				AgreementLevelRecord copy = p.copy();
-				copy.setAgreement(newId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
-			mirrorLevels.forEach(p -> {
-				AgreementLevelRecord copy = p.copy();
-				copy.setAgreement(oldId);
-				copy.setId(p.getId()*-1);
-				copy.insert();
-			});
+			// Poner a null todos los contratos que apuntan al convenio borrado
+			dslContext.update(CONTRACT)
+				.set(CONTRACT.AGREEMENT_LEVEL, DSL.select(CONTRACT.AGREEMENT_LEVEL.mul(-1)))
+				.where(CONTRACT.AGREEMENT_LEVEL.in(agreementLevelId))
+				.execute();
 			
-			// workplace
-			dslContext.select()
-			.from(PAYROLL_WORKPLACE)
-			.where(PAYROLL_WORKPLACE.AGREEMENT.eq(oldId))
-			.and(PAYROLL_WORKPLACE.AGREEMENT.notIn(DSL.select(AGREEMENT.ID).from(AGREEMENT) ))
-			.fetchInto(PAYROLL_WORKPLACE)
-			.forEach( w -> {
-				w.setAgreement(w.getAgreement()*-1);
-				w.update();
-			});
+			dslContext.update(AGREEMENT_LEVEL_CATEGORY)
+					.set(AGREEMENT_LEVEL_CATEGORY.ID, DSL.select(AGREEMENT_LEVEL_CATEGORY.ID.mul(-1)))
+					.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, DSL.select(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.mul(-1)))
+					.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.in(agreementLevelId))
+					.execute();
 
-		}
-		catch ( SQLException e ) {
+			dslContext.update(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.ID, DSL.select(AGREEMENT_LEVEL_DATA.ID.mul(-1)))
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, DSL.select(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.mul(-1)))
+					.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.in(agreementLevelId))
+					.execute();
+
+			dslContext.update(AGREEMENT_LEVEL)
+					.set(AGREEMENT_LEVEL.ID, DSL.select(AGREEMENT_LEVEL.ID.mul(-1)))
+					.set(AGREEMENT_LEVEL.AGREEMENT, DSL.select(AGREEMENT_LEVEL.AGREEMENT.mul(-1)))
+					.where(AGREEMENT_LEVEL.AGREEMENT.in(agreementId))
+					.execute();
+
+			dslContext.update(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.ID, DSL.select(AGREEMENT_EXTRA.ID.mul(-1)))
+					.where(AGREEMENT_EXTRA.AGREEMENT.in(agreementId))
+					.execute();
+
+			dslContext.update(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.ID, DSL.select(AGREEMENT_DATA.ID.mul(-1)))
+					.set(AGREEMENT_DATA.AGREEMENT, DSL.select(AGREEMENT_DATA.AGREEMENT.mul(-1)))
+					.where(AGREEMENT_DATA.AGREEMENT.in(agreementId))
+					.execute();
+
+			dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.ID, DSL.select(AGREEMENT_PAYMENT.ID.mul(-1)))
+					.set(AGREEMENT_PAYMENT.AGREEMENT, DSL.select(AGREEMENT_PAYMENT.AGREEMENT.mul(-1)))
+					.where(AGREEMENT_PAYMENT.AGREEMENT.in(agreementId))
+					.execute();
+
+			dslContext.update(PAYROLL_WORKPLACE)
+					.set(PAYROLL_WORKPLACE.AGREEMENT, DSL.select(PAYROLL_WORKPLACE.AGREEMENT.mul(-1)))
+					.where(PAYROLL_WORKPLACE.AGREEMENT.in(agreementId))
+					.execute();
+
+			dslContext.update(AGREEMENT)
+					.set(AGREEMENT.ID, DSL.select(AGREEMENT.ID.mul(-1)))
+					.where(AGREEMENT.ID.in(agreementId))
+					.execute();
 			
-		} finally {
-			try {
-				if ( fkStmt == null )
-					return;
-				
-				fkStmt.execute(SET_FOREIGN_KEY_CHECKS_1);
-				fkStmt.close();
-			} catch ( SQLException e ) {
-				
-			}
-		}
+			dslContext.execute(SET_FOREIGN_KEY_CHECKS_1);
+		});
+		
 	}
 
 	public static void updateAgreementId2delete(Connection conn, Integer domainId,
@@ -1226,336 +1055,230 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 		}
 	}
 
-	public static Agreement copyAgreement(Connection conn, Integer domain,
-			Integer id) {
+	public static Agreement copyAgreement(Connection conn, Integer domain, Integer id) {
 		return copyAgreement(DSL.using(conn, getDefaultSettings()), domain, id);
 	}
 
-	private static Agreement copyAgreement(DSLContext dslContext,
-			Integer domain, Integer id) {
+	private static Agreement copyAgreement(DSLContext dslContext, Integer domain, Integer id) {
 
-		try {
-			// @formatter:off
-			Record agreementRecord = dslContext.selectFrom(AGREEMENT)
-					.where(AGREEMENT.ID.eq(id)).fetchOne();
-			// @formatter:on
+		return dslContext.transactionResult(config -> {
+			try {
+				// @formatter:off
+				Record agreementRecord = dslContext.selectFrom(AGREEMENT)
+						.where(AGREEMENT.ID.eq(id)).fetchOne();
+				// @formatter:on
 
-			// EL CAMPO DESCRIPTION DE AGREEMENT TIENE UN MAX DE 64 CARACTERES.
-			// COMPRUEBO QUE AL ADD 'COPIA DE' NO SE PASE.
-			// EVITO OTRO QUEBRADERO DE CABEZA....
+				// EL CAMPO DESCRIPTION DE AGREEMENT TIENE UN MAX DE 64 CARACTERES.
+				// COMPRUEBO QUE AL ADD 'COPIA DE' NO SE PASE.
+				// EVITO OTRO QUEBRADERO DE CABEZA....
 
-			int lenght = agreementRecord.field(AGREEMENT.DESCRIPTION)
-					.getDataType().length();
-			String aux = "COPIA DE "
-					+ agreementRecord.getValue(AGREEMENT.DESCRIPTION);
-			String description = (aux.length() > lenght) ? aux.substring(0,
-					lenght) : aux;
-			String ssNumber = agreementRecord.getValue(AGREEMENT.SS_NUMBER);
+				int lenght = agreementRecord.field(AGREEMENT.DESCRIPTION).getDataType().length();
+				String aux = "COPIA DE " + agreementRecord.getValue(AGREEMENT.DESCRIPTION);
+				String description = (aux.length() > lenght) ? aux.substring(0,lenght) : aux;
+				String ssNumber = agreementRecord.getValue(AGREEMENT.SS_NUMBER);
 
-			int newAgreementId = dslContext
-					.insertInto(AGREEMENT)
-					.set(AGREEMENT.DOMAIN, domain)
-					.set(AGREEMENT.CALENDAR,
-							agreementRecord.getValue(AGREEMENT.CALENDAR))
-					.set(AGREEMENT.DESCRIPTION, description)
-					.returning(AGREEMENT.ID).fetchOne().getId();
+				int newAgreementId = dslContext
+						.insertInto(AGREEMENT)
+						.set(AGREEMENT.DOMAIN, domain)
+						.set(AGREEMENT.CALENDAR, agreementRecord.getValue(AGREEMENT.CALENDAR))
+						.set(AGREEMENT.DESCRIPTION, description)
+						.set(AGREEMENT.SS_NUMBER, agreementRecord.getValue(AGREEMENT.SS_NUMBER))
+						.set(AGREEMENT.OWNER, agreementRecord.getValue(AGREEMENT.OWNER))
+						.returning(AGREEMENT.ID).fetchOne().getId();
 
-			Agreement agreement = new Agreement();
-			agreement.setId(newAgreementId);
-			agreement.setDescription(description);
-			agreement.setSSNumber(ssNumber);
-			agreement.setDomain(domain);
-			agreement.setHasContract(false);
+				Agreement agreement = new Agreement();
+				agreement.setId(newAgreementId);
+				agreement.setDescription(description);
+				agreement.setSSNumber(ssNumber);
+				agreement.setDomain(domain);
+				agreement.setHasContract(false);
 
-			copy2AgreementData(dslContext, id, newAgreementId, domain);
-			copy2AgreementLevel(dslContext, id, newAgreementId, domain);
-			copy2AgreementPayment(dslContext, id, newAgreementId, domain);
+				copy2AgreementData(dslContext, id, newAgreementId, domain);
+				copy2AgreementLevel(dslContext, id, newAgreementId, domain);
+				copy2AgreementPayment(dslContext, id, newAgreementId, domain);
 
-			return agreement;
+				return agreement;
 
-		} catch (Exception ex) {
-			throw new IllegalArgumentException();
-		}
+			} catch (Exception ex) {
+				throw new IllegalArgumentException();
+			}
+		});
 	}
 
-	private static void copy2AgreementData(DSLContext dslContext,
-			Integer oldAgreementId, Integer newAgreementId, Integer domain)
-			throws Exception {
+	private static void copy2AgreementData(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) throws Exception {
 
-		InsertSetMoreStep<AgreementDataRecord> insert = null;
-
-		// @formatter:off
-		List<AgreementDataRecord> agreementDataRecord = dslContext
-				.selectFrom(AGREEMENT_DATA)
-				.where(AGREEMENT_DATA.AGREEMENT.eq(oldAgreementId))
-				.fetchInto(AGREEMENT_DATA);
-		// @formatter:on
-
-		if (agreementDataRecord != null) {
+		List<AgreementDataRecord> agreementDataRecord = dslContext.selectFrom(AGREEMENT_DATA)
+			.where(AGREEMENT_DATA.AGREEMENT.eq(oldAgreementId))
+			.fetchInto(AGREEMENT_DATA);
+		
+		if ( !agreementDataRecord.isEmpty() ) {
 
 			for (AgreementDataRecord record : agreementDataRecord) {
 
-				insert = dslContext
-						.insertInto(AGREEMENT_DATA)
-						.set(AGREEMENT_DATA.DOMAIN, domain)
-						.set(AGREEMENT_DATA.NAME,
-								record.getValue(AGREEMENT_DATA.NAME))
-						.set(AGREEMENT_DATA.AGREEMENT, newAgreementId)
-						.set(AGREEMENT_DATA.EXPRESSION,
-								record.getValue(AGREEMENT_DATA.EXPRESSION))
-						.set(AGREEMENT_DATA.START_DATE,
-								record.getValue(AGREEMENT_DATA.START_DATE))
-						.set(AGREEMENT_DATA.END_DATE,
-								record.getValue(AGREEMENT_DATA.END_DATE));
-
-				insert.execute();
+				dslContext.insertInto(AGREEMENT_DATA)
+					.set(AGREEMENT_DATA.DOMAIN, domain)
+					.set(AGREEMENT_DATA.NAME, record.getValue(AGREEMENT_DATA.NAME))
+					.set(AGREEMENT_DATA.AGREEMENT, newAgreementId)
+					.set(AGREEMENT_DATA.EXPRESSION, record.getValue(AGREEMENT_DATA.EXPRESSION))
+					.set(AGREEMENT_DATA.START_DATE, record.getValue(AGREEMENT_DATA.START_DATE))
+					.set(AGREEMENT_DATA.END_DATE, record.getValue(AGREEMENT_DATA.END_DATE))
+					.execute();
 			}
 		}
 	}
 
-	private static void copy2AgreementLevel(DSLContext dslContext,
-			Integer oldAgreementId, Integer newAgreementId, Integer domain)
-			throws Exception {
-		InsertSetMoreStep<AgreementLevelRecord> insert = null;
+	private static void copy2AgreementLevel(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) throws Exception {
 
-		// @formatter:off
-		List<AgreementLevelRecord> agreementLevelRecord = dslContext
-				.selectFrom(AGREEMENT_LEVEL)
+		List<AgreementLevelRecord> agreementLevelRecord = dslContext.selectFrom(AGREEMENT_LEVEL)
 				.where(AGREEMENT_LEVEL.AGREEMENT.eq(oldAgreementId))
 				.fetchInto(AGREEMENT_LEVEL);
 
-		if (agreementLevelRecord != null) {
+		if ( !agreementLevelRecord.isEmpty() ) {
 
 			for (AgreementLevelRecord record : agreementLevelRecord) {
 
-				insert = dslContext
+				int newLevelId = dslContext
 						.insertInto(AGREEMENT_LEVEL)
 						.set(AGREEMENT_LEVEL.DOMAIN, domain)
 						.set(AGREEMENT_LEVEL.AGREEMENT, newAgreementId)
-						.set(AGREEMENT_LEVEL.DESCRIPTION,
-								record.getValue(AGREEMENT_LEVEL.DESCRIPTION));
-
-				int newLevelId = insert.returning(AGREEMENT_LEVEL.ID)
+						.set(AGREEMENT_LEVEL.DESCRIPTION, record.getValue(AGREEMENT_LEVEL.DESCRIPTION))
+						.returning(AGREEMENT_LEVEL.ID)
 						.fetchOne().getId();
+				
 				int oldLevelId = record.getValue(AGREEMENT_LEVEL.ID);
 
-				copy2AgreementLevelInner(dslContext, domain, oldLevelId,
-						newLevelId);
+				copy2AgreementLevelInner(dslContext, domain, oldLevelId, newLevelId);
 
 			}
 		}
 	}
 
-	private static void copy2AgreementLevelInner(DSLContext dslContext,
-			Integer domain, Integer oldLevelId, Integer newLevelId)
-			throws Exception {
+	private static void copy2AgreementLevelInner(DSLContext dslContext, Integer domain, Integer oldLevelId, Integer newLevelId) throws Exception {
 
-		InsertSetMoreStep<AgreementLevelDataRecord> insertLevelData = null;
-		InsertSetMoreStep<AgreementLevelCategoryRecord> insertLevelCategory = null;
-
-		List<AgreementLevelDataRecord> selectLevelData = dslContext
-				.selectFrom(AGREEMENT_LEVEL_DATA)
+		List<AgreementLevelDataRecord> selectLevelData = dslContext.selectFrom(AGREEMENT_LEVEL_DATA)
 				.where(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL.eq(oldLevelId))
 				.fetchInto(AGREEMENT_LEVEL_DATA);
 
-		if (selectLevelData != null) {
+		if ( !selectLevelData.isEmpty()) {
 
 			for (AgreementLevelDataRecord record : selectLevelData) {
 
-				insertLevelData = dslContext
-						.insertInto(AGREEMENT_LEVEL_DATA)
-						.set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
-						.set(AGREEMENT_LEVEL_DATA.NAME,
-								record.getValue(AGREEMENT_LEVEL_DATA.NAME))
-						.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, newLevelId)
-						.set(AGREEMENT_LEVEL_DATA.EXPRESSION,
-								record.getValue(AGREEMENT_LEVEL_DATA.EXPRESSION))
-						.set(AGREEMENT_LEVEL_DATA.START_DATE,
-								record.getValue(AGREEMENT_LEVEL_DATA.START_DATE))
-						.set(AGREEMENT_LEVEL_DATA.END_DATE,
-								record.getValue(AGREEMENT_LEVEL_DATA.END_DATE));
-
-				insertLevelData.execute();
+				dslContext.insertInto(AGREEMENT_LEVEL_DATA)
+					.set(AGREEMENT_LEVEL_DATA.DOMAIN, domain)
+					.set(AGREEMENT_LEVEL_DATA.NAME, record.getValue(AGREEMENT_LEVEL_DATA.NAME))
+					.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, newLevelId)
+					.set(AGREEMENT_LEVEL_DATA.EXPRESSION, record.getValue(AGREEMENT_LEVEL_DATA.EXPRESSION))
+					.set(AGREEMENT_LEVEL_DATA.START_DATE, record.getValue(AGREEMENT_LEVEL_DATA.START_DATE))
+					.set(AGREEMENT_LEVEL_DATA.END_DATE, record.getValue(AGREEMENT_LEVEL_DATA.END_DATE))
+					.execute();
 			}
 		}
 
-		List<AgreementLevelCategoryRecord> selectLevelCategory = dslContext
-				.selectFrom(AGREEMENT_LEVEL_CATEGORY)
+		List<AgreementLevelCategoryRecord> selectLevelCategory = dslContext.selectFrom(AGREEMENT_LEVEL_CATEGORY)
 				.where(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(oldLevelId))
 				.fetchInto(AGREEMENT_LEVEL_CATEGORY);
 
-		if (selectLevelCategory != null) {
+		if ( !selectLevelCategory.isEmpty() ) {
 
 			for (AgreementLevelCategoryRecord record : selectLevelCategory) {
 
-				insertLevelCategory = dslContext
+				dslContext
 						.insertInto(AGREEMENT_LEVEL_CATEGORY)
 						.set(AGREEMENT_LEVEL_CATEGORY.DOMAIN, domain)
-						.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL,
-								newLevelId)
-						.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION,
-								record.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION));
-
-				insertLevelCategory.execute();
+						.set(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL, newLevelId)
+						.set(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION, record.getValue(AGREEMENT_LEVEL_CATEGORY.DESCRIPTION))
+						.execute();
 			}
 		}
 	}
 
-	private static void copy2AgreementPayment(DSLContext dslContext,
-			Integer oldAgreementId, Integer newAgreementId, Integer domain)
-			throws Exception {
+	private static void copy2AgreementPayment(DSLContext dslContext, Integer oldAgreementId, Integer newAgreementId, Integer domain) throws Exception {
 
-		InsertSetMoreStep<AgreementPaymentRecord> insertPayment = null;
-
-		// @formatter:off
-		List<AgreementPaymentRecord> agreementPaymentRecord = dslContext
-				.selectFrom(AGREEMENT_PAYMENT)
+		Result<Record> agreementPaymentRecord = dslContext.select().from(AGREEMENT_PAYMENT)
+				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
 				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(oldAgreementId))
-				.fetchInto(AGREEMENT_PAYMENT);
-		// @formatter:on
+				.fetch();
+		
+		if ( !agreementPaymentRecord.isEmpty() ) {
 
-		if (agreementPaymentRecord != null) {
-
-			for (AgreementPaymentRecord record : agreementPaymentRecord) {
+			for (Record record : agreementPaymentRecord) {
 				
-				//If payment_concept negative must be copy to like a new one
-				Integer paymentConceptId = record.get(AGREEMENT_PAYMENT.PAYMENT_CONCEPT);
-				if(paymentConceptId < 0) {
-					//Get smallestId
-					Record1<Integer> smallestIdR = dslContext.select(DSL.min(PAYMENT_CONCEPT.ID)).from(PAYMENT_CONCEPT)
-							.fetchOne();
-					
-					//New smallestId
-					Integer smallestId = smallestIdR.value1() - 1;
-					
-					Record paymentConceptRecord = dslContext.select().from(PAYMENT_CONCEPT)
-							.where(PAYMENT_CONCEPT.ID.eq(paymentConceptId))
-							.fetchOne();
-					
-					dslContext.insertInto(PAYMENT_CONCEPT)
-						.set(PAYMENT_CONCEPT.ID, smallestId)
-						.set(PAYMENT_CONCEPT.DOMAIN, paymentConceptRecord.get(PAYMENT_CONCEPT.DOMAIN))
-						.set(PAYMENT_CONCEPT.CODE, paymentConceptRecord.get(PAYMENT_CONCEPT.CODE))
-						.set(PAYMENT_CONCEPT.DESCRIPTION, paymentConceptRecord.get(PAYMENT_CONCEPT.DESCRIPTION))
-						.set(PAYMENT_CONCEPT.TYPE, paymentConceptRecord.get(PAYMENT_CONCEPT.TYPE))
-						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, paymentConceptRecord.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
-						.set(PAYMENT_CONCEPT.EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.EXPRESSION))
-						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
-						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, paymentConceptRecord.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
-						.execute();
-					
-					//Set new id
-					paymentConceptId = smallestId;
+				Integer paymentConceptId = null;
+				
+				if(null != record.get(PAYMENT_CONCEPT.ID)) {
+					paymentConceptId =dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, domain)
+						.set(PAYMENT_CONCEPT.CODE, record.get(PAYMENT_CONCEPT.CODE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION, record.get(PAYMENT_CONCEPT.DESCRIPTION))
+						.set(PAYMENT_CONCEPT.TYPE, record.get(PAYMENT_CONCEPT.TYPE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, record.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+						.set(PAYMENT_CONCEPT.EXPRESSION, record.get(PAYMENT_CONCEPT.EXPRESSION))
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, record.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, record.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+						.returning(PAYMENT_CONCEPT.ID)
+						.fetchOne(PAYMENT_CONCEPT.ID);
+				} else {
+					paymentConceptId =dslContext.insertInto(PAYMENT_CONCEPT)
+							.set(PAYMENT_CONCEPT.DOMAIN, domain)
+							.set(PAYMENT_CONCEPT.CODE, "__" + record.get(AGREEMENT_PAYMENT.ID))
+							.set(PAYMENT_CONCEPT.DESCRIPTION, record.get(AGREEMENT_PAYMENT.DESCRIPTION))
+							.set(PAYMENT_CONCEPT.TYPE, record.get(AGREEMENT_PAYMENT.TYPE))
+							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, record.get(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
+							.set(PAYMENT_CONCEPT.EXPRESSION, 
+									AonStringUtils.isNotBlank(record.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(record.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE")
+									? removeInheritExpr( AonStringUtils.substringAfter(record.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE();") )
+									: removeInheritExpr(record.get(AGREEMENT_PAYMENT.EXPRESSION))
+							)
+							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, record.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, record.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+							.returning(PAYMENT_CONCEPT.ID)
+							.fetchOne(PAYMENT_CONCEPT.ID);
 				}
-
-				insertPayment = dslContext
-						.insertInto(AGREEMENT_PAYMENT)
-						.set(AGREEMENT_PAYMENT.DOMAIN, domain)
-						.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
-						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
-//						.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT,
-//								record.getValue(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
-						.set(AGREEMENT_PAYMENT.TYPE,
-								record.getValue(AGREEMENT_PAYMENT.TYPE))
-						.set(AGREEMENT_PAYMENT.EXPRESSION,
-								record.getValue(AGREEMENT_PAYMENT.EXPRESSION))
-						.set(AGREEMENT_PAYMENT.DESCRIPTION,
-								record.getValue(AGREEMENT_PAYMENT.DESCRIPTION))
-						.set(AGREEMENT_PAYMENT.START_DATE,
-								record.getValue(AGREEMENT_PAYMENT.START_DATE))
-						.set(AGREEMENT_PAYMENT.END_DATE,
-								record.getValue(AGREEMENT_PAYMENT.END_DATE))
-						.set(AGREEMENT_PAYMENT.MONTH,
-								record.getValue(AGREEMENT_PAYMENT.MONTH))
-						.set(AGREEMENT_PAYMENT.SALARY_TYPE,
-								record.getValue(AGREEMENT_PAYMENT.SALARY_TYPE))
-						.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE,
-								record.getValue(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
-						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION,
-								record.getValue(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
-						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION,
-								record.getValue(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
-
-				int newPaymentId = insertPayment
-						.returning(AGREEMENT_PAYMENT.ID).fetchOne().getId();
+				
+				InsertSetMoreStep<AgreementPaymentRecord> insert = dslContext.insertInto(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.DOMAIN, domain)
+					.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+					.set(AGREEMENT_PAYMENT.START_DATE, record.getValue(AGREEMENT_PAYMENT.START_DATE))
+					.set(AGREEMENT_PAYMENT.END_DATE, record.getValue(AGREEMENT_PAYMENT.END_DATE))
+					.set(AGREEMENT_PAYMENT.MONTH, record.getValue(AGREEMENT_PAYMENT.MONTH))
+					.set(AGREEMENT_PAYMENT.SALARY_TYPE, record.getValue(AGREEMENT_PAYMENT.SALARY_TYPE))
+					;
+				
+				if(AonStringUtils.isNotBlank(record.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(record.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE"))
+					insert.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
+				else
+					insert.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+				
+				Integer newPaymentId = insert.returning(AGREEMENT_PAYMENT.ID)
+					.fetchOne(AGREEMENT_PAYMENT.ID);
+				
 				int oldPaymentId = record.getValue(AGREEMENT_PAYMENT.ID);
 
-				insert2AgreementExtra(dslContext, domain, oldAgreementId,
-						newAgreementId, oldPaymentId, newPaymentId);
+				insert2AgreementExtra(dslContext, domain, oldAgreementId, newAgreementId, oldPaymentId, newPaymentId);
 			}
 		}
 	}
 
-	private static void insert2AgreementExtra(DSLContext dslContext,
-			Integer domain, Integer oldAgreementId, Integer newAgreementId,
-			Integer oldPaymentId, Integer newPaymentId) throws Exception {
+	private static void insert2AgreementExtra(DSLContext dslContext, Integer domain, Integer oldAgreementId, Integer newAgreementId, Integer oldPaymentId, Integer newPaymentId) throws Exception {
 
-		InsertSetMoreStep<AgreementExtraRecord> insertExtra = null;
-
-		// @formatter:off
-		// List<AgreementExtraRecord> agreementExtraRecord = dslContext
-		// .selectFrom(AGREEMENT_EXTRA)
-		// .where(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(oldPaymentId))
-		// .fetchInto(AGREEMENT_EXTRA);
-		// @formatter:on
-
-		// @formatter:off
-		List<AgreementExtraRecord> agreementExtraRecord = dslContext
-				.selectFrom(AGREEMENT_EXTRA)
+		List<AgreementExtraRecord> agreementExtraRecords = dslContext.selectFrom(AGREEMENT_EXTRA)
 				.where(AGREEMENT_EXTRA.AGREEMENT.eq(oldAgreementId))
 				.and(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.eq(oldPaymentId))
 				.fetchInto(AGREEMENT_EXTRA);
-		// @formatter:on
+		
+		if ( !agreementExtraRecords.isEmpty() ) {
 
-		if (agreementExtraRecord != null) {
+			for (AgreementExtraRecord record : agreementExtraRecords) {
 
-			for (AgreementExtraRecord record : agreementExtraRecord) {
-
-				insertExtra = dslContext
-						.insertInto(AGREEMENT_EXTRA)
-						.set(AGREEMENT_EXTRA.DOMAIN, domain)
-						.set(AGREEMENT_EXTRA.AGREEMENT, newAgreementId)
-						.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, newPaymentId)
-						.set(AGREEMENT_EXTRA.START_DATE,
-								record.getValue(AGREEMENT_EXTRA.START_DATE))
-						.set(AGREEMENT_EXTRA.END_DATE,
-								record.getValue(AGREEMENT_EXTRA.END_DATE))
-						.set(AGREEMENT_EXTRA.ISSUE_DATE,
-								record.getValue(AGREEMENT_EXTRA.ISSUE_DATE));
-
-				insertExtra.execute();
-			}
-		}
-	}
-
-	private static void insert2PayrollWorkplace(DSLContext dslContext,
-			Integer id, Integer domain) throws Exception {
-
-		InsertSetMoreStep<PayrollWorkplaceRecord> insertPayroll = null;
-
-		// @formatter:off
-		List<PayrollWorkplaceRecord> payrollWorkplaceRecord = dslContext
-				.selectFrom(PAYROLL_WORKPLACE)
-				.where(PAYROLL_WORKPLACE.AGREEMENT.eq(id))
-				.fetchInto(PAYROLL_WORKPLACE);
-		// @formatter:on
-
-		if (payrollWorkplaceRecord != null) {
-
-			for (PayrollWorkplaceRecord record : payrollWorkplaceRecord) {
-
-				insertPayroll = dslContext
-						.insertInto(PAYROLL_WORKPLACE)
-						.set(PAYROLL_WORKPLACE.DOMAIN, domain)
-						.set(PAYROLL_WORKPLACE.WORKPLACE,
-								record.getValue(PAYROLL_WORKPLACE.WORKPLACE))
-						.set(PAYROLL_WORKPLACE.AGREEMENT, id)
-						.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY,
-								record.getValue(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY))
-						.set(PAYROLL_WORKPLACE.CALENDAR,
-								record.getValue(PAYROLL_WORKPLACE.CALENDAR));
-
-				insertPayroll.execute();
+				dslContext.insertInto(AGREEMENT_EXTRA)
+					.set(AGREEMENT_EXTRA.DOMAIN, domain)
+					.set(AGREEMENT_EXTRA.AGREEMENT, newAgreementId)
+					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, newPaymentId)
+					.set(AGREEMENT_EXTRA.START_DATE, record.getValue(AGREEMENT_EXTRA.START_DATE))
+					.set(AGREEMENT_EXTRA.END_DATE, record.getValue(AGREEMENT_EXTRA.END_DATE))
+					.set(AGREEMENT_EXTRA.ISSUE_DATE, record.getValue(AGREEMENT_EXTRA.ISSUE_DATE))
+					.execute();
 			}
 		}
 	}
@@ -1742,12 +1465,12 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			// Agreement_data
 			duplicateAgreementData(dslContext, agreementRecord.getId(), newAgreementId, newDomain);
 			
-			// Agreement_payment (also payment_concept)
+			// First: Agreement_payment, Secord: payment_concept
 			// return map <oldId, newId>
-			Map<Integer, Integer> agreementPaymentIds = duplicateAgreementPayment(dslContext, agreementRecord.getId(), newAgreementId, newDomain);
+			Pair<Map<Integer, Integer>, Map<Integer, Integer>> paymentIds = duplicateAgreementPayment(dslContext, agreementRecord.getId(), newAgreementId, newDomain);
 			
 			// Agreement_extra
-			duplicateAgreementExtra(dslContext, agreementRecord.getId(), newAgreementId, newDomain, agreementPaymentIds);
+			duplicateAgreementExtra(dslContext, agreementRecord.getId(), newAgreementId, newDomain, paymentIds.getFirst());
 			
 			// Agreement_level
 			// return map <oldId, newId>
@@ -1760,7 +1483,7 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			duplicateAgreementLevelData(dslContext, agreementRecord.getId(), newDomain, agreementLevelIds);
 			
 			// Update contracts using old agreement to the new agreement levels on own domain
-			updateContractsToNewAgreement(dslContext, agreementRecord.getId(), newDomain, agreementLevelIds);
+			updateContractsToNewAgreement(dslContext, agreementRecord.getId(), newDomain, agreementLevelIds, paymentIds.getSecond());
 		});
 
 	}
@@ -1785,76 +1508,89 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_DATA.DOMAIN, newDomain)
 				.set(AGREEMENT_DATA.NAME, agreementData.getName())
 				.set(AGREEMENT_DATA.AGREEMENT, newAgreementId)
-				.set(AGREEMENT_DATA.EXPRESSION, "/*inherit*/" + agreementData.getExpression() + "/**/")
+				.set(AGREEMENT_DATA.EXPRESSION, agreementData.getExpression())
 				.set(AGREEMENT_DATA.START_DATE, agreementData.getStartDate())
 				.set(AGREEMENT_DATA.END_DATE, agreementData.getEndDate())
 				.execute()
 		);
 	}
 	
-	private static Map<Integer, Integer> duplicateAgreementPayment(DSLContext dslContext, Integer agreementId, Integer newAgreementId, Integer newDomain) {
+	private static Pair<Map<Integer, Integer>, Map<Integer, Integer>> duplicateAgreementPayment(DSLContext dslContext, Integer agreementId, Integer newAgreementId, Integer newDomain) {
 		Map<Integer, Integer> agreementPaymentIds = new HashMap<>();
-		// Map <oldId, newId>
 		Map<Integer, Integer> paymentConceptIds = new HashMap<>();
 		
-		Result<AgreementPaymentRecord> agreementPayments = dslContext.selectFrom(AGREEMENT_PAYMENT).where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementId)).fetch();
+		Result<Record> agreementPayments = dslContext.select().from(AGREEMENT_PAYMENT)
+				.leftOuterJoin(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
+				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreementId))
+				.fetch();
 		
 		agreementPayments.forEach(agreementPayment -> {
-			// Duplicate payment_concept if exists
-			Integer newPaymentConceptId = null;
-			if(agreementPayment.getPaymentConcept() != null && null == paymentConceptIds.get(agreementPayment.getPaymentConcept())) {
-				newPaymentConceptId = duplicatePaymentConcept(dslContext, agreementPayment.getPaymentConcept(), newDomain);
-				paymentConceptIds.put(agreementPayment.getPaymentConcept(), newPaymentConceptId);
-			} else
-				newPaymentConceptId = paymentConceptIds.getOrDefault(agreementPayment.getPaymentConcept(), null);
 			
-			Integer newAgreementPaymentId = dslContext.insertInto(AGREEMENT_PAYMENT)
-					.set(AGREEMENT_PAYMENT.DOMAIN, newDomain)
-					.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
-					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, newPaymentConceptId)
-					.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
-					.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + agreementPayment.getExpression() + "/**/")
-					.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getDescription())
-					.set(AGREEMENT_PAYMENT.START_DATE, agreementPayment.getStartDate())
-					.set(AGREEMENT_PAYMENT.END_DATE, agreementPayment.getEndDate())
-					.set(AGREEMENT_PAYMENT.MONTH, agreementPayment.getMonth())
-					.set(AGREEMENT_PAYMENT.SALARY_TYPE, agreementPayment.getSalaryType())
-					.set(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE, agreementPayment.getDescriptionDecorable())
-					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, agreementPayment.getIrpfExpression())
-					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, agreementPayment.getQuoteExpression())
-					.returning(AGREEMENT_PAYMENT.ID)
-					.fetchOne()
-					.value1();
+			Integer paymentConceptId = null;
 			
-			agreementPaymentIds.put(agreementPayment.getId(), newAgreementPaymentId);
+			if(null != agreementPayment.get(PAYMENT_CONCEPT.ID)) {
+				paymentConceptId =dslContext.insertInto(PAYMENT_CONCEPT)
+					.set(PAYMENT_CONCEPT.DOMAIN, newDomain)
+					.set(PAYMENT_CONCEPT.CODE, agreementPayment.get(PAYMENT_CONCEPT.CODE))
+					.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION))
+					.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(PAYMENT_CONCEPT.TYPE))
+					.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE))
+					.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))
+					.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))
+					.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))
+					.returning(PAYMENT_CONCEPT.ID)
+					.fetchOne(PAYMENT_CONCEPT.ID);
+				
+				paymentConceptIds.put(agreementPayment.get(PAYMENT_CONCEPT.ID), paymentConceptId);
+			} else {
+				paymentConceptId = dslContext.insertInto(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.DOMAIN, newDomain)
+						.set(PAYMENT_CONCEPT.CODE, "__" + agreementPayment.get(AGREEMENT_PAYMENT.ID))
+						.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION))
+						.set(PAYMENT_CONCEPT.TYPE, agreementPayment.get(AGREEMENT_PAYMENT.TYPE))
+						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, agreementPayment.get(AGREEMENT_PAYMENT.DESCRIPTION_DECORABLE))
+						.set(PAYMENT_CONCEPT.EXPRESSION, 
+								AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE")
+								? removeInheritExpr( AonStringUtils.substringAfter(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE();") )
+								: removeInheritExpr(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION))
+						)
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, agreementPayment.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION))
+						.returning(PAYMENT_CONCEPT.ID)
+						.fetchOne(PAYMENT_CONCEPT.ID);
+			}
+			
+			InsertSetMoreStep<AgreementPaymentRecord> insert = dslContext.insertInto(AGREEMENT_PAYMENT)
+				.set(AGREEMENT_PAYMENT.DOMAIN, newDomain)
+				.set(AGREEMENT_PAYMENT.AGREEMENT, newAgreementId)
+				.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
+				.set(AGREEMENT_PAYMENT.START_DATE, agreementPayment.getValue(AGREEMENT_PAYMENT.START_DATE))
+				.set(AGREEMENT_PAYMENT.END_DATE, agreementPayment.getValue(AGREEMENT_PAYMENT.END_DATE))
+				.set(AGREEMENT_PAYMENT.MONTH, agreementPayment.getValue(AGREEMENT_PAYMENT.MONTH))
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, agreementPayment.getValue(AGREEMENT_PAYMENT.SALARY_TYPE))
+				;
+			
+			if(AonStringUtils.isNotBlank(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION)) && AonStringUtils.containsIgnoreCase(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), "DISABLE"))
+				insert.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
+			else
+				insert.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+			
+			Integer newAgreementPaymentId = insert.returning(AGREEMENT_PAYMENT.ID)
+				.fetchOne(AGREEMENT_PAYMENT.ID);
+			
+			agreementPaymentIds.put(agreementPayment.get(AGREEMENT_PAYMENT.ID), newAgreementPaymentId);
 		});
 		
-		return agreementPaymentIds;
-	}
-
-	private static Integer duplicatePaymentConcept(DSLContext dslContext, Integer paymentConceptId, Integer newDomain) {
-		PaymentConceptRecord paymentConceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(paymentConceptId)).fetchOne();
+		Pair<Map<Integer, Integer>, Map<Integer, Integer>> result = new Pair<Map<Integer,Integer>, Map<Integer,Integer>>(agreementPaymentIds, paymentConceptIds);
 		
-		return dslContext.insertInto(PAYMENT_CONCEPT)
-				.set(PAYMENT_CONCEPT.DOMAIN, newDomain)
-				.set(PAYMENT_CONCEPT.CODE, paymentConceptRecord.getCode())
-				.set(PAYMENT_CONCEPT.DESCRIPTION, paymentConceptRecord.getDescription())
-				.set(PAYMENT_CONCEPT.TYPE, paymentConceptRecord.getType())
-				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, paymentConceptRecord.getDescriptionDecorable())
-				.set(PAYMENT_CONCEPT.EXPRESSION, paymentConceptRecord.getExpression())
-				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, paymentConceptRecord.getIrpfExpression())
-				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, paymentConceptRecord.getQuoteExpression())
-				.returning(PAYMENT_CONCEPT.ID)
-				.fetchOne()
-				.value1();
+		return result;
 	}
 
 	private static void duplicateAgreementExtra(DSLContext dslContext, Integer agreementId, Integer newAgreementId, Integer newDomain, Map<Integer, Integer> agreementPaymentIds) {
 		Result<AgreementExtraRecord> agreementExtras = dslContext.selectFrom(AGREEMENT_EXTRA).where(AGREEMENT_EXTRA.AGREEMENT.eq(agreementId)).fetch();
 		
 		agreementExtras.forEach(agreementExtra -> {
-			Integer agreementPayment = null;
-			if(null != agreementExtra.getAgreementPayment()) agreementPayment = agreementPaymentIds.get(agreementExtra.getAgreementPayment());
+			Integer agreementPayment = null != agreementExtra.getAgreementPayment() ? agreementPaymentIds.get(agreementExtra.getAgreementPayment()) : null;
 			
 			dslContext.insertInto(AGREEMENT_EXTRA)
 				.set(AGREEMENT_EXTRA.DOMAIN, newDomain)
@@ -1915,19 +1651,29 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.set(AGREEMENT_LEVEL_DATA.DOMAIN, newDomain)
 				.set(AGREEMENT_LEVEL_DATA.NAME, agreementLevelData.get(AGREEMENT_LEVEL_DATA.NAME))
 				.set(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL, agreementLevelIds.get(agreementLevelData.get(AGREEMENT_LEVEL_DATA.AGREEMENT_LEVEL)))
-				.set(AGREEMENT_LEVEL_DATA.EXPRESSION, "/*inherit*/" + agreementLevelData.get(AGREEMENT_LEVEL_DATA.EXPRESSION) + "/**/")
+				.set(AGREEMENT_LEVEL_DATA.EXPRESSION, agreementLevelData.get(AGREEMENT_LEVEL_DATA.EXPRESSION))
 				.set(AGREEMENT_LEVEL_DATA.START_DATE, agreementLevelData.get(AGREEMENT_LEVEL_DATA.START_DATE))
 				.set(AGREEMENT_LEVEL_DATA.END_DATE, agreementLevelData.get(AGREEMENT_LEVEL_DATA.END_DATE))
 				.execute()
 		);
 	}
 
-	private static void updateContractsToNewAgreement(DSLContext dslContext, Integer agreementId, Integer newDomain, Map<Integer, Integer> agreementLevelIds) {
+	private static void updateContractsToNewAgreement(DSLContext dslContext, Integer agreementId, Integer newDomain, Map<Integer, Integer> agreementLevelIds, Map<Integer, Integer> paymentConceptIds) {
 		Result<Record> contracts = dslContext.select().from(CONTRACT)
 				.innerJoin(AGREEMENT_LEVEL)
 				.on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
 				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
 				.and(CONTRACT.DOMAIN.eq(newDomain))
+				.fetch();
+		
+		Result<Record> contractPayments = dslContext.select().from(CONTRACT_PAYMENT)
+				.innerJoin(CONTRACT)
+				.on(CONTRACT.ID.eq(CONTRACT_PAYMENT.CONTRACT))
+				.innerJoin(AGREEMENT_LEVEL)
+				.on(AGREEMENT_LEVEL.ID.eq(CONTRACT.AGREEMENT_LEVEL))
+				.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+				.and(CONTRACT.DOMAIN.eq(newDomain))
+				.and(CONTRACT_PAYMENT.PAYMENT_CONCEPT.in(paymentConceptIds.keySet()))
 				.fetch();
 		
 		contracts.forEach(contract ->
@@ -1936,6 +1682,14 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.where(CONTRACT.ID.eq(contract.get(CONTRACT.ID)))
 				.execute()
 		);
+		
+		contractPayments.forEach(contractPayment ->
+			dslContext.update(CONTRACT_PAYMENT)
+				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, paymentConceptIds.get(contractPayment.get(CONTRACT_PAYMENT.PAYMENT_CONCEPT)))
+				.where(CONTRACT_PAYMENT.ID.eq(contractPayment.get(CONTRACT_PAYMENT.ID)))
+				.execute()
+		);
+		
 	}
 
 	private static int max(DSLContext dslContext, Identity<?, Integer> identity) {
@@ -2103,11 +1857,51 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			return "0138";
 		case 7:
 			return "0163";
-		case 8:
+		case 8: 
 			return "0112";
 		default:
 			return "0111";
 		}
+	}
+
+	private static String removeInheritExpr(String expression) {
+		if(!AonStringUtils.contains(expression, "inherit")) return expression;
+		
+		String inheritTag = "/*inherit*/";
+        String endTag = "/**/";
+
+        int inheritPos = expression.indexOf(inheritTag);
+        if (inheritPos == -1) return null;
+
+        int contentStart = inheritPos + inheritTag.length();
+
+        // Buscar el cierre /**/ correspondiente (ignorando si está dentro de paréntesis)
+        int openParens = 0;
+        int endPos = -1;
+        int i = contentStart;
+
+        while (i < expression.length()) {
+            char c = expression.charAt(i);
+            if (c == '(') openParens++;
+            else if (c == ')') openParens = Math.max(0, openParens - 1);
+            else if (expression.startsWith(endTag, i) && openParens == 0) {
+                endPos = i;
+                break;
+            }
+            i++;
+        }
+
+        if (endPos == -1) return null;
+
+        // Tomar contenido sin el /*inherit*/ ni /**/
+        String before = expression.substring(0, inheritPos).trim();
+        String middle = expression.substring(contentStart, endPos).trim();
+        String after = expression.substring(endPos + endTag.length()).trim();
+
+        // Armar expresión limpia
+        String expresion = (before + " " + middle + " " + after).replaceAll("\\s+", " ").trim();
+        
+        return expresion;
 	}
 
 }

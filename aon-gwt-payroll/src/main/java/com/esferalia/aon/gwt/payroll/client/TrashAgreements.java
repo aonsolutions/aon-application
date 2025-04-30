@@ -155,15 +155,10 @@ public class TrashAgreements extends ResizeComposite implements
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-						
 						for (int i = 0; i < agreements.size(); i++) {
 							Agreement agreement = agreements.get(i);
 							addAgreementItem(agreement);
 						}
-						
-						// Select the first one.
-//						if (offset == 0 && agreementsTree.getTree().getItemCount() > 0)
-//							agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), false);
 						
 						// Get remainning
 						if ( agreements.size() == limit )
