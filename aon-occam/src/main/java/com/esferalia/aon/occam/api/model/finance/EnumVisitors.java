@@ -4,6 +4,13 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 
 public class EnumVisitors {
 
+	public interface IExternalStorageVisitor<T> {
+		T visitAon(String contentDisposition);
+		T visitDrive(String contentDisposition);
+		T visitAws(String contentDisposition);
+		T visitScaleway(String contentDisposition);
+	}
+	
 	public interface IInvoiceTypeVisitor<T> {
 		T visitPurchase(Invoice invoice);
 		T visitSales(Invoice invoice);

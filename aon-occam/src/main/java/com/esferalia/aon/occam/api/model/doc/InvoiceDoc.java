@@ -5,7 +5,7 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
+public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 
 	private static final String INVOICE_DOC = "invoice_doc";
 	private Integer invoice;

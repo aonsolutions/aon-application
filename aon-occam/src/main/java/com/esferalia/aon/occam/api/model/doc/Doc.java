@@ -75,6 +75,6 @@ public abstract class Doc<T extends Enum<?>>  {
 	
 	public abstract URL getDownloadURL();
 
-	public abstract  URL getDownloadURL(String contentDisposition);
+	public abstract URL getDownloadURL(String contentDisposition);
 	
 }
