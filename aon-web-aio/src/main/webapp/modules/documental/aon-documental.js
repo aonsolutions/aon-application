@@ -153,16 +153,17 @@ export class AonDocumental extends AonElement {
 		}
 		
 		if (this.isBetaDoc() && this.getDur().isDocumentalManager() || this.isBetaDoc() && this.getDur().isDocumentalPortal() ) {
-			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
+			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createOptions());
+			// aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
 		}
 
 		let bool = await this.hasBidoq();
-
+		
 		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
 			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 		}
 		
-		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
+		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){}
 			this.addDocumentOptions();
 		this.addTypeOptions();
 		this.addCategoryOptions();
@@ -282,6 +283,12 @@ export class AonDocumental extends AonElement {
 			domain: LS.getDomainId()
 		};
 		if (this.isBetaDoc()) {
+            let application = this.getApplication();
+            // Las categorias del cliente, las ponemos como ocultas si no tiene
+            let yourCategoriesVisibility = false;
+            if (!yourCategoriesVisibility)
+              this.hideElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
+            // llamamos a las categorias
 			getS3Category(data).then(categories => {
 				this._categories = categories.map(c => {
 					return {
@@ -289,7 +296,7 @@ export class AonDocumental extends AonElement {
 						name: c.name
 					};
 				});
-				let application = this.getApplication();
+				
                 // Limpiamos
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
@@ -324,6 +331,8 @@ export class AonDocumental extends AonElement {
 						};
 						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
 					}else{
+                        // Tiene datos en tus catogiras 
+                        yourCategoriesVisibility = true;
 						let optionUserCategories = {
                             id  : item.id,
 							name: item.name,
@@ -345,6 +354,9 @@ export class AonDocumental extends AonElement {
 					}
 					// Si estamos en modo beta, agregamos las categorías al nivel del apartado documentos
 				});
+                // Mostrar tus categorias
+                if (yourCategoriesVisibility)
+                  this.showElementByVisibility(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id);
 			});
 		} else {
 			getCategories(data).then(categories => {
@@ -397,77 +409,77 @@ export class AonDocumental extends AonElement {
 	}
 
 	//A LA ESPERA DE LA NUEVA TABLA TAGS
-	// createOptions() {
-	// 	if(document.getElementById('aonDocumentalDialogDialogActionAccept')){
-	// 		let btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
-	// 		btnAccept.remove();
-	// 	}
+	createOptions() {
+		if(document.getElementById('aonDocumentalDialogDialogActionAccept')){
+			let btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
+			btnAccept.remove();
+		}
 
-	// 	if(document.getElementById('aonDocumentalDialogDialogActionCancel')){
-	// 		let btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
-	// 		btnCancel.remove();
-	// 	}
+		if(document.getElementById('aonDocumentalDialogDialogActionCancel')){
+			let btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
+			btnCancel.remove();
+		}
 
-	// 	let doc = document.getElementById(this.getApplication().DIALOG);
-	// 	doc.clear(); 
-	// 	if (!this.isMobile()) doc.width = '400px';
-	// 	doc.setTitle("¿Qué quiere crear?");
+		let doc = document.getElementById(this.getApplication().DIALOG);
+		doc.clear(); 
+		if (!this.isMobile()) doc.width = '400px';
+		doc.setTitle("¿Qué quiere crear?");
 	
-	// 	// Crear los radio buttons
-	// 	let radioCategory = document.createElement('input');
-	// 	radioCategory.type = 'radio';
-	// 	radioCategory.name = 'categoryRadio'; 
-	// 	radioCategory.id = 'radioId';
-	// 	radioCategory.addEventListener('change', this.handleRadioChange.bind(this));
+		// Crear los radio buttons
+		let radioCategory = document.createElement('input');
+		radioCategory.type = 'radio';
+		radioCategory.name = 'categoryRadio'; 
+		radioCategory.id = 'radioId';
+		radioCategory.addEventListener('change', this.handleRadioChange.bind(this));
 	
-	// 	let radiotag = document.createElement('input');
-	// 	radiotag.type = 'radio';
-	// 	radiotag.name = 'tagRadio';
-	// 	radiotag.id = 'radioId2';
-	// 	radiotag.addEventListener('change', this.handleRadioChange.bind(this));
+		let radiotag = document.createElement('input');
+		radiotag.type = 'radio';
+		radiotag.name = 'tagRadio';
+		radiotag.id = 'radioId2';
+		radiotag.addEventListener('change', this.handleRadioChange.bind(this));
 	
-	// 	// Crear las etiquetas
-	// 	let labelCategory = document.createElement('label');
-	// 	labelCategory.setAttribute('for', 'radioId');
-	// 	labelCategory.textContent = 'Crear categoria';
+		// Crear las etiquetas
+		let labelCategory = document.createElement('label');
+		labelCategory.setAttribute('for', 'radioId');
+		labelCategory.textContent = 'Crear categoria';
 	
-	// 	let labelTag = document.createElement('label');
-	// 	labelTag.setAttribute('for', 'radioId2');
-	// 	labelTag.textContent = 'Crear etiqueta';
+		let labelTag = document.createElement('label');
+		labelTag.setAttribute('for', 'radioId2');
+		labelTag.textContent = 'Crear etiqueta';
 	
-	// 	// Crear un contenedor para los radio buttons y etiquetas
-	// 	let container = document.createElement('div');
+		// Crear un contenedor para los radio buttons y etiquetas
+		let container = document.createElement('div');
 	
-	// 	// Crear contenedores para cada radio button y su respectiva etiqueta
-	// 	let categoryContainer = document.createElement('div');
-	// 	categoryContainer.appendChild(radioCategory);
-	// 	categoryContainer.appendChild(labelCategory);
+		// Crear contenedores para cada radio button y su respectiva etiqueta
+		let categoryContainer = document.createElement('div');
+		categoryContainer.appendChild(radioCategory);
+		categoryContainer.appendChild(labelCategory);
 	
-	// 	let tagContainer = document.createElement('div');
-	// 	tagContainer.appendChild(radiotag);
-	// 	tagContainer.appendChild(labelTag);
+		let tagContainer = document.createElement('div');
+		tagContainer.appendChild(radiotag);
+		tagContainer.appendChild(labelTag);
 	
-	// 	// Añadir los contenedores al contenedor principal
-	// 	container.appendChild(categoryContainer);
-	// 	container.appendChild(tagContainer);
+		// Añadir los contenedores al contenedor principal
+		container.appendChild(categoryContainer);
+		container.appendChild(tagContainer);
 	
-	// 	// Establecer el contenido del modal (sin el botón de aceptar)
-	// 	doc.setContent(container);
+		// Establecer el contenido del modal (sin el botón de aceptar)
+		doc.setContent(container);
 	
-	// 	// No se agrega ningún botón de aceptar aquí
-	// 	doc.open();
-	// }
+		// No se agrega ningún botón de aceptar aquí
+		doc.open();
+	}
 	
-	// handleRadioChange(event) {
-	// 	// Verificar cuál radio button fue seleccionado
-	// 	if (event.target.id === 'radioId') {
-	// 		// Si se selecciona "Crear categoría"
-	// 		this.createCategory();
-	// 	} else if (event.target.id === 'radioId2') {
-	// 		// Si se selecciona "Crear etiqueta"
-	// 		this.createTag();
-	// 	}
-	// }
+	handleRadioChange(event) {
+		// Verificar cuál radio button fue seleccionado
+		if (event.target.id === 'radioId') {
+			// Si se selecciona "Crear categoría"
+			this.createCategory();
+		} else if (event.target.id === 'radioId2') {
+			// Si se selecciona "Crear etiqueta"
+			this.createTag();
+		}
+	}
 	
 	createCategory() {
         let d = document.getElementById(this.getApplication().DIALOG);
@@ -808,13 +820,13 @@ export class AonDocumental extends AonElement {
 					data.category = model;  // Se sobrescribe 'category' si modelo existe
 				}
 
-				//a la espera nueva tabla
-				// let tagElement = document.getElementById("aonDocumentalUploadTag");
-				// if (tagElement && tagElement.value !== null) {
-				// 	let tag = tagElement.value;
-				// 	data.tag = tag;
-				// }
-
+				let tagElement = document.getElementById("aonDocumentalUploadTag");
+				if (tagElement) {					
+					const selectedTags = tagElement.getSelectable();
+					// Transformamos los tags a un array con solo id 
+					data.tags = selectedTags.map(tag => ({ id: tag.value }));
+				}
+		
 				let datePickerElement = document.getElementById("aonDocumentalUploadDatePicker");
 				if (datePickerElement && datePickerElement.getValue() !== null) {
 					let date = datePickerElement.getValue();
@@ -894,7 +906,7 @@ export class AonDocumental extends AonElement {
                 }
 
 				if (tagElement && tagElement.value !== null &&  tagElement.value.trim() !== "") {
-					data.tag = dateElement.value;
+					data.tag = tagElement.getSelectable();
 				}
 
 				if (dateElement && dateElement.getValue() !== null && dateElement.getValue().trim() !== "") {
