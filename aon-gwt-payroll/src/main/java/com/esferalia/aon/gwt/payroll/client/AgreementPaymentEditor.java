@@ -550,21 +550,25 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private void checkPaymentCode() {
+		Set<String> allowedDuplicates = Set.of("SALARIO_BASE", "PAGA_EXTRA");
+		
 		String newCode = paymentConceptCodeTB.getValue();
 		if(!AonStringUtils.isBlank(newCode)) {
 			String cleanNewCode = newCode.replaceAll(" ", "_").trim().toUpperCase();
 			
-			Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), cleanNewCode)).findFirst();
-			if(existingCodePayment.isPresent()) {
-				paymentConceptCodeTB.setValue("");
-				AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
-			} else if(contextVariables.contains(cleanNewCode)) {
-				paymentConceptCodeTB.setValue("");
-				AonMessagePanel.showError(messagePanel, "No se puede usar el nombre de una variable de contexto como c\u00f3digo de un concepto. Elija otro nombre para el c\u00f3digo");
-			} else {
-				paymentConceptCodeTB.setValue(cleanNewCode);
+			if(!allowedDuplicates.contains(cleanNewCode)) {
+				Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), cleanNewCode)).findFirst();
+				if(existingCodePayment.isPresent()) {
+					paymentConceptCodeTB.setValue("");
+					AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+				} else if(contextVariables.contains(cleanNewCode)) {
+					paymentConceptCodeTB.setValue("");
+					AonMessagePanel.showError(messagePanel, "No se puede usar el nombre de una variable de contexto como c\u00f3digo de un concepto. Elija otro nombre para el c\u00f3digo");
+				} else {
+					paymentConceptCodeTB.setValue(cleanNewCode);
+				}
 			}
-				
+			
 		} else AonMessagePanel.showError(messagePanel, "El c\u00f3digo del concepto es obligatorio");
 	}
 
