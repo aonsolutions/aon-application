@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU} from "../services/app.js"
@@ -438,28 +438,54 @@ export class AonNewMenu extends AonElement {
 		div.id = "aonTopMenuDiv";
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
-	
-		for (let item in TOP_MENU_APPS) {
-			
-			let app = TOP_MENU_APPS[item];
-			
-			if (!this.isApp(app)) {
-				if (!showAllApps || excludedApps.includes(app.app)) {
-					continue;
-				} else {
-					let appElement = this.buildTopApp(app);
 
-					appElement.classList.add("aonNewMenuTopNavAppElement");
-					app.color = "var(--aonTopMenuNotAvailable)";
-					div.appendChild(appElement);
-					continue;
-				}
-			}
+		if(this.isSideVisible){
+			for (let item in TOP_MENU_APPS_HOME) {
 			
-			let appElement = this.buildTopApp(app);
-			div.appendChild(appElement);
-					
+				let app = TOP_MENU_APPS_HOME[item];
+				
+				if (!this.isApp(app)) {
+					if (!showAllApps || excludedApps.includes(app.app)) {
+						continue;
+					} else {
+						let appElement = this.buildTopApp(app);
+	
+						appElement.classList.add("aonNewMenuTopNavAppElement");
+						app.color = "var(--aonTopMenuNotAvailable)";
+						div.appendChild(appElement);
+						continue;
+					}
+				}
+				
+				let appElement = this.buildTopApp(app);
+				div.appendChild(appElement);
+						
+			}
+		}else{
+			for (let item in TOP_MENU_APPS) {
+			
+				let app = TOP_MENU_APPS[item];
+				
+				if (!this.isApp(app)) {
+					if (!showAllApps || excludedApps.includes(app.app)) {
+						continue;
+					} else {
+						let appElement = this.buildTopApp(app);
+	
+						appElement.classList.add("aonNewMenuTopNavAppElement");
+						app.color = "var(--aonTopMenuNotAvailable)";
+						div.appendChild(appElement);
+						continue;
+					}
+				}
+				
+				let appElement = this.buildTopApp(app);
+				div.appendChild(appElement);
+						
+			}
 		}
+	
+		
 
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
@@ -710,7 +736,7 @@ export class AonNewMenu extends AonElement {
 		div.addEventListener("mouseenter", () => {
 			if (LS.isCompanySelected()){
 				this.showSideNav();
-				//this.getElement("topMenuHome").style.display = "none";
+				this.getElement("topMenuHome").style.display = "none";
 			}
 		});
 
@@ -721,9 +747,21 @@ export class AonNewMenu extends AonElement {
 			if (!buttonNew?.contains(event.target) && !LS.isPortalChecked()) {
 				// Si se clicó fuera del sidenav, lo ocultamos
 				this.hideSideNav();
+				this.isSideVisible(true);
+				this.buildMenuTopnav();
 			}
+
+
 		});
 	
+	}
+
+	isSideVisible(visible){
+		if(visible){
+			return visible;
+		}else{
+			return false;
+		}
 	}
 
 
