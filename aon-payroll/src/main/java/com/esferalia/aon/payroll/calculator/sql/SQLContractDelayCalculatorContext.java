@@ -819,16 +819,17 @@ public class SQLContractDelayCalculatorContext extends
 
 			stmt = connection.prepareStatement(
 				"SELECT" 
-				+" " + SALARY_DATA + "." + SalaryDataColumns.START_DATE 
-				+"," + SALARY_DATA + "." + SalaryDataColumns.END_DATE 
+				+" COALESCE(" + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "," + SALARY+ "." + SalaryColumns.START_DATE +") AS " + SalaryDataColumns.START_DATE 
+				+", COALESCE(" + SALARY_DATA + "." + SalaryDataColumns.END_DATE + "," + SALARY + "." + SalaryColumns.END_DATE + ") AS " + SalaryDataColumns.END_DATE 
 				+" FROM " + SALARY
-				+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
+				+" LEFT JOIN " + SALARY_DATA + " ON (" 
+				+ SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY 
+				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + " IN( '" + CGC_BASE.getName() + "', " + FREE_BASES + ", " + ERE_BASES + " )"
+				+ ")" 
 				+" WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ? "
 				+" AND " + SALARY + "." + SalaryColumns.TYPE + " = 0 " 
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
-				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME 
-				+ " IN( '" + CGC_BASE.getName() + "', " + FREE_BASES + ", " + ERE_BASES + " )"
 				+" GROUP BY 1, 2"
 				); 
 			stmt.setInt(1, contract);
@@ -837,13 +838,13 @@ public class SQLContractDelayCalculatorContext extends
 			rs = stmt.executeQuery();
 			
 			while ( rs.next() ) {
-				java.sql.Date start = rs.getDate(SALARY_DATA + "." + SalaryDataColumns.START_DATE);
-				java.sql.Date end = rs.getDate(SALARY_DATA + "." + SalaryDataColumns.END_DATE);
+				java.sql.Date start = rs.getDate(SalaryDataColumns.START_DATE);
+				java.sql.Date end = rs.getDate(SalaryDataColumns.END_DATE);
 				cgcPeriods.add(new Period(start,end));
 			}
 			
 		}catch ( SQLException e ) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		finally {
 			if ( rs != null )
@@ -855,6 +856,7 @@ public class SQLContractDelayCalculatorContext extends
 		return cgcPeriods;
 
 	}
+
 
 	private static Collection<Period> getItPeriods(Connection connection, Integer contract, Date startDate, Date endDate) 
 	throws SQLException {
@@ -1207,7 +1209,9 @@ public class SQLContractDelayCalculatorContext extends
 					
 					+ " FROM "
 					+ SALARY 
-					+" INNER JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY + ")" 
+					+" LEFT JOIN " + SALARY_DATA + " ON (" + SALARY + "." + SalaryColumns.ID + " = " + SALARY_DATA + "." + SalaryDataColumns.SALARY 
+					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', " + FREE_BASES+  ", " + ERE_BASES + ")" 
+					+  ")" 
 					+" LEFT JOIN " + SALARY_PAYMENT + " ON (" + SALARY_DATA + "." + SalaryDataColumns.SALARY +  " = " + SALARY_PAYMENT + "." + SalaryPaymentColumns.SALARY 
 															+ " AND  "+ SALARY_PAYMENT + "." +SalaryPaymentColumns.PAYMENT_CONCEPT + " =  'PREST_IT'"  
 															+ " AND  ROUND("+ SALARY_PAYMENT + "." +SalaryPaymentColumns.QUOTE + ",2) =  CONVERT(" + SALARY_DATA + "."+ SalaryDataColumns.EXPRESSION +", DECIMAL(15,2))"
@@ -1216,11 +1220,11 @@ public class SQLContractDelayCalculatorContext extends
 					+ " WHERE " 
 					+ SALARY + "." + SalaryColumns.CONTRACT + " = ? " 
 					+ " AND " + SALARY + "." + SalaryColumns.TYPE + "  = ? " 
-					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
-					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
-					+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', " + FREE_BASES+  ", " + ERE_BASES + ")" 
+					+ " AND (" + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " + " OR " + SALARY + "." + SalaryColumns.START_DATE + "  = ? )"
+					+ " AND (" + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? " + " OR " + SALARY + "." + SalaryColumns.END_DATE + " = ? )"
+					//+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', " + FREE_BASES+  ", " + ERE_BASES + ")" 
 					+ " GROUP BY 1"
-	//				+ " ORDER BY 1"
+					//+ " ORDER BY 1"
 				+") AS " + SALARY_PAYMENT
 				;
 
@@ -1483,8 +1487,10 @@ public class SQLContractDelayCalculatorContext extends
 			
 			stmt.setInt(i++, contract); // SalaryColumns.CONTRACT + " = ? "
 			stmt.setInt(i++, type.ordinal()); // SalaryColumns.TYPE + " = ? "
+			stmt.setDate(i++, sqlStartDate); // SalaryDataColumns.START_DATE +
 			stmt.setDate(i++, sqlStartDate); // SalaryColumns.START_DATE +
 			stmt.setDate(i++, sqlEndDate); // SalaryColumns.END_DATE + "  = ? "
+			stmt.setDate(i++, sqlEndDate); // SalaryDataColumns.END_DATE + "  = ? "
 
 			return stmt.executeQuery();
 		}
