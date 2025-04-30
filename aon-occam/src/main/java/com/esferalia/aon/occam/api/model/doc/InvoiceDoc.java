@@ -30,6 +30,12 @@ public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 	}
 	
 	@Override
+	public InvoiceDoc setAonTable(String aonTable) {
+		super.setAonTable(aonTable);
+		return this;
+	}
+
+	@Override
 	public InvoiceDoc setDriveId(String driveId) {
 		super.setDriveId(driveId);
 		return this;
@@ -86,6 +92,12 @@ public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 	@Override
 	public InvoiceDoc setType(InvoiceAttachmentType type) {
 		super.setType(type);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setUrl(String url) {
+		super.setUrl(url);
 		return this;
 	}
 }

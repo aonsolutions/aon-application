@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.api.model.doc;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ExternalDoc<T extends Enum<?>> extends Doc<T> {
@@ -71,8 +73,9 @@ public class ExternalDoc<T extends Enum<?>> extends Doc<T> {
 		return url;
 	}
 	
-	public void setUrl(String url) {
+	public ExternalDoc<T> setUrl(String url) {
 		this.url = url;
+		return this;
 	}
 	
 	@Override
@@ -82,14 +85,12 @@ public class ExternalDoc<T extends Enum<?>> extends Doc<T> {
 	
 	@Override
 	public URL getDownloadURL(String contentDisposition) {
-		URL downloadUrl;
 		try {
-			downloadUrl = new URL(getUrl());
-		} catch (MalformedURLException e) {
+			return new URI(getUrl()).toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return downloadUrl;
 	}
 	
 }

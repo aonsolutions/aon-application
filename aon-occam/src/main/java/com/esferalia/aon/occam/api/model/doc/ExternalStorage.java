@@ -1,21 +1,22 @@
 package com.esferalia.aon.occam.api.model.doc;
 
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IExternalStorageVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 public enum ExternalStorage {
 	
 	AON {
-		@Override public <T> T visit(String contentDisposition, IExternalStorageVisitor<T> visitor) {return visitor.visitAon(contentDisposition);}
+		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAon();}
 	},
 	DRIVE {
-	 	@Override public <T> T visit(String contentDisposition, IExternalStorageVisitor<T> visitor) {return visitor.visitDrive(contentDisposition);}
+	 	@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitDrive();}
 	},
 	AWS() {
-		@Override public <T> T visit(String contentDisposition, IExternalStorageVisitor<T> visitor) {return visitor.visitAws(contentDisposition);}
+		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAws();}
 	},
 	SCALEWAY() {
-		@Override public <T> T visit(String contentDisposition, IExternalStorageVisitor<T> visitor) {return visitor.visitScaleway(contentDisposition);}
+		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitScaleway();}
 	};
 	
 	private ExternalStorage() {
@@ -25,8 +26,6 @@ public enum ExternalStorage {
 	public byte value() {
 		return (byte) this.ordinal();
 	}
-	
-	public abstract <T> T visit(String contentDisposition, IExternalStorageVisitor<T> visitor);
 	
 	public static ExternalStorage safeValueOf( Byte i ) {
 		if (i == null) return null;
@@ -39,13 +38,11 @@ public enum ExternalStorage {
 		return ExternalStorage.values()[i];
 	}
 	
-	public static ExternalStorage safeValueOf( String i ) {
-		if(AonStringUtils.isBlank(i)) return null;
-		for (ExternalStorage rs : values()) {
-			if(rs.name().equalsIgnoreCase(i))
-				return rs;
-		}
-		return null;
+	public static ExternalStorage safeValueOf( String s ) {
+		return AonCollectionUtils.stream(values())
+			.filter( t ->  AonStringUtils.equalsIgnoreCase(t.name(), s))
+			.findFirst()
+			.orElse(null);
 	}
 	
 	public boolean isAon() {
@@ -62,6 +59,15 @@ public enum ExternalStorage {
 	
 	public boolean isScaleway() {
 		return SCALEWAY.equals(this);
+	}
+	
+	public abstract <T> T visit(ExternalStorageVisitor<T> visitor);
+
+	public interface ExternalStorageVisitor<T> {
+		T visitAon();
+		T visitDrive();
+		T visitAws();
+		T visitScaleway();
 	}
 }
 

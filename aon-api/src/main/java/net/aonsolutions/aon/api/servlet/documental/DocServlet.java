@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IExternalStorageVisitor;
+import com.esferalia.aon.occam.api.model.doc.ExternalStorage.ExternalStorageVisitor;
 import com.esferalia.aon.watson.server.http.AonURIBuilder;
 import com.google.api.services.drive.Drive;
 
@@ -91,10 +91,10 @@ public class DocServlet extends HttpServlet {
 		String domainName = req.getServerName();
 		Integer domain = JsonUtils.getInteger(json, IJsonNames.DOMAIN);
 		ExternalStorage externalStorage = ExternalStorage.safeValueOf(JsonUtils.getbyte(json, IJsonNames.STORAGE));		
-		String longURL = externalStorage.visit(null, new IExternalStorageVisitor<String>() {
+		String longURL = externalStorage.visit(new ExternalStorageVisitor<String>() {
 
 			@Override
-			public String visitAon(String contentDisposition) {
+			public String visitAon() {
 				String source = JsonUtils.getString(json, IJsonNames.SOURCE);
 				String aonId = JsonUtils.getString(json, IJsonNames.AON_ID);
 
@@ -108,7 +108,7 @@ public class DocServlet extends HttpServlet {
 			}
 
 			@Override
-			public String visitDrive(String contentDisposition) {
+			public String visitDrive() {
 				String driveId = JsonUtils.getString(json, IJsonNames.DRIVE_ID);
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domain, "");
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
@@ -116,23 +116,23 @@ public class DocServlet extends HttpServlet {
 			}
 
 			@Override
-			public String visitAws(String contentDisposition) {
+			public String visitAws() {
 				String s3Bucket = JsonUtils.getString(json, IJsonNames.S3_BUCKET);
 				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
 				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
 				return s3Bucket != null
-					? S3.getInstance().getDownloadURL(s3Bucket, s3Key, contentDisposition).toExternalForm()
-					: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key, contentDisposition).toExternalForm();
+					? S3.getInstance().getDownloadURL(s3Bucket, s3Key).toExternalForm()
+					: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
 			}
 
 			@Override
-			public String visitScaleway(String contentDisposition) {
+			public String visitScaleway() {
 				String s3Bucket = JsonUtils.getString(json, IJsonNames.S3_BUCKET);
 				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
 				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
 				return s3Bucket != null
-					? SCALEWAY.getInstance().getDownloadURL(s3Bucket, s3Key, contentDisposition).toExternalForm()
-					: SCALEWAY.getInstance().getAonTableDownloadURL(aonTable, s3Key, contentDisposition).toExternalForm();
+					? SCALEWAY.getInstance().getDownloadURL(s3Bucket, s3Key).toExternalForm()
+					: SCALEWAY.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
 			}
 			
 		});
@@ -142,7 +142,6 @@ public class DocServlet extends HttpServlet {
 	
 	public static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();
-	    @SuppressWarnings("unchecked")
 		Map<String,String[]> params = req.getParameterMap();
 	    for (Map.Entry<String,String[]> entry : params.entrySet()) {
 	      String[] v = entry.getValue();
