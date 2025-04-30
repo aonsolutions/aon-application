@@ -17,6 +17,7 @@ export class AonSign extends AonElement {
   CONTENT;
   TIME;
   TIME_ID;
+  GLOBAL;
   // TOTAL_HOUR;
   get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -35,6 +36,7 @@ export class AonSign extends AonElement {
   }
 
   initialize() {
+	this.GLOBAL = SIGNIN_VIEWS.AON_SIGNIN;
     this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
@@ -197,9 +199,48 @@ export class AonSign extends AonElement {
 	}
 
   async saveTimeCtrl(status){
+	let divGeneral = this.getElement(this.GLOBAL)
+	// Spinner
+    let loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'aonDocumentalLoadingOverlay';
+    loadingOverlay.style.position = 'absolute';
+    loadingOverlay.style.top = '0';
+    loadingOverlay.style.left = '0';
+    loadingOverlay.style.width = '100%';
+    loadingOverlay.style.height = '100%';
+    loadingOverlay.style.backgroundColor = 'rgba(218, 209, 209, 0.8)';
+    loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.alignItems = 'center';
+    loadingOverlay.style.justifyContent = 'center';
+    loadingOverlay.style.zIndex = '10';
+    let spinner = document.createElement('div');
+    spinner.classList.add('preloader-wrapper', 'active');
+    spinner.innerHTML = `
+        <span class="material-symbols-outlined">
+            refresh
+        </span>
+    `;
+    let icon = spinner.querySelector('.material-symbols-outlined');
+    icon.style.fontSize = '48px';
+    icon.style.animation = 'rotate 2s linear infinite';
+    let style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    loadingOverlay.appendChild(spinner);
+    divGeneral.appendChild(loadingOverlay);
+	
+	
     let signin = {status, task_holder: this._taskHolder, parent: this.parent}
     this.disabledButton(true);
-
     let timeOutPosition = false;
 
     await getPosition()
@@ -210,10 +251,12 @@ export class AonSign extends AonElement {
     })
     .catch(error=>{
       timeOutPosition = error && error.timeout;
-      this.showToast(error);
+//      this.showToast(error);
     }); 
 
-    const resp = await saveTimeControl(signin);
+    const resp = await saveTimeControl(signin).catch(() => {
+		loadingOverlay.style.display = 'none';
+	});
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
       getPosition()
@@ -231,6 +274,8 @@ export class AonSign extends AonElement {
     this.buildSignin(resp);
 
     this.disabledButton(false);
+	this.showToast({code: 3, message: 'Marcaje realizado con exito', timeout: false});
+	loadingOverlay.style.display = 'none';
   }
 
   disabledButton(disabled){
