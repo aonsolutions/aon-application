@@ -24,8 +24,12 @@ import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
 import org.htmlunit.WebResponse;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
@@ -128,6 +132,8 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setRedirectEnabled(true);
 			
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			
 			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
 			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			
@@ -140,6 +146,19 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 				document = HtmlUnitToolkit.transformXmlPage(targetLink.click());
 			} catch (Exception e) {}
 			
+			
+			HtmlDivision dialogoMensajes = (HtmlDivision) document.getElementById("dialogoMensajes");
+
+			if (dialogoMensajes != null) {
+			    DomNodeList<DomNode> errores = dialogoMensajes.querySelectorAll("li.ERROR.mensaje p.pr_pMensaje");
+
+			    for (DomNode error : errores) {
+			        String mensaje = error.asNormalizedText();
+			        if (!mensaje.isEmpty()) {
+			            throw new SegSocialException(mensaje);
+			        }
+			    }
+			}
 			
 			HtmlInput sitUsuSec = document.querySelector("#sitUsuSec_1");
 			sitUsuSec.click();
