@@ -333,6 +333,9 @@ public class JooqAgreementTab {
 			payment.setIrpfExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.IRPF_EXPRESSION));
 			payment.setQuoteExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION));
 			
+			if(AonStringUtils.equalsIgnoreCase(payment.getExpression(), "DISABLE();"))
+				payment.setHiddenExpression(agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
+			
 			paymentsSet.add(payment);
 		}
 
