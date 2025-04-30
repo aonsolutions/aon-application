@@ -94,5 +94,29 @@ public class JsSalaryResult extends JavaScriptObject {
 			DATE_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
 		return DATE_FORMAT;
 	}
+	
+	public final String toDebugString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("JsSalaryResult {")
+	      .append("\n  employeeId: ").append(getEmployeeId())
+	      .append("\n  employeeName: ").append(getEmployeeName())
+	      .append("\n  enterpriseId: ").append(getEnterpriseId())
+	      .append("\n  enterpriseName: ").append(getEnterpriseName())
+	      .append("\n  workplaceId: ").append(getWorkplaceId())
+	      .append("\n  workplaceName: ").append(getWorkplaceName())
+	      .append("\n  startDate: ").append(getStartDateString())
+	      .append("\n  endDate: ").append(getEndDateString())
+	      .append("\n  chargeDate: ").append(getChargeDateString())
+	      .append("\n  totalLiquid: ").append(getTotalLiquid())
+	      .append("\n  totalPayment: ").append(getTotalPayment())
+	      .append("\n  totalDeduction: ").append(getTotalDeduction())
+	      .append("\n  hasCounter: ").append(hasCounter())
+	      .append("\n  counterTotalLiquid: ").append(getCounterTotalLiquid())
+	      .append("\n  counterTotalPayment: ").append(getCounterTotalPayment())
+	      .append("\n  counterTotalDeduction: ").append(getCounterTotalDeduction())
+	      .append("\n}");
+	    return sb.toString();
+	}
+
 
 }

@@ -581,64 +581,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public List<Agreement> getTrashAgreements(String domain, int offset, int limit) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainID = AonServletUtils.getDomainID(domain);
-
-			return JooqAgreement.getTrashAgreements(connection, offset, limit,
-					domainID);
-
+			return JooqAgreement.getTrashAgreements(connection, offset, limit, domainID);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 	
 	@Override
 	public Agreement getAgreement(String domain, Integer agreementId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			Integer domainID = AonServletUtils.getDomainID(domain);
-
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			return JooqAgreement.getAgreement(connection, agreementId);
-
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} catch (NullPointerException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 
 	@Override
 	public void updateAgreementId(String domain, Agreement agreement) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			JooqAgreement.trashRestoreAgreement(connection, agreement.getId(), true);
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 	
@@ -665,20 +630,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public Agreement copyAgreement(String domain, Agreement agreement) {
-		
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);						
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			return JooqAgreement.copyAgreement(connection, getDomain(domain), agreement.getId());
-		} catch(SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -1745,21 +1700,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void moveAgreement2Parent(String domain, Agreement agreement) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+	public void moveAgreement2Parent(String domain, Agreement agreement) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 			JooqAgreement.moveAgreement2ParentDomain(connection, parentDomainID, agreement.getId());
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	
 	}
@@ -5244,6 +5190,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			JooqAgreementIntegrity.fixAgreementIntegrity(connection, domainId, agreementId);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}

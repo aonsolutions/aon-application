@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.client.Agreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.gwt.payroll.shared.AgreementIntegrity;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -156,8 +157,21 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class MoveAgreementCommand implements ScheduledCommand {
 		@Override
 		public void execute() {
-			if(Window.confirm("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F"))
-				moveAgreement2Parent(MainAgreement.this.agreement);
+			AonDialog dialog = new AonDialog("Subir convenio", new HTML("\u00BFDesea subir el convenio seleccionado al dominio padre\u003F"));
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					moveAgreement2Parent(MainAgreement.this.agreement);
+				}
+			});
 		}
 		
 		private void moveAgreement2Parent(Agreement agreement) {
@@ -530,6 +544,36 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			this.agreementPreview.setReadOnly(0 == agreement.getDomain().intValue() || (parentDomain != null && parentDomain.intValue() == agreement.getDomain().intValue()));
 		}
 		
+//		agreementPreview.showLoading("Actualizando versi\u00f3n convenio...");
+//		fixAgreement(
+//				agreement.getId(), 
+//				s -> {
+//					agreementPreview.showLoading("Cargando convenio...");
+//					getAgreement(agreement.getId(), agreeementInfo -> {
+//						agreementSelected = agreeementInfo;
+//						showAgreementContainer();
+//						agreementPreview.resetSelectedDate();
+//						agreementPreview.setAgreementPreview(agreeementInfo);
+//					});
+//					
+//					checkAgreementIntegrity(agreement.getId(), 
+//						integrity -> {
+//							if(integrity.hasMessages())
+//								new AgreementIntegrityDialog(agreement.getId(), null);
+//						}
+//					);
+//				}, 
+//				err -> {
+//					agreementPreview.showLoading("Cargando convenio...");
+//					getAgreement(agreement.getId(), agreeementInfo -> {
+//						agreementSelected = agreeementInfo;
+//						showAgreementContainer();
+//						agreementPreview.resetSelectedDate();
+//						agreementPreview.setAgreementPreview(agreeementInfo);
+//					});
+//					new AgreementIntegrityDialog(agreement.getId(), err.getMessage());
+//				});
+		
 		agreementPreview.showLoading("Cargando convenio...");
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
@@ -618,6 +662,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 				@Override
 				public void onSuccess(Agreement result) {
+					agreementPreview.showSuccess("", "Convenio duplicado correctamente");
 					agreements.reloadAgreements(finish -> {
 						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
 							showAgreementMessage();
@@ -660,11 +705,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 										@Override
 										public void onFailure(Throwable caught) {
-											Window.alert("No ha sido posible enviar el Convenio a la papelera.");
+											agreementPreview.showError("Borrado", "No ha sido posible enviar el Convenio a la papelera.");
 										}
 
 										@Override
 										public void onSuccess(Void result) {
+											agreementPreview.showSuccess("Borrado", "Convenio enviado a la papelera");
 											MainAgreement.this.agreements.resetTypeView();
 											MainAgreement.this.agreements.reloadAgreements(finish -> {
 												if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
@@ -697,11 +743,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert("No ha sido posible eliminar el Convenio.");
+							agreementPreview.showError("Borrado", "No ha sido posible eliminar el Convenio.");
 						}
 
 						@Override
 						public void onSuccess(Void result) {
+							agreementPreview.showSuccess("Borrado", "Convenio borrado correctamente");
 							MainAgreement.this.agreements.setViewAgreements(false);
 							MainAgreement.this.agreements.resetTypeView();
 							MainAgreement.this.agreements.reloadAgreements(finish -> {
@@ -710,7 +757,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 								else
 									showAgreementContainer();
 							});
-//							showSelectAgreementMessage();
 						}
 					});
 				}
@@ -867,7 +913,38 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 		});
 	}
+	
+	private void fixAgreement(Integer agreementId, Consumer<Void> success, Consumer<Throwable> error) {
+		impl.fixAgreementIntegrity(agreementId, new AsyncCallback<Void>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+//				agreementPreview.showError("Error versi\u00f3n convenio", caught.getMessage());
+				error.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void end) {
+				success.accept(end);
+			}
+			
+		});
+	}
+	
+	private void checkAgreementIntegrity(Integer agreementId, Consumer<AgreementIntegrity> consumer) {
+		impl.checkAgreementIntegrity(agreementId, new AsyncCallback<AgreementIntegrity>() {
+			
+			@Override
+			public void onSuccess(AgreementIntegrity agreementIntegrityDB) {
+				consumer.accept(agreementIntegrityDB);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error comprobando integridad : " + caught.getMessage());
+			}
+		});
+	}
 	
 	private void saveAgreement(Consumer<AgreementInfo> success,  Consumer<Throwable> failure) {
 		impl.setAgreementInfo(agreementSelected, new AsyncCallback<Void>() {
