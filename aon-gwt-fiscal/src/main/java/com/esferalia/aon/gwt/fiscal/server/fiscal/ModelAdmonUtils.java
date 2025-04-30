@@ -27,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -45,6 +46,10 @@ import org.jooq.tools.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
+import com.amazonaws.services.lambda.model.InvokeRequest;
+import com.amazonaws.services.lambda.model.InvokeResult;
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.RespuestaCorrecta;
 import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.ServicioConsultasDirectas;
@@ -103,6 +108,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
@@ -137,6 +143,7 @@ public class ModelAdmonUtils {
 	private static final String ERROR_TEMPLATE_START = "<html>"
 			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
 			+"<body>";
+
 	private static final String ERROR_TEMPLATE_AEAT = "<div style=\""
 				+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
 				+"font-weight: bold;"
@@ -144,6 +151,14 @@ public class ModelAdmonUtils {
 			+"\">"
 			+ "La Agencia Tributaria devolvió el siguiente mensaje:"
 			+"</div>";
+	
+	private static final String ERROR_TEMPLATE_ATC = "<div style=\""
+			+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+			+"font-weight: bold;"
+			+"margin-top: 20px;"
+		+"\">"
+		+ "El módulo de impresión de la Agencia Tributaria Canaria devolvió el siguiente mensaje:"
+		+"</div>";
 			
 	private static final String ERROR_TEMPLATE_BEFORE = "<html>"
 			+"<ul style=\""
@@ -262,7 +277,7 @@ public class ModelAdmonUtils {
 		buff.append(ERROR_TEMPLATE_END);
 		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}
-	 
+	
 	
 	public static synchronized KeyManager[] getKeyManagers(AEATParams params) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException{
 		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), f ->
@@ -1632,6 +1647,99 @@ public class ModelAdmonUtils {
 			Thread.currentThread().interrupt();
 		} catch (AonCoreException | IOException e) {
 				ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+		}
+		
+	}
+
+	public static synchronized void manageWrongResponseCanarias(HttpServletResponse resp, JSONArray jsonErrores) {
+		List<String> errores = new ArrayList<>();
+		if (jsonErrores != null) {
+			for (int i = 0; i < jsonErrores.length(); i++) {
+				errores.add(jsonErrores.getString(i));
+			}
+		}
+		String[] array = errores.toArray(new String[0]);
+		giveExceptionBackCanarias(resp, array);
+	}
+	
+	public static synchronized void giveExceptionBackCanarias(HttpServletResponse resp, String ... msgs)  {
+		StringBuilder buff = new StringBuilder();
+		buff.append(ERROR_TEMPLATE_START);
+		buff.append(ERROR_TEMPLATE_ATC);	
+		buff.append(ERROR_TEMPLATE_BEFORE);
+		if (msgs == null || msgs.length == 0) {
+			buff.append("La Agencia Tributaria Canaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");
+		} else {
+			for (String msg : msgs) {
+				buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, msg));
+			}
+		}
+		buff.append(ERROR_TEMPLATE_AFTER);
+		buff.append(ERROR_TEMPLATE_END);
+		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+	}
+
+	// Llamada a función lambda AWS donde está el modulo de impresión de la Agencia Tributaria Canaria
+	// Para obtener el fichero para la presentación o el borrador PDF
+	public static void callAtcAwsFunction(String xml, Mod303 mod303, boolean isBorrador, HttpServletResponse resp) throws IOException {
+		
+		JSONObject params = new JSONObject();
+//		params.put("modelo", mod303.isMonthPeriod()?"417":"420");
+//		params.put("ejercicio", AonNumberUtils.toString(mod303.getYear()));
+		params.put("declaracion", Base64.getEncoder().encodeToString(xml.getBytes()));
+		params.put("borrador", isBorrador);
+		
+//		String payload =
+//		String.format("{"
+//		+ "\"declaracion\":\"%s\" "
+//		+ "}"
+//		, Base64.getEncoder().encodeToString(xml.getBytes()));
+		
+		String payload = params.toString();
+		
+		System.out.println("payload = " + payload);
+		
+		String functionName = "aon-aws-atc";
+		InvokeRequest invokeRequest = 
+				new InvokeRequest()
+				.withFunctionName(functionName )
+				.withPayload(payload);
+		
+		InvokeResult invokeResult = null;
+		try {
+			AWSLambda awsLambda = AWSLambdaClientBuilder.defaultClient();
+			invokeResult = awsLambda.invoke(invokeRequest);
+			String ans = new String(invokeResult.getPayload().array(), StandardCharsets.UTF_8);
+			
+			// write out the return value
+			System.out.println("ans = " + ans);
+			
+			// Interpretar el resultado, será un JSON con "resultado" o "errores"
+			JSONObject json = new JSONObject(ans);
+			
+			if (json.has("resultado")) {
+				// Validación correcta, viene el fichero a presentar o el pdf del borrador, en resultado
+				if (isBorrador) {
+					giveBase64Back(resp, json.getString("resultado").getBytes(StandardCharsets.ISO_8859_1), MimeType.PDF);
+				} else {
+				    String fileName = AonFiscalFileUtils.getFileName(mod303);
+				    resp.setCharacterEncoding("ISO-8859-1");
+					resp.setContentType(MimeType.TXT.getName());
+					resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".atc" + "\";");
+					AonIOUtils.write(json.getString("resultado").getBytes(),resp.getOutputStream());
+					resp.flushBuffer();
+				}
+			}
+			else if (json.has("errores")) {
+				// Validación con errores, obtenemos los mensajes de error
+				manageWrongResponseCanarias(resp, json.optJSONArray("errores"));
+			} else {
+				giveExceptionBackCanarias(resp, "ERROR INDEFINIDO");
+			}		
+		
+		} catch (Exception e) {
+			System.out.println(e);
+			giveExceptionBackCanarias(resp, "EXCEPTION ERROR: " + e.getMessage());
 		}
 		
 	}

@@ -11,6 +11,7 @@ import static com.esferalia.aon.occam.api.model.type.DeductionType.BONUS;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.JOB_TRAINING;
 import static com.esferalia.aon.occam.api.model.type.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -2262,7 +2263,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			ssPecs.stream().forEach(pec -> Assert.assertEquals(may202021, pec.getStartDate()));
 			ssPecs.stream().forEach(pec -> Assert.assertNull(pec.getEndDate()));
 
-			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+			ssPecs.forEach(pec -> System.out.println("PEC [" + pec.getName() + "] " + pec.getDescription() + " = "
 					+ pec.getFormula() + ", " + pec.getStartDate()));
 
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
@@ -2272,12 +2273,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
 
 			salary.getSalaryDeductions().forEach(
-					d -> System.out.println(d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
-			Assert.assertEquals(1 + 3 /*CGC + DESMPL + FP*/, salary.getSalaryDeductions().size());
-
+					d -> System.out.println("DEDUC:" + d.getDeductionConcept() + " : " + d.getAmount() + ", " + d.getType()));
 			salary.getSalaryCosts()
-			.forEach(c -> System.out.println(c.getName() + " : " + c.getAmount() + ", " + c.getType()));
-			Assert.assertEquals(1 + 5 /*DESMPL + FP + IT + IMS + FOGASA*/, salary.getSalaryCosts().size());
+			.forEach(c -> System.out.println("COST:" + c.getName() + " : " + c.getAmount() + ", " + c.getType()));
+
+			Assert.assertEquals(0 /*CGC + DESMPL + FP*/, salary.getSalaryDeductions().size());
+			Assert.assertEquals(0 /*DESMPL + FP + IT + IMS + FOGASA*/, salary.getSalaryCosts().size());
 
 			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
 			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
@@ -5309,13 +5310,17 @@ public class IdcTest extends AbstractSQLTestCase {
 			    	    totalCgcE += cost.getAmount();
 			}
 			
-			double totalBonus = 0.00;
-			for (SalaryBonus bonus : salary.getSalaryBonus()) {
-				totalBonus += bonus.getAmount();
-				
+			double totalRedCgcE = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			    	if ("RED_CGC_E".equals(cost.getName()) )
+			    		totalRedCgcE += cost.getAmount();
 			}
 			
-			assertEquals(totalCgcE * 0.75 * 12 / 31 , totalBonus, DELTA);
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				System.out.println(cost.getName() + ": " + cost.getAmount()  + ", " + cost.getExpression());
+			}
+
+			assertEquals(totalCgcE * 0.75 * 12 / 31 , - totalRedCgcE, DELTA);
 
 //			
 //			double totalEnterprise = notBonusCosts.stream().collect(Collectors.summingDouble(d->d));
@@ -5582,7 +5587,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			double cgcPercent = 4.70;
 			double cgcEPercent = 23.60;
 
-			//salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
+			salary.getSalaryDeductions().forEach( d -> System.out.println(d.getDescription() + " = " + d.getExpression() + " , " + d.getAmount() ));
 
 			assertEquals(cgcBase *  cgcPercent / 100.00 *  0.05 , salary.getSocialSecurityContributions() , DELTA);
 
@@ -6993,6 +6998,200 @@ public class IdcTest extends AbstractSQLTestCase {
 					- 2.64 ) / 100.00 
 					
 					- 148.050 , salary.getTotalEnterprise(), 0.5);
+		}
+	}
+
+	@Test
+	public void testIdcXXXIXSEAII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SQLException, SalaryException, ParseException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXXIX.pdf")) {
+			byte[] idc = is.readAllBytes();
+			
+			Collection<PEC> ssPECs = Idc.getSSPECs(idc);
+			// 40 TIPO COT. ESPEC. SEA	100,00		62	FOGASA-FP/CUOT.TOTAL
+			// 06 DECREMENTO DE TIPOS	  2,64		03	CONT.COMUN-C.EMPRESA
+			
+			Map<ContextVariable, IdcContractData> ssData = Idc.getContractData(idc);
+			
+			ssPECs.stream().forEach( sspec -> System.out.println("SSPEC: " + sspec.getName() + " : " +  sspec.getFormula() ));
+
+			Date date = new SimpleDateFormat("dd-MM-yyyy").parse("01-02-2025");
+			Collection<Data> datas = new ArrayList<>();
+			
+
+		    ssData.forEach( (var, value) -> {
+				datas.add( new Data() {
+					{
+						startDate = date;
+						name = var.getName();
+						expression = String.valueOf(value.data());
+						startDate = value.startDate();
+						endDate = value.endDate();
+					}
+				});
+			});
+
+		    java.sql.Date salaryStartDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
+		    java.sql.Date salaryEndDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
+			datas.add( new Data() {
+				{
+					startDate = salaryStartDate;
+					name = ContextVariable.CGC_BASE_MIN.getName();
+					expression = "1186.93";
+					endDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 18);
+				}
+			});
+			datas.add( new Data() {
+				{
+					startDate = date;
+					name = ContextVariable.CGP_BASE_MIN.getName();
+					expression = "1186.93";
+					endDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 18);
+				}
+			});
+//			datas.add( new Data() {
+//				{
+//					name = ContextVariable.LEAVE_DAYS.getName();
+//					expression = "5";
+//					startDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 19);
+//					endDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 25);
+//				}
+//			});
+			datas.add( new Data() {
+				{
+					name = ContextVariable.CGC_BASE_MIN.getName();
+					expression = "649.80";
+					startDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 19);
+					endDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 25);
+				}
+			});
+			datas.add( new Data() {
+				{
+					expression = "649.80";
+					name = ContextVariable.CGP_BASE_MIN.getName();
+					startDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 19);
+					endDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 25);
+				}
+			});
+			datas.add( new Data() {
+				{
+					name = ContextVariable.CGC_BASE_MIN.getName();
+					expression = "197.83";
+					startDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 26);
+					endDate = salaryEndDate;
+				}
+			});
+			datas.add( new Data() {
+				{
+					expression = "197.83";
+					name = ContextVariable.CGP_BASE_MIN.getName();
+					startDate = set(salaryStartDate, Calendar.DAY_OF_MONTH, 26);
+					endDate = salaryEndDate;
+				}
+			});
+			
+
+
+		    Connection connection = getConnection();
+		    AONContext aonContext = new AONContext(connection);
+		    ContractRecord contract = newContract(aonContext, toSQL(salaryStartDate), ssPECs, datas);
+		    
+			addIT(aonContext, contract, 
+					LeaveType.COMMON_DISEASE, 
+					set(salaryStartDate, Calendar.DAY_OF_MONTH, 19),
+					set(salaryStartDate, Calendar.DAY_OF_MONTH, 25), 
+					72.20);
+			PaymentConceptRecord directPay = addConcept(aonContext, DIRECT_PAY.getName());
+			addPayment(aonContext, contract, directPay, 
+					String.format("BASE_REGULADORA * 0.00 * %s_366",  COMMON_DISEASE_DAYS),
+					String.format("BASE_REGULADORA * %s",  QUOTE_DAYS)
+					);
+			addData(aonContext, contract, set(salaryStartDate, Calendar.DAY_OF_MONTH, 19), null, ContextVariable.DIRECT_PAY_START, 
+					String.format("%s(%d,%d,%d)",ContextVariable.DATE,get(salaryStartDate, YEAR), 1, 1 ));
+			
+
+		    ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, salaryStartDate, salaryEndDate,
+			    salaryEndDate, contract);
+		    SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		    Salary salary = calculator.calculate(ctx);
+			
+//			Salary salary = calculate(ssPECs, datas, date );
+			
+			double cgcBase = salary.getCommonBase();
+			double cgpBase = salary.getProfessionalBase();
+
+			double totalDeduction = 0.00;
+			for (SalaryDeduction deduction : salary.getSalaryDeductions()) {
+				totalDeduction += deduction.getAmount();
+				System.out.println(deduction.getName() + ": " + deduction.getAmount() + " (" + deduction.getExpression() + ")");
+			}
+//			PORCENTAJE_FP=		 0.10
+//			PORCENTAJE_FP_E=	 0.60
+//
+//			PORCENTAJE_CGC=		 4.70
+//			PORCENTAJE_CGC_E=	23.60
+//
+//			OCUPACION_IT=		 0.80
+//			OCUPACION_IMS=		 0.70
+//
+//			PORCENTAJE_DESMPL=	 1.55
+//			PORCENTAJE_DESMPL_E= 5.50
+//
+//			PORCENTAJE_FOGASA=	 0.20
+//			PORCENTAJE_MEI=		 0.10
+//			PORCENTAJE_MEI_E=	 0.50
+
+			System.out.println("CUOTA TRABAJADOR :" + totalDeduction);
+//			assertEquals(cgcBase *  ( 4.7 + 1.55 + 0.10 + 0.10 )/ 100.00 , salary.getSocialSecurityContributions(), DELTA);
+
+			double totalCost = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+				totalCost += cost.getAmount();
+				if ( cost.getName().equals("CGC_E") || cost.getName().equals("SEA_E"))
+					System.out.println("COST :" + cost.getName() + ": " + cost.getAmount());
+				else if ( cost.getName().equals("DESMPL_E") || cost.getName().equals("RED_DESMPL_E"))
+					System.out.println("COST :" + cost.getName() + ": " + cost.getAmount());
+			}
+			
+//			salary.getSalaryDatas().forEach( d -> {
+//				if ( d.getName().equals("BASE_CGC_E")) {
+//					System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
+//				}
+//			});
+//			salary.getSalaryDatas().forEach( d -> {
+//				if ( d.getName().equals("CGC_E")) {
+//					System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
+//				}
+//			});
+//			salary.getSalaryDatas().forEach( d -> {
+//				if ( d.getName().equals("DIAS_NOMINA")) {
+//					System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
+//				}
+//			});
+//			salary.getSalaryDatas().forEach( d -> {
+//				if ( d.getName().equals("DIAS_MES")) {
+//					System.out.println(d.getName() + " = " + d.getExpression() + " [ " + d.getStartDate() + ".." + d.getEndDate() +" ]");
+//				}
+//			});
+
+			assertEquals(0, salary.getSalaryBonus().size());
+
+			System.out.println("CUOTA EMPRESARIAL :" + totalCost);
+
+			System.out.println("BASE:" + salary.getCommonBase());
+
+			assertEquals(cgpBase  * ( 
+					23.6  	// CGC_E
+					+ 2.80  // IT & IMS
+					+ 5.50  // DESMPL_E
+					+ 0.50 	// MEI_E
+					+ 0.60	// FP_E
+					+ 0.20	// FOGASA
+					
+					- 2.64 ) / 100.00 
+					- 17.87
+ 					- 288.93 , salary.getTotalEnterprise(), 0.02);
 		}
 	}
 

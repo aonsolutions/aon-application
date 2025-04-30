@@ -496,14 +496,8 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private void onSearch( AccountingReportModuleOptions options ) {
 		AccountEntryParams params = getWidgetParams(options);
 		JournalPanel journalPanel = new JournalPanel(options, params);
-		journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
-			
-			@Override
-			public void onSelection(AccountEntrySelectionEvent event) {
-				AccountEntrySelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem(), event.getCallback() );
-			}
-
-		});
+		journalPanel.addSelectionHandler(event -> 
+			AccountEntrySelectionEvent.fire(JournalPanelReport.this, event.getSelectedItem(), event.getCallback() ));
 		centerPanel.setWidget(journalPanel);
 	}
 
