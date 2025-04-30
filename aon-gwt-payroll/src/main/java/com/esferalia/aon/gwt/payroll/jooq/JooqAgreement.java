@@ -891,6 +891,8 @@ public class JooqAgreement {
 
 			dslContext.update(AGREEMENT_EXTRA)
 					.set(AGREEMENT_EXTRA.ID, DSL.select(AGREEMENT_EXTRA.ID.mul(-1)))
+					.set(AGREEMENT_EXTRA.AGREEMENT_PAYMENT, DSL.select(AGREEMENT_EXTRA.AGREEMENT_PAYMENT.mul(-1)))
+					.set(AGREEMENT_EXTRA.AGREEMENT, DSL.select(AGREEMENT_EXTRA.AGREEMENT.mul(-1)))
 					.where(AGREEMENT_EXTRA.AGREEMENT.in(agreementId))
 					.execute();
 
