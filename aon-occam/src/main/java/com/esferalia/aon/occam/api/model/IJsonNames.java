@@ -46,7 +46,9 @@ public final class IJsonNames {
 	public static final String AMOUNT_347 = "amount347";
 	public static final String ANNULLED = "annulled";
 	public static final String AON_CUSTOMER = "aonCustomer";
+	public static final String AON_ID = "aonId";
 	public static final String AON_STATUS = "aonStatus";
+	public static final String AON_TABLE = "aonTable";
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
@@ -622,6 +624,7 @@ public final class IJsonNames {
 	public static final String STATUS = "status";
 	public static final String STATUS_MODIFICATION_DATE = "statusModificationDate";
 	public static final String STOCK_UNIT_TAG = "stockUnitTag";
+	public static final String STORAGE = "storage";
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
 	public static final String SUFIX = "sufix";

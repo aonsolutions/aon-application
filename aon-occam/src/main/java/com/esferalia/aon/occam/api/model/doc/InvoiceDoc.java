@@ -24,6 +24,24 @@ public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 	}
 	
 	@Override
+	public InvoiceDoc setAonId(Integer aonId) {
+		super.setAonId(aonId);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setDriveId(String driveId) {
+		super.setDriveId(driveId);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setExternalStorage(ExternalStorage externalStorage) {
+		super.setExternalStorage(externalStorage);
+		return this;
+	}
+	
+	@Override
 	public InvoiceDoc setS3Bucket(String s3Bucket) {
 		super.setS3Bucket(s3Bucket);
 		return this;

@@ -47,4 +47,22 @@ public enum ExternalStorage {
 		}
 		return null;
 	}
+	
+	public boolean isAon() {
+		return AON.equals(this);
+	}
+	
+	public boolean isAws() {
+		return AWS.equals(this);
+	}
+	
+	public boolean isDrive() {
+		return DRIVE.equals(this);
+	}
+	
+	public boolean isScaleway() {
+		return SCALEWAY.equals(this);
+	}
 }
+
+
