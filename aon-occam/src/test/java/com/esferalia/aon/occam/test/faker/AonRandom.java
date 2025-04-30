@@ -3,11 +3,13 @@ package com.esferalia.aon.occam.test.faker;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -69,7 +71,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
-import com.esferalia.aon.occam.test.accounting.entry.AccountEntryTest;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -78,31 +79,31 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
-	private static Faker faker = new Faker( Locale.of("es"));
+	private static final Faker FAKER = new Faker( Locale.of("es"));
 	
     public static boolean gt( int threshold) {
-		return faker.random().nextInt(0,100) >= threshold;
+		return FAKER.random().nextInt(0,100) >= threshold;
 	}
     public static String uuid( int maxLength ) {
-    	return AonStringUtils.substring(faker.internet().uuid(),0 ,maxLength);
+    	return AonStringUtils.substring(FAKER.internet().uuid(),0 ,maxLength);
     }
 
     public static String string( int nullThreshold, int minLength, int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?faker.lorem().characters(minLength, maxLength)
+        		?FAKER.lorem().characters(minLength, maxLength)
         		: null;
     }
     public static String string( int maxLength ) {
-    	return faker.lorem().characters(0, maxLength);
+    	return FAKER.lorem().characters(0, maxLength);
     }
     public static String string( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?faker.lorem().characters(0, maxLength)
+        		?FAKER.lorem().characters(0, maxLength)
         		:null;
     }
     public static String item( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?AonStringUtils.abbreviate(faker.book().title(),maxLength)
+        		?AonStringUtils.abbreviate(FAKER.book().title(),maxLength)
         		:null;
     }
     public static Integer integer( int nullThreshold ) {
@@ -115,18 +116,18 @@ public class AonRandom {
     }
     public static String lorem( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?faker.lorem().characters(0, maxLength)
+        		?FAKER.lorem().characters(0, maxLength)
         		:null;
     }
 
     public static String name( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-    		?AonStringUtils.abbreviate( faker.name().fullName(), maxLength)
+    		?AonStringUtils.abbreviate( FAKER.name().fullName(), maxLength)
     		:null;
     }
     public static String alias( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-    		?AonStringUtils.abbreviate( faker.name().username(), maxLength)
+    		?AonStringUtils.abbreviate( FAKER.name().username(), maxLength)
     		:null;
     }
 
@@ -136,7 +137,7 @@ public class AonRandom {
         		:null;
     }
     public static int number( int from, int to) {
-    	return faker.random().nextInt(from, to);
+    	return FAKER.random().nextInt(from, to);
     }
     public static int getInt( int from, int to) {
     	return number(from, to);
@@ -152,7 +153,7 @@ public class AonRandom {
     	return getDouble(from, to , 2);
     }
     public static double getDouble( int from, int to, int precision ) {
-    	double r = faker.random().nextDouble();
+    	double r = FAKER.random().nextDouble();
     	return AonMathUtils.round(from + ((to - from) * r), precision);
     }
     public static Double getDouble(int nullThreshold, int from, int to, int precision ) {
@@ -162,12 +163,12 @@ public class AonRandom {
     }
     
     public static Date getRandomYearDay( int year ) {
-    	return truncate( faker.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year)));
+    	return truncate( FAKER.date().between(AonDateUtils.getYearFirstDay(year),AonDateUtils.getYearLastDay(year)));
     }
     
     public static Date getPastDate( int threshold ) {
     	return ( gt(threshold) )
-        		?truncate( faker.date().past(100, TimeUnit.DAYS, new Date()))
+        		?truncate( FAKER.date().past(100, TimeUnit.DAYS, new Date()))
         		:null;
     }
     public static Date today( ) {
@@ -187,10 +188,10 @@ public class AonRandom {
     }
 
     public static Date getRangeDate( Date start, Date end ) {
-    	return faker.date().between(start, end);
+    	return FAKER.date().between(start, end);
     }
     public static Date getYearDay( Date date ) {
-    	return faker.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
+    	return FAKER.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
     }
     public static Date getFutureDate( Date date ) {
     	return getFutureDate(0, new Date());
@@ -200,7 +201,7 @@ public class AonRandom {
     }
     public static Date getFutureDate( int threshold, Date date ) {
     	return ( gt(threshold) )
-        		?truncate( faker.date().future(100, TimeUnit.DAYS, date))
+        		?truncate( FAKER.date().future(100, TimeUnit.DAYS, date))
         		:null;
     }
 
@@ -217,7 +218,7 @@ public class AonRandom {
 
     public static <T> T random(List<T> list){
     	if (list == null || list.isEmpty()) return null;
-        return list.get(faker.random().nextInt(0, (list.size() - 1)));
+        return list.get(FAKER.random().nextInt(0, (list.size() - 1)));
     }	
 
 //    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
@@ -348,7 +349,7 @@ public class AonRandom {
 		// **********************
 		
     	return gt(nullThreshold)
-    			?Administration.values()[faker.random().nextInt(length)]
+    			?Administration.values()[FAKER.random().nextInt(length)]
     			:null;
 	}
 
@@ -357,7 +358,7 @@ public class AonRandom {
 	}
 	public static TaxType getRandomTaxType(int nullThreshold) {
     	return gt(nullThreshold)
-			?TaxType.values()[faker.random().nextInt(TaxType.values().length)]
+			?TaxType.values()[FAKER.random().nextInt(TaxType.values().length)]
 			:null;
 	}
 
@@ -366,7 +367,7 @@ public class AonRandom {
 	}
 	public static WithholdingType getRandomWithholdingType(int nullThreshold) {
     	return gt(nullThreshold)
-			?WithholdingType.values()[faker.random().nextInt(WithholdingType.values().length)]
+			?WithholdingType.values()[FAKER.random().nextInt(WithholdingType.values().length)]
 			:null;
 	}
 
@@ -375,7 +376,7 @@ public class AonRandom {
 	}
 	public static VatDeductionType getRandomVatDeductionType(int nullThreshold) {
     	return gt(nullThreshold)
-			?VatDeductionType.values()[faker.random().nextInt(VatDeductionType.values().length)]
+			?VatDeductionType.values()[FAKER.random().nextInt(VatDeductionType.values().length)]
 			:null;
 	}
 
@@ -384,7 +385,7 @@ public class AonRandom {
 	}
 	public static BalanceType getRandomBalanceType(int nullThreshold) {
     	return gt(nullThreshold)
-    			?BalanceType.values()[faker.random().nextInt(BalanceType.values().length)]
+    			?BalanceType.values()[FAKER.random().nextInt(BalanceType.values().length)]
     			:null;
 	}
 	
@@ -394,7 +395,7 @@ public class AonRandom {
 	public static String getRandomContractType(int nullThreshold) {
 		Integer  models [] = new ContractType().getContractTypes().keySet().toArray(Integer[]::new);
     	return gt(nullThreshold)
-    			? String.format("%03d", models[faker.random().nextInt(models.length)])
+    			? String.format("%03d", models[FAKER.random().nextInt(models.length)])
     			:null;
 	}
 
@@ -403,14 +404,14 @@ public class AonRandom {
 	}
 	public static String getRandomOccupation(int nullThreshold) {
 		String occupations [] = {"a","b","c","d","e","f","g","h","i","v","w","x","y","z"};
-    	return gt(nullThreshold) ? occupations [faker.random().nextInt(occupations.length)] :null;
+    	return gt(nullThreshold) ? occupations [FAKER.random().nextInt(occupations.length)] :null;
 	}
 
 	public static String getRandomQuoteGroup() {
 		return getRandomQuoteGroup(-1);
 	}
 	public static String getRandomQuoteGroup(int nullThreshold) {
-    	return gt(nullThreshold)?String.format("%02d", faker.random().nextInt(1,10)):null;
+    	return gt(nullThreshold)?String.format("%02d", FAKER.random().nextInt(1,10)):null;
 	}
 
 	public static Province getRandomProvince() {
@@ -418,7 +419,7 @@ public class AonRandom {
 	}
 	public static Province getRandomProvince(int nullThreshold) {
     	return gt(nullThreshold)
-    			?Province.values()[faker.random().nextInt(Province.values().length)]
+    			?Province.values()[FAKER.random().nextInt(Province.values().length)]
     			:null;
 	}
 
@@ -430,7 +431,7 @@ public class AonRandom {
 	}
 	public static Gender getRandomGender(int nullThreshold) {
     	return gt(nullThreshold)
-    			?Gender.values()[faker.random().nextInt(Gender.values().length)]
+    			?Gender.values()[FAKER.random().nextInt(Gender.values().length)]
     			:null;
 	}
 
@@ -442,7 +443,7 @@ public class AonRandom {
 	}
 	public static SSRegimeType getRandomSSRegimeType(int nullThreshold) {
     	return gt(nullThreshold)
-    			?SSRegimeType.values()[faker.random().nextInt(SSRegimeType.values().length)]
+    			?SSRegimeType.values()[FAKER.random().nextInt(SSRegimeType.values().length)]
     			:null;
 	}
 
@@ -451,7 +452,7 @@ public class AonRandom {
 	}
 	public static Country getRandomCountry(int nullThreshold) {
     	return gt(nullThreshold)
-    			?Country.values()[faker.random().nextInt(Country.values().length)]
+    			?Country.values()[FAKER.random().nextInt(Country.values().length)]
     			:null;
 	}
 	
@@ -460,7 +461,7 @@ public class AonRandom {
 	}
 	public static DocumentType getRandomDocumentType(int nullThreshold) {
 		return gt(nullThreshold)
-			?DocumentType.values()[faker.random().nextInt(DocumentType.values().length)]
+			?DocumentType.values()[FAKER.random().nextInt(DocumentType.values().length)]
 			:null;
 	}
 	
@@ -469,7 +470,7 @@ public class AonRandom {
 	}
 	public static InvoiceTransactionType getRandomInvoiceTransactionType(int nullThreshold) {
 		return gt(nullThreshold)
-			?InvoiceTransactionType.values()[faker.random().nextInt(InvoiceTransactionType.values().length)]
+			?InvoiceTransactionType.values()[FAKER.random().nextInt(InvoiceTransactionType.values().length)]
 			:null;
 	} 
 	public static MediaType getRandomMediaType() {
@@ -477,7 +478,7 @@ public class AonRandom {
 	}
 	public static MediaType getRandomMediaType(int nullThreshold) {
 		return gt(nullThreshold)
-			?MediaType.values()[faker.random().nextInt(MediaType.values().length)]
+			?MediaType.values()[FAKER.random().nextInt(MediaType.values().length)]
 			:null;
 	}
 	public static PayMethodType getRandomPayMethodType() {
@@ -485,7 +486,7 @@ public class AonRandom {
 	}
 	public static PayMethodType getRandomPayMethodType(int nullThreshold) {
 		return gt(nullThreshold)
-			?PayMethodType.values()[faker.random().nextInt(PayMethodType.values().length)]
+			?PayMethodType.values()[FAKER.random().nextInt(PayMethodType.values().length)]
 			:null;
 	}
 	public static RectificationType getRandomRectificationType() {
@@ -493,7 +494,7 @@ public class AonRandom {
 	}
 	public static RectificationType getRandomRectificationType(int nullThreshold) {
 		return gt(nullThreshold)
-			?RectificationType.values()[faker.random().nextInt(RectificationType.values().length)]
+			?RectificationType.values()[FAKER.random().nextInt(RectificationType.values().length)]
 			:null;
 	}
 	
@@ -502,7 +503,7 @@ public class AonRandom {
 	}
 	public static VatSummaryType getRandomVatSummaryType(int nullThreshold) {
 		return gt(nullThreshold)
-			?VatSummaryType.values()[faker.random().nextInt(VatSummaryType.values().length)]
+			?VatSummaryType.values()[FAKER.random().nextInt(VatSummaryType.values().length)]
 			:null;
 	}
 	
@@ -511,7 +512,7 @@ public class AonRandom {
 	}
 	public static AccountPeriodStatus getRandomAccountPeriodStatus(int nullThreshold) {
 		return gt(nullThreshold)
-			?AccountPeriodStatus.values()[faker.random().nextInt(AccountPeriodStatus.values().length)]
+			?AccountPeriodStatus.values()[FAKER.random().nextInt(AccountPeriodStatus.values().length)]
 			:null;
 	}
 
@@ -520,7 +521,7 @@ public class AonRandom {
 	}
 	public static AccountEntryType getRandomAccountEntryType(int nullThreshold) {
 		return gt(nullThreshold)
-			?AccountEntryType.values()[faker.random().nextInt(AccountEntryType.values().length)]
+			?AccountEntryType.values()[FAKER.random().nextInt(AccountEntryType.values().length)]
 			:null;
 	}
 
@@ -529,7 +530,7 @@ public class AonRandom {
 	}
 	public static RegistryStatus getRandomRegistryStatus(int nullThreshold) {
 		return gt(nullThreshold)
-			?RegistryStatus.values()[faker.random().nextInt(RegistryStatus.values().length)]
+			?RegistryStatus.values()[FAKER.random().nextInt(RegistryStatus.values().length)]
 			:null;
 	}
 	
@@ -538,7 +539,7 @@ public class AonRandom {
 	}
 	public static CarrierStatus getRandomCarrierStatus(int nullThreshold) {
 		return gt(nullThreshold)
-			?CarrierStatus.values()[faker.random().nextInt(CarrierStatus.values().length)]
+			?CarrierStatus.values()[FAKER.random().nextInt(CarrierStatus.values().length)]
 			:null;
 	}
 	
@@ -547,7 +548,7 @@ public class AonRandom {
 	}
 	public static SecurityLevel getRandomSecurityLevel(int nullThreshold) {
 		return gt(nullThreshold)
-			?SecurityLevel.values()[faker.random().nextInt(SecurityLevel.values().length)]
+			?SecurityLevel.values()[FAKER.random().nextInt(SecurityLevel.values().length)]
 			:null;
 	} 
 	public static StreetType getRandomStreetType() {
@@ -555,7 +556,7 @@ public class AonRandom {
 	}
 	public static StreetType getRandomStreetType(int nullThreshold) {
 		return gt(nullThreshold)
-			?StreetType.values()[faker.random().nextInt(StreetType.values().length)]
+			?StreetType.values()[FAKER.random().nextInt(StreetType.values().length)]
 			:null;
 	}
 	
@@ -564,7 +565,7 @@ public class AonRandom {
 	}
 	public static ProductStatus getProductStatus(int nullThreshold) {
 		return gt(nullThreshold)
-			?ProductStatus.values()[faker.random().nextInt(ProductStatus.values().length)]
+			?ProductStatus.values()[FAKER.random().nextInt(ProductStatus.values().length)]
 			:null;
 	}
 
@@ -667,5 +668,32 @@ public class AonRandom {
 		;
 	}
 	
+    // ---------------------------------------------------------- 
+    // ---------------------------------- RANDOM ENUMS ----------
+    // ---------------------------------------------------------- 
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz) {
+		return getEnum( clazz, false, null, e -> true);
+	}
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz,int threshold) {
+		return getEnum( clazz, gt(threshold), null, e -> true);
+	}
+	public static <E extends Enum<E>> E getEnumFiltered(Class<E> clazz,int threshold, Predicate<E> filter) {
+		return getEnum( clazz, gt(threshold), null, filter );
+	}
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz,boolean nullable) {
+		return getEnum( clazz, nullable?gt(50):false , null, e -> true);
+	}
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz, int threshold, E defaultValue) {
+		return getEnum( clazz, gt(threshold), defaultValue, e -> true);
+	}
+	public static <E extends Enum<E>> E getEnum(Class<E> clazz,boolean nullable, E defaultValue, Predicate<E> filter) {
+		if (nullable) return defaultValue;
+		LinkedList<E> values = Arrays.stream(clazz.getEnumConstants())
+			.filter(filter)
+			.collect(Collectors.toCollection(LinkedList<E>::new));
+		return AonCollectionUtils.isNotEmpty(values)
+				? values.get(FAKER.random().nextInt(values.size()))
+				:null;
+	}
 }
 
