@@ -75,18 +75,19 @@ public class Mod2002024Character {
 				,Mod2002024Key.C0026  	  	
 				,Mod2002024Key.C0027    	
 				,Mod2002024Key.C0030
-				,Mod2002024Key.C0039
-				
+				,Mod2002024Key.C0039				
 				,Mod2002024Key.C0043
+				
 				,Mod2002024Key.C0045
 				,Mod2002024Key.C0087
 				,Mod2002024Key.C0063
 				,Mod2002024Key.C0071
 				,Mod2002024Key.C0088
 				,Mod2002024Key.C0083
-				,Mod2002024Key.C0070
+				,Mod2002024Key.C0070				
+				,Mod2002024Key.C0059
 				
-				,Mod2002024Key.C0059		                   
+				,Mod2002024Key.C0090
 				,Mod2002024Key.C0065                     
 				,Mod2002024Key.C0084                     
 				,Mod2002024Key.C0072                     
@@ -98,6 +99,7 @@ public class Mod2002024Character {
 			}
 	};
 	
+	// FALTA - REVISAR CUANDO PUBLIQUEN EL DOCUMENTO PADIS
 	static {
 		CHARACTER_INCOMPATIBILITY_MAP.put(Mod2002024Key.C0001, new Mod2002024Key[] {
 				Mod2002024Key.C0002, Mod2002024Key.C0011, Mod2002024Key.C0015, Mod2002024Key.C0031, Mod2002024Key.C0036, Mod2002024Key.C0060, Mod2002024Key.C0070, Mod2002024Key.C0008, 

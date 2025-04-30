@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
-// Deducciones doble imposición internacional RDL 4/2004
+// Deducciones doble imposición internacional RDLeg. 4/2004
 public enum Mod2002024BN572Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9

@@ -36,12 +36,14 @@ public enum Mod2002024BN082Key implements Serializable, IMod200KeysProvider {
 	 ,C18(new Mod2002024Key[]{Mod2002024Key.BN1094,Mod2002024Key.BN1095,Mod2002024Key.BN1096,Mod2002024Key.BN1097,Mod2002024Key.BN1097R },"2021: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
 	 ,C19(new Mod2002024Key[]{Mod2002024Key.BN1385,Mod2002024Key.BN1386,Mod2002024Key.BN1387,Mod2002024Key.BN1388,Mod2002024Key.BN1388R },"2022: Investigaci\u00F3n y desarrollo (CTE)")
 	 ,C20(new Mod2002024Key[]{Mod2002024Key.BN1389,Mod2002024Key.BN1390,Mod2002024Key.BN1391,Mod2002024Key.BN1392,Mod2002024Key.BN1392R },"2022: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
-	 ,C21(new Mod2002024Key[]{Mod2002024Key.BN2709,Mod2002024Key.BN2710,Mod2002024Key.BN2757,Mod2002024Key.BN2758,Mod2002024Key.BN2758R },"2024(*): Investigaci\u00F3n y desarrollo (CTE)")
-	 ,C22(new Mod2002024Key[]{Mod2002024Key.BN2759,Mod2002024Key.BN2760,Mod2002024Key.BN2762,Mod2002024Key.BN2763,Mod2002024Key.BN2763R },"2024(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
- 	 ,C23(new Mod2002024Key[]{Mod2002024Key.BN517 ,Mod2002024Key.BN081 ,Mod2002024Key.BN082 ,Mod2002024Key.BN1234A,null                 },"Total")
- 	 ,C24(new Mod2002024Key[]{Mod2002024Key.BN814 ,null                ,null                ,null                 ,null                 },"Gastos de investigaci\u00F3n y desarrollo del per\u00EDodo impositivo") 
- 	 ,C25(new Mod2002024Key[]{Mod2002024Key.BN1935,null                ,null                ,null                 ,null                 },"Importe anual de la deducci\u00F3n por gastos de investigaci\u00F3n y desarrollo aplicada o abonada por el resto del grupo")
- 	 ,C26(new Mod2002024Key[]{Mod2002024Key.BN130 ,null                ,null                ,null                 ,null                 },"Importe anual de la deducci\u00F3n por gastos en actividades de innovaci\u00F3n tecnol\u00F3gica aplicada o abonada por el resto del grupo")
+	 ,C21(new Mod2002024Key[]{Mod2002024Key.BN2709,Mod2002024Key.BN2710,Mod2002024Key.BN2757,Mod2002024Key.BN2758,Mod2002024Key.BN2758R },"2023: Investigaci\u00F3n y desarrollo (CTE)")
+	 ,C22(new Mod2002024Key[]{Mod2002024Key.BN2759,Mod2002024Key.BN2760,Mod2002024Key.BN2762,Mod2002024Key.BN2763,Mod2002024Key.BN2763R },"2023: Innovaci\u00F3n tecnol\u00F3gica (ITE)")
+	 ,C23(new Mod2002024Key[]{Mod2002024Key.BN2072,Mod2002024Key.BN2073,Mod2002024Key.BN2074,Mod2002024Key.BN2075,Mod2002024Key.BN2075R },"2024(*): Investigaci\u00F3n y desarrollo (CTE)")
+	 ,C24(new Mod2002024Key[]{Mod2002024Key.BN2220,Mod2002024Key.BN2277,Mod2002024Key.BN2278,Mod2002024Key.BN2279,Mod2002024Key.BN2279R },"2024(*): Innovaci\u00F3n tecnol\u00F3gica (ITE)")
+ 	 ,C25(new Mod2002024Key[]{Mod2002024Key.BN517 ,Mod2002024Key.BN081 ,Mod2002024Key.BN082 ,Mod2002024Key.BN1234A,null                 },"Total")
+ 	 ,C26(new Mod2002024Key[]{Mod2002024Key.BN814 ,null                ,null                ,null                 ,null                 },"Gastos de investigaci\u00F3n y desarrollo del per\u00EDodo impositivo") 
+ 	 ,C27(new Mod2002024Key[]{Mod2002024Key.BN1935,null                ,null                ,null                 ,null                 },"Importe anual de la deducci\u00F3n por gastos de investigaci\u00F3n y desarrollo aplicada o abonada por el resto del grupo")
+ 	 ,C28(new Mod2002024Key[]{Mod2002024Key.BN130 ,null                ,null                ,null                 ,null                 },"Importe anual de la deducci\u00F3n por gastos en actividades de innovaci\u00F3n tecnol\u00F3gica aplicada o abonada por el resto del grupo")
 	;
 	 
     private String description;    

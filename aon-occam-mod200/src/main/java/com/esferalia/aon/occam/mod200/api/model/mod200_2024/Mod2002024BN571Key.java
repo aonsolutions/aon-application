@@ -23,9 +23,10 @@ public enum Mod2002024BN571Key implements Serializable, IMod200KeysProvider {
 	,C06(new Mod2002024Key[]{Mod2002024Key.BN2324,Mod2002024Key.BN2325,Mod2002024Key.BN2326,Mod2002024Key.BN2327,Mod2002024Key.BN2328},"DI internacional 2020")
 	,C07(new Mod2002024Key[]{Mod2002024Key.BN207 ,Mod2002024Key.BN208 ,Mod2002024Key.BN209 ,Mod2002024Key.BN212 ,Mod2002024Key.BN213 },"DI internacional 2021")
 	,C08(new Mod2002024Key[]{Mod2002024Key.BN490 ,Mod2002024Key.BN491 ,Mod2002024Key.BN492 ,Mod2002024Key.BN493 ,Mod2002024Key.BN620 },"DI internacional 2022")
-	,C09(new Mod2002024Key[]{Mod2002024Key.BN1361,Mod2002024Key.BN1362,Mod2002024Key.BN1457,Mod2002024Key.BN1472,Mod2002024Key.BN1505},"DI internacional 2024(*)")
-	,C10(new Mod2002024Key[]{Mod2002024Key.BN131 ,null 				  ,Mod2002024Key.BN132 ,Mod2002024Key.BN571 ,Mod2002024Key.BN133 },"Total")
-	,C11(new Mod2002024Key[]{null  				 ,Mod2002024Key.BN103D,null  			   ,null  				,null  				 },"Tipo de gravamen 2024")
+	,C09(new Mod2002024Key[]{Mod2002024Key.BN1361,Mod2002024Key.BN1362,Mod2002024Key.BN1457,Mod2002024Key.BN1472,Mod2002024Key.BN1505},"DI internacional 2023")
+	,C10(new Mod2002024Key[]{Mod2002024Key.BN1934,Mod2002024Key.BN254 ,Mod2002024Key.BN255 ,Mod2002024Key.BN258 ,Mod2002024Key.BN288 },"DI internacional 2024(*)")
+	,C11(new Mod2002024Key[]{Mod2002024Key.BN131 ,null 				  ,Mod2002024Key.BN132 ,Mod2002024Key.BN571 ,Mod2002024Key.BN133 },"Total")
+	,C12(new Mod2002024Key[]{null  				 ,Mod2002024Key.BN103D,null  			   ,null  				,null  				 },"Tipo de gravamen 2024")
 	;
 	 
     private String description;

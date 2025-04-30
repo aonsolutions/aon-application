@@ -15,6 +15,8 @@ public class Mod2002024Behaviour {
 	// Elemento 0 ---> isTitle?    : Hace que aparezca en negrita y la casilla desplazada a la derecha
 	// Elemento 1 ---> isDisabled? : Hace que la casilla esté deshabilitada
 
+	// FALTA - TERMINAR DE REVISAR CON EL DOCUMENTO PADIS QUE CASILLAS ESTARAN DESHABILITADAS O DEBEN APARECER EN NEGRITA
+	
 	static { 
 		
 		// PARTICIPACIONES
@@ -22,6 +24,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1502, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1503, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1504, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P2376, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1506, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1809, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.P1810, new Boolean[]{FALSE,TRUE});		
@@ -74,6 +77,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP208, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP209, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP210, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP781, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP211, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP216, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP223, new Boolean[]{TRUE,FALSE});
@@ -82,6 +86,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP226, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP227, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP228, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP786, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP229, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP230, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP231, new Boolean[]{TRUE,TRUE});
@@ -96,7 +101,7 @@ public class Mod2002024Behaviour {
 	
 	static { 
 		
-		// BALANCE DE PERDIDAS Y GANANCIAS 
+		// CUENTA DE PERDIDAS Y GANANCIAS 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG255, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG705, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG258, new Boolean[]{TRUE,FALSE});
@@ -104,6 +109,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG260, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG261, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG262, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG770, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG265, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG266, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG270, new Boolean[]{TRUE,TRUE});
@@ -115,6 +121,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG287, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG288, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG291, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG791, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG294, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG295, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.PG296, new Boolean[]{TRUE,TRUE});

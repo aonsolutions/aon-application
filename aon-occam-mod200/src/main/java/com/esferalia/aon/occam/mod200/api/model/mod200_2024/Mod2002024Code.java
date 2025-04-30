@@ -45,11 +45,6 @@ public class Mod2002024Code {
 		CODE_MAP.put(Mod2002024Key.BN2758R, "");
 		CODE_MAP.put(Mod2002024Key.BN2763R, "");
 		CODE_MAP.put(Mod2002024Key.CNEST, "");
-//		CODE_MAP.put(Mod2002024Key.UTC01, "");
-//		CODE_MAP.put(Mod2002024Key.UTC02, "");
-//		CODE_MAP.put(Mod2002024Key.UTC03, "");
-//		CODE_MAP.put(Mod2002024Key.UTC04, "");
-//		CODE_MAP.put(Mod2002024Key.UTC05, "");
 		CODE_MAP.put(Mod2002024Key.BN1039M, "");
 		CODE_MAP.put(Mod2002024Key.BN2314M, "");
 		CODE_MAP.put(Mod2002024Key.IPCRG01, ""); // Régimen general: Producciones cinematográficas (excepto series audiovisuales)
@@ -58,6 +53,7 @@ public class Mod2002024Code {
 		CODE_MAP.put(Mod2002024Key.IPCRC01, ""); // Régimen fiscal Canarias: Producciones cinematográficas (excepto series audiovisuales)
 		CODE_MAP.put(Mod2002024Key.IPCRC02, ""); // Régimen fiscal Canarias: Series audiovisuales
 		CODE_MAP.put(Mod2002024Key.IPCRC03, ""); // Régimen fiscal Canarias: Número de episodios
+		CODE_MAP.put(Mod2002024Key.RV000, "");   // Reversión de las pérdidas por deterioro de valores representativos... Número de período impositivo
 		
 	}
 	

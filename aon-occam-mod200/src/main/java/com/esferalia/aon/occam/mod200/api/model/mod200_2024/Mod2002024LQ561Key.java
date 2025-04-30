@@ -30,9 +30,10 @@ public enum Mod2002024LQ561Key implements Serializable, IMod200KeysProvider  {
 	,C21(new Mod2002024Key[]{Mod2002024Key.LQ2452,Mod2002024Key.LQ2453,Mod2002024Key.LQ2454},"Compensaci\u00F3n de cuota a\u00F1o 2020")
 	,C22(new Mod2002024Key[]{Mod2002024Key.LQ1186,Mod2002024Key.LQ1187,Mod2002024Key.LQ1190},"Compensaci\u00F3n de cuota a\u00F1o 2021")	
 	,C23(new Mod2002024Key[]{Mod2002024Key.LQ1516,Mod2002024Key.LQ1517,Mod2002024Key.LQ1518},"Compensaci\u00F3n de cuota a\u00F1o 2022")	
-	,C24(new Mod2002024Key[]{Mod2002024Key.LQ2850,Mod2002024Key.LQ2912,Mod2002024Key.LQ2913},"Compensaci\u00F3n de cuota a\u00F1o 2024(*)")	
-	,C25(new Mod2002024Key[]{Mod2002024Key.LQ694 ,Mod2002024Key.LQ561 ,Mod2002024Key.LQ695 },"Total")
-	,C26(new Mod2002024Key[]{Mod2002024Key.LQ1225,null                ,Mod2002024Key.LQ1226},"Compensaci\u00F3n de cuota a\u00F1o 2024")
+	,C24(new Mod2002024Key[]{Mod2002024Key.LQ2850,Mod2002024Key.LQ2912,Mod2002024Key.LQ2913},"Compensaci\u00F3n de cuota a\u00F1o 2023")
+	,C25(new Mod2002024Key[]{Mod2002024Key.LQ3357,Mod2002024Key.LQ3358,Mod2002024Key.LQ024 },"Compensaci\u00F3n de cuota a\u00F1o 2024(*)")
+	,C26(new Mod2002024Key[]{Mod2002024Key.LQ694 ,Mod2002024Key.LQ561 ,Mod2002024Key.LQ695 },"Total")
+	,C27(new Mod2002024Key[]{Mod2002024Key.LQ1225,null                ,Mod2002024Key.LQ1226},"Compensaci\u00F3n de cuota a\u00F1o 2024")
 	;
 	 
     private String description;

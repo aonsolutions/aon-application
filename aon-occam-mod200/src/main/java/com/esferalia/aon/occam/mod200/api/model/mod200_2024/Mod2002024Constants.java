@@ -7,6 +7,7 @@ public class Mod2002024Constants {
 		 Mod2002024Key.P1502,
 		 Mod2002024Key.P1503,
 		 Mod2002024Key.P1504,
+		 Mod2002024Key.P2376,
 		 Mod2002024Key.P1506,
 		 Mod2002024Key.P1809,
 		 Mod2002024Key.P1810,		 
@@ -104,7 +105,9 @@ public class Mod2002024Constants {
 		Mod2002024Key.BP186, 
 		Mod2002024Key.BP187, 
 		Mod2002024Key.BP188,
-		Mod2002024Key.BP189, 
+		Mod2002024Key.BP189,
+		Mod2002024Key.BP764,
+		Mod2002024Key.BP765,
 		Mod2002024Key.BP190, 
 		Mod2002024Key.BP191, 
 		Mod2002024Key.BP192,
@@ -113,13 +116,17 @@ public class Mod2002024Constants {
 		Mod2002024Key.BP1001,
 		Mod2002024Key.BP1002, 
 		Mod2002024Key.BP712,
+		Mod2002024Key.BP766,
+		Mod2002024Key.BP767,
 		Mod2002024Key.BP194, 
 		Mod2002024Key.BP195, 
 		Mod2002024Key.BP196, 
 		Mod2002024Key.BP197, 
 		Mod2002024Key.BP198, 
 		Mod2002024Key.BP199, 
-		Mod2002024Key.BP200, 
+		Mod2002024Key.BP200,
+		Mod2002024Key.BP768,
+		Mod2002024Key.BP769,
 		Mod2002024Key.BP201, 
 		Mod2002024Key.BP202, 
 		Mod2002024Key.BP203, 
@@ -129,7 +136,12 @@ public class Mod2002024Constants {
 		Mod2002024Key.BP207, 
 		Mod2002024Key.BP208, 
 		Mod2002024Key.BP209, 
-		Mod2002024Key.BP210, 
+		Mod2002024Key.BP210,
+		Mod2002024Key.BP780,
+		Mod2002024Key.BP781,
+		Mod2002024Key.BP782,
+		Mod2002024Key.BP783,
+		Mod2002024Key.BP784,
 		Mod2002024Key.BP211, 
 		Mod2002024Key.BP212, 
 		Mod2002024Key.BP213, 
@@ -147,7 +159,12 @@ public class Mod2002024Constants {
 		Mod2002024Key.BP225, 
 		Mod2002024Key.BP226, 
 		Mod2002024Key.BP227, 
-		Mod2002024Key.BP228, 
+		Mod2002024Key.BP228,
+		Mod2002024Key.BP785,
+		Mod2002024Key.BP786,
+		Mod2002024Key.BP787,
+		Mod2002024Key.BP788,
+		Mod2002024Key.BP789,
 		Mod2002024Key.BP229, 
 		Mod2002024Key.BP230, 
 		Mod2002024Key.BP703, 
@@ -194,6 +211,9 @@ public class Mod2002024Constants {
 		Mod2002024Key.PG262, 
 		Mod2002024Key.PG762, 
 		Mod2002024Key.PG763,
+		Mod2002024Key.PG770,
+		Mod2002024Key.PG771,
+		Mod2002024Key.PG772,
 		Mod2002024Key.PG263, 
 		Mod2002024Key.PG264, 
 		Mod2002024Key.PG265, 
@@ -202,7 +222,8 @@ public class Mod2002024Constants {
 		Mod2002024Key.PG268, 
 		Mod2002024Key.PG269, 
 		Mod2002024Key.PG270, 
-		Mod2002024Key.PG271, 
+		Mod2002024Key.PG271,
+		Mod2002024Key.PG790,
 		Mod2002024Key.PG273, 
 		Mod2002024Key.PG274, 
 		Mod2002024Key.PG275, 
@@ -227,7 +248,10 @@ public class Mod2002024Constants {
 		Mod2002024Key.PG291, 
 		Mod2002024Key.PG292, 
 		Mod2002024Key.PG293, 
-		Mod2002024Key.PG710, 
+		Mod2002024Key.PG710,
+		Mod2002024Key.PG791,
+		Mod2002024Key.PG792,
+		Mod2002024Key.PG793,
 		Mod2002024Key.PG294, 
 		Mod2002024Key.PG295, 
 		Mod2002024Key.PG296, 
@@ -237,12 +261,14 @@ public class Mod2002024Constants {
 		Mod2002024Key.PG300, 
 		Mod2002024Key.PG301, 
 		Mod2002024Key.PG302, 
-		Mod2002024Key.PG303, 
+		Mod2002024Key.PG303,
+		Mod2002024Key.PG794,
 		Mod2002024Key.PG304, 
 		Mod2002024Key.PG305, 
 		Mod2002024Key.PG306, 
 		Mod2002024Key.PG307, 
-		Mod2002024Key.PG308, 
+		Mod2002024Key.PG308,
+		Mod2002024Key.PG796,
 		Mod2002024Key.PG309, 
 		Mod2002024Key.PG310, 
 		Mod2002024Key.PG311, 
@@ -296,7 +322,8 @@ public class Mod2002024Constants {
 	
 	public static Mod2002024Key[] LIQUIDATION_KEYS = new Mod2002024Key[] {
 								Mod2002024Key.LQ500, 
-		Mod2002024Key.LQ301, 	Mod2002024Key.LQ302, 
+		Mod2002024Key.LQ301, 	Mod2002024Key.LQ302,
+		Mod2002024Key.LQ004,
 								Mod2002024Key.LQ501,
 		Mod2002024Key.LQ1230, 	Mod2002024Key.LQ1231
 	};
@@ -346,7 +373,8 @@ public class Mod2002024Constants {
 		Mod2002024Key.LQ521,
 		
 		// Rentas que no limitan la compensación de bases imponibles
-		Mod2002024Key.LQ545, 
+		Mod2002024Key.LQ545,
+		Mod2002024Key.LQ925,
 		Mod2002024Key.LQ1509,
 		
 		// Régimen especial de buques y empresas navieras en Canarias
@@ -364,6 +392,7 @@ public class Mod2002024Constants {
 			Mod2002024Key.LQ408, Mod2002024Key.LQ1037,
 		                     	 Mod2002024Key.LQ593,
 		                     	 Mod2002024Key.LQ1510,
+		                     	 Mod2002024Key.LQ932,
 		Mod2002024Key.LQ561,
 		
 			Mod2002024Key.LQ1285,Mod2002024Key.LQ1286,
@@ -446,7 +475,8 @@ public class Mod2002024Constants {
 	public static final Mod2002024Key[][] LIQUIDATION_V_KEYS_5 = new Mod2002024Key[][] {
 		 new Mod2002024Key[] {Mod2002024Key.BN1234B, Mod2002024Key.BN083 , Mod2002024Key.BN1332}
 		,new Mod2002024Key[] {Mod2002024Key.BN1892 , Mod2002024Key.BN1042, Mod2002024Key.BN1333}  
-		,new Mod2002024Key[] {Mod2002024Key.BN1319 , Mod2002024Key.BN1893, Mod2002024Key.BN1881} 
+		,new Mod2002024Key[] {Mod2002024Key.BN1319 , Mod2002024Key.BN1893, Mod2002024Key.BN1881}
+		,new Mod2002024Key[] {Mod2002024Key.LQ031  , Mod2002024Key.LQ032 , Mod2002024Key.LQ466 }
 		,new Mod2002024Key[] {null 				   , Mod2002024Key.LQ1586, Mod2002024Key.LQ1587}
 	};
 	
@@ -576,7 +606,9 @@ public class Mod2002024Constants {
 		,new Mod2002024Key[]{Mod2002024Key.LM1252, null				  }
 		,new Mod2002024Key[]{Mod2002024Key.LM1253, null				  }
 		,new Mod2002024Key[]{Mod2002024Key.LM1254, null				  }
+		,new Mod2002024Key[]{Mod2002024Key.LM2368, null				  }
 		,new Mod2002024Key[]{Mod2002024Key.LM1255, null				  }
+		,new Mod2002024Key[]{Mod2002024Key.LM2369, null				  }
 		,new Mod2002024Key[]{null				 , Mod2002024Key.LM1256}
 		,new Mod2002024Key[]{null				 , Mod2002024Key.LM1257}
 		,new Mod2002024Key[]{null				 , Mod2002024Key.LM1258}
