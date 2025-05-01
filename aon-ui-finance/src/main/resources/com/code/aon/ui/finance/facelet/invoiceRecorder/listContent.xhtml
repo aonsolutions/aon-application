@@ -83,28 +83,49 @@
 									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
 								</aon:selectOneMenu>
 									
-								<!-- <aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}:" styleClass="aon-bold aon-margin-left" />
+								<aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}:" styleClass="aon-bold aon-margin-left" />
 								<aon:selectOneMenu id="Invoice_status"
-									value="#{searchController.defaultStatus}"
+									value="#{invoiceRecorderSearch.defaultStatus}"
 									styleClass="aon-margin-left" >
 									<f:selectItem itemLabel="#{bundle.finance_not_recorded}" itemValue="PENDING" />
 									<f:selectItem itemLabel="#{bundle.finance_invoice_recorded}" itemValue="SCORED" />
+									<a4j:support event="onchange"
+									    action="#{controller.afterSearchAction}"
+										actionListener="#{controller.onSearchList}"
+									    reRender="invoiceRecorderList"
+									    onsubmit="Richfaces.showModalPanel('waitProccess')"
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
 								</aon:selectOneMenu>
 								
-								<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-bold aon-margin-left"/>
+								<!-- <aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-bold aon-margin-left"/>
 									<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right" 
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="Invoice_issueDate-From"
 										valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" />
+										popupDateFormat="#{bundle.aon_date_pattern}" >
+										<a4j:support event="onchange"
+									    action="#{controller.afterSearchAction}"
+										actionListener="#{controller.onSearchList}"
+									    reRender="invoiceRecorderList"
+									    onsubmit="Richfaces.showModalPanel('waitProccess')"
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+									</aon:selectInputDate>
+										
 							
 									<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right" 
 										value="#{bundle.aon_date_to}:" />
 									<aon:selectInputDate id="Invoice_issueDate-To"
 										valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" /> -->
+										popupDateFormat="#{bundle.aon_date_pattern}">
+										<a4j:support event="onchange"
+									    action="#{controller.afterSearchAction}"
+										actionListener="#{controller.onSearchList}"
+									    reRender="invoiceRecorderList"
+									    onsubmit="Richfaces.showModalPanel('waitProccess')"
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+									</aon:selectInputDate> -->							
 							</aon:div>
 							<aon:div style="text-align: right;">
 								<aon:commandButton id="InvoiceRecorder-close"
