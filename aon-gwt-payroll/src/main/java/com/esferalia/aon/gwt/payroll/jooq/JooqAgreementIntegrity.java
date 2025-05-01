@@ -1744,6 +1744,18 @@ public class JooqAgreementIntegrity {
 				update.set(CONTRACT_PAYMENT.EXPRESSION, DSL.castNull(CONTRACT_PAYMENT.EXPRESSION));
 			}
 			
+			if(contractPayment.get(CONTRACT_PAYMENT.TYPE) == contractPayment.get(CONTRACT_PAYMENT.TYPE)) {
+				update.set(CONTRACT_PAYMENT.TYPE, DSL.castNull(CONTRACT_PAYMENT.TYPE));
+			}
+			
+			if(AonStringUtils.equals(contractPayment.get(CONTRACT_PAYMENT.IRPF_EXPRESSION), contractPayment.get(CONTRACT_PAYMENT.IRPF_EXPRESSION))) {
+				update.set(CONTRACT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(CONTRACT_PAYMENT.IRPF_EXPRESSION));
+			}
+			
+			if(AonStringUtils.equals(contractPayment.get(CONTRACT_PAYMENT.QUOTE_EXPRESSION), contractPayment.get(CONTRACT_PAYMENT.QUOTE_EXPRESSION))) {
+				update.set(CONTRACT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(CONTRACT_PAYMENT.QUOTE_EXPRESSION));
+			}
+			
 			update.where(CONTRACT_PAYMENT.ID.eq(contractPayment.get(CONTRACT_PAYMENT.ID)))
 				.execute();
 			
@@ -1769,6 +1781,18 @@ public class JooqAgreementIntegrity {
 			
 			if(AonStringUtils.equals(agreementPayment.get(AGREEMENT_PAYMENT.EXPRESSION), agreementPayment.get(PAYMENT_CONCEPT.EXPRESSION))) {
 				update.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+			}
+			
+			if(agreementPayment.get(AGREEMENT_PAYMENT.TYPE) == agreementPayment.get(PAYMENT_CONCEPT.TYPE)) {
+				update.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE));
+			}
+			
+			if(AonStringUtils.equals(agreementPayment.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION), agreementPayment.get(PAYMENT_CONCEPT.IRPF_EXPRESSION))) {
+				update.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION));
+			}
+			
+			if(AonStringUtils.equals(agreementPayment.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION), agreementPayment.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION))) {
+				update.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.QUOTE_EXPRESSION));
 			}
 			
 			update.where(AGREEMENT_PAYMENT.ID.eq(agreementPayment.get(AGREEMENT_PAYMENT.ID)))
