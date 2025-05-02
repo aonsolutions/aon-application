@@ -334,9 +334,9 @@ public class SLDSalaries {
 	private static Optional<DeductionType>  getCompensationType(String description) {
 		switch (description) {
 		case "COMPENSACION IT ENFERMEDAD COMUN" : 
-			return Optional.of(DeductionType.COMMON_CONTINGENCY);
+			return Optional.of(DeductionType.IN_KIND);
 		case "COMP.IT POR ACCIDENTE DE TRABAJO" : 
-			return Optional.of(DeductionType.PROFESSIONAL_CONTINGENCY);
+			return Optional.of(DeductionType.IN_KIND);
 		default:
 			return Optional.empty();
 		}
@@ -363,7 +363,7 @@ public class SLDSalaries {
 		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 			return "RED_SEA_E";
 		default:
-			return "REDUCCION_TGSS_E";
+			return "RED_CGC_E";
 		}
 	}
 
