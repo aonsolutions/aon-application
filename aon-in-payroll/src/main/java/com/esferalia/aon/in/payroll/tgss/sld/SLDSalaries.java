@@ -378,6 +378,7 @@ public class SLDSalaries {
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL" :
 		case "INCREMENTO COTI.CONTRATO TEMP.MENOR 6-7D":
+		case "COTIZ.ADICIONAL CONTRATOS TEMP.CORTA DUR":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
@@ -531,6 +532,9 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.FP_ENTERPRISE);
 		case "OTRAS HORAS EXTRAS":
 			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_ENTERPRISE);
+		case "COTIZ.ADICIONAL CONTRATOS TEMP.CORTA DUR":
+			return Optional.of(ContextVariable.CGC_ENTERPRISE_TEMP);
+			
 		default:
 			return Optional.empty();
 		}
