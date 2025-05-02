@@ -254,6 +254,7 @@ public final class IJsonNames {
 	public static final String EXPIRE_DATE = "expireDate";
 	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
+	public static final String EXTERNAL_STORAGE = "externalStorage";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";
 	public static final String FAX = "fax";
@@ -377,6 +378,7 @@ public final class IJsonNames {
 	public static final String MEDIA = "media";
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
+	public static final String MIME_TYPE = "mimeType";
 	public static final String MADE_MODELS_VISIBLE = "madeModelsVisible";
 	public static final String MAX_DOCUMENT_SIZE = "maxDocumentSize";
 	public static final String MAX_TOTAL_DOCUMENT_SIZE = "maxTotalDocumentSize";

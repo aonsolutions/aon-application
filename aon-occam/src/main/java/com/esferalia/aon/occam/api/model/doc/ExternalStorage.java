@@ -1,26 +1,16 @@
 package com.esferalia.aon.occam.api.model.doc;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum ExternalStorage {
 	
-	AON {
-		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAon();}
-	},
-	DRIVE {
-	 	@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitDrive();}
-	},
-	AWS() {
-		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAws();}
-	},
-	SCALEWAY() {
-		@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitScaleway();}
-	};
+	AON 		{@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAon();}},
+	DRIVE 		{@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitDrive();}},
+	AWS() 		{@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitAws();}},
+	SCALEWAY() 	{@Override public <T> T visit(ExternalStorageVisitor<T> visitor) {return visitor.visitScaleway();}};
 	
 	private ExternalStorage() {
-
 	}
 
 	public byte value() {
@@ -45,6 +35,10 @@ public enum ExternalStorage {
 			.orElse(null);
 	}
 	
+	public static String name(ExternalStorage e) {
+		return e==null?null:e.name();
+	}
+
 	public boolean isAon() {
 		return AON.equals(this);
 	}
@@ -69,6 +63,7 @@ public enum ExternalStorage {
 		T visitAws();
 		T visitScaleway();
 	}
+
 }
 
 
