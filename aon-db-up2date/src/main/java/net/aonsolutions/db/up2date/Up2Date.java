@@ -538,7 +538,7 @@ public class Up2Date {
 			// SalaryHoursFixV.SALARYHOURSFIXV,
 			// TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
 			// AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
-			AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
+			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

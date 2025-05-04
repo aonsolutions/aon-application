@@ -1566,10 +1566,11 @@ public class SalaryDraftBuilder
 		    		|| ( 
 		    		AonStringUtils.isNotBlank(c.getName()) 
 		    		&& AonStringUtils.equals(c.getName(), cost.getName()))
-				    || ( // RED.CUOTA SS-PORCENT ( C.COMUN.)
-			    	c.getAmount() < 0.00 
-			    	&& c.getType() == Deduction.Type.COMMON_CONTINGENCY 
-			    	&& cost.getType() == Deduction.Type.COMMON_CONTINGENCY)
+//				    || 
+//				    ( // RED.CUOTA SS-PORCENT ( C.COMUN.)
+//			    	c.getAmount() < 0.00 
+//			    	&& c.getType() == Deduction.Type.COMMON_CONTINGENCY 
+//			    	&& cost.getType() == Deduction.Type.COMMON_CONTINGENCY)
 		    		
 				    || (c.getType() == Deduction.Type.SOLIDARITY 
 			    	&& cost.getType() == Deduction.Type.SOLIDARITY)
@@ -2041,6 +2042,8 @@ public class SalaryDraftBuilder
 				return "Contingencias Comunes";
 			case "CGC_E_TEMP" :
 				return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
+			case "RED_CGC_E" :
+				return "Reducciones a Cargo de la TGSS";
 			default:
 				;
 			}
