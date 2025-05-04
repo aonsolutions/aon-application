@@ -225,7 +225,8 @@ public class MessageController implements IWebMailConstants, Serializable {
 	    		message.setFrom(new InternetAddress(address, personal, "UTF-8" ));
 
 	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
-	            message.addRecipient(RecipientType.BCC, replyTo);
+	            if(this.senderMailAccount.getReplyToMail() != null)
+	            	message.addRecipient(RecipientType.BCC, replyTo);
 	            Address[] addresses = {replyTo};
 	            message.setReplyTo(addresses);
 	            SES.sendEmail(AonUtil.getDomainName(), message);
