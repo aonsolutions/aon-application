@@ -137,6 +137,8 @@ public class SistemaREDCCC {
 			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setRedirectEnabled(true);
 			
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			
 			XmlPage xmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P002");
 			HtmlPage document = HtmlUnitToolkit.transformXmlPage(xmlPage);
 			

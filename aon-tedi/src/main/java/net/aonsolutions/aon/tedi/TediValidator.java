@@ -12,6 +12,8 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -33,34 +36,36 @@ public class TediValidator {
 	/**
 	 * El dominio de la factura no puede estar vacio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_DOMAIN = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_DOMAIN = ctx -> {
 		if (ctx.getInvoice().getDomain() == null || ctx.getInvoice().getDomain() == 0) {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.DOMAIN) );
 		}
 	};
+	
 	/**
 	 * El ámbito de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_INVOICE_SCOPE = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_INVOICE_SCOPE = ctx -> {
 		if (ctx.getInvoice().getRegistry() != null &&
 			(ctx.getInvoice().getScope() == null || ctx.getInvoice().getScope().getId() == null)) {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.SCOPE));
 		}
 	};
+	
 	/**
 	 * La serie no debe superar caracters definido en BD.
 	 */
-	public static Consumer<ValidationContext> OVERFLOW_SERIES = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getSeries())) {
-			if (willOverflow(INVOICE.SERIES, ctx.getInvoice().getSeries())) {
-				ctx.add( InvoiceErrorMessages.C002.wrn(InvoiceErrorKey.SERIES, InvoiceErrorKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
-			}
+	private static final Consumer<ValidationContext> OVERFLOW_SERIES = ctx -> {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getSeries()) 
+		 && willOverflow(INVOICE.SERIES, ctx.getInvoice().getSeries())) {
+			ctx.add( InvoiceErrorMessages.C002.wrn(InvoiceErrorKey.SERIES, InvoiceErrorKey.SERIES.getDescription(),INVOICE.SERIES.getDataType().length()));
 		}
 	};
+	
 	/**
 	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
 	 */
-	public static Consumer<ValidationContext> EMPTY_REFERENCE_CODE = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_REFERENCE_CODE = ctx -> {
 		if (!ctx.getInvoice().isSales() && AonStringUtils.isBlank(ctx.getInvoice().getReferenceCode())) {
 			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.REFERENCE_CODE));
 		}
@@ -69,7 +74,7 @@ public class TediValidator {
 	/**
 	 * Si la factura es de ventas, debe tener número de factura.
 	 */
-	public static Consumer<ValidationContext> EMPTY_SALES_NUMBER = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_SALES_NUMBER = ctx -> {
 		if (ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() == 0 ) {
 			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.NUMBER));
 		}
@@ -79,25 +84,25 @@ public class TediValidator {
 	/**
 	 * El codigo de referencia debe superar caracters definido en BD.
 	 */
-	public static Consumer<ValidationContext> OVERFLOW_REFERENCE_CODE = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getReferenceCode())) {
-			if (willOverflow(INVOICE.REFERENCE_CODE, ctx.getInvoice().getReferenceCode())) {
-				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.REFERENCE_CODE, InvoiceErrorKey.REFERENCE_CODE.getDescription(), INVOICE.REFERENCE_CODE.getDataType().length()));
-			}
+	private static final Consumer<ValidationContext> OVERFLOW_REFERENCE_CODE = ctx -> {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getReferenceCode()) 
+		 && willOverflow(INVOICE.REFERENCE_CODE, ctx.getInvoice().getReferenceCode())) {
+			ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.REFERENCE_CODE, InvoiceErrorKey.REFERENCE_CODE.getDescription(), INVOICE.REFERENCE_CODE.getDataType().length()));
 		}
 	};
-	/**
-	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
-	 */
-	public static Consumer<ValidationContext> EMPTY_TRANSACTION = (ctx) -> {
-		if (ctx.getInvoice().getRegistry() != null && (ctx.getInvoice().getTransaction() == null)) {
-			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
-		}
-	};
+	
+//	/**
+//	 * Si la factura no es de ventas, el codigo de referencia debe tener valor.
+//	 */
+//	private static final Consumer<ValidationContext> EMPTY_TRANSACTION = (ctx) -> {
+//		if (ctx.getInvoice().getRegistry() != null && (ctx.getInvoice().getTransaction() == null)) {
+//			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TRANSACTION) );
+//		}
+//	};
 	/**
 	 * La fecha de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_DATE = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_DATE = ctx -> {
 		if (ctx.getInvoice().getIssueDate() == null) {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.ISSUE_DATE) );
 		}
@@ -106,34 +111,33 @@ public class TediValidator {
 	/**
 	 * El Domain/Serie/Número/Tipo no puede estar duplicado
 	 */
-	public static Consumer<ValidationContext> DUPLICATED_SERIES_NUMBER = (ctx) -> {
-		if ( ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() != 0) {
-			if (ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
-					ctx.getCtx().getDslContext().selectOne()
-						.from(INVOICE)
-						.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))
-						.and(AonStringUtils.isBlank(ctx.getInvoice().getSeries())
-							?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
-							:INVOICE.SERIES.eq(ctx.getInvoice().getSeries()))
-						.and(INVOICE.NUMBER.eq(ctx.getInvoice().getNumber()))
-						.and(ctx.getInvoice().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(ctx.getInvoice().getId()))
-						.and(INVOICE.TYPE.eq(ctx.getInvoice().getType().value())))) {
-				ctx.add( InvoiceErrorMessages.C005.wrn(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
-			}
+	private static final Consumer<ValidationContext> DUPLICATED_SERIES_NUMBER = ctx -> {
+		if ( ctx.getInvoice().isSales() 
+		  && ctx.getInvoice().getNumber() != 0 && ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
+			ctx.getCtx().getDslContext().selectOne()
+				.from(INVOICE)
+				.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))
+				.and(AonStringUtils.isBlank(ctx.getInvoice().getSeries())
+					?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+					:INVOICE.SERIES.eq(ctx.getInvoice().getSeries()))
+				.and(INVOICE.NUMBER.eq(ctx.getInvoice().getNumber()))
+				.and(ctx.getInvoice().getId() == null ? DSL.trueCondition() : INVOICE.ID.ne(ctx.getInvoice().getId()))
+				.and(INVOICE.TYPE.eq(ctx.getInvoice().getType().value())))) {
+			ctx.add( InvoiceErrorMessages.C005.wrn(InvoiceErrorKey.DUPLICATED_SERIES_NUMBER) );
 		}
 	};
 	
 	/**
 	 * En facturas recibidas, el Domain/Registry/Numero Referencia no puede estar duplicado
 	 */
-	public static Consumer<ValidationContext> DUPLICATED_REFERENCE_CODE = (ctx) -> {
+	private static final Consumer<ValidationContext> DUPLICATED_REFERENCE_CODE = ctx -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getReferenceCode())
 			&& ctx.getInvoice().getType() != null
 			&& !ctx.getInvoice().isSales() 
 			&& !ctx.getInvoice().isUndeductible() 
-			&& ctx.getInvoice().getIssueDate() != null) {
-			if (ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
-					ctx.getCtx().getDslContext().selectOne()
+			&& ctx.getInvoice().getIssueDate() != null
+			&& ctx.getCtx() != null && ctx.getCtx().getDslContext().fetchExists( 
+				ctx.getCtx().getDslContext().selectOne()
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))
 					.and(INVOICE.REGISTRY.eq(ctx.getInvoice().getRegistry()))
@@ -143,14 +147,13 @@ public class TediValidator {
 					.and(DSL.year(INVOICE.ISSUE_DATE).eq(AonDateUtils.getYear( ctx.getInvoice().getIssueDate())))
 				)) {
 				ctx.add( InvoiceErrorMessages.C006.wrn(InvoiceErrorKey.DUPLICATED_REFERENCE_CODE) );
-			}
 		}
 	};
 
 	/**
 	 * La fecha IVA de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_TAX_DATE = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_TAX_DATE = ctx -> {
 		if (ctx.getInvoice().getIssueDate() != null && ctx.getInvoice().getTaxDate() == null) {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
 		}
@@ -158,7 +161,7 @@ public class TediValidator {
 	/**
 	 * El Tipo de la factura no puede ser null.
 	 */
-	public static Consumer<ValidationContext> EMPTY_INVOICE_TYPE = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_INVOICE_TYPE = ctx -> {
 		if (ctx.getInvoice().getType() == null) {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TYPE) );
 		}
@@ -167,7 +170,7 @@ public class TediValidator {
 	/**
 	 * El titular de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_REGISTRY = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_REGISTRY = ctx -> {
 		if (ctx.getInvoice().getRegistry() == null) {
 			if (AonStringUtils.isEmpty(ctx.getInvoice().getRegistryDocument())) {
 				ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.REGISTRY) );
@@ -182,7 +185,7 @@ public class TediValidator {
 	/**
 	 * El document del titular de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_REGISTRY_DOCUMENT = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_REGISTRY_DOCUMENT = ctx -> {
 		if (ctx.getInvoice().getRegistry() != null && AonStringUtils.isBlank(ctx.getInvoice().getRegistryDocument())) {
 			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RDOCUMENT) );
 		}
@@ -190,18 +193,17 @@ public class TediValidator {
 	/**
 	 * El documento del titular no debe superar caracters definido en BD.
 	 */
-	public static Consumer<ValidationContext> OVERFLOW_REGISTRY_DOCUMENT = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryDocument())) {
-			if (willOverflow(INVOICE.RDOCUMENT, ctx.getInvoice().getRegistryDocument())) {
-				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RDOCUMENT, InvoiceErrorKey.RDOCUMENT.getDescription(), INVOICE.RDOCUMENT.getDataType().length()));
-			}
+	private static final Consumer<ValidationContext> OVERFLOW_REGISTRY_DOCUMENT = ctx -> {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryDocument()) 
+		 && willOverflow(INVOICE.RDOCUMENT, ctx.getInvoice().getRegistryDocument())) {
+			ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RDOCUMENT, InvoiceErrorKey.RDOCUMENT.getDescription(), INVOICE.RDOCUMENT.getDataType().length()));
 		}
 	};
 
 	/**
 	 * El documento del titular debería validarse correctamente.
 	 */
-	public static Consumer<ValidationContext> INVALID_REGISTRY_DOCUMENT = (ctx) -> {
+	private static final Consumer<ValidationContext> INVALID_REGISTRY_DOCUMENT = ctx -> {
 		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryDocument())) {
 			String country = ctx.getInvoice().getRegistryDocumentCountry() == null ? null : 
 				ctx.getInvoice().getRegistryDocumentCountry().getIso2();
@@ -217,7 +219,7 @@ public class TediValidator {
 	/**
 	 * La razon social del titular de la factura es un dato obligatorio.
 	 */
-	public static Consumer<ValidationContext> EMPTY_REGISTRY_NAME = (ctx) -> {
+	private static final Consumer<ValidationContext> EMPTY_REGISTRY_NAME = ctx -> {
 		if (ctx.getInvoice().getRegistry() != null &&  AonStringUtils.isBlank(ctx.getInvoice().getRegistryName())) {
 			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.RNAME) );
 		}
@@ -225,38 +227,35 @@ public class TediValidator {
 	/**
 	 * La razon social del titular no debe superar caracters definido en BD.
 	 */
-	public static Consumer<ValidationContext> OVERFLOW_REGISTRY_NAME = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryName())) {
-			if (willOverflow(INVOICE.RNAME, ctx.getInvoice().getRegistryName())) {
-				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RNAME, InvoiceErrorKey.RNAME.getDescription(), INVOICE.RNAME.getDataType().length()));
-			}
+	private static final Consumer<ValidationContext> OVERFLOW_REGISTRY_NAME = ctx -> {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getRegistryName()) 
+		 && willOverflow(INVOICE.RNAME, ctx.getInvoice().getRegistryName())) {
+			ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.RNAME, InvoiceErrorKey.RNAME.getDescription(), INVOICE.RNAME.getDataType().length()));
 		}
 	};
 
 	/**
 	 * La dirección de la factura no debe superar caracters definido en BD.
 	 */
-	public static Consumer<ValidationContext> OVERFLOW_ADDRESS = (ctx) -> {
-		if (AonStringUtils.isNotBlank(ctx.getInvoice().getAddress().getAddress())) {
-			if (willOverflow(RADDRESS.ADDRESS, ctx.getInvoice().getAddress().getAddress())) {
-				ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.ADDRESS, InvoiceErrorKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
-			}
+	private static final Consumer<ValidationContext> OVERFLOW_ADDRESS = ctx -> {
+		if (AonStringUtils.isNotBlank(ctx.getInvoice().getAddress().getAddress())
+		 && willOverflow(RADDRESS.ADDRESS, ctx.getInvoice().getAddress().getAddress())) {
+			ctx.add( InvoiceErrorMessages.C002.err(InvoiceErrorKey.ADDRESS, InvoiceErrorKey.ADDRESS.getDescription(), RADDRESS.ADDRESS.getDataType().length()));
 		}
 	};
 
 	/**
 	 * La descripcion del detalle no debe superar caracters definido en BD.
 	 */
-	public static BiConsumer<ValidationContext,InvoiceDetail> OVERFLOW_DETAIL_DESCRIPTION = (ctx,detail) -> {
-		if (AonStringUtils.isNotBlank(detail.getDescription())) {
-			if (willOverflow(INVOICE_DETAIL.DESCRIPTION, detail.getDescription())) {
-				InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.DETAIL_DESCRIPTION, (int) detail.getLine());  
-				ctx.add( InvoiceErrorMessages.C002.err(context, InvoiceErrorKey.DETAIL_DESCRIPTION.getDescription(), INVOICE_DETAIL.DESCRIPTION.getDataType().length()));
-			}
+	private static final BiConsumer<ValidationContext,InvoiceDetail> OVERFLOW_DETAIL_DESCRIPTION = (ctx,detail) -> {
+		if (AonStringUtils.isNotBlank(detail.getDescription())
+		 && willOverflow(INVOICE_DETAIL.DESCRIPTION, detail.getDescription())) {
+			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.DETAIL_DESCRIPTION, (int) detail.getLine());  
+			ctx.add( InvoiceErrorMessages.C002.err(context, InvoiceErrorKey.DETAIL_DESCRIPTION.getDescription(), INVOICE_DETAIL.DESCRIPTION.getDataType().length()));
 		}
 	};
 
-	public static Consumer<ValidationContext> DETAILS_VALIDATION = (ctx) -> {
+	private static final Consumer<ValidationContext> DETAILS_VALIDATION = ctx -> {
 		if (ctx.getInvoice().getDetails() != null) {
 			for (InvoiceDetail detail : ctx.getInvoice().getDetails()) {
 				OVERFLOW_DETAIL_DESCRIPTION
@@ -265,14 +264,14 @@ public class TediValidator {
 		}
 	};
 
-	public static BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
+	private static final BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount())) {
 			InvoiceErrorContext context = new InvoiceErrorContext(InvoiceErrorKey.FINANCE_AMOUNT_ZERO);
 			ctx.add( InvoiceErrorMessages.C014.wrn(context, InvoiceErrorKey.FINANCE_AMOUNT_ZERO.getDescription()));
 		}
 	};
 
-	public static BiConsumer<Finance,ValidationContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
+	private static final BiConsumer<Finance,ValidationContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
 		if (finance.getBankAccount() == null || AonStringUtils.isEmpty(finance.getBankAccount().getBban())) {
 			finance.setBankAccount(null);
 			finance.setBankAlias(null);
@@ -284,7 +283,7 @@ public class TediValidator {
 		}
 	};
 	
-	public static Consumer<ValidationContext> FINANCES_VALIDATION = (ctx) -> {
+	private static final Consumer<ValidationContext> FINANCES_VALIDATION = ctx -> {
 		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getInvoice().getFinances() != null) {
 			for (Finance finance : ctx.getResult().getAccountingInvoice().getInvoice().getFinances()) {
 				CHECK_FINANCE_AMOUNT_ZERO
@@ -298,7 +297,7 @@ public class TediValidator {
 	/**
 	 * Si el año de la factura no es anterior en cinco años al actual.
 	 */
-	public static Consumer<ValidationContext> CHECK_FIVE_YEARS = (ctx) -> {
+	private static final Consumer<ValidationContext> CHECK_FIVE_YEARS = ctx -> {
 		if (ctx.getInvoice().getIssueDate() != null) {
 			int thisYear = AonDateUtils.getYear(new Date());
 			int invoiceYear = AonDateUtils.getYear(ctx.getInvoice().getIssueDate());
@@ -308,33 +307,33 @@ public class TediValidator {
 		}
 	};
 
-	public static Consumer<ValidationContext> CHECK_LINES = (ctx) -> {
-		if (ctx.getInvoice().getDetails() == null || ctx.getInvoice().getDetails().size() == 0) {
+	private static final Consumer<ValidationContext> CHECK_LINES = ctx -> {
+		if (AonCollectionUtils.isEmpty(ctx.getInvoice().getDetails())) {
 			ctx.add( InvoiceErrorMessages.C010.err(InvoiceErrorKey.DETAILS) );
 		}
 	};
 
-//	public static Consumer<ValidationContext> ENTRY_SETTLED = (ctx) -> {
-//		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getAccountEntry() != null) {
-//			AccountEntry ae = ctx.getResult().getAccountingInvoice().getAccountEntry();
-//			double sumD = 0.0;
-//			double sumC = 0.0;
-//			boolean empty = true;
-//			for (AccountEntryDetail aed : ae.getDetails()) {
-//				if (!aed.isDeleted()) {
-//					sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-//					sumC = AonMathUtils.sum(sumC, aed.getCredit());
-//					empty = false;
-//				}
-//			}
-//			if (empty) {
-//				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
-//			}
-//			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
-//				ctx.add( InvoiceErrorMessages.C012.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
-//			}
-//		}
-//	};
+	private static final Consumer<ValidationContext> ENTRY_SETTLED = ctx -> {
+		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getAccountEntry() != null) {
+			AccountEntry ae = ctx.getResult().getAccountingInvoice().getAccountEntry();
+			double sumD = 0.0;
+			double sumC = 0.0;
+			boolean empty = true;
+			for (AccountEntryDetail aed : ae.getDetails()) {
+				if (!aed.isDeleted()) {
+					sumD = AonMathUtils.sum(sumD, aed.getDebit());	
+					sumC = AonMathUtils.sum(sumC, aed.getCredit());
+					empty = false;
+				}
+			}
+			if (empty) {
+				ctx.add( InvoiceErrorMessages.C013.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
+			}
+			if (!AonMathUtils.isZero( AonMathUtils.round(sumD - sumC))) {
+				ctx.add( InvoiceErrorMessages.C012.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );
+			}
+		}
+	};
 
 	private static boolean willOverflow(Field<String> field, String series) {
 		return (AonStringUtils.length(series) > field.getDataType().length());
@@ -389,7 +388,7 @@ public class TediValidator {
 			
 			.andThen(FINANCES_VALIDATION)
 			
-//			.andThen(ENTRY_SETTLED)
+			.andThen(ENTRY_SETTLED)
 			
 		.accept(new ValidationContext(ctx,result));
 		

@@ -54,6 +54,15 @@ public class AgreementIntegrity implements Serializable {
 		this.messages = messages;
 		return this;
 	}
+	
+	public boolean hasMessages() {
+		if(null == messages) return false;
+		
+		for(List<String> messageIT : messages.values())
+			if(!messageIT.isEmpty()) return true;
+		
+		return false;
+	}
 
 	
 	

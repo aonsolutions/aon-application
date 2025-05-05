@@ -345,9 +345,6 @@ public class SQLSalaryDraft {
 			+ ContractPaymentColumns.PAYMENT_CONCEPT
 			+ " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
-	private static final String CONTRACT_PAYMENT_DELETE_SQL = "DELETE FROM "
-			+ SQLConstants.CONTRACT_PAYMENT + " WHERE "
-			+ ContractPaymentColumns.ID + " = ? ";
 
 	private static void makeRoomPayment(Connection conn, Payment payment,
 			Integer contract) throws SQLException {
@@ -361,15 +358,24 @@ public class SQLSalaryDraft {
 			java.sql.Date endDate = SQLUtils.date2sql(payment.getEndDate());
 			java.sql.Date startDate = SQLUtils.date2sql(payment.getStartDate());
 
-			String sql = "SELECT * " 
+			String querySql = "SELECT * " 
 					+ " FROM " + SQLConstants.CONTRACT_PAYMENT
-					+ " WHERE " + ContractPaymentColumns.ID + " = ? ";
+					+ " WHERE " + ContractPaymentColumns.ID + " = ? "
+					+ " AND " + ContractPaymentColumns.CONTRACT + " = ? "
+					;
 
-			queryStmt = conn.prepareStatement(sql);
+			queryStmt = conn.prepareStatement(querySql);
 
 			queryStmt.setInt(1, payment.getId());
+			queryStmt.setInt(2, contract);
 
-			deleteStmt = conn.prepareStatement(CONTRACT_PAYMENT_DELETE_SQL);
+			String deleteSql = "DELETE FROM "
+					+ SQLConstants.CONTRACT_PAYMENT 
+					+ " WHERE "	+ ContractPaymentColumns.ID + " = ? "
+					+ " AND " + ContractPaymentColumns.CONTRACT + " = ? "
+					;
+
+			deleteStmt = conn.prepareStatement(deleteSql);
 
 			insertStmt = conn.prepareStatement(CONTRACT_PAYMENT_INSERT);
 
@@ -422,6 +428,7 @@ public class SQLSalaryDraft {
 				// delete old
 				Integer id = rs.getInt(ContractPaymentColumns.ID);
 				deleteStmt.setInt(1, id);
+				deleteStmt.setInt(2, contract);
 				deleteStmt.execute();
 			}
 

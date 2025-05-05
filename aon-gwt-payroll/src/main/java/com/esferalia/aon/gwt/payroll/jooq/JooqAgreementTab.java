@@ -333,6 +333,9 @@ public class JooqAgreementTab {
 			payment.setIrpfExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.IRPF_EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.IRPF_EXPRESSION));
 			payment.setQuoteExpression(AonStringUtils.isNotBlank(agreementPaymentRecord.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION)) ? agreementPaymentRecord.get(AGREEMENT_PAYMENT.QUOTE_EXPRESSION) : agreementPaymentRecord.get(PAYMENT_CONCEPT.QUOTE_EXPRESSION));
 			
+			if(AonStringUtils.equalsIgnoreCase(payment.getExpression(), "DISABLE();"))
+				payment.setHiddenExpression(agreementPaymentRecord.get(PAYMENT_CONCEPT.EXPRESSION));
+			
 			paymentsSet.add(payment);
 		}
 
@@ -680,6 +683,10 @@ public class JooqAgreementTab {
 					.set(AGREEMENT_PAYMENT.END_DATE, parseToSqlDate(payment.getEndDate()))
 					.set(AGREEMENT_PAYMENT.MONTH, AonNumberUtils.toByte(payment.getMonth()))
 					.set(AGREEMENT_PAYMENT.SALARY_TYPE, AonEnumUtils.getByte(payment.getSalaryType()))
+					.set(AGREEMENT_PAYMENT.TYPE, DSL.castNull(AGREEMENT_PAYMENT.TYPE))
+//					.set(AGREEMENT_PAYMENT.DESCRIPTION, DSL.castNull(AGREEMENT_PAYMENT.DESCRIPTION))
+					.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
+					.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.IRPF_EXPRESSION))
 					;
 				
 				if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))

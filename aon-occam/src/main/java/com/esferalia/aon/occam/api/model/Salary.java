@@ -333,6 +333,10 @@ public class Salary implements Serializable {
 
 	public static class CommonContingecyCost extends Cost {
 
+		public CommonContingecyCost(Double amount, String description, String code) {
+			super(amount, description, code, DeductionType.COMMON_CONTINGENCY);
+		}
+
 		public CommonContingecyCost(Double amount, String description) {
 			super(amount, description, "CGC_E", DeductionType.COMMON_CONTINGENCY);
 		}
@@ -902,7 +906,7 @@ public class Salary implements Serializable {
 				.accept(new DeductionType.Visitor<Cost>() {
 				@Override
 				public Cost visitCommonContigency(DeductionType deductionType) {
-					return new CommonContingecyCost(amount, description);
+					return new CommonContingecyCost(amount, description, code );
 				}
 				
 				@Override

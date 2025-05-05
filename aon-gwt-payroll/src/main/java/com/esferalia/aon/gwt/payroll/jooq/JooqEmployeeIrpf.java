@@ -242,10 +242,20 @@ public class JooqEmployeeIrpf {
 		List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
 				.where(SALARY_PAYMENT.SALARY.eq(salaryId))
 				.and(SALARY_PAYMENT.TYPE.eq((byte)13))
-				.fetch(SALARY_PAYMENT.IRPF);
+				.fetch(SALARY_PAYMENT.QUOTE);
 			
-		if(!quotes.isEmpty()) return quotes.get(0);
+		if(!quotes.isEmpty())
+			return quotes.get(0).equals(0.000) ? (inkindBase * irpfPercent / 100) : quotes.get(0);
 		else return 0.00;
+		
+//		List<Double> quotes = dslContext.selectFrom(SALARY_PAYMENT)
+//				.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+//				.and(SALARY_PAYMENT.TYPE.eq((byte)13))
+//				.fetch(SALARY_PAYMENT.IRPF);
+//			
+//		if(!quotes.isEmpty())
+//			return inkindBase.equals(quotes.get(0)) ? (inkindBase * irpfPercent / 100) :  quotes.get(0);
+//		else return 0.00;
 	}
 
 	private static EmployeeIrpf createEmployeeIrpfL190(DSLContext dslContext, Date iteratorDate, Integer salaryId, String salaryType, Record salaryRecord) throws IllegalArgumentException {

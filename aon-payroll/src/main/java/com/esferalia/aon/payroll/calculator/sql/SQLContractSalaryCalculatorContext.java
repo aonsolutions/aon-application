@@ -4209,6 +4209,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return br / count;
 	}
 
+	public boolean isDef(Object name) {
+		return getCurrentBindings().containsKey(name);
+	}
+
 	protected boolean isPartialTime() {
 		try {
 			return !isFullTime();

@@ -905,6 +905,7 @@ public abstract class AbstractSQLTestCase {
 			AgreementLevelCategoryRecord category, int domainId, int personId, int workplaceId, int enterpriseCccId,
 			int enterpriseActivityId) {
 		ContractRecord contract = aonContext.getDslContext().insertInto(CONTRACT).set(CONTRACT.DOMAIN, domainId)
+				.set(CONTRACT.SS_REGIME, ssRegimeType == null? (byte) 0  : (byte) ssRegimeType.ordinal())
 				.set(CONTRACT.PERSON, personId).set(CONTRACT.WORKPLACE, workplaceId).set(CONTRACT.START_DATE, startDate)
 				.set(CONTRACT.SENIORITY_DATE, startDate).set(CONTRACT.END_DATE, endDate)
 				.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId).set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivityId)

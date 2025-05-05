@@ -1574,9 +1574,9 @@ public abstract class AgreementPreview extends Composite {
 			checkRowAndModify(paymentGrid, row, payment, descriptionCell);
 
 			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? ""
-					: getParsedExpression(payment.getExpression()));
+					: getParsedExpression(payment));
 			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? ""
-					: getParsedExpression(payment.getExpression()));
+					: getParsedExpression(payment));
 			expressionCell.addStyleName(style.elipsis());
 			expressionCell.addStyleName(
 					isOpenCollapse ? style.elipsisOpenCollapseWidth() : style.elipsisCloseCollapseWidth());
@@ -1804,9 +1804,9 @@ public abstract class AgreementPreview extends Composite {
 			checkRowAndModify(extraGrid, row, payment, descriptionCell);
 
 			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? ""
-					: getParsedExpression(payment.getExpression()));
+					: getParsedExpression(payment));
 			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? ""
-					: getParsedExpression(payment.getExpression()));
+					: getParsedExpression(payment));
 			expressionCell.addStyleName(style.elipsis());
 			expressionCell.addStyleName(
 					isOpenCollapse ? style.elipsisOpenCollapseExtraWidth() : style.elipsisCloseCollapseExtraWidth());
@@ -2446,10 +2446,12 @@ public abstract class AgreementPreview extends Composite {
 		return title;
 	}
 
-	private String getParsedExpression(String expression) {
+	private String getParsedExpression(Payment payment) {
+		String expression = payment.getExpression();
+		
 		try {
 			if(AonStringUtils.containsIgnoreCase(expression, "DISABLE();")) 
-				expression = AonStringUtils.substringAfter(expression, "DISABLE();");
+				expression = payment.getHiddenExpression();
 		} catch (Exception e) {}
 		
 		return SpecialExpresion.parse(expression).getInput();
@@ -3082,7 +3084,7 @@ public abstract class AgreementPreview extends Composite {
 		AonMessagePanel.showLoading(messagePanel, message);
 	}
 
-	private void hideMessage() {
+	public void hideMessage() {
 		AonMessagePanel.hideMessage(messagePanel);
 	}
 
