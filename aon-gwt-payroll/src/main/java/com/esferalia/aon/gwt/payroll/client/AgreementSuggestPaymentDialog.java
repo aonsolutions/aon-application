@@ -118,6 +118,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	private Button manualAgreement;
 	private Button acceptBtn;
 	
+	private Set<String> allowedDuplicates = Set.of("SALARIO_BASE", "PAGA_EXTRA");
+	
 	// --------------------- Constructor
 	
 	protected AgreementSuggestPaymentDialog(Set<Payment> allPayments, List<String> contextVariables) {
@@ -246,10 +248,12 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			if (concept != null) {
 				initialiazePaymentByConcept(concept);
 				
-				Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), concept.getName())).findFirst();
-				if(existingCodePayment.isPresent()) {
-					paymentCodeTB.setValue("");
-					AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+				if(!allowedDuplicates.contains(concept.getName())) {
+					Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), concept.getName())).findFirst();
+					if(existingCodePayment.isPresent()) {
+						paymentCodeTB.setValue("");
+						AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
+					}
 				}
 				
 			}
@@ -306,7 +310,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			String cleanNewCode = value.replaceAll(" ", "_").trim().toUpperCase();
 			
 			Optional<Payment> existingCodePayment = allPayments.stream().filter(p -> AonStringUtils.equals(p.getName(), cleanNewCode)).findFirst();
-			if(existingCodePayment.isPresent()) {
+			if(!allowedDuplicates.contains(cleanNewCode) && existingCodePayment.isPresent()) {
 				paymentCodeTB.setValue("");
 				AonMessagePanel.showError(messagePanel, "Ya existe un concepto con este c\u00f3digo para este convenio. Elija otro nombre para el c\u00f3digo");
 			} else if(contextVariables.contains(cleanNewCode)) {

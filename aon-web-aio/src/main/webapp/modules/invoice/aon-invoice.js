@@ -1615,8 +1615,9 @@ export class AonInvoice extends AonElement {
 		if((invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
 			firstIban = registry.banks && registry.banks.length > 0 ? registry.banks[0].bank_account : "";			
 		} else if((!invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-			firstIban = this.configuration.company.banks && this.configuration.company.banks.length > 0 
-				? this.configuration.company.banks[0].bank_account : "";
+			let banks = this.configuration.company.banks.filter(f => f.active);
+			firstIban = banks && banks.length > 0 
+				? banks[0].bank_account : "";
 		}
 		return registry.paymethod && registry.paymethod.bank && registry.paymethod.bank.bank_account
 			   ? registry.paymethod.bank.bank_account : firstIban;

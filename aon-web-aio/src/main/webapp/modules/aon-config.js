@@ -152,6 +152,7 @@ export class AonConfig extends AonElement {
             if(!welcome){
                 if(side.style.width == "0px") {
                     aonMenu.showSideNav();
+                    this.getElement("topMenuHome").style.display = "none";
                 } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };

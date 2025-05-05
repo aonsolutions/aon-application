@@ -238,78 +238,45 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
-		if(agreement.getHasContract()) {
-			AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."));
-			confirmDialog.setGlassStyleName(style.dialogGlass());
-			confirmDialog.addStyleName(style.dialogZIndex());
-			confirmDialog.confirm(new AonAcceptDialogCallback() {
-	
-						@Override
-						public void onAccept() {
-							agreementPreview.showLoading("Borrando convenio definitivamente ...");
-							agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
-										if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
-											showAgreementMessage();
-										else
-											showAgreementContainer();
-									});
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									// Not use here
-								}
-								
-							});
-						}
-	
-						@Override
-						public void onCancel() {
-							// Not use here
-						}
-					}
-			);
 		
-		} else {
-			AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?"));
-			confirmDialog.setGlassStyleName(style.dialogGlass());
-			confirmDialog.addStyleName(style.dialogZIndex());
-			confirmDialog.confirm(new AonAcceptDialogCallback() {
-	
+		String meesage = agreement.getHasContract()
+				? String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."
+				: String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?";
+		
+		AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(meesage));
+		confirmDialog.setGlassStyleName(style.dialogGlass());
+		confirmDialog.addStyleName(style.dialogZIndex());
+		confirmDialog.confirm(new AonAcceptDialogCallback() {
+
+				@Override
+				public void onAccept() {
+					agreementPreview.showLoading("Borrando convenio definitivamente ...");
+					agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+						
 						@Override
-						public void onAccept() {
-							agreementPreview.showLoading("Borrando convenio definitivamente ...");
-							agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
-										if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
-											showAgreementMessage();
-										else
-											showAgreementContainer();
-									});
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									// Not use here
-								}
-								
+						public void onSuccess(Void result) {
+							MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+								if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+									showAgreementMessage();
+								else
+									showAgreementContainer();
 							});
 						}
-	
+						
 						@Override
-						public void onCancel() {
+						public void onFailure(Throwable caught) {
 							// Not use here
 						}
-					}
-			);
-		}
+						
+					});
+				}
+
+				@Override
+				public void onCancel() {
+					// Not use here
+				}
+			}
+		);
 		
 	}
 
@@ -327,6 +294,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							
 							@Override
 							public void onSuccess(Void result) {
+								agreementPreview.showSuccess("Restauraci\u00f3n", "Convenio restaurado correctamente");
 								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
 									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
 										showAgreementMessage();
