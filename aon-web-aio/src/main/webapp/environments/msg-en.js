@@ -96,6 +96,7 @@ export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
 export const CONFIDENTIAL = 'Confidential';
 export const CONFIGURATION = 'Configuration';
+export const CONSOLE = 'Console';
 export const CONTACT = 'Contact';
 export const CONTACT_DATA = 'Contact Data';
 export const CONTACT_DATA2 = "Contact information";

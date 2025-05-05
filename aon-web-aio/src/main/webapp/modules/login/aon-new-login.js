@@ -32,6 +32,9 @@ import { AonMobileHome } from "../home/aon-mobile-home.js";
 import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
 import { AonDesktop } from "../company/aon-desktop.js";
 
+import * as GWT from '../../gwt/gwt.js';
+
+
 export class AonNewLogin extends AonElement {
   tag;
   userInput;
@@ -122,7 +125,7 @@ export class AonNewLogin extends AonElement {
     passwordInput.type = "password";
     divFormContent.appendChild(passwordInput);
     
-    userInput.addEventListener('keydown', (event) => {
+    userInput.addEventListener('keyup', (event) => {
 	    if (event.key === 'Enter') {
 			const username = this.getElement("aonLoginUser").value;
     		const password = this.getElement("aonLoginPassword").value;
@@ -132,7 +135,7 @@ export class AonNewLogin extends AonElement {
     	}
     });
     
-    passwordInput.addEventListener('keydown', (event) => {
+    passwordInput.addEventListener('keyup', (event) => {
 	    if (event.key === 'Enter') {
 	        if(userInput.value.length == 0 || passwordInput.value.length == 0) return;
 	        this.signin();
@@ -141,6 +144,7 @@ export class AonNewLogin extends AonElement {
 
     // Buttons
     let signIn = this.createElement(TAG.BUTTON);
+	signIn.type = 'submit';
     signIn.id = "aonLoginSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();
@@ -519,8 +523,7 @@ export class AonNewLogin extends AonElement {
         let limit = 100;
         getCompanies({ limit }).then((companies) => {
           this.getModule().stopLoading();
-
-          if (companies.length === 1) {
+		  if (companies.length === 1) {
             this.companySelection(companies[0], true);
           } else {
             this.getElement("aonHome").showMenu(false);
@@ -538,7 +541,7 @@ export class AonNewLogin extends AonElement {
         toast.start(error);
       });
   }
-
+  
   companySelection(company, onlyOne) {
     localStorage.setItem("company", JSON.stringify(company));
     localStorage.setItem("aon_domain_id", company.id);
@@ -562,7 +565,9 @@ export class AonNewLogin extends AonElement {
       localStorage.setItem("aon_domain_login", user.login);
       if (UA.isMobile()) {
         this.rootPanel(new AonMobileHome());
-      } else {
+      } else if(this.isConsole(company)){
+		GWT.iLoad(GWT.CONSOLE);
+	  } else {
         this.rootPanel(new AonDesktop());
         let portal = LS.isLeftMenu();
         LS.setPortalChecked(portal);
@@ -570,6 +575,10 @@ export class AonNewLogin extends AonElement {
     });
   }
   
+  isConsole(company) {
+	return company.type == 'ADMIN' && company.id === 0;
+  }
+
 }
 if(!window.customElements.get(TAG.AON_NEW_LOGIN)){
 	window.customElements.define(TAG.AON_NEW_LOGIN, AonNewLogin);

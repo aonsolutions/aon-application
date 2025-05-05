@@ -8111,6 +8111,10 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private static boolean isSSDeduction(Item<?> item) {
+		
+		if ( item instanceof Bonus  )
+			return true;
+
 		Enum<?> type = item.getType();
 		if (
 			type == Deduction.Type.MEI
@@ -8129,6 +8133,7 @@ public class SalaryDraft extends ResizeComposite
 		
 		if ( AonStringUtils.equals("ECSS_E", item.getName()) )
 			return true;
+		
 		
 		return false;
 	}

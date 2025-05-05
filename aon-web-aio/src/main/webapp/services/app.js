@@ -547,6 +547,7 @@ export const CONSOLE = {
   app: CONSTANT.CONSOLE,
   icon: AON_ICONS.AON_APP,
   title: MSG.CONSOLE,
+  description: MSG.CONSOLE,
   symbol: MATERIAL_ICONS.TERMINAL,
   color: COLORS.AON_BLACK,
   backgroundColor: "rgba(0, 0, 0, .2)",
@@ -624,7 +625,9 @@ export const MenuApps = {
   MARKETING,
   // GROUPWARE,
   NOTES,
-  TOOLS
+  TOOLS,
+  
+  
 };
 
 export const MobileMenuApps = [
@@ -1639,6 +1642,7 @@ export const MENU_APPS = [
   MESSENGER,
   WAREHOUSE,
   AON_CLASSIC,
+
 ];
 
 export const DESKTOP_APPS = [
@@ -1798,6 +1802,18 @@ export const ENTERPRISE_MENU = {
 	price: " ",
 };
 
+export const CONSOLE_MENU = {
+	app: "consoleMenu",
+	symbol: "construction",
+	title: MSG.CONFIGURATION,
+	description: MSG.CONFIGURATION,
+	subtitle: "Configuration",
+	color: "var(--aonTopMenuAvailable)",
+	style: "aonTopNavConfigurationButton",
+	apps: [],
+	price: " ",
+};
+
 export const TOP_MENU_APPS = [
 	OFFICE,
 	GARAGE,
@@ -1815,10 +1831,12 @@ export const TOP_MENU_APPS = [
 	PAYROLL_MENU,
 	MARKETING_MENU,
 	CONFIGURATION_MENU,
+
+	CONSOLE_MENU,
 ];
 
 export const TOP_MENU_APPS_HOME = [
-  HOME,
+  	HOME,
 	OFFICE,
 	GARAGE,
 	ACADEMY,
@@ -1835,6 +1853,9 @@ export const TOP_MENU_APPS_HOME = [
 	PAYROLL_MENU,
 	MARKETING_MENU,
 	CONFIGURATION_MENU,
+	
+	CONSOLE,
+	CONSOLE_MENU,
 ];
 
 export default Apps;

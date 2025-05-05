@@ -109,7 +109,7 @@ export class AonLinkDomains extends AonElement {
 		adcContainer.style.height = "calc(100% - 40px)";
 		let adc = new AonDomainCustomer();
 		adcContainer.appendChild(adc);
-		this.appendChild(adcContainer);n
+		this.appendChild(adcContainer);
 	}
 
 	showView(view, data, filter = undefined){
