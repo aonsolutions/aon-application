@@ -2,6 +2,7 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonNewDate } from "../../components/aon-new-date.js";
+import { AonSpinner } from "../../components/aon-spinner";
 import { MSG } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental, getS3Category, postS3Document } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
@@ -366,46 +367,8 @@ export async function loadOldCategories() {
     table.id = 'table';
   
     // Spinner
-    let loadingOverlay = document.createElement('div');
-    loadingOverlay.id = 'aonDocumentalLoadingOverlay';
-    loadingOverlay.style.position = 'absolute';
-    loadingOverlay.style.top = '0';
-    loadingOverlay.style.left = '0';
-    loadingOverlay.style.width = '100%';
-    loadingOverlay.style.height = '100%';
-    loadingOverlay.style.backgroundColor = 'rgba(218, 209, 209, 0.8)';
-    loadingOverlay.style.display = 'flex';
-    loadingOverlay.style.alignItems = 'center';
-    loadingOverlay.style.justifyContent = 'center';
-    loadingOverlay.style.zIndex = '10';
-  
-    let spinner = document.createElement('div');
-    spinner.classList.add('preloader-wrapper', 'active');
-    spinner.innerHTML = `
-        <span class="material-symbols-outlined">
-            refresh
-        </span>
-    `;
-  
-    let icon = spinner.querySelector('.material-symbols-outlined');
-    icon.style.fontSize = '48px';
-    icon.style.animation = 'rotate 2s linear infinite';
-  
-    let style = document.createElement('style');
-    style.innerHTML = `
-        @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    loadingOverlay.appendChild(spinner);
-    table.appendChild(loadingOverlay);
+    const spinner = new AonSpinner();
+    table.appendChild(spinner);
 
     // Lógica de los checkboxes
     if (dur.isDocumentalPortal() && !dur.isDocumentalManager()) {
@@ -471,7 +434,7 @@ export async function loadOldCategories() {
     selTag.title = MSG.TAG;
     tdTag.appendChild(selTag);
     selTag.multiple = true;
-  
+
     getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
 		if (tags && tags.length > 0) {		
         selTag.options = JSON.stringify(tags.map(t => {
@@ -484,14 +447,13 @@ export async function loadOldCategories() {
 	}
     });
 
-    loadingOverlay.style.display = 'none';
     // Crear la sección de categorías
-    createCategorySection(table, loadingOverlay, trScope, trTag, trDatePicker);
+    createCategorySection(table, spinner, trScope, trTag, trDatePicker);
     // filtros para subir
     return table;
 }
 
-async function createCategorySection(table, loadingOverlay, trScope, trTag, trDatePicker) {
+async function createCategorySection(table, spinner, trScope, trTag, trDatePicker) {
     let oldCategories =  await loadOldCategories();
 
     // Crear la fila de categorías (Radio buttons)
@@ -538,13 +500,12 @@ async function createCategorySection(table, loadingOverlay, trScope, trTag, trDa
                     };
                 }));
 
-                loadingOverlay.style.display = 'none';
-                
+                spinner.hide();
                 // Cuando se traten las categorias, se tendrá que manejar la visibilidad de otras partes
-                uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay);
+                uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, spinner);
             } else {
-                loadingOverlay.style.display = 'none';
-                console.log('No hay categorias disponibles.');
+              spinner.hide();
+              console.log('No hay categorias disponibles.');
             }
         });
     }
@@ -554,7 +515,7 @@ async function createCategorySection(table, loadingOverlay, trScope, trTag, trDa
     trCategory.appendChild(tdCategory);
 }
 
-function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay){
+function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, spinner){
   // Botton de aceptar oculto
   var button = document.getElementById("aonDocumentalDialogDialogActionAccept");
   button.disabled = true;
@@ -578,8 +539,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
       tdSubCategory.appendChild(selSubCat);
 
       let data = { parent: selectedCategoryId };
-      // Mostrar el overlay
-      loadingOverlay.style.display = 'flex';
+      // Mostrar el spinner
+      spinner.show();
       getS3Category(data).then(subcategories => {
         if (subcategories.length > 0) {
           selSubCat.options = JSON.stringify(subcategories.map(sc => {
@@ -589,8 +550,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
             };
           }));
           trSubCategory.appendChild(tdSubCategory);
-          // Oculta el overlay
-          loadingOverlay.style.display = 'none';
+          // Oculta el spinner
+            spinner.hide();
 ///////////////////////////////////////////////////
           // Event listener para la selección de la subcategoría
           selSubCat.addEventListener('change', (event) => {
@@ -614,8 +575,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                   tdAdministration.appendChild(selAdministration);
 
                   let data = { parent: selectedSubCategoryId };
-                  // Mostrar el overlay
-                  loadingOverlay.style.display = 'flex';
+                  // Mostrar el spinner
+                  spinner.show();
                   getS3Category(data).then(administrations => {
                       if (administrations.length > 0) {
                           selAdministration.options = JSON.stringify(administrations.map(adm => {
@@ -625,8 +586,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                               };
                           }));
                           trAdministration.appendChild(tdAdministration);
-                          // Oculta el overlay
-                          loadingOverlay.style.display = 'none';
+                          // Oculta el spinner
+                          spinner.hide();
                       ///////////////////////////////////////////////////
                           // Event listener para la selección de la administración
                           selAdministration.addEventListener('change', (event) => {
@@ -650,8 +611,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                   tdModel.appendChild(selModel);
 
                                   let data = { parent: selectedAdministrationId };
-                                  // Mostrar el overlay
-                                  loadingOverlay.style.display = 'flex';
+                                  // Mostrar el spinner
+                                  spinner.show();
                                   getS3Category(data).then(models => {
                                       if (models.length > 0) {
                                           selModel.options = JSON.stringify(models.map(mod => {
@@ -661,16 +622,16 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                               };
                                           }));
                                           trModel.appendChild(tdModel);
-                                          // Oculta el overlay
-                                          loadingOverlay.style.display = 'none';
+                                          // Oculta el spinner
+                                          spinner.hide();
                                           // Cuando se escoge un modelo
                                           selModel.addEventListener('change', (event) => {
                                               button.disabled = false;
                                           });
                                       } else {
                                         button.disabled = false;
-                                        // Oculta el overlay
-                                        loadingOverlay.style.display = 'none';
+                                        // Oculta el spinner
+                                        spinner.hide();
                                         console.log('No hay modelos disponibles.');
                                       }
                                   });
@@ -679,8 +640,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                       ///////////////////////////////////////////////////
                       } else {
                         button.disabled = false;
-                        // Oculta el overlay
-                        loadingOverlay.style.display = 'none';
+                        // Oculta el spinner
+                        spinner.hide();
                         console.log('No hay administraciones disponibles.');
                       }
                   });
@@ -689,8 +650,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
 ///////////////////////////////////////////////////
         } else {
           button.disabled = false;
-          // Oculta el overlay
-          loadingOverlay.style.display = 'none';
+          // Oculta el spinner
+          spinner.hide();
           console.log('No hay subcategorías disponibles.');
         }
       });

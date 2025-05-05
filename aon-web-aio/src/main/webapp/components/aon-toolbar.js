@@ -182,12 +182,6 @@ export class AonToolbar extends AonElement {
 	}
 
 	addSearchButton(opened=false, filterDocumental=false) {
-      
-      console.log('----------------------');
-      console.log('addSearchButton()');
-      console.log('----------------------');
-      
-      
 		let search = this.getSearchButton();
 		if(!search) {
 			search = new AonSearch(filterDocumental);

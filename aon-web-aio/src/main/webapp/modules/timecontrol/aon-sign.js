@@ -1,6 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
+import { AonSpinner } from "../../components/aon-spinner";
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
@@ -17,7 +18,6 @@ export class AonSign extends AonElement {
   CONTENT;
   TIME;
   TIME_ID;
-  GLOBAL;
   // TOTAL_HOUR;
   get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -36,7 +36,6 @@ export class AonSign extends AonElement {
   }
 
   initialize() {
-	this.GLOBAL = SIGNIN_VIEWS.AON_SIGNIN;
     this.AON_SIGN = SIGNIN_VIEWS.AON_SIGN;
     this.id = this.id || this.AON_SIGN;
     this.CONTENT = this.id + 'Content';
@@ -167,7 +166,7 @@ export class AonSign extends AonElement {
     }
 	}
 
-	salida() {
+  salida() {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
@@ -199,47 +198,12 @@ export class AonSign extends AonElement {
 	}
 
   async saveTimeCtrl(status){
-	let divGeneral = this.getElement(this.GLOBAL)
+	let divGeneral = this.getElement(this.id);
 	// Spinner
-    let loadingOverlay = document.createElement('div');
-    loadingOverlay.id = 'aonDocumentalLoadingOverlay';
-    loadingOverlay.style.position = 'absolute';
-    loadingOverlay.style.top = '0';
-    loadingOverlay.style.left = '0';
-    loadingOverlay.style.width = '100%';
-    loadingOverlay.style.height = '100%';
-    loadingOverlay.style.backgroundColor = 'rgba(218, 209, 209, 0.8)';
-    loadingOverlay.style.display = 'flex';
-    loadingOverlay.style.alignItems = 'center';
-    loadingOverlay.style.justifyContent = 'center';
-    loadingOverlay.style.zIndex = '10';
-    let spinner = document.createElement('div');
-    spinner.classList.add('preloader-wrapper', 'active');
-    spinner.innerHTML = `
-        <span class="material-symbols-outlined">
-            refresh
-        </span>
-    `;
-    let icon = spinner.querySelector('.material-symbols-outlined');
-    icon.style.fontSize = '48px';
-    icon.style.animation = 'rotate 2s linear infinite';
-    let style = document.createElement('style');
-    style.innerHTML = `
-        @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    loadingOverlay.appendChild(spinner);
-    divGeneral.appendChild(loadingOverlay);
-	
-	
-    let signin = {status, task_holder: this._taskHolder, parent: this.parent}
+    const spinner = new AonSpinner();
+    divGeneral.appendChild(spinner);
+
+    let signin = {status, task_holder: this._taskHolder, parent: this.parent};
     this.disabledButton(true);
     let timeOutPosition = false;
 
@@ -252,10 +216,10 @@ export class AonSign extends AonElement {
     .catch(error=>{
       timeOutPosition = error && error.timeout;
 //      this.showToast(error);
-    }); 
+    });
 
     const resp = await saveTimeControl(signin).catch(() => {
-		loadingOverlay.style.display = 'none';
+      spinner.hide();
 	});
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
@@ -275,7 +239,7 @@ export class AonSign extends AonElement {
 
     this.disabledButton(false);
 	this.showToast({code: 3, message: 'Marcaje realizado con exito', timeout: false});
-	loadingOverlay.style.display = 'none';
+    spinner.hide();
   }
 
   disabledButton(disabled){
@@ -294,7 +258,7 @@ export class AonSign extends AonElement {
 
   buildSignin(signin) {
     this._taskHolder = signin.task_holder.id;
-		const aonUserConnected = this.getElement('aonHeaderUserConnected');
+    const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
 
