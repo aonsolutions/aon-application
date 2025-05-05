@@ -287,17 +287,8 @@ export class AonNewSelect extends AonNewInput {
   }
 
   onChangeCheckBox(add=false, option=null){
-    const input = this.getInput();
     const selectable = this.getSelectable();
-    const length = selectable.length;
-
     this.displayMultiple();
-    // if(length){
-    //   input.value = selectable[0][this.nameAlias];
-    //   input.setLabelCount(length - 1);
-    // } else {
-    //   input.value ="";
-    // }
 
     this.dispatchEvent(new CustomEvent(EVENT.SELECT, {
       detail: {
@@ -305,21 +296,19 @@ export class AonNewSelect extends AonNewInput {
         add,
         option
       }
-    }))
+    }));
   }
 
   displayMultiple() {
-    const input = this.getInput();
-    const selectable = this.getSelectable();
-    const length = selectable.length;
-    if(length){
-      input.value = selectable[0][this.nameAlias];
-      input.setLabelCount(length - 1);
+    const selectable  = this.getSelectable();
+    const length      = selectable.length;
+    
+    if(length > 0){
+      super.setValue(selectable.map(item => item[this.nameAlias]).join(', '));
     } else {
-      input.value ="";
+      super.setValue('');
     }
   }
-
   keyboardSelected({key}){
     const options = this.getElement(this.OPTIONS);
     let items = options.querySelectorAll('li');
@@ -392,7 +381,6 @@ export class AonNewSelect extends AonNewInput {
 
   setOptionsBuild(options) {
     this.disableKeyUp = false;
-
     if(this.multiple && this.getSelectable().length){
       options = [ ...new Set(this.getSelectable()), ...new Set(options) ];
     }

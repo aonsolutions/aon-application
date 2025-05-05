@@ -321,10 +321,10 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			JSONObject doc = fullDocumentToJson(document);
-			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), 0).forEach(id -> {
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), type).forEach(id -> {
 				array.put(new JSONObject().put("id", id));
 			});
-			doc.put(IJsonNames.TAGS, array);
+			doc.put(IJsonNames.TAG, array);
 			jsArray.put(doc);
 		});
 		
@@ -343,8 +343,8 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
 		}
 		ArrayList<Integer> tags = new ArrayList<Integer>();
-		if(api.getData().has(IJsonNames.TAGS)) {			
-			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAGS);
+		if(api.getData().has(IJsonNames.TAG)) {			
+			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
 			if(tagsArray.length() > 0) {
 				for(int i = 0; i < tagsArray.length(); i++)
 					tags.add(tagsArray.getJSONObject(i).getInt(IJsonNames.ID));
@@ -379,7 +379,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
 		MimeType mime = JsonUtils.getString(json, IJsonNames.CONTENT_TYPE) != null ? MimeType.safeValueFromContenType(JsonUtils.getString(json, IJsonNames.CONTENT_TYPE)) : null;
 		ArrayList<Integer> tags = new ArrayList<Integer>();
-		if(api.getData().has(IJsonNames.TAG)) {			
+		if(api.getData().has(IJsonNames.TAG)) {	
 			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
 			if(tagsArray.length() > 0) {
 				for(int i = 0; i < tagsArray.length(); i++)
@@ -400,7 +400,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setModificationDate(new Date())
 				.setModificationUser(api.getUser().getLogin())
 				.setTags(tags)
-				;
+				;		
 		S3Document document = AON_SOLUTIONS.updateS3Document(api.getDomain(), api.getUser(), rdoc, type);
 		return fullDocumentToJson(document);
 	}

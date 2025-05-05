@@ -2,7 +2,7 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonNewDate } from "../../components/aon-new-date.js";
-import { MSG } from "../../environments/environments.js";
+import { EVENT, MSG } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental, getS3Category, postS3Document } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
@@ -44,10 +44,10 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
 		let data = {
-			category: document.getElementById("aonDocumentalUploadCategory").value,
-			scope: document.getElementById("aonDocumentalUploadScope").value,
-			tag: document.getElementById("aonDocumentalUploadTag").value,
-			type: document.getElementById("aonDocumentalUploadType").value
+			category: document.getElementById("aonDocumentalUploadCategoryU").value,
+			scope: document.getElementById("aonDocumentalUploadScopeU").value,
+			tag: document.getElementById("aonDocumentalUploadTagU").value,
+			type: document.getElementById("aonDocumentalUploadTypeU").value
 		};
 
 		let uploadToast = document.getElementById('aonUploadToast');
@@ -238,7 +238,7 @@ function createRadioButtonRow(table, radioId, labelText, onChangeCallback) {
     trRadio.appendChild(tdRadio);
     table.appendChild(trRadio);
 
-    if (radioId === 's3CategoriesRadio') {
+    if (radioId === 's3CategoriesRadioU') {
         radio.checked = true; // Marcar las categorias del despacho por defecto si existen
         // Disparar el evento 'change' después de un pequeño retraso
         setTimeout(() => {
@@ -251,35 +251,35 @@ function createRadioButtonRow(table, radioId, labelText, onChangeCallback) {
     }
 }
 function handleCheckboxChange(event) {
-	const visibleEmpleadoCheckbox = document.getElementById('visibleEmpleadoCheckbox');
-	const visibleEmpresaCheckbox = document.getElementById('visibleEmpresaCheckbox');
+	const visibleEmpleadoCheckbox = document.getElementById('visibleEmpleadoCheckboxU');
+	const visibleEmpresaCheckbox = document.getElementById('visibleEmpresaCheckboxU');
 
 
 	// Si el checkbox marcado es el 'visibleEmpleadoCheckbox', desmarcar 'visibleEmpresaCheckbox'
-	if (event.target.id === 'visibleEmpleadoCheckbox' && visibleEmpleadoCheckbox.checked) {
+	if (event.target.id === 'visibleEmpleadoCheckboxU' && visibleEmpleadoCheckbox.checked) {
 		visibleEmpresaCheckbox.checked = false;
 	}
 
 	// Si el checkbox marcado es el 'visibleEmpresaCheckbox', desmarcar 'visibleEmpleadoCheckbox'
-	if (event.target.id === 'visibleEmpresaCheckbox' && visibleEmpresaCheckbox.checked) {
+	if (event.target.id === 'visibleEmpresaCheckboxU' && visibleEmpresaCheckbox.checked) {
 		visibleEmpleadoCheckbox.checked = false;
 	}
 }
 
 export function handleRadioButtonChange(event) {
     // Primero eliminamos las filas generadas anteriormente
-    let table = document.getElementById("table");
-    let trScope = document.getElementById("trScope");
-    let trCategory = document.getElementById("trCategory");
-    let trTag = document.getElementById("trTag");
-    let trDatePicker = document.getElementById("trDatePicker");
+    let table = document.getElementById("tableU");
+    let trScope = document.getElementById("trScopeU");
+    let trCategory = document.getElementById("trCategoryU");
+    let trTag = document.getElementById("trTagU");
+    let trDatePicker = document.getElementById("trDatePickerU");
 
     // Llamamos a clearFields para eliminar las filas generadas (subcategoría, administración, etc.)
     clearFields(table, [trScope, trCategory, trTag, trDatePicker], 
-        ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+        ['visibleEmpleadoCheckboxU', 'visibleEmpresaCheckboxU','oldCategoriesRadioU','s3CategoriesRadioU']);
 
     // Si se selecciona 'oldCategoriesRadio', desmarcamos 's3CategoriesRadio' y cargamos categorías antiguas
-    if (event.target.id === 'oldCategoriesRadio') {
+    if (event.target.id === 'oldCategoriesRadioU') {
         getCategories({ domain: localStorage.getItem('aon_domain_id') }).then(oldCategories => {
             clearPreviousSelectOptions(oldCategories, 'old');
         }).catch(err => {
@@ -287,7 +287,7 @@ export function handleRadioButtonChange(event) {
         });
     }
     // Si se selecciona 's3CategoriesRadio', desmarcamos 'oldCategoriesRadio' y cargamos categorías S3
-    if (event.target.id === 's3CategoriesRadio') {
+    if (event.target.id === 's3CategoriesRadioU') {
         let data = { parent: null };
         getS3Category(data).then(categories => {
             clearPreviousSelectOptions(categories, 's3');
@@ -299,12 +299,12 @@ export function handleRadioButtonChange(event) {
 
 
 function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
-    let select = document.getElementById("aonDocumentalUploadCategory");
-    let table = document.getElementById("table");
-    let trScope = document.getElementById("trScope");
-    let trCategory = document.getElementById("trCategory");
-    let trTag = document.getElementById("trTag");
-    let trDatePicker = document.getElementById("trDatePicker");
+    let select = document.getElementById("aonDocumentalUploadCategoryU");
+    let table = document.getElementById("tableU");
+    let trScope = document.getElementById("trScopeU");
+    let trCategory = document.getElementById("trCategoryU");
+    let trTag = document.getElementById("trTagU");
+    let trDatePicker = document.getElementById("trDatePickerU");
     let loadingOverlay = document.getElementById("aonDocumentalLoadingOverlay");
 
     let defaultOption = {
@@ -363,7 +363,7 @@ export async function loadOldCategories() {
     // Se monta la tabla
     let table = document.createElement('table');
     table.style.width = '100%';
-    table.id = 'table';
+    table.id = 'tableU';
   
     // Spinner
     let loadingOverlay = document.createElement('div');
@@ -409,23 +409,23 @@ export async function loadOldCategories() {
 
     // Lógica de los checkboxes
     if (dur.isDocumentalPortal() && !dur.isDocumentalManager()) {
-        createCheckboxRow(table, 'visibleEmpleadoCheckbox', 'Visible Empleado');
+        createCheckboxRow(table, 'visibleEmpleadoCheckboxU', 'Visible Empleado');
     }
 
     if (dur.isDocumentalPortal() && dur.isDocumentalManager()) {
-        createCheckboxRow(table, 'visibleEmpresaCheckbox', 'No visible Empresa', handleCheckboxChange);
-        createCheckboxRow(table, 'visibleEmpleadoCheckbox', 'Visible Empleado', handleCheckboxChange);
+        createCheckboxRow(table, 'visibleEmpresaCheckboxU', 'No visible Empresa', handleCheckboxChange);
+        createCheckboxRow(table, 'visibleEmpleadoCheckboxU', 'Visible Empleado', handleCheckboxChange);
     }
 
     // DatePicker
     let trDatePicker = document.createElement('tr');
-    trDatePicker.id = 'trDatePicker';
+    trDatePicker.id = 'trDatePickerU';
     table.appendChild(trDatePicker);
     
     let tdDatePicker = document.createElement('td');
     tdDatePicker.setAttribute('colspan', '1');
     let datePicker = new AonNewDate();
-    datePicker.id = "aonDocumentalUploadDatePicker";
+    datePicker.id = "aonDocumentalUploadDatePickerU";
     datePicker.title = "Fecha del documento";
     tdDatePicker.appendChild(datePicker);
     trDatePicker.appendChild(tdDatePicker);
@@ -436,13 +436,13 @@ export async function loadOldCategories() {
 
     // SCOPE
     let trScope = document.createElement('tr');
-    trScope.id = 'trScope';
+    trScope.id = 'trScopeU';
     table.appendChild(trScope);
 
     let tdScope = document.createElement('td');
     tdScope.setAttribute('colspan', '1');
     let selScope = new AonNewSelect();
-    selScope.id = "aonDocumentalUploadScope";
+    selScope.id = "aonDocumentalUploadScopeU";
     selScope.title = MSG.SCOPE + ' (Solo visible...)';
     tdScope.appendChild(selScope);
 
@@ -460,29 +460,33 @@ export async function loadOldCategories() {
     });
 
     // TAG
-    let trTag = document.createElement('tr');
-    trTag.id = 'trTag';
-    table.appendChild(trTag);
-  
-    let tdTag = document.createElement('td');
-    tdTag.setAttribute('colspan', '1');
-    let selTag = new AonNewSelect();
-    selTag.id = "aonDocumentalUploadTag";
-    selTag.title = MSG.TAG;
-    tdTag.appendChild(selTag);
-    selTag.multiple = true;
-  
-    getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-		if (tags && tags.length > 0) {		
-        selTag.options = JSON.stringify(tags.map(t => {
-            return {
-                value: t.id,
-                name: t.name
-            };
-        }));
-		trTag.appendChild(tdTag);
-	}
-    });
+let trTag = document.createElement('tr');
+trTag.id = 'trTagU';
+trTag.style.display = 'none'; // Lo ocultamos por defecto
+table.appendChild(trTag);
+
+let tdTag = document.createElement('td');
+tdTag.setAttribute('colspan', '1');
+
+let selTag = new AonNewSelect();
+selTag.id = "aonDocumentalUploadTagU";
+selTag.title = MSG.TAG;
+selTag.multiple = true;
+
+tdTag.appendChild(selTag);
+
+getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+  if (Array.isArray(tags) && tags.length > 0) {
+    selTag.options = JSON.stringify(tags.map(t => ({
+      value: t.id,
+      name: t.name
+    })));
+    trTag.appendChild(tdTag);
+    trTag.style.display = ''; // Mostramos solo si hay etiquetas
+  } else {
+    console.log('No hay etiquetas disponibles.');
+  }
+});
 
     loadingOverlay.style.display = 'none';
     // Crear la sección de categorías
@@ -493,21 +497,23 @@ export async function loadOldCategories() {
 
 async function createCategorySection(table, loadingOverlay, trScope, trTag, trDatePicker) {
     let oldCategories =  await loadOldCategories();
-
+    if (!Array.isArray(oldCategories)) {
+        oldCategories = [];
+    }
     // Crear la fila de categorías (Radio buttons)
     if (oldCategories.length > 0) {
-        createRadioButtonRow(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
-        createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
+        createRadioButtonRow(table, 's3CategoriesRadioU', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
+        createRadioButtonRow(table, 'oldCategoriesRadioU', MSG.USER_CATEGORIES, handleRadioButtonChange);
     }
 
     let trCategory = document.createElement('tr');
-    trCategory.id = 'trCategory';
+    trCategory.id = 'trCategoryU';
     table.appendChild(trCategory);
 
     let tdCategory = document.createElement('td');
     tdCategory.setAttribute('colspan', '1');
     let selCat = new AonNewSelect();
-    selCat.id = "aonDocumentalUploadCategory";
+    selCat.id = "aonDocumentalUploadCategoryU";
     selCat.title = MSG.CATEGORY;
 
     if (oldCategories.length < 1) {
@@ -564,7 +570,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
     const selectedCategoryId = event.target.value;
     // Limpiar los campos antes de generar nuevos select
     clearFields(table, [trScope, trTag, trCategory, trDatePicker] ,
-       ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+       ['visibleEmpleadoCheckboxU', 'visibleEmpresaCheckboxU','oldCategoriesRadioU','s3CategoriesRadioU']);
     if (selectedCategoryId !== null && selectedCategoryId !== undefined && selectedCategoryId !== 'Seleccione una categoria') {
       // Crear un nuevo tr para Subcategoria solo si hay subcategorias
       let trSubCategory = document.createElement('tr');
@@ -572,7 +578,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
       let tdSubCategory = document.createElement('td');
       tdSubCategory.setAttribute('colspan', '1');
       let selSubCat = new AonNewSelect();
-      selSubCat.id = "aonDocumentalUploadSubCategory";
+      selSubCat.id = "aonDocumentalUploadSubCategoryU";
       // selSubCat.title = MSG.SUBCATEGORY; //TODO
       selSubCat.title = "Subcategoria"; //TODO
       tdSubCategory.appendChild(selSubCat);
@@ -599,7 +605,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
 
               // Limpiar los campos de administración y modelos antes de generar nuevos
               clearFields(table, [trScope, trTag, trCategory,  trDatePicker, trSubCategory] ,
-                   ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+                   ['visibleEmpleadoCheckboxU', 'visibleEmpresaCheckboxU','oldCategoriesRadioU','s3CategoriesRadioU']);
 
               if (selectedSubCategoryId != null && selectedSubCategoryId != undefined) {
                   // Crear un nuevo tr para Administración solo si hay administraciones
@@ -609,7 +615,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                   let tdAdministration = document.createElement('td');
                   tdAdministration.setAttribute('colspan', '1');
                   let selAdministration = new AonNewSelect();
-                  selAdministration.id = "aonDocumentalAdministration";
+                  selAdministration.id = "aonDocumentalAdministrationU";
                   selAdministration.title = "Administración";
                   tdAdministration.appendChild(selAdministration);
 
@@ -635,7 +641,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
 
                               // Limpiar el campo de modelos antes de generar nuevos
                               clearFields(table, [trScope, trTag, trCategory,  trDatePicker, trSubCategory, trAdministration] ,
-                                   ['visibleEmpleadoCheckbox', 'visibleEmpresaCheckbox','oldCategoriesRadio','s3CategoriesRadio']);
+                                   ['visibleEmpleadoCheckboxU', 'visibleEmpresaCheckboxU','oldCategoriesRadioU','s3CategoriesRadioU']);
 
                               if (selectedAdministrationId !== null && selectedAdministrationId !== undefined) {
                                   // Crear un nuevo tr para Modelos solo si hay modelos
@@ -645,7 +651,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                   let tdModel = document.createElement('td');
                                   tdModel.setAttribute('colspan', '1');
                                   let selModel = new AonNewSelect();
-                                  selModel.id = "aonDocumentalModels";
+                                  selModel.id = "aonDocumentalModelsU";
                                   selModel.title = "Modelos";
                                   tdModel.appendChild(selModel);
 
