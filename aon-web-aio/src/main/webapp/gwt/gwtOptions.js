@@ -580,3 +580,9 @@ export const TARIFF_MODULE = {
   entryPoint: 'TariffModule'
 };
 
+export const CONSOLE = {
+  title: 'Consola',
+  module: GWT_FISCAL,
+  entryPoint: 'ConsoleModule'
+};
+

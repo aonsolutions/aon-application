@@ -552,9 +552,9 @@ export class DomainUserRoles {
   }
 
 
-	isAlma() {
-		return this.hasApp(App.ALMA) && (this.isAdmin() || this.hasRole(Role.ALMA));
-	}
+  isAlma() {
+	return this.hasApp(App.ALMA) && (this.isAdmin() || this.hasRole(Role.ALMA));
+  }
 
   // OCR
 
@@ -726,7 +726,11 @@ export class DomainUserRoles {
   }
 
 
-  isOffice() {
+  isConsole() {
+    return this.getDomain().getDomainType() == 'ADMIN';
+  }
+
+    isOffice() {
     return this.getDomain().getDomainType() == 'OFFICE';
   }
 

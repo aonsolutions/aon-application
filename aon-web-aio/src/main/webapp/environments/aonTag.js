@@ -408,3 +408,4 @@ export const AON_JSF_REMOVE_DOMAIN = 'aon-jsf-remove-domain' ;
 
 export const SUPERSET = 'aon-superset' ;
 
+export const AON_CONSOLE_MENU = 'aon-console-menu';

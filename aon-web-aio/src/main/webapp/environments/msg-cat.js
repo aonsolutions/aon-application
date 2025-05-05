@@ -95,6 +95,7 @@ export const CONCEPT = 'Concepte';
 export const CONCEPTS = 'Conceptes';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuració';
+export const CONSOLE = 'Consola';
 export const CONTACT = 'Contacte';
 export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACT_DATA2 = "Dades de contacte"
