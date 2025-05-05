@@ -410,75 +410,96 @@ export class AonDocumental extends AonElement {
 
 	//A LA ESPERA DE LA NUEVA TABLA TAGS
 	createOptions() {
-		if(document.getElementById('aonDocumentalDialogDialogActionAccept')){
-			let btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
-			btnAccept.remove();
-		}
-
-		if(document.getElementById('aonDocumentalDialogDialogActionCancel')){
-			let btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
-			btnCancel.remove();
-		}
-
+		// Limpiar botones anteriores
+		const btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
+		const btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
+		if (btnAccept) btnAccept.remove();
+		if (btnCancel) btnCancel.remove();
+	
+		// Obtener y preparar el diálogo
 		let doc = document.getElementById(this.getApplication().DIALOG);
-		doc.clear(); 
+		doc.clear();
 		if (!this.isMobile()) doc.width = '400px';
 		doc.setTitle("¿Qué quiere crear?");
 	
-		// Crear los radio buttons
+		// Radios
 		let radioCategory = document.createElement('input');
 		radioCategory.type = 'radio';
-		radioCategory.name = 'categoryRadio'; 
-		radioCategory.id = 'radioId';
-		radioCategory.addEventListener('change', this.handleRadioChange.bind(this));
+		radioCategory.name = 'creationType';
+		radioCategory.id = 'radioCategory';
+		radioCategory.checked = true;
 	
-		let radiotag = document.createElement('input');
-		radiotag.type = 'radio';
-		radiotag.name = 'tagRadio';
-		radiotag.id = 'radioId2';
-		radiotag.addEventListener('change', this.handleRadioChange.bind(this));
-	
-		// Crear las etiquetas
 		let labelCategory = document.createElement('label');
-		labelCategory.setAttribute('for', 'radioId');
-		labelCategory.textContent = 'Crear categoria';
+		labelCategory.setAttribute('for', 'radioCategory');
+		labelCategory.textContent = 'Crear categoría';
+	
+		let radioTag = document.createElement('input');
+		radioTag.type = 'radio';
+		radioTag.name = 'creationType';
+		radioTag.id = 'radioTag';
 	
 		let labelTag = document.createElement('label');
-		labelTag.setAttribute('for', 'radioId2');
+		labelTag.setAttribute('for', 'radioTag');
 		labelTag.textContent = 'Crear etiqueta';
 	
-		// Crear un contenedor para los radio buttons y etiquetas
+		// Contenedor de radios
+		let radioContainer = document.createElement('div');
+		radioContainer.appendChild(radioCategory);
+		radioContainer.appendChild(labelCategory);
+		radioContainer.appendChild(document.createElement('br'));
+		radioContainer.appendChild(radioTag);
+		radioContainer.appendChild(labelTag);
+	
+		// Input compartido
+		const input =  new AonNewInput();
+		input.id = 'aonDocumentalCreationInput';
+		if (radioCategory.checked) {
+			input.title = MSG.CATEGORY;
+		}
+		// Reaccionar al cambio de radio
+		const handleRadioChange = () => {
+			const labelText = radioCategory.checked ? MSG.CATEGORY : MSG.TAG;
+		
+			// Actualizar atributo 'title'
+			input.title = labelText;
+		
+			// Actualizar contenido del título visible
+			const titleSpan = input.getElement(input.TITLE);
+			if (titleSpan) {
+				titleSpan.innerHTML = labelText + (input.isRequired() ? " *" : "");
+			}
+		
+			// Actualizar el placeholder
+			const inputEl = input.getElement(input.INPUT);
+			if (inputEl) {
+				inputEl.placeholder = labelText;
+			}
+		};
+			
+		radioCategory.addEventListener('change', handleRadioChange);
+		radioTag.addEventListener('change', handleRadioChange);
+	
+		// Contenedor general
 		let container = document.createElement('div');
+		container.appendChild(radioContainer);
+		container.appendChild(document.createElement('br'));
+		container.appendChild(input);
 	
-		// Crear contenedores para cada radio button y su respectiva etiqueta
-		let categoryContainer = document.createElement('div');
-		categoryContainer.appendChild(radioCategory);
-		categoryContainer.appendChild(labelCategory);
-	
-		let tagContainer = document.createElement('div');
-		tagContainer.appendChild(radiotag);
-		tagContainer.appendChild(labelTag);
-	
-		// Añadir los contenedores al contenedor principal
-		container.appendChild(categoryContainer);
-		container.appendChild(tagContainer);
-	
-		// Establecer el contenido del modal (sin el botón de aceptar)
 		doc.setContent(container);
 	
-		// No se agrega ningún botón de aceptar aquí
-		doc.open();
-	}
+		// Acción de aceptar
+		doc.addAcceptAction(() => {
+			const value = input.value?.trim();
+			if (!value) return;
 	
-	handleRadioChange(event) {
-		// Verificar cuál radio button fue seleccionado
-		if (event.target.id === 'radioId') {
-			// Si se selecciona "Crear categoría"
-			this.createCategory();
-		} else if (event.target.id === 'radioId2') {
-			// Si se selecciona "Crear etiqueta"
-			this.createTag();
-		}
+			if (radioCategory.checked) {
+				createCategory({ name: value }).then(() => this.loadCategories());
+			} else {
+				createTag({ name: value }).then(() => this.loadTags());
+			}
+		});
+	
+		doc.open();
 	}
 	
 	createCategory() {
@@ -695,7 +716,7 @@ export class AonDocumental extends AonElement {
 		text.style.color = '#333';
 		text.style.fontFamily = 'Arial, sans-serif';
 	
-		// Estilo para la animación del spinner (una sola vez idealmente)
+		// Estilo para la animación del spinner
 		if (!document.getElementById('spinner-style')) {
 			let style = document.createElement('style');
 			style.id = 'spinner-style';
@@ -720,7 +741,6 @@ export class AonDocumental extends AonElement {
 		// Agregar overlay al contenedor
 		let container = document.body; 
 		container.appendChild(loadingOverlay);
-	
 		try {
 			let data = {
 				document: localStorage.getItem('aon_domain_document'),

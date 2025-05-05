@@ -378,7 +378,8 @@ export class AonDocument extends AonElement {
 
   async getS3Doc() {
     let data = {
-      id: this.document.id
+      id: this.document.id,
+      type: this.document.type
     };
     const doc = await getS3Document(data);
     return doc;
@@ -386,6 +387,10 @@ export class AonDocument extends AonElement {
 
   async buildDataS3() {
     let s3Doc = await this.getS3Doc();
+    if (this.isBetaDoc() && Array.isArray(s3Doc.tag) && !this.doc.tag) {
+      this.doc.tag = s3Doc.tag.map(t => ({ id: t.id }));
+    }
+
     let card = this.getElement(this.DATA_CARD);
     card.setContentHTML('');
     let table = this.createElement(TAG.TABLE);
@@ -499,6 +504,84 @@ export class AonDocument extends AonElement {
       scopeSelect.addEventListener(EVENT.SELECT, () => this.updateScope(scopeSelect.value));
     });
 
+     //Tags
+     getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
+      if (Array.isArray(tags) && tags.length > 0) {
+        // Solo creamos la fila si hay etiquetas
+        let trTag = this.createElement(TAG.TR);
+        trTag.id = 'trTag';
+        trTag.setAttribute('colspan', '1'); 
+        table.appendChild(trTag);
+    
+        let tagSelect = createSelect(this.TAG_SELECT, MSG.TAGS, trTag);
+        if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
+          tagSelect.setDisabled(true);
+        }
+    
+        tagSelect.multiple = true;
+    
+        tagSelect.setOptions(tags.map(t => ({
+          value: t.id,
+          name: t.name
+        })));
+    
+        const input = tagSelect.getElement(tagSelect.INPUT);
+        if (s3Doc.tag?.length) {
+          const names = s3Doc.tag
+            .map(tag => {
+              const fullTag = tags.find(t => t.id === tag.id);
+              return fullTag ? fullTag.name : '';
+            })
+            .filter(Boolean)
+            .join(', ');
+    
+          if (input) {
+            input.value = names;
+          }
+        }
+    
+        let clickHandled = false;
+    
+        input.addEventListener(EVENT.CLICK, () => {
+          let originalTags = input.value;
+          if (clickHandled) return;
+    
+          if (Array.isArray(s3Doc.tag)) {
+            s3Doc.tag.forEach(tag => {
+              const checkbox = document.getElementById(`checkbox${tag.id}`);
+              if (checkbox) {
+                checkbox.value = true;
+              }
+            });
+          }
+          input.value = originalTags;
+          clickHandled = true;
+    
+          tagSelect.addEventListener(EVENT.SELECT, () => {
+            const selectedTags = tagSelect.getSelectable();
+    
+            const selectedNames = selectedTags.map(tag => tag.name).join(', ');
+            if (input) {
+              input.value = selectedNames;
+            } 
+    
+            const selectedIds = selectedTags.map(tag => tag.value).sort();
+            const currentIds = (s3Doc.tag || []).map(tag => tag.id).sort();
+    
+            const isSame = selectedIds.length === currentIds.length &&
+                           selectedIds.every((id, idx) => id === currentIds[idx]);
+    
+            if (!isSame) {
+              this.updateTags(selectedTags);
+            } else {
+              console.log("No se actualizan los tags: no hay cambios.");
+            }
+          });
+        });
+      } else {
+        console.log('No hay etiquetas disponibles.');
+      }
+    });
     //Category
     let oldCategories = await loadOldCategories();
     if(oldCategories){
@@ -601,11 +684,9 @@ export class AonDocument extends AonElement {
           categorySelect.id = "aonDocumentalSheetCategory";
           categorySelect.title = MSG.CATEGORY;
           if (!this.getDur().isDocumentalManager()) {
-            // categorySelect.readonly = 'true';
             categorySelect.disabled = true;
           }
           td.appendChild(categorySelect);
-
 
           const categories = await getCategories({ domain: localStorage.getItem('aon_domain_id') });
           categorySelect.options = JSON.stringify(categories.map(c => ({
@@ -616,8 +697,8 @@ export class AonDocument extends AonElement {
           // Esperamos a que se monten las options antes de asignar valor
           setTimeout(() => {
             categorySelect.value = s3Doc.category;
-            this.updateCategory(categorySelect.value);
           }, 0);
+          categorySelect.addEventListener(EVENT.SELECT, () => this.updateCategory(categorySelect.value));
         }
       }
     } else {
@@ -654,77 +735,41 @@ export class AonDocument extends AonElement {
 
           select.value = path[0].id;
           this.s3CategoryTree(select, table);
+
+          for (let i = 1; i < path.length; i++) {
+            const current = path[i];
+            const parent = path[i - 1];
+            const children = await getS3Category({ parent: parent.id });
+            if (!children.length){
+              break;
+            } 
+
+            const levelNames = ['Subcategoria', 'Administración', 'Modelos'];
+            const levelIds = ['SubcategoriaSelect', 'AdministracionSelect', 'ModelosSelect'];
+
+            const tr = document.createElement('tr');
+            tr.id = `tr${levelNames[i - 1]}`;
+            table.appendChild(tr);
+
+            const td = document.createElement('td');
+            td.setAttribute('colspan', '1');
+            tr.appendChild(td);
+
+            const sel = new AonNewSelect();
+            sel.id = levelIds[i - 1];
+            sel.title = levelNames[i - 1];
+            sel.options = JSON.stringify(children.map(opt => ({
+              value: opt.id,
+              name: opt.name
+            })));
+            sel.value = current.id;
+            sel.disabled = true;
+
+            td.appendChild(sel);
+          }
         }
       }
     }
-
-    let trTag = this.createElement(TAG.TR);
-    trTag.id = 'trTag';
-    table.appendChild(trTag);
-    trTag.setAttribute('colspan', '2');
-    let tagSelect = createSelect(this.TAG_SELECT, MSG.TAGS, trTag);
-    if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-      tagSelect.setDisabled(true)
-    }
-    tagSelect.multiple = true;
-    getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-      if (Array.isArray(tags)) {
-        tagSelect.setOptions(tags.map(t => ({
-          value: t.id,
-          name: t.name
-        })));
-        const input = tagSelect.getElement(tagSelect.INPUT);
-
-        if (s3Doc.tags?.length) {
-          const names = s3Doc.tags
-            .map(tag => {
-              const fullTag = tags.find(t => t.id === tag.id); // Busca el nombre real
-              return fullTag ? fullTag.name : '';
-            })
-            .filter(Boolean) // Elimina los vacíos por si no encuentra algo
-            .join(', ');
-        
-          if (input) {
-            input.value = names;
-          }
-        }
-               
-        let clickHandled = false;  // Bandera para controlar la ejecución
-
-        input.addEventListener(EVENT.CLICK, () => {
-          if (clickHandled) return;  // Si el evento ya se ha ejecutado, no hacer nada
-                  
-          if (Array.isArray(s3Doc.tags)) {
-            s3Doc.tags.forEach(tag => {
-              const checkbox = document.getElementById(`checkbox${tag.id}`);
-              if (checkbox) {
-                checkbox.value = true; // Activa visualmente el checkbox personalizado  
-              }
-            });
-          }
-        
-          clickHandled = true;  // Marca el evento como manejado
-        
-          // Agregar el evento SELECT
-          tagSelect.addEventListener(EVENT.SELECT, () => {
-            const selectedTags = tagSelect.getSelectable(); 
-        
-            const selectedIds = selectedTags.map(tag => tag.value).sort();
-            const currentIds = (s3Doc.tags || []).map(tag => tag.id).sort();
-        
-            const isSame = selectedIds.length === currentIds.length && selectedIds.every((id, idx) => id === currentIds[idx]);
-        
-            if (!isSame) {
-              this.updateTags(selectedTags); // Solo si cambio la selección
-            } else {
-              console.log("No se actualizan los tags: no hay cambios.");
-            }
-          });
-        });                  
-      } else {
-        console.error('Error: tags no es un array', tags);
-      }
-    }); 
   }
 
   async getCategoryPath(categoryId) {
@@ -826,7 +871,6 @@ export class AonDocument extends AonElement {
           value: c.id,
           name: c.name
         })));
-        select.value = s3Doc.category; 
         select.addEventListener(EVENT.SELECT, () => {
           this.updateCategory(select.value);
         });
@@ -834,33 +878,6 @@ export class AonDocument extends AonElement {
     }
   }
   
-  clearPreviewSelectOptions(categoriesToLoad, categoryType) {
-    let select = document.getElementById("aonDocumentalSheetCategory");
-    let table = document.getElementById("documentTable");
-
-    if(categoryType === 'old'){
-      select.options = JSON.stringify(categoriesToLoad.map(c => {
-        return {
-            value: c.id,
-            name: c.name
-        };
-      }));
-    }
-
-    if(categoryType === 's3'){
-      select.options = JSON.stringify(categoriesToLoad.filter(c => c.is_deletable === 0).map(c => {
-        return {
-            value: c.id,
-            name: c.name
-        };
-      }));
-    }
-
-    if(categoryType === 's3' && select.options){
-      this.s3CategoryTree(select, table)
-    }
-  }
-
   s3CategoryTree(select, table) {
     // Nivel 1: Categoría
     select.addEventListener('change', (event) => {
