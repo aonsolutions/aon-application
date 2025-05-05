@@ -212,99 +212,114 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		integrityContainer.setWidth("100%");
 		integrityContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
 		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END).size() > 0) {
-			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END, false);
-			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END));
-		}
-		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_DATA_INHERIT).size() > 0) {
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_DATA_INHERIT)) {
 			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_DATA_INHERIT, false);
 			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_DATA_INHERIT));
 		}
 		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_LEVEL_DATA_INHERIT).size() > 0) {
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_LEVEL_DATA_INHERIT)) {
 			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_LEVEL_DATA_INHERIT, false);
 			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_LEVEL_DATA_INHERIT));
 		}
 		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_INHERIT).size() > 0) {
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENT_INHERIT)) {
 			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_INHERIT, false);
 			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_INHERIT));
 		}
 		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.CONTRACT_PAYMENT_INHERIT).size() > 0) {
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.CONTRACT_PAYMENT_INHERIT)) {
 			isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENT_INHERIT, false);
 			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENT_INHERIT));
 		}
 		
-		if(errorCB.getValue() || agreementIntegrity.getMessages().get(AgreementIntegrityFix.AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR).size() > 0) {
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.PAYMENT_CONCEPT_INHERIT)) {
+			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_INHERIT, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_INHERIT));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS)) {
+			isPaymentOpen.put(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.OTHER_DOMAIN_AGREEMENT_PAYMENTS));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITHOUT_PAYMENT_CONCEPT));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT)) {
+			isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT)) {
+			isPaymentOpen.put(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.NO_CODE_WRONG_CODE_PAYMENT_CONCEPT));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_EXTRA_WRONG_FORMAT_PERIOD));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_EXTRA_START_END));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.PAYMENT_CONCEPT_DUPLICATE)) {
+			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_DUPLICATE, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_DUPLICATE));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE)) {
+			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_NO_REFERENCE));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION)) {
+			isPaymentOpen.put(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.PAYMENT_CONCEPT_CODE_AS_VAR_IN_EXPRESSION));
+		}
+	
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_VARIABLES_AS_PAYMENT_CONCEPT_CODE));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_EXTRA_PAIR_SW)) {
+			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_EXTRA_PAIR_SW, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_EXTRA_PAIR_SW));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR)) {
 			isPaymentOpen.put(AgreementIntegrityFix.AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR, false);
 			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.AGREEMENT_PAYMENT_PAYMENT_CONCEPT_SAME_EXPR));
+		}
+		
+		if(errorCB.getValue() || hasMessages(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE)) {
+			isPaymentOpen.put(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE, false);
+			integrityContainer.add(createMessagesPanel(AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE));
 		}
 		
 		scrollPanel = new ScrollPanel(integrityContainer);
@@ -313,6 +328,10 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 		contentPanel.add(scrollPanel);
 		
 		center();
+	}
+	
+	private boolean hasMessages(AgreementIntegrityFix agreementIntegrityFix) {
+		return null != agreementIntegrity.getMessages().get(agreementIntegrityFix) && agreementIntegrity.getMessages().get(agreementIntegrityFix).size() > 0;
 	}
 	
 	private Widget createMessagesPanel(AgreementIntegrityFix agreementIntegrityFix) {
@@ -386,10 +405,10 @@ public class AgreementIntegrityDialog extends AonCustomDialog {
 
 				private boolean isIntegrityAviable(AgreementIntegrityFix agreementIntegrityFix) {
 					return  agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_CONCEPT_CODE_AS_CONTEXT_VARIABLE && 
-							agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_WITH_OTHER_DOMAIN_PAYMENT_CONCEPT && 
 							agreementIntegrityFix != AgreementIntegrityFix.CONTRACT_PAYMENTS_PAYMENT_CONCEPTS_WITHOUT_CODE &&
 							agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_WRONG_EXPRESSION &&
-							agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES
+							agreementIntegrityFix != AgreementIntegrityFix.AGREEMENT_PAYMENT_DUPLICATE_VARIABLES &&
+							agreementIntegrityFix != AgreementIntegrityFix.PAYMENT_CONCEPT_DUPLICATE
 							;
 				}
 				

@@ -824,21 +824,29 @@ public class JooqAgreement {
 					.execute();
 			
 			// All paymentConcepts not from domain 0, where not appears in contracts
-			List<Integer> paymentConceptIds = dslContext.selectDistinct(PAYMENT_CONCEPT.ID).from(AGREEMENT_PAYMENT)
+			List<Integer> paymentConceptIds = dslContext.select(PAYMENT_CONCEPT.ID).from(AGREEMENT_PAYMENT)
 				.join(PAYMENT_CONCEPT).on(PAYMENT_CONCEPT.ID.eq(AGREEMENT_PAYMENT.PAYMENT_CONCEPT))
 				.leftOuterJoin(CONTRACT_PAYMENT).on(CONTRACT_PAYMENT.PAYMENT_CONCEPT.eq(PAYMENT_CONCEPT.ID))
 				.where(AGREEMENT_PAYMENT.AGREEMENT.eq(agreement.getId()))
 				.and(CONTRACT_PAYMENT.ID.isNull())
 				.and(PAYMENT_CONCEPT.DOMAIN.gt(0))
 				.fetch(PAYMENT_CONCEPT.ID);
-				
-			dslContext.delete(PAYMENT_CONCEPT)
-				.where(PAYMENT_CONCEPT.ID.in(paymentConceptIds))
-				.execute();
-	
+			
 			dslContext.delete(AGREEMENT_PAYMENT)
-					.where(AGREEMENT_PAYMENT.AGREEMENT.in(agreement.getId()))
-					.execute();
+				.where(AGREEMENT_PAYMENT.AGREEMENT.in(agreement.getId()))
+				.execute();
+			
+			paymentConceptIds.forEach(id -> {
+				List<Integer> agreementPaymentPaymentConceptFromOtherDomain = dslContext.select(AGREEMENT_PAYMENT.ID).from(AGREEMENT_PAYMENT)
+					.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(id))
+					.and(AGREEMENT_PAYMENT.AGREEMENT.ne(agreement.getId()))
+					.fetch(AGREEMENT_PAYMENT.ID);
+				
+				if(agreementPaymentPaymentConceptFromOtherDomain.isEmpty())
+					dslContext.delete(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.ID.eq(id))
+						.execute();
+			});
 	
 			dslContext.delete(PAYROLL_WORKPLACE)
 					.where(PAYROLL_WORKPLACE.AGREEMENT.in(agreement.getId()))
