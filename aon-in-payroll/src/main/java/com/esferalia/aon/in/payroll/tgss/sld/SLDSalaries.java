@@ -334,9 +334,9 @@ public class SLDSalaries {
 	private static Optional<DeductionType>  getCompensationType(String description) {
 		switch (description) {
 		case "COMPENSACION IT ENFERMEDAD COMUN" : 
-			return Optional.of(DeductionType.COMMON_CONTINGENCY);
+			return Optional.of(DeductionType.IN_KIND);
 		case "COMP.IT POR ACCIDENTE DE TRABAJO" : 
-			return Optional.of(DeductionType.PROFESSIONAL_CONTINGENCY);
+			return Optional.of(DeductionType.IN_KIND);
 		default:
 			return Optional.empty();
 		}
@@ -363,7 +363,7 @@ public class SLDSalaries {
 		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 			return "RED_SEA_E";
 		default:
-			return "REDUCCION_TGSS_E";
+			return "RED_CGC_E";
 		}
 	}
 
@@ -378,6 +378,7 @@ public class SLDSalaries {
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL" :
 		case "INCREMENTO COTI.CONTRATO TEMP.MENOR 6-7D":
+		case "COTIZ.ADICIONAL CONTRATOS TEMP.CORTA DUR":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
@@ -531,6 +532,9 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.FP_ENTERPRISE);
 		case "OTRAS HORAS EXTRAS":
 			return Optional.of(ContextVariable.NON_STRUCTURAL_OVERTIME_ENTERPRISE);
+		case "COTIZ.ADICIONAL CONTRATOS TEMP.CORTA DUR":
+			return Optional.of(ContextVariable.CGC_ENTERPRISE_TEMP);
+			
 		default:
 			return Optional.empty();
 		}

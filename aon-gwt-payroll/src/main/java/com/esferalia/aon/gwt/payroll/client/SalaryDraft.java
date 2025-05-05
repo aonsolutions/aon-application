@@ -8127,6 +8127,9 @@ public class SalaryDraft extends ResizeComposite
 			)
 			return true;
 		
+		if ( AonStringUtils.equals("ECSS_E", item.getName()) )
+			return true;
+		
 		return false;
 	}
 

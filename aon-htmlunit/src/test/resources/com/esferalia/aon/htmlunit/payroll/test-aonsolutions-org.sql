@@ -3102,7 +3102,7 @@ CREATE TABLE `contract_cost` (
   `contract` int NOT NULL COMMENT 'Contrato',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Coste',
   `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
-  `expression` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
+  `expression` varchar(512) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
   `description` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
@@ -14898,4 +14898,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-28 17:50:50
+-- Dump completed on 2025-05-02 15:15:55
