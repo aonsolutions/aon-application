@@ -133,13 +133,13 @@ export class AonNewSuggestion extends AonNewInput {
          if(li2) li2.style.backgroundColor = '#f1f1f1';
        } else if (e.keyCode == '13' || e.key == 'Enter') {
          // enter
-         this.closeOptions();
-        if(this.selected) {
+          this.closeOptions();
+          if(this.selected != undefined && this.selected > -1) {
             this.value = this.options[this.selected].value;
             let input = this.getElement(this.INPUT);
             input.value = this.options[this.selected].name;
             this.dispatchEvent(new CustomEvent(EVENT.SELECT, { detail: this.options[this.selected] }));
-        }  
+          }  
        } else {
          this.dispatchEvent(new Event(EVENT.AON_KEYUP));
        }
