@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ExternalStorageTest.class,
 	InvoiceDocJsonTest.class,
 	InvoiceDocTest.class,
+	InvoiceDocDAOTest.class,
 })
 public class InvoiceDocTestSuite {
 

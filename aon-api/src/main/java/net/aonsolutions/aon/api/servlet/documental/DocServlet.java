@@ -89,7 +89,7 @@ public class DocServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		JSONObject json = getParamsJSON(req);
 		String domainName = req.getServerName();
-		Integer domain = JsonUtils.getInteger(json, IJsonNames.DOMAIN);
+		Integer domain = JsonUtils.getInteger(json, IJsonNames.DOMAIN_ID);
 		ExternalStorage externalStorage = ExternalStorage.safeValueOf(JsonUtils.getbyte(json, IJsonNames.STORAGE));		
 		String longURL = externalStorage.visit(new ExternalStorageVisitor<String>() {
 
