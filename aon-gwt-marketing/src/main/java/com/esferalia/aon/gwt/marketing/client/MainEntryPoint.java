@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.marketing.client;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.marketing.client.quesrtion.QuestionModule;
+import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
