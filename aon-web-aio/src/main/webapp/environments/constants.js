@@ -36,6 +36,7 @@ export const AON_SEARCH = 'aonSearch';
 export const AON_USER_LIST = 'aonUserList';
 export const AON_SALES = 'aonSales';
 export const AON_SALES_LIST = 'aonSalesList';
+export const AON_SERVICES = 'aonServices';
 export const AON_MOBILE_SALES_LIST = 'aonMobileSalesList';
 export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const APP = 'app';
@@ -236,9 +237,10 @@ export const OCR_DISCARDED = 'ocrDiscarded';
 export const OCR_PENDING = 'ocrPending';
 export const OCR_TRASH = 'ocrTrash';
 export const OBJECT = 'object';
+export const OFF = 'off';
 export const OFFER = 'offer';
 export const OFFERS = 'offers';
-export const OFF = 'off';
+export const OFFICE = 'office';
 export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';
@@ -407,6 +409,7 @@ export const WAREHOUSE = 'warehouse';
 export const WAREHOUSES = 'warehouses';
 export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
+export const WORKGROUP = 'workgroup';
 export const WORKPLACE = 'workplace';
 
 // ----- X
