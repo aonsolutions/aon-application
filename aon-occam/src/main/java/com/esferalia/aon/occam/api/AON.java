@@ -186,6 +186,7 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -2355,6 +2356,12 @@ public class AON {
 	public static Sales getSales(String domainName, Integer domainId, String login, SalesFilter filter, Options... options) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getManagement().getSales(ctx, filter, options);
+		}
+	}
+	
+	public static List<Sales> getSales(SalesParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getManagement().getSales(ctx, params);
 		}
 	}
 

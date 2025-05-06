@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -77,6 +79,12 @@ public class ManagementImpl implements IManagement {
 	public Sales getSales(AONContext ctx, SalesFilter filter, Options... options) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SalesDAO.get(ctx, filter, options));
+	}
+	
+	@Override
+	public List<Sales> getSales(AONContext ctx, SalesParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SalesDAO.getList(ctx, params));
 	}
 	
 	@Override

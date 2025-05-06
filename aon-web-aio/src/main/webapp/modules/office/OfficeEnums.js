@@ -27,6 +27,12 @@ const AON_SERVICE = {
     icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 
+const AON_SALES_ENTERPRISE = {
+    id: 'sideNavSalesEnterprise',
+    name: 'Procesar Pedidos',
+    icon: MATERIAL_ICONS.CONTRACT
+}
+
 
 const OfficeViews = {
     AON_CUSTOMER: "aonCustomerOffice",
@@ -58,7 +64,8 @@ const OfficeOptions = {
 };
 
 const ServiceOptions = {
-    AON_SERVICE
+    AON_SERVICE,
+    AON_SALES_ENTERPRISE
 }
 
 
