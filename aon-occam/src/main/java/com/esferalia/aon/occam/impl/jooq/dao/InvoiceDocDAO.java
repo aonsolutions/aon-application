@@ -140,6 +140,15 @@ public class InvoiceDocDAO {
 		return doc;
 	}
 
+	public static void delete(AONContext ctx, Integer invoiceId) {
+		ctx.checkWrite();
+		int count = ctx.getDslContext()
+			.delete(INVOICE_DOC)
+			.where(INVOICE_DOC.INVOICE.equal(invoiceId))
+			.execute();
+		ctx.log().debug("DELETE INVOICE_DOC adjuntos de la factura: {0} ({1} filas)",invoiceId,count);
+	}
+	
 	private static class InvoiceDocFiller extends Filler implements Function<Record, InvoiceDoc> {
 		@Override
 		public InvoiceDoc apply(Record r) {
@@ -374,5 +383,6 @@ public class InvoiceDocDAO {
 			return doc;
 		}
 	}
+
 	
 }
