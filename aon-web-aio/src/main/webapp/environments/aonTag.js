@@ -73,7 +73,6 @@ export const AON_SEARCH_BOX = 'aon-search-box';
 export const AON_SELECT = 'aon-select';
 export const AON_NEW_SELECT = 'aon-new-select';
 export const AON_SLIDER = 'aon-slider';
-export const AON_SPINNER = 'aon-spinner';
 export const AON_SUGGESTION = 'aon-suggestion';
 export const AON_NEW_SUGGESTION = 'aon-new-suggestion';
 export const AON_SWITCH = 'aon-switch';

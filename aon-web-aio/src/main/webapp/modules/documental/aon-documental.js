@@ -85,7 +85,7 @@ export class AonDocumental extends AonElement {
 		// `;
 
 		let aonApplication = new AonApplication();
-		aonApplication.setAttribute("drag_and_drop", true);
+		aonApplication.setAttribute("drag_and_drop", true);        
 		this.createApplication(this.DOCUMENTAL, MSG.DOCUMENTARY, aonApplication);
 
 		let input = document.createElement("input");
@@ -403,7 +403,7 @@ export class AonDocumental extends AonElement {
 				return {
 					value: s.id,
 					name: s.name
-				}
+				};
 			});
 		});
 	}
@@ -739,7 +739,7 @@ export class AonDocumental extends AonElement {
 		loadingOverlay.appendChild(spinnerContainer);
 	
 		// Agregar overlay al contenedor
-		let container = document.body; 
+		let container = document.body;
 		container.appendChild(loadingOverlay);
 		try {
 			let data = {
@@ -759,7 +759,7 @@ export class AonDocumental extends AonElement {
 
 	async hasBidoq(){
 		let data = {
-			document: localStorage.getItem('aon_domain_document'),
+			document: localStorage.getItem('aon_domain_document')
 		};
 		let response = await checkBidoq(data);
 		return response;

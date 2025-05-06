@@ -2,8 +2,7 @@ import { AonDialog } from "../../components/aon-dialog.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonNewSelect } from "../../components/aon-new-select.js";
 import { AonNewDate } from "../../components/aon-new-date.js";
-import { AonSpinner } from "../../components/aon-spinner";
-import { EVENT, MSG } from "../../environments/environments.js";
+import { EVENT, MSG, CONSTANT } from "../../environments/environments.js";
 import { getCategories, getScopes, getTags, uploadFileDocumental, getS3Category, postS3Document } from "../../services/documentalService.js";
 import { getReader } from "../../services/utils.js";
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
@@ -353,22 +352,22 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
 }
 
 export async function loadOldCategories() {
-	try {
-	  return await getCategories({ domain: localStorage.getItem('aon_domain_id') });
-	} catch (error) {
-	  console.log('Error al obtener categorías:', error);
-	}
+  try {
+    return await getCategories({ domain: localStorage.getItem('aon_domain_id') });
+  } catch (error) {
+    console.log('Error al obtener categorías:', error);
   }
+}
 
-  function S3DocumentalSelects(dur) {
+function S3DocumentalSelects(dur) {
     // Se monta la tabla
     let table = document.createElement('table');
     table.style.width = '100%';
     table.id = 'tableU';
   
-    // Spinner
-    const spinner = new AonSpinner();
-    table.appendChild(spinner);
+    // Cargando loader que se mete en el login - Iniciar
+    const spinner = document.querySelector("#"+CONSTANT.ID_LOADER);
+    spinner.startLoading();
 
     // Lógica de los checkboxes
     if (dur.isDocumentalPortal() && !dur.isDocumentalManager()) {
@@ -506,11 +505,13 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
                     };
                 }));
 
-                spinner.hide();
+                // loader que se mete en el login - Parar
+                spinner.stopLoading();
                 // Cuando se traten las categorias, se tendrá que manejar la visibilidad de otras partes
                 uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicker, spinner);
             } else {
-              spinner.hide();
+              // loader que se mete en el login - Parar
+              spinner.stopLoading();
               console.log('No hay categorias disponibles.');
             }
         });
@@ -545,8 +546,9 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
       tdSubCategory.appendChild(selSubCat);
 
       let data = { parent: selectedCategoryId };
-      // Mostrar el spinner
-      spinner.show();
+      // loader que se mete en el login - Iniciar
+      spinner.startLoading();
+    
       getS3Category(data).then(subcategories => {
         if (subcategories.length > 0) {
           selSubCat.options = JSON.stringify(subcategories.map(sc => {
@@ -556,8 +558,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
             };
           }));
           trSubCategory.appendChild(tdSubCategory);
-          // Oculta el spinner
-            spinner.hide();
+          // loader que se mete en el login - Parar
+          spinner.stopLoading();
 ///////////////////////////////////////////////////
           // Event listener para la selección de la subcategoría
           selSubCat.addEventListener('change', (event) => {
@@ -581,8 +583,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                   tdAdministration.appendChild(selAdministration);
 
                   let data = { parent: selectedSubCategoryId };
-                  // Mostrar el spinner
-                  spinner.show();
+                  // loader que se mete en el login - Iniciar
+                  spinner.startLoading();
                   getS3Category(data).then(administrations => {
                       if (administrations.length > 0) {
                           selAdministration.options = JSON.stringify(administrations.map(adm => {
@@ -592,8 +594,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                               };
                           }));
                           trAdministration.appendChild(tdAdministration);
-                          // Oculta el spinner
-                          spinner.hide();
+                          // loader que se mete en el login - Parar
+                          spinner.stopLoading();
                       ///////////////////////////////////////////////////
                           // Event listener para la selección de la administración
                           selAdministration.addEventListener('change', (event) => {
@@ -617,8 +619,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                   tdModel.appendChild(selModel);
 
                                   let data = { parent: selectedAdministrationId };
-                                  // Mostrar el spinner
-                                  spinner.show();
+                                  // loader que se mete en el login - Parar
+                                  spinner.stopLoading();
                                   getS3Category(data).then(models => {
                                       if (models.length > 0) {
                                           selModel.options = JSON.stringify(models.map(mod => {
@@ -628,16 +630,16 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                               };
                                           }));
                                           trModel.appendChild(tdModel);
-                                          // Oculta el spinner
-                                          spinner.hide();
+                                          // loader que se mete en el login - Parar
+                                          spinner.stopLoading();
                                           // Cuando se escoge un modelo
                                           selModel.addEventListener('change', (event) => {
                                               button.disabled = false;
                                           });
                                       } else {
                                         button.disabled = false;
-                                        // Oculta el spinner
-                                        spinner.hide();
+                                        // loader que se mete en el login - Parar
+                                        spinner.stopLoading();
                                         console.log('No hay modelos disponibles.');
                                       }
                                   });
@@ -646,8 +648,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                       ///////////////////////////////////////////////////
                       } else {
                         button.disabled = false;
-                        // Oculta el spinner
-                        spinner.hide();
+                        // loader que se mete en el login - Parar
+                        spinner.stopLoading();
                         console.log('No hay administraciones disponibles.');
                       }
                   });
@@ -656,8 +658,8 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
 ///////////////////////////////////////////////////
         } else {
           button.disabled = false;
-          // Oculta el spinner
-          spinner.hide();
+          // loader que se mete en el login - Parar
+          spinner.stopLoading();
           console.log('No hay subcategorías disponibles.');
         }
       });

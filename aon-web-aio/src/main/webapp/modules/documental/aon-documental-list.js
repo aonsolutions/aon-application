@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {
   getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
-  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories 
+  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories
 } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
@@ -57,7 +57,7 @@ export class AonDocumentalList extends AonElement {
 
  	build() {
 		if(this.isBetaDoc()){
-			this.buildToolbarSearch();
+          this.buildToolbarSearch();
 		}
 		let aonDocumentalTable = createList(this.TABLE);
 		aonDocumentalTable.selectable = 'true';
@@ -77,7 +77,7 @@ export class AonDocumentalList extends AonElement {
 		this.init();
 		aonDocumentalTable.addEventListener('more', () => {
 			if(this.more)
-				this.loadMore()
+				this.loadMore();
 		});
 
 		aonDocumentalTable.addEventListener('select', () => {
@@ -377,8 +377,11 @@ export class AonDocumentalList extends AonElement {
     }
 
     loadDocumentsIntoTable(table, filter, isInit = false) {
+        // Barra loader de AonApplication - Iniciar
+        this.getApplication().startLoader();
+        // Traer los documentos
         const fetchDocuments = this.isBetaDoc() ? getS3Document : getDocuments;
-        fetchDocuments(filter).then(documents => {	
+        fetchDocuments(filter).then(documents => {
             if (isInit) {
                 table.removeRows();               // Limpiar la tabla si es la inicializaci�n
                 table.selected = [];              // Limpiar la selecci�n
@@ -394,13 +397,20 @@ export class AonDocumentalList extends AonElement {
             }
 			
             // Insertar los documentos en la tabla
-            documents.forEach((doc, i) => {
+            documents.forEach((doc, i) => { 
 				if(this.isBetaDoc() && documents[i].size){
 					documents[i].size = formatBytes(documents[i].size);
 				}
                 let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
                 tr.id = "aonDocumentalRow";
             });
+            // Barra loader de AonApplication - Finalizar
+            this.getApplication().stopLoader();
+        }).catch((error) => {
+          // En caso de error, detener el loader y mostrar mensaje
+//          console.error("Error al cargar documentos:", error);
+          // Barra loader de AonApplication - Finalizar
+          this.getApplication().stopLoader();
         });
     }
 

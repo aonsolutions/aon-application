@@ -1,7 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl, saveTimeControlDetail} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { AonSpinner } from "../../components/aon-spinner";
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, MSG, TAG, } from '../../environments/environments.js';
@@ -200,8 +199,7 @@ export class AonSign extends AonElement {
   async saveTimeCtrl(status){
 	let divGeneral = this.getElement(this.id);
 	// Spinner
-    const spinner = new AonSpinner();
-    divGeneral.appendChild(spinner);
+    this.getApplication().startLoading();
 
     let signin = {status, task_holder: this._taskHolder, parent: this.parent};
     this.disabledButton(true);
@@ -219,7 +217,7 @@ export class AonSign extends AonElement {
     });
 
     const resp = await saveTimeControl(signin).catch(() => {
-      spinner.hide();
+      this.getApplication().stopLoading();
 	});
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
@@ -239,7 +237,7 @@ export class AonSign extends AonElement {
 
     this.disabledButton(false);
 	this.showToast({code: 3, message: 'Marcaje realizado con exito', timeout: false});
-    spinner.hide();
+    this.getApplication().stopLoading();
   }
 
   disabledButton(disabled){

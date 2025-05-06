@@ -237,7 +237,6 @@ export class AonApplication extends AonElement {
     if(el) el.stopLoading();
   }
 
-
   toogleMobileSidenav() {
     let sidenav = this.getElement(this.MOBILE_SIDENAV);
     sidenav.firstChild.classList.add(CSS.AON_TRANSITION_LEFT);
