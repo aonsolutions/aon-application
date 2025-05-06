@@ -58,13 +58,10 @@ export class AonCustomer extends AonReg {
     ];
 
     if(this.office) {
-      let officeOptions = [
-        { title: "Expedientes", fn: () => this.buildExpedienteData() },
-        // { title: MSG.BOOKING, fn: () => this.buildBookingData() },
-        { title: "Agentes", fn: () => this.buildSellerData() }
-        // { title: MSG.PRODUCTS, fn: () => this.buildItemData()}
-      ];
-      this.options.concat(officeOptions);
+      this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData()});
+        // this.options.push({ title: MSG.BOOKING, fn: () => this.buildBookingData() });
+      this.options.push({ title: "Agentes", fn: () => this.buildSellerData()});
+        // this.options.push({ title: MSG.PRODUCTS, fn: () => this.buildItemData()});
     }
   }
 

@@ -23,7 +23,7 @@ const AON_WORKGROUP_LIST = {
 
 const AON_SERVICE = {
     id: 'sideNavService',
-    name: MSG.SERVICES_AON,
+    name: MSG.AON_SERVICES,
     icon: MATERIAL_ICONS.SHOPPING_BAG
 }
 

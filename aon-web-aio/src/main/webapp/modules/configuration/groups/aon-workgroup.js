@@ -2,20 +2,8 @@ import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSearch } from "../../../components/aon-search.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonElement } from "../../../components/AonElement.js";
-import {
-  CONSTANT,
-  CSS,
-  EVENT,
-  MATERIAL_ICONS,
-  MSG,
-  TAG,
-} from "../../../environments/environments.js";
-import {
-  assignTaskHolderWorkgroup,
-  removeTaskHolderWorkgroup,
-  getTastHoldersList,
-  getTaskHolderWorkGroups,
-} from "../../../services/taskHolderService.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
+import { assignTaskHolderWorkgroup, removeTaskHolderWorkgroup, getTastHoldersList, getTaskHolderWorkGroups } from "../../../services/taskHolderService.js";
 import { AonTaskHolderSimpleList } from "../../registry/taskholder/aon-taskholder-simple-list.js";
 import { AonGroupList } from "./aon-group-list.js";
 
