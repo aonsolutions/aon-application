@@ -26,6 +26,12 @@ public class DOC {
 			return InvoiceDocDAO.get(ctx, domain, invoiceId);
 		}
 	}
+
+	public static void deleteInvoiceFiscal(String schema, Integer invoiceId) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
+			InvoiceDocDAO.delete(ctx, invoiceId);
+		}
+	}	
 	
 //	public static Optional<InvoiceDoc> getInvoiceDoc(String domainName, String login, InvoiceDocFilter filter) {
 //		try (CloseableAONContext ctx  = AONContext.getAONContext(domainName, login) ) {

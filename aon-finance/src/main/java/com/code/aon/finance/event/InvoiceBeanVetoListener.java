@@ -42,6 +42,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -133,6 +134,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
 				removeInvoiceFiscal(invoice);
+				removeInvoiceDoc(invoice);
 				removeInvoiceInfo(invoice);
 				removeInvoiceData(invoice);
 				removeInvoiceCommunicationTracking(invoice);
@@ -379,6 +381,10 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		AON.deleteInvoiceFiscal(HibernateUtil.getSessionFactoryName(), invoice.getId());
 	}
 	
+	private void removeInvoiceDoc(Invoice invoice) {
+		DOC.deleteInvoiceFiscal(HibernateUtil.getSessionFactoryName(), invoice.getId());
+	}
+
 	private void removeInvoiceInfo(Invoice invoice) {
 		AON.deleteInvoiceInfo(HibernateUtil.getSessionFactoryName(), invoice.getId());
 	}
