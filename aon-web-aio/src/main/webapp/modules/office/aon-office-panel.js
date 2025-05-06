@@ -152,6 +152,11 @@ export class AonOfficePanel extends AonElement {
       let service = ServiceOptions.AON_SERVICE;
       service.fn = () => this.showView(ServiceOptions.AON_SERVICE.id);
       servicesOptions.push(service);
+
+      let salesEnterprise = ServiceOptions.AON_SALES_ENTERPRISE;
+      salesEnterprise.fn = () => this.showView(ServiceOptions.AON_SALES_ENTERPRISE.id);
+      servicesOptions.push(salesEnterprise);
+     
       application.addSidenavOptions(MSG.BOOKING, servicesOptions);
     }
 
@@ -619,6 +624,11 @@ export class AonOfficePanel extends AonElement {
           this.clearToolbar();
           application.closeSidenav();
           GWT.iLoad(GWT.PRODUCT_MODULE, this.getApplication().CONTENT);
+          break;
+        case ServiceOptions.AON_SALES_ENTERPRISE.id:
+          this.clearToolbar();
+          //application.closeSidenav();
+          GWT.iLoad(GWT.SALES_ENTERPRISE_MODULE, this.getApplication().CONTENT);
           break;
         case LINK_DOMAINS.id:
           aonView = new AonLinkDomains();

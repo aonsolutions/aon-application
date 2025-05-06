@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Options;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.management.SalesDetail;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -41,6 +43,7 @@ public interface IManagement {
 	Sales getSales(AONContext ctx, SalesFilter filter, Options... options);
 	Sales saveSales(AONContext ctx, Sales sales);
 	void deleteSales(AONContext ctx, Integer salesId);
+	List<Sales> getSales(AONContext ctx, SalesParams params);
 	
 	// -------------------- SALES DETAIL
 	Stream<SalesDetail> getSalesDetailStream(AONContext ctx, SalesDetailFilter filter);

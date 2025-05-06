@@ -477,6 +477,13 @@ export const PRODUCT_MODULE = {
   entryPoint: 'ProductModule'
 }
 
+export const SALES_ENTERPRISE_MODULE = {
+  title: 'Pedidos',
+  name: 'Pedidos',
+  module: GWT_FISCAL,
+  entryPoint: 'SalesModule'
+}
+
 export const BOOKING_RESUME = {
   title: MSG.BOOKING_RESUME,
   name: MSG.BOOKING_RESUME,

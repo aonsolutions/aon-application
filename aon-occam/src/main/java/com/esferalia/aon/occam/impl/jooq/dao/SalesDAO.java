@@ -18,6 +18,7 @@ import static com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO.CARRIER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
@@ -34,10 +36,10 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.SalesDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Properties.SalesProperties;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -48,6 +50,7 @@ import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.SalesType;
@@ -229,6 +232,112 @@ public class SalesDAO {
 			);
 		map.forEach((object, details) -> details.forEach(object::addDetail));
 		return map.keySet().stream(); 
+	}
+	
+	public static List<Sales> getList(AONContext ctx, SalesParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(SALES)
+				.join(SALES_DETAIL).on(SALES_DETAIL.SALES.equal(SALES.ID))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(SALES.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.leftOuterJoin(SELLER).on(SELLER.REGISTRY.eq(SALES.SELLER))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(CARRIER).on(CARRIER.REGISTRY.eq(SALES.CARRIER))
+				.leftOuterJoin(CARRIER_ALIAS).on(CARRIER.REGISTRY.eq(CARRIER_ALIAS.ID))
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(SALES.SCOPE))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.equal(SALES.PROJECT))
+				.leftOuterJoin(ITEM).on(ITEM.ID.equal(SALES_DETAIL.ITEM))
+				.leftOuterJoin(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
+				.leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+				.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(SALES.WORKPLACE))
+				.leftOuterJoin(RADDRESS).on(RADDRESS.ID.eq(SALES.SHIPPING_ADDRESS))
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(SALES.CREATION_DATE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "deliveryDate"))
+				select.orderBy(SALES.DELIVERY_DATE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "code")) {
+				Field<String> numberStr = SALES.NUMBER.cast(String.class);
+				Field<String> codeField = DSL
+				    .when(SALES.SERIES.isNull().or(SALES.SERIES.eq("")), numberStr)
+				    .otherwise(DSL.concat(SALES.SERIES, DSL.val("/"), numberStr));
+				
+				select.orderBy(codeField);
+			} else if(AonStringUtils.equals(params.getOrderBy(), "customer"))
+				select.orderBy(CUSTOMER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "comercial"))
+				select.orderBy(SELLER_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(SALES.STATUS);
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(SALES.SCOPE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(SALES.CREATION_DATE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "deliveryDate"))
+				select.orderBy(SALES.DELIVERY_DATE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "code")) {
+				Field<String> numberStr = SALES.NUMBER.cast(String.class);
+				Field<String> codeField = DSL
+				    .when(SALES.SERIES.isNull().or(SALES.SERIES.eq("")), numberStr)
+				    .otherwise(DSL.concat(SALES.SERIES, DSL.val("/"), numberStr));
+				
+				select.orderBy(codeField.desc());
+			} else if(AonStringUtils.equals(params.getOrderBy(), "customer"))
+				select.orderBy(CUSTOMER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "comercial"))
+				select.orderBy(SELLER_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(SALES.STATUS.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "scope"))
+				select.orderBy(SALES.SCOPE.desc());
+		}
+		
+		Map<Sales, List<SalesDetail>> salesMap = select
+			.groupBy(SALES.ID, SALES_DETAIL.ID)	
+			.limit(params.getOffset(), params.getLimit())
+			.fetchGroups(
+				new SalesFiller()::apply,
+				new SalesDetailFiller()::apply
+			);
+		salesMap.forEach((object, details) -> details.forEach(object::addDetail));
+		
+		System.out.println("------------ Sales DAO --> getList: " + salesMap.keySet().size());
+		
+		return salesMap.keySet().stream().collect(Collectors.toList());
+	}
+
+	private static Condition paramsToCondition(AONContext ctx, SalesParams params) {
+		Condition condition = SALES.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		// Concat SALES.SERIES/SALES.NUMBER
+		Field<String> series = SALES.SERIES;
+		Field<String> numberStr = SALES.NUMBER.cast(String.class);
+
+		Field<String> seriesNumber = DSL.when(series.isNull().or(series.eq("")), numberStr)
+		    .otherwise(DSL.concat(series, DSL.val("/"), numberStr));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(
+					CUSTOMER_ALIAS.NAME.like("%" + params.getDescription() + "%")
+					.or(SELLER_ALIAS.NAME.like("%" + params.getDescription() + "%"))
+					.or(seriesNumber.like("%" + params.getDescription() + "%"))
+			);
+		
+		if(null != params.getDate())
+			condition = condition.and(SALES.CREATION_DATE.ge(new Timestamp(params.getDate().getTime())));
+		
+		if(null != params.getDeliveryDate())
+			condition = condition.and(SALES.DELIVERY_DATE.ge(AonDateUtils.toSql(params.getDeliveryDate())));
+		
+		if(null != params.getStatus())
+			condition = condition.and(SALES.STATUS.eq(params.getStatus()));
+		
+		return condition;
 	}
 	
 	// ----- GET LIST
