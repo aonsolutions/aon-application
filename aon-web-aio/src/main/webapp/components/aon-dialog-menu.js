@@ -186,20 +186,28 @@ export class AonDialogMenu extends AonElement {
 		}
 	}
 
-	close() {
+	hide() {
 		if(this.isMobile()) {
 			this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
-			setTimeout(()=>	{
-				this.getDialog().style.display = "none";
-				if(this.getElement('aonMobileMenuSidenav'))
-					this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
-				this.clear();
-			}, 400);
+			new Promise((resolve/*, reject*/) => {
+				setTimeout(()=>	{
+					this.getDialog().style.display = "none";
+					if(this.getElement('aonMobileMenuSidenav'))
+						this.getElement('aonMobileMenuSidenav').style.zIndex = "0";
+					resolve();
+				}, 400);
+			});
 		} else {
-			let dialog = this.getDialog();
-			dialog.style.display = 'none';
-			this.clear();
+			new Promise((resolve/*, reject*/) => {
+				let dialog = this.getDialog();
+				dialog.style.display = 'none';
+				resolve();
+			});
 		}
+	}
+
+	close() {
+		this.hide().then(this.clear());
 	}
 	
 	setContentHTML(html) {
