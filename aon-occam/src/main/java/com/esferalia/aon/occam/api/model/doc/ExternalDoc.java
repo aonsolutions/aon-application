@@ -5,8 +5,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import com.esferalia.aon.occam.api.GwtIncompatible;
+
 public class ExternalDoc<T extends Enum<?>> extends Doc<T> {
 
+	private static final long serialVersionUID = -4316348857841270394L;
+	
 	private String aonTable;
 	private ExternalStorage externalStorage;
 	private String s3Bucket;
@@ -79,11 +83,13 @@ public class ExternalDoc<T extends Enum<?>> extends Doc<T> {
 	}
 	
 	@Override
+	@GwtIncompatible
 	public URL getDownloadURL() {
 		return getDownloadURL(null);
 	}
 	
 	@Override
+	@GwtIncompatible
 	public URL getDownloadURL(String contentDisposition) {
 		try {
 			return new URI(getUrl()).toURL();

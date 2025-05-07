@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
-import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
 import java.util.LinkedList;
@@ -14,8 +13,6 @@ import org.jooq.OrderField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsole;
 import com.esferalia.aon.occam.api.model.finance.InvoiceConsoleParams;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -25,7 +22,6 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -59,12 +55,12 @@ public class InvoiceConsoleDAO {
 			)
 			.from(INVOICE)
 			.where(getWhere(params))
-			.and( TEDI_FIELD.in(
-				ctx.getDslContext().select( MIN_SOURCE )
-					.from(INVOICE_DETAIL)
-					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
-					.groupBy( INVOICE_DETAIL.INVOICE )
-					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
+//			.and( TEDI_FIELD.in(
+//				ctx.getDslContext().select( MIN_SOURCE )
+//					.from(INVOICE_DETAIL)
+//					.where( INVOICE_DETAIL.INVOICE.eq( INVOICE.ID) )
+//					.groupBy( INVOICE_DETAIL.INVOICE )
+//					.having(MIN_SOURCE.eq(InvoiceSource.TEDI.value()))))
 			.orderBy(getOrderBy(params))
 			.limit(params.getOffset() , params.getLimit())
 			.fetch()
@@ -85,23 +81,10 @@ public class InvoiceConsoleDAO {
 	// ---------------------------------------------------------------------
 	
 	private static InvoiceConsole fillAttach(AONContext ctx, InvoiceConsole ic) {
-		return ctx.getDslContext()
-			.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.INVOICE,INVOICE_ATTACH.DRIVEID,INVOICE_ATTACH.MIMETYPE)
-				.from(INVOICE_ATTACH)
-				.where(INVOICE_ATTACH.INVOICE.eq(ic.getInvoice().getId()))
-				.fetch()
-				.stream()
-				.map(rec -> new Attach()
-					.setId(rec.getValue(INVOICE_ATTACH.ID))
-					.setAttachModule(rec.getValue(INVOICE_ATTACH.INVOICE))
-					.setAttachType(AttachType.INVOICE)
-					.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
-					.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
-					)
-				.map( ic::setAttach )
-				.findFirst()
-				.orElse(ic)
-		;
+		Integer dom = ic.getInvoice().getDomain();
+		Integer iid = ic.getInvoice().getId();
+		ic.getInvoice().setDoc( InvoiceDocDAO.get(ctx, dom, iid).orElse(null) );
+		return ic;
 	}
 
 	private static InvoiceConsole fillSource(InvoiceConsole ic) {

@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -99,6 +100,7 @@ public class Invoice implements Serializable, HasAudit {
 	private TaxBreakdown taxBreakdown;
 	
 	private InvoiceFiscal fiscal;
+	private InvoiceDoc doc;
 	
 	private String tediCategory;
 	private String fileUrl;
@@ -605,6 +607,14 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setFiscal(InvoiceFiscal fiscal) {
 		this.fiscal = fiscal;
+		return this;
+	}
+	
+	public Optional<InvoiceDoc> getDoc() {
+		return Optional.ofNullable(doc);
+	}
+	public Invoice setDoc(InvoiceDoc doc) {
+		this.doc = doc;
 		return this;
 	}
 	

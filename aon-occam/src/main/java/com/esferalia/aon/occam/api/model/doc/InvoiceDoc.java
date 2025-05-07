@@ -7,6 +7,8 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 
+	private static final long serialVersionUID = -2784454660963628068L;
+	
 	private static final String INVOICE_DOC = "invoice_doc";
 	private Integer invoice;
 	

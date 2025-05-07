@@ -1,11 +1,15 @@
 package com.esferalia.aon.occam.api.model.doc;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.GwtIncompatible;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public abstract class Doc<T extends Enum<?>>  {
+public abstract class Doc<T extends Enum<?>> implements Serializable {
+	
+	private static final long serialVersionUID = -4711556702612701224L;
 	
 	private T type;
 	private Integer id;
@@ -73,8 +77,10 @@ public abstract class Doc<T extends Enum<?>>  {
 		return this;
 	}
 	
+	@GwtIncompatible
 	public abstract URL getDownloadURL();
 
+	@GwtIncompatible
 	public abstract URL getDownloadURL(String contentDisposition);
 	
 }
