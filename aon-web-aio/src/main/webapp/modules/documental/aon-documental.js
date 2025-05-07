@@ -154,7 +154,6 @@ export class AonDocumental extends AonElement {
 		
 		if (this.isBetaDoc() && this.getDur().isDocumentalManager() || this.isBetaDoc() && this.getDur().isDocumentalPortal() ) {
 			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createOptions());
-			// aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createCategory());
 		}
 
 		let bool = await this.hasBidoq();
@@ -163,8 +162,9 @@ export class AonDocumental extends AonElement {
 			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
 		}
 		
-		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){}
+		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){
 			this.addDocumentOptions();
+		}
 		this.addTypeOptions();
 		this.addCategoryOptions();
 		this.addTagOptions();
@@ -408,7 +408,6 @@ export class AonDocumental extends AonElement {
 		});
 	}
 
-	//A LA ESPERA DE LA NUEVA TABLA TAGS
 	createOptions() {
 		// Limpiar botones anteriores
 		const btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
@@ -742,11 +741,16 @@ export class AonDocumental extends AonElement {
 		let container = document.body;
 		container.appendChild(loadingOverlay);
 		try {
+			let datatest = {
+				document: '78150882x',
+			}
+
 			let data = {
 				document: localStorage.getItem('aon_domain_document'),
 			};
-			let response = await getBidoqDocuments(data);
+			let response = await getBidoqDocuments(datatest);
 			if (response) {
+				// documentalList.init();
 				this.loadCategories();
 			}
 		} catch (error) {
@@ -758,10 +762,13 @@ export class AonDocumental extends AonElement {
 	}
 
 	async hasBidoq(){
+		let datatest = {
+			document: '78150882x',
+		}
 		let data = {
 			document: localStorage.getItem('aon_domain_document')
 		};
-		let response = await checkBidoq(data);
+		let response = await checkBidoq(datatest);
 		return response;
 	}
 

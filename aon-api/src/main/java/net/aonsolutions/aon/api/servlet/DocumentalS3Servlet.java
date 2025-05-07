@@ -196,35 +196,61 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static byte [] getRattachFile(AonApiData api) {
-		byte [] data = null;
-		String base64 = "domain=" + api.getDomain().getId() + "&id=" + api.getData().getInt(IJsonNames.ID) + "&attach_type=registry";
-		base64 = Base64.getEncoder().encodeToString(base64.getBytes());
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
-						+ "ms/download_attachment/"
-						+ api.getDomain().getName()
-						+ "/"
-						+ api.getUser().getLogin()
-						+ "/"
-						+ base64
-						))
-				.headers("Content-Type", "text/plain;charset=UTF-8")
-				.method("GET", HttpRequest.BodyPublishers.noBody())
-				.build();
-		HttpResponse<InputStream> response = null;
-		HttpClient http = HttpClient.newHttpClient();
-		try {
-			response = http.send(request, BodyHandlers.ofInputStream());
-			InputStream is = response.body();
-			data = is.readAllBytes();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return data;
+
+	private static byte[] getRattachFile(AonApiData api) {
+	    if (api.getData().optString(IJsonNames.DATA) != null && !api.getData().optString(IJsonNames.DATA).isEmpty()) {
+	        return getFromArrayData(api);
+	    } else {
+	        return getFromSingleData(api);
+	    }
 	}
+
+	
+	private static byte[] downloadAttachment(AonApiData api, int id) throws IOException, InterruptedException {
+	    String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
+	    base64 = Base64.getEncoder().encodeToString(base64.getBytes());
+
+	    HttpRequest request = HttpRequest.newBuilder()
+	            .uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
+	                    + "ms/download_attachment/"
+	                    + api.getDomain().getName()
+	                    + "/"
+	                    + api.getUser().getLogin()
+	                    + "/"
+	                    + base64))
+	            .headers("Content-Type", "text/plain;charset=UTF-8")
+	            .method("GET", HttpRequest.BodyPublishers.noBody())
+	            .build();
+
+	    HttpClient http = HttpClient.newHttpClient();
+	    HttpResponse<InputStream> response = http.send(request, HttpResponse.BodyHandlers.ofInputStream());
+	    return response.body().readAllBytes();
+	}
+	
+	private static byte[] getFromSingleData(AonApiData api) {
+	    try {
+	        int id = api.getData().getInt(IJsonNames.ID);
+	        return downloadAttachment(api, id);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	private static byte[] getFromArrayData(AonApiData api) {
+	    try {
+	        String jsonData = api.getData().getString(IJsonNames.DATA);
+	        JSONArray array = new JSONArray(jsonData);
+	        for (int i = 0; i < array.length(); i++) {
+	            int id = array.getJSONObject(i).getInt(IJsonNames.ID);
+	            return downloadAttachment(api, id);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 	
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
 		try {
@@ -252,6 +278,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				files.add(data);
 
 				String filename = document.getName();
+				
 				String type = document.getMimetype().toString(); 
 
 				if (type != null && !type.isEmpty()) {
@@ -306,12 +333,26 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Optional<Integer> page = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		Optional<Integer> perPage = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
 		Integer category = JsonUtils.getInteger(api.getData(), IJsonNames.CATEGORY);
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api, getScopes(api)), f -> generateFilterRAttach(f, api, getScopes(api)), null, category, page, perPage)
+
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(),
+			f -> generateFilter(f, api, getScopes(api)),
+			f -> generateFilterRAttach(f, api, getScopes(api)),
+			null, category, page, perPage)
 		.forEach(document -> {
-			jsArray.put(fullDocumentToJson(document));
+			JSONObject doc = fullDocumentToJson(document);
+
+			JSONArray tagArray = new JSONArray();
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), document.getId(), document.getType())
+				.forEach(id -> tagArray.put(new JSONObject().put("id", id)));
+
+			doc.put(IJsonNames.TAG, tagArray);  
+
+			jsArray.put(doc);
 		});
+
 		return jsArray;
 	}
+
 	
 	private static JSONObject getOne(AonApiData api) {
 		System.out.println("GET ONE METHOD");
