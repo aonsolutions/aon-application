@@ -119,6 +119,8 @@ public class Invoice implements Serializable, HasAudit {
 	private boolean selected;
 	private boolean skipAlcatrazValidationAllowed;
 	
+	private InvoiceDoc invoiceDoc;
+	
 	// Facturas Emitidas por Terceros.
 	private boolean thirdPart;
 
@@ -504,6 +506,15 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 
+	public InvoiceDoc getInvoiceDoc() {
+		return invoiceDoc;
+	}
+	
+	public Invoice setInvoiceDoc(InvoiceDoc invoiceDoc) {
+		this.invoiceDoc = invoiceDoc;
+		return this;
+	}
+	
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {

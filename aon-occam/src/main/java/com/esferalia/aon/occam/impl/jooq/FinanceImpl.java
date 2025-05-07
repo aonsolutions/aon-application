@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.FBatchFilter;
@@ -76,6 +77,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvofoxConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceConsoleDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
@@ -93,6 +95,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 public class FinanceImpl implements IFinance {
 
 	// ------------------------------------- INVOICE
+	
 	@Override
 	public Optional<Item> getLastItem(AONContext ctx, Integer registry) {
 		return ctx.getDslContext().transactionResult(
@@ -909,6 +912,20 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(
 			configuration -> InvoiceConsoleDAO.getInvoiceHeaders(ctx, params)
 		);
+	}
+	
+	// ------------------------------------- INVOICE DOC
+	
+	@Override
+	public Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceDocDAO.get(ctx, domain, invoiceId));
+	}
+	
+	@Override
+	public void saveInvoiceDoc(AONContext ctx, InvoiceDoc invoiceDoc) {
+		ctx.getDslContext().transaction(
+			configuration -> InvoiceDocDAO.save(ctx, invoiceDoc));
 	}
 
 }

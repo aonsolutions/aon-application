@@ -107,6 +107,7 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -8770,4 +8771,19 @@ public class AON {
 			return getNewProduct().getCatalogueList(ctx, filter);
 		}
 	}
+	
+	// INVOICE DOC
+	
+	public static Optional<InvoiceDoc> getInvoiceDoc(Occam occam, int domain, int invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceDoc(ctx, domain, invoiceId);
+		}
+	}
+	
+	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
 }

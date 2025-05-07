@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.ScopeJSON;
+import com.esferalia.aon.occam.api.json.doc.InvoiceDocJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
@@ -90,7 +91,8 @@ public class InvoiceJSON {
 				.setFinances(FinanceJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.FINANCES)))
 				.setTediCategory(JsonUtils.getString(json, IJsonNames.CATEGORY))
 				.setActivity(EnterpriseActivityJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.ACTIVITY)))
-				.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART));
+				.setThirdPart(JsonUtils.getboolean(json, IJsonNames.THIRD_PART))
+				.setInvoiceDoc(InvoiceDocJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.INVOICE_DOC)).orElse(null));
 	}
 
 	private static RectificationType getRectificationType(JSONObject json) {
@@ -151,8 +153,9 @@ public class InvoiceJSON {
 			.put(IJsonNames.FINANCES, FinanceJSON.toJSON(invoice.getFinances()))
 			.put(IJsonNames.ACTIVITY, EnterpriseActivityJSON.toJSON(invoice.getActivity()))
 			.put(IJsonNames.SCOPE, ScopeJSON.toJSON(invoice.getScope()))
-			.put(IJsonNames.THIRD_PART, invoice.isThirdPart());
-		
+			.put(IJsonNames.THIRD_PART, invoice.isThirdPart())
+			.put(IJsonNames.INVOICE_DOC, InvoiceDocJSON.toJSON(invoice.getInvoiceDoc()));
+				
 		if(invoice.isRectifier() || invoice.isRectified()) {
 			String rectificationInvoiceDate = AonDateUtils.format(invoice.getRectificationInvoiceDate() , AonDateUtils.DATE_TIME_FORMAT_AUX);
 

@@ -323,6 +323,7 @@ public final class IJsonNames {
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
 	public static final String INVOICE_DETAIL = "invoiceDetail";
+	public static final String INVOICE_DOC = "invoiceDoc";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
