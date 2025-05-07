@@ -88,7 +88,6 @@ import static org.junit.Assert.assertEquals;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.time.MonthDay;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8500,7 +8499,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				"DIAS_ENFERMEDAD_COMUN_CARENCIA * 0.00",
 				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
 				);
-		addPayment(aonContext, contract, directIT, 
+		addPayment(aonContext, contract, prestIT, 
 				String.format("BASE_REGULADORA * 1.00 * %s * (isdef %s ? %s : 1.00)",  OCCUPATIONAL_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
 				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
 				);
