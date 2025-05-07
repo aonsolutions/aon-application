@@ -23,8 +23,14 @@ const AON_WORKGROUP_LIST = {
 
 const AON_SERVICE = {
     id: 'sideNavService',
-    name: MSG.SERVICES_AON,
+    name: MSG.AON_SERVICES,
     icon: MATERIAL_ICONS.SHOPPING_BAG
+}
+
+const AON_SALES_ENTERPRISE = {
+    id: 'sideNavSalesEnterprise',
+    name: 'Procesar Pedidos',
+    icon: MATERIAL_ICONS.CONTRACT
 }
 
 
@@ -58,7 +64,8 @@ const OfficeOptions = {
 };
 
 const ServiceOptions = {
-    AON_SERVICE
+    AON_SERVICE,
+    AON_SALES_ENTERPRISE
 }
 
 

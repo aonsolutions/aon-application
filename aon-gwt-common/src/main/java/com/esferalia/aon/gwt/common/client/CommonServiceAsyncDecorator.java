@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -66,6 +67,7 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
@@ -895,6 +897,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.saveItemAddInfos(domainName, domain, user, itemAddInfoList, new AsyncCallbackWrapper<>(callback));
 	}
+
 	// **************************************************
 	// ***************************************** [TARIFF]
 	// **************************************************
@@ -963,6 +966,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getCatalogueList(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ****************************************** [SALES]
+	// **************************************************
+
+	@Override
+	public void getSales(SalesParams params, AsyncCallback<List<Sales>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSales(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

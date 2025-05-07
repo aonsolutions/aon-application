@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.issues.client.IssuesEntryPoint;
 import com.esferalia.aon.gwt.marketing.client.commercial.SellerModule;
 import com.esferalia.aon.gwt.marketing.client.commercial.SellerWorkloadModule;
 import com.esferalia.aon.gwt.marketing.client.marketing.campaign.MarketingCompaignModule;
-import com.esferalia.aon.gwt.marketing.client.quesrtion.QuestionModule;
+import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.template.client.Templates;

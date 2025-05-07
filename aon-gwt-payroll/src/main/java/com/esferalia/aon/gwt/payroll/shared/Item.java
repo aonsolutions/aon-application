@@ -34,6 +34,9 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	
 	boolean[] defined;
 	
+	// For payment_concept.expression when agreement_payment.expression = DISABLE();
+	String hiddenExpression;
+	
 
 	public Integer getId() {
 		return id;
@@ -181,6 +184,14 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 		this.descriptionTemplate = descriptionTemplate;
 	}
 	
+	public String getHiddenExpression() {
+		return hiddenExpression;
+	}
+
+	public void setHiddenExpression(String hiddenExpression) {
+		this.hiddenExpression = hiddenExpression;
+	}
+
 	@Override
 	public int hashCode() {
 		return id != null ? id : 0;

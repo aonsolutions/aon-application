@@ -1615,8 +1615,9 @@ export class AonInvoice extends AonElement {
 		if((invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (!invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
 			firstIban = registry.banks && registry.banks.length > 0 ? registry.banks[0].bank_account : "";			
 		} else if((!invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT') || (invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-			firstIban = this.configuration.company.banks && this.configuration.company.banks.length > 0 
-				? this.configuration.company.banks[0].bank_account : "";
+			let banks = this.configuration.company.banks.filter(f => f.active);
+			firstIban = banks && banks.length > 0 
+				? banks[0].bank_account : "";
 		}
 		return registry.paymethod && registry.paymethod.bank && registry.paymethod.bank.bank_account
 			   ? registry.paymethod.bank.bank_account : firstIban;
@@ -2317,14 +2318,17 @@ export class AonInvoice extends AonElement {
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
+			alert(bankAccount.value);
 			this.setFocus(this.FINANCE_AMOUNT + i);	
 			finance.bank_account = bankAccount.value;
 			this.invoice.setFinance(finance, i);
 		});
 	
-		// bankAccount.addEventListener(EVENT.SELECT,() => {
-		// 	this.setFocus(this.FINANCE_AMOUNT + i);
-		// })
+		bankAccount.addEventListener(EVENT.SELECT, (r) => {
+			this.setFocus(this.FINANCE_AMOUNT + i);
+			finance.bank_account = r.detail.name;
+			this.invoice.setFinance(finance, i);
+		});
 		
 		table.addCell(bankAccount);
 		finance.bank_account = finance.bank_account || finance.iban;
@@ -2388,17 +2392,19 @@ export class AonInvoice extends AonElement {
 							value: r.bank_account,
 							rbank: r};}));
 			});
-	
+
+			bankAccount.addEventListener(EVENT.SELECT, (r) => {
+				this.setFocus(this.FINANCE_AMOUNT + i);
+				finance.bank_account = r.detail.name;
+				this.invoice.setFinance(finance, i);
+			});
+
 			bankAccount.addEventListener(EVENT.CHANGE, () => {
 				this.setFocus(this.FINANCE_AMOUNT + i);
 				finance.bank_account = bankAccount.value;
 				this.invoice.setFinance(finance, i);
 			});
-	
-			// bankAccount.addEventListener(EVENT.SELECT,() => {
-			// 	this.setFocus(this.FINANCE_AMOUNT + i);
-			// })
-	
+		
 			let ibanCell = table.addCell(bankAccount);
 			ibanCell.style.width = '50%';
 			finance.bank_account = finance.bank_account || finance.iban;
