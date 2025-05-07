@@ -709,7 +709,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setMimetype(mime)
 				.setModificationDate(null)
 				.setModificationUser(null)
-				.setName(json.getString("nombreArchivo"))
+				.setName(clearFileName(json.getString("nombreArchivo")))
 				.setRegistry(registry)
 				.setRegistryType((byte) 3)
 				.setS3bucket(BIDOQ_BUCKET_NAME)
@@ -719,6 +719,20 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setSecurityLevel((byte) 0)
 				;
 	}
+	
+	//de momento limpiamos los siguientes caracteres : \ / : * ? " < > | +
+	private static String clearFileName(String filename) {
+	    int index = filename.lastIndexOf(".");
+	    if (index == -1) return filename.replaceAll("[\\\\/:*?\"<>|+]", ""); 
+	    String name = filename.substring(0, index);
+	    String extension = filename.substring(index);
+	    
+	    name = name.replaceAll("[\\\\/:*?\"<>|+]", "");
+	    name = name.replaceAll("[.\\s]+$", "");
+
+	    return name + extension;
+	}
+
 	
 	private static S3Category createBidoqCategory(AonApiData api, String name) {
 		S3Category category = new S3Category()
