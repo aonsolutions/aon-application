@@ -5,11 +5,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -32,6 +30,13 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		AON.start();
 		fsa.delete(occam, rawdocId, new AsyncCallbackWrapper<Void>(callback));
 	}
+	
+	@Override
+	public void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback) {
+		AON.start();
+		fsa.saveToAccounting(occam, rawdocIds, new AsyncCallbackWrapper<LinkedList<String>>(callback));
+	}
+	
 	@Override
 	public void toDraft(Occam occam, Integer rawdocId, AsyncCallback<Rawdoc> callback) {
 		AON.start();
@@ -56,28 +61,24 @@ public class RawdocServiceAsyncDecorator implements RawdocServiceAsync {
 		fsa.parse(occam, rawdocId, new AsyncCallbackWrapper<TediResult>(callback));
 	}
 	
-	// --------------------------------------------------------------- PENDING 
-	@Override
-	public void getAccountingInvoice(String domainName, int domain, String user, String invoice, AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getAccountingInvoice(domainName, domain, user, invoice, new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-	
-	@Override
-	public void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice, AsyncCallback<Boolean> callback) {
-		AON.start();
-		fsa.processInvoiceFile(domainName, domain, user, jsonStr, invoice, new AsyncCallbackWrapper<Boolean>(callback));
-	}
-	
 	@Override
 	public void getS3Url(Rawdoc rawdoc, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getS3Url(rawdoc, new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	// --------------------------------------------------------------- PENDING 
+//	@Override
+//	public void getAccountingInvoice(String domainName, int domain, String user, String invoice, AsyncCallback<AccountingInvoice> callback) {
+//		AON.start();
+//		fsa.getAccountingInvoice(domainName, domain, user, invoice, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+//	}
+//	
+//	@Override
+//	public void processInvoiceFile(String domainName, int domain, String user, String jsonStr, Invoice invoice, AsyncCallback<Boolean> callback) {
+//		AON.start();
+//		fsa.processInvoiceFile(domainName, domain, user, jsonStr, invoice, new AsyncCallbackWrapper<Boolean>(callback));
+//	}
+//	
 
-	@Override
-	public void saveToAccounting(Occam occam, LinkedHashSet<Integer> rawdocIds, AsyncCallback<LinkedList<String>> callback) {
-		AON.start();
-		fsa.saveToAccounting(occam, rawdocIds, new AsyncCallbackWrapper<LinkedList<String>>(callback));
-	}
 }
