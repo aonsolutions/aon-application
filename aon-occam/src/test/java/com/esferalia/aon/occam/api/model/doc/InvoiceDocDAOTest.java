@@ -420,4 +420,49 @@ public class InvoiceDocDAOTest extends AbstractOccamTest {
 		assertEquals(inserted.getId(), otherInserted.getId());
 		
 	}
+	
+	@Test
+	public void testGetFullInvoice() {
+		// New Invoice
+		int year = AonDateUtils.getYear( new Date() );
+		Date issueDate = AonRandom.getRandomYearDay( year );
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx).setIssueDate( issueDate );
+		Invoice invoice = InvoiceFaker.getRandomNotSales(params);
+		InvoiceDAO.insert(ctx, invoice);
+		
+		// New Invoice Doc
+		String invoicePath = INVOICES[2];
+		String s3Key = AonStringUtils.substringAfterLast(invoicePath, "/");
+		InvoiceDoc doc = new 	InvoiceDoc()
+			.setDomain(DOMAIN_ID)
+			.setMimeType(MimeType.PDF)
+			.setType( InvoiceAttachmentType.INVOICE )
+			.setDate(issueDate) 
+			.setInvoice( invoice.getId())
+			.setDescription( invoicePath )
+			.setExternalStorage( ExternalStorage.AWS )
+			.setS3Bucket(S3BUCKET)
+			.setS3Key(s3Key)
+		;
+		InvoiceDocDAO.save(ctx, doc);
+		
+		Invoice full = InvoiceDAO.getFullInvoice(ctx, doc.getInvoice());
+		assertNotNull( full );
+		assertTrue( full.getDoc().isPresent() );
+		InvoiceDoc inserted =  full.getDoc().get();
+		
+		// Compare
+		assertEquals(invoice.getId(), inserted.getInvoice());
+		assertEquals("invoice_doc", inserted.getAonTable());
+		assertEquals(ExternalStorage.AWS, inserted.getExternalStorage());
+		assertEquals(S3BUCKET,inserted.getS3Bucket());
+		assertEquals(s3Key,inserted.getS3Key());
+		assertNull(inserted.getDriveId());
+		assertNull(inserted.getAonId());
+		assertEquals(invoice.getIssueDate(), inserted.getDate());
+		assertEquals(invoicePath, inserted.getDescription());
+		assertTrue( AonStringUtils.startsWith(inserted.getUrl(), "https://"+DOMAIN_NAME));
+		
+	}
+	
 }

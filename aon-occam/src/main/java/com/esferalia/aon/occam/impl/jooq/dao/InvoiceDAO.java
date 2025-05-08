@@ -440,8 +440,6 @@ public class InvoiceDAO {
 			invoice.setRegistryData( RegistryDAO.get(ctx, invoice.getRegistry()));
 			invoice.setAddress(InvoiceAddressDAO.get(ctx, invoice));
 			invoice.setDetails(InvoiceDetailDAO.getFullList(ctx, f -> f.getInvoiceProperty().eq(id)));
-//			invoice.setDetails(getInvoiceDetails(ctx, prop -> prop.getIdProperty().eq(id))
-//			.collect(Collectors.toCollection(LinkedList::new)));
 			for(Integer i = 0; i < invoice.getDetails().size(); i++) {
 				InvoiceDetail detail = invoice.getDetails().get(i);
 				detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
@@ -480,14 +478,12 @@ public class InvoiceDAO {
 				});
 				
 				LinkedList<InvoiceTax> taxes = getInvoiceTaxStreamFromDetail(ctx, detail.getId())
-				.collect(Collectors.toCollection(LinkedList::new));
-				
-				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
-
-				Account acc = getInvoiceDetailAccount(ctx, invoice.getDetails().get(i).getId());
-				invoice.getDetails().get(i).setAccount(acc.getId());
-				invoice.getDetails().get(i).setAccountCode(acc.getCode());
-				invoice.getDetails().get(i).setAccountDescription(acc.getDescription());
+						.collect(Collectors.toCollection(LinkedList::new));
+				detail.setInvoiceTaxes(taxes);
+				Account acc = getInvoiceDetailAccount(ctx, detail.getId());
+				detail.setAccount(acc.getId());
+				detail.setAccountCode(acc.getCode());
+				detail.setAccountDescription(acc.getDescription());
 			}
 			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
@@ -506,6 +502,9 @@ public class InvoiceDAO {
 					invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
 				}
 			}
+			
+			invoice.setDoc(InvoiceDocDAO.get(ctx, invoice.getDomain(), invoice.getId()).orElse(null));
+			
 		}
 		return invoice;
 	}
