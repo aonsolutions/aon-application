@@ -19,17 +19,26 @@ module.exports = {
         {
           test: /\.css$/i,
           use: [MiniCssExtractPlugin.loader, 'css-loader']
+        },
+        {
+          test: /\.scss$/i,  // Añadir regla para archivos .scss
+          use: [
+              MiniCssExtractPlugin.loader,  // Extrae el CSS en un archivo separado
+              'css-loader',  // Procesa el CSS
+              'sass-loader'  // Compila Sass a CSS
+          ]
         }
       ]
     },
     optimization: {
         minimizer: [
-          new CssMinimizerPlugin(), '...'
+//          new CssMinimizerPlugin(), '...'
         ]
 	},
 	resolve: {
     	alias: {
           aoncss: path.resolve(__dirname, 'src/main/webapp/css/aon.css'),
+          aonscss: path.resolve(__dirname, 'src/main/webapp/assets_sass/styles/main.scss'),
           //aonsolutions: path.resolve(__dirname, '../aon-solutions/src/main/webapp/'),
           aonparent: path.resolve(__dirname, 'src/main/webapp/modules/aon-parent.js'),
           aio: path.resolve(__dirname, 'src/main/webapp/')
