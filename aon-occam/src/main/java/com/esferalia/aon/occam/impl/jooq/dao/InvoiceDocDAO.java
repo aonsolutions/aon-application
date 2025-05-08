@@ -100,7 +100,6 @@ public class InvoiceDocDAO {
 	// ---------------------------------------------------------------------- [WRITE]
 	public static InvoiceDoc save(AONContext ctx, InvoiceDoc doc) {
 		ctx.checkWrite();
-		// checkIfExists()!!
 		InvoiceDocValidator.validate(ctx, doc);
 		return doc.getId() != null
 			? update(ctx, doc)
@@ -108,20 +107,27 @@ public class InvoiceDocDAO {
 	}
 	
 	private static InvoiceDoc insert(AONContext ctx, InvoiceDoc doc) {
-		Integer id =ctx.getDslContext().insertInto(INVOICE_DOC)
-			.set(INVOICE_DOC.DOMAIN, doc.getDomain())
-			.set(INVOICE_DOC.INVOICE, doc.getInvoice())
-			.set(INVOICE_DOC.MIMETYPE, doc.getMimeType().value())
-			.set(INVOICE_DOC.DESCRIPTION, doc.getDescription())
-			.set(INVOICE_DOC.TYPE, doc.getType().value())
-			.set(INVOICE_DOC.ATTACH_DATE, AonDateUtils.toSql(doc.getDate()))
-			.set(INVOICE_DOC.S3_BUCKET, doc.getS3Bucket())
-			.set(INVOICE_DOC.S3_KEY, doc.getS3Key())
-			.returning(INVOICE_DOC.ID)
-			.fetchOne()
-			.getId();
-		ctx.log().debug("INSERT INVOICE DOC invoice: {0} id: {1}",doc.getInvoice(),id);
-		return doc.setId(id);
+		getInvoiceDoc(ctx, doc.getDomain(), doc.getInvoice())
+			.ifPresentOrElse( 
+				d -> update(ctx, doc.setId( d.getId()))
+				,() -> {
+					doc.setId( ctx.getDslContext().insertInto(INVOICE_DOC)
+						.set(INVOICE_DOC.DOMAIN, doc.getDomain())
+						.set(INVOICE_DOC.INVOICE, doc.getInvoice())
+						.set(INVOICE_DOC.MIMETYPE, doc.getMimeType().value())
+						.set(INVOICE_DOC.DESCRIPTION, doc.getDescription())
+						.set(INVOICE_DOC.TYPE, doc.getType().value())
+						.set(INVOICE_DOC.ATTACH_DATE, AonDateUtils.toSql(doc.getDate()))
+						.set(INVOICE_DOC.S3_BUCKET, doc.getS3Bucket())
+						.set(INVOICE_DOC.S3_KEY, doc.getS3Key())
+						.returning(INVOICE_DOC.ID)
+						.fetchOne()
+						.getId()
+					);
+					ctx.log().debug("INSERT INVOICE DOC invoice: {0} id: {1}",doc.getInvoice(),doc.getId());
+				}
+		);
+		return doc;
 	}
 	
 	private static InvoiceDoc update(AONContext ctx, InvoiceDoc doc) {
@@ -132,7 +138,7 @@ public class InvoiceDocDAO {
 			.set(INVOICE_DOC.DESCRIPTION, doc.getDescription())
 			.set(INVOICE_DOC.TYPE, doc.getType().value())
 			.set(INVOICE_DOC.ATTACH_DATE, AonDateUtils.toSql(doc.getDate()))
-			.set(INVOICE_DOC.S3_BUCKET, doc.getS3Key())
+			.set(INVOICE_DOC.S3_BUCKET, doc.getS3Bucket())
 			.set(INVOICE_DOC.S3_KEY, doc.getS3Key())
 			.where(INVOICE_DOC.ID.eq(doc.getId()))
 			.execute();
