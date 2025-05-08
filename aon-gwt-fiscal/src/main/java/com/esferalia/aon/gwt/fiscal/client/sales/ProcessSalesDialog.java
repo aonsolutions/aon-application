@@ -352,6 +352,8 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			        	} else {
 			        		AonMessagePanel.showWarning(messagePanel, message);
 			        		
+			        		center();
+			        		
 //			        		AonMessagePanel.showSuccess(messagePanel, message);
 //			        		
 //			        		Timer timer = new Timer() {

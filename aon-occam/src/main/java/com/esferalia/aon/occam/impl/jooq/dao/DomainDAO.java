@@ -273,6 +273,7 @@ public class DomainDAO {
 				.set(DOMAIN.MAXDEFINEDUSERS, 0)
 				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
 				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16)
+				.set(DOMAIN.SCOPE, domain.getScope())
 				.returning(DOMAIN.ID)
 				.fetchOne().getId();
 		domain.setId(newDomainId);
