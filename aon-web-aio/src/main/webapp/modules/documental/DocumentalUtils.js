@@ -494,7 +494,7 @@ function createCategorySection(table, loadingOverlay, trScope, trDatePicker) {
     
     // Crear la fila de categorías (Radio buttons)
     if (oldCategories) {
-        createRadioButtonRow(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
+        createRadioButtonRow(table, 's3CategoriesRadio', MSG.OFFICE_CATEGORIES, handleRadioButtonChange);
         createRadioButtonRow(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, handleRadioButtonChange);
     }
 
