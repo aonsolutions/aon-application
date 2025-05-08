@@ -145,6 +145,7 @@ export const getDomainApps = (domain) => {
   };
 
   export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);
+
   export const getThemeUrl = async (data) => {
   	const query = new URLSearchParams(data).toString();
   	const response = await fetch(`${API_URL}/themeurl?${query}`);
@@ -153,5 +154,3 @@ export const getDomainApps = (domain) => {
   	const json = await response.json();
   	return json.url; // <- esto es lo que querés
   };
-
-

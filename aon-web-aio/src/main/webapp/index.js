@@ -1,4 +1,3 @@
-
 import * as LS from './services/localStorageService.js';
 import * as UA from './services/userAgentService.js';
 import { AonModule } from './modules/aon-module.js';
@@ -14,19 +13,22 @@ import './css/aon-mobile.css';
 import './css/aon-figma.css';
 import { getThemeUrl } from './services/companyService.js';
 
+// Estilo por sass
+//localStorage.setItem('sass', 'true');
+
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
     window.tokenFCM = token;
     saveAuthDevice({tokenFCM:token});
-}
+};
 
 window.setNotificationAction = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RECEIVED_NOTIFICATION, {detail:data}));
-}
+};
 
 window.setResumeApp = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RESUME_APP, {detail:data}));
-}
+};
 
 const load = () => {
 	
@@ -40,21 +42,21 @@ const load = () => {
 	
 	loadScripts(); 
 	loadTheme().then(
-	() => { 
-		favicon(); 
-		title();
-		document.body.appendChild(new AonModule());
-	},
-	(err) => {
-		document.body.appendChild(new AonModule());
-	}  
-	);  
+      () => { 
+          favicon(); 
+          title();
+          document.body.appendChild(new AonModule());
+      },
+      (err) => {
+          document.body.appendChild(new AonModule());
+      }
+	);
 
 	// TODO: loadScriptFirebase();
     window.loadScripts = () => loadScripts();
 
-	console.debug("Fantastic aonSolutions loaded :-).")
-}
+	console.debug("Fantastic aonSolutions loaded :-).");
+};
 
 export const loadTheme = async  () => {
     // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
@@ -99,7 +101,7 @@ export const loadTheme = async  () => {
 			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
 		}
 	});
-}
+};
 
 /*const favicon = () => {
 	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
@@ -147,33 +149,33 @@ const loadScripts = () => {
         loadScript("aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js")
     ];
     Promise.all(promises);
-}
+};
 
 const loadScriptFirebase = async() =>{
     await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js");
     await loadScript("https://www.gstatic.com/firebasejs/8.2.6/firebase-messaging.js");
-    setWindowApp()
-}
+    setWindowApp();
+};
 
 const isBeta = () => {
     const href = window.location.href;
 	return href.includes('aonsolutions.org') || isLocal();
-}
+};
 
 const isBetaDoc = () => {
   return isBeta();
-}
+};
 
 const isLocal =  () => {
     const href = window.location.href;
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
-}
+};
 
 const getParam = (paramName) => {
 	const queryString = window.location.search;
 	const searchParams = new URLSearchParams(queryString);
 	return searchParams.get(paramName);
-}
+};
 
 const getCookie = (cookieName) => {
 	const cookieValue = decodeURIComponent(document.cookie)
@@ -181,8 +183,8 @@ const getCookie = (cookieName) => {
 	.map((row) => row.trimStart() )
     .find((row) => row.startsWith(`${cookieName}=`))
     ?.split('=')[1];
-	
-	return cookieValue;  
-} 
- 
+
+	return cookieValue;
+};
+
 load();
