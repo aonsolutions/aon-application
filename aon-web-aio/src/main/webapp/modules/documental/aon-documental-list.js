@@ -1,7 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {
   getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
-  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories
+  getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories,
+  getTags
 } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
@@ -101,6 +102,28 @@ export class AonDocumentalList extends AonElement {
           clearTimeout(timeOut);
           timeOut = setTimeout(() => {
             this._list = [];
+			if (detail.tags) {
+				// ---- RECONSTRUIR TAGS DESDE LOS CHECKBOXES ----
+				const tagIds = Object.keys(detail)
+				.filter(key => key.startsWith("checkbox"))
+				.filter(key => detail[key] === 'true') // solo los que están marcados
+				.map(key => parseInt(key.replace("checkbox", '')))
+				.filter(id => !isNaN(id));
+
+				if (tagIds.length > 0) {
+				detail.tag = JSON.stringify(tagIds.map(id => ({ id })));
+				}
+
+				// Eliminar los checkboxes individuales del filtro
+				Object.keys(detail).forEach(key => {
+				if (key.startsWith("checkbox")) {
+				delete detail[key];
+				}
+				});
+				// 🔄 Limpieza final para evitar duplicados
+				delete detail.tags; // ← Asegúrate de eliminar el campo con los nombres de los tags
+			}
+
 	        if(detail) {
               // El tipo de permiso
                 if(detail[ASESOR_TYPE] && detail[ASESOR_TYPE] !== 'false'){
@@ -172,6 +195,8 @@ export class AonDocumentalList extends AonElement {
             ...DOCUMENTAL_FILTER
           ]);
         }
+		//Etiquetas
+		this.tagFilter();
         // Categoria despacho(categorias predefinidas)
 	    this.searchValueDefault();
         // tus categorias (creadas por la empresa)
@@ -201,6 +226,20 @@ export class AonDocumentalList extends AonElement {
         }
       });
     }
+
+	async tagFilter(){
+		let tagSel = this.getElement("tags");
+		let listTags = await getTags({domain : localStorage.getItem('aon_domain_id')});
+		if(!listTags){
+			tagSel.remove();
+		}
+		tagSel.setOptions(
+			listTags
+			  .filter(tag => tag.id != null)
+			  .map(tag => ({ name: tag.name, value: tag.id }))
+		  );
+		  
+	}
 
     async categoryOldFilter(){
       let categoryOldEl = this.getElement("categoryOldFilter");

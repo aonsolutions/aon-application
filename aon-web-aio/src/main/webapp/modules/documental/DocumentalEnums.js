@@ -60,6 +60,13 @@ export const DOCUMENTAL_FILTER = [
       name: "categoryOldFilter",
       title: "Buscar en mis "+MSG.CATEGORY+"s"
     },
+    {
+      type: "select",
+      id: "tags",
+      name: "tags",
+      title: "Mis "+ MSG.TAGS,
+      multiple: true      
+    },
 	{
       type: "select",
       id: "categoryOld",
