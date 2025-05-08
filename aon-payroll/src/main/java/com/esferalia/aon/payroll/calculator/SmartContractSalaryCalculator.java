@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.calculator.TaxCalculator.getMonth;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NO_HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT;
@@ -682,7 +683,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		Month month  = contractPayment.getMonth(); 
 		PaymentType paymentType = contractPayment.getType();
 		
-		if ( salaryType != ctx.getSalaryType()  
+		if ( paymentType == PaymentType.CRA_0004 
+				&& !expressionContext.isDef(MONTHLY_PAYMENTS)){
+			throw new UndefinedVariablesException(MONTHLY_PAYMENTS);
+		} else if ( salaryType != ctx.getSalaryType()  
 			&& salaryType == SalaryType.EXTRA ){
 			try {
 				resolveExtra(contractPayment, 
@@ -1968,7 +1972,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				double value = expressionContext.dryEval(String.valueOf(names[i]), period.getStart(), period.getEnd()).stream()
 				.map(v->v.getValue(v.getPeriod())).filter(v -> v != null && v instanceof Number)
 				.collect(Collectors.summingDouble(v -> ((Number)v).doubleValue()));
-				min =  Math.min(value, min);
+				if ( value > 0.00 )
+					min =  Math.min(value, min);
 			} catch ( ExpressionException e ) {
 				expressionException = e;
 			} catch( CompileException e ) {

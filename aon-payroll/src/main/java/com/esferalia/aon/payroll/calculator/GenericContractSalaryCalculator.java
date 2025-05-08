@@ -175,6 +175,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		{
 			add("ANTIGUEDAD");
 			add("PLUS_SALARIAL");
+			add("PLUS_ANTIGUEDAD");
 			add("PLUS_EXTRA_SALARIAL");
 			add("A_CUENTA_CONVENIO");
 			add("GARANTIZADO");
@@ -781,6 +782,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			paymentsVars.addAll(willBeDefined);
 			paymentsVars.addAll(alreadyDefined);
 
+			String[] undefMonthlyVars = undefMonthlyPayments.stream().map(INamedContractPayment::getName)
+					.toArray(String[]::new);
+			
 			int undefined = 0;
 			while (undefPayments.size() > 0) {
 				UndefPayment undefPayment = undefPayments.pop();
@@ -799,6 +803,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UndefinedVariablesException e) {
 					
 					if ( e.hasVariableName(MONTHLY_PAYMENTS)) {
+						undefMonthlyPayments.add(undefPayment);
+					} else if( e.hasAnyVariableName(undefMonthlyVars)) {
 						undefMonthlyPayments.add(undefPayment);
 					} else if (undefPayment.willBeDefined(paymentsVars)) {
 						undefPayments.add(undefPayment);
@@ -835,14 +841,29 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			
 			
-			for (UndefPayment undefMonthlyPayment : undefMonthlyPayments) {
+			while ( undefMonthlyPayments.size() > 0 ) {
+				UndefPayment undefMonthlyPayment = undefMonthlyPayments.pop();
 				try {
 					resolvePayment(undefMonthlyPayment, start, end, issueDate, expressionContext, taxCalculator,
 							quoteCalculator, leavePeriods, offPeriods);
 					copyResults(expressionContext, undefMonthlyPayment);
-				} catch (UndefinedVariablesException e) {
+				} catch (UndefinedTotalPaymentException e) {
+					undefTotalPayments.add(new UndefPayment(undefMonthlyPayment, e));
+				} catch (UndefinedContextVariablesException e) {
 					onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
-				}
+					addResult(expressionContext, undefMonthlyPayment.getName(), start, end, 0.00);
+					addResult(expressionContext, undefMonthlyPayment.getSurName(), start, end, 0.00);
+				} catch (UndefinedVariablesException e) {
+					if (e.allAreOneOf(CONCEPTS)) {
+						undefMonthlyPayments.add(undefMonthlyPayment);
+						for ( String name : e.getVariableNames() )
+							addResult(expressionContext, name, start, end, 0.00);
+					} else {
+						onUndefinedData(undefMonthlyPayment, e.getMessage(), e.getVariableNames());
+						addResult(expressionContext, undefMonthlyPayment.getName(), start, end, 0.00);
+						addResult(expressionContext, undefMonthlyPayment.getSurName(), start, end, 0.00);
+					}
+				} 
 			}
 
 			double totalPayment = taxCalculator.getTotalPayment();

@@ -1,5 +1,8 @@
 package com.esferalia.aon.salary.expression;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import com.code.aon.AonVersion;
 
 public class UndefinedVariablesException extends ExpressionException {
@@ -40,6 +43,22 @@ public class UndefinedVariablesException extends ExpressionException {
 			if (var.equals(v))
 				return true;
 		return false;
+	}
+	
+	public boolean hasAnyVariableName(String ...vars) {
+		for (String var : vars) {
+			if ( hasVariableName(var))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean allAreOneOf(Collection<String> names) {
+		for ( String variableName: variableNames ) {
+			if ( !names.contains(variableName))
+				return false;
+		}
+		return true;
 	}
 	
 	
