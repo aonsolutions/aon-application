@@ -290,66 +290,68 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		else if(AonStringUtils.isBlank(supportSeller.getValue())) AonMessagePanel.showError(messagePanel, "El agente de soporte es obligatorio");
 		else {
 			
-			Window.alert("En desarrollo...");
+			AonMessagePanel.showLoading(messagePanel, "Procesando pedido para generar una empresa..");
 			
-//			AonMessagePanel.showLoading(messagePanel, "Procesando pedido para generar una empresa..");
-//			
-//			String host = Window.Location.getHost();
-//			String endPoint = "/ms/api/sales-creation-enterprise/";
-//			
-//			HashMap<String, String> headers = new HashMap<>();
-//			headers.put("domain_name", params.getDomainName());
-//			headers.put("domain_login", params.getUser());
-//			headers.put("domain_id", String.valueOf(params.getDomain()));
-//			
-//			JSONObject body = new JSONObject();
-//			
-//			body.put("name", new JSONString(sale.getCustomer().getName()));
-//			body.put("document", new JSONString(sale.getCustomer().getDocument()));
-//			
-//			body.put("streetType", new JSONString(customerAddress.get().getStreetType().getAeatCode()));
-//			body.put("address", new JSONString(customerAddress.get().getAddress()));
-//			body.put("number", new JSONString(customerAddress.get().getNumber()));
-//			body.put("zip", new JSONString(customerAddress.get().getZip()));
-//			body.put("geozoneCode", new JSONString(customerAddress.get().getGeozoneCode()));
-//			body.put("city", new JSONString(customerAddress.get().getCity()));
-//			
-//			body.put("phone", new JSONString(phoneOpt.isEmpty() ? "" : phoneOpt.get().getValue()));
-//			body.put("email", new JSONString(emailOpt.get().getValue()));
-//			
-//			body.put("registry", new JSONString(sale.getCustomer().getId().toString()));
-//			
-//			body.put("sellerSupport", new JSONString(supportSeller.getValue()));
-//			body.put("sellerCommercial", new JSONString(sale.getSeller().getId()));
-//			
-//			// Create a URL builder and add query parameters
-//			UrlBuilder urlBuilder = new UrlBuilder();
-//			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
-//			urlBuilder.setHost(host); 
-//			urlBuilder.setPath(endPoint);
-//			
-//			// Create the request builder with the complete URL
-//			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
-////			requestBuilder.setHeader("session_id", AonStringUtils.isBlank(sessionId) ? "AONd95770f269e711eb94390242ac130002" : sessionId);
-//			
-//			headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
-//			
-//			try {
-//			    // Send the request
-//			    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
-//			        public void onResponseReceived(Request request, Response response) {
-//			        	JSONValue jsonValue = JSONParser.parseStrict(response.getText());
-//			        	String message = "";
-//		        	    if (jsonValue != null && jsonValue.isObject() != null) {
-//		        	        JSONObject jsonObject = jsonValue.isObject();
-//		        	        
-//		        	        JSONValue messageValue = jsonObject.get("message");
-//		        	        message = null != messageValue ? messageValue.isString().stringValue() : "Error desconocido";
-//		        	    }
-//			        	
-//			        	if(response.getStatusCode() == 400) {
-//			        		AonMessagePanel.showError(messagePanel, message);
-//			        	} else {
+			String host = Window.Location.getHost();
+			String endPoint = "/ms/api/sales-creation-enterprise/";
+			
+			HashMap<String, String> headers = new HashMap<>();
+			headers.put("domain_name", params.getDomainName());
+			headers.put("domain_login", params.getUser());
+			headers.put("domain_id", String.valueOf(params.getDomain()));
+			
+			JSONObject body = new JSONObject();
+			
+			body.put("name", new JSONString(sale.getCustomer().getName()));
+			body.put("document", new JSONString(sale.getCustomer().getDocument()));
+			
+			body.put("streetType", new JSONString(customerAddress.get().getStreetType().getAeatCode()));
+			body.put("address", new JSONString(customerAddress.get().getAddress()));
+			body.put("number", new JSONString(customerAddress.get().getNumber()));
+			body.put("zip", new JSONString(customerAddress.get().getZip()));
+			body.put("geozoneCode", new JSONString(customerAddress.get().getGeozoneCode()));
+			body.put("city", new JSONString(customerAddress.get().getCity()));
+			
+			body.put("phone", new JSONString(phoneOpt.isEmpty() ? "" : phoneOpt.get().getValue()));
+			body.put("email", new JSONString(emailOpt.get().getValue()));
+			
+			body.put("registry", new JSONString(sale.getCustomer().getId().toString()));
+			
+			body.put("sellerSupport", new JSONString(supportSeller.getValue()));
+			body.put("sellerCommercial", new JSONString(sale.getSeller().getId().toString()));
+			
+			body.put("saleId", new JSONString(sale.getId().toString()));
+			
+			// Create a URL builder and add query parameters
+			UrlBuilder urlBuilder = new UrlBuilder();
+			urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+			urlBuilder.setHost(host); 
+			urlBuilder.setPath(endPoint);
+			
+			// Create the request builder with the complete URL
+			RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+//			requestBuilder.setHeader("session_id", AonStringUtils.isBlank(sessionId) ? "AONd95770f269e711eb94390242ac130002" : sessionId);
+			
+			headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+			
+			try {
+			    // Send the request
+			    requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+			        public void onResponseReceived(Request request, Response response) {
+			        	JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+			        	String message = "";
+		        	    if (jsonValue != null && jsonValue.isObject() != null) {
+		        	        JSONObject jsonObject = jsonValue.isObject();
+		        	        
+		        	        JSONValue messageValue = jsonObject.get("message");
+		        	        message = null != messageValue ? messageValue.isString().stringValue() : "Error desconocido";
+		        	    }
+			        	
+			        	if(response.getStatusCode() == 400) {
+			        		AonMessagePanel.showError(messagePanel, message);
+			        	} else {
+			        		AonMessagePanel.showWarning(messagePanel, message);
+			        		
 //			        		AonMessagePanel.showSuccess(messagePanel, message);
 //			        		
 //			        		Timer timer = new Timer() {
@@ -360,17 +362,17 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 //				       		     }
 //				       		};
 //				       		timer.schedule(2500);
-//				        	
-//			        	}
-//			        }
-//
-//					public void onError(Request request, Throwable exception) {
-//						Window.alert(exception.getMessage());
-//			        }
-//			    });
-//			} catch (RequestException exception) {
-//				Window.alert("Catch : " + exception.getMessage());
-//			}
+				        	
+			        	}
+			        }
+
+					public void onError(Request request, Throwable exception) {
+						Window.alert(exception.getMessage());
+			        }
+			    });
+			} catch (RequestException exception) {
+				Window.alert("Catch : " + exception.getMessage());
+			}
 			
 		}
 	}

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -33,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
@@ -41,10 +43,13 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -53,13 +58,17 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -138,6 +147,8 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		 * sellerSupport : seller.id support type
 		 * sellerCommercial : seller.id commercial type
 		 * 
+		 * saleId
+		 * 
 		 * */
 
 		JSONObject data = api.getData();
@@ -146,6 +157,8 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 			
 
 		// Create Enterprise
+		
+		JSONObject result = new JSONObject();
 		
 		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
 			ctx.transaction(t -> {
@@ -161,28 +174,34 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 				
 				System.out.println("----------------------- [Start] Create Enterprise -----------------------");
 				
-				Domain newDomain = createDomain(api);
+				System.out.println("----------------------- Create Scope");
+				
+				Scope newScope = createScope(api);
+				
+				System.out.println("----------------------- Create Domain");
+				
+				Domain newDomain = createDomain(api, newScope);
 				
 				System.out.println("----------------------- Create Auth / User");
 				
-				createDefaultUser(api, newDomain);
+				User newUser = createDefaultUser(api, newDomain, newScope);
 				
 				System.out.println("----------------------- Domain Apps / Config");
 				
 				insertDomainConfiguration(ctx, newDomain);
 				
 				// Send mail
-				String logoUrl = getLogoUrl(parent, api.getUser());
-
-				sendTrailEnterpriseCreatedMail(api, email, logoUrl, parent);
+//				String logoUrl = getLogoUrl(parent, api.getUser());
+//
+//				sendTrailEnterpriseCreatedMail(api, email, logoUrl, parent);
 				
 				System.out.println("----------------------- [End] Create Enterprise -----------------------");
+				
+				result.put("message", "Pedido procesado, empresa creada correctamente. URL : " + newDomain.getName() + " . Usuario : " + newUser.getAuth().getEmail() + ", Pass.: " + passwordMail);
 				
 			});
 		}
 		
-		JSONObject result = new JSONObject();
-		result.put("message", "Pedido procesado correctamente. Empresa creada correctamente.");
 		
 		return result;
 	}
@@ -190,12 +209,39 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 	// ---------------------------------------------------------------------------------------------
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
+	
+	private static Scope createScope(AonApiData api) throws Exception {
+		
+		JSONObject data = api.getData();
+		
+		String document = JsonUtils.getString(data, "document");
+		
+		Domain parentDomain = null == api.getDomain().getParentId() 
+				? api.getDomain() 
+				: AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		
+		Stream<Scope> scopes = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDescriptionProperty().eq(document).and(f.getDomainProperty().eq(parentDomain.getId())));
+		
+		if(scopes.count() != 0)
+			throw new AonApiException("Ya existe un ambito en el entorno cuya descripci\u00f3n es " + document);
+		else {
+			Scope newScope = new Scope()
+					.setDomain(parentDomain.getId())
+					.setDescription(document);
+			
+			newScope = AON.insertScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), newScope);
+			return newScope;
+		}
+		
+	}
 
-	private static Domain createDomain(AonApiData api) throws Exception {
+	private static Domain createDomain(AonApiData api, Scope newScope) throws Exception {
 		JSONObject data = api.getData();
 		
 		String name = JsonUtils.getString(data, "name");
 		String document = JsonUtils.getString(data, "document");
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
 
 		Company company = new Company();
 		company.setName(name);
@@ -214,17 +260,26 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (null == parentDomain || null == parentDomain.getId())
 			throw new AonApiException("No existe empresa padre desde la que colgar esta empresa");
 
+		// Get owner email
+		
+		Stream<RegistryMedia> sellerSupportMedias = AON.getRegistryMediaStream(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(sellerSupport));
+		Optional<RegistryMedia> sellerSupportEmailOpt = sellerSupportMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		
+		if(sellerSupportEmailOpt.isEmpty())
+			throw new AonApiException("No existe email para el agente de soporte seleccionado");
+		
 		String domainNewName = company.getDocument() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
 		
 		Domain newDomain = new Domain()
 				.setName(domainNewName.toLowerCase())
 				.setDescription(company.getName())
-				.setOwner(api.getDomain().getOwner())
+				.setOwner(sellerSupportEmailOpt.get().getValue()) // Alguno mas
 				.setParentId(parentDomain.getId())
 				.setActive(true)
 				.setDomainType(DomainType.ENTERPRISE)
 				.setEnableHeredity(true)
-				.setDomainManagement(false);
+				.setDomainManagement(false)
+				.setScope(newScope.getId());
 
 		newDomain = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), newDomain, company);
 		
@@ -287,6 +342,8 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		String phone = JsonUtils.getString(data, "phone");
 		String email = JsonUtils.getString(data, "email");
 		
+		Integer customerId = JsonUtils.getInteger(data, "registry");
+		
 		Company newCompany = AON.getCompany(
 				newDomain.getName(), 
 				newDomain.getId(), 
@@ -325,7 +382,7 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		saveMedia(api, newDomain.getId(), newCompany.getId(), MediaType.EMAIL, email, comapnyRaddressId);
 
 		if (null != comapnyRaddressId)
-			createWorkplace(newDomain, newCompany.getId(), comapnyRaddressId);
+			createWorkplace(newDomain, newCompany.getId(), comapnyRaddressId, customerId);
 		
 		createRRelationShip(api, newCompany);
 		
@@ -334,28 +391,39 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 	private static void saveMedia(AonApiData api, Integer domain, Integer registry, MediaType mediaType, String value,
 			Integer raddress) {
 		if (AonStringUtils.isNotBlank(value)) {
-			RegistryMedia registryMedia = new RegistryMedia().setDomain(domain).setRegistry(registry)
-					.setMedia(mediaType).setValue(value).setCommercial(true).setRaddress(raddress);
+			RegistryMedia registryMedia = new RegistryMedia()
+					.setDomain(domain)
+					.setRegistry(registry)
+					.setMedia(mediaType)
+					.setValue(value)
+					.setCommercial(true)
+					.setRaddress(raddress);
 
 			AON.save(api.getDomain(), api.getUser().getLogin(), registryMedia);
 		}
 	}
 	
-	private static void createWorkplace(Domain newDomain, Integer companyId, Integer raddressId) {
+	private static void createWorkplace(Domain newDomain, Integer companyId, Integer raddressId, Integer customerId) {
 		Workplace workplace = new Workplace()
 				.setActive(true)
 				.setDescription("PRINCIPAL")
 				.setDomain(newDomain.getId())
 				.setEnterprise(companyId)
-				.setAddress(raddressId);
+				.setAddress(raddressId)
+				.setCustomer(customerId)
+				.setEconomicAgreement(Administration.COMMON_TERRITORY)
+				;
 
-		AON.saveWorkplace(newDomain, new User(), workplace);
+		AON.saveWorkplace(newDomain, new User().setLogin(""), workplace);
 	}
 	
 	private static void createRRelationShip(AonApiData api, Company newCompany) {
 		JSONObject data = api.getData();
 
 		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		Integer sellerCommercial = JsonUtils.getInteger(data, "sellerCommercial");
+		Integer saleId = JsonUtils.getInteger(data, "saleId");
 		
 		Customer customer = AON.getCustomer(
 			api.getDomain().getName(), 
@@ -397,6 +465,73 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 				newTarget
 			);
 		}
+		
+		// Create RSeller
+		Sales sale = AON.getSales(api.getDomain(), api.getUser().getLogin(), f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
+		
+		Stream<RegistrySeller> customerRSellers = AON.getRegistrySellerStream(api.getDomain(), api.getUser().getLogin(), f -> f.getRegistryProperty().eq(registry));
+
+		Optional<RegistrySeller> commercialRSeller = customerRSellers.filter(rseller -> rseller.getType().equals(RegistrySellerType.COMERCIAL)).findFirst();
+		if(commercialRSeller.isEmpty()) {
+			RegistrySeller rseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerCommercial))
+					.setType(RegistrySellerType.COMERCIAL)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(sale.getCreationDate());
+			
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), rseller);
+		} else {
+			Date startDate = sale.getCreationDate();
+			Date endDate = AonDateUtils.addDays(startDate, -1);
+			
+			RegistrySeller rseller = commercialRSeller.get();
+			rseller.setEndDate(endDate);
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), rseller);
+			
+			RegistrySeller newRseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerCommercial))
+					.setType(RegistrySellerType.COMERCIAL)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(sale.getCreationDate());
+			
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), newRseller);
+		}
+		
+		customerRSellers = AON.getRegistrySellerStream(api.getDomain(), api.getUser().getLogin(), f -> f.getRegistryProperty().eq(registry));
+		
+		Optional<RegistrySeller> supportRSeller = customerRSellers.filter(rseller -> rseller.getType().equals(RegistrySellerType.SOPORTE)).findFirst();
+		if(supportRSeller.isEmpty()) {
+			RegistrySeller rseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerSupport))
+					.setType(RegistrySellerType.SOPORTE)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(sale.getCreationDate());
+			
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), rseller);
+		} else {
+			Date startDate = sale.getCreationDate();
+			Date endDate = AonDateUtils.addDays(startDate, -1);
+			
+			RegistrySeller rseller = supportRSeller.get();
+			rseller.setEndDate(endDate);
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), rseller);
+			
+			RegistrySeller newRseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerSupport))
+					.setType(RegistrySellerType.SOPORTE)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(sale.getCreationDate());
+			
+			AON.saveRegistrySeller(api.getDomain(), api.getUser().getLogin(), newRseller);
+		}
 
 		// Create Registry Relationship
 		RegistryRelationship rrelationship = new RegistryRelationship();
@@ -408,7 +543,7 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		AON_SOLUTIONS.saveRegistryRelationship(api.getDomain(), api.getUser(), rrelationship);
 	}
 	
-	private static void createDefaultUser(AonApiData api, Domain newDomain) {
+	private static User createDefaultUser(AonApiData api, Domain newDomain, Scope newScope) {
 		JSONObject data = api.getData();
 		
 		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
@@ -438,18 +573,23 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 						.setSurname(null)
 						.setDocument(targetOpt.get().getDocument())
 						.setPhone(phone);
+				
+				passwordMail = login;
 
 				auth = AON_SOLUTIONS.insertAuth(newDomain.getName(), newDomain.getId(), auth);
 			}
 
+			User user = null;
 			if (auth.getAuth() != null) {
-				User user = createUser(api, newDomain, auth, login, targetOpt.get().getName());
+				user = createUser(api, newDomain, newScope, auth, login, targetOpt.get().getName());
 				setUserAppRole(newDomain, user);
 
 				if (newDomain.isChild() || newDomain.isStandalone()) {
 					createTaskHolder(newDomain, auth, user);
 				}
 			}
+			
+			return user;
 
 		} else {
 			throw new AonApiException("El email (" + email + ") no tiene un formato correcto.");
@@ -463,7 +603,11 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 		return i.toString();
 	}
 
-	private static User createUser(AonApiData api, Domain newDomain, Auth auth, String login, String name) {
+	private static User createUser(AonApiData api, Domain newDomain, Scope newScope, Auth auth, String login, String name) {
+		JSONObject data = api.getData();
+		
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		
 		Company newCompany = AON.getCompany(
 			newDomain.getName(), 
 			newDomain.getId(), 
@@ -509,6 +653,22 @@ public class SalesEnterpriseCreationServlet extends AonApiHttpServlet {
 					.setName(AppParam.AON_PORTAL.getValue());
 			
 			AON.insertApplicationParameter(newDomain.getName(), newDomain.getId(), newUser.getLogin(), appParam);
+		}
+		
+		// Actualizar "user_scope": Asignar el scope al agente asignado
+		TaskHolder taskHolder = AON.getTaskHolder(newDomain.getName(), newDomain.getId(), newUser.getLogin(), f -> f.getIdProperty().eq(sellerSupport));
+		if(null != taskHolder && null != taskHolder.getUserId()) {
+			User user = AON.getUser(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(taskHolder.getUserId()));
+			
+			AON.insertUserScope(
+					api.getDomain().getName(), 
+					api.getDomain().getId(), 
+					api.getUser().getLogin(),
+					new UserScope()
+						.setDomain(user.getDomain().getId())
+						.setScope(newScope.getId())
+						.setUserId(user.getId())
+			);
 		}
 
 		return newUser;
