@@ -93,7 +93,6 @@ import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.TbaiUri;
-import solutions.aon.aws.s3.S3;
 
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends AonApiHttpServlet{
@@ -448,7 +447,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
 		JSONObject json = new JSONObject();
 
-		InvoiceDoc invoiceDoc = invoice.getInvoiceDoc();
+		InvoiceDoc invoiceDoc = invoice.getDoc().orElse(null);
 		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
 		if(invoiceDoc == null) invoiceDoc = AON.getInvoiceDoc(occam, invoice.getDomain(), invoice.getId()).orElse(null);
 		
