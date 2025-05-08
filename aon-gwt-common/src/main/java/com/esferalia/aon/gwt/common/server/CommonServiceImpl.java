@@ -124,6 +124,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException {
 		return AON.getConfiguration(occam, params);
 	}
+	@Override
+	public Domain getParentDomain(String domainName, int domain, String user, Integer domainId) throws AonCoreException {
+		Domain doamin = AON.getDomain(domainName, domain, user, f -> f.getIdProperty().eq(domainId));
+		return AON.getDomain(domainName, domain, user, f -> f.getIdProperty().eq(doamin.getParentId()));
+	}
+
 	// **************************************************
 	// *************************************** [SECURITY]
 	// **************************************************
@@ -945,6 +951,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public List<Sales> getSales(SalesParams params) throws AonCoreException {
 		return AON.getSales(params);
+	}
+	
+	@Override
+	public Sales getSale(String domainName, int domain, String user, Integer saleId) throws AonCoreException {
+		return AON.getSales(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
 	}
 
 }
