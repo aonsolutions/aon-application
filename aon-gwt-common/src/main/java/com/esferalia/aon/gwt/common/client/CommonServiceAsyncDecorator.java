@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -112,6 +113,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> callback) {
 		AON.start();
 		serviceAsync.getAonConfiguration(occam, params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getParentDomain(String domainName, int domain, String user, Integer id, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getParentDomain(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// **************************************************
@@ -976,6 +983,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getSales(SalesParams params, AsyncCallback<List<Sales>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getSales(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSale(String domainName, int domain, String user, Integer saleId, AsyncCallback<Sales> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSale(domainName,domain, user, saleId, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

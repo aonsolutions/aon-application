@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -92,6 +93,7 @@ public interface CommonService extends RemoteService {
 	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate) throws AonCoreException;
 	AonConfiguration getAonConfiguration(Occam occam) throws AonCoreException;
 	AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException;
+	Domain getParentDomain(String domainName, int domain, String user, Integer id) throws AonCoreException;
 	
 	// **************************************************
 	// *************************************** [SECURITY]
@@ -340,5 +342,6 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 
 	List<Sales> getSales(SalesParams params) throws AonCoreException;
+	Sales getSale(String domainName, int domain, String user, Integer saleId) throws AonCoreException;
 	
 }
