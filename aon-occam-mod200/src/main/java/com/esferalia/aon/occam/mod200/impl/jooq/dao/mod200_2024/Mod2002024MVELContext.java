@@ -700,25 +700,27 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		return lq501 + i0417 - d0418;
 	}
 	
+	// FALTA - VER CON EL DOCUMENTO PADIS COMO QUEDA AL FINAL EL CALCULO DE ESTA CASILLA
 	public double computeLM1249() throws AonCoreException {
 		double lm1250 = roundKey(Mod2002024Key.LM1250); 
 		double lm1251 = roundKey(Mod2002024Key.LM1251);
 		double lm1252 = roundKey(Mod2002024Key.LM1252);
 		double lm1253 = roundKey(Mod2002024Key.LM1253);
 		double lm1254 = roundKey(Mod2002024Key.LM1254);
+		double lm2368 = roundKey(Mod2002024Key.LM2368);
 		double lm1256 = roundKey(Mod2002024Key.LM1256);
 		double lm1258 = roundKey(Mod2002024Key.LM1258);
 		double lm1259 = roundKey(Mod2002024Key.LM1259);
-		double lm1249_1 = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254) * 0.30);
-		double lm1249_2 = round(lm1256+lm1258+lm1259);
+		double lm1249a = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254 - lm2368) * 0.30);
+		double lm1249b = round(lm1256+lm1258+lm1259);
 		if (isChecked(C0072)) {
-			return lm1249_2;
+			return lm1249b;
 		}
 		else {
-			if (lm1249_2 >= getLimit(LIM_2)) {
-			 return lm1249_1>getLimit(LIM_2)?lm1249_1:getLimit(LIM_2);
+			if (lm1249b >= getLimit(LIM_2)) {
+			 return lm1249a>getLimit(LIM_2)?lm1249a:getLimit(LIM_2);
 			}
-			return lm1249_1>lm1249_2?lm1249_1:lm1249_2;
+			return lm1249a>lm1249b?lm1249a:lm1249b;
 		}
 	}
 	

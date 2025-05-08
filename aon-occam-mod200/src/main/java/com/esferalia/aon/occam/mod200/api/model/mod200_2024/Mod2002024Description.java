@@ -23,6 +23,7 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.X0001, "Realiza actividades agr\u00EDcolas y/o ganaderas");
 		DESCRIPTION_MAP.put(Mod2002024Key.R0001, "Motivo de la rectificaci\u00F3n: Rectificaciones (excepto incluidas en el motivo siguiente)");
 		DESCRIPTION_MAP.put(Mod2002024Key.R0002, "Motivo de la rectificaci\u00F3n: Discrepancia criterio administrativo");
+		DESCRIPTION_MAP.put(Mod2002024Key.R0003, "Como consecuencia de la presentaci\u00F3n de la autoliquidaci\u00F3n rectificativa solicito dar de baja la domiciliaci\u00F3n efectuada");
 		
 		DESCRIPTION_MAP.put(Mod2002024Key.C0001,"Entidad sin \u00E1nimo de lucro acogida r\u00E9gimen fiscal T\u00EDtulo II Ley 49/2002");
 		DESCRIPTION_MAP.put(Mod2002024Key.C0002,"Entidad parcialmente exenta");
@@ -449,7 +450,7 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ500, "Resultado de la cuenta de p\u00E9rdidas y ganancias");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ301, "Correcciones por Impuesto sobre Sociedades");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ004, "Correcciones por Impuesto Complementario");
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ501, "Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades");
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ501, "Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades e Impuesto Complementario");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal (art. 62.1a) LIS) (i.e., operaciones con acciones propias a nivel de grupo fiscal, coberturas, etc.)");
 		DESCRIPTION_MAP.put(Mod2002024Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluida la correcci\u00F3n por IS)");
 	}
@@ -603,12 +604,12 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.LM150, "Abono por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.LM506, "Compensaci\u00F3n por conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)");		
 		
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ3243, "Rectificativa: Devoluci\u00F3n acordada/compensada"); 
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ3317, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono");
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ3243, "Rectificativa - Rectificativa: Devoluci\u00F3n acordada/compensada"); 
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ3317, "Rectificativa - Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Abono");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ3318, DESCRIPTION_MAP.get(Mod2002024Key.LQ3317));
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ3320, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ3320, "Rectificativa - Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: Compensaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ2490, DESCRIPTION_MAP.get(Mod2002024Key.LQ3320));
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ2492, "Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ2492, "Rectificativa - Resultado de conversi\u00F3n de AID tras regularizaci\u00F3n: A ingresar");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ2493, DESCRIPTION_MAP.get(Mod2002024Key.LQ2492));		
 	}
 	

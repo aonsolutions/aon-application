@@ -41,14 +41,17 @@ public class Mod2002024 extends Mod200 {
 	private String enterprisePhone1;
 	private String enterprisePhone2;
 	
-	private String fiscalGroup;                   // Grupo - Claves 00009 ó 00010 - Nº de grupo fiscal
-	private String dominantDocument;              // Grupo - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
-	private String dominantIdentificationNumber;  // Grupo - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
+	private String fiscalGroup;                   // Grupo fiscal - Claves 00009 ó 00010 - Nº de grupo fiscal
+	private String dominantDocument;              // Grupo fiscal - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
+	private String dominantIdentificationNumber;  // Grupo fiscal - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
 	
-	private String ultimateDocument;            // Grupo - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-	private Country ultimateDocumentCountry; 	// Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
-    private String ultimateName;				// Grupo - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-    private Country ultimateCountry; 			// Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
+	private String ultimateDocument;            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
+	private String ultimateName;				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
+//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
+	private Country ultimateDocumentCountry; 	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país ESTE DESAPARECE
+    private Country ultimateCountry; 			// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción  ESTE SERIA EL NUEVO País de residencia
+//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
+//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 	
 	private BalanceType balanceType;
 	private EcpnType ecpnType;
@@ -76,14 +79,15 @@ public class Mod2002024 extends Mod200 {
 	private String payType;
 	private String iban;
 	private String bic;
-
-	private String nrsAnexoIII;
-	private String justCanarias;
-	private String nrsAnexoIV;
-	private String nrsAnexoV;
-	private String nrsAnexoVric;
-	private String justActivos;
-	private String nrsAnexoVI; // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+	
+	private String nrsAnexoIII;  // Presentación de documentación previa en la sede electrónica. Documentación presentada  Anexo III (Ajustes y deducciones)
+	private String justCanarias; // Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
+	private String nrsAnexoIV;   // Presentación de documentación previa en la sede electrónica. Documentación presentada Anexo IV (Personal investigador)
+	private String nrsAnexoV;    // Presentación de documentación previa en la sede electrónica. Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS) 
+	private String nrsAnexoVric; // Presentación de documentación previa en la sede electrónica. Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
+	private String justActivos;  // Presentación de documentación previa en la sede electrónica. Número justificante autoliquidación de la prestación patrimonial por conversión de activos
+	private String nrsAnexoVI;   // Presentación de documentación previa en la sede electrónica. Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
+	private String justBaleares; // FALTA CAMPO NUEVO - Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears	
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
 	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
@@ -340,6 +344,12 @@ public class Mod2002024 extends Mod200 {
 	}
 	public void setJustCanarias(String justCanarias) {
 		this.justCanarias = justCanarias;
+	}
+	public String getJustBaleares() {
+		return justBaleares;
+	}
+	public void setJustBaleares(String justBaleares) {
+		this.justBaleares = justBaleares;
 	}
 	public String getNrsAnexoIV() {
 		return nrsAnexoIV;

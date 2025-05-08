@@ -53,7 +53,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2022.Mod2002022DAO;
-import com.esferalia.aon.occam.mod200.server.format.mod200_2024.Mod2002024Import2022;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -979,7 +978,7 @@ public class Mod2002024DAO  {
 		if (old != null && old.getId() != null) { 
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2022");
 			mod200.setEnterprise(old.getEnterprise());
-			Mod2002024Import2022.import2022(mod200,old);
+			Mod2002024Import2023.import2023(mod200,old);
 			mod200.setInitializedFromLastYear(true);
 		} else {
 			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM CONFIGURATION");

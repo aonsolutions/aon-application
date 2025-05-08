@@ -1,15 +1,14 @@
 //
-// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
-// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
+// Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// 
+// Generado el: 2025.05.05 a las 11:04:44 AM CEST 
 //
 
 
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.jaxb;
 
 import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,45 +21,46 @@ import javax.xml.bind.annotation.XmlType;
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina29">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="T00193" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00194" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00758" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00195" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00197" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00198" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00199" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00200" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00201" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00202" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00762" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00763" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00764" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00203" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00204" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00205" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00208" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00209" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02154" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02156" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02157" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02158" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00212" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00213" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00214" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02159" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T02160" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00218" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00759" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00760" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00761" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tipo_Pagina29"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="T00193" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00194" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00758" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00195" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00197" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00198" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00199" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00200" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00201" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00202" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00762" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00763" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00764" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00203" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00204" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00205" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00208" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00209" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02154" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02156" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02157" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02158" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00212" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00213" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00214" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02159" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02160" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00218" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00759" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00760" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00761" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T02161" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -97,7 +97,8 @@ import javax.xml.bind.annotation.XmlType;
     "t00218",
     "t00759",
     "t00760",
-    "t00761"
+    "t00761",
+    "t02161"
 })
 public class TipoPagina29 {
 
@@ -163,6 +164,8 @@ public class TipoPagina29 {
     protected BigDecimal t00760;
     @XmlElement(name = "T00761")
     protected BigDecimal t00761;
+    @XmlElement(name = "T02161")
+    protected BigDecimal t02161;
 
     /**
      * Obtiene el valor de la propiedad t00193.
@@ -906,6 +909,30 @@ public class TipoPagina29 {
      */
     public void setT00761(BigDecimal value) {
         this.t00761 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t02161.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT02161() {
+        return t02161;
+    }
+
+    /**
+     * Define el valor de la propiedad t02161.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT02161(BigDecimal value) {
+        this.t02161 = value;
     }
 
 }

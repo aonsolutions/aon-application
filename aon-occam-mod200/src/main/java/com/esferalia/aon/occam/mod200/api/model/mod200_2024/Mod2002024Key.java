@@ -23,6 +23,7 @@ public enum Mod2002024Key implements IMod200Key {
     ,X0001 // Realiza actividades agrícolas y/o ganaderas
     ,R0001 // Motivo de la rectificación: Rectificaciones (excepto incluidas en el motivo siguiente)
     ,R0002 // Motivo de la rectificación: Discrepancia criterio administrativo
+    ,R0003 // Autoliquidación rectificativa - Como consecuencia de la presentación de la autoliquidación rectificativa solicito dar de baja la domiciliación efectuada
     
 	// CARACTERES DE LA DECLARACION
 	// Tipo de Entidad     		
@@ -95,6 +96,7 @@ public enum Mod2002024Key implements IMod200Key {
 	
 // --------------- PAGINA 2 BIS ----------- //
 	
+	// FALTA - EN EL DISEÑO DEL REGISTRO TAMBIEN SE PONE EN LAS COMPLEMENTARIAS, PERO NO FORMARA PARTE DEL TITULAR REAL SE SUPONE
 	,T0001 // Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo
 	
 // --------------- PAGINA 3 --------------- //
@@ -715,7 +717,11 @@ public enum Mod2002024Key implements IMod200Key {
 	,LQ1584 ,LQ1585
 	,BN621	,BN622		
 	
-	,LQ866	      
+	,LQ866	
+	
+	// FALTA - ESTAS DOS CASILLAS SOLO ESTAN EN EL DISEÑO DEL REGISTRO
+	,ING01  // A. Ingresos previos antes de la rectificación
+	,ING02  // B. Ingresos anulados en la rectificación
 	
 	// Opción de fraccionamiento en supuestos de cambios de residencia
 	,LQ1588 ,LQ2480
@@ -805,7 +811,7 @@ public enum Mod2002024Key implements IMod200Key {
 	,BN199 	,BN203 	,BN204 	,BN205 	,BN206
 	,BN394 	,BN436 	,BN437 	,BN438 	,BN2076	
 	,BN1270 ,BN1271 ,BN1299 ,BN1318 ,BN1360
-	,BN467  ,BN586  ,BN259  ,BN260  ,BN261   // FALTA - DUPLICADAS
+	,BN467  ,BN586  ,BN259  ,BN260  ,BN261   
 	,BN1342			,BN1343			,BN1345
 			,BN103B
 	

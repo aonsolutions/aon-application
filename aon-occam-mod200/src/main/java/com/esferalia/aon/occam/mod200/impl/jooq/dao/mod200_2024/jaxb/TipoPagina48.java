@@ -1,15 +1,14 @@
 //
-// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
-// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
+// Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-//  
+// Generado el: 2025.05.05 a las 11:04:44 AM CEST 
 //
 
 
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.jaxb;
 
 import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,21 +21,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina48">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="T00295" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00297" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00298" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00299" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00300" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00301" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00302" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tipo_Pagina48"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="T00295" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00297" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00298" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00299" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00300" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00301" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00302" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

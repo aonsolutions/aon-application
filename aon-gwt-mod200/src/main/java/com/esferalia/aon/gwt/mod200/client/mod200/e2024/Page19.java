@@ -2,8 +2,8 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2024;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Constants.UTE_KEYS_B7;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Constants.UTE_KEYS_B81;
-import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Constants.UTE_KEYS_B82;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Constants.UTE_KEYS_B8_1;
+import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Constants.UTE_KEYS_B8_2;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceCountryListBox;
@@ -110,8 +110,8 @@ public class Page19 extends PageAbs {
 			table1.setWidget(row++, 0, panelB6);
 	
 			row = paintTable(table1, row, UTE_KEYS_B7 , "7.- Bonificaciones:", "Base de la bonificaci\u00F3n", "Importe de la bonificaci\u00F3n");
-			row = paintTable(table1, row, UTE_KEYS_B81, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
-			row = paintTable(table1, row, UTE_KEYS_B82, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones:");
+			row = paintTable(table1, row, UTE_KEYS_B8_1, "8.- Deducciones generadas en el periodo impositivo:", "Base de la deducci\u00F3n", "Importe de la deducci\u00F3n");
+			row = paintTable(table1, row, UTE_KEYS_B8_2, "Informaci\u00F3n adicional para el c\u00E1lculo de l\u00EDmites de deducciones:");
 			
 			paintKey(table1, Mod2002024Key.UT062, row++);
 			paintDescription(table1, AON.MSG.ute5(), row++, 0, false);

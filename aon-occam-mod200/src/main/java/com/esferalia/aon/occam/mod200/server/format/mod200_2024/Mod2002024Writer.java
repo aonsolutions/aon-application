@@ -61,9 +61,18 @@ public class Mod2002024Writer {
 	// **** VARIABLES Y METODOS ESTATICOS DE UTILIDAD ****
 	// ***************************************************
 
-	private static SimpleDateFormat DATE_FORMAT_6 = new SimpleDateFormat("ddMMyy");
-	private static int DS = 17; // Tamaño de digitos por defecto para los importes
-	private static int DD = 2;  // Decimales por defecto para los importes
+	private static final SimpleDateFormat DATE_FORMAT_6 = new SimpleDateFormat("ddMMyy");
+	private static final int DS = 17; // Tamaño de digitos por defecto para los importes
+	private static final int DD = 2;  // Decimales por defecto para los importes
+	
+	private static final Mod2002024KeyDC[][] CORRECTIONS_KEYS = {
+			{ Mod2002024KeyDC.DC0073, Mod2002024KeyDC.DC2650 }, // Página 26B (from, to)
+			{ Mod2002024KeyDC.DC2654, Mod2002024KeyDC.DC2831 }, // Página 26C (from, to)
+			{ Mod2002024KeyDC.DC2574, Mod2002024KeyDC.DC2844 }, // Página 26D (from, to)
+			{ Mod2002024KeyDC.DC2984, Mod2002024KeyDC.DC3170 }, // Página 26E (from, to)
+			{ Mod2002024KeyDC.DC3174, Mod2002024KeyDC.DC2293 }, // Página 26F (from, to)
+			{ Mod2002024KeyDC.DC3324, Mod2002024KeyDC.DC3400 }, // Página 26G (from, to)
+	};	
 	
 	// Añade un importe de una casilla del modelo (con signo, longitud y decimales
 	// por defecto, relleno con ceros por la izquierda)
@@ -178,6 +187,7 @@ public class Mod2002024Writer {
 		double dValue = 0;
 		double eValue = 0;
 		double fValue = 0;
+		double gValue = 0;
 		double capital = 0;
 		double reserve = 0;
 		double otherAmounts = 0;
@@ -190,12 +200,13 @@ public class Mod2002024Writer {
 			nominalValue = mod200.getParticipationsOut().get(index).getNominalValue();
 			bookValue = mod200.getParticipationsOut().get(index).getBookValue();
 			incomes = mod200.getParticipationsOut().get(index).getIncomes();
-			aValue = mod200.getParticipationsOut().get(index).getValueCorrection();			
-			bValue = mod200.getParticipationsOut().get(index).getAccountingElimination();			
-			cValue = mod200.getParticipationsOut().get(index).getValuesElimination();
-			dValue = mod200.getParticipationsOut().get(index).getAdjustmentDecrease();
-			eValue = mod200.getParticipationsOut().get(index).getCorrectionEffect();
-			fValue = mod200.getParticipationsOut().get(index).getCorrectionsBalance();
+			aValue = mod200.getParticipationsOut().get(index).getValueCorrection();        // a) Corrección de valor incluida en pérdidas y ganancias ejercicio
+			bValue = mod200.getParticipationsOut().get(index).getLossReversion();          // b) Reversión de pérdidas por deterioro de valores (DT 16º LIS) 
+			cValue = mod200.getParticipationsOut().get(index).getAccountingElimination();  // c) Eliminación del deterioro contable incluido en P y G (art.13.2b) LIS)			
+			dValue = mod200.getParticipationsOut().get(index).getValuesElimination();      // d) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)
+			eValue = mod200.getParticipationsOut().get(index).getAdjustmentDecrease();     // e) Ajuste por la disminución de valor originada por criterio de valor razonable (art. 15 l) LIS)
+			fValue = mod200.getParticipationsOut().get(index).getCorrectionEffect();       // f) Efecto corrección valorativa en la BI del ejercicio (= a + b + c + d + e) 
+			gValue = mod200.getParticipationsOut().get(index).getCorrectionsBalance();     // g) Saldo de correcciones fiscales (art. 12.3 RDL 4/2004) pendientes a fin de ejercicio [(+) = aumentos futuros; (-) = disminuciones futuras]
 			capital = mod200.getParticipationsOut().get(index).getCapital();
 			reserve = mod200.getParticipationsOut().get(index).getReserve();
 			otherAmounts = mod200.getParticipationsOut().get(index).getOtherAmounts();
@@ -214,6 +225,7 @@ public class Mod2002024Writer {
 		line.append(AonFiscalFileUtils.signedZero(dValue, DS, DD));
 		line.append(AonFiscalFileUtils.signedZero(eValue, DS, DD));
 		line.append(AonFiscalFileUtils.signedZero(fValue, DS, DD));
+		line.append(AonFiscalFileUtils.signedZero(gValue, DS, DD));
 		line.append(AonFiscalFileUtils.signedZero(capital, DS, DD));
 		line.append(AonFiscalFileUtils.signedZero(reserve, DS, DD));
 		line.append(AonFiscalFileUtils.signedZero(otherAmounts, DS, DD));
@@ -531,8 +543,11 @@ public class Mod2002024Writer {
     	
 	}
     
-	private static boolean addBreakdownCorrectionKeys(Writer l, Mod2002024 m, Mod2002024KeyDC fromKey, Mod2002024KeyDC toKey) throws IOException {
-		
+    private static boolean addBreakdownCorrectionKeys(Writer l, Mod2002024 m, int page) throws IOException {
+    	
+    	Mod2002024KeyDC fromKey = CORRECTIONS_KEYS[page][0];
+    	Mod2002024KeyDC toKey = CORRECTIONS_KEYS[page][1];
+    	
 		boolean printKey = false;
 		boolean res = false; // Indica si hay alguna casilla distinta de cero
 		for (Mod2002024CorrectionKey ck : Mod2002024CorrectionKey.values()) {
@@ -618,6 +633,9 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getEnterprisePhone2(), 9))
 				,(line, mod200, label) -> line.append(mod200.isComplementary() ? "1" : "0")
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(AonNumberUtils.todouble(mod200.getReplacedNumber()), 13, 0))
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.R0001, 1, 0)  // Autoliquidación rectificativa - Motivo de la rectificación - Rectificaciones (excepto incluidas en el motivo siguiente)
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.R0002, 1, 0)  // Autoliquidación rectificativa - Motivo de la rectificación - Discrepancia criterio administrativo
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.R0003, 1, 0)  // Autoliquidación rectificativa - Como consecuencia de la presentación de la autoliquidación rectificativa solicito dar de baja la domiciliación efectuada
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0001, 1, 0)				
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0002, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0080, 1, 0)				
@@ -684,6 +702,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0083, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0070, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0059, 1, 0)
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0090, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0065, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0084, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0072, 1, 0)
@@ -692,19 +711,23 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0044, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0074, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0089, 1, 0)
+				,(line, mod200, label) -> {  // SOCIMIS: Régimen fiscal de entrada-salida. Renta derivada de la transmisión de inmuebles poseídos con anterioridad a la aplicación de este régimen y otras transmisiones de participaciones y activos a las que se aplica un tipo impositivo distinto del general (Art. 12.1 c, Art. 12.1 y Art 12.2) (Sólo si están marcados caracteres 57 o 64)
+					if (mod200.getDoubleValue(Mod2002024Key.C0057)==1 || mod200.getDoubleValue(Mod2002024Key.C0064)==1) 
+						addUnSignedKey(line, mod200, Mod2002024Key.C0012R, 1, 0);
+					else line.append("0"); 
+				 }
+				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 1.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - inferior a 20 millones de euros
+				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 2.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros pero inferior a 60 millones de euros
+				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 60 millones de euros
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(21))  // RESERVADO PARA LA A.E.A.T. (Dejar en blanco) Incluye Nº Referencia
+				
+				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPygType() == null || mod200.getDoubleValue(Mod2002024Key.C0026) == 1 ? 0 : mod200.getPygType().ordinal() + 1, 1, 0))
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0061, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0068, 1, 0)				
 				,(line, mod200, label) -> line.append("0") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC) (No se usa en AON)
-				,(line, mod200, label) -> {  // SOCIMIS: Régimen fiscal de entrada-salida. Renta derivada de la transmisión de inmuebles poseídos con anterioridad a la aplicación de este régimen y otras transmisiones de participaciones y activos a las que se aplica un tipo impositivo distinto del general (Art. 12.1 c, Art. 12.1 y Art 12.2) (Sólo si están marcados caracteres 57 o 64)
-					if (mod200.getDoubleValue(Mod2002024Key.C0057)==1 || mod200.getDoubleValue(Mod2002024Key.C0064)==1) 
-						addUnSignedKey(line, mod200, Mod2002024Key.C0012R, 1, 0);
-					else line.append("0"); 
-				 }
-				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 1.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - inferior a 20 millones de euros
-				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) >= 2.0?"1":"0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 20 millones de euros
 				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
@@ -714,7 +737,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0041, 9, 2)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0042, 9, 2)				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(21))  // RESERVADO PARA LA A.E.A.T. (Dejar en blanco) Incluye Nº Referencia
+				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(20))  // Identificador cliente EEDD. RESERVADO PARA LAS EEDD.              
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(50))  // Nombre y Apellidos de la persona de contacto para incidencias     
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(9))    // Teléfono fijo de contacto para incidencias                        
@@ -724,11 +747,39 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // RESERVADO PARA LA AEAT                                            
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
+		
+		, PAG01B("T20001B00", new IPropertyFiller[] { 
+				 (line, mod200, label) -> addStartLabel(line, label)
+				,(line, mod200, label) -> line.append(" ")
+				
+				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))  // Grupo fiscal - Claves 00009 ó 00010 - Nº de grupo fiscal [00040]
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))               // Grupo fiscal - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))  // Grupo fiscal - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
+				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
+				// FALTA // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
+				// FALTA // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))                                             // Balance 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))   // ECPN 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPygType() == null || mod200.getDoubleValue(Mod2002024Key.C0026) == 1 ? 0 : mod200.getPygType().ordinal() + 1, 1, 0))  // Pérdidas y ganancias 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0061, 1, 0)   // Estados de cuentas de Instituciones de Inversión Colectiva: Entidades que utilicen los estados de cuentas aplicables a las IIC (excepto claves 00003, 00004 y 00008) [00061]
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0068, 1, 0)   // Estados de cuentas de Entidades de Crédito: Entidades que sin ser Entidades de Crédito utilicen los estados de cuentas aplicables a éstas [00068]				
+				,(line, mod200, label) -> line.append("0")                                          // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC)
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0041, 9, 2)   // Personal asalariado (cifra media del ejercicio) Personal fijo [00041]
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0042, 9, 2)   // Personal asalariado (cifra media del ejercicio) Personal no fijo [00042]				
+				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200))  // RESERVADO PARA LA AEAT                                            
+				,(line, mod200, label) -> addEndLabel(line, label) 
+			})
 
 		, PAG02("T20002000", new IPropertyFiller[] { 
 				(line, mod200, label) -> {
 					boolean isComplementary = false; // Indicador de pagina complementaria
-					int a = 0; // Contador para Administradores
+					int a = 0;  // Contador para Administradores
 					int b1 = 0; // Contador para Participaciones B1
 					int b2 = 0; // Contador para Participaciones B2					
 					while (!isComplementary || a < mod200.getAdministrators().size() || b1 < mod200.getParticipationsOut().size() || b2 < mod200.getParticipationsIn().size()) {
@@ -747,6 +798,7 @@ public class Mod2002024Writer {
 						addUnSignedKey(line, mod200, Mod2002024Key.P1502, DS, DD, isComplementary);
 						addUnSignedKey(line, mod200, Mod2002024Key.P1503, DS, DD, isComplementary);
 						addSignedKey(line, mod200, Mod2002024Key.P1504, isComplementary);
+						addSignedKey(line, mod200, Mod2002024Key.P2376, isComplementary);
 						addSignedKey(line, mod200, Mod2002024Key.P1506, isComplementary);
 						addSignedKey(line, mod200, Mod2002024Key.P1809, isComplementary);
 						addSignedKey(line, mod200, Mod2002024Key.P1810, isComplementary);
@@ -797,6 +849,8 @@ public class Mod2002024Writer {
 							addNIF(line, mod200.getSicav2(), s2++); // E. Socios de SICAV - NIF de la/las IIC donde reinvierte
 						}
 						
+						// FALTA - SEGUN DISEÑO DE REGISTRO SALE EN TODAS LAS HOJAS, INCLUSO LAS COMPLEMENTARIAS ??
+						addUnSignedKey(line, mod200, Mod2002024Key.T0001, 1, 0);
 						addTitularReal(line, mod200, t++); // F. Identificación del titular real de la entidad (solo 1 por pagina)
 						
 						line.append(AonFiscalFileUtils.text(isComplementary ? "" : mod200.getSecretary().getName(), 21));    // Secretario - Apellidos y Nombre
@@ -916,6 +970,8 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP187)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP188)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP189)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP764)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP765)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP190)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP191)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP192)
@@ -924,6 +980,8 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP1001)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP1002)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP712)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP766)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP767)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP194)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP195)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP196)
@@ -931,6 +989,8 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP198)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP199)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP200)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP768)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP769)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP201)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP202)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP203)
@@ -941,6 +1001,11 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP208)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP209)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP210)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP780)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP781)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP782)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP783)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP784)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP211)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP212)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP213)
@@ -966,6 +1031,11 @@ public class Mod2002024Writer {
 				(line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP228)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP785)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP786)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP787)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP788)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP789)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP229)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP230)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BP703)
@@ -1016,6 +1086,9 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG262)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG762)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG763)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG770)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG771)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG772)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG263)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG264)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG265)
@@ -1025,6 +1098,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG269)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG270)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG271)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG790)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG273)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG274)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG275)
@@ -1050,6 +1124,9 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG292)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG293)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG710)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG791)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG792)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG793)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG294)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG295)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG296)
@@ -1067,11 +1144,13 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG301)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG302)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG303)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG794)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG304)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG305)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG306)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG307)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG308)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG796)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG309)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG310)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.PG311)
@@ -1430,10 +1509,11 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ500)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ301)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ302)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ004)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ501)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1230)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1231)
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024CorrectionKey.values(), Mod2002024Key.I0093, Mod2002024Key.D1016)  // Correcciones al resultado contable
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024CorrectionKey.values(), Mod2002024Key.I0093, Mod2002024Key.D1573)  // Correcciones al resultado contable
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
@@ -1441,7 +1521,7 @@ public class Mod2002024Writer {
 		, PAG13("T20013000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")						        
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024CorrectionKey.values(), Mod2002024Key.D0370, Mod2002024Key.D0414)
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024CorrectionKey.values(), Mod2002024Key.I1574, Mod2002024Key.D0414)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.I0417)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.D0418)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ578)
@@ -1479,6 +1559,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ520)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ521)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ545)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ925)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1509)				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1576)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1577)
@@ -1490,6 +1571,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1037)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ593)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1510)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ932)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ561)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1285)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1286)
@@ -1514,9 +1596,6 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN577)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN581)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN582)
-				
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT 
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.zeros(17)) // Reservado para la AEAT
  
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
@@ -1586,7 +1665,10 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1333)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1319) // Liquidación IV - Resultado de la autoliquidación - Abono de deducciones por producciones cinematográficas extranjeras en Canarias (art. 39.3 LIS y DA 14ª Ley 19/1994) - Total 
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1893) // Liquidación IV - Resultado de la autoliquidación - Abono de deducciones por producciones cinematográficas extranjeras en Canarias (art. 39.3 LIS y DA 14ª Ley 19/1994) - Estado 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1881) // Liquidación IV - Resultado de la autoliquidación - Abono de deducciones por producciones cinematográficas extranjeras en Canarias (art. 39.3 LIS y DA 14ª Ley 19/1994) - D. Forales/Navarra 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1881) // Liquidación IV - Resultado de la autoliquidación - Abono de deducciones por producciones cinematográficas extranjeras en Canarias (art. 39.3 LIS y DA 14ª Ley 19/1994) - D. Forales/Navarra
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ031)  // Liquidación IV - Resultado de la autoliquidación - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Total [00031]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ032)  // Liquidación IV - Resultado de la autoliquidación - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Estado [00032]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ466)  // Liquidación IV - Resultado de la autoliquidación - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - D. Forales/Navarra [00466]
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1586) // Liquidación IV - Resultado de la autoliquidación - Estado 
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1587) // Liquidación IV - Resultado de la autoliquidación - D. Forales/Navarra
 				
@@ -1596,6 +1678,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1585) // Liquidación IV - Líquido a ingresar o a devolver - Complementaria: Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al período impositivo 2024 - D. Forales/Navarra (Totales)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN621)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN622)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ866)  // Liquidación IV - Rectificación - Estado [00866]
 				
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1588) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Importe integrado en la base imponible - Estado 
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2480) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Importe integrado en la base imponible - D. Forales/Navarra (Totales) 
@@ -1611,7 +1694,10 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2489) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Líquido a ingresar - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS - Estado 
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3242) // Liquidación IV - Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS) - Líquido a ingresar - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS - D. Forales/Navarra (Totales)
 				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.ING01) // A. Ingresos previos antes de la rectificación
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.ING02) // B. Ingresos anulados en la rectificación
+				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(166)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 			})
 
@@ -1625,18 +1711,18 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LM506)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1021)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN1044)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3243) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Complementaria: Devolución acordada/compensada - Total 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3244) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Complementaria: Devolución acordada/compensada - Estado 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3245) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Complementaria: Devolución acordada/compensada - D. Forales/Navarra (Totales) 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3317) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Abono - Total 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3318) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Abono - Estado 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3319) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Abono - D. Forales/Navarra (Totales) 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3320) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Compensación - Total 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2490) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Compensación - Estado 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2491) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: Compensación - D. Forales/Navarra (Totales) 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2492) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: A ingresar - Total 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2493) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: A ingresar - Estado 
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2494) // Liquidación IV - Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Líquido a ingresar o a devolver - Resultado de conversión de AID tras regularización: A ingresar - D. Forales/Navarra (Totales) 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3243) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Rectificativa: Devolución acordada/compensada - Total 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3244) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Rectificativa: Devolución acordada/compensada - Estado 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3245) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Rectificativa: Devolución acordada/compensada - D. Forales/Navarra (Totales) 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3317) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Abono - Total 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3318) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Abono - Estado 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3319) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Abono - D. Forales/Navarra (Totales) 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ3320) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Compensación - Total 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2490) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Compensación - Estado 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2491) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: Compensación - D. Forales/Navarra (Totales) 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2492) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: A ingresar - Total 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2493) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: A ingresar - Estado 
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2494) // Conversión de activos por impuesto diferido en crédito exigible frente a la Administración tributaria (art. 130 LIS) - Rectificativa - Resultado de conversión de AID tras regularización: A ingresar - D. Forales/Navarra (Totales) 
 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024LQ547Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024LQ243Key.values())
@@ -1677,7 +1763,7 @@ public class Mod2002024Writer {
 		, PAG17("T20017000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN466, Mod2002024Key.BN889)
+				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN061, Mod2002024Key.BN830)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) 
 		})
@@ -1690,13 +1776,13 @@ public class Mod2002024Writer {
 						addStartLabel(line, label);
 						line.append(isComplementary ? "C" : " ");						
 						
-						addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN1369, Mod2002024Key.BN2192, isComplementary);
+						addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN798, Mod2002024Key.BN2192, isComplementary);
 						
 						for (int i = 1; i <= 6; i++) {
 							addNIF(line, mod200.getFilmProductions(), c++);
 						}
 						
-						addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN1626, Mod2002024Key.BN1274, isComplementary);
+						addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN2365, null, isComplementary);
 						
 						line.append(AonFiscalFileUtils.spaces(200)); // Reservado para la AEAT
 		
@@ -1709,7 +1795,6 @@ public class Mod2002024Writer {
 		, PAG18B("T20018B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ") 
-				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN588Key.values(), Mod2002024Key.BN1281, null)
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN2315Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN1039Key.values())				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN2314Key.values())
@@ -1808,6 +1893,13 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.ID665)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.ID666)				
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024LM1494Key.values())
+				
+				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.RV000, 2, 0 )  // Reversión de las pérdidas por deterioro de valores representativos - Número de período impositivo (*)
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.RV941 )  // Reversión por deterioro de valores representativos - Dotaciones pendientes de integración a principio del período [00941]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.RV2810)  // Reversión por deterioro de valores representativos - Dotaciones integradas en esta liquidación DT 16ª.1 y 2 LIS [02810]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.RV990 )  // Reversión por deterioro de valores representativos - Dotaciones integradas en esta liquidación DT 16ª.3 LIS [00990]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.RV991 )  // Reversión por deterioro de valores representativos - Dotaciones pendientes de integración en períodos futuros [00991]
+
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})
@@ -1852,6 +1944,7 @@ public class Mod2002024Writer {
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoVI()), 22));    // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoV()), 22));     // Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustCanarias()), 13));  // Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
+						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustBaleares()), 13));  // Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustActivos()), 13));   // Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 						
 						addUnSignedKey(line, mod200, Mod2002024Key.IPCRG01, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Producciones cinematográficas (excepto series audiovisuales)
@@ -1887,9 +1980,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024RIIB_1Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - RIIB
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.RB2918)		    // Importe de la dotación RIIB con cargo a beneficios de 2024		
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024RIIB_2Key.values())  // Régimen especial de la reserva para inversiones en las Illes Balears - Inversiones anticipadas				
-				,(line, mod200, label) -> line.append(mod200.isCooperativa() && mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 2.0?"1":"0")  // Régimen de cooperativas - Información adicional para el cálculo de límites de compensación de cuotas - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros
-				,(line, mod200, label) -> line.append(mod200.isCooperativa() && mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0?"1":"0")  // Régimen de cooperativas - Información adicional para el cálculo de límites de compensación de cuotas - INCN de al menos 60 millones de euros				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(198)) // Reservado para la AEAT
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label)
 			})
 
@@ -1911,15 +2002,15 @@ public class Mod2002024Writer {
 						addSignedKey(line, mod200, Mod2002024Key.UT1330, isComplementary);
 		
 						// B6.- Deducción para evitar la doble imposición
-						for (int i = 1; i <= 4; i++) {      
+						for (int i = 1; i <= 6; i++) {      
 							addUteBase(line, mod200, i1++);
 						}						
 						addSignedKey(line, mod200, Mod2002024Key.UT1277, isComplementary); // B6.- Deduc. evitar doble imposición: Total: Base de la deducción [01277]
 						addSignedKey(line, mod200, Mod2002024Key.UT1278, isComplementary); // B6.- Deduc. evitar doble imposición: Total: Importe de la deducción [01278]
 						
 						addBreakdownFromConstants(line, mod200, Mod2002024Constants.UTE_KEYS_B7, isComplementary);  // B7.- Bonificaciones 
-						addBreakdownFromConstants(line, mod200, Mod2002024Constants.UTE_KEYS_B81, isComplementary); // B8.- Deducciones generadas en el periodo impositivo
-						addBreakdownFromConstants(line, mod200, Mod2002024Constants.UTE_KEYS_B82, isComplementary); // Información adicional para el cálculo del límite de deducciones
+						addBreakdownFromConstants(line, mod200, Mod2002024Constants.UTE_KEYS_B8_1, isComplementary); // B8.- Deducciones generadas en el periodo impositivo
+						addBreakdownFromConstants(line, mod200, Mod2002024Constants.UTE_KEYS_B8_2, isComplementary); // Información adicional para el cálculo del límite de deducciones
 						
 						addSignedKey(line, mod200, Mod2002024Key.UT062, isComplementary);  // B9.- Retenciones e ingresos a cuenta  [00062]
 						addSignedKey(line, mod200, Mod2002024Key.UT070, isComplementary);  // B10.- Dividendos y participaciones. a) Ejercicios que no haya tributado en régimen especial [00070]
@@ -2010,7 +2101,8 @@ public class Mod2002024Writer {
 		, PAG26B("T20026B00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria				
-				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC0073, Mod2002024KeyDC.DC2670)				
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC0073, Mod2002024KeyDC.DC2650)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 0)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
@@ -2018,7 +2110,8 @@ public class Mod2002024Writer {
 		, PAG26C("T20026C00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC2674, Mod2002024KeyDC.DC2880)				
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC2654, Mod2002024KeyDC.DC2831)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 1)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
@@ -2026,7 +2119,8 @@ public class Mod2002024Writer {
 		, PAG26D("T20026D00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC3241, Mod2002024KeyDC.DC3040)
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC2574, Mod2002024KeyDC.DC2844)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 2)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
@@ -2034,7 +2128,8 @@ public class Mod2002024Writer {
 		, PAG26E("T20026E00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC3044, Mod2002024KeyDC.DC3240)
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC2984, Mod2002024KeyDC.DC3170)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 3)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
@@ -2042,7 +2137,17 @@ public class Mod2002024Writer {
 		, PAG26F("T20026F00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) 
 				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
-				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC3246, Mod2002024KeyDC.DC3400)
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC3174, Mod2002024KeyDC.DC2293)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 4)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
+		})
+		
+		, PAG26G("T20026G00", new IPropertyFiller[] { 
+				 (line, mod200, label) -> addStartLabel(line, label) 
+				,(line, mod200, label) -> line.append(" ")  // Indicador de página complementaria
+//				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, Mod2002024KeyDC.DC3324, Mod2002024KeyDC.DC3400)
+				,(line, mod200, label) -> addBreakdownCorrectionKeys(line, mod200, 5)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.DC2305)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.DC2301)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.DC2303)
@@ -2061,19 +2166,20 @@ public class Mod2002024Writer {
 
 		, DID("T200DID00", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label) // Etiqueta de inicio de pagina
-				,(line, mod200, label) -> line.append(" ") // Indicador de pagina complementaria
-				,(line, mod200, label) -> line.append("0") // Cuenta corriente tributaria "0" o "1" (no se usa)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getYear(), 4, 0)) // Identificación - Ejercicio
+				,(line, mod200, label) -> line.append(" ")           // Indicador de pagina complementaria
+				,(line, mod200, label) -> line.append("0")           // Cuenta corriente tributaria "0" o "1" (no se usa)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getYear(), 4, 0))       // Identificación - Ejercicio
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPeriodType(), 1, 0)) // Tipo de ejercicio
-				,(line, mod200, label) -> line.append("0A") // Período Impositivo "0A"
+				,(line, mod200, label) -> line.append("0A")                                                      // Período Impositivo "0A"
 				,(line, mod200, label) -> line.append(mod200.getPeriodStart() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodStart())) // Período Impositivo Inicio (ddmmaa)
-				,(line, mod200, label) -> line.append(mod200.getPeriodEnd() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodEnd())) // Período Impositivo Fin (ddmmaa)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDocument(), 9)) // Identificación -  NIF				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getName(), 80)) // Identificación - Apellidos y nombre o Razón Social
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ552) // Liquidación - Base imponible [552]
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ562) // Liquidación - Cuota íntegra [562]
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN621) // Liquidación - Líquido a ingresar o a devolver Estado [621]
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2489) // Liquidación - Opción de fraccionamiento art. 19.1 LIS - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS: Estado 
+				,(line, mod200, label) -> line.append(mod200.getPeriodEnd() == null ? AonStringUtils.repeat('0', 6) : DATE_FORMAT_6.format(mod200.getPeriodEnd()))     // Período Impositivo Fin (ddmmaa)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDocument(), 9))  // Identificación -  NIF				
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getName(), 80))     // Identificación - Apellidos y nombre o Razón Social
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ552)                // Liquidación - Base imponible [552]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ562)                // Liquidación - Cuota íntegra [562]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ1586)               // Liquidación - Resultado de la autoliquidación [01586]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.BN621)                // Liquidación - Resultado: Estado [621]
+				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002024Key.LQ2489)               // Liquidación - Opción de fraccionamiento art. 19.1 LIS - Líquido a ingresar incluido el 1er fraccionamiento del art. 19.1 LIS: Estado 
 				
 				,(line, mod200, label) -> {
 					
@@ -2081,15 +2187,23 @@ public class Mod2002024Writer {
 					
 					line.append(AonFiscalFileUtils.text(importe < 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
 					line.append(AonFiscalFileUtils.signedZero(importe < 0 ? Math.abs(importe) : 0.0, DS, DD)); 						          // Devolución - Importe a devolver
-					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");                                                  // Devolución - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
-                    line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));         // Devolución - Número de cuenta IBAN (si devolución por transferencia)
-					//line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getBic() : "", 11));          // Devolución - Código SWIFT-BIC
-					line.append(AonFiscalFileUtils.spaces(11));  // Devolución - Código SWIFT-BIC - No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la aeat, lo pone por defecto en el apartado de cuenta extranjera UE
-					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));    // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Adeudo en cuenta, "U" Domiciliación
+					
+					addSignedKey(line, mod200, Mod2002024Key.LQ866);  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
+					
+					// FALTA - A VER COMO FUNCIONA LO DE LA RECTIFICACION, SUPONGO QUE EL IBAN TAMBIEN HABRA QUE PONERLO CUANDO HAYA IMPORTE RECTIFICACION (CASILLA 866) NO SOLO CUANDO SEA DEVOLUCION
+					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
+                    line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
+					line.append(AonFiscalFileUtils.spaces(11));  // Cuenta Bancaria - Código SWIFT-BIC (No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la AEAT, lo pone por defecto en el apartado de cuenta extranjera UE)
+					line.append(AonFiscalFileUtils.spaces(70));  // Cuenta Bancaria - Banco/Bank name (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+					line.append(AonFiscalFileUtils.spaces(35));  // Cuenta Bancaria - Dirección del Banco/ Bank adress (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+					line.append(AonFiscalFileUtils.spaces(30));  // Cuenta Bancaria - Ciudad/City (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)					
+					line.append(AonFiscalFileUtils.spaces( 2));  // Cuenta Bancaria - Código País/Country code (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+					
+					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Ingreso, "U" Domiciliación
 					if (mod200.getDoubleValue(Mod2002024Key.LQ2489) > 0) 
-					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002024Key.LQ2489), DS, DD));    // Ingreso - Importe a ingresar
+					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002024Key.LQ2489), DS, DD));  // Ingreso - Importe a ingresar
 					else
-					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));    // Ingreso - Importe a ingresar
+					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));  // Ingreso - Importe a ingresar
 					line.append(AonFiscalFileUtils.text(importe > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
 
 					addSignedKey(line, mod200, Mod2002024Key.BN1020); // Abono/Compensación - Abono por conversión de activos impuesto diferido - A
@@ -2098,16 +2212,9 @@ public class Mod2002024Writer {
 					addSignedKey(line, mod200, Mod2002024Key.LQ2490); // Abono/Compensación - Resultado de conversión de AID tras regularización: Compensación 
 					addSignedKey(line, mod200, Mod2002024Key.LQ2493); // Abono/Compensación - Resultado de conversión de AID tras regularización: A ingresar 
 
-					line.append(importe == 0 ? "1" : "0");   // Cuota Cero "0" o "1"
+					line.append(importe == 0 ? "1" : "0");  // Resultado Cero "0" o "1"
 					
-					// Datos bancarios devolucion por transferencia a cuenta bancaria abierta en el extranjero (fuera de la unión europea) (Se asume que la cuenta es de España)
-					line.append(AonFiscalFileUtils.spaces(70)); // Devolución - Banco/Bank name
-					line.append(AonFiscalFileUtils.spaces(35)); // Devolución - Dirección del Banco/ Bank adress
-					line.append(AonFiscalFileUtils.spaces(30)); // Devolución - Ciudad/City					
-					line.append(AonFiscalFileUtils.spaces( 2)); // Devolución - Código País/Country code
-					
-				}
-				
+				}				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 
@@ -2115,7 +2222,7 @@ public class Mod2002024Writer {
 
 		private String tag;
 		private IPropertyFiller[] propertyFillers;
-
+		
 		private Pages2024(String t, IPropertyFiller[] pf) {
 			this.tag = t;
 			this.propertyFillers = pf;
@@ -2126,7 +2233,7 @@ public class Mod2002024Writer {
 			// Controles determinadas páginas que solo se ponen si están marcados ciertos caracteres
 			boolean addPage = true;
 
-			// Página 9 a 11. ECPN. Si están marcadas las casillas 75, 76 o 77
+			// Páginas 9 a 11. ECPN. Si están marcadas las casillas 75, 76 o 77
 			if (this == Pages2024.PAG09 || this == Pages2024.PAG10 || this == Pages2024.PAG11) {
 				addPage = (mod200.getEcpnType() == EcpnType.NORMAL) || (mod200.getEcpnType() == EcpnType.ABREVIADO) || (mod200.getEcpnType() == EcpnType.PYMES);
 			}
@@ -2155,30 +2262,70 @@ public class Mod2002024Writer {
 			if (this == Pages2024.PAG26) {
 				addPage = (mod200.isChecked(Mod2002024Key.C0028));
 			}
+//			
+//			// Páginas 26B: Solo si hay algún importe en la pagina
+//			if (this == Pages2024.PAG26B) {				
+//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC0073, Mod2002024KeyDC.DC2670);
+//			}
+//			
+//			// Páginas 26C: Solo si hay algún importe en la pagina			
+//			if (this == Pages2024.PAG26C) {
+//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC2674, Mod2002024KeyDC.DC2880);
+//			}
+//			
+//			// Páginas 26D: Solo si hay algún importe en la pagina
+//			if (this == Pages2024.PAG26D) {
+//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3241, Mod2002024KeyDC.DC3040);
+//			}
+//
+//			// Páginas 26E: Solo si hay algún importe en la pagina
+//			if (this == Pages2024.PAG26E) {
+//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3044, Mod2002024KeyDC.DC3240);
+//			}
+//			
+//			// Páginas 26F: Solo si hay algún importe en la pagina
+//			if (this == Pages2024.PAG26F) {
+//				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3246, Mod2002024KeyDC.DC3400) ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2305) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2301) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2303) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2307) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2309) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2306) != 0 ||					
+//						  mod200.getDoubleValue(Mod2002024Key.DC2302) != 0 ||	
+//						  mod200.getDoubleValue(Mod2002024Key.DC2304) != 0 ||	
+//						  mod200.getDoubleValue(Mod2002024Key.DC2308) != 0 ||
+//						  mod200.getDoubleValue(Mod2002024Key.DC2310) != 0;
+//			}
 			
-			// Páginas 26B: Solo si hay algún importe en la pagina
+			// Página 26B: Solo si hay algún importe en la pagina
 			if (this == Pages2024.PAG26B) {				
-				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC0073, Mod2002024KeyDC.DC2670);
+				addPage = addBreakdownCorrectionKeys(null, mod200, 0);
 			}
 			
-			// Páginas 26C: Solo si hay algún importe en la pagina			
+			// Página 26C: Solo si hay algún importe en la pagina			
 			if (this == Pages2024.PAG26C) {
-				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC2674, Mod2002024KeyDC.DC2880);
+				addPage = addBreakdownCorrectionKeys(null, mod200, 1);
 			}
 			
-			// Páginas 26D: Solo si hay algún importe en la pagina
+			// Página 26D: Solo si hay algún importe en la pagina
 			if (this == Pages2024.PAG26D) {
-				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3241, Mod2002024KeyDC.DC3040);
+				addPage = addBreakdownCorrectionKeys(null, mod200, 2);
 			}
 
-			// Páginas 26E: Solo si hay algún importe en la pagina
+			// Página 26E: Solo si hay algún importe en la pagina
 			if (this == Pages2024.PAG26E) {
-				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3044, Mod2002024KeyDC.DC3240);
+				addPage = addBreakdownCorrectionKeys(null, mod200, 3);
 			}
 			
-			// Páginas 26F: Solo si hay algún importe en la pagina
+			// Página 26F: Solo si hay algún importe en la pagina
 			if (this == Pages2024.PAG26F) {
-				addPage = addBreakdownCorrectionKeys(null, mod200, Mod2002024KeyDC.DC3246, Mod2002024KeyDC.DC3400) ||
+				addPage = addBreakdownCorrectionKeys(null, mod200, 4);
+			}
+			
+			// Página 26G: Solo si hay algún importe en la pagina
+			if (this == Pages2024.PAG26G) {
+				addPage = addBreakdownCorrectionKeys(null, mod200, 5) ||
 						  mod200.getDoubleValue(Mod2002024Key.DC2305) != 0 ||
 						  mod200.getDoubleValue(Mod2002024Key.DC2301) != 0 ||
 						  mod200.getDoubleValue(Mod2002024Key.DC2303) != 0 ||
@@ -2198,6 +2345,7 @@ public class Mod2002024Writer {
 				}
 			}
 		}
+
 	}
 
 	public static void fillWriter(Mod2002024 mod200, Writer line) throws IOException {

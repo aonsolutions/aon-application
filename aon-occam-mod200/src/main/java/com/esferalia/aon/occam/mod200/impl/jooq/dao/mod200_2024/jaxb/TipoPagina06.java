@@ -1,15 +1,14 @@
 //
-// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
-// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
+// Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// 
+// Generado el: 2025.05.05 a las 11:04:44 AM CEST 
 //
 
 
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.jaxb;
 
 import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,42 +21,50 @@ import javax.xml.bind.annotation.XmlType;
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina06">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="T00229" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00230" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00703" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00704" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00232" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00233" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00234" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00235" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00236" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00237" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00238" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00241" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00242" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00243" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00244" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00245" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00246" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00247" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00248" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00249" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00250" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00251" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tipo_Pagina06"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="T00785" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00787" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00788" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00789" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00229" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00230" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00703" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00704" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00232" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00233" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00234" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00235" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00236" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00237" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00238" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00241" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00242" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00243" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00244" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00245" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00246" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00247" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00248" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00249" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00250" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00251" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tipo_Pagina06", propOrder = {
+    "t00785",
+    "t00787",
+    "t00788",
+    "t00789",
     "t00229",
     "t00230",
     "t00703",
@@ -83,6 +90,14 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class TipoPagina06 {
 
+    @XmlElement(name = "T00785")
+    protected BigDecimal t00785;
+    @XmlElement(name = "T00787")
+    protected BigDecimal t00787;
+    @XmlElement(name = "T00788")
+    protected BigDecimal t00788;
+    @XmlElement(name = "T00789")
+    protected BigDecimal t00789;
     @XmlElement(name = "T00229")
     protected BigDecimal t00229;
     @XmlElement(name = "T00230")
@@ -127,6 +142,102 @@ public class TipoPagina06 {
     protected BigDecimal t00250;
     @XmlElement(name = "T00251")
     protected BigDecimal t00251;
+
+    /**
+     * Obtiene el valor de la propiedad t00785.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00785() {
+        return t00785;
+    }
+
+    /**
+     * Define el valor de la propiedad t00785.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00785(BigDecimal value) {
+        this.t00785 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00787.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00787() {
+        return t00787;
+    }
+
+    /**
+     * Define el valor de la propiedad t00787.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00787(BigDecimal value) {
+        this.t00787 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00788.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00788() {
+        return t00788;
+    }
+
+    /**
+     * Define el valor de la propiedad t00788.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00788(BigDecimal value) {
+        this.t00788 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00789.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00789() {
+        return t00789;
+    }
+
+    /**
+     * Define el valor de la propiedad t00789.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00789(BigDecimal value) {
+        this.t00789 = value;
+    }
 
     /**
      * Obtiene el valor de la propiedad t00229.

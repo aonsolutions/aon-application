@@ -1,15 +1,14 @@
 //
-// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
-// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
+// Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// 
+// Generado el: 2025.05.05 a las 11:04:44 AM CEST 
 //
 
 
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.jaxb;
 
 import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,105 +21,105 @@ import javax.xml.bind.annotation.XmlType;
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina11">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="T00387" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00388" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00389" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00390" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00391" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00392" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00401" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00402" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00403" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00404" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00405" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00406" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00415" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00416" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00417" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00418" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00419" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00420" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00443" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00444" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00445" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00446" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00448" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00457" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00458" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00461" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00462" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00485" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00486" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00489" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00490" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00499" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00502" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00503" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00504" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00527" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00528" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00529" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00530" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00531" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00532" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00541" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00542" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00543" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00544" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00545" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00546" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00555" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00556" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00557" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00558" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00560" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00569" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00570" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00571" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00572" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00574" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00583" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00584" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00585" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00586" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00588" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00597" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00598" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00599" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00600" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00602" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00611" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00612" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00613" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00614" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00615" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00616" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00625" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00626" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00627" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00628" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00629" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00630" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00722" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00723" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00724" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00725" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00726" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00727" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00736" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00737" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00738" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00739" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00740" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00741" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tipo_Pagina11"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="T00387" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00388" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00389" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00390" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00391" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00392" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00401" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00402" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00403" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00404" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00405" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00406" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00415" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00416" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00417" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00418" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00419" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00420" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00443" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00444" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00445" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00446" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00448" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00457" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00458" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00461" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00462" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00485" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00486" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00489" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00490" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00499" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00502" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00503" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00504" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00527" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00528" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00529" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00530" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00531" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00532" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00541" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00542" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00543" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00544" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00545" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00546" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00555" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00556" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00557" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00558" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00560" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00569" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00570" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00571" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00572" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00574" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00583" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00584" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00585" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00586" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00588" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00597" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00598" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00599" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00600" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00602" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00611" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00612" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00613" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00614" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00615" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00616" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00625" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00626" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00627" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00628" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00629" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00630" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00722" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00723" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00724" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00725" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00726" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00727" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00736" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00737" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00738" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00739" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00740" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00741" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

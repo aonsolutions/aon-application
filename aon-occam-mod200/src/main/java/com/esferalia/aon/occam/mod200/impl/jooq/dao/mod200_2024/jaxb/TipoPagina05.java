@@ -1,15 +1,14 @@
 //
-// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
-// Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.1-b171012.0423 
+// Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// 
+// Generado el: 2025.05.05 a las 11:04:44 AM CEST 
 //
 
 
 package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024.jaxb;
 
 import java.math.BigDecimal;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,55 +21,65 @@ import javax.xml.bind.annotation.XmlType;
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="tipo_Pagina05">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="T00188" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00189" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00190" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00192" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00193" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00702" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T01001" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T01002" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00712" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00194" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00195" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00196" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00197" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00198" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00199" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00200" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00201" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00202" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00203" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00204" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00205" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00206" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00207" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00208" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00209" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00211" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00212" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00213" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00214" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00215" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00217" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00218" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00219" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00220" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00221" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00222" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00223" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00224" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00225" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00226" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *         &lt;element name="T00227" type="{}tipo_ImpNegativo" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tipo_Pagina05"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="T00188" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00189" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00764" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00765" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00190" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00192" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00193" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00702" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T01001" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T01002" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00712" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00766" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00767" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00194" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00195" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00196" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00197" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00198" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00199" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00200" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00768" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00769" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00201" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00202" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00203" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00204" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00205" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00206" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00207" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00208" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00209" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00780" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00782" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00783" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00784" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00211" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00212" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00213" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00214" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00215" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00217" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00218" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00219" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00220" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00221" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00222" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00223" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00224" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00225" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00226" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *         &lt;element name="T00227" type="{}tipo_ImpNegativo" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -79,6 +88,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "tipo_Pagina05", propOrder = {
     "t00188",
     "t00189",
+    "t00764",
+    "t00765",
     "t00190",
     "t00192",
     "t00193",
@@ -86,6 +97,8 @@ import javax.xml.bind.annotation.XmlType;
     "t01001",
     "t01002",
     "t00712",
+    "t00766",
+    "t00767",
     "t00194",
     "t00195",
     "t00196",
@@ -93,6 +106,8 @@ import javax.xml.bind.annotation.XmlType;
     "t00198",
     "t00199",
     "t00200",
+    "t00768",
+    "t00769",
     "t00201",
     "t00202",
     "t00203",
@@ -102,6 +117,10 @@ import javax.xml.bind.annotation.XmlType;
     "t00207",
     "t00208",
     "t00209",
+    "t00780",
+    "t00782",
+    "t00783",
+    "t00784",
     "t00211",
     "t00212",
     "t00213",
@@ -125,6 +144,10 @@ public class TipoPagina05 {
     protected BigDecimal t00188;
     @XmlElement(name = "T00189")
     protected BigDecimal t00189;
+    @XmlElement(name = "T00764")
+    protected BigDecimal t00764;
+    @XmlElement(name = "T00765")
+    protected BigDecimal t00765;
     @XmlElement(name = "T00190")
     protected BigDecimal t00190;
     @XmlElement(name = "T00192")
@@ -139,6 +162,10 @@ public class TipoPagina05 {
     protected BigDecimal t01002;
     @XmlElement(name = "T00712")
     protected BigDecimal t00712;
+    @XmlElement(name = "T00766")
+    protected BigDecimal t00766;
+    @XmlElement(name = "T00767")
+    protected BigDecimal t00767;
     @XmlElement(name = "T00194")
     protected BigDecimal t00194;
     @XmlElement(name = "T00195")
@@ -153,6 +180,10 @@ public class TipoPagina05 {
     protected BigDecimal t00199;
     @XmlElement(name = "T00200")
     protected BigDecimal t00200;
+    @XmlElement(name = "T00768")
+    protected BigDecimal t00768;
+    @XmlElement(name = "T00769")
+    protected BigDecimal t00769;
     @XmlElement(name = "T00201")
     protected BigDecimal t00201;
     @XmlElement(name = "T00202")
@@ -171,6 +202,14 @@ public class TipoPagina05 {
     protected BigDecimal t00208;
     @XmlElement(name = "T00209")
     protected BigDecimal t00209;
+    @XmlElement(name = "T00780")
+    protected BigDecimal t00780;
+    @XmlElement(name = "T00782")
+    protected BigDecimal t00782;
+    @XmlElement(name = "T00783")
+    protected BigDecimal t00783;
+    @XmlElement(name = "T00784")
+    protected BigDecimal t00784;
     @XmlElement(name = "T00211")
     protected BigDecimal t00211;
     @XmlElement(name = "T00212")
@@ -250,6 +289,54 @@ public class TipoPagina05 {
      */
     public void setT00189(BigDecimal value) {
         this.t00189 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00764.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00764() {
+        return t00764;
+    }
+
+    /**
+     * Define el valor de la propiedad t00764.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00764(BigDecimal value) {
+        this.t00764 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00765.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00765() {
+        return t00765;
+    }
+
+    /**
+     * Define el valor de la propiedad t00765.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00765(BigDecimal value) {
+        this.t00765 = value;
     }
 
     /**
@@ -395,7 +482,7 @@ public class TipoPagina05 {
     public void setT01002(BigDecimal value) {
         this.t01002 = value;
     }
-    
+
     /**
      * Obtiene el valor de la propiedad t00712.
      * 
@@ -418,6 +505,54 @@ public class TipoPagina05 {
      */
     public void setT00712(BigDecimal value) {
         this.t00712 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00766.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00766() {
+        return t00766;
+    }
+
+    /**
+     * Define el valor de la propiedad t00766.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00766(BigDecimal value) {
+        this.t00766 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00767.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00767() {
+        return t00767;
+    }
+
+    /**
+     * Define el valor de la propiedad t00767.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00767(BigDecimal value) {
+        this.t00767 = value;
     }
 
     /**
@@ -586,6 +721,54 @@ public class TipoPagina05 {
      */
     public void setT00200(BigDecimal value) {
         this.t00200 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00768.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00768() {
+        return t00768;
+    }
+
+    /**
+     * Define el valor de la propiedad t00768.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00768(BigDecimal value) {
+        this.t00768 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00769.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00769() {
+        return t00769;
+    }
+
+    /**
+     * Define el valor de la propiedad t00769.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00769(BigDecimal value) {
+        this.t00769 = value;
     }
 
     /**
@@ -802,6 +985,102 @@ public class TipoPagina05 {
      */
     public void setT00209(BigDecimal value) {
         this.t00209 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00780.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00780() {
+        return t00780;
+    }
+
+    /**
+     * Define el valor de la propiedad t00780.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00780(BigDecimal value) {
+        this.t00780 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00782.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00782() {
+        return t00782;
+    }
+
+    /**
+     * Define el valor de la propiedad t00782.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00782(BigDecimal value) {
+        this.t00782 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00783.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00783() {
+        return t00783;
+    }
+
+    /**
+     * Define el valor de la propiedad t00783.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00783(BigDecimal value) {
+        this.t00783 = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad t00784.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public BigDecimal getT00784() {
+        return t00784;
+    }
+
+    /**
+     * Define el valor de la propiedad t00784.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigDecimal }
+     *     
+     */
+    public void setT00784(BigDecimal value) {
+        this.t00784 = value;
     }
 
     /**

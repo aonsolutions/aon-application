@@ -630,7 +630,7 @@ public class Mod2002024Constants {
 		,{Mod2002024Key.UT2962 ,Mod2002024Key.UT2963}
 	};
 	
-	public static final Mod2002024Key[][] UTE_KEYS_B81 = {
+	public static final Mod2002024Key[][] UTE_KEYS_B8_1 = {
 		 {Mod2002024Key.UT2964 ,Mod2002024Key.UT2965}
 		,{Mod2002024Key.UT2967 ,Mod2002024Key.UT2968}
 		,{Mod2002024Key.UT2969 ,Mod2002024Key.UT2970}
@@ -653,7 +653,7 @@ public class Mod2002024Constants {
 		,{Mod2002024Key.UT3359 ,Mod2002024Key.UT3360}			
 	};
 	
-	public static final Mod2002024Key[][] UTE_KEYS_B82 = {
+	public static final Mod2002024Key[][] UTE_KEYS_B8_2 = {
 		 {Mod2002024Key.UT3285 ,Mod2002024Key.UT3287}
 		,{Mod2002024Key.UT3288 ,Mod2002024Key.UT3289}
 		,{Mod2002024Key.UT3290 ,Mod2002024Key.UT3311}
