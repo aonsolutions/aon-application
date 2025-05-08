@@ -126,6 +126,7 @@ export const DONE = 'done';
 export const EDIT = 'edit';
 export const EDIT_DOCUMENT = 'edit_document';
 export const EQUALIZER = 'equalizer';
+export const EMIT = 'list_alt_check';
 export const ERROR = 'error';
 export const EURO = 'euro';
 export const EURO_SYMBOL = 'euro_symbol';
