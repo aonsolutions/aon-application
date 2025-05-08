@@ -430,7 +430,7 @@ export class AonSearch extends AonElement {
         break;
       }
 
-      // Si hemos creado un componente, lo a�adimos al array
+      // Si hemos creado un componente, lo aniadimos al array
       if (component) {
         // Asi tenemos los componetes que se montan para limpiar el filtro o lo que se quiera
         this.formComponents.push(component);
@@ -446,7 +446,7 @@ export class AonSearch extends AonElement {
       // Solo agregado por ahora inputs del documental, probar los demas!!!!!!!!!!!!!!!!!!!!!!!!!
       this.formComponents.forEach(component => {
         if (component.tagName === TAG.AON_NEW_SELECT.toUpperCase() && typeof component.setValue === 'function') {
-          // Limpiar select (valor vac�o)
+          // Limpiar select (valor vacio)
           component.setValue('');
         } else if (component.tagName === TAG.AON_SWITCH.toUpperCase() && typeof component.checked !== undefined) {
           // Limpiar checkbox (desmarcar)

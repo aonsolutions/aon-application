@@ -114,14 +114,13 @@ export class AonDocumentalList extends AonElement {
 				detail.tag = JSON.stringify(tagIds.map(id => ({ id })));
 				}
 
-				// Eliminar los checkboxes individuales del filtro
+				// Eliminar los checkboxes individuales del filtro para que no se muestren en la llamada
 				Object.keys(detail).forEach(key => {
 				if (key.startsWith("checkbox")) {
 				delete detail[key];
 				}
 				});
-				// 🔄 Limpieza final para evitar duplicados
-				delete detail.tags; // ← Asegúrate de eliminar el campo con los nombres de los tags
+				delete detail.tags; 
 			}
 
 	        if(detail) {
