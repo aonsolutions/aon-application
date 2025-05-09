@@ -30,7 +30,7 @@ const AON_SERVICE = {
 const AON_SALES_ENTERPRISE = {
     id: 'sideNavSalesEnterprise',
     name: 'Procesar Pedidos',
-    icon: MATERIAL_ICONS.CONTRACT
+    icon: MATERIAL_ICONS.EMIT
 }
 
 

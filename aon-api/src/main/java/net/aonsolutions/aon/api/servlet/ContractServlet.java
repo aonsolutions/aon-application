@@ -114,7 +114,10 @@ public class ContractServlet extends AonApiHttpServlet {
 			filter = filter.and(properties.getWorkplaceProperty().eq(workplace));
 		}
 		if(name != null) {
-			filter = filter.and(properties.getPersonFullNameProperty().like("%"+name+"%"));
+			String[] words = name.split("\\s");
+			for (String word : words) {
+				filter = filter.and(properties.getPersonFullNameProperty().like("%"+word+"%"));
+			}
 		}
 		if(status != null) {			
 			if(Boolean.TRUE.equals(status)) {

@@ -234,7 +234,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 			
 			Integer limit = api.getData().optInt(IJsonNames.LIMIT, Integer.MAX_VALUE); 
 			
-			List<String> schemas = AONContext.getSchemas();
+			List<String> schemas = AONContext.getSchemas(api.getDomain().getName());
 		
 			try {
 				for(String schema : schemas) {

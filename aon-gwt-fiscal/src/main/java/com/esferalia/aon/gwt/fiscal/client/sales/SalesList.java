@@ -350,7 +350,10 @@ public abstract class SalesList extends AonCustomDockLayout {
 		processButton.addClickHandler(event -> {
 			event.stopPropagation();
 			
-			Window.alert("Procesar Pedido");
+			new ProcessSalesDialog(sale.getId(), params) {
+				@Override
+				public void onSaleProcess() { onSearch(); }
+			};
 			
 //			processButton.setEnabled(false);
 			

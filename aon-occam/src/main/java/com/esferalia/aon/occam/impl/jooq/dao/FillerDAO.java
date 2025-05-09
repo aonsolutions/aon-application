@@ -154,6 +154,7 @@ public class FillerDAO {
 				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
 				.setAonCustomer(r.getValue(domainTable.AONCUSTOMER))
 				.setAonStatus(AonStatus.safeValueOf(r.getValue(domainTable.AONSTATUS)))
+				.setSubDomainSuffix(r.getValue(domainTable.SUBDOMAINSUFFIX))
 				;	
 		}
 	}

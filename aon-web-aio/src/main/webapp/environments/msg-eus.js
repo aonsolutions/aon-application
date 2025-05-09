@@ -129,7 +129,7 @@ export const DATE = 'Data';
 export const DATE_CREATION = 'Sortze-data';
 export const DARK = 'Iluna';
 export const DEACTIVATE = 'Desaktibatu';
-export const DEFAULT_CATEGORIES = 'Kategoria lehenetsitakoak';
+export const DEFAULT_CATEGORIES = 'Kategoria lehenetsiak';
 export const DELETE = 'Ezabatu';
 export const DELETE_BACKGROUND_CONFIRM = 'Ziur zaude hondoa ezabatzeaz';
 export const DELETE_CATEGORY = 'Kategoria Ezabatu';
@@ -327,6 +327,7 @@ export const NUMBER_OF_PALLETS = "Palet kopurua";
 // ----- O
 export const OBSERVATION = 'Oharra';
 export const OFFICE = 'Bulegoa';
+export const OFFICE_CATEGORIES = 'Bulegoko kategoriak';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Estekatutako domeinurik gabeko domeinuak bakarrik";
 export const ONLY_PORTAL = 'Portala Soilik';
 export const OPEN = 'Ireki';
