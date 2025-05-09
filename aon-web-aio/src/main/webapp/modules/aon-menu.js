@@ -622,7 +622,7 @@ export class AonMenu extends AonElement {
 		else if(MenuApps.TOOLS.app === app.app)
 			return this.isBeta();
 		else if(MenuApps.OFFICE.app === app.app){
-			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+			return (this.isBeta() || this.isAyudaTorInfoautonomos()) && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
 		} else if(MenuApps.CONSOLE.app === app.app){
 			return this.isBeta();
 		} else if(MenuApps.MARKETING.app === app.app){
