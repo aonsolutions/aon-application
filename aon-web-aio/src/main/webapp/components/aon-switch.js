@@ -3,22 +3,21 @@ import { CONSTANT, TAG, EVENT } from '../environments/environments.js';
 import '../css/aon-switch.css';
 
 export class AonSwitch extends AonElement {
-
-	INPUT;
+  INPUT;
   LABEL;
-	TITLE;
+  TITLE;
 
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.CHECKED, CONSTANT.TITLE, CONSTANT.DISABLED];
   }
 
-	get id() {
-		return this.getAttribute(CONSTANT.ID);
-	}
+  get id() {
+    return this.getAttribute(CONSTANT.ID);
+  }
 
-	set id(id) {
-		this.setAttribute(CONSTANT.ID, id);
-	}
+  set id(id) {
+    this.setAttribute(CONSTANT.ID, id);
+  }
 
   get value() {
     return this.getAttribute(CONSTANT.VALUE)
@@ -28,7 +27,7 @@ export class AonSwitch extends AonElement {
     this.setAttribute(CONSTANT.VALUE, value);
   }
 
-	get title() {
+  get title() {
     return this.getAttribute(CONSTANT.TITLE)
   }
 
@@ -52,21 +51,21 @@ export class AonSwitch extends AonElement {
     this.setAttribute(CONSTANT.DISABLED, disabled);
   }
 
-	get readonly() {
-		return this.getAttribute(CONSTANT.READONLY);
-	}
+  get readonly() {
+    return this.getAttribute(CONSTANT.READONLY);
+  }
 
-	set readonly(readonly) {
-		this.setAttribute(CONSTANT.READONLY, readonly);
-	}
+  set readonly(readonly) {
+    this.setAttribute(CONSTANT.READONLY, readonly);
+  }
 
   get name() {
-		return this.getAttribute(CONSTANT.NAME);
-	}
+    return this.getAttribute(CONSTANT.NAME);
+  }
 
-	set name(name) {
-		this.setAttribute(CONSTANT.NAME, name);
-	}
+  set name(name) {
+    this.setAttribute(CONSTANT.NAME, name);
+  }
 
   attributeChangedCallback(name, oldValue, newValue) {
     const el = this.getElement(this.INPUT);
@@ -94,11 +93,11 @@ export class AonSwitch extends AonElement {
     }
   }
 
-	constructor () {
-		super();
-	}
+  constructor () {
+      super();
+  }
 
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     let label = this.createElement(TAG.LABEL);
     label.id = this.LABEL;
@@ -132,7 +131,7 @@ export class AonSwitch extends AonElement {
       boolean= true;
     }
     this.value = boolean;
-	}
+  }
 
   initialize() {
     this.id = this.id || 'aonSwitch';

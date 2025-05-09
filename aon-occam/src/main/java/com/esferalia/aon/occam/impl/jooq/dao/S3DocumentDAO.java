@@ -64,8 +64,7 @@ public class S3DocumentDAO {
 				.from(Rdoc.RDOC)
 				.leftJoin(RdocTag.RDOC_TAG).on(Rdoc.RDOC.ID.eq(RdocTag.RDOC_TAG.RDOC))
 				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-				.and(Rdoc.RDOC.DELETE_DATE.isNull())
-				;
+				.and(Rdoc.RDOC.DELETE_DATE.isNull());
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
 				.selectDistinct(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.select(DSL.inline((Integer) 1).as(TYPE_DOC))
@@ -110,16 +109,17 @@ public class S3DocumentDAO {
 			queryRAttach = queryRAttach.and(Rattach.RATTACH.CATEGORY.in(recursiveIds));
 		}
 		Select<Record> fullQuery;
+		
 		if(type == null) {
 			if(page != null && perPage != null && page.isPresent() && perPage.isPresent())
-				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.ID.desc()).limit(perPage.get()).offset(perPage.get() * (page.get() - 1));
+				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.DOCUMENT_DATE.desc()).limit(perPage.get()).offset(perPage.get() * (page.get() - 1));
 			else
-				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.ID.desc());
-		}
-		else if(type == 0)
-			fullQuery = queryRDoc.orderBy(Rdoc.RDOC.ID.desc());
+				fullQuery = queryRDoc.union(queryRAttach).orderBy(Rdoc.RDOC.DOCUMENT_DATE.desc());
+		} else if(type == 0)
+			fullQuery = queryRDoc.orderBy(Rdoc.RDOC.DOCUMENT_DATE.desc());
 		else
-			fullQuery = queryRAttach.orderBy(Rattach.RATTACH.ID.desc());
+			fullQuery = queryRAttach.orderBy(Rattach.RATTACH.ATTACH_DATE.desc());
+		
 		return fullQuery
 			.fetch()
 			.stream()
