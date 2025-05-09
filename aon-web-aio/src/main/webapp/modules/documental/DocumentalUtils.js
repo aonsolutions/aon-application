@@ -514,6 +514,9 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
               console.log('No hay categorias disponibles.');
             }
         });
+    } else {
+      // loader que se mete en el login - Parar
+      spinner.stopLoading();
     }
 
     // Agregar el selector de categorías a la tabla
