@@ -570,7 +570,7 @@ export class AonDocumentalList extends AonElement {
 		let toolbar = this.getElement(aonDocumental.TOOLBAR);
 		toolbar.addSeparator();
         if(this.isBetaDoc()){
-			if(!this._roles.isEmployee() && !this._roles.isEnterprise()){
+			if(this._roles.isDocumentalManager()){
 				aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeS3Files());
 			}
             aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadS3Files());
