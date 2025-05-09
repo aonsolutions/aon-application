@@ -20,6 +20,7 @@ import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
 
+import {AonDocumentalList} from './aon-documental-list.js';
 import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
@@ -467,40 +468,45 @@ export class AonDocumental extends AonElement {
 			if (titleSpan) {
 				titleSpan.innerHTML = labelText + (input.isRequired() ? " *" : "");
 			}
-		
+
 			// Actualizar el placeholder
 			const inputEl = input.getElement(input.INPUT);
 			if (inputEl) {
 				inputEl.placeholder = labelText;
 			}
 		};
-			
+
 		radioCategory.addEventListener('change', handleRadioChange);
-		radioTag.addEventListener('change', handleRadioChange);
-	
+
 		// Contenedor general
 		let container = document.createElement('div');
 		container.appendChild(radioContainer);
 		container.appendChild(document.createElement('br'));
 		container.appendChild(input);
-	
+
 		doc.setContent(container);
-	
+
 		// Acción de aceptar
 		doc.addAcceptAction(() => {
 			const value = input.value?.trim();
 			if (!value) return;
-	
+
 			if (radioCategory.checked) {
-				createCategory({ name: value }).then(() => this.loadCategories());
+              createCategory({ name: value })
+              .then(() => {
+                this.loadCategories();
+              });
 			} else {
-				createTag({ name: value }).then(() => this.loadTags());
+              createTag({ name: value })
+              .then(() => {
+                this.loadTags();
+              });
 			}
 		});
-	
+
 		doc.open();
 	}
-	
+
 	createCategory() {
         let d = document.getElementById(this.getApplication().DIALOG);
         d.clear();

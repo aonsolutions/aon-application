@@ -82,11 +82,11 @@ export class AonNewSelect extends AonNewInput {
     }
   }
 
-	constructor () {
-		super();
+  constructor () {
+    super();
   }
 
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     this.build();
     this.buildSelect();
@@ -104,7 +104,7 @@ export class AonNewSelect extends AonNewInput {
     let input = this.getElement(this.INPUT);
     if(input){
       input.readonly = this.isReadonly();
-      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {     
+      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
         input.setAttribute(CONSTANT.READONLY, true);
       }
 
@@ -309,6 +309,7 @@ export class AonNewSelect extends AonNewInput {
       super.setValue('');
     }
   }
+
   keyboardSelected({key}){
     const options = this.getElement(this.OPTIONS);
     let items = options.querySelectorAll('li');
@@ -474,6 +475,10 @@ export class AonNewSelect extends AonNewInput {
     this.value = "";
     let input = this.getElement(this.INPUT);
     if(input) input.value = "";
+    // limpiar los datos del multiple
+    if(this.multiple){
+      this.clearSelectable();
+    }
   }
 
   getText() {

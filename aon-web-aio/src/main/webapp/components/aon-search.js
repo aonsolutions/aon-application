@@ -447,7 +447,7 @@ export class AonSearch extends AonElement {
       this.formComponents.forEach(component => {
         if (component.tagName === TAG.AON_NEW_SELECT.toUpperCase() && typeof component.setValue === 'function') {
           // Limpiar select (valor vacio)
-          component.setValue('');
+          component.clear('');
         } else if (component.tagName === TAG.AON_SWITCH.toUpperCase() && typeof component.checked !== undefined) {
           // Limpiar checkbox (desmarcar)
           component.checked = false;

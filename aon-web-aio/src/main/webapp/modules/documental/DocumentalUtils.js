@@ -459,7 +459,7 @@ function S3DocumentalSelects(dur) {
 async function createCategorySection(table, spinner, trScope, trTag, trDatePicker) {
     let oldCategories =  await loadOldCategories();
     if (!Array.isArray(oldCategories)) {
-        oldCategories = [];
+      oldCategories = [];
     }
     // Crear la fila de categorías (Radio buttons)
     if (oldCategories.length > 0) {
@@ -515,6 +515,8 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
               console.log('No hay categorias disponibles.');
             }
         });
+    } else {
+      spinner.stopLoading();
     }
 
     // Agregar el selector de categorías a la tabla
