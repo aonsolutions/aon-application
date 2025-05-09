@@ -37,6 +37,7 @@ public class Domain implements Serializable {
 	private Date modificationDate;
 	private Integer aonCustomer;
 	private AonStatus aonStatus;
+	private String subDomainSuffix;
 	
 	private List<User> users;
 	private List<DomainApp> apps;
@@ -279,6 +280,15 @@ public class Domain implements Serializable {
 	}
 	public Domain setAonStatus(AonStatus aonStatus) {
 		this.aonStatus = aonStatus;
+		return this;
+	}
+
+	public String getSubDomainSuffix() {
+		return subDomainSuffix;
+	}
+
+	public Domain setSubDomainSuffix(String subDomainSuffix) {
+		this.subDomainSuffix = subDomainSuffix;
 		return this;
 	}
 	

@@ -19,7 +19,7 @@ export const DocumentalSidenav = {
   },
   DEFAULT_CATEGORIES: {
     id: 'DefaultCategories',
-    name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
+    name: MSG.OFFICE_CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
   USER_CATEGORIES: {

@@ -51,8 +51,9 @@ public class LoginServlet extends AonApiHttpServlet{
 		}
 		boolean ok = false;
 		Auth auth = new Auth();
+		String domainName = req.getServerName();
 	    if(Utils.isEmail(username)) {
-	       	List<String> schemas = AONContext.getSchemas();
+	       	List<String> schemas = AONContext.getSchemas(domainName);
 	    	if(!AonStringUtils.isBlank(login)) {
 	    		for(String schema: schemas) {
 	    			String domain = AONContext.getSchemaFirstDomain(schema);
@@ -133,7 +134,6 @@ public class LoginServlet extends AonApiHttpServlet{
 				} 
 				ok = true;
 			} else {
-				String domainName = req.getServerName();
 				Domain domain = AON_SOLUTIONS.getDomain(domainName);
 				
 				if ( domain != null && Objects.equals(domain.getName(), domainName )) {
@@ -146,7 +146,6 @@ public class LoginServlet extends AonApiHttpServlet{
 			}
 
 		} else {
-			String domainName = req.getServerName();
 			if(AonStringUtils.isNotBlank(domainName) 
 					&& !"aon.solutions".equals(domainName) 
 					&& !"aonsolutions.org".equals(domainName) 

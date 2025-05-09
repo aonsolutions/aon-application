@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -90,6 +91,7 @@ public interface CommonServiceAsync {
 	void getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate, AsyncCallback<AonConfiguration> callback);
 	void getAonConfiguration(Occam occam, AsyncCallback<AonConfiguration> asyncCallback);
 	void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> asyncCallback);
+	void getParentDomain(String domainName, int domain, String user, Integer id, AsyncCallback<Domain> asyncCallback) throws AonCoreException;
 
 	// **************************************************
 	// *************************************** [SECURITY]
@@ -336,6 +338,7 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getSales(SalesParams params, AsyncCallback<List<Sales>> asyncCallback) throws AonCoreException;
+	void getSale(String domainName, int domain, String user, Integer saleId, AsyncCallback<Sales> asyncCallback) throws AonCoreException;
 	
 	
 }

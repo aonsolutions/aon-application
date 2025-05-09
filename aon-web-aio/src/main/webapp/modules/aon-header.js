@@ -26,6 +26,24 @@ import * as GWT from '../gwt/gwt.js';
 import { AON_CUSTOMIZE_SUPPORT_EMAIL } from '../environments/appParams.js';
 import {favicon, title,  loadCustomView } from '../css/aon-customView.js';
 
+import {AonStringUtils} from './utils/AonStringUtils.js'
+
+const AON_DIALOG_SEARCH = 'aon-dialog-search';
+
+class AonDialogSearch extends AonDialogMenu {
+	
+	constructor(){
+		super();	
+	}
+	
+	close() {
+		this.hide();	
+	}
+	
+	hasContent(){
+		return this.getList();
+	}
+}
 
 export class AonHeader extends AonElement {
 
@@ -137,6 +155,10 @@ export class AonHeader extends AonElement {
 		aonHeaderSearchBox.addEventListener(EVENT.KEYUP, () => {
 			clearTimeout(this.searchTimeoutId);
 			this.searchTimeoutId = setTimeout( () => this.search(this) , 1000 );
+		} );
+		aonHeaderSearchBox.addEventListener(EVENT.FOCUS, () => {
+			clearTimeout(this.searchTimeoutId);
+			this.searchTimeoutId = setTimeout( () => this.showSearch(this) , 300 );
 		} );
 		aonHeaderSearch.appendChild(aonHeaderSearchBox);
 		div.appendChild(aonHeaderSearch);
@@ -528,7 +550,7 @@ export class AonHeader extends AonElement {
 		let header6 = this.getElement("aonHeaderUserButtonIconButton")
 		header6.style.color = "var--(aonGrayHeaderButtonsColor)";
 		
-		let aonHeaderSearchDialogMenu = new AonDialogMenu();
+		let aonHeaderSearchDialogMenu = new AonDialogSearch();
 		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
 		this.appendChild(aonHeaderSearchDialogMenu);
 
@@ -897,26 +919,27 @@ export class AonHeader extends AonElement {
 		
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
-				const name = company?.name?.toUpperCase().includes(aonHeaderSearchBoxValue.toUpperCase());
-				const document = company?.document?.toUpperCase().includes(aonHeaderSearchBoxValue.toUpperCase());
+				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
+				const document = AonStringUtils.containsMatching(company?.name,aonHeaderSearchBoxValue);
 				return document || name;
 			});
 		
 			let searchOptions = [];
 			
-			if ( searchCompanies.length > 0 ) {
-				let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
-				searchOptions.push({
-					icon: MATERIAL_ICONS.BUSINESS,
-					name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
-				});
-			}
+			let title = searchCompanies.length == 1 ? `${MSG.ONE} ${MSG.ENTERPRISE}` :`${searchCompanies.length} ${MSG.ENTERPRISES}`;
+			searchOptions.push({
+				icon: MATERIAL_ICONS.BUSINESS,
+				name: `<span style="font-weight: bold; cursor: default" >${title}</span>`,
+			});
 			
 			searchCompanies.slice(0, 10).forEach(company => {
+
+				const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
+				
 				searchOptions.push({
 					id: `Company${company.id}`,
 					icon: aonHeader.getIcon(company),
-					name: `<span>${company.name}</span><span style="float:right;">${company.document}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+					name: `<span>${companyName}</span><span style="float:right;">${company.document}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
 					title: `${company.domain}`,
 					fn: () => { aonHeader.companySelection(company); },
 				});
@@ -951,9 +974,10 @@ export class AonHeader extends AonElement {
 				})
 				.filter( contract => contract.company)
 				.forEach(contract => {
+					const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
 					searchOptions.push({
 						icon : MATERIAL_ICONS.PERSON,
-						name : `<span>${contract.name}</span><span style="float:right;">${contract.company.name}</span>`,
+						name : `<span>${contractName}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name})} );
 						},
@@ -969,10 +993,29 @@ export class AonHeader extends AonElement {
 			
 		});
 		
-		
-		
 	}
 	
+	decorateMatching (text, searcher) {
+		let decoratedText = text;
+		let matchingWords = AonStringUtils.getMatching(decoratedText, searcher);
+		for ( let matchingWord of matchingWords ) {
+			decoratedText = decoratedText.replaceAll(matchingWord, `<b>${matchingWord}</b>`);
+		}
+		return decoratedText;
+	}
+
+	showSearch(aonHeader) {
+		
+		let aonHeaderSearchBox = aonHeader.getElement(this.AON_HEADER_SEARCH_BOX);
+		let aonHeaderSearchDialogMenu =  aonHeader.getElement(this.AON_HEADER_SEARCH_DIALOG_MENU);
+		
+		if ( aonHeaderSearchDialogMenu.hasContent() ) {
+			aonHeaderSearchDialogMenu.getContent().style.minWidth = `${aonHeaderSearchBox.offsetWidth * 1.5}px`; 
+			aonHeaderSearchDialogMenu.open();
+		}
+ 		
+	}
+
 	setupDomainUrlCopy(searchOptions) {
 		searchOptions.filter(option => option.id).forEach(option => {
 			this.getElement(option.id).addEventListener(EVENT.MOUSEOVER, () => {
@@ -1147,3 +1190,4 @@ export class AonHeader extends AonElement {
 }
 
 window.customElements.define(TAG.AON_HEADER, AonHeader);
+window.customElements.define(AON_DIALOG_SEARCH, AonDialogSearch);
