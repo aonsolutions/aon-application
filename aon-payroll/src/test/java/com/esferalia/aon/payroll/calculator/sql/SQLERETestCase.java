@@ -2007,7 +2007,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
 				.getSalaryPayments()) {
 			System.out.println(payment.getName() + " = " + payment.getAmount()
-					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+					+ " " + payment.getExpression() + ", " + payment.getQuote() + "");
 		}
 		int monthDays = getMax(endDate, DAY_OF_MONTH);
 		Assert.assertEquals(
