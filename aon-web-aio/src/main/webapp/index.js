@@ -14,7 +14,7 @@ import './css/aon-figma.css';
 import { getThemeUrl } from './services/companyService.js';
 
 // Estilo por sass
-//localStorage.setItem('sass', 'true');
+localStorage.setItem('sass', 'true');
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -40,10 +40,10 @@ const load = () => {
     // TODO: Skip reload
 	LS.set(LS.NEW_THEME, true);
 	
-	loadScripts(); 
+	loadScripts();
 	loadTheme().then(
-      () => { 
-          favicon(); 
+      () => {
+          favicon();
           title();
           document.body.appendChild(new AonModule());
       },
@@ -139,7 +139,7 @@ const setWindowApp = () => {
     waitEl(TAG.AON_NOTIFICATION_ICON).then(aonNotificationIcon=>{
         aonNotificationIcon.initializeFB();
         aonNotificationIcon.getTotalNotification();
-    });  
+    });
 } 
 
 const loadScripts = () => {
