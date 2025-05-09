@@ -101,31 +101,24 @@
 									<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right" 
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="Invoice_issueDate-From"
-										valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+										value="#{invoiceRecorderSearch.defaultDateFrom}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" >
-										<a4j:support event="onchange"
-									    action="#{controller.afterSearchAction}"
-										actionListener="#{controller.onSearchList}"
-									    reRender="invoiceRecorderList"
-									    onsubmit="Richfaces.showModalPanel('waitProccess')"
-									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-									</aon:selectInputDate>
-										
-							
+										popupDateFormat="#{bundle.aon_date_pattern}"
+   										onvaluechange="setTimeout(function() { document.getElementById(aonContent:invoiceRecorderList:dateForm:searchDateButton).click(); }, 100);" />
 									<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label aon-padding-right" 
 										value="#{bundle.aon_date_to}:" />
 									<aon:selectInputDate id="Invoice_issueDate-To"
-										valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+										value="#{invoiceRecorderSearch.defaultDateTo}"
 										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}">
-										<a4j:support event="onchange"
-									    action="#{controller.afterSearchAction}"
+										popupDateFormat="#{bundle.aon_date_pattern}"
+    									onchange="setTimeout(function() { document.getElementById(aonContent:invoiceRecorderList:dateForm:searchDateButton).click(); }, 100);" /> 								
+									<aon:commandButton id="searchDateButton"
+										styleClass="aon-finding-toolbar-item aon-icon-close"
+										action="#{controller.afterSearchAction}"
 										actionListener="#{controller.onSearchList}"
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
-									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
-									</aon:selectInputDate> -->							
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/> -->
 							</aon:div>
 							<aon:div style="text-align: right;">
 								<aon:commandButton id="InvoiceRecorder-close"
