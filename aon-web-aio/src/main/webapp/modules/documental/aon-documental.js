@@ -20,7 +20,6 @@ import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 import { AonApplication } from '../../components/aon-application.js';
 
-import {AonDocumentalList} from './aon-documental-list.js';
 import './aon-documental-list.js';
 import './aon-document.js';
 import './aon-mobile-documental-list.js';
@@ -129,7 +128,7 @@ export class AonDocumental extends AonElement {
 
 		input.addEventListener(EVENT.CHANGE, () => this.upload(input.files));
 
-		aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
+        aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
 
 		if (this.isMobile()) {
 			if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
@@ -157,15 +156,15 @@ export class AonDocumental extends AonElement {
 			aonDocumental.addToolbarOption2(ACTION.ADD, () => this.createOptions());
 		}
 
-		let bool = await this.hasBidoq();
-		
-		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
-			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
-		}
-		
 		if (this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager()){
 			this.addDocumentOptions();
 		}
+
+        let bool = await this.hasBidoq();
+		if(bool && this.isBetaDoc() && this.getDur().isDocumentalManager()){
+			aonDocumental.addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
+		}
+
 		this.addTypeOptions();
 		this.addCategoryOptions();
 		this.addTagOptions();
@@ -410,7 +409,7 @@ export class AonDocumental extends AonElement {
 	}
 
 	createOptions() {
-		// Limpiar botones anteriores
+      	// Limpiar botones anteriores
 		const btnAccept = document.getElementById('aonDocumentalDialogDialogActionAccept');
 		const btnCancel = document.getElementById('aonDocumentalDialogDialogActionCancel');
 		if (btnAccept) btnAccept.remove();
@@ -492,14 +491,16 @@ export class AonDocumental extends AonElement {
 			if (!value) return;
 
 			if (radioCategory.checked) {
-              createCategory({ name: value })
-              .then(() => {
+              createCategory({ name: value }).then(() => {
                 this.loadCategories();
+                // recargar el filtro
+                this.aonDocumentalListRestFilter();
               });
 			} else {
-              createTag({ name: value })
-              .then(() => {
-                this.loadTags();git 
+              createTag({ name: value }).then(() => {
+                this.loadTags();
+                // recargar el filtro
+                this.aonDocumentalListRestFilter();
               });
 			}
 		});
@@ -747,14 +748,10 @@ export class AonDocumental extends AonElement {
 		let container = document.body;
 		container.appendChild(loadingOverlay);
 		try {
-			let datatest = {
-				document: '78150882x',
-			}
-
 			let data = {
 				document: localStorage.getItem('aon_domain_document'),
 			};
-			let response = await getBidoqDocuments(datatest);
+			let response = await getBidoqDocuments(data);
 			if (response) {
 				// documentalList.init();
 				this.loadCategories();
@@ -768,15 +765,18 @@ export class AonDocumental extends AonElement {
 	}
 
 	async hasBidoq(){
-		let datatest = {
-			document: '78150882x',
-		}
 		let data = {
-			document: localStorage.getItem('aon_domain_document')
+          document: localStorage.getItem('aon_domain_document')
 		};
-		let response = await checkBidoq(datatest);
+		let response = await checkBidoq(data);
 		return response;
 	}
+
+            
+    aonDocumentalListRestFilter(){
+      let documentalList = this.getElement('aonDocumentalList');
+      documentalList.buildToolbarSearch();
+    }
 
 	aonDocumentalList(filter) {
 		filter = filter || this._filter;
