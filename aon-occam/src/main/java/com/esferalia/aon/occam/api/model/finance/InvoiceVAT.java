@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -32,9 +34,7 @@ public class InvoiceVAT implements Serializable {
 	private boolean withholding;
 	private boolean prepayment;
 	
-	private Integer outputAccountId;
-	private String outputAccountCode;
-	private String outputAccountDescription;
+	private Account outputAccount;
 	private Integer inputAccountId;
 	private String inputAccountCode;
 	private String inputAccountDescription;
@@ -214,30 +214,11 @@ public class InvoiceVAT implements Serializable {
 		return this;
 	}
 
-	public Integer getOutputAccountId() {
-		return outputAccountId;
+	public Optional<Account> getOutputAccount() {
+		return Optional.ofNullable(outputAccount);
 	}
-
-	public InvoiceVAT setOutputAccountId(Integer outputAccountId) {
-		this.outputAccountId = outputAccountId;
-		return this;
-	}
-
-	public String getOutputAccountCode() {
-		return outputAccountCode;
-	}
-
-	public InvoiceVAT setOutputAccountCode(String outputAccountCode) {
-		this.outputAccountCode = outputAccountCode;
-		return this;
-	}
-
-	public String getOutputAccountDescription() {
-		return outputAccountDescription;
-	}
-
-	public InvoiceVAT setOutputAccountDescription(String outputAccountDescription) {
-		this.outputAccountDescription = outputAccountDescription;
+	public InvoiceVAT setOutputAccount(Account outputAccount) {
+		this.outputAccount = outputAccount;
 		return this;
 	}
 
@@ -383,9 +364,7 @@ public class InvoiceVAT implements Serializable {
 			.setDirectTaxPercent(this.directTaxPercent)
 			.setWithholding(this.withholding)
 			.setPrepayment(this.prepayment) 
-			.setOutputAccountId(this.outputAccountId)
-			.setOutputAccountCode(this.outputAccountCode)
-			.setOutputAccountDescription(this.outputAccountDescription)
+			.setOutputAccount(this.outputAccount)
 			.setInputAccountId(this.inputAccountId)
 			.setInputAccountCode(this.inputAccountCode)
 			.setInputAccountDescription(this.inputAccountDescription)

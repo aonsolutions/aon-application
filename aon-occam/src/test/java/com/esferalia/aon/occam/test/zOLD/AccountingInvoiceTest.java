@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -144,9 +145,9 @@ public class AccountingInvoiceTest {
 			System.out.println("deductiblePercent ...: " + vat.getDeductiblePercent());
 			System.out.println("deductibleQuota ...: " + vat.getDeductibleQuota());
 			System.out.println("withholding ...: " + vat.isWithholding());
-			System.out.println("outputAccountId ...: " + vat.getOutputAccountId());
-			System.out.println("outputAccountCode ...: " + vat.getOutputAccountCode());
-			System.out.println("outputAccountDescription ...: " + vat.getOutputAccountDescription());
+			System.out.println("outputAccountId ...: " + vat.getOutputAccount().map(Account::getId).orElse(null));
+			System.out.println("outputAccountCode ...: " + vat.getOutputAccount().map(Account::getCode).orElse(null));
+			System.out.println("outputAccountDescription ...: " + vat.getOutputAccount().map(Account::getDescription).orElse(null));
 			System.out.println("inputAccountId ...: " + vat.getInputAccountId());
 			System.out.println("inputAccountCode ...: " + vat.getInputAccountCode());
 			System.out.println("inputAccountDescription ...: " + vat.getInputAccountDescription());

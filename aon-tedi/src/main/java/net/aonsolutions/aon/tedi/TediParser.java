@@ -287,9 +287,7 @@ public class TediParser {
 				.setDeductiblePercent(tax.getDeductiblePercent())
 				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
 
-				.setOutputAccountId(outputAccount == null ? null : outputAccount.getId())
-				.setOutputAccountCode(outputAccount == null ? null : outputAccount.getCode())
-				.setOutputAccountDescription(outputAccount == null ? null : outputAccount.getDescription())
+				.setOutputAccount(outputAccount )
 
 				.setInputAccountId(inputAccount == null ? null : inputAccount.getId())
 				.setInputAccountCode(inputAccount == null ? null : inputAccount.getCode())

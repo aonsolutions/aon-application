@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -14,10 +15,14 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
-
+	
 	private static final String N_FRA = "N/Fra";
 	private static final String S_FRA = "S/Fra";
 	private static final String ABONO = "ABONO";
+	
+	private InvoiceRecorder() {
+		
+	}
 	
 	private static interface IVisitor {
 		void visit( AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map);
@@ -277,30 +282,24 @@ public class InvoiceRecorder {
 					for (InvoiceVAT vat : invoice.getVats()) {
 						double amount = vat.getDeductibleQuota() + vat.getSurchargeQuota();
 						if (AonMathUtils.isNotZero(amount)) {
-							Integer id = null;
-							String code = null;
-							String description = null;
-							if (vat.getOutputAccountId() == null) {
-								id = vat.getExpAccountId();
-								code = vat.getExpAccountCode();
-								description = vat.getExpAccountDescription();
-							} else {
-								id = vat.getOutputAccountId();
-								code = vat.getOutputAccountCode();
-								description = vat.getOutputAccountDescription();
-							}
-							if (id != null) {
-								AccountEntryDetail detail = map.get(id);
+							Account outAccount =  vat.getOutputAccount()
+								.orElse(new Account()
+									.setId(vat.getExpAccountId())
+									.setCode(vat.getExpAccountCode())
+									.setDescription(vat.getExpAccountDescription())
+							);
+							if (outAccount != null && outAccount.getId() != null) {
+								AccountEntryDetail detail = map.get(outAccount.getId());
 								if (detail == null) {
 									detail = new AccountEntryDetail()
-											.setAccount(id)
-											.setAccountCode(code)
-											.setAccountDescription(description)
-											.setBalancingAccount(obtainRegistryAccount(invoice))
-											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-											;
-									map.put(id,detail);
+										.setAccount(outAccount.getId())
+										.setAccountCode(outAccount.getCode())
+										.setAccountDescription(outAccount.getDescription())
+										.setBalancingAccount(obtainRegistryAccount(invoice))
+										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+									;
+									map.put(outAccount.getId(),detail);
 								}
 								detail.addCredit( amount );
 							}

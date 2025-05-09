@@ -33,7 +33,6 @@ import org.jooq.AggregateFunction;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -51,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -60,7 +60,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -68,7 +67,6 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -338,28 +336,16 @@ public class AccountingInvoiceDAO {
 		.stream()
 		.forEach( tax -> {
 			Integer invoiceTaxId = tax.getValue(INVOICE_TAX.ID);
-			Integer vatAccountId = null;
-			String vatAccountCode = null;
-			String vatAccountDescription = null;
-			Record r = ctx.getDslContext()
-				.select(
-					VAT_ACCOUNT.ID,
-					VAT_ACCOUNT.CODE, 
-					VAT_ACCOUNT.DESCRIPTION)
+			Optional<Account> vatAccount = ctx.getDslContext()
+				.select(VAT_ACCOUNT.fields())
 				.from( INVOICE_TAX_ACCOUNT )
 				.leftOuterJoin( VAT_ACCOUNT ).on( INVOICE_TAX_ACCOUNT.ACCOUNT.eq(VAT_ACCOUNT.ID))
 				.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(invoiceTaxId))
 				.limit(1)
 				.fetch()
 				.stream()
-				.findFirst()
-				.orElse( null );
-			
-			if (r != null) {
-				vatAccountId = r.getValue(VAT_ACCOUNT.ID);
-				vatAccountCode = r.getValue(VAT_ACCOUNT.CODE);
-				vatAccountDescription = r.getValue(VAT_ACCOUNT.DESCRIPTION);
-			}
+				.map( r -> FullAccountFiller.build(r, VAT_ACCOUNT))
+				.findFirst();
 			
 			vat.setId(tax.getValue(INVOICE_TAX.ID))
 				.setInvoiceDetailId(tax.getValue(INVOICE_TAX.INVOICE_DETAIL))
@@ -403,9 +389,9 @@ public class AccountingInvoiceDAO {
 					ai.setWithholdingData( new InvoiceWithholding()
 							.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
 							.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-							.setAccountId(vatAccountId)
-							.setAccountCode(vatAccountCode)
-							.setAccountDescription(vatAccountDescription));
+							.setAccountId(vatAccount.map(Account::getId).orElse(null))
+							.setAccountCode(vatAccount.map(Account::getCode).orElse(null))
+							.setAccountDescription(vatAccount.map(Account::getDescription).orElse(null)));
 				}
 				ai.getWithholdingData()
 					.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )
@@ -413,24 +399,20 @@ public class AccountingInvoiceDAO {
 			}
 			if (!withholding) {
 				if (ai.isSales()) {
-					vat.setOutputAccountId(vatAccountId)
-					.setOutputAccountCode(vatAccountCode)
-					.setOutputAccountDescription(vatAccountDescription);
+					vat.setOutputAccount(vatAccount.orElse(null));
 				}
 				if (!ai.isSales()) {
-					vat.setInputAccountId(vatAccountId)
-					.setInputAccountCode(vatAccountCode)
-					.setInputAccountDescription(vatAccountDescription);
+					vat.setInputAccountId(vatAccount.map(Account::getId).orElse(null))
+						.setInputAccountCode(vatAccount.map(Account::getCode).orElse(null))
+						.setInputAccountDescription(vatAccount.map(Account::getDescription).orElse(null));
 					if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
-						vat.setOutputAccountId(config.accounting().getDefaultChargedVatAccount().getId())
-						.setOutputAccountCode(config.accounting().getDefaultChargedVatAccount().getCode())
-						.setOutputAccountDescription(config.accounting().getDefaultChargedVatAccount().getDescription());
+						vat.setOutputAccount(config.accounting().getDefaultChargedVatAccount());
 					}
 				}
 				if (vat.getInvestAsset() != null && config.accounting().getVatNegativeAdjustAccount() != null) {
 					vat.setAdjAccountId(config.accounting().getVatNegativeAdjustAccount().getId())
-					.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
-					.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
+						.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
+						.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
 				}
 				if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
 					vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())
@@ -571,11 +553,9 @@ public class AccountingInvoiceDAO {
 			vat.setInputAccountCode(inputVatAccount.getCode());
 			vat.setInputAccountDescription(inputVatAccount.getDescription());
 		}
-		if (outputVatAccount== null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
+		if (outputVatAccount == null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
 		if (outputVatAccount != null) {
-			vat.setOutputAccountId(outputVatAccount.getId());
-			vat.setOutputAccountCode(outputVatAccount.getCode());
-			vat.setOutputAccountDescription(outputVatAccount.getDescription());
+			vat.setOutputAccount(outputVatAccount);
 		}
 		if (config.accounting().getVatNegativeAdjustAccount() != null) {
 			vat.setAdjAccountId( config.accounting().getVatNegativeAdjustAccount().getId());
@@ -1243,7 +1223,9 @@ public class AccountingInvoiceDAO {
 					detail.setInvoiceTaxes( 
 						detail.getInvoiceTaxes().stream().map(r -> {
 							if(TaxType.VAT.equals(r.getTaxType()))
-								r.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId());
+								r.setAccount(accInvoice.isSales() 
+									? vat.getOutputAccount().map(Account::getId).orElse(null)
+									: vat.getInputAccountId());
 							return r;
 						}).collect(Collectors.toCollection(LinkedList::new))
 					);
@@ -1262,7 +1244,9 @@ public class AccountingInvoiceDAO {
 						// Issue: #2414
 						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
 						// https://github.com/aonsolutions/aon-application/issues/2414
-						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId())
+						.setAccount(accInvoice.isSales() 
+							? vat.getOutputAccount().map(Account::getId).orElse(null) 
+							: vat.getInputAccountId())
 					);
 				}
 				
@@ -1382,7 +1366,9 @@ public class AccountingInvoiceDAO {
 					detail.setInvoiceTaxes( 
 						detail.getInvoiceTaxes().stream().map(r -> {
 							if(TaxType.VAT.equals(r.getTaxType()))
-								r.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId());
+								r.setAccount(accInvoice.isSales() 
+									? vat.getOutputAccount().map(Account::getId).orElse(null)
+									: vat.getInputAccountId());
 							return r;
 						}).collect(Collectors.toCollection(LinkedList::new))
 					);
@@ -1402,7 +1388,9 @@ public class AccountingInvoiceDAO {
 						// Issue: #2414
 						// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
 						// https://github.com/aonsolutions/aon-application/issues/2414
-						.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId())
+						.setAccount(accInvoice.isSales() 
+							? vat.getOutputAccount().map(Account::getId).orElse(null) 
+							: vat.getInputAccountId())
 					);
 				}
 				
@@ -2118,18 +2106,14 @@ public class AccountingInvoiceDAO {
 					}
 					if (!withholding) {
 						if (ai.isSales()) {
-							vat.setOutputAccountId(vatAccount.map(Account::getId).orElse(null))
-							.setOutputAccountCode(vatAccount.map(Account::getCode).orElse(null))
-							.setOutputAccountDescription(vatAccount.map(Account::getDescription).orElse(null));
+							vat.setOutputAccount(vatAccount.orElse(null));
 						}
 						if (!ai.isSales()) {
 							vat.setInputAccountId(vatAccount.map(Account::getId).orElse(null))
 							.setInputAccountCode(vatAccount.map(Account::getCode).orElse(null))
 							.setInputAccountDescription(vatAccount.map(Account::getDescription).orElse(null));
 							if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
-								vat.setOutputAccountId(config.accounting().getDefaultChargedVatAccount().getId())
-								.setOutputAccountCode(config.accounting().getDefaultChargedVatAccount().getCode())
-								.setOutputAccountDescription(config.accounting().getDefaultChargedVatAccount().getDescription());
+								vat.setOutputAccount(config.accounting().getDefaultChargedVatAccount());
 							}
 						}
 						if (vat.getInvestAsset() != null && config.accounting().getVatNegativeAdjustAccount() != null) {

@@ -412,21 +412,9 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineOutputVatAccount(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		outputVatAccount = new AonAccountBox(callback.getOccam(), false);
 		outputVatAccount.setRequired(false);
-		outputVatAccount.setValue(
-			callback.getVat(vatIdx).getOutputAccountId(),
-			callback.getVat(vatIdx).getOutputAccountCode(),
-			callback.getVat(vatIdx).getOutputAccountDescription(),true);
+		outputVatAccount.setAccount(callback.getVat(vatIdx).getOutputAccount().orElse(null),true);
 		outputVatAccount.addSelectionHandler( event -> {
-			Account a = event.getSelectedItem();
-			if (a!=null) {
-				callback.getVat(vatIdx).setOutputAccountId(a.getId());
-				callback.getVat(vatIdx).setOutputAccountCode(a.getCode());
-				callback.getVat(vatIdx).setOutputAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setOutputAccountId(null);
-				callback.getVat(vatIdx).setOutputAccountCode(null);
-				callback.getVat(vatIdx).setOutputAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setOutputAccount(event.getSelectedItem());
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}

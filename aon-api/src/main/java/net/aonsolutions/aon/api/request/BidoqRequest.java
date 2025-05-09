@@ -280,9 +280,7 @@ public class BidoqRequest {
 					.setExpAccountCode(expAccount.getCode())
 					.setExpAccountDescription(expAccount.getDescription())
 							
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
+					.setOutputAccount(outputAccount)
 							
 					.setInputAccountCode(inputAccount.getCode())
 					.setInputAccountDescription(inputAccount.getDescription())
@@ -1388,9 +1386,7 @@ public class BidoqRequest {
 					.setExpAccountCode(expAccount.getCode())
 					.setExpAccountDescription(expAccount.getDescription())
 
-					.setOutputAccountCode(outputAccount.getCode())
-					.setOutputAccountDescription(outputAccount.getDescription())
-					.setOutputAccountId(outputAccount.getId())
+					.setOutputAccount(outputAccount)
 
 					.setInputAccountCode(inputAccount.getCode())
 					.setInputAccountDescription(inputAccount.getDescription()).setInputAccountId(inputAccount.getId())
