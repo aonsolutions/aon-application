@@ -17,7 +17,7 @@ export const DocumentalSidenav = {
     name: MSG.CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
-  DEFAULT_CATEGORIES: {
+  OFFICE_CATEGORIES: {
     id: 'DefaultCategories',
     name: MSG.OFFICE_CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL

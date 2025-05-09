@@ -180,7 +180,7 @@ export class AonDocumental extends AonElement {
 		let aonDocumental = this.getElement(this.DOCUMENTAL);
 
         if (this.isBetaDoc()) {
-			let data2 = DocumentalSidenav.DEFAULT_CATEGORIES;
+			let data2 = DocumentalSidenav.OFFICE_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data2);
 			let data3 = DocumentalSidenav.USER_CATEGORIES;
 			aonDocumental.addSidenavOptions3(data3);
@@ -298,7 +298,7 @@ export class AonDocumental extends AonElement {
 				});
 				
                 // Limpiamos
-                this.clearElementById(application.SIDENAV + DocumentalSidenav.DEFAULT_CATEGORIES.id + 'List');
+                this.clearElementById(application.SIDENAV + DocumentalSidenav.OFFICE_CATEGORIES.id + 'List');
                 this.clearElementById(application.SIDENAV + DocumentalSidenav.USER_CATEGORIES.id + 'List');
                 // Metemos el todo los documentos
                 let documentOptions = {
@@ -312,7 +312,7 @@ export class AonDocumental extends AonElement {
                     this.aonDocumentalList();
                   }
                 };
-                application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, documentOptions);
+                application.addSidenavOptionsListValue(DocumentalSidenav.OFFICE_CATEGORIES, documentOptions);
                 // Marcamos la primera opcion
                 application.getToolbar().attributeChangedCallback(CONSTANT.OPTION, '', MSG.ALL_FILES);
                 application.addBackgroundSidenav(MSG.ALL_FILES, DocumentalSidenav.DOCUMENTS.app.color);
@@ -329,7 +329,7 @@ export class AonDocumental extends AonElement {
 								this.aonDocumentalList();
 							}
 						};
-						application.addSidenavOptionsListValue(DocumentalSidenav.DEFAULT_CATEGORIES, optionDefaultCategory);
+						application.addSidenavOptionsListValue(DocumentalSidenav.OFFICE_CATEGORIES, optionDefaultCategory);
 					}else{
                         // Tiene datos en tus catogiras 
                         yourCategoriesVisibility = true;

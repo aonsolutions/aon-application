@@ -585,7 +585,7 @@ export class AonDocument extends AonElement {
     //Category
     let oldCategories = await loadOldCategories();
     if(oldCategories){
-      this.createCategoryRadio(table, 's3CategoriesRadio', MSG.DEFAULT_CATEGORIES, this.handleCategoryChange.bind(this));
+      this.createCategoryRadio(table, 's3CategoriesRadio', MSG.OFFICE_CATEGORIES, this.handleCategoryChange.bind(this));
       this.createCategoryRadio(table, 'oldCategoriesRadio', MSG.USER_CATEGORIES, this.handleCategoryChange.bind(this));
 
       let radioS3 = document.getElementById('s3CategoriesRadio');

@@ -297,7 +297,6 @@ export function handleRadioButtonChange(event) {
     }
 }
 
-
 function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     let select = document.getElementById("aonDocumentalUploadCategoryU");
     let table = document.getElementById("tableU");
@@ -305,7 +304,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     let trCategory = document.getElementById("trCategoryU");
     let trTag = document.getElementById("trTagU");
     let trDatePicker = document.getElementById("trDatePickerU");
-    let loadingOverlay = document.getElementById("aonDocumentalLoadingOverlay");
+    let spinner = document.getElementById(CONSTANT.ID_LOADER);
 
     let defaultOption = {
         value: "Seleccione una categoria",
@@ -347,7 +346,7 @@ function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
     }
 
     if (categoryType === 's3' && select.options) {
-      uploadedCategory(select, table, trScope, trTag, trCategory, trDatePicker, loadingOverlay);
+      uploadedCategory(select, table, trScope, trTag, trCategory, trDatePicker, spinner);
     }
 }
 
@@ -366,7 +365,7 @@ function S3DocumentalSelects(dur) {
     table.id = 'tableU';
   
     // Cargando loader que se mete en el login - Iniciar
-    const spinner = document.querySelector("#"+CONSTANT.ID_LOADER);
+    const spinner = document.getElementById(CONSTANT.ID_LOADER);
     spinner.startLoading();
 
     // Lógica de los checkboxes
@@ -463,7 +462,7 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
     }
     // Crear la fila de categorías (Radio buttons)
     if (oldCategories.length > 0) {
-        createRadioButtonRow(table, 's3CategoriesRadioU', MSG.DEFAULT_CATEGORIES, handleRadioButtonChange);
+        createRadioButtonRow(table, 's3CategoriesRadioU', MSG.OFFICE_CATEGORIES, handleRadioButtonChange);
         createRadioButtonRow(table, 'oldCategoriesRadioU', MSG.USER_CATEGORIES, handleRadioButtonChange);
     }
 
@@ -515,8 +514,6 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
               console.log('No hay categorias disponibles.');
             }
         });
-    } else {
-      spinner.stopLoading();
     }
 
     // Agregar el selector de categorías a la tabla
