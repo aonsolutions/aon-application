@@ -451,7 +451,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		return d;
 	}
 
-	public Boolean isChecked(Mod2002024Key key) {
+	public Boolean isChecked(Mod2002024Key key) {		
 		return (Boolean) get(key.toString());
 	}
 	public Boolean isCooperativa() {
@@ -1238,6 +1238,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		
 	}
 	
+	// FALTA - SUPONGO QUE AHORA PARA EL 2024 LAS REFERENCIAS A LA CASILLA 1962 SERAN A LA 2239 - REVISAR CON DOCUMENTO PADIS
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	// La clave 01033 (aumentos) sólo podrá tener contenido cuando la base imponible (clave 00552) sea negativa 
 	// (excepto en los supuestos de extinción de entidad (clave 00072) y de último período permitido para la adición) 
@@ -1246,7 +1247,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002024Key.LQ552);
-		double lq1962 = getValue(Mod2002024Key.LQ1962);
+//		double lq1962 = getValue(Mod2002024Key.LQ1962);
+		double lq2239 = getValue(Mod2002024Key.LQ2239);
 		
 		if (lq552>=0 && !isChecked(C0072)) {
 			// Base imponible [552] positiva o cero, [col2] = 0 
@@ -1255,8 +1257,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			// Base imponible [552] negativa, [col2] = [col1] - [col3] con el limite de la [552]
 			double col2 = col1-col3;
 			double total = suma + col2;			
-			if (total > (Math.abs(lq552)+lq1962)) {
-				col2 = col2 - (total - (Math.abs(lq552)+lq1962));
+			if (total > (Math.abs(lq552)+lq2239)) {
+				col2 = col2 - (total - (Math.abs(lq552)+lq2239));
 			}
 			return col2;		
 		}		
@@ -1467,7 +1469,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN498,
 			Mod2002024Key.BN473,
 			Mod2002024Key.BN181,
-			Mod2002024Key.BN032,
+//			Mod2002024Key.BN032,
 			Mod2002024Key.BN532,
 			Mod2002024Key.BN023,
 			Mod2002024Key.BN946,
@@ -1536,13 +1538,13 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1076,
 			Mod2002024Key.BN2456,
 			Mod2002024Key.BN1370,
-			Mod2002024Key.BN1627,
-			Mod2002024Key.BN1708,
-			Mod2002024Key.BN2363,
+//			Mod2002024Key.BN1627,
+//			Mod2002024Key.BN1708,
+//			Mod2002024Key.BN2363,
 			Mod2002024Key.BN2366,
 			Mod2002024Key.BN2372,
-			Mod2002024Key.BN2375,
-			Mod2002024Key.BN2378,
+//			Mod2002024Key.BN2375,
+//			Mod2002024Key.BN2378,
 			Mod2002024Key.BN260,
 			Mod2002024Key.BN263,
 			Mod2002024Key.BN269,
@@ -1559,17 +1561,17 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN431,
 			Mod2002024Key.BN434,
 			Mod2002024Key.BN440,
-			Mod2002024Key.BN453,
-			Mod2002024Key.BN456,
-			Mod2002024Key.BN469,
-			Mod2002024Key.BN479,
-			Mod2002024Key.BN502,
-			Mod2002024Key.BN511,
+//			Mod2002024Key.BN453,
+//			Mod2002024Key.BN456,
+//			Mod2002024Key.BN469,
+//			Mod2002024Key.BN479,
+//			Mod2002024Key.BN502,
+//			Mod2002024Key.BN511,
 			Mod2002024Key.BN523,
-			Mod2002024Key.BN816,
+//			Mod2002024Key.BN816,
 			Mod2002024Key.BN2459,
 			Mod2002024Key.BN875,
-			Mod2002024Key.BN879,
+//			Mod2002024Key.BN879,
 			Mod2002024Key.BN906,
 			Mod2002024Key.BN955,
 			Mod2002024Key.BN1087,
@@ -1580,7 +1582,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1156,
 			Mod2002024Key.BN1180,
 			Mod2002024Key.BN1207,
-			Mod2002024Key.BN1218,
+//			Mod2002024Key.BN1218,
 			Mod2002024Key.BN1221,
 			Mod2002024Key.BN1229,
 			Mod2002024Key.BN1235,
@@ -1590,12 +1592,12 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1268,
 			Mod2002024Key.BN1273,
 			Mod2002024Key.BN1282,
-			Mod2002024Key.BN1884,
+//			Mod2002024Key.BN1884,
 			Mod2002024Key.BN1901,
 			Mod2002024Key.BN1904,
-			Mod2002024Key.BN1995,
+//			Mod2002024Key.BN1995,
 			Mod2002024Key.BN1908,
-			Mod2002024Key.BN2024,
+//			Mod2002024Key.BN2024,
 			Mod2002024Key.BN2027,
 			Mod2002024Key.BN2030,
 			Mod2002024Key.BN2033,
@@ -1611,8 +1613,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN252,
 			Mod2002024Key.BN697,
 			Mod2002024Key.BN1522,
-			Mod2002024Key.BN991,
-			Mod2002024Key.BN917,
+//			Mod2002024Key.BN991,
+//			Mod2002024Key.BN917,
 			Mod2002024Key.BN998,
 			Mod2002024Key.BN931,
 			Mod2002024Key.BN247,
@@ -1690,7 +1692,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1929,
 			Mod2002024Key.BN2191,
 //			Mod2002024Key.BN881,  // EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
-			Mod2002024Key.BN867,
+//			Mod2002024Key.BN867,
 			Mod2002024Key.BN940,
 			Mod2002024Key.BN192,
 			Mod2002024Key.BN614,

@@ -1,4 +1,4 @@
-// LIQUIDACION (V): CUOTA A INGRESAR O DEVOLVER, PAGOS FRACCIONADOS, LIQUIDO A INGRESAR O DEVOLVER
+// LIQUIDACION (V): CUOTA A INGRESAR O DEVOLVER, PAGOS FRACCIONADOS, RESULTADO DE LA AUTOLIQUIDACION
 package com.esferalia.aon.gwt.mod200.client.mod200.e2024;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -25,6 +25,10 @@ public class Page13 extends PageAbs {
 			"D.Forales/Navarra (totales)"
 	};
 	
+	private static final String[] HEADERS_4 = new String[] {
+			"Estado"
+	};
+	
 	public Page13( Model2002024PageCallback callback ) {
 		super(callback);
 	}
@@ -40,12 +44,13 @@ public class Page13 extends PageAbs {
 		paintTable("Resultado de la autoliquidaci\u00F3n", Mod2002024Constants.LIQUIDATION_V_KEYS_4, HEADERS_2, null);
 		paintTable("", Mod2002024Constants.LIQUIDATION_V_KEYS_5, HEADERS_3, Mod2002024Key.LQ1586);
 		paintFooterNote(basePanel, "(**) Incumplimiento de requisitos o tributaci\u00F3n por otro r\u00E9gimen antes del plazo de 3 a\u00F1os de permanencia (art. 9.1 Ley 11/2009)");
-		paintTable(AON.MSG.netQuota(), Mod2002024Constants.LIQUIDATION_V_KEYS_6, HEADERS_2, Mod2002024Key.BN621);
+		paintTable("Rectificativa", Mod2002024Constants.LIQUIDATION_V_KEYS_6, HEADERS_2, Mod2002024Key.BN621);
+		paintTable("Rectificaci\u00F3n", Mod2002024Constants.LIQUIDATION_V_KEYS_6_1, HEADERS_4, Mod2002024Key.LQ866);
 		paintTable("Opci\u00F3n de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)", Mod2002024Constants.LIQUIDATION_V_KEYS_7, HEADERS_2, Mod2002024Key.LQ2485);
-		basePanel.add(getSubtitle("L\u00EDquido a ingresar"));
+		basePanel.add(getSubtitle("Rectificativa"));
 		paintTable("", Mod2002024Constants.LIQUIDATION_V_KEYS_8, HEADERS_2, Mod2002024Key.LQ2489);
 		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002024Constants.LIQUIDATION_V_KEYS_9, HEADERS_3, null);
-		basePanel.add(getSubtitle(AON.MSG.netQuota()));
+		basePanel.add(getSubtitle("Rectificativa"));
 		paintTable("", Mod2002024Constants.LIQUIDATION_V_KEYS_10, HEADERS_3, null);
 		
 	}

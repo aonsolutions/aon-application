@@ -11,13 +11,13 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page15 extends PageAbs {
 
-	private AonTextBox nrsAnexoIII;
-	private AonTextBox justCanarias;
-	private AonTextBox nrsAnexoIV;
-	private AonTextBox nrsAnexoV;
-	private AonTextBox nrsAnexoVric;
-	private AonTextBox justActivos;
-	private AonTextBox nrsAnexoVI;
+//	private AonTextBox nrsAnexoIII;
+//	private AonTextBox justCanarias;
+//	private AonTextBox nrsAnexoIV;
+//	private AonTextBox nrsAnexoV;
+//	private AonTextBox nrsAnexoVric;
+//	private AonTextBox justActivos;
+//	private AonTextBox nrsAnexoVI;
 
 	public Page15( Model2002024PageCallback callback ) {
 		super(callback);
@@ -56,7 +56,7 @@ public class Page15 extends PageAbs {
 		// PRESENTACIÓN DE DOCUMENTACIÓN PREVIA EN LA SEDE ELECTRÓNICA
 		
 		// Documentación presentada por el Anexo III (Ajustes y deducciones)
-		nrsAnexoIII = new AonTextBox();
+		AonTextBox nrsAnexoIII = new AonTextBox();
 		nrsAnexoIII.setVisibleLength(22);
 		nrsAnexoIII.setMaxLength(22);
 		nrsAnexoIII.setValue(callback.getMod200Object().getMod200().getNrsAnexoIII());
@@ -67,7 +67,7 @@ public class Page15 extends PageAbs {
 		otherInputs.add(nrsAnexoIII);
 		
 		// Documentación presentada por el Anexo IV (Personal investigador) 
-		nrsAnexoIV = new AonTextBox();
+		AonTextBox nrsAnexoIV = new AonTextBox();
 		nrsAnexoIV.setVisibleLength(22);
 		nrsAnexoIV.setMaxLength(22);
 		nrsAnexoIV.setValue(callback.getMod200Object().getMod200().getNrsAnexoIV());
@@ -78,7 +78,7 @@ public class Page15 extends PageAbs {
 		otherInputs.add(nrsAnexoIV);
 		
 		// Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
-		nrsAnexoVric = new AonTextBox();
+		AonTextBox nrsAnexoVric = new AonTextBox();
 		nrsAnexoVric.setVisibleLength(22);
 		nrsAnexoVric.setMaxLength(22);
 		nrsAnexoVric.setValue(callback.getMod200Object().getMod200().getNrsAnexoVric());
@@ -89,7 +89,7 @@ public class Page15 extends PageAbs {
 		otherInputs.add(nrsAnexoVric);
 		
 		// Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-		nrsAnexoVI = new AonTextBox();
+		AonTextBox nrsAnexoVI = new AonTextBox();
 		nrsAnexoVI.setVisibleLength(22);
 		nrsAnexoVI.setMaxLength(22);
 		nrsAnexoVI.setValue(callback.getMod200Object().getMod200().getNrsAnexoVI());
@@ -100,7 +100,7 @@ public class Page15 extends PageAbs {
 		otherInputs.add(nrsAnexoVI);		
 
 		// Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
-		nrsAnexoV = new AonTextBox();
+		AonTextBox nrsAnexoV = new AonTextBox();
 		nrsAnexoV.setVisibleLength(22);
 		nrsAnexoV.setMaxLength(22);
 		nrsAnexoV.setValue(callback.getMod200Object().getMod200().getNrsAnexoV());
@@ -111,7 +111,7 @@ public class Page15 extends PageAbs {
 		otherInputs.add(nrsAnexoV);
 		
 		// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-		justCanarias = new AonTextBox();
+		AonTextBox justCanarias = new AonTextBox();
 		justCanarias.setVisibleLength(22);
 		justCanarias.setMaxLength(13);
 		justCanarias.setValue(callback.getMod200Object().getMod200().getJustCanarias());
@@ -120,9 +120,21 @@ public class Page15 extends PageAbs {
 			callback.markAsDirty();
 		});
 		otherInputs.add(justCanarias);
+
+		// FALTA - CAMPO NUEVO SI AL FINAL ES NECESARIO
+		// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
+		AonTextBox justBaleares = new AonTextBox();
+		justBaleares.setVisibleLength(22);
+		justBaleares.setMaxLength(13);
+		justBaleares.setValue(callback.getMod200Object().getMod200().getJustBaleares());
+		justBaleares.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setJustBaleares(justBaleares.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(justBaleares);
 		
 		// Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
-		justActivos = new AonTextBox();
+		AonTextBox justActivos = new AonTextBox();
 		justActivos.setVisibleLength(22);
 		justActivos.setMaxLength(13);
 		justActivos.setValue(callback.getMod200Object().getMod200().getJustActivos());
@@ -159,6 +171,9 @@ public class Page15 extends PageAbs {
 		
 		paintDescription(table2, AON.MSG.justCanarias(), ++row, 0, false);
 		table2.setWidget(row, 1, justCanarias);
+
+		paintDescription(table2, "N\u00FAmero de justificante identificativo de la declaraci\u00F3n informativa de ayudas R\u00E9gimen Econ\u00F3mico y Fiscal de Illes Balears", ++row, 0, false);
+		table2.setWidget(row, 1, justBaleares);
 		
 		paintDescription(table2, AON.MSG.justActivos(), ++row, 0, false);
 		table2.setWidget(row, 1, justActivos);

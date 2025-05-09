@@ -46,13 +46,14 @@ import com.esferalia.aon.occam.mod200.api.model.UteBase;
 import com.esferalia.aon.occam.mod200.api.model.UteForeign;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipation;
 import com.esferalia.aon.occam.mod200.api.model.UteParticipationBis;
-import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Character;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
-import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2022.Mod2002022DAO;
+import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2023.Mod2002023DAO;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2024.Mod2002024Import2023;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -973,10 +974,9 @@ public class Mod2002024DAO  {
 	
 	public static Mod2002024 initializeNewMod200(AONContext ctx, Mod2002024 mod200) {
 		
-		//Mod2002022 old = Mod2002022DAO.getByYear(ctx, 2022, false);
-		Mod2002022 old = Mod2002022DAO.getLastModel2022(ctx);
+		Mod2002023 old = Mod2002023DAO.getLastModel2023(ctx);
 		if (old != null && old.getId() != null) { 
-			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2022");
+			ctx.log().info("------ [START] INITIALIZE NEW MOD 200 FROM MOD 200 2023");
 			mod200.setEnterprise(old.getEnterprise());
 			Mod2002024Import2023.import2023(mod200,old);
 			mod200.setInitializedFromLastYear(true);

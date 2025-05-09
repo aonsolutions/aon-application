@@ -70,6 +70,7 @@ public class Page03 extends PageAbs {
 		otherInputs.clear();
 		basePanel.clear();
 		
+		// FALTA - AÑADIR CAMPO NUEVO (b) SI REALMENTE SE AÑADE AL FINAL		
 		// B.1. PARTICIPACIONES DE LA DECLARANTE EN OTRAS ENTIDADES		
 		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
@@ -158,7 +159,7 @@ public class Page03 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 
 		addLabel(PARTICIPATIONS_LABEL, true);
-		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
+		addLabel("En caso de sociedades de responsabilidad limitada (SL) o sociedades civiles, se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
 		AonDisplayTable tab2 = addRegistryTable(AON.MSG.document(), "Rpte.", "F/J/Otra", AON.MSG.companyName(), AON.MSG.province() + "/" + AON.MSG.country(), "% Particip.", AON.MSG.nominalValue());	
 		
@@ -204,7 +205,6 @@ public class Page03 extends PageAbs {
 			otherInputs.add(rep);
 			
 			// El valor de "fjo" se guarda en el campo notary de la tabla 
-			//AonTextBox fjo = new AonTextBox();
 			fjo.setMaxLength(1);
 			fjo.setVisibleLength(1);			
 			fjo.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).getNotary());

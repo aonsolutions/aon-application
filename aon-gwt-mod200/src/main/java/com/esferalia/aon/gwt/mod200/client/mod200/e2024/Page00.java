@@ -1,4 +1,4 @@
-// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, CARACTERES 
+// IDENTIFICACION, TIPO DE DECLARACION, RECTIFICATIVA, ESTADOS DE CUENTAS, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2024;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Character.CHARACTERS_KEYS;
@@ -36,103 +36,6 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
 	
-//	public static final HashSet<Mod2002024Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002024Key>();
-//	static {
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0003);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0008); 
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0004);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0007);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0024);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0025);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0035);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0036);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0058);
-//		NOT_SUPPORTED_CHARACTERS.add(Mod2002024Key.C0061);
-//	}
-
-//	public static final Mod2002024Key[] DECLARATION_CHARACTERS_BLOCK1 = new Mod2002024Key[] {
-//		Mod2002024Key.C0001,
-//		Mod2002024Key.C0002,
-//		Mod2002024Key.C0080,
-//		Mod2002024Key.C0003,
-//		Mod2002024Key.C0008,
-//		Mod2002024Key.C0004,
-//		Mod2002024Key.C0005,		
-//		Mod2002024Key.C0011,
-//		Mod2002024Key.C0085,
-//		Mod2002024Key.C0013,
-//		Mod2002024Key.C0014,
-//		Mod2002024Key.C0017,
-//		Mod2002024Key.C0018,		
-//		Mod2002024Key.C0019,
-//		Mod2002024Key.C0021,
-//		Mod2002024Key.C0023,
-//		Mod2002024Key.C0024,
-//		Mod2002024Key.C0025,
-//		Mod2002024Key.C0031,
-//		Mod2002024Key.C0032,
-//		Mod2002024Key.C0036,
-//		Mod2002024Key.C0048,
-//		Mod2002024Key.C0058,
-//		Mod2002024Key.C0060,
-//		Mod2002024Key.C0066,
-//		Mod2002024Key.C0078,
-//		Mod2002024Key.C0056,
-//		Mod2002024Key.C0083  
-//	};
-//
-//	public static final Mod2002024Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002024Key[] {
-//		Mod2002024Key.C0006,
-//		Mod2002024Key.C0015,
-//		Mod2002024Key.C0079,
-//		Mod2002024Key.C0022,
-//		Mod2002024Key.C0028,
-//		Mod2002024Key.C0047,
-//		Mod2002024Key.C0049,
-//		Mod2002024Key.C0035,		
-//		Mod2002024Key.C0029,
-//		Mod2002024Key.C0069,
-//		Mod2002024Key.C0086,
-//		Mod2002024Key.C0033,
-//		Mod2002024Key.C0034,
-//		Mod2002024Key.C0038,
-//		Mod2002024Key.C0046,
-//		Mod2002024Key.C0012,
-//		Mod2002024Key.C0064,
-//		Mod2002024Key.C0057,
-//		Mod2002024Key.C0012R,		
-//		Mod2002024Key.C0062,
-//		Mod2002024Key.C0020
-//	};
-//	
-//	public static final Mod2002024Key[] DECLARATION_CHARACTERS_BLOCK3 = new Mod2002024Key[] {
-//		Mod2002024Key.C0007,
-//		Mod2002024Key.C0009,
-//		Mod2002024Key.C0010,
-//		Mod2002024Key.C0081,
-//		Mod2002024Key.C0082,		
-//		Mod2002024Key.C0026,
-//		Mod2002024Key.C0027,
-//		Mod2002024Key.C0030,
-//		Mod2002024Key.C0039,
-//		Mod2002024Key.C0043,
-//		Mod2002024Key.C0045,
-//		Mod2002024Key.C0087,
-//		Mod2002024Key.C0063,
-//		Mod2002024Key.C0071,
-//		Mod2002024Key.C0088,
-//		Mod2002024Key.C0070,
-//		Mod2002024Key.C0059,
-//		Mod2002024Key.C0065,
-//		Mod2002024Key.C0084, 
-//		Mod2002024Key.C0072,
-//		Mod2002024Key.C0073,
-//		Mod2002024Key.C0037,
-//		Mod2002024Key.C0044,
-//		Mod2002024Key.C0074,
-//		Mod2002024Key.C0089
-//	};
-	
 	private Map<Mod2002024Key, CheckBox> inputsCheckBox;
 	
 	private AonDocumentTextBox nif;
@@ -141,9 +44,12 @@ public class Page00 extends PageAbs {
 	private AonTextBox phone2;
 	private AonTextBox cnae;
 	private InlineLabel cnaeLabel;
-	private AonTableButton cnaeButton;
-	private CheckBox complementary;
-	private AonTextBox complementaryReceipt;
+	
+	private CheckBox rectification;
+	private AonTextBox rectificationNumber;
+	private CheckBox rectificationMotive1;
+	private CheckBox rectificationMotive2;
+	private CheckBox rectificationMotive3;
 	private ListBox periodType;
 	private FlowPanel periodPanel;
 	private AonDateBox periodStart;
@@ -151,9 +57,6 @@ public class Page00 extends PageAbs {
 	private ListBox balanceSheetType;
 	private ListBox ecpnType;
 	private ListBox profitAndLossType;
-//	private AonDoubleBox c041;
-//	private AonDoubleBox c042;	
-//	private ListBox opeVol;
 	private CheckBox agriculturalActivities;
 	private InlineLabel receiptNumberLabel;
 	private AonTextBox receiptNumber;
@@ -169,8 +72,11 @@ public class Page00 extends PageAbs {
 		companyName.setValue(callback.getMod200Object().getMod200().getName());
 		phone1.setValue(callback.getMod200Object().getMod200().getEnterprisePhone1());
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
-		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
-		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
+		rectification.setValue(callback.getMod200Object().getMod200().isComplementary());
+		rectificationNumber.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
+		rectificationMotive1.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.R0001));
+		rectificationMotive2.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.R0002));
+		rectificationMotive3.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.R0003));
 		agriculturalActivities.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.X0001));
 		receiptNumber.setValue(callback.getMod200Object().getMod200().getNumber());
 		
@@ -213,13 +119,6 @@ public class Page00 extends PageAbs {
 			inputsCheckBox.get(Mod2002024Key.C0027).setValue(AonMathUtils.equals(sv.getValue(), 1.0));
 		}
 		
-//		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002024Key.VOLOPE);
-//		index = 0;
-//		if (dv != null) {
-//			index = dv.getValue().intValue();
-//		}
-//		opeVol.setSelectedIndex(index);
-		
 		// Hago la llamada despues, porque para setEnabled(), necesito que algunos campos ya contengan el valor
 		super.dump();		
 				
@@ -235,8 +134,11 @@ public class Page00 extends PageAbs {
 		receiptNumber.setVisible(receiptNumberLabel.isVisible());
         receiptNumber.setEnabled(false);
     	
-    	// Número de justificante declaración anterior
-        complementaryReceipt.setEnabled(isEditable() && complementary.getValue());
+    	// Autoliquidación rectificativa
+        rectificationNumber.setEnabled(isEditable() && rectification.getValue());
+        rectificationMotive1.setEnabled(isEditable() && rectification.getValue());
+        rectificationMotive2.setEnabled(isEditable() && rectification.getValue());
+        rectificationMotive3.setEnabled(isEditable() && rectification.getValue());
 		
 		// Determinados campos y los caracteres, se desabilitan si ya está inicializado el modelo
 		boolean enabled = !callback.getMod200Object().isInitialized();
@@ -251,7 +153,7 @@ public class Page00 extends PageAbs {
 		if (enabled)
 			for (Mod2002024Key[] block : CHARACTERS_KEYS)
 			  for (Mod2002024Key key : block) {
-				if (inputsCheckBox.containsKey( key ) && inputsCheckBox.get( key ).getValue()) {
+				if (inputsCheckBox.containsKey(key) && inputsCheckBox.get(key).getValue()) {
 					changeAvailability(key);
 				}
 			  }
@@ -269,7 +171,7 @@ public class Page00 extends PageAbs {
 	}
 
 	private void paint() {
-		
+  		
 		otherInputs.clear();
 		basePanel.clear();
 		
@@ -338,7 +240,7 @@ public class Page00 extends PageAbs {
 		cnae.setMaxLength(5);
 		cnae.setReadOnly(true);
 		
-		cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
+		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(),AON.CSS.aonIconSearch());
 		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
 		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());
 		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
@@ -390,34 +292,34 @@ public class Page00 extends PageAbs {
 		periodPanel.add(toLabel);
 		periodPanel.add(periodEnd);
 	
-		FlowPanel complementaryPanel = new FlowPanel();
+//		FlowPanel complementaryPanel = new FlowPanel();
 		
-		complementary = new CheckBox();
-		complementary.addClickHandler(event -> {
-			complementaryReceipt.setEnabled(complementary.getValue());
-			if (!complementary.getValue()) {
-				complementaryReceipt.setValue("", true);
-			}
-			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-			callback.markAsDirty();
-		});
-		otherInputs.add(complementary);
-		
-		complementaryReceipt = new AonTextBox();
-		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
-		complementaryReceipt.setVisibleLength(13);
-		complementaryReceipt.setMaxLength(13);
-		complementaryReceipt.addValueChangeHandler(event -> {
-			callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());			
-			callback.markAsDirty();
-		});
-
-		InlineLabel complementaryLabel = new InlineLabel(AON.MSG.complementaryReceipt());
-		complementaryLabel.setStyleName(AON.CSS.aonMarginLeft());
-		
-		complementaryPanel.add(complementary);
-		complementaryPanel.add(complementaryLabel);
-		complementaryPanel.add(complementaryReceipt);
+//		complementary = new CheckBox();
+//		complementary.addClickHandler(event -> {
+//			complementaryReceipt.setEnabled(complementary.getValue());
+//			if (!complementary.getValue()) {
+//				complementaryReceipt.setValue("", true);
+//			}
+//			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
+//			callback.markAsDirty();
+//		});
+//		otherInputs.add(complementary);
+//		
+//		complementaryReceipt = new AonTextBox();
+//		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
+//		complementaryReceipt.setVisibleLength(13);
+//		complementaryReceipt.setMaxLength(13);
+//		complementaryReceipt.addValueChangeHandler(event -> {
+//			callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());			
+//			callback.markAsDirty();
+//		});
+//
+//		InlineLabel complementaryLabel = new InlineLabel(AON.MSG.complementaryReceipt());
+//		complementaryLabel.setStyleName(AON.CSS.aonMarginLeft());
+//		
+//		complementaryPanel.add(complementary);
+//		complementaryPanel.add(complementaryLabel);
+//		complementaryPanel.add(complementaryReceipt);
 		
 		agriculturalActivities = new CheckBox();
 		agriculturalActivities.addClickHandler(event -> {			
@@ -438,9 +340,71 @@ public class Page00 extends PageAbs {
 		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
 		   .addLabelWidgetRow("", periodPanel)
-		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel)
+//		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel)
 		   .addLabelWidgetRow(Mod2002024Key.X0001.getDescription(), agriculturalActivities)
 		   .addLabelWidgetRow(receiptNumberLabel, receiptNumber);
+		
+		// AUTOLIQUIDACION RECTIFICATIVA
+		
+		basePanel.add(getTitle("Autoliquidaci\u00F3n Rectificativa"));
+		
+		AonDisplayTable tab1 = new AonDisplayTable();
+		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab1);
+		
+		rectification = new CheckBox();
+		rectification.addClickHandler(event -> {
+			rectificationNumber.setEnabled(rectification.getValue());
+			rectificationMotive1.setEnabled(rectification.getValue());
+			rectificationMotive2.setEnabled(rectification.getValue());
+			rectificationMotive3.setEnabled(rectification.getValue());
+			if (!rectification.getValue()) {
+				rectificationNumber.setValue("", true);
+				rectificationMotive1.setValue(false, true);
+				rectificationMotive2.setValue(false, true);
+				rectificationMotive3.setValue(false, true);
+			}
+			callback.getMod200Object().getMod200().setComplementary(rectification.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(rectification);
+		
+		rectificationNumber = new AonTextBox();
+		rectificationNumber.addStyleName(AON.CSS.aonMarginLeft());
+		rectificationNumber.setVisibleLength(13);
+		rectificationNumber.setMaxLength(13);
+		rectificationNumber.addValueChangeHandler(event -> {
+			callback.getMod200Object().getMod200().setReplacedNumber(rectificationNumber.getValue());			
+			callback.markAsDirty();
+		});
+		
+		rectificationMotive1 = new CheckBox();
+		rectificationMotive1.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0001, rectificationMotive1.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(rectificationMotive1);
+		
+		rectificationMotive2 = new CheckBox();
+		rectificationMotive2.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0002, rectificationMotive2.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(rectificationMotive2);
+		
+		rectificationMotive3 = new CheckBox();
+		rectificationMotive3.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0003, rectificationMotive3.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(rectificationMotive3);
+		
+		tab1.addLabelWidgetRow("Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification)
+		    .addLabelWidgetRow(AON.MSG.previousReceipt(), rectificationNumber)
+		    .addLabelWidgetRow(Mod2002024Key.R0001.getDescription(), rectificationMotive1)
+		    .addLabelWidgetRow(Mod2002024Key.R0002.getDescription(), rectificationMotive2)
+		    .addLabelWidgetRow(Mod2002024Key.R0003.getDescription(), rectificationMotive3);
 		
 		// ESTADOS DE CUENTAS
 		
@@ -494,71 +458,6 @@ public class Page00 extends PageAbs {
 		tab2.addLabelWidgetRow(AON.MSG.balanceSheet(), balanceSheetType)
 		    .addLabelWidgetRow(AON.MSG.ecpn(), ecpnType)
 		    .addLabelWidgetRow(AON.MSG.profitAndLoss(), profitAndLossType);
-		
-//		// PERSONAL ASALARIADO
-//		
-//		basePanel.add(getTitle("Personal asalariado"));
-//		
-//		AonDisplayTable tab3 = new AonDisplayTable();
-//		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab3.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tab3);
-//		
-//		c041 = new AonDoubleBox();
-//		c041.setMaxLength(8);
-//		c041.setVisibleLength(8);
-//		c041.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002024Key.C0041));
-//		c041.addValueChangeHandler(event -> {			
-//			callback.getMod200Object().getMod200().setDoubleValue(Mod2002024Key.C0041, c041.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(c041);
-//		
-//		c042 = new AonDoubleBox();	
-//		c042.setMaxLength(8);
-//		c042.setVisibleLength(8);	
-//		c042.setValue(callback.getMod200Object().getMod200().getDoubleValue(Mod2002024Key.C0042));
-//		c042.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().setDoubleValue(Mod2002024Key.C0042, c042.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(c042);
-//		
-//		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
-//	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
-		
-//		// CIFRA DE NEGOCIOS
-//		
-//		basePanel.add(getTitle("Cifra de negocios"));
-//		
-//		FlexTable tableVol = addTable();
-//
-//		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
-//		
-//		// Para este año existen solo 0, 1 y 2, excepto cooperativas, que tienen todos los valores
-//		opeVol = new ListBox();
-//		opeVol.addItem("0 - No consta");
-//		opeVol.addItem("1 - Inferior a 20 millones de euros");
-//		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0017) || callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0018) || callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0019)) {
-//			opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-//			opeVol.addItem("3 - Al menos 60 millones de euros");
-//		} else {
-//			opeVol.addItem("2 - Al menos 20 millones de euros");
-//		}
-//		opeVol.addChangeHandler( event -> {
-//			DoubleVariableEx bv = new DoubleVariableEx(Mod2002024Key.VOLOPE);
-//			bv.setValue((double)opeVol.getSelectedIndex());
-//			callback.getMod200Object().getMod200().addVariable(bv);
-//			callback.getMod200Object().doubleValueChanged(Mod2002024Key.VOLOPE, opeVol.getSelectedIndex());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(opeVol);
-//		
-//		basePanel.add(opeVol);
-//		tableVol.setWidget(1, 0, opeVol);
-//
-//		//paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
-//		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si procede, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima (art\u00EDculo 30 bis LIS)");
 		
 		// CARACTERES DE LA DECLARACION
 		

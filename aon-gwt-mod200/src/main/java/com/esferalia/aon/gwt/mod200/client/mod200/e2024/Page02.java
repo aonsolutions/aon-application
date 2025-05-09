@@ -16,22 +16,12 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.mod200.api.model.TitularReal;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Key;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class Page02 extends PageAbs {
 
-//	private AonDocumentTextBox secretaryDocument;
-//	private AonTextBox secretaryName;
-////	private AonDateBox irnr; 
-//	private AonTextBox fiscalGroup;
-//	private AonDocumentTextBox dominantDocument;
-//	private AonTextBox dominantIdentificationNumber;
-//	private AonDocumentTextBox ultimateDocument;           
-//	private CountryListBox ultimateDocumentCountry;
-//	private AonTextBox ultimateName;				
-//	private CountryListBox ultimateCountry;
-	
 	public Page02( Model2002024PageCallback callback ) {
 		super(callback);
 	}
@@ -45,166 +35,6 @@ public class Page02 extends PageAbs {
 		
 		otherInputs.clear();		
 		basePanel.clear();
-		
-//		// SECRETARIO DEL CONSEJO DE ADMINISTRACION
-//
-//		basePanel.add(getTitle(AON.MSG.secretaryData()));
-//		
-//		AonDisplayTable tab1 = new AonDisplayTable();
-//		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab1.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tab1);
-//		
-//		AonDocumentTextBox secretaryDocument = new AonDocumentTextBox();
-//		secretaryDocument.setValue(callback.getMod200Object().getMod200().getSecretary().getDocument());
-//		secretaryDocument.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().getSecretary().setDocument(secretaryDocument.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(secretaryDocument);
-//		
-//		AonTextBox secretaryName = new AonTextBox();
-//		secretaryName.setVisibleLength(40);
-//		secretaryName.setMaxLength(25);
-//		secretaryName.setValue(callback.getMod200Object().getMod200().getSecretary().getName());
-//		secretaryName.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().getSecretary().setName(secretaryName.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(secretaryName);
-//		
-//// ESTE DATO NO APARECE ESTE AÑO 		
-////		AonDateBox irnr = new AonDateBox();
-////		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
-////		irnr.addValueChangeHandler(event -> {
-////			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
-////			callback.markAsDirty();
-////		});
-////		otherInputs.add(irnr);
-//		
-//		tab1.addLabelWidgetRow(AON.MSG.document(), secretaryDocument)
-////		    .addLabelWidgetRow(AON.MSG.name(), secretaryName); 
-//	        .addLabelWidgetRow("Apellidos y Nombre", secretaryName); 
-//// 		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
-//		
-//		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
-//		
-//		AonTextBox fiscalGroup = new AonTextBox();
-//		AonDocumentTextBox dominantDocument = new AonDocumentTextBox();
-//		AonTextBox dominantIdentificationNumber = new AonTextBox();
-//		
-//		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0009) || 
-//			callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0010)) {
-//		
-//			basePanel.add(getTitle(AON.MSG.fiscalGroupLabel()));
-//			
-//			AonDisplayTable tab2 = new AonDisplayTable();
-//			tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-//			tab2.addStyleName(AON.CSS.aonBlockCenter());
-//			basePanel.add(tab2);
-//					
-//			fiscalGroup.setVisibleLength(7);
-//			fiscalGroup.setMaxLength(7);
-//			fiscalGroup.setValue( callback.getMod200Object().getMod200().getFiscalGroup());
-//			fiscalGroup.addValueChangeHandler(event -> {
-//				callback.getMod200Object().getMod200().setFiscalGroup(fiscalGroup.getValue());
-//				callback.markAsDirty();
-//			});
-//			otherInputs.add(fiscalGroup);
-//			
-//			dominantDocument.setMaxLength(9);
-//			dominantDocument.setValue(callback.getMod200Object().getMod200().getDominantDocument());
-//			dominantDocument.addValueChangeHandler(event -> {
-//				callback.getMod200Object().getMod200().setDominantDocument(dominantDocument.getValue());
-//				callback.markAsDirty();
-//			});
-//			otherInputs.add(dominantDocument);
-//			
-//			tab2.addRow()
-//				.addCell(new Label(AON.MSG.fiscalGroup()), AON.CSS.aonWidth400())
-//				.addCell(fiscalGroup);
-//			tab2.addRow()
-//				.addCell(new Label(AON.MSG.groupDocument()), AON.CSS.aonWidth400())
-//				.addCell(dominantDocument);
-//			
-//			if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0010)) {
-//				dominantIdentificationNumber.setVisibleLength(15);
-//				dominantIdentificationNumber.setMaxLength(15);
-//				dominantIdentificationNumber.setValue(callback.getMod200Object().getMod200().getDominantIdentificationNumber());
-//				dominantIdentificationNumber.addValueChangeHandler(event -> {
-//					callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
-//					callback.markAsDirty();
-//				});					
-//				otherInputs.add(dominantIdentificationNumber);
-//				
-//				tab2.addRow()
-//					.addCell(new Label(AON.MSG.dominantIdentificationNumber()), AON.CSS.aonWidth400()) 
-//					.addCell(dominantIdentificationNumber);		    
-//			}
-//		}
-//		
-//		// GRUPO MERCANTIL (solo habilitados si caracter 81 marcado)
-//		
-//		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
-//		CountryListBox ultimateDocumentCountry = new CountryListBox();
-//		AonTextBox ultimateName = new AonTextBox();				
-//		CountryListBox ultimateCountry = new CountryListBox();
-//		
-//		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0081)) {
-//		
-//			basePanel.add(getTitle("Grupo mercantil"));
-//			
-//			AonDisplayTable tab3 = new AonDisplayTable();
-//			tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
-//			tab3.addStyleName(AON.CSS.aonBlockCenter());
-//			basePanel.add(tab3);
-//			
-//			ultimateDocument.setValue(callback.getMod200Object().getMod200().getUltimateDocument());
-//			ultimateDocument.addValueChangeHandler(event -> {
-//				callback.getMod200Object().getMod200().setUltimateDocument(ultimateDocument.getValue());         
-//				callback.markAsDirty();
-//			});
-//			otherInputs.add(ultimateDocument);
-//			
-//			ultimateDocumentCountry.setWidth("240px");
-//			ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
-//			ultimateDocumentCountry.addChangeHandler( event -> {
-//				callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
-//				callback.markAsDirty();				
-//			});
-//			otherInputs.add(ultimateDocumentCountry);
-//			
-//			ultimateName.setVisibleLength(40); 
-//			ultimateName.setMaxLength(40);
-//		    ultimateName.setValue(callback.getMod200Object().getMod200().getUltimateName());
-//			ultimateName.addValueChangeHandler(event -> {
-//			    callback.getMod200Object().getMod200().setUltimateName(ultimateName.getValue());
-//				callback.markAsDirty();
-//			});
-//			otherInputs.add(ultimateName);
-//			
-//			ultimateCountry.setWidth("240px");
-//			ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
-//			ultimateCountry.addChangeHandler( event -> {						
-//				callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
-//				callback.markAsDirty();				
-//			});
-//			otherInputs.add(ultimateCountry);
-//			
-//			tab3.addRow()
-//				.addCell(new Label(AON.MSG.ultimateDocument()), AON.CSS.aonWidth400())
-//				.addCell(ultimateDocument);
-//			tab3.addRow()
-//				.addCell(new Label(AON.MSG.ultimateDocumentCountry()), AON.CSS.aonWidth400())
-//				.addCell(ultimateDocumentCountry);
-//			tab3.addRow()
-//				.addCell(new Label(AON.MSG.ultimateName()), AON.CSS.aonWidth400())
-//				.addCell(ultimateName);
-//			tab3.addRow()
-//				.addCell(new Label(AON.MSG.ultimateCountry()), AON.CSS.aonWidth400())
-//				.addCell(ultimateCountry);
-//		
-//		}
 		
 		// REPRESENTANTES LEGALES DE LA ENTIDAD
 		
@@ -368,6 +198,24 @@ public class Page02 extends PageAbs {
 		// IDENTIFICACION DEL TITULAR REAL
 		
 		basePanel.add(getTitle("Identificaci\u00F3n del titular real de la entidad"));
+		
+		// FALTA - SUPONGO QUE ESTE CHECK ES INDEPENDIENTE DE LA TABLA, AUNQUE EN EL FICHERO APAREZCA EN TODAS LAS COMPLEMENTARIAS
+//		"Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo"
+		
+		AonDisplayTable tab1 = new AonDisplayTable();
+		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab1);
+		
+		CheckBox rectificationMotive1 = new CheckBox();
+		rectificationMotive1.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.T0001));
+		rectificationMotive1.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.T0001, rectificationMotive1.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(rectificationMotive1);
+		
+		tab1.addLabelWidgetRow(Mod2002024Key.T0001.getDescription(), rectificationMotive1);
 		
 		AonDisplayTable tab6 = addRegistryTable("Tipo Documento", "Documento", "Apellidos y nombre", "Pa\u00EDs de expedici\u00F3n del documento de identificaci\u00F3n", "Fecha de nacimiento", "Pa\u00EDs de residencia", "Nacionalidad");
 		

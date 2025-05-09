@@ -39,16 +39,11 @@ public class Page01 extends PageAbs {
 
 		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
 		
-		// Para este año existen solo 0, 1 y 2, excepto cooperativas, que tienen todos los valores
 		ListBox opeVol = new ListBox();
 		opeVol.addItem("0 - No consta");
 		opeVol.addItem("1 - Inferior a 20 millones de euros");
-		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0017) || callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0018) || callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0019)) {
-			opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-			opeVol.addItem("3 - Al menos 60 millones de euros");
-		} else {
-			opeVol.addItem("2 - Al menos 20 millones de euros");
-		}
+		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
+		opeVol.addItem("3 - Al menos 60 millones de euros");
 		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002024Key.VOLOPE);
 		int index = 0;
 		if (dv != null) {
@@ -67,8 +62,7 @@ public class Page01 extends PageAbs {
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
 
-		//paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
-		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si procede, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima (art\u00EDculo 30 bis LIS)");
+		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo, a efectos de determinar si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima del art. 30 bis LIS, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, los l\u00EDmites de compensaci\u00F3n de cuotas en el r\u00E9gimen de cooperativas, las correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los arts, 31, 32, 100.10º y DT 23º LIS (l\u00EDmites aplicables de acuerdo con la DA 8\u00AA Ley 20/1990 y DA 15\u00AA LIS)");		
 		
 		// PERSONAL ASALARIADO
 		
@@ -129,18 +123,8 @@ public class Page01 extends PageAbs {
 		});
 		otherInputs.add(secretaryName);
 		
-// ESTE DATO NO APARECE ESTE AÑO 		
-//		AonDateBox irnr = new AonDateBox();
-//		irnr.setValue(callback.getMod200Object().getMod200().getSecretary().getIrnr());
-//		irnr.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().getSecretary().setIrnr(irnr.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(irnr);
-		
 		tab1.addLabelWidgetRow(AON.MSG.document(), secretaryDocument)
-	        .addLabelWidgetRow("Apellidos y Nombre", secretaryName); // SE CAMBIA A "Apellidos y Nombre" ANTES SOLO PONIA Nombre 
-// 		    .addLabelWidgetRow(AON.MSG.irnrDate(), irnr);
+	        .addLabelWidgetRow("Apellidos y Nombre", secretaryName);  
 		
 		// GRUPO FISCAL (solo habilitados si caracteres 9 o 10 marcados)
 		
@@ -199,6 +183,7 @@ public class Page01 extends PageAbs {
 		}
 		
 		// GRUPO MERCANTIL (solo habilitados si caracter 81 marcado)
+		// FALTA - CAMPOS NUEVOS A VER COMO SE QUEDA AL FINAL
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
 		CountryListBox ultimateDocumentCountry = new CountryListBox();

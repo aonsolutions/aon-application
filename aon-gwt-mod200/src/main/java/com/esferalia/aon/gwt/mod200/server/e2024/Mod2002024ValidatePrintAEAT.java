@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "Mod200 2024 Validate Print AEAT", urlPatterns = { "/aon_gwt_mod200/ms/Mod2002024ValidatePrintAEAT" })
 public class Mod2002024ValidatePrintAEAT extends HttpServlet {
 
-	private static final long serialVersionUID = 8746029270554525955L;
+	private static final long serialVersionUID = -4386488646925215116L;
 	private static final Logger LOGGER = Logger.getLogger(Mod2002024ValidatePrintAEAT.class.getName()); 
 
 	private enum AeatUrl {
@@ -89,6 +89,12 @@ public class Mod2002024ValidatePrintAEAT extends HttpServlet {
 			if (mod200 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
+			// FALTA - PROBAR SI ES NECESARIO YA HACERLO CON SERVALIDOS O AUN SIRVE SERVALI
+//			if (mod200.getYear() >= 2024) {
+//				ModelAdmonUtils.serValiDos(resp, aeatParams, mod200);
+//			} else {
+//				
+//			}			
 			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod200);
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( aeatURL.getUrl() ))

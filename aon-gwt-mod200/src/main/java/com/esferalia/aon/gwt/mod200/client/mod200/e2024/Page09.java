@@ -86,6 +86,12 @@ public class Page09 extends PageAbs {
 		paintKeyField(tab1, Mod2002024Key.LQ302, row, 2);
 		paintEmptyCell(tab1, row, 3);
 		++row;
+		
+		paintKeyDescription(tab1, Mod2002024Key.LQ004, row, 0);
+		paintKeyField(tab1, Mod2002024Key.LQ004, row, 1);
+		paintEmptyCell(tab1, row, 2);
+		paintEmptyCell(tab1, row, 3);
+		++row;
 
 		tab1.getFlexCellFormatter().setColSpan(row, 0, 3);
 		paintKeyDescription(tab1, Mod2002024Key.LQ501, row, 0);

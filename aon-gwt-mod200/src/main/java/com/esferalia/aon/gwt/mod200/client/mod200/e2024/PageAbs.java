@@ -569,4 +569,3 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 }
-

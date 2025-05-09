@@ -28,7 +28,7 @@ public class ParticipationPanel extends AonCustomDialog {
 			this.onCancel();
 		}
 	}
-	
+	// FALTA - SE SUPONE QUE HAY UN CAMPO NUEVO (b), REVISAR CUANDO SALGA LA ORDEN
 	private AonDocumentTextBox document;
 	private AonTextBox name;
 	private ProvinceCountryListBox province;

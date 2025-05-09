@@ -486,6 +486,10 @@ public class Mod2002024Constants {
 		,new Mod2002024Key[] {Mod2002024Key.BN621 , Mod2002024Key.BN622 }
 	};
 	
+	public static final Mod2002024Key[][] LIQUIDATION_V_KEYS_6_1 = new Mod2002024Key[][] {
+		 new Mod2002024Key[] {Mod2002024Key.LQ866}
+	};
+	
 	public static final Mod2002024Key[][] LIQUIDATION_V_KEYS_7 = new Mod2002024Key[][] {
 		 new Mod2002024Key[] {Mod2002024Key.LQ1588, Mod2002024Key.LQ2480}
 		,new Mod2002024Key[] {Mod2002024Key.LQ2481, Mod2002024Key.LQ2482}
