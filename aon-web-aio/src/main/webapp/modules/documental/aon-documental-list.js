@@ -105,21 +105,21 @@ export class AonDocumentalList extends AonElement {
 			if (detail.tags) {
 				// ---- RECONSTRUIR TAGS DESDE LOS CHECKBOXES ----
 				const tagIds = Object.keys(detail)
-                  .filter(key => key.startsWith("checkbox"))
-                  .filter(key => detail[key] === 'true') // solo los que están marcados
-                  .map(key => parseInt(key.replace("checkbox", '')))
-                  .filter(id => !isNaN(id));
+				.filter(key => key.includes('_checkbox_'))
+				.filter(key => detail[key] === 'true') // solo los que están marcados
+				.map(key => parseInt(key.split('_checkbox_')[1]))
+				.filter(id => !isNaN(id));
 
 				if (tagIds.length > 0) {
                   detail.tag = JSON.stringify(tagIds.map(id => ({ id })));
 				}
-
 				// Eliminar los checkboxes individuales del filtro para que no se muestren en la llamada
 				Object.keys(detail).forEach(key => {
-                  if (key.startsWith("checkbox")) {
-                    delete detail[key];
-                  }
-				});
+					if (key.includes('_checkbox_')) {
+					  delete detail[key];
+					}
+				  });
+				  
 				delete detail.tags;
 			}
 
