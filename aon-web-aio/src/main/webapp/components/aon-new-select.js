@@ -258,8 +258,12 @@ export class AonNewSelect extends AonNewInput {
 
     if(valueAlias){
       checkbox =  new AonCheckbox();
+      if(this.isBetaDoc()){
+        checkbox.name = checkBoxId;
+      }else{
+        checkbox.name = "checkbox"+valueAlias;
+      }
       checkbox.id = checkBoxId;
-      checkbox.name = "checkbox"+valueAlias;
       li.appendChild(checkbox);
       checkbox.value = this.isSelectable(option);
 

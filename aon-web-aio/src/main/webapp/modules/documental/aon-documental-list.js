@@ -98,88 +98,99 @@ export class AonDocumentalList extends AonElement {
           this.btnSearch.hidden = false;
         }
         // Montamos el filtro
-	    this.btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-          clearTimeout(timeOut);
-          timeOut = setTimeout(() => {
-            this._list = [];
-			if (detail.tags) {
-				// ---- RECONSTRUIR TAGS DESDE LOS CHECKBOXES ----
-				const tagIds = Object.keys(detail)
-				.filter(key => key.includes('_checkbox_'))
-				.filter(key => detail[key] === 'true') // solo los que están marcados
-				.map(key => parseInt(key.split('_checkbox_')[1]))
-				.filter(id => !isNaN(id));
-
+	    this.btnSearch.addEventListener(EVENT.SEARCH_NEW, ({ detail }) => {
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+			  this._list = [];
+		  
+			  let cleanDetail = { ...detail }; 
+		  
+			  if (cleanDetail.tags) {
+				const tagIds = Object.keys(cleanDetail)
+				  .filter(key => key.includes('_checkbox_'))
+				  .filter(key => cleanDetail[key] === 'true')
+				  .map(key => parseInt(key.split('_checkbox_')[1]))
+				  .filter(id => !isNaN(id));
+		  
 				if (tagIds.length > 0) {
-				detail.tag = JSON.stringify(tagIds.map(id => ({ id })));
+				  cleanDetail.tag = JSON.stringify(tagIds.map(id => ({ id })));
 				}
-				// Eliminar los checkboxes individuales del filtro para que no se muestren en la llamada
-				Object.keys(detail).forEach(key => {
-					if (key.includes('_checkbox_')) {
-					  delete detail[key];
-					}
-				  });
-				  
-				delete detail.tags;
-			}
-
-	        if(detail) {
-              // El tipo de permiso
-                if(detail[ASESOR_TYPE] && detail[ASESOR_TYPE] !== 'false'){
-                  // Buscar solo asesor
-                    detail.categoryType = ASESOR_TYPE;
-					delete detail[ASESOR_TYPE];
-                } else if (detail[ASESOR_TYPE]){
-					delete detail[ASESOR_TYPE];
-                }
-                if(detail[EMPLOYEE_TYPE] && detail[EMPLOYEE_TYPE] !== 'false'){
-                  // Buscar solo empleado
-                    detail.categoryType = EMPLOYEE_TYPE;
-					delete detail[EMPLOYEE_TYPE];
-                } else if (detail[EMPLOYEE_TYPE]){
-					delete detail[EMPLOYEE_TYPE];
-                }
-              // Mis categorias
-                const myCategory = detail.categoryOldFilter && detail.categoryOldFilter !== 'false';
-                if(myCategory){
-                    detail.category = detail.categoryOld;
-					delete detail.categoryOld;
-					delete detail.categoryOldFilter;
-                } else if (detail.categoryOldFilter){
-					delete detail.categoryOld;
-					delete detail.categoryOldFilter;
-                } 
-              // Enviamos un evento con la categoria marcada, principal (antes de meter en el valor de las subcategorias)
-                const selectCategory   = detail.category ? detail.category : MSG.ALL_FILES;
-                let selectCategoryName = MSG.ALL_FILES;
-                if( selectCategory !== MSG.ALL_FILES){
-                  // El nombre de la categoria de despcho o las creadas por la empresa
-                  const category        = myCategory ? this.getElement("categoryOld") : this.getElement("category");
-                  const categoryOptions = JSON.parse(category.options);
-                  const selectedOption  = categoryOptions.find(opt => opt.value === parseInt(selectCategory));
-                  selectCategoryName    = selectedOption.name;
-                }
-                const evento  = new CustomEvent('category_filter', { detail: {category: selectCategory, categoryName: selectCategoryName}});
-                window.dispatchEvent(evento);
-              // El tipo de category despacho
-				if(detail.category2){
-					detail.category = detail.category2;
-					delete detail.category2;
+		  
+				// Limpiar los checkboxes
+				Object.keys(cleanDetail).forEach(key => {
+				  if (key.includes('_checkbox_')) {
+					delete cleanDetail[key];
+				  }
+				});
+		  
+				delete cleanDetail.tags;
+			  }
+		  
+			  // Resto del tratamiento del filtro, pero sobre `cleanDetail` en lugar de `detail`
+			  if (cleanDetail) {
+				if (cleanDetail[ASESOR_TYPE] && cleanDetail[ASESOR_TYPE] !== 'false') {
+				  cleanDetail.registryType = ASESOR_TYPE;
+				  delete cleanDetail[ASESOR_TYPE];
+				} else if (cleanDetail[ASESOR_TYPE]) {
+				  delete cleanDetail[ASESOR_TYPE];
 				}
-				if(detail.category3){
-					detail.category = detail.category3;
-					delete detail.category3;
+		  
+				if (cleanDetail[EMPLOYEE_TYPE] && cleanDetail[EMPLOYEE_TYPE] !== 'false') {
+				  cleanDetail.registryType = EMPLOYEE_TYPE;
+				  delete cleanDetail[EMPLOYEE_TYPE];
+				} else if (cleanDetail[EMPLOYEE_TYPE]) {
+				  delete cleanDetail[EMPLOYEE_TYPE];
 				}
-				if(detail.category4){
-					detail.category = detail.category4;
-					delete detail.category4;
+		  
+				const myCategory = cleanDetail.categoryOldFilter && cleanDetail.categoryOldFilter !== 'false';
+				if (myCategory) {
+				  cleanDetail.category = cleanDetail.categoryOld;
+				  delete cleanDetail.categoryOld;
+				  delete cleanDetail.categoryOldFilter;
+				} else if (cleanDetail.categoryOldFilter) {
+				  delete cleanDetail.categoryOld;
+				  delete cleanDetail.categoryOldFilter;
 				}
-				detail.name = detail.search;
-				this.setFilter(detail);
+		  
+				const selectCategory = cleanDetail.category ? cleanDetail.category : MSG.ALL_FILES;
+				let selectCategoryName = MSG.ALL_FILES;
+				if (selectCategory !== MSG.ALL_FILES) {
+				  const category = myCategory ? this.getElement("categoryOld") : this.getElement("category");
+				  const categoryOptions = JSON.parse(category.options);
+				  const selectedOption = categoryOptions.find(opt => opt.value === parseInt(selectCategory));
+				  selectCategoryName = selectedOption.name;
+				}
+		  
+				const evento = new CustomEvent('category_filter', {
+				  detail: {
+					category: selectCategory,
+					categoryName: selectCategoryName
+				  }
+				});
+				window.dispatchEvent(evento);
+		  
+				if (cleanDetail.category2) {
+				  cleanDetail.category = cleanDetail.category2;
+				  delete cleanDetail.category2;
+				}
+				if (cleanDetail.category3) {
+				  cleanDetail.category = cleanDetail.category3;
+				  delete cleanDetail.category3;
+				}
+				if (cleanDetail.category4) {
+				  cleanDetail.category = cleanDetail.category4;
+				  delete cleanDetail.category4;
+				}
+		  
+				cleanDetail.name = cleanDetail.search;
+		  
+				// Usamos el detalle limpio
+				this.setFilter(cleanDetail);
 				this.init();
-			} // this.getApplicationParent().setDataFilter(detail);
-          }, 300);
-	    });
+			  }
+			}, 300);
+		  });
+		  
         // Rango por encima de empresa, ve el permiso de asesor (documentos que solo ve el asesor)
         if (this._roles.isDocumentalManager()) {
           this.btnSearch.buildOptionsFilter([
