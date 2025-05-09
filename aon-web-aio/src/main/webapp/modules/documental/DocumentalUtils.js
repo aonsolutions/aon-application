@@ -44,10 +44,10 @@ export const uploadDocuments = (el, files, dur) => {
 	d.setContent(uploadOption(dur));
 	d.addAcceptAction(async () => {
 		let data = {
-			category: document.getElementById("aonDocumentalUploadCategoryU").value,
-			scope: document.getElementById("aonDocumentalUploadScopeU").value,
-			tag: document.getElementById("aonDocumentalUploadTagU").value,
-			type: document.getElementById("aonDocumentalUploadTypeU").value
+			category: document.getElementById("aonDocumentalUploadCategory").value,
+			scope: document.getElementById("aonDocumentalUploadScope").value,
+			tag: document.getElementById("aonDocumentalUploadTag").value,
+			type: document.getElementById("aonDocumentalUploadType").value
 		};
 
 		let uploadToast = document.getElementById('aonUploadToast');
@@ -298,7 +298,7 @@ export function handleRadioButtonChange(event) {
 }
 
 function clearPreviousSelectOptions(categoriesToLoad, categoryType) {
-    let select = document.getElementById("aonDocumentalUploadCategoryU");
+    let select = document.getElementById("aonDocumentalUploadCategory");
     let table = document.getElementById("tableU");
     let trScope = document.getElementById("trScopeU");
     let trCategory = document.getElementById("trCategoryU");
@@ -386,7 +386,7 @@ function S3DocumentalSelects(dur) {
     let tdDatePicker = document.createElement('td');
     tdDatePicker.setAttribute('colspan', '1');
     let datePicker = new AonNewDate();
-    datePicker.id = "aonDocumentalUploadDatePickerU";
+    datePicker.id = "aonDocumentalUploadDatePicker";
     datePicker.title = "Fecha del documento";
     tdDatePicker.appendChild(datePicker);
     trDatePicker.appendChild(tdDatePicker);
@@ -403,7 +403,7 @@ function S3DocumentalSelects(dur) {
     let tdScope = document.createElement('td');
     tdScope.setAttribute('colspan', '1');
     let selScope = new AonNewSelect();
-    selScope.id = "aonDocumentalUploadScopeU";
+    selScope.id = "aonDocumentalUploadScope";
     selScope.title = MSG.SCOPE + ' (Solo visible...)';
     tdScope.appendChild(selScope);
 
@@ -430,7 +430,7 @@ function S3DocumentalSelects(dur) {
     tdTag.setAttribute('colspan', '1');
 
     let selTag = new AonNewSelect();
-    selTag.id = "aonDocumentalUploadTagU";
+    selTag.id = "aonDocumentalUploadTag";
     selTag.title = MSG.TAG;
     selTag.multiple = true;
 
@@ -473,7 +473,7 @@ async function createCategorySection(table, spinner, trScope, trTag, trDatePicke
     let tdCategory = document.createElement('td');
     tdCategory.setAttribute('colspan', '1');
     let selCat = new AonNewSelect();
-    selCat.id = "aonDocumentalUploadCategoryU";
+    selCat.id = "aonDocumentalUploadCategory";
     selCat.title = MSG.CATEGORY;
 
     if (oldCategories.length < 1) {
@@ -539,7 +539,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
       let tdSubCategory = document.createElement('td');
       tdSubCategory.setAttribute('colspan', '1');
       let selSubCat = new AonNewSelect();
-      selSubCat.id = "aonDocumentalUploadSubCategoryU";
+      selSubCat.id = "aonDocumentalUploadSubCategory";
       // selSubCat.title = MSG.SUBCATEGORY; //TODO
       selSubCat.title = "Subcategoria"; //TODO
       tdSubCategory.appendChild(selSubCat);
@@ -577,7 +577,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                   let tdAdministration = document.createElement('td');
                   tdAdministration.setAttribute('colspan', '1');
                   let selAdministration = new AonNewSelect();
-                  selAdministration.id = "aonDocumentalAdministrationU";
+                  selAdministration.id = "aonDocumentalAdministration";
                   selAdministration.title = "Administración";
                   tdAdministration.appendChild(selAdministration);
 
@@ -613,7 +613,7 @@ function uploadedCategory(selCat, table, trScope, trTag, trCategory, trDatePicke
                                   let tdModel = document.createElement('td');
                                   tdModel.setAttribute('colspan', '1');
                                   let selModel = new AonNewSelect();
-                                  selModel.id = "aonDocumentalModelsU";
+                                  selModel.id = "aonDocumentalModels";
                                   selModel.title = "Modelos";
                                   tdModel.appendChild(selModel);
 
