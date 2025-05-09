@@ -438,16 +438,16 @@ function S3DocumentalSelects(dur) {
     tdTag.appendChild(selTag);
 
     getTags({ domain: localStorage.getItem('aon_domain_id') }).then(tags => {
-      if (Array.isArray(tags) && tags.length > 0) {
-        selTag.options = JSON.stringify(tags.map(t => ({
-          value: t.id,
-          name: t.name
-        })));
-        trTag.appendChild(tdTag);
-        trTag.style.display = ''; // Mostramos solo si hay etiquetas
-      } else {
-        console.log('No hay etiquetas disponibles.');
-      }
+        if (Array.isArray(tags) && tags.length > 0) {
+            selTag.options = JSON.stringify(tags.map(t => ({
+              value: t.id,
+              name: t.name
+            })));
+            trTag.appendChild(tdTag);  // Mostramos solo si hay etiquetas
+            trTag.style.display = '';         
+          } else {
+            console.log('No hay etiquetas disponibles.');
+          }          
     });
 
     // Crear la sección de categorías

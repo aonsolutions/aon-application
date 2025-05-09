@@ -240,8 +240,11 @@ export class AonNewSelect extends AonNewInput {
   buildLiMultiple(option, ul){
 
     const valueAlias = option[this.valueAlias];
-
-    const checkBoxId = "checkbox"+valueAlias;
+    if(this.isBetaDoc()){
+      var checkBoxId = `${this.id}_checkbox_${valueAlias}`;
+    }else{
+      var checkBoxId = "checkbox"+valueAlias;
+    }
 
     let checkbox = this.getElement(checkBoxId);
     if(checkbox) return;

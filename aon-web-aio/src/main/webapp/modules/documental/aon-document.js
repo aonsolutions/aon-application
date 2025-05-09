@@ -1092,7 +1092,7 @@ export class AonDocument extends AonElement {
       documentToolbar.addSeparator();
       if(this.isBetaDoc()){
         // Solo si no eres empleado o empresa, entiendo que es este permiso
-        if (!this.getDur().isEmployee() && !this.getDur().isEnterprise()){
+        if (this.getDur().isDocumentalManager()) {
           documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
         }
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
