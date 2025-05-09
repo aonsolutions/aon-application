@@ -499,7 +499,7 @@ export class AonDocumental extends AonElement {
 			} else {
               createTag({ name: value })
               .then(() => {
-                this.loadTags();
+                this.loadTags();git 
               });
 			}
 		});
