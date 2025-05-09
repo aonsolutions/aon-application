@@ -16,13 +16,15 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -301,9 +303,11 @@ public class AyudatInvofoxCounters {
 		String f = "/home/ecastellano/TRABAJO/INVOFOX/USAGE/AonDocsPerCompany.xlsx";
 		LinkedHashMap<String, Invofox> map = new LinkedHashMap<>();
 		DataFormatter dataFormatter = new DataFormatter();
+        
 		try (FileInputStream fis = new FileInputStream(f)) {
 			try (XSSFWorkbook workbook = new XSSFWorkbook(fis)){
 				XSSFSheet sheet = workbook.getSheetAt(0);
+				FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 				Iterator<Row> rowIterator = sheet.iterator();
 				int line = 0;
 				while (rowIterator.hasNext()) {
@@ -311,9 +315,15 @@ public class AyudatInvofoxCounters {
 					Row row =  rowIterator.next();
 					if (line > 0) {
 						Cell cell = row.getCell( 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK );
-						String document = (cell.getCellType() == CellType.NUMERIC)
-							?dataFormatter.formatCellValue( cell )
-							:cell.getStringCellValue();
+						String document = null;
+						if (cell.getCellType() == CellType.FORMULA) {
+							 CellValue cellValue = evaluator.evaluate(cell);
+							document = cellValue.getStringValue();
+						} else if (cell.getCellType() == CellType.NUMERIC) {
+							document = dataFormatter.formatCellValue( cell ); 
+						} else {
+							document = cell.getStringCellValue();
+						}
 						System.out.print(" " + document + " ---> ");
 						if (AonStringUtils.isNotBlank( document )) {
 							double processed = row.getCell( 3 ).getNumericCellValue();
@@ -385,9 +395,9 @@ public class AyudatInvofoxCounters {
 		protected void headerRow() {
 			PrintSetup printSetup = sheet.getPrintSetup();
 			printSetup.setLandscape(true);
-			sheet.setMargin(Sheet.LeftMargin, 0.3 );
-			sheet.setMargin(Sheet.RightMargin, 0.3 );
-			sheet.setMargin(Sheet.TopMargin, 0.3 );
+			sheet.setMargin(PageMargin.LEFT, 0.3 );
+			sheet.setMargin(PageMargin.RIGHT, 0.3 );
+			sheet.setMargin(PageMargin.TOP, 0.3 );
 			
 			row = sheet.createRow(rowCount);
 			CellStyle defaultStyle = workbook.createCellStyle();
