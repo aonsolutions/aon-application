@@ -189,7 +189,7 @@ export class AonDialogMenu extends AonElement {
 	hide() {
 		if(this.isMobile()) {
 			this.getContent().style.bottom = ((this.HEADER_HEIGHT || 300)*-1)+"px";
-			new Promise((resolve/*, reject*/) => {
+			return new Promise((resolve/*, reject*/) => {
 				setTimeout(()=>	{
 					this.getDialog().style.display = "none";
 					if(this.getElement('aonMobileMenuSidenav'))
@@ -198,7 +198,7 @@ export class AonDialogMenu extends AonElement {
 				}, 400);
 			});
 		} else {
-			new Promise((resolve/*, reject*/) => {
+			return new Promise((resolve/*, reject*/) => {
 				let dialog = this.getDialog();
 				dialog.style.display = 'none';
 				resolve();
