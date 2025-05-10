@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.sales;
+package com.esferalia.aon.gwt.fiscal.client.target;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +14,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Workplace;
-import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ProcessSalesDialog extends AonCustomDialog {
+public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 	
 	// UI
 	private HTMLPanel body = new HTMLPanel(AonStringUtils.EMPTY);
@@ -51,57 +51,41 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 	
 	private HTMLPanel contentPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	private ScrollPanel scrollPanel;
-	private HTMLPanel saleContainer = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel targetContainer = new HTMLPanel(AonStringUtils.EMPTY);
 	
 	private AonCustomListBox supportSeller;
-	private AonCustomListBox feePeriod;
-	private AonCustomListBox feeWorkplace;
 
 	// Variables
 	private static CommonServiceAsync COMMON_SERVICE;
 	
-	private SalesParams params;
-	private Sales sale;
+	private TargetParams params;
+	private TargetFull target;
 	
 	private Domain parentDomain;
 	private List<Seller> supportSellers;
-	private List<RegistryAddress> customerAddresses;
-	private List<RegistryMedia> customerMedias;
-	private List<Workplace> workplaces;
 	
-	public ProcessSalesDialog( Integer saleId, SalesParams params ) {
+	public ProcessTargetEnterpriseDialog( TargetFull target, List<RegistrySeller> targetSellers, TargetParams params ) {
 		super();
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
-		this.sale = new Sales().setId(saleId);
-		
-		// Style for glass dialog
-		getElement().getStyle().setProperty("z-index", "8");
-		setGlassStyleName(AON.CSS.aonDialogGlass());
+		this.target = target;
 		
 		// Caption
-		setCaption("Procesar Pedido");
+		setCaption("Crear Empresa (C. Potencial)");
+		
+		getElement().getStyle().setProperty("min-width", "35rem");
 		
 		showCloseButton(true);
 		
-		getSale(saleIt -> {
-			getSupportSellers(supportSellersIt -> {
-				getCustomerAddresses(customerAddressesIt -> {
-					getRegistryMedias(customerMediasIt -> {
-						getParentDomain(parentDomainIt -> {
-							getWorkplaces(workplacesIt -> {
-								initView();
-								
-								center();
-								show();
-								
-							});
-						});
-					});
-				});
+		getSupportSellers(supportSellersIt -> {
+			getParentDomain(parentDomainIt -> {
+				initView();
+				
+				center();
+				show();
 			});
 		});
 	}
@@ -135,31 +119,31 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 	private void initSale() {
 		if(null != contentPanel) contentPanel.clear();
 		
-		saleContainer.clear();
-		saleContainer.addStyleName(AON.CSS.aonItemFlex());
-		saleContainer.addStyleName(AON.CSS.aonFlexColumn());
-		saleContainer.setWidth("100%");
-		saleContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
+		targetContainer.clear();
+		targetContainer.addStyleName(AON.CSS.aonItemFlex());
+		targetContainer.addStyleName(AON.CSS.aonFlexColumn());
+		targetContainer.setWidth("100%");
+		targetContainer.getElement().getStyle().setProperty("max-height", "27.5rem");
 		
 		AonCustomTextBox document = new AonCustomTextBox("Documento");
 		document.setWidth("6rem");
 		document.setEnable(false);
-		document.setValue(sale.getCustomer().getDocument());
+		document.setValue(target.getRegistry().getDocument());
 		
 		AonCustomTextBox name = new AonCustomTextBox("Nombre");
 		name.setEnable(false);
-		name.setValue(sale.getCustomer().getName());
+		name.setValue(target.getRegistry().getName());
 		
 		AonCustomTextBox registry = new AonCustomTextBox("Registry");
 		registry.setWidth("6rem");
 		registry.setEnable(false);
-		registry.setValue(sale.getCustomer().getId().toString());
+		registry.setValue(target.getId().toString());
 		
-		saleContainer.add(createRow(document, name, registry));
+		targetContainer.add(createRow(document, name, registry));
 		
-		Optional<RegistryAddress> customerAddress = customerAddresses.stream().filter(address -> address.isMain()).findFirst();
+		Optional<RegistryAddress> customerAddress = target.getAddresses().stream().filter(address -> address.isMain()).findFirst();
 		
-		if(customerAddress.isEmpty()) AonMessagePanel.showError(messagePanel, "El cliente no tiene definidad una direcci\u00f3n principal");
+		if(customerAddress.isEmpty()) AonMessagePanel.showError(messagePanel, "El cliente potencial no tiene definidad una direcci\u00f3n principal");
 		else {
 			AonCustomTextBox streetType = new AonCustomTextBox("T. Via");
 			streetType.setWidth("4rem");
@@ -175,7 +159,7 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			number.setEnable(false);
 			number.setValue(customerAddress.get().getNumber());
 			
-			saleContainer.add(createRow(streetType, address, number));
+			targetContainer.add(createRow(streetType, address, number));
 			
 			AonCustomTextBox zip = new AonCustomTextBox("C.P.");
 			zip.setWidth("4rem");
@@ -190,63 +174,41 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			city.setEnable(false);
 			city.setValue(customerAddress.get().getCity());
 			
-			saleContainer.add(createRow(zip, geozone, city));
+			targetContainer.add(createRow(zip, geozone, city));
 		}
 		
-		Optional<RegistryMedia> celularOpt = customerMedias.stream().filter(media -> media.getMedia().equals(MediaType.CELLULAR)).findFirst();
+		Optional<RegistryMedia> celularOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.CELLULAR)).findFirst();
 		
 		AonCustomTextBox phone = new AonCustomTextBox("Telefono");
 		phone.setEnable(false);
 		phone.setValue(celularOpt.isPresent() ? celularOpt.get().getValue() : null);
 		
-		Optional<RegistryMedia> emailOpt = customerMedias.stream().filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		Optional<RegistryMedia> emailOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
 		
-		if(emailOpt.isEmpty()) AonMessagePanel.showError(messagePanel, "No existe direcci\u00f3n de correo. Por favor rellenala en la ficha del cliente antes de continuar");
+		if(emailOpt.isEmpty()) AonMessagePanel.showError(messagePanel, "No existe direcci\u00f3n de correo. Por favor rellenela en la ficha del cliente potencial antes de continuar");
 		
 		AonCustomTextBox email = new AonCustomTextBox("Email");
 		email.setEnable(false);
 		email.setValue(emailOpt.isPresent() ? emailOpt.get().getValue() : null);
 		
-		saleContainer.add(createRow(phone, email));
+		targetContainer.add(createRow(phone, email));
 		
 		if(null == parentDomain || AonStringUtils.isBlank(parentDomain.getSubDomainSuffix())) AonMessagePanel.showError(messagePanel, "El dominio padre no tiene definido el sufijo para los hijos");
 		
 		AonCustomTextBox url = new AonCustomTextBox("URL");
 		url.setEnable(false);
-		url.setValue(sale.getCustomer().getDocument().toLowerCase() + "-" + (null == parentDomain || AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix()) );
+		url.setValue(target.getRegistry().getDocument().toLowerCase() + "-" + (null == parentDomain || AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix()) );
 		
-		saleContainer.add(createRow(url, null));
+		targetContainer.add(createRow(url, null));
 		
 		supportSeller = new AonCustomListBox("Agente de soporte (con usuario)");
 		supportSeller.clearItems();
 		supportSeller.addItem("-", "");
 		supportSellers.forEach(seller -> supportSeller.addItem(seller.getName(), seller.getId().toString()));
 		
-		AonCustomTextBox commercialSeller = new AonCustomTextBox("Agente Comercial");
-		commercialSeller.setEnable(false);
-		commercialSeller.setValue(sale.getSeller().getName());
+		targetContainer.add(createRow(supportSeller, null));
 		
-		saleContainer.add(createRow(supportSeller, commercialSeller));
-		
-		feePeriod = new AonCustomListBox("Periodo Cuotas");
-		feePeriod.clearItems();
-		feePeriod.addItem("Sin periodo", "0");
-		feePeriod.addItem("Mensual", "1");
-		feePeriod.addItem("Bimensual", "2");
-		feePeriod.addItem("Trimestral", "3");
-		feePeriod.addItem("Cuatrimestral", "4");
-		feePeriod.addItem("Semestral", "5");
-		feePeriod.addItem("Anual", "6");
-		feePeriod.setValue("1");
-		
-		feeWorkplace = new AonCustomListBox("C. Trabajo");
-		feeWorkplace.clearItems();
-		feeWorkplace.addItem("-", "");
-		workplaces.forEach(w -> feeWorkplace.addItem(w.getDescription(), w.getId().toString()));
-		
-		saleContainer.add(createRow(feePeriod, feeWorkplace));
-		
-		scrollPanel = new ScrollPanel(saleContainer);
+		scrollPanel = new ScrollPanel(targetContainer);
 		scrollPanel.setWidth("100%");
 		
 		contentPanel.add(scrollPanel);
@@ -261,10 +223,12 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		buttonPanel.getElement().getStyle().setProperty("gap", "1rem");
 		
 		Button processSaleBtn = new Button();
-		processSaleBtn.setStyleName(AON.CSS.aonIconEmit());
+		processSaleBtn.setStyleName(AON.CSS.aonIconDomainAdd());
 		processSaleBtn.addStyleName(AON.CSS.aonButtonIconText());
-		processSaleBtn.setText("Procesar Pedido");
-		processSaleBtn.addClickHandler(e -> processSale());
+		processSaleBtn.setText("Crear Empresa");
+		processSaleBtn.getElement().getStyle().setProperty("padding-left", "1.5rem");
+		processSaleBtn.getElement().getStyle().setProperty("background-position-x", "3px");
+		processSaleBtn.addClickHandler(e -> createEnterprise());
 		
 		buttonPanel.add(processSaleBtn);
 		
@@ -299,23 +263,22 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		return panel;
 	}
 	
-	private void processSale() {
+	private void createEnterprise() {
 		
 		// Check required info
 		
-		Optional<RegistryAddress> customerAddress = customerAddresses.stream().filter(address -> address.isMain()).findFirst();
-		Optional<RegistryMedia> emailOpt = customerMedias.stream().filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
-		Optional<RegistryMedia> phoneOpt = customerMedias.stream().filter(media -> media.getMedia().equals(MediaType.CELLULAR)).findFirst();
+		Optional<RegistryAddress> targetAddress = target.getAddresses().stream().filter(address -> address.isMain()).findFirst();
+		Optional<RegistryMedia> emailOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		Optional<RegistryMedia> phoneOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.CELLULAR)).findFirst();
 		
-		if(AonStringUtils.isBlank(sale.getCustomer().getDocument())) AonMessagePanel.showError(messagePanel, "El cliente no tiene documento definido");
-		else if(customerAddress.isEmpty()) AonMessagePanel.showError(messagePanel, "El cliente no tiene definidad una direcci\u00f3n principal");
-		else if(emailOpt.isEmpty()) AonMessagePanel.showError(messagePanel, "No existe direcci\u00f3n de correo. Por favor rellenala en la ficha del cliente antes de continuar");
+		if(AonStringUtils.isBlank(target.getRegistry().getDocument())) AonMessagePanel.showError(messagePanel, "El cliente potencial no tiene documento definido");
+		else if(targetAddress.isEmpty()) AonMessagePanel.showError(messagePanel, "El cliente potencial no tiene definidad una direcci\u00f3n principal");
+		else if(emailOpt.isEmpty()) AonMessagePanel.showError(messagePanel, "No existe direcci\u00f3n de correo. Por favor rellenala en la ficha del cliente potencial antes de continuar");
 		else if(AonStringUtils.isBlank(parentDomain.getSubDomainSuffix())) AonMessagePanel.showError(messagePanel, "El dominio padre no tiene definido el sufijo para los hijos");
 		else if(AonStringUtils.isBlank(supportSeller.getValue())) AonMessagePanel.showError(messagePanel, "El agente de soporte es obligatorio");
-		else if(AonStringUtils.isBlank(feeWorkplace.getValue())) AonMessagePanel.showError(messagePanel, "El centro de trabajo para la creaci\u00f3n de cuotas es requerido");
 		else {
 			
-			AonMessagePanel.showLoading(messagePanel, "Procesando pedido para generar una empresa..");
+			AonMessagePanel.showLoading(messagePanel, "Generando una empresa para el cliente potencial..");
 			
 			String host = Window.Location.getHost();
 			String endPoint = "/ms/api/registry-creation-enterprise/";
@@ -327,30 +290,24 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 			
 			JSONObject body = new JSONObject();
 			
-			body.put("name", new JSONString(sale.getCustomer().getName()));
-			body.put("document", new JSONString(sale.getCustomer().getDocument()));
+			body.put("name", new JSONString(target.getRegistry().getName()));
+			body.put("document", new JSONString(target.getRegistry().getDocument()));
 			
-			body.put("streetType", new JSONString(customerAddress.get().getStreetType().getAeatCode()));
-			body.put("address", new JSONString(customerAddress.get().getAddress()));
-			body.put("number", new JSONString(customerAddress.get().getNumber()));
-			body.put("zip", new JSONString(customerAddress.get().getZip()));
-			body.put("geozoneCode", new JSONString(customerAddress.get().getGeozoneCode()));
-			body.put("city", new JSONString(customerAddress.get().getCity()));
+			body.put("streetType", new JSONString(targetAddress.get().getStreetType().getAeatCode()));
+			body.put("address", new JSONString(targetAddress.get().getAddress()));
+			body.put("number", new JSONString(targetAddress.get().getNumber()));
+			body.put("zip", new JSONString(targetAddress.get().getZip()));
+			body.put("geozoneCode", new JSONString(targetAddress.get().getGeozoneCode()));
+			body.put("city", new JSONString(targetAddress.get().getCity()));
 			
 			body.put("phone", new JSONString(phoneOpt.isEmpty() ? "" : phoneOpt.get().getValue()));
 			body.put("email", new JSONString(emailOpt.get().getValue()));
 			
-			body.put("registry", new JSONString(sale.getCustomer().getId().toString()));
+			body.put("registry", new JSONString(target.getId().toString()));
 			
 			body.put("sellerSupport", new JSONString(supportSeller.getValue()));
-			body.put("sellerCommercial", new JSONString(sale.getSeller().getId().toString()));
 			
-			body.put("saleId", new JSONString(sale.getId().toString()));
-			
-			body.put("feePeriod", new JSONString(feePeriod.getValue()));
-			body.put("feeWorkplace", new JSONString(feeWorkplace.getValue()));
-			
-			body.put("source", new JSONString("SALE"));
+			body.put("source", new JSONString("TARGET"));
 			
 			// Create a URL builder and add query parameters
 			UrlBuilder urlBuilder = new UrlBuilder();
@@ -406,22 +363,6 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		}
 	}
 	
-	private void getSale(Consumer<Sales> success) {
-		COMMON_SERVICE.getSale(params.getDomainName(), params.getDomain(), params.getUser(), sale.getId(), new AsyncCallback<Sales>() {
-			
-			@Override
-			public void onSuccess(Sales saleDB) {
-				sale = saleDB;
-				success.accept(sale);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error tarifas: " + caught.getMessage());
-			}
-		});
-	}
-	
 	private void getSupportSellers(Consumer<List<Seller>> success) {
 		COMMON_SERVICE.getTaskHolderUsers(params.getDomainName(), params.getDomain(), params.getUser(), new AsyncCallback<List<Seller>>() {
 			
@@ -438,61 +379,13 @@ public abstract class ProcessSalesDialog extends AonCustomDialog {
 		});
 	}
 	
-	private void getCustomerAddresses(Consumer<List<RegistryAddress>> success) {
-		COMMON_SERVICE.getRegistryAddresses(params.getDomainName(), params.getDomain(), params.getUser(), sale.getCustomer().getId(), new AsyncCallback<List<RegistryAddress>>() {
-			
-			@Override
-			public void onSuccess(List<RegistryAddress> customerAddressesDb) {
-				customerAddresses = customerAddressesDb;
-				success.accept(customerAddresses);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error direcciones del cliente: " + caught.getMessage());
-			}
-		});
-	}
-	
-	private void getRegistryMedias(Consumer<List<RegistryMedia>> success) {
-		COMMON_SERVICE.getRegistryMedias(params.getDomainName(), params.getDomain(), params.getUser(), sale.getCustomer().getId(), new AsyncCallback<List<RegistryMedia>>() {
-			
-			@Override
-			public void onSuccess(List<RegistryMedia> customerMediasDb) {
-				customerMedias = customerMediasDb;
-				success.accept(customerMedias);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error direcciones del cliente: " + caught.getMessage());
-			}
-		});
-	}
-	
 	private void getParentDomain(Consumer<Domain> success) {
-		COMMON_SERVICE.getParentDomain(params.getDomainName(), params.getDomain(), params.getUser(), sale.getDomain(), new AsyncCallback<Domain>() {
+		COMMON_SERVICE.getParentDomain(params.getDomainName(), params.getDomain(), params.getUser(), target.getDomain(), new AsyncCallback<Domain>() {
 			
 			@Override
 			public void onSuccess(Domain parentDomainDb) {
 				parentDomain = parentDomainDb;
 				success.accept(parentDomain);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error direcciones del cliente: " + caught.getMessage());
-			}
-		});
-	}
-	
-	private void getWorkplaces(Consumer<List<Workplace>> success) {
-		COMMON_SERVICE.getWorkplaces(params.getDomainName(), params.getDomain(), params.getUser(), new AsyncCallback<List<Workplace>>() {
-			
-			@Override
-			public void onSuccess(List<Workplace> workplacesDb) {
-				workplaces = workplacesDb;
-				success.accept(workplaces);
 			}
 			
 			@Override

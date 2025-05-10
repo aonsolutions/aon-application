@@ -167,6 +167,9 @@ export class AonOfficePanel extends AonElement {
     workgroups.fn = () => this.showView(OfficeViews.AON_WORKGROUP_LIST);
     options.push(workgroups);
 
+ 	let targetEnterprise = ServiceOptions.AON_TARGET_ENTERPRISE;
+	targetEnterprise.fn = () => this.showView(ServiceOptions.AON_TARGET_ENTERPRISE.id);
+	options.push(targetEnterprise);
 
     let salesEnterprise = ServiceOptions.AON_SALES_ENTERPRISE;
     salesEnterprise.fn = () => this.showView(ServiceOptions.AON_SALES_ENTERPRISE.id);
@@ -623,6 +626,11 @@ export class AonOfficePanel extends AonElement {
           this.clearToolbar();
           //application.closeSidenav();
           GWT.iLoad(GWT.SALES_ENTERPRISE_MODULE, this.getApplication().CONTENT);
+          break;
+		case ServiceOptions.AON_TARGET_ENTERPRISE.id:
+          this.clearToolbar();
+          //application.closeSidenav();
+          GWT.iLoad(GWT.TARGET_ENTERPRISE_MODULE, this.getApplication().CONTENT);
           break;
         case LINK_DOMAINS.id:
           aonView = new AonLinkDomains();

@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
@@ -64,13 +66,16 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
@@ -339,6 +344,14 @@ public interface CommonServiceAsync {
 	
 	void getSales(SalesParams params, AsyncCallback<List<Sales>> asyncCallback) throws AonCoreException;
 	void getSale(String domainName, int domain, String user, Integer saleId, AsyncCallback<Sales> asyncCallback) throws AonCoreException;
+	void getTaskHolderUsers(String domainName, int domain, String user, AsyncCallback<List<Seller>> asyncCallback) throws AonCoreException;
+	void getWorkplaces(String domainName, int domain, String user, AsyncCallback<List<Workplace>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ******************* [TARGET - ENTERPRISE CREATION]
+	// **************************************************
+	
+	void getTargetNotUserFull(TargetParams params, AsyncCallback<Map<TargetFull, List<RegistrySeller>>> asyncCallback) throws AonCoreException;
 	
 	
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
@@ -74,6 +76,7 @@ public interface ITask {
 
 	public TaskHolder getTaskHolder(AONContext ctx, TaskHolderFilter filter, Options...options);
 	public Stream<TaskHolder> getTaskHolderStream(AONContext ctx, TaskHolderFilter filter, Options...options);
+	public List<Seller> getTaskHolderSellerStream(CloseableAONContext ctx, Integer id);
 	public void deleteTaskHolder(AONContext ctx, Integer taskHolder);
 	
 	/* usan TaskOldDAO cambiar a TaskHolderDAO */
