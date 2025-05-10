@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.sales;
+package com.esferalia.aon.gwt.fiscal.client.target;
 
 import java.util.logging.Logger;
 
@@ -6,19 +6,18 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
-import com.esferalia.aon.occam.api.model.management.Sales;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 
-public class SalesModule extends MainEntryPoint {
+public class TargetEnterpriseModule extends MainEntryPoint {
 	
-	private static final Logger LOGGER = Logger.getLogger(SalesModule.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(TargetEnterpriseModule.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
 	private RegistryModuleOptions options;
 	
 	private DeckLayoutPanel deckLayoutPanel;
-	private SalesList salesList;
+	private TargetEnterpriseList targetList;
 	
 	@Override
 	public void onModuleLoad() {
@@ -38,10 +37,9 @@ public class SalesModule extends MainEntryPoint {
 		
 		deckLayoutPanel = new DeckLayoutPanel();
 		
-		salesList = new SalesList(options);
-		
-		deckLayoutPanel.add(salesList);
-		deckLayoutPanel.showWidget(salesList);
+		targetList = new TargetEnterpriseList(options);
+		deckLayoutPanel.add(targetList);
+		deckLayoutPanel.showWidget(targetList);
 		
 		options.getParentWidget().add(deckLayoutPanel);
 	}

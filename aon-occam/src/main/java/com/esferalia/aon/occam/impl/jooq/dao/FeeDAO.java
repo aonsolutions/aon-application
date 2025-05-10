@@ -664,7 +664,25 @@ public class FeeDAO {
 		Date billingDate = fee.getBillingDate() != null ? new Date(fee.getBillingDate().getTime()) : null;
 		
 		Integer id = ctx.getDslContext()
-			.insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE)
+			.insertInto(
+					CUSTOMER_FEE, 
+					CUSTOMER_FEE.DOMAIN, 
+					CUSTOMER_FEE.PROJECT, 
+					CUSTOMER_FEE.CUSTOMER, 
+					CUSTOMER_FEE.LINE, 
+					CUSTOMER_FEE.ITEM, 
+					CUSTOMER_FEE.DESCRIPTION, 
+					CUSTOMER_FEE.QUANTITY, 
+					CUSTOMER_FEE.PRICE, 
+					CUSTOMER_FEE.DISCOUNT_EXPR, 
+					CUSTOMER_FEE.INITIAL_DATE, 
+					CUSTOMER_FEE.FINAL_DATE, 
+					CUSTOMER_FEE.BILLING_DATE, 
+					CUSTOMER_FEE.PERIOD, 
+					CUSTOMER_FEE.SECURITY_LEVEL, 
+					CUSTOMER_FEE.INVOICING_GROUP, 
+					CUSTOMER_FEE.SELLER, 
+					CUSTOMER_FEE.WORKPLACE)
 			.values(fee.getDomain().getId(), fee.getProject().getId(), fee.getCustomer().getId(), fee.getLine(), fee.getItem().getId(), fee.getDescription(), fee.getQuantity(), fee.getPrice(), fee.getDiscountExpr(), startDate, endDate, billingDate, (short) fee.getPeriod().value(), fee.getSecurityLevel().value(), fee.getInvoicingGroup().getId(), fee.getSeller().getId(), fee.getWorkplace().getId())
 			.returning(CUSTOMER_FEE.ID).fetchOne().getValue(CUSTOMER_FEE.ID);
 		return fee.setId(id);
