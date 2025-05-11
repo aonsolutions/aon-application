@@ -101,7 +101,8 @@ public class TargetDAO {
 				.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
 				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
 				.leftOuterJoin(CUSTOMER).on(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY))
-				.where(condition);
+				.where(condition)
+				.and(CUSTOMER.REGISTRY.isNull());
 		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "date"))
