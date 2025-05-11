@@ -1052,8 +1052,7 @@ export class AonNewMenu extends AonElement {
 
 	isApp(app) {
 		if (OFFICE.app === app.app){
-			//return this.getDur().isOffice();
-			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
+			return (this.isBeta() || this.isAyudaTorInfoautonomos()) && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
 		}
 		
 		if (ACADEMY.app === app.app)
@@ -1062,8 +1061,6 @@ export class AonNewMenu extends AonElement {
 			return this.getDur().isCommerce();
 		if (GARAGE.app === app.app)
 			return this.getDur().isGarage();
-		if (OFFICE.app === app.app)
-			return this.getDur().isOffice();
 
 		if (COMMERCIAL_MENU.app === app.app)
 			return this.getDur().isCommercial();
