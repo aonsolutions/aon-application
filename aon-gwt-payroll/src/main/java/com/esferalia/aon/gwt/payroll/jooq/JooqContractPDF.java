@@ -315,7 +315,10 @@ public class JooqContractPDF {
 		
 		if(!entepriseRecords.isEmpty()) {
 			Record enterpriseRecord = entepriseRecords.get(0);
-			String address = enterpriseRecord.get(RADDRESS.STREET_TYPE) + " " + enterpriseRecord.get(RADDRESS.ADDRESS) + ", " + enterpriseRecord.get(RADDRESS.NUMBER);
+			String address = null;
+			if(AonStringUtils.isNotBlank(enterpriseRecord.get(RADDRESS.ADDRESS)))
+				address = enterpriseRecord.get(RADDRESS.STREET_TYPE) + " " + enterpriseRecord.get(RADDRESS.ADDRESS) + ", " + enterpriseRecord.get(RADDRESS.NUMBER);
+			
 			String municipalityCode = enterpriseRecord.get(RADDRESS.MUNICIPALITY_CODE);
 			String zip = enterpriseRecord.get(RADDRESS.ZIP);
 			
@@ -330,7 +333,8 @@ public class JooqContractPDF {
 			extensionInfo.put("Texto4", representativeCharge.isPresent() ? representativeCharge.get().getValue() : "");
 			
 			extensionInfo.put("Texto5", contractData.getEnterpriseName());
-			extensionInfo.put("Texto6", address);
+			if(null != address)
+				extensionInfo.put("Texto6", address);
 			extensionInfo.put("Texto7", "ESPA\u00D1A");
 			extensionInfo.put("Cifra1", "7");
 			extensionInfo.put("Cifra2", "2");
@@ -347,11 +351,13 @@ public class JooqContractPDF {
 				extensionInfo.put("Cifra8", municipalityCode.substring(4, 5));
 			}
 			
-			extensionInfo.put("Cifra9", zip.substring(0, 1));
-			extensionInfo.put("Cifra10", zip.substring(1, 2));
-			extensionInfo.put("Cifra11", zip.substring(2, 3));
-			extensionInfo.put("Cifra12", zip.substring(3, 4));
-			extensionInfo.put("Cifra13", zip.substring(4, 5));
+			if(null != zip) {
+				extensionInfo.put("Cifra9", zip.substring(0, 1));
+				extensionInfo.put("Cifra10", zip.substring(1, 2));
+				extensionInfo.put("Cifra11", zip.substring(2, 3));
+				extensionInfo.put("Cifra12", zip.substring(3, 4));
+				extensionInfo.put("Cifra13", zip.substring(4, 5));
+			}
 			
 		}
 		

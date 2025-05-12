@@ -17,9 +17,9 @@ export const DocumentalSidenav = {
     name: MSG.CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
-  DEFAULT_CATEGORIES: {
+  OFFICE_CATEGORIES: {
     id: 'DefaultCategories',
-    name: MSG.DEFAULT_CATEGORIES.toUpperCase(),
+    name: MSG.OFFICE_CATEGORIES.toUpperCase(),
     app: Apps.DOCUMENTAL
   },
   USER_CATEGORIES: {
@@ -59,6 +59,13 @@ export const DOCUMENTAL_FILTER = [
       id: "categoryOldFilter",
       name: "categoryOldFilter",
       title: "Buscar en mis "+MSG.CATEGORY+"s"
+    },
+    {
+      type: "select",
+      id: "tags",
+      name: "tags",
+      title: "Mis "+ MSG.TAGS,
+      multiple: true      
     },
 	{
       type: "select",

@@ -3,12 +3,14 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetParams;
@@ -28,6 +30,7 @@ import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
@@ -36,6 +39,7 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
+import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.news.News;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -61,12 +65,16 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
@@ -110,6 +118,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> callback) {
 		AON.start();
 		serviceAsync.getAonConfiguration(occam, params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getParentDomain(String domainName, int domain, String user, Integer id, AsyncCallback<Domain> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getParentDomain(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// **************************************************
@@ -895,6 +909,7 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.saveItemAddInfos(domainName, domain, user, itemAddInfoList, new AsyncCallbackWrapper<>(callback));
 	}
+
 	// **************************************************
 	// ***************************************** [TARIFF]
 	// **************************************************
@@ -963,6 +978,44 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getCatalogueList(String domainName, int domain, String user, AsyncCallback<List<Catalogue>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getCatalogueList(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ****************************************** [SALES]
+	// **************************************************
+
+	@Override
+	public void getSales(SalesParams params, AsyncCallback<List<Sales>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSales(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSale(String domainName, int domain, String user, Integer saleId, AsyncCallback<Sales> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSale(domainName,domain, user, saleId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHolderUsers(String domainName, int domain, String user, AsyncCallback<List<Seller>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolderUsers(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getWorkplaces(String domainName, int domain, String user, AsyncCallback<List<Workplace>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getWorkplaces(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ******************* [TARGET - ENTERPRISE CREATION]
+	// **************************************************
+
+	@Override
+	public void getTargetNotUserFull(TargetParams params, AsyncCallback<Map<TargetFull, List<RegistrySeller>>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTargetNotUserFull(params, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

@@ -22,6 +22,8 @@ import java.util.Map.Entry;
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -1520,6 +1522,74 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(666.66, salary.getTotalPayment(), 0.0001);
 	}
 	
+	@Test
+	public void testDisabledPayments()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord baseConcept = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord plusConcept = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord extraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		AgreementRecord agreement = newAgreement(aonContext);
+		addPayment(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment() {
+			{
+				this.concept = baseConcept.getId();
+				this.expression = "DISABLE();";
+			}
+		});
+		addPayment(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment() {
+			{
+				this.concept = plusConcept.getId();
+				this.expression = "DISABLE();";
+			}
+		});
+		addPayment(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment() {
+			{
+				this.type = PaymentType.CRA_0004;
+				this.concept = extraConcept.getId();
+				this.expression = "(SALARIO_BASE + PLUS_SALARIAL)/12";
+			}
+		});
+		addPayment(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment() {
+			{
+				this.concept = baseConcept.getId();
+				this.expression = "1000.00  * DIAS_TRABAJADOS / DIAS_MES ";
+			}
+		});
+		addPayment(aonContext, agreement, getFirstDayOfYear(getToday()), new Payment() {
+			{
+				this.concept = plusConcept.getId();
+				this.expression = "250.00  * DIAS_TRABAJADOS / DIAS_MES";
+			}
+		});
+		
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] { 
+						},
+				new String[] { 
+				},
+				category);
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		
+		ISalary salary = calculator.calculate(ctx);
+		
+		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
+	}
+
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {

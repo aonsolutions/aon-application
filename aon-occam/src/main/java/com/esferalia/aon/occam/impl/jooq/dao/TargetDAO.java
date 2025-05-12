@@ -9,9 +9,12 @@ import static com.esferalia.aon.jooq.tables.Tariff.TARIFF;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 
@@ -20,7 +23,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Advertising;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
@@ -31,6 +36,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO.TariffFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TargetAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TargetValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TargetDAO {
 	
@@ -76,18 +82,72 @@ public class TargetDAO {
 			.stream()
 			.map(new TargetFiller());
 		
-		System.out.println(ctx.getDslContext().select()
-			.from(TARGET)
-			.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
-			.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
-			.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
-			.where(TARGET_PROPERTIES.getConditions(filter))
-			.and(TARGET.REGISTRY.notIn(ctx.getDslContext().select(CUSTOMER.REGISTRY).from(CUSTOMER).where(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY))))
-			.orderBy(TARGET_ALIAS.NAME)
-			.offset(ofs)
-			.limit(limit).getSQL().toString());
-		
 		return targets;
+	}
+	
+	public static TargetFull getFull(AONContext ctx, Integer id){
+		TargetFull full = new TargetFull();
+		full.setRegistry(TargetDAO.get(ctx, id));  
+		RegistryDAO.fillChilds(ctx, full);
+		return full;
+	}
+	
+	public static List<TargetFull> getTargetNotUserFull(AONContext ctx, TargetParams params){
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(TARGET)
+				.join(TARGET_ALIAS).on(TARGET_ALIAS.ID.eq(TARGET.REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(TARGET_ALIAS.DOMAIN))
+				.join(SCOPE).on(SCOPE.ID.eq(TARGET.SCOPE))
+				.leftOuterJoin(CUSTOMER).on(CUSTOMER.REGISTRY.eq(TARGET.REGISTRY))
+				.where(condition)
+				.and(CUSTOMER.REGISTRY.isNull());
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(TARGET.CREATION_DATE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TARGET_ALIAS.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(TARGET_ALIAS.DOCUMENT);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(TARGET.CREATION_DATE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(TARGET_ALIAS.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(TARGET_ALIAS.DOCUMENT.desc());
+		}
+		
+		List<TargetFull> targetFullList = select
+			.limit(params.getOffset(), params.getLimit())
+			.fetch()
+			.stream()
+			.map(new TargetFiller())
+			.map(target -> {
+				TargetFull full = new TargetFull();
+				full.setRegistry(target);
+				RegistryDAO.fillChilds(ctx, full);
+				return full;
+			})
+			.collect(Collectors.toList());
+		
+		System.out.println("------------ Target DAO --> getTargetNotUserFull: " + targetFullList.size());
+		
+		return targetFullList;
+	}
+	
+	private static Condition paramsToCondition(AONContext ctx, TargetParams params) {
+		Condition condition = TARGET.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription()))
+			condition = condition.and(TARGET_ALIAS.NAME.like("%" + params.getDescription() + "%"));
+		
+		if(null != params.getDate())
+			condition = condition.and(TARGET.CREATION_DATE.ge(new Timestamp(params.getDate().getTime())));
+		
+		return condition;
 	}
 	
 	public static Target save(AONContext ctx, Target target) {

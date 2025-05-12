@@ -1395,7 +1395,7 @@ public abstract class CCAAPdfAction {
 		D2DepositKey[][] keys = d2Deposit.getType().equalsIgnoreCase("PYMES")
 			? D2PDepositConstants.MRN7_PYMES_KEYS_3 : D2DepositConstants.MRN7_ABREVIATE_KEYS_3;
 
-		String title = "Vencimientos de las deudas al cierre del ejercicio 2021";
+		String title = "Vencimientos de las deudas al cierre del ejercicio " + d2Deposit.getYear();
 		String[] columns = {"Uno", "Dos", "Tres", "Cuatro", "Cinco", "Más de 5", "TOTAL"};
 
 		general(title, columns, null, keys, 10);

@@ -40,7 +40,9 @@ import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.DomainBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
+import com.esferalia.aon.gwt.fiscal.client.sales.SalesModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
+import com.esferalia.aon.gwt.fiscal.client.target.TargetEnterpriseModule;
 import com.esferalia.aon.gwt.fiscal.client.tariff.TariffModule;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -303,6 +305,12 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== TARIFF
 	//
 	private static final String TARIFF_MODULE_ENTRY_POINT = "TariffModule";
+	//  ================================================================== SALES
+	//
+	private static final String SALES_MODULE_ENTRY_POINT = "SalesModule";
+	//  ================================================================== TARGET ENTERPRISE
+	//
+	private static final String TARGET_ENTERPRISE_MODULE_ENTRY_POINT = "TargetEnterpriseModule";
 	
 	
 
@@ -964,6 +972,36 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					TariffModule tariffModule = new TariffModule();
 					tariffModule.onModuleLoad();
+				}
+				
+			});
+		}  else if( entryPoint.equalsIgnoreCase(SALES_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(SalesModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					SalesModule salesModule = new SalesModule();
+					salesModule.onModuleLoad();
+				}
+				
+			});
+		}  else if( entryPoint.equalsIgnoreCase(TARGET_ENTERPRISE_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(TargetEnterpriseModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					TargetEnterpriseModule targetEnterpriseModule = new TargetEnterpriseModule();
+					targetEnterpriseModule.onModuleLoad();
 				}
 				
 			});

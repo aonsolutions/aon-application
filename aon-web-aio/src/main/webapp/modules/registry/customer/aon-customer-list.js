@@ -57,8 +57,10 @@ export class AonCustomerList extends AonRegistryList {
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
 		this.getApplication().addToolbarOption2(ACTION.ADD, () => this.buildRegistry());
-		const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
-		if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadExcel('customer'));
+		if(this.getDur()) {
+			const isUdapa = this.getDur().getDomain().getName().includes("udapa") || this.getDur().getDomain().getName().includes("paturpat");
+			if(isUdapa) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL, () => this.downloadExcel('customer'));
+		}
 		this.buildSearch();
 	}
 

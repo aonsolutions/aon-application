@@ -476,6 +476,67 @@ public abstract class AbstractSQLTestCase {
         	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void addCCCPayment(AONContext aonContext, CCCType cccType, Date startDate,
+			PaymentType paymentType, String expression, String quoteExpression, String irpfExpression) {
+		addCCCPayment(aonContext, cccType, startDate, null, paymentType, expression, quoteExpression,
+				irpfExpression, null);
+	}
+
+	protected final void addCCCPayment(AONContext aonContext, CCCType cccType, Date startDate,
+			PaymentType type, String expression, String quoteExpression) {
+		addCCCPayment(aonContext, cccType, startDate, type, expression, quoteExpression,
+				ContextVariable.ALL);
+	}
+
+	protected final void addCCCPayment(AONContext aonContext, CCCType cccType, Date startDate,
+			PaymentType type, String expression) {
+		addCCCPayment(aonContext, cccType, startDate, type, expression, ContextVariable.ALL,
+				ContextVariable.ALL);
+	}
+
+	protected final void addCCCPayment(AONContext aonContext, CCCType cccType,  Date startDate,
+			PaymentConceptRecord paymentConcept, PaymentType paymentType, String expression, String quoteExpression) {
+		addCCCPayment(aonContext, cccType, startDate, paymentConcept, paymentType, expression, quoteExpression,
+				ContextVariable.ALL, null);
+	}
+
+	protected final void addCCCPayment(AONContext aonContext, CCCType cccType,  Date startDate,
+			PaymentConceptRecord paymentConcept, PaymentType paymentType, String expression, String quoteExpression, String irpfExpression) {
+		addCCCPayment(aonContext, cccType, startDate, paymentConcept, paymentType, expression, quoteExpression,
+				irpfExpression, null);
+	}
+
+	protected SystemPaymentRecord addCCCPayment(AONContext aonContext,
+			CCCType cccType,
+			Date startDate,
+			PaymentConceptRecord concept,
+			PaymentType paymentType,
+			String expression,
+			String quoteExpression,
+			String irpfExpression,
+			SalaryType salaryType) {
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+		
+		SystemPaymentRecord systemPayment = 
+		aonContext.getDslContext().insertInto(SYSTEM_PAYMENT)
+				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, concept != null? concept.getId(): null)
+				.set(SYSTEM_PAYMENT.START_DATE, startDate)
+				.set(SYSTEM_PAYMENT.EXPRESSION, expression)
+				.set(SYSTEM_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
+				.set(SYSTEM_PAYMENT.DOMAIN, (-1) * (cccType.ordinal() + 100))
+				.set(SYSTEM_PAYMENT.TYPE,
+						(byte) (paymentType != null ? paymentType.ordinal() : PaymentType.CRA_0001.ordinal()))
+				.set(SYSTEM_PAYMENT.SALARY_TYPE,
+						(byte) (salaryType != null ? salaryType.ordinal() : SalaryType.SALARY.ordinal()))
+				.returning()
+				.fetchOne();
+
+		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+		
+		return systemPayment;
+	}
+
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");
 	}

@@ -23,8 +23,20 @@ const AON_WORKGROUP_LIST = {
 
 const AON_SERVICE = {
     id: 'sideNavService',
-    name: MSG.SERVICES_AON,
+    name: MSG.AON_SERVICES,
     icon: MATERIAL_ICONS.SHOPPING_BAG
+}
+
+const AON_SALES_ENTERPRISE = {
+    id: 'sideNavSalesEnterprise',
+    name: 'Procesar Pedidos',
+    icon: MATERIAL_ICONS.EMIT
+}
+
+const AON_TARGET_ENTERPRISE = {
+    id: 'sideNavTargetEnterprise',
+    name: 'Empresas (C. Potenciales)',
+    icon: MATERIAL_ICONS.DOMAIN_ADD
 }
 
 
@@ -58,7 +70,9 @@ const OfficeOptions = {
 };
 
 const ServiceOptions = {
-    AON_SERVICE
+    AON_SERVICE,
+    AON_SALES_ENTERPRISE,
+    AON_TARGET_ENTERPRISE
 }
 
 

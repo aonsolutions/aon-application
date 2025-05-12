@@ -42,6 +42,7 @@ public class ThemeUrlServlet extends AonApiHttpServlet {
 			String url = "";
 			resp.setContentType(MimeType.CSS.getName());
 			Domain domain = AON.getDomain(domainStr, 1, "", f -> f.getNameProperty().eq(domainStr));
+
 			Integer parentId = domain.getParentId();
 			if(parentId != null) {
 				boolean customView = AON_SOLUTIONS.getDomainApp(domainStr, parentId, "", f-> f.getDomainProperty().eq(parentId)
@@ -67,6 +68,9 @@ public class ThemeUrlServlet extends AonApiHttpServlet {
 			}else if(AonStringUtils.isNotBlank(lsAonTheme)) {
 				url = lsAonTheme;
 			}
+			
+			if(domain.getName().contains("ayudat"))
+				url = "https://aonsolutions.github.io/aon-theme/css/ayudat.css";
 			JSONObject json = new  JSONObject();
 			json.put(IJsonNames.URL, url);
 			response(req, resp, json);

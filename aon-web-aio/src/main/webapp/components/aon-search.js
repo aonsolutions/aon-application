@@ -14,6 +14,7 @@ import { AonNewDate } from './aon-new-date.js';
 import { AonNewSelect } from "./aon-new-select.js";
 
 export class AonSearch extends AonElement {
+    formComponents = [];
 
 	static get observedAttributes() {
 		return [CONSTANT.DISABLED];
@@ -84,7 +85,7 @@ export class AonSearch extends AonElement {
 		span.style.position = 'relative';
 
 		this.appendChild(span);
-		
+
 		let searchButton = new AonIconButton();
 		searchButton.id = this.SEARCH_BUTTON;
 		searchButton.icon = MATERIAL_ICONS.SEARCH;
@@ -106,7 +107,7 @@ export class AonSearch extends AonElement {
         } else {
           // Dejamos el boton de filtro como estaba
           advancedButton.style.display = 'none';
-          advancedButton.id = this.ADVANCED_BUTTON;
+          advancedButton.id   = this.ADVANCED_BUTTON;
           advancedButton.icon = MATERIAL_ICONS.FILTER_LIST;
           span.appendChild(advancedButton);
         }
@@ -114,7 +115,7 @@ export class AonSearch extends AonElement {
 		advancedButton.addEventListener(EVENT.CLICK, () => {
 			this.openOrClose();
 		});
-		
+
 		input.addEventListener(EVENT.KEYUP, () => {
 			this.dispatchEventSearch(input.value, EVENT.KEYUP);
 		});
@@ -171,48 +172,55 @@ export class AonSearch extends AonElement {
 	}
 
 	dispatchCleanEventSearch(value, event=undefined){
-		this.dispatchEvent(new CustomEvent(EVENT.RESET_FILTER,{
-			detail:{
-				event,
-				search: value,
-				...this.getValues()
-			}
-		}));
-		
-		this.buildBadge();
+      let eventType = EVENT.RESET_FILTER;
+      let clear     = false;
+      // Por ahora solo esta en el menu documental limpienado filtros, ya que veo que en otras vistas hace cosas raras
+      if(this.isBetaDoc()){
+        eventType = EVENT.SEARCH_NEW;
+        clear     = true;
+        value     = '';
+        this.clearFormData();
+      }
+      
+      this.dispatchEvent(new CustomEvent(eventType,{
+          detail:{
+              event,
+              search: value,
+              ...this.getValues()
+          }
+      }));
+      this.buildBadge(clear);
 	}
 
-	buildBadge(){
+	buildBadge(clear = false){
 		let count = Object.values(this.getValues()).length;
-
-		const id = this.id+"CountFilter";
-
-		let div = this.getElement(id);
+		const id  = this.id+"CountFilter";
+		let div   = this.getElement(id);
 
 		if(div){
-			div.remove();
+          div.remove();
 		}
 
-		if(count){
-			div = this.createElement(TAG.DIV);
-			div.id = id;
-			div.style = `
-				position: relative; 
-				background: #002469;
-				top: 14px;
-				right: 5px;
-				border-radius: 50%;
-				color: white;
-				font-size: 10px;
-				font-weight: 800;
-				text-align: center;
-				height: 14px;
-				width: 14px;
-				line-height: 14px;
-			`;
-			div.textContent = count;
-			div.title = `${count} ${MSG.FILTERS}`;
-			this.getElement(this.SPAN).appendChild(div);
+		if(count && !clear){
+          div       = this.createElement(TAG.DIV);
+          div.id    = id;
+          div.style = `
+              position: relative; 
+              background: #002469;
+              top: 14px;
+              right: 5px;
+              border-radius: 50%;
+              color: white;
+              font-size: 10px;
+              font-weight: 800;
+              text-align: center;
+              height: 14px;
+              width: 14px;
+              line-height: 14px;
+          `;
+          div.textContent = count;
+          div.title       = `${count} ${MSG.FILTERS}`;
+          this.getElement(this.SPAN).appendChild(div);
 		}
 	}
 
@@ -259,7 +267,7 @@ export class AonSearch extends AonElement {
 				this.style.background = 'white';
 				span.style.width = '100%';
 				advancedButton.style.position = 'absolute';
-				advancedButton.style.right = '0px';		
+				advancedButton.style.right = '0px';
 			}
 			input.style.display = 'block';
             if(!this.newStyle){
@@ -389,32 +397,66 @@ export class AonSearch extends AonElement {
 		divOpts.insertBefore(divOpts.lastChild, el);
 	}
 
-	getInput(attributes) {
-		let html = undefined;
-		switch (attributes.type) {
-			case CONSTANT.CHECKBOX:
-				html = setAttributes(new AonSwitch(), attributes);
-			break;
-			case CONSTANT.TEXT:
-				html = setAttributes(new AonInput(), attributes);
-			break;
-			case CONSTANT.SELECT:
-				html = !this.newStyle 
-                  ? setAttributes(new AonSelect(), attributes)
-                  : setAttributes(new AonNewSelect(), attributes);
-			break;
-			case CONSTANT.DATE:
-				html = setAttributes(new AonDate(), attributes);
-			break;
-			case CONSTANT.NEW_DATE:
-				html = setAttributes(new AonNewDate(), attributes);
-			break;
-			case CONSTANT.HTML_ELEMENT:
-				html = setAttributes(attributes.element, {...attributes, element: ""});
-			break;
-		}
-		return html;
-	}
+    getInput(attributes) {
+      let html      = undefined;
+      let component = undefined;
+
+      switch (attributes.type) {
+        case CONSTANT.CHECKBOX:
+          component = new AonSwitch();
+          html = setAttributes(component, attributes);
+        break;
+        case CONSTANT.TEXT:
+          component = new AonInput();
+          html = setAttributes(component, attributes);
+        break;
+        case CONSTANT.SELECT:
+          component = !this.newStyle 
+            ? new AonSelect()
+            : new AonNewSelect();
+          html = setAttributes(component, attributes);
+        break;
+        case CONSTANT.DATE:
+          component = new AonDate();
+          html = setAttributes(component, attributes);
+        break;
+        case CONSTANT.NEW_DATE:
+          component = new AonNewDate();
+          html = setAttributes(component, attributes);
+        break;
+        case CONSTANT.HTML_ELEMENT:
+          component = attributes.element;
+          html = setAttributes(component, {...attributes, element: ""});
+        break;
+      }
+
+      // Si hemos creado un componente, lo aniadimos al array
+      if (component) {
+        // Asi tenemos los componetes que se montan para limpiar el filtro o lo que se quiera
+        this.formComponents.push(component);
+      }
+
+      return html;
+    }
+
+    clearFormData() {
+      // limpiamos los datos del buscar principal
+      this.getElement(this.SEARCH_INPUT).value = '';
+      // Iteramos sobre todos los componentes en el array formComponents
+      // Solo agregado por ahora inputs del documental, probar los demas!!!!!!!!!!!!!!!!!!!!!!!!!
+      this.formComponents.forEach(component => {
+        if (component.tagName === TAG.AON_NEW_SELECT.toUpperCase() && typeof component.setValue === 'function') {
+          // Limpiar select (valor vacio)
+          component.clear('');
+        } else if (component.tagName === TAG.AON_SWITCH.toUpperCase() && typeof component.checked !== undefined) {
+          // Limpiar checkbox (desmarcar)
+          component.checked = false;
+        } else if (component.tagName === TAG.AON_NEW_DATE.toUpperCase() && typeof component.setDate === 'function') {
+          // Limpiar fecha
+          component.setDate('');
+        }
+      });
+    }
 
 	clearValues() {
 		const names = this.getValues();

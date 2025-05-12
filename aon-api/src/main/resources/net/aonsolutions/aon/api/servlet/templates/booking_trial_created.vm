@@ -26,7 +26,7 @@
                                 <a href="$url" style="color: #007bff; text-decoration: none;">$domainName</a>
                             </p>
                             <p><strong>Usuario:</strong>
-                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$user">$user</a>.
+                            	<a style="color: #007bff; text-decoration: none;" href="mailto:$user">$user</a>
                             </p>
                             <p><strong>Contraseña:</strong> $password</p>
                         </td>

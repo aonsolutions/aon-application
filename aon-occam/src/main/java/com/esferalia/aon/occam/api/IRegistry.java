@@ -80,6 +80,8 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 
 public interface IRegistry {
 	
@@ -188,6 +190,7 @@ public interface IRegistry {
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter, int ofs, int limit);
 	public Target save(AONContext ctx, Target target);
+	List<TargetFull> getTargetNotUserFull(AONContext ctx, TargetParams params);
 
 
 	// ------------------- RECORD DATA

@@ -8293,6 +8293,177 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testHomeCommonDiseaseITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.HOME_EMPLOYEES,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,24);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT,PaymentType.CRA_0000);
+		PaymentConceptRecord directIT = addConcept(aonContext, DIRECT_PAY.getName(),PaymentType.CRA_0000);
+		addCCCPayment(aonContext, CCCType.HOME_EMPLOYEES, contract.getStartDate(), prestIT, PaymentType.CRA_0001,
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+		addCCCPayment(aonContext, CCCType.HOME_EMPLOYEES, contract.getStartDate(),prestIT, PaymentType.CRA_0001,
+				String.format("BASE_REGULADORA * 0.60 * %s_4_8 * (isdef %s ? %s : 1.00)",  COMMON_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+		addCCCPayment(aonContext, CCCType.HOME_EMPLOYEES, contract.getStartDate(),directIT, PaymentType.CRA_0001,
+				String.format("DIAS_ENFERMEDAD_COMUN_9 * 0.00",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(4 + 3 , salary.getSalaryPayments().size());
+		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) + 1750.00 / monthDays * 5 * 0.60  , salary.getTotalPayment(), DELTA);
+
+	}
+
+	
+	@Test
+	public void testHomeATEPITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.HOME_EMPLOYEES,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,24);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				endITDate, null);
+
+		PaymentConceptRecord directIT = addConcept(aonContext, DIRECT_PAY.getName(),PaymentType.CRA_0000);
+		addCCCPayment(aonContext, CCCType.HOME_EMPLOYEES, contract.getStartDate(),directIT, PaymentType.CRA_0001,
+				String.format("%s * 0.00",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(4 + 1 , salary.getSalaryPayments().size());
+		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
+
+	}
+
+	@Test
+	public void testHomeMenstruationITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				SSRegimeType.GENERAL, 
+				CCCType.HOME_EMPLOYEES,
+				getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = set(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,24);
+		addIT(aonContext, contract, LeaveType.MENSTRUATION, startITDate,
+				endITDate, null);
+
+		PaymentConceptRecord directIT = addConcept(aonContext, DIRECT_PAY.getName(),PaymentType.CRA_0000);
+		addCCCPayment(aonContext, CCCType.HOME_EMPLOYEES, contract.getStartDate(),directIT, PaymentType.CRA_0001,
+				String.format("%s * 0.00",  ContextVariable.MENSTRUATION_DAYS),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		
+		Assert.assertEquals(4 + 1 , salary.getSalaryPayments().size());
+		org.junit.Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals(1750.00 / monthDays * ( monthDays - 15) , salary.getTotalPayment(), DELTA);
+
+	}
 	// ------------------------------------------------------------------------
 	
 
@@ -8346,6 +8517,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		return prestIT;
 	}
+	
+
 	
 	protected static <T> T random(T arr[]) {
 		return arr[(int) ((int) (Math.random() * arr.length))];

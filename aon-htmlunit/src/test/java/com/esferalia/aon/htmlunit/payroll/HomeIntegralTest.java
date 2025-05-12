@@ -3,6 +3,7 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 
@@ -799,6 +800,31 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
 		assertText("unemployment", cgcBase*1.55/100.00);
+	}
+
+
+	@Test
+	public void TestIT() throws Exception {
+
+		if (!isDisplayed("accidente_de_trabajo,_it"))
+			open("principal");
+
+		wait4Id("accidente_de_trabajo,_it");
+
+		draft("ACCIDENTE DE TRABAJO, IT");
+		calculate(Calendar.MAY, 2025);
+		assertValue("totalPaymentLabel", 1000.00 / 30 * 16 );
+
+		draft("ENFERMEDAD COMÚN, IT");
+		calculate(Calendar.MAY, 2025);
+		assertValue("totalPaymentLabel", 1000.00 / 30 * 15  + 941.00 / 30 * 5 * 0.60 );
+
+		draft("PAGO DELEGADO, IT");
+		calculate(Calendar.JUNE, 2025);
+		double totalEnterprise = getText("totalEnterpriseLabel");
+		assertTrue(totalEnterprise > 0.00);
+
+
 	}
 
 

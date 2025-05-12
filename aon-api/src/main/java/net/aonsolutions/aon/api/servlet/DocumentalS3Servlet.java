@@ -180,7 +180,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 			} else if(type == 1){
-				data = getRattachFile(api);
+				data = getRattachFile(api, api.getData().getInt(IJsonNames.ID));
 			}
 			if(data != null) {				
 				Attach attach = new Attach()
@@ -196,9 +196,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static byte [] getRattachFile(AonApiData api) {
+	private static byte [] getRattachFile(AonApiData api, Integer id) {
 		byte [] data = null;
-		String base64 = "domain=" + api.getDomain().getId() + "&id=" + api.getData().getInt(IJsonNames.ID) + "&attach_type=registry";
+		String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
 		base64 = Base64.getEncoder().encodeToString(base64.getBytes());
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
@@ -212,8 +212,10 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.headers("Content-Type", "text/plain;charset=UTF-8")
 				.method("GET", HttpRequest.BodyPublishers.noBody())
 				.build();
+		
 		HttpResponse<InputStream> response = null;
 		HttpClient http = HttpClient.newHttpClient();
+
 		try {
 			response = http.send(request, BodyHandlers.ofInputStream());
 			InputStream is = response.body();
@@ -225,7 +227,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		}
 		return data;
 	}
-	
+
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
 		try {
 			String jsonData = api.getData().getString(IJsonNames.DATA);
@@ -242,15 +244,26 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
 			List<byte[]> files = new LinkedList<byte[]>();
 			List<String> filenames = new LinkedList<String>();
-			for(S3Document document: documents) {
+			for (S3Document document : documents) {
 				byte[] data = null;
-				if(document.getType() == 0 && document.getS3key() != null) {
+				if (document.getType() == 0 && document.getS3key() != null) {
 					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 				} else if(document.getType() == 1){
-					data = getRattachFile(api);
+					data = getRattachFile(api, document.getId());
 				}
 				files.add(data);
-				filenames.add(document.getName());
+
+				String filename = document.getName();
+				
+				String type = document.getMimetype().toString(); 
+
+				if (type != null && !type.isEmpty()) {
+					String extension = "." + type.toLowerCase();
+					if (!filename.toLowerCase().endsWith(extension)) {
+						filename += extension;
+					}
+				}
+				filenames.add(filename);
 			}
 			byte[] i = createZipFromByteArrays(files, filenames);
 			Attach attach = new Attach()
@@ -296,12 +309,25 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Optional<Integer> page = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		Optional<Integer> perPage = Optional.ofNullable(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
 		Integer category = JsonUtils.getInteger(api.getData(), IJsonNames.CATEGORY);
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> generateFilter(f, api, getScopes(api)), f -> generateFilterRAttach(f, api, getScopes(api)), null, category, page, perPage)
+
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(),
+			f -> generateFilter(f, api, getScopes(api)),
+			f -> generateFilterRAttach(f, api, getScopes(api)),
+			null, category, page, perPage)
 		.forEach(document -> {
-			jsArray.put(fullDocumentToJson(document));
+			JSONObject doc = fullDocumentToJson(document);
+
+			JSONArray tagArray = new JSONArray();
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), document.getId(), document.getType())
+				.forEach(id -> tagArray.put(new JSONObject().put("id", id)));
+
+			doc.put(IJsonNames.TAG, tagArray);  
+
+			jsArray.put(doc);
 		});
 		return jsArray;
 	}
+
 	
 	private static JSONObject getOne(AonApiData api) {
 		System.out.println("GET ONE METHOD");
@@ -311,10 +337,10 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			JSONObject doc = fullDocumentToJson(document);
-			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), 6, 0).forEach(id -> {
+			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), type).forEach(id -> {
 				array.put(new JSONObject().put("id", id));
 			});
-			doc.put(IJsonNames.TAGS, array);
+			doc.put(IJsonNames.TAG, array);
 			jsArray.put(doc);
 		});
 		
@@ -369,7 +395,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
 		MimeType mime = JsonUtils.getString(json, IJsonNames.CONTENT_TYPE) != null ? MimeType.safeValueFromContenType(JsonUtils.getString(json, IJsonNames.CONTENT_TYPE)) : null;
 		ArrayList<Integer> tags = new ArrayList<Integer>();
-		if(api.getData().has(IJsonNames.TAG)) {			
+		if(api.getData().has(IJsonNames.TAG)) {	
 			JSONArray tagsArray = api.getData().getJSONArray(IJsonNames.TAG);
 			if(tagsArray.length() > 0) {
 				for(int i = 0; i < tagsArray.length(); i++)
@@ -390,7 +416,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setModificationDate(new Date())
 				.setModificationUser(api.getUser().getLogin())
 				.setTags(tags)
-				;
+				;		
 		S3Document document = AON_SOLUTIONS.updateS3Document(api.getDomain(), api.getUser(), rdoc, type);
 		return fullDocumentToJson(document);
 	}
@@ -658,7 +684,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setMimetype(mime)
 				.setModificationDate(null)
 				.setModificationUser(null)
-				.setName(json.getString("nombreArchivo"))
+				.setName(clearFileName(json.getString("nombreArchivo")))
 				.setRegistry(registry)
 				.setRegistryType((byte) 3)
 				.setS3bucket(BIDOQ_BUCKET_NAME)
@@ -668,6 +694,20 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setSecurityLevel((byte) 0)
 				;
 	}
+	
+	//de momento limpiamos los siguientes caracteres : \ / : * ? " < > | +
+	private static String clearFileName(String filename) {
+	    int index = filename.lastIndexOf(".");
+	    if (index == -1) return filename.replaceAll("[\\\\/:*?\"<>|+]", ""); 
+	    String name = filename.substring(0, index);
+	    String extension = filename.substring(index);
+	    
+	    name = name.replaceAll("[\\\\/:*?\"<>|+]", "");
+	    name = name.replaceAll("[.\\s]+$", "");
+
+	    return name + extension;
+	}
+
 	
 	private static S3Category createBidoqCategory(AonApiData api, String name) {
 		S3Category category = new S3Category()
@@ -718,7 +758,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject().put("error", "falló la llamada");
+            return new JSONObject().put("error", "fallï¿½ la llamada");
         }
     }
 	
