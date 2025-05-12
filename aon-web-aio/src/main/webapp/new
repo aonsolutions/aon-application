@@ -1,14 +1,1 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-
-    <title>aon Application</title>
-    <base href="/">
-
-    <script type="module" src="dist/app.min.js"></script>
-  </head>
-  <body></body>
-</html>
+<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>aon Application</title><base href="/"><script type="module" src="dist/app.min.js"></script><link href="dist/app.min.css" rel="stylesheet"><link href="dist/sass.a886cc3f2407d6db3bca.min.css" rel="stylesheet"><link href="dist/app.min.css" rel="stylesheet"><link href="dist/sass.a886cc3f2407d6db3bca.min.css" rel="stylesheet"><link href="dist/app.min.css" rel="stylesheet"><link href="dist/sass.a886cc3f2407d6db3bca.min.css" rel="stylesheet"><link href="dist/appSass.min.css" rel="stylesheet"><link href="dist/sass.a886cc3f2407d6db3bca.min.css" rel="stylesheet"><link href="dist/appSass.min.css" rel="stylesheet"><link href="dist/sass.a886cc3f2407d6db3bca.min.css" rel="stylesheet"></head><body><script defer="defer" src="dist/app.abbcf8a54b1cfa91395f.min.js"></script><script defer="defer" src="dist/sass.min.js"></script><script defer="defer" src="dist/app.abbcf8a54b1cfa91395f.min.js"></script><script defer="defer" src="dist/sass.min.js"></script><script defer="defer" src="dist/app.abbcf8a54b1cfa91395f.min.js"></script><script defer="defer" src="dist/sass.min.js"></script><script defer="defer" src="dist/appSass.ddd4bd64591b04bc3716.min.js"></script><script defer="defer" src="dist/sass.min.js"></script><script defer="defer" src="dist/appSass.ddd4bd64591b04bc3716.min.js"></script><script defer="defer" src="dist/sass.min.js"></script></body></html>

@@ -5,14 +5,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app : './src/main/webapp/index.js',
-    aio : './src/main/webapp/aio.js',
-    sass: './src/main/webapp/assets_sass/styles/main.scss'
+    app     : './src/main/webapp/index.js',                     // Para usar en el BETA
+    aio     : './src/main/webapp/aio.js',
+    appSass : './src/main/webapp/index.js',                     // Para usar en el NEW
+    sass    : './src/main/webapp/assets_sass/styles/main.scss'  // Para usar en el NEW
   },
   output: {
-        // Hash solo para app.js y sass.css
+    // Hash solo para appSass.js y sass.css
     filename: (pathData) => {
-      return pathData.chunk.name === 'app' ? '[name].[contenthash].min.js' : '[name].min.js';
+      return pathData.chunk.name === 'appSass' ? '[name].[contenthash].min.js' : '[name].min.js';
     },
     path: path.resolve(__dirname, 'src/main/webapp/dist'),
     clean: true
@@ -25,8 +26,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: './src/main/webapp/new',
-      filename: 'new',
-      chunks: ['app', 'sass'],  // Solo incluye estos
+      filename: '../new',
+      chunks: ['appSass', 'sass'],  // Solo incluye estos
       inject: 'body'
     })
   ],
