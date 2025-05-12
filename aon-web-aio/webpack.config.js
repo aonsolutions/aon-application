@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -9,11 +10,26 @@ module.exports = {
     sass: './src/main/webapp/assets_sass/styles/main.scss'
   },
   output: {
+        // Hash solo para app.js y sass.css
+    filename: (pathData) => {
+      return pathData.chunk.name === 'app' ? '[name].[contenthash].min.js' : '[name].min.js';
+    },
     filename: '[name].min.js',
-    path: path.resolve(__dirname, 'src/main/webapp/dist')
+    path: path.resolve(__dirname, 'src/main/webapp/dist'),
+    clean: true
   },
   plugins: [new MiniCssExtractPlugin({
-    filename: '[name].min.css'
+    new MiniCssExtractPlugin({
+      filename: (pathData) => {
+        return pathData.chunk.name === 'sass' ? '[name].[contenthash].min.css' : '[name].min.css';
+      }
+    }),
+    new HtmlWebpackPlugin({
+      template: './public/new',
+      filename: 'new',
+      chunks: ['app', 'sass'],  // Solo incluye estos
+      inject: 'body',
+    })
   })],
   module: {
     rules: [
