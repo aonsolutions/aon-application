@@ -111,7 +111,7 @@ export const postS3Document 	 = (data) => post(`${API_URL}/s3/`, data);
 export const putS3DocumentUpdate = (data) => put(`${API_URL}/s3/`, data);
 export const deleteS3Document 	 = (data) => remove(`${API_URL}/s3/`, data);
 export const downloadS3Documents = (data) => getFileBlob(`${API_URL}/s3/file_multiple?data=${data}`);
-
+export const sendS3DocumentMail  = (data) => post(`${API_URL}/send_mail/s3Document`, data);
 //LLamadas al nuevo servlet de categorias
 export const getS3Category 		= (data) => get(`${API_URL}/s3category`, data);
 export const getS3CategoryCount = (data) => get(`${API_URL}/s3category/count`, data);
