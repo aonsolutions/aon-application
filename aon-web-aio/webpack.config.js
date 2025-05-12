@@ -28,7 +28,7 @@ module.exports = {
       template: './src/main/webapp/templates/new',
       filename: '../new',
       chunks  : ['appSass', 'sass'],  // Solo incluye estos
-      inject  : true
+      inject  : false
     })
   ],
   module: {

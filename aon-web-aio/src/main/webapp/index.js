@@ -32,7 +32,7 @@ window.setResumeApp = (data) =>  {
 
 const load = () => {
 	
-	console.debug("Start loading aonSolutions.")
+	console.debug("Start loading aonSolutions.");
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
 	
