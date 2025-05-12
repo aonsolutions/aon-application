@@ -197,59 +197,105 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	}
 	
 
-	private static byte[] getRattachFile(AonApiData api) {
-	    if (api.getData().optString(IJsonNames.DATA) != null && !api.getData().optString(IJsonNames.DATA).isEmpty()) {
-	        return getFromArrayData(api);
-	    } else {
-	        return getFromSingleData(api);
-	    }
+//	private static byte[] getRattachFile(AonApiData api) {
+//	    if (api.getData().optString(IJsonNames.DATA) != null && !api.getData().optString(IJsonNames.DATA).isEmpty()) {
+//	        return getFromArrayData(api);
+//	    } else {
+//	        return getFromSingleData(api);
+//	    }
+//	}
+	
+	private static byte [] getRattachFile(AonApiData api) {
+		byte [] data = null;
+		String base64 = "domain=" + api.getDomain().getId() + "&id=" + api.getData().getInt(IJsonNames.ID) + "&attach_type=registry";
+		base64 = Base64.getEncoder().encodeToString(base64.getBytes());
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
+						+ "ms/download_attachment/"
+						+ api.getDomain().getName()
+						+ "/"
+						+ api.getUser().getLogin()
+						+ "/"
+						+ base64
+						))
+				.headers("Content-Type", "text/plain;charset=UTF-8")
+				.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		
+		HttpResponse<InputStream> response = null;
+		HttpClient http = HttpClient.newHttpClient();
+
+		try {
+			response = http.send(request, BodyHandlers.ofInputStream());
+			InputStream is = response.body();
+			data = is.readAllBytes();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return data;
 	}
 
 	
-	private static byte[] downloadAttachment(AonApiData api, int id) throws IOException, InterruptedException {
-	    String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
-	    base64 = Base64.getEncoder().encodeToString(base64.getBytes());
-
-	    HttpRequest request = HttpRequest.newBuilder()
-	            .uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
-	                    + "ms/download_attachment/"
-	                    + api.getDomain().getName()
-	                    + "/"
-	                    + api.getUser().getLogin()
-	                    + "/"
-	                    + base64))
-	            .headers("Content-Type", "text/plain;charset=UTF-8")
-	            .method("GET", HttpRequest.BodyPublishers.noBody())
-	            .build();
-
-	    HttpClient http = HttpClient.newHttpClient();
-	    HttpResponse<InputStream> response = http.send(request, HttpResponse.BodyHandlers.ofInputStream());
-	    return response.body().readAllBytes();
-	}
+//	private static byte[] downloadAttachment(AonApiData api, int id) throws IOException, InterruptedException {
+//	    String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
+//	    base64 = Base64.getEncoder().encodeToString(base64.getBytes());
+//
+//	    HttpRequest request = HttpRequest.newBuilder()
+//	            .uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
+//	                    + "ms/download_attachment/"
+//	                    + api.getDomain().getName()
+//	                    + "/"
+//	                    + api.getUser().getLogin()
+//	                    + "/"
+//	                    + base64))
+//	            .headers("Content-Type", "text/plain;charset=UTF-8")
+//	            .method("GET", HttpRequest.BodyPublishers.noBody())
+//	            .build();
+//
+//	    HttpResponse<InputStream> response = null;
+//		byte [] data = null;
+//
+//		HttpClient http = HttpClient.newHttpClient();
+//
+//		try {
+//			response = http.send(request, BodyHandlers.ofInputStream());
+//			InputStream is = response.body();
+//			data = is.readAllBytes();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		return data;
+//	}
 	
-	private static byte[] getFromSingleData(AonApiData api) {
-	    try {
-	        int id = api.getData().getInt(IJsonNames.ID);
-	        return downloadAttachment(api, id);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
-	
-	private static byte[] getFromArrayData(AonApiData api) {
-	    try {
-	        String jsonData = api.getData().getString(IJsonNames.DATA);
-	        JSONArray array = new JSONArray(jsonData);
-	        for (int i = 0; i < array.length(); i++) {
-	            int id = array.getJSONObject(i).getInt(IJsonNames.ID);
-	            return downloadAttachment(api, id);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
+//	private static byte[] getFromSingleData(AonApiData api) {
+//		System.out.println("pasa x sinlge");
+//	    try {
+//	        int id = api.getData().getInt(IJsonNames.ID);
+//	        return downloadAttachment(api, id);
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//	    return null;
+//	}
+//	
+//	private static byte[] getFromArrayData(AonApiData api) {
+//		System.out.println("pasa x array");
+//	    try {
+//	        String jsonData = api.getData().getString(IJsonNames.DATA);
+//	        JSONArray array = new JSONArray(jsonData);
+//	        for (int i = 0; i < array.length(); i++) {
+//	            int id = array.getJSONObject(i).getInt(IJsonNames.ID);
+//	            return downloadAttachment(api, id);
+//	        }
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	    }
+//	    return null;
+//	}
 
 	
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
@@ -349,7 +395,6 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 
 			jsArray.put(doc);
 		});
-
 		return jsArray;
 	}
 
