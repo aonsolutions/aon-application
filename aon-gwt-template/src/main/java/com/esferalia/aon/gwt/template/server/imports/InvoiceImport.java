@@ -690,10 +690,7 @@ public class InvoiceImport extends ImportUtils{
 							? ivs.get(j).getQuota() : 0.0)
 					.setWithholding(ivs.get(j).getRetentionQuota() != null
 							&& ivs.get(j).getRetentionQuota() != 0)
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
-						
+					.setExpAccount(expAccount)
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
 					.setAdjAccount(adjAccount)
@@ -1047,10 +1044,8 @@ public class InvoiceImport extends ImportUtils{
 							? aux.getQuota() : 0.0)
 					.setWithholding(aux.getRetentionQuota() != null
 							&& aux.getRetentionQuota() != 0)
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
-						
+
+					.setExpAccount(expAccount)
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
 					.setAdjAccount(adjAccount)

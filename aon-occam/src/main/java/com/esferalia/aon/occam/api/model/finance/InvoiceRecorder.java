@@ -164,26 +164,27 @@ public class InvoiceRecorder {
 		}
 		return description;
 	}
+	
 	private static void fillBalancingAccount(AccountEntryDetail detail, AccountingInvoice invoice) {
-		Integer account = null;
+		Integer id = null;
 		String code = null;
 		String description = null;
 		if (invoice.getVats() != null) {
 			for (InvoiceVAT vat : invoice.getVats()) {
-				if (account == null) {
-					account = vat.getExpAccountId();
-					code = vat.getExpAccountCode();
-					description = vat.getExpAccountDescription();
+				if (id == null) {
+					id = vat.getExpAccount().map(Account::getId).orElse(null);
+					code = vat.getExpAccount().map(Account::getCode).orElse(null);
+					description = vat.getExpAccount().map(Account::getDescription).orElse(null);
 				}
-				if (!AonNumberUtils.equals(account,vat.getExpAccountId())) {
-					account = null;
+				if (!AonNumberUtils.equals(id,vat.getExpAccount().map(Account::getId).orElse(null))) {
+					id = null;
 					code = null;
 					description = null;
 					break;
 				}
 			}
 		}
-		detail.setBalancingAccount(account)
+		detail.setBalancingAccount(id)
 			.setBalancingAccountCode(code)
 			.setBalancingAccountDescription(description);
 	}
@@ -240,11 +241,8 @@ public class InvoiceRecorder {
 					double amount = vat.getDeductibleQuota() + vat.getSurchargeQuota();
 					if (AonMathUtils.isNotZero(amount)) {
 						Account inpAccount =  vat.getInputAccount()
-							.orElse(new Account()
-									.setId(vat.getExpAccountId())
-									.setCode(vat.getExpAccountCode())
-									.setDescription(vat.getExpAccountDescription())
-						);
+							.or(() -> vat.getExpAccount() )
+							.orElse(null);
 						if (inpAccount != null && inpAccount.getId() != null) {
 							AccountEntryDetail detail = map.computeIfAbsent( inpAccount.getId()
 								,k -> new AccountEntryDetail()
@@ -270,11 +268,8 @@ public class InvoiceRecorder {
 						double amount = vat.getDeductibleQuota() + vat.getSurchargeQuota();
 						if (AonMathUtils.isNotZero(amount)) {
 							Account outAccount =  vat.getOutputAccount()
-								.orElse(new Account()
-									.setId(vat.getExpAccountId())
-									.setCode(vat.getExpAccountCode())
-									.setDescription(vat.getExpAccountDescription())
-							);
+								.or(() -> vat.getExpAccount() )
+								.orElse(null);
 							if (outAccount != null && outAccount.getId() != null) {
 								AccountEntryDetail detail = map.get(outAccount.getId());
 								if (detail == null) {
@@ -308,11 +303,8 @@ public class InvoiceRecorder {
 							double amount = vat.getQuota() - vat.getDeductibleQuota();
 							if (AonMathUtils.isNotZero(amount)) {
 								Account adjAccount =  vat.getAdjAccount()
-									.orElse(new Account()
-										.setId(vat.getExpAccountId())
-										.setCode(vat.getExpAccountCode())
-										.setDescription(vat.getExpAccountDescription())
-								);
+									.or(() -> vat.getExpAccount() )
+									.orElse(null);
 								if (adjAccount != null && adjAccount.getId() != null) {
 									AccountEntryDetail detail = map.get(adjAccount.getId());
 									if (detail == null) {
@@ -370,26 +362,27 @@ public class InvoiceRecorder {
 										detail.addDebit( amount );
 									}
 									
-									Integer id = vat.getExpAccountId();
-									String code = vat.getExpAccountCode();
-									String description = vat.getExpAccountDescription();
-									detail = map.get(id);
-									if (detail == null) {
-										detail = new AccountEntryDetail()
-											.setAccount(id)
-											.setAccountCode(code)
-											.setAccountDescription(description)
-											.setBalancingAccount(obtainRegistryAccount(invoice))
-											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-										map.put(id,detail);
-									}
-									if (invoice.isOutputVatEnabled()) {
-										detail.addDebit( amount );
-									} else {
-										detail.addCredit( amount );
-									}
-									
+									vat.getExpAccount()
+										.filter( ac -> a.getId() != null)
+										.ifPresent( ac -> {
+											AccountEntryDetail det = map.get(ac.getId());
+											if (det == null) {
+												det = new AccountEntryDetail()
+													.setAccount(ac.getId())
+													.setAccountCode(ac.getCode())
+													.setAccountDescription(ac.getDescription())
+													.setBalancingAccount(obtainRegistryAccount(invoice))
+													.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+													.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+												map.put(ac.getId(),det);
+											}
+											if (invoice.isOutputVatEnabled()) {
+												det.addDebit( amount );
+											} else {
+												det.addCredit( amount );
+											}
+										}
+									);
 							});
 						}
 					}
@@ -454,17 +447,18 @@ public class InvoiceRecorder {
 				if (invoice.isSales() && invoice.getVats() != null) {
 					for (InvoiceVAT vat : invoice.getVats()) {
 						double amount = vat.getBase();
-						if (vat.getExpAccountId() != null && AonMathUtils.isNotZero(amount)) {
-							AccountEntryDetail detail = map.get(vat.getExpAccountId());
+						Integer accountId = vat.getExpAccount().map(Account::getId).orElse(null);
+						if (accountId != null && AonMathUtils.isNotZero(amount)) {
+							AccountEntryDetail detail = map.get(accountId);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-									.setAccount(vat.getExpAccountId())
-									.setAccountCode(vat.getExpAccountCode())
-									.setAccountDescription(vat.getExpAccountDescription())
+									.setAccount(accountId)
+									.setAccountCode(vat.getExpAccount().map(Account::getCode).orElse(null) )
+									.setAccountDescription(vat.getExpAccount().map(Account::getDescription).orElse(null) )
 									.setBalancingAccount(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-								map.put(vat.getExpAccountId(), detail);
+								map.put(accountId, detail);
 							}
 							detail.addCredit( amount );		
 						}
@@ -480,17 +474,18 @@ public class InvoiceRecorder {
 				if (!invoice.isSales() && invoice.getVats() != null) {
 					for (InvoiceVAT vat : invoice.getVats()) {
 						double amount = vat.getBase();
-						if (vat.getExpAccountId() != null && AonMathUtils.isNotZero(amount)) {
-							AccountEntryDetail detail = map.get(vat.getExpAccountId());
+						Integer accountId = vat.getExpAccount().map(Account::getId).orElse(null);
+						if (accountId != null && AonMathUtils.isNotZero(amount)) {
+							AccountEntryDetail detail = map.get(accountId);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-									.setAccount(vat.getExpAccountId())
-									.setAccountCode(vat.getExpAccountCode())
-									.setAccountDescription(vat.getExpAccountDescription())
+									.setAccount(accountId)
+									.setAccountCode(vat.getExpAccount().map(Account::getCode).orElse(null) )
+									.setAccountDescription(vat.getExpAccount().map(Account::getDescription).orElse(null) )
 									.setBalancingAccount(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-								map.put(vat.getExpAccountId(),detail);
+								map.put(accountId,detail);
 							}
 							detail.addDebit( amount );
 						}

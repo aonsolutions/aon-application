@@ -696,14 +696,11 @@ public class AccountingInvoiceBuilder {
 				.setInvestAsset(tax.getInvestAsset())
 				.setDeductiblePercent(tax.getDeductiblePercent())
 				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-
 				.setOutputAccount(outputAccount)
 				.setInputAccount(inputAccount)
 				.setAdjAccount(adjAccount)
-				
-				.setExpAccountId(expAccount == null ? null : expAccount.getId())
-				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())
-				.setExpAccountDescription(expAccount == null ? null : expAccount.getDescription());
+				.setExpAccount(expAccount)
+			;
 	}
 	
 	public static void fillRegistry(AONContext ctx, AonConfiguration aonCtx, TediResult result) {

@@ -277,23 +277,20 @@ public class TediParser {
 	
 	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account expAccount, boolean withholding) {
 		return new InvoiceVAT()
-				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-				.setBase(detail.getTaxableBase())
-				.setPercentage(tax.getPercentage())
-				.setQuota(tax.getQuota())
-				.setSurcharge(tax.getSurcharge())
-				.setSurchargeQuota(tax.getSurchargeQuota())
-				.setInvestAsset(tax.getInvestAsset())
-				.setDeductiblePercent(tax.getDeductiblePercent())
-				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-
-				.setOutputAccount(outputAccount)
-				.setInputAccount(inputAccount)
-				.setAdjAccount(adjAccount)
-
-				.setExpAccountId(expAccount == null ? null : expAccount.getId())
-				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())
-				.setExpAccountDescription(expAccount == null ? null : expAccount.getDescription());
+			.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+			.setBase(detail.getTaxableBase())
+			.setPercentage(tax.getPercentage())
+			.setQuota(tax.getQuota())
+			.setSurcharge(tax.getSurcharge())
+			.setSurchargeQuota(tax.getSurchargeQuota())
+			.setInvestAsset(tax.getInvestAsset())
+			.setDeductiblePercent(tax.getDeductiblePercent())
+			.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
+			.setOutputAccount(outputAccount)
+			.setInputAccount(inputAccount)
+			.setAdjAccount(adjAccount)
+			.setExpAccount(expAccount)
+		;
 	}
 	
 	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {

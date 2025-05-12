@@ -1161,7 +1161,9 @@ public class AccountEntryDAO {
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Integer oldAccountId = null;
 					if (ai.getVats() != null && ai.getVats().size() > 0) {
-						oldAccountId = ai.getVats().get(0).getExpAccountId();
+						oldAccountId = ai.getVats().get(0).getExpAccount()
+							.map(a -> a.getId())
+							.orElse(null);
 					}
 					Integer newAccountId = null;
 					String description = null;
@@ -1367,10 +1369,10 @@ public class AccountEntryDAO {
 						Integer account = null;
 						for (InvoiceVAT vat : ai.getVats() ) {
 							if ( account == null) {
-								account = vat.getExpAccountId();
+								account = vat.getExpAccount().map(a->a.getId()).orElse(null);
 								add = true;
 							}
-							if ( !AonNumberUtils.equals(account,vat.getExpAccountId())) {
+							if ( !AonNumberUtils.equals(account,vat.getExpAccount().map(a->a.getId()).orElse(null))) {
 								add = false;
 								break;
 							}

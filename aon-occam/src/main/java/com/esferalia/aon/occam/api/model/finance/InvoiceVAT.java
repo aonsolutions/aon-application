@@ -38,9 +38,7 @@ public class InvoiceVAT implements Serializable {
 	private Account inputAccount;
 	private Account adjAccount;
 	private Account adjDirectTaxAccount;
-	private Integer expAccountId;
-	private String expAccountCode;
-	private String expAccountDescription;
+	private Account expAccount;
 
 	private InvoiceDetail invoiceDetail;
 	
@@ -240,33 +238,14 @@ public class InvoiceVAT implements Serializable {
 		return this;
 	}
 
-	public Integer getExpAccountId() {
-		return expAccountId;
+	public Optional<Account> getExpAccount() {
+		return Optional.ofNullable(expAccount);
 	}
-
-	public InvoiceVAT setExpAccountId(Integer expAccountId) {
-		this.expAccountId = expAccountId;
+	public InvoiceVAT setExpAccount(Account expAccount) {
+		this.expAccount = expAccount;
 		return this;
 	}
 
-	public String getExpAccountCode() {
-		return expAccountCode;
-	}
-
-	public InvoiceVAT setExpAccountCode(String expAccountCode) {
-		this.expAccountCode = expAccountCode;
-		return this;
-	}
-
-	public String getExpAccountDescription() {
-		return expAccountDescription;
-	}
-
-	public InvoiceVAT setExpAccountDescription(String expAccountDescription) {
-		this.expAccountDescription = expAccountDescription;
-		return this;
-	}
-	
 	public InvoiceDetail getInvoiceDetail() {
 		return invoiceDetail;
 	}
@@ -308,17 +287,26 @@ public class InvoiceVAT implements Serializable {
 			.setInputAccount(this.inputAccount)
 			.setAdjAccount(this.adjAccount)
 			.setAdjDirectTaxAccount(this.adjDirectTaxAccount)
-			.setExpAccountId(this.expAccountId)
-			.setExpAccountCode(this.expAccountCode)
-			.setExpAccountDescription(this.expAccountDescription);
+			.setExpAccount(this.expAccount)
+		;
 	}
 	
 	public void syncChangesToWrappedDetail() {
 		if ( this.isInvoiceDetailPresent() ) {
 			// ACCOUNT
-			this.getInvoiceDetail().setAccount(this.getExpAccountId());
-			this.getInvoiceDetail().setAccountCode(this.getExpAccountCode());
-			this.getInvoiceDetail().setAccountDescription(this.getExpAccountDescription());
+			getExpAccount()
+				.ifPresentOrElse( 
+					a -> {
+						this.getInvoiceDetail().setAccount(a.getId());
+						this.getInvoiceDetail().setAccountCode(a.getCode());
+						this.getInvoiceDetail().setAccountDescription(a.getDescription());
+					}
+					,() -> {
+						this.getInvoiceDetail().setAccount(null);
+						this.getInvoiceDetail().setAccountCode(null);
+						this.getInvoiceDetail().setAccountDescription(null);
+					}
+			);
 			
 			// INVEST ASSET
 			this.getInvoiceDetail().setInvestAsset( this.getInvestAsset() );

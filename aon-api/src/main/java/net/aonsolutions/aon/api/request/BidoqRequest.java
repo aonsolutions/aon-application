@@ -275,11 +275,7 @@ public class BidoqRequest {
 					.setDeductiblePercent(100.0)
 					.setDeductibleQuota(detail.getDouble("quotaVat"))
 					.setWithholding(detail.optJSONObject("irpf") != null)
-
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
-							
+					.setExpAccount(expAccount)
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
 					.setAdjAccount(adjAccount)
@@ -1377,11 +1373,7 @@ public class BidoqRequest {
 				.setDeductiblePercent(detailTax.getDeductiblePercent())
 				.setDeductibleQuota(detailTax.getDeductibleQuota())
 				.setWithholding(detailTax.isWithholding())
-				
-				.setExpAccountId(expAccount.getId())
-				.setExpAccountCode(expAccount.getCode())
-				.setExpAccountDescription(expAccount.getDescription())
-
+				.setExpAccount(expAccount)
 				.setOutputAccount(outputAccount)
 				.setInputAccount(inputAccount)
 				.setAdjAccount(adjAccount)
