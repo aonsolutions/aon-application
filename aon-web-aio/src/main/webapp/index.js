@@ -14,10 +14,10 @@ import './css/aon-figma.css';
 import { getThemeUrl } from './services/companyService.js';
 
 // Estilo por sass
-localStorage.setItem('sass', 'true');
+//localStorage.setItem('sass', 'true');
 
 window.setPosition = (pos) => setPosition(pos);
-window.setTokenFCM =  (token) => {
+window.setTokenFCM = (token) => {
     window.tokenFCM = token;
     saveAuthDevice({tokenFCM:token});
 };

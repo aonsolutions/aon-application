@@ -5,5 +5,5 @@
   ],
   "ext": "js,scss,sass",
   "exec": "npm run build-dev",
-  "ignore": ["node_modules", "dist"]
+  "ignore": ["node_modules", "src/main/webapp/dist", "src/main/webapp/new"]
 }

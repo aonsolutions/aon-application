@@ -1,7 +1,7 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path                  = require('path');
+const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
+const CssMinimizerPlugin    = require('css-minimizer-webpack-plugin');
+const HtmlWebpackPlugin     = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -15,8 +15,8 @@ module.exports = {
     filename: (pathData) => {
       return pathData.chunk.name === 'appSass' ? '[name].[contenthash].min.js' : '[name].min.js';
     },
-    path: path.resolve(__dirname, 'src/main/webapp/dist'),
-    clean: true
+    path  : path.resolve(__dirname, 'src/main/webapp/dist'),
+    clean : true
   },
   plugins: [
     new MiniCssExtractPlugin({
@@ -25,21 +25,21 @@ module.exports = {
       }
     }),
     new HtmlWebpackPlugin({
-      template: './src/main/webapp/new',
+      template: './src/main/webapp/templates/new',
       filename: '../new',
-      chunks: ['appSass', 'sass'],  // Solo incluye estos
-      inject: 'body'
+      chunks  : ['appSass', 'sass'],  // Solo incluye estos
+      inject  : true
     })
   ],
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
+        use : [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
         test: /\.scss$/i,  // Regla para archivos .scss
-        use: [
+        use : [
           MiniCssExtractPlugin.loader,  // Extrae el CSS en un archivo separado
           'css-loader',  // Procesa el CSS
           'sass-loader'  // Compila Sass a CSS
@@ -49,7 +49,7 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new CssMinimizerPlugin(), '...'
+//      new CssMinimizerPlugin(), '...'
     ]
   },
   resolve: {
