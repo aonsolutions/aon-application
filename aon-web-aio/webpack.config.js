@@ -14,23 +14,22 @@ module.exports = {
     filename: (pathData) => {
       return pathData.chunk.name === 'app' ? '[name].[contenthash].min.js' : '[name].min.js';
     },
-    filename: '[name].min.js',
     path: path.resolve(__dirname, 'src/main/webapp/dist'),
     clean: true
   },
-  plugins: [new MiniCssExtractPlugin({
+  plugins: [
     new MiniCssExtractPlugin({
       filename: (pathData) => {
         return pathData.chunk.name === 'sass' ? '[name].[contenthash].min.css' : '[name].min.css';
       }
     }),
     new HtmlWebpackPlugin({
-      template: './public/new',
+      template: './src/main/webapp/new',
       filename: 'new',
       chunks: ['app', 'sass'],  // Solo incluye estos
-      inject: 'body',
+      inject: 'body'
     })
-  })],
+  ],
   module: {
     rules: [
       {
