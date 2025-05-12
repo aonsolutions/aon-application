@@ -458,7 +458,6 @@ export class AonDocumental extends AonElement {
 		// Reaccionar al cambio de radio
 		const handleRadioChange = () => {
 			const labelText = radioCategory.checked ? MSG.CATEGORY : MSG.TAG;
-		
 			// Actualizar atributo 'title'
 			input.title = labelText;
 		
@@ -476,6 +475,7 @@ export class AonDocumental extends AonElement {
 		};
 
 		radioCategory.addEventListener('change', handleRadioChange);
+		radioTag.addEventListener('change', handleRadioChange);
 
 		// Contenedor general
 		let container = document.createElement('div');
