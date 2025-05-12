@@ -11,6 +11,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -670,9 +671,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		if(api.getUser().getRegistry().getId() == null) {
 			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
 		}
-		String name = json.getString("nombreArchivo");
+		String name = json.getString("nombreAlmacenado");
 		String [] split = name.split("\\.");
-		MimeType mime = MimeType.safeValueFromExtension(split[split.length-1]);
+		MimeType mime = MimeType.safeValueFromExtension(split[split.length-1].toLowerCase());
 		Stream<S3Category> list = AON_SOLUTIONS.getS3CategoryStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().eq("Bidoq/" + category)), Optional.ofNullable(null), Optional.ofNullable(null));
 		Optional<S3Category> s3category = list.findFirst();
 		return new S3Document()
@@ -685,6 +686,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setModificationDate(null)
 				.setModificationUser(null)
 				.setName(clearFileName(json.getString("nombreArchivo")))
+				.setRealName(clearFileName(json.getString("nombreAlmacenado")))
 				.setRegistry(registry)
 				.setRegistryType((byte) 3)
 				.setS3bucket(BIDOQ_BUCKET_NAME)
@@ -695,17 +697,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				;
 	}
 	
-	//de momento limpiamos los siguientes caracteres : \ / : * ? " < > | +
 	private static String clearFileName(String filename) {
-	    int index = filename.lastIndexOf(".");
-	    if (index == -1) return filename.replaceAll("[\\\\/:*?\"<>|+]", ""); 
-	    String name = filename.substring(0, index);
-	    String extension = filename.substring(index);
-	    
-	    name = name.replaceAll("[\\\\/:*?\"<>|+]", "");
-	    name = name.replaceAll("[.\\s]+$", "");
-
-	    return name + extension;
+		String textoOriginal = filename;
+		return Normalizer.normalize(textoOriginal, Normalizer.Form.NFC);
 	}
 
 	

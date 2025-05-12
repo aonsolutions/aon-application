@@ -5,7 +5,7 @@ import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
    ASESOR_TYPE,
    EMPLOYEE_TYPE,
    ENTERPRISE_TYPE} from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document } from '../../services/service.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document, sendS3DocumentMail, sendDocumentMail } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -706,9 +706,8 @@ export class AonDocument extends AonElement {
       this.createCategoryRadio(table, 's3CategoriesRadio', '', this.handleCategoryChange.bind(this));
       let radio = document.getElementById('s3CategoriesRadio');
       radio.hidden = true;  
-      if (s3Doc.category) {
         const s3Categories = await getS3Category();
-        const isS3Category = s3Categories.some(cat => cat.id === s3Doc.category && cat.is_deletable === 0);
+        const isS3Category = s3Categories.some(cat => cat.is_deletable === 0);
         if (isS3Category) {
           const path = await this.getCategoryPath(s3Doc.category);
           const s3Radio = document.getElementById('s3CategoriesRadio');
@@ -768,7 +767,6 @@ export class AonDocument extends AonElement {
             td.appendChild(sel);
           }
         }
-      }
     }
   }
 
@@ -1096,13 +1094,13 @@ export class AonDocument extends AonElement {
           documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
         }
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
+        documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
       } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
         documentToolbar.addButton2(ACTION.NEXT, () => this.next());
         documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
         documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.remove());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.download());
       }
-      // documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
     }
     documentToolbar.addButton2(ACTION.BACK, () => this.back());
   }
@@ -1126,8 +1124,19 @@ export class AonDocument extends AonElement {
     d.clear();
     if(!this.isMobile()) d.width = '400px';
     d.setTitle(MSG.SEND_FILE);
-    d.setContentHTML(MSG.IN_DEVELOPMENT);
-    d.addAcceptAction(() => {});
+    d.setContentHTML('<aon-input id="sendDocumentsMail" description="Email"></aon-input>');
+    d.addAcceptAction(() => {
+      let mail = this.getElement('sendDocumentsMail');
+			let message = {
+				to: mail.value,
+				documents: [this.document]
+			};
+        if(this.isBetaDoc()){
+          sendS3DocumentMail(message).then(() => {});
+        }else{
+          sendDocumentMail(message).then(() => {});
+        }			      
+    });
     d.open();
   }
 
