@@ -1,0 +1,1009 @@
+package net.aonsolutions.aon.api.servlet.registry;
+
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.LOGO;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.SIGNATURE;
+
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Random;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Advertising;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.tariff.Tariff;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SalesStatus;
+import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.TargetStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryRelationshipDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistrySellerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SalesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.error.AonApiException;
+import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.servlet.AonRouting;
+import net.aonsolutions.aon.api.servlet.Utils;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "RegistryEnterpriseCreationServlet", urlPatterns = { "/ms/api/registry-creation-enterprise/*" })
+public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
+
+	private static final Logger LOGGER = Logger.getLogger(RegistryEnterpriseCreationServlet.class.getName());
+
+	public static final String CREATE_ENTERPRISE = "/";
+
+	// Mail
+	private static String urlMail;
+	private static String userMail;
+	private static String passwordMail;
+	private static boolean authExisted = false;
+
+	private static boolean isLocal = false;
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
+
+		try {
+
+			AonApiData api = initialize(req, false);
+			Object object = new AonRouting(api)
+					.addRoute(CREATE_ENTERPRISE, RegistryEnterpriseCreationServlet::createEnterprise)
+					.apply();
+
+			response(req, resp, object);
+
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+
+	// ---------------------------------------------------------------------------------------------
+	// CREATE ENTERPRISE
+	// ---------------------------------------------------------------------------------------------
+
+	public static JSONObject createEnterprise(AonApiData api) {
+		
+		/*
+		 * Allowed params 
+		 * 
+		 * name : registry name
+		 * document : registry document
+		 * 
+		 * streetType
+		 * address
+		 * number
+		 * zip
+		 * geozoneCode
+		 * city
+		 * 
+		 * phone
+		 * email
+		 * 
+		 * registry : customer.id / target.id
+		 * 
+		 * sellerSupport : seller.id support type
+		 * sellerCommercial : seller.id commercial type
+		 * 
+		 * saleId
+		 * 
+		 * feePeriod : 0 sin periodo, 1 mensual, 2 bimesnual, 3 trimestral, 4 cuatrimestral, 5 semestral, 6 anual
+		 * feeWorkplace : id del workplace
+		 * 
+		 * source: TARGET, SALE
+		 * 
+		 * */
+			
+		// Create Enterprise
+		
+		JSONObject result = new JSONObject();
+		
+		try (CloseableAONContext ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())) {
+			ctx.transaction(t -> {
+				
+				JSONObject data = api.getData();
+				String source = JsonUtils.getString(data, "source");
+				
+				System.out.println("----------------------- [Start] Create Enterprise -----------------------");
+
+ 				System.out.println("----------------------- Check Customer");
+				
+ 				checkCustomer(api, ctx);
+ 				
+				System.out.println("----------------------- Create Scope");
+				
+				Scope newScope = createScope(api, ctx);
+				
+				System.out.println("----------------------- Create Domain");
+				
+ 				Domain newDomain = createDomain(api, ctx, newScope);
+ 				urlMail = newDomain.getName();
+				
+				System.out.println("----------------------- Create Auth / User");
+				
+				createDefaultUser(api, ctx, newDomain, newScope);
+				
+				System.out.println("----------------------- Create User Scope (supportSeller)");
+				
+				createUserScope(api, ctx, newDomain, newScope);
+				
+				System.out.println("----------------------- Domain Apps / Config");
+				
+				insertDomainConfiguration(ctx, newDomain);
+				
+				if(AonStringUtils.equalsIgnoreCase(source, "SALE")) {
+				
+					System.out.println("----------------------- Customer Fees");
+					
+					createCustomerFee(api, ctx);
+					
+					System.out.println("----------------------- Close Sale");
+					
+					closeSale(api, ctx);
+				
+				}
+				
+				// Send mail
+				sendTrailEnterpriseCreatedMail(api, ctx);
+				
+				System.out.println("----------------------- [End] Create Enterprise -----------------------");
+				
+				if(AonStringUtils.equalsIgnoreCase(source, "SALE"))
+					result.put("message", "Pedido procesado, empresa creada correctamente. Se ha enviado un mail con los datos al agente de soporte");
+				else if(AonStringUtils.equalsIgnoreCase(source, "TARGET"))
+					result.put("message", "Empresa creada correctamente. Se ha enviado un mail con los datos al agente de soporte");
+				
+			});
+		}
+		
+		return result;
+	}
+
+	// ---------------------------------------------------------------------------------------------
+	// AUXILIAR METHODS
+	// ---------------------------------------------------------------------------------------------
+
+	private static void checkCustomer(AonApiData api, CloseableAONContext ctx) {
+		JSONObject data = api.getData();
+		
+		Integer registry = JsonUtils.getInteger(data, "registry");
+		
+		Customer customer = CustomerDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
+		Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst();
+		
+		// Existe target pero no customer
+		if(null == customer || null == customer.getId()){
+			TargetFull target = TargetDAO.getFull(ctx, registry);
+			Customer newCustomer = new Customer()
+					.setTariff(null != target.getRegistry().getTariff() ? target.getRegistry().getTariff().getId() : null)
+					.setSurcharge(target.getRegistry().getSurcharge())
+					.setWithholding(target.getRegistry().getWithholding())
+					.setTransaction(target.getRegistry().getTransaction())
+					.setStatus(RegistryStatus.ACTIVE)
+					.setScope(target.getRegistry().getScope())
+					.setCreationUser(api.getUser().getName())
+					.setCreationDate(new Date())
+					;
+			customer = CustomerDAO.save(ctx, newCustomer);		
+		
+		// Existe customer pero no target
+		} else if(targetOpt.isEmpty()) {
+			if(targetOpt.isEmpty()) {
+				Target newTarget = new Target()
+						.setTariff(new Tariff().setId(customer.getTariff()))
+						.setAdvertising(Advertising.ALLOWED)
+						.setSurcharge(customer.isSurcharge())
+						.setWithholding(customer.isWithholding())
+						.setTransaction(customer.getTransaction())
+						.setStatus(TargetStatus.ACTIVE)
+						.setScope(customer.getScope())
+						.setCreationUser(api.getUser().getLogin())
+						.setCreationDate(new Date())
+						;
+				
+				newTarget.setDomain(customer.getDomain());
+				newTarget.setId(registry);
+				
+				TargetDAO.save(ctx, newTarget);
+			}
+		}
+		
+	}
+
+	private static Scope createScope(AonApiData api, CloseableAONContext ctx) throws Exception {
+		
+		JSONObject data = api.getData();
+		
+		String document = JsonUtils.getString(data, "document");
+		
+		Domain parentDomain = null == api.getDomain().getParentId() 
+				? api.getDomain() 
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		Stream<Scope> scopes = SecurityDAO.getScopeStream(ctx, f -> f.getDescriptionProperty().eq(document).and(f.getDomainProperty().eq(parentDomain.getId())));
+		
+		if(scopes.count() != 0)
+			throw new AonApiException("Ya existe un ambito en el entorno cuya descripci\u00f3n es " + document);
+		else {
+			Scope newScope = new Scope()
+					.setDomain(parentDomain.getId())
+					.setDescription(document);
+			
+			newScope = SecurityDAO.insertScope(ctx, newScope);
+			return newScope;
+		}
+		
+	}
+
+	private static Domain createDomain(AonApiData api, CloseableAONContext ctx, Scope newScope) throws Exception {
+		JSONObject data = api.getData();
+		
+		String name = JsonUtils.getString(data, "name");
+		String document = JsonUtils.getString(data, "document");
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+
+		Company company = new Company();
+		company.setName(name);
+		company.setDocument(document);
+		company.setLegalPerson(AonDocumentUtil.isValidCIF(document));
+
+		checkCompany(company);
+		
+		if(checkExistingDomain(api, ctx))
+			throw new AonApiException("La empresa con identificador " + document + " para el cliente " + name + " ya existe");
+			
+		Domain parentDomain = null == api.getDomain().getParentId() 
+				? api.getDomain() 
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		if (null == parentDomain || null == parentDomain.getId())
+			throw new AonApiException("No existe empresa padre desde la que colgar esta empresa");
+
+		// Get owner email
+		
+		Stream<RegistryMedia> sellerSupportMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
+		Optional<RegistryMedia> sellerSupportEmailOpt = sellerSupportMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		
+		if(sellerSupportEmailOpt.isEmpty())
+			throw new AonApiException("No existe email para el agente de soporte seleccionado");
+		
+		String domainNewName = company.getDocument() + "-" + (AonStringUtils.isBlank(parentDomain.getSubDomainSuffix()) ? parentDomain.getName() : parentDomain.getSubDomainSuffix());
+		
+		Domain newDomain = new Domain()
+				.setName(domainNewName.toLowerCase())
+				.setDescription(company.getName())
+				.setOwner(sellerSupportEmailOpt.get().getValue()) // Alguno mas
+				.setParentId(parentDomain.getId())
+				.setActive(true)
+				.setDomainType(DomainType.ENTERPRISE)
+				.setEnableHeredity(true)
+				.setDomainManagement(false)
+				.setScope(newScope.getId());
+		
+		newDomain = DomainDAO.insertDomain(ctx, newDomain, company);
+		
+		createCompanyMedia(api, ctx, newDomain);
+		
+		return newDomain;
+		
+	}
+
+	private static void checkCompany(Company company) throws AonApiException {
+		if (AonStringUtils.isBlank(company.getDocument())) {
+			throw new AonApiException("El documento de la empresa esta vacio.");
+		}
+
+		if (!AonDocumentUtil.isValid(company.getDocument().toUpperCase())) {
+			throw new AonApiException("El documento de la empresa no es valido");
+		}
+
+		if (AonStringUtils.isBlank(company.getName())) {
+			throw new AonApiException("El nombre de la empresa esta vacio");
+		}
+	}
+	
+	private static boolean checkExistingDomain(AonApiData api, CloseableAONContext ctx) {
+		JSONObject data = api.getData();
+		
+		String document = JsonUtils.getString(data, "document");
+		
+		Domain parentDomain = null == api.getDomain().getParentId() 
+				? api.getDomain() 
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId()));
+		
+		if (null != parentDomain && null != parentDomain.getId()) {
+			
+			Domain domain = DomainDAO.getDomain(ctx, 
+					f -> f.getNameProperty().like("%" + document + "%")
+						.and(f.getParentProperty().eq(parentDomain.getId()))
+			);
+			
+			return null != domain && null != domain.getId();
+			
+		}
+		
+		return false;
+	}
+	
+	private static void createCompanyMedia(AonApiData api, CloseableAONContext ctx, Domain newDomain) {
+		JSONObject data = api.getData();
+		
+		String streetType = JsonUtils.getString(data, "streetType");
+		String address = JsonUtils.getString(data, "address");
+		String number = JsonUtils.getString(data, "number");
+		String zip = JsonUtils.getString(data, "zip");
+		String geozoneCode = JsonUtils.getString(data, "geozoneCode");
+		String city = JsonUtils.getString(data, "city");
+		
+		String phone = JsonUtils.getString(data, "phone");
+		String email = JsonUtils.getString(data, "email");
+		
+		Integer registry = JsonUtils.getInteger(data, "registry");
+		
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
+
+		Integer comapnyRaddressId = null;
+		
+		if (AonStringUtils.isNotBlank(address)) {
+			
+			Optional<GeoZone> geozoneOpt = GeoZoneDAO.getStream(ctx, 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getCodeProperty().eq(geozoneCode))
+				).findFirst();
+
+			RegistryAddress registryAddress = new RegistryAddress()
+					.setDomain(newDomain.getId())
+					.setRegistry(newCompany.getId())
+					.setMain(true)
+					.setStreetType(StreetType.getForAeatCode(streetType, AonLanguage.SPANISH))
+					.setAddress(address)
+					.setNumber(number)
+					.setZip(zip)
+					.setCity(city)
+					.setGeozone(geozoneOpt.isPresent() ? geozoneOpt.get().getId() : null).setGeozoneCode(geozoneCode)
+					.setGeozoneName(geozoneOpt.isPresent() ? geozoneOpt.get().getName() : null);
+
+			registryAddress = RegistryAddressDAO.save(ctx, registryAddress);
+			comapnyRaddressId = registryAddress.getId();
+		}
+
+		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.CELLULAR, phone, comapnyRaddressId);
+		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.EMAIL, email, comapnyRaddressId);
+
+		if (null != comapnyRaddressId) {
+			
+			Customer customer = CustomerDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId());
+		}
+		
+		createRRelationShip(api, ctx, newCompany);
+		
+	}
+
+	private static void saveMedia(AonApiData api, CloseableAONContext ctx, Integer domain, Integer registry, MediaType mediaType, String value,
+			Integer raddress) {
+		if (AonStringUtils.isNotBlank(value)) {
+			RegistryMedia registryMedia = new RegistryMedia()
+					.setDomain(domain)
+					.setRegistry(registry)
+					.setMedia(mediaType)
+					.setValue(value)
+					.setCommercial(true)
+					.setRaddress(raddress);
+			
+			RegistryMediaDAO.save(ctx, registryMedia);
+		}
+	}
+	
+	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId) {
+		Workplace workplace = new Workplace()
+				.setActive(true)
+				.setDescription("PRINCIPAL")
+				.setDomain(newDomain.getId())
+				.setEnterprise(companyId)
+				.setAddress(raddressId)
+				.setCustomer(customerId)
+				.setEconomicAgreement(Administration.COMMON_TERRITORY)
+				;
+
+		WorkplaceDAO.save(ctx, workplace);
+	}
+	
+	private static void createRRelationShip(AonApiData api, CloseableAONContext ctx, Company newCompany) {
+		JSONObject data = api.getData();
+
+		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		Integer sellerCommercial = JsonUtils.getInteger(data, "sellerCommercial");
+		Integer saleId = JsonUtils.getInteger(data, "saleId");
+		
+		Customer customer = CustomerDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst().get();
+		
+		if(null == customer)
+			throw new AonApiException("No ha sido posible encontrar al cliente seleccionado");
+		
+		// Create RSeller
+		Sales sale = null;
+		if(null != saleId)
+			sale = SalesDAO.get(ctx, f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
+		
+		Stream<RegistrySeller> customerRSellers = RegistrySellerDAO.getStream(ctx, f -> f.getRegistryProperty().eq(registry));
+
+		Optional<RegistrySeller> commercialRSeller = customerRSellers.filter(rseller -> rseller.getType().equals(RegistrySellerType.COMERCIAL)).findFirst();
+		
+		if(null != sellerCommercial) {
+			if(commercialRSeller.isEmpty()) {
+				Date startDate = null != sale ? sale.getCreationDate() : new Date();
+				
+				RegistrySeller rseller = new RegistrySeller()
+						.setDomain(api.getDomain())
+						.setRegistry(registry)
+						.setSeller(new Seller().setId(sellerCommercial))
+						.setType(RegistrySellerType.COMERCIAL)
+						.setStatus(RegistrySellerStatus.ACTIVE)
+						.setStartDate(startDate);
+				
+				RegistrySellerDAO.save(ctx, rseller);
+			} else {
+				Date startDate = null != sale ? sale.getCreationDate() : new Date();
+				Date endDate = AonDateUtils.addDays(startDate, -1);
+				
+				RegistrySeller rseller = commercialRSeller.get();
+				rseller.setEndDate(endDate);
+				RegistrySellerDAO.save(ctx, rseller);
+				
+				RegistrySeller newRseller = new RegistrySeller()
+						.setDomain(api.getDomain())
+						.setRegistry(registry)
+						.setSeller(new Seller().setId(sellerCommercial))
+						.setType(RegistrySellerType.COMERCIAL)
+						.setStatus(RegistrySellerStatus.ACTIVE)
+						.setStartDate(sale.getCreationDate());
+				
+				RegistrySellerDAO.save(ctx, newRseller);
+			}
+		}
+		
+		customerRSellers = RegistrySellerDAO.getStream(ctx, f -> f.getRegistryProperty().eq(registry));
+		
+		Optional<RegistrySeller> supportRSeller = customerRSellers.filter(rseller -> rseller.getType().equals(RegistrySellerType.SOPORTE)).findFirst();
+		if(supportRSeller.isEmpty()) {
+			Date startDate = null != sale ? sale.getCreationDate() : new Date();
+			
+			RegistrySeller rseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerSupport))
+					.setType(RegistrySellerType.SOPORTE)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(startDate);
+			
+			RegistrySellerDAO.save(ctx, rseller);
+		} else {
+			Date startDate = null != sale ? sale.getCreationDate() : new Date();
+			Date endDate = AonDateUtils.addDays(startDate, -1);
+			
+			RegistrySeller rseller = supportRSeller.get();
+			rseller.setEndDate(endDate);
+			RegistrySellerDAO.save(ctx, rseller);
+			
+			RegistrySeller newRseller = new RegistrySeller()
+					.setDomain(api.getDomain())
+					.setRegistry(registry)
+					.setSeller(new Seller().setId(sellerSupport))
+					.setType(RegistrySellerType.SOPORTE)
+					.setStatus(RegistrySellerStatus.ACTIVE)
+					.setStartDate(startDate);
+			
+			RegistrySellerDAO.save(ctx, newRseller);
+		}
+
+		// Create Registry Relationship
+		RegistryRelationship rrelationship = new RegistryRelationship();
+		rrelationship.setDomain(customer.getDomain());
+		rrelationship.setRegistry(customer.getId());
+		rrelationship.setRelatedRegistry(newCompany.getId());
+		rrelationship.setComments(newCompany.getDomain().getName());
+
+		RegistryRelationshipDAO.save(ctx, rrelationship);
+	}
+	
+	private static User createDefaultUser(AonApiData api, CloseableAONContext ctx,  Domain newDomain, Scope newScope) {
+		JSONObject data = api.getData();
+		
+		Integer registry = JsonUtils.getInteger(data, "registry"); // target.id / customer.id
+		String email = JsonUtils.getString(data, "email");
+		String phone = JsonUtils.getString(data, "phone");
+		
+		Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst();
+		
+		if (Utils.isEmail(email)) {
+			
+			String login = ramdonLogin();
+			String pass = null;
+			
+			Auth auth = AON_SOLUTIONS.getAuth(email);
+			if (auth.getUuid() == null) {
+				if (pass == null) pass = Utils.createPasswordHash(email, login);
+				
+				auth = new Auth()
+						.setEmail(email)
+						.setPassword(pass)
+						.setName(targetOpt.get().getName())
+						.setSurname(null)
+						.setDocument(targetOpt.get().getDocument())
+						.setPhone(phone);
+				
+				passwordMail = login;
+
+				auth = SecurityDAO.insertAuth(ctx, auth);
+			}
+
+			User user = null;
+			if (auth.getAuth() != null) {
+				user = createUser(api, ctx, newDomain, newScope, auth, login, targetOpt.get().getName());
+				setUserAppRole(ctx, newDomain, user);
+
+				if (newDomain.isChild() || newDomain.isStandalone()) {
+					createTaskHolder(ctx, newDomain, auth, user);
+				}
+			}
+			
+			userMail = email;
+			
+			return user;
+
+		} else {
+			throw new AonApiException("El email (" + email + ") no tiene un formato correcto.");
+		}
+		
+	}
+	
+	private static String ramdonLogin() {
+		Random rnd = new Random();
+		Integer i = rnd.nextInt(100000000 - 10000000 + 1) + 10000000;
+		return i.toString();
+	}
+
+	private static User createUser(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope, Auth auth, String login, String name) {
+		JSONObject data = api.getData();
+		
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		
+		
+		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
+
+		User newUser = new User()
+				.setAuth(auth)
+				.setActive(true)
+				.setDomain(newDomain.getId())
+				.setLogin(newCompany.getDocument())
+				.setName(AonStringUtils.isNotBlank(name) ? name : newCompany.getDocument())
+				.setShared(false)
+				.setEnterprise(newCompany.getId())
+				.setToolbar(UserToolbar.GOOGLE);
+
+		
+		newUser = SecurityDAO.save(ctx, newUser);
+
+		SecurityDAO.updateUserPassword(ctx, newUser.getId(), auth.getPassword());
+
+		Scope scope = getScope(ctx, newDomain, newUser);
+
+		if (scope != null) {
+			SecurityDAO.insertUserScope(
+					ctx, 
+					new UserScope()
+					.setDomain(newDomain.getId())
+					.setScope(scope.getId())
+					.setUserId(newUser.getId())
+			);
+		}
+
+		ApplicationParameter appParam = AppParamDAO.fetchOne(ctx, AppParam.AON_PORTAL);
+		
+		if (appParam == null || appParam.getId() == null) {
+			
+			appParam = new ApplicationParameter()
+					.setDomain(newDomain.getId())
+					.setValue("288")
+					.setName(AppParam.AON_PORTAL.getValue());
+			
+			AppParamDAO.insertApplicationParameter(ctx, appParam);
+		}
+		
+		// Actualizar "user_scope": Asignar el scope al agente asignado
+		Seller seller = SellerDAO.get(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
+		TaskHolder taskHolder = TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(seller.getTaskHolder().getId()), new Options().setFull(true));
+		if(null != taskHolder && null != taskHolder.getUserId()) {
+			
+			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUserId()), new Options().setFull(true));
+			
+			SecurityDAO.insertUserScope(
+					ctx, 
+					new UserScope()
+					.setDomain(user.getDomain().getId())
+					.setScope(newScope.getId())
+					.setUserId(user.getId())
+			);
+			
+		}
+
+		return newUser;
+	}
+
+	private static Scope getScope(CloseableAONContext ctx, Domain newDomain, User newUser) {
+
+		Scope s = SecurityDAO.getScopeStream(
+				ctx, 
+				f -> f.getDomainProperty().eq(newDomain.getId())
+					.and(f.getDescriptionProperty().eq("GENERAL"))
+				)
+				.findFirst().orElse(null);
+
+		if (s == null && newDomain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getParentId())
+						.and(f.getDescriptionProperty().eq("GENERAL"))
+					)
+					.findFirst().orElse(null);
+		}
+
+		if (s == null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getId())
+					)
+					.findFirst().orElse(null);
+		}
+
+		if (s == null && newDomain.getParentId() != null) {
+			s = SecurityDAO.getScopeStream(
+					ctx, 
+					f -> f.getDomainProperty().eq(newDomain.getParentId())
+					)
+					.findFirst().orElse(null);
+		}
+
+		return s;
+	}
+	
+
+	private static void setUserAppRole(CloseableAONContext ctx, Domain newDomain, User user) {
+		Integer userId = user.getId();
+
+		LinkedList<AonRole> aRoles = SecurityDAO.getUserAppRoleStream(ctx, f -> f.getUserIdProperty().eq(userId))
+				.map(r -> r.getRole())
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		LinkedList<AonRole> tRoles = new LinkedList<AonRole>();
+		tRoles.add(AonRole.ENTERPRISE);
+		tRoles.add(AonRole.INVOICE_PORTAL);
+		tRoles.add(AonRole.INVOICE);
+
+		AonRole.stream().forEach(role -> {
+			if (aRoles.contains(role) && !tRoles.contains(role)) {
+				SecurityDAO.deleteUserAppRole(ctx, 
+						f -> f.getDomainProperty().eq(newDomain.getId())
+							.and(f.getUserIdProperty().eq(userId))
+							.and(f.getRoleProperty().eq(role.value()))
+				);
+			}
+			
+			if (!aRoles.contains(role) && tRoles.contains(role)) {
+				SecurityDAO.insertUserAppRole(ctx, 
+						new UserAppRole()
+						.setApp(null)
+						.setDomain(newDomain.getId())
+						.setRole(role)
+						.setUser(userId)
+				);
+			}
+		});
+	}
+	
+	private static void createTaskHolder(CloseableAONContext ctx, Domain newDomain, Auth auth, User newUser) {
+
+		String alias = auth.getName().length() > 32 ? auth.getName().substring(0, 31) : auth.getName();
+		
+		Registry newRegistry = RegistryDAO.save(ctx, 
+				new Registry()
+				.setDocument(auth.getDocument())
+				.setName(auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())) )
+				.setAlias(alias)
+				.setDomain(newDomain)
+		);
+		
+		newUser.setRegistry(newRegistry);
+		newUser = UserDAO.save(ctx, newUser);
+		
+		TaskHolder taskHolder = new TaskHolder()
+				.copy(newRegistry)
+				.setActive(true)
+				.setUserId(newUser.getId());
+		
+		taskHolder = TaskHolderDAO.save(ctx, taskHolder);
+
+	}
+
+	private static void createUserScope(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private static void insertDomainConfiguration(CloseableAONContext ctx, Domain newDomain) {
+		SecurityDAO.saveDomainMaxDefinedUser(ctx, newDomain.getId(), 1);
+		
+		DomainApp domainApp = new DomainApp()
+				.setDomain(newDomain.getId())
+				.setApp(AonApp.INVOICE)
+				.setActive(true);
+		
+		SecurityDAO.saveDomainApp(ctx, domainApp);
+		
+		domainApp = new DomainApp()
+				.setDomain(newDomain.getId())
+				.setApp(AonApp.DOCUMENTAL)
+				.setActive(true);
+		
+		SecurityDAO.saveDomainApp(ctx, domainApp);
+		
+		domainApp = new DomainApp()
+				.setDomain(newDomain.getId())
+				.setApp(AonApp.MESSENGER)
+				.setActive(true);
+		
+		SecurityDAO.saveDomainApp(ctx, domainApp);
+	}
+	
+	private static void createCustomerFee(AonApiData api, CloseableAONContext ctx) {
+		JSONObject data = api.getData();
+
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		Integer saleId = JsonUtils.getInteger(data, "saleId");
+		Byte feePeriod = JsonUtils.getByte(data, "feePeriod");
+		Integer feeWorkplace = JsonUtils.getInteger(data, "feeWorkplace");
+		
+		Sales sale = SalesDAO.get(ctx, f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
+		
+		sale.getDetails().forEach(detail -> {
+			
+			Date feeStartDate = sale.getDate().before(sale.getDeliveryDate()) ? sale.getDate() : sale.getDeliveryDate();
+			
+			Fee fee = new Fee()
+					.setDomain(new Domain().setId(sale.getDomain()))
+					.setProject(sale.getProject())
+					.setCustomer(sale.getCustomer())
+					.setItem(new OldItem().setId(detail.getItem().getId()))
+					.setDescription(detail.getDescription())
+					.setQuantity(detail.getQuantity())
+					.setPrice(detail.getPrice())
+					.setDiscountExpr(detail.getDiscountExpression().getDiscountExpr())
+					.setStartDate(feeStartDate)
+					.setEndDate(null)
+					.setBillingDate(AonDateUtils.getMonthFirstDay(sale.getDeliveryDate()))
+					.setPeriod(BillingPeriod.values()[feePeriod])
+					.setSeller(new Seller().setId(sellerSupport))
+					.setWorkplace(new Workplace().setId(feeWorkplace))
+					;
+			
+			FeeDAO.save(ctx, fee);
+		});
+	}
+
+	private static void closeSale(AonApiData api, CloseableAONContext ctx) {
+		JSONObject data = api.getData();
+
+		Integer saleId = JsonUtils.getInteger(data, "saleId");
+		
+		Sales sale = SalesDAO.get(ctx, f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
+		sale.setStatus(SalesStatus.CLOSED);
+		
+		SalesDAO.save(ctx, sale);
+	}
+	
+	// ---------------------------------------------------------------------------------------------
+	// AUXILIAR METHODS
+	// ---------------------------------------------------------------------------------------------
+	
+	private static void sendTrailEnterpriseCreatedMail(AonApiData api, CloseableAONContext ctx) {
+		JSONObject data = api.getData();
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		String name = JsonUtils.getString(data, "name");
+		
+		Domain parent = api.getDomain().isParent() 
+				? api.getDomain()
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId())
+			);
+		
+		String logoUrl = getLogoUrl(api, ctx);
+
+		String from = getFromMessage(api, ctx, parent);
+		String bcc = "booking@aonsolutions.es";
+
+		Stream<RegistryMedia> sellerSupportMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
+		Optional<RegistryMedia> sellerSupportEmailOpt = sellerSupportMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		
+		if(sellerSupportEmailOpt.isEmpty() || AonStringUtils.isBlank(sellerSupportEmailOpt.get().getValue()))
+			throw new AonApiException("No existe email para el agente de soporte seleccionado");
+		
+		SESMessage msg = new SESMessage()
+				.setAlias(name)
+				.setFrom(from)
+				.setReplyTo(from)
+				.setTo(sellerSupportEmailOpt.get().getValue())
+//				.setBcc(bcc)
+				.setSubject("Empresa " + name)
+				.setBody(createEnterpriseCreatedBody(logoUrl, parent, from, name));
+
+		SES.sendEmail(msg);
+	}
+	
+
+	private static String getLogoUrl(AonApiData api, CloseableAONContext ctx) {
+		
+		Domain parent = api.getDomain().isParent() 
+				? api.getDomain()
+				: DomainDAO.getDomain(ctx, f -> f.getIdProperty().eq(api.getDomain().getParentId())
+			);
+		
+		Company company = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(parent.getId())).findFirst().get();
+		
+		Attach attach = getLogoAttach(api, ctx, company.getId());
+
+		String str = "domain=" + attach.getDomain().getId() + "&id=" + attach.getId() + "&attach_type=registry";
+		String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		String logoUrl = null;
+		
+		Domain attachDomain = DomainDAO.getDomain(ctx, attach.getDomain().getId());
+		 logoUrl = (isLocal ? "http" : "https") + "://" + parent.getName() + (isLocal ? ":8080" : "")
+				+ "/ms/download_attachment/" + attachDomain.getName() + "/" + attach.getCreationUser() + "/"
+				+ result;
+			
+		return logoUrl;
+	}
+
+	private static Attach getLogoAttach(AonApiData api, CloseableAONContext ctx, Integer enterpriseId) {
+		Optional<Attach> attach1 = AttachmentDAO.getRegistryAttachStream(ctx, f -> f.getTypeProperty().eq(SIGNATURE.value()).and(f.getAttachModuleProperty().eq(enterpriseId)), true).findFirst();
+
+		return attach1.isPresent() ? attach1.get() : AttachmentDAO.getRegistryAttachStream(ctx, f -> f.getTypeProperty().eq(LOGO.value()).and(f.getAttachModuleProperty().eq(enterpriseId)), true).findFirst().get();
+	}
+
+	private static String getFromMessage(AonApiData api, CloseableAONContext ctx, Domain parent) {
+		DomainUserRoles domainUserRoles = SecurityDAO.getDomainUserRoles(ctx, api.getUser().getId()); 
+		
+		String from = null;
+
+		if (domainUserRoles.hasParentCustomView() || domainUserRoles.hasCustomView()) {
+			// Ya es el dominio padre el que hay en api.getDomain()
+			if (null == api.getDomain().getParentId() && (null == parent || null == parent.getId())) {
+				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getMediaProperty().eq((byte) 4)));
+				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+					from = emailMedia.getValue();
+				
+			// Se busca el dominio padre
+			} else if (null != parent && null != parent.getId()) {
+				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getDomainProperty().eq(parent.getId()).and(f.getMediaProperty().eq((byte) 4)));
+				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
+					from = emailMedia.getValue();
+			}
+		}
+
+		return from;
+	}
+
+	
+
+	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from, String name) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+		
+		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
+				+ "/beta";
+		
+		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
+			url = "https://leevy.aon.solutions";
+		else if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "infoautonomos.aonsolutions.net"))
+			url = "https://infoautonomos.aon.solutions";
+
+		VelocityContext context = new VelocityContext();
+		context.put("logo", logoUrl);
+		context.put("parentName", parentDomain.getDescription());
+		context.put("name", name);
+		context.put("url", url);
+		context.put("domainName", urlMail);
+		context.put("user", userMail);
+		context.put("password", authExisted ? "La existente para este usuario" : passwordMail);
+		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
+
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_created.vm");
+
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
+	}
+
+}

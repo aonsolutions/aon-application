@@ -6667,6 +6667,9 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		
 
 	}
+
+	
+
 	@Test
 	public void testExtraMismatchVariablesI() throws ExpressionException,
 			SQLException, SalaryException {
@@ -6737,6 +6740,93 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testExtraA_CUENTA_CONVENIOI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord aCuentaConvenio = addConcept(aonContext, "A_CUENTA_CONVENIO");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES + A_CUENTA_CONVENIO";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "1000.00 *DIAS_TRABAJADOS / DIAS_MES + A_CUENTA_CONVENIO";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}}, 
+				new Payment[] {
+						new Payment() {{
+							this.type = PaymentType.CRA_0001;
+							this.description = "SALARIO BASE";
+							this.concept = salarioBaseConcept.getId();
+							this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES";
+						}},
+						new Payment() {{
+							this.type = PaymentType.CRA_0001;
+							this.description = "A CUENTA CONVENIO";
+							this.concept = aCuentaConvenio.getId();
+							this.expression = "100.00 * DIAS_TRABAJADOS / DIAS_MES";
+						}}
+				}
+				);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {
+				} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		ISalary salary =
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		Assert.assertEquals(1100.00, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1100.00 / 6, salary.getExtraPayProration(), DELTA);
+			
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.DECEMBER);
+		calendar.set(DAY_OF_MONTH, 15);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		int year = calendar.get(Calendar.YEAR);
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
+		
+		salary = 
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate))
+		.getSalary();
+		
+		Assert.assertEquals(1100.00, salary.getTotalPayment(), DELTA);
+		
+
+	}
+
 	@Test
 	public void testExtraAndGrossI() throws ExpressionException,
 			SQLException, SalaryException {

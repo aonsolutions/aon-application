@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -187,6 +188,8 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -196,6 +199,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
@@ -2358,6 +2362,12 @@ public class AON {
 			return getManagement().getSales(ctx, filter, options);
 		}
 	}
+	
+	public static List<Sales> getSales(SalesParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getManagement().getSales(ctx, params);
+		}
+	}
 
 	// ----- SAVE SALES
 	
@@ -4515,6 +4525,12 @@ public class AON {
 	public static Target save(String domainName, Integer domainId, String login, Target target) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().save(ctx, target);
+		}
+	}
+	
+	public static List<TargetFull> getTargetNotUserFull(Domain domain, String user, TargetParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRegistry().getTargetNotUserFull(ctx, params);
 		}
 	}
 	
@@ -6720,6 +6736,12 @@ public class AON {
 		} 
 	}
 	
+	public static List<Seller> getTaskHolderSellerStream(Domain domain, String user) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user)) {
+			return getTask().getTaskHolderSellerStream(ctx, domain.getId());
+		} 
+	}
+	
 	// ----- Get Task Holder Stream
 	
 	public static Stream<TaskHolder> getTaskHolderStream(Domain domain, User user, TaskHolderFilter filter, Options...options){
@@ -8771,7 +8793,7 @@ public class AON {
 			return getNewProduct().getCatalogueList(ctx, filter);
 		}
 	}
-	
+
 	// INVOICE DOC
 	
 	public static Optional<InvoiceDoc> getInvoiceDoc(Occam occam, int domain, int invoiceId) {

@@ -87,6 +87,9 @@ export class AonSearchBox extends AonElement {
 	    	this.dispatchEvent(new Event('keyup'));
 		});
 
+		input.addEventListener('focus', () => {
+			this.dispatchEvent(new Event('focus'));
+		});
 
 		let search = document.getElementById('aon-search-button');
 		search.addEventListener('click', () => {

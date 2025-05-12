@@ -82,6 +82,8 @@ import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.impl.jooq.dao.CarrierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
@@ -611,6 +613,12 @@ public class RegistryImpl implements IRegistry{
 	public Target save(AONContext ctx, Target target) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> TargetDAO.save(ctx, target));
+	}
+	
+	@Override
+	public List<TargetFull> getTargetNotUserFull(AONContext ctx, TargetParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TargetDAO.getTargetNotUserFull(ctx, params));
 	}
 	
 	// -------------------- PERSON

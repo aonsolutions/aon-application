@@ -165,7 +165,7 @@ export class AonSign extends AonElement {
     }
 	}
 
-	salida() {
+  salida() {
     let content = this.getElement(this.CONTENT);
     if(content){
       this.clearElement(content);
@@ -197,9 +197,12 @@ export class AonSign extends AonElement {
 	}
 
   async saveTimeCtrl(status){
-    let signin = {status, task_holder: this._taskHolder, parent: this.parent}
-    this.disabledButton(true);
+	let divGeneral = this.getElement(this.id);
+	// Spinner
+    this.getApplication().startLoading();
 
+    let signin = {status, task_holder: this._taskHolder, parent: this.parent};
+    this.disabledButton(true);
     let timeOutPosition = false;
 
     await getPosition()
@@ -210,10 +213,12 @@ export class AonSign extends AonElement {
     })
     .catch(error=>{
       timeOutPosition = error && error.timeout;
-      this.showToast(error);
-    }); 
+//      this.showToast(error);
+    });
 
-    const resp = await saveTimeControl(signin);
+    const resp = await saveTimeControl(signin).catch(() => {
+      this.getApplication().stopLoading();
+	});
 
     if(timeOutPosition && this.isMobile() && resp && resp.id){
       getPosition()
@@ -231,6 +236,8 @@ export class AonSign extends AonElement {
     this.buildSignin(resp);
 
     this.disabledButton(false);
+	this.showToast({code: 3, message: 'Marcaje realizado con exito', timeout: false});
+    this.getApplication().stopLoading();
   }
 
   disabledButton(disabled){
@@ -249,7 +256,7 @@ export class AonSign extends AonElement {
 
   buildSignin(signin) {
     this._taskHolder = signin.task_holder.id;
-		const aonUserConnected = this.getElement('aonHeaderUserConnected');
+    const aonUserConnected = this.getElement('aonHeaderUserConnected');
     const timeEl = this.getElement(this.TIME);
     timeEl.style.cursor = "default";
 

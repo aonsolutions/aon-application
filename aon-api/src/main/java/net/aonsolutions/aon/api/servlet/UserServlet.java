@@ -101,7 +101,7 @@ public class UserServlet extends AonApiHttpServlet {
 				response(req, resp, getUsers(api));
 				break;
 			case "/notice":
-				List<String> schemas = AONContext.getSchemas();
+				List<String> schemas = AONContext.getSchemas(api.getDomain().getName());
 				RawdocUserData rawdocUserData = new RawdocUserData();
 				for(String schema : schemas) {
 					rawdocUserData.append(AON.getRawdocUserData(api.getToken(), schema));

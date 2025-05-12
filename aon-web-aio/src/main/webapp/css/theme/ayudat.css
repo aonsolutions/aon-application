@@ -1,0 +1,148 @@
+:root{
+	--favicon: https://ayudatpymes.com/images/default/isotipo.png;
+	--ayudaTColor: #f0f0f0;
+}
+
+#aonConfigThemesCard{
+	display: none;
+}
+
+.aonHeader,
+.aonMenuLeftop{
+	overflow: hidden;
+	background-color: var(--ayudaTColor);
+}
+
+#applications {
+	background-color: var(--ayudaTColor);
+}
+
+
+.aonHeader #aonHeaderCompanyName,
+.aonHeader .material-icons {
+	color: var(--gray-50);
+}
+
+.aonHeaderAppSpan{
+	color: black;
+}
+
+
+#applications .material-symbols-outlined{
+	color: var(--gray-50);
+}
+
+#applications:hover .material-symbols-outlined {
+	color: white;
+}
+
+.aonNewLogo {
+    width: 155px;
+    height: 18px;
+    cursor: pointer;
+    padding: 0 0 0 68px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("../image/ayudaTpymes.svg");
+}
+
+.aonLoginLogo{
+  width: 180px;
+  height: 50px;
+  cursor: pointer;
+  background-size: 175px 65px;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-image: url("../image/ayudaTpymes.svg");
+}
+
+.aonLink{
+	display: none;
+}
+
+.aonTrademark:after {
+	content: ' Ayuda T Pymes es una marca registrada de Ayuda T Soluciones Profesionales S.L.';
+}
+
+.aonWeekSchedule:after{
+	content: 'Lunes a jueves de 8:00 a 15:00';
+}
+
+.aonWeekFridaySchedule:after{
+	content: 'Viernes de 8:00 a 14:00';
+}
+
+.aonSupportName:after {
+	content: 'Ayuda T Pymes';
+}
+
+.aonSupportTelephone:after {
+	content: '(+34) 900 100 162';	
+}
+
+.aonSupportUsersEmail:after {
+	content: 'soporteclientes@ayudatpymes.es';	
+}
+
+.aonSupportSalesEmail:after {
+	display:none;
+}
+
+.aonSupportAdminEmail:after {
+	display:none;
+}
+
+#aonContactIcon4,
+#aonContactIcon5 {
+	display: none;
+}
+
+#aon_new_invoice {
+	--aonIcon: var(--aonInvoice);
+}
+
+#aon_new_documental {
+	--aonIcon: var(--aonDocumental);
+}
+
+#aon_new_timecontrol {
+	--aonIcon: var(--aonTimecontrol);
+}
+
+#aon_new_notes {
+	--aonIcon: var(--aonNote);
+}
+
+#aon_new_messenger {
+	--aonIcon: var(--aonMessenger);
+}
+
+#registradores {
+	--aonIcon: var(--aonAccounting);
+}
+
+#aon_new_payroll {
+	--aonIcon: var(--aonPayroll);
+}
+
+#aon_new_fiscal {
+	--aonIcon: var(--aonFiscal);
+}
+
+#aon_new_office,
+#aon_new_garage,
+#aon_new_academy{
+	--aonIcon: var(--aonTopMenuSpecial);
+}
+
+.aonHeaderAppIcon{
+	color: var(--aonTopMenuAvailable);
+}
+
+/**
+Important. Keep this rule at the end of file 
+**/
+.aonTheme {
+	--aon-theme: 'AYUDA T PYMES';
+}

@@ -477,6 +477,20 @@ export const PRODUCT_MODULE = {
   entryPoint: 'ProductModule'
 }
 
+export const SALES_ENTERPRISE_MODULE = {
+  title: 'Pedidos',
+  name: 'Pedidos',
+  module: GWT_FISCAL,
+  entryPoint: 'SalesModule'
+}
+
+export const TARGET_ENTERPRISE_MODULE = {
+  title: 'Empresas (C. Potenciales)',
+  name: 'Empresas (C. Potenciales)',
+  module: GWT_FISCAL,
+  entryPoint: 'TargetEnterpriseModule'
+}
+
 export const BOOKING_RESUME = {
   title: MSG.BOOKING_RESUME,
   name: MSG.BOOKING_RESUME,
@@ -578,5 +592,11 @@ export const TARIFF_MODULE = {
   title: 'Tarifas',
   module: GWT_FISCAL,
   entryPoint: 'TariffModule'
+};
+
+export const CONSOLE = {
+  title: 'Consola',
+  module: GWT_FISCAL,
+  entryPoint: 'ConsoleModule'
 };
 

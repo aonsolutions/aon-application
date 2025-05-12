@@ -238,6 +238,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconDomainAdd aonIconDomainAdd;
+.aon_icon_domain_add { background-image: iconDomainAdd;}
 @url iconRepair aonIconRepair;
 .aon_icon_repair { background-image: iconRepair;}
 @url iconMoveGroup aonIconMoveGroup;

@@ -322,5 +322,21 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Sales Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_sales_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/sales/salesModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Target Enterprise Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_sales_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/target/targetEnterpriseModule.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

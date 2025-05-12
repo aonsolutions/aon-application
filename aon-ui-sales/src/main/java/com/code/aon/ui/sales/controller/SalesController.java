@@ -84,6 +84,7 @@ import com.code.aon.ui.sales.importer.edi.FtpSalesDownloadHandler;
 import com.code.aon.ui.sales.udapa.SalesIngenetHandler;
 import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
+import com.code.aon.ui.sales.util.SalesImportManager;
 import com.code.aon.ui.sales.util.SalesUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
@@ -159,11 +160,24 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	private SalesElaborationProcess elaborationProcess;
 
+	// Sales Duplication
+	private boolean showDuplicationWindow;
+	private String duplicationSeries;
+	private int duplicationNumber;
+	private boolean duplicationNumberEditable;
+	private Customer duplicationCustomer;
+	private Date duplicationDate;
+	
+	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
     }
 
+	public Sales getSales() {
+		return (Sales) getTo();
+	}
+	
 	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
@@ -1345,7 +1359,12 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 			AON.deleteDelivery(domainName, sales.getDomain(), login, delivery);
 		}
 		
+	}	
+	
+	public String navigationRedirect() {
+		return SALES_FORM_NAME;
 	}
+
 	
 	public String getDeliveryDownloadURL(Integer delivery) {
 		Sales sales = (Sales) getTo();
@@ -1358,5 +1377,108 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_packaging_sales_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 	}
+	
+	// SALES DUPLICATION
+	
+	public boolean isShowDuplicationWindow() {
+		return showDuplicationWindow;
+	}
+	
+	public void setShowDuplicationWindow(boolean showDuplicationWindow) {
+		this.showDuplicationWindow = showDuplicationWindow;
+	}
+	
+	public String getDuplicationSeries() {
+		return duplicationSeries;
+	}
+
+	public void setDuplicationSeries(String duplicationSeries) {
+		this.duplicationSeries = duplicationSeries;
+	}
+
+	public int getDuplicationNumber() {
+		return duplicationNumber;
+	}
+
+	public void setDuplicationNumber(int duplicationNumber) {
+		this.duplicationNumber = duplicationNumber;
+	}
+	
+	public boolean isDuplicationNumberEditable() {
+		return duplicationNumberEditable;
+	}
+
+	public void setDuplicationNumberEditable(boolean duplicationNumberEditable) {
+		this.duplicationNumberEditable = duplicationNumberEditable;
+	}
+	
+	public Customer getDuplicationCustomer() {
+		return duplicationCustomer;
+	}
+
+	public void setDuplicationCustomer(Customer duplicationCustomer) {
+		this.duplicationCustomer = duplicationCustomer;
+	}
+		
+	public Date getDuplicationDate() {
+		return duplicationDate;
+	}
+
+	public void setDuplicationDate(Date duplicationDate) {
+		this.duplicationDate = duplicationDate;
+	}
+	
+	public void onDuplicationShow(ActionEvent event) throws ManagerBeanException {
+		Sales sales = getSales();
+		setDuplicationSeries(SeriesUtil.ensureInvoiceSeries(sales.getSeries()));
+		setDuplicationNumber(0);
+		setDuplicationNumberEditable(false);
+		setDuplicationCustomer(sales.getCustomer());
+		setDuplicationDate(new Date());
+	}
+
+	public void onDuplicationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (isDuplicationNumberEditable()) {
+			updateDuplicationNumber((String)event.getNewValue());
+		}
+	}
+	
+	public void onDuplicationNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateDuplicationNumber(getDuplicationSeries());		
+	}			
+	
+	private void updateDuplicationNumber(String seriesId) {
+		setDuplicationNumber(obtainMaxNumber(seriesId));
+	}	
+
+	public void onDuplicationRegistryChanged(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Customer customer = (Customer)event.getNewValue();
+			setDuplicationCustomer(customer);
+		}
+	}
+
+	public void onDuplicate(ActionEvent event) throws ManagerBeanException {
+		Sales to = getSales();
+
+		if (StringUtils.isBlank(getDuplicationSeries())) {
+        	setDuplicationSeries(null);
+        }		
+		if (getDuplicationNumber() == 0) {
+	       	updateDuplicationNumber(getDuplicationSeries());
+		}		
+	    
+		this.getManagerBean().restoreNullSubPOJOs(to);
+		
+		SalesImportManager manager = new SalesImportManager();
+		Sales sales = manager.copySales(to, getDuplicationSeries(), getDuplicationNumber(), getDuplicationCustomer(), getDuplicationDate());
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.SALES_ID), sales.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+	}
+
 }
 

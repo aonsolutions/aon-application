@@ -127,7 +127,7 @@ public class ContractLeaveLoader {
 
 		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) + parentDays : 545 ;
 
-		DaysRange commonRanges[] = new DaysRange[5];
+		DaysRange commonRanges[] = new DaysRange[7];
 		commonRanges[0] = new DaysRange(1, Math.min(delegatePayDays,3));
 		commonRanges[1] = new DaysRange(4, Math.min(delegatePayDays,15));
 		commonRanges[2] = new DaysRange(16, Math.min(delegatePayDays,20));
@@ -145,6 +145,17 @@ public class ContractLeaveLoader {
 				return String.format("%s_%d", variable, 366);
 			}
 		};
+		
+		// Home Employees
+		commonRanges[5] = new DaysRange(4, Math.min(delegatePayDays,8));
+		commonRanges[6] = new DaysRange(9, delegatePayDays) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s_%d", variable, start);
+			}
+		};
+
+
 		return commonRanges;
 	}
 
