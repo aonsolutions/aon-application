@@ -695,10 +695,8 @@ public class InvoiceImport extends ImportUtils{
 					.setExpAccountDescription(expAccount.getDescription())
 						
 					.setOutputAccount(outputAccount)
-						
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription())
-					.setInputAccountId(inputAccount.getId())
+					.setInputAccount(inputAccount)
+					
 					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
 					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
@@ -1056,10 +1054,8 @@ public class InvoiceImport extends ImportUtils{
 					.setExpAccountDescription(expAccount.getDescription())
 						
 					.setOutputAccount(outputAccount)
-						
-					.setInputAccountCode(inputAccount.getCode())
-					.setInputAccountDescription(inputAccount.getDescription())
-					.setInputAccountId(inputAccount.getId())
+					.setInputAccount(inputAccount)
+					
 					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
 					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);

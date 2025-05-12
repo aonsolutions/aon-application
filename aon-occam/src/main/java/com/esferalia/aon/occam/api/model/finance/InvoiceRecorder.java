@@ -234,46 +234,33 @@ public class InvoiceRecorder {
 				}
 			}
 	 	})
-		,INPUT_VAT( new IVisitor() {
-
-			@Override
-			public void visit(AccountingInvoice invoice, LinkedHashMap<Integer,AccountEntryDetail> map) {
-				if (invoice.getVats() != null && invoice.isInputVatEnabled()) {
-					for (InvoiceVAT vat : invoice.getVats()) {
-						double amount = vat.getDeductibleQuota() + vat.getSurchargeQuota();
-						if (AonMathUtils.isNotZero(amount)) {
-							Integer id = null;
-							String code = null;
-							String description = null;
-							if (vat.getInputAccountId() == null) {
-								id = vat.getExpAccountId();
-								code = vat.getExpAccountCode();
-								description = vat.getExpAccountDescription();
-							} else {
-								id = vat.getInputAccountId();
-								code = vat.getInputAccountCode();
-								description = vat.getInputAccountDescription();
-							}
-							if (id != null) {
-								AccountEntryDetail detail = map.get(id);
-								if (detail == null) {
-									detail = new AccountEntryDetail()
-										.setAccount(id)
-										.setAccountCode(code)
-										.setAccountDescription(description)
-										.setBalancingAccount(obtainRegistryAccount(invoice))
-										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-										;
-									map.put(id,detail);
-								}
-								detail.addDebit( amount );
-							}
+		,INPUT_VAT( (invoice, map) -> {
+			if (invoice.isInputVatEnabled()) {
+				for (InvoiceVAT vat : invoice.getVats()) {
+					double amount = vat.getDeductibleQuota() + vat.getSurchargeQuota();
+					if (AonMathUtils.isNotZero(amount)) {
+						Account inpAccount =  vat.getInputAccount()
+							.orElse(new Account()
+									.setId(vat.getExpAccountId())
+									.setCode(vat.getExpAccountCode())
+									.setDescription(vat.getExpAccountDescription())
+						);
+						if (inpAccount != null && inpAccount.getId() != null) {
+							AccountEntryDetail detail = map.computeIfAbsent( inpAccount.getId()
+								,k -> new AccountEntryDetail()
+									.setAccount(inpAccount.getId())
+									.setAccountCode(inpAccount.getCode())
+									.setAccountDescription(inpAccount.getDescription())
+									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice))
+							);
+							detail.addDebit( amount );
 						}
 					}
 				}
 			}
-	 	})
+		})
 		,OUTPUT_VAT( new IVisitor() {
 
 			@Override

@@ -35,9 +35,7 @@ public class InvoiceVAT implements Serializable {
 	private boolean prepayment;
 	
 	private Account outputAccount;
-	private Integer inputAccountId;
-	private String inputAccountCode;
-	private String inputAccountDescription;
+	private Account inputAccount;
 	private Integer adjAccountId;
 	private String adjAccountCode;
 	private String adjAccountDescription;
@@ -222,30 +220,11 @@ public class InvoiceVAT implements Serializable {
 		return this;
 	}
 
-	public Integer getInputAccountId() {
-		return inputAccountId;
+	public Optional<Account> getInputAccount() {
+		return Optional.ofNullable(inputAccount);
 	}
-
-	public InvoiceVAT setInputAccountId(Integer inputAccountId) {
-		this.inputAccountId = inputAccountId;
-		return this;
-	}
-
-	public String getInputAccountCode() {
-		return inputAccountCode;
-	}
-
-	public InvoiceVAT setInputAccountCode(String inputAccountCode) {
-		this.inputAccountCode = inputAccountCode;
-		return this;
-	}
-
-	public String getInputAccountDescription() {
-		return inputAccountDescription;
-	}
-
-	public InvoiceVAT setInputAccountDescription(String inputAccountDescription) {
-		this.inputAccountDescription = inputAccountDescription;
+	public InvoiceVAT setInputAccount(Account inputAccount) {
+		this.inputAccount = inputAccount;
 		return this;
 	}
 
@@ -365,9 +344,7 @@ public class InvoiceVAT implements Serializable {
 			.setWithholding(this.withholding)
 			.setPrepayment(this.prepayment) 
 			.setOutputAccount(this.outputAccount)
-			.setInputAccountId(this.inputAccountId)
-			.setInputAccountCode(this.inputAccountCode)
-			.setInputAccountDescription(this.inputAccountDescription)
+			.setInputAccount(this.inputAccount)
 			.setAdjAccountId(this.adjAccountId)
 			.setAdjAccountCode(this.adjAccountCode)
 			.setAdjAccountDescription(this.adjAccountDescription)

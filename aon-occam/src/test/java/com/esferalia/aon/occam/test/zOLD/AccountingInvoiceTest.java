@@ -148,9 +148,9 @@ public class AccountingInvoiceTest {
 			System.out.println("outputAccountId ...: " + vat.getOutputAccount().map(Account::getId).orElse(null));
 			System.out.println("outputAccountCode ...: " + vat.getOutputAccount().map(Account::getCode).orElse(null));
 			System.out.println("outputAccountDescription ...: " + vat.getOutputAccount().map(Account::getDescription).orElse(null));
-			System.out.println("inputAccountId ...: " + vat.getInputAccountId());
-			System.out.println("inputAccountCode ...: " + vat.getInputAccountCode());
-			System.out.println("inputAccountDescription ...: " + vat.getInputAccountDescription());
+			System.out.println("inputAccountId ...: " + vat.getInputAccount().map(Account::getId).orElse(null));
+			System.out.println("inputAccountCode ...: " + vat.getInputAccount().map(Account::getCode).orElse(null));
+			System.out.println("inputAccountDescription ...: " + vat.getInputAccount().map(Account::getDescription).orElse(null));
 			System.out.println("adjAccountId ...: " + vat.getAdjAccountId());
 			System.out.println("adjAccountCode ...: " + vat.getAdjAccountCode());
 			System.out.println("adjAccountDescription ...: " + vat.getAdjAccountDescription());

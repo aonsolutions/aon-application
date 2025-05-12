@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
@@ -163,6 +165,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public AccountingInvoice setSuggestedAccounts(LinkedList<Account> suggestedAccounts) {
 		this.suggestedAccounts = suggestedAccounts;
 		return this;
+	}
+	
+	public Stream<InvoiceVAT> vatsStream() {
+		return AonCollectionUtils.stream(vats);
 	}
 	public LinkedList<InvoiceVAT> getVats() {
 		return vats;

@@ -402,9 +402,7 @@ public class AccountingInvoiceDAO {
 					vat.setOutputAccount(vatAccount.orElse(null));
 				}
 				if (!ai.isSales()) {
-					vat.setInputAccountId(vatAccount.map(Account::getId).orElse(null))
-						.setInputAccountCode(vatAccount.map(Account::getCode).orElse(null))
-						.setInputAccountDescription(vatAccount.map(Account::getDescription).orElse(null));
+					vat.setInputAccount(vatAccount.orElse(null));
 					if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
 						vat.setOutputAccount(config.accounting().getDefaultChargedVatAccount());
 					}
@@ -549,9 +547,7 @@ public class AccountingInvoiceDAO {
 		}
 		if (inputVatAccount == null) inputVatAccount = config.accounting().getDefaultPaidVatAccount();
 		if (inputVatAccount != null) {
-			vat.setInputAccountId(inputVatAccount.getId());
-			vat.setInputAccountCode(inputVatAccount.getCode());
-			vat.setInputAccountDescription(inputVatAccount.getDescription());
+			vat.setInputAccount(inputVatAccount);
 		}
 		if (outputVatAccount == null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
 		if (outputVatAccount != null) {
@@ -1222,10 +1218,11 @@ public class AccountingInvoiceDAO {
 				if(invoiceTax != null && invoiceTax.getAccount() == null) {
 					detail.setInvoiceTaxes( 
 						detail.getInvoiceTaxes().stream().map(r -> {
-							if(TaxType.VAT.equals(r.getTaxType()))
+							if (TaxType.VAT.equals(r.getTaxType()))
 								r.setAccount(accInvoice.isSales() 
 									? vat.getOutputAccount().map(Account::getId).orElse(null)
-									: vat.getInputAccountId());
+									: vat.getInputAccount().map(Account::getId).orElse(null)
+								);
 							return r;
 						}).collect(Collectors.toCollection(LinkedList::new))
 					);
@@ -1246,7 +1243,7 @@ public class AccountingInvoiceDAO {
 						// https://github.com/aonsolutions/aon-application/issues/2414
 						.setAccount(accInvoice.isSales() 
 							? vat.getOutputAccount().map(Account::getId).orElse(null) 
-							: vat.getInputAccountId())
+							: vat.getInputAccount().map(Account::getId).orElse(null))
 					);
 				}
 				
@@ -1368,7 +1365,8 @@ public class AccountingInvoiceDAO {
 							if(TaxType.VAT.equals(r.getTaxType()))
 								r.setAccount(accInvoice.isSales() 
 									? vat.getOutputAccount().map(Account::getId).orElse(null)
-									: vat.getInputAccountId());
+									: vat.getInputAccount().map(Account::getId).orElse(null)
+								);
 							return r;
 						}).collect(Collectors.toCollection(LinkedList::new))
 					);
@@ -1390,7 +1388,8 @@ public class AccountingInvoiceDAO {
 						// https://github.com/aonsolutions/aon-application/issues/2414
 						.setAccount(accInvoice.isSales() 
 							? vat.getOutputAccount().map(Account::getId).orElse(null) 
-							: vat.getInputAccountId())
+							: vat.getInputAccount().map(Account::getId).orElse(null)
+						)
 					);
 				}
 				
@@ -2109,9 +2108,7 @@ public class AccountingInvoiceDAO {
 							vat.setOutputAccount(vatAccount.orElse(null));
 						}
 						if (!ai.isSales()) {
-							vat.setInputAccountId(vatAccount.map(Account::getId).orElse(null))
-							.setInputAccountCode(vatAccount.map(Account::getCode).orElse(null))
-							.setInputAccountDescription(vatAccount.map(Account::getDescription).orElse(null));
+							vat.setInputAccount(vatAccount.orElse(null));
 							if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
 								vat.setOutputAccount(config.accounting().getDefaultChargedVatAccount());
 							}
