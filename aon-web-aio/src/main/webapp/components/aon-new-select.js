@@ -82,11 +82,11 @@ export class AonNewSelect extends AonNewInput {
     }
   }
 
-	constructor () {
-		super();
+  constructor () {
+    super();
   }
 
-	connectedCallback () {
+  connectedCallback () {
     this.initialize();
     this.build();
     this.buildSelect();
@@ -104,7 +104,7 @@ export class AonNewSelect extends AonNewInput {
     let input = this.getElement(this.INPUT);
     if(input){
       input.readonly = this.isReadonly();
-      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {     
+      if(!this.hasAttribute(CONSTANT.AUTOCOMPLETE)) {
         input.setAttribute(CONSTANT.READONLY, true);
       }
 
@@ -240,8 +240,11 @@ export class AonNewSelect extends AonNewInput {
   buildLiMultiple(option, ul){
 
     const valueAlias = option[this.valueAlias];
-
-    const checkBoxId = "checkbox"+valueAlias;
+    if(this.isBetaDoc()){
+      var checkBoxId = `${this.id}_checkbox_${valueAlias}`;
+    }else{
+      var checkBoxId = "checkbox"+valueAlias;
+    }
 
     let checkbox = this.getElement(checkBoxId);
     if(checkbox) return;
@@ -255,8 +258,12 @@ export class AonNewSelect extends AonNewInput {
 
     if(valueAlias){
       checkbox =  new AonCheckbox();
+      if(this.isBetaDoc()){
+        checkbox.name = checkBoxId;
+      }else{
+        checkbox.name = "checkbox"+valueAlias;
+      }
       checkbox.id = checkBoxId;
-      checkbox.name = "checkbox"+valueAlias;
       li.appendChild(checkbox);
       checkbox.value = this.isSelectable(option);
 
@@ -287,17 +294,8 @@ export class AonNewSelect extends AonNewInput {
   }
 
   onChangeCheckBox(add=false, option=null){
-    const input = this.getInput();
     const selectable = this.getSelectable();
-    const length = selectable.length;
-
     this.displayMultiple();
-    // if(length){
-    //   input.value = selectable[0][this.nameAlias];
-    //   input.setLabelCount(length - 1);
-    // } else {
-    //   input.value ="";
-    // }
 
     this.dispatchEvent(new CustomEvent(EVENT.SELECT, {
       detail: {
@@ -305,18 +303,17 @@ export class AonNewSelect extends AonNewInput {
         add,
         option
       }
-    }))
+    }));
   }
 
   displayMultiple() {
-    const input = this.getInput();
-    const selectable = this.getSelectable();
-    const length = selectable.length;
-    if(length){
-      input.value = selectable[0][this.nameAlias];
-      input.setLabelCount(length - 1);
+    const selectable  = this.getSelectable();
+    const length      = selectable.length;
+    
+    if(length > 0){
+      super.setValue(selectable.map(item => item[this.nameAlias]).join(', '));
     } else {
-      input.value ="";
+      super.setValue('');
     }
   }
 
@@ -392,7 +389,6 @@ export class AonNewSelect extends AonNewInput {
 
   setOptionsBuild(options) {
     this.disableKeyUp = false;
-
     if(this.multiple && this.getSelectable().length){
       options = [ ...new Set(this.getSelectable()), ...new Set(options) ];
     }
@@ -486,6 +482,10 @@ export class AonNewSelect extends AonNewInput {
     this.value = "";
     let input = this.getElement(this.INPUT);
     if(input) input.value = "";
+    // limpiar los datos del multiple
+    if(this.multiple){
+      this.clearSelectable();
+    }
   }
 
   getText() {

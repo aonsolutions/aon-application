@@ -8,8 +8,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog.AonCustomDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
@@ -26,7 +24,6 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -36,7 +33,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class SalesList extends AonCustomDockLayout {
+public class SalesList extends AonCustomDockLayout {
 	
 	private static CommonServiceAsync COMMON_SERVICE;
 	
@@ -109,8 +106,6 @@ public abstract class SalesList extends AonCustomDockLayout {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.options = options;
-		
-		addButtonsToolbar();
 		
 		hideToolbarFilterMessages();
 		setSearchPlaceholder("Busque por cliente, comercial, n\u00ba pedido ...");
@@ -199,36 +194,6 @@ public abstract class SalesList extends AonCustomDockLayout {
 		offset.setValue(0);
 	}
 	
-	private void addButtonsToolbar() {
-		// Add toolbar button if needed
-//		AonToolbarButton newButton = new AonToolbarButton( "Nuevo Pedido de Venta", AON.CSS.aonIconAdd());
-//		newButton.addClickHandler(e -> showSalesDialog());
-//		addToolbarButton(newButton);
-	}
-	
-	private void showSalesDialog() {
-		AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "NUEVO PEDIDO DE VENTA" );
-		dialog.showCloseButton(true);
-		
-//		TariffPanel tariffPanel = new TariffPanel(options, new AonTariffPanelCallback(){
-//
-//			@Override
-//			public void onAccept(Tariff tariff) {
-//				dialog.hide();
-//				onSearch();
-//			}
-//		
-//		});
-//			
-//		dialog.add( tariffPanel );
-		
-		dialog.showLoadedCB(new AonCustomDialogCallback() {
-			@Override
-			public void onEnd() { /*tariffPanel.focusCode();*/ }
-		});
-	}
-
 	public void onSearch() {
 		getWidgetParams();
 		resetSearchOffset();
@@ -350,30 +315,16 @@ public abstract class SalesList extends AonCustomDockLayout {
 		processButton.addClickHandler(event -> {
 			event.stopPropagation();
 			
-			Window.alert("Procesar Pedido");
+			new ProcessSalesDialog(sale.getId(), params) {
+				@Override
+				public void onSaleProcess() { onSearch(); }
+			};
 			
-//			processButton.setEnabled(false);
-			
-//			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Tarifa",
-//					new HTML("Se va a proceder a eliminar la tarifa <b>" + tariff.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-//			
-//			dialog.confirm(new AonAcceptDialogCallback() {
-//
-//				@Override
-//				public void onCancel() {
-//					deleteButton.setEnabled(true);
-//				}
-//
-//				@Override
-//				public void onAccept() {
-//					delete(tariff);
-//				}
-//			});
 		});
 		buttonContainer.add(processButton);
 		
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onSaleSelect(sale), ClickEvent.getType());
+		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
 		Label date = new Label(null == sale.getDate() ? "" : formatDate.format(sale.getDate()));
 		tab.addRow(row, date, COLS.DAT.getColWidth());
@@ -449,23 +400,5 @@ public abstract class SalesList extends AonCustomDockLayout {
 			}
 		});
 	}
-	
-//	private void delete(Sales sale) {
-//		COMMON_SERVICE.deleteSale(params.getDomainName(), params.getDomain(), params.getUser(), sale.getId(), new AsyncCallback<Void>() {
-//			
-//			@Override
-//			public void onSuccess(Void result) {
-//				resetSearchOffset();
-//				onSearchData();
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				AonMessagePanel.showError(messagePanel, "Error borrado: " + caught.getMessage());
-//			}
-//		});
-//	}
-
-	protected abstract void onSaleSelect(Sales sale);
 	
 }

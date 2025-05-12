@@ -170,6 +170,7 @@ export const IBAN = 'iban';
 export const ICON = 'icon';
 export const ICON_BUTTON = 'iconButton';
 export const ID = 'id';
+export const ID_LOADER = 'aonModuleLoader';
 export const IMAGE = 'image';
 export const IN_PROGRESS = 'inProgress';
 export const INCOMES = 'incomes';
@@ -181,7 +182,7 @@ export const INVOICE = 'invoice';
 export const INVOICE_ISSUED = 'invoiceIssued';
 export const INVOICE_OBJECT = 'invoiceObject';
 export const INVOICE_RECEIVED = 'invoiceReceived';
-export const INVOICE_TICKET = 'invoiceTicket'; 
+export const INVOICE_TICKET = 'invoiceTicket';
 export const INVOICES = 'invoices';
 export const ITEM = 'item';
 

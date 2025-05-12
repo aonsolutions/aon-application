@@ -30,7 +30,13 @@ const AON_SERVICE = {
 const AON_SALES_ENTERPRISE = {
     id: 'sideNavSalesEnterprise',
     name: 'Procesar Pedidos',
-    icon: MATERIAL_ICONS.CONTRACT
+    icon: MATERIAL_ICONS.EMIT
+}
+
+const AON_TARGET_ENTERPRISE = {
+    id: 'sideNavTargetEnterprise',
+    name: 'Empresas (C. Potenciales)',
+    icon: MATERIAL_ICONS.DOMAIN_ADD
 }
 
 
@@ -65,7 +71,8 @@ const OfficeOptions = {
 
 const ServiceOptions = {
     AON_SERVICE,
-    AON_SALES_ENTERPRISE
+    AON_SALES_ENTERPRISE,
+    AON_TARGET_ENTERPRISE
 }
 
 

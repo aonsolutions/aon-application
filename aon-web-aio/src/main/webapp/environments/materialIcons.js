@@ -120,12 +120,14 @@ export const DICTIONARY = 'dictionary';
 export const DO_NOT_DISTURB_ON = 'do_not_disturb_on';
 export const DOCUMENT_SCANNER = 'document_scanner';
 export const DONE = 'done';
+export const DOMAIN_ADD = 'domain_add';
 
 // ----- E
 
 export const EDIT = 'edit';
 export const EDIT_DOCUMENT = 'edit_document';
 export const EQUALIZER = 'equalizer';
+export const EMIT = 'list_alt_check';
 export const ERROR = 'error';
 export const EURO = 'euro';
 export const EURO_SYMBOL = 'euro_symbol';

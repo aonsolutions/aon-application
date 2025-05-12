@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -167,8 +168,6 @@ public class TaskHolderDAO {
 		return getStream(ctx, filter, options)
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
-	
-
 
 	public static TaskHolder get(AONContext ctx, Integer id){
 		return get(ctx, p -> p.getIdProperty().eq(id));

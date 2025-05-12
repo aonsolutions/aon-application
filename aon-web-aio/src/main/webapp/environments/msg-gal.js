@@ -330,6 +330,7 @@ export const NUMBER_OF_PALLETS = 'Número de palets';
 
 export const OBSERVATION = 'Observación';
 export const OFFICE = 'Despacho';
+export const OFFICE_CATEGORIES = 'Categorías de oficina';
 export const ONLY_DOMAINS_WITHOUT_LINKED_CUSTOMER = "Só dominios sen cliente vinculado";
 export const ONLY_PORTAL = 'Só Portal';
 export const OPEN = 'Abrir';

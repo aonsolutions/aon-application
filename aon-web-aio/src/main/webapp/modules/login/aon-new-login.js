@@ -5,10 +5,9 @@ import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
 import "../../components/aon-dialog.js";
 import "../../components/aon-toast.js";
-
 import "../company/aon-mobile-desktop.js";
 
-import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
@@ -25,7 +24,6 @@ import { AonIconButton } from "../../components/aon-icon-button.js";
 import { createInput } from "../../components/CreateComponent.js";
 
 import { changeUrl } from '../../services/actionService.js';
-
 
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";

@@ -143,7 +143,6 @@ export class AonToolbar extends AonElement {
 		return header;
 	}
 
-
 	removeSeparators() {
 		this.querySelectorAll('hr').forEach((item, i) => {
 				item.remove();

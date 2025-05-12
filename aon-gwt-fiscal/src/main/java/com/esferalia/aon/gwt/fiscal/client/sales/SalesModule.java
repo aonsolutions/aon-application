@@ -19,7 +19,6 @@ public class SalesModule extends MainEntryPoint {
 	
 	private DeckLayoutPanel deckLayoutPanel;
 	private SalesList salesList;
-//	private TariffEntry tariffEntry;
 	
 	@Override
 	public void onModuleLoad() {
@@ -39,39 +38,12 @@ public class SalesModule extends MainEntryPoint {
 		
 		deckLayoutPanel = new DeckLayoutPanel();
 		
-//		tariffEntry = new TariffEntry(options) {
-//
-//			@Override
-//			protected void onBackClick() {
-//				showTariffList();
-//			}
-//			
-//		};
-//		
-		salesList = new SalesList(options) {
-
-			@Override
-			protected void onSaleSelect(Sales sale) {
-				showSelectedSale(sale);
-			}
+		salesList = new SalesList(options);
 		
-		};
 		deckLayoutPanel.add(salesList);
-//		deckLayoutPanel.add(tariffEntry);
 		deckLayoutPanel.showWidget(salesList);
 		
 		options.getParentWidget().add(deckLayoutPanel);
-	}
-	
-//	private void showTariffList() {
-//		deckLayoutPanel.showWidget(tariffList);
-//		tariffList.onSearch();
-//	}
-	
-	private void showSelectedSale(Sales sale) {
-//		Window.alert("showSelectedSale: " + sale.getId());
-//		deckLayoutPanel.showWidget(saleEntry);
-//		saleEntry.setSale(sale.getId());
 	}
 	
 }

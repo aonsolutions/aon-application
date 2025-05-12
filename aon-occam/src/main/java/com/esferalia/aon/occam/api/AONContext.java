@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -211,6 +212,35 @@ public class AONContext {
 		}
 	}
 	
+	public static String getSchema(String domainName) {
+		ConnectionInfo connectionInfo = null;
+		try {
+			connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			return  connectionInfo.getDomainDatabase(domainName);
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		} finally {
+			// TODO CLOSE!!!
+		}
+	}
+
+	public static List<String> getSchemas(String domainName) {
+		ConnectionInfo connectionInfo = null;
+		try {
+			connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			String schema = connectionInfo.getDomainDatabase(domainName);
+			if ( schema != null ) {
+				return Collections.singletonList(schema);
+			} else {
+				return connectionInfo.getSchemas();
+			}
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		} finally {
+			// TODO CLOSE!!!
+		}
+	}
+
 	public static String getSchemaFirstDomain(String schema) {
 		ConnectionInfo connectionInfo = null;
 		try {

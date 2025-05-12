@@ -68,7 +68,8 @@ public class TagDAO {
 				.set(TAG.DOMAIN, ctx.getDomainId())
 				.set(TAG.NAME, tag.getName())
 				.set(TAG.TYPE, tag.getType())
-				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null);
+				.set(TAG.COLOR, (tag.getColor() != null) ? tag.getColor() : null)
+				.execute();
 		return tag;
 	}
 

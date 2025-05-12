@@ -2,10 +2,12 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
+import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.util.List;
@@ -214,7 +216,26 @@ public class SellerDAO {
 				.offset(offset)
 				.limit(limit)
 				.fetch().stream().map(new SellerFiller());
-	}	
+	}
+	
+	public static List<Seller> getTaskHolderSellerStream(AONContext ctx, Integer domainId){
+		return ctx.getDslContext().select()
+				.from(SELLER)
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
+				.join(DOMAIN).on(SELLER_ALIAS.DOMAIN.eq(DOMAIN.ID)) 
+				.join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
+				.leftOuterJoin(COMMISSION_TYPE).on(COMMISSION_TYPE.ID.eq(SELLER.COMMISSION_TYPE))
+				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(SELLER.TASK_HOLDER))
+				.leftOuterJoin(TASK_HOLDER_ALIAS).on(TASK_HOLDER_ALIAS.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(USER).on(USER.ID.eq(TASK_HOLDER.USER_ID).and(USER.DOMAIN.eq(DOMAIN.PARENT)))
+				.where(SELLER_PROPERTIES.getConditions(f -> f.getDomainProperty().eq(domainId)))
+				.and(TASK_HOLDER.REGISTRY.isNotNull())
+				.orderBy(SELLER_ALIAS.NAME)
+				.fetch()
+				.stream()
+				.map(new SellerFiller())
+				.collect(Collectors.toList());
+	}
 	
 	public static Seller save(AONContext ctx, Seller seller) {
 		ctx.checkWrite();

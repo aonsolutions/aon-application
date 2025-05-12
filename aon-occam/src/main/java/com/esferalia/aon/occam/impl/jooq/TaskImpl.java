@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.ITask;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
@@ -23,6 +25,7 @@ import com.esferalia.aon.occam.api.model.task.TaskEvent;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderWorkgroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO;
@@ -170,6 +173,12 @@ public class TaskImpl implements ITask {
 	public Stream<TaskHolder> getTaskHolderWorkgroupStream(AONContext ctx, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskHolderDAO.getTaskHolderWorkgroup(ctx, filter, workgroupId, ofs, limit));	
+	}
+
+	@Override
+	public List<Seller> getTaskHolderSellerStream(CloseableAONContext ctx, Integer domainId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SellerDAO.getTaskHolderSellerStream(ctx, domainId));
 	}
 
 	@Override

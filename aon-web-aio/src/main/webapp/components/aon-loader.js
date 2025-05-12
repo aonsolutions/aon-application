@@ -3,9 +3,9 @@ import {AonElement} from './AonElement.js';
 import '../css/aon-loader.css';
 
 export class AonLoader extends AonElement {
-
 	PROGRESS;
 	LOADING;
+
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -22,7 +22,7 @@ export class AonLoader extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<div id="${this.PROGRESS}" class="aonProgress"></div>
+			<div id="${this.PROGRESS}" class="aonProgress aonProgressHide"></div>
 			<div id="${this.LOADING}" class="aonLoading">
 				<div class="bounce1"></div>
 				<div class="bounce2"></div>
@@ -32,22 +32,22 @@ export class AonLoader extends AonElement {
 	}
 
 	start() {
-		this.getElement(this.PROGRESS).style.display = 'flex';
+      this.getElement(this.PROGRESS).style.setProperty('display', 'flex', 'important');
 	}
 
 	stop() {
-		this.getElement(this.PROGRESS).style.display = 'none';
+      this.getElement(this.PROGRESS).style.display = 'none';
 	}
 
 	startLoading() {
-		this.getElement(this.LOADING).style.display = 'block';
+      this.getElement(this.LOADING).style.display = 'block';
 	}
 
 	stopLoading() {
-		this.getElement(this.LOADING).style.display = 'none';
+      this.getElement(this.LOADING).style.display = 'none';
 	}
 
 }
 if(!window.customElements.get('aon-loader')){
-	window.customElements.define('aon-loader',  AonLoader);
+  window.customElements.define('aon-loader', AonLoader);
 }

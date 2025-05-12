@@ -125,23 +125,22 @@ export class AonApplication extends AonElement {
 
   build() {
     this.innerHTML = `
-			<!-- AON APPLICATION TOOLBAR -->
-			<aon-toolbar id="${this.TOOLBAR}" title="${this.getTitle()}"></aon-toolbar>
+      <!-- AON APPLICATION TOOLBAR -->
+      <aon-toolbar id="${this.TOOLBAR}" title="${this.getTitle()}"></aon-toolbar>
 
-			<!-- AON APPLICATION LOADER -->
-			<aon-loader id="${this.LOADER}"> </aon-loader>
+      <!-- AON APPLICATION LOADER -->
+      <aon-loader id="${this.LOADER}"> </aon-loader>
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.getSidenavClassName()}"></div>
-
-			   <!-- AON APPLICATION CONTENT -->
-			   <div id="${this.CONTENT}"></div>
+        <div id="${this.SIDENAV}" class="${this.getSidenavClassName()}"></div>
+        <!-- AON APPLICATION CONTENT -->
+        <div id="${this.CONTENT}"></div>
       </div>
-			<aon-dialog-menu id="${this.OPTION_DIALOG}"> </aon-dialog-menu>
-			<aon-dialog id="${this.DIALOG}"> </aon-dialog>
-			<aon-toast id="${this.TOAST}"> </aon-toast>
-		`;
+      <aon-dialog-menu id="${this.OPTION_DIALOG}"> </aon-dialog-menu>
+      <aon-dialog id="${this.DIALOG}"> </aon-dialog>
+      <aon-toast id="${this.TOAST}"> </aon-toast>
+    `;
 
     this.content = this.getContent();
     if(this.isMobile()) {
@@ -236,7 +235,6 @@ export class AonApplication extends AonElement {
     let el = this.getElement(this.LOADER);
     if(el) el.stopLoading();
   }
-
 
   toogleMobileSidenav() {
     let sidenav = this.getElement(this.MOBILE_SIDENAV);

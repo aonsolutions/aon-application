@@ -729,8 +729,7 @@ export class AonNotes extends AonElement {
       noteCardBodyDiv.style.backgroundColor = note.getColor();
       textAreaBody.style.backgroundColor = note.getColor();
       noteCardDate.style.backgroundColor = note.getColor();
-    }
-    else {
+    } else {
       noteCardBodyDiv.style.backgroundColor = "white";
       textAreaBody.style.backgroundColor = "white";
       noteCardDate.style.backgroundColor = "white";

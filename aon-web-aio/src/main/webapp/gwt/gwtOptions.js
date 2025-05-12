@@ -484,6 +484,13 @@ export const SALES_ENTERPRISE_MODULE = {
   entryPoint: 'SalesModule'
 }
 
+export const TARGET_ENTERPRISE_MODULE = {
+  title: 'Empresas (C. Potenciales)',
+  name: 'Empresas (C. Potenciales)',
+  module: GWT_FISCAL,
+  entryPoint: 'TargetEnterpriseModule'
+}
+
 export const BOOKING_RESUME = {
   title: MSG.BOOKING_RESUME,
   name: MSG.BOOKING_RESUME,
