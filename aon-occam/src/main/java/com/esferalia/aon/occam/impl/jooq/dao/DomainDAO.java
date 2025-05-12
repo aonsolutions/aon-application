@@ -308,7 +308,13 @@ public class DomainDAO {
 		Integer[] domainsParent = {domain.getId(), domain.getParentId()};
 		Integer[] domainOnly = {domain.getId()};
 		Integer[] domains = domain.getParentId() != null ? domainsParent : domainOnly;
-		Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), ctx.getUser(), f -> f.getDomainProperty().in(domains)).findFirst().orElse(new Scope());
+		
+		Scope scope = null;
+		if(null != domain.getScope()) 
+			scope = new Scope().setId(domain.getScope());
+		else 
+			scope = AON.getScopeStream(domain.getName(), domain.getId(), ctx.getUser(), 
+				f -> f.getDomainProperty().in(domains)).findFirst().orElse(new Scope());
 		
 
 		ctx.getDslContext().insertInto(COMPANY)

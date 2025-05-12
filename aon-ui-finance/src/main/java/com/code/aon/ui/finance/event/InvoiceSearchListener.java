@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.event;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	
 	private String defaultType;
 	private String defaultStatus;
+	private Date defaultDateFrom;
+	private Date defaultDateTo;
 	private Registry registry;
 	private Project project;
     private Item item;
@@ -49,6 +52,22 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	private PayMethod[] payMethods;
 	private Seller seller;
 	private Boolean customerEInvoice;
+	
+	public Date getDefaultDateFrom() {
+		return defaultDateFrom;
+	}
+	
+	public void setDefaultDateFrom(Date defaultDateFrom) {
+		this.defaultDateFrom = defaultDateFrom;
+	}
+	
+	public Date getDefaultDateTo() {
+		return defaultDateTo;
+	}
+	
+	public void setDefaultDateTo(Date defaultDateTo) {
+		this.defaultDateTo = defaultDateTo;
+	}
 	
 	public String getDefaultType() {
 		return defaultType;
@@ -205,6 +224,13 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 			Expression exp1  = ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
 			Expression exp2  = ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.SCORED);
 			criteria.addExpression( ExpressionUtilities.getOrExpression(exp1, exp2));
+		}
+		if (getDefaultDateFrom() != null) {
+			criteria.addGreaterThanOrEqualExpression("Invoice.issueDate", getDefaultDateFrom());
+		}
+		
+		if (getDefaultDateTo() != null) {
+			criteria.addLessThanOrEqualExpression("Invoice.issueDate", getDefaultDateTo());
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), getRegistry().getId());

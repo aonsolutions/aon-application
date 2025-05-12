@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Survey;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
@@ -79,13 +81,16 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
 import com.esferalia.aon.occam.api.model.sales.SalesParams;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.tariff.TariffAddInfo;
 import com.esferalia.aon.occam.api.model.tariff.TariffCatalogue;
@@ -956,6 +961,37 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Sales getSale(String domainName, int domain, String user, Integer saleId) throws AonCoreException {
 		return AON.getSales(new Domain().setName(domainName).setId(domain), user, f -> f.getIdProperty().eq(saleId), new Options().setFull(true));
+	}
+	
+	@Override
+	public List<Workplace> getWorkplaces(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getWorkplaceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)));
+	}
+	
+	@Override
+	public List<Seller> getTaskHolderUsers(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getTaskHolderSellerStream(
+				new Domain().setName(domainName).setId(domain), user);
+	}
+	
+	@Override
+	public Map<TargetFull, List<RegistrySeller>> getTargetNotUserFull(TargetParams params) throws AonCoreException {
+		List<TargetFull> targetFullList = AON.getTargetNotUserFull(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+		
+		Map<TargetFull, List<RegistrySeller>> resultMap = targetFullList.stream().collect(
+			Collectors.toMap(
+				Function.identity(),
+				targetFull -> AON.getRegistrySellerStream(
+							new Domain().setName(params.getDomainName()).setId(params.getDomain()), 
+							params.getUser(),
+							 f -> f.getDomainProperty().eq(params.getDomain())
+	                         .and(f.getRegistryProperty().eq(targetFull.getId()))
+						).collect(Collectors.toList())
+			)
+			
+		);
+		
+		return resultMap;
 	}
 
 }

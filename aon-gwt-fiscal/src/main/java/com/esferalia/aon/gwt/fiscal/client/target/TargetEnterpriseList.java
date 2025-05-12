@@ -1,6 +1,10 @@
-package com.esferalia.aon.gwt.fiscal.client.sales;
+package com.esferalia.aon.gwt.fiscal.client.target;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -14,8 +18,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.registry.RegistryModuleOptions;
-import com.esferalia.aon.occam.api.model.management.Sales;
-import com.esferalia.aon.occam.api.model.sales.SalesParams;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
+import com.esferalia.aon.occam.api.model.registry.TargetFull;
+import com.esferalia.aon.occam.api.model.target.TargetParams;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -33,7 +41,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class SalesList extends AonCustomDockLayout {
+public class TargetEnterpriseList extends AonCustomDockLayout {
 	
 	private static CommonServiceAsync COMMON_SERVICE;
 	
@@ -42,9 +50,7 @@ public class SalesList extends AonCustomDockLayout {
 	private HTMLPanel container;
 	private HTMLPanel messagePanel = new HTMLPanel("");
 	
-	private AonCustomDateBox date = new AonCustomDateBox("Fecha");
-	private AonCustomDateBox deliveryDate = new AonCustomDateBox("Fecha Entrega");
-	private AonCustomListBox status = new AonCustomListBox("Estado");
+	private AonCustomDateBox date = new AonCustomDateBox("Fecha Creaci\u00f3n");
 	
 	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
 	private AonCustomListBox asc = new AonCustomListBox("Orden");
@@ -57,7 +63,7 @@ public class SalesList extends AonCustomDockLayout {
 	
 	private RegistryModuleOptions options;
 	
-	private SalesParams params;
+	private TargetParams params;
 	
 	// Table UI
 	private final int limit = 100;
@@ -68,13 +74,13 @@ public class SalesList extends AonCustomDockLayout {
 	private int lastScrollPos = 0;
 
 	private static enum COLS {
-		  DAT(AON.MSG.date()						,"5rem" 			,"")
-		, DEL("F. Entrega"							,"5rem" 			,"")
-		, COD("N\u00ba Pedido"						,"10rem"  			,"")
-		, CUS(AON.MSG.customer()					,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, COM("Comercial"							,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, SCO(AON.MSG.scope()						,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TOT(AON.MSG.total()						,"5rem" 			,"text-align: right;")
+		  DOC("Document"							,"6rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, NAM("Nombre / Raz\u00f3n Social"			,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, SEL("A. Soporte"							,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, MAI("Email"								,"13rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, PHO(AON.MSG.phone()						,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CRU("Creado Por"							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CRD("Creado (Fecha)"						,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 
@@ -99,8 +105,8 @@ public class SalesList extends AonCustomDockLayout {
 	}
 	
 	// Constructor
-	public SalesList(RegistryModuleOptions options) {
-		super("PROCESAR PEDIDOS");
+	public TargetEnterpriseList(RegistryModuleOptions options) {
+		super("Crear Empresa (C. Poteciales)");
 		
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -108,7 +114,7 @@ public class SalesList extends AonCustomDockLayout {
 		this.options = options;
 		
 		hideToolbarFilterMessages();
-		setSearchPlaceholder("Busque por cliente, comercial, n\u00ba pedido ...");
+		setSearchPlaceholder("Busque por nombre, documento ...");
 		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
 			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
@@ -121,32 +127,10 @@ public class SalesList extends AonCustomDockLayout {
 		date.addValueChangeHandler(e -> onSearch());
 		addFilterWidget(date);
 		
-		deliveryDate.addValueChangeHandler(e -> onSearch());
-		addFilterWidget(deliveryDate);
-		
-		status.clearItems();
-		status.addItem( "Todas", "");
-		status.addItem( "Pediente", "0");
-		status.addItem( "Bloqueado", "1");
-		status.addItem( "Servido", "2");
-		status.addItem( "Cerrado", "3");
-		status.addItem( "Facturado", "4");
-		status.addItem( "En Preparaci\u00f3n", "5");
-		status.getListBox().addChangeHandler(event -> onSearch());
-		
-		// Default pending
-		status.setValue("0");;
-		status.setEnable(false);
-		
-		addFilterWidget(status);
-		
 		sort.addItem("Fecha", "date");
-		sort.addItem("F. Entrega", "deliveryDate");
-		sort.addItem("N\u00ba Pedido", "code");
-		sort.addItem("Cliente", "customer");
-		sort.addItem("Comercial", "comercial");
-		sort.addItem("Estado", "status");
-		sort.addItem("Ambito", "scope");
+		sort.addItem("Nombre", "name");
+		sort.addItem("Documento", "document");
+		sort.setValue("name");
 		sort.getListBox().addChangeHandler(event -> onSearch());
 		
 		asc.addItem("Ascendente", "true");
@@ -180,20 +164,16 @@ public class SalesList extends AonCustomDockLayout {
 	@Override
 	protected void onClearFilter() {
 		getSearchTextBox().setValue(null, false);
-		
 		date.setValue(null);
-		deliveryDate.setValue(null);
-		status.setValue("0");
-		
+		sort.setValue("name");
 		resetSearchOffset();
-		
 		onSearch();
 	}
 	
 	private void resetSearchOffset() {
 		offset.setValue(0);
 	}
-	
+
 	public void onSearch() {
 		getWidgetParams();
 		resetSearchOffset();
@@ -201,14 +181,12 @@ public class SalesList extends AonCustomDockLayout {
 	}
 
 	public void getWidgetParams() {
-		params = new SalesParams()
+		params = new TargetParams()
 				.setDomainName(options.getDomainName())
 				.setDomain(options.getDomain())
 				.setUser(options.getUser())
 				.setDescription(getSearchTextBox().getValue())
 				.setDate(date.getValue())
-				.setDeliveryDate(deliveryDate.getValue())
-				.setStatus(AonStringUtils.isBlank(status.getValue()) ? null : Byte.parseByte(status.getValue()))
 				.setOrderBy(sort.getValue())
 				.setAsc(Boolean.parseBoolean(asc.getValue()))
 				;
@@ -278,18 +256,18 @@ public class SalesList extends AonCustomDockLayout {
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		getList(sales -> {
+		getList(targets -> {
 			boolean something = false;
 			
-			for(Sales sale : sales) {
+			for( Entry<TargetFull, List<RegistrySeller>> targetFull : targets.entrySet()) {
 				something = true;
-				paintRow(sale);
+				paintRow(targetFull.getKey(), targetFull.getValue());
 			}
 			
-			if (sales.size() < limit) {
+			if (targets.size() < limit) {
 				disableMoreData();
 			} else {
-				offset.setValue(offset.intValue() + sales.size() - 1);
+				offset.setValue(offset.intValue() + targets.size() - 1);
 				enableMoreData();
 			}
 			
@@ -306,16 +284,16 @@ public class SalesList extends AonCustomDockLayout {
 		});
 	}
 	
-	private void paintRow(Sales sale) {
+	private void paintRow(TargetFull target, List<RegistrySeller> sellers) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton processButton = new AonTableButton("Procesar Pedido", AON.CSS.aonIconEmit());
+		AonTableButton processButton = new AonTableButton("Crear Empresa", AON.CSS.aonIconDomainAdd());
 		processButton.addStyleName(AON.CSS.aonCustomRowButtom());
 		processButton.addClickHandler(event -> {
 			event.stopPropagation();
 			
-			new ProcessSalesDialog(sale.getId(), params) {
+			new ProcessTargetEnterpriseDialog(target, sellers, params) {
 				@Override
 				public void onSaleProcess() { onSearch(); }
 			};
@@ -326,77 +304,56 @@ public class SalesList extends AonCustomDockLayout {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {}, ClickEvent.getType());
 		
-		Label date = new Label(null == sale.getDate() ? "" : formatDate.format(sale.getDate()));
-		tab.addRow(row, date, COLS.DAT.getColWidth());
+		Label document = new Label(target.getRegistry().getDocument());
+		tab.addInlineStyle(document, COLS.DOC.getCellStyleClass());
+		tab.addRow(row, document, COLS.DOC.getColWidth());
 		
-		Label deliveryDate = new Label(null == sale.getDeliveryDate() ? "" : formatDate.format(sale.getDeliveryDate()));
-		tab.addRow(row, deliveryDate, COLS.DEL.getColWidth());
+		Label name = new Label(target.getRegistry().getName());
+		tab.addInlineStyle(name, COLS.NAM.getCellStyleClass());
+		tab.addRow(row, name, COLS.NAM.getColWidth());
 		
-		Label deliveryNumber = new Label((AonStringUtils.isBlank(sale.getSeries()) ? "" : sale.getSeries() + "/") + sale.getNumber());
-		tab.addRow(row, deliveryNumber, COLS.COD.getColWidth());
+		Optional<RegistrySeller> supportSellerOpt = sellers.stream().filter(seller -> seller.getType().equals(RegistrySellerType.SOPORTE)).findFirst();
 		
-		Label customer = new Label(sale.getCustomer().getName());
-		tab.addInlineStyle(customer, COLS.CUS.getCellStyleClass());
-		tab.addRow(row, customer, COLS.CUS.getColWidth());
+		Label supportSeller = new Label(supportSellerOpt.isEmpty() ? "" : supportSellerOpt.get().getSeller().getName());
+		tab.addInlineStyle(supportSeller, COLS.SEL.getCellStyleClass());
+		tab.addRow(row, supportSeller, COLS.SEL.getColWidth());
 		
-		Label commercial = new Label(sale.getSeller().getName());
-		tab.addInlineStyle(commercial, COLS.COM.getCellStyleClass());
-		tab.addRow(row, commercial, COLS.COM.getColWidth());
+		Optional<RegistryMedia> mailOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
 		
-		Label scope = new Label(sale.getScope().getDescription());
-		tab.addInlineStyle(scope, COLS.SCO.getCellStyleClass());
-		tab.addRow(row, scope, COLS.SCO.getColWidth());
+		Label mail = new Label(mailOpt.isEmpty() ? "" : mailOpt.get().getValue());
+		tab.addInlineStyle(mail, COLS.MAI.getCellStyleClass());
+		tab.addRow(row, mail, COLS.MAI.getColWidth());
 		
-		double totalSales = sale.getDetails().stream().mapToDouble(detail -> getTotal(detail.getQuantity(), detail.getPrice(), detail.getTaxes(), detail.getDiscountExpression().getDiscountExpr())).sum();
-		Label total = new Label(formaDouble(totalSales) + " \u20ac");
-		tab.addInlineStyle(total, COLS.TOT.getCellStyleClass());
-		tab.addRow(row, total, COLS.TOT.getColWidth());
+		Optional<RegistryMedia> phoneOpt = target.getMedias().stream().filter(media -> media.getMedia().equals(MediaType.CELLULAR)).findFirst();
+		
+		Label phone = new Label(phoneOpt.isEmpty() ? "" : phoneOpt.get().getValue());
+		tab.addInlineStyle(phone, COLS.PHO.getCellStyleClass());
+		tab.addRow(row, phone, COLS.PHO.getColWidth());
+		
+		Label creationUser = new Label(target.getRegistry().getCreationUser());
+		tab.addInlineStyle(creationUser, COLS.CRU.getCellStyleClass());
+		tab.addRow(row, creationUser, COLS.CRU.getColWidth());
+		
+		Date creationDateValue = target.getRegistry().getCreationDate();
+		
+		Label creationDate = new Label(null == creationDateValue ? "" : formatDate.format(creationDateValue));
+		tab.addInlineStyle(creationDate, COLS.CRD.getCellStyleClass());
+		tab.addRow(row, creationDate, COLS.CRD.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 	
-	private static double getTotal(double quantity, double price, double taxes, String discount) {
-		double result = price;
-		
-		if (discount != null && !discount.trim().isEmpty()) {
-            
-			String[] parts = discount.replace(" ", "").split("\\+");
-
-            for (String part : parts) {
-                try {
-                    double discountPercent = Double.parseDouble(part);
-                    result -= result * (discountPercent / 100.0);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Formato de descuento inválido: " + part, e);
-                }
-            }
-        }
-
-		result += result * (taxes / 100.0);
-        return result * quantity;
-	}
-
-	private static String formaDouble(double value) {
-        // Round to two decimal places
-        long scaledValue = Math.round(value * 100); // Scale to avoid floating-point precision issues
-        long integerPart = scaledValue / 100;      // Extract integer part
-        long decimalPart = scaledValue % 100;      // Extract decimal part
-
-        // Format the result
-        return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart /*+ " \u20ac"*/;
-    }
-	
-	private void getList(Consumer<List<Sales>> success) {
-		COMMON_SERVICE.getSales(params, new AsyncCallback<List<Sales>>() {
+	private void getList(Consumer<Map<TargetFull, List<RegistrySeller>>> success) {
+		COMMON_SERVICE.getTargetNotUserFull(params, new AsyncCallback<Map<TargetFull, List<RegistrySeller>>>() {
 			
 			@Override
-			public void onSuccess(List<Sales> salesDB) {
-				success.accept(salesDB);
+			public void onSuccess(Map<TargetFull, List<RegistrySeller>> targetFullDb) {
+				success.accept(targetFullDb);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				AonMessagePanel.showError(messagePanel, "Error tarifas: " + caught.getMessage());
+				AonMessagePanel.showError(messagePanel, "Error targets: " + caught.getMessage());
 			}
 		});
 	}
