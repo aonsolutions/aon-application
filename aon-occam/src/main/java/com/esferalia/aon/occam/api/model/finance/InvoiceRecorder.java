@@ -15,7 +15,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceRecorder {
-	
+
 	private static final String N_FRA = "N/Fra";
 	private static final String S_FRA = "S/Fra";
 	private static final String ABONO = "ABONO";
@@ -348,48 +348,49 @@ public class InvoiceRecorder {
 					&& invoice.getVats() != null) {
 					for (InvoiceVAT vat : invoice.getVats()) {
 						if (vat.getInvestAsset() != null
-							&& AonMathUtils.notEquals(100.0, vat.getDirectTaxNoDedExpenses())
-							&& vat.getAdjDirectTaxAccountId() != null) {
+							&& AonMathUtils.notEquals(100.0, vat.getDirectTaxPercent())
+							&& vat.getAdjDirectTaxAccount().map( a -> a.getId()).filter(i -> i != null).isPresent()) {
 							double amount = vat.getDirectTaxNoDedExpenses();
-							Integer id = vat.getAdjDirectTaxAccountId();
-							String code = vat.getAdjDirectTaxAccountCode();
-							String description = vat.getAdjDirectTaxAccountDescription();
-							AccountEntryDetail detail = map.get(id);
-							if (detail == null) {
-								detail = new AccountEntryDetail()
-									.setAccount(id)
-									.setAccountCode(code)
-									.setAccountDescription(description)
-									.setBalancingAccount(obtainRegistryAccount(invoice))
-									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-								map.put(id,detail);
-							}
-							if (invoice.isOutputVatEnabled()) {
-								detail.addCredit( amount );
-							} else {
-								detail.addDebit( amount );
-							}
-							
-							id = vat.getExpAccountId();
-							code = vat.getExpAccountCode();
-							description = vat.getExpAccountDescription();
-							detail = map.get(id);
-							if (detail == null) {
-								detail = new AccountEntryDetail()
-									.setAccount(id)
-									.setAccountCode(code)
-									.setAccountDescription(description)
-									.setBalancingAccount(obtainRegistryAccount(invoice))
-									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-								map.put(id,detail);
-							}
-							if (invoice.isOutputVatEnabled()) {
-								detail.addDebit( amount );
-							} else {
-								detail.addCredit( amount );
-							}
+							vat.getAdjDirectTaxAccount()
+								.ifPresent( a -> {
+									AccountEntryDetail detail = map.get(a.getId());
+									if (detail == null) {
+										detail = new AccountEntryDetail()
+											.setAccount(a.getId())
+											.setAccountCode(a.getCode())
+											.setAccountDescription(a.getDescription())
+											.setBalancingAccount(obtainRegistryAccount(invoice))
+											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+										map.put(a.getId(),detail);
+									}
+									if (invoice.isOutputVatEnabled()) {
+										detail.addCredit( amount );
+									} else {
+										detail.addDebit( amount );
+									}
+									
+									Integer id = vat.getExpAccountId();
+									String code = vat.getExpAccountCode();
+									String description = vat.getExpAccountDescription();
+									detail = map.get(id);
+									if (detail == null) {
+										detail = new AccountEntryDetail()
+											.setAccount(id)
+											.setAccountCode(code)
+											.setAccountDescription(description)
+											.setBalancingAccount(obtainRegistryAccount(invoice))
+											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+										map.put(id,detail);
+									}
+									if (invoice.isOutputVatEnabled()) {
+										detail.addDebit( amount );
+									} else {
+										detail.addCredit( amount );
+									}
+									
+							});
 						}
 					}
 				}

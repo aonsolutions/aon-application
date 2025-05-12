@@ -469,17 +469,17 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 		addButton.addClickHandler(event -> {
 			int lastIdx = callback.getInvoice().getVats().size() - 1;
 			final InvoiceVAT last = callback.getVat(lastIdx);
-			final InvoiceVAT vat = new InvoiceVAT().setExpAccountId(last.getExpAccountId())
-					.setExpAccountCode(last.getExpAccountCode())
-					.setExpAccountDescription(last.getExpAccountDescription()).setPercentage(last.getPercentage())
-					.setSurcharge(last.getSurcharge()).setWithholding(last.isWithholding())
-					.setInputAccount(last.getInputAccount().orElse(null))
-					.setOutputAccount(last.getOutputAccount().orElse(null))
-					.setAdjAccount(last.getAdjAccount().orElse(null))
-					.setDirectTaxPercent(last.getDirectTaxPercent())
-					.setAdjDirectTaxAccountId(last.getAdjDirectTaxAccountId())
-					.setAdjDirectTaxAccountCode(last.getAdjDirectTaxAccountCode())
-					.setAdjDirectTaxAccountDescription(last.getAdjDirectTaxAccountDescription());
+			final InvoiceVAT vat = new InvoiceVAT()
+				.setExpAccountId(last.getExpAccountId())
+				.setExpAccountCode(last.getExpAccountCode())
+				.setExpAccountDescription(last.getExpAccountDescription()).setPercentage(last.getPercentage())
+				.setSurcharge(last.getSurcharge()).setWithholding(last.isWithholding())
+				.setInputAccount(last.getInputAccount().orElse(null))
+				.setOutputAccount(last.getOutputAccount().orElse(null))
+				.setAdjAccount(last.getAdjAccount().orElse(null))
+				.setAdjDirectTaxAccount(last.getAdjDirectTaxAccount().orElse(null))
+				.setDirectTaxPercent(last.getDirectTaxPercent())
+			;
 			callback.getInvoice().addVat(vat);
 			int insertedIdx = callback.getInvoice().getVats().size() - 1;
 			addRow(callback, insertedIdx, true);

@@ -411,9 +411,7 @@ public class AccountingInvoiceDAO {
 					vat.setAdjAccount(config.accounting().getVatNegativeAdjustAccount());
 				}
 				if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
-					vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())
-						.setAdjDirectTaxAccountCode(config.accounting().getDirectTaxAdjustAccount().getCode())
-						.setAdjDirectTaxAccountDescription(config.accounting().getDirectTaxAdjustAccount().getDescription());
+					vat.setAdjDirectTaxAccount(config.accounting().getDirectTaxAdjustAccount());
 				}
 				
 			}
@@ -555,9 +553,7 @@ public class AccountingInvoiceDAO {
 			vat.setAdjAccount( config.accounting().getVatNegativeAdjustAccount());
 		}
 		if (config.accounting().getDirectTaxAdjustAccount() != null) {
-			vat.setAdjDirectTaxAccountId( config.accounting().getDirectTaxAdjustAccount().getId());
-			vat.setAdjDirectTaxAccountCode( config.accounting().getDirectTaxAdjustAccount().getCode());
-			vat.setAdjDirectTaxAccountDescription( config.accounting().getDirectTaxAdjustAccount().getDescription());
+			vat.setAdjDirectTaxAccount( config.accounting().getDirectTaxAdjustAccount());
 		}
 		if (ai.isSales() && config.accounting().getDefaultSalesAccount() != null) {
 			vat.setExpAccountId(config.accounting().getDefaultSalesAccount().getId());
@@ -2113,9 +2109,7 @@ public class AccountingInvoiceDAO {
 							vat.setAdjAccount(config.accounting().getVatNegativeAdjustAccount());
 						}
 						if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
-							vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())
-								.setAdjDirectTaxAccountCode(config.accounting().getDirectTaxAdjustAccount().getCode())
-								.setAdjDirectTaxAccountDescription(config.accounting().getDirectTaxAdjustAccount().getDescription());
+							vat.setAdjDirectTaxAccount(config.accounting().getDirectTaxAdjustAccount());
 						}
 				}
 			}

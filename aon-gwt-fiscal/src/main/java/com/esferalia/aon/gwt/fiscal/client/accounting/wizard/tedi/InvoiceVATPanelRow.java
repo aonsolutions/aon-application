@@ -520,21 +520,10 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineDirectTaxAccount(IEditableInvoicePanelCallback callback, int vatIdx) {
 		directTaxAccount = new AonAccountBox(callback.getOccam(), false);
-		directTaxAccount.setValue(
-			callback.getVat(vatIdx).getAdjDirectTaxAccountId(),
-			callback.getVat(vatIdx).getAdjDirectTaxAccountCode(),
-			callback.getVat(vatIdx).getAdjDirectTaxAccountDescription(),true);
+		directTaxAccount.setAccount(callback.getVat(vatIdx).getAdjDirectTaxAccount().orElse(null),true);
 		directTaxAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
-			if (a != null) {
-				callback.getVat(vatIdx).setAdjDirectTaxAccountId(a.getId());
-				callback.getVat(vatIdx).setAdjDirectTaxAccountCode(a.getCode());
-				callback.getVat(vatIdx).setAdjDirectTaxAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setAdjDirectTaxAccountId(null);
-				callback.getVat(vatIdx).setAdjDirectTaxAccountCode(null);
-				callback.getVat(vatIdx).setAdjDirectTaxAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setAdjDirectTaxAccount(a);
 			SelectionEvent.<Account>fire(this, a);
 		});
 	}

@@ -37,9 +37,7 @@ public class InvoiceVAT implements Serializable {
 	private Account outputAccount;
 	private Account inputAccount;
 	private Account adjAccount;
-	private Integer adjDirectTaxAccountId;
-	private String adjDirectTaxAccountCode;
-	private String adjDirectTaxAccountDescription;
+	private Account adjDirectTaxAccount;
 	private Integer expAccountId;
 	private String expAccountCode;
 	private String expAccountDescription;
@@ -234,6 +232,14 @@ public class InvoiceVAT implements Serializable {
 		return this;
 	}
 
+	public Optional<Account> getAdjDirectTaxAccount() {
+		return Optional.ofNullable(adjDirectTaxAccount);
+	}
+	public InvoiceVAT setAdjDirectTaxAccount(Account adjDirectTaxAccount) {
+		this.adjDirectTaxAccount = adjDirectTaxAccount;
+		return this;
+	}
+
 	public Integer getExpAccountId() {
 		return expAccountId;
 	}
@@ -258,30 +264,6 @@ public class InvoiceVAT implements Serializable {
 
 	public InvoiceVAT setExpAccountDescription(String expAccountDescription) {
 		this.expAccountDescription = expAccountDescription;
-		return this;
-	}
-
-	public Integer getAdjDirectTaxAccountId() {
-		return adjDirectTaxAccountId;
-	}
-	public InvoiceVAT setAdjDirectTaxAccountId(Integer adjDirectTaxAccountId) {
-		this.adjDirectTaxAccountId = adjDirectTaxAccountId;
-		return this;
-	}
-	
-	public String getAdjDirectTaxAccountCode() {
-		return adjDirectTaxAccountCode;
-	}
-	public InvoiceVAT setAdjDirectTaxAccountCode(String adjDirectTaxAccountCode) {
-		this.adjDirectTaxAccountCode = adjDirectTaxAccountCode;
-		return this;
-	}
-	
-	public String getAdjDirectTaxAccountDescription() {
-		return adjDirectTaxAccountDescription;
-	}
-	public InvoiceVAT setAdjDirectTaxAccountDescription(String adjDirectTaxAccountDescription) {
-		this.adjDirectTaxAccountDescription = adjDirectTaxAccountDescription;
 		return this;
 	}
 	
@@ -325,9 +307,7 @@ public class InvoiceVAT implements Serializable {
 			.setOutputAccount(this.outputAccount)
 			.setInputAccount(this.inputAccount)
 			.setAdjAccount(this.adjAccount)
-			.setAdjDirectTaxAccountId(this.adjDirectTaxAccountId)
-			.setAdjDirectTaxAccountCode(this.adjDirectTaxAccountCode)
-			.setAdjDirectTaxAccountDescription(this.adjDirectTaxAccountDescription)
+			.setAdjDirectTaxAccount(this.adjDirectTaxAccount)
 			.setExpAccountId(this.expAccountId)
 			.setExpAccountCode(this.expAccountCode)
 			.setExpAccountDescription(this.expAccountDescription);
