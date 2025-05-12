@@ -267,7 +267,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 					.setCreationDate(new Date())
 					;
 			newCustomer.setDomain(new Domain().setId(target.getDomain()));
-			newCustomer.setId(registry);
+			newCustomer.copy(target.getRegistry());
 			
 			customer = CustomerDAO.save(ctx, newCustomer);	
 			System.out.println("Registry : " + registry + ", New Customer : " + customer.getId());
@@ -288,7 +288,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						;
 				
 				newTarget.setDomain(customer.getDomain());
-				newTarget.setId(registry);
+				newTarget.copy(customer);
 				
 				TargetDAO.save(ctx, newTarget);
 			}
