@@ -706,9 +706,8 @@ export class AonDocument extends AonElement {
       this.createCategoryRadio(table, 's3CategoriesRadio', '', this.handleCategoryChange.bind(this));
       let radio = document.getElementById('s3CategoriesRadio');
       radio.hidden = true;  
-      if (s3Doc.category) {
         const s3Categories = await getS3Category();
-        const isS3Category = s3Categories.some(cat => cat.id === s3Doc.category && cat.is_deletable === 0);
+        const isS3Category = s3Categories.some(cat => cat.is_deletable === 0);
         if (isS3Category) {
           const path = await this.getCategoryPath(s3Doc.category);
           const s3Radio = document.getElementById('s3CategoriesRadio');
@@ -768,7 +767,6 @@ export class AonDocument extends AonElement {
             td.appendChild(sel);
           }
         }
-      }
     }
   }
 
