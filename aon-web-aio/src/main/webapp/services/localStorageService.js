@@ -26,12 +26,12 @@ export const PORTAL_CHECKED = "portalChecked"
 // Mantener css y agregar sass
 let THEME, AON_MOBILE_THEME, AON_MOBILE_ANDROID, AON_THEME, DARK_THEME, DARK_BETA_THEME;
 if (localStorage.getItem('sass') === 'true') {
-  AON_THEME = 'dist/sass.min.css';
-  THEME = 'aonTheme';
-  AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
-  AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
-  DARK_THEME = '/css/theme/dark.css';
-  DARK_BETA_THEME = '/css/theme/darkBeta.css';
+  AON_THEME = '';
+  THEME = '';
+  AON_MOBILE_THEME = '';
+  AON_MOBILE_ANDROID = '';
+  DARK_THEME = '';
+  DARK_BETA_THEME = '';
 } else {
   THEME = 'aonTheme';
   AON_MOBILE_THEME = '/css/theme/aon-mobile.css';

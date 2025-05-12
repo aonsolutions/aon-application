@@ -13,9 +13,6 @@ import './css/aon-mobile.css';
 import './css/aon-figma.css';
 import { getThemeUrl } from './services/companyService.js';
 
-// Estilo por sass
-//localStorage.setItem('sass', 'true');
-
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM = (token) => {
     window.tokenFCM = token;
@@ -31,7 +28,10 @@ window.setResumeApp = (data) =>  {
 };
 
 const load = () => {
-	
+	// Estamos cargando el estilo nuevo
+    const isNew = window.location.pathname.includes('/new');
+    localStorage.setItem('sass', isNew ? 'true' : 'false');
+    
 	console.debug("Start loading aonSolutions.");
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
@@ -48,7 +48,10 @@ const load = () => {
           document.body.appendChild(new AonModule());
       },
       (err) => {
-          document.body.appendChild(new AonModule());
+        console.log(document.body);
+        console.log(new AonModule());
+        console.log(err);
+        document.body.appendChild(new AonModule());
       }
 	);
 
@@ -74,9 +77,8 @@ export const loadTheme = async  () => {
         ? LS.AON_MOBILE_ANDROID 
         : await getThemeUrl(params);
 	console.log(themeUrl);
-		
-		
-		/* location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;*/
+
+    /* location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;*/
 
 	return new Promise((resolve, reject) => {
 		try {
@@ -187,4 +189,7 @@ const getCookie = (cookieName) => {
 	return cookieValue;
 };
 
-load();
+// Cargado el DOM iniciamos la aplicacion
+document.addEventListener('DOMContentLoaded', function () {
+  load();
+});
