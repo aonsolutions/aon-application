@@ -118,7 +118,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	private static String urlMail;
 	private static String userMail;
 	private static String passwordMail;
-	private static boolean authExisted = false;
 
 	private static boolean isLocal = false;
 
@@ -267,7 +266,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 					.setCreationDate(new Date())
 					;
 			newCustomer.setDomain(new Domain().setId(target.getDomain()));
-			newCustomer.setId(registry);
+			newCustomer.copy(target.getRegistry());
 			
 			customer = CustomerDAO.save(ctx, newCustomer);	
 			System.out.println("Registry : " + registry + ", New Customer : " + customer.getId());
@@ -288,7 +287,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						;
 				
 				newTarget.setDomain(customer.getDomain());
-				newTarget.setId(registry);
+				newTarget.copy(customer);
 				
 				TargetDAO.save(ctx, newTarget);
 			}
@@ -609,8 +608,12 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 			String pass = null;
 			
 			Auth auth = AON_SOLUTIONS.getAuth(email);
+			
+			if (pass == null) pass = Utils.createPasswordHash(email, login);
+			passwordMail = login;
+			
 			if (auth.getUuid() == null) {
-				if (pass == null) pass = Utils.createPasswordHash(email, login);
+//				if (pass == null) pass = Utils.createPasswordHash(email, login);
 				
 				auth = new Auth()
 						.setEmail(email)
@@ -620,11 +623,13 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						.setDocument(targetOpt.get().getDocument())
 						.setPhone(phone);
 				
-				passwordMail = login;
+//				passwordMail = login;
 
 				auth = SecurityDAO.insertAuth(ctx, auth);
-			} else 
-				authExisted = true;
+			} else {
+				auth.setPassword(pass);
+				auth = SecurityDAO.updateAuth(ctx, auth);
+			}
 
 			User user = null;
 			if (auth.getAuth() != null) {
@@ -1022,7 +1027,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		context.put("url", url);
 		context.put("domainName", urlMail);
 		context.put("user", userMail);
-		context.put("password", authExisted ? "La existente para este usuario" : passwordMail);
+		context.put("password", passwordMail);
 		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created.vm");
