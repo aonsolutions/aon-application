@@ -282,10 +282,8 @@ public class BidoqRequest {
 							
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
-					
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setAdjAccount(adjAccount)
+				;
 				
 				ai.addVat(vat);
 				
@@ -1367,30 +1365,27 @@ public class BidoqRequest {
 			InvoiceTax detailTax = detail.getInvoiceTaxes().stream().filter(f -> f.getTaxType().equals(TaxType.VAT)).findFirst().orElse(new InvoiceTax());
 			
 			InvoiceVAT vat = new InvoiceVAT()
-					.setInvoiceDetail(detail)
-					.setPrepayment(detail.isPrepayment())
-					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-					.setBase(detailTax.getBase())
-					.setPercentage(detailTax.getPercentage())
-					.setQuota(detailTax.getQuota())
-					.setSurcharge(detailTax.getSurcharge())
-					.setSurchargeQuota(detailTax.getSurchargeQuota())
-					// .setInvestAsset(ivs.get(j).getInvestAsset())
-					.setDeductiblePercent(detailTax.getDeductiblePercent())
-					.setDeductibleQuota(detailTax.getDeductibleQuota())
-					.setWithholding(detailTax.isWithholding())
-					
-					.setExpAccountId(expAccount.getId())
-					.setExpAccountCode(expAccount.getCode())
-					.setExpAccountDescription(expAccount.getDescription())
+				.setInvoiceDetail(detail)
+				.setPrepayment(detail.isPrepayment())
+				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+				.setBase(detailTax.getBase())
+				.setPercentage(detailTax.getPercentage())
+				.setQuota(detailTax.getQuota())
+				.setSurcharge(detailTax.getSurcharge())
+				.setSurchargeQuota(detailTax.getSurchargeQuota())
+				// .setInvestAsset(ivs.get(j).getInvestAsset())
+				.setDeductiblePercent(detailTax.getDeductiblePercent())
+				.setDeductibleQuota(detailTax.getDeductibleQuota())
+				.setWithholding(detailTax.isWithholding())
+				
+				.setExpAccountId(expAccount.getId())
+				.setExpAccountCode(expAccount.getCode())
+				.setExpAccountDescription(expAccount.getDescription())
 
-					.setOutputAccount(outputAccount)
-					.setInputAccount(inputAccount)
-					
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode() : null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription() : null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
-
+				.setOutputAccount(outputAccount)
+				.setInputAccount(inputAccount)
+				.setAdjAccount(adjAccount)
+			;
 			ai.addVat(vat);
 		}
 

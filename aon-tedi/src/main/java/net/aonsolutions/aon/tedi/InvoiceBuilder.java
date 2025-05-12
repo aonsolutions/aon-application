@@ -700,10 +700,7 @@ public class InvoiceBuilder {
 
 				.setOutputAccount(outputAccount)
 				.setInputAccount(inputAccount)
-
-				.setAdjAccountId(adjAccount == null ? null : adjAccount.getId())
-				.setAdjAccountCode(adjAccount == null ? null : adjAccount.getCode())
-				.setAdjAccountDescription(adjAccount == null ? null : adjAccount.getDescription())
+				.setAdjAccount(adjAccount)
 
 				.setExpAccountId(expAccount == null ? null : expAccount.getId())
 				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())

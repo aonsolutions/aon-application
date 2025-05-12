@@ -696,10 +696,8 @@ public class InvoiceImport extends ImportUtils{
 						
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
-					
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setAdjAccount(adjAccount)
+				;
 				if(invoice.isUndeductible()) {
 					vat.setBase(ivs.get(j).getTotal());
 					vat.setPercentage(0.0);
@@ -1055,10 +1053,8 @@ public class InvoiceImport extends ImportUtils{
 						
 					.setOutputAccount(outputAccount)
 					.setInputAccount(inputAccount)
-					
-					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+					.setAdjAccount(adjAccount)
+				;
 				if(invoice.isUndeductible()) {
 					vat.setBase(aux.getTotal());
 					vat.setPercentage(0.0);

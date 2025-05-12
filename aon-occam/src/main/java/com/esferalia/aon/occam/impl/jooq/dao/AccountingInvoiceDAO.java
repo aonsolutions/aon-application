@@ -408,9 +408,7 @@ public class AccountingInvoiceDAO {
 					}
 				}
 				if (vat.getInvestAsset() != null && config.accounting().getVatNegativeAdjustAccount() != null) {
-					vat.setAdjAccountId(config.accounting().getVatNegativeAdjustAccount().getId())
-						.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
-						.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
+					vat.setAdjAccount(config.accounting().getVatNegativeAdjustAccount());
 				}
 				if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
 					vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())
@@ -554,9 +552,7 @@ public class AccountingInvoiceDAO {
 			vat.setOutputAccount(outputVatAccount);
 		}
 		if (config.accounting().getVatNegativeAdjustAccount() != null) {
-			vat.setAdjAccountId( config.accounting().getVatNegativeAdjustAccount().getId());
-			vat.setAdjAccountCode( config.accounting().getVatNegativeAdjustAccount().getCode());
-			vat.setAdjAccountDescription( config.accounting().getVatNegativeAdjustAccount().getDescription());
+			vat.setAdjAccount( config.accounting().getVatNegativeAdjustAccount());
 		}
 		if (config.accounting().getDirectTaxAdjustAccount() != null) {
 			vat.setAdjDirectTaxAccountId( config.accounting().getDirectTaxAdjustAccount().getId());
@@ -2114,9 +2110,7 @@ public class AccountingInvoiceDAO {
 							}
 						}
 						if (vat.getInvestAsset() != null && config.accounting().getVatNegativeAdjustAccount() != null) {
-							vat.setAdjAccountId(config.accounting().getVatNegativeAdjustAccount().getId())
-							.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
-							.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
+							vat.setAdjAccount(config.accounting().getVatNegativeAdjustAccount());
 						}
 						if (vat.getInvestAsset() != null && directTaxEnabled && config.accounting().getDirectTaxAdjustAccount() != null) {
 							vat.setAdjDirectTaxAccountId(config.accounting().getDirectTaxAdjustAccount().getId())

@@ -307,33 +307,29 @@ public class InvoiceRecorder {
 						if (vat.getDeductibleQuota() !=  vat.getQuota()) {
 							double amount = vat.getQuota() - vat.getDeductibleQuota();
 							if (AonMathUtils.isNotZero(amount)) {
-								Integer id = null;
-								String code = null;
-								String description = null;
-								if (vat.getAdjAccountId() == null) {
-									id = vat.getExpAccountId();
-									code = vat.getExpAccountCode();
-									description = vat.getExpAccountDescription();
-								} else {
-									id = vat.getAdjAccountId();
-									code = vat.getAdjAccountCode();
-									description = vat.getAdjAccountDescription();
-								}
-								AccountEntryDetail detail = map.get(id);
-								if (detail == null) {
-									detail = new AccountEntryDetail()
-										.setAccount(id)
-										.setAccountCode(code)
-										.setAccountDescription(description)
-										.setBalancingAccount(obtainRegistryAccount(invoice))
-										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-									map.put(id,detail);
-								}
-								if (invoice.isOutputVatEnabled()) {
-									detail.addCredit( amount );
-								} else {
-									detail.addDebit( amount );
+								Account adjAccount =  vat.getAdjAccount()
+									.orElse(new Account()
+										.setId(vat.getExpAccountId())
+										.setCode(vat.getExpAccountCode())
+										.setDescription(vat.getExpAccountDescription())
+								);
+								if (adjAccount != null && adjAccount.getId() != null) {
+									AccountEntryDetail detail = map.get(adjAccount.getId());
+									if (detail == null) {
+										detail = new AccountEntryDetail()
+											.setAccount(adjAccount.getId())
+											.setAccountCode(adjAccount.getCode())
+											.setAccountDescription(adjAccount.getDescription())
+											.setBalancingAccount(obtainRegistryAccount(invoice))
+											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+										map.put(adjAccount.getId(),detail);
+									}
+									if (invoice.isOutputVatEnabled()) {
+										detail.addCredit( amount );
+									} else {
+										detail.addDebit( amount );
+									}
 								}
 							}
 						}
