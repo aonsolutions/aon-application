@@ -397,18 +397,18 @@ public class InvoiceRecorder {
 				if (invoice.isSales() 
 					&& invoice.isWithholding() 
 					&& invoice.getWithholdingData() != null 
-					&& invoice.getWithholdingData().getAccountId() != null 
+					&& invoice.getWithholdingData().getAccount().isPresent() 
 					&& AonMathUtils.isNotZero(invoice.getWithholdingData().getQuota())) {
-					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null));
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-								.setAccountId(invoice.getWithholdingData().getAccountId())
-								.setAccountCode(invoice.getWithholdingData().getAccountCode())
-								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
-								.setBalancingAccountId(obtainRegistryAccount(invoice))
-								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-						map.put(invoice.getWithholdingData().getAccountId(),detail);
+							.setAccountId(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null))
+							.setAccountCode(invoice.getWithholdingData().getAccount().map(Account::getCode).orElse(null))
+							.setAccountDescription(invoice.getWithholdingData().getAccount().map(Account::getDescription).orElse(null))
+							.setBalancingAccountId(obtainRegistryAccount(invoice))
+							.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+							.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+						map.put(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null),detail);
 					}
 					detail.addDebit( invoice.getWithholdingData().getQuota() );
 				}
@@ -422,19 +422,19 @@ public class InvoiceRecorder {
 				if (!invoice.isSales() 
 					&& invoice.isWithholding() 
 					&& invoice.getWithholdingData() != null 
-					&& invoice.getWithholdingData().getAccountId() != null 
+					&& invoice.getWithholdingData().getAccount().isPresent() 
 					&& AonMathUtils.isNotZero(invoice.getWithholdingData().getQuota())) {
 					
-					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
+					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null));
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-								.setAccountId(invoice.getWithholdingData().getAccountId())
-								.setAccountCode(invoice.getWithholdingData().getAccountCode())
-								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
-								.setBalancingAccountId(obtainRegistryAccount(invoice))
-								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
-								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
-						map.put(invoice.getWithholdingData().getAccountId(),detail);
+							.setAccountId(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null))
+							.setAccountCode(invoice.getWithholdingData().getAccount().map(Account::getCode).orElse(null))
+							.setAccountDescription(invoice.getWithholdingData().getAccount().map(Account::getDescription).orElse(null))
+							.setBalancingAccountId(obtainRegistryAccount(invoice))
+							.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
+							.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
+						map.put(invoice.getWithholdingData().getAccount().map(Account::getId).orElse(null),detail);
 					}
 					detail.addCredit( invoice.getWithholdingData().getQuota() );
 				}

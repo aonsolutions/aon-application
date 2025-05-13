@@ -165,9 +165,9 @@ public class AccountingInvoiceTest {
 		System.out.println("base ...: " + withholding.getBase());
 		System.out.println("percentage ...: " + withholding.getPercentage());
 		System.out.println("quota ...: " + withholding.getQuota());
-		System.out.println("accountId ...: " + withholding.getAccountId());
-		System.out.println("accountCode ...: " + withholding.getAccountCode());
-		System.out.println("accountDescription ...: " + withholding.getAccountDescription());
+		System.out.println("accountId ...: " + withholding.getAccount().map(Account::getId).orElse(null));
+		System.out.println("accountCode ...: " + withholding.getAccount().map(Account::getCode).orElse(null));
+		System.out.println("accountDescription ...: " + withholding.getAccount().map(Account::getDescription).orElse(null));
 	}
 		
 	@AfterClass

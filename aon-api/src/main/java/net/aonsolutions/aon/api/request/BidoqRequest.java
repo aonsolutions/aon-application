@@ -313,9 +313,7 @@ public class BidoqRequest {
 						.setBase(retBase)
 						.setPercentage(retPercentage)
 						.setQuota(retQuota)
-						.setAccountCode(retentionAccount.getCode())
-						.setAccountDescription(retentionAccount.getDescription())
-						.setAccountId(retentionAccount.getId());
+						.setAccount(retentionAccount);
 					ai.setWithholdingData(iw);
 				}
 			}
@@ -1324,9 +1322,8 @@ public class BidoqRequest {
 					.setBase(tax.getBase())
 					.setPercentage(tax.getPercentage())
 					.setQuota(tax.getQuota())
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount)
+					;
 			ai.setWithholdingData(iw); 
 		}
 			

@@ -731,9 +731,8 @@ public class InvoiceImport extends ImportUtils{
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount)
+					;
 				ai.setWithholdingData(iw);
 			}
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
@@ -1082,9 +1081,7 @@ public class InvoiceImport extends ImportUtils{
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
+					.setAccount(retentionAccount);
 				ai.setWithholdingData(iw);
 			}
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));

@@ -276,9 +276,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
 	public void setWithholdingAccount(Account acc) {
-		getWithholdingData().setAccountId(acc.getId())
-			.setAccountCode(acc.getCode())
-			.setAccountDescription(acc.getDescription());
+		getWithholdingData().setAccount(acc);
 	}	
 	public void setWithholdingBase(Double base) {
 		getWithholdingData().setBase(base);

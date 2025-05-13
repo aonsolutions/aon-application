@@ -232,10 +232,8 @@ public class TediParser {
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
 						.setQuota( ib.getQuota() )
-						.setAccountId( retentionAccount == null? null : retentionAccount.getId() )
-						.setAccountCode( retentionAccount == null? null : retentionAccount.getCode() )
-						.setAccountDescription( retentionAccount == null? null : retentionAccount.getDescription() )
-						;
+						.setAccount( retentionAccount )
+					;
 					ai.setWithholdingData(iw);
 					break;
 				}

@@ -385,11 +385,10 @@ public class AccountingInvoiceDAO {
 				vat.setWithholding(withholding);
 				if (!ai.hasWithholdingData()) {
 					ai.setWithholdingData( new InvoiceWithholding()
-							.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
-							.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-							.setAccountId(vatAccount.map(Account::getId).orElse(null))
-							.setAccountCode(vatAccount.map(Account::getCode).orElse(null))
-							.setAccountDescription(vatAccount.map(Account::getDescription).orElse(null)));
+						.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
+						.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
+						.setAccount(vatAccount.orElse(null))
+					);
 				}
 				ai.getWithholdingData()
 					.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )
@@ -513,9 +512,7 @@ public class AccountingInvoiceDAO {
 					:config.accounting().getDefaultChargedRetAccount(); 
 			}
 			if (withholdingAccount != null) {
-				ai.getWithholdingData().setAccountId(withholdingAccount.getId());
-				ai.getWithholdingData().setAccountCode(withholdingAccount.getCode());
-				ai.getWithholdingData().setAccountDescription(withholdingAccount.getDescription());
+				ai.getWithholdingData().setAccount(withholdingAccount);
 			}
 		}
 		return ai;
@@ -1234,14 +1231,18 @@ public class AccountingInvoiceDAO {
 				}
 				
 				if (vat.isWithholding() && accInvoice.isWithholding()) {
-					InvoiceTax invoiceRetention = detail.getInvoiceTaxes().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
-					if(invoiceRetention != null && invoiceRetention.getAccount() == null) {
+					InvoiceTax invoiceRetention = detail.getInvoiceTaxes()
+						.stream()
+						.filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
+						.findFirst()
+						.orElse(null);
+					if (invoiceRetention != null && invoiceRetention.getAccount() == null) {
 						detail.setInvoiceTaxes( 
-							detail.getInvoiceTaxes().stream().map(r -> {
-								if(TaxType.RETENTION.equals(r.getTaxType()))
-									r.setAccount(accInvoice.getWithholdingData().getAccountId());
-								return r;
-							}).collect(Collectors.toCollection(LinkedList::new))
+							detail.getInvoiceTaxes()
+								.stream()
+								.filter(r -> TaxType.RETENTION.equals(r.getTaxType() ) )
+								.map(r -> r.setAccount(accInvoice.getWithholdingData().getAccount().map(Account::getId).orElse(null)))
+								.collect(Collectors.toCollection(LinkedList::new))
 						);
 					} else if(invoiceRetention == null) { 
 						double base = 0;
@@ -1263,7 +1264,7 @@ public class AccountingInvoiceDAO {
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
 							.setQuota(quota)
 							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
-							.setAccount(accInvoice.getWithholdingData().getAccountId()));
+							.setAccount(accInvoice.getWithholdingData().getAccount().map(Account::getId).orElse(null)));
 					}
 				}
 			}
@@ -1383,12 +1384,12 @@ public class AccountingInvoiceDAO {
 					InvoiceTax invoiceRetention = detail.getInvoiceTaxes().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType())).findFirst().orElse(null);
 					if(invoiceRetention != null && invoiceRetention.getAccount() == null) {
 						detail.setInvoiceTaxes( 
-							detail.getInvoiceTaxes().stream().map(r -> {
-								if(TaxType.RETENTION.equals(r.getTaxType()))
-									r.setAccount(accInvoice.getWithholdingData().getAccountId());
-								return r;
-							}).collect(Collectors.toCollection(LinkedList::new))
-						);
+							detail.getInvoiceTaxes()
+								.stream()
+								.filter(r -> TaxType.RETENTION.equals(r.getTaxType()))
+								.map(r -> r.setAccount(accInvoice.getWithholdingData().getAccount().map(Account::getId).orElse(null) ) )
+								.collect(Collectors.toCollection(LinkedList::new))
+							);
 					} else if(invoiceRetention == null) { 
 						double base = 0;
 						if (accInvoice.isWithholdingFarmer()) {
@@ -1409,7 +1410,7 @@ public class AccountingInvoiceDAO {
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
 							.setQuota(quota)
 							.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
-							.setAccount(accInvoice.getWithholdingData().getAccountId()));
+							.setAccount(accInvoice.getWithholdingData().getAccount().map(Account::getId).orElse(null) ));
 					}
 				}
 			}
@@ -2074,9 +2075,7 @@ public class AccountingInvoiceDAO {
 							ai.setWithholdingData( new InvoiceWithholding()
 								.setPercentage(tax.getValue(INVOICE_TAX.PERCENTAGE))
 								.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,tax.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-								.setAccountId(vatAccount.map(Account::getId).orElse(null))
-								.setAccountCode(vatAccount.map(Account::getCode).orElse(null))
-								.setAccountDescription(vatAccount.map(Account::getDescription).orElse(null)));
+								.setAccount(vatAccount.orElse(null)));
 						}
 						ai.getWithholdingData()
 							.setBase (ai.getWithholdingData().getBase() + tax.getValue(INVOICE_TAX.BASE) )

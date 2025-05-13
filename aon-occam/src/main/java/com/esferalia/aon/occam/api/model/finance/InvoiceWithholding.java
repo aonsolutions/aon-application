@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class InvoiceWithholding implements Serializable {
@@ -12,9 +14,7 @@ public class InvoiceWithholding implements Serializable {
 	private double base;
 	private double percentage;
 	private double quota;
-	private Integer accountId;
-	private String accountCode;
-	private String accountDescription;
+	private Account account;
 	
 	private boolean quotaEdited;
 
@@ -54,30 +54,11 @@ public class InvoiceWithholding implements Serializable {
 		return this;
 	}
 
-	public Integer getAccountId() {
-		return accountId;
+	public Optional<Account> getAccount() {
+		return Optional.ofNullable(account);
 	}
-
-	public InvoiceWithholding setAccountId(Integer accountId) {
-		this.accountId = accountId;
-		return this;
-	}
-
-	public String getAccountCode() {
-		return accountCode;
-	}
-
-	public InvoiceWithholding setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-		return this;
-	}
-
-	public String getAccountDescription() {
-		return accountDescription;
-	}
-
-	public InvoiceWithholding setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
+	public InvoiceWithholding setAccount(Account account) {
+		this.account = account;
 		return this;
 	}
 	
