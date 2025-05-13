@@ -2,13 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URLDecoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.Normalizer;
@@ -39,6 +33,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
@@ -47,6 +42,7 @@ import com.esferalia.aon.occam.api.model.S3Category;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.S3Document;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
@@ -55,6 +51,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.aws.s3.S3rDoc;
+
+import java.io.ByteArrayInputStream;
+
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "DocumentalS3Servlet", urlPatterns = {"/ms/api/s3/*"})
@@ -198,33 +203,29 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	}
 	
 	private static byte [] getRattachFile(AonApiData api, Integer id, String creationUser) {
-		byte [] data = null;
-		String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
-		base64 = Base64.getEncoder().encodeToString(base64.getBytes(StandardCharsets.UTF_8));
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
-						+ "ms/download_attachment/"
-						+ api.getDomain().getName()
-						+ "/"
-						+ creationUser
-						+ "/"
-						+ base64
-						))
-				.headers("Content-Type", "text/plain;charset=UTF-8")
-				.method("GET", HttpRequest.BodyPublishers.noBody())
-				.build();
-		HttpResponse<InputStream> response = null;
-		HttpClient http = HttpClient.newHttpClient();
-		try {
-			response = http.send(request, BodyHandlers.ofInputStream());
-			InputStream is = response.body();
-			data = is.readAllBytes();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		Integer idRattach = api.getData().getInt(IJsonNames.ID);
+		Domain domain = api.getDomain();
+		Attach attach = AON.getAttach(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(idRattach), AttachType.getAttachType("registry"), true);
+		if(attach.getDriveId() != null) {
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), api.getUser().getLogin());
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			String[] keys = {"fileId", "aontype", "domain"};
+			String[] values = {attach.getId() + "", "registry", attach.getDomain().getName()};
+			FileList fl = SearchFiles.searchFilesAppProperties(drive, keys, values);
+			if(fl.getFiles().size() > 0) {
+				if(!fl.getFiles().get(0).getId().equals(attach.getDriveId())) {
+					attach.setDriveId(fl.getFiles().get(0).getId());
+					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+				}
+				if("0".equals(attach.getDparentId())) {
+					attach.setDparentId(fl.getFiles().get(0).getSize().toString());
+					AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+				}
+			}
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
-		return data;
+        ByteArrayInputStream bais = new ByteArrayInputStream(attach.getData());
+        return bais.readAllBytes();
 	}
 
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
