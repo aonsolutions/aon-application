@@ -1013,7 +1013,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		engine.init();
 		
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-				+ "/beta";
+				+ "/app";
 		
 		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
 			url = "https://leevy.aon.solutions";
