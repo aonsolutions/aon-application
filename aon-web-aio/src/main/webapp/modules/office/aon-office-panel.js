@@ -170,6 +170,10 @@ export class AonOfficePanel extends AonElement {
     let seller = OfficeOptions.AON_SELLER_LIST
     seller.fn = () => this.showView(OfficeOptions.AON_SELLER_LIST.id);
     options.push(seller);
+    
+    //let sellerWorkload = OfficeOptions.AON_SELLER_WORKLOAD
+    //sellerWorkload.fn = () => this.showView(OfficeOptions.AON_SELLER_WORKLOAD.id);
+    //options.push(sellerWorkload);
 
     if(this.isSig()){
         let consoleOptions = [];
@@ -646,6 +650,11 @@ export class AonOfficePanel extends AonElement {
           this.clearToolbar();
           application.closeSidenav();
           GWT.iLoad(GWT.SELLER_MODULE, this.getApplication().CONTENT);
+          break;
+        case OfficeOptions.AON_SELLER_WORKLOAD.id:
+          this.clearToolbar();
+          application.closeSidenav();
+          GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE, this.getApplication().CONTENT);
           break;
         case officeViews.AON_OFFICE_PANEL:
           aonView = new AonOfficePanel();

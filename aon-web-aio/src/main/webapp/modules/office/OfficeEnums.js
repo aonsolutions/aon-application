@@ -24,7 +24,13 @@ const AON_WORKGROUP_LIST = {
 const AON_SELLER_LIST = {
     id: 'sideNavSeller',
     name: "Agentes",
-    icon: MATERIAL_ICONS.PEOPLE
+    icon: MATERIAL_ICONS.SUPPORT_AGENT
+}
+
+const AON_SELLER_WORKLOAD = {
+    id: 'sideNavSellerWorkload',
+    name: "Cargas de Trabajo",
+    icon: MATERIAL_ICONS.PERSON_PLAY
 }
 
 const AON_SERVICE = {
@@ -73,7 +79,8 @@ const OfficeOptions = {
     AON_CUSTOMER,
     AON_TASK_HOLDER,
     AON_WORKGROUP_LIST,
-    AON_SELLER_LIST
+    AON_SELLER_LIST,
+    AON_SELLER_WORKLOAD
 };
 
 const ServiceOptions = {
