@@ -181,7 +181,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 			} else if(type == 1){
-				data = getRattachFile(api, api.getData().getInt(IJsonNames.ID));
+				data = getRattachFile(api, api.getData().getInt(IJsonNames.ID), document.getCreationUser());
 			}
 			if(data != null) {				
 				Attach attach = new Attach()
@@ -197,26 +197,24 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static byte [] getRattachFile(AonApiData api, Integer id) {
+	private static byte [] getRattachFile(AonApiData api, Integer id, String creationUser) {
 		byte [] data = null;
 		String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
-		base64 = Base64.getEncoder().encodeToString(base64.getBytes());
+		base64 = Base64.getEncoder().encodeToString(base64.getBytes(StandardCharsets.UTF_8));
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
 						+ "ms/download_attachment/"
 						+ api.getDomain().getName()
 						+ "/"
-						+ api.getUser().getLogin()
+						+ creationUser
 						+ "/"
 						+ base64
 						))
 				.headers("Content-Type", "text/plain;charset=UTF-8")
 				.method("GET", HttpRequest.BodyPublishers.noBody())
 				.build();
-		
 		HttpResponse<InputStream> response = null;
 		HttpClient http = HttpClient.newHttpClient();
-
 		try {
 			response = http.send(request, BodyHandlers.ofInputStream());
 			InputStream is = response.body();
@@ -250,7 +248,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				if (document.getType() == 0 && document.getS3key() != null) {
 					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 				} else if(document.getType() == 1){
-					data = getRattachFile(api, document.getId());
+					data = getRattachFile(api, document.getId(), document.getCreationUser());
 				}
 				files.add(data);
 
