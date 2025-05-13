@@ -2,7 +2,8 @@ import {AonElement} from '../../components/AonElement.js';
 import {
   getDocuments, downloadDocuments, sendDocumentMail, updateFiles, deleteFile, 
   getDomainUserRoles, getS3Document, deleteS3Document, downloadS3Documents, getS3Category, getCategories,
-  getTags
+  getTags,
+  sendS3DocumentMail
 } from '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import '../../components/aon-table.js';
@@ -571,7 +572,11 @@ export class AonDocumentalList extends AonElement {
 				to: mail.value,
 				documents: aonDocumentalTable.selected
 			};
-			sendDocumentMail(message).then(() => {});
+			if(this.isBetaDoc()){
+				sendS3DocumentMail(message).then(() => {});
+			}else{
+				sendDocumentMail(message).then(() => {});
+			}			
 		});
 		d.open();
 	}
@@ -592,7 +597,7 @@ export class AonDocumentalList extends AonElement {
 			aonDocumental.addToolbarOption2(ACTION.DELETE_FILE, () => this.removeFiles());
 			aonDocumental.addToolbarOption2(ACTION.DOWNLOAD_FILE, () => this.downloadFiles());
 		}
-		// aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
+		aonDocumental.addToolbarOption2(ACTION.SEND_FILE, () => this.sendFiles());
 	}
 
 	removeDocumentalActions() {

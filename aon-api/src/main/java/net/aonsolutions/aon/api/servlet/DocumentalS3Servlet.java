@@ -11,6 +11,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -180,7 +181,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 			} else if(type == 1){
-				data = getRattachFile(api);
+				data = getRattachFile(api, api.getData().getInt(IJsonNames.ID), document.getCreationUser());
 			}
 			if(data != null) {				
 				Attach attach = new Attach()
@@ -196,62 +197,36 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		}
 	}
 	
-
-	private static byte[] getRattachFile(AonApiData api) {
-	    if (api.getData().optString(IJsonNames.DATA) != null && !api.getData().optString(IJsonNames.DATA).isEmpty()) {
-	        return getFromArrayData(api);
-	    } else {
-	        return getFromSingleData(api);
-	    }
+	private static byte [] getRattachFile(AonApiData api, Integer id, String creationUser) {
+		byte [] data = null;
+		String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
+		base64 = Base64.getEncoder().encodeToString(base64.getBytes(StandardCharsets.UTF_8));
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
+						+ "ms/download_attachment/"
+						+ api.getDomain().getName()
+						+ "/"
+						+ creationUser
+						+ "/"
+						+ base64
+						))
+				.headers("Content-Type", "text/plain;charset=UTF-8")
+				.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<InputStream> response = null;
+		HttpClient http = HttpClient.newHttpClient();
+		try {
+			response = http.send(request, BodyHandlers.ofInputStream());
+			InputStream is = response.body();
+			data = is.readAllBytes();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return data;
 	}
 
-	
-	private static byte[] downloadAttachment(AonApiData api, int id) throws IOException, InterruptedException {
-	    String base64 = "domain=" + api.getDomain().getId() + "&id=" + id + "&attach_type=registry";
-	    base64 = Base64.getEncoder().encodeToString(base64.getBytes());
-
-	    HttpRequest request = HttpRequest.newBuilder()
-	            .uri(URI.create(api.getRequest().getRequestURL().toString().split("ms")[0]
-	                    + "ms/download_attachment/"
-	                    + api.getDomain().getName()
-	                    + "/"
-	                    + api.getUser().getLogin()
-	                    + "/"
-	                    + base64))
-	            .headers("Content-Type", "text/plain;charset=UTF-8")
-	            .method("GET", HttpRequest.BodyPublishers.noBody())
-	            .build();
-
-	    HttpClient http = HttpClient.newHttpClient();
-	    HttpResponse<InputStream> response = http.send(request, HttpResponse.BodyHandlers.ofInputStream());
-	    return response.body().readAllBytes();
-	}
-	
-	private static byte[] getFromSingleData(AonApiData api) {
-	    try {
-	        int id = api.getData().getInt(IJsonNames.ID);
-	        return downloadAttachment(api, id);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
-	
-	private static byte[] getFromArrayData(AonApiData api) {
-	    try {
-	        String jsonData = api.getData().getString(IJsonNames.DATA);
-	        JSONArray array = new JSONArray(jsonData);
-	        for (int i = 0; i < array.length(); i++) {
-	            int id = array.getJSONObject(i).getInt(IJsonNames.ID);
-	            return downloadAttachment(api, id);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
-
-	
 	private static Attach getFileMultiple(AonApiData api, HttpServletResponse resp) throws Exception {
 		try {
 			String jsonData = api.getData().getString(IJsonNames.DATA);
@@ -273,7 +248,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				if (document.getType() == 0 && document.getS3key() != null) {
 					data = S3rDoc.download(document.getS3key(), document.getS3bucket());
 				} else if(document.getType() == 1){
-					data = getRattachFile(api);
+					data = getRattachFile(api, document.getId(), document.getCreationUser());
 				}
 				files.add(data);
 
@@ -349,7 +324,6 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 
 			jsArray.put(doc);
 		});
-
 		return jsArray;
 	}
 
@@ -695,9 +669,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		if(api.getUser().getRegistry().getId() == null) {
 			registry = AON.getEnterpriseData(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId())).getEnterprise();
 		}
-		String name = json.getString("nombreArchivo");
+		String name = json.getString("nombreAlmacenado");
 		String [] split = name.split("\\.");
-		MimeType mime = MimeType.safeValueFromExtension(split[split.length-1]);
+		MimeType mime = MimeType.safeValueFromExtension(split[split.length-1].toLowerCase());
 		Stream<S3Category> list = AON_SOLUTIONS.getS3CategoryStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().eq("Bidoq/" + category)), Optional.ofNullable(null), Optional.ofNullable(null));
 		Optional<S3Category> s3category = list.findFirst();
 		return new S3Document()
@@ -710,6 +684,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				.setModificationDate(null)
 				.setModificationUser(null)
 				.setName(clearFileName(json.getString("nombreArchivo")))
+				.setRealName(clearFileName(json.getString("nombreAlmacenado")))
 				.setRegistry(registry)
 				.setRegistryType((byte) 3)
 				.setS3bucket(BIDOQ_BUCKET_NAME)
@@ -720,17 +695,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				;
 	}
 	
-	//de momento limpiamos los siguientes caracteres : \ / : * ? " < > | +
 	private static String clearFileName(String filename) {
-	    int index = filename.lastIndexOf(".");
-	    if (index == -1) return filename.replaceAll("[\\\\/:*?\"<>|+]", ""); 
-	    String name = filename.substring(0, index);
-	    String extension = filename.substring(index);
-	    
-	    name = name.replaceAll("[\\\\/:*?\"<>|+]", "");
-	    name = name.replaceAll("[.\\s]+$", "");
-
-	    return name + extension;
+		String textoOriginal = filename;
+		return Normalizer.normalize(textoOriginal, Normalizer.Form.NFC);
 	}
 
 	

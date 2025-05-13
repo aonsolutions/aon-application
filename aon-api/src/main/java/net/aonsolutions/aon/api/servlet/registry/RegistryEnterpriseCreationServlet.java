@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -74,6 +76,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
@@ -115,7 +118,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	private static String urlMail;
 	private static String userMail;
 	private static String passwordMail;
-	private static boolean authExisted = false;
 
 	private static boolean isLocal = false;
 
@@ -223,7 +225,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				}
 				
 				// Send mail
-				sendTrailEnterpriseCreatedMail(api, ctx);
+				sendEnterpriseCreatedMail(api, ctx);
 				
 				System.out.println("----------------------- [End] Create Enterprise -----------------------");
 				
@@ -263,7 +265,11 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 					.setCreationUser(api.getUser().getName())
 					.setCreationDate(new Date())
 					;
-			customer = CustomerDAO.save(ctx, newCustomer);		
+			newCustomer.setDomain(new Domain().setId(target.getDomain()));
+			newCustomer.copy(target.getRegistry());
+			
+			customer = CustomerDAO.save(ctx, newCustomer);	
+			System.out.println("Registry : " + registry + ", New Customer : " + customer.getId());
 		
 		// Existe customer pero no target
 		} else if(targetOpt.isEmpty()) {
@@ -281,7 +287,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						;
 				
 				newTarget.setDomain(customer.getDomain());
-				newTarget.setId(registry);
+				newTarget.copy(customer);
 				
 				TargetDAO.save(ctx, newTarget);
 			}
@@ -602,8 +608,12 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 			String pass = null;
 			
 			Auth auth = AON_SOLUTIONS.getAuth(email);
+			
+			if (pass == null) pass = Utils.createPasswordHash(email, login);
+			passwordMail = login;
+			
 			if (auth.getUuid() == null) {
-				if (pass == null) pass = Utils.createPasswordHash(email, login);
+//				if (pass == null) pass = Utils.createPasswordHash(email, login);
 				
 				auth = new Auth()
 						.setEmail(email)
@@ -613,9 +623,12 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 						.setDocument(targetOpt.get().getDocument())
 						.setPhone(phone);
 				
-				passwordMail = login;
+//				passwordMail = login;
 
 				auth = SecurityDAO.insertAuth(ctx, auth);
+			} else {
+				auth.setPassword(pass);
+				auth = SecurityDAO.updateAuth(ctx, auth);
 			}
 
 			User user = null;
@@ -784,12 +797,17 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	
 	private static void createTaskHolder(CloseableAONContext ctx, Domain newDomain, Auth auth, User newUser) {
 
-		String alias = auth.getName().length() > 32 ? auth.getName().substring(0, 31) : auth.getName();
+		String alias = AonStringUtils.isBlank(auth.getName())
+				? newUser.getName()
+				: auth.getName().length() > 32 ? auth.getName().substring(0, 31) : auth.getName();
 		
 		Registry newRegistry = RegistryDAO.save(ctx, 
 				new Registry()
 				.setDocument(auth.getDocument())
-				.setName(auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())) )
+				.setName(
+						AonStringUtils.isBlank(auth.getName())
+						? newUser.getName()
+						: auth.getName() + (AonStringUtils.isBlank(auth.getSurname()) ? "" : (" " + auth.getSurname())) )
 				.setAlias(alias)
 				.setDomain(newDomain)
 		);
@@ -886,10 +904,11 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
 	
-	private static void sendTrailEnterpriseCreatedMail(AonApiData api, CloseableAONContext ctx) {
+	private static void sendEnterpriseCreatedMail(AonApiData api, CloseableAONContext ctx) {
 		JSONObject data = api.getData();
 		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
 		String name = JsonUtils.getString(data, "name");
+		Integer registry = JsonUtils.getInteger(data, "registry");
 		
 		Domain parent = api.getDomain().isParent() 
 				? api.getDomain()
@@ -899,7 +918,9 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		String logoUrl = getLogoUrl(api, ctx);
 
 		String from = getFromMessage(api, ctx, parent);
-		String bcc = "booking@aonsolutions.es";
+		
+		if(AonStringUtils.isBlank(from))
+			throw new AonApiException("No existe email definido en el entorno para la creaci\u00f3n de empresas");
 
 		Stream<RegistryMedia> sellerSupportMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
 		Optional<RegistryMedia> sellerSupportEmailOpt = sellerSupportMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
@@ -907,12 +928,21 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if(sellerSupportEmailOpt.isEmpty() || AonStringUtils.isBlank(sellerSupportEmailOpt.get().getValue()))
 			throw new AonApiException("No existe email para el agente de soporte seleccionado");
 		
+		List<String> bcc = List.of(sellerSupportEmailOpt.get().getValue(), from);
+		
+		Optional<Target> targetOpt = TargetDAO.getStream(ctx, f -> f.getIdProperty().eq(registry)).findFirst();
+		Stream<RegistryMedia> targetMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(targetOpt.get().getId()));
+		Optional<RegistryMedia> targetEmailOpt = targetMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
+		
+		if(targetEmailOpt.isEmpty())
+			throw new AonApiException("No existe email para el cliente potencial seleccionado");
+			
 		SESMessage msg = new SESMessage()
-				.setAlias(name)
 				.setFrom(from)
+				.setTo(targetEmailOpt.get().getValue())
+				.setBcc(bcc)
 				.setReplyTo(from)
-				.setTo(sellerSupportEmailOpt.get().getValue())
-//				.setBcc(bcc)
+//				.setAlias(name)
 				.setSubject("Empresa " + name)
 				.setBody(createEnterpriseCreatedBody(logoUrl, parent, from, name));
 
@@ -957,13 +987,15 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (domainUserRoles.hasParentCustomView() || domainUserRoles.hasCustomView()) {
 			// Ya es el dominio padre el que hay en api.getDomain()
 			if (null == api.getDomain().getParentId() && (null == parent || null == parent.getId())) {
-				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getMediaProperty().eq((byte) 4)));
+				Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(api.getDomain().getId()));
+				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(enterprise.getId()).and(f.getMediaProperty().eq((byte) 4)));
 				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
 					from = emailMedia.getValue();
 				
 			// Se busca el dominio padre
 			} else if (null != parent && null != parent.getId()) {
-				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getDomainProperty().eq(parent.getId()).and(f.getMediaProperty().eq((byte) 4)));
+				Enterprise enterprise = EnterpriseDAO.get(ctx, f -> f.getDomainProperty().eq(parent.getId()));
+				RegistryMedia emailMedia = RegistryMediaDAO.get(ctx, f -> f.getRegistryProperty().eq(enterprise.getId()).and(f.getMediaProperty().eq((byte) 4)));
 				if (null != emailMedia && AonStringUtils.isNotBlank(emailMedia.getValue()))
 					from = emailMedia.getValue();
 			}
@@ -981,7 +1013,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		engine.init();
 		
 		String url = (isLocal ? "http" : "https") + "://" + parentDomain.getName() + (isLocal ? ":8080" : "")
-				+ "/beta";
+				+ "/app";
 		
 		if(AonStringUtils.equalsIgnoreCase(parentDomain.getName(), "app.leevy.es"))
 			url = "https://leevy.aon.solutions";
@@ -995,10 +1027,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		context.put("url", url);
 		context.put("domainName", urlMail);
 		context.put("user", userMail);
-		context.put("password", authExisted ? "La existente para este usuario" : passwordMail);
+		context.put("password", passwordMail);
 		context.put("contact", AonStringUtils.isBlank(from) ? "booking@aonsolutions.es" : from);
 
-		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/booking_trial_created.vm");
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/registry_enterprise_created.vm");
 
 		StringWriter writer = new StringWriter();
 		template.merge(context, writer);
