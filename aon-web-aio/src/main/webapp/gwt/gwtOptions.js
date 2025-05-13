@@ -505,6 +505,13 @@ export const QUESTION = {
   entryPoint: 'QuestionModule',
 }
 
+export const SELLER_MODULE = {
+  title: 'Agentes',
+  name: 'Agentes',
+  module: GWT_AIO,
+  entryPoint: 'Seller',
+}
+
 export const CONTRACT_MEDIA = {
   module: GWT_AIO,
   entryPoint: 'templates',
@@ -586,6 +593,11 @@ export const ACCOUNT_OPERATING_REPORT = {
 export const MARKETING_CAMPAIGN = {
   module: GWT_AIO,
   entryPoint: 'MarketingCampaign'
+};
+
+export const SELLER_WORKLOAD_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'SellerWorkload'
 };
 
 export const TARIFF_MODULE = {
