@@ -1,17 +1,17 @@
 @use '../variables' as v;
 
 @font-face {
-    font-family: 'Inter-regular';
-    src: url('../fonts/inter/Inter-Regular.woff') format('woff');
-    font-weight: 400 800;
-    font-style:normal;
+    font-family: v.$font-primary-regular;
+    src: v.$font-url-regular;
+    font-weight: v.$font-weight-regular v.$font-weight-extrabold;
+    font-style: v.$font-style-normal;
 }
 
 @font-face {
-    font-family: 'Inter-italic';
-    src: url('../fonts/inter/Inter-Italic.woff') format('woff');
-    font-weight: 400 800;
-    font-style: italic;
+    font-family: v.$font-primary-italic;
+    src: v.$font-url-italic;
+    font-weight: v.$font-weight-regular v.$font-weight-extrabold;
+    font-style: v.$font-style-italic;
 }
 
 h1 {
@@ -60,4 +60,60 @@ blockquote {
     font-size: v.$font-size-blockquote;
     line-height: v.$line-height-blockquote;
     letter-spacing: v.$letter-spacing-blockquote;
+}
+
+th {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-bold;
+    font-size: v.$font-size-tr;
+    line-height: v.$line-height-tr;
+    letter-spacing: v.$letter-spacing-tr;
+}
+
+tr {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-bold;
+    font-size: v.$font-size-tr;
+    line-height: v.$line-height-tr;
+    letter-spacing: v.$letter-spacing-tr;
+}
+
+ul {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-regular;
+    font-size: v.$font-size-ul;
+    line-height: v.$line-height-ul;
+    letter-spacing: v.$letter-spacing-ul;
+}
+
+code {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-bold;
+    font-size: v.$font-size-code;
+    line-height: v.$line-height-code;
+    letter-spacing: v.$letter-spacing-code;
+}
+
+big {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-semibold;
+    font-size: v.$font-size-big;
+    line-height: v.$line-height-big;
+    letter-spacing: v.$letter-spacing-big;
+}
+
+small {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-medium;
+    font-size: v.$font-size-small;
+    line-height: v.$line-height-small;
+    letter-spacing: v.$letter-spacing-small;
+}
+
+sub {
+    font-family: v.$font-primary-regular;
+    font-weight: v.$font-weight-regular;
+    font-size: v.$font-size-sub;
+    line-height: v.$line-height-sub;
+    letter-spacing: v.$letter-spacing-sub;
 }
