@@ -51,10 +51,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-							.setAccount(registryAccount)
+							.setAccountId(registryAccount)
 							.setAccountCode(registryAccountCode)
 							.setAccountDescription(registryAccountDescription)
-							.setBalancingAccount(payAccount)
+							.setBalancingAccountId(payAccount)
 							.setBalancingAccountCode(payAccountCode)
 							.setBalancingAccountDescription(payAccountDescription);
 						map.put(invoice.getRegistry().getAccountId(),detail);
@@ -64,10 +64,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
 					if (payDetail == null) {
 						payDetail = new AccountEntryDetail()
-							.setAccount(payAccount)
+							.setAccountId(payAccount)
 							.setAccountCode(payAccountCode)
 							.setAccountDescription(payAccountDescription)
-							.setBalancingAccount(registryAccount)
+							.setBalancingAccountId(registryAccount)
 							.setBalancingAccountCode(registryAccountCode)
 							.setBalancingAccountDescription(registryAccountDescription);
 						map.put(invoice.getPayAccountId(),payDetail);
@@ -101,10 +101,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-							.setAccount(registryAccount)
+							.setAccountId(registryAccount)
 							.setAccountCode(registryAccountCode)
 							.setAccountDescription(registryAccountDescription)
-							.setBalancingAccount(payAccount)
+							.setBalancingAccountId(payAccount)
 							.setBalancingAccountCode(payAccountCode)
 							.setBalancingAccountDescription(payAccountDescription);
 						map.put(invoice.getRegistry().getAccountId(),detail);
@@ -114,10 +114,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
 					if (payDetail == null) {
 						payDetail = new AccountEntryDetail()
-							.setAccount(payAccount)
+							.setAccountId(payAccount)
 							.setAccountCode(payAccountCode)
 							.setAccountDescription(payAccountDescription)
-							.setBalancingAccount(registryAccount)
+							.setBalancingAccountId(registryAccount)
 							.setBalancingAccountCode(registryAccountCode)
 							.setBalancingAccountDescription(registryAccountDescription);
 						map.put(invoice.getPayAccountId(),payDetail);
@@ -184,7 +184,7 @@ public class InvoiceRecorder {
 				}
 			}
 		}
-		detail.setBalancingAccount(id)
+		detail.setBalancingAccountId(id)
 			.setBalancingAccountCode(code)
 			.setBalancingAccountDescription(description);
 	}
@@ -200,7 +200,7 @@ public class InvoiceRecorder {
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice); 
 						detail = new AccountEntryDetail()
-							.setAccount(account)
+							.setAccountId(account)
 							.setAccountCode(obtainRegistryAccountCode(invoice))
 							.setAccountDescription(obtainRegistryAccountDescription(invoice));
 						fillBalancingAccount(detail,invoice);
@@ -225,7 +225,7 @@ public class InvoiceRecorder {
 					if (detail == null) {
 						Integer account = obtainRegistryAccount(invoice);
 						detail = new AccountEntryDetail()
-							.setAccount(account)
+							.setAccountId(account)
 							.setAccountCode(obtainRegistryAccountCode(invoice))
 							.setAccountDescription(obtainRegistryAccountDescription(invoice));
 						fillBalancingAccount(detail,invoice);
@@ -246,10 +246,10 @@ public class InvoiceRecorder {
 						if (inpAccount != null && inpAccount.getId() != null) {
 							AccountEntryDetail detail = map.computeIfAbsent( inpAccount.getId()
 								,k -> new AccountEntryDetail()
-									.setAccount(inpAccount.getId())
+									.setAccountId(inpAccount.getId())
 									.setAccountCode(inpAccount.getCode())
 									.setAccountDescription(inpAccount.getDescription())
-									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountId(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice))
 							);
@@ -274,10 +274,10 @@ public class InvoiceRecorder {
 								AccountEntryDetail detail = map.get(outAccount.getId());
 								if (detail == null) {
 									detail = new AccountEntryDetail()
-										.setAccount(outAccount.getId())
+										.setAccountId(outAccount.getId())
 										.setAccountCode(outAccount.getCode())
 										.setAccountDescription(outAccount.getDescription())
-										.setBalancingAccount(obtainRegistryAccount(invoice))
+										.setBalancingAccountId(obtainRegistryAccount(invoice))
 										.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 									;
@@ -309,10 +309,10 @@ public class InvoiceRecorder {
 									AccountEntryDetail detail = map.get(adjAccount.getId());
 									if (detail == null) {
 										detail = new AccountEntryDetail()
-											.setAccount(adjAccount.getId())
+											.setAccountId(adjAccount.getId())
 											.setAccountCode(adjAccount.getCode())
 											.setAccountDescription(adjAccount.getDescription())
-											.setBalancingAccount(obtainRegistryAccount(invoice))
+											.setBalancingAccountId(obtainRegistryAccount(invoice))
 											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 										map.put(adjAccount.getId(),detail);
@@ -348,10 +348,10 @@ public class InvoiceRecorder {
 									AccountEntryDetail detail = map.get(a.getId());
 									if (detail == null) {
 										detail = new AccountEntryDetail()
-											.setAccount(a.getId())
+											.setAccountId(a.getId())
 											.setAccountCode(a.getCode())
 											.setAccountDescription(a.getDescription())
-											.setBalancingAccount(obtainRegistryAccount(invoice))
+											.setBalancingAccountId(obtainRegistryAccount(invoice))
 											.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 											.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 										map.put(a.getId(),detail);
@@ -368,10 +368,10 @@ public class InvoiceRecorder {
 											AccountEntryDetail det = map.get(ac.getId());
 											if (det == null) {
 												det = new AccountEntryDetail()
-													.setAccount(ac.getId())
+													.setAccountId(ac.getId())
 													.setAccountCode(ac.getCode())
 													.setAccountDescription(ac.getDescription())
-													.setBalancingAccount(obtainRegistryAccount(invoice))
+													.setBalancingAccountId(obtainRegistryAccount(invoice))
 													.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 													.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 												map.put(ac.getId(),det);
@@ -402,10 +402,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-								.setAccount(invoice.getWithholdingData().getAccountId())
+								.setAccountId(invoice.getWithholdingData().getAccountId())
 								.setAccountCode(invoice.getWithholdingData().getAccountCode())
 								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
-								.setBalancingAccount(obtainRegistryAccount(invoice))
+								.setBalancingAccountId(obtainRegistryAccount(invoice))
 								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
@@ -428,10 +428,10 @@ public class InvoiceRecorder {
 					AccountEntryDetail detail = map.get(invoice.getWithholdingData().getAccountId());
 					if (detail == null) {
 						detail = new AccountEntryDetail()
-								.setAccount(invoice.getWithholdingData().getAccountId())
+								.setAccountId(invoice.getWithholdingData().getAccountId())
 								.setAccountCode(invoice.getWithholdingData().getAccountCode())
 								.setAccountDescription(invoice.getWithholdingData().getAccountDescription())
-								.setBalancingAccount(obtainRegistryAccount(invoice))
+								.setBalancingAccountId(obtainRegistryAccount(invoice))
 								.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
@@ -452,10 +452,10 @@ public class InvoiceRecorder {
 							AccountEntryDetail detail = map.get(accountId);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-									.setAccount(accountId)
+									.setAccountId(accountId)
 									.setAccountCode(vat.getExpAccount().map(Account::getCode).orElse(null) )
 									.setAccountDescription(vat.getExpAccount().map(Account::getDescription).orElse(null) )
-									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountId(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(accountId, detail);
@@ -479,10 +479,10 @@ public class InvoiceRecorder {
 							AccountEntryDetail detail = map.get(accountId);
 							if (detail == null) {
 								detail = new AccountEntryDetail()
-									.setAccount(accountId)
+									.setAccountId(accountId)
 									.setAccountCode(vat.getExpAccount().map(Account::getCode).orElse(null) )
 									.setAccountDescription(vat.getExpAccount().map(Account::getDescription).orElse(null) )
-									.setBalancingAccount(obtainRegistryAccount(invoice))
+									.setBalancingAccountId(obtainRegistryAccount(invoice))
 									.setBalancingAccountCode(obtainRegistryAccountCode(invoice))
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(accountId,detail);

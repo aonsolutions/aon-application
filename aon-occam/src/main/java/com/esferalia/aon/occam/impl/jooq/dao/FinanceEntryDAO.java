@@ -79,10 +79,10 @@ public class FinanceEntryDAO {
 			.stream()
 			.forEach(detail -> {
 				if (AonStringUtils.startsWith(detail.getAccountCode(), "5")) {
-					entry.setBankAccount(AccountDAO.get(ctx, detail.getAccount()));
+					entry.setBankAccount(AccountDAO.get(ctx, detail.getAccountId()));
 					entry.setManualConcept(AonStringUtils.substringBetween(detail.getConcept(), AonStringUtils.OPEN_BRACKET, AonStringUtils.CLOSE_BRACKET));
 				} else if (AonStringUtils.startsWith(detail.getAccountCode(), "6")) {
-						entry.setExpensesAccount(AccountDAO.get(ctx, detail.getAccount()));
+						entry.setExpensesAccount(AccountDAO.get(ctx, detail.getAccountId()));
 						entry.setExpenses( AonMathUtils.round(detail.getDebit() - detail.getCredit() ));
 				}
 			});

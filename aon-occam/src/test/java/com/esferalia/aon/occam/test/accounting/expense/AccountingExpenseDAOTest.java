@@ -63,16 +63,16 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		assertTrue(AonCollectionUtils.isNotEmpty(saved.getDetails()));
 		assertEquals(2, AonCollectionUtils.size(saved.getDetails()));
 		AccountEntryDetail expDetail = saved.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		assertNotNull(expDetail.getAccountId());
+		assertNotNull(expDetail.getBalancingAccountId());
 		assertEquals(expDetail.getConcept(), expense.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), expense.getReferenceCode());
 		AccountEntryDetail bankDetail = saved.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
+		assertNotNull(bankDetail.getAccountId());
+		assertNotNull(bankDetail.getBalancingAccountId());
 		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getAccountId(), bankDetail.getBalancingAccountId());
+		assertEquals(expDetail.getBalancingAccountId(), bankDetail.getAccountId());
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 		
@@ -155,17 +155,17 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
 		AccountEntryDetail expDetail = ae.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		assertNotNull(expDetail.getAccountId());
+		assertNotNull(expDetail.getBalancingAccountId());
 		
 		
 		AccountEntryDetail bankDetail = ae.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
+		assertNotNull(bankDetail.getAccountId());
+		assertNotNull(bankDetail.getBalancingAccountId());
 
 		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getAccountId(), bankDetail.getBalancingAccountId());
+		assertEquals(expDetail.getBalancingAccountId(), bankDetail.getAccountId());
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 	}
@@ -186,17 +186,17 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		
 		assertEquals(2, AonCollectionUtils.size(ae.getDetails()));
 		AccountEntryDetail expDetail = ae.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		assertNotNull(expDetail.getAccountId());
+		assertNotNull(expDetail.getBalancingAccountId());
 		
 		
 		AccountEntryDetail bankDetail = ae.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
+		assertNotNull(bankDetail.getAccountId());
+		assertNotNull(bankDetail.getBalancingAccountId());
 
 		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getAccountId(), bankDetail.getBalancingAccountId());
+		assertEquals(expDetail.getBalancingAccountId(), bankDetail.getAccountId());
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 	}
@@ -268,14 +268,14 @@ public class AccountingExpenseDAOTest extends AbstractOccamTest {
 		
 		assertEquals(2, AonCollectionUtils.size(updatedEntry.getDetails()));
 		AccountEntryDetail expDetail = updatedEntry.getDetails().get(0);
-		assertNotNull(expDetail.getAccount());
-		assertNotNull(expDetail.getBalancingAccount());
+		assertNotNull(expDetail.getAccountId());
+		assertNotNull(expDetail.getBalancingAccountId());
 		AccountEntryDetail bankDetail = updatedEntry.getDetails().get(1);
-		assertNotNull(bankDetail.getAccount());
-		assertNotNull(bankDetail.getBalancingAccount());
+		assertNotNull(bankDetail.getAccountId());
+		assertNotNull(bankDetail.getBalancingAccountId());
 		assertEquals(expDetail.getCredit(), bankDetail.getDebit(), DELTA);
-		assertEquals(expDetail.getAccount(), bankDetail.getBalancingAccount());
-		assertEquals(expDetail.getBalancingAccount(), bankDetail.getAccount());
+		assertEquals(expDetail.getAccountId(), bankDetail.getBalancingAccountId());
+		assertEquals(expDetail.getBalancingAccountId(), bankDetail.getAccountId());
 		assertEquals(expDetail.getConcept(), bankDetail.getConcept());
 		assertEquals(expDetail.getDocumentNumber(), bankDetail.getDocumentNumber());
 		assertEquals(AonMathUtils.absRounded(expDetail.getDebit() - expDetail.getCredit()), savedUpdate.getAmount() , DELTA);

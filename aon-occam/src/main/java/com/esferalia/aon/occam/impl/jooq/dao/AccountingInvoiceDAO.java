@@ -307,7 +307,7 @@ public class AccountingInvoiceDAO {
 		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
 		if (directTaxAccount != null && ai.getAccountEntry() != null) {
 			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
-				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
+				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccountId(),directTaxAccount.getId()));
 		}
 		final boolean directTaxEnabled = directTaxEnabledPre;
 		// *********************
@@ -1973,7 +1973,7 @@ public class AccountingInvoiceDAO {
 		Account directTaxAccount = config.accounting().getDirectTaxAdjustAccount();
 		if (directTaxAccount != null && ai.getAccountEntry() != null) {
 			directTaxEnabledPre = AonCollectionUtils.stream(ai.getAccountEntry().getDetails())
-				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccount(),directTaxAccount.getId()));
+				.anyMatch( aed -> AonNumberUtils.equals(aed.getAccountId(),directTaxAccount.getId()));
 		}
 		final boolean directTaxEnabled = directTaxEnabledPre;
 		// *********************

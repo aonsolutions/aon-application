@@ -826,7 +826,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					(wrp.getAccountEntry().getDetails() == null
 					|| wrp.getAccountEntry().getDetails().size() == 0
 					|| (wrp.getAccountEntry().getDetails().size() == 1
-					&& wrp.getAccountEntry().getDetails().get(0).getAccount() == null
+					&& wrp.getAccountEntry().getDetails().get(0).getAccountId() == null
 					&& wrp.getAccountEntry().getDetails().get(0).getDebit() == 0
 					&& wrp.getAccountEntry().getDetails().get(0).getCredit() == 0)				
 							);
@@ -1392,14 +1392,14 @@ public class AccountEntryModule extends MainEntryPoint {
 			.stream()
 			.map( aed -> new AccountEntryDetail()
 				.setDomain(aed.getDomain())
-				.setAccount(aed.getAccount())
+				.setAccountId(aed.getAccountId())
 				.setAccountCode(aed.getAccountCode())
 				.setAccountDescription(aed.getAccountDescription())
 				.setLine(aed.getLine())
 				.setConcept(mantainConcept.getValue().booleanValue()?aed.getConcept(): concept.getValue())
 				.setDebit(invert.getValue().booleanValue()?aed.getCredit():aed.getDebit())
 				.setCredit(invert.getValue().booleanValue()?aed.getDebit():aed.getCredit())
-				.setBalancingAccount(aed.getBalancingAccount())
+				.setBalancingAccountId(aed.getBalancingAccountId())
 				.setBalancingAccountCode(aed.getBalancingAccountCode())
 				.setBalancingAccountDescription(aed.getBalancingAccountDescription())
 				.setDocumentNumber(mantainDocument.getValue().booleanValue()?aed.getDocumentNumber(): document.getValue()))

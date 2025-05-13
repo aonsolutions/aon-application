@@ -1521,13 +1521,13 @@ public class InsertTest extends AbstractOccamTest {
 			}
 		}
 		return new AccountEntryDetail()
-			.setAccount( account.getId() )
+			.setAccountId( account.getId() )
 			.setAccountCode(account.getCode())
 			.setAccountDescription(account.getDescription())
 			.setConcept(concept)
 			.setDebit(debit)
 			.setCredit(credit)
-			.setBalancingAccount(balancingAccount == null ? null : balancingAccount.getId())
+			.setBalancingAccountId(balancingAccount == null ? null : balancingAccount.getId())
 			.setBalancingAccountCode(balancingAccount == null ? null : balancingAccount.getCode())
 			.setBalancingAccountDescription(balancingAccount == null ? null : balancingAccount.getDescription())
 			.setDocumentNumber(documentNumber);
