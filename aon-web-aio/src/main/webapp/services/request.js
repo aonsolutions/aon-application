@@ -85,11 +85,7 @@ export const requestXml = (method, url, sendData, fn) => {
 export const requestXhr = (xhr, sendData, fn) => {
   try {
     const isNew = localStorage.getItem('sass') === 'true';
-    
-    console.log('///////////////////////////////////////////////');
-    console.log(isNew);
-    console.log('///////////////////////////////////////////////');
-    
+
     xhr.send(sendData);
     xhr.onload = () => {
       if (xhr.status != 200) {
@@ -106,7 +102,6 @@ export const requestXhr = (xhr, sendData, fn) => {
       }
     };
     xhr.onprogress = (event) => {
-      console.log(isNew);
       if(!isNew){
         if (event.lengthComputable) {
           console.debug(`Received ${event.loaded} of ${event.total} bytes`);

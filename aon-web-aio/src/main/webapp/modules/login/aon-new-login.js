@@ -32,7 +32,6 @@ import { AonDesktop } from "../company/aon-desktop.js";
 
 import * as GWT from '../../gwt/gwt.js';
 
-
 export class AonNewLogin extends AonElement {
   tag;
   userInput;
@@ -48,6 +47,11 @@ export class AonNewLogin extends AonElement {
   initialize() {}
 
   build() {
+    
+    
+    console.log('********* LOGIN ***********');
+    
+    
     this.style.display = "flex";
     this.style.height = "100vh";
     this.style.flexDirection = "column";
@@ -457,8 +461,7 @@ export class AonNewLogin extends AonElement {
     //const div  = this.getElement('logosMobiles');
     divMobiles.style.textAlign = "center";
     const playStore = this.createElement(TAG.A);
-    playStore.href =
-      "https://play.google.com/store/apps/details?id=aon.solutions";
+    playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
     playStore.target = "_blank";
     const imgPlayStore = this.createElement("img");
     imgPlayStore.src = "assets/playstore.png"; //: "assets/playstore-disabled.png";
@@ -467,8 +470,7 @@ export class AonNewLogin extends AonElement {
     divMobiles.appendChild(playStore);
 
     const appStore = this.createElement(TAG.A);
-    appStore.href =
-      "https://itunes.apple.com/es/app/aon-solutions/id1538461097";
+    appStore.href = "https://itunes.apple.com/es/app/aon-solutions/id1538461097";
     appStore.target = "_blank";
     const imgAppStore = this.createElement("img");
     imgAppStore.src = "assets/appstore.png"; //: "assets/appstore-disabled.png";
@@ -512,7 +514,6 @@ export class AonNewLogin extends AonElement {
     loader.start();
     login(data)
       .then(() => {
-        // document.body.style.background = 'transparent';
         loader.stop();
 
         LS.removeDomain();
@@ -539,7 +540,7 @@ export class AonNewLogin extends AonElement {
         toast.start(error);
       });
   }
-  
+
   companySelection(company, onlyOne) {
     localStorage.setItem("company", JSON.stringify(company));
     localStorage.setItem("aon_domain_id", company.id);
@@ -572,7 +573,7 @@ export class AonNewLogin extends AonElement {
       }
     });
   }
-  
+
   isConsole(company) {
 	return company.type == 'ADMIN' && company.id === 0;
   }
