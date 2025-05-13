@@ -346,7 +346,7 @@ public class AccountingInvoiceDAO {
 				.map( r -> FullAccountFiller.build(r, VAT_ACCOUNT))
 				.findFirst();
 			
-			vat.setId(tax.getValue(INVOICE_TAX.ID))
+			vat.setInvoiceTaxId(invoiceTaxId)
 				.setInvoiceDetailId(tax.getValue(INVOICE_TAX.INVOICE_DETAIL))
 			;
 			if (!ai.isAccountSource()) {
@@ -977,10 +977,10 @@ public class AccountingInvoiceDAO {
 				.set(INVOICE_TAX.SURCHARGE_QUOTA, vat.getSurchargeQuota())
 				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
 				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, vat.getQuota())
-				.where(INVOICE_TAX.ID.equal( vat.getId()))
+				.where(INVOICE_TAX.ID.equal( vat.getInvoiceTaxId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();
-			ctx.log().debug("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getId(),i);
+			ctx.log().debug("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getInvoiceTaxId(),i);
 		}
 		ctx.log().debug("\tINSERT INVOICE_DUA (nat.invoice: {0}, imp.invoice: {1}, id : {2})",accInvoice.getInvoice().getId(),importInvoice.getInvoice().getId(),id);
 		ctx.log().debug("\t--- END INVOICE_DUA INSERT");
@@ -1014,10 +1014,10 @@ public class AccountingInvoiceDAO {
 				.set(INVOICE_TAX.SURCHARGE_QUOTA, vat.getSurchargeQuota())
 				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
 				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, vat.getQuota())
-				.where(INVOICE_TAX.ID.equal( vat.getId()))
+				.where(INVOICE_TAX.ID.equal( vat.getInvoiceTaxId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();
-			ctx.log().info("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getId(),i);
+			ctx.log().info("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getInvoiceTaxId(),i);
 		}
 		ctx.log().debug("\tUPDATE INVOICE_DUA (nat.invoice: {0}, imp.invoice: {1}, id: {2})",accInvoice.getInvoice().getId(),importInvoice.getInvoice().getId(),id);
 		ctx.log().debug("\t--- END INVOICE_DUA UPDATE");
@@ -2032,7 +2032,7 @@ public class AccountingInvoiceDAO {
 						.map(r -> FullAccountFiller.build( r, VAT_ACCOUNT))
 						.findFirst();
 					
-					vat.setId(tax.getValue(INVOICE_TAX.ID))
+					vat.setInvoiceTaxId(invoiceTaxId)
 						.setInvoiceDetailId(tax.getValue(INVOICE_TAX.INVOICE_DETAIL))
 					;
 					if (!ai.isAccountSource()) {
