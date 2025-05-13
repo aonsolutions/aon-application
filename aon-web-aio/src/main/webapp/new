@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
 
     <!-- JS: -->
-    <script src="dist/appSass.af1d588fd2e1d092173b.min.js"></script>
+    <script src="dist/appSass.282dfabe7b2ef5b410ad.min.js" defer></script>
     <!-- CSS: -->
-    <link href="dist/sass.aca80fcea378c255b4d5.min.css" rel="stylesheet">
+    <link href="dist/sass.cdae3fd9ec07eb762ded.min.css" rel="stylesheet">
   </head>
   <body></body>
 </html>

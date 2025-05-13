@@ -186,9 +186,13 @@ export class AonElement extends HTMLElement{
     return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
   }
   
+  isNewStyle(){
+    return localStorage.getItem('sass') === 'true';
+  };
+  
   isAyudaTorInfoautonomos(){
 	const href = localStorage.getItem("aon_domain_name")
-			return href.includes('ayudat') || href.includes('infoautonomos')
+	return href.includes('ayudat') || href.includes('infoautonomos')
   }
 
   isSig(){
