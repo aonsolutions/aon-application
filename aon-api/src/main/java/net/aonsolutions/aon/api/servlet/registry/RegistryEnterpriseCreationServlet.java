@@ -204,7 +204,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				
 				createDefaultUser(api, ctx, newDomain, newScope);
 				
-				System.out.println("----------------------- Create User Scope (supportSeller)");
+				System.out.println("----------------------- Create User Scope (supportSeller / api.getUser)");
 				
 				createUserScope(api, ctx, newDomain, newScope);
 				
@@ -662,7 +662,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		
 		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
 		
-		
 		Company newCompany = CompanyDAO.getCompanyStream(ctx, f -> f.getDomainProperty().eq(newDomain.getId())).findFirst().get();
 
 		User newUser = new User()
@@ -702,23 +701,6 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 					.setName(AppParam.AON_PORTAL.getValue());
 			
 			AppParamDAO.insertApplicationParameter(ctx, appParam);
-		}
-		
-		// Actualizar "user_scope": Asignar el scope al agente asignado
-		Seller seller = SellerDAO.get(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
-		TaskHolder taskHolder = TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(seller.getTaskHolder().getId()), new Options().setFull(true));
-		if(null != taskHolder && null != taskHolder.getUserId()) {
-			
-			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUserId()), new Options().setFull(true));
-			
-			SecurityDAO.insertUserScope(
-					ctx, 
-					new UserScope()
-					.setDomain(user.getDomain().getId())
-					.setScope(newScope.getId())
-					.setUserId(user.getId())
-			);
-			
 		}
 
 		return newUser;
@@ -825,8 +807,36 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	}
 
 	private static void createUserScope(AonApiData api, CloseableAONContext ctx, Domain newDomain, Scope newScope) {
-		// TODO Auto-generated method stub
+		JSONObject data = api.getData();
 		
+		Integer sellerSupport = JsonUtils.getInteger(data, "sellerSupport");
+		
+		// Actualizar "user_scope": Asignar el scope al agente asignado
+		Seller seller = SellerDAO.get(ctx, f -> f.getRegistryProperty().eq(sellerSupport));
+		TaskHolder taskHolder = TaskHolderDAO.get(ctx, f -> f.getIdProperty().eq(seller.getTaskHolder().getId()), new Options().setFull(true));
+		if(null != taskHolder && null != taskHolder.getUserId()) {
+			
+			User user = UserDAO.get(ctx, f -> f.getIdProperty().eq(taskHolder.getUserId()), new Options().setFull(true));
+			
+			SecurityDAO.insertUserScope(
+					ctx, 
+					new UserScope()
+					.setDomain(user.getDomain().getId())
+					.setScope(newScope.getId())
+					.setUserId(user.getId())
+			);
+			
+		}
+		
+		// Insertar el ambito al usuario que ha creado la empresa
+		if(null != api.getUser() && null != api.getUser().getId())
+			SecurityDAO.insertUserScope(
+					ctx, 
+					new UserScope()
+					.setDomain(api.getUser().getDomain().getId())
+					.setScope(newScope.getId())
+					.setUserId(api.getUser().getId())
+			);
 	}
 	
 	private static void insertDomainConfiguration(CloseableAONContext ctx, Domain newDomain) {
