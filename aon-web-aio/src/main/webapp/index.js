@@ -27,11 +27,14 @@ window.setResumeApp = (data) =>  {
     window.dispatchEvent( new CustomEvent(EVENT.RESUME_APP, {detail:data}));
 };
 
+function loadNew(){
+  favicon();
+  title();
+  document.body.appendChild(new AonModule());
+}
+
 const load = () => {
-	// Estamos cargando el estilo nuevo
-    const isNew = window.location.pathname.includes('/new');
-    localStorage.setItem('sass', isNew ? 'true' : 'false');
-    
+
 	console.debug("Start loading aonSolutions.");
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
@@ -105,26 +108,6 @@ export const loadTheme = async  () => {
 	});
 };
 
-/*const favicon = () => {
-	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
-	if ( favicon ) {
-		loadLink('', 'icon', 'image/x-icon')
-		.then( faviconLink  => {
-			faviconLink.href = favicon;
-		});
-	}
-}
-
-const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
-    const link = document.createElement('link');
-    document.head.appendChild(link);
-    link.onload = resolve(link);
-    link.onerror = reject;
-    link.href = url;
-    link.rel = rel || "stylesheet";
-    link.type = type || "text/css";
-});*/
-
 const loadScript = (url, module=false) => new Promise((resolve, reject) => {
     let script = document.querySelector(`script[src="${url}"]`);
     if(!script){
@@ -168,6 +151,10 @@ const isBetaDoc = () => {
   return isBeta();
 };
 
+const isNewStyle = () => {
+  return localStorage.getItem('sass') === 'true';
+};
+
 const isLocal =  () => {
     const href = window.location.href;
     return href.includes('localhost') || href.includes('8080') ||  href.includes('ngrok.io');
@@ -191,5 +178,12 @@ const getCookie = (cookieName) => {
 
 // Cargado el DOM iniciamos la aplicacion
 document.addEventListener('DOMContentLoaded', function () {
-  load();
+  // Estamos cargando el estilo nuevo
+  const isNew = window.location.pathname.includes('/new');
+  localStorage.setItem('sass', isNew ? 'true' : 'false');
+  
+  if(isNew)
+    loadNew();
+  else 
+    load();
 });

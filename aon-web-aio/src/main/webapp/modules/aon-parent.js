@@ -676,6 +676,7 @@ export class AonParent extends AonElement {
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){
-	console.log( 'Define <aon-new-parent> ^-^' );
+    if(!localStorage.getItem('sass') === 'true')
+      console.log( 'Define <aon-new-parent> ^-^' );
 	window.customElements.define(TAG.AON_PARENT, AonParent);
 }

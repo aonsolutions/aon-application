@@ -82,34 +82,46 @@ export const requestXml = (method, url, sendData, fn) => {
   requestXhr(xhr, sendData, fn)
 };
 
-
 export const requestXhr = (xhr, sendData, fn) => {
   try {
+    const isNew = localStorage.getItem('sass') === 'true';
+    
+    console.log('///////////////////////////////////////////////');
+    console.log(isNew);
+    console.log('///////////////////////////////////////////////');
+    
     xhr.send(sendData);
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
-        console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        if(!isNew)
+          console.error(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
         fn(undefined, xhr.response);
       } else {
         // show the result
-        console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        if(!isNew)
+          console.debug(`Done, got ${xhr.response.length} bytes`); // responseText is the server
         let response = !xhr.response ? "[]" : xhr.response;
         fn(response);
       }
     };
     xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        console.debug(`Received ${event.loaded} of ${event.total} bytes`);
-      } else {
-        console.debug(`Received ${event.loaded} bytes`); // no Content-Length
+      console.log(isNew);
+      if(!isNew){
+        if (event.lengthComputable) {
+          console.debug(`Received ${event.loaded} of ${event.total} bytes`);
+        } else {
+          console.debug(`Received ${event.loaded} bytes`); // no Content-Length
+        }
       }
     };
     xhr.onerror = () => {
-      console.error("Request failed");
+      if(!isNew)
+        console.error("Request failed");
     };
   } catch (error) {
-    console.error("error");
+    if(!isNew)
+      console.error("error");
     fn(undefined, error);
   }
 };

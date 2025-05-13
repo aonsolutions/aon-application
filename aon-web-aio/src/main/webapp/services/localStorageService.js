@@ -24,23 +24,13 @@ export const COMPANY_SELECTED = 'companySelected';
 export const PORTAL_CHECKED = "portalChecked"
 
 // Mantener css y agregar sass
-let THEME, AON_MOBILE_THEME, AON_MOBILE_ANDROID, AON_THEME, DARK_THEME, DARK_BETA_THEME;
-if (localStorage.getItem('sass') === 'true') {
-  AON_THEME = '';
-  THEME = '';
-  AON_MOBILE_THEME = '';
-  AON_MOBILE_ANDROID = '';
-  DARK_THEME = '';
-  DARK_BETA_THEME = '';
-} else {
-  THEME = 'aonTheme';
-  AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
-  AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
-  AON_THEME = '/css/theme/aon.css';
-  DARK_THEME = '/css/theme/dark.css';
-  DARK_BETA_THEME = '/css/theme/darkBeta.css';
-}
-export { THEME, AON_MOBILE_THEME, AON_MOBILE_ANDROID, AON_THEME, DARK_THEME, DARK_BETA_THEME };
+
+export const THEME = 'aonTheme';
+export const AON_MOBILE_THEME = '/css/theme/aon-mobile.css';
+export const AON_MOBILE_ANDROID = 'css/theme/aon-mobile-android.css';
+export const AON_THEME = '/css/theme/aon.css';
+export const DARK_THEME = '/css/theme/dark.css';
+export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
 export const BETADOC = 'betadoc';
 export const get = (item) => {
