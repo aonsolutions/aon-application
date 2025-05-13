@@ -2,6 +2,11 @@
   Created on : May 8, 2025, 10:11:14?AM
 */
 
+@import url(_variables.scss);
+@import url(base/_typography.scss);
+
 :root{
-  background: white;
+  font-size: 16px;
 }
+
+
