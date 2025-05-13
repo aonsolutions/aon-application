@@ -568,4 +568,11 @@ public abstract class PageAbs extends ResizeComposite {
 		return result;
 	}
 	
+	protected void addLabelWidgetRow600(AonDisplayTable tab, String label, Widget widget) {
+		AonDisplayTableRow row = tab.addRow();
+		row.addCell(new Label(label), AON.CSS.aonWidth600());
+		row.addCell(widget);
+	}
+	
+	
 }

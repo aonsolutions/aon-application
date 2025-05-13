@@ -274,7 +274,7 @@ public class Page21 extends PageAbs {
 		// Cuenta Bancaria
 		
 		ibanPanel = new FlowPanel(); 
-		ibanPanel.add(getTitle("Cuenta Bancaria (IBAN)"));
+		ibanPanel.add(getTitle("Cuenta Bancaria"));
 		
 		FlowPanel ibanPanel3 = new FlowPanel();
 		ibanPanel3.addStyleName(AON.CSS.aonMarginLeft());

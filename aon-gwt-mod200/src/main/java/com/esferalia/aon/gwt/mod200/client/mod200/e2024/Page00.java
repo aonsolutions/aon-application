@@ -360,10 +360,13 @@ public class Page00 extends PageAbs {
 			rectificationMotive2.setEnabled(rectification.getValue());
 			rectificationMotive3.setEnabled(rectification.getValue());
 			if (!rectification.getValue()) {
+				callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0001, false);
+				callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0002, false);
+				callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.R0003, false);
+				rectificationMotive1.setValue(false, false);
+				rectificationMotive2.setValue(false, false);
+				rectificationMotive3.setValue(false, false);
 				rectificationNumber.setValue("", true);
-				rectificationMotive1.setValue(false, true);
-				rectificationMotive2.setValue(false, true);
-				rectificationMotive3.setValue(false, true);
 			}
 			callback.getMod200Object().getMod200().setComplementary(rectification.getValue());
 			callback.markAsDirty();
@@ -400,11 +403,17 @@ public class Page00 extends PageAbs {
 		});
 		otherInputs.add(rectificationMotive3);
 		
-		tab1.addLabelWidgetRow("Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification)
-		    .addLabelWidgetRow(AON.MSG.previousReceipt(), rectificationNumber)
-		    .addLabelWidgetRow(Mod2002024Key.R0001.getDescription(), rectificationMotive1)
-		    .addLabelWidgetRow(Mod2002024Key.R0002.getDescription(), rectificationMotive2)
-		    .addLabelWidgetRow(Mod2002024Key.R0003.getDescription(), rectificationMotive3);
+//		tab1.addLabelWidgetRow("Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification)
+//		    .addLabelWidgetRow(AON.MSG.previousReceipt(), rectificationNumber)
+//		    .addLabelWidgetRow(Mod2002024Key.R0001.getDescription(), rectificationMotive1)
+//		    .addLabelWidgetRow(Mod2002024Key.R0002.getDescription(), rectificationMotive2)
+//		    .addLabelWidgetRow(Mod2002024Key.R0003.getDescription(), rectificationMotive3);
+		
+		addLabelWidgetRow600(tab1,"Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification);
+	    addLabelWidgetRow600(tab1,AON.MSG.previousReceipt(), rectificationNumber);
+	    addLabelWidgetRow600(tab1,Mod2002024Key.R0001.getDescription(), rectificationMotive1);
+	    addLabelWidgetRow600(tab1,Mod2002024Key.R0002.getDescription(), rectificationMotive2);
+	    addLabelWidgetRow600(tab1,Mod2002024Key.R0003.getDescription(), rectificationMotive3);
 		
 		// ESTADOS DE CUENTAS
 		

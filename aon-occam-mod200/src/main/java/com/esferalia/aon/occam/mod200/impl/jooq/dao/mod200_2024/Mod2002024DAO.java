@@ -1214,7 +1214,7 @@ public class Mod2002024DAO  {
 				// Ingreso
 				mod200.setResultType("I");
 				mod200.setAmount( v.getValue() );
-				mod200.setPayType(AonStringUtils.isEmpty(mod200.getPayType())?"H":mod200.getPayType());
+				mod200.setPayType(AonStringUtils.isEmpty(mod200.getPayType())?"I":mod200.getPayType());
 				mod200.setDevType(null);
 			}
 			

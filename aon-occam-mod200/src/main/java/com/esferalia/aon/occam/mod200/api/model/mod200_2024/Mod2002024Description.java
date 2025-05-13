@@ -375,8 +375,8 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.PG292,"Beneficios (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002024Key.PG293,"P\u00E9rdidas (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002024Key.PG710,"Deterioro y resultados por enajenaciones del inmovilizado de las sociedades holding (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002024Key.PG791,"Fondo de Educación, Formación y Promoción (cooperativas) (N, A, P)");
-		DESCRIPTION_MAP.put(Mod2002024Key.PG792,"Dotación (cooperativas) (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002024Key.PG791,"Fondo de Educaci\u00F3n, Formaci\u00F3n y Promoci\u00F3n (cooperativas) (N, A, P)");
+		DESCRIPTION_MAP.put(Mod2002024Key.PG792,"Dotaci\u00F3n (cooperativas) (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002024Key.PG793,"Subvenciones, donaciones y ayudas y sanciones (cooperativas) (N, A, P)");
 		DESCRIPTION_MAP.put(Mod2002024Key.PG294,"Diferencia negativa de combinaciones de negocio (N, A)");
 		DESCRIPTION_MAP.put(Mod2002024Key.PG295,"Otros resultados (N, A, P)");
@@ -452,7 +452,7 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ004, "Correcciones por Impuesto Complementario");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ501, "Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades e Impuesto Complementario");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal (art. 62.1a) LIS) (i.e., operaciones con acciones propias a nivel de grupo fiscal, coberturas, etc.)");
-		DESCRIPTION_MAP.put(Mod2002024Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluida la correcci\u00F3n por IS)");
+		DESCRIPTION_MAP.put(Mod2002024Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluidas las correcciones por IS y por IC)");
 	}
 	
 	static {
@@ -588,8 +588,8 @@ public class Mod2002024Description {
 		
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1586,"Resultado de la autoliquidaci\u00F3n");
 		
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ1578, "Complementaria: Resultados a ingresar procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2024"); 
-		DESCRIPTION_MAP.put(Mod2002024Key.LQ1584, "Complementaria: Devoluciones acordadas procedentes de autoliquidaciones anteriores correspondientes al per\u00EDodo impositivo 2024"); 
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ1578, "Resultado a ingresar como consecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al periodo impositivo 2024"); 
+		DESCRIPTION_MAP.put(Mod2002024Key.LQ1584, "Devoluci\u00F3n acordada por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al periodo impositivo 2024"); 
 		DESCRIPTION_MAP.put(Mod2002024Key.BN621,  "Resultado");
 		
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ866,  "Rectificaci\u00F3n");
@@ -754,10 +754,11 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1334, "Abono de deducciones I+D+i por insuficiencia de cuota (opci\u00F3n art. 44.2 RDLeg. 4/2004 y art. 39.2 LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1338, "Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 39.3 LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1877, "Abono de deducciones por producciones cinematogr\u00E1ficas extranjeras en Canarias (art. 39.3 LIS y DA 14\u00AA Ley 19/1994)");
+		DESCRIPTION_MAP.put(Mod2002024Key.TR2378, "Discrepancia de criterio administrativo para determinados supuestos de autoliquidaci\u00F3n rectificativa que no deban incluirse en otras casillas");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1624, "Resultado de la autoliquidaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1607, "Rectificativa: Resultado a ingresar como consecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al per\u00EDodo impositivo 2024"); 
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1611, "Rectificativa: Devoluci\u00F3n acordada por la Agencia Tributaria como concecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al per\u00EDodo impositivo 2024"); 
-		DESCRIPTION_MAP.put(Mod2002024Key.TR494	, "L\u00EDquido a ingresar o a devolver");
+		DESCRIPTION_MAP.put(Mod2002024Key.TR494	, "Resultado");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1631, "Importe integrado en la base imponible");
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1635, "Deuda tributaria resultante del fraccionamiento art. 19.1 LIS"); 
 		DESCRIPTION_MAP.put(Mod2002024Key.TR1642, "1er fraccionamiento");  

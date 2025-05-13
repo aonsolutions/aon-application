@@ -1626,6 +1626,14 @@ public enum Mod2002024Key implements IMod200Key {
 	,TR1334	,TR1335	,TR1336	,TR1337	,TR1332
 	,TR1338	,TR1339	,TR1340	,TR1341	,TR1333
 	,TR1877 ,TR1878 ,TR1879 ,TR1880 ,TR1881
+
+//	Tributación conjunta Estado y Adm.Forales - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Araba/Álava [02378]
+//			Tributación conjunta Estado y Adm.Forales - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Gipuzkoa [02379]
+//			Tributación conjunta Estado y Adm.Forales - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Bizkaia [02407]
+//			Tributación conjunta Estado y Adm.Forales - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Navarra [02408]
+//			Tributación conjunta Estado y Adm.Forales - Discrepancia de criterio administrativo para determinados supuestos de autoliquidación rectificativa que no deban incluirse en otras casillas - Total [00466]
+	
+	,TR2378	,TR2379	,TR2407	,TR2408	,TR466
 	,TR1624 ,TR1625 ,TR1629 ,TR1630 ,TR1587
 	,TR1607 ,TR1608 ,TR1609 ,TR1610 ,TR1583
 	,TR1611 ,TR1612 ,TR1613 ,TR1623 ,TR1585

@@ -26,7 +26,7 @@ public class Page09 extends PageAbs {
 	
 	private enum CorrectionKey implements Serializable,IMod200KeysProvider {
 		 DC01(false,Mod2002024Key.DC2305,Mod2002024Key.DC2306,"Saldo pendiente de correcciones temporarias a principio de ejercicio")
-		,DC02(false,Mod2002024Key.DC2301,Mod2002024Key.DC2302,"Correcciones del ejercicio: Correcciones permanentes (excluida correcci\u00F3n I. Sociedades)")
+		,DC02(false,Mod2002024Key.DC2301,Mod2002024Key.DC2302,"Correcciones del ejercicio: Correcciones permanentes (excluidas las correcciones por IS y por IC)")
 		,DC03(false,Mod2002024Key.DC2303,Mod2002024Key.DC2304,"Correcciones del ejercicio: Correcciones temporarias con origen en el ejercicio")
 		,DC04(false,Mod2002024Key.DC2307,Mod2002024Key.DC2308,"Correcciones del ejercicio: Correcciones temporarias con origen en ejercicios anteriores")
 		,DC05(true ,Mod2002024Key.I0417B,Mod2002024Key.D0418B,"Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias del ejercicio")
@@ -112,8 +112,8 @@ public class Page09 extends PageAbs {
 			paintEmptyCell(tab1, row, 3);
 		}
 		
-		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
-		
+		basePanel.add(getTitle("Detalle de las correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluidas las correcciones por IS y por Impuesto Complementario)"));
+		                        
 		FlexTable tab2 = addTable();
 		
 		row = 0;
@@ -146,7 +146,7 @@ public class Page09 extends PageAbs {
 		paintKeyField(tab2, Mod2002024Key.D0418, row, 2, true);
 		
 		// Detalle de Correcciones (Totales)
-		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
+		basePanel.add(getTitle("Detalle de las correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluidas las correcciones por IS y por IC)"));
 		
 		FlexTable tab3 = addTable();
 		

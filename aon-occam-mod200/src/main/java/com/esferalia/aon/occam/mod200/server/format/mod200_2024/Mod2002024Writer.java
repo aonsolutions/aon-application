@@ -1734,7 +1734,7 @@ public class Mod2002024Writer {
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")				
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN570Key.values())  
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values()) 
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS BLANCOS EN UNO DE LOS PORCENTAJES VER SI AL FINAL SE QUEDA ASI 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN1280Key.values())
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN572Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1744,7 +1744,7 @@ public class Mod2002024Writer {
 		, PAG16("T20016000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values())
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS BLANCOS EN UNO DE LOS PORCENTAJES VER SI AL FINAL SE QUEDA ASI
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN573Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN585Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN584Key.values())

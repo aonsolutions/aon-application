@@ -46,7 +46,7 @@ public class Page16 extends PageAbs {
 						paintDescription(table, key.getDescription(), row, 0, key == Mod2002024Key.LM1260);
 						if (key == Mod2002024Key.LM1250 || key == Mod2002024Key.LM1251
 						 || key == Mod2002024Key.LM1252 || key == Mod2002024Key.LM1253
-						 || key == Mod2002024Key.LM1254) {
+						 || key == Mod2002024Key.LM1254 || key == Mod2002024Key.LM2368) {
 							table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPadding2Left());					
 						}
 						paintKeyField(table, key, row, x+1, 10, false);

@@ -26,7 +26,8 @@ public class Page13 extends PageAbs {
 	};
 	
 	private static final String[] HEADERS_4 = new String[] {
-			"Estado"
+			"Estado",
+			""
 	};
 	
 	public Page13( Model2002024PageCallback callback ) {
