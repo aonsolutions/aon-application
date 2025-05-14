@@ -13,72 +13,72 @@
 
 @include mixin.respond("8k") {
   :root {
-    font-size: 30rem; // 7680px / 16px = 480px -> 30rem
+    font-size: 24px;
   }
 }
 
 @include mixin.respond("5k") {
   :root {
-    font-size: 20rem; // 5120px / 16px = 320px -> 20rem
+    font-size: 22px;
   }
 }
 
 @include mixin.respond("4k") {
   :root {
-    font-size: 15rem; // 3840px / 16px = 240px -> 15rem
+    font-size: 20px;
   }
 }
 
 @include mixin.respond("2k") {
   :root {
-    font-size: 10rem; // 2560px / 16px = 160px -> 10rem
+    font-size: 18px;
   }
 }
 
 @include mixin.respond("xl") {
   :root {
-    font-size: 7.5rem; // 1920px / 16px = 120px -> 7.5rem
+    font-size: 17px;
   }
 }
 
 @include mixin.respond("lg") {
   :root {
-    font-size: 5.3125rem; // 1366px / 16px = 85px -> 5.3125rem
+    font-size: 16px;
   }
 }
 
 @include mixin.respond("md") {
   :root {
-    font-size: 4rem; // 1024px / 16px = 64px -> 4rem
+    font-size: 15px;
   }
 }
 
 @include mixin.respond("sm") {
   :root {
-    font-size: 3rem; // 768px / 16px = 48px -> 3rem
+    font-size: 14px;
   }
 }
 
 @include mixin.respond("xs") {
   :root {
-    font-size: 2.5rem; // 600px / 16px = 37.5px -> 2.5rem
+    font-size: 13px;
   }
 }
 
 @include mixin.respond("mobile") {
   :root {
-    font-size: 1.875rem; // 480px / 16px = 30px -> 1.875rem
+    font-size: 12px;
   }
 }
 
 @include mixin.respond("mobile-sm") {
   :root {
-    font-size: 1.40625rem; // 360px / 16px = 22.5px -> 1.40625rem
+    font-size: 11px;
   }
 }
 
 @include mixin.respond("mobile-xs") {
   :root {
-    font-size: 1.25rem; // 320px / 16px = 20px -> 1.25rem
+    font-size: 10px;
   }
 }
