@@ -309,7 +309,8 @@ abstract class Model131Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
-		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound()); 		
+//		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound());
+		alcatrazUnboundLabel.setVisible(false); // Este modelo no se obtiene leyendo de facturas
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
@@ -925,7 +926,7 @@ abstract class Model131Base extends DockLayoutPanel {
 						@Override
 						public void onSuccess(String result) {
 							JsAccountingBreakdownGridPanel grid = new JsAccountingBreakdownGridPanel( true );
-							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							grid.setTitle(AON.MSG.modelRelatedEntries(getModel().getModelFullName()));
 							grid.setSubTitle(script.getLabel());
 							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
 							JsArray<JsAccountingBreakdown> array = arrayObject.cast();
