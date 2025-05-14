@@ -51,6 +51,7 @@ public class EnumVisitors {
 		T visitM193C1(T t);
 		T visitM193C2(T t);
 		T visitM193C3(T t);
+		T visitM193C4(T t);
 		T visitM190F01(T t);
 		T visitM190F021(T t);
 		T visitM190F022(T t);

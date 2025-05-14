@@ -176,6 +176,15 @@ public enum WithholdingType implements Serializable {
 			return visitor.visitM190F022(t);
 		}
 	}
+	// FALTA - AÑADIR NUEVA SUBCLAVE C04
+	// MODELO 193 - CLAVE C 4
+	,M193_C4(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/4)","Rendimientos o rentas procedentes del arrendamiento o subarrendamiento de bienes muebles, negocios o minas que no constituyan actividades econ\u00F3micas"){
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193C4(t);
+		}
+	}
+	// -----------------------
 	;
 	
 	private WithholdingTypeGroup group;
@@ -265,7 +274,7 @@ public enum WithholdingType implements Serializable {
 		// TRABAJO
 		,M190_F_01,M190_F_02_1,M190_F_02_2
 		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3
+		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4
 		// DERECHOS_IMAGEN
 		,M190_J
 		// GANANCIAS_PATRIMONIALES
