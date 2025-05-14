@@ -50,11 +50,12 @@ export class AonNewLogin extends AonElement {
     
     
     console.log('********* LOGIN ***********');
+    console.log(this.isNewStyle());
     
     
-    this.style.display = "flex";
-    this.style.height = "100vh";
-    this.style.flexDirection = "column";
+//    this.style.display        = "flex";
+//    this.style.height         = "100vh";
+//    this.style.flexDirection  = "column";
 
     // Toolbar
     let toolbar = this.createElement(TAG.DIV);
@@ -68,7 +69,7 @@ export class AonNewLogin extends AonElement {
 
     let divLanguage = this.createElement(TAG.DIV);
     divLanguage.id = "aonLoginLanguageDivToolbar";
-    divLanguage.style.cursor = "pointer";
+//    divLanguage.style.cursor = "pointer";
     divLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
     toolbar.appendChild(divLanguage);
 
@@ -95,8 +96,8 @@ export class AonNewLogin extends AonElement {
     let loginContent = this.createElement(TAG.DIV);
     loginContent.id = "loginContent";
     loginContent.className = CSS.AON_FLEX_COLUMN;
-    loginContent.style.height = "100%";
-    loginContent.style.justifyContent = "center";
+//    loginContent.style.height = "100%";
+//    loginContent.style.justifyContent = "center";
 
     let loginDivForm = this.createElement(TAG.DIV);
     loginDivForm.id = "loginDivForm";
@@ -195,8 +196,8 @@ export class AonNewLogin extends AonElement {
     let magicLinkContent = this.createElement(TAG.DIV);
     magicLinkContent.id = "magicLinkContent";
     magicLinkContent.className = CSS.AON_FLEX_COLUMN;
-    magicLinkContent.style.height = "100%";
-    magicLinkContent.style.justifyContent = "center";
+//    magicLinkContent.style.height = "100%";
+//    magicLinkContent.style.justifyContent = "center";
 
     let magicLinkDivForm = this.createElement(TAG.DIV);
     magicLinkDivForm.id = "magicLinkDivForm";
@@ -280,10 +281,10 @@ export class AonNewLogin extends AonElement {
   createTitlePanel(parent, title, subtitle) {
     let divTitleForm = this.createElement(TAG.DIV);
     divTitleForm.id = "divTitleForm";
-    divTitleForm.style.display = "flex";
-    divTitleForm.style.flexDirection = "column";
-    divTitleForm.style.alignItems = "center";
-    divTitleForm.style.marginBottom = "2rem";
+//    divTitleForm.style.display = "flex";
+//    divTitleForm.style.flexDirection = "column";
+//    divTitleForm.style.alignItems = "center";
+//    divTitleForm.style.marginBottom = "2rem";
     parent.appendChild(divTitleForm);
 
     let h1 = this.createElement(TAG.H1);
@@ -300,7 +301,7 @@ export class AonNewLogin extends AonElement {
   createLoader(parent) {
     let aonLoader = new AonLoader();
     aonLoader.id = "aonLoginLoader";
-    aonLoader.style.display = "none";
+//    aonLoader.style.display = "none";
     parent.appendChild(aonLoader);
   }
 
@@ -331,7 +332,7 @@ export class AonNewLogin extends AonElement {
 
   magicLink(value) {
     let loader = this.getElement("aonLoginLoader");
-    loader.style.display = "";
+//    loader.style.display = "";
     loader.start();
 
     let data = {
@@ -459,13 +460,13 @@ export class AonNewLogin extends AonElement {
 
   buildAppLogo(divMobiles) {
     //const div  = this.getElement('logosMobiles');
-    divMobiles.style.textAlign = "center";
+//    divMobiles.style.textAlign = "center";
     const playStore = this.createElement(TAG.A);
     playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
     playStore.target = "_blank";
     const imgPlayStore = this.createElement("img");
     imgPlayStore.src = "assets/playstore.png"; //: "assets/playstore-disabled.png";
-    imgPlayStore.style.height = "38px";
+//    imgPlayStore.style.height = "38px";
     playStore.appendChild(imgPlayStore);
     divMobiles.appendChild(playStore);
 
@@ -474,8 +475,8 @@ export class AonNewLogin extends AonElement {
     appStore.target = "_blank";
     const imgAppStore = this.createElement("img");
     imgAppStore.src = "assets/appstore.png"; //: "assets/appstore-disabled.png";
-    imgAppStore.style.height = "40px";
-    imgAppStore.style.filter = "grayscale(100%)";
+//    imgAppStore.style.height = "40px";
+//    imgAppStore.style.filter = "grayscale(100%)";
     appStore.appendChild(imgAppStore);
     divMobiles.appendChild(appStore);
   }
@@ -510,7 +511,7 @@ export class AonNewLogin extends AonElement {
     };
 
     let loader = this.getElement("aonLoginLoader");
-    loader.style.display = "";
+//    loader.style.display = "";
     loader.start();
     login(data)
       .then(() => {
@@ -577,8 +578,8 @@ export class AonNewLogin extends AonElement {
   isConsole(company) {
 	return company.type == 'ADMIN' && company.id === 0;
   }
-
 }
+
 if(!window.customElements.get(TAG.AON_NEW_LOGIN)){
 	window.customElements.define(TAG.AON_NEW_LOGIN, AonNewLogin);
 }

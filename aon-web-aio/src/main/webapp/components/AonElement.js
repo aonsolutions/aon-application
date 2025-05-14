@@ -7,7 +7,6 @@ import * as LS from '../services/localStorageService.js';
 import * as UA from '../services/userAgentService.js';
 
 export class AonElement extends HTMLElement{
-
   ROOT_PANEL = 'rootPanel';
   dur;
 

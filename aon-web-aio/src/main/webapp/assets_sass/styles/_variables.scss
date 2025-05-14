@@ -1,10 +1,13 @@
 //Fuente principal
-$font-primary-regular: 'Inter-regular';
-$font-url-regular: url('../fonts/inter/Inter-Regular.woff') format('woff');
-$font-style-normal: normal;
-$font-primary-italic: 'Intar-italic';
-$font-url-italic: url('../fonts/inter/Inter-Italic.woff') format('woff');
-$font-style-italic: italic;
+$font-primary-regular   : 'Inter-regular';
+$font-url-regular       : '../fonts/inter/Inter-Regular.woff';
+$font-url-regular-format: 'woff';
+$font-style-normal      : 'normal';
+
+$font-primary-italic    : 'Inter-italic';
+$font-url-italic        : '../fonts/inter/Inter-Italic.woff';
+$font-url-italic-format : 'woff';
+$font-style-italic      : 'italic';
 
 //Rango de pesos de la fuente
 $font-weight-regular: 400;

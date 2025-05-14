@@ -8,9 +8,7 @@ import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { MenuApps, ClassicApps, Apps } from '../services/app.js';
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
 
-
 export class AonParent extends AonElement {
-
 	notice;
 	filter;
 	selected;
@@ -72,8 +70,7 @@ export class AonParent extends AonElement {
 	
 
 	select(filter, callback) {
-		
-		this.clearSelectedTab(this.filter);		
+		this.clearSelectedTab(this.filter);
 		//TODO: aonParent.startLoader();
 		let limit = 100;
 		getCompanies({limit}).then( companies => {
