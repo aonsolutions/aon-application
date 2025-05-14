@@ -132,8 +132,6 @@ public class DeliveryDAO {
 		
 		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
-
-		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	// -------------------- DELIVERY
