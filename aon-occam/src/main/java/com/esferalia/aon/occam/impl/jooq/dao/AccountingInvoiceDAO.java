@@ -1176,9 +1176,9 @@ public class AccountingInvoiceDAO {
 		LinkedList<InvoiceDetail> details = new LinkedList<>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
 			InvoiceDetail detail = vat.getInvoiceDetail() != null
-				? vat.getInvoiceDetail().setAccount(
-					vat.getInvoiceDetail().getAccount() != null
-						? vat.getInvoiceDetail().getAccount() 
+				? vat.getInvoiceDetail().setAccountId(
+					vat.getInvoiceDetail().getAccountId() != null
+						? vat.getInvoiceDetail().getAccountId() 
 						: vat.getExpAccount().map(a -> a.getId()).orElse(null)
 				)
 				: new InvoiceDetail()
@@ -1193,7 +1193,7 @@ public class AccountingInvoiceDAO {
 					.setDiscountExpression("0.0")
 					.setSource(InvoiceSource.ACCOUNT)
 					.setTaxableBase(vat.getBase())
-					.setAccount(vat.getExpAccount().map(a -> a.getId()).orElse(null) )
+					.setAccountId(vat.getExpAccount().map(a -> a.getId()).orElse(null) )
 					.setPrepayment(vat.isPrepayment());
 			if (!vat.isPrepayment()) {				
 				InvoiceTax invoiceTax = detail.getInvoiceTaxes().stream().filter(f -> TaxType.VAT.equals(f.getTaxType())).findFirst().orElse(null);
@@ -1296,7 +1296,7 @@ public class AccountingInvoiceDAO {
 					.setDiscountExpression("0.0")
 					.setSource(InvoiceSource.ACCOUNT)
 					.setTaxableBase(vat.getBase())
-					.setAccount(vat.getExpAccount().map(a->a.getId()).orElse(null))
+					.setAccountId(vat.getExpAccount().map(a->a.getId()).orElse(null))
 					.setPrepayment(vat.isPrepayment())
 				;
 			} else {
@@ -1306,7 +1306,7 @@ public class AccountingInvoiceDAO {
 					.setInvestAsset(vat.getInvestAsset())
 					.setWorkplace( new Workplace().setId( accInvoice.getWorkplace()))
 					.setLine(line)
-					.setAccount(vat.getExpAccount().map(a->a.getId()).orElse(null))
+					.setAccountId(vat.getExpAccount().map(a->a.getId()).orElse(null))
 					.setPrepayment(vat.isPrepayment())
 				;
 				if (AonNumberUtils.notEquals (detail.getTaxableBase(), vat.getBase())) {

@@ -1144,7 +1144,7 @@ public class OCRInvoiceBuilder {
 		guessItemsOrAccounts(ocr.getCtx(),ocr.getInvoice(),ocr.getDetail());
 		
 		// Si no se ha rellenado ni iten ni account, se busca el parámetro por defecto. 
-		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccount() == null) {
+		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccountId() == null) {
 			if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
 				ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
 			} else {
@@ -1160,7 +1160,7 @@ public class OCRInvoiceBuilder {
 					guessItemsOrAccounts(ctx, invoice, invoice.getDetails().get(i) );			
 				} else {
 					invoice.getDetails().get(i).setItem( invoice.getDetails().get(0).getItem() );
-					invoice.getDetails().get(i).setAccount( invoice.getDetails().get(0).getAccount() );
+					invoice.getDetails().get(i).setAccountId( invoice.getDetails().get(0).getAccountId() );
 					invoice.getDetails().get(i).setAccountCode( invoice.getDetails().get(0).getAccountCode() );
 					invoice.getDetails().get(i).setAccountDescription( invoice.getDetails().get(0).getAccountDescription() );
 				}
@@ -1182,7 +1182,7 @@ public class OCRInvoiceBuilder {
 					.findFirst()
 					.orElse(null);
 				if (account != null) {
-					invoiceDetail.setAccount( account.getId() );	
+					invoiceDetail.setAccountId( account.getId() );	
 					invoiceDetail.setAccountCode( account.getCode() );
 					invoiceDetail.setAccountDescription( account.getDescription() );
 				}

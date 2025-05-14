@@ -296,12 +296,12 @@ public class InvoiceVAT implements Serializable {
 			getExpAccount()
 				.ifPresentOrElse( 
 					a -> {
-						this.getInvoiceDetail().setAccount(a.getId());
+						this.getInvoiceDetail().setAccountId(a.getId());
 						this.getInvoiceDetail().setAccountCode(a.getCode());
 						this.getInvoiceDetail().setAccountDescription(a.getDescription());
 					}
 					,() -> {
-						this.getInvoiceDetail().setAccount(null);
+						this.getInvoiceDetail().setAccountId(null);
 						this.getInvoiceDetail().setAccountCode(null);
 						this.getInvoiceDetail().setAccountDescription(null);
 					}

@@ -47,7 +47,7 @@ public class InvoiceDetail implements Serializable {
 	private Workplace workplace;
 	
 	// ACCOUNT
-	private Integer account;
+	private Integer accountId;
 	private String accountCode;
 	private String accountDescription;
 	
@@ -262,11 +262,11 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
-	public Integer getAccount() {
-		return account;
+	public Integer getAccountId() {
+		return accountId;
 	}
-	public InvoiceDetail setAccount(Integer account) {
-		this.account = account;
+	public InvoiceDetail setAccountId(Integer accountId) {
+		this.accountId = accountId;
 		return this;
 	}
 	
