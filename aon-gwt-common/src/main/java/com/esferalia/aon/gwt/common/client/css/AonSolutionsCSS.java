@@ -1508,5 +1508,8 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_badge")
 	String aonBadge();
+	
+	@ClassName("aon_grid_two_cols")
+	String aonGridTwoCols();
 }
 

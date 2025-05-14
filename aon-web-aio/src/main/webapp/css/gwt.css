@@ -49,6 +49,22 @@
 */
 
 /*
+* Grid template
+*/
+
+.aon_grid_two_cols{
+	display: grid;
+	grid-template-columns: 1fr;
+   	gap: 1rem;
+}
+ 
+@media(min-width: 1150px) {
+	.aon_grid_two_cols {
+		grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/*
  * Card
  */
 .aonCard, .aonEmployeeCard, .aonEnterpriseCard, .aonCCCCard,

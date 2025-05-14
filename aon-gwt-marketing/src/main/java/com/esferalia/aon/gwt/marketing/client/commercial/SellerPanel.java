@@ -22,11 +22,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -48,8 +46,6 @@ public abstract class SellerPanel extends ScrollPanel {
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
 	
-	private SimplePanel container;
-	private ScrollPanel scrollPanel;
 	private AonCustomTable tab;
 	private int lastScrollPos = 0;
 	
@@ -59,14 +55,16 @@ public abstract class SellerPanel extends ScrollPanel {
 	
 	private Integer deleteIterator = 0;
 	
+	private SimplePanel parentPanel;
+	
 	private static enum COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
 		, DES(AON.MSG.name()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUD(AON.MSG.alias()						,"15rem"			,"")
-		, DOC(AON.MSG.document()					,"5rem"				,"")
-		, TYP(AON.MSG.scope()						,"10rem"			,"")
-		, ACT("Estado"								,"5rem"				,"")
-		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
+		, BUD(AON.MSG.alias()						,"12rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DOC(AON.MSG.document()					,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TYP(AON.MSG.scope()						,"10rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, ACT("Estado"								,"6rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUT(AonStringUtils.EMPTY					,"3rem"				,"")
 		;
 
 		String headerLabel;
@@ -89,17 +87,15 @@ public abstract class SellerPanel extends ScrollPanel {
 		}
 	}
 
-	public SellerPanel(SellerParams params) {
+	public SellerPanel(SellerParams params, SimplePanel centerPanel) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+		
+		this.parentPanel = centerPanel;
 		
 		this.params = params;
 		this.rowSellers.clear();
 
-		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
-		setWidget(container);
-		
 		addScrollHandler(new ScrollHandler() {
 
 			public void onScroll(ScrollEvent event) {
@@ -149,13 +145,11 @@ public abstract class SellerPanel extends ScrollPanel {
 	}
 
 	private void search() {
-		container.clear();
 		tab = new AonCustomTable();
-		tab.setMaxHeight((Window.getClientHeight() - 200) + "px");
-		scrollPanel = new ScrollPanel(tab);
+		setWidget(tab);
+		getElement().getStyle().setProperty("margin", "0 1rem");
 		
 		paintHeader();
-		container.setWidget(scrollPanel);
 		searchData();
 	}
 	
@@ -214,8 +208,8 @@ public abstract class SellerPanel extends ScrollPanel {
 				FlowPanel line = new FlowPanel();
 				InlineLabel label = new InlineLabel(AON.MSG.noData());
 				line.add(label);
-				container.clear();
-				container.add(line);
+				parentPanel.clear();
+				parentPanel.add(line);
 				disableMoreData();
 			}
 			enableSearch();
@@ -227,33 +221,28 @@ public abstract class SellerPanel extends ScrollPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton button;
-		button = new AonTableButton("Borrar agente comercial", AON.CSS.aonIconDelete());
-		button.addStyleName(AON.CSS.aonCustomRowButtom());
-		button.addClickHandler( new ClickHandler() {
+		AonTableButton deleteButton = new AonTableButton("Borrar agente comercial", AON.CSS.aonIconDelete());
+		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
+		deleteButton.addClickHandler(e -> {
+			e.stopPropagation();
+			deleteButton.setEnabled(false);
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Agente Comercial",
+					new HTML("Se va a proceder a eliminar el agente <b>" + seller.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				event.stopPropagation();
-				button.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Agente Comercial",
-						new HTML("Se va a proceder a eliminar el agente <b>" + seller.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-				
-				dialog.confirm(new AonAcceptDialogCallback() {
+			dialog.confirm(new AonAcceptDialogCallback() {
 
-					@Override
-					public void onCancel() {
-						button.setEnabled(true);
-					}
+				@Override
+				public void onCancel() {
+					deleteButton.setEnabled(true);
+				}
 
-					@Override
-					public void onAccept() {
-						delete(seller.getId());
-					}
-				});
-			}
+				@Override
+				public void onAccept() {
+					delete(seller.getId());
+				}
+			});
 		});
-		buttonContainer.add(button);
+		buttonContainer.add(deleteButton);
 		
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onSellerOpen(seller), ClickEvent.getType());
@@ -279,10 +268,27 @@ public abstract class SellerPanel extends ScrollPanel {
 		tab.addInlineStyle(name, COLS.DES.getStyles());
 		tab.addRow(row, name, COLS.DES.getColWidth());
 		
-		tab.addRow(row, new Label(seller.getAlias()), COLS.BUD.getColWidth());
-		tab.addRow(row, new Label(seller.getDocument()), COLS.DOC.getColWidth());
-		tab.addRow(row, new Label(seller.getScope() == null ? null : seller.getScope().getDescription()), COLS.TYP.getColWidth());
-		tab.addRow(row, new Label(seller.isActive() ? "Activo" : "Inactivo"), COLS.ACT.getColWidth());
+		Label alias = new Label(seller.getAlias());
+		alias.setTitle(seller.getAlias());
+		tab.addInlineStyle(alias, COLS.BUD.getStyles());
+		tab.addRow(row, alias, COLS.BUD.getColWidth());
+		
+		Label document = new Label(seller.getDocument());
+		document.setTitle(seller.getDocument());
+		tab.addInlineStyle(document, COLS.DOC.getStyles());
+		tab.addRow(row, document, COLS.DOC.getColWidth());
+		
+		String scopeValue = seller.getScope() == null ? null : seller.getScope().getDescription();
+		Label scope = new Label(scopeValue);
+		scope.setTitle(scopeValue);
+		tab.addInlineStyle(scope, COLS.TYP.getStyles());
+		tab.addRow(row, scope, COLS.TYP.getColWidth());
+		
+		String statusValue = seller.isActive() ? "Activo" : "Inactivo";
+		Label status = new Label(statusValue);
+		status.setTitle(statusValue);
+		tab.addInlineStyle(status, COLS.ACT.getStyles());
+		tab.addRow(row, status, COLS.ACT.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
