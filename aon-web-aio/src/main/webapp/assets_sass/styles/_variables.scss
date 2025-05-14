@@ -10,13 +10,27 @@ $font-url-italic-format : 'woff';
 $font-style-italic      : 'italic';
 
 //Rango de pesos de la fuente
-$font-weight-regular: 400;
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
-$font-weight-bold: 700;
+$font-weight-regular  : 400;
+$font-weight-medium   : 500;
+$font-weight-semibold : 600;
+$font-weight-bold     : 700;
 $font-weight-extrabold: 800;
 
-//Tamaños de fuente estandar
+//Tamaño de fuente segun resolucion
+$font-size-8k       : 24px;
+$font-size-5k       : 22px;
+$font-size-4k       : 20px;
+$font-size-xl       : 17px;
+$font-size-lg       : 16px;
+$font-size-md       : 16px;
+$font-size-sm       : 14px;
+$font-size-xs       : 13px;
+$font-size-mobile   : 12px;
+$font-size-mobile-sm: 11px;
+$font-size-mobile-xs: 10px;
+
+
+//Tamanos de fuente estandar
 $font-8 : 0.5rem;   // 8px
 $font-10: 0.625rem; // 10px
 $font-12: 0.75rem;  // 12px
