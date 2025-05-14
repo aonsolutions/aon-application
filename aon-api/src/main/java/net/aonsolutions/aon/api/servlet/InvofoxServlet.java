@@ -694,7 +694,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 							.setPercentage(21.0).setQuota(AonMathUtils.round(detail.getAmount() * 0.21))
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT).setDeductiblePercent(100)
 							.setDeductibleQuota(AonMathUtils.round(detail.getAmount() * 0.21));
-					detail.addInvoiceTax(invoiceTax);
+					detail.addTax(invoiceTax);
 				}
 				return detail;
 			}).toList());

@@ -585,7 +585,7 @@ public class OCRInvoiceBuilder {
 			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
 			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 			
-			detail.addInvoiceTax(vat);
+			detail.addTax(vat);
 		}
 	}
 
@@ -615,7 +615,7 @@ public class OCRInvoiceBuilder {
 			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
 			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 			
-			detail.addInvoiceTax(vat);
+			detail.addTax(vat);
 		}
 	}
 

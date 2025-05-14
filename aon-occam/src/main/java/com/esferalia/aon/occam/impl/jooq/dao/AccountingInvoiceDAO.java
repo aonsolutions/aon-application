@@ -1210,7 +1210,7 @@ public class AccountingInvoiceDAO {
 						}).collect(Collectors.toCollection(LinkedList::new))
 					);
 				} else if(invoiceTax == null) { 
-					detail.addInvoiceTax(new InvoiceTax()
+					detail.addTax(new InvoiceTax()
 						.setTaxType(TaxType.VAT)
 						.setBase(vat.getBase())
 						.setPercentage(vat.getPercentage())
@@ -1258,7 +1258,7 @@ public class AccountingInvoiceDAO {
 								quota = AonMathUtils.round(quota + withholdingTotalQuota);
 							}
 						}
-						detail.addInvoiceTax(new InvoiceTax()
+						detail.addTax(new InvoiceTax()
 							.setTaxType(TaxType.RETENTION)
 							.setBase(base)
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())
@@ -1359,7 +1359,7 @@ public class AccountingInvoiceDAO {
 					);
 				} else if(invoiceTax == null) { 
 					
-					detail.addInvoiceTax(new InvoiceTax()
+					detail.addTax(new InvoiceTax()
 						.setTaxType(TaxType.VAT)
 						.setBase(vat.getBase())
 						.setPercentage(vat.getPercentage())
@@ -1404,7 +1404,7 @@ public class AccountingInvoiceDAO {
 								quota = AonMathUtils.round(quota + withholdingTotalQuota);
 							}
 						}
-						detail.addInvoiceTax(new InvoiceTax()
+						detail.addTax(new InvoiceTax()
 							.setTaxType(TaxType.RETENTION)
 							.setBase(base)
 							.setPercentage(accInvoice.getWithholdingData().getPercentage())

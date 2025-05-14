@@ -609,7 +609,7 @@ public class TediParser {
 			double quota = AonMathUtils.round( base * percent / 100 );
 			double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
 			double deductibleQuota = AonMathUtils.round( quota + surchargeQuota );
-			ctx.getAonDetail().addInvoiceTax( 
+			ctx.getAonDetail().addTax( 
 					new InvoiceTax()
 					.setTaxType( TaxType.VAT )
 					.setBase( base )
@@ -699,7 +699,7 @@ public class TediParser {
 				if (irpfTax != null && result.getInvoice().getDetails() != null) {
 					for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-						id.addInvoiceTax( 
+						id.addTax( 
 							new InvoiceTax()
 								.setTaxType( TaxType.RETENTION )
 								.setBase( id.getTaxableBase() )
@@ -736,7 +736,7 @@ public class TediParser {
 						;
 					result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
 					result.getInvoice().getDetails().add(id);
-					id.addInvoiceTax( new InvoiceTax()
+					id.addTax( new InvoiceTax()
 						.setTaxType( TaxType.VAT )
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
@@ -753,7 +753,7 @@ public class TediParser {
 				result.getInvoice().getBreakdown().add(irpfTax);
 				for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 					double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-					id.addInvoiceTax( 
+					id.addTax( 
 							new InvoiceTax()
 								.setTaxType( TaxType.RETENTION )
 								.setBase( id.getTaxableBase() )

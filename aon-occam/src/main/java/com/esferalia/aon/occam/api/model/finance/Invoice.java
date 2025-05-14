@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -34,7 +35,6 @@ public class Invoice implements Serializable, HasAudit {
 	private Integer id;
 	private Integer domain;
 	private EnterpriseActivity activity;
-	private String epigraph;
 	private Integer investAsset;			//**
 	private Integer project;				//**
 	private String series;
@@ -93,8 +93,6 @@ public class Invoice implements Serializable, HasAudit {
 	private String siiStatus;
 
 	private List<InvoiceDetail> details;
-	@Deprecated
-	private List<InvoiceBreakdown> breakdown;
 	private List<Finance> finances;
 	
 	private TaxBreakdown taxBreakdown;
@@ -102,15 +100,6 @@ public class Invoice implements Serializable, HasAudit {
 	private InvoiceFiscal fiscal;
 	private InvoiceDoc doc;
 	
-	private String tediCategory;
-	private String fileUrl;
-	
-	// ***************************
-	// ATRIBUTOS CON DUDOSO FUTURO
-	// ***************************
-	private Registry registryData;
-	// ***************************
-
 	private InvoiceInfo invoiceInfo;
 		
 	private List<InvoiceError> messages;
@@ -122,6 +111,17 @@ public class Invoice implements Serializable, HasAudit {
 	// Facturas Emitidas por Terceros.
 	private boolean thirdPart;
 
+	// ***************************
+	// ATRIBUTOS CON DUDOSO FUTURO
+	// ***************************
+	private String epigraph;
+	private Registry registryData;
+	@Deprecated
+	private List<InvoiceBreakdown> breakdown;
+	private String tediCategory;
+	private String fileUrl;
+	// ***************************
+
 	public Integer getId() {
 		return id;
 	}
@@ -129,6 +129,7 @@ public class Invoice implements Serializable, HasAudit {
 		this.id = id;
 		return this;
 	}
+	
 	public Integer getDomain() {
 		return domain;
 	}
@@ -144,13 +145,6 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setActivity(EnterpriseActivity activity) {
 		this.activity = activity;
-		return this;
-	}
-	public String getEpigraph() {
-		return epigraph;
-	}
-	public Invoice setEpigraph(String epigraph) {
-		this.epigraph = epigraph;
 		return this;
 	}
 	public Integer getInvestAsset() {
@@ -268,14 +262,6 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public Registry getRegistryData() {
-		return registryData;
-	}
-	public Invoice setRegistryData(Registry registryData) {
-		this.registryData = registryData;
-		return this;
-	}
-	
 	public String getRegistryDocument() {
 		return registryDocument;
 	}
@@ -324,8 +310,6 @@ public class Invoice implements Serializable, HasAudit {
 		this.registryAddress = registryAddress;
 		return this;
 	}
-	
-	
 	
 	public Scope getScope() {
 		return scope;
@@ -537,65 +521,45 @@ public class Invoice implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
-	public List<InvoiceDetail> getDetails() {
-		if(details == null) {
-			details = new LinkedList<>();
-		}
-		return details;
+	// ---------------------------------------------------- [DETAILS]
+	public Stream<InvoiceDetail> detailStream() {
+		return AonCollectionUtils.stream(this.details);
 	}
-	
-	public Invoice setDetails(List<InvoiceDetail> details) {
-		this.details = details;
-		return this;
+	public boolean hasDetails() {
+		return AonCollectionUtils.isEmpty(this.details); 
 	}
-	
 	public Invoice addDetail(InvoiceDetail detail) {
-		getDetails().add(detail);
-		return this;
-		
-	}
-
-	/**
-	 * @deprecated This method will be removed 
-	 * use getTaxBreakdown(), getVats() or getWithHolding()
-	 */
-	@Deprecated
-	public List<InvoiceBreakdown> getBreakdown() {
-		if(breakdown == null) {
-			this.breakdown = new LinkedList<>();
-		}
-		return breakdown;
-	}
-	/**
-	 * @deprecated This method will be removed 
-	 * use setTaxBreakdown()
-	 */
-	@Deprecated
-	public Invoice setBreakdown(List<InvoiceBreakdown> breakdown) {
-		this.breakdown = breakdown;
+		ensureDetails().add(detail);
 		return this;
 	}
-
-	public List<Finance> getFinances() {
-		return finances;
-	}
-	public Invoice setFinances(List<Finance> finances) {
-		this.finances = finances;
-		return this;
+	private List<InvoiceDetail> ensureDetails() {
+		if (this.details == null) this.details = new LinkedList<>();
+		return this.details;
 	}
 	
-	public Invoice addFinance(Finance finance) {
-		if (getFinances() == null) {
-			setFinances(new LinkedList<>());
-		}
-		getFinances().add(finance);
-		return this;
+	// ---------------------------------------------------- [FINANCES]
+	public Stream<Finance> financeStream() {
+		return AonCollectionUtils.stream(this.finances);
 	}
 	public boolean hasFinances() {
-		return getFinances() != null && !getFinances().isEmpty(); 
+		return AonCollectionUtils.isEmpty(this.finances); 
 	}
-	
+	private List<Finance> ensureFinances() {
+		if (this.finances == null) this.finances = new LinkedList<>();
+		return this.finances;
+	}
+	public Invoice addFinance(Finance finance) {
+		ensureFinances().add(finance);
+		return this;
+	}
+	public Optional<Finance> getUniqueFinance() {
+		if (AonCollectionUtils.size(this.finances) == 1) {
+			return financeStream().findFirst(); 
+		}
+		return Optional.empty();
+	}
+
+	// ---------------------------------------------------- [FISCAL]
 	public InvoiceFiscal getFiscal() {
 		return fiscal;
 	}
@@ -610,6 +574,34 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	// ---------------------------------------------------- [MESSAGES]
+	public Stream<InvoiceError> messageStream() {
+		return AonCollectionUtils.stream(this.messages);
+	}
+	private List<InvoiceError> ensureMessages() {
+	    if ( this.messages == null ) messages = new LinkedList<>();
+	    return this.messages;
+	}
+	public boolean hasMessages() {
+		return AonCollectionUtils.isEmpty(this.messages);
+	}
+	public Invoice addMessage(InvoiceError message) {
+		ensureMessages().add(message);
+	    return this;
+	}
+	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
+		if (!hasMessages()) return Optional.empty();
+		return AonCollectionUtils.stream( getMessages() )
+			.map(ie -> ie.getLevel().ordinal())
+			.max( Integer::compare )
+			.flatMap( InvoiceErrorLevel::value )
+		;
+	}
+	public void clearMessages() {
+		this.messages = new LinkedList<>();		
+	}
+
+	// ---------------------------------------------------- [DOC]
 	public Optional<InvoiceDoc> getDoc() {
 		return Optional.ofNullable(doc);
 	}
@@ -627,17 +619,6 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public Invoice setRegistryAccount(Account registryAccount) {
 		this.registryAccount = registryAccount;
-		return this;
-	}
-	
-	// TEDI CATEGORY - ACCOUNT CODE
-	
-	public String getTediCategory() {
-		return tediCategory;
-	}
-	
-	public Invoice setTediCategory(String category) {
-		this.tediCategory = category;
 		return this;
 	}
 	
@@ -739,15 +720,6 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public String getFileUrl() {
-		return fileUrl;
-	}
-	
-	public Invoice setFileUrl(String fileUrl) {
-		this.fileUrl = fileUrl;
-		return this;
-	}
-	
 	// ----------- VAT REGIMES
 	
 	public boolean isVatUnion() {
@@ -793,39 +765,6 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setInvoiceInfo(InvoiceInfo invoiceInfo) {
 		this.invoiceInfo = invoiceInfo;
 		return this;
-	}
-	
-	public boolean hasMessages() {
-		return getMessages() != null && !getMessages().isEmpty();
-	}
-	public List<InvoiceError> getMessages() {
-	    if ( messages == null ) {
-		messages = new LinkedList<>();
-	    }
-	    return messages;
-	}
-	public Invoice setMessages(LinkedList<InvoiceError> messages) {
-	    this.messages = messages;
-	    return this;
-	}
-	public Invoice addMessage(InvoiceError message) {
-	    if ( messages == null ) {
-		messages = new LinkedList<>();
-	    }
-	    messages.add(message);
-	    return this;
-	}
-	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
-		if (!hasMessages()) return Optional.empty();
-		return AonCollectionUtils.stream( getMessages() )
-			.map(ie -> ie.getLevel().ordinal())
-			.max( Integer::compare )
-			.flatMap( InvoiceErrorLevel::value )
-		;
-	}
-
-	public void clearMessages() {
-		this.messages = new LinkedList<>();		
 	}
 	
 	public boolean isRecordable() {
@@ -888,33 +827,129 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public String flat() {	
-		StringBuilder builder = new StringBuilder();
-//		java.lang.reflect.Field[] field = this.getClass().getDeclaredFields();
-//		for (java.lang.reflect.Field f : field) {
-//			try {
-//				if(f.get(this) != null && (f.getType() == java.lang.Integer.class
-//						|| f.getType() == java.lang.String.class
-//						|| f.getType() == int.class
-//						|| f.getType() == java.util.Date.class
-//						|| f.getType() == boolean.class
-//						|| f.getType() == double.class
-//						)) {
-//					String value = f.get(this).toString();
-//					builder.append(value);
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}			
-//		}
-		
-		builder.append(getSeries());
-		builder.append(getNumber());
-		builder.append(getReferenceCode());
-		builder.append(getRegistryName());
-		builder.append(getRegistryDocument());
-		builder.append(getTotal());
-		
-		return builder.toString();
+		return new StringBuilder()
+			.append(getSeries())
+			.append(getNumber())
+			.append(getReferenceCode())
+			.append(getRegistryName())
+			.append(getRegistryDocument())
+			.append(getTotal())
+			.toString();
+	}
+	
+	// *********************************************************************************
+	// ****************************************** [ ATRIBUTOS CON DUDOSO FUTURO ] ******
+	// *********************************************************************************
+	public String getEpigraph() {
+		return epigraph;
+	}
+	public Invoice setEpigraph(String epigraph) {
+		this.epigraph = epigraph;
+		return this;
+	}
+	
+	public Registry getRegistryData() {
+		return registryData;
+	}
+	public Invoice setRegistryData(Registry registryData) {
+		this.registryData = registryData;
+		return this;
+	}
+	
+	public String getTediCategory() {
+		return tediCategory;
+	}
+	
+	public Invoice setTediCategory(String category) {
+		this.tediCategory = category;
+		return this;
+	}
+	
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	public Invoice setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
+		return this;
+	}
+	
+	// **********************************************************************************
+	// ***************************************************** [ DEPRECATED METHODS ] *****
+	// **********************************************************************************
+	/**
+	 * @deprecated This method will be removed 
+	 * use detailStream()
+	 */
+	public List<InvoiceDetail> getDetails() {
+		if(details == null) {
+			details = new LinkedList<>();
+		}
+		return details;
+	}
+	
+	/**
+	 * @deprecated This method will be removed 
+	 * use addDetail(InvoiceDetail detail)
+	 */
+	public Invoice setDetails(List<InvoiceDetail> details) {
+		this.details = details;
+		return this;
+	}
+
+	/**
+	 * @deprecated This method will be removed 
+	 * use financeStream()
+	 */
+	public List<Finance> getFinances() {
+		return finances;
+	}
+	/**
+	 * @deprecated This method will be removed 
+	 * use addFinance(Finance finance)
+	 */
+	public Invoice setFinances(List<Finance> finances) {
+		this.finances = finances;
+		return this;
+	}
+
+	/**
+	 * @deprecated This method will be removed 
+	 * use getTaxBreakdown(), getVats() or getWithHolding()
+	 */
+	@Deprecated
+	public List<InvoiceBreakdown> getBreakdown() {
+		if(breakdown == null) {
+			this.breakdown = new LinkedList<>();
+		}
+		return breakdown;
+	}
+	/**
+	 * @deprecated This method will be removed 
+	 * use setTaxBreakdown()
+	 */
+	@Deprecated
+	public Invoice setBreakdown(List<InvoiceBreakdown> breakdown) {
+		this.breakdown = breakdown;
+		return this;
+	}
+	
+	/**
+	 * @deprecated This method will be removed 
+	 * use messageStream()
+	 */
+	public List<InvoiceError> getMessages() {
+	    if ( messages == null ) {
+	    	messages = new LinkedList<>();
+	    }
+	    return messages;
+	}
+	/**
+	 * @deprecated This method will be removed 
+	 * use addMessage(InvoiceError message)
+	 */
+	public Invoice setMessages(LinkedList<InvoiceError> messages) {
+	    this.messages = messages;
+	    return this;
 	}
 }
 
