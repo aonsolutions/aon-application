@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.invoice;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.util.AonMathUtils;

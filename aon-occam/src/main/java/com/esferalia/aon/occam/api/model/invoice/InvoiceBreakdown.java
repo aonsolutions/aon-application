@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.invoice;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -175,7 +176,7 @@ public class InvoiceBreakdown implements Serializable {
 			.setQuota(iw.getQuota())
 			.setDeductibleQuota(iw.getDeductibleQuota())
 			.setWithholdingType(iw.getWithholdingType())
-			.setWithholdingAccount(iw.getAccount())
+			.setWithholdingAccount(iw.getAccount().orElse(null))
 			;
 	}
 }

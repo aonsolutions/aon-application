@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;

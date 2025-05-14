@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Workplace;
+import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
@@ -353,12 +354,12 @@ public class InvoiceDetail implements Serializable, HasAudit {
 				.setInvoiceDetail(this.id)
 				.setTaxType(TaxType.RETENTION)
 				.setPercentage(iw.getPercentage())
-				.setWithholdingAccount(iw.getAccount())
+				.setWithholdingAccount(iw.getAccount().orElse(null))
 				.setWithholdingType(iw.getWithholdingType());
 			addInvoiceTax(inv, it);
 		} else {
 			it.setPercentage(iw.getPercentage())
-			  .setWithholdingAccount(iw.getAccount())
+			  .setWithholdingAccount(iw.getAccount().orElse(null))
 			  .setWithholdingType(iw.getWithholdingType());
 		}
 		return it;
