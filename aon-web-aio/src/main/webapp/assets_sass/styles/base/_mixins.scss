@@ -1,0 +1,27 @@
+@use '../variables' as v;
+@use "sass:map";
+
+// breakpoints
+$breakpoints: (
+  "8k": 7680px,
+  "5k": 5120px,
+  "4k": 3840px,
+  "2k": 2560px,
+  "xl": 1920px,
+  "lg": 1366px,
+  "md": 1024px,
+  "sm": 768px,
+  "xs": 600px,
+  "mobile": 480px,
+  "mobile-sm": 360px,
+  "mobile-xs": 320px
+);
+
+@mixin respond($size) {
+  $value: map.get($breakpoints, $size);
+  @if $value != null {
+    @media (max-width: $value) {
+      @content;
+    }
+  }
+}

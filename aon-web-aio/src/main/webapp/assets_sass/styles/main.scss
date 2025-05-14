@@ -2,10 +2,83 @@
   Created on : May 8, 2025, 10:11:14?AM
 */
 @use './variables' as v;
+@use './base/mixins' as mixin;
 @use './base/typography';
 
 :root{
   font-family : v.$font-primary-regular;
   font-weight : v.$font-weight-regular;
   font-size   : v.$font-16;
+}
+
+@include mixin.respond("8k") {
+  :root {
+    font-size: 30rem; // 7680px / 16px = 480px -> 30rem
+  }
+}
+
+@include mixin.respond("5k") {
+  :root {
+    font-size: 20rem; // 5120px / 16px = 320px -> 20rem
+  }
+}
+
+@include mixin.respond("4k") {
+  :root {
+    font-size: 15rem; // 3840px / 16px = 240px -> 15rem
+  }
+}
+
+@include mixin.respond("2k") {
+  :root {
+    font-size: 10rem; // 2560px / 16px = 160px -> 10rem
+  }
+}
+
+@include mixin.respond("xl") {
+  :root {
+    font-size: 7.5rem; // 1920px / 16px = 120px -> 7.5rem
+  }
+}
+
+@include mixin.respond("lg") {
+  :root {
+    font-size: 5.3125rem; // 1366px / 16px = 85px -> 5.3125rem
+  }
+}
+
+@include mixin.respond("md") {
+  :root {
+    font-size: 4rem; // 1024px / 16px = 64px -> 4rem
+  }
+}
+
+@include mixin.respond("sm") {
+  :root {
+    font-size: 3rem; // 768px / 16px = 48px -> 3rem
+  }
+}
+
+@include mixin.respond("xs") {
+  :root {
+    font-size: 2.5rem; // 600px / 16px = 37.5px -> 2.5rem
+  }
+}
+
+@include mixin.respond("mobile") {
+  :root {
+    font-size: 1.875rem; // 480px / 16px = 30px -> 1.875rem
+  }
+}
+
+@include mixin.respond("mobile-sm") {
+  :root {
+    font-size: 1.40625rem; // 360px / 16px = 22.5px -> 1.40625rem
+  }
+}
+
+@include mixin.respond("mobile-xs") {
+  :root {
+    font-size: 1.25rem; // 320px / 16px = 20px -> 1.25rem
+  }
 }
