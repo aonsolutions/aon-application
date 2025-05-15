@@ -187,7 +187,7 @@ public class SellerWorkloadDAO {
 	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
-	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+//	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
 	            .and(condition);
 	        
@@ -291,7 +291,7 @@ public class SellerWorkloadDAO {
 			            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 			            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 			            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
-			            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+//			            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 			            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
 			            .and(conditionFee)
 			            .fetch();
@@ -341,7 +341,7 @@ public class SellerWorkloadDAO {
 		            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 		            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 		            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
-		            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+//		            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 		            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
 		            .and(condition)
 		            .fetch();
@@ -552,7 +552,7 @@ public class SellerWorkloadDAO {
 	            .and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 	            .and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
 	            .and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
-	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
+//	            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 	            .and(recalculatedBillingDateAdjusted.lessOrEqual(start)) // Filtro por la fecha ajustada
 	            .fetch();
 
