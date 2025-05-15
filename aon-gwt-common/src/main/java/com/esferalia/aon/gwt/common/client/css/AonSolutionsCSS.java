@@ -1511,5 +1511,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_grid_two_cols")
 	String aonGridTwoCols();
+	
+	@ClassName("aon_icon_gpp_maybe")
+	String aonIconGppMaybe();
+	
 }
 

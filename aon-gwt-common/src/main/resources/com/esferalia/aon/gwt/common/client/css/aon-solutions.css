@@ -125,6 +125,8 @@
 .aon_icon_undo { background-image: iconUndo;}
 @url iconUndoAll aonIconUndoAll;
 .aon_icon_undo_all { background-image: iconUndoAll;}
+@url iconGppMaybe aonIconGppMaybe;
+.aon_icon_gpp_maybe { background-image: iconGppMaybe;}
 @url iconRedo aonIconRedo;
 .aon_icon_redo { background-image: iconRedo;}
 @url iconAccept aonIconAccept;
