@@ -153,8 +153,12 @@ export class AonInvoicePanel extends AonElement {
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
   }
 
+  buildEmptyToolbarOptions() {
+    this.clearToolbar();
+  } 
+
   buildInvoiceHomeToolbarOptions() {
-     this.clearToolbar();
+    this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());      
       this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
