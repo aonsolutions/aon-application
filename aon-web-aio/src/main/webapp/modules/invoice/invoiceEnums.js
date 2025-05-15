@@ -155,13 +155,13 @@ export const WithholdingType = [
     name: "Elab. obras (F/02) - 15%",
     description: "Elaboración de obras literarias, artísticas o científicas.",
     percentage: 15.0
-  }	,
-	   {
-	    id: 'M193_C4',
-	    name: "Cap. Mobiliario (C/4) - 19%",
-	    description: "Rendimientos o rentas procedentes del arrendamiento o subarrendamiento de bienes muebles, negocios o minas que no constituyan actividades económicas.",
-	    percentage: 19.0
-	  }
+  },
+  {
+    id: 'M193_C4',
+    name: "Cap. Mobiliario (C/4) - 19%",
+    description: "Rendimientos o rentas procedentes del arrendamiento o subarrendamiento de bienes muebles, negocios o minas que no constituyan actividades económicas.",
+    percentage: 19.0
+  }
 ];
 
 

@@ -495,16 +495,20 @@ public class Mod193DAO {
 				.as(INVOICE_TAX.QUOTA.getName()));
 		
 		ctx.getDslContext()
-			.select(INVOICE.RDOCUMENT,INVOICE.RNAME,minRegistry,sumBase,quotaOp,INVOICE_TAX.PERCENTAGE)
+			.select(INVOICE.RDOCUMENT, INVOICE.RNAME, minRegistry, sumBase, quotaOp, INVOICE_TAX.PERCENTAGE, INVOICE_TAX.WITHHOLDING_TYPE)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.where(INVOICE.DOMAIN.equal(mod193.getDomain()))
 			.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // No Ventas
 			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.RETENTION.value() )) // IRPF
-			.and(INVOICE_TAX.WITHHOLDING_TYPE.equal( WithholdingType.MOVABLE_CAPITAL.value() ))	// IRPF de Capital Mobiliario
+			.and( INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.MOVABLE_CAPITAL.value())
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C1.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C2.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C3.value()))
+				  .or(INVOICE_TAX.WITHHOLDING_TYPE.equal(WithholdingType.M193_C4.value())) )  // IRPF de Capital Mobiliario
 			.and(INVOICE.ISSUE_DATE.between(firstDay,lastDay))
-			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME,INVOICE_TAX.WITHHOLDING_TYPE,INVOICE_TAX.PERCENTAGE)
+			.groupBy(INVOICE.RDOCUMENT, INVOICE.RNAME, INVOICE_TAX.WITHHOLDING_TYPE, INVOICE_TAX.PERCENTAGE)
 			.fetch()
 			.stream()
 			.map(rec -> new Mod193Detail()
@@ -513,8 +517,10 @@ public class Mod193DAO {
 					.setMod193(mod193.getId())
 					.setDocument(rec.getValue(INVOICE.RDOCUMENT))
 					.setName(rec.getValue(INVOICE.RNAME))
-					.setKey("A")
-					.setNature("01")
+					.setKey(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.MOVABLE_CAPITAL.value() ? "A" : "C")
+					.setNature( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C4.value() ? "04" :
+						        rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "03" :
+							    rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C2.value() ? "02" : "01" )
 					.setRetentionBase(rec.getValue(sumBase).doubleValue())
 					.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE))
 					.setRetention(rec.getValue(quotaOp).doubleValue())
