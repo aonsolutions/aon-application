@@ -288,4 +288,11 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		}
 	}
 	
+	public void resetFilter(ActionEvent event) {
+		this.setDefaultType("SALES");
+		this.setDefaultStatus("PENDING");
+		this.setDefaultDateTo(null);
+		this.setDefaultDateFrom(null);
+	}
+	
 }

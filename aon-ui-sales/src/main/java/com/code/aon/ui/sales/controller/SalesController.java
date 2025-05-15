@@ -1430,7 +1430,7 @@ public class SalesController extends HeaderObjectController implements ISalesCon
 	
 	public void onDuplicationShow(ActionEvent event) throws ManagerBeanException {
 		Sales sales = getSales();
-		setDuplicationSeries(SeriesUtil.ensureInvoiceSeries(sales.getSeries()));
+		setDuplicationSeries(SeriesUtil.ensureSalesSeries(sales.getSeries()));
 		setDuplicationNumber(0);
 		setDuplicationNumberEditable(false);
 		setDuplicationCustomer(sales.getCustomer());

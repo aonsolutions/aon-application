@@ -153,6 +153,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
+		if (params.getPeriod() != null ) {
+			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_PERIOD), params.getPeriod());
+		}
 		if (params.getSegments() != null) {
 			Collection<Integer> segments =  Arrays.stream(params.getSegments())
 					.filter( s -> s != null)
@@ -164,6 +167,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine, Serializabl
 				criteria.addInExpression(alias,  segments );
 			}
 		}
+		System.out.println( criteria.toString() );
 		return criteria;
 	}
 
