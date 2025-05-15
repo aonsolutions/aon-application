@@ -10,12 +10,12 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel.AonAddressPanelCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAddressPanel.AonAddressPanelCallback;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -59,27 +59,32 @@ public abstract class AddressTable extends ScrollPanel {
 	private Integer registry;
 	
 	private static enum COLS {
-		  STR(""									, "3rem"	)
-		, ADD(AON.MSG.address()						, "-moz-available"	)
-		, NMB("N\u00b0"								, "5rem"	)
-		, ZIP("C.P."								, "5rem"	)
-		, PRO(AON.MSG.province()					, "20rem"	)
-		, CIT("Localidad"							, "15rem"	)
-		, BUT(AonStringUtils.EMPTY					, "3rem"	)
+		  STR(""									, "3rem" 			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
+		, ADD(AON.MSG.address()						, "-moz-available"	, "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, NMB("N\u00b0"								, "3rem"			, "" )
+		, ZIP("C.P."								, "4rem"			, "" )
+		, PRO(AON.MSG.province()					, "7rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"	)
+		, CIT("Localidad"							, "6rem"			, "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BUT(AonStringUtils.EMPTY					, "3rem"			,"")
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private COLS(String headerLabel,String colWidth) {
+		private COLS(String headerLabel,String colWidth, String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -158,7 +163,7 @@ public abstract class AddressTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
-			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	private void searchData() {
@@ -228,11 +233,25 @@ public abstract class AddressTable extends ScrollPanel {
 		row.addDomHandler(e -> onUpdateRegistryAddress(registryAddress), ClickEvent.getType());
 		
 		tab.addRow(row, new Label(registryAddress.getStreetType().getAeatCode() + "."), COLS.STR.getColWidth());
-		tab.addRow(row, new Label(registryAddress.getAddress()), COLS.ADD.getColWidth());
+		
+		Label address = new Label(registryAddress.getAddress());
+		address.setTitle(registryAddress.getAddress());
+		tab.addInlineStyle(address, COLS.ADD.getStyles());
+		tab.addRow(row, address, COLS.ADD.getColWidth());
+		
 		tab.addRow(row, new Label(registryAddress.getNumber()), COLS.NMB.getColWidth());
 		tab.addRow(row, new Label(registryAddress.getZip()), COLS.ZIP.getColWidth());
-		tab.addRow(row, new Label(registryAddress.getGeozoneName()), COLS.PRO.getColWidth());
-		tab.addRow(row, new Label(registryAddress.getCity()), COLS.CIT.getColWidth());
+		
+		Label geozone = new Label(registryAddress.getGeozoneName());
+		geozone.setTitle(registryAddress.getGeozoneName());
+		tab.addInlineStyle(geozone, COLS.PRO.getStyles());
+		tab.addRow(row, geozone, COLS.PRO.getColWidth());
+		
+		Label city = new Label(registryAddress.getCity());
+		city.setTitle(registryAddress.getCity());
+		tab.addInlineStyle(city, COLS.CIT.getStyles());
+		tab.addRow(row, city, COLS.CIT.getColWidth());
+		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 
