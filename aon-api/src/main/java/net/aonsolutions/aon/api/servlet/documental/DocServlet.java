@@ -121,7 +121,7 @@ public class DocServlet extends HttpServlet {
 				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
 				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
 				return s3Bucket != null
-					? S3.getInstance().getDownloadURL(s3Bucket, s3Key).toExternalForm()
+					? S3.getInstance().getURL(s3Bucket, s3Key).toExternalForm()
 					: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
 			}
 
@@ -131,12 +131,12 @@ public class DocServlet extends HttpServlet {
 				String s3Key = JsonUtils.getString(json, IJsonNames.S3_KEY);
 				String aonTable = JsonUtils.getString(json, IJsonNames.AON_TABLE);
 				return s3Bucket != null
-					? SCALEWAY.getInstance().getDownloadURL(s3Bucket, s3Key).toExternalForm()
+					? SCALEWAY.getInstance().getURL(s3Bucket, s3Key).toExternalForm()
 					: SCALEWAY.getInstance().getAonTableDownloadURL(aonTable, s3Key).toExternalForm();
 			}
 			
 		});
-		
+		System.out.println(longURL);
 		new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
 	}
 	

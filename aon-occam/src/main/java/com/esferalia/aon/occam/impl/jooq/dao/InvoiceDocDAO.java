@@ -189,6 +189,7 @@ public class InvoiceDocDAO {
 			.setPath("/ms/api/doc")
 			.setParameter(IJsonNames.DOMAIN_ID, AonNumberUtils.toString(doc.getDomain()))
 			.setParameter(IJsonNames.SOURCE,"invoice")
+			.setParameter(IJsonNames.STORAGE, AonNumberUtils.toString(doc.getExternalStorage().value()))
 		;
 		return doc.getExternalStorage().visit( 
 			new ExternalStorageVisitor<AonURIBuilder>() {
