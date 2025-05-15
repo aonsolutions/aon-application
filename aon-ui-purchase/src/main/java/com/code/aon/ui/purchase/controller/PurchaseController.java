@@ -32,6 +32,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -66,6 +67,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
+import com.code.aon.ui.purchase.util.PurchaseImportManager;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.registry.util.RegistryAddressFilter;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -116,10 +118,23 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	private List<String> moreRecipients;
 	private List<IEmailControllerListener> emailControllerListenerClasses;
 	
+	// Purchase Duplication
+	
+	private boolean showDuplicationWindow;
+	private String duplicationSeries;
+	private int duplicationNumber;
+	private boolean duplicationNumberEditable;
+	private Supplier duplicationSupplier;
+	private Date duplicationDate;
+	
 	public PurchaseController() {
     	this.emailUtil = new PurchaseEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
     }
+	
+	public Purchase getPurchase() {
+		return (Purchase) getTo();
+	}
 
 	public List<SelectItem> getAddresses() {
 		return addresses;
@@ -904,6 +919,110 @@ public class PurchaseController extends HeaderObjectController implements IPurch
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getTo();
 		return WarehouseCollectionsController.getWarehouses(purchase.getWorkPlace());
+	}
+	
+	// PURCHASE DUPLICATION
+	
+	public String navigationRedirect() {
+		return PURCHASE_FORM_NAME;
+	}
+	
+	public boolean isShowDuplicationWindow() {
+		return showDuplicationWindow;
+	}
+		
+	public void setShowDuplicationWindow(boolean showDuplicationWindow) {
+		this.showDuplicationWindow = showDuplicationWindow;
+	}
+		
+	public String getDuplicationSeries() {
+		return duplicationSeries;
+	}
+
+	public void setDuplicationSeries(String duplicationSeries) {
+		this.duplicationSeries = duplicationSeries;
+	}
+
+	public int getDuplicationNumber() {
+		return duplicationNumber;
+	}
+
+	public void setDuplicationNumber(int duplicationNumber) {
+		this.duplicationNumber = duplicationNumber;
+	}
+		
+	public boolean isDuplicationNumberEditable() {
+		return duplicationNumberEditable;
+	}
+
+	public void setDuplicationNumberEditable(boolean duplicationNumberEditable) {
+		this.duplicationNumberEditable = duplicationNumberEditable;
+	}
+		
+	public Supplier getDuplicationSupplier() {
+		return duplicationSupplier;
+	}
+
+	public void setDuplicationSupplier(Supplier duplicationSupplier) {
+		this.duplicationSupplier = duplicationSupplier;
+	}
+			
+	public Date getDuplicationDate() {
+		return duplicationDate;
+	}
+
+	public void setDuplicationDate(Date duplicationDate) {
+		this.duplicationDate = duplicationDate;
+	}
+		
+	public void onDuplicationShow(ActionEvent event) throws ManagerBeanException {
+		Purchase purchase = getPurchase();
+		setDuplicationSeries(SeriesUtil.ensureSalesSeries(purchase.getSeries()));
+		setDuplicationNumber(0);
+		setDuplicationNumberEditable(false);
+		setDuplicationSupplier(purchase.getSupplier());
+		setDuplicationDate(new Date());
+	}
+
+	public void onDuplicationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (isDuplicationNumberEditable()) {
+				updateDuplicationNumber((String)event.getNewValue());
+		}
+	}
+		
+	public void onDuplicationNumberEditable(ActionEvent event) throws ManagerBeanException {
+		updateDuplicationNumber(getDuplicationSeries());		
+	}			
+		
+	private void updateDuplicationNumber(String seriesId) {
+		setDuplicationNumber(obtainMaxNumber(seriesId));
+	}	
+
+	public void onDuplicationRegistryChanged(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Supplier supplier = (Supplier)event.getNewValue();
+			setDuplicationSupplier(supplier);
+		}
+	}
+
+	public void onDuplicate(ActionEvent event) throws ManagerBeanException {
+		Purchase to = getPurchase();
+		if (StringUtils.isBlank(getDuplicationSeries())) {
+			setDuplicationSeries(null);
+		}		
+		if (getDuplicationNumber() == 0) {
+		   	updateDuplicationNumber(getDuplicationSeries());
+		}		
+		    
+		this.getManagerBean().restoreNullSubPOJOs(to);
+		
+		PurchaseImportManager manager = new PurchaseImportManager();
+		Purchase purchase = manager.copyPurchase(to, getDuplicationSeries(), getDuplicationNumber(), getDuplicationSupplier(), getDuplicationDate());
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PURCHASE_ID), purchase.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
 	}
 	
 }
