@@ -5,13 +5,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.esferalia.aon.occam.api.json.raw.JsonRawTestSuite;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDocTestSuite;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceTestSuite;
 import com.esferalia.aon.occam.test.accounting.AccountingTestSuite;
 import com.esferalia.aon.occam.test.accounting.account.AccountTestSuite;
 import com.esferalia.aon.occam.test.delivery.DeliveryTest;
 import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
+import com.esferalia.aon.occam.test.finance.invoice.InvoiceTestSuite;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.occam.test.json.JsonTestSuite;
 import com.esferalia.aon.occam.test.marketing.MarketingTestSuite;
@@ -61,7 +60,6 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 	
 	RawdocTestSuite.class,
 	// Nuevos cambios en Occam
-	JsonRawTestSuite.class,
 	InvoiceTestSuite.class,
 	InvoiceDocTestSuite.class,
 })
