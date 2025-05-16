@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.IAccountingInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.invoice.Invoice.InvoiceTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceType implements Serializable  {
