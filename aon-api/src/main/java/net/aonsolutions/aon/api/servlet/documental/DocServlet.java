@@ -1,7 +1,11 @@
 package net.aonsolutions.aon.api.servlet.documental;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
@@ -29,6 +33,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
+import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import solutions.aon.aws.s3.S3;
 import solutions.aon.aws.s3.SCALEWAY;
@@ -136,9 +141,52 @@ public class DocServlet extends HttpServlet {
 			}
 			
 		});
-		System.out.println(longURL);
-		new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
+		
+		if(externalStorage.isAon()) new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
+		else forwardToExternal(req, resp, longURL);
 	}
+	
+	public void forwardToExternal(HttpServletRequest request, HttpServletResponse response, String longUrl) throws IOException {
+        URL url = new URL(longUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod(request.getMethod());
+        conn.setDoOutput(true);
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            if (headerValue != null) {
+                conn.setRequestProperty(headerName, headerValue);
+            }
+        }
+
+        if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
+            try (InputStream in = request.getInputStream();
+                 OutputStream out = conn.getOutputStream()) {
+                in.transferTo(out);
+            }
+        }
+        
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+        response.addHeader(IConstants.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+        response.addHeader(IConstants.ACCESS_CONTROL_MAX_AGE, "1728000");
+        
+        response.setStatus(conn.getResponseCode());
+        conn.getHeaderFields().forEach((key, values) -> {
+            if (key != null) {
+                for (String value : values) {
+                    response.addHeader(key, value);
+                }
+            }
+        });
+
+        try (InputStream in = conn.getInputStream();
+             OutputStream out = response.getOutputStream()) {
+            in.transferTo(out);
+        }
+    }
 	
 	public static JSONObject getParamsJSON(ServletRequest req) {
 	    JSONObject jsonObj = new JSONObject();
