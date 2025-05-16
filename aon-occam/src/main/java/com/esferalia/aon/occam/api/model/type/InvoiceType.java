@@ -13,22 +13,18 @@ public enum InvoiceType implements Serializable  {
 
 	PURCHASE("Compras", "recibida") {
 		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitPurchase(invoice);}
-		@Override public <T> T visit(com.esferalia.aon.occam.api.model.invoice.Invoice invoice,InvoiceTypeVisitor<T> visitor) {return visitor.visitPurchase(invoice);}
 		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) { visitor.visitPurchase(invoice);}
 	}
 	,SALES("Ventas", "emitida") {
 		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitSales(invoice);}
-		@Override public <T> T visit(com.esferalia.aon.occam.api.model.invoice.Invoice invoice,InvoiceTypeVisitor<T> visitor) {return visitor.visitSales(invoice);}
 		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitSales(invoice);}
 	}
 	,EXPENSES("Gastos", "recibida") {
 		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitExpenses(invoice);}
-		@Override public <T> T visit(com.esferalia.aon.occam.api.model.invoice.Invoice invoice,InvoiceTypeVisitor<T> visitor) {return visitor.visitExpenses(invoice);}
 		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitExpenses(invoice);}
 	}
 	,UNDEDUCTIBLE("Gt.NO Ded", "ticket") {
 		@Override public <T> T visit(Invoice invoice,IInvoiceTypeVisitor<T> visitor) {return visitor.visitUndeductible(invoice);}
-		@Override public <T> T visit(com.esferalia.aon.occam.api.model.invoice.Invoice invoice,InvoiceTypeVisitor<T> visitor) {return visitor.visitUndeductible(invoice);}
 		@Override public void visit(AccountingInvoice invoice,IAccountingInvoiceTypeVisitor visitor) {visitor.visitUndeductible(invoice);}
 	}
 	;
@@ -57,7 +53,6 @@ public enum InvoiceType implements Serializable  {
 	}
 	
 	public abstract <T> T visit(Invoice invoice, IInvoiceTypeVisitor<T> visitor);
-	public abstract <T> T visit(com.esferalia.aon.occam.api.model.invoice.Invoice invoice, InvoiceTypeVisitor<T> visitor);
 	public abstract void visit(AccountingInvoice invoice, IAccountingInvoiceTypeVisitor visitor);
 	
 	public static InvoiceType safeValueOf( Byte i ) {
