@@ -460,7 +460,7 @@ public class CustomerFee extends MainEntryPoint {
 		customerItemPanel.add(customerSuggestBox);
 		customerItemPanel.add(customerStatusListBox);
 		
-		if(null != customerId) {
+		if(null != customerId && 0 != customerId) {
 			customerSuggestBox.setEnabled(false);
 			customerStatusListBox.setEnabled(false);
 		}
@@ -1450,7 +1450,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setPeriodicity(AonStringUtils.isBlank(periocityListBox.getSelectedValue()) ? null : Byte.parseByte(periocityListBox.getSelectedValue()));
 		
-		if(null != customerId) params.setCustomer(customerId);
+		if(null != customerId && 0 != customerId) params.setCustomer(customerId);
 		else params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getId() : null);
 		
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
