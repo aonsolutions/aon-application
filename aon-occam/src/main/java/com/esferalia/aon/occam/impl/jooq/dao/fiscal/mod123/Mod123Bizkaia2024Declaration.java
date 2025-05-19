@@ -142,7 +142,8 @@ public class Mod123Bizkaia2024Declaration extends Mod123Declaration {
 		return br.isFromInvoice() && 
 			(br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
-			|| br.getWithholdingType() == WithholdingType.M193_C3);
+			|| br.getWithholdingType() == WithholdingType.M193_C3
+			|| br.getWithholdingType() == WithholdingType.M193_C4);
 	}	
 
 }
