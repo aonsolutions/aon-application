@@ -123,7 +123,7 @@ export const WithholdingType = [
    {
     id: 'M193_C1',
     name: "Cap. Mobiliario (C/1) - 19%",
-    description: "Propiedad intelectual, industrial, prestación de asistencia técnica.",
+    description: "Propiedad industrial, prestación de asistencia técnica.",
     percentage: 19.0
   },
    {
@@ -159,7 +159,7 @@ export const WithholdingType = [
   {
     id: 'M193_C4',
     name: "Cap. Mobiliario (C/4) - 19%",
-    description: "Rendimientos o rentas procedentes del arrendamiento o subarrendamiento de bienes muebles, negocios o minas que no constituyan actividades económicas.",
+    description: "Arrendamiento y subarrendamiento de bienes muebles, negocios o minas.",
     percentage: 19.0
   }
 ];

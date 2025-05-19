@@ -519,8 +519,8 @@ public class Mod193DAO {
 					.setName(rec.getValue(INVOICE.RNAME))
 					.setKey(rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.MOVABLE_CAPITAL.value() ? "A" : "C")
 					.setNature( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C4.value() ? "04" :
-						        rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "03" :
-							    rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C2.value() ? "02" : "01" )
+				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C3.value() ? "06" :
+				        		rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE) == WithholdingType.M193_C1.value() ? "02" : "01" )
 					.setRetentionBase(rec.getValue(sumBase).doubleValue())
 					.setPercent(rec.getValue(INVOICE_TAX.PERCENTAGE))
 					.setRetention(rec.getValue(quotaOp).doubleValue())
