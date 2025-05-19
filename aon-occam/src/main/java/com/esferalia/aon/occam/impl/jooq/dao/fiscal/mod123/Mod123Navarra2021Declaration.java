@@ -115,7 +115,8 @@ public class Mod123Navarra2021Declaration extends Mod123Declaration {
 			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
 			|| br.getWithholdingType() == WithholdingType.M193_C1
 			|| br.getWithholdingType() == WithholdingType.M193_C2
-			|| br.getWithholdingType() == WithholdingType.M193_C3);
+			|| br.getWithholdingType() == WithholdingType.M193_C3
+			|| br.getWithholdingType() == WithholdingType.M193_C4);
 	}
 	
 }

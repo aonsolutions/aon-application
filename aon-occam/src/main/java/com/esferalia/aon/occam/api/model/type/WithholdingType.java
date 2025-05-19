@@ -31,7 +31,7 @@ public enum WithholdingType implements Serializable {
 			return visitor.visitRenting(t);
 		}
 	}
-	// MODELO 193 - CLAVE A  
+	// MODELO 193 - CLAVE A - 01  
 	,MOVABLE_CAPITAL	(CAPITAL_MOBILIARIO,"Cap. Mobiliario (A)","Derivados de la participaci\u00F3n en fondos propios de entidades."){
 		@Override 
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
@@ -137,7 +137,7 @@ public enum WithholdingType implements Serializable {
 		}
 	}	
 	// MODELO 193 - CLAVE C 1
-	,M193_C1	(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/1)","Propiedad intelectual, industrial, prestaci\u00F3n de asistencia t\u00E9cnica."){
+	,M193_C1	(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/1)","Propiedad industrial, prestaci\u00F3n de asistencia t\u00E9cnica."){
 		@Override 
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM193C1(t);
@@ -175,7 +175,14 @@ public enum WithholdingType implements Serializable {
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
 			return visitor.visitM190F022(t);
 		}
-	}
+	}	
+	// MODELO 193 - CLAVE C 4
+	,M193_C4(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/4)","Arrendamiento y subarrendamiento de bienes muebles, negocios o minas."){
+		@Override 
+		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {
+			return visitor.visitM193C4(t);
+		}
+	}	
 	;
 	
 	private WithholdingTypeGroup group;
@@ -265,7 +272,7 @@ public enum WithholdingType implements Serializable {
 		// TRABAJO
 		,M190_F_01,M190_F_02_1,M190_F_02_2
 		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3
+		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4
 		// DERECHOS_IMAGEN
 		,M190_J
 		// GANANCIAS_PATRIMONIALES
