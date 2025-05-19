@@ -85,7 +85,8 @@ public interface RegistryService extends RemoteService {
 	List<Fee> parseFeeFile(Domain domain, User user, String data);
 	ImportError importFee(Domain domain, User user, Fee fee, Integer index);
 	
-	List<Customer> getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams);
+	List<Customer> getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams) throws IllegalArgumentException;
+	List<Customer> getCustomerWithoutFee(CustomerParams customerParams) throws IllegalArgumentException;
 	
 	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer);
 	

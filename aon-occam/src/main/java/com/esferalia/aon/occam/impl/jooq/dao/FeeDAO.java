@@ -132,17 +132,17 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(CUSTOMER_FEE.PROJECT))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
-		if(null != customerFeeParams.getSeller())
-			fromCustomerRecords = fromCustomerRecords 	
-					.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
-					.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-					.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
-					.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
-					.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
-					;
+		fromCustomerRecords = fromCustomerRecords 	
+				.leftOuterJoin(SELLER_COMERCIAL).on(CUSTOMER_FEE.SELLER.eq(SELLER_COMERCIAL.REGISTRY))
+				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER_COMERCIAL.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
+				.leftOuterJoin(RSELLER).on(CUSTOMER.REGISTRY.eq(RSELLER.REGISTRY).and(RSELLER.STATUS.eq((byte)0)))
+				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
+				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
+				;
 		
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
@@ -180,6 +180,7 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(CUSTOMER_FEE.PROJECT))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
 		
@@ -286,6 +287,11 @@ public class FeeDAO {
 		
 		if(null != customerFeeParams.getCustomer()) 
 			condition = condition.and(CUSTOMER.REGISTRY.eq(customerFeeParams.getCustomer()));
+		
+		if(null != customerFeeParams.getDescription()) 
+			condition = condition.and(CUSTOMER_ALIAS.NAME.like("%" + customerFeeParams.getDescription() + "%")
+						.or(CUSTOMER_ALIAS.DOCUMENT.like("%" + customerFeeParams.getDescription() + "%"))
+					);
 		
 		if(null != customerFeeParams.getCustomerStatus())
 			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
@@ -445,6 +451,7 @@ public class FeeDAO {
 				.leftOuterJoin(SELLER_SUPPORT).on(RSELLER.SELLER.eq(SELLER_SUPPORT.REGISTRY))
 				.leftOuterJoin(SELLER_SUPPORT_ALIAS).on(SELLER_SUPPORT.REGISTRY.eq(SELLER_SUPPORT_ALIAS.ID))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(CUSTOMER_FEE.PROJECT))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
@@ -488,7 +495,9 @@ public class FeeDAO {
 				.setNetCost(calculateNetCost(r))
 				.setTotalNetPrice(calculateTotalNetPrice(r))
 				.setTotalPrice(calculateTotalPrice(r))
-				.setProject(new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
+				.setProject(checkField(r, INVOICING_GROUP.ID)
+						? ProjectFiller.build(r)
+						: new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
 				.setSeller(new Seller().setId(r.getValue(CUSTOMER_FEE.SELLER)))
 				.setSellerComercial(checkField(r, SELLER_COMERCIAL.REGISTRY)
@@ -975,11 +984,8 @@ public class FeeDAO {
 		// Condition
 		Condition condition = PROJECT.DOMAIN.eq(domainId);
 		if(AonStringUtils.isNotBlank(query))
-			condition = condition
-					.and(REGISTRY.NAME.isNotNull())
-					.and(REGISTRY.NAME.containsIgnoreCase(query)
-							.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
-							.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
+			condition = condition.and(PROJECT.NAME.like("%" + query + "%")
+						.or(PROJECT.ALIAS.like("%" + query + "%"))
 					);
 		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
 		
@@ -1144,7 +1150,8 @@ public class FeeDAO {
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_COMERCIAL_ALIAS).on(SELLER.REGISTRY.eq(SELLER_COMERCIAL_ALIAS.ID))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(CUSTOMER_FEE.PROJECT));
 		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
 			if(customerFeeParams.getSegment() == -1)
 				fromCustomerRecords = fromCustomerRecords 	
