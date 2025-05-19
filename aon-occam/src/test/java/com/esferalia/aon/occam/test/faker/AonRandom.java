@@ -69,7 +69,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
-import com.esferalia.aon.occam.test.accounting.entry.AccountEntryTest;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -588,6 +587,7 @@ public class AonRandom {
 			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
 			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
 			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM193C4(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C4);     }
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
@@ -627,6 +627,7 @@ public class AonRandom {
 			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
 			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
 			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM193C4(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C4);     }
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
