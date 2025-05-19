@@ -79,6 +79,14 @@
 							value="#{preInvoicing.invoicingParams.year}" />
 					</aon:panelGrid>
 
+					<aon:outputLabel for="CustomerFee_period" 
+						value="Periodicidad"/>
+					<aon:selectOneMenu id="CustomerFee_period"
+						value="#{preInvoicing.invoicingParams.period}" >
+						<f:selectItem itemValue="#{null}" itemLabel="-" />
+						<f:selectItems value="#{financeCollections.billingPeriods}" />
+					</aon:selectOneMenu>
+
 					<aon:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel for="CustomerFee_Confidential"
 							value="#{bundle.aon_confidential}" />

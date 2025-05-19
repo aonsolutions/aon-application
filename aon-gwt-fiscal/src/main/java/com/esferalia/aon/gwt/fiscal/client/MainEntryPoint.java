@@ -1040,6 +1040,11 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.getItem("customer");
 	}-*/;
 	
+	public static native int removeCustomer()
+	/*-{
+		return $wnd.localStorage.removeItem("customer");
+	}-*/;
+	
 	public static String getCurrentUser() {
 		return getCurrentUserJs();
 	}

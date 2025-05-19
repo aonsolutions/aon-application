@@ -228,6 +228,8 @@ public class CustomerFee extends MainEntryPoint {
 	
 	// ContextMenu
 	private ExcelExportMenu excelExportMenu;
+	
+	private Integer customerId = null;
 
 	@Override
 	public void onModuleLoad() {
@@ -237,6 +239,10 @@ public class CustomerFee extends MainEntryPoint {
 		options.setDomainName(getCurrentDomainName());
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
+		
+		customerId = getCustomer();
+		removeCustomer();
+		
 		this.onModuleLoad(options);
 	}
 
@@ -453,6 +459,11 @@ public class CustomerFee extends MainEntryPoint {
 		customerItemPanel.add(customerLabel);
 		customerItemPanel.add(customerSuggestBox);
 		customerItemPanel.add(customerStatusListBox);
+		
+		if(null != customerId && 0 != customerId) {
+			customerSuggestBox.setEnabled(false);
+			customerStatusListBox.setEnabled(false);
+		}
 
 		filterDefaultPanel.add(customerItemPanel);
 		
@@ -1438,7 +1449,10 @@ public class CustomerFee extends MainEntryPoint {
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setPeriodicity(AonStringUtils.isBlank(periocityListBox.getSelectedValue()) ? null : Byte.parseByte(periocityListBox.getSelectedValue()));
-		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getId() : null);
+		
+		if(null != customerId && 0 != customerId) params.setCustomer(customerId);
+		else params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getId() : null);
+		
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setSegment(segmentListBox != null && segmentListBox.getSelectedIndex() > 0 ? AonNumberUtils.toInteger( segmentListBox.getSelectedValue()) : null);
 		params.setStartCompare(Byte.parseByte(startCompareLB.getSelectedValue()));
@@ -3064,5 +3078,10 @@ public class CustomerFee extends MainEntryPoint {
 			}
 		}
 	}
+	
+	public static native String getCustomerId()
+	/*-{
+		return $wnd.getCustomerId();
+	}-*/;
 
 }

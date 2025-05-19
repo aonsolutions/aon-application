@@ -88,7 +88,7 @@ public class DeliveryReportServlet extends HttpServlet {
 							.and(p.getIssueTimeProperty().ge(AonDateUtils.toTimestamp(fromDate)))
 							.and(p.getIssueTimeProperty().le(AonDateUtils.toTimestamp(toDate)));
 						f = scopes == null?f:f.and(p.getScopeProperty().in( scopes ));
-						f = user.hasConfidentialityRole()?f:f.and(p.getConfidentialProperty().eq(SecurityLevel.OFFICIAL.value()));	
+						f = user.hasConfidentialityRole()?f:f.and(p.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value()));	
 						
 						return f;
 					}

@@ -189,7 +189,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 
  				System.out.println("----------------------- Check Customer");
 				
- 				checkCustomer(api, ctx);
+ 				Customer customer = checkCustomer(api, ctx);
  				
 				System.out.println("----------------------- Create Scope");
 				
@@ -234,6 +234,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				else if(AonStringUtils.equalsIgnoreCase(source, "TARGET"))
 					result.put("message", "Empresa creada correctamente. Se ha enviado un mail con los datos al agente de soporte");
 				
+				result.put("customer", customer.getId().toString());
 			});
 		}
 		
@@ -244,7 +245,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 	// AUXILIAR METHODS
 	// ---------------------------------------------------------------------------------------------
 
-	private static void checkCustomer(AonApiData api, CloseableAONContext ctx) {
+	private static Customer checkCustomer(AonApiData api, CloseableAONContext ctx) {
 		JSONObject data = api.getData();
 		
 		Integer registry = JsonUtils.getInteger(data, "registry");
@@ -292,6 +293,8 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				TargetDAO.save(ctx, newTarget);
 			}
 		}
+		
+		return customer;
 		
 	}
 
