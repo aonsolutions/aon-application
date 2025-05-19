@@ -241,6 +241,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getCustomerWithoutFee(domainName, domain, user, customerParams, new AsyncCallbackWrapper<List<Customer>>(callback));
 	}
+	
+	@Override
+	public void getCustomerWithoutFee(CustomerParams params, AsyncCallback<List<Customer>> callback) throws IllegalArgumentException {
+		AON.start();
+		serviceAsync.getCustomerWithoutFee(params, new AsyncCallbackWrapper<List<Customer>>(callback));
+	}
 
 	@Override
 	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> callback) {

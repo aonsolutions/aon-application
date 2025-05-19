@@ -253,14 +253,14 @@ public class DownloadCustomerWithoutFee extends HttpServlet{
 		
 		customerParams.setDomain(domainId);
 		
-		if(filterJSON.opt("customer") != null) {
-			String customer = filterJSON.optString("customer");
-			customerParams.setCustomer(customer);
+		if(filterJSON.opt("description") != null) {
+			String description = filterJSON.optString("description");
+			customerParams.setDescription(description);
 		}
 		
 		if(filterJSON.opt("status") != null) {
 			Integer status = filterJSON.optInt("status");
-			customerParams.setCustomerStatus(status.byteValue());
+			customerParams.setStatus(status.byteValue());
 		}
 		
 		if(filterJSON.opt("customerIds") != null) {

@@ -816,7 +816,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			String projectQuery = projectSuggestBox.getValue();
 			
 			Integer customerId = null;
-			if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
+			if(null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
 				Customer customer = customerSuggestions.get(customerSuggestBox.getValue());
 				if(null != customer) customerId = customer.getId();
 				else if(null != fee && null != fee.getCustomer()) customerId = fee.getCustomer().getId();

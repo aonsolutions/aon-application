@@ -500,6 +500,10 @@ public class DownloadFeeServlet extends HttpServlet {
 			params.setCustomer(filterJSON.optInt("customer"));
 		}
 		
+		if(filterJSON.opt("description") != null) {
+			params.setDescription(filterJSON.optString("description"));
+		}
+		
 		if(filterJSON.opt("status") != null) {
 			params.setCustomerStatus((byte)filterJSON.optInt("status"));
 		}
