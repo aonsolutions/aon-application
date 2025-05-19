@@ -1644,39 +1644,41 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		feeDockLayout.addToolbarButton(exportButton);
 		
-		importButton = new AonToolbarButton("Importar Cuotas", AON.CSS.aonIconUploadFile());
-		importButton.addClickHandler(e -> {
-			Upload upload = new Upload() {
-				
-				@Override
-				protected void onUpload(String data, String type) {
-					pbd = new AonProgressBarDialog("Procesando Excel...") {};
-					pbd.addStyleName("gwt-PopupPanel-template");
-					pbd.setGlassEnabled(true);
-					pbd.center();
-					pbd.show();
+		if(!isCustomer()) {
+			importButton = new AonToolbarButton("Importar Cuotas", AON.CSS.aonIconUploadFile());
+			importButton.addClickHandler(e -> {
+				Upload upload = new Upload() {
 					
-					SERVICE.parseFeeFile(options.getConfiguration().getDomain(), options.getConfiguration().getUser(), data, new AsyncCallback<List<Fee>>() {
-						@Override
-						public void onSuccess(List<Fee> result) {
-							pbd.completed();
-							pbd.hide();
-							pbd = new AonProgressBarDialog("Importando Cuotas...") {};
-							pbd.addStyleName("gwt-PopupPanel-template");
-							pbd.setGlassEnabled(true);
-							pbd.center();
-							pbd.show();
-							insertFee(result, 0);
-						}
-							
-						@Override
-						public void onFailure(Throwable caught) {}
-					});
-				}
-			};
-			upload.upload();
-		});
-		feeDockLayout.addToolbarButton(importButton);
+					@Override
+					protected void onUpload(String data, String type) {
+						pbd = new AonProgressBarDialog("Procesando Excel...") {};
+						pbd.addStyleName("gwt-PopupPanel-template");
+						pbd.setGlassEnabled(true);
+						pbd.center();
+						pbd.show();
+						
+						SERVICE.parseFeeFile(options.getConfiguration().getDomain(), options.getConfiguration().getUser(), data, new AsyncCallback<List<Fee>>() {
+							@Override
+							public void onSuccess(List<Fee> result) {
+								pbd.completed();
+								pbd.hide();
+								pbd = new AonProgressBarDialog("Importando Cuotas...") {};
+								pbd.addStyleName("gwt-PopupPanel-template");
+								pbd.setGlassEnabled(true);
+								pbd.center();
+								pbd.show();
+								insertFee(result, 0);
+							}
+								
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
+					}
+				};
+				upload.upload();
+			});
+			feeDockLayout.addToolbarButton(importButton);
+		}
 		
 		if(!isCustomer()) {
 			customerButton = new AonToolbarButton("Clientes sin cuotas", AON.CSS.aonIconGroupOff());
