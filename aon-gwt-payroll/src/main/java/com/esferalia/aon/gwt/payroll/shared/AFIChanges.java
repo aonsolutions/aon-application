@@ -120,6 +120,8 @@ public class AFIChanges implements Serializable {
 			if(!exist)
 				afiChangeList.add(new AFIChange(name, value));
 		}
+		
+//		Window.alert("addAFIChangeByDate : " + date + ", name : " + name + ", value : " + afiChangeList.stream().filter(afi -> AonStringUtils.equalsIgnoreCase(afi.getName(), name)).findFirst().get().getValue());
 	}
 
 	public boolean hasChange(String type, String value) {
@@ -129,7 +131,7 @@ public class AFIChanges implements Serializable {
 		if(!datesList.isEmpty() && datesList.size() > 1) {
 			datesList.sort((o1, o2) -> o1.compareTo(o2));
 			Collections.reverse(datesList);
-			Date date = datesList.get(datesList.size() - 1);
+			Date date = datesList.get(0);
 			for(AFIChange afiChange : afiChanges.get(date)) {
 				if(AonStringUtils.equalsIgnoreCase(afiChange.getName(), type) && null != afiChange.getValue() && !AonStringUtils.equalsIgnoreCase(afiChange.getValue(), value))
 					return true;
@@ -143,9 +145,11 @@ public class AFIChanges implements Serializable {
 		datesList.addAll(afiChanges.keySet());
 		
 		if(!datesList.isEmpty() && datesList.size() > 1) {
-			Date date = datesList.get(datesList.size() - 1);
+			datesList.sort((o1, o2) -> o1.compareTo(o2));
+			Collections.reverse(datesList);
+			Date date = datesList.get(0);
 			for(AFIChange afiChange : afiChanges.get(date)) {
-				if(afiChange.getName().equals(type))
+				if(AonStringUtils.equalsIgnoreCase(afiChange.getName(),type))
 					return afiChange.getValue();
 			}		
 		}
