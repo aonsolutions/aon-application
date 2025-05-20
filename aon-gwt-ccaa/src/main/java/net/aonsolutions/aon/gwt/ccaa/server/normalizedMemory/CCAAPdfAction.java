@@ -1422,7 +1422,7 @@ public abstract class CCAAPdfAction {
 	}
 	
 	public void ap12A() throws DocumentException, IOException{
-		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "12" : "9") + " - Otra informaci\u00f3n", D2DepositKey.MAT139139001);	
+		freeText("Apartado " + (d2Deposit.getYear() < 2016 ? "12" : "9") + " - Operaciones con partes vinculadas", D2DepositKey.MAT129129001);
 	}
 	
 	public void ap12B() throws BadElementException, MalformedURLException, DocumentException, IOException{
