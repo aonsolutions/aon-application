@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -66,7 +67,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 
 	// Enterprise customer created
 	String enterpriseCustomerId = null;
-
+	
 	public ProcessTargetEnterpriseDialog(TargetFull target, List<RegistrySeller> targetSellers, TargetParams params) {
 		super();
 
@@ -85,10 +86,13 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 
 		getSupportSellers(supportSellersIt -> {
 			getParentDomain(parentDomainIt -> {
-				initView();
+				checkCustomer(customer -> {
+					initView();
 
-				center();
-				show();
+					center();
+					show();
+					
+				});
 			});
 		});
 	}
@@ -427,6 +431,45 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 								"Error direcciones del cliente: " + caught.getMessage());
 					}
 				});
+	}
+	
+	// Check if exist a current user by document for duplicate target
+	private void checkCustomer(Consumer<Customer> success) {
+		COMMON_SERVICE.getCustomerByDocument(params.getDomainName(), params.getDomain(), params.getUser(), target.getRegistry().getDocument(),
+				new AsyncCallback<Customer>() {
+
+			@Override
+			public void onSuccess(Customer customer) {
+				if(null != customer && null != customer.getId()) {
+					AonMessagePanel.showWarning(messagePanel,
+							"Existe un cliente con este documento, se va a proceder a usar este cliente para la creaci\u00f3n de la empresa");
+					
+					COMMON_SERVICE.getTargetFull(params.getDomainName(), params.getDomain(), params.getUser(), customer.getId(),
+							new AsyncCallback<TargetFull>() {
+
+						@Override
+						public void onSuccess(TargetFull targetFullDb) {
+							target = targetFullDb;
+							success.accept(customer);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel,
+									"Cliente existente, error targetFull: " + caught.getMessage());
+						}
+					});
+					
+				} else
+					success.accept(customer);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel,
+						"Error direcciones del cliente: " + caught.getMessage());
+			}
+		});
 	}
 
 	public static native void onSaleProcess(String data) /*-{

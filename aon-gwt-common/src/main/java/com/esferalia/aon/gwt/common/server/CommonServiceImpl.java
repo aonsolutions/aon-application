@@ -993,5 +993,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 		return resultMap;
 	}
+	@Override
+	public Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException {
+		return AON.getCustomer(domainName, domain, user, f -> f.getDocumentProperty().eq(document));
+	}
+	
+	@Override
+	public TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getTargetFull(domainName, registry, user, registry);
+	}
 
 }
