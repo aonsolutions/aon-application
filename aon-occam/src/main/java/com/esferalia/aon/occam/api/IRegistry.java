@@ -190,8 +190,8 @@ public interface IRegistry {
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter);
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter, int ofs, int limit);
 	public Target save(AONContext ctx, Target target);
-	List<TargetFull> getTargetNotUserFull(AONContext ctx, TargetParams params);
-
+	public List<TargetFull> getTargetNotUserFull(AONContext ctx, TargetParams params);
+	public TargetFull getTargetFull(AONContext ctx, Integer registry);
 
 	// ------------------- RECORD DATA
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
@@ -311,5 +311,5 @@ public interface IRegistry {
 	public MarketingActionTarget saveMarketingActionTarget(CloseableAONContext ctx, MarketingActionTarget marketingActionTarget);
 	
 	public Stream<GeoZone> geozoneStream(CloseableAONContext ctx, GeoZoneFilter filter);
-
+	
 }

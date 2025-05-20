@@ -352,6 +352,8 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getTargetNotUserFull(TargetParams params, AsyncCallback<Map<TargetFull, List<RegistrySeller>>> asyncCallback) throws AonCoreException;
+	void getCustomerByDocument(String domainName, int domain, String user, String document, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
+	void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> asyncCallback) throws AonCoreException;
 	
 	
 }

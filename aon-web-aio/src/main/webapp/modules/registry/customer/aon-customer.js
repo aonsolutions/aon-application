@@ -54,7 +54,10 @@ export class AonCustomer extends AonReg {
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
-			{ title: MSG.BANK_DATA, fn: () => this.buildBankData() },
+			{ title: MSG.BANK_DATA, fn: () => {
+				this.showSaveButton();
+				this.buildBankData();
+			}},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
@@ -95,6 +98,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildGeneralData = () => {
+		this.showSaveButton();
+		
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
 
@@ -140,6 +145,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildDataAdditional() {
+		this.showSaveButton();
+				
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
 
@@ -244,6 +251,7 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildEnterpriseLinked() {
+		// Quitar el beta y sig
 		if (this.isBeta() || this.isSig()) {
 			const card = this.getElement(this.GENERAL_CARD);
 
@@ -335,9 +343,21 @@ export class AonCustomer extends AonReg {
 			});
 		}
 	}
+	
+	hideSaveButton(){
+		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		if(saveBtn) saveBtn.style.display = 'none';
+	}
+	
+	showSaveButton(){
+		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		if(saveBtn) saveBtn.style.display = 'block';
+	}
 
 	//EXPEDIENTE
 	buildExpedienteData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -354,6 +374,8 @@ export class AonCustomer extends AonReg {
 
 	//ITEMS PRODUCTS
 	buildItemData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -375,6 +397,8 @@ export class AonCustomer extends AonReg {
 
 	//BOOKING PRODUCTS
 	buildBookingData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -396,6 +420,8 @@ export class AonCustomer extends AonReg {
 
 	//SELLERS
 	buildSellerData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -411,6 +437,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildCustomerFee() {
+		this.hideSaveButton();
+		
 		let div = this.getElement(this.DIV);
 		this.clearElement(div);
 
