@@ -2318,7 +2318,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
-			alert(bankAccount.value);
 			this.setFocus(this.FINANCE_AMOUNT + i);	
 			finance.bank_account = bankAccount.value;
 			this.invoice.setFinance(finance, i);

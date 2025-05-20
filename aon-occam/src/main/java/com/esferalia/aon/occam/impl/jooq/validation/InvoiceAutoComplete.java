@@ -615,7 +615,10 @@ public class InvoiceAutoComplete {
 						detail.setWorkplace(wp);
 					}
 				} else {
-					Workplace wp = ctx.getConfiguration().getWorkplaces().getFirst();
+					List<Workplace> wps = ctx.getConfiguration().getWorkplaces();
+					Workplace wp = null;
+					if(wps != null && !wps.isEmpty())
+						wp = wps.getFirst();
 					if(wp != null && wp.getId() != null) {
 						detail.setWorkplace(wp);
 					}

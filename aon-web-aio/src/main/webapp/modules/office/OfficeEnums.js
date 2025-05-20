@@ -21,6 +21,18 @@ const AON_WORKGROUP_LIST = {
     icon: MATERIAL_ICONS.GROUPS
 }
 
+const AON_SELLER_LIST = {
+    id: 'sideNavSeller',
+    name: "Agentes",
+    icon: MATERIAL_ICONS.SUPPORT_AGENT
+}
+
+const AON_SELLER_WORKLOAD = {
+    id: 'sideNavSellerWorkload',
+    name: "Cargas de Trabajo",
+    icon: MATERIAL_ICONS.PERSON_PLAY
+}
+
 const AON_SERVICE = {
     id: 'sideNavService',
     name: MSG.AON_SERVICES,
@@ -35,7 +47,7 @@ const AON_SALES_ENTERPRISE = {
 
 const AON_TARGET_ENTERPRISE = {
     id: 'sideNavTargetEnterprise',
-    name: 'Empresas (C. Potenciales)',
+    name: 'Procesar C. Potenciales',
     icon: MATERIAL_ICONS.DOMAIN_ADD
 }
 
@@ -66,7 +78,9 @@ const OfficeSidenav = {
 const OfficeOptions = {
     AON_CUSTOMER,
     AON_TASK_HOLDER,
-    AON_WORKGROUP_LIST
+    AON_WORKGROUP_LIST,
+    AON_SELLER_LIST,
+    AON_SELLER_WORKLOAD
 };
 
 const ServiceOptions = {

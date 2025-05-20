@@ -6856,13 +6856,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					+ "\n" + grup_ctz + "\n" + fecha);
 
 			// Get employee nafxipf
-			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
-					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
-					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
-					employeeContractInfo.getEmployeeInfo().getSurName(),
-					employeeContractInfo.getEmployeeInfo().getSecondSurName());
-
-			System.out.println(employeeAux.getNss());
+//			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+//					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
+//					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
+//					employeeContractInfo.getEmployeeInfo().getSurName(),
+//					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+//
+//			System.out.println(employeeAux.getNss());
 
 			// cambioGrupCtz
 			SistemaRED.cambioGrupCtz(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
@@ -6870,7 +6870,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeAux.getNss(), grup_ctz, fecha);
+					employeeContractInfo.getEmployeeInfo().getSsNumber(), grup_ctz, fecha);
 
 		} catch (Exception e) {
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)

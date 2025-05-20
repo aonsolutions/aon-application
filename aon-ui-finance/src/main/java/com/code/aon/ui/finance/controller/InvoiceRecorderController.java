@@ -7,7 +7,6 @@ import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -29,7 +28,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
@@ -700,5 +698,13 @@ public class InvoiceRecorderController extends BasicController {
 				.put("domain_name", domain.getName())
 				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
 		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+	}
+	
+	public void refreshFilter() {
+	    this.checkOption = null;
+	    this.showBreakDownOption = null;
+	    this.showAccountEntryOption = null;
+
+	    this.onSearchList(null);
 	}
 }

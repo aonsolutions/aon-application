@@ -35,6 +35,7 @@ public enum WithholdingType implements IResourceable {
 	,M190_F_01(TRABAJO,"Trabajo (F/01)")
 	,M190_F_02_1(TRABAJO,"Cursos (F/02)")
 	,M190_F_02_2(TRABAJO,"Elab. obras (F/02)")
+	,M193_C4(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/4)")
 	;
 	private WithholdingTypeGroup group;
 	private String abbrev;
@@ -77,7 +78,7 @@ public enum WithholdingType implements IResourceable {
 		// TRABAJO
 		,M190_F_01,M190_F_02_1,M190_F_02_2
 		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3
+		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3,M193_C4
 		// DERECHOS_IMAGEN
 		,M190_J
 		// GANANCIAS_PATRIMONIALES

@@ -589,6 +589,7 @@ public class AonRandom {
 			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
 			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
 			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM193C4(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C4);     }
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
@@ -628,6 +629,7 @@ public class AonRandom {
 			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
 			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
 			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM193C4(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C4);     }
 			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
 			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
 			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
