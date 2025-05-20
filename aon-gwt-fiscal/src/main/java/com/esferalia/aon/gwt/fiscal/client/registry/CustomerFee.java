@@ -36,12 +36,14 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
+import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -303,13 +305,18 @@ public class CustomerFee extends MainEntryPoint {
 			
 			@Override
 			protected void onClearFilter() {
-				getSearchTextBox().setValue(null, false);
+				if(!isCustomer()) 
+					getSearchTextBox().setValue(null, false);
+				
 				monthListBox.setValue("");
 				yearListBox.setValue("");
 				periocityListBox.setValue("");
-				customerStatusListBox.setValue("");
-				if(null != segmentListBox)
-					segmentListBox.setValue("");
+				
+				if(!isCustomer()) {
+					customerStatusListBox.setValue("");
+					if(null != segmentListBox)
+						segmentListBox.setValue("");
+				}
 				startCompareLB.setValue("0");
 				startDateBox.setValue(null);
 				endCompareLB.setValue("0");
@@ -1289,47 +1296,101 @@ public class CustomerFee extends MainEntryPoint {
 	private void createToolbar() {
 		createButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 		createButton.addClickHandler(e -> {
-			new CustomerFeeDialog(options) {
+			
+			if(isCustomer()) {
 				
-				@Override
-				protected void onCreate(Fee fee) {
-					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+				getCustomer(customer -> {
+					
+					new CustomerFeeDialog(options, customer) {
 						
 						@Override
-						public void onSuccess(Fee customerFee) {
-							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
-							addValueButton.setEnabled(false);
-							deleteFeeButton.setEnabled(false);
-							exportButton.setEnabled(false);
-							onSearch();
+						protected void onCreate(Fee fee) {
+							SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+								
+								@Override
+								public void onSuccess(Fee customerFee) {
+									AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+									addValueButton.setEnabled(false);
+									deleteFeeButton.setEnabled(false);
+									exportButton.setEnabled(false);
+									onSearch();
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								}
+							});
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
+								Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+							// TODO Auto-generated method stub
+							
 						}
-					});
-				}
-				
-				@Override
-				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
-						Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				protected void onAccept(Fee fee) {
-					// TODO Auto-generated method stub
-					
-				}
+						
+						@Override
+						protected void onAccept(Fee fee) {
+							// TODO Auto-generated method stub
+							
+						}
 
-				@Override
-				protected void onCreate(Fee fee, Integer ritem) {
-					// TODO Auto-generated method stub
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
+					};
 					
-				}
-			};
+				});
+				
+			} else {
+			
+				new CustomerFeeDialog(options) {
+					
+					@Override
+					protected void onCreate(Fee fee) {
+						SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+							
+							@Override
+							public void onSuccess(Fee customerFee) {
+								AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+								addValueButton.setEnabled(false);
+								deleteFeeButton.setEnabled(false);
+								exportButton.setEnabled(false);
+								onSearch();
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+							}
+						});
+					}
+					
+					@Override
+					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
+							Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					protected void onAccept(Fee fee) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					protected void onCreate(Fee fee, Integer ritem) {
+						// TODO Auto-generated method stub
+						
+					}
+				};
+				
+			}
+			
 		});
 		feeDockLayout.addToolbarButton(createButton);
 		
@@ -1826,6 +1887,22 @@ public class CustomerFee extends MainEntryPoint {
 				}
 			}
 		);
+	}
+	
+	private void getCustomer(Consumer<Customer> success) {
+		COMMON_SERVICE.getCustomer(options.getDomainName(), options.getDomain(), options.getUser(), customerId, new AsyncCallback<CustomerFull>() {
+			
+			@Override
+			public void onSuccess(CustomerFull customer) {
+				success.accept(customer.getRegistry());
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obteniendo cliente: " + caught.getMessage());
+				success.accept(null);
+			}
+		});
 	}
 
 }

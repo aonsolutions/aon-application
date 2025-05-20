@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -372,6 +373,7 @@ public class SellerWorkloadDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(CUSTOMER_FEE.PROJECT))
 				.where(condition);
 			
 //		fromCustomerRecords = fromCustomerRecords.leftJoin(RITEM).on(RITEM.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER).and(RITEM.ITEM.eq(CUSTOMER_FEE.ITEM)).and(RITEM.CUSTOMER_FEE.eq(CUSTOMER_FEE.ID)));
