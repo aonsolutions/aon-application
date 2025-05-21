@@ -185,6 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
   
   if(isNew)
     loadNew();
-  else 
+  else
     load();
 });

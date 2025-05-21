@@ -27,11 +27,15 @@ aon-icon-button i {
 
   aon-icon-button[icon="#{$icon-name}"] i {
     &::after {
-      content: url(#{$icon-data}); /* Mostrar el texto como respaldo */
+      width             : 1.5rem;
+      height            : 1.5rem;
+      content           : '';
+      display           : inline-flex;
+      mask              : url(#{$icon-data}) no-repeat center;
+      mask-size         : contain;
+      -webkit-mask      : url(#{$icon-data}) no-repeat center;
+      -webkit-mask-size : contain;
+      background-color  : #bd9fe9;
     }
   }
-}
-
-svg{
-  color: red;
 }

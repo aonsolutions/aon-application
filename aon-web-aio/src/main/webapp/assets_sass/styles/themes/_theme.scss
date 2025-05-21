@@ -1,41 +1,47 @@
 @use '../variables' as v;
 
 @mixin theme(
-  $color-50, $color-100, $color-200, $color-300,
+  $color-0, $color-50, $color-100, $color-200, $color-300,
   $color-400, $color-500, $color-600, $color-700, 
   $color-800, $color-900,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp
 ) {
   body {
-    background-color : $color-50;
+    background-color : $color-0;
     color            : $color-text;
-    button{
-      background-color  : $color-900;
-      color             : $color-text-button;
-      transition        : background-color v.$transition-duration-03 v.$transition-easing-ease;  
-      &:hover{
-        background-color: $color-500;
+    margin           : unset;
+    aon-module{
+      display : flex;
+      width   : 100vw;
+      height  : 100vh;
+      button{
+        background-color  : $color-900;
+        color             : $color-text-button;
+        transition        : background-color v.$transition-duration-03 v.$transition-easing-ease;  
+        &:hover{
+          background-color: $color-500;
+        }
       }
-    }
-    button.aonLoginButton{
-      &:hover{
-        background-color : linear-gradient(to v.$gradient-direction-right, $color-grad-max, $color-grad-min);
+      button.aonLoginButton{
+        &:hover{
+          background-color : linear-gradient(to v.$gradient-direction-right, $color-grad-max, $color-grad-min);
+        }
       }
-    }
-    button.aonMagicButton{
-      background-color : v.$background-color-transp;
-      color            : $color-text-button-transp;
-      &:hover{
-        background-color : $color-900;
-        color            : $color-text-button;
-        border           : none;
-      }
-    }
-    button.aonIconButton{
-      background-color   : $color-600;
-      &:hover{
+      button.aonMagicButton{
         background-color : v.$background-color-transp;
+        color            : $color-text-button-transp;
+        &:hover{
+          background-color : $color-900;
+          color            : $color-text-button;
+          border           : none;
+        }
+      }
+      button.aonIconButton{
+        background-color   : $color-600;
+        &:hover{
+          background-color : v.$background-color-transp;
+        }
       }
     }
   }

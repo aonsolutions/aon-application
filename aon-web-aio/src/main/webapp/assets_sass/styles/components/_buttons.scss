@@ -13,14 +13,13 @@ $btn-display       : v.$display-inline-block;
 $btn-text-align    : v.$text-align-center;
 $btn-gap           : v.$gap-10;
 
-$aonmagicbutton-box-sizing   : v.$box-sizing-borderbox; 
-$aonmagicbutton-border-color : v.$border-color-silver; 
-$aonmagicbutton-border-width : v.$border-width-1; 
-$aonmagicbutton-border-style : v.$border-style-solid; 
+$magicbutton-box-sizing   : v.$box-sizing-borderbox; 
+$magicbutton-border-color : v.$border-color-silver; 
+$magicbutton-border-width : v.$border-width-1; 
+$magicbutton-border-style : v.$border-style-solid; 
 
-$aoniconbutton-padding : v.$padding-unset;
-$aoniconbutton-margin  : v.$margin-unset;
-
+$iconbutton-padding : v.$padding-unset;
+$iconbutton-margin  : v.$margin-unset;
 
 // ESTILO BOTON
 button {
@@ -37,15 +36,15 @@ button {
   &::first-letter{
     text-transform : v.$text-transform-uppercase;
   }
-}
+  
+  &.aonMagicButton{
+    box-sizing : $magicbutton-box-sizing;
+    border     : $magicbutton-border-width $magicbutton-border-style $magicbutton-border-color;
+  }
 
-button.aonMagicButton{
-  box-sizing : $aonmagicbutton-box-sizing;
-  border     : $aonmagicbutton-border-width $aonmagicbutton-border-style $aonmagicbutton-border-color;
-}
-
-// Boton que se inyecta en los input
-button.aonIconButton{
-  padding : $aoniconbutton-padding;
-  margin  : $aoniconbutton-margin;
+  // Boton que se inyecta en los input
+  &.aonIconButton{
+    padding : $iconbutton-padding;
+    margin  : $iconbutton-margin;
+  }
 }

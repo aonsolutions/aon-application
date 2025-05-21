@@ -1,6 +1,7 @@
 @use './theme' as t;
 
 // Variables colores
+$color-0  : #fff;
 $color-50 : #f8fafc;
 $color-100: #f1f5f9;
 $color-200: #e2e8f0;
@@ -20,7 +21,7 @@ $color-text-button-transp: #1E293B;
 
 @mixin infoautonomo-theme {
   @include t.theme(
-    $color-50, $color-100, $color-200, $color-300, 
+    $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,

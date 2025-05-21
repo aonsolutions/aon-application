@@ -1,6 +1,7 @@
 @use './theme' as t;
 
 // Variables colores
+$color-0  : #000;
 $color-50 : #13001f;  // Fondo principal
 $color-100: #1c003d;
 $color-200: #220649;
@@ -20,7 +21,7 @@ $color-text-button-transp: #ede5f8;
 
 @mixin dark-theme {
   @include t.theme(
-    $color-50, $color-100, $color-200, $color-300, 
+    $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
