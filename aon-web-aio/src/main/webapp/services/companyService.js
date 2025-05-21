@@ -1,4 +1,4 @@
-import { request, put, get, getDefaultSessionData, getParentSessionData } from "./request.js";
+import { request, put, get, post, getDefaultSessionData, getParentSessionData } from "./request.js";
 import { API, API_URL } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -154,4 +154,6 @@ export const getDomainApps = (domain) => {
   	return json.url; // <- esto es lo que querés
   };
 
+  export const getContratado = (data) => get(`${API_URL}/contracted_plans_servlet/apps`, data);
+  export const sendFormData = (data) => post(`${API_URL}/contracted_plans_servlet/callForm`, data);
 

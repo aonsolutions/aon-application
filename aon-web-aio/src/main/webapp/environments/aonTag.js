@@ -27,6 +27,7 @@ export const PRE = 'pre';
 export const TEXTAREA = 'textarea';
 export const SRIPT = 'script';
 export const LINK = 'link';
+export const P = 'p';
 
 // COMPONENTS
 

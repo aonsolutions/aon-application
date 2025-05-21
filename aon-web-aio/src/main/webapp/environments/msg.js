@@ -579,6 +579,7 @@ export const PROTOCOL = "Protocolo";
 export const PROVINCE = MSG.PROVINCE;
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PARENT = "Padre"; // TODO
+export const PLAN = "Planes";
 
 // ----- Q
 
