@@ -1,0 +1,92 @@
+@use '../variables' as v;
+
+// .aonInputBox
+$display-aonInputBox : v.$display-grid;
+// .aonInputBoxLabel
+$width-aonInputBoxLabel          : v.$width-100;
+$display-aonInputBoxLabel        : v.$display-flex;
+$flex-direction-aonInputBoxLabel : v.$flex-direction-column-reverse;
+$gap-aonInputBoxLabel            : v.$gap-6;
+// input
+$height-input        : v.$height-40;
+$border-width-input  : v.$border-width-1;
+$border-style-input  : v.$border-style-solid;
+$border-color-input  : v.$border-color-silver;
+$border-radius-input : v.$border-radius;
+$box-sizing-input    : v.$box-sizing-borderbox;
+// span
+$height-span      : v.$height-24;
+$display-span     : v.$display-flex;
+$align-items-span : v.$align-items-center;
+// .aonInputIconLabel
+$display-aonInputIconLabel         : v.$display-flex;
+$justify-content-aonInputIconLabel : v.$justify-content-flex-end;
+$position-aonInputIconLabel        : v.$position-relative;
+// aonIconButton
+$align-content-aonIconButton : v.$align-content-center;
+$height-aonIconButton        : v.$height-0;
+
+$padding-top    : v.$padding-8;
+$padding-right  : v.$padding-12;
+$padding-bottom : v.$padding-8;
+$padding-left   : v.$padding-12;
+
+aon-input, aon-new-input{ 
+  //display: grid;
+
+  #aonLoginUserRoot{
+    padding-bottom: $padding-bottom;
+  }
+
+  #aonLoginPasswordRoot{
+    padding-bottom: $padding-bottom;
+  }
+  
+  .aonInputBox{
+    display: $display-aonInputBox;
+    
+    .aonInputBoxLabel{
+      display        : $display-aonInputBoxLabel;
+      flex-direction : $flex-direction-aonInputBoxLabel;
+      width          : $width-aonInputBoxLabel;
+      gap: $gap-aonInputBoxLabel;
+    
+      input{
+        height        : $height-input;
+        padding       : $padding-top $padding-right $padding-bottom $padding-left;
+        border        : $border-width-input $border-style-input $border-color-input;
+        border-radius : $border-radius-input;
+        box-sizing    : $box-sizing-input;
+      }
+      span{
+        height      : $height-span;
+        display     : $display-span;
+        align-items : $align-items-span;
+      }
+    }
+    // El Boton que se inyecta en el label esta configurado en _buttons.css
+    .aonInputIconLabel{
+      display         : $display-aonInputIconLabel;
+      position        : $position-aonInputIconLabel;
+      justify-content : $justify-content-aonInputIconLabel;
+      top             : -($height-input - $padding-top);
+      right           : $padding-right;
+      aon-icon-button {
+        height        : $height-aonIconButton;
+        align-content : $align-content-aonIconButton;
+
+        button{
+          padding-left     : $padding-left;
+          background-color : aliceblue;
+        }
+      }
+    }
+  }
+  .aonInputMsg{
+    padding-left: $padding-left;
+
+    .aonInputMsgError{
+      color: #f6655a;
+    }
+  }
+}

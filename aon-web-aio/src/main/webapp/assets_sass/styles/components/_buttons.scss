@@ -1,0 +1,51 @@
+@use '../variables' as v;
+
+// Variables estandar boton
+$btn-padding       : .5rem 1rem;
+$btn-border-radius : v.$border-radius;
+$btn-border-width  : v.$border-width-1;
+$btn-border-color  : v.$border-color-transparent; 
+$btn-border-style  : v.$border-style-solid; 
+$btn-width         : v.$width-100;
+$btn-height        : v.$height-100;
+$btn-cursor        : v.$cursor-pointer;
+$btn-display       : v.$display-inline-block;
+$btn-text-align    : v.$text-align-center;
+$btn-gap           : v.$gap-10;
+
+$aonmagicbutton-box-sizing   : v.$box-sizing-borderbox; 
+$aonmagicbutton-border-color : v.$border-color-silver; 
+$aonmagicbutton-border-width : v.$border-width-1; 
+$aonmagicbutton-border-style : v.$border-style-solid; 
+
+$aoniconbutton-padding : v.$padding-unset;
+$aoniconbutton-margin  : v.$margin-unset;
+
+
+// ESTILO BOTON
+button {
+  width            : $btn-width;
+  padding          : $btn-padding;
+  font-size        : v.$font-16;
+  border-radius    : $btn-border-radius;
+  border           : none;
+  cursor           : $btn-cursor;
+  display          : $btn-display;
+  text-align       : $btn-text-align;
+  gap              : $btn-gap;
+  text-transform   : v.$text-transform-lowercase;
+  &::first-letter{
+    text-transform : v.$text-transform-uppercase;
+  }
+}
+
+button.aonMagicButton{
+  box-sizing : $aonmagicbutton-box-sizing;
+  border     : $aonmagicbutton-border-width $aonmagicbutton-border-style $aonmagicbutton-border-color;
+}
+
+// Boton que se inyecta en los input
+button.aonIconButton{
+  padding : $aoniconbutton-padding;
+  margin  : $aoniconbutton-margin;
+}

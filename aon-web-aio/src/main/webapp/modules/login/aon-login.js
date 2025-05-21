@@ -389,7 +389,7 @@ export class AonLogin extends AonElement {
     loader.start();
     login(data)
       .then(() => {
-        document.body.style.background = 'transparent';
+       // document.body.style.background = 'transparent';
         loader.stop();
         LS.removeDomain();
         this.getModule().buildHome();

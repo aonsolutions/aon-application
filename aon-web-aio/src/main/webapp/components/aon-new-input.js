@@ -4,7 +4,6 @@ import '../css/aon-new-input.css';
 import { AonIconButton } from "./aon-icon-button.js";
 
 export class AonNewInput extends AonElement {
-
     ROOT;
     BOX;
     LABEL;
@@ -14,7 +13,6 @@ export class AonNewInput extends AonElement {
     TITLE;
     MSG;
     MSG_SPAN;
-    
     
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -222,7 +220,6 @@ export class AonNewInput extends AonElement {
           div.appendChild(iconLabel);
         }
         iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-        iconLabel.style.top = '5px';
         iconLabel.id = this.ICON;
         iconLabel.setAttribute("for", this.INPUT);
         let aonIconButton = new AonIconButton();
@@ -233,7 +230,6 @@ export class AonNewInput extends AonElement {
         iconLabel.appendChild(aonIconButton);
         
         if(color) iconLabel.color = color;
-        this.getElement(this.INPUT).style.paddingRight = '40px';
     }
 
     addIconWithRemove(icon, color, removeFn) {
@@ -244,7 +240,7 @@ export class AonNewInput extends AonElement {
           div.appendChild(iconLabel);
         }
         iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
-        iconLabel.style.top = '5px';
+       // iconLabel.style.top = '5px';
         iconLabel.id = this.ICON;
         iconLabel.setAttribute("for", this.INPUT);
         let aonIconButton = new AonIconButton();
@@ -262,7 +258,7 @@ export class AonNewInput extends AonElement {
         iconLabel.appendChild(aonIconButton);
     
         if (color) iconLabel.color = color; 
-        this.getElement(this.INPUT).style.paddingRight = '40px';
+       //this.getElement(this.INPUT).style.paddingRight = '40px';
       }
 
     addError(message) {

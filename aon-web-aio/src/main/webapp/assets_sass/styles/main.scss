@@ -8,6 +8,13 @@
 // Importamos los archivos de temas
 @use './themes/light' as light;
 @use './themes/ayudat' as ayudat;
+@use './themes/infoautonomo' as infoautonomo;
+@use './themes/dark' as dark;
+
+// Importamos componentes
+@use './components/buttons' as button;
+@use './components/inputs' as input;
+@use './components/icons' as icon;
 
 :root{
   font-family : v.$font-primary-regular;
@@ -104,4 +111,12 @@
 // Si el body tiene la clase theme-ayudat, aplicamos el tema ayudat
 :root.theme-ayudat {
   @include ayudat.ayudat-theme;
+}
+// Si el body tiene la clase theme-infoautonomo, aplicamos el tema infoautonomo
+:root.theme-infoautonomo {
+  @include infoautonomo.infoautonomo-theme;
+}
+// Si el body tiene la clase theme-dark, aplicamos el tema oscuro
+:root.theme-dark {
+  @include dark.dark-theme;
 }

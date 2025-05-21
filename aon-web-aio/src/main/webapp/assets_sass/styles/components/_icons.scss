@@ -1,0 +1,37 @@
+@use '../variables' as v;
+
+// Mapa con iconos y texto
+$icons: (
+  "visibility"    : '../icons/eye.svg',
+  "visibility_off": '../icons/eye-off.svg'
+);
+
+// Estilos comunes para <i> (el texto por defecto)
+aon-icon-button i {
+  font-size: 16px; /* Tamaño de texto por defecto */
+  color: #CBD5E1; /* Color del texto por defecto */
+  position: relative; /* Necesario para el posicionamiento de iconos */
+}
+
+// Estilos para los iconos usando el mapa
+@each $icon-name, $icon-data in $icons {
+  aon-icon-button[icon="#{$icon-name}"] i {
+    font-size: 0; /* Ocultar el texto */
+  }
+
+  aon-icon-button[icon="#{$icon-name}"] i::before {
+    content : #{$icon-name}; /* Cargar el icono SVG */
+    width   : 16.67px;
+    height  : 16.67px;
+  }
+
+  aon-icon-button[icon="#{$icon-name}"] i {
+    &::after {
+      content: url(#{$icon-data}); /* Mostrar el texto como respaldo */
+    }
+  }
+}
+
+svg{
+  color: red;
+}

@@ -2,77 +2,91 @@
 
 @font-face {
   font-family : v.$font-primary-regular;
-  src         : url(v.$font-url-regular) format(v.$font-url-regular-format);
-  font-weight : v.$font-weight-regular v.$font-weight-extrabold;
+  src         : url(v.$font-url-regular) format(v.$font-url-format);
+  font-weight : v.$font-weight-regular;
   font-style  : v.$font-style-normal;
 }
 
 @font-face {
-  font-family : v.$font-primary-italic;
-  src         : url(v.$font-url-italic) format(v.$font-url-italic-format);
-  font-weight : v.$font-weight-regular v.$font-weight-extrabold;
-  font-style  : v.$font-style-italic;
+  font-family : v.$font-primary-medium;
+  src         : url(v.$font-url-medium) format(v.$font-url-format);
+  font-weight : v.$font-weight-medium;
+  font-style  : v.$font-style-normal;
+}
+
+@font-face {
+  font-family : v.$font-primary-semibold;
+  src         : url(v.$font-url-semibold) format(v.$font-url-format);
+  font-weight : v.$font-weight-semibold;
+  font-style  : v.$font-style-normal;
+}
+
+@font-face {
+  font-family : v.$font-primary-bold;
+  src         : url(v.$font-url-bold) format(v.$font-url-format);
+  font-weight : v.$font-weight-bold;
+  font-style  : v.$font-style-normal;
+}
+
+@font-face {
+  font-family : v.$font-primary-extrabold;
+  src         : url(v.$font-url-extrabold) format(v.$font-url-format);
+  font-weight : v.$font-weight-extrabold;
+  font-style  : v.$font-style-normal;
 }
 
 h1 {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-extrabold;
+  font-family: v.$font-primary-extrabold;
   font-size: v.$font-size-h1;
   line-height: v.$line-height-h1;
   letter-spacing: v.$letter-spacing-h1;
 }
 
 h2 {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-semibold;
+  font-family: v.$font-primary-semibold;
   font-size: v.$font-size-h2;
   line-height: v.$line-height-h2;
   letter-spacing: v.$letter-spacing-h2;
 }
 
 h3 {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-semibold;
+  font-family: v.$font-primary-semibold;
   font-size: v.$font-size-h3;
   line-height: v.$line-height-h3;
   letter-spacing: v.$letter-spacing-h3;
 }
 
 h4 {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-semibold;
+  font-family: v.$font-primary-semibold;
   font-size: v.$font-size-h4;
   line-height: v.$line-height-h4;
   letter-spacing: v.$letter-spacing-h4;
 }
 
 p {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-semibold;
+  font-family: v.$font-primary-semibold;
   font-size: v.$font-size-p;
   line-height: v.$line-height-p;
   letter-spacing: v.$letter-spacing-p;
 }
 
 blockquote {
-  font-family: v.$font-primary-italic;
-  font-weight: v.$font-weight-regular;
+  font-family: v.$font-primary-regular;
+  font-style: v.$font-style-italic;
   font-size: v.$font-size-blockquote;
   line-height: v.$line-height-blockquote;
   letter-spacing: v.$letter-spacing-blockquote;
 }
 
 th {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-bold;
+  font-family: v.$font-primary-bold;
   font-size: v.$font-size-tr;
   line-height: v.$line-height-tr;
   letter-spacing: v.$letter-spacing-tr;
 }
 
 tr {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-bold;
+  font-family: v.$font-primary-bold;
   font-size: v.$font-size-tr;
   line-height: v.$line-height-tr;
   letter-spacing: v.$letter-spacing-tr;
@@ -80,31 +94,27 @@ tr {
 
 ul {
   font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-regular;
   font-size: v.$font-size-ul;
   line-height: v.$line-height-ul;
   letter-spacing: v.$letter-spacing-ul;
 }
 
 code {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-bold;
+  font-family: v.$font-primary-bold;
   font-size: v.$font-size-code;
   line-height: v.$line-height-code;
   letter-spacing: v.$letter-spacing-code;
 }
 
 big {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-semibold;
+  font-family: v.$font-primary-semibold;
   font-size: v.$font-size-big;
   line-height: v.$line-height-big;
   letter-spacing: v.$letter-spacing-big;
 }
 
 small {
-  font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-medium;
+  font-family: v.$font-primary-medium;
   font-size: v.$font-size-small;
   line-height: v.$line-height-small;
   letter-spacing: v.$letter-spacing-small;
@@ -112,8 +122,26 @@ small {
 
 sub {
   font-family: v.$font-primary-regular;
-  font-weight: v.$font-weight-regular;
   font-size: v.$font-size-sub;
   line-height: v.$line-height-sub;
   letter-spacing: v.$letter-spacing-sub;
+}
+
+button {
+  font-family: v.$font-primary-medium;
+  font-size: v.$font-size-btn;
+  line-height: v.$line-height-btn;
+  letter-spacing: v.$letter-spacing-btn;
+}
+
+span{
+  font-family: v.$font-primary-medium;
+  font-size: v.$font-size-span;
+  line-height: v.$line-height-span;
+  letter-spacing: v.$letter-spacing-span;
+}
+
+.aonInputMsgError{
+  font-family: v.$font-primary-semibold;
+  font-size: v.$font-size-aonInputMsgError;
 }
