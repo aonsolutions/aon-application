@@ -47,6 +47,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -370,28 +371,28 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- ContractAttachUIImpl
 
-		public class EmployeeCalendarDraftNewImpl extends EmployeeCalendarDraftNew {
+	public class EmployeeCalendarDraftNewImpl extends EmployeeCalendarDraftNew {
 
-			@Override
-			protected void showErrorMessage(String title, String message) {
-				showError(title, message);
-			}
-
-			@Override
-			protected void showSuccessMessage(String title, String message) {
-				showSuccess(title, message);
-			}
-
-			@Override
-			protected void showLoadingMessage(String message) {
-				showLoading(message);
-			}
-
-			@Override
-			protected void onHideMessage() {
-				hideMessage();
-			}
+		@Override
+		protected void showErrorMessage(String title, String message) {
+			showError(title, message);
 		}
+
+		@Override
+		protected void showSuccessMessage(String title, String message) {
+			showSuccess(title, message);
+		}
+
+		@Override
+		protected void showLoadingMessage(String message) {
+			showLoading(message);
+		}
+
+		@Override
+		protected void onHideMessage() {
+			hideMessage();
+		}
+	}
 
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 
@@ -2010,8 +2011,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void onPartialityCoefContract(String partialityCoef, Date date) {
 				showLoading("Comunicando coeficiente parcialidad (TGSS) ...");
 				contrataEmployeeObject.cambioCoef(partialityCoef, date,
-						s -> showSuccess("AVISO: Parcialidad",
-								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						s -> { 
+							showSuccess("AVISO: Parcialidad",
+								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social.");
+							reloadEmpl();
+						},
 						f -> showError("Error comunicaci\u00F3n Parcialidad", f.getMessage()));
 			}
 
@@ -2019,7 +2023,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void onCnoContract(String cno, Date date) {
 				showLoading("Comunicando CNO (TGSS) ...");
 				contrataEmployeeObject.cambioCno(cno, date,
-						s -> showSuccess("AVISO: CNO", "El cambio de CNO ha sido notificado a la Seguridad Social."),
+						s -> {
+							showSuccess("AVISO: CNO", "El cambio de CNO ha sido notificado a la Seguridad Social.");
+							reloadEmpl();
+						},
 						f -> showError("Error comunicaci\u00F3n CNO", f.getMessage()));
 			}
 
@@ -2027,8 +2034,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void onOcupationContract(String ocupation, Date date) {
 				showLoading("Comunicando ocupaci\u00f3n (TGSS) ...");
 				contrataEmployeeObject.cambioOcupacion(ocupation, date,
-						s -> showSuccess("AVISO: Ocupaci\u00F3n",
-								"El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."),
+						s -> {
+							showSuccess("AVISO: Ocupaci\u00F3n",
+								"El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social.");
+
+							reloadEmpl();
+						},
 						f -> showError("Error comunicaci\u00F3n Ocupaci\u00f3n", f.getMessage()));
 			}
 
@@ -2036,8 +2047,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void onQuoteContract(String quoteGroup, Date date) {
 				showLoading("Comunicando grupo cotizaci\u00f3n (TGSS) ...");
 				contrataEmployeeObject.cambioGrupCtz(quoteGroup, date,
-						s -> showSuccess("AVISO: Grupo cotizaci\u00F3n",
-								"El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."),
+						s -> {
+							showSuccess("AVISO: Grupo cotizaci\u00F3n",
+								"El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social.");
+							reloadEmpl();
+						},
 						f -> showError("Error comunicaci\u00F3n Grupo Cotizaci\u00f3n", f.getMessage()));
 			}
 
@@ -2045,8 +2059,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			protected void onChangeContract(String contract, String partialityCoef, Date date) {
 				showLoading("Comunicando cambio TC2 (TGSS) ...");
 				contrataEmployeeObject.cambioContrato(contract, partialityCoef, date,
-						s -> showSuccess("AVISO: Tipo contrato",
-								"El cambio de tipo de contrato ha sido notificado a la Seguridad Social."),
+						s -> {
+							showSuccess("AVISO: Tipo contrato",
+								"El cambio de tipo de contrato ha sido notificado a la Seguridad Social.");
+							reloadEmpl();
+						},
 						f -> showError("Error comunicaci\u00F3n TC2", f.getMessage()));
 			}
 
@@ -2066,6 +2083,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
 					downloadStartDocuments();
 				}, f -> showError("Error comunicaci\u00F3n Fecha Inicio", f.getMessage()));
+			}
+			
+			private void reloadEmpl() {
+				new Timer() {
+					
+					@Override
+					public void run() {
+						loadWindow(su -> {
+						});
+					}
+				}.schedule(2500);
 			}
 		};
 	}

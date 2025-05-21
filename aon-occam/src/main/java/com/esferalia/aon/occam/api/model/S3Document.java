@@ -19,6 +19,7 @@ public class S3Document implements Serializable {
 	private MimeType mimetype;
 	private Integer size;
 	private String name;
+	private String realName;
 	private Integer scope;
 	private Byte securityLevel;
 	private Date documentDate;
@@ -101,6 +102,15 @@ public class S3Document implements Serializable {
 
 	public S3Document setName(String name) {
 		this.name = name;
+		return this;
+	}
+	
+	public String getRealName() {
+		return realName;
+	}
+
+	public S3Document setRealName(String name) {
+		this.realName = name;
 		return this;
 	}
 

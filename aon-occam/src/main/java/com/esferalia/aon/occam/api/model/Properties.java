@@ -453,9 +453,6 @@ public interface Properties {
 		// REGISTRY
 		Property<String> getRegistryNameProperty();
 		Property<String> getRegistryDocumentProperty();
-		
-		
-		Property<Byte> getConfidentialProperty();
 	}
 	
 	public interface DeliveryDetailProperties extends AuditProperties{
@@ -1034,8 +1031,7 @@ public interface Properties {
 		// VALUE OF PURCHASE TABLE
 		Property<Date> getStartIssueDateProperty();
 		Property<Date> getEndIssueDateProperty();
-		Property<Byte> getConfidentialProperty();
-		
+	
 		// REGISTRY
 		Property<String> getRegistryNameProperty();
 		Property<String> getRegistryDocumentProperty();
@@ -1064,9 +1060,7 @@ public interface Properties {
 		
 		// VALUE OF PURCHASE TABLE
 		Property<Integer> getScopeProperty();
-		Property<Byte> getConfidentialProperty();
 		Property<Integer> getSupplierProperty();
-		
 	}
 	
 	public interface RecordDataProperties {
@@ -1141,8 +1135,6 @@ public interface Properties {
 		Property<String> getBankAliasProperty();
 		Property<String> getBicProperty();
 		Property<Integer> getCarrierPackingProperty();
-		
-		Property<Byte> getConfidentialProperty();
 	}
 
 	public interface IncomeDetailProperties extends AuditProperties{
@@ -1212,7 +1204,6 @@ public interface Properties {
 		Property<String> getRemarksProperty();
 		Property<Integer> getWorkplaceProperty();
 		Property<Integer> getScopeProperty();
-		Property<Byte> getConfidentialProperty();
 		Property<Short> getNumberOfPymntsProperty();
 		Property<Short> getDaysToFirstPymntProperty();
 		Property<Short> getDaysBetweenPymntsProperty();

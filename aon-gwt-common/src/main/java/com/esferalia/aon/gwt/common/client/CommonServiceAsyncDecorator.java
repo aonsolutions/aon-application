@@ -1018,4 +1018,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getTargetNotUserFull(params, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getCustomerByDocument(String domainName, int domain, String user, String document, AsyncCallback<Customer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomerByDocument(domainName, domain, user, document, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTargetFull(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
 }

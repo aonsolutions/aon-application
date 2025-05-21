@@ -181,6 +181,7 @@ export const CONTRACTED_USERS = MSG.CONTRACTED_USERS;
 export const CONTRACTS = MSG.CONTRACTS;
 export const COPIED_TO_CLIPBOARD = MSG.COPIED_TO_CLIPBOARD;
 export const COPY = MSG.COPY;
+export const CUSTOMER_FEE = 'Cuotas';
 export const COUNTRY = MSG.COUNTRY;
 export const CREATE = MSG.CREATE;
 export const CREATE_INVOICE = 'Crear Factura';

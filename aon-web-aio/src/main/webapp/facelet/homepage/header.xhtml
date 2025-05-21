@@ -1062,7 +1062,9 @@
 	.aon-finding-toolbar-item.aon-icon-remove-selection,
 	.aon-finding-toolbar-item.aon-icon-done-all,
 	.aon-finding-toolbar-item.aon-icon-remove-done,
-	.aon-finding-toolbar-item.aon-icon-close	
+	.aon-finding-toolbar-item.aon-icon-close,
+	.aon-finding-toolbar-item.aon-lookupButton-clear,
+	.aon-finding-toolbar-item.aon-icon-clear
 	{
 		min-height:24px !important;
 		padding-top:4px;
@@ -1178,7 +1180,7 @@
 	}
 
 	.aon-lookupButton-clear{
-		background-size:cover;
+		background-size:24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-refresh.svg']}) ;
 	}
 	
@@ -2478,7 +2480,7 @@
 						id="new_aon"
 						target="_blank" 
 						style="color: #002469;"
-						value="/beta"
+						value="/app"
 						styleClass="aon-top-menu-item"
 						onclick="initLocalStorage(); return true;"
 					>

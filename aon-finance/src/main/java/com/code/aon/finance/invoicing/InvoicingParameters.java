@@ -19,6 +19,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.registry.Segment;
@@ -38,6 +39,7 @@ public class InvoicingParameters implements Serializable {
 	private Integer toNumber;
 	private Date fromDate;
 	private Date toDate;
+	private BillingPeriod period;
 	private boolean confidential;
 	private WorkPlace workPlace;
 	private Scope scope;
@@ -143,6 +145,13 @@ public class InvoicingParameters implements Serializable {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+	
+	public BillingPeriod getPeriod() {
+		return period;
+	}
+	public void setPeriod(BillingPeriod period) {
+		this.period = period;
 	}
 
 	public boolean isConfidential() {

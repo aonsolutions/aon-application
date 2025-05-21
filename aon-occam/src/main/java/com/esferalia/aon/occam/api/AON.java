@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -4511,6 +4510,12 @@ public class AON {
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, TargetFilter filter) {
 		return getTargetStream(domainName, domainId, login, filter)
 				.findFirst();
+	}
+	
+	public static TargetFull getTargetFull(String domainName, Integer domainId, String login, Integer registry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getTargetFull(ctx, registry);
+		} 
 	}
 	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, Integer id) {
