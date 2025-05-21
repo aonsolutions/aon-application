@@ -16,6 +16,12 @@
 @use './components/inputs' as input;
 @use './components/icons' as icon;
 
+// Importamos layouts
+@use './layouts/header' as header;
+
+// Importamos vistas
+@use './pages/index' as index;
+
 :root{
   font-family : v.$font-primary-regular;
   font-weight : v.$font-weight-regular;

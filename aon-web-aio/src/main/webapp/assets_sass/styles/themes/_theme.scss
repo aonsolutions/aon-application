@@ -7,6 +7,8 @@
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp
 ) {
+  $magicbutton-border: v.$border-width-1 v.$border-style-solid $color-300;
+  
   body {
     background-color : $color-0;
     color            : $color-text;
@@ -15,26 +17,42 @@
       display : flex;
       width   : 100vw;
       height  : 100vh;
+      // Cabecera
+      .aonToolbar2{
+        background-color  : $color-900;
+      }
+      // Botones
       button{
         background-color  : $color-900;
         color             : $color-text-button;
-        transition        : background-color v.$transition-duration-03 v.$transition-easing-ease;  
         &:hover{
           background-color: $color-500;
         }
       }
+      button.aonButton{
+        transition: background-color v.$transition-duration-03 v.$transition-easing-ease;
+      }
       button.aonLoginButton{
+        background          : linear-gradient(to #{v.$gradient-direction-right}, $color-900, $color-900, $color-grad-max, $color-grad-min);
+        background-size     : 200% 100%;
+        background-position : 0 0;
+        transition          : background-position  v.$transition-duration-03;
         &:hover{
-          background-color : linear-gradient(to v.$gradient-direction-right, $color-grad-max, $color-grad-min);
+          background-position: 100% 0;
         }
       }
       button.aonMagicButton{
-        background-color : v.$background-color-transp;
-        color            : $color-text-button-transp;
+        background-color: v.$background-color-transp;
+        color           : $color-text-button-transp;
+        border          : $magicbutton-border;
+        transition      : background-color v.$transition-duration-03 v.$transition-easing-ease;
+        padding         : (.5rem - v.$border-width-1) 1rem;
         &:hover{
-          background-color : $color-900;
-          color            : $color-text-button;
-          border           : none;
+          background-color: $color-900;
+          color           : $color-text-button;
+          border          : none;
+          box-sizing : v.$box-sizing-borderbox;
+          padding: .5rem 1rem;
         }
       }
       button.aonIconButton{

@@ -14,9 +14,6 @@ $btn-text-align    : v.$text-align-center;
 $btn-gap           : v.$gap-10;
 
 $magicbutton-box-sizing   : v.$box-sizing-borderbox; 
-$magicbutton-border-color : v.$border-color-silver; 
-$magicbutton-border-width : v.$border-width-1; 
-$magicbutton-border-style : v.$border-style-solid; 
 
 $iconbutton-padding : v.$padding-unset;
 $iconbutton-margin  : v.$margin-unset;
@@ -39,7 +36,6 @@ button {
   
   &.aonMagicButton{
     box-sizing : $magicbutton-box-sizing;
-    border     : $magicbutton-border-width $magicbutton-border-style $magicbutton-border-color;
   }
 
   // Boton que se inyecta en los input
