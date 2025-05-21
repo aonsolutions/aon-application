@@ -2724,6 +2724,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object gross(double gross, Date start, Date end) throws ExpressionException, SQLException, SalaryException {
+		if ( AonNumberUtils.isNotValid(gross) ) {
+			throw new CheckException("Bruto err\u00F3neo. Revise la expresi\u00F3n, elimine posibles divisiones por cero.");
+		}
 
 		return paymentImpl(gross, 0.005, start, end);
 	}
@@ -4854,8 +4857,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
-	public static Double neto(Double liquido) throws MacroException {
-
+	public static Double neto(Double liquido) throws MacroException, CheckException {
+		if ( AonNumberUtils.isNotValid(liquido) ) {
+			throw new CheckException("Neto err\u00F3neo. Revise la expresi\u00F3n, elimine posibles divisiones por cero.");
+		}
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
@@ -4886,7 +4891,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return ctx.gross(bruto, start, end);
 	}
 
-	public static Double neto(Double liquido, Double bruto) throws MacroException {
+	public static Double neto(Double liquido, Double bruto) throws MacroException, CheckException {
+		if ( AonNumberUtils.isNotValid(liquido) ) {
+			throw new CheckException("Neto err\u00F3neo. Revise la expresi\u00F3n, elimine posibles divisiones por cero.");
+		} else if ( AonNumberUtils.isNotValid(bruto) ) {
+			throw new CheckException("Bruto err\u00F3neo. Revise la expresi\u00F3n, elimine posibles divisiones por cero.");
+		}
+		
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
