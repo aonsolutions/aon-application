@@ -182,40 +182,47 @@ public class CustomerDAO {
 		.collect(Collectors.toList());
 	}
 	
-	public static List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams customerParams) {
-		if(null != customerParams.getLimit()) {
-			return ctx.getDslContext().select()
-			.from(CUSTOMER)
-			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
-				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
-			)
-			.where(createCustomerCondition(ctx, customerParams))
-	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
-			.and(CUSTOMER_FEE.ID.isNull())
-			.offset(customerParams.getOffset())
-			.limit(customerParams.getLimit())
-			.fetch().stream().map(new CustomerFiller())
+	public static List<Customer> getCustomerWithoutFee(AONContext ctx, CustomerParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(CUSTOMER)
+				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER_FEE.CUSTOMER.eq(CUSTOMER.REGISTRY))
+				.where(condition)
+				.and(CUSTOMER_FEE.ID.isNull());
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT);
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(CUSTOMER.STATUS);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(REGISTRY.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "document"))
+				select.orderBy(REGISTRY.DOCUMENT.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "status"))
+				select.orderBy(CUSTOMER.STATUS.desc());
+		}
+		
+		List<Customer> customerList = select
+			.limit(params.getOffset(), params.getLimit())
+			.fetch()
+			.stream()
+			.map(new CustomerFiller())
 			.collect(Collectors.toList());
-		} else 
-			return ctx.getDslContext().select()
-			.from(CUSTOMER)
-			.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
-			.leftOuterJoin(CUSTOMER_FEE).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER)
-				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(AonDateUtils.toSql(new Date()))))
-			)
-			.where(createCustomerCondition(ctx, customerParams))
-	//		.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId()))
-	//		.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
-			.and(CUSTOMER_FEE.ID.isNull())
-			.fetch().stream().map(new CustomerFiller())
-			.collect(Collectors.toList());
+		
+		System.out.println("------------ Customer DAO --> getCustomerWithoutFee: " + customerList.size());
+		
+		return customerList;
+		
 	}
 	
-	private static Condition createCustomerCondition(AONContext ctx, CustomerParams customerParams) {
-		Integer domain = null != customerParams.getDomain() ? customerParams.getDomain() : ctx.getDomainId();
-		Condition condition = CUSTOMER.DOMAIN.eq(domain);
+	private static Condition paramsToCondition(AONContext ctx, CustomerParams params) {
+		Condition condition = CUSTOMER.DOMAIN.eq(params.getDomain());
 		
 		User user = SecurityDAO.getUser(ctx);
 		if(user.getDomain().getId() == ctx.getDomainId()) {
@@ -223,14 +230,17 @@ public class CustomerDAO {
 			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
 		}
 		
-		if(AonStringUtils.isNotBlank(customerParams.getCustomer())) 
-			condition = condition.and(REGISTRY.NAME.eq(customerParams.getCustomer()));
+		if(AonStringUtils.isNotBlank(params.getDescription())) 
+			condition = condition.and(REGISTRY.NAME.like("%" + params.getDescription() + "%")
+						.or(REGISTRY.ALIAS.like("%" + params.getDescription() + "%"))
+						.or(REGISTRY.DOCUMENT.like("%" + params.getDescription() + "%"))
+					);
 		
-		if(null != customerParams.getCustomerStatus())
-			condition = condition.and(CUSTOMER.STATUS.eq(customerParams.getCustomerStatus()));
+		if(null != params.getStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(params.getStatus()));
 		
-		if(null != customerParams.getCustomerIds() && !customerParams.getCustomerIds().isEmpty())
-			condition = condition.and(CUSTOMER.REGISTRY.in(customerParams.getCustomerIds()));
+		if(null != params.getCustomerIds() && params.getCustomerIds().size() > 0)
+			condition = condition.and(CUSTOMER.REGISTRY.in(params.getCustomerIds()));
 		
 		return condition;
 	}

@@ -104,8 +104,7 @@
 								<f:setPropertyActionListener target="#{sales.showPrepareSaleWindow}"
 									value="#{true}" />
 							 </aon:menuItem>
-							 
-							<!-- 						
+							 				
 							<aon:menuItem id="salesduplicate"
 								value="#{bundle.aon_to_duplicate}"
 								rendered="#{salesDetail.model.rowCount > 0}"
@@ -116,7 +115,6 @@
 								<f:setPropertyActionListener target="#{sales.showDuplicationWindow}"
 									value="#{true}" />
 							</aon:menuItem>
-							-->
 						</aon:if>
 						<aon:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="manufacture"

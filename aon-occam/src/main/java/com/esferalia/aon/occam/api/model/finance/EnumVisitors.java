@@ -50,10 +50,11 @@ public class EnumVisitors {
 		T visitM190K02(T t);
 		T visitM193C1(T t);
 		T visitM193C2(T t);
-		T visitM193C3(T t);
+		T visitM193C3(T t);		
 		T visitM190F01(T t);
 		T visitM190F021(T t);
 		T visitM190F022(T t);
+		T visitM193C4(T t);
 	}
 	
 	public static interface IRPFParamsOrderByVisitor<T,P> {

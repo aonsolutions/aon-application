@@ -8,6 +8,9 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJE
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
+import static com.esferalia.aon.watson.util.AonStringUtils.contains;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfter;
+import static com.esferalia.aon.watson.util.AonStringUtils.substringAfterLast;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -65,6 +68,7 @@ import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import software.amazon.awssdk.services.sesv2.model.GetEmailIdentityResponse;
 import solutions.aon.aws.ses.SES;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
@@ -346,11 +350,15 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 				
 				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml);
 				if(isProtocolAon(getEmailSender())) {
-					String from = getEmailSender().getMailAccount().getDisplayName() + "<no-reply@aon.solutions>";
+					String fromEmail = isVerifiedForSendingStatus(getEmailSender().getMailAccount().getEmail())
+							? getEmailSender().getMailAccount().getEmail() : "no-reply@aon.solutions";
+					
+					String from = getEmailSender().getMailAccount().getDisplayName() + "<" + fromEmail + ">";
 		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
 		            message.setFrom(new InternetAddress(from));
 		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail());
-		            message.addRecipient(RecipientType.BCC, replyTo);
+		            if(getEmailSender().getMailAccount().getReplyToMail() != null)
+		            	message.addRecipient(RecipientType.BCC, replyTo);
 		            Address[] addresses = {replyTo};
 		            message.setReplyTo(addresses);
 		            SES.sendEmail(AonUtil.getDomainName(), message);
@@ -386,5 +394,14 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	
 	public boolean isProtocolAon(EmailSender es) {
 		return es.getMailAccount().getProtocol() != null && "aon".equalsIgnoreCase(es.getMailAccount().getProtocol());
+	}
+	
+	public boolean isVerifiedForSendingStatus(String email) {
+		GetEmailIdentityResponse emailIdentity = SES.getEmailIdentity(email);
+		for (String domain = substringAfterLast(email, "@"); emailIdentity == null
+				&& contains(domain, '.'); domain = substringAfter(domain, ".")) {
+			emailIdentity = SES.getEmailIdentity(domain);
+		}
+		return emailIdentity != null && emailIdentity.verifiedForSendingStatus();
 	}
 }

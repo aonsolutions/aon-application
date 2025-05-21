@@ -118,7 +118,6 @@ public class SalesDAO {
 		@Override public Property<String> getShippingAlternativeRecipientProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_RECIPIENT);}
 		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_CONTACT);}
 		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_PERIOD);}
-		@Override public Property<Byte> getConfidentialProperty() {return null;}
 		@Override public Property<Integer> getSalesDetailIdProperty() {return new FilterDAO.PropertyDAO<>(SALES_DETAIL.ID);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(SALES.CARRIER_PACKING);}
 	}

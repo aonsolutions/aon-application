@@ -683,9 +683,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	void onQuoteGroupChange(ChangeEvent event) {
 		if (quoteGroup.getSelectedIndex() == 0)
 			afiChangesMap.addAFIChangeByDate(selectedDate, "GRUPO_COTIZACION", null);
-		else
+		else {
 			afiChangesMap.addAFIChangeByDate(selectedDate, "GRUPO_COTIZACION",
-					quoteGroup.getSelectedItemText().split("\\.")[0]);
+					quoteGroup.getSelectedValue());
+		}
 	}
 
 	@UiHandler("ocupation")
@@ -694,7 +695,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			afiChangesMap.addAFIChangeByDate(selectedDate, "OCUPACION", null);
 		else
 			afiChangesMap.addAFIChangeByDate(selectedDate, "OCUPACION",
-					ocupation.getSelectedItemText().split("\\.")[0]);
+					ocupation.getSelectedValue());
 	}
 
 	@UiHandler("partialityCoef")
@@ -722,7 +723,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isQuoteContract() {
-//		Window.alert("onQuoteContract : " + afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal));
+//		Window.alert("onQuoteContract : " + afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal) + "\nquoteGroupOriginal : " + quoteGroupOriginal + "\nselectedDate : " + selectedDate + "\nnewValue : " + afiChangesMap.getAFIChangessByDate(selectedDate).stream().filter(afiC -> AonStringUtils.equalsIgnoreCase("GRUPO_COTIZACION", afiC.getName())).findFirst().get().getValue());
 		return afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal);
 	}
 
@@ -820,6 +821,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private void onAcceptDialog() {
 		onAccept(s -> {
 			hide();
+			
+//			Window.alert("isComunication : " + isComunication + "\nisStartContract : " + isStartContract() + "\nisEndContract : " + isEndContract()
+//				+ "\nisChangeContract : " + isChangeContract() + "\nisQuoteContract : " + isQuoteContract() + "\nisOcupationContract : " + isOcupationContract()
+//				+ "\nisPartialityCoefContract : " + isPartialityCoefContract() + "\nisCnoContract : " + isCnoContract() + ""
+// 			);
 			
 			if (isComunication) {
 				if (isStartContract())

@@ -77,6 +77,11 @@ public class SendMailServlet extends AonApiHttpServlet{
 				subject = "Documentos";
 				body = documentContent(api, api.getData().optJSONArray("documents"));				
 			}
+			
+			if("s3Document".equalsIgnoreCase(pathInfo[1])) {
+				subject = "Documentos";
+				body = documentS3Content(api, api.getData().optJSONArray("documents"));
+			}
 		}
 		
 		String bcc = api.getUser().getAuth().getEmail();
@@ -87,7 +92,6 @@ public class SendMailServlet extends AonApiHttpServlet{
 				.setAlias(cp.getRegistry().getName())
 				.setSubject(subject)
 				.setBody(body);
-		
 		String m = SES.sendEmail(msg);
 		JSONObject j = new JSONObject()
 			.put(IJsonNames.MESSAGE, m);
@@ -202,6 +206,32 @@ public class SendMailServlet extends AonApiHttpServlet{
 		return writer.toString();
 	}
 	
+	private String documentS3Content(AonApiData api, JSONArray documentArray) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+
+		  LinkedList<DocumentMail> list = new LinkedList<>();
+		    for (int i = 0; i < documentArray.length(); i++) {
+		        JSONObject doc = documentArray.optJSONObject(i);
+		        DocumentMail dm = new DocumentMail();
+		        dm.setDate(doc.opt("date") != null ? doc.optString("date"): "");
+		        dm.setTitle(doc.opt("name") != null ? doc.optString("name") : "");
+		        dm.setUrl(getS3DocumentUrl(api.getDomain(), api.getUser().getLogin(), doc));
+		        list.add(dm);
+		    }
+		    VelocityContext context = new VelocityContext();
+		    context.put("documents", list);
+
+		    Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/document.vm");
+
+		    StringWriter writer = new StringWriter();
+		    template.merge(context, writer);
+
+		    return writer.toString();
+	}
+	
 	private String getInvoiceUrl(Domain domain, String login, JSONObject invoice) {	
 		JSONObject file = invoice.optJSONObject(IJsonNames.FILE);
 		if(file != null && file.opt(IJsonNames.URL) != null) {
@@ -231,6 +261,12 @@ public class SendMailServlet extends AonApiHttpServlet{
 		String str = "domain="+ domain.getId() + "&id=" + document.getInt("id") + "&attach_type=data";
 	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
 	    return "https://" +domain.getName() +"/ms/download_attachment/"  + domain.getName() + "/" + login + "/" +  result;
+	}
+	
+	private String getS3DocumentUrl(Domain domain, String login, JSONObject document) {	
+		String str = "domain="+ domain.getId() + "&id=" + document.getInt("id") + "&type="+ document.getInt(IJsonNames.TYPE);
+	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+	    return "https://" +domain.getName() +"/ms/download_s3_document/"  + domain.getName() + "/" + login + "/" +  result;
 	}
 	
 	public class CompanyMail {

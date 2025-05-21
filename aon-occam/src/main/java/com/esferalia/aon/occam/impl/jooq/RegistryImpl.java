@@ -621,6 +621,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> TargetDAO.getTargetNotUserFull(ctx, params));
 	}
 	
+	@Override
+	public TargetFull getTargetFull(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TargetDAO.getFull(ctx, registry));
+	}
+	
 	// -------------------- PERSON
 	
 	@Override

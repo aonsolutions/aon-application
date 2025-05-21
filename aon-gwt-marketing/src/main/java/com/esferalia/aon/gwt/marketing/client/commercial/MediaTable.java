@@ -58,26 +58,31 @@ public abstract class MediaTable extends ScrollPanel {
 	private Integer registry;
 	
 	private static enum COLS {
-		  TYP(AON.MSG.type()						,"6rem" )
-		, VAL("Valor"								,"-moz-available"  )
-		, ADM("Admin."								,"5rem"  )
-		, COM("Comercial"							,"5rem"  )
-		, TEC("Tecnico"								,"5rem"  )
-		, BUT(AonStringUtils.EMPTY					,"5rem"  )
+		  TYP(AON.MSG.type()						,"4rem", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, VAL("Valor"								,"-moz-available", "min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" )
+		, ADM("Admin."								,"4rem", ""  )
+		, COM("Comercial"							,"5rem", ""  )
+		, TEC("Tecnico"								,"4rem", ""  )
+		, BUT(AonStringUtils.EMPTY					,"3rem", ""  )
 		;
 
 		String headerLabel;
 		String colWidth;
+		String styles;
 
-		private COLS(String headerLabel,String colWidth) {
+		private COLS(String headerLabel,String colWidth,String styles) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
+			this.styles = styles;
 		}
 		public String getColWidth() {
 			return colWidth;
 		}
 		public String getHeaderLabel() {
 			return headerLabel;
+		}
+		public String getStyles() {
+			return styles;
 		}
 	}
 	
@@ -156,7 +161,7 @@ public abstract class MediaTable extends ScrollPanel {
 	private void paintHeader() {
 		tab.createHeader();
 		for ( COLS col : COLS.values()) 
-			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth());
+			tab.addHeader(new Label(col.getHeaderLabel()), col.getColWidth(), col.getStyles());
 	}
 	
 	private void searchData() {
@@ -225,8 +230,15 @@ public abstract class MediaTable extends ScrollPanel {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> onUpdateRMedia(registryMedia), ClickEvent.getType());
 		
-		tab.addRow(row, new Label(registryMedia.getMedia().getDescription()), COLS.TYP.getColWidth());
-		tab.addRow(row, new Label(registryMedia.getValue()), COLS.VAL.getColWidth());
+		Label mediaType = new Label(registryMedia.getMedia().getDescription());
+		mediaType.setTitle(registryMedia.getMedia().getDescription());
+		tab.addInlineStyle(mediaType, COLS.TYP.getStyles());
+		tab.addRow(row, mediaType, COLS.TYP.getColWidth());
+		
+		Label value = new Label(registryMedia.getValue());
+		value.setTitle(registryMedia.getValue());
+		tab.addInlineStyle(value, COLS.VAL.getStyles());
+		tab.addRow(row, value, COLS.VAL.getColWidth());
 		
 		Button administrative = new Button();
 		getEnableDisableButton(administrative, registryMedia.isAdministrative());

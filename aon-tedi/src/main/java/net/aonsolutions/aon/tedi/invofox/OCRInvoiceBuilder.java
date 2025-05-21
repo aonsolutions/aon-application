@@ -607,14 +607,19 @@ public class OCRInvoiceBuilder {
 		Optional<BigDecimal> uniqueVatPercent = checkIfOnlyOneVat(invoice);
 		BigDecimal percentage = uniqueVatPercent.orElse( ocrBreakdown.getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocrBreakdown.getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
+		
+		BigDecimal rePercentage = uniqueVatPercent.orElse( ocrBreakdown.getReRate().flatMap( d -> d.getValue() ).orElse(null) );
+		BigDecimal reQuota = ocrBreakdown.getReAmount().flatMap( d -> d.getValue() ).orElse(null);
+
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
 		    InvoiceTax vat = new InvoiceTax().setDomain(detail.getDomain()).setTaxType(TaxType.VAT)
 			    .setVatDeductionType(VatDeductionType.WITH_RIGHT);
 			vat.setBase( AonNumberUtils.zeroIfNull(taxableBase));
 			vat.setPercentage( AonNumberUtils.zeroIfNull(percentage));
 			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
-			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
-			
+			vat.setSurcharge(AonNumberUtils.zeroIfNull(rePercentage));
+			vat.setSurchargeQuota(AonNumberUtils.zeroIfNull(reQuota));
+			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota) + AonNumberUtils.zeroIfNull(reQuota));			
 			detail.addInvoiceTax(vat);
 		}
 	}

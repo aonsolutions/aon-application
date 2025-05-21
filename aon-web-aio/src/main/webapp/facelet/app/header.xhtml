@@ -1597,6 +1597,8 @@
 	input.aon-finding-toolbar-item.aon-icon-filter,
 	input.aon-finding-toolbar-item.aon-icon-filter-off,
 	input.aon-finding-toolbar-item.aon-icon-close,
+	input.aon-finding-toolbar-item.aon-lookupButton-clear,
+	input.aon-finding-toolbar-item.aon-icon-clear,
 	input.aon-finding-toolbar-item.aon-icon-visibility-off {
 	    width:32px;
 		height:32px;
@@ -1687,6 +1689,8 @@
 	.aon-finding-toolbar-item.aon-icon-task-assume:hover,
 	.aon-finding-toolbar-item.aon-icon-task-liberate:hover,
 	.aon-finding-toolbar-item.aon-icon-close:hover,
+	.aon-finding-toolbar-item.aon-lookupButton-clear:hover,
+	.aon-finding-toolbar-item.aon-icon-clear:hover,
 	.aon-finding-toolbar-item.aon-icon-visibility-off:hover,
 	.aon-finding-toolbar-item.aon-icon-add-task:hover,
 	.aon-finding-toolbar-item.aon-icon-ink-selection:hover,
@@ -1835,10 +1839,14 @@
 	}
 
 	.aon-lookupButton-clear{
-		background-size:cover;
+		background-size:24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-refresh.svg']}) ;
 	}
 	
+	.aon-icon-clear{
+		background-size:24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-clear.svg']});
+	}
 	/*
 	.aon-icon-predetermine {
 		background-size:cover;

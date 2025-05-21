@@ -443,7 +443,7 @@ export class AonNewMenu extends AonElement {
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 
-		if(this.isSideVisible){
+		if(!this.isSideVisible() && !LS.isLeftMenu()){
 			for (let item in TOP_MENU_APPS_HOME) {
 			
 				let app = TOP_MENU_APPS_HOME[item];
@@ -467,7 +467,7 @@ export class AonNewMenu extends AonElement {
 			}
 		}else{
 			for (let item in TOP_MENU_APPS) {
-			
+
 				let app = TOP_MENU_APPS[item];
 				
 				if (!this.isApp(app)) {
@@ -489,8 +489,6 @@ export class AonNewMenu extends AonElement {
 			}
 		}
 	
-		
-
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
 	}
@@ -745,14 +743,12 @@ export class AonNewMenu extends AonElement {
 		});
 
 		document.addEventListener("click", (event) => {
-			// Verificamos si el clic ocurrió fuera del sidenav
 			const buttonNew = this.getElement("new");
 
 			if (!buttonNew?.contains(event.target) && !LS.isPortalChecked()) {
-				// Si se clicó fuera del sidenav, lo ocultamos
 				this.hideSideNav();
 				this.isSideVisible(true);
-				this.buildMenuTopnav();
+				this.reloadTopNav();
 			}
 
 
