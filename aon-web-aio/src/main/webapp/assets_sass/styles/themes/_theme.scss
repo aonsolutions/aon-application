@@ -8,11 +8,15 @@
   $color-text, $color-text-button, $color-text-button-transp,
   $color-msg-error
 ) {
+  $color-900-alpha: #{$color-900}0D;
+  
   $body-margin       : unset;
   $aonmodule-display : flex;
   $aonmodule-width   : v.$vw-100;
   $aonmodule-height  : v.$vh-100;
 
+  $box-shadow    : v.$px-0 v.$px-4 v.$px-6 v.$px-0 $color-900-alpha;
+  $border        : v.$px-1 solid $color-200;
   $border-radius : v.$px-6;
   $transition    : background-color v.$transition-duration-03 ease;
   $box-sizing    : border-box;
@@ -99,13 +103,27 @@
         }
         aon-icon-button i {
           &::after {
-            background-color  : #bd9fe9;
+            background-color: $color-300;
           }
         }
       }
       input{
         border: $input-border;
       }
-  } 
-}
+      // 
+      // Pages - login
+      // 
+      aon-new-login{
+        #loginContent, #magicLinkContent{
+          .aonLoginForm{
+            border    : $border;
+            box-shadow: $box-shadow;
+            .aonLoginTitle{
+              color: $color-500;
+            }
+          }
+        }
+      }
+    }
+  }
 }
