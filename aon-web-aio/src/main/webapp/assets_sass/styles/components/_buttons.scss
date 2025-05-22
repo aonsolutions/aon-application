@@ -1,30 +1,24 @@
 @use '../variables' as v;
 
 // Variables estandar boton
-$btn-padding       : .5rem 1rem;
-$btn-border-radius : v.$border-radius;
-$btn-border-width  : v.$border-width-1;
-$btn-border-color  : v.$border-color-transparent; 
-$btn-border-style  : v.$border-style-solid; 
-$btn-width         : v.$width-100;
-$btn-height        : v.$height-100;
-$btn-cursor        : v.$cursor-pointer;
-$btn-display       : v.$display-inline-block;
-$btn-text-align    : v.$text-align-center;
-$btn-gap           : v.$gap-10;
+$btn-padding       : v.$px-8 v.$px-16;
+$btn-width         : v.$pct-100;
+$btn-height        : v.$pct-100;
+$btn-cursor        : pointer;
+$btn-display       : inline-block;
+$btn-text-align    : center;
+$btn-gap           : v.$px-10;
 
-$magicbutton-box-sizing   : v.$box-sizing-borderbox; 
+$magicbutton-box-sizing : border-box; 
 
-$iconbutton-padding : v.$padding-unset;
-$iconbutton-margin  : v.$margin-unset;
+$iconbutton-padding : unset;
+$iconbutton-margin  : unset;
 
 // ESTILO BOTON
 button {
   width            : $btn-width;
   padding          : $btn-padding;
-  font-size        : v.$font-16;
-  border-radius    : $btn-border-radius;
-  border           : none;
+  font-size        : v.$px-16;
   cursor           : $btn-cursor;
   display          : $btn-display;
   text-align       : $btn-text-align;

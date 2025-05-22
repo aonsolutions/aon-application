@@ -1,5 +1,18 @@
 @use '../variables' as v;
 
+$aoniconbutton-font-size        : v.$px-16;
+$position                       : relative;
+$aoniconbutton-font-size-hidden : v.$zero;
+$aoniconbutton-before-width     : 16.67px;
+$aoniconbutton-before-height    : 16.67px;
+$aoniconbutton-after-width      : v.$px-24;
+$aoniconbutton-after-height     : v.$px-24;
+$content                        : '';
+$display                        : inline-flex;
+$mask                           : no-repeat center;
+$mask-size                      : contain;
+
+
 // Mapa con iconos y texto
 $icons: (
   "visibility"    : '../icons/eye.svg',
@@ -8,34 +21,33 @@ $icons: (
 
 // Estilos comunes para <i> (el texto por defecto)
 aon-icon-button i {
-  font-size: 16px; /* Tamaño de texto por defecto */
-  color: #CBD5E1; /* Color del texto por defecto */
-  position: relative; /* Necesario para el posicionamiento de iconos */
+  font-size: $aoniconbutton-font-size; /* Tamaño de texto por defecto */
+  position: $position; /* Necesario para el posicionamiento de iconos */
 }
 
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
   aon-icon-button[icon="#{$icon-name}"] i {
-    font-size: 0; /* Ocultar el texto */
+    font-size: $aoniconbutton-font-size-hidden; /* Ocultar el texto */
   }
 
   aon-icon-button[icon="#{$icon-name}"] i::before {
     content : #{$icon-name}; /* Cargar el icono SVG */
-    width   : 16.67px;
-    height  : 16.67px;
+    width   : $aoniconbutton-before-width;
+    height  : $aoniconbutton-before-height;
   }
 
   aon-icon-button[icon="#{$icon-name}"] i {
     &::after {
-      width             : 1.5rem;
-      height            : 1.5rem;
-      content           : '';
-      display           : inline-flex;
-      mask              : url(#{$icon-data}) no-repeat center;
-      mask-size         : contain;
-      -webkit-mask      : url(#{$icon-data}) no-repeat center;
-      -webkit-mask-size : contain;
-      background-color  : #bd9fe9;
+      width             : $aoniconbutton-after-width;
+      height            : $aoniconbutton-after-height;
+      content           : $content;
+      display           : $display;
+      mask              : url(#{$icon-data}) $mask;
+      mask-size         : $mask-size;
+      -webkit-mask      : url(#{$icon-data}) $mask;
+      -webkit-mask-size : $mask-size;
+     // background-color  : #bd9fe9;
     }
   }
 }

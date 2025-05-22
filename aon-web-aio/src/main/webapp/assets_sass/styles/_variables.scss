@@ -39,62 +39,157 @@ $font-size-mobile    : 12px;
 $font-size-mobile-sm : 11px;
 $font-size-mobile-xs : 10px;
 
+// CERO
+$zero : 0;
 
-//Tamanos de fuente estandar
-$font-8  : 0.5rem;   // 8px
-$font-10 : 0.625rem; // 10px
-$font-12 : 0.75rem;  // 12px
-$font-14 : 0.875rem; // 14px
-$font-16 : 1rem;     // 16px
-$font-18 : 1.125rem; // 18px
-$font-20 : 1.25rem;  // 20px
-$font-22 : 1.375rem; // 22px
-$font-24 : 1.5rem;   // 24px
-$font-26 : 1.625rem; // 26px
-$font-28 : 1.75rem;  // 28px
-$font-30 : 1.875rem; // 30px
-$font-32 : 2rem;     // 32px
-$font-34 : 2.125rem; // 34px
-$font-36 : 2.25rem;  // 36px
-$font-40 : 2.5rem;   // 40px
-$font-48 : 3rem;     // 48px
-$font-56 : 3.5rem;   // 56px
-$font-64 : 4rem;     // 64px
+// MEDIDAS PX A REM
+$px-1  : 0.0625rem;
+$px-2  : 0.125rem;
+$px-3  : 0.1875rem;
+$px-4  : 0.25rem;
+$px-5  : 0.3125rem;
+$px-6  : 0.375rem;
+$px-7  : 0.4375rem;
+$px-8  : 0.5rem;
+$px-9  : 0.5625rem;
+$px-10 : 0.625rem;
+$px-11 : 0.6875rem;
+$px-12 : 0.75rem;
+$px-13 : 0.8125rem;
+$px-14 : 0.875rem;
+$px-15 : 0.9375rem;
+$px-16 : 1rem;
+$px-17 : 1.0625rem;
+$px-18 : 1.125rem;
+$px-19 : 1.1875rem;
+$px-20 : 1.25rem;
+$px-21 : 1.3125rem;
+$px-22 : 1.375rem;
+$px-23 : 1.4375rem;
+$px-24 : 1.5rem;
+$px-25 : 1.5625rem;
+$px-26 : 1.625rem;
+$px-27 : 1.6875rem;
+$px-28 : 1.75rem;
+$px-29 : 1.8125rem;
+$px-30 : 1.875rem;
+$px-31 : 1.9375rem;
+$px-32 : 2rem;
+$px-33 : 2.0625rem;
+$px-34 : 2.125rem;
+$px-35 : 2.1875rem;
+$px-36 : 2.25rem;
+$px-37 : 2.3125rem;
+$px-38 : 2.375rem;
+$px-39 : 2.4375rem;
+$px-40 : 2.5rem;
+$px-41 : 2.5625rem;
+$px-42 : 2.625rem;
+$px-43 : 2.6875rem;
+$px-44 : 2.75rem;
+$px-45 : 2.8125rem;
+$px-46 : 2.875rem;
+$px-47 : 2.9375rem;
+$px-48 : 3rem;
+$px-49 : 3.0625rem;
+$px-50 : 3.125rem;
+$px-51 : 3.1875rem;
+$px-52 : 3.25rem;
+$px-53 : 3.3125rem;
+$px-54 : 3.375rem;
+$px-55 : 3.4375rem;
+$px-56 : 3.5rem;
+$px-57 : 3.5625rem;
+$px-58 : 3.625rem;
+$px-59 : 3.6875rem;
+$px-60 : 3.75rem;
+$px-61 : 3.8125rem;
+$px-62 : 3.875rem;
+$px-63 : 3.9375rem;
+$px-64 : 4rem;
+$px-65 : 4.0625rem;
+$px-66 : 4.125rem;
+$px-67 : 4.1875rem;
+$px-68 : 4.25rem;
+$px-69 : 4.3125rem;
+$px-70 : 4.375rem;
+$px-71 : 4.4375rem;
+$px-72 : 4.5rem;
+$px-73 : 4.5625rem;
+$px-74 : 4.625rem;
+$px-75 : 4.6875rem;
+$px-76 : 4.75rem;
+$px-77 : 4.8125rem;
+$px-78 : 4.875rem;
+$px-79 : 4.9375rem;
+$px-80 : 5rem;
+$px-81 : 5.0625rem;
+$px-82 : 5.125rem;
+$px-83 : 5.1875rem;
+$px-84 : 5.25rem;
+$px-85 : 5.3125rem;
+$px-86 : 5.375rem;
+$px-87 : 5.4375rem;
+$px-88 : 5.5rem;
+$px-89 : 5.5625rem;
+$px-90 : 5.625rem;
+$px-91 : 5.6875rem;
+$px-92 : 5.75rem;
+$px-93 : 5.8125rem;
+$px-94 : 5.875rem;
+$px-95 : 5.9375rem;
+$px-96 : 6rem;
+$px-97 : 6.0625rem;
+$px-98 : 6.125rem;
+$px-99 : 6.1875rem;
+$px-100 : 6.25rem;
+
+// PORCENTAJES
+$pct-25  : 25%;
+$pct-50  : 50%;
+$pct-75  : 75%;
+$pct-100 : 100%;
+$pct-150 : 150%;
+$pct-200 : 200%;
+
+// VIEWPORT
+$vh-100 : 100vh;
+$vw-100 : 100vw;
 
 //Tamaños de fuente por elemento o clase
-$font-size-h1               : $font-48;
-$font-size-h2               : $font-30;
-$font-size-h3               : $font-24;
-$font-size-h4               : $font-20;
-$font-size-p                : $font-16;
-$font-size-blockquote       : $font-16;
-$font-size-th               : $font-16;
-$font-size-tr               : $font-16;
-$font-size-ul               : $font-16;
-$font-size-code             : $font-14;
-$font-size-big              : $font-18;
-$font-size-small            : $font-14;
-$font-size-sub              : $font-14;
-$font-size-btn              : $font-16;
-$font-size-span             : $font-16;
-$font-size-aonInputMsgError : $font-14;
+$font-size-h1               : $px-48;
+$font-size-h2               : $px-30;
+$font-size-h3               : $px-24;
+$font-size-h4               : $px-20;
+$font-size-p                : $px-16;
+$font-size-blockquote       : $px-16;
+$font-size-th               : $px-16;
+$font-size-tr               : $px-16;
+$font-size-ul               : $px-16;
+$font-size-code             : $px-14;
+$font-size-big              : $px-18;
+$font-size-small            : $px-14;
+$font-size-sub              : $px-14;
+$font-size-btn              : $px-16;
+$font-size-span             : $px-14; 
+$font-size-aonInputMsgError : $px-14;
 
 // Altura de línea por elemento
-$line-height-h1         : $font-48;
-$line-height-h2         : $font-36;
-$line-height-h3         : $font-32;
-$line-height-h4         : $font-28;
-$line-height-p          : $font-28;
-$line-height-blockquote : $font-24;
-$line-height-tr         : $font-24;
-$line-height-th         : $font-24;
-$line-height-ul         : $font-24;
-$line-height-code       : $font-20;
-$line-height-big        : $font-28;
-$line-height-small      : $font-14;
-$line-height-sub        : $font-20;
-$line-height-btn        : $font-24;
-$line-height-span       : $font-24;
+$line-height-h1         : $px-48;
+$line-height-h2         : $px-36;
+$line-height-h3         : $px-32;
+$line-height-h4         : $px-28;
+$line-height-p          : $px-28;
+$line-height-blockquote : $px-24;
+$line-height-tr         : $px-24;
+$line-height-th         : $px-24;
+$line-height-ul         : $px-24;
+$line-height-code       : $px-20;
+$line-height-big        : $px-28;
+$line-height-small      : $px-14;
+$line-height-sub        : $px-20;
+$line-height-btn        : $px-24;
+$line-height-span       : $px-24;
 
 // Letter spacing estandar
 $letter-spacing-0        : 0;          // 0%
@@ -121,12 +216,12 @@ $letter-spacing-btn        : $letter-spacing-0;
 $letter-spacing-span       : $letter-spacing-0;
 
 // WIDTH Y HEIGHT
-$width-0    : 0;
-$width-100  : 100%;
-$height-0   : 0;
-$height-24  : 1.5rem;
-$height-40  : 2.5rem;
-$height-100 : 100%;
+$width-0     : 0;
+$width-100   : 100%;
+$height-0    : 0;
+$height-24   : 1.5rem;
+$height-40   : 2.5rem;
+$height-100  : 100%;
 
 // MARGIN
 $margin-unset : unset;
@@ -189,7 +284,7 @@ $justify-content-flex-end : flex-end;
 
 //GAP
 $gap-6  : .375rem;
-$gap-10 : 0.625rem;
+$gap-10 : .625rem;
 
 // TEXT TRANSFORM
 $text-transform-uppercase : uppercase;
@@ -197,4 +292,5 @@ $text-transform-lowercase : lowercase;
 
 // TRANSITION
 $transition-duration-03 : 0.3s;
-$transition-easing-ease : ease;
+//$transition-easing-ease : ease;
+
