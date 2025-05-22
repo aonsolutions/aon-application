@@ -48,7 +48,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		
 		addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
-			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
 				onSearch( options );
 			} else if(AonStringUtils.isBlank(value)) {
 				onSearch( options );

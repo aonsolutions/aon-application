@@ -9,6 +9,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -284,8 +286,7 @@ public interface CommonServiceAsync {
 	
 	void getSellersWorkload(SellerWorkloadParams params, AsyncCallback<List<SellerWorkload>> asyncCallback) throws AonCoreException;
 	void getSellersWorkloadCount(SellerWorkloadParams params, AsyncCallback<Integer> asyncCallback) throws AonCoreException;
-	void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> asyncCallback) throws AonCoreException;
-	void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> asyncCallback) throws AonCoreException;
+	void getSellersWorkloadContent(SellerWorkloadParams params, AsyncCallback<SellerWorkloadContent> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// **************************************** [PRODUCT]
@@ -354,6 +355,7 @@ public interface CommonServiceAsync {
 	void getTargetNotUserFull(TargetParams params, AsyncCallback<Map<TargetFull, List<RegistrySeller>>> asyncCallback) throws AonCoreException;
 	void getCustomerByDocument(String domainName, int domain, String user, String document, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
 	void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> asyncCallback) throws AonCoreException;
+	void getCompanyByDocument(String domainName, int domain, String user, String document, AsyncCallback<Company> asyncCallback) throws AonCoreException;
 	
 	
 }

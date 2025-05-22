@@ -183,6 +183,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -5273,13 +5274,25 @@ public class AON {
 		}
 	}
 	
-	public static List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) {
+	public static SellerWorkloadContent getSellersWorkloadContent(SellerWorkloadParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
-			return getRegistry().getSellersWorkloadFees(ctx, params);
+			return getRegistry().getSellersWorkloadContent(ctx, params);
 		}
 	}
 	
 	public static List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
+		}
+	}
+	
+	public static List<Integer> getSellersWorkloadInvoiceIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadInvoiceIds(ctx, params);
+		}
+	}
+	
+	public static List<Integer> getSellersWorkloadInvoicesIds(SellerWorkloadParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
 			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
 		}

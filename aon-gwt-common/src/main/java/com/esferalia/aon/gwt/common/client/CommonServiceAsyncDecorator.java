@@ -8,6 +8,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -35,7 +36,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
-import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -68,6 +68,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -751,15 +752,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> callback) throws AonCoreException {
+	public void getSellersWorkloadContent(SellerWorkloadParams params, AsyncCallback<SellerWorkloadContent> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getSellersWorkloadFees(params, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.getSellersWorkloadFeesIds(params, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getSellersWorkloadContent(params, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1028,6 +1023,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getTargetFull(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCompanyByDocument(String domainName, int domain, String user, String document, AsyncCallback<Company> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanyByDocument(domainName, domain, user, document, new AsyncCallbackWrapper<>(callback));
 	}
 
 }
