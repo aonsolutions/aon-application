@@ -183,25 +183,31 @@ $font-size-big              : $px-18;
 $font-size-small            : $px-14;
 $font-size-sub              : $px-14;
 $font-size-btn              : $px-16;
-$font-size-span             : $px-14; 
+$font-size-span             : $px-16;
+$font-size-button           : $px-16;
+$font-size-input            : $px-16;
+$font-size-placeholder      : $px-14;
 $font-size-aonInputMsgError : $px-14;
 
 // Altura de línea por elemento
-$line-height-h1         : $px-48;
-$line-height-h2         : $px-36;
-$line-height-h3         : $px-32;
-$line-height-h4         : $px-28;
-$line-height-p          : $px-28;
-$line-height-blockquote : $px-24;
-$line-height-tr         : $px-24;
-$line-height-th         : $px-24;
-$line-height-ul         : $px-24;
-$line-height-code       : $px-20;
-$line-height-big        : $px-28;
-$line-height-small      : $px-14;
-$line-height-sub        : $px-20;
-$line-height-btn        : $px-24;
-$line-height-span       : $px-24;
+$line-height-h1          : $px-48;
+$line-height-h2          : $px-36;
+$line-height-h3          : $px-32;
+$line-height-h4          : $px-28;
+$line-height-p           : $px-28;
+$line-height-blockquote  : $px-24;
+$line-height-tr          : $px-24;
+$line-height-th          : $px-24;
+$line-height-ul          : $px-24;
+$line-height-code        : $px-20;
+$line-height-big         : $px-28;
+$line-height-small       : $px-14;
+$line-height-sub         : $px-20;
+$line-height-btn         : $px-24;
+$line-height-span        : $px-24;
+$line-height-button      : $px-24;
+$line-height-input       : $px-24;
+$line-height-placeholder : $px-24;
 
 // Letter spacing estandar
 $letter-spacing-0        : 0;          // 0%
@@ -211,21 +217,24 @@ $letter-spacing-neg-006  : -0.006rem;  // -0.6%
 $letter-spacing-neg-005  : -0.005rem;  // -0.5%
 
 // Espaciado de letras por elemento
-$letter-spacing-h1         : $letter-spacing-neg-012;
-$letter-spacing-h2         : $letter-spacing-neg-0075;
-$letter-spacing-h3         : $letter-spacing-neg-006;
-$letter-spacing-h4         : $letter-spacing-neg-005;
-$letter-spacing-p          : $letter-spacing-0;
-$letter-spacing-blockquote : $letter-spacing-0;
-$letter-spacing-th         : $letter-spacing-0;
-$letter-spacing-tr         : $letter-spacing-0;
-$letter-spacing-ul         : $letter-spacing-0;
-$letter-spacing-code       : $letter-spacing-0;
-$letter-spacing-big        : $letter-spacing-0;
-$letter-spacing-small      : $letter-spacing-0;
-$letter-spacing-sub        : $letter-spacing-0;
-$letter-spacing-btn        : $letter-spacing-0;
-$letter-spacing-span       : $letter-spacing-0;
+$letter-spacing-h1          : $letter-spacing-neg-012;
+$letter-spacing-h2          : $letter-spacing-neg-0075;
+$letter-spacing-h3          : $letter-spacing-neg-006;
+$letter-spacing-h4          : $letter-spacing-neg-005;
+$letter-spacing-p           : $letter-spacing-0;
+$letter-spacing-blockquote  : $letter-spacing-0;
+$letter-spacing-th          : $letter-spacing-0;
+$letter-spacing-tr          : $letter-spacing-0;
+$letter-spacing-ul          : $letter-spacing-0;
+$letter-spacing-code        : $letter-spacing-0;
+$letter-spacing-big         : $letter-spacing-0;
+$letter-spacing-small       : $letter-spacing-0;
+$letter-spacing-sub         : $letter-spacing-0;
+$letter-spacing-btn         : $letter-spacing-0;
+$letter-spacing-span        : $letter-spacing-0;
+$letter-spacing-button      : $letter-spacing-0;
+$letter-spacing-input       : $letter-spacing-0;
+$letter-spacing-placeholder : $letter-spacing-0;
 
 // TRANSITION
 $transition-duration-03 : 0.3s;

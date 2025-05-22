@@ -141,6 +141,26 @@ span{
   letter-spacing: v.$letter-spacing-span;
 }
 
+button{
+  font-family: v.$font-primary-regular;
+  font-size: v.$font-size-button;
+  line-height: v.$line-height-button;
+  letter-spacing: v.$letter-spacing-button;
+}
+
+input{
+  font-family: v.$font-primary-regular;
+  font-size: v.$font-size-input;
+  line-height: v.$line-height-input;
+  letter-spacing: v.$letter-spacing-input;
+}
+
+input::placeholder{
+  font-family: v.$font-primary-regular;
+  font-size: v.$font-size-placeholder;
+  letter-spacing: v.$letter-spacing-placeholder;
+}
+
 .aonInputMsgError{
   font-family: v.$font-primary-semibold;
   font-size: v.$font-size-aonInputMsgError;
