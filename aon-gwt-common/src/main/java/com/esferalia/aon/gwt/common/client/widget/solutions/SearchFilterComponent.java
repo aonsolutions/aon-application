@@ -112,6 +112,7 @@ public abstract class SearchFilterComponent extends HTMLPanel {
         // Buttons
         HTMLPanel buttonPanel = new HTMLPanel("");
         buttonPanel.setStyleName(AON.CSS.aonDisplayFlexEnd());
+        buttonPanel.getElement().getStyle().setProperty("margin-top", "1rem");
         
         AonCustomButton closeButton = new AonCustomButton(AON.CSS.aonIconClose(), "Cerrar");
         closeButton.addDomHandler(e -> searchMenuPopup.hide(), ClickEvent.getType()); 

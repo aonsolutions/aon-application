@@ -867,5 +867,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-accounting-unrecord.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAccountingUnrecord();
+	
+	@Source("icons/aon-icon-gpp-maybe.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGppMaybe();
 }
 

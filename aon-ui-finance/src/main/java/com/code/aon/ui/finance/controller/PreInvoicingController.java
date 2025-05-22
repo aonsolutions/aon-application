@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;

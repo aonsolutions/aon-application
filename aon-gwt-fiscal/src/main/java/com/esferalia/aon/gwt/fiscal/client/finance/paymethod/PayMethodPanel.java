@@ -23,7 +23,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -223,53 +222,58 @@ public abstract class PayMethodPanel extends ScrollPanel {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton button;
-		button = new AonTableButton("Borrar forma de pago", AON.CSS.aonIconDelete());
+		AonTableButton button = new AonTableButton("Borrar forma de pago", AON.CSS.aonIconDelete());
 		button.addStyleName(AON.CSS.aonCustomRowButtom());
-		button.addClickHandler( new ClickHandler() {
+		button.addClickHandler(event -> {
+			event.stopPropagation();
+			button.setEnabled(false);
+			AonDialog dialog = new AonDialog("Eliminaci\u00f3n Forma de Pago",
+					new HTML("Se va a proceder a eliminar la forma de pago <b>" + payMethod.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				event.stopPropagation();
-				button.setEnabled(false);
-				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Forma de Pago",
-						new HTML("Se va a proceder a eliminar la forma de pago <b>" + payMethod.getName() + "</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
-				
-				dialog.confirm(new AonAcceptDialogCallback() {
+			dialog.confirm(new AonAcceptDialogCallback() {
 
-					@Override
-					public void onCancel() {
-						button.setEnabled(true);
-					}
+				@Override
+				public void onCancel() {
+					button.setEnabled(true);
+				}
 
-					@Override
-					public void onAccept() {
-						delete(payMethod.getId());
-						button.setEnabled(true);
-					}
-				});
-			}
+				@Override
+				public void onAccept() {
+					delete(payMethod.getId());
+					button.setEnabled(true);
+				}
+			});
 		});
-		buttonContainer.add(button);
+		
+		if(payMethod.getDomain().equals(params.getDomain()))
+			buttonContainer.add(button);
 		
 		HTMLPanel row = tab.createRow();
-		row.addDomHandler(e -> onPaymethodOpen(payMethod), ClickEvent.getType());
 		
-		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
-		checkButton.addClickHandler(e -> {
-			e.stopPropagation();
-			if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
-				checkButton.addStyleName(AON.CSS.aonIconCheck());
-				checkButton.removeStyleName(AON.CSS.aonIconChecked());
-			} else {
-				checkButton.addStyleName(AON.CSS.aonIconChecked());
-				checkButton.removeStyleName(AON.CSS.aonIconCheck());
-			}
-			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
-			onGroupEnable(!selectedItemList.isEmpty());
-		});
-		tab.addRow(row, checkButton, COLS.CHK.getColWidth());
+		if(payMethod.getDomain().equals(params.getDomain()))
+			row.addDomHandler(e -> onPaymethodOpen(payMethod), ClickEvent.getType());
 		
+		if(payMethod.getDomain().equals(params.getDomain())) {
+			AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
+			checkButton.addClickHandler(e -> {
+				e.stopPropagation();
+				if (AonStringUtils.containsIgnoreCase(checkButton.getStyleName(), AON.CSS.aonIconChecked())) {
+					checkButton.addStyleName(AON.CSS.aonIconCheck());
+					checkButton.removeStyleName(AON.CSS.aonIconChecked());
+				} else {
+					checkButton.addStyleName(AON.CSS.aonIconChecked());
+					checkButton.removeStyleName(AON.CSS.aonIconCheck());
+				}
+				List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+				onGroupEnable(!selectedItemList.isEmpty());
+			});
+			tab.addRow(row, checkButton, COLS.CHK.getColWidth());
+			
+			selectedItems.put(payMethod.getId(), checkButton);
+		} else {
+			AonTableButton parentPayMethod = new AonTableButton("Fila heredada del dominio padre", AON.CSS.aonIconGppMaybe());
+			tab.addRow(row, parentPayMethod, COLS.CHK.getColWidth());
+		}
 		
 		Label name = new Label(payMethod.getName());
 		name.setTitle(payMethod.getName());
@@ -281,7 +285,7 @@ public abstract class PayMethodPanel extends ScrollPanel {
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
 		rowPaymethod.put(payMethod.getId(), payMethod);
-		selectedItems.put(payMethod.getId(), checkButton);
+		
 	}
 	
 	private void getList(Consumer<LinkedList<PayMethod>> success) {

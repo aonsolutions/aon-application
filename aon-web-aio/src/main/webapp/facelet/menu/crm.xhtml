@@ -46,11 +46,18 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 
-									<!-- CM de Agentes Comerciales -->
+									<!-- CM de Agentes Comerciales 
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl2" action="commercial_search_view-seller" actionListener="#{commercialStat.onReset}" value="#{bundle.seller_stat_control_seller}">
 											<aon:actionListener method="#{commercialStat.onSellerType}"/>
 										</aon:commandLink>
+									</aon:div>
+									-->
+									
+									<!-- Agentes Comerciales [Nuevo] -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="sellerModule" action="gwt_sellerModule"
+											value="#{bundle.seller_module}" />
 									</aon:div>
 
 									<!-- CM de Clientes Potenciales -->
@@ -156,9 +163,16 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 
-								<!-- Agentes Comerciales -->
+								<!-- Agentes Comerciales
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink action="seller_list-commercial" actionListener="#{seller.onSearch}" id="seller-commercial" value="#{bundle.seller_module}">.</aon:commandLink>
+								</aon:div>
+								-->
+								
+								<!-- Agentes Comerciales [Nuevo] -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sellerModule2" action="gwt_sellerModule"
+										value="#{bundle.seller_module}" />
 								</aon:div>
 								
 								<!-- Clientes Potenciales -->

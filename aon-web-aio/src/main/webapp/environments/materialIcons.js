@@ -226,6 +226,7 @@ export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';
 export const PERSON_ADD_ALT = 'person_add_alt';
+export const PERSON_PLAY = 'person_play';
 export const PHONE = 'phone';
 export const PINBOARD = 'pinboard';
 export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';

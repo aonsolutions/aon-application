@@ -6,6 +6,8 @@ import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
 
   export const jsfOfferLoad = () => {
     let application = document.querySelector(TAG.AON_APPLICATION);
+    let parent = application.getParent();
+    parent.buildEmptyToolbarOptions();
     application.setContent(new JSF.AonJsfOffer());
   }
 

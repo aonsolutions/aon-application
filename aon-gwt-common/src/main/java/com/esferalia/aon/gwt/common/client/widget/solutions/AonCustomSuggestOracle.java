@@ -21,7 +21,7 @@ public class AonCustomSuggestOracle extends SuggestOracle {
         String query = request.getQuery().toLowerCase();
 
         for (String item : data) {
-            if (AonStringUtils.containsIgnoreCase(item, query)) { // Aquí hacemos la búsqueda en cualquier parte
+            if (AonStringUtils.isBlank(query) || AonStringUtils.containsIgnoreCase(item, query)) { // Aquí hacemos la búsqueda en cualquier parte
                 suggestions.add(new MultiWordSuggestion(item, item));
             }
         }

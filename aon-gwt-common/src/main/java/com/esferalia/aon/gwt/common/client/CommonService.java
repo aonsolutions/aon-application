@@ -356,5 +356,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	Map<TargetFull, List<RegistrySeller>> getTargetNotUserFull(TargetParams params) throws AonCoreException;
+	Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
+	TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	
 }

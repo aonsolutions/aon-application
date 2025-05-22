@@ -1,15 +1,20 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -29,6 +34,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -36,6 +47,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
@@ -57,7 +72,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	
 	private HTMLPanel productPanel;
 	private SuggestBox productSuggestBox;
-	private TextBox productTextBox;
+	private AutoResizeTextArea productTextBox;
+//	private TextBox productTextBox;
 	
 	private HTMLPanel quantityPricePanel;
 	private TextBox quantityTextBox;
@@ -112,7 +128,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 
 	protected CustomerFeeDialog(OldItem item, RegistryModuleOptions options) {
-		setCaption("Editor Cuotas");
+		setCaption("Edici\u00f3n Cuota");
 		
 		this.isSameProduct = null != item;
 		this.item = item;
@@ -126,7 +142,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	protected CustomerFeeDialog(Fee fee, RegistryModuleOptions options) {
-		setCaption("Editor Cuota");
+		setCaption("Edici\u00f3n Cuota");
 		
 		this.fee = fee;
 		this.options = options;
@@ -139,7 +155,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	protected CustomerFeeDialog(RegistryModuleOptions options) {
-		setCaption("Creador Cuota");
+		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.options = options;
@@ -152,7 +168,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	protected CustomerFeeDialog(RegistryModuleOptions options, Customer customer) {
-		setCaption("Creador Cuota");
+		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.customer = customer;
@@ -166,7 +182,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	protected CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer) {
-		setCaption("Creador Cuota");
+		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.item = item;
@@ -181,7 +197,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	public CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer, Integer ritem) {
-		setCaption("Creador Cuota");
+		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.item = item;
@@ -265,7 +281,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		customerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		customerSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		customerSuggestBox.setAutoSelectEnabled(false);
-		customerSuggestBox.getElement().setPropertyString("placeholder", "Cliente: busque por nombre, nif o alias");
+		customerSuggestBox.getElement().setPropertyString("placeholder", "Cliente: busque por nombre, nif o alias (ctrl + espacio para sugerencias)");
 		
 		customerSuggestBox.addSelectionHandler(e -> {
 			customerSuggestBox.hideSuggestionList();
@@ -279,7 +295,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				customerSuggestBox.setValue("");
 				customerQuery = null;
 				getCustomersSuggestion(customerQuery);
-			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) 
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 2) 
 				getCustomersSuggestion(customerQuery);
 		});
 		
@@ -361,7 +377,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		productSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		productSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		productSuggestBox.setAutoSelectEnabled(false);
-		productSuggestBox.getElement().setPropertyString("placeholder", "Producto: busque por c\u00f3digo o descripci\u00f3n");
+		productSuggestBox.getElement().setPropertyString("placeholder", "Producto: busque por c\u00f3digo o descripci\u00f3n (ctrl + espacio para sugerencias)");
 		
 		productSuggestBox.addSelectionHandler(e -> {
 			productSuggestBox.hideSuggestionList();
@@ -380,7 +396,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				productSuggestBox.setValue("");
 				productQuery = null;
 				getProductsSuggestion(productQuery);
-			} else  if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
+			} else  if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 2)
 				getProductsSuggestion(productQuery);
 		});
 		
@@ -392,7 +408,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			productSuggestBox.setValue("");
 		});
 		
-		productTextBox = new TextBox();
+		productTextBox = new AutoResizeTextArea();
 		productTextBox.getElement().getStyle().setProperty("margin-left", "6rem");
 		productTextBox.addValueChangeHandler(e ->{
 			if(null != item) {
@@ -612,7 +628,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		workplaceSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		workplaceSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		workplaceSuggestBox.setAutoSelectEnabled(false);
-		workplaceSuggestBox.getElement().setPropertyString("placeholder", "C. Trabajo: busque por descripci\u00f3n");
+		workplaceSuggestBox.getElement().setPropertyString("placeholder", "C. Trabajo: busque por descripci\u00f3n (ctrl + espacio para sugerencias)");
 		
 		workplaceSuggestBox.addSelectionHandler(e -> {
 			workplaceSuggestBox.hideSuggestionList();
@@ -629,7 +645,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				workplaceSuggestBox.setValue("");
 				workplaceQuery = null;
 				getWorkplacesSuggestion(workplaceQuery);
-			} else if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 3) 
+			} else if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 2) 
 				getWorkplacesSuggestion(workplaceQuery);
 		});
 		
@@ -675,7 +691,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		sellerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		sellerSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		sellerSuggestBox.setAutoSelectEnabled(false);
-		sellerSuggestBox.getElement().setPropertyString("placeholder", "Comercial: busque por nombre");
+		sellerSuggestBox.getElement().setPropertyString("placeholder", "Comercial: busque por nombre (ctrl + espacio para sugerencias)");
 		
 		sellerSuggestBox.addSelectionHandler(e -> {
 			sellerSuggestBox.hideSuggestionList();
@@ -692,11 +708,11 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				sellerSuggestBox.setValue("");
 				sellerQuery = null;
 				getSellersSuggestion(sellerQuery);
-			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
+			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 2)
 				getSellersSuggestion(sellerQuery);
 		});
 		
-		if(null != fee) sellerSuggestBox.setValue(fee.getSeller().getName());
+		if(null != fee) sellerSuggestBox.setValue(fee.getSellerComercial().getName());
 		
 		sellerPanel.add(sellerLabel);
 		sellerPanel.add(sellerSuggestBox);
@@ -738,7 +754,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		invoicingGroupSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		invoicingGroupSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		invoicingGroupSuggestBox.setAutoSelectEnabled(false);
-		invoicingGroupSuggestBox.getElement().setPropertyString("placeholder", "G. Facturaci\u00f3n: busque por descripci\u00f3n");
+		invoicingGroupSuggestBox.getElement().setPropertyString("placeholder", "G. Facturaci\u00f3n: busque por descripci\u00f3n (ctrl + espacio para sugerencias)");
 		
 		invoicingGroupSuggestBox.addSelectionHandler(e -> {
 			invoicingGroupSuggestBox.hideSuggestionList();
@@ -755,7 +771,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				invoicingGroupSuggestBox.setValue("");
 				invoicingGroupQuery = null;
 				getInvoicingGroupsSuggestion(invoicingGroupQuery);
-			} else if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 3)
+			} else if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 2)
 				getInvoicingGroupsSuggestion(invoicingGroupQuery);
 		});
 		
@@ -791,7 +807,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		projectPanel = new HTMLPanel("");
 		projectPanel.addStyleName(AON.CSS.aonItemFlex());
 		
-		Label projectLabel = new Label("Proyecto");
+		Label projectLabel = new Label("Expediente");
 		projectLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
 		projectLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
@@ -801,7 +817,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		projectSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		projectSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
 		projectSuggestBox.setAutoSelectEnabled(false);
-		projectSuggestBox.getElement().setPropertyString("placeholder", "Proyecto: busque por descripci\u00f3n");
+		projectSuggestBox.getElement().setPropertyString("placeholder", "Proyecto: busque por descripci\u00f3n (ctrl + espacio para sugerencias)");
 		
 		projectSuggestBox.addSelectionHandler(e -> {
 			projectSuggestBox.hideSuggestionList();
@@ -816,17 +832,17 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			String projectQuery = projectSuggestBox.getValue();
 			
 			Integer customerId = null;
-			if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
+			if(null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
 				Customer customer = customerSuggestions.get(customerSuggestBox.getValue());
 				if(null != customer) customerId = customer.getId();
 				else if(null != fee && null != fee.getCustomer()) customerId = fee.getCustomer().getId();
 			}
 			
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				projectSuggestBox.setValue("");
+				projectSuggestBox.setValue("", false);
 				projectQuery = null;
 				getProjectsSuggestion(customerId, projectQuery);
-			} else if(AonStringUtils.isNotBlank(projectQuery) && projectQuery.length() > 3)
+			} else if(AonStringUtils.isNotBlank(projectQuery) && projectQuery.length() > 2)
 				getProjectsSuggestion(customerId, projectQuery);
 		});
 		
@@ -1032,6 +1048,55 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			Optional.ofNullable(null == endDateBox.getValue() ? null : endDateBox.getValue()),
 			Optional.ofNullable(createBillingDate())
 		);
+	}
+	
+	// ------------------------------------------ AutoResizeTextArea
+
+	public class AutoResizeTextArea extends TextArea implements ValueChangeHandler<String>, KeyUpHandler {
+
+		private final int MIN_HEIGHT = 25;
+
+		public AutoResizeTextArea() {
+			super();
+			this.getElement().getStyle().setProperty("resize", "none");
+			addKeyUpHandler(this);
+			addValueChangeHandler(this);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void setText(String text) {
+			super.setText(text);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void setValue(String text) {
+			super.setValue(text);
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void onKeyUp(KeyUpEvent event) {
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			Scheduler.get().scheduleDeferred(() -> adjustHeight());
+		}
+
+		private void adjustHeight() {
+			int scrollHeight = getElement().getScrollHeight();
+			int offsetHeight = getElement().getOffsetHeight();
+			int clientHeight = getElement().getClientHeight();
+			int newHeight = Math.max(scrollHeight, MIN_HEIGHT);
+			if (newHeight > offsetHeight || newHeight > clientHeight) {
+				DOM.setStyleAttribute(getElement(), "height", newHeight + "px");
+			}
+			center();
+		}
+
 	}
 
 	// ------------------------------------------------- Abstract Methods
