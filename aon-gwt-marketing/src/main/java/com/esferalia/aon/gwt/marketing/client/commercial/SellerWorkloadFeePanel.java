@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
@@ -17,7 +16,10 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -60,14 +62,14 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		, CON("Producto"							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Perido"								,"4rem"				,"")
 		, QUA("Cantidad"							,"4rem"				,"text-align: right;")
-		, PRI("Pre. Bruto"							,"6rem"				,"text-align: right;")
+		, PRI("Pre. Bruto"							,"5.5rem"			,"text-align: right;")
 		, DIS("Descuento"							,"5rem"				,"text-align: right;")
-		, NET("Pre. Neto"							,"6rem"				,"text-align: right;")
-		, TOB("Importe Bruto"						,"6rem"				,"text-align: right;")
-		, TON("Importe Neto"						,"6rem"				,"text-align: right;")
-		, STR("F. Desde"							,"4rem"				,"")
-		, BIL("F. Facturaci\u00f3n"					,"6rem"				,"")
-		, END("F. Hasta"							,"4rem"				,"")
+		, NET("Pre. Neto"							,"5rem"				,"text-align: right;")
+		, TOB("I. Bruto"							,"5rem"				,"text-align: right;")
+		, TON("I. Neto"								,"5rem"				,"text-align: right;")
+		, STR("F. Desde"							,"5rem"				,"text-align: center;")
+		, BIL("F. Fact."							,"5rem"				,"text-align: center;")
+		, END("F. Hasta"							,"5rem"				,"text-align: center;")
 		, BUT(AonStringUtils.EMPTY					,"2rem"				,"")
 		;
 
@@ -170,18 +172,22 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		params.setOffset(offset.intValue());
 		params.setLimit(limit);
 		
-		getList(sellersWorkloadFee -> {
+		getList(sellerWorkloadContent -> {
 			boolean something = false;
 			
-			for(Fee sellerWorkloadFee : sellersWorkloadFee ) {
-				something = true;
-				paintRow(sellerWorkloadFee);
-			}
+			something = !sellerWorkloadContent.getFees().isEmpty() || !sellerWorkloadContent.getInvoiceDetails().isEmpty();
 			
-			if (sellersWorkloadFee.size() < limit) {
+			sellerWorkloadContent.getInvoiceDetails().forEach(invoiceDetail -> {
+				paintRow(invoiceDetail);
+			});
+			sellerWorkloadContent.getFees().forEach(fee -> {
+				paintRow(fee);
+			});
+			
+			if ((sellerWorkloadContent.getFees().size() + sellerWorkloadContent.getInvoiceDetails().size()) < limit) {
 				disableMoreData();
 			} else {
-				offset.setValue(offset.intValue() + sellersWorkloadFee.size() - 1);
+				offset.setValue(offset.intValue() + limit - 1);
 				enableMoreData();
 			}
 			
@@ -193,6 +199,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 				this.setWidget(line);
 				disableMoreData();
 			}
+			
 			enableSearch();
 			
 		});
@@ -245,17 +252,81 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		tab.addRow(row, priceNetLabel, COLS.TON.getColWidth());
 		
 		Label startLabel = new Label(AonDateUtils.formatDate(fee.getStartDate()));
+		startLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		tab.addRow(row, startLabel, COLS.STR.getColWidth());
 		
 		Label billingLabel = new Label(AonDateUtils.formatMonthYear(fee.getBillingDate()));
+		billingLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		tab.addRow(row, billingLabel, COLS.BIL.getColWidth());
 		
 		Label endLabel = new Label(AonDateUtils.formatDate(fee.getEndDate()));
+		endLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		tab.addRow(row, endLabel, COLS.END.getColWidth());
 		
 		AonToolbarSmallButton infoBtn = new AonToolbarSmallButton("", AON.CSS.aonIconInfo());
 		infoBtn.setTitle(createFeeInfo(fee));
 		buttonContainer.add(infoBtn);
+		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+	}
+	
+	private void paintRow(InvoiceDetail invoiceDetail) {
+		FlowPanel buttonContainer = new FlowPanel();
+		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		
+		HTMLPanel row = tab.createRow();
+		
+		Label customerLabel = new Label(invoiceDetail.getInvoice().getRegistryName());
+		customerLabel.setTitle(invoiceDetail.getInvoice().getRegistryName());
+		tab.addInlineStyle(customerLabel, COLS.DES.getStyles());
+		tab.addRow(row, customerLabel, COLS.DES.getColWidth());
+		
+		Label statusLabel = new Label("");
+		tab.addRow(row, statusLabel, COLS.STA.getColWidth());
+		
+		Label productLabel = new Label(invoiceDetail.getDescription());
+		productLabel.setTitle(invoiceDetail.getDescription());
+		tab.addInlineStyle(productLabel, COLS.CON.getStyles());
+		tab.addRow(row, productLabel, COLS.CON.getColWidth());
+		
+		Label periodLabel = new Label("Factura");
+		tab.addRow(row, periodLabel, COLS.PER.getColWidth());
+		
+		Label quantityLabel = new Label(String.valueOf(invoiceDetail.getQuantity()));
+		quantityLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, quantityLabel, COLS.QUA.getColWidth());
+		
+		Label priceLabel = new Label(formatToEuro(invoiceDetail.getPrice()));
+		priceLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, priceLabel, COLS.PRI.getColWidth());
+		
+		Label discountLabel = new Label(null == invoiceDetail.getDiscountExpression() ? "" : invoiceDetail.getDiscountExpression().getDiscountExpr());
+		discountLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, discountLabel, COLS.DIS.getColWidth());
+		
+		Label netCostLabel = new Label(formatToEuro(null == invoiceDetail.getNetCost() ? 0.00 : invoiceDetail.getNetCost()));
+		netCostLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, netCostLabel, COLS.NET.getColWidth());
+		
+		Label priceTotalLabel = new Label(formatToEuro(null == invoiceDetail.getTotalPrice() ? 0.00 : invoiceDetail.getTotalPrice()));
+		priceTotalLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, priceTotalLabel, COLS.TOB.getColWidth());
+		
+		Label priceNetLabel = new Label(formatToEuro(null == invoiceDetail.getTotalNetPrice() ? 0.00 : invoiceDetail.getTotalNetPrice()));
+		priceNetLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		tab.addRow(row, priceNetLabel, COLS.TON.getColWidth());
+		
+		Label startLabel = new Label("");
+		startLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		tab.addRow(row, startLabel, COLS.STR.getColWidth());
+		
+		Label billingLabel = new Label(AonDateUtils.formatMonthYear(invoiceDetail.getInvoice().getIssueDate()));
+		billingLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		tab.addRow(row, billingLabel, COLS.BIL.getColWidth());
+		
+		Label endLabel = new Label("");
+		endLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		tab.addRow(row, endLabel, COLS.END.getColWidth());
+		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 	}
 	
@@ -280,27 +351,12 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		return tooltip;
 	}
 	
-	private void getList(Consumer<List<Fee>> success) {
-		COMMON_SERVICE.getSellersWorkloadFees(params, new AsyncCallback<List<Fee>>() {
+	private void getList(Consumer<SellerWorkloadContent> success) {
+		COMMON_SERVICE.getSellersWorkloadContent(params, new AsyncCallback<SellerWorkloadContent>() {
 			
 			@Override
-			public void onSuccess(List<Fee> sellerswokloadFees) {
-				success.accept(sellerswokloadFees);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// Error
-			}
-		});
-	}
-	
-	public void getCustomerFeeIds(Consumer<List<Integer>> success) {
-		COMMON_SERVICE.getSellersWorkloadFeesIds(params, new AsyncCallback<List<Integer>>() {
-			
-			@Override
-			public void onSuccess(List<Integer> sellerswokloadFeesIds) {
-				success.accept(sellerswokloadFeesIds);
+			public void onSuccess(SellerWorkloadContent sellerswokloadContent) {
+				success.accept(sellerswokloadContent);
 			}
 			
 			@Override
@@ -318,29 +374,6 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	
 	public AonCustomTable getTable() {
 		return tab;
-	}
-
-	public Integer getSellerListPosition(Integer sellerId) {
-		List<Seller> sellers = rowSellers.values().stream().collect(Collectors.toList());
-		for(int i=0; i<sellers.size(); i++)
-			if(sellers.get(i).getId().equals(sellerId))
-				return i;
-		return 0;
-	}
-	
-	public void getSellerListCount(Consumer<Integer> finish) {
-		COMMON_SERVICE.getSellersWorkloadCount(params, new AsyncCallback<Integer>() {
-					
-					@Override
-					public void onSuccess(Integer count) {
-						finish.accept(count);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						finish.accept(null);
-					}
-				});
 	}
 
 	protected abstract void onShowSuccessMessage(String successMessage);
