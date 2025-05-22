@@ -7,16 +7,40 @@
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp
 ) {
-  $magicbutton-border: v.$border-width-1 v.$border-style-solid $color-300;
+  $body-margin       : unset;
+  $aonmodule-display : flex;
+  $aonmodule-width   : v.$vw-100;
+  $aonmodule-height  : v.$vh-100;
+
+  $border-radius : v.$px-6;
+  $transition    : background-color v.$transition-duration-03 ease;
+  $box-sizing    : border-box;
+
+  $button-border : v.$zero;
+
+  $loginbutton-background            : linear-gradient(to right, $color-900, $color-900, $color-grad-max, $color-grad-min);
+  $loginbutton-background-size       : v.$pct-200 v.$pct-100;
+  $loginbutton-backgorund-position   : v.$zero v.$zero;
+  $loginbutton-transition            : background v.$transition-duration-03 ease;
+  $loginbutton-hover-background-size : v.$pct-100 v.$zero;
+
+  $magicbutton-background-color : transparent;
+  $magicbutton-color            : $color-text-button-transp;
+  $magicbutton-border           : v.$px-1 solid $color-300;
+  $magicbutton-padding          : (v.$px-8 - v.$px-1) v.$px-16;
+  $magicbutton-hover-border     : v.$zero;
+  $magicbutton-hover-padding    : v.$px-8 v.$px-16;
+
+  $iconbutton-hover-background-color : transparent;
   
   body {
     background-color : $color-0;
     color            : $color-text;
-    margin           : unset;
+    margin           : $body-margin;
     aon-module{
-      display : flex;
-      width   : 100vw;
-      height  : 100vh;
+      display : $aonmodule-display;
+      width   : $aonmodule-width;
+      height  : $aonmodule-height;
       // Cabecera
       .aonToolbar2{
         background-color  : $color-900;
@@ -25,42 +49,52 @@
       button{
         background-color  : $color-900;
         color             : $color-text-button;
+        border-radius     : $border-radius;
+        border            : $button-border;
         &:hover{
           background-color: $color-500;
         }
       }
       button.aonButton{
-        transition: background-color v.$transition-duration-03 v.$transition-easing-ease;
+        transition: $transition;
       }
       button.aonLoginButton{
-        background          : linear-gradient(to #{v.$gradient-direction-right}, $color-900, $color-900, $color-grad-max, $color-grad-min);
-        background-size     : 200% 100%;
-        background-position : 0 0;
-        transition          : background-position  v.$transition-duration-03;
+        background            : $loginbutton-background;
+        background-size       : $loginbutton-background-size;
+        background-position   : $loginbutton-backgorund-position;
+        transition            : $loginbutton-transition;
         &:hover{
-          background-position: 100% 0;
+          background-position : $loginbutton-hover-background-size;
         }
       }
       button.aonMagicButton{
-        background-color: v.$background-color-transp;
-        color           : $color-text-button-transp;
-        border          : $magicbutton-border;
-        transition      : background-color v.$transition-duration-03 v.$transition-easing-ease;
-        padding         : (.5rem - v.$border-width-1) 1rem;
+        background-color   : $magicbutton-background-color;
+        color              : $magicbutton-color;
+        border             : $magicbutton-border;
+        transition         : $transition;
+        padding            : $magicbutton-padding;
         &:hover{
-          background-color: $color-900;
-          color           : $color-text-button;
-          border          : none;
-          box-sizing : v.$box-sizing-borderbox;
-          padding: .5rem 1rem;
+          background-color : $color-900;
+          color            : $color-text-button;
+          border           : $magicbutton-hover-border;
+          box-sizing       : $box-sizing;
+          padding          : $magicbutton-hover-padding;
         }
       }
       button.aonIconButton{
         background-color   : $color-600;
+        color              : $color-300;
         &:hover{
-          background-color : v.$background-color-transp;
+          background-color : $iconbutton-hover-background-color;
+        }
+      }
+      aon-input, aon-new-input{ 
+        aon-icon-button i {
+          &::after {
+            background-color  : #bd9fe9;
+          }
         }
       }
     }
-  }
+  } 
 }
