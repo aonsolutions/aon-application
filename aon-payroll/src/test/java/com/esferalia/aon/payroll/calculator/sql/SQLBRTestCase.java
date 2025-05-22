@@ -5,14 +5,17 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C300;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -50,6 +53,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 
 import junit.framework.Assert;
 
@@ -1115,14 +1119,14 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
-	public void testBRPartialTimeII() throws ExpressionException, SQLException,
+	public void testBRPartialTimeMaternityI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
 		// @formatter:on
 		Date startDate = getFirstDayOfYear(getToday());
+		 
 		ContractRecord contract = newContract(aonContext, 
 				startDate,
 				new HashMap<String, String>() {
@@ -1158,40 +1162,78 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		
 		Date endDate = getLastDayOfMonth(startDate);
 		
+		int days = 0;
+		int months = 0;
+		
+		months++;
 		// JANUARY
 		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+		
+		months++;
 		// FEBRUARY
 		startDate = add(startDate, Calendar.MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+
+		months++;
 		// MARCH
 		startDate = add(startDate, Calendar.MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
 		
+		months++;
 		// APRIL
 		startDate = add(startDate, Calendar.MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
 		
 		
+		months++;
 		// MAY
 		startDate = add(startDate, Calendar.MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
 			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
 
+
+		months++;
 		// JUNE
 		startDate = add(startDate, Calendar.MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
-		Date startIt = add(startDate, DAY_OF_MONTH, 10);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
 		
-		double br = 1500.00 * 3 / ( 31 + 30 + 31);
+		months++;
+		// JULY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+
+		// AUGUST
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+
+		//SEPTEMBER
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		Date startIt = add(startDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.PATERNITY, startIt, null, null);
+		
+		double br = 1500.00 * months / ( days );
 		
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -1201,22 +1243,19 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				endDate, 
 				contract);
 		
-		//ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
-		//Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
 	}
 
 	@Test
-	@Ignore
-	public void testBRPartialTimeIII() throws ExpressionException, SQLException,
+	public void testBRPartialTimeMaternityII() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 
 		// @formatter:on
-		Date startDate = getFirstDayOfYear(getToday());
+		Date contractStartDate = add(getToday(), Calendar.YEAR, -2);
 		ContractRecord contract = newContract(aonContext, 
-				startDate,
+				contractStartDate,
 				new HashMap<String, String>() {
 					{
 						put(MONTH_DAYS.getName(), format("%f", 30.00));
@@ -1231,7 +1270,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		addData(aonContext, 
 				contract, 
-				startDate, 
+				contractStartDate, 
 				null, 
 				new HashMap<String, String>() {
 					{
@@ -1247,17 +1286,27 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				);
 		
 		//@formatter:off
+		int days = 0;
+		Date startDate = getFirstDayOfMonth(contractStartDate);
+		for ( int i = 0; i < 12; i++ ) {
+			Date endDate = getLastDayOfMonth(startDate);
+			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract));
+			days += get(endDate, Calendar.DAY_OF_MONTH) - get(Period.max(startDate, contractStartDate), Calendar.DAY_OF_MONTH) +1; 
+			startDate = add(startDate, Calendar.MONTH, 1);
+		}
 		
-		Date endDate = getLastDayOfMonth(startDate);
 		
 
-		// FEBRUARY
 		startDate = add(startDate, Calendar.MONTH, 1);
-		endDate = getLastDayOfMonth(startDate);
+		Date endDate = getLastDayOfMonth(startDate);
 		Date startIt = add(startDate, DAY_OF_MONTH, 10);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		addIT(aonContext, contract, LeaveType.MATERNITY, startIt, null, null);
 		
-		double br = 1500.00 / get(endDate, Calendar.DAY_OF_MONTH);
+		
+		
+		int firstMonthDays = get(getLastDayOfMonth(contractStartDate), Calendar.DAY_OF_MONTH) - get(contractStartDate, Calendar.DAY_OF_MONTH) + 1;
+		double br = ( 1500.00 / 30 * firstMonthDays + 1500.00 * 11 ) / days;
 		
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -1273,6 +1322,79 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 	
 	
+	@Test
+	public void testBRPartialTimeMaternity365() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStartDate = add(getToday(), Calendar.YEAR, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+						ContractCode.C501.getValue()));
+					}
+				}, new String[] { 
+						"3000.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+				new String[] {}, 
+				null);
+
+		addData(aonContext, 
+				contract, 
+				contractStartDate, 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put(MONDAY_HOURS.getName(), format("%f", 4.00));
+						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
+						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
+						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
+						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
+						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
+						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+					}
+				}
+				);
+		
+		//@formatter:off
+		Date startDate = getFirstDayOfMonth(contractStartDate);
+		for ( int i = 0; i < 13; i++ ) {
+			startDate = add(startDate, Calendar.MONTH, 1);
+			Date endDate = getLastDayOfMonth(startDate);
+			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract));
+		}
+		
+		
+
+		startDate = add(startDate, Calendar.MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+		Date startIt = add(startDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.MATERNITY, startIt, null, null);
+		
+		
+		
+		double br = 1500.00 * 12 / 365;
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		//ctx.getExpressionContext().setVariable("TODAY", startIt, startDate, endDate);
+		//Assert.assertEquals(br, ctx.getExpressionContext().eval("BR(TODAY)", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+	}
+	
+
 	@Test
 	public void testMaternityI() throws ExpressionException, SQLException,
 			SalaryException {
@@ -1347,6 +1469,95 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 	
 
+	@Test
+	public void testBRFijoDiscontinuoPeriods() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date startDate = getFirstDayOfYear(getToday());
+		 
+		ContractRecord contract = newContract(
+				aonContext, 
+				startDate,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(PARTIAL_FACTOR.getName(), format("%f", 1.00));
+						//put(TC2.getName(), format("\"%s\"",C300.getValue()));
+						
+					}
+				}, new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				},
+				new String[] {}, 
+				null);
+		
+		
+		addData(aonContext, contract, contract.getStartDate(), add(contract.getStartDate(), Calendar.DAY_OF_MONTH, 31+28+10), TC2, format("\"%s\"",C300.getValue()) );
+		addData(aonContext, contract, add(contract.getStartDate(), Calendar.DAY_OF_MONTH, 31+28+11), null, TC2, format("\"%s\"",C300.getValue()) );
+		
+		//@formatter:off
+		
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		int days = 0;
+		int months = 0;
+		
+		// JANUARY
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		
+		months++;
+		// FEBRUARY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+
+		months++;
+		// MARCH
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		//addPayment(aonContext, contract, startDate, endDate, "TRAMO("+get(startDate, Calendar.YEAR)+",3,15);0.00" );
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+		
+		months++;
+		// APRIL
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+		days += get(endDate, Calendar.DAY_OF_MONTH);
+		
+		// MAY
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
+			connection, startDate, endDate, endDate, contract));
+
+		// JUNE
+		startDate = add(startDate, Calendar.MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		Date startIt = add(startDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		
+		double br = 1500.00 * months / ( days );
+		
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		org.junit.Assert.assertEquals(br, ctx.getExpressionContext().eval("BASE_REGULADORA", startDate, endDate, Double.class).get(0).getValue(), DELTA);
+	}
 	// ------------------------------------------------------------------------
 
 }
