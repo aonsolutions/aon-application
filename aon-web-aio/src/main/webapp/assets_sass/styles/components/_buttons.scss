@@ -11,8 +11,6 @@ $btn-gap           : v.$px-10;
 $text-transform-l  : lowercase;
 $text-transform-u  : uppercase;
 
-$magicbutton-box-sizing : border-box; 
-
 $iconbutton-padding : unset;
 $iconbutton-margin  : unset;
 
@@ -29,11 +27,8 @@ button {
   &::first-letter{
     text-transform : $text-transform-u;
   }
-  
-  &.aonMagicButton{
-    box-sizing : $magicbutton-box-sizing;
-  }
-
+  // esta entero en _theme por que es un poco especial... al ser distinto
+/*  &.aonMagicButton{}*/
   // Boton que se inyecta en los input
   &.aonIconButton{
     padding : $iconbutton-padding;
