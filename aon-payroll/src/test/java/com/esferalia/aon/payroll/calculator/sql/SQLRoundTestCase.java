@@ -19,6 +19,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -401,6 +402,12 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 	    Assert.assertEquals(commonBase, salary.getCommonBase(),0.00);
 	}
 
+	void assertProfessionalBase(Salary salary) {
+	    double commonBase = 
+	    salary.getSalaryPayments().stream().map( p -> Math.round(p.getQuote()*100)/100.00 ).map( d -> BigDecimal.valueOf(d)).reduce(BigDecimal.ZERO, (d1,d2) -> d1.add(d2)).doubleValue();
+	    Assert.assertEquals(commonBase, salary.getProfessionalBase(),0.00);
+	}
+
 	@Test
 	public void testIrpfQuotasI()
 			throws ExpressionException, SQLException, SalaryException {
@@ -709,6 +716,87 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1, distinct);
 		
 		Assert.assertEquals(1000+ 83.33 * 2 , salary.getTotalPayment(), 0.00);
+		
+
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundCgpBaseI()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+		
+		setData(aonContext, contract, "BASE_CGC_MAX", "1000.00");
+		
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE", "2000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		Salary salary = calculate(connection, aonContext, contract);
+		
+		assertTotalPayment(salary);
+		assertProfessionalBase(salary);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		
+
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundCgpBaseII()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+		
+		setData(aonContext, contract, "BASE_CGP_MAX", "1000.00");
+		
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE", "2000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		Salary salary = calculate(connection, aonContext, contract);
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+		assertEquals(1000.00, salary.getProfessionalBase(), DELTA);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
 		
 
 		} finally {

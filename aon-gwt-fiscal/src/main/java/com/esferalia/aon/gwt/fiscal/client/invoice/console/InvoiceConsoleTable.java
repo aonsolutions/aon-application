@@ -293,7 +293,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 		dialog.setGlassEnabled(true);
 		dialog.setModal(true);
 		dialog.setCaption(AON.MSG.invoice());
-		dialog.add(InvoiceConsoleTextPrinter.print(invoice));
+		dialog.add(new InvoiceConsoleTextPanel(invoice));
 		dialog.center();
 		dialog.show();
 	}

@@ -405,12 +405,15 @@ public class FeeDAO {
 		
 		if(null != customerFeeParams.getSeller())
 			condition = condition.and(
-					RSELLER.SELLER.eq(customerFeeParams.getSeller())
-					.and(RSELLER.TYPE.eq((byte)1))
-					.and(RSELLER.STATUS.eq((byte)0).and(
-							RSELLER.START_DATE.le(new Date(new java.util.Date().getTime()))
-							.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime()))))
-						))
+					(
+						RSELLER.SELLER.eq(customerFeeParams.getSeller())
+						.and(RSELLER.TYPE.eq((byte)1))
+						.and(RSELLER.STATUS.eq((byte)0).and(
+								RSELLER.START_DATE.le(new Date(new java.util.Date().getTime()))
+								.and(RSELLER.END_DATE.isNull().or(RSELLER.END_DATE.ge(new Date(new java.util.Date().getTime()))))
+							))
+					)
+					.or(CUSTOMER_FEE.SELLER.eq(customerFeeParams.getSeller()))
 			);
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getWorkplace())) 
@@ -495,7 +498,7 @@ public class FeeDAO {
 				.setNetCost(calculateNetCost(r))
 				.setTotalNetPrice(calculateTotalNetPrice(r))
 				.setTotalPrice(calculateTotalPrice(r))
-				.setProject(checkField(r, INVOICING_GROUP.ID)
+				.setProject(checkField(r, PROJECT.ID)
 						? ProjectFiller.build(r)
 						: new Project().setId(r.getValue(CUSTOMER_FEE.PROJECT)))
 				.setQuantity(r.getValue(CUSTOMER_FEE.QUANTITY))
@@ -517,6 +520,8 @@ public class FeeDAO {
             Double price = record.get(CUSTOMER_FEE.PRICE);
             short recordPeriod = record.get(CUSTOMER_FEE.PERIOD);
             
+            if(null == price) return null;
+            
             // Fórmula: PRICE * QUANTITY / PERIOD
             double periodValue = getPeriodValue(recordPeriod);
             double feeSum = price * quantity / periodValue;
@@ -528,6 +533,8 @@ public class FeeDAO {
             Double price = record.get(CUSTOMER_FEE.PRICE);
             String discountExpr = record.get(CUSTOMER_FEE.DISCOUNT_EXPR);
             short recordPeriod = record.get(CUSTOMER_FEE.PERIOD);
+            
+            if(null == price) return null;
             
             ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 
@@ -550,6 +557,9 @@ public class FeeDAO {
 
 		private static Double calculateNetCost(Record r) {
             Double price = r.get(CUSTOMER_FEE.PRICE);
+            
+            if(null == price) return null;
+            
             String discountExpr = r.get(CUSTOMER_FEE.DISCOUNT_EXPR);
             
 	        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
@@ -987,7 +997,7 @@ public class FeeDAO {
 			condition = condition.and(PROJECT.NAME.like("%" + query + "%")
 						.or(PROJECT.ALIAS.like("%" + query + "%"))
 					);
-		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
+//		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
 		
 		Result<Record> projectRecords = ctx.getDslContext()
 				.select().from(PROJECT)

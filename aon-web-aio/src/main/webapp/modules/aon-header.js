@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts} from  '../services/service.js';
+import {closeSession, getTimeControl, saveTimeControl, clearDurum, getDomainUserRoles, getOneNotification, getNotification, getCompanies, getUser, getAllContracts, getAuth} from  '../services/service.js';
 import {getPosition} from '../services/maps.js';
 
 import '../components/aon-dialog-menu.js';
@@ -47,6 +47,7 @@ class AonDialogSearch extends AonDialogMenu {
 
 export class AonHeader extends AonElement {
 
+	auth;
 	BASE_ID;
 	activeTimecontrol;
 	newTheme;
@@ -78,6 +79,7 @@ export class AonHeader extends AonElement {
   }
 
 	initialize() {
+		this.auth = '';
 		this.BASE_ID = 'aonHeader';
 		this.AON_HEADER_WEB = this.BASE_ID + 'Web';
 		this.AON_LOGO = 'aonLogo';
@@ -103,6 +105,7 @@ export class AonHeader extends AonElement {
 	}
 
 	build() {
+		
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
 		div.className = (LS.isNewTheme() || this.newTheme) ? `${CSS.AON_HEADER} ${CSS.AON_HEADER_START} ` : CSS.AON_HEADER_BETA;
@@ -181,17 +184,6 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompany);
 
-		let aonHeaderHome = this.createElement(TAG.SPAN);
-		aonHeaderHome.id = this.AON_HEADER_HOME;
-		aonHeaderHome.style.display = "none";
-
-		let aonHeaderHomeButton = new AonIconButton();
-		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
-		aonHeaderHomeButton.icon = "home";
-		aonHeaderHomeButton.outlined = true;
-		aonHeaderHome.appendChild(aonHeaderHomeButton);
-
-		aonHeaderButtons.appendChild(aonHeaderHome);
 
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
@@ -204,6 +196,17 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
+		
+		/*let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHome);*/
+	
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
@@ -253,7 +256,10 @@ export class AonHeader extends AonElement {
 
 		let aonHeaderUser = this.createElement(TAG.SPAN)
 		aonHeaderUser.id = this.AON_HEADER_USER;
-		aonHeaderUser.title = MSG.USER;
+		getAuth().then(auth => {
+			aonHeaderUser.title = auth.name + " " +  auth.surname;		
+		});
+		
 		
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
@@ -399,7 +405,6 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch.style.display = 'flex';
 
 				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-				aonHeaderHome.style.display = 'none';
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
@@ -631,8 +636,8 @@ export class AonHeader extends AonElement {
 			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
-		aonHeaderHome.style.display = company ? 'block' : 'none';
-
+/*		aonHeaderHome.style.display = company ? 'block' : 'none';
+*/
 		let aonHeaderCompany = this.getElement(this.AON_HEADER_COMPANY);
 		aonHeaderCompany.style.display = company ? 'block' : 'none';
 

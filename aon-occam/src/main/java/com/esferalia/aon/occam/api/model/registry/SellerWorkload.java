@@ -15,10 +15,11 @@ public class SellerWorkload extends Seller implements Serializable {
 		periods = new TreeMap<Date, SellerWorkloadPeriod>();
 	}
 
-	public void addSellerWorkloadPeriod(Date date, Integer customers, Integer customersFees, Double netAmount, Double totalAmount) {
+	public void addSellerWorkloadPeriod(Date date, Integer customers, Integer customersFees, Integer customersInvoices, Double netAmount, Double totalAmount) {
 		SellerWorkloadPeriod sellerWorkloadPeriod = new SellerWorkloadPeriod()
 				.setCustomers(customers)
 				.setCustomerFees(customersFees)
+				.setCustomerInvoices(customersInvoices)
 				.setNetAmount(netAmount)
 				.setTotalAmount(totalAmount);
 		

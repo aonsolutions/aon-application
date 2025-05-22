@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -51,7 +52,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
-import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -84,6 +84,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -731,15 +732,11 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getSellerWorkloadListCount(params);
 	}
 	@Override
-	public List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException {
-		List<Fee> sellersWorkloadFees =  AON.getSellersWorkloadFees(params);
+	public SellerWorkloadContent getSellersWorkloadContent(SellerWorkloadParams params) throws AonCoreException {
+		SellerWorkloadContent sellersWorkloadFees =  AON.getSellersWorkloadContent(params);
 		return sellersWorkloadFees;
 	}
-	@Override
-	public List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException {
-		List<Integer> sellersWorkloadFees = AON.getSellersWorkloadFeesIds(params);
-		return sellersWorkloadFees;
-	}
+	
 	
 	// **************************************************
 	// **************************************** [PRODUCT]
@@ -992,6 +989,29 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		);
 		
 		return resultMap;
+	}
+	@Override
+	public Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException {
+		return AON.getCustomer(domainName, domain, user, f -> f.getDocumentProperty().eq(document));
+	}
+	
+	@Override
+	public TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException {
+		return AON.getTargetFull(domainName, registry, user, registry);
+	}
+	@Override
+	public Company getCompanyByDocument(String domainName, int domainId, String user, String document) throws AonCoreException {
+		Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(domainId));
+		List<Integer> silbingDomains = AON.getDomainList(domainName, domainId, user, 
+				f -> f.getParentProperty().eq(domain.getParentId()))
+			.stream()
+			.map(domainIt -> domainIt.getId())
+			.collect(Collectors.toList());
+		
+		return AON.getCompany(
+				new Domain().setName(domainName).setId(domainId), 
+				new User().setLogin(user).setName(user), 
+				f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().in(silbingDomains.toArray(new Integer[0]))));
 	}
 
 }
