@@ -342,7 +342,8 @@ export const OPEN_MENU = 'Abrir Menú';
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';
 export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opciones';
-export const OR_ACCESS = 'o ACCEDE';
+//export const OR_ACCESS = 'o ACCEDE';
+export const OR_ACCESS = 'O si prefieres, inicia sesión sin contraseña';
 export const OTHER_SERVICES = 'Otros Servicios';
 export const ONE = 'Una';
 

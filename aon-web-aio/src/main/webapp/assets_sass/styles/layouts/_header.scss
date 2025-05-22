@@ -1,5 +1,7 @@
 @use '../variables' as v;
 
-.aonToolbar{
-  height: 4rem;
+.aonToolbar2{
+  height  : 4rem;
+  position: sticky;
+  top     : 0;
 }

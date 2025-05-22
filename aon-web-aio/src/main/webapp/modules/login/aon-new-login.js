@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, magicLink, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
+import { login, getManifest, magicLink, getCompanies, getUser, MOBILE_ACTION } from "../../services/service.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -9,11 +9,8 @@ import "../company/aon-mobile-desktop.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
-import { webkitRequestMobile } from "../../services/request.js";
-import { AonInput } from "../../components/aon-input.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
-import { AonDialog } from "../../components/aon-dialog.js";
 import { AonToast } from "../../components/aon-toast.js";
 import { AonDialogMenu } from "../../components/aon-dialog-menu.js";
 import { Language } from "../../models/Language.js";
@@ -27,7 +24,6 @@ import { changeUrl } from '../../services/actionService.js';
 
 import * as UA from '../../services/userAgentService.js';
 import { AonMobileHome } from "../home/aon-mobile-home.js";
-import { AonMobileDesktop } from "../company/aon-mobile-desktop.js";
 import { AonDesktop } from "../company/aon-desktop.js";
 
 import * as GWT from '../../gwt/gwt.js';
@@ -52,10 +48,11 @@ export class AonNewLogin extends AonElement {
     console.log('********* LOGIN ***********');
     console.log(this.isNewStyle());
     
-    
-//    this.style.display        = "flex";
-//    this.style.height         = "100vh";
-//    this.style.flexDirection  = "column";
+    if(!this.isNewStyle()){
+      this.style.display        = "flex";
+      this.style.height         = "100vh";
+      this.style.flexDirection  = "column";
+    }
 
     // Toolbar
     let toolbar = this.createElement(TAG.DIV);
@@ -69,7 +66,9 @@ export class AonNewLogin extends AonElement {
 
     let divLanguage = this.createElement(TAG.DIV);
     divLanguage.id = "aonLoginLanguageDivToolbar";
-//    divLanguage.style.cursor = "pointer";
+    if(!this.isNewStyle()){
+      divLanguage.style.cursor = "pointer";
+    }
     divLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
     toolbar.appendChild(divLanguage);
 
@@ -77,7 +76,9 @@ export class AonNewLogin extends AonElement {
     languageButton.id = "aonLoginLanguageButton";
     languageButton.icon = MATERIAL_ICONS.LANGUAGE;
     languageButton.title = MSG.SELECT_LANGUAGE;
-    if (LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
+    if(!this.isNewStyle()){
+      if (LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
+    }
     divLanguage.appendChild(languageButton);
 
     let spanLanguage = this.createElement(TAG.SPAN);
@@ -96,8 +97,10 @@ export class AonNewLogin extends AonElement {
     let loginContent = this.createElement(TAG.DIV);
     loginContent.id = "loginContent";
     loginContent.className = CSS.AON_FLEX_COLUMN;
-//    loginContent.style.height = "100%";
-//    loginContent.style.justifyContent = "center";
+    if(!this.isNewStyle()){
+      loginContent.style.height = "100%";
+      loginContent.style.justifyContent = "center";
+    } 
 
     let loginDivForm = this.createElement(TAG.DIV);
     loginDivForm.id = "loginDivForm";
@@ -160,7 +163,7 @@ export class AonNewLogin extends AonElement {
     });
 
     this.createDivider(divFormContent, MSG.OR_ACCESS);
-
+    
     let magicLinkButton = this.createElement(TAG.BUTTON);
     magicLinkButton.id = "aonLoginMagicLink";
     magicLinkButton.className = CSS.AON_MAGIC_BUTTON;
@@ -196,8 +199,10 @@ export class AonNewLogin extends AonElement {
     let magicLinkContent = this.createElement(TAG.DIV);
     magicLinkContent.id = "magicLinkContent";
     magicLinkContent.className = CSS.AON_FLEX_COLUMN;
-//    magicLinkContent.style.height = "100%";
-//    magicLinkContent.style.justifyContent = "center";
+    if(!this.isNewStyle()){
+      magicLinkContent.style.height = "100%";
+      magicLinkContent.style.justifyContent = "center";
+    }
 
     let magicLinkDivForm = this.createElement(TAG.DIV);
     magicLinkDivForm.id = "magicLinkDivForm";
@@ -249,8 +254,10 @@ export class AonNewLogin extends AonElement {
       let version = MSG.VERSION + ": " + manifest.build_date;
       signIn.title = version;
     });
-
-    this.createDivider(divFormContent, "O");
+    
+    if(!this.isNewStyle()){
+      this.createDivider(divFormContent, "O");
+    }
 
     let backButton = this.createElement(TAG.BUTTON);
     backButton.id = "backButton";
@@ -281,27 +288,38 @@ export class AonNewLogin extends AonElement {
   createTitlePanel(parent, title, subtitle) {
     let divTitleForm = this.createElement(TAG.DIV);
     divTitleForm.id = "divTitleForm";
-//    divTitleForm.style.display = "flex";
-//    divTitleForm.style.flexDirection = "column";
-//    divTitleForm.style.alignItems = "center";
-//    divTitleForm.style.marginBottom = "2rem";
+    if(!this.isNewStyle()){
+      divTitleForm.style.display = "flex";
+      divTitleForm.style.flexDirection = "column";
+      divTitleForm.style.alignItems = "center";
+      divTitleForm.style.marginBottom = "2rem";
+    }
     parent.appendChild(divTitleForm);
 
-    let h1 = this.createElement(TAG.H1);
-    h1.className = CSS.AON_LOGIN_TITLE;
-    h1.innerHTML = title;
-    divTitleForm.appendChild(h1);
+    if(!this.isNewStyle()){
+      let h1 = this.createElement(TAG.H1);
+      h1.className = CSS.AON_LOGIN_TITLE;
+      h1.innerHTML = title;
+      divTitleForm.appendChild(h1);
 
-    let h2 = this.createElement(TAG.H1);
-    h2.className = CSS.AON_LOGIN_SUB_TITLE;
-    h2.innerHTML = subtitle;
-    divTitleForm.appendChild(h2);
+      let h2 = this.createElement(TAG.H1);
+      h2.className = CSS.AON_LOGIN_SUB_TITLE;
+      h2.innerHTML = subtitle;
+      divTitleForm.appendChild(h2);
+    } else {
+      let title = this.createElement(TAG.DIV);
+      title.className = CSS.AON_LOGIN_TITLE;
+      title.innerHTML = subtitle;
+      divTitleForm.appendChild(title);
+    }
   }
 
   createLoader(parent) {
     let aonLoader = new AonLoader();
     aonLoader.id = "aonLoginLoader";
-//    aonLoader.style.display = "none";
+    if(!this.isNewStyle()){
+      aonLoader.style.display = "none";
+    }
     parent.appendChild(aonLoader);
   }
 
@@ -316,12 +334,24 @@ export class AonNewLogin extends AonElement {
   }
 
   createMobileApps(parent) {
-    let divMobiles = this.createElement(TAG.DIV);
-    divMobiles.id = "logosMobiles";
-    divMobiles.classList.add("aonNewLoginDivMobiles");
-    parent.appendChild(divMobiles);
-
-    if (!UA.isApp() && this.isMobile()) this.buildAppLogo(divMobiles);
+    if(!this.isNewStyle()){
+      if (!UA.isApp() && this.isMobile()){
+        let divMobiles = this.createElement(TAG.DIV);
+        divMobiles.id = "logosMobiles";
+        divMobiles.classList.add("aonNewLoginDivMobiles");
+        parent.appendChild(divMobiles);
+        this.buildAppLogo(divMobiles);
+      }
+    } else {
+      // No se carga si accedes desde la APP
+      if (!UA.isApp()){
+        let divMobiles = this.createElement(TAG.DIV);
+        divMobiles.id = "logosMobiles";
+        divMobiles.classList.add("aonNewLoginDivMobiles");
+        parent.appendChild(divMobiles);
+        this.buildAppLogo(divMobiles);
+      }
+    }
   }
 
   createToast(parent) {
@@ -332,7 +362,9 @@ export class AonNewLogin extends AonElement {
 
   magicLink(value) {
     let loader = this.getElement("aonLoginLoader");
-//    loader.style.display = "";
+    if(!this.isNewStyle()){
+      loader.style.display = "";
+    }
     loader.start();
 
     let data = {
@@ -460,13 +492,17 @@ export class AonNewLogin extends AonElement {
 
   buildAppLogo(divMobiles) {
     //const div  = this.getElement('logosMobiles');
-//    divMobiles.style.textAlign = "center";
+    if(!this.isNewStyle()){
+      divMobiles.style.textAlign = "center";
+    } 
     const playStore = this.createElement(TAG.A);
     playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
     playStore.target = "_blank";
     const imgPlayStore = this.createElement("img");
     imgPlayStore.src = "assets/playstore.png"; //: "assets/playstore-disabled.png";
-//    imgPlayStore.style.height = "38px";
+    if(!this.isNewStyle()){
+      imgPlayStore.style.height = "38px";
+    } 
     playStore.appendChild(imgPlayStore);
     divMobiles.appendChild(playStore);
 
@@ -475,8 +511,10 @@ export class AonNewLogin extends AonElement {
     appStore.target = "_blank";
     const imgAppStore = this.createElement("img");
     imgAppStore.src = "assets/appstore.png"; //: "assets/appstore-disabled.png";
-//    imgAppStore.style.height = "40px";
-//    imgAppStore.style.filter = "grayscale(100%)";
+    if(!this.isNewStyle()){
+      imgAppStore.style.height = "40px";
+      imgAppStore.style.filter = "grayscale(100%)";
+    } 
     appStore.appendChild(imgAppStore);
     divMobiles.appendChild(appStore);
   }
@@ -511,7 +549,9 @@ export class AonNewLogin extends AonElement {
     };
 
     let loader = this.getElement("aonLoginLoader");
-//    loader.style.display = "";
+    if(!this.isNewStyle()){
+      loader.style.display = "";
+    }
     loader.start();
     login(data)
       .then(() => {

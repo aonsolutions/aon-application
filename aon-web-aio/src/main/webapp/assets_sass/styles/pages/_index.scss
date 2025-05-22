@@ -1,8 +1,61 @@
 @use '../variables' as v;
+@use '../base/mixins' as mixin;
 
 aon-new-login{
-  width : 100%;
-  height: 100%;
-  
-  
+  width         : 100%;
+  height        : 100%;
+  display       : flex;
+  flex-direction: column;
+  #loginContent, #magicLinkContent{
+    flex-grow       : 1; /* Hace que este div ocupe el espacio restante */
+    overflow        : auto;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    .aonLoginTitle{
+      display         : flex;
+      justify-content : center;
+      font-size       : .875rem;
+      color           : #864fcd;
+    }
+    .aonLoginForm{
+      width   : 21.875rem;
+      height  : fit-content;
+      padding : 1.368rem;
+      border  : 0.055rem solid #E2E8F0;
+      box-shadow: 0px 3.5px 5.25px 0px rgba(0, 0, 0, 0.05);
+      border-radius: 0.328rem;
+
+      .aonLoginFormContent{
+        display : grid;
+        gap     : .875rem;
+        .aonDividerSpan{
+          display         : flex;
+          justify-content : center;
+          font-size       : 0.766rem;
+        }
+      }
+    }
+    #logosMobiles{
+      display         : none;
+      justify-content : center;
+      gap             : .875rem;
+      img {
+        width     : 10rem;
+        max-width : 100%;
+        height    : auto;
+        display   : block;
+      }
+    }
+  }
+}
+// Tablet para abajo
+@include mixin.respond("md") {
+  aon-new-login{
+    #loginContent, #magicLinkContent{
+      #logosMobiles{
+        display: flex;
+      }
+    }
+  }
 }

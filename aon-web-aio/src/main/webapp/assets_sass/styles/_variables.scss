@@ -25,6 +25,20 @@ $font-weight-semibold  : 600;
 $font-weight-bold      : 700;
 $font-weight-extrabold : 800;
 
+// Resoluciones
+$breakpoint-8k        : 7680px;
+$breakpoint-5k        : 5120px;
+$breakpoint-4k        : 3840px;
+$breakpoint-2k        : 2560px;
+$breakpoint-xl        : 1920px;
+$breakpoint-lg        : 1366px;
+$breakpoint-md        : 1024px;
+$breakpoint-sm        : 768px;
+$breakpoint-xs        : 600px;
+$breakpoint-mobile    : 480px;
+$breakpoint-mobile-sm : 360px;
+$breakpoint-mobile-xs : 320px;
+
 //Tamaño de fuente segun resolucion
 $font-size-8k        : 24px;
 $font-size-5k        : 22px;

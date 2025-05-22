@@ -3,18 +3,18 @@
 
 // breakpoints
 $breakpoints: (
-  "8k": 7680px,
-  "5k": 5120px,
-  "4k": 3840px,
-  "2k": 2560px,
-  "xl": 1920px,
-  "lg": 1366px,
-  "md": 1024px,
-  "sm": 768px,
-  "xs": 600px,
-  "mobile": 480px,
-  "mobile-sm": 360px,
-  "mobile-xs": 320px
+  "8k"        : v.$breakpoint-8k,
+  "5k"        : v.$breakpoint-5k,
+  "4k"        : v.$breakpoint-4k,
+  "2k"        : v.$breakpoint-2k,
+  "xl"        : v.$breakpoint-xl,
+  "lg"        : v.$breakpoint-lg,
+  "md"        : v.$breakpoint-md,
+  "sm"        : v.$breakpoint-sm,
+  "xs"        : v.$breakpoint-xs,
+  "mobile"    : v.$breakpoint-mobile,
+  "mobile-sm" : v.$breakpoint-mobile-sm,
+  "mobile-xs" : v.$breakpoint-mobile-xs
 );
 
 @mixin respond($size) {

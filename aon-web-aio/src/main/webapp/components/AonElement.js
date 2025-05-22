@@ -198,7 +198,7 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('sig.aonsolutions.org')
       || LS.getDomainName() === 'sig.aonsolutions.org';
-	}
+  }
 
   isConsole(){
     const href = window.location.href;
@@ -210,7 +210,7 @@ export class AonElement extends HTMLElement{
       || href.includes('console-ayudat.aonsolutions.net')
       || href.includes('console-grupoayudat.aonsolutions.net')
       || href.includes('console-demos.aonsolutions.org');
-	}
+  }
 
   showMessage(msg) {
     this.showToast({

@@ -11,9 +11,9 @@ $color-500: #452277;
 $color-600: #371b5c;
 $color-700: #482b6e;
 $color-800: #523a77;
-$color-900: #6e578f;  
-$color-grad-min: #5A1C9C;
-$color-grad-max: #1C003D;
+$color-900: #6e578f;
+$color-grad-min: $color-900;
+$color-grad-max: #5A1C9C;
 
 $color-text: #ede5f8;
 $color-text-button: #ede5f8;
