@@ -8,6 +8,8 @@ $btn-cursor        : pointer;
 $btn-display       : inline-block;
 $btn-text-align    : center;
 $btn-gap           : v.$px-10;
+$text-transform-l  : lowercase;
+$text-transform-u  : uppercase;
 
 $magicbutton-box-sizing : border-box; 
 
@@ -23,9 +25,9 @@ button {
   display          : $btn-display;
   text-align       : $btn-text-align;
   gap              : $btn-gap;
-  text-transform   : v.$text-transform-lowercase;
+  text-transform   : $text-transform-l;
   &::first-letter{
-    text-transform : v.$text-transform-uppercase;
+    text-transform : $text-transform-u;
   }
   
   &.aonMagicButton{

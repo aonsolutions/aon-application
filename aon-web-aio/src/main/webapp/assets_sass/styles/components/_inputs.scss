@@ -1,74 +1,75 @@
 @use '../variables' as v;
 
+// Generales
+$padding-top    : v.$px-8;
+$padding-right  : v.$px-12;
+$padding-bottom : v.$px-8;
+$padding-left   : v.$px-12;
+$border-radius  : v.$px-6;
 // .aonInputBox
-$display-aonInputBox : v.$display-grid;
+$inputbox-display : grid;
 // .aonInputBoxLabel
-$width-aonInputBoxLabel          : v.$width-100;
-$display-aonInputBoxLabel        : v.$display-flex;
-$flex-direction-aonInputBoxLabel : v.$flex-direction-column-reverse;
-$gap-aonInputBoxLabel            : v.$gap-6;
+$inputboxlabel-display        : flex;
+$inputboxlabel-flex-direction : column-reverse;
+$inputboxlabel-width          : v.$pct-100;
+$inputboxlabel-gap            : v.$px-6;
 // input
-$height-input        : v.$height-40;
-$border-width-input  : v.$border-width-1;
-$border-style-input  : v.$border-style-solid;
-$border-color-input  : v.$border-color-silver;
-$border-radius-input : v.$border-radius;
-$box-sizing-input    : v.$box-sizing-borderbox;
+$input-height     : v.$px-40;
+$input-box-sizing : border-box;
 // span
-$height-span      : v.$height-24;
-$display-span     : v.$display-flex;
-$align-items-span : v.$align-items-center;
+$span-height      : v.$px-24;
+$span-display     : flex;
+$span-align-items : center;
 // .aonInputIconLabel
-$display-aonInputIconLabel         : v.$display-flex;
-$justify-content-aonInputIconLabel : v.$justify-content-flex-end;
-$position-aonInputIconLabel        : v.$position-relative;
+$inputiconlabel-display         : flex;
+$inputiconlabel-position        : relative;
+$inputiconlabel-justify-content : flex-end;
 // aonIconButton
-$align-content-aonIconButton : v.$align-content-center;
-$height-aonIconButton        : v.$height-0;
-
-$padding-top    : v.$padding-8;
-$padding-right  : v.$padding-12;
-$padding-bottom : v.$padding-8;
-$padding-left   : v.$padding-12;
+$iconbutton-height        : v.$px-0;
+$iconbutton-align-content : center;
+// button
+$button-height : v.$px-24;
+$button-width  : v.$px-24;
+// icono
+$icon-padding-right : v.$px-40;
 
 aon-input, aon-new-input{ 
 
   .aonInputBox{
-    display: $display-aonInputBox;
+    display: $inputbox-display;
     
     .aonInputBoxLabel{
-      display        : $display-aonInputBoxLabel;
-      flex-direction : $flex-direction-aonInputBoxLabel;
-      width          : $width-aonInputBoxLabel;
-      gap            : $gap-aonInputBoxLabel;
+      display        : $inputboxlabel-display;
+      flex-direction : $inputboxlabel-flex-direction;
+      width          : $inputboxlabel-width;
+      gap            : $inputboxlabel-gap;
     
       input{
-        height        : $height-input;
+        height        : $input-height;
         padding       : $padding-top $padding-right $padding-bottom $padding-left;
-        border        : $border-width-input $border-style-input $border-color-input;
-        border-radius : $border-radius-input;
-        box-sizing    : $box-sizing-input;
+        border-radius : $border-radius;
+        box-sizing    : $input-box-sizing;
       }
       span{
-        height      : $height-span;
-        display     : $display-span;
-        align-items : $align-items-span;
+        height      : $span-height;
+        display     : $span-display;
+        align-items : $span-align-items;
       }
     }
     // El Boton que se inyecta en el label esta configurado en _buttons.css
     .aonInputIconLabel{
-      display         : $display-aonInputIconLabel;
-      position        : $position-aonInputIconLabel;
-      justify-content : $justify-content-aonInputIconLabel;
-      top             : -($height-input - $padding-top);
+      display         : $inputiconlabel-display;
+      position        : $inputiconlabel-position;
+      justify-content : $inputiconlabel-justify-content;
+      top             : -($input-height - $padding-top);
       right           : $padding-right;
       aon-icon-button {
-        height        : $height-aonIconButton;
-        align-content : $align-content-aonIconButton;
+        height        : $iconbutton-height;
+        align-content : $iconbutton-align-content;
 
         button{
-          width : 1.5rem;
-          height: 1.5rem;
+          width : $button-height;
+          height: $button-width;
         }
       }
     }
@@ -76,15 +77,11 @@ aon-input, aon-new-input{
   // Mensaje de error en los input
   .aonInputMsg{
     padding-left: $padding-left;
-
-    .aonInputMsgError{
-      color: #f6655a;
-    }
   }
   // Este input tiene un icono, por lo que tiene un padding distinto
   &[type="password"]{
     .aonInputBox .aonInputBoxLabel input{
-      padding-right: 2.5rem;
+      padding-right: $icon-padding-right;
     }
   }
 }

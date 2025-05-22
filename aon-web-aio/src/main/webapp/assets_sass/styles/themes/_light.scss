@@ -19,12 +19,15 @@ $color-text: #1E293B;
 $color-text-button: #ffffff;
 $color-text-button-transp: #1E293B;
 
+$color-msg-error: #f6655a;
+
 @mixin light-theme {
   @include t.theme(
     $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-button, $color-text-button-transp
+    $color-text, $color-text-button, $color-text-button-transp,
+    $color-msg-error
   );
 }

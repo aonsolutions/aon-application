@@ -2,7 +2,7 @@
 
 $aoniconbutton-font-size        : v.$px-16;
 $position                       : relative;
-$aoniconbutton-font-size-hidden : v.$zero;
+$aoniconbutton-font-size-hidden : v.$px-0;
 $aoniconbutton-before-width     : 16.67px;
 $aoniconbutton-before-height    : 16.67px;
 $aoniconbutton-after-width      : v.$px-24;
@@ -47,7 +47,6 @@ aon-icon-button i {
       mask-size         : $mask-size;
       -webkit-mask      : url(#{$icon-data}) $mask;
       -webkit-mask-size : $mask-size;
-     // background-color  : #bd9fe9;
     }
   }
 }

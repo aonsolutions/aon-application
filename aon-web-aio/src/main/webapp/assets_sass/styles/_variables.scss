@@ -53,10 +53,8 @@ $font-size-mobile    : 12px;
 $font-size-mobile-sm : 11px;
 $font-size-mobile-xs : 10px;
 
-// CERO
-$zero : 0;
-
 // MEDIDAS PX A REM
+$px-0  : 0;
 $px-1  : 0.0625rem;
 $px-2  : 0.125rem;
 $px-3  : 0.1875rem;
@@ -229,82 +227,7 @@ $letter-spacing-sub        : $letter-spacing-0;
 $letter-spacing-btn        : $letter-spacing-0;
 $letter-spacing-span       : $letter-spacing-0;
 
-// WIDTH Y HEIGHT
-$width-0     : 0;
-$width-100   : 100%;
-$height-0    : 0;
-$height-24   : 1.5rem;
-$height-40   : 2.5rem;
-$height-100  : 100%;
-
-// MARGIN
-$margin-unset : unset;
-$margin-8     : .5rem;
-$margin-12    : .75rem;
-$margin-16    : 1rem;
-
-// PADDING
-$padding-unset : unset;
-$padding-8     : .5rem;
-$padding-12    : .75rem;
-$padding-16    : 1rem;
-
-// BACKGROUND
-$background-color-transp : transparent;
-
-// DEGRADADO
-$gradient-direction-right : right;
-$gradient-direction-left  : left;
-
-// BORDE
-$border-0                 : 0;
-$border-color-silver      : silver;
-$border-color-transparent : transparent;
-$border-width-1           : .0625rem;
-$border-style-solid       : solid;
-$box-sizing-borderbox     : border-box;
-
-// BORDER RADIUS
-$border-radius     : .375rem;
-$border-radius-50  : 50%;
-$border-radius-100 : 100%;
-
-// CURSOR
-$cursor-default : default;
-$cursor-pointer : pointer;
-$cursor-help    : help;
-
-// POSITION
-$position-relative : relative;
-
-// DISPLAY
-$display-flex         : flex;
-$display-grid         : grid;
-$display-block        : block;
-$display-inline-block : inline-block;
-
-// FLEX DIRECTION:
-$flex-direction-row            : row;
-$flex-direction-row-reverse    : row-reverse;
-$flex-direction-column         : column;
-$flex-direction-column-reverse : column-reverse;
-
-// ALIGN Y JUSTIFY
-$align-items-center       : center;
-$text-align-center        : center;
-$align-content-center     : center;
-$justify-content-center   : center;
-$justify-content-flex-end : flex-end;
-
-//GAP
-$gap-6  : .375rem;
-$gap-10 : .625rem;
-
-// TEXT TRANSFORM
-$text-transform-uppercase : uppercase;
-$text-transform-lowercase : lowercase;
-
 // TRANSITION
 $transition-duration-03 : 0.3s;
-//$transition-easing-ease : ease;
+
 
