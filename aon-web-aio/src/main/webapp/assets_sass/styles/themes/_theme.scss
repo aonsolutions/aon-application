@@ -27,9 +27,9 @@
   $magicbutton-background-color : transparent;
   $magicbutton-color            : $color-text-button-transp;
   $magicbutton-border           : v.$px-1 solid $color-300;
-  $magicbutton-padding          : (v.$px-8 - v.$px-1) v.$px-16;
-  $magicbutton-hover-border     : v.$zero;
-  $magicbutton-hover-padding    : v.$px-8 v.$px-16;
+  $magicbutton-padding          : v.$px-7 v.$px-15;
+  $magicbutton-hover-border     : v.$px-1 solid $color-900;
+  $magicbutton-hover-padding    : v.$px-7 v.$px-15;
 
   $iconbutton-hover-background-color : transparent;
   
