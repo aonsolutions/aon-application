@@ -193,6 +193,16 @@ export class AonElement extends HTMLElement{
 	const href = localStorage.getItem("aon_domain_name")
 	return href.includes('ayudat') || href.includes('infoautonomos')
   }
+  
+  isAyudat() {
+    const href = localStorage.getItem("aon_domain_name");
+    return href.includes('ayudat');
+  }
+
+  isInfoautonomos() {
+    const href = localStorage.getItem("aon_domain_name");
+    return href.includes('infoautonomos');
+  }
 
   isSig(){
     const href = window.location.href;

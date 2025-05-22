@@ -87,7 +87,20 @@ export class AonNewLogin extends AonElement {
     divLanguage.appendChild(spanLanguage);
 
     // Content
+    if(this.isNewStyle()){
+      this.createLogo();
+    }
     this.createLoginPanel();
+  }
+  
+  // Se inyecta el logo por css dependiendo del tema
+  createLogo(){
+    let logoContent = this.createElement(TAG.DIV);
+    logoContent.id = "logoContent";
+    let logo = this.createElement(TAG.DIV);
+    logo.id = "logoSVG";
+    logoContent.appendChild(logo);
+    this.appendChild(logoContent);
   }
 
   createLoginPanel() {

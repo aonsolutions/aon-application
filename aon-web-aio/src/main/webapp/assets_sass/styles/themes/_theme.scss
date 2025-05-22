@@ -6,7 +6,8 @@
   $color-800, $color-900,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp,
-  $color-msg-error
+  $color-msg-error,
+  $logo, $logo-width, $logo-height
 ) {
   $color-900-alpha: #{$color-900}0D;
   
@@ -24,7 +25,7 @@
   $button-border : v.$px-0;
 
   $loginbutton-background            : linear-gradient(to right, $color-900, $color-900, $color-grad-max, $color-grad-min);
-  $loginbutton-background-size       : v.$pct-200 v.$pct-100;
+  $loginbutton-background-size       : v.$pct-300 v.$pct-100;
   $loginbutton-backgorund-position   : v.$px-0 v.$px-0;
   $loginbutton-transition            : background v.$transition-duration-03 ease;
   $loginbutton-hover-background-size : v.$pct-100 v.$px-0;
@@ -106,14 +107,24 @@
             background-color: $color-300;
           }
         }
-      }
-      input{
-        border: $input-border;
+        input{
+          border: $input-border;
+          background-color: $color-0;
+          color: $color-text;
+        }
       }
       // 
       // Pages - login
       // 
       aon-new-login{
+        #logoContent{
+          #logoSVG{
+            background-image: url($logo);
+            width: v.$px-100;
+            height: v.$px-100;
+            background-size: contain;
+          }
+        }
         #loginContent, #magicLinkContent{
           .aonLoginForm{
             border    : $border;

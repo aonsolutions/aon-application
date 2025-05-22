@@ -6,8 +6,14 @@ aon-new-login{
   height        : 100%;
   display       : flex;
   flex-direction: column;
+  #logoContent{
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    align-items: flex-end;
+  }
   #loginContent, #magicLinkContent{
-    flex-grow       : 1; /* Hace que este div ocupe el espacio restante */
+    flex-grow       : 2; /* Hace que este div ocupe el espacio restante */
     overflow        : auto;
     display         : flex;
     align-items     : center;
@@ -20,7 +26,6 @@ aon-new-login{
       .aonLoginTitle{
         display         : flex;
         justify-content : center;
-        font-size       : v.$px-16;
       }
       .aonLoginFormContent{
         display : grid;
@@ -28,7 +33,6 @@ aon-new-login{
         .aonDividerSpan{
           display         : flex;
           justify-content : center;
-          font-size       : v.$px-16;
         }
       }
     }

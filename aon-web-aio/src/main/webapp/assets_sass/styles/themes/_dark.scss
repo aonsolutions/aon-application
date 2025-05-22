@@ -1,4 +1,5 @@
 @use './theme' as t;
+@use '../variables' as v;
 
 // Variables colores
 $color-0  : #000;
@@ -19,7 +20,11 @@ $color-text: #ede5f8;
 $color-text-button: #ede5f8;
 $color-text-button-transp: #ede5f8;
 
-$color-msg-error: #f6655a;
+$color-msg-error: #FB5722;
+
+$logo: "../images/ayudat/logo-gris.svg";
+$logo-width: v.$px-100;
+$logo-height: v.$px-100;
 
 @mixin dark-theme {
   @include t.theme(
@@ -28,7 +33,8 @@ $color-msg-error: #f6655a;
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
     $color-text, $color-text-button, $color-text-button-transp,
-    $color-msg-error
+    $color-msg-error,
+    $logo, $logo-width, $logo-height
   );
 }
  
