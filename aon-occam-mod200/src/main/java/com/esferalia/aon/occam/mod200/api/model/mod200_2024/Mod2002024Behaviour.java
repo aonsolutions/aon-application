@@ -368,11 +368,12 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ1586,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ1587,new Boolean[]{FALSE,TRUE});
 		
-		// Liquido a ingresar o a devolver
+		// Rectificativa y Resultado
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ1583, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ1585, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BN621, new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BN622, new Boolean[]{FALSE,TRUE});		
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BN622, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ866, new Boolean[]{FALSE,TRUE});
 
 		// Opción de fraccionamiento en supuestos de cambios de residencia (art. 19.1 LIS)
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LQ2480, new Boolean[]{FALSE,TRUE});
@@ -544,12 +545,16 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.LM2806, new Boolean[]{FALSE,TRUE}); 
 		addBreakdown(Mod2002024LM1494Key.values(), Mod2002024Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
+		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos
+		// propios de entidades pendientes de reversión (DT 16ª LIS)
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.RV991, new Boolean[]{FALSE,TRUE});
+		
 	}
 	
 	static { 
 		
 		// Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)		
-		addBreakdown(Mod2002024RIC_1Key.values()); // No lleva fila de totales
+		addBreakdown(Mod2002024RIC_1Key.values(), Mod2002024Key.RC3312); // No lleva fila de totales, pero se deshabilita la ultima fila porque es calculada
 		
 		// REGIMEN DE COOPERATIVAS - Determinacion de la base imponible
 		addBreakdown(Mod2002024LQ554Key.values(), new Mod2002024Key[] {Mod2002024Key.CP2837, Mod2002024Key.CP553}, new byte[] {}); // Lleva 2 filas de totales y no lleva columnas de totales
@@ -558,7 +563,7 @@ public class Mod2002024Behaviour {
 		addBreakdown(Mod2002024LQ561Key.values(), Mod2002024Key.LQ561);
 		
 		// Régimen especial de la reserva para inversiones en las Illes Balears (DA 70 Ley 31/2022)		
-		addBreakdown(Mod2002024RIIB_1Key.values()); // No lleva fila de totales
+		addBreakdown(Mod2002024RIIB_1Key.values(),Mod2002024Key.RB1708); // No lleva fila de totales, pero la casilla de la última fila se deshabilita porque es calculada
 		
 	}
 	

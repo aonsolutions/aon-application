@@ -1201,19 +1201,19 @@ public class Mod2002024DAO  {
 			if (v == null || v.getValue() == 0) {
 				// Cuota cero
 				mod200.setResultType("N");
-				mod200.setAmount( 0.0 );
+				mod200.setAmount(0.0);
 				mod200.setDevType(null);
 				mod200.setPayType(null);
 			} else if (AonMathUtils.round(v.getValue()) < 0.0) {
 				// Devolución
 				mod200.setResultType("D");
-				mod200.setAmount( AonMathUtils.round( v.getValue() * -1));
+				mod200.setAmount(AonMathUtils.round( v.getValue() * -1));
 				mod200.setDevType(AonStringUtils.isEmpty(mod200.getDevType())?"D":mod200.getDevType());
 				mod200.setPayType(null);
 			} else {
 				// Ingreso
 				mod200.setResultType("I");
-				mod200.setAmount( v.getValue() );
+				mod200.setAmount(v.getValue());
 				mod200.setPayType(AonStringUtils.isEmpty(mod200.getPayType())?"I":mod200.getPayType());
 				mod200.setDevType(null);
 			}

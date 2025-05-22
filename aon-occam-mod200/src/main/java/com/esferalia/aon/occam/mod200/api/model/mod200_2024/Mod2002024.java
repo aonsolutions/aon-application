@@ -59,6 +59,10 @@ public class Mod2002024 extends Mod200 {
 	
 	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante	                                                 
 	
+	// FALTA - HABRA QUE MODIFICAR EL TIPO DE LOS CAMPOS TYPE Y PROVINCE DE LA TABLA FS_MODEL_REGISTRY 
+	// QUE PASE DE TINYINT(1) A TINYINT (QUE SERIA LONGITUD 4), PARA EVITAR LOS PROBLEMAS QUE HABIA ESTOS 
+	// AÑOS PASADOS AL DUPLICAR UN DOMINIO
+	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 
 	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado

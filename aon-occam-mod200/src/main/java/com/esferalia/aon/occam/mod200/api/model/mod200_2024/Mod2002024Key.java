@@ -97,7 +97,7 @@ public enum Mod2002024Key implements IMod200Key {
 // --------------- PAGINA 2 BIS ----------- //
 	
 	// FALTA - EN EL DISEÑO DEL REGISTRO TAMBIEN SE PONE EN LAS COMPLEMENTARIAS, PERO NO FORMARA PARTE DEL TITULAR REAL SE SUPONE
-	,T0001 // Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo
+	,NOITR // Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo
 	
 // --------------- PAGINA 3 --------------- //
 	
@@ -719,7 +719,7 @@ public enum Mod2002024Key implements IMod200Key {
 	
 	,LQ866	
 	
-	// FALTA - ESTAS DOS CASILLAS SOLO ESTAN EN EL DISEÑO DEL REGISTRO
+	// FALTA - ESTAS DOS CASILLAS SOLO ESTAN EN EL DISEÑO DEL REGISTRO - VER COMO SE QUEDAN AL FINAL EN EL MODELO
 	,ING01  // A. Ingresos previos antes de la rectificación
 	,ING02  // B. Ingresos anulados en la rectificación
 	
@@ -1427,10 +1427,7 @@ public enum Mod2002024Key implements IMod200Key {
 	,LQ631
 	,LQ632
 	
-	// FALTA - EN ESTA PAGINA HAY UNA NUEVA CASILLA DE DOCUMENTACION QUE HABRA QUE CREAR UN NUEVO CAMPO EN FS_MODEL200
-	
 	// Inversiones en producciones cinematográficas o series audiovisuales: Num 5 (5 enteros)
-	
 	,IPCRG01 // Régimen general: Producciones cinematográficas (excepto series audiovisuales)
 	,IPCRG02 // Régimen general: Series audiovisuales
 	,IPCRG03 // Régimen general: Número de episodios

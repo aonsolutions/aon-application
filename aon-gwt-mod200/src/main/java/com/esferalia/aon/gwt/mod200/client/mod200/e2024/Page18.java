@@ -48,6 +48,43 @@ public class Page18 extends PageAbs {
 				AON.MSG.dot12() );
 		
 		paintFooterNote(basePanel, FOOTER_1494_1, FOOTER_1494_2);
+		
+		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital o en los fondos propios de entidades pendientes de reversión (DT 16ª LIS).
+
+//		FlexTable table1 = addTable("Reversi\u00F3n de las p\u00E9rdidas por deterioro de valores representativos de la participaci\u00F3n en el capital o en los fondos propios de entidades pendientes de reversi\u00F3n (DT 16\u00AA LIS)", 6, "150px");
+//
+//		row = 0;
+//		addHeaderCell(table1, row, 3, "Dotaciones integradas en esta liquidaci\u00F3n");
+//		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
+//		row++;
+//		addHeaderCell(table1, row, 0, "");
+//		addHeaderCell(table1, row, 1, "N\u00BA per\u00EDodo impositivo (*)");
+//		addHeaderCell(table1, row, 2, "Dotaciones pendientes de integraci\u00F3n a principio del per\u00EDodo");
+//		addHeaderCell(table1, row, 3, "DT 16\u00AA.1 y 2 LIS");
+//		addHeaderCell(table1, row, 4, "DT 16\u00AA.3 LIS");
+//		addHeaderCell(table1, row, 5, "Dotaciones pendientes de integraci\u00F3n en per\u00EDodos futuros");
+//		row++;
+//		paintDescription(table1, "" , row, 0, false);
+//		paintKeyField(table1,Mod2002024Key.RV000 , row, 1,  5, false); // Número de período impositivo (*)
+//		paintKeyField(table1,Mod2002024Key.RV941 , row, 2, 10, false); // Dotaciones pendientes de integración a principio del período
+//		paintKeyField(table1,Mod2002024Key.RV2810, row, 3, 10, false); // Dotaciones integradas en esta liquidación DT 16ª.1 y 2 LIS
+//		paintKeyField(table1,Mod2002024Key.RV990 , row, 4, 10, false); // Dotaciones integradas en esta liquidación DT 16ª.3 LIS
+//		paintKeyField(table1,Mod2002024Key.RV991 , row, 5, 10, false); // Dotaciones pendientes de integración en períodos futuros
+		
+		FlexTable table1 = addTable("Reversi\u00F3n de las p\u00E9rdidas por deterioro de valores representativos de la participaci\u00F3n en el capital o en los fondos propios de entidades pendientes de reversi\u00F3n (DT 16\u00AA LIS)");		
+		
+		paintDescription(table1, "N\u00BA per\u00EDodo impositivo (*)", 0, 0, false);
+		paintKeyField(table1,Mod2002024Key.RV000 , 0, 1,  5, false); // Número de período impositivo (*)
+		paintDescription(table1, "Dotaciones pendientes de integraci\u00F3n a principio del per\u00EDodo", 1, 0, false);
+		paintKeyField(table1,Mod2002024Key.RV941 , 1, 1, 10, false); // Dotaciones pendientes de integración a principio del período
+		paintDescription(table1, "Dotaciones integradas en esta liquidaci\u00F3n: DT 16\u00AA.1 y 2 LIS", 2, 0, false);
+		paintKeyField(table1,Mod2002024Key.RV2810, 2, 1, 10, false); // Dotaciones integradas en esta liquidación DT 16ª.1 y 2 LIS
+		paintDescription(table1, "Dotaciones integradas en esta liquidaci\u00F3n: DT 16\u00AA.3 LIS", 3, 0, false);
+		paintKeyField(table1,Mod2002024Key.RV990 , 3, 1, 10, false); // Dotaciones integradas en esta liquidación DT 16ª.3 LIS
+		paintDescription(table1, "Dotaciones pendientes de integraci\u00F3n en per\u00EDodos futuros", 4, 0, false);
+		paintKeyField(table1,Mod2002024Key.RV991 , 4, 1, 10, false); // Dotaciones pendientes de integración en períodos futuros
+		
+		paintFooterNote(basePanel, "(*) Se indicar\u00E1 cual es el n\u00FAmero de per\u00EDodo impositivo objeto de declaraci\u00F3n a contar a partir de 1 de enero de 2024, considerando incluidos los per\u00EDodos inferiores a 12 meses.");
 				
 		// Activos por impuesto diferido DT 33 ...
 		

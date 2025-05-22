@@ -404,7 +404,10 @@ public class Page21 extends PageAbs {
 		} else if ("N".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
 			devPanel.setVisible(false);
-			ibanPanel.setVisible(callback.getMod200Object().getDoubleValue(Mod2002024Key.LQ866) > 0.0); // FALTA - CASILLA 866 DISTINTO DE CERO, SE HABILITA TAMBIEN IBAN, DEPENDERA AL FINAL DE COMO SE CALCULE LA CASILLA 866 Y COMO SE CONTROLE LAS RECTIFICATIVAS
+			// FALTA - CASILLA 866 DISTINTO DE CERO, SE HABILITA TAMBIEN IBAN, DEPENDERA AL FINAL DE COMO SE CALCULE LA CASILLA 866 Y COMO SE CONTROLE LAS RECTIFICATIVAS
+			// CREO QUE NO SE NECESITA PORQUE SI 866 LLEVA CONTENIDO SE GRABARA COMO DEVOLUCION AUNQUE LUEGO EL MODELO 200 SALGA COMO RESULTADO CERO
+//			ibanPanel.setVisible(callback.getMod200Object().getDoubleValue(Mod2002024Key.LQ866) > 0.0);
+			ibanPanel.setVisible(false);
 			zeroPanel.setVisible(true);
 			zeroQuota.setValue(true);
 		}

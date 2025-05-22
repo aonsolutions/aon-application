@@ -849,8 +849,7 @@ public class Mod2002024Writer {
 							addNIF(line, mod200.getSicav2(), s2++); // E. Socios de SICAV - NIF de la/las IIC donde reinvierte
 						}
 						
-						// FALTA - SEGUN DISEÑO DE REGISTRO SALE EN TODAS LAS HOJAS, INCLUSO LAS COMPLEMENTARIAS ??
-						addUnSignedKey(line, mod200, Mod2002024Key.T0001, 1, 0);
+						addUnSignedKey(line, mod200, Mod2002024Key.NOITR, 1, 0); // FALTA - SEGUN DISEÑO DE REGISTRO SALE EN TODAS LAS HOJAS, INCLUSO LAS COMPLEMENTARIAS ??
 						addTitularReal(line, mod200, t++); // F. Identificación del titular real de la entidad (solo 1 por pagina)
 						
 						line.append(AonFiscalFileUtils.text(isComplementary ? "" : mod200.getSecretary().getName(), 21));    // Secretario - Apellidos y Nombre
@@ -2185,34 +2184,65 @@ public class Mod2002024Writer {
 					
 					double importe = mod200.getDoubleValue(Mod2002024Key.BN621); // importe a ingresar o a devolver
 					
-					line.append(AonFiscalFileUtils.text(importe < 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
-					line.append(AonFiscalFileUtils.signedZero(importe < 0 ? Math.abs(importe) : 0.0, DS, DD)); 						          // Devolución - Importe a devolver
+//					line.append(AonFiscalFileUtils.text(importe < 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
+//					line.append(AonFiscalFileUtils.signedZero(importe < 0 ? Math.abs(importe) : 0.0, DS, DD)); 						          // Devolución - Importe a devolver
+//					
+//					addSignedKey(line, mod200, Mod2002024Key.LQ866);  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
+//					
+//					// FALTA - A VER COMO FUNCIONA LO DE LA RECTIFICACION, SUPONGO QUE EL IBAN TAMBIEN HABRA QUE PONERLO CUANDO HAYA IMPORTE RECTIFICACION (CASILLA 866) NO SOLO CUANDO SEA DEVOLUCION
+//					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
+//                    line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
+//					line.append(AonFiscalFileUtils.spaces(11));  // Cuenta Bancaria - Código SWIFT-BIC (No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la AEAT, lo pone por defecto en el apartado de cuenta extranjera UE)
+//					line.append(AonFiscalFileUtils.spaces(70));  // Cuenta Bancaria - Banco/Bank name (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+//					line.append(AonFiscalFileUtils.spaces(35));  // Cuenta Bancaria - Dirección del Banco/ Bank adress (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+//					line.append(AonFiscalFileUtils.spaces(30));  // Cuenta Bancaria - Ciudad/City (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)					
+//					line.append(AonFiscalFileUtils.spaces( 2));  // Cuenta Bancaria - Código País/Country code (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
+//					
+//					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Ingreso, "U" Domiciliación
+//					if (mod200.getDoubleValue(Mod2002024Key.LQ2489) > 0) 
+//					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002024Key.LQ2489), DS, DD));  // Ingreso - Importe a ingresar
+//					else
+//					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));  // Ingreso - Importe a ingresar
+//					line.append(AonFiscalFileUtils.text(importe > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
 					
-					addSignedKey(line, mod200, Mod2002024Key.LQ866);  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
+					double ingreso = 0.0;
+					double devolucion = 0.0;
+					double rectificacion = mod200.getDoubleValue(Mod2002024Key.LQ866);
 					
-					// FALTA - A VER COMO FUNCIONA LO DE LA RECTIFICACION, SUPONGO QUE EL IBAN TAMBIEN HABRA QUE PONERLO CUANDO HAYA IMPORTE RECTIFICACION (CASILLA 866) NO SOLO CUANDO SEA DEVOLUCION
-					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
-                    line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
+					if (importe > 0) {
+						ingreso = importe;
+					} else if (importe < 0) {
+						devolucion = Math.abs(importe) - rectificacion;
+					}
+
+					line.append(AonFiscalFileUtils.text(devolucion > 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
+					line.append(AonFiscalFileUtils.signedZero(devolucion, DS, DD)); 						                                     // Devolución - Importe a devolver
+					
+					line.append(AonFiscalFileUtils.signedZero(rectificacion, DS, DD));  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
+					
+					boolean ponerCuentaDevolucion = (devolucion > 0 && "D".equals(mod200.getDevType())) || (rectificacion > 0); // Cuenta devolucion se indica si devolucion mayhor que cero y solitita devolucion o rectificacion mayor que cero
+					line.append(ponerCuentaDevolucion ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
+                    line.append(AonFiscalFileUtils.text(ponerCuentaDevolucion ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
 					line.append(AonFiscalFileUtils.spaces(11));  // Cuenta Bancaria - Código SWIFT-BIC (No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la AEAT, lo pone por defecto en el apartado de cuenta extranjera UE)
 					line.append(AonFiscalFileUtils.spaces(70));  // Cuenta Bancaria - Banco/Bank name (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
 					line.append(AonFiscalFileUtils.spaces(35));  // Cuenta Bancaria - Dirección del Banco/ Bank adress (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
 					line.append(AonFiscalFileUtils.spaces(30));  // Cuenta Bancaria - Ciudad/City (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)					
 					line.append(AonFiscalFileUtils.spaces( 2));  // Cuenta Bancaria - Código País/Country code (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
 					
-					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Ingreso, "U" Domiciliación
+					line.append(AonFiscalFileUtils.text(ingreso > 0 ? mod200.getPayType() : "", 1));  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Ingreso, "U" Domiciliación
 					if (mod200.getDoubleValue(Mod2002024Key.LQ2489) > 0) 
 					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002024Key.LQ2489), DS, DD));  // Ingreso - Importe a ingresar
 					else
-					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));  // Ingreso - Importe a ingresar
-					line.append(AonFiscalFileUtils.text(importe > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
-
+					   line.append(AonFiscalFileUtils.signedZero(ingreso, DS, DD));  // Ingreso - Importe a ingresar
+					line.append(AonFiscalFileUtils.text(ingreso > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
+					
 					addSignedKey(line, mod200, Mod2002024Key.BN1020); // Abono/Compensación - Abono por conversión de activos impuesto diferido - A
 					addSignedKey(line, mod200, Mod2002024Key.BN1021); // Abono/Compensación - Compensación por conversión de activos impuesto diferido - C
 					addSignedKey(line, mod200, Mod2002024Key.LQ3318); // Abono/Compensación - Resultado de conversión de AID tras regularización: Abono 
 					addSignedKey(line, mod200, Mod2002024Key.LQ2490); // Abono/Compensación - Resultado de conversión de AID tras regularización: Compensación 
 					addSignedKey(line, mod200, Mod2002024Key.LQ2493); // Abono/Compensación - Resultado de conversión de AID tras regularización: A ingresar 
 
-					line.append(importe == 0 ? "1" : "0");  // Resultado Cero "0" o "1"
+					line.append(ingreso == 0 && devolucion == 0 ? "1" : "0");  // Resultado Cero "0" o "1"
 					
 				}				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT

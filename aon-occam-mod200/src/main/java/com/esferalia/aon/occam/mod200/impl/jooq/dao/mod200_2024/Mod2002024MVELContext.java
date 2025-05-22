@@ -700,27 +700,60 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		return lq501 + i0417 - d0418;
 	}
 	
-	// FALTA - VER CON EL DOCUMENTO PADIS COMO QUEDA AL FINAL EL CALCULO DE ESTA CASILLA
-	public double computeLM1249() throws AonCoreException {
-		double lm1250 = roundKey(Mod2002024Key.LM1250); 
-		double lm1251 = roundKey(Mod2002024Key.LM1251);
-		double lm1252 = roundKey(Mod2002024Key.LM1252);
-		double lm1253 = roundKey(Mod2002024Key.LM1253);
-		double lm1254 = roundKey(Mod2002024Key.LM1254);
-		double lm2368 = roundKey(Mod2002024Key.LM2368);
+	// VER CON EL DOCUMENTO PADIS COMO QUEDA AL FINAL EL CALCULO DE ESTA CASILLA
+	// AHORA ES UNA FORMULA SIMPLE
+//	public double computeLM1249() throws AonCoreException {
+//		double lm1250 = roundKey(Mod2002024Key.LM1250); 
+//		double lm1251 = roundKey(Mod2002024Key.LM1251);
+//		double lm1252 = roundKey(Mod2002024Key.LM1252);
+//		double lm1253 = roundKey(Mod2002024Key.LM1253);
+//		double lm1254 = roundKey(Mod2002024Key.LM1254);
+//		double lm2368 = roundKey(Mod2002024Key.LM2368);
+//		double lm1256 = roundKey(Mod2002024Key.LM1256);
+//		double lm1258 = roundKey(Mod2002024Key.LM1258);
+//		double lm1259 = roundKey(Mod2002024Key.LM1259);
+//		double lm1249a = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254 - lm2368) * 0.30);
+//		double lm1249b = round(lm1256+lm1258+lm1259);
+//		if (isChecked(C0072)) {
+//			return lm1249b;
+//		}
+//		else {
+//			if (lm1249b >= getLimit(LIM_2)) {
+//			 return lm1249a>getLimit(LIM_2)?lm1249a:getLimit(LIM_2);
+//			}
+//			return lm1249a>lm1249b?lm1249a:lm1249b;
+//		}
+//	}
+	
+	// Casilla 02369: Límite total... 
+	//	Si 01249 + 01255 <= 1.000.000 entonces 02369 = 1.000.000
+	//	Si 01249 + 01255 > 1.000.000 entonces 02369 = 01249 + 01255
+	// Excepción en la aplicación de los límites de deducibilidad de gastos financieros (art. 16.6.b LIS): 
+	// 	Si marca la clave 00072 de caracteres "extinción de entidad" => [02369] = 01256 + 01258 + 01259	
+	public double computeLM2369() throws AonCoreException {
+		double lm1249 = roundKey(Mod2002024Key.LM1249);
+		double lm1255 = roundKey(Mod2002024Key.LM1255);
 		double lm1256 = roundKey(Mod2002024Key.LM1256);
 		double lm1258 = roundKey(Mod2002024Key.LM1258);
 		double lm1259 = roundKey(Mod2002024Key.LM1259);
-		double lm1249a = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254 - lm2368) * 0.30);
-		double lm1249b = round(lm1256+lm1258+lm1259);
+		
+//		double lm1250 = roundKey(Mod2002024Key.LM1250); 
+//		double lm1251 = roundKey(Mod2002024Key.LM1251);
+//		double lm1252 = roundKey(Mod2002024Key.LM1252);
+//		double lm1253 = roundKey(Mod2002024Key.LM1253);
+//		double lm1254 = roundKey(Mod2002024Key.LM1254);
+//		double lm2368 = roundKey(Mod2002024Key.LM2368);
+//		double lm1249a = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254 - lm2368) * 0.30);
+//		double lm1249b = 
 		if (isChecked(C0072)) {
-			return lm1249b;
+			return round(lm1256+lm1258+lm1259);
 		}
 		else {
-			if (lm1249b >= getLimit(LIM_2)) {
-			 return lm1249a>getLimit(LIM_2)?lm1249a:getLimit(LIM_2);
-			}
-			return lm1249a>lm1249b?lm1249a:lm1249b;
+			if (lm1249 + lm1255 <= getLimit(LIM_2)) {
+				return getLimit(LIM_2);
+			} else {
+				return round(lm1249 + lm1255);	
+			}			
 		}
 	}
 	
@@ -1238,16 +1271,14 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		
 	}
 	
-	// FALTA - SUPONGO QUE AHORA PARA EL 2024 LAS REFERENCIAS A LA CASILLA 1962 SERAN A LA 2239 - REVISAR CON DOCUMENTO PADIS
 	// Cálculo del importe de la columna 2 del desglose de la casilla [1033]
 	// La clave 01033 (aumentos) sólo podrá tener contenido cuando la base imponible (clave 00552) sea negativa 
 	// (excepto en los supuestos de extinción de entidad (clave 00072) y de último período permitido para la adición) 
 	// y su importe máximo será el importe de dicha base negativa, excepto en los supuestos en que se cumplimente 
-	// la clave 01962 en cuyo caso podrá exceder por el importe consignado en esta casilla.
+	// la clave 02239 en cuyo caso podrá exceder por el importe consignado en esta casilla.
 	public double computeLQ1033_1(double col1, double col3, double suma) throws AonCoreException {
 		
 		double lq552 = getValue(Mod2002024Key.LQ552);
-//		double lq1962 = getValue(Mod2002024Key.LQ1962);
 		double lq2239 = getValue(Mod2002024Key.LQ2239);
 		
 		if (lq552>=0 && !isChecked(C0072)) {
@@ -1267,7 +1298,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 	// La clave 01034 sólo puede tener contenido si se ha marcado la clave 00006 de caracteres de la
 	// declaración.
 	// La clave 01034 (disminuciones) sólo podrá tener contenido cuando la base imponible (clave
-	// 00552) sea positiva(excepto en los supuestos que también se haya marcado la clave 00072 de 
+	// 00552) sea positiva (excepto en los supuestos que también se haya marcado la clave 00072 de 
 	// caracteres "extinción de entidad", en cuyo caso la clave 01034 permanecerá cerrada sin posibilidad 
 	// de cumplimentación), y su importe máximo será el 10% de dicha base positiva y no puede superar
 	// el millón de euros si el periodo impositivo es igual al año o si su período impositivo tiene una
@@ -1309,6 +1340,36 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			return lq550 - lq1032 - lq547;
 		
 	}
+
+	// Casilla 866: Rectificación	
+	// Sólo se puede cumplimentar si se cumplen simultáneamente las siguientes condiciones:
+	//	- Cumplimentación de la casilla "autoliquidación rectificativa"
+	//	- Casilla 01578 con contenido
+	//	- Casilla 00621 con resultado menor que cero.
+	// Si 01586 <= 0 y 01578 <= - 00621 entonces 00866 = 01578
+	// Si 01586 <= 0 y 01578 > - 00621 entonces 00866 = 01578 - 01586 - 01584 = - 00621
+	// Si 01586 > 0 entonces 00866 = 01578 - 01586 - 01584 = - 00621	
+	public double computeLQ866() throws AonCoreException {
+
+		double lq1578 = roundKey(Mod2002024Key.LQ1578);
+		double bn621 = roundKey(Mod2002024Key.BN621);
+		double lq1586 = roundKey(Mod2002024Key.LQ1586);
+		
+		if (mod200.isComplementary() && lq1578 != 0.0 && bn621 < 0.0) {
+			if (lq1586 <= 0) {
+				if (lq1578 <= Math.abs(bn621)) {
+					return lq1578;
+				} else {
+					return Math.abs(bn621);
+				}					
+			} else {
+				return Math.abs(bn621);
+			}
+		} else {
+			return 0.0;
+		}
+		
+	}
 	
 	// Casilla 619: Cuota líquida mínima (art. 30 bis.2 LIS)  
 	public double computeBN619() throws AonCoreException {
@@ -1329,7 +1390,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		}
 		
 		// La tributación mínima es aplicable en los siguientes casos:
-		// - Contribuyentes que marquen el supuesto 2 (INCN de al menos 20 millones de euros) (supuestos 2 o 3 en caso de cooperativas)
+		// - Contribuyentes que marquen los supuestos 2 (INCN de al menos 20 millones de euros pero inferior a 60) o 3 (INCN de al menos 60 millones de euros)
 		// - Contribuyentes que marquen el caracter 00079 de la página 1 de la declaración (excepto supuestos excluidos).
 		int volope = getValue(Mod2002024Key.VOLOPE).intValue();
 		if (volope >= 2 || isChecked(C0079)) { 
@@ -1420,6 +1481,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1293,
 			Mod2002024Key.BN1296,
 			Mod2002024Key.BN2313,
+			Mod2002024Key.BN298,
 			Mod2002024Key.BN575,
 			Mod2002024Key.BN577,
 			Mod2002024Key.BN165,
@@ -1457,15 +1519,17 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN2204,
 			Mod2002024Key.BN1318,
 			Mod2002024Key.BN2327,
+			Mod2002024Key.BN260,
 			Mod2002024Key.BN212,
 			Mod2002024Key.BN493,
-			Mod2002024Key.BN1472
+			Mod2002024Key.BN1472,
+			Mod2002024Key.BN258
 	};
 	
 	// TRAMO 2 DEDUCCIONES
 	private static final Mod2002024Key[] TRAMO_2 = new Mod2002024Key[] {			
 			Mod2002024Key.BN583,
-			Mod2002024Key.BN467,
+//			Mod2002024Key.BN467,
 			Mod2002024Key.BN498,
 			Mod2002024Key.BN473,
 			Mod2002024Key.BN181,
@@ -1498,31 +1562,36 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1854,
 			Mod2002024Key.BN2500,
 			Mod2002024Key.BN1354,
-			Mod2002024Key.BN750,			
+//			Mod2002024Key.BN750,			
 			Mod2002024Key.BN2222,
 			Mod2002024Key.BN2225,
 			Mod2002024Key.BN2092,
 			Mod2002024Key.BN1776,
-			Mod2002024Key.BN753,			
+			Mod2002024Key.BN750,
 			Mod2002024Key.BN2357,
 			Mod2002024Key.BN2360,
 			Mod2002024Key.BN2095,
 			Mod2002024Key.BN1839,
-			Mod2002024Key.BN756,			
+			Mod2002024Key.BN753,
 			Mod2002024Key.BN229,
 			Mod2002024Key.BN235,
 			Mod2002024Key.BN2098,
-			Mod2002024Key.BN2207,			
-			Mod2002024Key.BN759,			
+			Mod2002024Key.BN2207,
+			Mod2002024Key.BN756,
 			Mod2002024Key.BN781,
 			Mod2002024Key.BN787,
 			Mod2002024Key.BN2146,
-			Mod2002024Key.BN2330,			
-			Mod2002024Key.BN762,
+			Mod2002024Key.BN2330,
+			Mod2002024Key.BN759,
 			Mod2002024Key.BN1875,
 			Mod2002024Key.BN1895,
 			Mod2002024Key.BN1849,
 			Mod2002024Key.BN252,
+			Mod2002024Key.BN762,
+			Mod2002024Key.BN468,
+			Mod2002024Key.BN572,
+			Mod2002024Key.BN406,
+			Mod2002024Key.BN697,
 			Mod2002024Key.BN745,
 			Mod2002024Key.BN783,
 			Mod2002024Key.BN2450,
@@ -1545,22 +1614,22 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN2372,
 //			Mod2002024Key.BN2375,
 //			Mod2002024Key.BN2378,
-			Mod2002024Key.BN260,
-			Mod2002024Key.BN263,
-			Mod2002024Key.BN269,
-			Mod2002024Key.BN273,
-			Mod2002024Key.BN295,
-			Mod2002024Key.BN298,
-			Mod2002024Key.BN316,
-			Mod2002024Key.BN349,
+//			Mod2002024Key.BN260,
+//			Mod2002024Key.BN263,
+//			Mod2002024Key.BN269,
+//			Mod2002024Key.BN273,
+//			Mod2002024Key.BN295,
+//			Mod2002024Key.BN298,
+//			Mod2002024Key.BN316,
+//			Mod2002024Key.BN349,
 			Mod2002024Key.BN353,
-			Mod2002024Key.BN367,
-			Mod2002024Key.BN401,
-			Mod2002024Key.BN423,
+//			Mod2002024Key.BN367,
+//			Mod2002024Key.BN401,
+//			Mod2002024Key.BN423,
 			Mod2002024Key.BN428,
-			Mod2002024Key.BN431,
+//			Mod2002024Key.BN431,
 			Mod2002024Key.BN434,
-			Mod2002024Key.BN440,
+//			Mod2002024Key.BN440,
 //			Mod2002024Key.BN453,
 //			Mod2002024Key.BN456,
 //			Mod2002024Key.BN469,
@@ -1610,9 +1679,13 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN089,
 			Mod2002024Key.BN1684,
 			Mod2002024Key.BN829,
-			Mod2002024Key.BN252,
-			Mod2002024Key.BN697,
 			Mod2002024Key.BN1522,
+			Mod2002024Key.BN291,
+			// FALTA - ESTOS NO ESTAN BORRADOS EN EL DOC PADIS SIMPLEMENTE NO APARECEN
+//			Mod2002024Key.BN252,
+//			Mod2002024Key.BN697,
+//			Mod2002024Key.BN1522,
+			
 //			Mod2002024Key.BN991,
 //			Mod2002024Key.BN917,
 			Mod2002024Key.BN998,
@@ -1657,6 +1730,10 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN2692,
 			Mod2002024Key.BN2695,
 			Mod2002024Key.BN2698,
+			Mod2002024Key.BN395,
+			Mod2002024Key.BN422,
+			Mod2002024Key.BN430,
+			Mod2002024Key.BN439,
 			Mod2002024Key.BN1437,
 			Mod2002024Key.BN1440,
 			Mod2002024Key.BN1444,
@@ -1667,6 +1744,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1084,
 			Mod2002024Key.BN1379,
 			Mod2002024Key.BN2703,
+			Mod2002024Key.BN904,
 			Mod2002024Key.BN1446,
 			Mod2002024Key.BN1449,
 			Mod2002024Key.BN1453,
@@ -1676,7 +1754,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN2389,
 			Mod2002024Key.BN2478,
 			Mod2002024Key.BN1383,
-			Mod2002024Key.BN2707
+			Mod2002024Key.BN2707,
+			Mod2002024Key.BN2070
 	};
 
 	// TRAMO 3 DE DEDUCCIONES 
@@ -1689,6 +1768,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1923,
 			Mod2002024Key.BN1926,
 			Mod2002024Key.BN1898,
+			Mod2002024Key.BN880,
 			Mod2002024Key.BN1929,
 			Mod2002024Key.BN2191,
 //			Mod2002024Key.BN881,  // EN EL PADIS ESTA PUESTO, PERO EN EL MODELO NO EXISTE, LA LINEA DEL 2004 SE QUITA
@@ -1740,7 +1820,11 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1615,
 			Mod2002024Key.BN1800,
 			Mod2002024Key.BN1803,
-			Mod2002024Key.BN1806			
+			Mod2002024Key.BN1806,
+			Mod2002024Key.BN263,
+			Mod2002024Key.BN269,
+			Mod2002024Key.BN273,
+			Mod2002024Key.BN295
 	};
 	
 	// TRAMO 4 DEDUCCIONES
@@ -1765,6 +1849,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1314,
 			Mod2002024Key.BN2355,
 			Mod2002024Key.BN2466,
+			Mod2002024Key.BN316,
+			Mod2002024Key.BN350,
 			Mod2002024Key.BN574,
 			Mod2002024Key.BN977,
 			Mod2002024Key.BN824,
@@ -1786,7 +1872,9 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			Mod2002024Key.BN1387,
 			Mod2002024Key.BN1391,
 			Mod2002024Key.BN2757,
-			Mod2002024Key.BN2762
+			Mod2002024Key.BN2762,
+			Mod2002024Key.BN2704,
+			Mod2002024Key.BN2278
 	};
 	
 	

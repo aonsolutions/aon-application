@@ -208,15 +208,15 @@ public class Page02 extends PageAbs {
 		basePanel.add(tab1);
 		
 		CheckBox titularRealCheck = new CheckBox();
-		titularRealCheck.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.T0001));
+		titularRealCheck.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002024Key.NOITR));
 		titularRealCheck.addClickHandler(event -> {			
-			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.T0001, titularRealCheck.getValue());
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002024Key.NOITR, titularRealCheck.getValue());
 			callback.markAsDirty();
 		});
 		otherInputs.add(titularRealCheck);
 		
 //		tab1.addLabelWidgetRow(Mod2002024Key.T0001.getDescription(), rectificationMotive1);
-		addLabelWidgetRow600(tab1, Mod2002024Key.T0001.getDescription(), titularRealCheck);
+		addLabelWidgetRow600(tab1, Mod2002024Key.NOITR.getDescription(), titularRealCheck);
 		
 		AonDisplayTable tab6 = addRegistryTable("Tipo Documento", "Documento", "Apellidos y nombre", "Pa\u00EDs de expedici\u00F3n del documento de identificaci\u00F3n", "Fecha de nacimiento", "Pa\u00EDs de residencia", "Nacionalidad");
 		

@@ -182,15 +182,22 @@ public class Page01 extends PageAbs {
 			}
 		}
 		
-		// GRUPO MERCANTIL (solo habilitados si caracter 81 marcado)
+		// GRUPO MERCANTIL (solo habilitados si caracteres 81, 82 o 39 marcados)
 		// FALTA - CAMPOS NUEVOS A VER COMO SE QUEDA AL FINAL
+		// SEGUN EL DOC PADIS SE QUEDAN ESTOS CAMPOS:
+		// - NIF
+		// - RAZON SOCIAL
+		// - NOMBRE DE GRUPO
+		// - IDENTIFICACION FISCAL DEL PAIS DE RESIDENCIA
+		// - NIF EN PAIS DE RESIDENCIA
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
 		CountryListBox ultimateDocumentCountry = new CountryListBox();
 		AonTextBox ultimateName = new AonTextBox();				
 		CountryListBox ultimateCountry = new CountryListBox();
 		
-		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0081)) {
+//		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0081)) {
+		if (isCheckedOr(Mod2002024Key.C0081,Mod2002024Key.C0082,Mod2002024Key.C0039)) {
 		
 			basePanel.add(getTitle("Grupo mercantil"));
 			paintLabel(basePanel, "Datos de la sociedad matriz \u00FAltima:", false);

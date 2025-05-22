@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2024;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
@@ -41,15 +42,13 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024LQ561Key;
 
 public class Mod2002024Compute {
 	
-	// FALTA - TERMINAR DE REVISAR TODOS LOS CALCULOS, CUANDO SALGA EL DOCUMENTO PADIS
-	
 	// MUY IMPORTANTE - LOS CALCULOS DEBEN ESTAR ORDENADOS EN EL MAP SEGUN LOS CALCULOS DE LAS CASILLAS
 	// DEL MODELO, YA QUE NO SE HACEN CALCULOS RECURSIVOS EN LAS EXPRESIONES MVEL, PUES NO SE LE PASA
 	// EL MAP AL CONTEXT DE MVEL, PARA GANAR VELOCIDAD, DADO EL TAMAÑO DEL MAP Y LOS CALCULOS A REALIZAR
 	// POR ESO SE USA UN LinkedHashMap, PORQUE SE NECESITA QUE PARA EL CALCULO DEL MODELO, SE RECORRA 
 	// EL MAP EXACTAMENTE EN EL ORDEN EN QUE APARECE EN ESTA CLASE
 	
-	public static final LinkedHashMap<Mod2002024Key,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<Mod2002024Key,String>();
+	public static final Map<Mod2002024Key,String> COMPUTE_EXPRESSION_MAP = new LinkedHashMap<>();
 		
 	static {
 		
@@ -273,10 +272,10 @@ public class Mod2002024Compute {
 	
 	// LIQUIDACION I
 	
-	static { 
+	static {
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ500,"PG500");
-		
+		// FALTA - VER COMO LO HACE SOCIEDADES WEB PORQUE EN EL DOC PADIS LAS COMPROBACIONES SE HACEN AHORA TAMBIEN CON LA CASILLA 00004, POR LO TANTO IGUAL LA 301 NO SE PUEDE ASIGNAR DIRECTAMENTE A LO QUE TENGA LA 326
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ301,"(PG326<0)?(PG326*-1):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ302,"(PG326>0)?(PG326):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ501,"(LQ500+LQ301-LQ302+LQ004)");
@@ -414,11 +413,12 @@ public class Mod2002024Compute {
 		addBreakdown(Mod2002024LQ547Key.values(), Mod2002024Key.LQ547);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1049,"LQ1048");
 		
-		// Casillas 1887, 1890
+		// Casilla 243: Compensación de bases imponibles negativas Régimen especial de buques y empresas navieras en Canarias
+		// Casillas 1887, 1890 (subtotales):
 		// Compensación de bases imponibles negativas períodos anteriores de la parte de base imponible régimen especial [01887]
 		// Compensación de bases imponibles negativas períodos anteriores de la parte de base imponible resto de actividades [01890]		
-		addBreakdown(Mod2002024LQ243Key.values(), Mod2002024Key.LQ1886, true, Mod2002024Key.LQ168 , Mod2002024Key.LQ1010 );
-		addBreakdown(Mod2002024LQ243Key.values(), Mod2002024Key.LQ1889, true, Mod2002024Key.LQ168 , Mod2002024Key.LQ1010 );
+		addBreakdown(Mod2002024LQ243Key.values(), Mod2002024Key.LQ1886, true, Mod2002024Key.LQ168 , Mod2002024Key.LQ092 );
+		addBreakdown(Mod2002024LQ243Key.values(), Mod2002024Key.LQ1889, true, Mod2002024Key.LQ168 , Mod2002024Key.LQ092 );
 		addBreakdown(Mod2002024LQ243Key.values(), Mod2002024Key.LQ216 , true, Mod2002024Key.LQ1886, Mod2002024Key.LQ1889);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ267,"LQ266");		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ344,"LQ290");
@@ -461,7 +461,7 @@ public class Mod2002024Compute {
 		
 		// Rentas que no limitan la compensación de bases imponibles y cuotas negativas
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ545,"(LQ545<0.0)?0.0:LQ545");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ925,"(LQ925<0.0)?0.0:LQ925"); // FALTA - CASILLA NUEVA SE PONE EL MISMO CRITERIO QUE LAS OTRAS DOS DEL GRUPO
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ925,"(LQ925<0.0)?0.0:LQ925"); 
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1509,"(LQ1509<0.0)?0.0:LQ1509");
 		
 		// Tipo de gravamen
@@ -471,7 +471,8 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ560,"computeLQ560()");
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ593,"(LQ593<0.0)?0.0:LQ593");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1510,"(LQ1510<0.0)?0.0:LQ1510");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1510,"(LQ1510<0.0)?0.0:LQ1510");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ932,"(LQ932<0.0)?0.0:LQ932");
 		
 		// Casilla 561: Compensación de cuotas por pérdidas de cooperativas 
 		addBreakdown(Mod2002024LQ561Key.values(), Mod2002024Key.LQ561);
@@ -541,13 +542,13 @@ public class Mod2002024Compute {
 		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002). Tiene dos apartados con varios subtotales
 		// Donaciones de carácter general 
 		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1689, true, Mod2002024Key.BN997, Mod2002024Key.BN997);
-		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1692, true, Mod2002024Key.BN246, Mod2002024Key.BN2691);
-		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1695, true, Mod2002024Key.BN246, Mod2002024Key.BN2691);
+		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1692, true, Mod2002024Key.BN246, Mod2002024Key.BN405);
+		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1695, true, Mod2002024Key.BN246, Mod2002024Key.BN405);
 		addBreakdown(Mod2002024BN565_1Key.values(), Mod2002024Key.BN1698, true, Mod2002024Key.BN1689, Mod2002024Key.BN1695);
 		// Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
 		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1701, true, Mod2002024Key.BN930, Mod2002024Key.BN930);
-		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1704, true, Mod2002024Key.BN933, Mod2002024Key.BN2697);
-		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1729, true, Mod2002024Key.BN933, Mod2002024Key.BN2697);
+		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1704, true, Mod2002024Key.BN933, Mod2002024Key.BN432);
+		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1729, true, Mod2002024Key.BN933, Mod2002024Key.BN432);
 		addBreakdown(Mod2002024BN565_2Key.values(), Mod2002024Key.BN1079, true, Mod2002024Key.BN1701, Mod2002024Key.BN1729);
 		// Total deducciones a entidades sin fines de lucro (Ley 49/2002)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.BN598,"BN1698+BN1079");
@@ -617,11 +618,10 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1881, "C0028?(TR1877+TR1878+TR1879+TR1880):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR466, "C0028?(TR2378+TR2379+TR2407+TR2408):0.0");
 		
-		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1624, "C0028?(TR474+TR482+TR913+TR486-TR1334-TR1338-TR1877):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1625, "C0028?(TR475+TR483+TR914+TR487-TR1335-TR1339-TR1878):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1629, "C0028?(TR476+TR484+TR915+TR488-TR1336-TR1340-TR1879):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1630, "C0028?(TR477+TR485+TR916+TR489-TR1337-TR1341-TR1880):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1624, "C0028?(TR474+TR482+TR913+TR486-TR1334-TR1338-TR1877+TR2378):0.0"); 
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1625, "C0028?(TR475+TR483+TR914+TR487-TR1335-TR1339-TR1878+TR2379):0.0"); 
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1629, "C0028?(TR476+TR484+TR915+TR488-TR1336-TR1340-TR1879+TR2407):0.0"); 
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1630, "C0028?(TR477+TR485+TR916+TR489-TR1337-TR1341-TR1880+TR2408):0.0"); 
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1587, "C0028?(TR1624+TR1625+TR1629+TR1630):0.0");
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.TR1583, "C0028?(TR1607+TR1608+TR1609+TR1610):0.0");
@@ -682,7 +682,7 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.BN1042,"(C0028)?(BN1892-BN1333):(BN1892)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.BN1893,"(C0028)?(BN1319-BN1881):(BN1319)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ031,"LQ032+LQ466");		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1586, "BN611+BN615+BN633+BN617-BN083-BN1042-BN1893-LQ032");  // FALTA - REVISAR CON PADIS  
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1586, "BN611+BN615+BN633+BN617-BN083-BN1042-BN1893-LQ032");   
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ1587, "TR1587");
 		
 		// Rectificativa - Resultado
@@ -691,7 +691,8 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.BN621, "LQ1586-LQ1578+LQ1584");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.BN622, "TR622");
 		
-		// FALTA - Rectificación (CALCULO DE LA CASILLA 866)
+		// Rectificación
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ866, "computeLQ866()");
 		
 		// Resultado de la autoliquidación incluido el 1er fraccionamiento del art. 19.1 LIS
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ2480, "C0037?TR2480:0.0");
@@ -731,7 +732,9 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1251,"isLimitEnabled()?PG284:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1252,"isLimitEnabled()?PG285:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1253,"isLimitEnabled()?PG287:0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1249,"isLimitEnabled()?computeLM1249():0.0");
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1249,"isLimitEnabled()?computeLM1249():0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1249,"isLimitEnabled()?round((LM1250-LM1251-LM1252-LM1253+LM1254-LM2368) * 0.30):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM2369,"isLimitEnabled()?computeLM2369():0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1260,"isLimitEnabled()?LM1243+LM1257:0.0");
 
 		 // Limitación en la deducibilidad de gastos financieros. Gastos financieros pendientes de deducir
@@ -778,16 +781,20 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1628,"LM1626-LM1627");  // Fila 2024
 		addBreakdown(Mod2002024LM1494Key.values(), Mod2002024Key.LM1494, false);  // Fila de totales
 		
+		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital ...
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RV991, "RV941-RV2810-RV990");
+		
 		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC996 ,"RC1165-RC928-RC938-RC1985");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC1175,"RC1744-RC1168-RC1172-RC1986");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC1821,"RC2807-RC1745-RC1746-RC2430");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC2822,"RC2975-RC2808-RC2809-RC2977");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC3312,"RC3352+RC3353-RC3354");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RC3313,"RC927-RC3312");  
 	
-		// FALTA - COMPROBAR CON EL DOCUMENTO PADIS QUE SIGUE EL MISMO CRITERIO QUE PARA CANARIAS
 		// Régimen especial de la reserva para inversiones en las Illes Balears. La última columna no sigue la regla estandar y no tiene fila de totales
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB2917,"RB1707-RB2914-RB2915-RB1936");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB1708,"RB2363+RB2364-RB2374");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB1709,"RB2918-RB1708");
 				
 	}
@@ -1002,7 +1009,7 @@ public class Mod2002024Compute {
 				// Resto de filas, se añade para calcular la columna 2				
 				Mod2002024Key key1 = (Mod2002024Key) keys[0];  // Base de deducción
 				Mod2002024Key key2 = (Mod2002024Key) keys[1];  // Importe generado/pendiente al principio del período				
-				// Primera fila se multiplica por 0,02, el resto por 0,05
+				// Primera fila se multiplica por 0,02 y el resto por 0,05
 				if (firstRow)
 					COMPUTE_EXPRESSION_MAP.put(key2, "round("+key1.toString()+"*0.02)");
 				else 

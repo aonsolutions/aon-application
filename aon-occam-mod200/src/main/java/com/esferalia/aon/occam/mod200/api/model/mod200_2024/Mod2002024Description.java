@@ -138,7 +138,7 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.PORES,"Suma de porcentajes de participaciones en situaciones especiales");
 		
 		// IDENTIFICACION DEL TITULAR REAL
-		DESCRIPTION_MAP.put(Mod2002024Key.T0001,"Entidad sin obligaci\u00F3n de identificar el titular real conforme al apartado 2 del art\u00EDculo 4 de la Ley 10/2010, de 28 de abril, de prevenci\u00F3n del blanqueo de capitales y de la financiaci\u00F3n del terrorismo");
+		DESCRIPTION_MAP.put(Mod2002024Key.NOITR,"Entidad sin obligaci\u00F3n de identificar el titular real conforme al apartado 2 del art\u00EDculo 4 de la Ley 10/2010, de 28 de abril, de prevenci\u00F3n del blanqueo de capitales y de la financiaci\u00F3n del terrorismo");
 	}
 
 	static {
