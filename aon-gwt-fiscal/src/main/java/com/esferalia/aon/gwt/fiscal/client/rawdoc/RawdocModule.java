@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
@@ -160,7 +161,7 @@ public class RawdocModule extends MainEntryPoint {
 			.setParams(new RawdocParams()
 				.setDomain(getCurrentDomain())
 				.setDomainName(getCurrentDomainName())
-				.setStatus(RawdocStatus.INBOX))
+				.setStatus(RawdocStatus.PROCESSED))
 		;
 		this.onModuleLoad( options );
 	}
@@ -271,7 +272,11 @@ public class RawdocModule extends MainEntryPoint {
 		allInboxButton.addClickHandler(event -> search( opt , null));
 		toolbar.add(allInboxButton);
 
-		AonToolbarButton inboxButton = new AonToolbarButton( AON.MSG.inbox(), AON.CSS.aonIconInbox() );
+		AonToolbarButton processedButton = new AonToolbarButton( AON.MSG.inbox(), AON.CSS.aonIconInbox() );
+		processedButton.addClickHandler(event -> search( opt , RawdocStatus.PROCESSED));
+		toolbar.add(processedButton);
+
+		AonToolbarButton inboxButton = new AonToolbarButton( AON.MSG.draft(), AON.CSS.aonIconEditCalendar() );
 		inboxButton.addClickHandler(event -> search( opt , RawdocStatus.INBOX));
 		toolbar.add(inboxButton);
 
@@ -283,14 +288,41 @@ public class RawdocModule extends MainEntryPoint {
 		draftButton.addClickHandler(event -> search( opt , RawdocStatus.DRAFT));
 		toolbar.add(draftButton);
 
-		AonToolbarButton recordButton = new AonToolbarButton( AON.MSG.record(), AON.CSS.aonIconAccountingRecord() );
-		recordButton.addClickHandler(event -> record( opt ));
+		AonToolbarButton recordButton = new AonToolbarButton( AON.MSG.record(), AON.CSS.aonIconAddTask() );
+		recordButton.addClickHandler(event -> recordDoc( opt ));
 		toolbar.add(recordButton);
 
+		FlowPanel queryPanel = new FlowPanel();
+		queryPanel.setStyleName( AON.CSS.aonDisplayFlexCenter());
+		queryPanel.addStyleName( AON.CSS.aonMarginRight());
+		InlineLabel queryLabel = new InlineLabel("Filtro:");
+		queryLabel.setStyleName( AON.CSS.aonMarginLeft());
+		queryLabel.addStyleName( AON.CSS.aonMarginRight());
+		queryLabel.addStyleName( AON.CSS.aonItalic());
+		AonTextBox queryBox = new AonTextBox();
+		queryBox.addValueChangeHandler( e -> {
+			opt.getParams().setQuery( queryBox.getValue() );
+			search( opt );
+		});
+		AonToolbarButton queryDeleteButton = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconCancel() );
+		queryDeleteButton.setStyleName(AON.CSS.aonButton());
+		queryDeleteButton.addStyleName(AON.CSS.aonTabIcon());
+		queryDeleteButton.addStyleName(AON.CSS.aonIconCancel());
+		queryDeleteButton.addClickHandler( e -> {
+			if (AonStringUtils.isNotBlank(queryBox.getValue())) {
+				queryBox.setValue(null , false);
+				opt.getParams().setQuery( null );
+				search( opt );
+			}
+		});
+		queryPanel.add(queryLabel);
+		queryPanel.add(queryBox);
+		queryPanel.add(queryDeleteButton);
+		toolbar.showFilterPanel( queryPanel );
 		return toolbar;
 	}
 	
-	private void record(RawdocModuleOptions opt) {
+	private void recordDoc(RawdocModuleOptions opt) {
 		if (recording) return;
 		recording = true;
 		if ( AonCollectionUtils.isEmpty( selectedItems) ) {
@@ -348,7 +380,7 @@ public class RawdocModule extends MainEntryPoint {
 									AonMessageDialog.info("Proceso terminado correctamente");
 								}
 								recording = false;
-								search( opt , RawdocStatus.INBOX);
+								search( opt );
 							}
 							
 							@Override
