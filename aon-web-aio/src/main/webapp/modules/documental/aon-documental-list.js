@@ -446,12 +446,16 @@ export class AonDocumentalList extends AonElement {
                 table.addRowNoData("No existen documentos disponibles");
             }
 			
+			const ids = documents.map(document => document.id)
+			const types = documents.map(document => document.type)
+			
             // Insertar los documentos en la tabla
             documents.forEach((doc, i) => { 
 				if(this.isBetaDoc() && documents[i].size){
 					documents[i].size = formatBytes(documents[i].size);
 				}
-                let tr = table.addRow(doc, () => this.aonDocument(doc, i), (e) => this.aonDocumentContextMenu(e, doc, i));
+				const filter = this.getFilter();
+                let tr = table.addRow(doc, () => this.aonDocument(doc, i, ids, filter, types), (e) => this.aonDocumentContextMenu(e, doc, i));
                 tr.id = "aonDocumentalRow";
             });
             // Barra loader de AonApplication - Finalizar
@@ -464,13 +468,14 @@ export class AonDocumentalList extends AonElement {
         });
     }
 
-	aonDocument(doc, i) {
+	aonDocument(doc, i, ids, filter, types) {
       // Al ver un documento ocultamos el buscar
       if( this.isBetaDoc() ){
         this.btnSearch.hidden = true;
       } 
       this.removeDocumentalActions();
-      this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}'> </aon-document>`);
+      this.getApplication().setContentHTML(`<aon-document document='${JSON.stringify(doc)}' filter='${JSON.stringify(filter)}' 
+	  documentList='${JSON.stringify(ids)}' typesList='${JSON.stringify(types)}'> </aon-document>`);
 	}
 
 	downloadFiles() {
