@@ -77,7 +77,7 @@ export class AonInvoiceList extends AonElement {
 				} else if(aonInvoiceTable.selected.length === 0){
 					this.removeInvoiceActions();
 				}
-			});			
+			});
 		}
 	}
 
@@ -97,11 +97,16 @@ export class AonInvoiceList extends AonElement {
 		});
 
 		aonInvoiceTable.addEventListener('select', () => {
+			let aonInvoice = this.getElement('aonInvoice');
 			if(aonInvoiceTable.selected.length === 1) {
 				this.addInvoiceActions();
+				if(this.getDur().isInvofox()) {
+					this.rp = true;
+					aonInvoice.addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing());
+				}
 			} else if(aonInvoiceTable.selected.length === 0){
 				this.removeInvoiceActions();
-			}
+			} else aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 		});	
 	}
 
@@ -398,7 +403,24 @@ export class AonInvoiceList extends AonElement {
 		});
 		d.open();
 	}
-
+	
+	refreshProcessing() {
+		if(this.rp) {
+			this.rp = false;
+			this.getApplication().startLoading();
+			let rawdoc = this.getTable().selected.map(r => r.id);
+			refreshProcessing({rawdoc}).then(r => {
+				this.getApplication().stopLoading();
+			    let parent = this.getApplication().getParent();
+				parent.buildCounter();
+	    		parent.aonInvoiceList({status: CONSTANT.PROCESSING});
+	   		}).catch(e => {
+				this.getApplication().stopLoading();
+				this.showError(e);	
+			});
+		}
+  	}
+	
 	rejectInvoices() {
 		let cont = 0;
 		let aonInvoiceTable = this.getTable();
@@ -528,6 +550,7 @@ export class AonInvoiceList extends AonElement {
 		aonInvoice.removeToolbarOption(ACTION.DELETE_FOREVER);
 		aonInvoice.removeToolbarOption(ACTION.DOWNLOAD_INVOICE);
 		aonInvoice.removeToolbarOption(ACTION.SEND_INVOICE);
+		aonInvoice.removeToolbarOption(ACTION.REPROCESS);
 	}
 
 	getTable(){

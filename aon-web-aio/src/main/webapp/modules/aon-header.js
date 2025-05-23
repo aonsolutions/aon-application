@@ -283,12 +283,12 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
-			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
-			aonHeaderHomeButton.addEventListener('click', () => {
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			});
+			// let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
+			// aonHeaderHomeButton.addEventListener('click', () => {
+			// 	this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+			// 	let aonDesktop = this.getElement('aonDesktop');
+			// 	aonDesktop.setAttribute('company', this.getAttribute('company'));
+			// });
 			if(!this.newTheme){
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
@@ -720,7 +720,7 @@ export class AonHeader extends AonElement {
 	setColor(color, backgroundColor) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
-			this.getElement('aonHeaderHomeButton'),
+			// this.getElement('aonHeaderHomeButton'),
 			this.getElement('aonHeaderUserButton'),
 			this.getElement('aonHeaderConfigButton'),
 			this.getElement('aonHeaderNotificationButton'),
@@ -895,7 +895,7 @@ export class AonHeader extends AonElement {
 	}
 
 	setVisibleHomeButton(visible) {
-		this.setVisibleElement('aonHeaderHomeButton', visible)
+		// this.setVisibleElement('aonHeaderHomeButton', visible)
 	}
 
 	setVisibleCompanyListButton(visible) {
@@ -1123,11 +1123,11 @@ export class AonHeader extends AonElement {
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init().then(() => {
 			aonMenu.open();
-			let customUrl = location.origin + '/customview?domain=' + company.domain;
+			let customUrl =  LS.getDomainName() + '/customview?domain=' + company.domain;
 			loadCustomView(customUrl).then(() => { 
 				favicon();
 				title();
-			});
+			}).catch(() => {});
 		}
 		);
 
