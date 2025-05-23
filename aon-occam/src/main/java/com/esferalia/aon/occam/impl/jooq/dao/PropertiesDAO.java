@@ -249,7 +249,10 @@ public class PropertiesDAO {
 
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}
+
+		@Override public Property<Integer> getDetailIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.ID);}
+			
 		
 	}
 	
@@ -589,8 +592,6 @@ public class PropertiesDAO {
 		
 		// TODO
 		@Override public Property<Integer> getScopeProperty() {return null;}
-		@Override public Property<Byte> getConfidentialProperty() {return null;}
-
 
 	}
 	
@@ -655,7 +656,6 @@ public class PropertiesDAO {
 
 		@Override public Property<Date> getStartIssueDateProperty() {return null;}
 		@Override public Property<Date> getEndIssueDateProperty() {return null;}
-		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class IncomePropertiesDAO implements IncomeProperties {
@@ -698,8 +698,6 @@ public class PropertiesDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
-
-		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
 	protected static class IncomeDetailPropertiesDAO implements IncomeDetailProperties {

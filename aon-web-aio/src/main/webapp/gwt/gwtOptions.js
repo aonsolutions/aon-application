@@ -406,8 +406,8 @@ export const MODEL_390 = {
 export const MODEL_SII = {
   title: "Modelo SII",
   name: "Modelo SII",
-  module: GWT_FISCAL,
-  entryPoint: 'Sii'
+  module: GWT_AIO,
+  entryPoint: 'sii'
 };
 
 export const INVOICE_STAT = {

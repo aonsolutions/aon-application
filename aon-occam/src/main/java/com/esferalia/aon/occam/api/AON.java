@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
@@ -184,6 +183,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -4513,6 +4513,12 @@ public class AON {
 				.findFirst();
 	}
 	
+	public static TargetFull getTargetFull(String domainName, Integer domainId, String login, Integer registry) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getRegistry().getTargetFull(ctx, registry);
+		} 
+	}
+	
 	public static Optional<Target> getTarget(String domainName, Integer domainId, String login, Integer id) {
 		return getTarget(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
@@ -5268,13 +5274,25 @@ public class AON {
 		}
 	}
 	
-	public static List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) {
+	public static SellerWorkloadContent getSellersWorkloadContent(SellerWorkloadParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
-			return getRegistry().getSellersWorkloadFees(ctx, params);
+			return getRegistry().getSellersWorkloadContent(ctx, params);
 		}
 	}
 	
 	public static List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
+		}
+	}
+	
+	public static List<Integer> getSellersWorkloadInvoiceIds(SellerWorkloadParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getRegistry().getSellersWorkloadInvoiceIds(ctx, params);
+		}
+	}
+	
+	public static List<Integer> getSellersWorkloadInvoicesIds(SellerWorkloadParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
 			return getRegistry().getSellersWorkloadFeesIds(ctx, params);
 		}

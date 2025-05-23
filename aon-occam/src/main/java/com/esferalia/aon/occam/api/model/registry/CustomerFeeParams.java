@@ -16,6 +16,7 @@ public class CustomerFeeParams implements Serializable {
 	
 	private Byte periodicity;
 	
+	private String description;
 	private Integer customer;
 	private String customerName;
 	private Byte customerStatus;
@@ -50,6 +51,7 @@ public class CustomerFeeParams implements Serializable {
 	private boolean asc = true;
 	
 	private Integer[] feeIds;
+	private Integer[] invoiceIds;
 	
 	private Integer childDomain;
 	
@@ -95,6 +97,13 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setPeriodicity(Byte periodicity) {
 		this.periodicity = periodicity;
+		return this;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public CustomerFeeParams setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 	public Integer getCustomer() {
@@ -259,6 +268,14 @@ public class CustomerFeeParams implements Serializable {
 	
 	public Integer[] getFeeIds() {
 		return this.feeIds;
+	}
+	
+	public void setInvoiceIds(Integer[] invoiceIds) {
+		this.invoiceIds = invoiceIds;
+	}
+	
+	public Integer[] getInvoiceIds() {
+		return this.invoiceIds;
 	}
 	
 	public Integer getChildDomain() {

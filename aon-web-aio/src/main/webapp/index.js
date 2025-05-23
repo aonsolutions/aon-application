@@ -68,8 +68,9 @@ export const loadTheme = async  () => {
 		lsAonTheme: LS.AON_THEME || ''
 	};
 	
+	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
 	let themeUrl = UA.isMobile() 
-        ? LS.AON_MOBILE_ANDROID 
+        ?  mobileCss
         : await getThemeUrl(params);
 	console.log(themeUrl);
 		

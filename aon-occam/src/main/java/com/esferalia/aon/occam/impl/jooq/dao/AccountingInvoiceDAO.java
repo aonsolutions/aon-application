@@ -494,6 +494,9 @@ public class AccountingInvoiceDAO {
 					+ reg.getType().getInvoiceType().getDescription() );
 		}
 		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx,issueDate);
+		if (AonCollectionUtils.isEmpty(config.getWorkplaces())) {
+			throw new AonCoreException("No se ha encontrado un centro de trabajo v\u00E1lido. Revise la configuraci\u00F3n de la empresa.");
+		}
 		AccountingInvoice ai = new AccountingInvoice()
 				.setRegistry(reg)
 				.setWorkplace(config.getWorkplaces().get(0).getId())

@@ -25,9 +25,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.validator.LongRangeValidator;
 import javax.faces.validator.ValidatorException;
-import jakarta.mail.Address;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -88,13 +85,17 @@ import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.sun.faces.util.MessageFactory;
+
+import jakarta.mail.Address;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import solutions.aon.aws.ses.SES;
 
 public class DomainController extends BasicController {
 
@@ -583,12 +584,20 @@ public class DomainController extends BasicController {
 	
 	public static void sendNotificationEmail( Address[] emails, String subject, String content, AonFile diffFile ) throws IOException, WebmailException {
 		LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
-		EmailSender sender = DomainController.getEmailSender();
-		AonMessage message = sender.createMessage(subject);
-		message.setRecipientsBcc(emails);
+
 		AonFile termsOfServiceFile = DomainController.getTermsOfServiceFile();
-		sender.addMessageContent(message, content, MimeType.MIME_HTML, diffFile, termsOfServiceFile);
-		sender.sendMessage(message);
+		
+		List<File> files = new LinkedList<>();
+		if(diffFile != null) files.add(diffFile.getFile());
+		if(termsOfServiceFile != null) files.add(termsOfServiceFile.getFile());
+		
+		List<String> to = new LinkedList<>();
+		for (Address address : emails) {
+			InternetAddress ia = (InternetAddress) address;
+			to.add(ia.getAddress());
+		}
+		
+		SES.sendEmailWithAttachment("admin@aonsolutions.net", to, subject, content, files);
 		termsOfServiceFile.clean();
 	}
 	

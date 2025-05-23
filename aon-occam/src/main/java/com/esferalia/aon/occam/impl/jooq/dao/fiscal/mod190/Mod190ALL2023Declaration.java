@@ -790,6 +790,7 @@ public class Mod190ALL2023Declaration extends Mod190Declaration {
 		@Override public Mod190DetailKey visitM193C1(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C2(Mod190DetailKey detailKey) {return detailKey;}
 		@Override public Mod190DetailKey visitM193C3(Mod190DetailKey detailKey) {return detailKey;}
+		@Override public Mod190DetailKey visitM193C4(Mod190DetailKey detailKey) {return detailKey;}
 		
 		@Override
 		public Mod190DetailKey visitProfessional(Mod190DetailKey detailKey) {
