@@ -261,7 +261,8 @@ public class SellerWorkloadDAO {
 			if(null != params.getSeller()) {
 				// Realizamos la consulta con la lógica del ajuste de fechas incorporada
 				SelectConditionStep<Record1<Integer>> invoiceSelect = ctx.getDslContext().selectDistinct(INVOICE_DETAIL.ID)
-						.from(INVOICE_DETAIL).join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+						.from(INVOICE_DETAIL)
+						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
 						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 						.and(INVOICE.ISSUE_DATE.between(start, end));
@@ -714,8 +715,9 @@ public class SellerWorkloadDAO {
 			
 			// Realizamos la consulta con la lógica del ajuste de fechas incorporada
 			Result<Record4<Double, Double, String, Integer>> invoiceResult = ctx.getDslContext()
-					.selectDistinct(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
-					.from(INVOICE_DETAIL).join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
+					.select(INVOICE_DETAIL.QUANTITY, INVOICE_DETAIL.PRICE, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE.REGISTRY)
+					.from(INVOICE_DETAIL)
+					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 					.where(INVOICE_DETAIL.SELLER.eq(seller))
 					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 					.and(INVOICE.ISSUE_DATE.between(start, end))
