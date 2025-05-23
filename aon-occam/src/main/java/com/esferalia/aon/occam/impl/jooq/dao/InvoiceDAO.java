@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
-import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -44,10 +43,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -408,9 +403,9 @@ public class InvoiceDAO {
 	}
 
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
-		Result<Record> invoices = getFullInvoices(ctx, filter);
-		
-		return invoices.stream().map(new FullInvoiceDetailFiller());
+		return getFullInvoices(ctx, filter)
+				.stream()
+				.map(new FullInvoiceDetailFiller());
 	}
 
 	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {
@@ -698,9 +693,6 @@ public class InvoiceDAO {
 				.setQuantity(r.getValue(INVOICE_DETAIL.QUANTITY))
 				.setPrice(r.getValue(INVOICE_DETAIL.PRICE))
 				.setDiscountExpression(r.getValue(INVOICE_DETAIL.DISCOUNT_EXPR))
-				.setNetCost(calculateNetCost(r))
-				.setTotalNetPrice(calculateTotalNetPrice(r))
-				.setTotalPrice(calculateTotalPrice(r))
 				.setTaxableBase(r.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setItem(checkField(r, ITEM.ID)
 					? ItemFiller.build(r)
@@ -720,100 +712,6 @@ public class InvoiceDAO {
 			
 		}
 		
-	}
-	
-	private static Double calculateTotalPrice(Record record) {
-		Double quantity = record.get(INVOICE_DETAIL.QUANTITY);
-        Double price = record.get(INVOICE_DETAIL.PRICE);
-        
-        if(null == price) return null;
-        
-        // Fórmula: PRICE * QUANTITY
-        double feeSum = price * quantity;
-        return feeSum;
-	}
-
-	private static Double calculateTotalNetPrice(Record record) {
-		Double quantity = record.get(INVOICE_DETAIL.QUANTITY);
-        Double price = record.get(INVOICE_DETAIL.PRICE);
-        String discountExpr = record.get(INVOICE_DETAIL.DISCOUNT_EXPR);
-        
-        if(null == price) return null;
-        
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-
-        // Calcular el descuento
-        double discount = 0.0;
-        if (discountExpr != null && !discountExpr.isEmpty()) {
-            try {
-                discount = evaluateDiscount(discountExpr, price, engine);
-            } catch (ScriptException e) {
-                System.err.println("Error evaluando DISCOUNT_EXPR: " + discountExpr);
-                e.printStackTrace();
-            }
-        }
-
-        // Fórmula: (PRICE - DISCOUNT) * QUANTITY
-        double feeNetSum = (price - discount) * quantity;
-        return feeNetSum;
-	}
-
-	private static Double calculateNetCost(Record r) {
-        Double price = r.get(CUSTOMER_FEE.PRICE);
-        
-        if(null == price) return null;
-        
-        String discountExpr = r.get(CUSTOMER_FEE.DISCOUNT_EXPR);
-        
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-
-        // Calcular el descuento
-        double discount = 0.0;
-        if (discountExpr != null && !discountExpr.isEmpty()) {
-            try {
-                discount = evaluateDiscount(discountExpr, price, engine);
-            } catch (ScriptException e) {
-                System.err.println("Error evaluando DISCOUNT_EXPR: " + discountExpr);
-                e.printStackTrace();
-            }
-        }
-
-        // Fórmula: (PRICE - DISCOUNT)
-        double netCost = (price - discount);
-		return netCost;
-	}
-	
-	// Método para evaluar el descuento basado en DISCOUNT_EXPR
-	private static double evaluateDiscount(String discountExpr, Double price, ScriptEngine engine) throws ScriptException {
-	    double discount = 0.0;
-	    double discountedPrice = price;
-
-	    // Expresión regular que soporta números con o sin decimales (e.g., 10, 10.5)
-	    String numberPattern = "\\d+(\\.\\d+)?";
-
-	    if (discountExpr.matches(numberPattern)) { 
-	        // Si es un número simple como "10" o "10.5", aplicamos ese porcentaje de descuento
-	        discount = (price * Double.parseDouble(discountExpr)) / 100;
-	        discountedPrice = price - discount;
-	    } else {
-	        // Si es una expresión matemática (e.g., "10 + 10.5"), aplicamos cada descuento secuencialmente
-	        String[] discountParts = discountExpr.split("\\+");
-
-	        for (String part : discountParts) {
-	            part = part.trim();
-	            if (part.matches(numberPattern)) {
-	                // Aplicamos el porcentaje de descuento al precio actual
-	                double percentage = Double.parseDouble(part);
-	                discount = (discountedPrice * percentage) / 100;
-	                discountedPrice -= discount;
-	            } else {
-	                // Si por alguna razón el descuento no es numérico, se lanza una excepción
-	                throw new ScriptException("Formato de descuento inválido: " + part);
-	            }
-	        }
-	    }
-
-	    return price - discountedPrice; // Devolvemos la cantidad total descontada
 	}
 	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
