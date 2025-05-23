@@ -40,6 +40,12 @@ public class InvoiceDetail implements Serializable {
 	private double taxableBase;
 	private double taxes;
 	private boolean prepayment;
+
+	private Double netCost;
+	private Double totalNetPrice;
+	private Double totalPrice;
+
+	// WAREHOUSE
 	private Integer warehouse;
 	private String warehouseName;
 	private Workplace workplace;
@@ -249,6 +255,33 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 	
+	public Double getNetCost() {
+		return netCost;
+	}
+	
+	public InvoiceDetail setNetCost(Double netCost) {
+		this.netCost = netCost;
+		return this;
+	}
+	
+	public Double getTotalNetPrice() {
+		return totalNetPrice;
+	}
+
+	public InvoiceDetail setTotalNetPrice(Double totalNetPrice) {
+		this.totalNetPrice = totalNetPrice;
+		return this;
+	}
+
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public InvoiceDetail setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+		return this;
+	}
+
 	public Integer getAccountId() {
 		return accountId;
 	}

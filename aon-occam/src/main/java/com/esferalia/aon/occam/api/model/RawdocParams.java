@@ -16,6 +16,7 @@ public class RawdocParams implements Serializable{
 	private RawdocNature nature;
 	private RawdocType type;
 	private RawdocStatus status;
+	private String query;
 
 	public int getDomain() {
 		return domain;
@@ -53,5 +54,11 @@ public class RawdocParams implements Serializable{
 		return this;
 	}
 	
-	
+	public String getQuery() {
+		return query;
+	}
+	public RawdocParams setQuery(String query) {
+		this.query = query;
+		return this;
+	}
 }

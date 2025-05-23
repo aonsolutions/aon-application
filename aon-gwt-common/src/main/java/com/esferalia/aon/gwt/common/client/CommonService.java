@@ -8,6 +8,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -286,8 +288,7 @@ public interface CommonService extends RemoteService {
 	
 	List<SellerWorkload> getSellersWorkload(SellerWorkloadParams params) throws AonCoreException;
 	Integer getSellersWorkloadCount(SellerWorkloadParams params) throws AonCoreException;
-	List<Fee> getSellersWorkloadFees(SellerWorkloadParams params) throws AonCoreException;
-	List<Integer> getSellersWorkloadFeesIds(SellerWorkloadParams params) throws AonCoreException;
+	SellerWorkloadContent getSellersWorkloadContent(SellerWorkloadParams params) throws AonCoreException;
 	
 	// **************************************************
 	// **************************************** [PRODUCT]
@@ -356,5 +357,9 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	Map<TargetFull, List<RegistrySeller>> getTargetNotUserFull(TargetParams params) throws AonCoreException;
+	Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
+	TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException;
+	Company getCompanyByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
+	
 	
 }

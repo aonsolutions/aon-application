@@ -54,7 +54,10 @@ export class AonCustomer extends AonReg {
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
-			{ title: MSG.BANK_DATA, fn: () => this.buildBankData() },
+			{ title: MSG.BANK_DATA, fn: () => {
+				this.showSaveButton();
+				this.buildBankData();
+			}},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
@@ -95,6 +98,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildGeneralData = () => {
+		this.showSaveButton();
+		
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
 
@@ -140,6 +145,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildDataAdditional() {
+		this.showSaveButton();
+				
 		let parent = this.getElement(this.DIV);
 		this.clearElement(parent);
 
@@ -244,7 +251,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildEnterpriseLinked() {
-		if (this.isBeta() || this.isSig()) {
+		// Quitar el beta y sig
+		//if (this.isBeta() || this.isSig()) {
 			const card = this.getElement(this.GENERAL_CARD);
 
 			let divOne = this.getElement(this.ENTERPRISE_LINKED);
@@ -266,7 +274,7 @@ export class AonCustomer extends AonReg {
 				.catch((err) => {
 					this.showError(err);
 				});
-		}
+		//}
 	}
 
 	buildEnterpriseLinkedView(resp) {
@@ -335,9 +343,21 @@ export class AonCustomer extends AonReg {
 			});
 		}
 	}
+	
+	hideSaveButton(){
+		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		if(saveBtn) saveBtn.style.display = 'none';
+	}
+	
+	showSaveButton(){
+		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		if(saveBtn) saveBtn.style.display = 'block';
+	}
 
 	//EXPEDIENTE
 	buildExpedienteData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -354,6 +374,8 @@ export class AonCustomer extends AonReg {
 
 	//ITEMS PRODUCTS
 	buildItemData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -375,6 +397,8 @@ export class AonCustomer extends AonReg {
 
 	//BOOKING PRODUCTS
 	buildBookingData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -396,6 +420,8 @@ export class AonCustomer extends AonReg {
 
 	//SELLERS
 	buildSellerData() {
+		this.hideSaveButton();
+		
 		let main = this.getElement(this.DIV);
 		this.clearElement(main);
 
@@ -411,6 +437,8 @@ export class AonCustomer extends AonReg {
 	}
 
 	buildCustomerFee() {
+		this.hideSaveButton();
+		
 		let div = this.getElement(this.DIV);
 		this.clearElement(div);
 
@@ -436,69 +464,78 @@ export class AonCustomer extends AonReg {
 							window.open("https://" + rrelationship.comments);
 						}
 					},
-				},
-				{
-					name: "Desvincular",
-					value: "UNLINK",
-					icon: MATERIAL_ICONS.LINK_OFF,
-					fn: () => {
-						this.getApplication().startLoading();
-
-						removeRelationShip(rrelationship)
-							.then(() => {
-								this.showMessage();
-								this.buildEnterpriseLinked();
-							})
-							.catch((err) => this.showError(err))
-							.finally(() => {
-								this.getApplication().stopLoading();
-							});
-					},
 				}
 			);
+			
+			if(this.isSig()){
+				options.push(
+					{
+						name: "Desvincular",
+						value: "UNLINK",
+						icon: MATERIAL_ICONS.LINK_OFF,
+						fn: () => {
+							this.getApplication().startLoading();
+	
+							removeRelationShip(rrelationship)
+								.then(() => {
+									this.showMessage();
+									this.buildEnterpriseLinked();
+								})
+								.catch((err) => this.showError(err))
+								.finally(() => {
+									this.getApplication().stopLoading();
+								});
+						},
+					}
+				);
+			}
 		} else {
-			options.push(
-				{
-					name: "Vincular con una existente",
-					value: "LINK",
-					icon: MATERIAL_ICONS.LINK,
-					fn: () => {
-						this.openDialogCompany();
+			if(this.isSig()){
+				options.push(
+					{
+						name: "Vincular con una existente",
+						value: "LINK",
+						icon: MATERIAL_ICONS.LINK,
+						fn: () => {
+							this.openDialogCompany();
+						},
 					},
-				},
-				{
-					name: "Crear nueva empresa",
-					value: "ENTERPRISE_NEW",
-					icon: MATERIAL_ICONS.OPEN_IN_NEW,
-					fn: () => {
-						this.getApplication().confirmDialog(
-							MSG.REGISTER,
-							`Desea registrar y vincular a ${this.registry.getName()} ?`,
-							() => {
-								this.getApplication().startLoading();
-								saveCompany({ ...this.registry, id: null })
-									.then((company) => {
-										console.log("company", company);
-										this.saveRegistryRelationship(company);
-									})
-									.catch((err) => {
-										this.showError(err);
-									})
-									.finally(() => {
-										this.getApplication().stopLoading();
-									});
-							}
-						);
-					},
-				}
-			);
+					{
+						name: "Crear nueva empresa",
+						value: "ENTERPRISE_NEW",
+						icon: MATERIAL_ICONS.OPEN_IN_NEW,
+						fn: () => {
+							this.getApplication().confirmDialog(
+								MSG.REGISTER,
+								`Desea registrar y vincular a ${this.registry.getName()} ?`,
+								() => {
+									this.getApplication().startLoading();
+									saveCompany({ ...this.registry, id: null })
+										.then((company) => {
+											console.log("company", company);
+											this.saveRegistryRelationship(company);
+										})
+										.catch((err) => {
+											this.showError(err);
+										})
+										.finally(() => {
+											this.getApplication().stopLoading();
+										});
+								}
+							);
+						},
+					}
+				);
+			}
 		}
 
-		const top = element.getBoundingClientRect().top + 24;
-		const left = element.getBoundingClientRect().left + 3;
-		let d = this.getApplication().getOptionDialog();
-		d.setMenuOptions(options, top, left);
-		d.open();
+		if(options && options.length > 0){
+			const top = element.getBoundingClientRect().top + 24;
+			const left = element.getBoundingClientRect().left + 3;
+			let d = this.getApplication().getOptionDialog();
+			d.setMenuOptions(options, top, left);
+			d.open();
+		}
 	}
 
 	openDialogCompany(companies = []) {

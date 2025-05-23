@@ -150,8 +150,7 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 		idx = addCell(callback, vatIdx, idx, InvoiceVATPanel.InvoiceVATGridColumns.OUTPUT_VAT_ACCOUNT, outputVatAccount);
 		idx = addCell(callback, vatIdx, idx, InvoiceVATPanel.InvoiceVATGridColumns.WITHHOLDING, withholding);
 		idx = addCell(callback, vatIdx, idx, InvoiceVATPanel.InvoiceVATGridColumns.PREPAYMENT, prepayment);
-		addCell(callback, vatIdx, idx, InvoiceVATPanel.InvoiceVATGridColumns.EMPTY, removeButton);
-		
+		addCell(callback, vatIdx, idx, InvoiceVATPanel.InvoiceVATGridColumns.REMOVE, removeButton);
 		if (InvoiceVATGridColumns.INVEST_ASSET.isAdditionalDataEnabled(callback, vatIdx)) {
 			addInvestAssetAdditionalData( callback, vatIdx );
 		}
