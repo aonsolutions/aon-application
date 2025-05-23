@@ -621,6 +621,8 @@ public class OCRInvoiceBuilder {
 			vat.setSurchargeQuota(AonNumberUtils.zeroIfNull(reQuota));
 			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota) + AonNumberUtils.zeroIfNull(reQuota));			
 			detail.addInvoiceTax(vat);
+			
+			if(vat.getSurcharge() > 0.0) invoice.setSurcharge(true);
 		}
 	}
 
