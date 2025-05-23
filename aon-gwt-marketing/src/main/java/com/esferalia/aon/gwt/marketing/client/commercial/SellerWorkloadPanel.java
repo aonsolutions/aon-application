@@ -30,14 +30,12 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class SellerWorkloadPanel extends ScrollPanel {
@@ -52,12 +50,11 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
 	
-	private SimplePanel container;
-	private ScrollPanel scrollPanel;
 	private AonCustomTable tab;
 	private int lastScrollPos = 0;
 	
 	private SellerWorkloadParams params;
+	
 	private Map<Integer, Seller> rowSellers = new HashMap<>();
 	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
@@ -101,9 +98,7 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 		this.params = params;
 		this.rowSellers.clear();
 
-		container = new SimplePanel();
-		container.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
-		setWidget(container);
+		this.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
 		
 		addScrollHandler(new ScrollHandler() {
 
@@ -154,13 +149,10 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 	}
 
 	private void search() {
-		container.clear();
 		tab = new AonCustomTable();
-		tab.setMaxHeight((Window.getClientHeight() - 200) + "px");
-		scrollPanel = new ScrollPanel(tab);
+		this.setWidget(tab);
 		
 		paintHeader();
-		container.setWidget(scrollPanel);
 		searchData();
 	}
 	
@@ -254,11 +246,13 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				container.clear();
-				container.add(line);
+				if(tab.getRowsCount() <= 1) {
+					FlowPanel line = new FlowPanel();
+					InlineLabel label = new InlineLabel(AON.MSG.noData());
+					line.add(label);
+					this.clear();
+					this.setWidget(line);
+				}
 				disableMoreData();
 			}
 			enableSearch();
