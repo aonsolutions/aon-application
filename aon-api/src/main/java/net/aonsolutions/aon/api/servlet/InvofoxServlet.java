@@ -311,7 +311,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						S3.copy(rawdoc.getS3Bucket(), rawdoc.getS3Bucket(), rawdoc.getS3Key(), newKey.toString());
 							
 						AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc.getId());
-						// S3.delete(r.getS3Bucket(), r.getS3Key());
+						S3.delete(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 					}		
 				}
 			}		
