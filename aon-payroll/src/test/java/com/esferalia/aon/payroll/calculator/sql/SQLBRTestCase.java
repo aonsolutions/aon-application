@@ -972,7 +972,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				getFirstDayOfYear(getToday()),
 				new HashMap<String, String>() {
 					{
-						//put(MONTH_DAYS.getName(), format("%f", 30.00));
+						//put(MONTH_DAYS.getName(), "30.00");
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 								ContractCode.C200.getValue()));
 					}
@@ -1131,7 +1131,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				startDate,
 				new HashMap<String, String>() {
 					{
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 						ContractCode.C501.getValue()));
 					}
@@ -1147,13 +1147,13 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put(MONDAY_HOURS.getName(), format("%f", 4.00));
-						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
-						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
-						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
-						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
-						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
-						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+						put(MONDAY_HOURS.getName(), "4.00");
+						put(TUESDAY_HOURS.getName(), "4.00");
+						put(WEDNESDAY_HOURS.getName(), "4.00");
+						put(THURSDAY_HOURS.getName(), "4.00");
+						put(FRIDAY_HOURS.getName(), "4.00");
+						put(SATURDAY_HOURS.getName(), "0.00");
+						put(SUNDAY_HOURS.getName(), "0.00");
 					}
 				}
 				);
@@ -1258,7 +1258,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				contractStartDate,
 				new HashMap<String, String>() {
 					{
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 						ContractCode.C501.getValue()));
 					}
@@ -1274,13 +1274,13 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put(MONDAY_HOURS.getName(), format("%f", 4.00));
-						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
-						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
-						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
-						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
-						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
-						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+						put(MONDAY_HOURS.getName(), "4.00");
+						put(TUESDAY_HOURS.getName(), "4.00");
+						put(WEDNESDAY_HOURS.getName(), "4.00");
+						put(THURSDAY_HOURS.getName(), "4.00");
+						put(FRIDAY_HOURS.getName(), "4.00");
+						put(SATURDAY_HOURS.getName(), "0.00");
+						put(SUNDAY_HOURS.getName(), "0.00");
 					}
 				}
 				);
@@ -1334,7 +1334,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				contractStartDate,
 				new HashMap<String, String>() {
 					{
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 						ContractCode.C501.getValue()));
 					}
@@ -1350,13 +1350,13 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				null, 
 				new HashMap<String, String>() {
 					{
-						put(MONDAY_HOURS.getName(), format("%f", 4.00));
-						put(TUESDAY_HOURS.getName(), format("%f", 4.00));
-						put(WEDNESDAY_HOURS.getName(), format("%f", 4.00));
-						put(THURSDAY_HOURS.getName(), format("%f", 4.00));
-						put(FRIDAY_HOURS.getName(), format("%f", 4.00));
-						put(SATURDAY_HOURS.getName(), format("%f", 0.00));
-						put(SUNDAY_HOURS.getName(), format("%f", 0.00));
+						put(MONDAY_HOURS.getName(), "4.00");
+						put(TUESDAY_HOURS.getName(), "4.00");
+						put(WEDNESDAY_HOURS.getName(), "4.00");
+						put(THURSDAY_HOURS.getName(), "4.00");
+						put(FRIDAY_HOURS.getName(), "4.00");
+						put(SATURDAY_HOURS.getName(), "0.00");
+						put(SUNDAY_HOURS.getName(), "0.00");
 					}
 				}
 				);
@@ -1483,8 +1483,8 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				startDate,
 				new HashMap<String, String>() {
 					{
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
-						put(PARTIAL_FACTOR.getName(), format("%f", 1.00));
+						put(MONTH_DAYS.getName(), "30.00");
+						put(PARTIAL_FACTOR.getName(), "1.00");
 						//put(TC2.getName(), format("\"%s\"",C300.getValue()));
 						
 					}
