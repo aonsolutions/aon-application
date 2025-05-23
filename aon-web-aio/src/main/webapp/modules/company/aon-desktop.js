@@ -1,8 +1,8 @@
-import {AonElement} from '../../components/AonElement.js';
-import { Apps, ClassicApps, getAppsByDur} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne} from  '../../services/service.js';
-import {getAccessBidoq} from  '../../services/bidoqService.js';
-import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+import { AonElement } from '../../components/AonElement.js';
+import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne } from '../../services/service.js';
+import { getAccessBidoq } from '../../services/bidoqService.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
@@ -32,6 +32,7 @@ import { AonDashboardButton } from '../../components/aon-dashboard-button.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonDashboardGraphicsTrial } from '../accounting/aon-graphics-dashboard-trial.js';
 import { AonFiscalCard } from '../fiscal/aon-fiscal-card.js';
+import { AonModelMatrixCard } from '../fiscal/aon-model-matrix-card.js';
 import { AonStatistics } from '../timecontrol/time-control/statistics/aon-statistics.js';
 import { AonPayrollCard } from '../laboral/payroll/aon-payroll-card.js';
 import { AonMessengerCard } from '../messenger/aon-messenger-card.js';
@@ -49,6 +50,7 @@ import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { generateJobId } from '../invoice/InvoiceUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
+import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
 
 export class AonDesktop extends AonElement {
 
@@ -71,11 +73,11 @@ export class AonDesktop extends AonElement {
 		this.setAttribute('id', id);
 	}
 
-	constructor () {
+	constructor() {
 		super();
 	}
 
-	initialize(){
+	initialize() {
 		this.id = this.id || 'aonDesktop';
 		this.AON_DESKTOP = 'aonDesktopMain';
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
@@ -83,19 +85,19 @@ export class AonDesktop extends AonElement {
 		this.SIDENAV_ACTIVITY_SUMMARY = [];
 		this.TIMECONTROL_TITLE = this.id + 'TimecontrolTitle';
 		this.TIMECONTROL_SIGN = this.id + 'TimecontrolSign';
-	}	
+	}
 
 	getDur() {
 		return this.dur;
 	}
 
-	connectedCallback () {
-		if(LS.isNewTheme()) {
+	connectedCallback() {
+		if (LS.isNewTheme()) {
 			let span = this.getElement('aonHeaderHome');
-			if(span) span.style.display = 'none';
+			if (span) span.style.display = 'none';
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
-			if(expandButtonDiv) expandButtonDiv.style.display = 'block';
+			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
 		}
 
 		this.initialize();
@@ -103,59 +105,59 @@ export class AonDesktop extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
-  	}
+	}
 
-	disconnectedCallback () {
-		if(LS.isNewTheme()) {
+	disconnectedCallback() {
+		if (LS.isNewTheme()) {
 			let span = this.getElement('aonHeaderHome');
-			if(span) span.style.display = 'block';
+			if (span) span.style.display = 'block';
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
-			if(expandButtonDiv) expandButtonDiv.style.display = 'none';
+			if (expandButtonDiv) expandButtonDiv.style.display = 'none';
 		}
-	}	
+	}
 
 	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
-        this.innerHTML = /*html*/`
+		this.innerHTML = /*html*/`
           <input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
           <input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
           <aon-application id="${this.AON_DESKTOP}" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
 
-          let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-          inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => {
-              this.uploadInvoiceDesktop(undefined, target.files);
-          });
+		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({ target }) => {
+			this.uploadInvoiceDesktop(undefined, target.files);
+		});
 
-          let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-          inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => {
-              this.uploadDocumentsDesktop(undefined, target.files);
-          });
-        
+		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+		inputDocumentFile.addEventListener(EVENT.CHANGE, ({ target }) => {
+			this.uploadDocumentsDesktop(undefined, target.files);
+		});
+
 		let divLogo = this.createElement(TAG.DIV);
 		divLogo.id = this.id + 'Logo';
 		aonDesktop.getSidenav().appendChild(divLogo);
-		if(LS.isNewTheme()) {
+		if (LS.isNewTheme()) {
 			aonDesktop.getSidenav().style.display = 'none';
 		}
 		let filter = {
 			attachType: 'registry',
 			attachModule: company.registry,
 			type: 0
-		}; 
-					
+		};
+
 		let parentFilter = {
 			attachType: 'registry',
 			domainId: company.parentId,
 			type: 0
 		};
-		let f = this.getDur().hasCustomView() || this.getDur().isEmployee() 
-			?  filter : parentFilter; 
+		let f = this.getDur().hasCustomView() || this.getDur().isEmployee()
+			? filter : parentFilter;
 
 		getAttach(f).then(r => {
 			let attach = new Attach(r);
-			if(attach && attach.id && attach.getContentType().includes("image")){
+			if (attach && attach.id && attach.getContentType().includes("image")) {
 				divLogo.style.maxHeight = '60px';
 				divLogo.style.margin = '10px';
 				divLogo.style.justifyContent = 'center';
@@ -196,7 +198,7 @@ export class AonDesktop extends AonElement {
 			});
 		}*/
 
-		if(this.isBeta() && !this.getDur().getDomain().isOffice()) {
+		if (this.isBeta() && !this.getDur().getDomain().isOffice()) {
 			let myGestor = {
 				id: 'Gestor',
 				name: MSG.MY_MANAGER,
@@ -206,32 +208,32 @@ export class AonDesktop extends AonElement {
 			getOfficeProjects({}).then(offices => {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
 				offices.forEach(office => {
-					if(office.projects.length > 0) {
-						office.projects.forEach((item,idx) => {
+					if (office.projects.length > 0) {
+						office.projects.forEach((item, idx) => {
 							let p = new Project(item);
-							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+							let h = p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
 							let option = {
-								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
+								name: p.getType().getDescription() + (h ? ' - ' + h : ''),
 								icon: MATERIAL_ICONS.SUPPORT_AGENT,
-								fn: () => {}, 
+								fn: () => { },
 								actions: [{
-								  id: 'Contact'+idx,
-								  icon: 'chat',
-								  action: () => {
-									let aonMessengerChat = new AonMessenger();	
-									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item, domain: item.domain};
-									this.rootPanel(aonMessengerChat);
-								  }
+									id: 'Contact' + idx,
+									icon: 'chat',
+									action: () => {
+										let aonMessengerChat = new AonMessenger();
+										aonMessengerChat.data = { source: TASK_SOURCE.QUERY, project: item, domain: item.domain };
+										this.rootPanel(aonMessengerChat);
+									}
 								}]
 							};
 							aonDesktop.addSidenavOptionsListValue(myGestor, option);
 						});
 					}
-           		});
-			}); 
+				});
+			});
 		}
 
-		if(company.parentId || company.type !== 'CONSULTANCY'){
+		if (company.parentId || company.type !== 'CONSULTANCY') {
 			this.getSidenavActivity();
 		}
 
@@ -252,7 +254,7 @@ export class AonDesktop extends AonElement {
 		// 	});
 		// }
 
-		if(this.getDur().isAon()){
+		if (this.getDur().isAon()) {
 			classicOptions.push({
 				name: 'aonSolutions',
 				img: 'assets/aon.png',
@@ -261,15 +263,15 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if(this.getDur().isBidoq()){
+		if (this.getDur().isBidoq()) {
 			classicOptions.push({
 				name: 'Bidoq',
 				img: 'assets/apps/bidoq.png',
 				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () =>{
+				fn: () => {
 					getAccessBidoq().then(r => {
-						const {datos} = r;
-						if(datos && datos.ruta) {
+						const { datos } = r;
+						if (datos && datos.ruta) {
 							open(datos.respuesta);
 						} else {
 							open('https://mispapeles.es/');
@@ -279,28 +281,28 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if(this.getDur().isSelfconta()){
+		if (this.getDur().isSelfconta()) {
 			classicOptions.push({
 				name: 'Selfconta',
 				img: 'assets/apps/selfconta.png',
 				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () =>open('https://mispapeles.es/selfconta/')
+				fn: () => open('https://mispapeles.es/selfconta/')
 			});
 		}
 
-		if(this.getDur().isSaltra()){
+		if (this.getDur().isSaltra()) {
 			classicOptions.push({
 				name: 'Saltra',
 				img: 'assets/apps/saltra.png',
 				style: CSS.AON_DESKTOP_MENU_CLASSIC_OPTION,
-				fn: () =>open('https://app.saltra.es/')
+				fn: () => open('https://app.saltra.es/')
 			});
 		}
 
-		if(classicOptions.length > 0)
+		if (classicOptions.length > 0)
 			aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
 
-		if(this.getDur().isTimecontrol() && !LS.isNewTheme()) {
+		if (this.getDur().isTimecontrol() && !LS.isNewTheme()) {
 			getTimeControl().then(r => {
 				let aonSign = new AonSign();
 				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
@@ -321,7 +323,7 @@ export class AonDesktop extends AonElement {
 		contentData.id = "contentData";
 		contentData.style.margin = '1rem';
 
-		if(LS.isNewTheme()){
+		if (LS.isNewTheme()) {
 			// Intiliaze App List
 			content.appendChild(contentData);
 			this.createDashboard(contentData, company);
@@ -332,7 +334,7 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
-	uploadDocumentsDesktop(input, files){
+	uploadDocumentsDesktop(input, files) {
 		let d = new AonDialog();
 		let rootPanel = document.getElementById("rootPanel");
 		rootPanel.appendChild(d);
@@ -340,34 +342,34 @@ export class AonDesktop extends AonElement {
 		// if(isMobile()) d.width = '400px';
 		d.setTitle(MSG.UPLOAD_FILE);
 		d.setContent(uploadOption(this.getDur()));
-		d.addAcceptAction(async() => {
-		  let data = {
-			  category: document.getElementById("aonDocumentalUploadCategory").value,
-			  scope: document.getElementById("aonDocumentalUploadScope").value,
-			  tag: document.getElementById("aonDocumentalUploadTag").value,
-			  type: document.getElementById("aonDocumentalUploadType").value
-		  }
+		d.addAcceptAction(async () => {
+			let data = {
+				category: document.getElementById("aonDocumentalUploadCategory").value,
+				scope: document.getElementById("aonDocumentalUploadScope").value,
+				tag: document.getElementById("aonDocumentalUploadTag").value,
+				type: document.getElementById("aonDocumentalUploadType").value
+			}
 
-		  let uploadToast = this.getElement('aonUploadToast');
-		  if(!uploadToast){ 
-			  uploadToast = new AonUploadToast();
-			  this.appendChild(uploadToast);
-		  }
-		  for (let file of files) {
-			  uploadToast.addFile("documental", file, data);
-		  }
+			let uploadToast = this.getElement('aonUploadToast');
+			if (!uploadToast) {
+				uploadToast = new AonUploadToast();
+				this.appendChild(uploadToast);
+			}
+			for (let file of files) {
+				uploadToast.addFile("documental", file, data);
+			}
 		});
 		d.open();
 	}
 
-	uploadInvoiceDesktop(input, files){
+	uploadInvoiceDesktop(input, files) {
 		let uploadToast = this.getElement('aonUploadToast');
-		if(!uploadToast){ 
+		if (!uploadToast) {
 			uploadToast = new AonUploadToast();
 			this.appendChild(uploadToast);
 		}
 		let data = {
-			uploaded : 0
+			uploaded: 0
 		}
 		uploadToast.setJobId(generateJobId());
 		for (let file of files) {
@@ -375,7 +377,7 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
-	async createDashboard(parent, company){
+	async createDashboard(parent, company) {
 		// Clear parent
 		while (parent.lastElementChild) {
 			parent.removeChild(parent.lastElementChild);
@@ -386,29 +388,29 @@ export class AonDesktop extends AonElement {
 		dashboard.className = CSS.AON_DASHBOARD;
 		parent.appendChild(dashboard);
 
-		if (!this.isBetaDoc()){
-          // Upload Panel
-          let upload = this.createElement(TAG.DIV);
-          upload.className = CSS.AON_UPLOAD_PANEL;
-          upload.id = "uploads";
-          dashboard.appendChild(upload);
+		if (!this.isBetaDoc()) {
+			// Upload Panel
+			let upload = this.createElement(TAG.DIV);
+			upload.className = CSS.AON_UPLOAD_PANEL;
+			upload.id = "uploads";
+			dashboard.appendChild(upload);
 
-          if (this.getDur().isDocumental()){
-              let uploadDoc = new AonNewUpload();
-              uploadDoc.id = "docUpload";
-              uploadDoc.setMessage("Subir documentación");
-              uploadDoc.setType("Documental");
-              upload.appendChild(uploadDoc);
-          }
+			if (this.getDur().isDocumental()) {
+				let uploadDoc = new AonNewUpload();
+				uploadDoc.id = "docUpload";
+				uploadDoc.setMessage("Subir documentación");
+				uploadDoc.setType("Documental");
+				upload.appendChild(uploadDoc);
+			}
 
-          if (this.getDur().isInvoice() && ( this.getDur().isOcr() || this.getDur().isInvofox() )){
-              let uploadInv = new AonNewUpload();
-              uploadInv.id = "factUpload";
-              uploadInv.setMessage("Subir factura");
-              uploadInv.setType("Invoice");
-              upload.appendChild(uploadInv);
-          }
-        }
+			if (this.getDur().isInvoice() && (this.getDur().isOcr() || this.getDur().isInvofox())) {
+				let uploadInv = new AonNewUpload();
+				uploadInv.id = "factUpload";
+				uploadInv.setMessage("Subir factura");
+				uploadInv.setType("Invoice");
+				upload.appendChild(uploadInv);
+			}
+		}
 
 		// Cards Panel
 		let cardsPanel = this.createElement(TAG.DIV);
@@ -418,8 +420,10 @@ export class AonDesktop extends AonElement {
 		cardsPanel.id = "cardsPanel";
 		dashboard.appendChild(cardsPanel);
 
-		// Timecontrol
-		if(this.getDur().isTimecontrol()) {
+		// ------------------------------------------------
+		// Timecontrol 
+		// ------------------------------------------------
+		if (this.getDur().isTimecontrol()) {
 			let timecontrolCard = new AonCard();
 			timecontrolCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			timecontrolCard.id = CONSTANT.TIMECONTROL;
@@ -427,7 +431,7 @@ export class AonDesktop extends AonElement {
 			timecontrolCard.message = MSG.TIMECONTROL;
 			timecontrolCard.setApp(Apps.TIMECONTROL);
 			timecontrolCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.TIMECONTROL.app));
-			cardsPanel.appendChild(timecontrolCard);	
+			cardsPanel.appendChild(timecontrolCard);
 			timecontrolCard.getCardTitle1().style.cursor = 'pointer';
 
 			getTimeControl().then(r => {
@@ -437,7 +441,7 @@ export class AonDesktop extends AonElement {
 				staticsDiv.style.maxWidth = "25rem";
 				staticsDiv.style.margin = "0 auto";
 				staticsDiv.innerHTML = '',
-				staticsDiv.appendChild(new AonStatistics());
+					staticsDiv.appendChild(new AonStatistics());
 
 				let aonSign = new AonSign();
 
@@ -454,12 +458,88 @@ export class AonDesktop extends AonElement {
 			});
 
 		}
+
+		// ------------------------------------------------
+		// Fiscal
+		// ------------------------------------------------
+		if (this.getDur().isFiscalManager()) {
+			// Modelos
+			let fiscalCard = new AonCard();
+			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			fiscalCard.id = "fiscalCard";
+			fiscalCard.message = MSG.TAXES;
+			fiscalCard.setApp(Apps.FISCAL);
+			cardsPanel.appendChild(fiscalCard);
+			fiscalCard.getCardTitle1().style.cursor = 'pointer';
+
+			let aonModelMatrixCard = new AonModelMatrixCard();
+			fiscalCard.setContent(aonModelMatrixCard);
+
+			fiscalCard.firstChild.style.minHeight = "28rem";
+			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
+			fiscalCard.firstChild.style.margin = '0';
+
+		} else if (this.getDur().isFiscal()) {
+			// Impuestos
+			let fiscalCard = new AonCard();
+			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			fiscalCard.id = "fiscalCard";
+			fiscalCard.message = MSG.TAXES;
+			fiscalCard.setApp(Apps.FISCAL);
+			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
+				let fiscalFilter = await aonFiscalCard.getFilter();
+				this.appSelectionFilter(Apps.FISCAL.app, fiscalFilter);
+			});
+			cardsPanel.appendChild(fiscalCard);
+			fiscalCard.getCardTitle1().style.cursor = 'pointer';
+			fiscalCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardFiscalOption'> </aon-dialog-menu>");
+
+			let fiscalDefaultFilter = this.getFiscalFilter();
+			let aonFiscalCard = new AonFiscalCard(fiscalDefaultFilter);
+			fiscalCard.setContent(aonFiscalCard);
+
+			let spanPeriod = this.createElement(TAG.SPAN);
+			spanPeriod.style.fontSize = "1rem";
+			spanPeriod.style.color = "#d2d2d6";
+			spanPeriod.style.fontWeight = "500";
+			if (fiscalDefaultFilter) {
+				fiscalDefaultFilter.then(filter => spanPeriod.innerHTML = filter ? filter.title : '');
+			}
+			fiscalCard.addSection2(spanPeriod);
+
+			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal());
+			fiscalCard.firstChild.style.minHeight = "28rem";
+			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
+			fiscalCard.firstChild.style.margin = '0';
+
+			await this.filterFutureFiscal();
+		}
 		
-		if(this.getDur().isAccounting()) {
+		// ------------------------------------------------
+		// Accounting
+		// ------------------------------------------------
+		let aonJsfAccountingGraphCard ;
+		if (this.getDur().isAccountingManager()) {
+			let accountingGraphCard = new AonCard();
+			accountingGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			accountingGraphCard.id = "accountingGraphCard";
+			accountingGraphCard.message = ``;
+			accountingGraphCard.setApp(Apps.ACCOUNTING);
+			cardsPanel.appendChild(accountingGraphCard);
+			accountingGraphCard.getCardTitle1().style.cursor = 'pointer';
+
+			aonJsfAccountingGraphCard = new AonJsfAccountingGraph();
+			accountingGraphCard.setContent(aonJsfAccountingGraphCard);
+			
+			accountingGraphCard.firstChild.style.minHeight = "28rem";
+			accountingGraphCard.firstChild.children.item(1).style.height = "22.5rem";
+			accountingGraphCard.firstChild.style.margin = '0';
+			
+		} else if (this.getDur().isAccounting()) {
 			// PyG Card
 			let defaultYear = new Date().getFullYear();
 
-			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+			if (new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
 				defaultYear = defaultYear - 1;
 
 			let aonDashboardGraphicsTrial = new AonDashboardGraphicsTrial("yearly", defaultYear);
@@ -473,7 +553,7 @@ export class AonDesktop extends AonElement {
 			pygCard.setApp(Apps.ACCOUNTING);
 			cardsPanel.appendChild(pygCard);
 			pygCard.getCardTitle1().style.cursor = 'pointer';
-			pygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPyGOption'> </aon-dialog-menu>" );
+			pygCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardPyGOption'> </aon-dialog-menu>");
 
 			pygCard.setContent(aonDashboardGraphicsTrial);
 			pygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPyG(pygCard));
@@ -488,7 +568,98 @@ export class AonDesktop extends AonElement {
 			});
 		}
 		
-		if((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
+		// ------------------------------------------------
+		// Payroll
+		// ------------------------------------------------
+		if (this.getDur().isPayrollManager()) {
+			let contractGraphCard = new AonCard();
+			let payrollGraphCard = new AonCard();
+			payrollGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			payrollGraphCard.id = "payrollGraphCard";
+			payrollGraphCard.message = ``;
+			payrollGraphCard.setApp(Apps.PAYROLL);
+			cardsPanel.appendChild(payrollGraphCard);
+			payrollGraphCard.getCardTitle1().style.cursor = 'pointer';
+
+			let aonJsfPayrollGraphCard = new AonJsfPayrollGraph();
+			let aonJsfContractGraphCard = new AonJsfContractGraph();
+			
+			if ( aonJsfAccountingGraphCard ) {
+				aonJsfAccountingGraphCard.isLoaded().then( () => {
+					payrollGraphCard.setContent(aonJsfPayrollGraphCard);
+					aonJsfPayrollGraphCard.isLoaded().then( () => {
+						contractGraphCard.setContent(aonJsfContractGraphCard);
+					});
+				});
+			} else {
+				payrollGraphCard.setContent(aonJsfPayrollGraphCard);
+				aonJsfPayrollGraphCard.isLoaded().then( () => {
+					contractGraphCard.setContent(aonJsfContractGraphCard);
+				});
+			}
+			
+			payrollGraphCard.firstChild.style.minHeight = "28rem";
+			payrollGraphCard.firstChild.children.item(1).style.height = "22.5rem";
+			payrollGraphCard.firstChild.style.margin = '0';
+		
+			contractGraphCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			contractGraphCard.id = "contractGraphCard";
+			contractGraphCard.message = ``;
+			contractGraphCard.setApp(Apps.PAYROLL);
+			cardsPanel.appendChild(contractGraphCard);
+			contractGraphCard.getCardTitle1().style.cursor = 'pointer';
+			
+			contractGraphCard.firstChild.style.minHeight = "28rem";
+			contractGraphCard.firstChild.children.item(1).style.height = "22.5rem";
+			contractGraphCard.firstChild.style.margin = '0';
+
+			let payrollCard = new AonCard();
+			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			payrollCard.id = CONSTANT.PAYROLL;
+			// payrollCard.title = MSG.LABORAL_COSTS;
+			payrollCard.message = MSG.LABORAL_COSTS;
+			payrollCard.setApp(Apps.PAYROLL);
+			payrollCard.addEventListener(EVENT.CLICK_TITLE, () => {
+				this.appSelectionFilter(Apps.PAYROLL.app, this.getElement('aon-company-costs-card').getFilter());
+			});
+			cardsPanel.appendChild(payrollCard);
+			payrollCard.getCardTitle1().style.cursor = 'pointer';
+			payrollCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>");
+	
+			let lastMonthFilter = getPeriodLaboral("last_month");
+			lastMonthFilter.period = lastMonthFilter.value;
+	
+			let aonCompanyCostsCard = new AonCompanyCostsCard(lastMonthFilter);
+			payrollCard.setContent(aonCompanyCostsCard);
+			await paintCompanyCostPieChart();
+			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
+			payrollCard.firstChild.style.margin = '0';
+		}  else if (this.getDur().isPayroll()) {
+			// Nominas
+			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
+			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
+			payrollCard.id = "payroll";
+			payrollCard.message = MSG.PAYSHEETS;
+			payrollCard.setApp(Apps.PAYROLL);
+			payrollCard.addEventListener(EVENT.CLICK_TITLE, () => this.appSelection(Apps.PAYROLL.app));
+			cardsPanel.appendChild(payrollCard);
+			payrollCard.getCardTitle1().style.cursor = 'pointer';
+
+			let aonPayrollCard = new AonPayrollCard();
+			payrollCard.setContent(aonPayrollCard);
+
+			payrollCard.firstChild.style.minHeight = "28rem";
+			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
+			payrollCard.firstChild.style.margin = '0';
+		}
+		
+		
+		// ------------------------------------------------
+		// Usage Summary
+		// ------------------------------------------------
+		if ((this.getDur().isInvoice() || this.getDur().isAccounting()) && this.getDur().isTrial()) {
 			// Trial Card
 			let trialCard = new AonCard();
 			trialCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -509,11 +680,14 @@ export class AonDesktop extends AonElement {
 			});
 		}
 
-		if((this.getDur().isInvoice() || this.getDur().isAccounting())) {
+		// ------------------------------------------------
+		// Sales & Purchases ( only for users ¿ portal ?)
+		// ------------------------------------------------
+		if ((this.getDur().isInvoiceUser()) || (this.getDur().isAccountingUser())) {
 			// Ventas y Gastos Card
 			let defaultYear = new Date().getFullYear();
 
-			if(new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
+			if (new Date().getTime() < new Date(new Date().getFullYear(), 0, 31))
 				defaultYear = defaultYear - 1;
 
 			let aonDashboardSalesPurchases = new AonDashboardSalesPurchases("yearly", defaultYear);
@@ -527,7 +701,7 @@ export class AonDesktop extends AonElement {
 			vygCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
 			cardsPanel.appendChild(vygCard);
 			vygCard.getCardTitle1().style.cursor = 'pointer';
-			vygCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardVyGOption'> </aon-dialog-menu>" );
+			vygCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardVyGOption'> </aon-dialog-menu>");
 
 			vygCard.setContent(aonDashboardSalesPurchases);
 			vygCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterVyG(vygCard));
@@ -539,10 +713,8 @@ export class AonDesktop extends AonElement {
 			vygCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
 			});
-		}
 
-		if(this.getDur().isInvoice() || this.getDur().isAccounting()) {
-			// Cobros y Pagos Card
+			// Cobros y Pagos 
 			let cypCard = new AonCard();
 			cypCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			cypCard.id = "cyp";
@@ -550,65 +722,24 @@ export class AonDesktop extends AonElement {
 			cypCard.setApp(this.getDur().isInvoice() ? Apps.INVOICE : Apps.ACCOUNTING);
 			cardsPanel.appendChild(cypCard);
 			cypCard.getCardTitle1().style.cursor = 'pointer';
-			cypCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>" );
-
+			cypCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardCyPOption'> </aon-dialog-menu>");
+	
 			cypCard.setContent(new AonDashboardChargePayments("current_month"));
 			cypCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterCyP(cypCard));
 			cypCard.firstChild.style.marginLeft = '0';
 			cypCard.firstChild.style.minHeight = "28rem";
 			cypCard.firstChild.children.item(1).style.height = "22.5rem";
 			cypCard.firstChild.style.margin = '0';
-
+	
 			cypCard.addEventListener(EVENT.CLICK_TITLE, () => {
 				this.appSelection(this.getDur().isInvoice() ? Apps.INVOICE.app : Apps.ACCOUNTING.app);
 			});
 		}
 
-		if(this.getDur().isPayrollManager()) {
-			// LABORAL
-			let payrollCard = new AonCard();
-			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			payrollCard.id = CONSTANT.PAYROLL;
-			// payrollCard.title = MSG.LABORAL_COSTS;
-			payrollCard.message = MSG.LABORAL_COSTS;
-			payrollCard.setApp(Apps.PAYROLL);
-			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => {
-				this.appSelectionFilter(Apps.PAYROLL.app, this.getElement('aon-company-costs-card').getFilter());
-			});
-			cardsPanel.appendChild(payrollCard);
-			payrollCard.getCardTitle1().style.cursor = 'pointer';
-			payrollCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>" );
-			
-			let lastMonthFilter = getPeriodLaboral("last_month");
-			lastMonthFilter.period = lastMonthFilter.value;
-
-			let aonCompanyCostsCard = new AonCompanyCostsCard(lastMonthFilter);
-			payrollCard.setContent(aonCompanyCostsCard);
-			await paintCompanyCostPieChart();
-			payrollCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterPayrollStatics(payrollCard));
-			payrollCard.firstChild.style.minHeight = "28rem";
-			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
-			payrollCard.firstChild.style.margin = '0';
-		} else if(this.getDur().isPayroll()) {
-			// Nominas
-			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
-			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			payrollCard.id = "payroll";
-			payrollCard.message = MSG.PAYSHEETS;
-			payrollCard.setApp(Apps.PAYROLL);
-			payrollCard.addEventListener(EVENT.CLICK_TITLE ,() => this.appSelection(Apps.PAYROLL.app));
-			cardsPanel.appendChild(payrollCard);
-			payrollCard.getCardTitle1().style.cursor = 'pointer';
-
-			let aonPayrollCard = new AonPayrollCard();
-			payrollCard.setContent(aonPayrollCard);
-			
-			payrollCard.firstChild.style.minHeight = "28rem";
-			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
-			payrollCard.firstChild.style.margin = '0';
-		}
-
-		if(this.getDur().isBank()) {
+		// ------------------------------------------------
+		// Banks
+		// ------------------------------------------------
+		if (this.getDur().isBank()) {
 			// Bancos
 			let bankCard = new AonCard();
 			bankCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -624,52 +755,20 @@ export class AonDesktop extends AonElement {
 			});
 			cardsPanel.appendChild(bankCard);
 			bankCard.getCardTitle1().style.cursor = 'pointer';
-			
+
 			let aonBankCard = new AonBankCard(company.registry);
 			bankCard.setContent(aonBankCard);
-			
+
 			bankCard.firstChild.style.minHeight = "28rem";
 			bankCard.firstChild.children.item(1).style.height = "22.5rem";
 			bankCard.firstChild.style.margin = '0';
 		}
 
-		if(this.getDur().isFiscal()) {
-			// Impuestos
-			let fiscalCard = new AonCard();
-			fiscalCard.classList.add(CSS.AON_DASHBOARD_CARD);
-			fiscalCard.id = "fiscalCard";
-			fiscalCard.message = MSG.TAXES;
-			fiscalCard.setApp(Apps.FISCAL);
-			fiscalCard.addEventListener(EVENT.CLICK_TITLE, async () => {
-				let fiscalFilter = await aonFiscalCard.getFilter();
-				this.appSelectionFilter(Apps.FISCAL.app, fiscalFilter);
-			});
-			cardsPanel.appendChild(fiscalCard);
-			fiscalCard.getCardTitle1().style.cursor = 'pointer';
-			fiscalCard.insertAdjacentHTML( 'beforeend', "<aon-dialog-menu id='aonCardFiscalOption'> </aon-dialog-menu>" );
-    
-			let fiscalDefaultFilter = this.getFiscalFilter();
-			let aonFiscalCard = new AonFiscalCard(fiscalDefaultFilter);
-			fiscalCard.setContent(aonFiscalCard);
-			
-			let spanPeriod = this.createElement(TAG.SPAN);
-			spanPeriod.style.fontSize =  "1rem";
-			spanPeriod.style.color = "#d2d2d6";
-			spanPeriod.style.fontWeight = "500";
-			if(fiscalDefaultFilter){
-				fiscalDefaultFilter.then(filter => spanPeriod.innerHTML = filter ? filter.title : '');
-			}
-			fiscalCard.addSection2(spanPeriod);
-			
-			fiscalCard.addTitleButton(MSG.OPTIONS, MATERIAL_ICONS.MORE_VERT, false, () => this.filterFiscal());
-			fiscalCard.firstChild.style.minHeight = "28rem";
-			fiscalCard.firstChild.children.item(1).style.height = "22.5rem";
-			fiscalCard.firstChild.style.margin = '0';
 
-			await this.filterFutureFiscal();
-		}
-
-		if(this.getDur().isDocumental()) {
+		// ------------------------------------------------
+		// Documental
+		// ------------------------------------------------
+		if (this.getDur().isDocumentalUser()) {
 			// Documental
 			let documentalCard = new AonCard();
 			documentalCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -681,16 +780,20 @@ export class AonDesktop extends AonElement {
 			});
 			cardsPanel.appendChild(documentalCard);
 			documentalCard.getCardTitle1().style.cursor = 'pointer';
-			
+
 			let aonBankCard = new AonDocumentalCard();
 			documentalCard.setContent(aonBankCard);
-			
+
 			documentalCard.firstChild.style.minHeight = "28rem";
 			documentalCard.firstChild.children.item(1).style.height = "22.5rem";
 			documentalCard.firstChild.style.margin = '0';
 		}
 
-		if(this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
+		
+		// ------------------------------------------------
+		// Requests ( Issues )
+		// ------------------------------------------------
+		if (this.getDur().isMessengerManager() || this.getDur().isMessenger()) {
 			// Solicitudes
 			let messengerCard = new AonCard();
 			messengerCard.classList.add(CSS.AON_DASHBOARD_CARD);
@@ -704,7 +807,7 @@ export class AonDesktop extends AonElement {
 			let aonMessengerCard = new AonMessengerCard(() => this.appSelection(Apps.MESSENGER.app));
 
 			messengerCard.setContent(aonMessengerCard);
-			
+
 			let messages = await MessegerUtils.getMeseggers();
 			let messageBadge = MessegerUtils.getMessageBadge(messages.length);
 			messageBadge.addEventListener(EVENT.CLICK, () => this.appSelection(Apps.MESSENGER.app));
@@ -719,47 +822,47 @@ export class AonDesktop extends AonElement {
 		let data = {
 			additional_info: ['ADDRESSES']
 		};
-    
+
 		getCompanyOne(data).then(cp => {
-			if(!cp.addresses || cp.addresses.length === 0){
+			if (!cp.addresses || cp.addresses.length === 0) {
 				this.getApplication().confirmDialog(
 					"Dirección",
 					"No existe una direccion para esta empresa. Cumplimentelá antes de continuar.",
 					async () => {
-					  let aonHeader = this.getElement('aonHeader');
-					  aonHeader.aonConfiguration();
-			  
-					  waitEl(`ul[id*="aonConfigurationSidenavEMPRESAList"] li[id*="aonConfigurationSidenav"]`).then(liGeneralInfo =>{
-						liGeneralInfo.click();
-					  }); 
+						let aonHeader = this.getElement('aonHeader');
+						aonHeader.aonConfiguration();
+
+						waitEl(`ul[id*="aonConfigurationSidenavEMPRESAList"] li[id*="aonConfigurationSidenav"]`).then(liGeneralInfo => {
+							liGeneralInfo.click();
+						});
 					}
-				  );
+				);
 			}
 		});
 	}
 
-	async isElementLoaded(selector){
-		while ( document.querySelector(selector) === null) {
-		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+	async isElementLoaded(selector) {
+		while (document.querySelector(selector) === null) {
+			await new Promise(resolve => requestAnimationFrame(resolve))
 		}
 		return document.querySelector(selector);
 	};
 
-	async isElementLoaded(selector){
-		while ( document.querySelector(selector) === null) {
-		  await new Promise( resolve =>  requestAnimationFrame(resolve) )
+	async isElementLoaded(selector) {
+		while (document.querySelector(selector) === null) {
+			await new Promise(resolve => requestAnimationFrame(resolve))
 		}
 		return document.querySelector(selector);
-	  };
+	};
 
-	filterPyG(pygCard){
+	filterPyG(pygCard) {
 		let button = this.getElement('pygCardTitleSection2OpcionesButtonIconButton');
-		let top  = button.getBoundingClientRect().top;
+		let top = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let pyGYearSelect = this.getElement('pyGyearelect');
 		let period = JSON.parse(pyGYearSelect.value);
-        let pygyYear = period.name;
+		let pygyYear = period.name;
 
 		let aonDashboardGraphicsTrial = this.getElement('aonDashboardGraphicsTrial');
 
@@ -767,7 +870,7 @@ export class AonDesktop extends AonElement {
 
 		const anual = {
 			name: 'Vista Anual',
-			title:"Vista Anual",
+			title: "Vista Anual",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
 			fn: () => {
@@ -780,7 +883,7 @@ export class AonDesktop extends AonElement {
 
 		const trimestral = {
 			name: 'Vista Trimestral',
-			title:"Vista Trimestral",
+			title: "Vista Trimestral",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
 			fn: () => {
@@ -803,21 +906,21 @@ export class AonDesktop extends AonElement {
 				pygCard.setContent(aonDashboardGraphicsTrial);
 			}
 		};
-	
+
 		let options = [anual, trimestral, mensual];
-		
+
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
-	filterVyG(vygCard){
+	filterVyG(vygCard) {
 		let button = this.getElement('vygCardTitleSection2OpcionesButtonIconButton');
-		let top  = button.getBoundingClientRect().top;
+		let top = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let vyGYearSelect = this.getElement('vyGyearSelect');
 		let period = JSON.parse(vyGYearSelect.value);
-        let vygYear = period.name;
+		let vygYear = period.name;
 
 		let aonDashboardSalesPurchases = this.getElement('aonDashboardSalesPurchases');
 
@@ -825,7 +928,7 @@ export class AonDesktop extends AonElement {
 
 		const anual = {
 			name: 'Vista Anual',
-			title:"Vista Anual",
+			title: "Vista Anual",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
 			fn: () => {
@@ -838,7 +941,7 @@ export class AonDesktop extends AonElement {
 
 		const trimestral = {
 			name: 'Vista Trimestral',
-			title:"Vista Trimestral",
+			title: "Vista Trimestral",
 			icon: 'calendar_today',
 			backgroundColor: "#4472C4",
 			fn: () => {
@@ -861,16 +964,16 @@ export class AonDesktop extends AonElement {
 				vygCard.setContent(aonDashboardSalesPurchases);
 			}
 		};
-	
+
 		let options = [anual, trimestral, mensual];
-		
+
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
-	filterCyP(cypCard){
+	filterCyP(cypCard) {
 		let button = this.getElement('cypTitleSection2OpcionesButtonIconButton');
-		let top  = button.getBoundingClientRect().top;
+		let top = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let d = document.getElementById('aonCardCyPOption');
@@ -929,20 +1032,20 @@ export class AonDesktop extends AonElement {
 				cypCard.setContent(new AonDashboardChargePayments("yearly"));
 			}
 		};
-	
+
 		let options = [currentMonth, nextMonth, next3Month, next6Month, yearly];
-		
+
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
-	filterPayrollStatics(payrollCard){
+	filterPayrollStatics(payrollCard) {
 		let button = this.getElement('payrollTitleSection2OpcionesButtonIconButton');
-		let top  = button.getBoundingClientRect().top;
+		let top = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let d = document.getElementById('aonCardPayrollOption');
- 
+
 		let periods = getPeriodLaboral();
 		periods.pop();
 
@@ -950,87 +1053,85 @@ export class AonDesktop extends AonElement {
 			...option,
 			period: option.value,
 			fn: async () => {
-				payrollCard.setContent(new AonCompanyCostsCard({...option, period: option.value}));
+				payrollCard.setContent(new AonCompanyCostsCard({ ...option, period: option.value }));
 				await paintCompanyCostPieChart();
 			}
-		  }));
+		}));
 
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
 
-	async getFiscalFilter(){
+	async getFiscalFilter() {
 		let result = await this.getFilterModels();
-		if(!result || result.length == 0) return undefined;
+		if (!result || result.length == 0) return undefined;
 		let period = result[0];
-		return {year: period.year, period: period.period, title: period.periodText + " " + period.year};
+		return { year: period.year, period: period.period, title: period.periodText + " " + period.year };
 	}
 
-	async getFilterModels(){
+	async getFilterModels() {
 		const datos = await getModelsFiscal();
 		let orderDatos = [];
-        if (datos) {
-			orderDatos = sortBy(datos,'year','desc')
+		if (datos) {
+			orderDatos = sortBy(datos, 'year', 'desc')
 				.map((model) => FiscalUtils.getModelNew(model));
-        }
+		}
 
-		const result = orderDatos.filter(function (a) {
-		  var key = a.year + '|' + a.period;
-		  if (!this[key]) {
-			  this[key] = true;
-			  return true;
-		  }
+		const result = orderDatos.filter(function(a) {
+			var key = a.year + '|' + a.period;
+			if (!this[key]) {
+				this[key] = true;
+				return true;
+			}
 		}, Object.create(null));
 
-		result.sort(function (a, b) {
-		  var aSize = a.year;
-		  var bSize = b.year;
-		  var aLow = a.period;
-		  var bLow = b.period;
-	  
-		  if(aSize == bSize)
-		  {
-			  return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0;
-		  }
-		  else
-		  {
-			  return (aSize < bSize) ? -1 : 1;
-		  }
-		});
-	
-		return result.reverse();
-	  }
+		result.sort(function(a, b) {
+			var aSize = a.year;
+			var bSize = b.year;
+			var aLow = a.period;
+			var bLow = b.period;
 
-	filterFiscal(){
+			if (aSize == bSize) {
+				return (aLow < bLow) ? -1 : (aLow > bLow) ? 1 : 0;
+			}
+			else {
+				return (aSize < bSize) ? -1 : 1;
+			}
+		});
+
+		return result.reverse();
+	}
+
+	filterFiscal() {
 		let button = this.getElement('fiscalCardTitleSection2OpcionesButtonIconButton');
-		let top  = button.getBoundingClientRect().top;
+		let top = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
 
 		let d = document.getElementById('aonCardFiscalOption');
 
 		let aonFiscalCard = document.getElementById('aonFiscalCard');
 		let result = aonFiscalCard.getFilterModels;
-		
+
 		let options = [];
-		
-		if(!result || result.length === 0){
+
+		if (!result || result.length === 0) {
 			let period = this.getCurrentFiscalPeriod();
 			let year = new Date().getFullYear();
-			
+
 			// Borrador actual (para empresas nuevas o sin modelos existentes)
 			let periodCurrent;
 			let periodTextCurrent;
 			let yearCurrent;
-			
-			if(period == "T1") {
+
+			if (period == "T1") {
 				periodCurrent = "T1";
 				periodTextCurrent = "1º Trim.";
 				yearCurrent = year;
-			} else if(period == "T2") {
+			} else if (period == "T2") {
 				periodCurrent = "T2";
 				periodTextCurrent = "2º Trim.";
 				yearCurrent = year;
-			} else if(period == "T3") {
+			} else if (period == "T3") {
 				periodCurrent = "T3";
 				periodTextCurrent = "3º Trim.";
 				yearCurrent = year;
@@ -1039,13 +1140,13 @@ export class AonDesktop extends AonElement {
 				periodTextCurrent = "4º Trim.";
 				yearCurrent = year;
 			}
-			
+
 			let periodOptCurrent = {
 				name: periodTextCurrent + " " + yearCurrent + " (B)",
 				title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
 				icon: MATERIAL_ICONS.EVENT,
 				backgroundColor: "#4472C4",
-				fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
+				fn: () => aonFiscalCard.filterEstimationTable({ year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent })
 			};
 			options.push(periodOptCurrent);
 		} else {
@@ -1053,15 +1154,15 @@ export class AonDesktop extends AonElement {
 			let periodFuture;
 			let periodTextFuture;
 			let yearFuture;
-			if(result[0].period == "T1") {
+			if (result[0].period == "T1") {
 				periodFuture = "T2";
 				periodTextFuture = "2º Trim.";
 				yearFuture = result[0].year;
-			} else if(result[0].period == "T2") {
+			} else if (result[0].period == "T2") {
 				periodFuture = "T3";
 				periodTextFuture = "3º Trim.";
 				yearFuture = result[0].year;
-			} else if(result[0].period == "T3") {
+			} else if (result[0].period == "T3") {
 				periodFuture = "T4";
 				periodTextFuture = "4º Trim.";
 				yearFuture = result[0].year;
@@ -1075,24 +1176,24 @@ export class AonDesktop extends AonElement {
 				title: periodTextFuture + " " + yearFuture + " (Borrador)",
 				icon: MATERIAL_ICONS.EVENT,
 				backgroundColor: "#4472C4",
-				fn: () => aonFiscalCard.filterEstimationTable({year: yearFuture, period: periodFuture, title: "Borrador " + periodTextFuture + " " + yearFuture})
+				fn: () => aonFiscalCard.filterEstimationTable({ year: yearFuture, period: periodFuture, title: "Borrador " + periodTextFuture + " " + yearFuture })
 			};
 			options.push(periodOptFuture);
-	
+
 			// Borrador
 			let periodCurrent;
 			let periodTextCurrent;
 			let yearCurrent;
-			
-			if(result[0].period == "T1") {
+
+			if (result[0].period == "T1") {
 				periodCurrent = "T1";
 				periodTextCurrent = "1º Trim.";
 				yearCurrent = result[0].year;
-			} else if(result[0].period == "T2") {
+			} else if (result[0].period == "T2") {
 				periodCurrent = "T2";
 				periodTextCurrent = "2º Trim.";
 				yearCurrent = result[0].year;
-			} else if(result[0].period == "T3") {
+			} else if (result[0].period == "T3") {
 				periodCurrent = "T3";
 				periodTextCurrent = "3º Trim.";
 				yearCurrent = result[0].year;
@@ -1101,16 +1202,16 @@ export class AonDesktop extends AonElement {
 				periodTextCurrent = "4º Trim.";
 				yearCurrent = result[0].year;
 			}
-			
+
 			let periodOptCurrent = {
 				name: periodTextCurrent + " " + yearCurrent + " (B)",
 				title: periodTextCurrent + " " + yearCurrent + " (Borrador)",
 				icon: MATERIAL_ICONS.EVENT,
 				backgroundColor: "#4472C4",
-				fn: () => aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
+				fn: () => aonFiscalCard.filterEstimationTable({ year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent })
 			};
 			options.push(periodOptCurrent);
-	
+
 			// Filtros
 			for (let index = 0; index < 4; index++) {
 				const period = result[index];
@@ -1119,49 +1220,49 @@ export class AonDesktop extends AonElement {
 					title: period.periodText + " " + period.year,
 					icon: MATERIAL_ICONS.EVENT,
 					backgroundColor: "#4472C4",
-					fn: () => aonFiscalCard.filterTable({year: period.year, period: period.period, title: period.periodText + " " + period.year})
+					fn: () => aonFiscalCard.filterTable({ year: period.year, period: period.period, title: period.periodText + " " + period.year })
 				};
 				options.push(periodOpt);
-			}	
+			}
 		}
-		
+
 		d.setMenuOptions(options, top, left);
 		d.open();
 	}
-	
-	getCurrentFiscalPeriod(){
+
+	getCurrentFiscalPeriod() {
 		const fecha = new Date();
 		const mes = fecha.getMonth(); // getMonth() devuelve un número entre 0 (enero) y 11 (diciembre)
-    
-	    if (mes >= 0 && mes <= 2) return "T1";  // Enero - Marzo
-	    if (mes >= 3 && mes <= 5) return "T2";  // Abril - Junio
-	    if (mes >= 6 && mes <= 8) return "T3";  // Julio - Septiembre
-	    return "T4"; // Octubre - Diciembre
+
+		if (mes >= 0 && mes <= 2) return "T1";  // Enero - Marzo
+		if (mes >= 3 && mes <= 5) return "T2";  // Abril - Junio
+		if (mes >= 6 && mes <= 8) return "T3";  // Julio - Septiembre
+		return "T4"; // Octubre - Diciembre
 	}
 
-	async filterFutureFiscal(){
+	async filterFutureFiscal() {
 		let aonFiscalCard = document.getElementById('aonFiscalCard');
 		let result = await this.getFilterModels();
 
 		// Borrador actual (para empresas nuevas o sin modelos existentes)
-		if(!result || result.length === 0) {
-			
+		if (!result || result.length === 0) {
+
 			let period = this.getCurrentFiscalPeriod();
 			let year = new Date().getFullYear();
-			
+
 			let periodCurrent;
 			let periodTextCurrent;
 			let yearCurrent;
-			
-			if(period == "T1") {
+
+			if (period == "T1") {
 				periodCurrent = "T1";
 				periodTextCurrent = "1º Trim.";
 				yearCurrent = year;
-			} else if(period == "T2") {
+			} else if (period == "T2") {
 				periodCurrent = "T2";
 				periodTextCurrent = "2º Trim.";
 				yearCurrent = year;
-			} else if(period == "T3") {
+			} else if (period == "T3") {
 				periodCurrent = "T3";
 				periodTextCurrent = "3º Trim.";
 				yearCurrent = year;
@@ -1170,28 +1271,28 @@ export class AonDesktop extends AonElement {
 				periodTextCurrent = "4º Trim.";
 				yearCurrent = year;
 			}
-			
+
 			setTimeout(() => {
-					aonFiscalCard.filterEstimationTable({year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent})
+				aonFiscalCard.filterEstimationTable({ year: yearCurrent, period: periodCurrent, title: "Borrador " + periodTextCurrent + " " + yearCurrent })
 			}, 500);
-			
+
 		} else {
 			let lastPeriod;
 			let period;
 			let periodText;
 			let year;
-	
-			if(result[0].period == "T1") {
+
+			if (result[0].period == "T1") {
 				period = "T2";
 				periodText = "2º Trim.";
 				year = result[0].year;
 				lastPeriod = new Date(result[0].year + "-" + "03-31");
-			} else if(result[0].period == "T2") {
+			} else if (result[0].period == "T2") {
 				period = "T3";
 				periodText = "3º Trim.";
 				year = result[0].year;
 				lastPeriod = new Date(result[0].year + "-" + "06-30");
-			} else if(result[0].period == "T3") {
+			} else if (result[0].period == "T3") {
 				period = "T4";
 				periodText = "4º Trim.";
 				year = result[0].year;
@@ -1202,18 +1303,18 @@ export class AonDesktop extends AonElement {
 				year = result[0].year + 1;
 				lastPeriod = new Date(result[0].year + "-" + "12-31");
 			}
-	
+
 			const dayDiff = Math.floor((new Date() - lastPeriod) / (1000 * 60 * 60 * 24));
-	
-			if(dayDiff > 30){
+
+			if (dayDiff > 30) {
 				setTimeout(() => {
-					aonFiscalCard.filterEstimationTable({year: year, period: period, title: "Borrador " + periodText})
+					aonFiscalCard.filterEstimationTable({ year: year, period: period, title: "Borrador " + periodText })
 				}, 500);
-			}	
+			}
 		}
 	}
 
-	createAppList(parent, company){
+	createAppList(parent, company) {
 		// Clear parent
 		while (parent.lastElementChild) {
 			parent.removeChild(parent.lastElementChild);
@@ -1227,14 +1328,14 @@ export class AonDesktop extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.classList.add(CSS.AON_LIST_GROUP);
 
-		if(company.parentId || company.type !== 'CONSULTANCY'){
-			
-			for (let key in Apps){
+		if (company.parentId || company.type !== 'CONSULTANCY') {
+
+			for (let key in Apps) {
 				const app = Apps[key];
-				if(this.isApp(app)) {
-					if(Apps.MESSENGER.app === app.app){
-						getTaskHolder({reload:true}).then(({id})=>{
-							if(id) 
+				if (this.isApp(app)) {
+					if (Apps.MESSENGER.app === app.app) {
+						getTaskHolder({ reload: true }).then(({ id }) => {
+							if (id)
 								this.addApp(app, ul);
 						});
 					} else {
@@ -1242,12 +1343,12 @@ export class AonDesktop extends AonElement {
 					}
 				}
 			}
-	
+
 			this.openFirstApp(this.getDur());
 		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			if(!LS.isNewTheme()) {
+			if (!LS.isNewTheme()) {
 				li.classList.add(CSS.AON_APP_LI);
 			}
 			li.style.borderRight = '0px';
@@ -1256,7 +1357,7 @@ export class AonDesktop extends AonElement {
 			li.addEventListener(EVENT.CLICK, () => {
 				this.rootPanelHtml('<aon-configuration></aon-configuration>');
 			});
-			
+
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
@@ -1283,12 +1384,12 @@ export class AonDesktop extends AonElement {
 		appsList.appendChild(ul);
 	}
 
-	openFirstApp(dur){
-		const appsOpen = getAppsByDur(dur).filter(app=>  ![Apps.NOTES.app, Apps.TIMECONTROL.app,  Apps.MESSENGER.app].includes(app.app));
+	openFirstApp(dur) {
+		const appsOpen = getAppsByDur(dur).filter(app => ![Apps.NOTES.app, Apps.TIMECONTROL.app, Apps.MESSENGER.app].includes(app.app));
 
-		if(appsOpen && appsOpen.length===1){
+		if (appsOpen && appsOpen.length === 1) {
 			let app = appsOpen[0];
-			if( app.app === Apps.AON_SALTRA.app ){
+			if (app.app === Apps.AON_SALTRA.app) {
 				this.rootPanel(new AonSaltra())
 				this.appOption = false;
 			}
@@ -1303,14 +1404,14 @@ export class AonDesktop extends AonElement {
 		div.innerHTML = title;
 		return div;
 	}
-	
-	addApp(app, ul){
-		if(this.isApp(app)) {
-		 	let li = this.createElement(TAG.LI);
+
+	addApp(app, ul) {
+		if (this.isApp(app)) {
+			let li = this.createElement(TAG.LI);
 			ul.appendChild(li)
 			li.id = this.AON_DESKTOP + app.app.initCap();
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
-			if(!LS.isNewTheme()) {
+			if (!LS.isNewTheme()) {
 				li.classList.add(CSS.AON_APP_LI);
 			}
 			li.style.borderRight = '0px';
@@ -1321,7 +1422,7 @@ export class AonDesktop extends AonElement {
 				this.appSelection(app.app);
 				this.appOption = false
 			});
-			if(LS.isNewTheme()) {
+			if (LS.isNewTheme()) {
 
 				li.addEventListener(EVENT.MOUSEOVER, () => {
 					li.style.backgroundColor = app.backgroundColor || '#eaf1fb';
@@ -1335,7 +1436,7 @@ export class AonDesktop extends AonElement {
 			let span = this.createElement(TAG.SPAN);
 			span.style.margin = '20px';
 
-			if(app.icon) {
+			if (app.icon) {
 				span.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
 			} else {
 				let img = this.createElement(TAG.IMG);
@@ -1354,7 +1455,7 @@ export class AonDesktop extends AonElement {
 			buttons.style.right = '10px';
 			buttons.style.top = '8px';
 
-			if(app.options && app.options.stat) {
+			if (app.options && app.options.stat) {
 				let stat = new AonIconButton();
 				stat.id = li.id + 'Stat';
 				stat.icon = "bar_chart";
@@ -1367,7 +1468,7 @@ export class AonDesktop extends AonElement {
 				buttons.appendChild(stat);
 			}
 
-			if(app.options && app.options.upload && this.hasUploadRole(app)) {
+			if (app.options && app.options.upload && this.hasUploadRole(app)) {
 				let upload = new AonIconButton();
 				upload.id = li.id + 'Upload';
 				upload.icon = "file_upload";
@@ -1380,7 +1481,7 @@ export class AonDesktop extends AonElement {
 				buttons.appendChild(upload);
 			}
 
-			if(app.options && app.options.add) {
+			if (app.options && app.options.add) {
 				let add = new AonIconButton();
 				add.id = li.id + 'Add';
 				add.icon = "add";
@@ -1400,14 +1501,14 @@ export class AonDesktop extends AonElement {
 				&& this.isOpenMenu(app)
 				? "menu_open" : "keyboard_arrow_right";
 
-			
+
 			menu.title = app.options && app.options.menu
 				&& this.isOpenMenu(app)
 				? MSG.OPEN_MENU : MSG.OPEN;
-			
+
 			menu.addEventListener(EVENT.CLICK, (event) => {
-				if(app.options && app.options.menu
-					&& this.isOpenMenu(app)){
+				if (app.options && app.options.menu
+					&& this.isOpenMenu(app)) {
 					this.appOption = true;
 					event.preventDefault();
 					this.menuOption(app);
@@ -1424,49 +1525,49 @@ export class AonDesktop extends AonElement {
 					console.log(EVENT.DRAGOVER);
 					li.classList.add('dragAndDrop');
 				});
-			
+
 				li.addEventListener(EVENT.DRAGENTER, (event) => {
-				  event.preventDefault();
-				  li.classList.add('dragAndDrop');
+					event.preventDefault();
+					li.classList.add('dragAndDrop');
 				});
-			
+
 				li.addEventListener(EVENT.MOUSELEAVE, () => {
 					li.classList.remove('dragAndDrop');
 				});
-			
+
 				li.addEventListener(EVENT.MOUSEOVER, () => {
-					li.classList.remove('dragAndDrop');	
-				});
-			
-				document.addEventListener(EVENT.DRAGLEAVE, (event) => {
-				  event.preventDefault();
-				  let isClickInside = li.contains(event.target) || li === event.target;
-				  if (!isClickInside) {
 					li.classList.remove('dragAndDrop');
-				  }
 				});
-			
+
+				document.addEventListener(EVENT.DRAGLEAVE, (event) => {
+					event.preventDefault();
+					let isClickInside = li.contains(event.target) || li === event.target;
+					if (!isClickInside) {
+						li.classList.remove('dragAndDrop');
+					}
+				});
+
 				li.addEventListener(EVENT.DROP, (event) => {
-					  event.preventDefault();
-					  console.log(EVENT.DROP);
-					  li.style.borderRight = "0px";
-					  li.style.borderLeft = "0px";
-					  li.style.borderTop = "0px";
-					  li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
-					  li.style.opacity = "1";
-					  if(event && event.dataTransfer && event.dataTransfer.files){
+					event.preventDefault();
+					console.log(EVENT.DROP);
+					li.style.borderRight = "0px";
+					li.style.borderLeft = "0px";
+					li.style.borderTop = "0px";
+					li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
+					li.style.opacity = "1";
+					if (event && event.dataTransfer && event.dataTransfer.files) {
 						let files = event.dataTransfer.files;
 
-						switch(app.app){
-						case Apps.DOCUMENTAL.app:
-							let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-							// uploadDocuments(inputDocumentFile, files, this.getDur());
-							this.uploadDocumentsDesktop(undefined, files);
-							break;
-						case Apps.INVOICE.app:
-							let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
-							this.uploadInvoiceDesktop(undefined, files);
-							break;								
+						switch (app.app) {
+							case Apps.DOCUMENTAL.app:
+								let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+								// uploadDocuments(inputDocumentFile, files, this.getDur());
+								this.uploadDocumentsDesktop(undefined, files);
+								break;
+							case Apps.INVOICE.app:
+								let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+								this.uploadInvoiceDesktop(undefined, files);
+								break;
 						}
 					}
 				});
@@ -1475,11 +1576,11 @@ export class AonDesktop extends AonElement {
 	}
 
 	appSelection(app) {
-		if(!this.appOption)
-			switch(app){
+		if (!this.appOption)
+			switch (app) {
 				case Apps.DOCUMENTAL.app:
-                    this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
-                    break;
+					this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
+					break;
 				case Apps.ACCOUNTING.app:
 					this.rootPanel(new AonAccounting());
 					break;
@@ -1519,8 +1620,8 @@ export class AonDesktop extends AonElement {
 					break;
 				case ClassicApps.BIDOQ.app:
 					getAccessBidoq().then(r => {
-						const {datos} = r;
-						if(datos && datos.ruta) {
+						const { datos } = r;
+						if (datos && datos.ruta) {
 							open(datos.respuesta);
 						} else {
 							open('https://mispapeles.es/');
@@ -1534,8 +1635,8 @@ export class AonDesktop extends AonElement {
 	}
 
 	appSelectionFilter(app, filter) {
-		if(!this.appOption)
-			switch(app){
+		if (!this.appOption)
+			switch (app) {
 				case Apps.ACCOUNTING.app:
 					this.rootPanel(new AonAccounting(filter));
 					break;
@@ -1556,83 +1657,83 @@ export class AonDesktop extends AonElement {
 	}
 
 	isApp(app) {
-		if(Apps.ACCOUNTING.app === app.app)
+		if (Apps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccounting();
-		else if(Apps.FISCAL.app === app.app)
+		else if (Apps.FISCAL.app === app.app)
 			return this.getDur().isFiscal();
-		else if(Apps.COMUNICA.app === app.app)
-			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal() ) && !this.getDur().isPayroll();
-		else if(Apps.PAYROLL.app === app.app)
+		else if (Apps.COMUNICA.app === app.app)
+			return (this.getDur().isComunicaManager() || this.getDur().isComunicaPortal()) && !this.getDur().isPayroll();
+		else if (Apps.PAYROLL.app === app.app)
 			return this.getDur().isPayroll();
-		else if(Apps.DOCUMENTAL.app === app.app)
+		else if (Apps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
-		else if(Apps.TIMECONTROL.app === app.app)
+		else if (Apps.TIMECONTROL.app === app.app)
 			return this.getDur().isTimecontrol();
-		else if(Apps.INVOICE.app === app.app)
+		else if (Apps.INVOICE.app === app.app)
 			return this.getDur().isInvoice();
-		else if(Apps.MESSENGER.app === app.app)
+		else if (Apps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(Apps.AON_SALTRA.app === app.app)
+		else if (Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
-		else if(Apps.WAREHOUSE.app === app.app){
+		else if (Apps.WAREHOUSE.app === app.app) {
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
-		}else if(Apps.MARKETING.app === app.app){
+		} else if (Apps.MARKETING.app === app.app) {
 			return this.getDur().isMarketing() && this.isBeta();
-		} else if(ClassicApps.AON_SOLUTIONS.app === app.app){
-			return this.getDur().isAon();	
-		} else if(ClassicApps.BIDOQ.app === app.app){
-			return this.getDur().isBidoq();	
-		} else if(ClassicApps.SELFCONTA.app === app.app){
-			return this.getDur().isSelfconta();	
+		} else if (ClassicApps.AON_SOLUTIONS.app === app.app) {
+			return this.getDur().isAon();
+		} else if (ClassicApps.BIDOQ.app === app.app) {
+			return this.getDur().isBidoq();
+		} else if (ClassicApps.SELFCONTA.app === app.app) {
+			return this.getDur().isSelfconta();
 		} else return false;
 	}
 
 	isOpenMenu(app) {
-		if(Apps.ACCOUNTING.app === app.app)
+		if (Apps.ACCOUNTING.app === app.app)
 			return this.getDur().isAccountingManager();
-		else if(Apps.FISCAL.app === app.app)
+		else if (Apps.FISCAL.app === app.app)
 			return this.getDur().isFiscalManager();
-		else if(Apps.PAYROLL.app === app.app)
+		else if (Apps.PAYROLL.app === app.app)
 			return this.getDur().isPayrollManager();
 		else return false;
 	}
 
-	async getSidenavActivity(){
+	async getSidenavActivity() {
 		let application = this.getApplication();
 
 		application.addSidenavOptions3({
 			id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-			name:MSG.ACTIVITY_SUMMARY.toUpperCase(),
+			name: MSG.ACTIVITY_SUMMARY.toUpperCase(),
 			options: []
 		});
 
-		if(this.getDur().isInvoice()) {
+		if (this.getDur().isInvoice()) {
 			await this.invoiceSidenav();
 		}
 		await this.requestSidenav();
 		await this.noteSidenav();
-		
-		if(this.SIDENAV_ACTIVITY_SUMMARY.length){
+
+		if (this.SIDENAV_ACTIVITY_SUMMARY.length) {
 			application.addSidenavOptionsList({
 				id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-				name:MSG.ACTIVITY_SUMMARY.toUpperCase()
+				name: MSG.ACTIVITY_SUMMARY.toUpperCase()
 			}, this.SIDENAV_ACTIVITY_SUMMARY);
 		} else {
 			application.removeSidenavById(MSG.ACTIVITY_SUMMARY.toUpperCase());
 		}
 	}
 
-	async invoiceSidenav(){
+	async invoiceSidenav() {
 		try {
 			const notice = await getDomainNotice();
-	
+
 			let inboxCount = 0;
 			let rejectedCount = 0;
-			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+			if (notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
 				inboxCount = notice.invoice.inbox.count;
 			}
-			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+			if (notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
 				rejectedCount = notice.invoice.rejected.count;
 			}
 
@@ -1660,30 +1761,30 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
-	async requestSidenav(){
+	async requestSidenav() {
 		try {
-			const {id:task_holder} = await getTaskHolder();
-			if(task_holder){
-				const count = await getTaskCount({task_holder});
-				if(count.task_holder) this.SIDENAV_ACTIVITY_SUMMARY.push({
+			const { id: task_holder } = await getTaskHolder();
+			if (task_holder) {
+				const count = await getTaskCount({ task_holder });
+				if (count.task_holder) this.SIDENAV_ACTIVITY_SUMMARY.push({
 					name: MSG.REQUESTS_RECEIVED,
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
-					count:count.task_holder,
-					fn: () =>{
+					count: count.task_holder,
+					fn: () => {
 						let aonMessenger = new AonMessenger();
 						aonMessenger._filter.task_holder = task_holder;
 						this.rootPanel(aonMessenger);
 					}
 				});
-				if(count.sender) this.SIDENAV_ACTIVITY_SUMMARY.push({
+				if (count.sender) this.SIDENAV_ACTIVITY_SUMMARY.push({
 					name: MSG.REQUESTS_SENT,
 					icon: MATERIAL_ICONS.OUTBOX,
-					count:count.sender,
-					fn: () =>{
+					count: count.sender,
+					fn: () => {
 						let aonMessenger = new AonMessenger();
 						aonMessenger._filter.sender = task_holder;
 						this.rootPanel(aonMessenger);
-					} 
+					}
 				});
 			}
 		} catch (error) {
@@ -1691,15 +1792,15 @@ export class AonDesktop extends AonElement {
 		}
 	}
 
-	async noteSidenav(){
+	async noteSidenav() {
 		try {
-			const {total, total_expired} = await getNoteCount();
-			if(total>0){
+			const { total, total_expired } = await getNoteCount();
+			if (total > 0) {
 				this.SIDENAV_ACTIVITY_SUMMARY.push({
 					name: MSG.NOTES,
-					icon: MATERIAL_ICONS.STICKY_NOTE ,
-					count:`${total_expired}/${total}`,
-					fn: () =>{}
+					icon: MATERIAL_ICONS.STICKY_NOTE,
+					count: `${total_expired}/${total}`,
+					fn: () => { }
 				});
 			}
 		} catch (error) {
@@ -1708,7 +1809,7 @@ export class AonDesktop extends AonElement {
 	}
 
 	statOption(app) {
-		switch(app){
+		switch (app) {
 			case Apps.DOCUMENTAL.app:
 				break;
 			case Apps.ACCOUNTING.app:
@@ -1729,14 +1830,14 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
-				if(this.isBeta())
+				if (this.isBeta())
 					GWT.iLoad(GWT.TASK_STAT);
 				break;
-			}
+		}
 	}
 
 	addOption(app, button) {
-		switch(app){
+		switch (app) {
 			case Apps.DOCUMENTAL.app:
 				this.getElement(this.INPUT_DOCUMENT_FILE).click();
 				break;
@@ -1754,20 +1855,20 @@ export class AonDesktop extends AonElement {
 			case Apps.TIMECONTROL.app:
 				break;
 			case Apps.MESSENGER.app:
-				let aonMessengerChat = new AonMessenger();	
-				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+				let aonMessengerChat = new AonMessenger();
+				aonMessengerChat.data = { source: TASK_SOURCE.QUERY };
 				this.rootPanel(aonMessengerChat);
 				break;
-			}
+		}
 	}
 
 	menuOption(app) {
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.buildAppMenu(app);
 	}
-	
+
 	uploadOption(app) {
-		switch(app){
+		switch (app) {
 			case Apps.DOCUMENTAL.app:
 				this.getElement(this.INPUT_DOCUMENT_FILE).click();
 				break;
@@ -1786,18 +1887,18 @@ export class AonDesktop extends AonElement {
 				break;
 			case Apps.MESSENGER.app:
 				break;
-			}
+		}
 	}
 
 	addNewOptions(e) {
 		let rect = e.target.getBoundingClientRect();
-    	let x = e.clientX - rect.left;
+		let x = e.clientX - rect.left;
 		let y = e.clientY - rect.top;
 
-		const top  = rect.top + y;
-	  	const left = rect.left + x + 180;
+		const top = rect.top + y;
+		const left = rect.left + x + 180;
 
-    	let d = this.getElement(this.getApplication().OPTION_DIALOG);
+		let d = this.getElement(this.getApplication().OPTION_DIALOG);
 
 		const NEW_INVOICE = {
 			id: 'invoice',
@@ -1817,27 +1918,27 @@ export class AonDesktop extends AonElement {
 			id: 'messenger',
 			name: MSG.NEW_REQUEST,
 			icon: 'message',
-			fn: () => {this.development(MSG.NEW_REQUEST);}
+			fn: () => { this.development(MSG.NEW_REQUEST); }
 		};
 
-	  	let actions = [NEW_INVOICE, NEW_DOCUMENT, NEW_MESSENGER];
-	  
-	  	d.setMenuOptions(actions, top, left);
-	  	d.open();
+		let actions = [NEW_INVOICE, NEW_DOCUMENT, NEW_MESSENGER];
+
+		d.setMenuOptions(actions, top, left);
+		d.open();
 	}
 
-	addInvoice(button, dashboard) {		
-		let invoicePanel = new AonInvoicePanel();	
+	addInvoice(button, dashboard) {
+		let invoicePanel = new AonInvoicePanel();
 		let top;
 		let left;
-		if(dashboard){
-			top  = button.getBoundingClientRect().top + 55;
+		if (dashboard) {
+			top = button.getBoundingClientRect().top + 55;
 			left = button.getBoundingClientRect().right + 7;
 		} else {
-			top  = button.getBoundingClientRect().top;
+			top = button.getBoundingClientRect().top;
 			left = button.getBoundingClientRect().left;
 		}
-		
+
 		let d = this.getApplication().getOptionDialog();
 		let options = [{
 			name: 'Emitidas',
@@ -1866,12 +1967,12 @@ export class AonDesktop extends AonElement {
 	}
 
 	hasUploadRole(app) {
-		if(app.app === Apps.DOCUMENTAL.app){
+		if (app.app === Apps.DOCUMENTAL.app) {
 			return this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager();
 		} else return true;
 	}
 }
 
-if(!window.customElements.get('aon-desktop')){
+if (!window.customElements.get('aon-desktop')) {
 	window.customElements.define('aon-desktop', AonDesktop);
 }
