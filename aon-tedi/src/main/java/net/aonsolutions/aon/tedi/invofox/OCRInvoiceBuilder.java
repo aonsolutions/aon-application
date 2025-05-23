@@ -620,7 +620,7 @@ public class OCRInvoiceBuilder {
 			vat.setSurcharge(AonNumberUtils.zeroIfNull(rePercentage));
 			vat.setSurchargeQuota(AonNumberUtils.zeroIfNull(reQuota));
 			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota) + AonNumberUtils.zeroIfNull(reQuota));			
-			detail.addInvoiceTax(vat);
+			detail.addTax(vat);
 		}
 	}
 
