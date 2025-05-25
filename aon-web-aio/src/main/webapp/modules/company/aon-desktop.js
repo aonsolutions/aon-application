@@ -613,6 +613,7 @@ export class AonDesktop extends AonElement {
 			contractGraphCard.firstChild.children.item(1).style.height = "22.5rem";
 			contractGraphCard.firstChild.style.margin = '0';
 
+		} else if ( this.getDur().isPayrollManager() ){
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;
@@ -625,10 +626,10 @@ export class AonDesktop extends AonElement {
 			cardsPanel.appendChild(payrollCard);
 			payrollCard.getCardTitle1().style.cursor = 'pointer';
 			payrollCard.insertAdjacentHTML('beforeend', "<aon-dialog-menu id='aonCardPayrollOption'> </aon-dialog-menu>");
-	
+
 			let lastMonthFilter = getPeriodLaboral("last_month");
 			lastMonthFilter.period = lastMonthFilter.value;
-	
+
 			let aonCompanyCostsCard = new AonCompanyCostsCard(lastMonthFilter);
 			payrollCard.setContent(aonCompanyCostsCard);
 			await paintCompanyCostPieChart();
@@ -636,7 +637,7 @@ export class AonDesktop extends AonElement {
 			payrollCard.firstChild.style.minHeight = "28rem";
 			payrollCard.firstChild.children.item(1).style.height = "22.5rem";
 			payrollCard.firstChild.style.margin = '0';
-		}  else if (this.getDur().isPayroll()) {
+		} else if (this.getDur().isPayroll()) {
 			// Nominas
 			let payrollCard = new AonCard(() => this.appSelection(Apps.PAYROLL.app));
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
