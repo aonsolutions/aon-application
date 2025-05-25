@@ -116,10 +116,10 @@ public class JsfAppServlet extends HttpServlet {
 			}
 
 			Session session = request.getSessionInternal();
-            Manager manager = request.getContext().getManager();
-            String sessionId  = manager.getSessionIdGenerator().generateSessionId();
-            manager.changeSessionId(session, sessionId );
-            request.changeSessionId(session.getId());
+            //Manager manager = request.getContext().getManager();
+            //String sessionId  = manager.getSessionIdGenerator().generateSessionId();
+            //manager.changeSessionId(session, sessionId );
+            //request.changeSessionId(session.getId());
 			Principal principal = session.getPrincipal();
 			
 			if ( principal == null ) {
