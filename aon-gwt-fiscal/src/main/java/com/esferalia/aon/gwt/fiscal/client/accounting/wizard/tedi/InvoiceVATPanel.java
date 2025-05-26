@@ -291,7 +291,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 			@Override
 			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
-				return true;
+				return isAccountingSource( callback, vatIdx );
 			}
 		},
 		PREPAYMENT {
@@ -320,7 +320,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 				return true;
 			}
 		},
-		EMPTY {
+		REMOVE {
 			@Override
 			String width() {
 				return "auto";
@@ -343,7 +343,7 @@ public class InvoiceVATPanel extends FlowPanel implements HasValueChangeHandlers
 
 			@Override
 			boolean isEnabled(IEditableInvoicePanelCallback callback, int vatIdx) {
-				return true;
+				return isAccountingSource( callback, vatIdx );
 			}
 		};
 

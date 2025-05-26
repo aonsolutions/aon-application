@@ -404,8 +404,8 @@ public class InvoiceDAO {
 
 	public static Stream<InvoiceDetail> getInvoiceDetails(AONContext ctx, InvoiceFilter filter) {
 		return getFullInvoices(ctx, filter)
-			.stream()
-			.map(new FullInvoiceDetailFiller());
+				.stream()
+				.map(new FullInvoiceDetailFiller());
 	}
 
 	public static Stream<InvoiceDetailExtended> getInvoiceDetailsExtended(AONContext ctx, InvoiceFilter filter, IDAOCallback callback) {

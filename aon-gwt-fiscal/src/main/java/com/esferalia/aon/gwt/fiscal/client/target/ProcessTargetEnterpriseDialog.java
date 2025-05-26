@@ -12,7 +12,9 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -39,6 +41,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -87,11 +90,13 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 		getSupportSellers(supportSellersIt -> {
 			getParentDomain(parentDomainIt -> {
 				checkCustomer(customer -> {
-					initView();
+					// Customer do not exist
+					if(!(null != customer && null != customer.getId())) {
+						initView();
 
-					center();
-					show();
-					
+						center();
+						show();
+					}
 				});
 			});
 		});
@@ -159,7 +164,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 			AonCustomTextBox streetType = new AonCustomTextBox("T. Via");
 			streetType.setWidth("4rem");
 			streetType.setEnable(false);
-			streetType.setValue(customerAddress.get().getStreetType().getAeatCode());
+			streetType.setValue(null == customerAddress.get().getStreetType() ? "" : customerAddress.get().getStreetType().getAeatCode());
 
 			AonCustomTextBox address = new AonCustomTextBox("Direcci\u00f3n");
 			address.setEnable(false);
@@ -322,7 +327,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 			body.put("name", new JSONString(target.getRegistry().getName()));
 			body.put("document", new JSONString(target.getRegistry().getDocument()));
 
-			body.put("streetType", new JSONString(targetAddress.get().getStreetType().getAeatCode()));
+			body.put("streetType", new JSONString(null == targetAddress.get().getStreetType() ? "" : targetAddress.get().getStreetType().getAeatCode()));
 			body.put("address", new JSONString(targetAddress.get().getAddress()));
 			body.put("number", new JSONString(targetAddress.get().getNumber()));
 			body.put("zip", new JSONString(targetAddress.get().getZip()));
@@ -434,6 +439,8 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 	}
 	
 	// Check if exist a current user by document for duplicate target
+	private String htmlMessage = null;
+	
 	private void checkCustomer(Consumer<Customer> success) {
 		COMMON_SERVICE.getCustomerByDocument(params.getDomainName(), params.getDomain(), params.getUser(), target.getRegistry().getDocument(),
 				new AsyncCallback<Customer>() {
@@ -441,24 +448,47 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 			@Override
 			public void onSuccess(Customer customer) {
 				if(null != customer && null != customer.getId()) {
-					AonMessagePanel.showWarning(messagePanel,
-							"Existe un cliente con este documento, se va a proceder a usar este cliente para la creaci\u00f3n de la empresa");
+					htmlMessage = "Existe un cliente, asociado a otro cliente potencial, con este documento.";
 					
-					COMMON_SERVICE.getTargetFull(params.getDomainName(), params.getDomain(), params.getUser(), customer.getId(),
-							new AsyncCallback<TargetFull>() {
+					COMMON_SERVICE.getCompanyByDocument(params.getDomainName(), params.getDomain(), params.getUser(), target.getRegistry().getDocument(),
+							new AsyncCallback<Company>() {
 
-						@Override
-						public void onSuccess(TargetFull targetFullDb) {
-							target = targetFullDb;
-							success.accept(customer);
-						}
+								@Override
+								public void onFailure(Throwable arg0) {
+									// TODO Auto-generated method stub
+									
+								}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel,
-									"Cliente existente, error targetFull: " + caught.getMessage());
-						}
+								@Override
+								public void onSuccess(Company company) {
+									htmlMessage += (null == company || null == company.getId())
+											? "<br>No se ha encontrado una empresa con el documento " + target.getRegistry().getDocument()
+											: "<br>Se ha encontado una empresa con el documento " + company.getDocument() + " (" + company.getDomain().getName() + ")";
+								
+									AonDialog dialog = new AonDialog("Cliente existente", new HTML(htmlMessage));
+									dialog.info();
+									
+									success.accept(customer);
+									
+								}
+								
 					});
+					
+//					COMMON_SERVICE.getTargetFull(params.getDomainName(), params.getDomain(), params.getUser(), customer.getId(),
+//							new AsyncCallback<TargetFull>() {
+//
+//						@Override
+//						public void onSuccess(TargetFull targetFullDb) {
+//							target = targetFullDb;
+//							success.accept(customer);
+//						}
+//
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							AonMessagePanel.showError(messagePanel,
+//									"Cliente existente, error targetFull: " + caught.getMessage());
+//						}
+//					});
 					
 				} else
 					success.accept(customer);

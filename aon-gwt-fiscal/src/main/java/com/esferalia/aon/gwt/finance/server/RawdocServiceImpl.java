@@ -61,7 +61,7 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			AonConfiguration config = ConfigurationDAO.getConfiguration(ctx);
 			return new RawdocImpl().getRawdocStream(ctx, p -> RawdocUtils.getFilter(p, params),offset,limit)
 				.map( r -> {
-					if (r.isInbox() || r.isProcessed() ) {
+					if (r.isRecordable() ) {
 						TediResult tr = TediParser.toAccountingInvoice(ctx, config, r );
 						r.setInvoice( tr.getAccountingInvoice().getInvoice() );
 						// InvoiceRecorderDAO.fillMessages( ctx, occam.getDomain(), r.getInvoice() );
