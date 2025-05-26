@@ -19,23 +19,14 @@ aon-toast {
     word-wrap: break-word;
     opacity: 0;
     transition: opacity 0.5s ease, visibility 0.5s ease;
+    display: unset;
     
-    &.error{
-      background-color: #f8b3ad;
-      color: #721c24;
-    }
-    &.success{
-      background-color: #a8dbc2;
-      color: #1e4634;
-    }
-    &.primary{
-      background-color: #a7d3f8;
-      color: #0b3c5d;
-    }
     &.error, &.success, &.primary{
+      display: block;
       opacity: 1;
     }
     &.hidden{
+      display: unset;
       opacity: 0;
     }
   }

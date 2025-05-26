@@ -87,8 +87,6 @@ $color-text: #1E293B;
 $color-text-button: #ffffff;
 $color-text-button-transp: #1E293B;
 
-$color-msg-error: #FB5722;
-
 // Logo
 $logo: "../images/aon/logo.svg";
 $logo-width: 11.3125rem; 
@@ -101,7 +99,7 @@ $logo-height: v.$px-55;
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
     $color-text, $color-text-button, $color-text-button-transp,
-    $color-msg-error,
+    $color-red-500,
     $logo, $logo-width, $logo-height
   );
 }

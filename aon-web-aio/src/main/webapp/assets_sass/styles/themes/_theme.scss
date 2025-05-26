@@ -6,7 +6,7 @@
   $color-800, $color-900,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp,
-  $color-msg-error,
+  $color-red-500,
   $logo, $logo-width, $logo-height
 ) {
   $color-900-alpha: #{$color-900}0D;
@@ -109,7 +109,7 @@
       aon-input, aon-new-input{ 
         .aonInputMsg{
           .aonInputMsgError{
-            color: $color-msg-error;
+            color: $color-red-500;
           }
         }
         aon-icon-button i {
