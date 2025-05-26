@@ -88,7 +88,8 @@ class RawdocTable extends ScrollPanel {
 	
 	private void search(RawdocModuleOptions opt, RawdocCallback cbk, final int ofs) {
 		if (!isMoreData()) return;
-		RawdocModule.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT			, new AsyncCallback<LinkedList<Rawdoc>>() {
+		RawdocModule.RAWDOC_SERVICE.getRawdocs(opt.getOccam(), opt.getParams(), ofs, LIMIT
+			, new AsyncCallback<LinkedList<Rawdoc>>() {
 				@Override
 				public void onSuccess(LinkedList<Rawdoc> rawdocs) {
 					paintRows( opt, cbk, ofs, rawdocs );

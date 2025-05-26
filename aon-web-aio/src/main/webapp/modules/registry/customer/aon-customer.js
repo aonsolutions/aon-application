@@ -252,7 +252,7 @@ export class AonCustomer extends AonReg {
 
 	buildEnterpriseLinked() {
 		// Quitar el beta y sig
-		if (this.isBeta() || this.isSig()) {
+		//if (this.isBeta() || this.isSig()) {
 			const card = this.getElement(this.GENERAL_CARD);
 
 			let divOne = this.getElement(this.ENTERPRISE_LINKED);
@@ -274,7 +274,7 @@ export class AonCustomer extends AonReg {
 				.catch((err) => {
 					this.showError(err);
 				});
-		}
+		//}
 	}
 
 	buildEnterpriseLinkedView(resp) {
@@ -464,69 +464,78 @@ export class AonCustomer extends AonReg {
 							window.open("https://" + rrelationship.comments);
 						}
 					},
-				},
-				{
-					name: "Desvincular",
-					value: "UNLINK",
-					icon: MATERIAL_ICONS.LINK_OFF,
-					fn: () => {
-						this.getApplication().startLoading();
-
-						removeRelationShip(rrelationship)
-							.then(() => {
-								this.showMessage();
-								this.buildEnterpriseLinked();
-							})
-							.catch((err) => this.showError(err))
-							.finally(() => {
-								this.getApplication().stopLoading();
-							});
-					},
 				}
 			);
+			
+			if(this.isSig()){
+				options.push(
+					{
+						name: "Desvincular",
+						value: "UNLINK",
+						icon: MATERIAL_ICONS.LINK_OFF,
+						fn: () => {
+							this.getApplication().startLoading();
+	
+							removeRelationShip(rrelationship)
+								.then(() => {
+									this.showMessage();
+									this.buildEnterpriseLinked();
+								})
+								.catch((err) => this.showError(err))
+								.finally(() => {
+									this.getApplication().stopLoading();
+								});
+						},
+					}
+				);
+			}
 		} else {
-			options.push(
-				{
-					name: "Vincular con una existente",
-					value: "LINK",
-					icon: MATERIAL_ICONS.LINK,
-					fn: () => {
-						this.openDialogCompany();
+			if(this.isSig()){
+				options.push(
+					{
+						name: "Vincular con una existente",
+						value: "LINK",
+						icon: MATERIAL_ICONS.LINK,
+						fn: () => {
+							this.openDialogCompany();
+						},
 					},
-				},
-				{
-					name: "Crear nueva empresa",
-					value: "ENTERPRISE_NEW",
-					icon: MATERIAL_ICONS.OPEN_IN_NEW,
-					fn: () => {
-						this.getApplication().confirmDialog(
-							MSG.REGISTER,
-							`Desea registrar y vincular a ${this.registry.getName()} ?`,
-							() => {
-								this.getApplication().startLoading();
-								saveCompany({ ...this.registry, id: null })
-									.then((company) => {
-										console.log("company", company);
-										this.saveRegistryRelationship(company);
-									})
-									.catch((err) => {
-										this.showError(err);
-									})
-									.finally(() => {
-										this.getApplication().stopLoading();
-									});
-							}
-						);
-					},
-				}
-			);
+					{
+						name: "Crear nueva empresa",
+						value: "ENTERPRISE_NEW",
+						icon: MATERIAL_ICONS.OPEN_IN_NEW,
+						fn: () => {
+							this.getApplication().confirmDialog(
+								MSG.REGISTER,
+								`Desea registrar y vincular a ${this.registry.getName()} ?`,
+								() => {
+									this.getApplication().startLoading();
+									saveCompany({ ...this.registry, id: null })
+										.then((company) => {
+											console.log("company", company);
+											this.saveRegistryRelationship(company);
+										})
+										.catch((err) => {
+											this.showError(err);
+										})
+										.finally(() => {
+											this.getApplication().stopLoading();
+										});
+								}
+							);
+						},
+					}
+				);
+			}
 		}
 
-		const top = element.getBoundingClientRect().top + 24;
-		const left = element.getBoundingClientRect().left + 3;
-		let d = this.getApplication().getOptionDialog();
-		d.setMenuOptions(options, top, left);
-		d.open();
+		if(options && options.length > 0){
+			const top = element.getBoundingClientRect().top + 24;
+			const left = element.getBoundingClientRect().left + 3;
+			let d = this.getApplication().getOptionDialog();
+			d.setMenuOptions(options, top, left);
+			d.open();
+		}
 	}
 
 	openDialogCompany(companies = []) {

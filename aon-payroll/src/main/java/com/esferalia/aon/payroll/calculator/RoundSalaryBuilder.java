@@ -1032,8 +1032,6 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
 		salaryBuilder.setTotalDeduction(doubleValue(totalDeduction));
 
-		cgcBase = f.apply(cgcBase);
-
 		totalPayment = f.apply(totalPayment);
 		roundPaymentsAmount(totalPayment);
 		//roundPaymentsQuote(cgcBase);
@@ -1054,20 +1052,26 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setInkindIrpfBase(doubleValue(inkindIrpfBase));
 		salaryBuilder.setRemuneration(doubleValue(remuneration));
 
+
 		// ---
 		itBase = f.apply(itBase);
 		proExtBase = f.apply(proExtBase);
 		salaryBuilder.setItBase(doubleValue(itBase));
 		salaryBuilder.setProExtBase(doubleValue(proExtBase));
 
+		cgcBase = f.apply(cgcBase);
+		cgpBase = f.apply(cgpBase);
 		hExtraBase = f.apply(hExtraBase);
 		nonHExtraBase = f.apply(nonHExtraBase);
-		salaryBuilder.setHExtraBase(doubleValue(hExtraBase));
-		salaryBuilder.setCgcBase(doubleValue(cgcBase));
-		salaryBuilder.setNonHExtraBase(doubleValue(nonHExtraBase));
+			
+		cgpBase =cgcBase.add(nonHExtraBase).add(hExtraBase)
+				.max(cgpBase.subtract(nonHExtraBase).subtract(hExtraBase))
+				.min(cgpBase);
 
-		cgpBase = add(cgcBase,nonHExtraBase,hExtraBase).min(f.apply(cgpBase));
+		salaryBuilder.setCgcBase(doubleValue(cgcBase));
 		salaryBuilder.setCgpBase(doubleValue(cgpBase));
+		salaryBuilder.setHExtraBase(doubleValue(hExtraBase));
+		salaryBuilder.setNonHExtraBase(doubleValue(nonHExtraBase));
 
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
