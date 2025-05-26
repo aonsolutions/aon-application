@@ -155,6 +155,13 @@ input{
   letter-spacing: v.$letter-spacing-input;
 }
 
+#aonLoginUserTitle, #aonLoginPasswordTitle{
+  font-family: v.$font-primary-regular;
+  font-size: v.$font-size-input;
+  line-height: v.$line-height-input;
+  letter-spacing: v.$letter-spacing-input;
+}
+
 input::placeholder{
   font-family: v.$font-primary-regular;
   font-size: v.$font-size-placeholder;
