@@ -7,9 +7,11 @@
 
 // Importamos los archivos de temas
 @use './themes/light' as light;
-@use './themes/ayudat' as ayudat;
-@use './themes/infoautonomo' as infoautonomo;
 @use './themes/dark' as dark;
+@use './themes/ayudat' as ayudat;
+@use './themes/ayudatDark' as ayudatDark;
+@use './themes/infoautonomo' as infoautonomo;
+@use './themes/infoautonomoDark' as infoautonomoDark;
 
 // Importamos componentes
 @use './components/loader' as loader;
@@ -116,15 +118,18 @@
 :root {
   @include light.light-theme;
 }
+// Si el body tiene la clase theme-dark, aplicamos el tema oscuro
+:root.theme-dark {
+  @include dark.dark-theme;
+}
 // Si el body tiene la clase theme-ayudat, aplicamos el tema ayudat
 :root.theme-ayudat {
   @include ayudat.ayudat-theme;
 }
+:root.theme-ayudat-dark {
+  @include ayudatDark.ayudat-theme;
+}
 // Si el body tiene la clase theme-infoautonomo, aplicamos el tema infoautonomo
 :root.theme-infoautonomo {
   @include infoautonomo.infoautonomo-theme;
-}
-// Si el body tiene la clase theme-dark, aplicamos el tema oscuro
-:root.theme-dark {
-  @include dark.dark-theme;
 }

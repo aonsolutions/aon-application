@@ -130,9 +130,11 @@
         #logoContent{
           #logoSVG{
             background-image: url($logo);
-            width: v.$px-100;
-            height: v.$px-100;
+            width: $logo-width;
+            height: $logo-height;
             background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
           }
         }
         #loginContent, #magicLinkContent{
