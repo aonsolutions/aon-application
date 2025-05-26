@@ -409,6 +409,9 @@ export const AON_ENTERPRISE_MENU = 'aon-enterprise-menu';
 export const AON_JSF_NEW_DOMAIN = 'aon-jsf-new-domain' ;
 export const AON_JSF_REMOVE_DOMAIN = 'aon-jsf-remove-domain' ;
 
+export const AON_JSF_HELP_CONTENT = 'aon-jsf-help-content' ;
+export const AON_JSF_HELP_NOTIFICATION = 'aon-jsf-help-notification' ;
+
 export const SUPERSET = 'aon-superset' ;
 
 export const AON_CONSOLE_MENU = 'aon-console-menu';
