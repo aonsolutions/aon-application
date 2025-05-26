@@ -1,0 +1,42 @@
+@use '../variables' as v;
+
+aon-toast {
+  position: absolute;
+  bottom: 10%;
+  min-width: 250px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 99;
+  overflow: hidden;
+  > div {
+    border-radius: 0.2rem;
+    padding: 16px;
+    font-size: 17px;
+    word-wrap: break-word;
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    
+    &.error{
+      background-color: #f8b3ad;
+      color: #721c24;
+    }
+    &.success{
+      background-color: #a8dbc2;
+      color: #1e4634;
+    }
+    &.primary{
+      background-color: #a7d3f8;
+      color: #0b3c5d;
+    }
+    &.error, &.success, &.primary{
+      opacity: 1;
+    }
+    &.hidden{
+      opacity: 0;
+    }
+  }
+}

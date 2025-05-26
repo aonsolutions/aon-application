@@ -2,34 +2,44 @@
 @use '../base/mixins' as mixin;
 
 aon-new-login{
-  width         : 100%;
-  height        : 100%;
+  width         : v.$pct-100;
+  height        : v.$pct-100;
   display       : flex;
   flex-direction: column;
   #logoContent{
-    display: flex;
+    display        : flex;
     justify-content: center;
-    flex-grow: 1;
-    align-items: flex-end;
+    flex-grow      : 1;
+    align-items    : flex-end;
   }
   #loginContent, #magicLinkContent{
     flex-grow       : 2; /* Hace que este div ocupe el espacio restante */
     overflow        : auto;
     display         : flex;
-    align-items     : center;
+    padding-top     : v.$px-58;
     justify-content : center;
+    aon-loader{
+      // Barra de progreso
+      .aonProgress {
+        border-radius: v.$pct-100;
+        &:before {
+          border-radius: v.$pct-100;
+        }
+      }
+    }
     .aonLoginForm{
       width        : 25rem;
       height       : fit-content;
-      padding      : v.$px-25;
       border-radius: v.$px-6;
       .aonLoginTitle{
         display         : flex;
         justify-content : center;
+        padding         : v.$px-25;
       }
       .aonLoginFormContent{
         display : grid;
         gap     : v.$px-16;
+        padding : v.$px-0 v.$px-25 v.$px-25 v.$px-25;
         .aonDividerSpan{
           display         : flex;
           justify-content : center;
@@ -42,7 +52,7 @@ aon-new-login{
       gap             : v.$px-25;
       img {
         width     : 10rem;
-        max-width : 100%;
+        max-width : v.$pct-100;
         height    : auto;
         display   : block;
       }
@@ -56,6 +66,19 @@ aon-new-login{
       #logosMobiles{
         display: flex;
       }
+    }
+  }
+}
+// Si no tenemos mucha altura ocultamos el logo
+@media (max-height: 650px) {
+  aon-new-login{
+    #logoContent {
+      display: none;
+    }
+    #loginContent, #magicLinkContent{
+      flex-grow   : 1;
+      align-items : center;
+      padding-top : v.$px-0;
     }
   }
 }

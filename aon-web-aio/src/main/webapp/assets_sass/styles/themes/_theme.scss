@@ -53,6 +53,16 @@
       .aonToolbar2{
         background-color  : $color-900;
       }
+      // cargandos
+      aon-loader{
+        // Barra de progreso
+        .aonProgress {
+          background-color: $color-200;
+          &:before {
+            background-color: $color-500;
+          }
+        }
+      }
       // Botones
       button{
         background-color  : $color-900;

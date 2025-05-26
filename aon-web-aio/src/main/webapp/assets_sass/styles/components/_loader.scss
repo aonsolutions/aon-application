@@ -1,0 +1,64 @@
+@use '../variables' as v;
+
+aon-loader{
+  // Barra de progreso
+  .aonProgress {
+    display: none;
+    height : v.$px-3;
+    &:before {
+      display   : flex;
+      height    : v.$px-3;
+      width     : v.$pct-100;
+      content   : "";
+      animation : running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      -webkit-animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    @keyframes running-progress {
+      100% {
+        margin-left : 100%;
+        margin-right: 0;
+      }
+    }
+  }
+
+
+  // spinner
+  .aonLoader {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    animation: around 5.4s infinite;
+  }
+
+  @keyframes around {
+    0% {
+      transform: rotate(0deg)
+    }
+    100% {
+      transform: rotate(360deg)
+    }
+  }
+
+  .aonLoader::after, .aonLoader::before {
+    content: "";
+    background: transparent;
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-width: 2px;
+    border-color: #333 #333 transparent transparent;
+    border-style: solid;
+    border-radius: 20px;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    animation: around 0.7s ease-in-out infinite;
+  }
+
+  .aonLoader::after {
+    animation: around 0.7s ease-in-out 0.1s infinite;
+    background: transparent;
+  }   
+}

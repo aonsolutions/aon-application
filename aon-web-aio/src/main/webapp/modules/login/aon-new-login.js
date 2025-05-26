@@ -119,15 +119,20 @@ export class AonNewLogin extends AonElement {
     loginDivForm.id = "loginDivForm";
     loginDivForm.className = CSS.AON_LOGIN_FORM;
     loginContent.appendChild(loginDivForm);
-
+    // se carga antes
+    if(this.isNewStyle()){
+      this.createLoader(loginDivForm);
+    }
+    // se carga textos
     this.createTitlePanel(loginDivForm, MSG.LOGIN, MSG.LOGIN_SUBTITLE);
-
     // Form
     let divFormContent = this.createElement(TAG.DIV);
     divFormContent.classList.add(CSS.AON_LOGIN_FORM_CONTENT);
     loginDivForm.appendChild(divFormContent);
-
-    this.createLoader(divFormContent);
+    // se carga en el form
+    if(!this.isNewStyle()){
+      this.createLoader(divFormContent);
+    }
 
     if (this.userInput && this.userInput.innerHTML)
       this.userInput.innerHTML = "";
@@ -587,7 +592,7 @@ export class AonNewLogin extends AonElement {
         });
       })
       .catch((e) => {
-        console.log(e);
+        //console.log(e);
         loader.stop();
         let error = JSON.parse(e);
         let toast = this.getElement("aonLoginToast");
