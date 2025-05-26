@@ -6828,6 +6828,44 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtraANTIGUEDAD() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()) 
+				,new HashMap<String, String>() {
+				} 
+				,new String[] {
+				} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null, "SALARIO BASE", "1100.00", "_P", "_P", CRA_0001);
+		addPayment(aonContext, contract, contract.getStartDate(), null, "PAGA EXTRA PRORR.", "SALARIO_BASE+ANTIGÜEDAD", "_P", "_P", CRA_0004);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		ISalary salary =
+		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract))
+		;
+		
+		Assert.assertEquals(1100.00 + 1100.00 / 12, salary.getTotalPayment(), DELTA);
+			
+
+		
+
+	}
+
+	@Test
 	public void testExtraAndGrossI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
