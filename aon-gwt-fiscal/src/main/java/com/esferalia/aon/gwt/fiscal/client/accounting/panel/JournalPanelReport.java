@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.AccountEntryListBox;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
@@ -458,7 +457,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		buttonsPanel.add( cleanButton );     
 		buttonsPanel.add( refreshButton );
 		buttonsPanel.add( closeButton );
-		tab.setWidget(0, 7, buttonsPanel);
+		tab.setWidget(0, activitiesListBoxEnabled?8:6, buttonsPanel);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());

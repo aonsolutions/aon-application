@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.main.xhtml">
+
+
+	<ui:define name="mainScripts">
+	</ui:define>
+
+	<ui:define name="mainStyleSheets">
+		<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">
+			<a4j:loadStyle src="#{fn:startsWith(styleSheet, 'aonResource') ? '/' : '' }#{styleSheet}"/>
+		</c:forEach>
+	</ui:define>
+
+	<ui:define name="head">
+		<link rel="stylesheet"
+			href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" />
+		<link rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" />
+	</ui:define>
+
+	<ui:define name="mainHeader">
+		<aon:div id="#{app.standAloneAppId}" />
+		<ui:include src="/facelet/app/header.xhtml" />
+	</ui:define>
+
+	<ui:define name="mainContent">
+		<aon:form id="graphForm">
+
+			<ui:include src="/facelet/shared/array.prototype.js.xhtml" />
+
+			<aon:div id="accountingGraphContainer"
+				style="width: 100%; height: 22.5rem; text-align: center; border: none !important; box-shadow: none !important; font-size: 12px !important; font-family: 'Noto Sans', sans-serif; ">
+				<aon:div styleClass="">
+					<aon:outputText value="Apuntes por Meses del Ejercicio" />
+					<aon:selectOneMenu id="accountPeriodSelect" style="border: none;"
+						value="#{dashboard.accountingPeriod}">
+						<a4j:support event="onchange"
+							actionListener="#{dashboard.onAccountingPeriodChanged}"
+							reRender="accountingGraphContainer" ajaxSingle="true" />
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+					</aon:selectOneMenu>
+				</aon:div>
+
+				<aon:div id="accountColumnChartDiv"
+					style="width: 100%; min-height: 180px;" />
+				<script type="text/javascript">
+					function drawAccountColumnChart(){
+						var data = new google.visualization.DataTable();
+						data.addColumn('string', 'Mes');
+						data.addColumn('number', 'Apuntes');
+						<c:forEach var='entry' items='#{dashboard.periodEntriesCount}'>
+						data.addRow(['#{entry.name}', #{entry.value} ]);
+						</c:forEach>
+						
+						var options = {
+	  						chartArea:{
+								top:15,
+								left:30,
+								right:5,
+								width:'90%',
+								height:'60%'
+							},
+	 						legend: {
+								position: 'none'
+							},
+							tooltip: {
+								isHtml: true,
+								
+							},
+							fontSize: 12,
+							fontName: 'Noto Sans',
+	 						theme: 'material',
+						};
+						var accountChart = new google.visualization.ColumnChart(document.getElementById('graphForm:accountColumnChartDiv'));
+						accountChart.draw(data, options);
+					}
+					
+					google.charts.load('current', {packages: ['corechart']});
+					google.charts.setOnLoadCallback(drawAccountColumnChart);							
+					
+			   	</script>
+
+				<aon:div id="messageList"
+					style="width: 100%; text-align: center; margin-top: 30px; padding-bottom: 10px;padding-top: 5px; border: none !important; box-shadow: none !important; font-size: 12px !important;">
+					<aon:div styleClass="">
+						<aon:outputText
+							value="Datos relativos al ejercicio Contable #{dashboard.accountingPeriod.name}" />
+					</aon:div>
+					<ul class="aon-width-all aon-text-left"
+						style="margin-left: 10px; margin-top: 10px; list-style-type: none">
+						<c:forEach var="msg" items="#{dashboard.messages}">
+							<li style="margin-left: 5px;"><aon:outputText
+									value="#{msg.category}" style="padding-left: 20px;"
+									styleClass="aon-icon-point-#{msg.level}" /> <aon:outputText
+									value="#{msg.message}" styleClass="aon-padding-left" /></li>
+						</c:forEach>
+					</ul>
+				</aon:div>
+
+
+			</aon:div>
+
+			<script type="text/javascript"> 
+				//<![CDATA[
+				function selectYear() {
+					// current year
+					fiscalYear = new Date().getFullYear() ; 
+					let select = document.getElementById('graphForm:accountPeriodSelect');
+					for ( option of select.options ) {
+						if ( option.text == fiscalYear ) {
+							if ( select.value != option.value ){
+								select.value = option.value;
+								select.onchange();
+							}
+							break;
+						}
+					}
+				}
+				document.addEventListener('DOMContentLoaded', selectYear, false );
+				//]]>
+			</script>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+

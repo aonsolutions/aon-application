@@ -7,10 +7,9 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -31,7 +30,9 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
+import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -72,8 +73,10 @@ public class DownloadFeeServlet extends HttpServlet {
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
         Integer columns = columnList.size();
+        int rowNum = 0;
         
-        Row fila = hoja.createRow(0);
+        Row fila = hoja.createRow(rowNum);
+        rowNum++;
         
         fila.setHeightInPoints(16);
         CellStyle style = libro.createCellStyle();
@@ -112,26 +115,39 @@ public class DownloadFeeServlet extends HttpServlet {
         celdaf.setCellStyle(style);
        
         LinkedList<Fee> fees;
+        LinkedList<InvoiceDetail> invoices = new LinkedList<InvoiceDetail>();
         
         if(isCustomerFee) {
         	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, getCondition(domain, filterJSON));
-        } else if(isSellerWorkload) {
-        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionSellerWorkload(domain, login, filterJSON));
+        } else if(isSellerWorkload || isSellersWorkload) {
+        	List<Integer> ids = AON.getSellersWorkloadFeesIds(
+        			isSellerWorkload 
+        			? getConditionSellerWorkload(domain, login, filterJSON)
+        			: getConditionSellersWorkload(domain, login, filterJSON)
+        	);
         	CustomerFeeParams params = new CustomerFeeParams();
     		params.setDomain(domain.getId());
     		params.setFeeIds(ids.toArray(Integer[]::new));
-        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
-        } else if(isSellersWorkload) {
-        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionSellersWorkload(domain, login, filterJSON));
-        	CustomerFeeParams params = new CustomerFeeParams();
-    		params.setDomain(domain.getId());
-    		params.setFeeIds(ids.toArray(Integer[]::new));
-        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
-        	Collections.sort(fees, Comparator
-        		    .comparing((Fee fee) -> fee.getSellerComercial() != null &&  fee.getSellerComercial().getName() != null ? fee.getSellerComercial().getName() : null,
-        		               Comparator.nullsFirst(String::compareTo))  // nullsFirst para que los nulls queden al inicio
-        		    .thenComparing((Fee fee) -> fee.getCustomer() != null&&  fee.getCustomer().getName() != null ? fee.getCustomer().getName() : null,
-        		                   Comparator.nullsFirst(String::compareTo))); // nullsFirst también para Customer ID
+        	fees = ids.size() > 0 ? AON.getFullFeeList(domain.getName(), domain.getId(), login, params) : new LinkedList<Fee>();
+        	
+        	List<Integer> invoiceIds = AON.getSellersWorkloadInvoiceIds(
+        			isSellerWorkload 
+        			? getConditionSellerWorkload(domain, login, filterJSON)
+        			: getConditionSellersWorkload(domain, login, filterJSON)
+        	);
+        	Integer[] invoiceIdArray = invoiceIds.toArray(new Integer[0]);
+        	invoices = AON.getInvoiceDetails(domain.getName(), domain.getId(), login, f -> f.getDetailIdProperty().in(invoiceIdArray)).collect(Collectors.toCollection(LinkedList::new));
+//        } else if(isSellersWorkload) {
+//        	List<Integer> ids = AON.getSellersWorkloadFeesIds(getConditionSellersWorkload(domain, login, filterJSON));
+//        	CustomerFeeParams params = new CustomerFeeParams();
+//    		params.setDomain(domain.getId());
+//    		params.setFeeIds(ids.toArray(Integer[]::new));
+//        	fees = AON.getFullFeeList(domain.getName(), domain.getId(), login, params);
+//        	Collections.sort(fees, Comparator
+//        		    .comparing((Fee fee) -> fee.getSellerComercial() != null &&  fee.getSellerComercial().getName() != null ? fee.getSellerComercial().getName() : null,
+//        		               Comparator.nullsFirst(String::compareTo))  // nullsFirst para que los nulls queden al inicio
+//        		    .thenComparing((Fee fee) -> fee.getCustomer() != null&&  fee.getCustomer().getName() != null ? fee.getCustomer().getName() : null,
+//        		                   Comparator.nullsFirst(String::compareTo))); // nullsFirst también para Customer ID
         } else {
             if(filterJSON.opt("segment") != null) {
     			JSONArray segment = filterJSON.optJSONArray("segment");
@@ -146,8 +162,78 @@ public class DownloadFeeServlet extends HttpServlet {
     		} else  fees = AON.getFeeList(domain.getName(), domain.getId(), login, f -> feeFilter(domain, filterJSON, f, null));
         }
         
+        
+        
+        for(Integer i = 0; i < invoices.size(); i++) {
+        	Row row = hoja.createRow(rowNum);
+        	rowNum++;
+        	for(Integer j = 0; j < columnList.size(); j++) {
+        		Cell cell = row.createCell(j);
+        		String title = columnList.get(j);
+        		InvoiceDetail invoiceDetail = invoices.get(i);
+        		if(IConstants.CLIENTE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getInvoice().getRegistryDocument());
+        		} else if(IConstants.RAZON_SOCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getInvoice().getRegistryName());
+        		} else if(IConstants.PRODUCTO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getProduct().getCode());
+        		} else if(IConstants.CANTIDAD.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getQuantity());
+        		} else if(IConstants.PRECIO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getPrice());
+        		} else if(IConstants.DESCUENTO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getDiscount());
+        		} else if(IConstants.FECHA_INICIO.equalsIgnoreCase(title)) {
+        			cell.setCellValue("");
+        			cell.setCellStyle(dateStyle);
+        		} else if(IConstants.FECHA_FIN.equalsIgnoreCase(title) ) {
+        			cell.setCellValue("");
+        			cell.setCellStyle(dateStyle);
+        		} else if((IConstants.FECHA_FACTURACION.equalsIgnoreCase(title) || IConstants.FECHA_FACTURACION2.equalsIgnoreCase(title))&& invoiceDetail.getInvoice().getIssueDate() != null) {
+        			cell.setCellValue(invoiceDetail.getInvoice().getIssueDate());
+        			cell.setCellStyle(dateStyle);
+        		} else if(IConstants.PERIODO.equalsIgnoreCase(title)) {
+        			cell.setCellValue("Factura");
+        		} else if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getSeller().getDocument());
+        		} else if(IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getSeller().getName());
+        		} else if(IConstants.CENTRO_DE_TRABAJO.equalsIgnoreCase(title) || IConstants.CENTRO_TRABAJO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getWorkplace().getDescription());
+        		} else if(IConstants.GRUPO_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_FACTURACION2.equalsIgnoreCase(title) || IConstants.GRUPO.equalsIgnoreCase(title)
+        				|| IConstants.GRUPO_DE_FACTURACION.equalsIgnoreCase(title) || IConstants.GRUPO_DE_FACTURACION2.equalsIgnoreCase(title)) {
+        			cell.setCellValue("");
+        		} else if(IConstants.CONFIDENCIAL.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getInvoice().isConfidential());
+        		} else if(IConstants.DESCRIPCION.equalsIgnoreCase(title) || IConstants.DESCRIPCION2.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getDescription());
+        		} else if(IConstants.EXPEDIENTE.equalsIgnoreCase(title)) {
+        			//cell.setCellValue(invoiceDetail.getProject().getName()); // TODO
+        		} else if(IConstants.DETALLE_1.equalsIgnoreCase(title) || IConstants.DETALLE1.equalsIgnoreCase(title) || IConstants.DETALLE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getDetail());
+        		} else if(IConstants.DETALLE_2.equalsIgnoreCase(title) || IConstants.DETALLE2.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getDetail2());
+        		} else if(IConstants.DETALLE_3.equalsIgnoreCase(title) || IConstants.DETALLE3.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getDetail3());
+        		} else if(IConstants.CODIGO_DE_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_DE_BARRAS2.equalsIgnoreCase(title) || IConstants.BARCODE.equalsIgnoreCase(title)
+        				|| IConstants.CODIGO_BARRAS.equalsIgnoreCase(title) || IConstants.CODIGO_BARRAS2.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getBarcode());
+        		} else if(IConstants.NUMERO_DE_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_DE_SERIE.equalsIgnoreCase(title) || IConstants.SERIAL_NUMBER.equalsIgnoreCase(title)
+        				|| IConstants.NUMERO_SERIE2.equalsIgnoreCase(title) || IConstants.NUMERO_SERIE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getItem().getSerialNumber());
+        		} else if(IConstants.LINEA.equalsIgnoreCase(title) || IConstants.LINEA2.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getLine());
+        		} else if(IConstants.AGENTE_DE_SOPORTE.equalsIgnoreCase(title)) {
+        			cell.setCellValue(invoiceDetail.getSeller().getName());
+        		}else if(IConstants.SEGMENTO.equalsIgnoreCase(title)) {		
+        			cell.setCellValue("");
+         		}
+        	}
+        }
+        
         for(Integer i = 0; i < fees.size(); i++) {
-        	Row row = hoja.createRow(i+1);
+        	Row row = hoja.createRow(rowNum);
+        	rowNum++;
         	for(Integer j = 0; j < columnList.size(); j++) {
         		Cell cell = row.createCell(j);
         		String title = columnList.get(j);
@@ -174,7 +260,7 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getBillingDate());
         			cell.setCellStyle(dateStyle);
         		} else if(IConstants.PERIODO.equalsIgnoreCase(title)) {
-        			cell.setCellValue(fee.getPeriod().getValue());
+        			cell.setCellValue(BillingPeriod.toString(fee.getPeriod()));
         		} else if(IConstants.COMERCIAL.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getSellerComercial().getDocument());
         		} else if(IConstants.NOMBRE_COMERCIAL.equalsIgnoreCase(title)) {
@@ -232,7 +318,7 @@ public class DownloadFeeServlet extends HttpServlet {
         Integer length = data.length;
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        resp.addHeader("Content-Disposition","attachment; filename=\"" + (isSellerWorkload ? "CargaTrabajo_Cuotas" : "Cuotas") + ".xls\"");
+        resp.addHeader("Content-Disposition","attachment; filename=\"" + ((isSellerWorkload || isSellersWorkload) ? "CargaTrabajo_Cuotas_Facturas" : "Cuotas") + ".xls\"");
         resp.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);

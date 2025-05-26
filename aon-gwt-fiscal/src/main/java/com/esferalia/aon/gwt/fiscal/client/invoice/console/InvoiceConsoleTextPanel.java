@@ -4,6 +4,8 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.console;
 import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -14,11 +16,12 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public class InvoiceConsoleTextPrinter {
+public class InvoiceConsoleTextPanel extends ScrollPanel {
 
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9
@@ -29,40 +32,51 @@ public class InvoiceConsoleTextPrinter {
 	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
 
+	static final InvoiceConsoleServiceAsync INVOICE_SERVICE;
+	static {
+		InvoiceConsoleServiceAsync fiscalServiceRaw = GWT.create(InvoiceConsoleService.class);
+		INVOICE_SERVICE = new InvoiceConsoleAsyncDecorator(fiscalServiceRaw);
+	}
+
 	private static final String SIN_ASIGNAR = "Sin asignar.";
 
-	private boolean abbrv;
-
-	private InvoiceConsoleTextPrinter(boolean abbrv) {
-		this.abbrv = abbrv;
-	}
+	private boolean abbrv = true;
 
 	private int getLineSize() {
 		return this.abbrv ? 110 : 172;
 	}
-
-	public static Widget print(Invoice invoice) {
+	public InvoiceConsoleTextPanel(Occam occam, Integer domain, Integer id) {
+		INVOICE_SERVICE.getInvoice(occam, domain, id, new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				print( inv );
+			}
+			
+			@Override
+			public void onFailure(Throwable e) {
+				AonMessageDialog.error(e.getMessage());
+			}
+		} ); 
+	}
+	public InvoiceConsoleTextPanel(Invoice invoice) {
+		print( invoice ); 
+	}
+	
+	private void print (Invoice invoice) {
 		StringBuilder out = new StringBuilder();
-		print(out, invoice, false);
+		header(invoice, out);
+		details(invoice, out);
+		vatBreakdown(invoice, out);
+		withholding(invoice, out);
+		totals(invoice, out);
+		finances(invoice, out);
+		fiscal(invoice, out);
+		messages(invoice, out);
 		HTMLPanel panel = new HTMLPanel("pre",out.toString());
 		panel.setStyleName( AON.CSS.aonFixedFont() );
-		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName( AON.CSS.aonScrollArea() );
-		scroll.addStyleName( AON.CSS.aonTextCenter() );
-		scroll.setWidget( panel );
-		return scroll;
-	}
-
-	private static void print(StringBuilder out, Invoice invoice, boolean abbrv) {
-		new InvoiceConsoleTextPrinter(abbrv)
-			.header(invoice, out)
-			.details(invoice, out)
-			.vatBreakdown(invoice, out)
-			.withholding(invoice, out)
-			.totals(invoice, out)
-			.finances(invoice, out)
-			.fiscal(invoice, out)
-			.messages(invoice, out);
+		this.setStyleName( AON.CSS.aonScrollArea() );
+		this.addStyleName( AON.CSS.aonTextCenter() );
+		this.setWidget( panel );
 	}
 
 	private static final String TOP_LEFT_CORNER = "\u250C";
@@ -77,7 +91,7 @@ public class InvoiceConsoleTextPrinter {
 	private static final String HORIZONTAL_UP_BAR = "\u2534"; // ?
 	private static final String CROSS = "\u253C"; // ?
 
-	private InvoiceConsoleTextPrinter header(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel header(Invoice invoice, StringBuilder out) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(TOP_LEFT_CORNER);
@@ -145,7 +159,7 @@ public class InvoiceConsoleTextPrinter {
 	}
 
 
-	private InvoiceConsoleTextPrinter details(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel details(Invoice invoice, StringBuilder out) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(TOP_LEFT_CORNER);
@@ -205,6 +219,25 @@ public class InvoiceConsoleTextPrinter {
 		buf.append(VERTICAL_BAR);
 		println(out,buf.toString());
 		detail.getInvoiceTaxes().forEach(tax -> invoiceTax(tax, out));
+		
+		buf = new StringBuilder();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(VERTICAL_BAR);
+		buf.append(">>>>");
+		buf.append(" [SOURCE ");
+		buf.append(detail.getSource());
+		buf.append(AonStringUtils.CLOSE_BRACKET);
+		buf.append(" [Cuenta contable ");
+		buf.append(detail.getAccountCode());
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.HYPHEN);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(detail.getAccountDescription());
+		buf.append(AonStringUtils.CLOSE_BRACKET);
+		
+		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
+		buf.append(VERTICAL_BAR);
+		println(out,buf.toString());
 	}
 
 	private void invoiceTax(InvoiceTax tax, StringBuilder out) {
@@ -232,7 +265,7 @@ public class InvoiceConsoleTextPrinter {
 		println(out,buf.toString());
 	}
 
-	private InvoiceConsoleTextPrinter vatBreakdown(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel vatBreakdown(Invoice invoice, StringBuilder out) {
 		if (AonCollectionUtils.isNotEmpty( invoice.getVats() )) {
 			StringBuilder buf = new StringBuilder();
 			buf.append(AonStringUtils.spaces(40));
@@ -253,7 +286,7 @@ public class InvoiceConsoleTextPrinter {
 		return this;
 	}
 
-	private InvoiceConsoleTextPrinter withholding(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel withholding(Invoice invoice, StringBuilder out) {
 		Optional<InvoiceWithholding> iw = invoice.getWithholding();
 		if (iw.isPresent()) {
 			StringBuilder buf = new StringBuilder();
@@ -303,7 +336,7 @@ public class InvoiceConsoleTextPrinter {
 		println(out,buf.toString());
 	}
 
-	private InvoiceConsoleTextPrinter totals(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel totals(Invoice invoice, StringBuilder out) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.spaces(38));
 		buf.append(TOP_LEFT_CORNER);
@@ -377,7 +410,7 @@ public class InvoiceConsoleTextPrinter {
 	}
 
 	
-	private InvoiceConsoleTextPrinter finances(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel finances(Invoice invoice, StringBuilder out) {
 		StringBuilder buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
 		buf.append(TOP_LEFT_CORNER);
@@ -429,7 +462,7 @@ public class InvoiceConsoleTextPrinter {
 		println(out,buf.toString());
 	}
 	
-	private InvoiceConsoleTextPrinter fiscal(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel fiscal(Invoice invoice, StringBuilder out) {
 		Optional.ofNullable( invoice.getFiscal() )
 			.ifPresent( invoiceFiscal -> {
 				StringBuilder buf = new StringBuilder();
@@ -617,7 +650,7 @@ public class InvoiceConsoleTextPrinter {
 			; 
 	}
 
-	private InvoiceConsoleTextPrinter messages(Invoice invoice, StringBuilder out) {
+	private InvoiceConsoleTextPanel messages(Invoice invoice, StringBuilder out) {
 		if (AonCollectionUtils.isNotEmpty(invoice.getMessages())) {
 			println(out,"");
 			StringBuilder buf = new StringBuilder();

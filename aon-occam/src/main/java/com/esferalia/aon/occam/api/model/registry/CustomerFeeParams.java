@@ -51,6 +51,7 @@ public class CustomerFeeParams implements Serializable {
 	private boolean asc = true;
 	
 	private Integer[] feeIds;
+	private Integer[] invoiceIds;
 	
 	private Integer childDomain;
 	
@@ -267,6 +268,14 @@ public class CustomerFeeParams implements Serializable {
 	
 	public Integer[] getFeeIds() {
 		return this.feeIds;
+	}
+	
+	public void setInvoiceIds(Integer[] invoiceIds) {
+		this.invoiceIds = invoiceIds;
+	}
+	
+	public Integer[] getInvoiceIds() {
+		return this.invoiceIds;
 	}
 	
 	public Integer getChildDomain() {

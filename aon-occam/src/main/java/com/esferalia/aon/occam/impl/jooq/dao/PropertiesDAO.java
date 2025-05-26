@@ -249,7 +249,10 @@ public class PropertiesDAO {
 
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}
+
+		@Override public Property<Integer> getDetailIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.ID);}
+			
 		
 	}
 	

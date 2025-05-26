@@ -72,7 +72,7 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		addButtonsToolbar();
 		getSearchTextBox().addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
-			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
 				onSearch( getSellerWorkloadListParams() );
 			} else if(AonStringUtils.isBlank(value)) {
 				sellerWorkloadFeePanel.resetSearchOffset();
