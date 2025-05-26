@@ -1192,6 +1192,22 @@ export class AonJsfAccountingBook extends AonJsfApp {
 	}
 }
 
+export class AonJsfHelpContent extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/helpContent.xhtml');
+	}
+}
+
+export class AonJsfHelpNotification extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/helpNotification.xhtml');
+	}
+}
+
 export class AonJsfGraph extends AonJsfApp {
 
 	constructor() {
@@ -1758,8 +1774,12 @@ if (!window.customElements.get(TAG.AON_JSF_REMOVE_DOMAIN)) {
 	window.customElements.define(TAG.AON_JSF_REMOVE_DOMAIN, AonJsfRemoveDomain);
 }
 
-if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_BOOK)) {
-	window.customElements.define(TAG.AON_JSF_ACCOUNTING_BOOK, AonJsfAccountingBook);
+if (!window.customElements.get(TAG.AON_JSF_HELP_CONTENT)) {
+	window.customElements.define(TAG.AON_JSF_HELP_CONTENT, AonJsfHelpContent);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_HELP_NOTIFICATION)) {
+	window.customElements.define(TAG.AON_JSF_HELP_NOTIFICATION, AonJsfHelpNotification);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_GRAPH)) {
