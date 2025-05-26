@@ -6,7 +6,9 @@
   $color-800, $color-900,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-button, $color-text-button-transp,
-  $color-msg-error,
+  $color-red-100,  $color-red-500, $color-red-900,
+  $color-green-100, $color-green-500, $color-green-900,
+  $color-blue-100, $color-blue-500, $color-blue-900,
   $logo, $logo-width, $logo-height
 ) {
   $color-900-alpha: #{$color-900}0D;
@@ -63,6 +65,23 @@
           }
         }
       }
+      // toast
+      aon-toast {
+        > div {
+          &.error{
+            background-color: $color-red-100;
+            color: $color-red-900;
+          }
+          &.success{
+            background-color: $color-green-100;
+            color: $color-green-900;
+          }
+          &.primary{
+            background-color: $color-blue-100;
+            color: $color-blue-900;
+          }
+        }
+      }
       // Botones
       button{
         background-color  : $color-900;
@@ -106,6 +125,7 @@
           background-color : $iconbutton-hover-background-color;
         }
       }
+      // Input
       aon-input, aon-new-input{ 
         .aonInputMsg{
           .aonInputMsgError{
