@@ -1,8 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.CommercialTracking.COMMERCIAL_TRACKING;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
+import static com.esferalia.aon.jooq.tables.ProjectActivity.PROJECT_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
@@ -10,12 +11,15 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
@@ -26,6 +30,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Properties.ProjectCommercialProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectReservationProperties;
@@ -41,6 +46,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProjectAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProjectValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ProjectDAO {
 	
@@ -165,6 +171,15 @@ public class ProjectDAO {
 				.findFirst().orElse(new Project());
 	}
 	
+	public static Project getFull(AONContext ctx, ProjectFilter filter){
+		Project project = get(ctx, filter);
+		
+		project.setProjectActivities(ProjectActivityDAO.getStream(ctx, f -> f.getProjectProperty().eq(project.getId())).collect(Collectors.toList()));
+		project.setProjectHolders(ProjectHolderDAO.getList(ctx, f -> f.getProjectProperty().eq(project.getId())));
+		
+		return project;
+	}
+	
 	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter){
 		return select(ctx, filter).fetch().stream().map(new ProjectFiller());
 	}
@@ -175,6 +190,107 @@ public class ProjectDAO {
 			.fetch().stream().map(new ProjectFiller());
 	}
 	
+	public static List<Project> getProjectList(CloseableAONContext ctx, ProjectParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record> select = ctx.getDslContext().select()
+				.from(PROJECT)
+				.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
+				.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+				.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))				
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PROJECT.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PROJECT_TYPE.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE);
+			else if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(PROJECT.DATE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PROJECT.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PROJECT_TYPE.DESCRIPTION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "activity"))
+				select.orderBy(PROJECT_ACTIVITY.ACTIVITY_TYPE.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(PROJECT.DATE.desc());
+		}
+		
+		List<Project> projects = select
+				.limit(params.getOffset(), params.getLimit())
+				.fetch()
+				.stream()
+				.map(new ProjectFiller())
+				.collect(Collectors.toList());
+		
+		projects.forEach(project -> {
+			project.setProjectActivities(ProjectActivityDAO.getStream(ctx, f -> f.getProjectProperty().eq(project.getId())).collect(Collectors.toList()));
+			project.setProjectHolders(ProjectHolderDAO.getList(ctx, f -> f.getProjectProperty().eq(project.getId())));
+			System.out.println(project.getName());
+		});
+			
+		return projects;
+	}
+	
+	public static Integer getProjectsCount(CloseableAONContext ctx, ProjectParams params) {
+		Condition condition = paramsToCondition(ctx, params);
+		
+		SelectConditionStep<Record1<Integer>> select = ctx.getDslContext().selectCount()
+				.from(PROJECT)
+				.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
+				.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+				.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))			
+				.leftOuterJoin(PROJECT_ACTIVITY).on(PROJECT_ACTIVITY.PROJECT.eq(PROJECT.ID))			
+				.where(condition);
+		
+		if(params.isAsc()) {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PROJECT.NAME);
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PROJECT_TYPE.DESCRIPTION);
+			else if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(PROJECT.DATE);
+		} else {
+			if(AonStringUtils.equals(params.getOrderBy(), "name"))
+				select.orderBy(PROJECT.NAME.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "type"))
+				select.orderBy(PROJECT_TYPE.DESCRIPTION.desc());
+			else if(AonStringUtils.equals(params.getOrderBy(), "date"))
+				select.orderBy(PROJECT.DATE.desc());
+		}
+				
+		Record1<Integer> projectCount = select.fetchOne();
+					
+		return projectCount == null ? 0 : projectCount.value1();
+	}
+	
+	private static Condition paramsToCondition(CloseableAONContext ctx, ProjectParams params) {
+		Condition condition = PROJECT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		
+		if(AonStringUtils.isNotBlank(params.getDescription())) {
+			condition = condition.and(
+					PROJECT.NAME.like("%" + params.getDescription() + "%")
+					.or(REGISTRY.NAME.like("%" + params.getDescription() + "%"))
+					.or(PROJECT.ALIAS.like("%" + params.getDescription() + "%"))
+			);
+		}
+		
+		if(null != params.getRegistry())
+			condition = condition.and(PROJECT.REGISTRY.eq(params.getRegistry()));
+		
+		if(null != params.getProjectType())
+			condition = condition.and(PROJECT_TYPE.ID.eq(params.getProjectType()));
+		
+		if(null != params.getDate())
+			condition = condition.and(PROJECT.DATE.ge(AonDateUtils.toSql(params.getDate())));
+		
+		return condition;
+	}
+
 	/**
 	 * @deprecated  Replaced by getStream(AONContext ctx, ProjectFilter filter) 
 	 * 	or getStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage) 
