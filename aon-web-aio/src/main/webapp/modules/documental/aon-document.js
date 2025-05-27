@@ -106,6 +106,8 @@ export class AonDocument extends AonElement {
     fileDiv.style.width   = '50%';
     
     if(this.isBetaDoc()){
+      // Barra loader de AonApplication - Iniciar
+      this.getApplication().startLoading();
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
           this.docS3 = document;
@@ -121,7 +123,8 @@ export class AonDocument extends AonElement {
             let offset2 = dataDiv.getBoundingClientRect();
             dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
           }
-    
+          
+          this.getApplication().stopLoading();
           this.buildData();
           this.buildDocumentToolbar();
       });
@@ -492,7 +495,7 @@ export class AonDocument extends AonElement {
     name.setValue(s3Doc.name);
 
     if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-        name.setDisabled(true)
+        name.setDisabled(true);
     }
     name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
     // Scope
@@ -1011,7 +1014,6 @@ export class AonDocument extends AonElement {
       }
     });
   }
-  
 
   checkAndUpdateCategory() {
     const modelSelect = document.getElementById("ModelosSelect");
@@ -1107,6 +1109,10 @@ export class AonDocument extends AonElement {
           documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
         } 				
 		const position = (this.filter.page - 1) * this.filter.perPage + this.docList.indexOf(this.document.id) + 1;
+
+        console.log(position);
+        console.log(this.count);
+
 		if(position < this.count)
 			documentToolbar.addButton2(ACTION.NEXT, () => this.next());
 		if(position > 1)
@@ -1142,7 +1148,7 @@ export class AonDocument extends AonElement {
 			this.document = await getS3Document({id: nextPageDocs[0].id, type: nextPageDocs[0].type});
 			await this.build();
 		}
-	} else {		
+	} else {
     	this.getApplication().development();
 	}
   }
@@ -1161,7 +1167,7 @@ export class AonDocument extends AonElement {
 			this.document = await getS3Document({id: prevPageDocs[prevPageDocs.length -1].id, type: prevPageDocs[prevPageDocs.length -1].type});
 			await this.build();
 		}
-	} else {		
+	} else {
 		this.getApplication().development();
 	}
   }
@@ -1187,7 +1193,6 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
-
   
   removeS3() {
     let aonDocumental = this.getApplication();
@@ -1211,6 +1216,7 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
+
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
