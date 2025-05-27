@@ -87,7 +87,9 @@ export class AonToast extends AonElement {
       // ocultamos
       setTimeout(() => this.displayToast(false), delay);
     } else {
-      // agregamos clase
+      // Componente padre
+      this.className = "view";
+      // agregamos clase para el tipo de mensaje
       if (type === CONSTANT.ERROR) 
         toast.className = "error";
       else if (type === CONSTANT.SUCCESS)
@@ -95,7 +97,10 @@ export class AonToast extends AonElement {
       else if (type === CONSTANT.PRIMARY)
         toast.className = "primary";
       // Ocultamos
-      setTimeout(() => toast.className = "hidden", delay);
+      setTimeout(() => {
+        this.className  = "";
+        toast.className = "hidden"
+      }, delay);
     }
   }
 

@@ -227,6 +227,11 @@ export class AonNewLogin extends AonElement {
     magicLinkDivForm.className = CSS.AON_LOGIN_FORM;
     magicLinkContent.appendChild(magicLinkDivForm);
 
+    // se carga antes
+    if(this.isNewStyle()){
+      this.createLoader(magicLinkDivForm);
+    }
+
     this.createTitlePanel(
       magicLinkDivForm,
       "Acceso sin contraseña",
@@ -238,7 +243,10 @@ export class AonNewLogin extends AonElement {
     divFormContent.classList.add(CSS.AON_LOGIN_FORM_CONTENT);
     magicLinkDivForm.appendChild(divFormContent);
 
-    this.createLoader(divFormContent);
+    // se carga en el form
+    if(!this.isNewStyle()){
+      this.createLoader(divFormContent);
+    }
 
     if (this.userInput && this.userInput.innerHTML)
       this.userInput.innerHTML = "";

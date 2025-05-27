@@ -9,11 +9,11 @@ aon-new-login{
   #logoContent{
     display        : flex;
     justify-content: center;
-    flex-grow      : 1;
+    flex-grow      : v.$num-1;
     align-items    : flex-end;
   }
   #loginContent, #magicLinkContent{
-    flex-grow       : 2; /* Hace que este div ocupe el espacio restante */
+    flex-grow       : v.$num-2; /* Hace que este div ocupe el espacio restante */
     overflow        : auto;
     display         : flex;
     padding-top     : v.$px-58;
@@ -28,7 +28,7 @@ aon-new-login{
       }
     }
     .aonLoginForm{
-      width        : 25rem;
+      width        : v.$px-400;
       height       : fit-content;
       border-radius: v.$px-6;
       .aonLoginTitle{
@@ -51,7 +51,7 @@ aon-new-login{
       justify-content : center;
       gap             : v.$px-25;
       img {
-        width     : 10rem;
+        width     : v.$px-160;
         max-width : v.$pct-100;
         height    : auto;
         display   : block;
@@ -76,7 +76,7 @@ aon-new-login{
       display: none;
     }
     #loginContent, #magicLinkContent{
-      flex-grow   : 1;
+      flex-grow   : v.$num-1;
       align-items : center;
       padding-top : v.$px-0;
     }

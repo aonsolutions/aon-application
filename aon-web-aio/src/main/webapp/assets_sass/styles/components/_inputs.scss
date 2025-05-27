@@ -5,7 +5,7 @@ $padding-top    : v.$px-8;
 $padding-right  : v.$px-12;
 $padding-bottom : v.$px-8;
 $padding-left   : v.$px-12;
-$border-radius  : v.$px-6;
+$padding: $padding-top $padding-right $padding-bottom $padding-left;
 // .aonInputBox
 $inputbox-display : grid;
 // .aonInputBoxLabel
@@ -46,8 +46,8 @@ aon-input, aon-new-input{
     
       input{
         height        : $input-height;
-        padding       : $padding-top $padding-right $padding-bottom $padding-left;
-        border-radius : $border-radius;
+        padding       : $padding;
+        border-radius : v.$border-radius;
         box-sizing    : $input-box-sizing;
       }
       span{

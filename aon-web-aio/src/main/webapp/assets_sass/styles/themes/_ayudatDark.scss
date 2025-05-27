@@ -92,7 +92,7 @@ $logo: "../images/ayudat/logo-gris.svg";
 $logo-width: v.$px-100;
 $logo-height: v.$px-100;
 
-@mixin ayudat-theme {
+@mixin ayudatDark-theme {
   @include t.theme(
     $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 

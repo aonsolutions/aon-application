@@ -155,8 +155,13 @@ $px-97 : 6.0625rem;
 $px-98 : 6.125rem;
 $px-99 : 6.1875rem;
 $px-100 : 6.25rem;
+$px-160 : 10rem;
+$px-250 : 15.625rem; 
+$px-300 : 18.75rem;
+$px-400 : 25rem;
 
 // PORCENTAJES
+$pct-10  : 10%;
 $pct-25  : 25%;
 $pct-50  : 50%;
 $pct-75  : 75%;
@@ -168,6 +173,15 @@ $pct-300 : 300%;
 // VIEWPORT
 $vh-100 : 100vh;
 $vw-100 : 100vw;
+
+// NUMEROS
+$num-0  : 0;
+$num-1  : 1;
+$num-2  : 2;
+$num-3  : 3;
+$num-4  : 4;
+$num-5  : 5;
+$num-99 : 99;
 
 //Tamaños de fuente por elemento o clase
 $font-size-h1               : $px-48;
@@ -237,7 +251,15 @@ $letter-spacing-button      : $letter-spacing-0;
 $letter-spacing-input       : $letter-spacing-0;
 $letter-spacing-placeholder : $letter-spacing-0;
 
-// TRANSITION
-$transition-duration-03 : 0.3s;
+// TIEMPO
+$t-01 : 0.1s;
+$t-03 : 0.3s;
+$t-05 : 0.5s;
+$t-07 : 0.7s;
+$t-2  : 2s;
+$t-5-4 : 5.4s;
+
+// BORDER
+$border-radius : $px-6;
 
 

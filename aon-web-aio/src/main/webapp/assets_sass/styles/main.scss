@@ -127,9 +127,12 @@
   @include ayudat.ayudat-theme;
 }
 :root.theme-ayudat-dark {
-  @include ayudatDark.ayudat-theme;
+  @include ayudatDark.ayudatDark-theme;
 }
 // Si el body tiene la clase theme-infoautonomo, aplicamos el tema infoautonomo
 :root.theme-infoautonomo {
   @include infoautonomo.infoautonomo-theme;
+}
+:root.theme-infoautonomo-dark {
+  @include infoautonomoDark.infoautonomoDark-theme;
 }
