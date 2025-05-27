@@ -341,6 +341,9 @@ export const AON_JSF_FEE_ASSIGNMENT = 'aon-jsf-fee-assignment' ;
 export const AON_JSF_FEE_INVOICING = 'aon-jsf-fee-invoicing' ;
 export const AON_JSF_FEE_PRE_INVOICING = 'aon-jsf-fee-pre-invoicing' ;
 export const AON_JSF_ACCOUNTING_BOOK = 'aon-jsf-accounting-book' ;
+export const AON_JSF_ACCOUNTING_GRAPH = 'aon-jsf-accounting-graph' ;
+export const AON_JSF_PAYROLL_GRAPH = 'aon-jsf-payroll-graph' ;
+export const AON_JSF_CONTRACT_GRAPH = 'aon-jsf-contract-graph' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 export const AON_JSF_INCOME = 'aon-jsf-income' ;
@@ -405,6 +408,9 @@ export const AON_JSF_LOADER = 'aon-jsf-loader' ;
 export const AON_ENTERPRISE_MENU = 'aon-enterprise-menu';
 export const AON_JSF_NEW_DOMAIN = 'aon-jsf-new-domain' ;
 export const AON_JSF_REMOVE_DOMAIN = 'aon-jsf-remove-domain' ;
+
+export const AON_JSF_HELP_CONTENT = 'aon-jsf-help-content' ;
+export const AON_JSF_HELP_NOTIFICATION = 'aon-jsf-help-notification' ;
 
 export const SUPERSET = 'aon-superset' ;
 

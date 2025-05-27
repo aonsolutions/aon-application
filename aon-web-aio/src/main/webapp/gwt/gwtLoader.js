@@ -62,7 +62,7 @@
 	}
 
 	export const iLoad = (gwtOption, rootPanel, params = {}) => {
-		iStartModule(gwtOption.module, gwtOption.entryPoint, gwtOption.subEntryPoint, rootPanel, document => {
+		return iStartModule(gwtOption.module, gwtOption.entryPoint, gwtOption.subEntryPoint, rootPanel, document => {
 			gwtOption.javaScripts?.forEach( (script) =>  addScript(document, "text/javascript", script))				
 		}, params);
 	}
@@ -138,102 +138,106 @@
 			iframe.style.inset = 'none';
 			iframe.src = 'about_blank';
 			//iframe.src = 'about:blank';
-			iframe.onload = () => {
-				
-
-				let iwindow = iframe.contentWindow;			
-				let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
-				
-				iwindow.stop();
-				idocument.body.innerHTML = "";
-
-				
-				iwindow.drawChartsCallback = () => {};
-				iwindow.getSubEntryPoint = () => subEntryPoint;
-
-				// loadDomainFunctions
-				iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
-				iwindow.getCurrentDomainName = () => LS.getDomainName();
-				iwindow.getCurrentDomain = () => parseInt(LS.getDomainId());
-				iwindow.getCurrentUser = () => LS.getDomainLogin();
-				iwindow.isSysAdmin = () => true;
-
-
-				// inject 'gwt' script 
-				
-				for (const sheet of document.styleSheets) {
-					if ( sheet?.href?.includes('fonts.googleapis.com') ){
-						let link = idocument.createElement('link');
-						link.rel= 'stylesheet';
-						link.type= 'text/css';
-						link.href = sheet.href;
-						idocument.head.appendChild(link);
-					}
+			
+			const promise = new Promise((resolve, reject) => {
+				iframe.onload = () => {
 					
-				}	
-				
-				customize?.(idocument);				
 
-				let rootPanel = idocument.createElement(TAG.DIV);
-				rootPanel.id = 'rootPanel';
-				idocument.body.appendChild(rootPanel);
+					let iwindow = iframe.contentWindow;			
+					let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow.document;		
+					
+					iwindow.stop();
+					idocument.body.innerHTML = "";
 
-				let script = idocument.createElement(TAG.SRIPT);
-				script.type = "text/javascript";
-				script.defer = "true";
-				script.text = `
-				//<![CDATA[ 
+					
+					iwindow.drawChartsCallback = () => {};
+					iwindow.getSubEntryPoint = () => subEntryPoint;
 
-					function startModule() {
-					    if (document.createElement && document.getElementsByTagName) {
-					      var script = document.createElement('script');
-					      script.type = 'text/javascript';
-					      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}&${queryString}';
-						  script.defer = true;
-						  document.head.appendChild(script);
-						  triggerModuleStart();
+					// loadDomainFunctions
+					iwindow.getCurrentDomainNameURL = () => LS.getDomainName();
+					iwindow.getCurrentDomainName = () => LS.getDomainName();
+					iwindow.getCurrentDomain = () => parseInt(LS.getDomainId());
+					iwindow.getCurrentUser = () => LS.getDomainLogin();
+					iwindow.isSysAdmin = () => true;
+
+
+					// inject 'gwt' script 
+					
+					for (const sheet of document.styleSheets) {
+						if ( sheet?.href?.includes('fonts.googleapis.com') ){
+							let link = idocument.createElement('link');
+							link.rel= 'stylesheet';
+							link.type= 'text/css';
+							link.href = sheet.href;
+							idocument.head.appendChild(link);
 						}
-					}				
-
-					function triggerModuleStart(){
-					    try{
-						    ${module}.onInjectionDone('${module}');
-						    if ( !document.createEventObject ) {
-						        var evt = document.createEvent("HTMLEvents");
-						        evt.initEvent("DOMContentLoaded", true, true);
-						        document.dispatchEvent(evt);
-						     }
-					    } catch ( e ) {
-					    	//window.setTimeout('triggerModuleStart()', 100 );
-					   } 
-					}
+						
+					}	
 					
-					startModule();
-				//]]>
-				`;
+					customize?.(idocument);				
 
-				idocument.head.appendChild(script);
+					let rootPanel = idocument.createElement(TAG.DIV);
+					rootPanel.id = 'rootPanel';
+					idocument.body.appendChild(rootPanel);
 
-				let aonRichCssLink = idocument.createElement('link');
-				aonRichCssLink.rel= 'stylesheet';
-				aonRichCssLink.type= 'text/css';
-				aonRichCssLink.href = '/aonResource/aon-richCss.css';
-				idocument.head.insertBefore(aonRichCssLink, idocument.head.firstChild);
-				
-				fetch('css/gwt.css')
-				.then(response => response.text())
-				.then((text) => {
-					let style = idocument.createElement('style');
-					style.textContent = text;
-					idocument.body.appendChild(style)
-				});
+					let script = idocument.createElement(TAG.SRIPT);
+					script.type = "text/javascript";
+					script.defer = "true";
+					script.text = `
+					//<![CDATA[ 
 
-								
+						function startModule() {
+						    if (document.createElement && document.getElementsByTagName) {
+						      var script = document.createElement('script');
+						      script.type = 'text/javascript';
+						      script.src = '${module}/${module}.nocache.js?entryPoint=${entrypoint}&id=${getRamdomId()}&${queryString}';
+							  script.defer = true;
+							  document.head.appendChild(script);
+							  triggerModuleStart();
+							}
+						}				
 
-			}
+						function triggerModuleStart(){
+						    try{
+							    ${module}.onInjectionDone('${module}');
+							    if ( !document.createEventObject ) {
+							        var evt = document.createEvent("HTMLEvents");
+							        evt.initEvent("DOMContentLoaded", true, true);
+							        document.dispatchEvent(evt);
+							     }
+						    } catch ( e ) {
+						    	//window.setTimeout('triggerModuleStart()', 100 );
+						   } 
+						}
+						
+						startModule();
+					//]]>
+					`;
 
+					idocument.head.appendChild(script);
+
+					let aonRichCssLink = idocument.createElement('link');
+					aonRichCssLink.rel= 'stylesheet';
+					aonRichCssLink.type= 'text/css';
+					aonRichCssLink.href = '/aonResource/aon-richCss.css';
+					idocument.head.insertBefore(aonRichCssLink, idocument.head.firstChild);
+					
+					fetch('css/gwt.css')
+					.then(response => response.text())
+					.then((text) => {
+						let style = idocument.createElement('style');
+						style.textContent = text;
+						idocument.body.appendChild(style)
+					});
+
+					resolve(iframe);
+
+				}
+			});
 			
 			document.getElementById(panel)?.appendChild(iframe);
+			
+			return promise;
 
 		}
 

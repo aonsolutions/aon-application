@@ -546,15 +546,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 4495.50);
 		calculate(Calendar.FEBRUARY,2023);
 		assertValue("cgcBaseLabel", 4495.50 / 30.00 * 28);
-		assertValue("cgpBaseLabel", 4495.50 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 4495.50 );
 		assertNotElement("editor-bases_provisonales");
 		calculate(Calendar.FEBRUARY,2024);
 		assertValue("cgcBaseLabel", 4720.50 / 30.00 * 29);
-		assertValue("cgpBaseLabel", 4720.50 / 30.00 * 29);
+		assertValue("cgpBaseLabel", 4720.50 );
 		assertNotElement("editor-bases_provisonales");
 		calculate(Calendar.FEBRUARY,2025);
 		assertValue("cgcBaseLabel", 4909.50 / 30.00 * 28);
-		assertValue("cgpBaseLabel", 4909.50 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 4909.50 );
 		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
@@ -2672,6 +2672,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
 		
+		draft("ENFERMEDAD PROFESIONAL, PPE");
+		
+		calculate(Calendar.MAY, 2025);
+		click("costsCheck-input");
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JUNE, 2025);
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JULY, 2025);
+		assertText("other_cost", 100.00);
+		click("costsCheck-input");
 		
 	}
 
