@@ -32,9 +32,14 @@ export class AonCustomerList extends AonRegistryList {
 
 	async getCustomerCustom(registry){
 		if(registry && registry.id){
+			let additional_info = ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT'];
+			if(this.isOffice()) {
+				additional_info.push('REGISTRY_COMPANY');
+				additional_info.push('RRELATIONSHIP');
+			}
 			let data = {
 				id: registry.id,
-				additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RSEGMENT']
+				additional_info
 			};
 
 			return this.filter.type == "false" ? getTarget(data) : getCustomer(data);
@@ -198,7 +203,10 @@ export class AonCustomerList extends AonRegistryList {
 		let json = btoa(JSON.stringify(data));
 		downloadRegistryExcel(json);
 	}
-
+	
+	isOffice() {
+		return this.office;
+	}
 
 	setOffice(office) {
 		this.office = office;

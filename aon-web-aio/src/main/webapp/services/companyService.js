@@ -84,7 +84,7 @@ export const getCompany = () => {
   });
 }
 
-export const setDomainApp = (data) => put(API.COMPANY_BOOKING, data);
+export const setDomainApp = (data, sessionData) => put(API.COMPANY_BOOKING, data, sessionData);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 
@@ -98,7 +98,7 @@ export const getCompanyActivities = (data) => get(API.COMPANY_ACTIVITIES, data);
 
 export const saveCompany = (data) => put(API.COMPANY, data)
 
-// export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
+export const getBookingDomainUserRoles = (data, sessionData) => get(API.COMPANY_APPROLES, data, sessionData);
 
 export const getDomainUserRoles = (data) => {
   const domain = LS.getDomainId();

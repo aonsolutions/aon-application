@@ -8,6 +8,7 @@ public class SellerWorkloadPeriod  implements Serializable {
 	
 	private Integer customers;
 	private Integer customerFees;
+	private Integer customerInvoices;
 	private Integer salaries;
 	private Double netAmount;
 	private Double totalAmount;
@@ -31,6 +32,15 @@ public class SellerWorkloadPeriod  implements Serializable {
 
 	public SellerWorkloadPeriod setCustomerFees(Integer customerFees) {
 		this.customerFees = customerFees;
+		return this;
+	}
+	
+	public Integer getCustomerInvoices() {
+		return customerInvoices;
+	}
+
+	public SellerWorkloadPeriod setCustomerInvoices(Integer customerInvoices) {
+		this.customerInvoices = customerInvoices;
 		return this;
 	}
 

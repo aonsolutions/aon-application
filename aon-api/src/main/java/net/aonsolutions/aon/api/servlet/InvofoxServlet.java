@@ -73,6 +73,7 @@ import net.aonsolutions.aon.tedi.invofox.OCRTooManyOwnersException;
 import net.aonsolutions.aon.tedi.invofox.OCRUndefinedTypeException;
 import net.aonsolutions.invofox.OCRCompanyParams;
 import net.aonsolutions.invofox.OCRDocumentsParams;
+import net.aonsolutions.invofox.OCRFilter;
 import net.aonsolutions.invofox.OCRInvofox;
 import net.aonsolutions.invofox.json.OCRDocumentJSON;
 import net.aonsolutions.invofox.json.OCRNames;
@@ -230,30 +231,91 @@ public class InvofoxServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject refreshProcessing(AonApiData api) {
-		String jobId = generateJobId();
-		Company company = AON.getCompany(api.getOccam(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
-		AON.getRawdocStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-				f -> f.getDomainProperty().eq(api.getDomain().getId())
-					.and(f.getStatusProperty().eq(RawdocStatus.PROCESSING.value())))
-		.forEach(r -> { 
-			Date date = AonDateUtils.addMinutes(new Date(), -10);
-			if(!AonStringUtils.isBlank(r.getS3Key()) && r.getCreationDate() != null && r.getCreationDate().before(date)) {
-				String[] keyParams = r.getS3Key().split("/"); 
-				StringBuilder newKey = new StringBuilder()
-						.append(keyParams[0] + "/")
-						.append(api.getDomain().getName() + "/")
-						.append(company.getDocument() + "/")
-						.append(keyParams[3] + "/")
-						.append(jobId + "/")
-						.append(keyParams[5]);
-				
-				S3.copy(r.getS3Bucket(), r.getS3Bucket(), r.getS3Key(), newKey.toString());
-				
-				AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), r.getId());
-				// S3.delete(r.getS3Bucket(), r.getS3Key());
-			}
-		});
+		Rawdoc rawdoc = AON.getRawdocFull(api.getOccam(), JsonUtils.getInteger(api.getData(), IJsonNames.RAWDOC));
 		
+		Date date = AonDateUtils.addMinutes(new Date(), -15);
+		if(!AonStringUtils.isBlank(rawdoc.getS3Key()) && rawdoc.getCreationDate() != null && !rawdoc.getCreationDate().before(date)) {
+			throw new AonApiException(new Exception("El documento se está procesando. Si en 15 minutos aún no se ha procesado vuelva a intentarlo de nuevo."));
+		}
+		
+		InvofoxConfiguration invofoxConfiguration = AON.getInvofoxConfiguration(api.getDomain(), api.getUser());
+		Company company = AON.getCompany(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
+		if (AonStringUtils.isBlank(company.getDocument())) return new JSONObject();
+		
+		OCRCompaniesResponse companiesResponse = OCRInvofox.getCompanies(invofoxConfiguration.getApiKey(),
+				invofoxConfiguration.getApiUrl(), OCRCompanyParams.get().withTaxId(company.getDocument()));
+		List<OCRCompany> companies = companiesResponse.getCompanies().orElse(new LinkedList<>());
+
+		if(rawdoc != null && rawdoc.isProcessing()) {
+			JSONObject rawdocJSON = new JSONObject(rawdoc.getJson());
+			JSONObject insightJSON = JsonUtils.getJSONObject(rawdocJSON, IJsonNames.INSIGHT);
+			String invofoxId = JsonUtils.getString(insightJSON, IJsonNames.INVOFOX_ID);
+				
+			if(!AonStringUtils.isBlank(invofoxId)) {
+				OCRDocumentResponse response = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(),invofoxConfiguration.getApiUrl(), invofoxId);
+				OCRDocument document = response.getDocument().orElse(null);
+				if(document != null && document.getPublicState().isPresent() && !document.getPublicState().get().equals(OCRSeverity.processing)) {
+					rawdocDocument(api, invofoxId);
+				}
+			} else {
+				OCRDocumentsParams ocrDocumentParams = OCRDocumentsParams.get()
+					.withEnvironment(invofoxConfiguration.getEnvironment())
+					.sort(OCRNames.CREATION, OCRDocumentsParams.DESC)
+					.withCompany(companies.get(0).getId())
+					.withFilter( () -> new OCRFilter()
+						.between(  OCRNames.CREATION, rawdoc.getCreationDate(), new Date())
+					);
+					
+				OCRDocumentsResponse response = OCRInvofox.getDocuments(invofoxConfiguration.getApiKey(),
+						invofoxConfiguration.getApiUrl(), ocrDocumentParams);
+				response.getDocuments().orElse(new LinkedList<>()).forEach(d -> {
+					if(d.getId().isPresent() && d.getPublicState().isPresent()) {
+						String documentId = d.getId().get();
+						OCRDocumentResponse responseDoc = OCRInvofox.getDocument(invofoxConfiguration.getApiKey(),invofoxConfiguration.getApiUrl(), invofoxId);
+						OCRDocument doc = responseDoc.getDocument().orElse(null);
+						Integer rawdocId = getRawdocId(doc);
+						if(rawdoc.getId().equals(rawdocId)) {
+							rawdocJSON.put(IJsonNames.INSIGHT, new JSONObject().put(IJsonNames.INVOFOX_ID, documentId));
+							if(doc != null && doc.getPublicState().isPresent() && !doc.getPublicState().get().equals(OCRSeverity.processing)) {
+								rawdocDocument(api, documentId);
+							} else if(doc != null && doc.getPublicState().isPresent() && doc.getPublicState().get().equals(OCRSeverity.processing)) {
+								rawdoc.setJson(rawdocJSON.toString());
+								AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc);
+							}
+						} else {
+							Rawdoc r = AON.getRawdocFull(api.getOccam(), rawdocId);
+							if(r != null && r.isProcessing()) {
+								JSONObject rJSON = new JSONObject(rawdoc.getJson());
+								rJSON.put(IJsonNames.INSIGHT, new JSONObject().put(IJsonNames.INVOFOX_ID, documentId));
+								r.setJson(rJSON.toString());
+								AON.rawdocSave(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), r);
+							}
+						}
+					}
+				});
+			
+				JSONObject insightJSON2 = JsonUtils.getJSONObject(rawdocJSON, IJsonNames.INSIGHT);
+				String invofoxId2 = JsonUtils.getString(insightJSON2, IJsonNames.INVOFOX_ID);
+				if(AonStringUtils.isBlank(invofoxId2)) {
+					String jobId = generateJobId();
+					if(!AonStringUtils.isBlank(rawdoc.getS3Key()) && rawdoc.getCreationDate() != null && rawdoc.getCreationDate().before(date)) {
+						String[] keyParams = rawdoc.getS3Key().split("/"); 
+						StringBuilder newKey = new StringBuilder()
+							.append(keyParams[0] + "/")
+							.append(api.getDomain().getName() + "/")
+							.append(company.getDocument() + "/")
+							.append(keyParams[3] + "/")
+							.append(jobId + "/")
+							.append(keyParams[5]);
+						
+						S3.copy(rawdoc.getS3Bucket(), rawdoc.getS3Bucket(), rawdoc.getS3Key(), newKey.toString());
+							
+						AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdoc.getId());
+						S3.delete(rawdoc.getS3Bucket(), rawdoc.getS3Key());
+					}		
+				}
+			}		
+		}				
 		return new JSONObject();
 	}
 	
