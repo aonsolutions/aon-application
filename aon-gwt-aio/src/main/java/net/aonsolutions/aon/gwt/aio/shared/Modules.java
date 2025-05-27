@@ -22,4 +22,5 @@ public interface Modules {
 	public static final String MARKETING_CAMPAIGN_MODULE = "MarketingCampaign";
 	public static final String SELLER_MODULE = "Seller";
 	public static final String SELLER_WORKLOAD_MODULE = "SellerWorkload";
+	public static final String PROJECT_MODULE = "ProjectModule";
 }

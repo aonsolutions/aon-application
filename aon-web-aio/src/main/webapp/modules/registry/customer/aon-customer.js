@@ -357,15 +357,12 @@ export class AonCustomer extends AonReg {
 		main.style.display = "flex";
 		this.clearElement(main);
 
-		let registryId = this.registry.getId();
+		div.style.position = 'absolute';
+		div.style.height = '100%';
 
-		if (registryId) {
-			let aonProjectList = new AonProjectList();
-			aonProjectList.style.width = "100%";
-			aonProjectList.registry = this.registry;
-			aonProjectList.filter = { page: 1, perPage: 500, registry: registryId };
-			main.appendChild(aonProjectList);
-		}
+		localStorage.setItem("customer", this.registry.getId());
+
+		GWT.iLoad(GWT.PROJECT, this.DIV);
 	}
 
 	//ITEMS PRODUCTS
