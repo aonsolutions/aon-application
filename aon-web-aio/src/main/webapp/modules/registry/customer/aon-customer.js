@@ -1,42 +1,30 @@
 import { AonReg } from "../aon-reg.js";
-import {
-	COLORS,
-	CONSTANT,
-	CSS,
-	EVENT,
-	MATERIAL_ICONS,
-	MSG,
-	TAG,
-} from "../../../environments/environments.js";
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../environments/environments.js";
 import { AonCard } from "../../../components/aon-card.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import {
-	getRelationShip,
-	saveRelationShip,
-	removeRelationShip,
-	saveCustomer
-} from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
-import {
-	getDomainCompanies,
-	saveCompany,
-} from "../../../services/companyService.js";
+import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
 import { AonProjectList } from "../../project/aon-project-list.js";
 import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
 import { AonItemList } from "../target/item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
 import { AonToolbar } from "../../../components/aon-toolbar.js";
-import * as ACTION from '../../actions.js';
-import * as GWT from '../../../gwt/gwt.js';
 import { ToolbarType } from "../../../models/enums.js";
 import { AonSellerSmallList } from "../seller/aon-seller-small-list.js";
+import { AonBooking } from "../../marketplace/aon-booking.js";
+
+import * as ACTION from '../../actions.js';
+import * as GWT from '../../../gwt/gwt.js';
+import * as LS from '../../../services/localStorageService.js';
 
 export class AonCustomer extends AonReg {
+	
 	saveBool;
 	ENTERPRISE_LINKED;
 	office;
@@ -63,10 +51,15 @@ export class AonCustomer extends AonReg {
 
 		if (this.office) {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
-			// this.options.push({ title: MSG.BOOKING, fn: () => this.buildBookingData() });
-			this.options.push({ title: "Agentes", fn: () => this.buildSellerData() });
-			// this.options.push({ title: MSG.PRODUCTS, fn: () => this.buildItemData()});
+			if(this.registry.registryCompany) 
+				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+			this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
+		}
+
+		if(this.isSig()) {
+			this.options.push({ title: MSG.BOOKING + '(SIG)', fn: () => this.buildBookingData()});		
+			this.options.push({ title: MSG.PRODUCTS + '(SIG)', fn: () => this.buildItemData()});
 		}
 	}
 
@@ -101,6 +94,7 @@ export class AonCustomer extends AonReg {
 		this.showSaveButton();
 		
 		let parent = this.getElement(this.DIV);
+		parent.style.display = "flex";
 		this.clearElement(parent);
 
 		this.buildGeneralCard(parent);
@@ -148,6 +142,7 @@ export class AonCustomer extends AonReg {
 		this.showSaveButton();
 				
 		let parent = this.getElement(this.DIV);
+		parent.style.display = "flex";
 		this.clearElement(parent);
 
 		this.buildGeneralInformation(parent);
@@ -358,8 +353,9 @@ export class AonCustomer extends AonReg {
 	buildExpedienteData() {
 		this.hideSaveButton();
 		
-		let div = this.getElement(this.DIV);
-		this.clearElement(div);
+		let main = this.getElement(this.DIV);
+		main.style.display = "flex";
+		this.clearElement(main);
 
 		div.style.position = 'absolute';
 		div.style.height = '100%';
@@ -374,6 +370,7 @@ export class AonCustomer extends AonReg {
 		this.hideSaveButton();
 		
 		let main = this.getElement(this.DIV);
+		main.style.display = "flex";
 		this.clearElement(main);
 
 		let registryId = this.registry.getId();
@@ -392,11 +389,34 @@ export class AonCustomer extends AonReg {
 		}
 	}
 
+
+	buildOfficeBookingData() {
+		this.hideSaveButton();
+		
+		let main = this.getElement(this.DIV);
+		main.style.display = "block";
+		this.clearElement(main);
+
+		let booking = new AonBooking();
+		booking.sessionData = this.getSessionData();
+		main.appendChild(booking);
+	}
+
+	getSessionData() {
+		return {
+			session_id: LS.getToken(),
+			domain_name: this.registry.registryCompany ? this.registry.registryCompany.domain.name : LS.getDomainName(),
+			domain_id: this.registry.registryCompany ? this.registry.registryCompany.domain.id : LS.getDomainId(),
+			domain_login: LS.getDomainLogin()
+ 		};
+	}
+
 	//BOOKING PRODUCTS
 	buildBookingData() {
 		this.hideSaveButton();
 		
 		let main = this.getElement(this.DIV);
+		main.style.display = "flex";
 		this.clearElement(main);
 
 		let registryId = this.registry.getId();
@@ -420,6 +440,7 @@ export class AonCustomer extends AonReg {
 		this.hideSaveButton();
 		
 		let main = this.getElement(this.DIV);
+		main.style.display = "flex";
 		this.clearElement(main);
 
 		let registryId = this.registry.getId();
@@ -437,6 +458,7 @@ export class AonCustomer extends AonReg {
 		this.hideSaveButton();
 		
 		let div = this.getElement(this.DIV);
+		div.style.display = "flex";
 		this.clearElement(div);
 
 		div.style.position = 'absolute';

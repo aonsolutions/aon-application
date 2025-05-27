@@ -3979,7 +3979,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public Object br(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
-		if ( leaveType == LeaveType.MATERNITY ||
+		if ( (leaveType == LeaveType.MATERNITY ||
+				leaveType == LeaveType.PATERNITY)
+			&& isPartialTime()) {
+			return this.getBr(add(date, Calendar.MONTH, -1), leaveType);
+		} else if ( leaveType == LeaveType.MATERNITY ||
 				leaveType == LeaveType.PATERNITY ) {
 			return this.br(add(date, Calendar.MONTH, -1));
 		} else if ( isPartialTime() && Period.compare(date,getVariable(BOE_A_2024_26917_START, Date.class)) > 0 ) {
@@ -3989,9 +3993,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
+
 	public Object br(Date date) throws ExpressionException, SQLException, SalaryException {
 
-		double br = getSavedBr(date);
+		double br = getSavedBr(date, null);
 
 		if (br > 0.00)
 			return br;
@@ -4004,7 +4009,22 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return calculateBr(date.before(contractStartDate) ? contractStartDate : date);
 	}
 
-	public double getSavedBr(Date date) {
+	public Object getBr(Date date, LeaveType leaveType) throws ExpressionException, SQLException, SalaryException {
+
+		double br = getSavedBr(date, leaveType);
+
+		if (br > 0.00)
+			return br;
+
+		br = getL00Br(date);
+		if (br > 0.00)
+			return br;
+
+		// No salaries are present.
+		return calculateBr(date.before(contractStartDate) ? contractStartDate : date);
+	}
+
+	public double getSavedBr(Date date, LeaveType leaveType) {
 		int contractId = getId();
 
 		boolean fullTime = true;
@@ -4014,7 +4034,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 
 		Date prevEndMonth = getLastDayOfMonth(add(date, Calendar.MONTH, -1));
-		Date prevStartMonth = getFirstDayOfMonth(add(date, Calendar.MONTH, fullTime ? -1 : -3));
+		int months = fullTime ? -1 : ( leaveType == LeaveType.MATERNITY || leaveType == LeaveType.PATERNITY ? -12 :  -3);
+		Date prevStartMonth = getFirstDayOfMonth(add(date, Calendar.MONTH, months));
 
 		double br = 0.00;
 
@@ -4029,7 +4050,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			salaries.forEach(s -> {
 				pair.fst += s.getCommonContingenciesBase();
 
-				double monthDays = s.getContextData(MONTH_DAYS.getName(), summingDouble(Double::parseDouble));
+				double monthDays = s.getContextData(MONTH_DAYS.getName(), Collectors.averagingDouble(Double::parseDouble));
 				;
 				double quoteDays = s.getContextData(QUOTE_DAYS.getName(), summingDouble(Double::parseDouble));
 				double naturalDays = quoteDays == monthDays ? AonDateUtils.getMax(s.getEndDate(), Calendar.DAY_OF_MONTH)
@@ -4051,7 +4072,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			});
 
-			br = pair.fst / pair.snd;
+			br = pair.fst / Math.min(pair.snd, 365);
 
 			boolean occupational = getLeaves().stream().filter(leave -> date.compareTo(leave.getEnd()) <= 0)
 					.filter(leave -> date.compareTo(leave.getStart()) >= 0

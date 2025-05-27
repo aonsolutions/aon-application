@@ -1145,7 +1145,13 @@ public class ContextFunctions {
 			context.setVariable(_OLD, oldStub, startDate, endDate);
 
 			Method seniority = ContextFunctions.class.getMethod("seniority");
-			MethodStub seniorStub = new MethodStub(seniority);
+			MethodStub seniorStub = new MethodStub(seniority){
+				@Override
+				public String toString() {
+					return "0";
+				}
+			};
+			
 			context.setVariable(ContextVariable.OLD, seniorStub, startDate, endDate);
 
 		} catch (SecurityException e) {

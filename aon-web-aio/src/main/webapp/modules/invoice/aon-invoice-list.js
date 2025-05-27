@@ -1,7 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Paymethods } from '../../services/paymethod.js';
-import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices } from '../../services/service.js';
+import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices, sendInvoiceMail, downloadInvoices, getAeatCertificates, recordInvoices, refreshProcessing} from '../../services/service.js';
 import { Invoice, getDocumentNumber } from './Invoice.js';
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
 import { COLORS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';

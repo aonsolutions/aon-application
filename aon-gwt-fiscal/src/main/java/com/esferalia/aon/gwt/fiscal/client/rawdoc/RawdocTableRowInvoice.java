@@ -115,9 +115,10 @@ class RawdocTableRowInvoice extends RawdocTableRowAbs<Invoice> {
 										StringBuilder buf = new StringBuilder();
 										if (result.getAccountingInvoice() != null 
 										 && result.getAccountingInvoice().getAccountEntry() != null) {
-												buf.append(AON.MSG.journal());
-												buf.append(": ");
-												buf.append(result.getAccountingInvoice().getAccountEntry().getJournal());
+											buf.append( result.getAccountingInvoice().getInvoice().getDocumentNumber() )
+												.append(" (")
+												.append(result.getAccountingInvoice().getAccountEntry().getJournal())
+												.append(")");
 										} else {
 											buf.append("CONTABILIZADO");
 										}
