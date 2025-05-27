@@ -18,6 +18,8 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Timestamp;
@@ -45,7 +47,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
-import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -277,23 +278,25 @@ public class AccountingInvoiceDAO {
 		}
 		ai.getInvoice().setFinances(FinanceDAO.getInvoiceFinances(ctx, invoice.getId()));
 		
-		ai.setAttach(
-			ctx.getDslContext()
-				.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.INVOICE,INVOICE_ATTACH.DRIVEID,INVOICE_ATTACH.MIMETYPE)
-					.from(INVOICE_ATTACH)
-					.where(INVOICE_ATTACH.INVOICE.eq(invoice.getId()))
-					.fetch()
-					.stream()
-					.map(rec -> new Attach()
-							.setId(rec.getValue(INVOICE_ATTACH.ID))
-							.setAttachModule(rec.getValue(INVOICE_ATTACH.INVOICE))
-							.setAttachType(AttachType.INVOICE)
-							.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
-							.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
-						)
-					.findFirst()
-					.orElse(null)
-			);
+		InvoiceDocDAO.get(ctx,invoice.getDomain(), invoice.getId())
+			.ifPresent(d -> ai.getInvoice().setDoc(d) );
+		
+//		ai.setAttach(ctx.getDslContext()
+//			.select(INVOICE_ATTACH.ID,INVOICE_ATTACH.INVOICE,INVOICE_ATTACH.DRIVEID,INVOICE_ATTACH.MIMETYPE)
+//			.from(INVOICE_ATTACH)
+//			.where(INVOICE_ATTACH.INVOICE.eq(invoice.getId()))
+//			.fetch()
+//			.stream()
+//			.map(rec -> new Attach()
+//					.setId(rec.getValue(INVOICE_ATTACH.ID))
+//					.setAttachModule(rec.getValue(INVOICE_ATTACH.INVOICE))
+//					.setAttachType(AttachType.INVOICE)
+//					.setDriveId(rec.getValue(INVOICE_ATTACH.DRIVEID))
+//					.setMimeType(MimeType.safeValueOf(rec.getValue(INVOICE_ATTACH.MIMETYPE)))
+//				)
+//			.findFirst()
+//			.orElse(null)
+//		);
 		return ai;
 	}
 
@@ -789,7 +792,7 @@ public class AccountingInvoiceDAO {
 			if (accInvoice.getInvoice().hasFinances()) {
 				entries.addAll( recordFinances(ctx, accInvoice) );				
 			}
-			if (accInvoice.getAttach() != null) {
+			if (accInvoice.getInvoice().getDoc().isEmpty() && accInvoice.getAttach() != null) {
 				insertInvoiceAttach( ctx, accInvoice);
 			}
 			if ( accInvoice.isFromRawdoc()) {
@@ -831,25 +834,17 @@ public class AccountingInvoiceDAO {
 		attach.setDescription("Factura");
 		if (attach.getData() == null) {
 			if (attach.getAttachURL() != null) {
-				if ( accInvoice.isFromRawdoc()) {
-					InputStream in = null;
-					try {
-						Rawdoc rawdoc = RawdocDAO.getFull(ctx, accInvoice.getAttach().getId());
-						if(rawdoc != null) attach.setData( rawdoc.getData() );
-					} finally {
-						AonIOUtils.closeQuietly(in);
-					}
-				} else {
-					InputStream in = null;
-					try {
-						URL url = new URL(attach.getAttachURL());
-						URLConnection conn = url.openConnection();
-						conn.connect();
-						in = new BufferedInputStream(conn.getInputStream());
-						attach.setData( AonIOUtils.toByteArray(in) );
-					} finally {
-						AonIOUtils.closeQuietly(in);
-					}
+				InputStream in = null;
+				try {
+					URL url = new URI(attach.getAttachURL()).toURL();
+					URLConnection conn = url.openConnection();
+					conn.connect();
+					in = new BufferedInputStream(conn.getInputStream());
+					attach.setData( AonIOUtils.toByteArray(in) );
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				} finally {
+					AonIOUtils.closeQuietly(in);
 				}
 			}
 		} else {

@@ -152,7 +152,8 @@ public class RawdocServlet extends AonApiHttpServlet {
 	private static JSONObject getRawdoc(AonApiData api) {
 		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
 		Integer rawdocId = vars.getInt(IJsonNames.ID);
-		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdocId);
+		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), rawdocId)
+				.orElse(null);
 		return rawdocToJson(api, rawdoc);
 	}
 	

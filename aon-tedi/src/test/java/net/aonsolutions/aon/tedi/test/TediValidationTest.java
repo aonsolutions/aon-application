@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hamcrest.MatcherAssert;
 import org.json.JSONObject;
@@ -34,7 +34,10 @@ import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.TediParser;
 
 class TediValidationTest {
-
+	private LinkedList<InvoiceError> getMessages(TediResult result) {
+		return result.messageStream().collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	@AfterEach
 	public void afterEach() {
 		System.out.println("");
@@ -47,11 +50,11 @@ class TediValidationTest {
 		TediInvoice tedi = TediInvoiceJSON.fromJSON(tediInvoice);
 		tedi.setType(null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString()))));
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString()))));
 	}
-	
+
 	@Test
 	public void test_002_OverflowSeries() throws Exception {
 		System.out.print("\t-test Tedi overflow series validation");
@@ -59,9 +62,9 @@ class TediValidationTest {
 		tedi.setType(TediInvoiceType.EMITIDA);
 		tedi.setSeries(AonStringUtils.repeat("X", (INVOICE.SERIES.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.SERIES)))
 				)));
@@ -74,9 +77,9 @@ class TediValidationTest {
 		tedi.setType(TediInvoiceType.EMITIDA);
 		tedi.setNumber(null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.NUMBER)))
 				)));
@@ -88,9 +91,9 @@ class TediValidationTest {
 		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
 		tedi.setReference(AonStringUtils.repeat("X", (INVOICE.REFERENCE_CODE.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 					 hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))		
 					,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.REFERENCE_CODE)))
 						)));
@@ -102,9 +105,9 @@ class TediValidationTest {
 		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
 		tedi.setDate( (Date) null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.ISSUE_DATE)))
 				)));
@@ -122,9 +125,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().setDocument(null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result),hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString())),
 				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.REGISTRY)))
 				)));
@@ -142,9 +145,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().setDocument(AonStringUtils.repeat("X", (INVOICE.RDOCUMENT.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT)))
 				)));
@@ -163,9 +166,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().setDocument("11111111Q");
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result),hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C004.toString())),
 				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT)))
 				)));
@@ -183,9 +186,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().setDocumentCountry(null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result),hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C003.toString())),
 				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RDOCUMENT_COUNTRY))))))
 				;
@@ -203,9 +206,9 @@ class TediValidationTest {
 //		}
 //		tedi.getRegistry().setName(null);
 //		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-//		Assert.assertNotNull(result.getMessages());
-//		printMessages(result.getMessages());
-//		MatcherAssert.assertThat(result.getMessages(),hasItem(allOf(
+//		Assert.assertNotNull(getMessages(result));
+//		printMessages(getMessages(result));
+//		MatcherAssert.assertThat(getMessages(result),hasItem(allOf(
 //				hasProperty("code", equalTo(InvoiceErrorMessages.C001.toString())),
 //				hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RNAME))))));
 //	}
@@ -222,9 +225,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().setName(AonStringUtils.repeat("X", (INVOICE.RNAME.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.RNAME))))));
 	}
@@ -244,9 +247,9 @@ class TediValidationTest {
 		}
 		tedi.getRegistry().getAddress().setAddress(AonStringUtils.repeat("X", (RADDRESS.ADDRESS.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), hasItem(allOf(
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), hasItem(allOf(
 				hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))
 				,hasProperty("context", hasProperty("key",is(InvoiceErrorKey.ADDRESS))))));
 	}
@@ -264,9 +267,9 @@ class TediValidationTest {
 		TediInvoiceDetail det = tedi.getDetails().get(0);
 		det.setDescription(AonStringUtils.repeat("X", (INVOICE_DETAIL.DESCRIPTION.getDataType().length() + 1)));
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
-		assertNotNull(result.getMessages());
-		printMessages(result.getMessages());
-		MatcherAssert.assertThat(result.getMessages(), 
+		assertNotNull(getMessages(result));
+		printMessages(getMessages(result));
+		MatcherAssert.assertThat(getMessages(result), 
 			hasItem(
 				allOf(
 					 hasProperty("code", equalTo(InvoiceErrorMessages.C002.toString()))		
@@ -277,7 +280,7 @@ class TediValidationTest {
 		 )))));
 	}
 
-	private void printMessages(List<InvoiceError> messages) {
+	private void printMessages(LinkedList<InvoiceError> messages) {
 		if (messages != null && messages.size()>0) {
 			System.out.println();
 			System.out.println("\t\t"

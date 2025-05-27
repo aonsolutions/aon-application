@@ -526,7 +526,7 @@ public class Invoice implements Serializable, HasAudit {
 		return AonCollectionUtils.stream(this.details);
 	}
 	public boolean hasDetails() {
-		return AonCollectionUtils.isEmpty(this.details); 
+		return AonCollectionUtils.isNotEmpty(this.details); 
 	}
 	public Invoice addDetail(InvoiceDetail detail) {
 		ensureDetails().add(detail);
@@ -542,7 +542,7 @@ public class Invoice implements Serializable, HasAudit {
 		return AonCollectionUtils.stream(this.finances);
 	}
 	public boolean hasFinances() {
-		return AonCollectionUtils.isEmpty(this.finances); 
+		return AonCollectionUtils.isNotEmpty(this.finances); 
 	}
 	private List<Finance> ensureFinances() {
 		if (this.finances == null) this.finances = new LinkedList<>();
@@ -583,15 +583,19 @@ public class Invoice implements Serializable, HasAudit {
 	    return this.messages;
 	}
 	public boolean hasMessages() {
-		return AonCollectionUtils.isEmpty(this.messages);
+		return AonCollectionUtils.isNotEmpty(this.messages);
+	}
+	public int getMessagesSize() {
+		return AonCollectionUtils.size(this.messages);
 	}
 	public Invoice addMessage(InvoiceError message) {
 		ensureMessages().add(message);
 	    return this;
 	}
+	
 	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
 		if (!hasMessages()) return Optional.empty();
-		return AonCollectionUtils.stream( getMessages() )
+		return messageStream()
 			.map(ie -> ie.getLevel().ordinal())
 			.max( Integer::compare )
 			.flatMap( InvoiceErrorLevel::value )

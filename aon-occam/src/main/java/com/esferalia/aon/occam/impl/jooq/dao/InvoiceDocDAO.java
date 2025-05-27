@@ -82,7 +82,7 @@ public class InvoiceDocDAO {
 		;
 	}
 		
-	private static Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId ) {
+	public static Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, Integer invoiceId ) {
 		return getInvoiceDoc(ctx, domain, f -> f.getInvoiceProperty().eq(invoiceId));
 	}
 	private static Optional<InvoiceDoc> getInvoiceDoc(AONContext ctx, int domain, InvoiceDocFilter filter ) {
@@ -184,7 +184,12 @@ public class InvoiceDocDAO {
 	private static String buildUrl(String domain, InvoiceDoc doc) {
 		if (doc.getExternalStorage() == null) return null;
 		AonURIBuilder builder = new AonURIBuilder()
+// --------------
 			.setScheme("https")
+// --------------
+//			.setScheme("http")
+//			.setPort(8080)
+// --------------
 			.setHost(domain)
 			.setPath("/ms/api/doc")
 			.setParameter(IJsonNames.DOMAIN_ID, AonNumberUtils.toString(doc.getDomain()))

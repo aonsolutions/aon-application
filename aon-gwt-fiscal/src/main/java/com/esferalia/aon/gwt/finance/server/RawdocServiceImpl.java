@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.impl.jooq.RawdocImpl;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
@@ -76,7 +77,6 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public TediResult parse(Occam occam, Integer rawdocId) throws AonCoreException {
 		try {
-			String url = getRawdocAttachURL(occam,rawdocId);
 			TediContext tctx = new TediContext()
 				.setDomainName(occam.getDomainName())
 				.setDomain(occam.getDomain())
@@ -85,7 +85,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			result.getAccountingInvoice()
 				.setFromRawdoc(true)
 				.setTediParsed(true)
-				.getAttach().setAttachURL(url);
+			;
+			Attach attach = result.getAccountingInvoice().getAttach();
+			if (attach != null && attach.getAttachURL() == null && attach.getData() != null) {
+				String url = getRawdocDataAttachURL(occam,rawdocId);
+				result.getAccountingInvoice().getAttach()
+					.setAttachURL(url)
+					.setData( null );
+				System.out.println( "url ..: " + url);
+			}
 			return result;
 		} catch ( TediException t) {
 			t.printStackTrace();
@@ -101,27 +109,15 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			AonCollectionUtils.stream(rawdocIds)
 			.forEach( rawdocId -> {
 				try {
-					String url = getRawdocAttachURL(occam,rawdocId);
-					TediContext tctx = new TediContext()
-						.setAONContext(ctx)
-						.setAonConfiguration( config)
-						.setDomainName(occam.getDomainName())
-						.setDomain(occam.getDomain())
-						.setUser(occam.getUser());
-					TediResult result = TEDI.fromRawdoc(tctx, rawdocId );
-					result.getAccountingInvoice()
-						.setFromRawdoc(true)
-						.setTediParsed(true)
-						.getAttach().setAttachURL(url);
+					TediResult result = parse(occam, rawdocId);
 					AccountingInvoiceDAO.save(ctx, config , result.getAccountingInvoice());					
-				} catch ( TediException | AonCoreException e) {
+				} catch ( Exception e) {
 					e.printStackTrace();
 					ret.add( e.getMessage() );
 				}			
 			});
 		}
-
-			return ret;
+		return ret;
 	}
 
 	@Override
@@ -129,9 +125,9 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 	}
 
-	private String getRawdocAttachURL(Occam occam, Integer rawdocId) {
+	private String getRawdocDataAttachURL(Occam occam, Integer rawdocId) {
 		String url = null;
-		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId);
+		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId).orElse(null);
 		if (rawdoc != null) {
 			if (rawdoc.getData() != null) {
 				

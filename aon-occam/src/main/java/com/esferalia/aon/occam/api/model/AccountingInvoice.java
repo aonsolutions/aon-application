@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -82,6 +82,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.accountEntry = accountEntry;
 	}
 	
+	public Optional<Invoice> optInvoice() {
+		return Optional.ofNullable(invoice);
+	}
 	public Invoice getInvoice() {
 		return invoice;
 	}
@@ -115,7 +118,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean isDocumentAttached() {
-		return this.attach != null;
+		return this.attach != null || (this.getInvoice() != null && this.getInvoice().getDoc().isPresent());
 	}
 	
 	public Attach getAttach() {
@@ -368,32 +371,30 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	
 	public boolean hasMessages() {
-		return invoice.hasMessages();
+		return invoice != null && invoice.hasMessages();
+	}
+	public int getMessagesSize() {
+		return invoice != null ? invoice.getMessagesSize() : 0;
 	}
 
-	public List<InvoiceError> getMessages() {
-		return invoice.getMessages();
+	public Stream<InvoiceError> messageStream() {
+		return optInvoice().map(Invoice::messageStream).orElse(Stream.empty());
 	}
 
 	public void add(InvoiceError error) {
 		invoice.addMessage(error);
 	}
 
-	public InvoiceErrorLevel getMoreSeriousLevel() {
-		InvoiceErrorLevel level  = null;
-		if (getMessages() != null) {
-			for (InvoiceError error : getMessages()) {
-				if (level == null || error.getLevel().ordinal() > level.ordinal()) {
-					level = error.getLevel();
-				}
-			}
-		}
-		return level;
+	public Optional<InvoiceErrorLevel> getMoreSeriousLevel() {
+		return optInvoice().flatMap(Invoice::getMoreSeriousLevel);
 	}
 	
 	public boolean isImportable() {
-		InvoiceErrorLevel level = getMoreSeriousLevel();
-		return ( level == null || level.ordinal() < InvoiceErrorLevel.ERR.ordinal() );
+		return getMoreSeriousLevel().isEmpty()
+			|| getMoreSeriousLevel()
+			.filter(l -> l.ordinal() < InvoiceErrorLevel.ERR.ordinal() )
+			.isPresent()
+		;
 	}
 	public void clearMessages() {
 		invoice.clearMessages();		

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.tedi;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -111,9 +112,12 @@ public class TediResult implements Serializable {
 	public void clearMessages() {
 		getAccountingInvoice().clearMessages();
 	}
+	public boolean hasMessages() {
+		return getAccountingInvoice().hasMessages();
+	}
 
-	public List<InvoiceError> getMessages() {
-		return getAccountingInvoice().getMessages();
+	public Stream<InvoiceError> messageStream() {
+		return getAccountingInvoice().messageStream();
 	}
 
 	public boolean isImportable() {

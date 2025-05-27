@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -43,7 +44,7 @@ public class RawdocImpl implements IRawdoc {
 	}
 	
 	@Override
-	public Rawdoc getRawdocFull(AONContext ctx, int id) {
+	public Optional<Rawdoc> getRawdocFull(AONContext ctx, int id) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getFull(ctx, id));
 	}

@@ -7656,12 +7656,12 @@ public class AON {
 			return getRawdoc().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
-	public static Rawdoc getRawdocFull(Occam occam, int id) {
+	public static Optional<Rawdoc> getRawdocFull(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}
 	}
-	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
+	public static Optional<Rawdoc> getRawdocFull(String domainName, int domain, String user, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}

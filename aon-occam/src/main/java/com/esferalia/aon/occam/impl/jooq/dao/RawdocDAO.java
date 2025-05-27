@@ -185,16 +185,15 @@ public class RawdocDAO {
 				.map(new RawdocFiller());
 	}
 	
-	public static Rawdoc getFull(AONContext ctx, Integer id) {
+	public static Optional<Rawdoc> getFull(AONContext ctx, Integer id) {
 		return ctx.getDslContext()
-				.select( RAWDOC.fields() )
-				.from(RAWDOC)
-				.where(RAWDOC.ID.eq(id))
-				.fetch()
-				.stream()
-				.map(new RawdocFiller())
-				.findFirst()
-				.orElse(null);
+			.select( RAWDOC.fields() )
+			.from(RAWDOC)
+			.where(RAWDOC.ID.eq(id))
+			.fetch()
+			.stream()
+			.map(new RawdocFiller())
+			.findFirst();
 	}
 	
 	public static Rawdoc insert(AONContext ctx, Rawdoc rawdoc) {

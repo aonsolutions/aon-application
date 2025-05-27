@@ -902,29 +902,32 @@ public class InvoiceDAO {
 		return invoice;
 	}
 	
-	public static Invoice accept(AONContext ctx, Invoice invoice, Integer rawdocId) {
+	public static Invoice accept(AONContext ctx, final Invoice invoice, Integer rawdocId) {
 		AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate());
 		InvoiceAutoComplete.completeInvoice2(ctx, aonCtx, invoice);
 		InvoiceValidation.validateInvoice(ctx, aonCtx, invoice);
-		invoice = insert(ctx, aonCtx, invoice);
+		insert(ctx, aonCtx, invoice);
 		FinanceDAO.insertFinances(ctx, invoice.getFinances());
 		if(invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
 			updateRectifiedInvoice(ctx, invoice);
 		}
 		if(rawdocId != null) {
-			Rawdoc rawdoc = RawdocDAO.getFull(ctx, rawdocId);
-			if(rawdoc != null && rawdoc.getData() != null) {
-				Attach attach = new Attach()
-					.setDate(new Date())
-					.setDomain(new Domain().setId(invoice.getDomain()))
-					.setAttachModule(invoice.getId())
-					.setMimeType(rawdoc.getMimeType())
-					.setAttachType(AttachType.INVOICE)
-					.setType(InvoiceAttachmentType.INVOICE.value())
-					.setData(rawdoc.getData());
-				AttachmentDAO.insertInvoiceAttach(ctx, attach);
-			}
-			RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
+			RawdocDAO.getFull(ctx, rawdocId)
+				.ifPresent(rawdoc -> {
+					if(rawdoc.getData() != null) {
+						Attach attach = new Attach()
+							.setDate(new Date())
+							.setDomain(new Domain().setId(invoice.getDomain()))
+							.setAttachModule(invoice.getId())
+							.setMimeType(rawdoc.getMimeType())
+							.setAttachType(AttachType.INVOICE)
+							.setType(InvoiceAttachmentType.INVOICE.value())
+							.setData(rawdoc.getData());
+						AttachmentDAO.insertInvoiceAttach(ctx, attach);
+					}
+					RawdocDAO.delete(ctx, invoice.getDomain(), rawdocId);	
+				}
+			);
 		}
 		
 		invoice.getDetails().stream().forEach(detail ->
@@ -1049,6 +1052,12 @@ public class InvoiceDAO {
 		
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);
+		invoice.getDoc()
+			.map(d -> d.setInvoice(invoice.getId())
+					.setDomain(invoice.getDomain())
+					.setType(InvoiceAttachmentType.INVOICE)
+					)
+			.ifPresent(d -> InvoiceDocDAO.save(ctx, d));
 		generateMD5(ctx, invoice);
 		return invoice.setCreationDate(new Date()); 
 	}
