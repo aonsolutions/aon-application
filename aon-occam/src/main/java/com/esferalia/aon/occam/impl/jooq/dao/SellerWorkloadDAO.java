@@ -220,6 +220,7 @@ public class SellerWorkloadDAO {
 		Condition condition = createFeeCondition(ctx, params);
 
 		Date start = getStartDatePeriod(params.getPeriod());
+		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 		Date end = getEndDatePeriod(params.getPeriod());
 
 		HashSet<Integer> customerFeeIds = new HashSet<Integer>();
@@ -228,6 +229,7 @@ public class SellerWorkloadDAO {
 		// Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera
 		// compatible con ambos motores de base de datos
 		Field<Date> recalculatedBillingDateAdjusted = DSL
+				.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
@@ -246,7 +248,7 @@ public class SellerWorkloadDAO {
 						.where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
 						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
 						.and(condition);
 	
@@ -265,7 +267,7 @@ public class SellerWorkloadDAO {
 						.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
 						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(INVOICE.ISSUE_DATE.between(start, end));
+						.and(INVOICE.ISSUE_DATE.between(start, endIt));
 	
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
@@ -274,6 +276,7 @@ public class SellerWorkloadDAO {
 			}
 			// Sumamos un mes a la fecha de inicio
 			start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+			endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 		}
 
 		if (customerFeeIds.isEmpty() && invoiceIds.isEmpty())
@@ -336,6 +339,7 @@ public class SellerWorkloadDAO {
 				Condition conditionFee = createFeeCondition(ctx, params);
 
 				start = getStartDatePeriod(params.getPeriod());
+				Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 				end = getEndDatePeriod(params.getPeriod());
 
 				HashSet<Integer> customerFeeIds = new HashSet<Integer>();
@@ -343,6 +347,7 @@ public class SellerWorkloadDAO {
 				// Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera
 				// compatible con ambos motores de base de datos
 				Field<Date> recalculatedBillingDateAdjusted = DSL
+						.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 						.when(CUSTOMER_FEE.PERIOD.eq((short) 1),
 								DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 						.when(CUSTOMER_FEE.PERIOD.eq((short) 2),
@@ -366,7 +371,7 @@ public class SellerWorkloadDAO {
 							.where(CUSTOMER_FEE.SELLER.eq(sellerWorkload.getId()))
 							.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-							.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+							.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 //			            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 							.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
 							.and(conditionFee).fetch();
@@ -375,6 +380,7 @@ public class SellerWorkloadDAO {
 
 					// Sumamos un mes a la fecha de inicio
 					start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+					endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 				}
 
 				System.out.println("getFeeIdsList size : " + customerFeeIds.size());
@@ -391,6 +397,7 @@ public class SellerWorkloadDAO {
 			Condition condition = createFeeCondition(ctx, params);
 
 			Date start = getStartDatePeriod(params.getPeriod());
+			Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 			Date end = getEndDatePeriod(params.getPeriod());
 
 			HashSet<Integer> customerFeeIds = new HashSet<Integer>();
@@ -398,6 +405,7 @@ public class SellerWorkloadDAO {
 			// Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera
 			// compatible con ambos motores de base de datos
 			Field<Date> recalculatedBillingDateAdjusted = DSL
+					.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 					.when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 					.when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
 					.when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
@@ -415,7 +423,7 @@ public class SellerWorkloadDAO {
 						.where(CUSTOMER_FEE.SELLER.eq(params.getSeller()))
 						.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+						.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 //		            .and(CUSTOMER_FEE.PERIOD.ne((short) 0))
 						.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
 						.and(condition).fetch();
@@ -424,6 +432,7 @@ public class SellerWorkloadDAO {
 
 				// Sumamos un mes a la fecha de inicio
 				start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+				endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 			}
 
 			System.out.println("getFeeIdsList size : " + customerFeeIds.size());
@@ -464,6 +473,7 @@ public class SellerWorkloadDAO {
 
 			for (SellerWorkload sellerWorkload : sellers) {
 				start = getStartDatePeriod(params.getPeriod());
+				Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 				end = getEndDatePeriod(params.getPeriod());
 
 				HashSet<Integer> invoiceIds = new HashSet<Integer>();
@@ -474,7 +484,7 @@ public class SellerWorkloadDAO {
 							.from(INVOICE_DETAIL).join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 							.where(INVOICE_DETAIL.SELLER.eq(sellerWorkload.getId()))
 							.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-							.and(INVOICE.ISSUE_DATE.between(start, end));
+							.and(INVOICE.ISSUE_DATE.between(start, endIt));
 
 					Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 							.limit(params.getLimit()).fetch();
@@ -483,6 +493,7 @@ public class SellerWorkloadDAO {
 
 					// Sumamos un mes a la fecha de inicio
 					start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+					endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 				}
 
 				System.out.println("getInvoiceIdsList size : " + invoiceIds.size());
@@ -496,6 +507,7 @@ public class SellerWorkloadDAO {
 
 		} else {
 			Date start = getStartDatePeriod(params.getPeriod());
+			Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 			Date end = getEndDatePeriod(params.getPeriod());
 
 			HashSet<Integer> customerInvoiceIds = new HashSet<Integer>();
@@ -506,7 +518,7 @@ public class SellerWorkloadDAO {
 						.from(INVOICE_DETAIL).join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 						.where(INVOICE_DETAIL.SELLER.eq(params.getSeller()))
 						.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-						.and(INVOICE.ISSUE_DATE.between(start, end));
+						.and(INVOICE.ISSUE_DATE.between(start, endIt));
 
 				Result<Record1<Integer>> resultInvoice = invoiceSelect.groupBy(INVOICE_DETAIL.ID).offset(params.getOffset())
 						.limit(params.getLimit()).fetch();
@@ -515,6 +527,7 @@ public class SellerWorkloadDAO {
 
 				// Sumamos un mes a la fecha de inicio
 				start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+				endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 			}
 
 			System.out.println("getInvoiceIdsList size : " + customerInvoiceIds.size());
@@ -686,11 +699,13 @@ public class SellerWorkloadDAO {
 
 	private static void getCustomerAmount(AONContext ctx, SellerWorkload sellerWorkload, Integer seller, SellerWorkloadParams params) {
 		Date start = getStartDatePeriod(params.getPeriod());
+		Date endIt = AonDateUtils.toSql( AonDateUtils.getMonthLastDay(start) );
 		Date end = getEndDatePeriod(params.getPeriod());
 
 		// Utilizamos JOOQ para recalcular la fecha de facturación ajustada de manera
 		// compatible con ambos motores de base de datos
 		Field<Date> recalculatedBillingDateAdjusted = DSL
+				.when(CUSTOMER_FEE.PERIOD.eq((short) 0), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 1), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 1, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 2), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 2, DatePart.MONTH))
 				.when(CUSTOMER_FEE.PERIOD.eq((short) 3), DSL.dateSub(CUSTOMER_FEE.BILLING_DATE, 3, DatePart.MONTH))
@@ -709,7 +724,7 @@ public class SellerWorkloadDAO {
 					.where(CUSTOMER_FEE.SELLER.eq(seller))
 					.and(CUSTOMER_FEE.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 					.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(start))
-					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(end)))
+					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(endIt)))
 					.and(recalculatedBillingDateAdjusted.lessThan(start)) // Filtro por la fecha ajustada
 					.fetch();
 			
@@ -720,7 +735,7 @@ public class SellerWorkloadDAO {
 					.join(INVOICE).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 					.where(INVOICE_DETAIL.SELLER.eq(seller))
 					.and(INVOICE_DETAIL.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-					.and(INVOICE.ISSUE_DATE.between(start, end))
+					.and(INVOICE.ISSUE_DATE.between(start, endIt))
 					.fetch();
 
 			// Inicializamos los valores para los cálculos
@@ -792,6 +807,7 @@ public class SellerWorkloadDAO {
 
 			// Sumamos un mes a la fecha de inicio
 			start = AonDateUtils.toSql(AonDateUtils.addMonths(start, 1));
+			endIt = AonDateUtils.toSql(AonDateUtils.getMonthLastDay(start));
 		}
 	}
 
