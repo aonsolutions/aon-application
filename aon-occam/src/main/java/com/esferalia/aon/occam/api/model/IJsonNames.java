@@ -313,6 +313,7 @@ public final class IJsonNames {
 	public static final String INITIATION_DATE = "initiationDate";
 	public static final String INPUT_ACCOUNT = "inputAccount";
 	public static final String INSIDE_PERIOD = "insidePeriod";
+	public static final String INSIGHT = "insight";
 	public static final String INTE = "inte";
 	public static final String INTERNET = "internet";
 	public static final String INTERVAL = "interval";
@@ -320,6 +321,7 @@ public final class IJsonNames {
 	public static final String INVENTORIABLE = "inventoriable";
 	public static final String INVEST_ASSET = "investAsset";
 	public static final String INVESTMENT = "investment";
+	public static final String INVOFOX_ID = "invofoxId";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
 	public static final String INVOICE_DETAIL = "invoiceDetail";

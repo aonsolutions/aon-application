@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ConsultancyBookingApps, BookingApps, ClassicApps, ConsoleServices, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
-import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
+import {getBookingDomainUserRoles, getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
@@ -37,6 +37,7 @@ export class AonBooking extends AonElement {
 	definedUsers;
 	dur;
 	domainPayer;
+	sessionData;
 
 	options
 
@@ -53,7 +54,7 @@ export class AonBooking extends AonElement {
 	}
 
 	connectedCallback () {
-		getDomainUserRoles({reload: true}).then(r => {
+		getBookingDomainUserRoles({}, this.sessionData).then(r => {
 			this.dur = new DomainUserRoles(r);
 			this.initialize();
 			this.domainPayer = this.dur.isDomainPayer();
@@ -62,7 +63,7 @@ export class AonBooking extends AonElement {
 				this.completeDomainApps(this.dur);
 			this.users = this.dur.maxDefinedUsers;
 			this.definedUsers = this.dur.definedUsers;
-			this.build();
+			this.build();			
 		});
 	}
 
@@ -629,7 +630,7 @@ export class AonBooking extends AonElement {
 				apps: this.apps,
 				users: this.users,
 				domainPayer: this.domainPayer
-			}).then(() => {
+			}, this.sessionData).then(() => {
 				toast.start({
 					type: 'success',
 					message: 'Datos Guardados Correctamente'
