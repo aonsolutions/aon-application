@@ -22,6 +22,7 @@ import { AonBooking } from "../../marketplace/aon-booking.js";
 import * as ACTION from '../../actions.js';
 import * as GWT from '../../../gwt/gwt.js';
 import * as LS from '../../../services/localStorageService.js';
+import { AonUserList } from "../../user/aon-user-list.js";
 
 export class AonCustomer extends AonReg {
 	
@@ -51,16 +52,18 @@ export class AonCustomer extends AonReg {
 
 		if (this.office) {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
-			if(this.registry.registryCompany) 
-				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
 			this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
+			if(this.registry.registryCompany) {
+				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
+				this.options.push({ title: MSG.USERS, fn: () => this.buildUsersData() });
+			}
 		}
 
-		if(this.isSig()) {
-			this.options.push({ title: MSG.BOOKING + '(SIG)', fn: () => this.buildBookingData()});		
-			this.options.push({ title: MSG.PRODUCTS + '(SIG)', fn: () => this.buildItemData()});
-		}
+		// if(this.isSig()) {
+		// 	this.options.push({ title: MSG.BOOKING + '(SIG)', fn: () => this.buildBookingData()});		
+		// 	this.options.push({ title: MSG.PRODUCTS + '(SIG)', fn: () => this.buildItemData()});
+		// }
 	}
 
 	build = () => {
@@ -403,6 +406,19 @@ export class AonCustomer extends AonReg {
 		let booking = new AonBooking();
 		booking.sessionData = this.getSessionData();
 		main.appendChild(booking);
+	}
+
+	buildUsersData() {
+		this.hideSaveButton();
+		
+		let main = this.getElement(this.DIV);
+		main.style.display = "block";
+		this.clearElement(main);
+
+		let userList = new AonUserList();
+		userList.sessionData = this.getSessionData();
+		userList.parent = main;
+		main.appendChild(userList);
 	}
 
 	getSessionData() {
