@@ -781,7 +781,10 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1628,"LM1626-LM1627");  // Fila 2024
 		addBreakdown(Mod2002024LM1494Key.values(), Mod2002024Key.LM1494, false);  // Fila de totales
 		
+		// FALTA - VER SI ASIGNAR TAMBIEN CASILLAS 2810 Y 990 SI TIENEN CALCULOS FIJOS AL FINAL 
 		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital ...
+//		 02810 (pág. 20 quater) = 02919 (pág. 12)
+//		 00990 (pág. 20 quater) = 00524 (pág. 12)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RV991, "RV941-RV2810-RV990");
 		
 		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales		

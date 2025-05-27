@@ -724,36 +724,46 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 //			return lm1249a>lm1249b?lm1249a:lm1249b;
 //		}
 //	}
-	
-	// Casilla 02369: Límite total... 
-	//	Si 01249 + 01255 <= 1.000.000 entonces 02369 = 1.000.000
-	//	Si 01249 + 01255 > 1.000.000 entonces 02369 = 01249 + 01255
+
+	// FALTA - NO ENTIENDO MUY BIEN ESTO DEL PADIS PRIMERO PONE QUE SE CALCULA DE UNA FORMA Y LUEGO PONE DE OTRA FORMA
+	// POR AHORA PONGO LA SEGUNDA, YA VERE COMO LO HACE SOCIEDADES WEB
+	// Casilla 02369:  
+	//	Límite total (casilla 02369):
+	//	 - Si 01249 + 01255 <= 1.000.000 entonces 02369 = 1.000.000
+	//	 - Si 01249 + 01255 > 1.000.000 entonces 02369 = 01249 + 01255
+	//	Importe calculado:
+	//	 - Si GFN ((01248 + 01258 + 01259)) > 01249, y 01249 > 1.000.000 entonces 02369 = 01249 + 01255
+	//	 - Si GFN ((01248 + 01258 + 01259)) > 01249, y 01249 <= 1.000.000 entonces 02369 = la mayor de 01249 + 01255 o 1.000.000
+	//	 - Si GFN ((01248 + 01258 + 01259)) <= 01249, y 01249 > 1.000.000 entonces 02369 = 01249
+	//	 - Si GFN ((01248 + 01258 + 01259)) <= 01249, y 01249 <= 1.000.000 entonces 02369 = 1.000.000
 	// Excepción en la aplicación de los límites de deducibilidad de gastos financieros (art. 16.6.b LIS): 
-	// 	Si marca la clave 00072 de caracteres "extinción de entidad" => [02369] = 01256 + 01258 + 01259	
+	// 	Si marca la clave 00072 de caracteres "extinción de entidad" => [02369] = 01256 + 01258 + 01259
 	public double computeLM2369() throws AonCoreException {
 		double lm1249 = roundKey(Mod2002024Key.LM1249);
 		double lm1255 = roundKey(Mod2002024Key.LM1255);
 		double lm1256 = roundKey(Mod2002024Key.LM1256);
 		double lm1258 = roundKey(Mod2002024Key.LM1258);
 		double lm1259 = roundKey(Mod2002024Key.LM1259);
-		
-//		double lm1250 = roundKey(Mod2002024Key.LM1250); 
-//		double lm1251 = roundKey(Mod2002024Key.LM1251);
-//		double lm1252 = roundKey(Mod2002024Key.LM1252);
-//		double lm1253 = roundKey(Mod2002024Key.LM1253);
-//		double lm1254 = roundKey(Mod2002024Key.LM1254);
-//		double lm2368 = roundKey(Mod2002024Key.LM2368);
-//		double lm1249a = round((lm1250 - lm1251 - lm1252 - lm1253 + lm1254 - lm2368) * 0.30);
-//		double lm1249b = 
+		double lm1248 = roundKey(Mod2002024Key.LM1248);
 		if (isChecked(C0072)) {
 			return round(lm1256+lm1258+lm1259);
 		}
-		else {
-			if (lm1249 + lm1255 <= getLimit(LIM_2)) {
-				return getLimit(LIM_2);
+		else {			
+//			if (lm1249 + lm1255 <= getLimit(LIM_2)) {
+//				return getLimit(LIM_2);
+//			} else {
+//				return round(lm1249 + lm1255);	
+//			}
+			double gfn = lm1248 + lm1258 + lm1259;
+			if (gfn > lm1249 && lm1249 > getLimit(LIM_2)) {
+				return round(lm1249 + lm1255);
+			} else if (gfn > lm1249 && lm1249 <= getLimit(LIM_2)) {
+				return round(lm1249 + lm1255) > getLimit(LIM_2) ? round(lm1249 + lm1255) : getLimit(LIM_2); 
+			} else if (gfn <= lm1249 && lm1249 > getLimit(LIM_2)) {
+				return lm1249;
 			} else {
-				return round(lm1249 + lm1255);	
-			}			
+				return getLimit(LIM_2);	
+			}
 		}
 	}
 	
