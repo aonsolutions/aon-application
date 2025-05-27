@@ -653,9 +653,8 @@ export class AonNewMenu extends AonElement {
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
 			icon.innerHTML = app.symbol;
-			if(app.title == 'Planes' && window.location.href.includes('ayudat') && !this.dur.isEmployee() || 
-				app.title == 'Planes' && window.location.href.includes('infoautonomos') && !this.dur.isEmployee()){
-				icon.style.color = "green";  
+			if(app.title == 'Planes' && this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
+				icon.style.color = "green";
 			} 
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;

@@ -39,7 +39,9 @@ export class AonNewDesktop extends AonElement {
 	}
 
 	async build() {
-		if(this.isAyudaTorInfoautonomos() && !this.getDur().isEmployee()){
+      // Se compruebe de esta manera : this.getDur().isAdmin() && this.getDur().isAdmin() 
+      // Que especificamente seas uno de ellos, ya que siendo admin tambien devuelve que eres empleado en algunos casos
+		if(this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
 			let app = this.createApplication(this.AON_DESKTOP, 'Planes', new AonApplication());
 			app.main = "true";
 			this.appendChild(app);
@@ -425,7 +427,6 @@ export class AonNewDesktop extends AonElement {
 		tittleDiv.appendChild(subtitleP);
 
 		container.appendChild(tittleDiv);
-		
 
 		// Contenedor de las 4 cards
 		const plansGrid = this.createElement(TAG.DIV);
@@ -522,25 +523,27 @@ export class AonNewDesktop extends AonElement {
 		return cardDiv;
 	}
 	sendDataforPlan(planName){
-		getAuth().then(auth => {
-			const dataUser = auth;
-			const data = {
-				email: dataUser.email,
-				phone: dataUser.phone,
-				name: dataUser.name,
-				surname: dataUser.surname,
-				domainUrl: window.location.href,
-				companyData: localStorage.getItem('company'),
-				plan: planName
-			};
-			sendFormData(data).then(response => {
-				console.log(response);
-				this.showPopupMessage("Su solicitud ha sido enviada con exito, en breves un agente contactará con usted.");
-			}).catch(error => {
-				console.error(error);
-				this.showPopupMessage("Fallo al enviar la solicitud");
-			});
-		});
+      // Barra loader de AonApplication - Iniciar
+      this.getApplication().startLoading();
+      getAuth().then(auth => {
+          const dataUser = auth;
+          const data = {
+              email: dataUser.email,
+              phone: dataUser.phone,
+              name: dataUser.name,
+              surname: dataUser.surname,
+              domainUrl: window.location.href,
+              companyData: localStorage.getItem('company'),
+              plan: planName
+          };
+          sendFormData(data).then(response => {
+            this.getApplication().stopLoading();
+            this.showPopupMessage("Su solicitud ha sido enviada con exito, en breve un agente contactará con usted.");
+          }).catch(error => {
+            this.getApplication().stopLoading();
+            this.showPopupMessage("Fallo al enviar la solicitud");
+          });
+      });
 	}
 
 	createPopup() {
