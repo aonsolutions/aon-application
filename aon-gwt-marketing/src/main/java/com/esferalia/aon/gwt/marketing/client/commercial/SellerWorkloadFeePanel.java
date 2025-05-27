@@ -1,8 +1,5 @@
 package com.esferalia.aon.gwt.marketing.client.commercial;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -12,13 +9,10 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
-import com.esferalia.aon.occam.api.model.registry.Seller;
-import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.mutable.MutableInt;
@@ -43,7 +37,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	private static final Logger LOGGER = Logger.getLogger(SellerWorkloadFeePanel.class.getName());
 	static { LOGGER.addHandler( new ConsoleLogHandler() ); }
 	
-	private final int limit = 30;
+	private final int limit = 100;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
@@ -52,8 +46,6 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	private int lastScrollPos = 0;
 	
 	private SellerWorkloadParams params;
-	private Map<Integer, Seller> rowSellers = new HashMap<>();
-	private Map<Integer, AonTableButton> selectedItems = new HashMap<>();
 	
 	private static enum COLS {
 		  
@@ -98,7 +90,8 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
 		this.params = params;
-		this.rowSellers.clear();
+		this.params.setOffset(0);
+		this.params.setLimit(Integer.MAX_VALUE);
 
 		this.getElement().getStyle().setProperty("padding", "0 1rem 0 1px");
 		
@@ -192,11 +185,13 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				this.clear();
-				this.setWidget(line);
+				if(tab.getRowsCount() <= 1) {
+					FlowPanel line = new FlowPanel();
+					InlineLabel label = new InlineLabel(AON.MSG.noData());
+					line.add(label);
+					this.clear();
+					this.setWidget(line);
+				}
 				disableMoreData();
 			}
 			
@@ -303,15 +298,15 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		discountLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		tab.addRow(row, discountLabel, COLS.DIS.getColWidth());
 		
-		Label netCostLabel = new Label(formatToEuro(null == invoiceDetail.getNetCost() ? 0.00 : invoiceDetail.getNetCost()));
+		Label netCostLabel = new Label(formatToEuro(getNetCost(invoiceDetail)));
 		netCostLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		tab.addRow(row, netCostLabel, COLS.NET.getColWidth());
 		
-		Label priceTotalLabel = new Label(formatToEuro(null == invoiceDetail.getTotalPrice() ? 0.00 : invoiceDetail.getTotalPrice()));
+		Label priceTotalLabel = new Label(formatToEuro(getTotalPrice(invoiceDetail)));
 		priceTotalLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		tab.addRow(row, priceTotalLabel, COLS.TOB.getColWidth());
 		
-		Label priceNetLabel = new Label(formatToEuro(null == invoiceDetail.getTotalNetPrice() ? 0.00 : invoiceDetail.getTotalNetPrice()));
+		Label priceNetLabel = new Label(formatToEuro(getTotalNetPrice(invoiceDetail)));
 		priceNetLabel.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		tab.addRow(row, priceNetLabel, COLS.TON.getColWidth());
 		
@@ -328,6 +323,18 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		tab.addRow(row, endLabel, COLS.END.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+	}
+
+	private double getNetCost(InvoiceDetail invoiceDetail) {
+		return invoiceDetail.getPrice() * (1 - invoiceDetail.getDiscount()/100);
+	}
+	
+	 private double getTotalPrice(InvoiceDetail invoiceDetail) {
+		return invoiceDetail.getPrice() * invoiceDetail.getQuantity();
+	}
+	 
+	private double getTotalNetPrice(InvoiceDetail invoiceDetail) {
+		return getNetCost(invoiceDetail) * invoiceDetail.getQuantity();
 	}
 	
 	private static String formatToEuro(double amount) {
@@ -368,8 +375,6 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 	
 	public void resetSearchOffset() {
 		offset.setValue(0);
-		rowSellers.clear();
-		selectedItems.clear();
 	}
 	
 	public AonCustomTable getTable() {

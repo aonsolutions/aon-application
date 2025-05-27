@@ -6,7 +6,8 @@ import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
 import { getCompany, getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
-import * as LS from '../services/localStorageService.js';
+import * as JSF from './aon-jsf-app.js';
+
 export class AonHelp extends AonElement {
 
 	SUPPORT_SWITCH;
@@ -61,21 +62,45 @@ export class AonHelp extends AonElement {
 		
 		helpContent.appendChild(supportContent);
 
-		let div = this.createSpan();
-		div.className = "helpCardText";
+		let helpContentIndexDiv = this.createSpan();
+		helpContentIndexDiv.className = "helpCardText";
 
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS;
-		i.classList.add("aonHelpI");
-		i.innerHTML= "school";
-		div.appendChild(i);
+		let helpContentIndexI = this.createElement(TAG.I);
+		helpContentIndexI.className = CSS.MATERIAL_ICONS;
+		helpContentIndexI.classList.add("aonHelpI");
+		helpContentIndexI.innerHTML= "school";
+		helpContentIndexDiv.appendChild(helpContentIndexI);
 
-		let span2 = this.createDiv();
-		span2.className = CSS.AON_CARD_TEXT;
-        span2.classList.add("aonHelpSpan2");
-		span2.innerHTML = MSG.CONTENT_INDEX;
-		div.appendChild(span2);
-		helpContent.appendChild(div);
+		let helpContentIndexSpan = this.createDiv();
+		helpContentIndexSpan.className = CSS.AON_CARD_TEXT;
+        helpContentIndexSpan.classList.add("aonHelpSpan2");
+		helpContentIndexSpan.innerHTML = MSG.CONTENT_INDEX;
+		helpContentIndexDiv.appendChild(helpContentIndexSpan);
+		helpContent.appendChild(helpContentIndexDiv);
+		
+		helpContentIndexDiv.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new JSF.AonJsfHelpContent())
+		});
+
+		let helpNotificationDiv = this.createSpan();
+		helpNotificationDiv.className = "helpCardText";
+
+		let helpNotificationI = this.createElement(TAG.I);
+		helpNotificationI.className = CSS.MATERIAL_ICONS;
+		helpNotificationI.classList.add("aonHelpI");
+		helpNotificationI.innerHTML= "rss_feed";
+		helpNotificationDiv.appendChild(helpNotificationI);
+
+		let helpNotificationSpan = this.createDiv();
+		helpNotificationSpan.className = CSS.AON_CARD_TEXT;
+		helpNotificationSpan.classList.add("aonHelpSpan2");
+		helpNotificationSpan.innerHTML = MSG.NOTIFICATIONS;
+		helpNotificationDiv.appendChild(helpNotificationSpan);
+		helpContent.appendChild(helpNotificationDiv);
+
+		helpNotificationDiv.addEventListener(EVENT.CLICK, () => {
+			this.rootPanel(new JSF.AonJsfHelpNotification())
+		});
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;

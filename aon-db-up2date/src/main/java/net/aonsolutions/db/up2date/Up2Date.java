@@ -29,6 +29,7 @@ import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
 
 public class Up2Date {
 
@@ -128,7 +129,7 @@ public class Up2Date {
 			// RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
 			// InvoiceDUACreation.INVOICEDUACREATION
 			// RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
-			// DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
+			// DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETaon-db-up2date/src/main/java/net/aonsolutions/db/up2date/payroll/PPEITUpdate.javaEWARN
 			// RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
 			// SnapshotCreation.AUTH_CREATION,
 			// SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS,
@@ -171,7 +172,7 @@ public class Up2Date {
 			// IrpfEuskadi2021Insert.IRPFEUSKADI2021INSERT
 			// AuthAttachCreation.AUTH_ATTACH_CREATION,
 			// AlterFsMod2002020.ALTER_FS_MODEL_200_2020,
-			// TaskWorkflowCreation.TASK_WORKFLOW_CREATION,
+			// TaskWorkflowCreation.TASK_WORKFLOW_CREATION,aon-db-up2date/src/main/java/net/aonsolutions/db/up2date/payroll/PPEITUpdate.java
 			// TaskAttachCreation.TASK_ATTACH_CREATION
 			// ContractCostCreation.CONTRACTCOSTCREATION,
 			// CRA0062Insert.CRA0062INSERT
@@ -540,14 +541,15 @@ public class Up2Date {
 			// TrainingExcessDeductions2024InsertFaseIII.TRAININGEXCESSDEDUCTIONS2024INSERTFASEIII,
 			// AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
-			HomePrestITInsert.HOMEPRESTITINSERT,
+			// HomePrestITInsert.HOMEPRESTITINSERT,
+			PPEITUpdate.PPE_IT_UPDATE,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
-			RdocTag.RDOC_TAG,
-			UpdateCategoryTree.UPDATE_CATEGORY_TREE
+			//RdocTag.RDOC_TAG,
+			//UpdateCategoryTree.UPDATE_CATEGORY_TREE
 
 	};
 

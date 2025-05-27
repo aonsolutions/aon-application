@@ -47,7 +47,6 @@ class AonDialogSearch extends AonDialogMenu {
 
 export class AonHeader extends AonElement {
 
-	auth;
 	BASE_ID;
 	activeTimecontrol;
 	newTheme;
@@ -79,7 +78,6 @@ export class AonHeader extends AonElement {
   }
 
 	initialize() {
-		this.auth = '';
 		this.BASE_ID = 'aonHeader';
 		this.AON_HEADER_WEB = this.BASE_ID + 'Web';
 		this.AON_LOGO = 'aonLogo';
@@ -105,7 +103,6 @@ export class AonHeader extends AonElement {
 	}
 
 	build() {
-		
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
 		div.className = (LS.isNewTheme() || this.newTheme) ? `${CSS.AON_HEADER} ${CSS.AON_HEADER_START} ` : CSS.AON_HEADER_BETA;
@@ -184,6 +181,17 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompany);
 
+		let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+		aonHeaderHome.style.display = "none";
+
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHomeButton.outlined = true;
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHome);
 
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
@@ -196,17 +204,6 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
-		
-		/*let aonHeaderHome = this.createElement(TAG.SPAN);
-		aonHeaderHome.id = this.AON_HEADER_HOME;
-
-		let aonHeaderHomeButton = new AonIconButton();
-		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
-		aonHeaderHomeButton.icon = "home";
-		aonHeaderHome.appendChild(aonHeaderHomeButton);
-
-		aonHeaderButtons.appendChild(aonHeaderHome);*/
-	
 
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
@@ -283,12 +280,12 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
-			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
-			aonHeaderHomeButton.addEventListener('click', () => {
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			});
+			// let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
+			// aonHeaderHomeButton.addEventListener('click', () => {
+			// 	this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+			// 	let aonDesktop = this.getElement('aonDesktop');
+			// 	aonDesktop.setAttribute('company', this.getAttribute('company'));
+			// });
 			if(!this.newTheme){
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
@@ -405,6 +402,7 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch.style.display = 'flex';
 
 				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
+				aonHeaderHome.style.display = 'none';
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
@@ -636,8 +634,8 @@ export class AonHeader extends AonElement {
 			aonHeaderSearch.style.marginLeft = '33px';
 
 		let aonHeaderHome = this.getElement(this.AON_HEADER_HOME);
-/*		aonHeaderHome.style.display = company ? 'block' : 'none';
-*/
+		aonHeaderHome.style.display = company ? 'block' : 'none';
+
 		let aonHeaderCompany = this.getElement(this.AON_HEADER_COMPANY);
 		aonHeaderCompany.style.display = company ? 'block' : 'none';
 
@@ -720,7 +718,7 @@ export class AonHeader extends AonElement {
 	setColor(color, backgroundColor) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
-			this.getElement('aonHeaderHomeButton'),
+			// this.getElement('aonHeaderHomeButton'),
 			this.getElement('aonHeaderUserButton'),
 			this.getElement('aonHeaderConfigButton'),
 			this.getElement('aonHeaderNotificationButton'),
@@ -895,7 +893,7 @@ export class AonHeader extends AonElement {
 	}
 
 	setVisibleHomeButton(visible) {
-		this.setVisibleElement('aonHeaderHomeButton', visible)
+		// this.setVisibleElement('aonHeaderHomeButton', visible)
 	}
 
 	setVisibleCompanyListButton(visible) {
@@ -1123,11 +1121,11 @@ export class AonHeader extends AonElement {
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init().then(() => {
 			aonMenu.open();
-			let customUrl = location.origin + '/customview?domain=' + company.domain;
+			let customUrl =  LS.getDomainName() + '/customview?domain=' + company.domain;
 			loadCustomView(customUrl).then(() => { 
 				favicon();
 				title();
-			});
+			}).catch(() => {});
 		}
 		);
 

@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.AccountJSON;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainLinkedJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.json.RegistryProfileJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
@@ -39,6 +41,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -225,6 +228,14 @@ public class RegistryServlet extends AonApiHttpServlet {
 				if (RegistryAdditionalInfo.DOMAIN_LINKED.equals(rai)) {
 					List<DomainLinked> domainsLinked = AON.getDomainLinkedList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registryId);
 					object.put(IJsonNames.DOMAIN_LINKED, DomainLinkedJSON.toJSON(domainsLinked));
+				}
+				
+				if (RegistryAdditionalInfo.REGISTRY_COMPANY.equals(rai)) {
+					Optional<RegistryRelationship> relOpt = AON_SOLUTIONS.getRegistryRelationship(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(registryId).and(f.getRelationshipProperty().eq(-1)));
+					if(relOpt.isPresent()) {
+						Company company = AON.getCompany(api.getOccam(), f -> f.getIdProperty().eq(relOpt.get().getRelatedRegistry()));
+						if(company != null && !company.isEmpty()) object.put(IJsonNames.REGISTRY_COMPANY, CompanyJSON.toJSON(company));
+					}
 				}
 			});
 		}

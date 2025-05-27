@@ -54,6 +54,8 @@ public class UndefinedVariablesException extends ExpressionException {
 	}
 
 	public boolean allAreOneOf(Collection<String> names) {
+		if ( variableNames.length == 0 && names.size() > 0 )
+			return false;
 		for ( String variableName: variableNames ) {
 			if ( !names.contains(variableName))
 				return false;
