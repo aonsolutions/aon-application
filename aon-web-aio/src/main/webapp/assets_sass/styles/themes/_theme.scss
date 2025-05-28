@@ -61,7 +61,8 @@
           height: $logoHead-height;
           background-size: contain;
           background-repeat: no-repeat;
-          background-position: center;
+          max-height: v.$px-64;
+          padding-left: v.$px-93;
         }
       }
       // cargandos
