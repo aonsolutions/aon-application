@@ -171,9 +171,9 @@ public class SellerWorkloadDAO {
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.leftJoin(CUSTOMER_FEE)
 				.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(start)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 						.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-								.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(end))))) // Condiciones de
+								.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
 																										// fechas
 				.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 
@@ -202,9 +202,9 @@ public class SellerWorkloadDAO {
 				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE).on(SCOPE.ID.eq(SELLER.SCOPE))
 				.leftJoin(CUSTOMER_FEE)
 				.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(start)))
+						.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 						.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-								.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(end))))) // Condiciones de
+								.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones de
 																										// fechas
 				.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 
@@ -321,9 +321,9 @@ public class SellerWorkloadDAO {
 					.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE)
 					.on(SCOPE.ID.eq(SELLER.SCOPE)).leftJoin(CUSTOMER_FEE)
 					.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(start)))
+							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(end))))) // Condiciones
+									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones
 																											// de fechas
 					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 
@@ -457,9 +457,9 @@ public class SellerWorkloadDAO {
 					.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY)).join(SCOPE)
 					.on(SCOPE.ID.eq(SELLER.SCOPE)).leftJoin(CUSTOMER_FEE)
 					.on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY)
-							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(start)))
+							.and(CUSTOMER_FEE.INITIAL_DATE.lessOrEqual(AonDateUtils.toSql(end)))
 							.and(CUSTOMER_FEE.FINAL_DATE.isNull()
-									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(end))))) // Condiciones
+									.or(CUSTOMER_FEE.FINAL_DATE.greaterOrEqual(AonDateUtils.toSql(start))))) // Condiciones
 																											// de fechas
 					.where(condition).groupBy(SELLER.REGISTRY); // Agrupamos por SELLER
 
@@ -650,22 +650,25 @@ public class SellerWorkloadDAO {
 
 	private static Date getStartDatePeriod(Byte period) {
 		java.util.Date start = AonDateUtils.getMonthFirstDay(new java.util.Date());
+		
+		if(period == (byte) 0 || period == (byte) 1)
+			start = AonDateUtils.addMonths(start, -1);
+		else if(period == (byte) 4)
+		start = AonDateUtils.addMonths(start, 1);
+		
 		return AonDateUtils.toSql(start);
 	}
 
 	private static Date getEndDatePeriod(Byte period) {
 		java.util.Date start = AonDateUtils.getMonthFirstDay(new java.util.Date());
-		java.util.Date end = null;
-
+		java.util.Date end = AonDateUtils.getMonthLastDay(start);
+		
 		if (period == (byte) 0) {
-			end = AonDateUtils.getMonthLastDay(new java.util.Date());
-		} else if (period == (byte) 1) {
+			end = AonDateUtils.getMonthLastDay( AonDateUtils.addMonths(end, -1) );
+		} else if (period == (byte) 3 || period == (byte) 4) {
 			end = AonDateUtils.addMonths(start, 1);
 			end = AonDateUtils.getMonthLastDay(end);
-		} else if (period == (byte) 2) {
-			end = AonDateUtils.addMonths(start, 2);
-			end = AonDateUtils.getMonthLastDay(end);
-		}
+		} 
 
 		return AonDateUtils.toSql(end);
 	}
