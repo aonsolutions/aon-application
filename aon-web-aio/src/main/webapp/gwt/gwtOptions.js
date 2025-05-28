@@ -612,3 +612,8 @@ export const CONSOLE = {
   entryPoint: 'ConsoleModule'
 };
 
+export const PROJECT = {
+  module: GWT_AIO,
+  entryPoint: 'ProjectModule'
+};
+

@@ -1,9 +1,8 @@
-import {AonElement} from '../../components/AonElement.js';
-import {getUser, saveUser, deleteUser,
-	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail, clearDurum, updateDurDefinedUsers, getUserRoles} from  '../../services/service.js';
-import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
-import {Role, ToolbarType} from '../../models/enums.js';
-import {DomainUserRoles} from '../../models/DomainUserRoles.js';
+import { AonElement } from '../../components/AonElement.js';
+import { saveUser, deleteUser, changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail, updateDurDefinedUsers, getUserRoles, getBookingDomainUserRoles } from  '../../services/service.js';
+import { AllApps, EnterpriseApps, EmployeeApps, getApp } from  '../../services/app.js';
+import { Role, ToolbarType } from '../../models/enums.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-icon.js';
@@ -33,6 +32,8 @@ export class AonUser extends AonElement {
 	user;
 	dur;
 	apps;
+
+	parent;
 
 	get showApps() {
 		return this.getAttribute(CONSTANT.SHOW_APPS);
@@ -171,7 +172,7 @@ export class AonUser extends AonElement {
 				</div>
 			`;
 
-		getDomainUserRoles({}).then(r => {
+		getBookingDomainUserRoles({}, this.sessionData).then(r => {
 			this.dur = new DomainUserRoles(r);
 			this.buildUserToolbar();
 			this.build();
@@ -371,7 +372,7 @@ export class AonUser extends AonElement {
 			if(this.isAutosave()){
 				this.save();
 			} else {
-				getAuth({email: this.user.email, reload: true}).then((auth) => {
+				getAuth({email: this.user.email, reload: true}, this.sessionData).then((auth) => {
 					if(auth.uuid){
 						this.user.name = auth.name || '';
 						this.user.surname = auth.surname || '';
@@ -451,7 +452,7 @@ export class AonUser extends AonElement {
 
 		d.addAcceptAction(() => {
 			// if(newPassword && newPassword.length>5){
-				changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}).then(()=>{
+				changePassword({oldPassword:oldPassword.value, newPassword:newPassword.value}, this.sessionData).then(()=>{
 					this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
 				}).catch(e=>this.showError(e))
 			// } else {
@@ -469,11 +470,11 @@ export class AonUser extends AonElement {
 			this.user.portal = true;
 			this.user.roles = [Role.ENTERPRISE];
 		}
-		saveUser(this.user).then(r => {
+		saveUser(this.user, this.sessionData).then(r => {
 			this.user = r;
 			let definedUsers = getUsers().filter(f => !f.portal).length;
 			this.getDur().definedUsers = definedUsers;
-			updateDurDefinedUsers(definedUsers);
+			updateDurDefinedUsers(definedUsers, this.sessionData);
 			this.init();
 		}).catch(e => this.showError(e));
 	}
@@ -486,7 +487,7 @@ export class AonUser extends AonElement {
    	 	d.setContentHTML(`Estás seguro de eliminar el usuario`);
     	d.addAcceptAction(() => {
 			let data = { user: this.user.id};
-			deleteUser(data).then(() => {
+			deleteUser(data, this.sessionData).then(() => {
 				deleteUserCache();
 				this.back()
 			});
@@ -499,8 +500,13 @@ export class AonUser extends AonElement {
 			this.getApplication().setContent(new AonMobileUserList());
 		} else {
 			let aonUserList = new AonUserList();
+			aonUserList.sessionData = this.sessionData;
+			aonUserList.parent = this.parent;
 			aonUserList.setBack(true);
-			this.getApplication().setContent(aonUserList);
+			if(this.parent) {
+				this.parent.innerHTML = '';
+				this.parent.appendChild(aonUserList);
+			} else this.getApplication().setContent(aonUserList);
 		}
 	}
 
@@ -515,7 +521,7 @@ export class AonUser extends AonElement {
 	}
 
 	changeUser(user) {
-		getUserRoles({user: user.id}).then(roles => {
+		getUserRoles({user: user.id}, this.sessionData).then(roles => {
 			user.roles = roles;
 			this.setUser(user);
 			this.init();
@@ -529,7 +535,7 @@ export class AonUser extends AonElement {
 		d.setTitle(MSG.SEND);
 		d.setContentHTML('Al notificar los datos de usuario se generará una nueva contraseña.');
 		d.addAcceptAction(() => {
-			sendUserInfoEmail(this.user).then(success => {
+			sendUserInfoEmail(this.user, this.sessionData).then(success => {
 				this.showToast({message: "Se ha enviado un mail a " + this.user.email + ", desde la cuenta " + success.fromEmail + ", con la contraseña nueva", type: CONSTANT.SUCCESS, delay: 3000});
 			  }, err => {
 				let jsonError = JSON.parse(err);

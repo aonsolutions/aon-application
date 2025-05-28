@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
@@ -34,6 +35,13 @@ public class ProjectImpl implements IProject{
 	public Project getProject(AONContext ctx, ProjectFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.get(ctx, filter));
+	}
+	
+
+	@Override
+	public Project getProjectFull(AONContext ctx, ProjectFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getFull(ctx, filter));
 	}
 	
 	@Override
@@ -64,6 +72,18 @@ public class ProjectImpl implements IProject{
 	public Integer insertProject(AONContext ctx, Project project) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.insertProject(ctx, project));
+	}
+	
+	@Override
+	public List<Project> getProjectList(CloseableAONContext ctx, ProjectParams params) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getProjectList(ctx, params));
+	}
+
+	@Override
+	public Integer getProjectsCount(CloseableAONContext ctx, ProjectParams params) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getProjectsCount(ctx, params));
 	}
 	
 	// ------------------------------------- PROJECT RESERVATION

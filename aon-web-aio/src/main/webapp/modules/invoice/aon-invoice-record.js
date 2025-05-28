@@ -4,7 +4,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {CONSTANT, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as GWT from "../../gwt/gwt.js";
-import * as JSF from "aio/modules/aon-jsf-app.js";
+import * as JSF from "../aon-jsf-app.js";
 
 export class AonInvoiceRecord extends AonElement {
 

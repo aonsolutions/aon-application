@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -36,7 +37,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
-import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -56,12 +56,14 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -86,7 +88,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -361,5 +362,21 @@ public interface CommonService extends RemoteService {
 	TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	Company getCompanyByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
 	
+	// **************************************************
+	// **************************************** [PROJECT]
+	// **************************************************
+	
+	List<Project> getProjects(ProjectParams params) throws AonCoreException;
+	Project getProject(String domainName, int domain, String user, Integer projectId) throws AonCoreException;
+	void deleteProject(String domainName, int domain, String user, Integer projectId) throws AonCoreException;
+	Project saveProject(String domainName, int domain, String user, Project project) throws AonCoreException;
+	
+	Integer getProjectsCount(ProjectParams params) throws AonCoreException;
+	
+	List<ProjectHolder> getProjectHolders(String domainName, int domain, String user, Integer projectId) throws AonCoreException;
+	ProjectHolder saveProjectHolder(String domainName, int domain, String user, ProjectHolder projectHolder) throws AonCoreException;
+	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId) throws AonCoreException;
+	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user) throws AonCoreException;
+
 	
 }
