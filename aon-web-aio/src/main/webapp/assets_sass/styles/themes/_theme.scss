@@ -60,6 +60,11 @@
           width: $logoHead-width;
           height: $logoHead-height; 
         }
+        aon-icon-button i {
+          &::after {
+            background-color: $color-0;
+          }
+        }
       }
       // cargandos
       aon-loader{
