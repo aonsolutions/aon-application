@@ -1,13 +1,13 @@
 @use '../variables' as v;
 
 .aonToolbar2{
-  height  : v.$px-64;
-  position: sticky;
-  top     : v.$px-0;
-  padding : 0 v.$px-20;
-  
+  height          : v.$px-64;
+  position        : sticky;
+  top             : v.$px-0;
+  padding         : 0 v.$px-20;
   display         : flex;
   justify-content : space-between;
+  align-items     : center;
   
   #aonLoginLogoDiv{
     max-height: v.$px-64;
