@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
@@ -621,38 +622,36 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
 					
 			if(s3Key != null) {
-//				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-//				InvoiceDoc invoiceDoc = new InvoiceDoc()
-//						.setExternalStorage(ExternalStorage.AWS)
-//						.setS3Bucket("aon-upload-post")
-//						.setS3Key(s3Key)
-//						.setInvoice(invoice.getId())
-//						.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-//						.setType(InvoiceAttachmentType.INVOICE)
-//						.setDomain(invoice.getDomain());
-//				Occam occam = new Occam().setDomain(api.getDomain().getId())
-//						.setDomainName(api.getDomain().getName())
-//						.setUser(api.getUser().getLogin());
-//				AON.saveInvoiceDoc(occam, invoiceDoc);
+				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+				InvoiceDoc invoiceDoc = new InvoiceDoc()
+						.setExternalStorage(ExternalStorage.AWS)
+						.setS3Bucket("aon-upload-post")
+						.setS3Key(s3Key)
+						.setInvoice(invoice.getId())
+						.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+						.setType(InvoiceAttachmentType.INVOICE)
+						.setDomain(invoice.getDomain());
 
-				try {
-					byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
-					if(data != null) {
-						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-						Attach attach = new Attach()
-							.setDate(new Date())
-							.setDomain(new Domain().setId(invoice.getDomain()))
-							.setAttachModule(invoice.getId())
-							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-							.setAttachType(AttachType.INVOICE)
-							.setType(InvoiceAttachmentType.INVOICE.value())
-							.setData(data);
+				AON.saveInvoiceDoc(api.getOccam(), invoiceDoc);
 
-						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
+//					if(data != null) {
+//						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+//						Attach attach = new Attach()
+//							.setDate(new Date())
+//							.setDomain(new Domain().setId(invoice.getDomain()))
+//							.setAttachModule(invoice.getId())
+//							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+//							.setAttachType(AttachType.INVOICE)
+//							.setType(InvoiceAttachmentType.INVOICE.value())
+//							.setData(data);
+//
+//						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+//					}
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 	}
