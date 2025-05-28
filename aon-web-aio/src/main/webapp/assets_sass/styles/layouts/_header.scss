@@ -11,6 +11,8 @@
   
   #aonLoginLogoDiv{
     max-height: v.$px-64;
+    background-size: contain;
+    background-repeat: no-repeat;
   }
   #aonLoginLanguageDivToolbar{
     display: flex;

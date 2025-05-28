@@ -56,17 +56,9 @@
         background-color  : $color-900;
         color             : $color-0;
         .aonLoginLogo{
-          background-image: url($logoHead); 
+          background-image: url($logoHead);
           width: $logoHead-width;
-          height: $logoHead-height;
-          background-size: contain;
-          background-repeat: no-repeat;
-          max-height: v.$px-64;
-        }
-        aon-icon-button i {
-          &::after {
-            background-color: $color-0;
-          }
+          height: $logoHead-height; 
         }
       }
       // cargandos
@@ -100,10 +92,14 @@
       button{
         background-color  : $color-900;
         color             : $color-text-button;
-        border-radius     : v.$border-radius;
         border            : $button-border;
         &:hover{
           background-color: $color-500;
+        }
+        aon-icon-button i {
+          &::after {
+            background-color: $color-300;
+          }
         }
         &.aonButton{
           transition: $transition;
@@ -166,9 +162,6 @@
             background-image: url($logo);
             width: $logo-width;
             height: $logo-height;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
           }
         }
         #loginContent, #magicLinkContent{

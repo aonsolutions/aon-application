@@ -11,6 +11,11 @@ aon-new-login{
     justify-content: center;
     flex-grow      : v.$num-1;
     align-items    : flex-end;
+    #logoSVG{
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
   }
   #loginContent, #magicLinkContent{
     flex-grow       : v.$num-2; /* Hace que este div ocupe el espacio restante */
