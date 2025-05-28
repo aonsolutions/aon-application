@@ -83,9 +83,14 @@ $color-yellow-800: #854d0e;
 $color-yellow-900: #713f12;
 
 // Colores textos
-$color-text: #1E293B;
-$color-text-button: #ffffff;
-$color-text-button-transp: #1E293B;
+$color-text               : #1E293B;
+$color-text-button        : #ffffff;
+$color-text-button-transp : #1E293B;
+
+// Logo del header
+$logoHead        : "../images/aon/logo-horizontal.svg";
+$logoHead-width  : v.$px-100;
+$logoHead-height : v.$px-100;
 
 // Logo
 $logo: "../images/aon/logo.svg";
@@ -102,6 +107,7 @@ $logo-height: v.$px-55;
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-500, $color-green-900,
     $color-blue-100, $color-blue-500, $color-blue-900,
+    $logoHead, $logoHead-width, $logoHead-height,
     $logo, $logo-width, $logo-height
   );
 }

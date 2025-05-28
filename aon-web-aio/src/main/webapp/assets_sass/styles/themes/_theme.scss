@@ -9,6 +9,7 @@
   $color-red-100,  $color-red-500, $color-red-900,
   $color-green-100, $color-green-500, $color-green-900,
   $color-blue-100, $color-blue-500, $color-blue-900,
+  $logoHead, $logoHead-width, $logoHead-height,
   $logo, $logo-width, $logo-height
 ) {
   $color-900-alpha: #{$color-900}0D;
@@ -53,6 +54,15 @@
       // Cabecera
       .aonToolbar2{
         background-color  : $color-900;
+        color             : $color-0;
+        .aonLoginLogo{
+          background-image: url($logoHead);
+          width: $logoHead-width;
+          height: $logoHead-height;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
       }
       // cargandos
       aon-loader{
