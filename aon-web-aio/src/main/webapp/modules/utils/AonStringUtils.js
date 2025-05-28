@@ -48,16 +48,17 @@ export const AonStringUtils = {
 		text = text.trim();
 		searcher = searcher.trim();
 		
-		if(text.toUpperCase().includes(searcher.toUpperCase())) {
-			return [searcher];
+		const index = text.toUpperCase().indexOf(searcher.toUpperCase());
+		if(index >= 0) {
+			return [text.substring(index, index + searcher.length )];
 		}
 		
 		let matches = new Array();
 
 		let words = searcher.split(/\s+/);
 		
-		for (let word of words) {		
-			 matches.push(this.getMatchingWord(text, word, tolerance) );
+		for (let word of words) {
+			this.getMatchingWord(text, word, tolerance)?.forEach( w => matches.push(w));
 		}
 		
 		return matches;
@@ -74,18 +75,21 @@ export const AonStringUtils = {
 		text = text.trim();
 		searcher = searcher.trim();
 
-		text = this.normalized(text.toUpperCase());
-		searcher = this.normalized(searcher.toUpperCase());
+		let normalizedText = this.normalized(text.toUpperCase());
+		let normalizedSearcher = this.normalized(searcher.toUpperCase());
 		
-		if(text.includes(searcher)){
-			return [searcher];
+		const index = normalizedText.indexOf(normalizedSearcher);
+		if(index >= 0) {
+			return [text.substring(index, index + searcher.length )];
 		}
 		
 		let matches = new Array();
 		const words = text.split(/\s+/);
 		for (let word of words) {
 			
-			let currentDistance = this.getLevenshteinDistance(searcher, word);
+			let normalizedWord = this.normalized(word.toUpperCase());
+
+			let currentDistance = this.getLevenshteinDistance(searcher, normalizedWord);
 			let realTolerance = tolerance;
 			
 			if(currentDistance < realTolerance) {
