@@ -100,38 +100,43 @@
         &:hover{
           background-color: $color-500;
         }
-      }
-      button.aonButton{
-        transition: $transition;
-      }
-      button.aonLoginButton{
-        background            : $loginbutton-background;
-        background-size       : $loginbutton-background-size;
-        background-position   : $loginbutton-backgorund-position;
-        transition            : $loginbutton-transition;
-        &:hover{
-          background-position : $loginbutton-hover-background-size;
+        aon-icon-button i {
+          &::after {
+            background-color: $color-300;
+          }
         }
-      }
-      button.aonMagicButton{
-        background-color   : $magicbutton-background-color;
-        color              : $magicbutton-color;
-        border             : $magicbutton-border;
-        transition         : $transition;
-        padding            : $magicbutton-padding;
-        &:hover{
-          background-color : $color-900;
-          color            : $color-text-button;
-          border           : $magicbutton-hover-border;
-          box-sizing       : $box-sizing;
-          padding          : $magicbutton-hover-padding;
+        &.aonButton{
+          transition: $transition;
         }
-      }
-      button.aonIconButton{
-        background-color   : $color-600;
-        color              : $color-300;
-        &:hover{
-          background-color : $iconbutton-hover-background-color;
+        &.aonLoginButton{
+          background            : $loginbutton-background;
+          background-size       : $loginbutton-background-size;
+          background-position   : $loginbutton-backgorund-position;
+          transition            : $loginbutton-transition;
+          &:hover{
+            background-position : $loginbutton-hover-background-size;
+          }
+        }
+        &.aonMagicButton{
+          background-color   : $magicbutton-background-color;
+          color              : $magicbutton-color;
+          border             : $magicbutton-border;
+          transition         : $transition;
+          padding            : $magicbutton-padding;
+          &:hover{
+            background-color : $color-900;
+            color            : $color-text-button;
+            border           : $magicbutton-hover-border;
+            box-sizing       : $box-sizing;
+            padding          : $magicbutton-hover-padding;
+          }
+        }
+        &.aonIconButton{
+          background-color   : $color-600;
+          color              : $color-300;
+          &:hover{
+            background-color : $iconbutton-hover-background-color;
+          }
         }
       }
       // Input

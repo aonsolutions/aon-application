@@ -12,11 +12,11 @@ $display                        : inline-flex;
 $mask                           : no-repeat center;
 $mask-size                      : contain;
 
-
 // Mapa con iconos y texto
 $icons: (
   "visibility"    : '../icons/eye.svg',
-  "visibility_off": '../icons/eye-off.svg'
+  "visibility_off": '../icons/eye-off.svg',
+  "language"      : '../icons/globe.svg'
 );
 
 // Estilos comunes para <i> (el texto por defecto)

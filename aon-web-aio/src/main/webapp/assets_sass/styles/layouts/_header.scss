@@ -4,4 +4,15 @@
   height  : v.$px-64;
   position: sticky;
   top     : v.$px-0;
+  padding : 0 v.$px-20;
+  
+  display         : flex;
+  justify-content : space-between;
+  
+  #aonLoginLogoDiv{
+    max-height: v.$px-64;
+  }
+  #aonLoginLanguageDivToolbar{
+    display: flex;
+  }
 }
