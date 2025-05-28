@@ -854,14 +854,12 @@ public class PayrollTemplate implements IPayrollTemplate {
 	    drawTextRight(contents, new PDRectangle(x + 518, y - 5, 30, 10), totalContingenciesAmount, BLACK,
 		    HELVETICA_BOLD, 6.5f, 3, 5);
 
-	    if (p.getImpressionType() == IMPRESION.DRAFT) {
 		drawTextRight(contents, new PDRectangle(x + 451, y - 14, 30, 10), totalCostsTitle, BLACK,
 			HELVETICA_BOLD,
 
 			6.5f, 5, 5);
 		drawTextRight(contents, new PDRectangle(x + 518, y - 14, 30, 10), totalCostsAmount, BLACK,
 			HELVETICA_BOLD, 6.5f, 3, 5);
-	    }
 
 	}
 
