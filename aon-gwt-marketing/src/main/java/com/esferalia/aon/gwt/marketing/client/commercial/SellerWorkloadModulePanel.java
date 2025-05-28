@@ -58,8 +58,8 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		setSearchPlaceholder("Buscar por nombre ...");
 		
 		period.addItem( "Mes actual", "0");
-		period.addItem( "Pr\u00f3ximos 2 meses", "1");
-		period.addItem( "Pr\u00f3ximos 3 meses", "2");
+		period.addItem( "Pr\u00f3ximo mes", "1");
+		period.addItem( "Pr\u00f3ximos 2 meses", "2");
 		period.getListBox().addChangeHandler(event -> {
 			onSearch( options );
 		});

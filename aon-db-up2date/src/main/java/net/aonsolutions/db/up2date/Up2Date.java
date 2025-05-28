@@ -29,6 +29,7 @@ import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
+import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
 
 public class Up2Date {
@@ -542,14 +543,15 @@ public class Up2Date {
 			// AgriculturalRealDecreeLaw1782025Art28Fix.AGRICULTURALREALDECREELAW1782025ART28FIX,
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			// HomePrestITInsert.HOMEPRESTITINSERT,
-			PPEITUpdate.PPE_IT_UPDATE,
+			// PPEITUpdate.PPE_IT_UPDATE,
+			PPEITFix.PPE_IT_FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
-			//RdocTag.RDOC_TAG,
-			//UpdateCategoryTree.UPDATE_CATEGORY_TREE
+			RdocTag.RDOC_TAG,
+			UpdateCategoryTree.UPDATE_CATEGORY_TREE
 
 	};
 

@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -3953,6 +3954,12 @@ public class AON {
 			return getProject().getProject(ctx, filter);
 		}
 	}
+	
+	public static Project getProjectFull(String domainName, Integer domainId, String login, ProjectFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectFull(ctx, filter);
+		}
+	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
 		return getProjectStream(domainName, domainId, login, filter)
@@ -3968,6 +3975,18 @@ public class AON {
 	public static void deleteProject(Domain domain, User user, Integer projectId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			getProject().deleteProject(ctx, projectId);
+		}
+	}
+	
+	public static List<Project> getProjectList(ProjectParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getProject().getProjectList(ctx, params);
+		}
+	}
+
+	public static Integer getProjectsCount(ProjectParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getProject().getProjectsCount(ctx, params);
 		}
 	}
 	
