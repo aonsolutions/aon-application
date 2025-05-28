@@ -89,13 +89,13 @@ $color-text-button-transp : #ede5f8;
 
 // Logo del header
 $logoHead        : "../images/aon/logo-horizontal.svg";
-$logoHead-width  : v.$px-100;
-$logoHead-height : v.$px-100;
+$logoHead-width  : v.$px-200;
+$logoHead-height : v.$px-24;
 
 // Logo
 $logo: "../images/ayudat/logo-gris.svg";
-$logo-width: v.$px-100;
-$logo-height: v.$px-100;
+$logo-width: v.$px-200; 
+$logo-height: v.$px-55;
 
 @mixin dark-theme {
   @include t.theme(
