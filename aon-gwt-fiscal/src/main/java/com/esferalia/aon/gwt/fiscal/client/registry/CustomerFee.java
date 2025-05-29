@@ -1105,46 +1105,93 @@ public class CustomerFee extends MainEntryPoint {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {
 			e.stopPropagation();
-			new CustomerFeeDialog(fee, options) {
-				
-				@Override
-				protected void onAccept(Fee fee) {
-					LinkedList<Fee> fees = new LinkedList<Fee>();
-					fee.setModify(true);
-					fees.add(fee);
+			if(!isCustomer()) {
+				new CustomerFeeDialog(fee, options) {
 					
-					SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
-							new AsyncCallback<Integer>() {
+					@Override
+					protected void onAccept(Fee fee) {
+						LinkedList<Fee> fees = new LinkedList<Fee>();
+						fee.setModify(true);
+						fees.add(fee);
+						
+						SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
+								new AsyncCallback<Integer>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
-								}
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+									}
 
-								@Override
-								public void onSuccess(Integer updates) {
-									AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
-									addValueButton.setEnabled(false);
-									deleteFeeButton.setEnabled(false);
-									exportButton.setEnabled(false);
-									onSearch();
-								}
-							});
-				}
+									@Override
+									public void onSuccess(Integer updates) {
+										AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+										addValueButton.setEnabled(false);
+										deleteFeeButton.setEnabled(false);
+										exportButton.setEnabled(false);
+										onSearch();
+									}
+								});
+					}
 
-				@Override
-				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+					@Override
+					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
 
-				@Override
-				protected void onCreate(Fee fee) {}
+					@Override
+					protected void onCreate(Fee fee) {}
 
-				@Override
-				protected void onCreate(Fee fee, Integer ritem) {
-					// TODO Auto-generated method stub
+					@Override
+					protected void onCreate(Fee fee, Integer ritem) {
+						// TODO Auto-generated method stub
+						
+					}
 					
-				}
+				};
+			} else {
+				getCustomer(customer -> {
+					new CustomerFeeDialog(fee, customer, options) {
+						
+						@Override
+						protected void onAccept(Fee fee) {
+							LinkedList<Fee> fees = new LinkedList<Fee>();
+							fee.setModify(true);
+							fees.add(fee);
+							
+							SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
+									new AsyncCallback<Integer>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+											AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+										}
+
+										@Override
+										public void onSuccess(Integer updates) {
+											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+											addValueButton.setEnabled(false);
+											deleteFeeButton.setEnabled(false);
+											exportButton.setEnabled(false);
+											onSearch();
+										}
+									});
+						}
+
+						@Override
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+						@Override
+						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					};
+				});
 				
-			};
+			}
+			
 		}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
