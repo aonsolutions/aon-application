@@ -447,29 +447,6 @@ export class AonNewMenu extends AonElement {
 	
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 
-		if(!this.isSideVisible() && !LS.isLeftMenu()){
-			for (let item in TOP_MENU_APPS_HOME) {
-			
-				let app = TOP_MENU_APPS_HOME[item];
-				
-				if (!this.isApp(app)) {
-					if (!showAllApps || excludedApps.includes(app.app)) {
-						continue;
-					} else {
-						let appElement = this.buildTopApp(app);
-	
-						appElement.classList.add("aonNewMenuTopNavAppElement");
-						app.color = "var(--aonTopMenuNotAvailable)";
-						div.appendChild(appElement);
-						continue;
-					}
-				}
-				
-				let appElement = this.buildTopApp(app);
-				div.appendChild(appElement);
-						
-			}
-		}else{
 			for (let item in TOP_MENU_APPS) {
 
 				let app = TOP_MENU_APPS[item];
@@ -491,7 +468,6 @@ export class AonNewMenu extends AonElement {
 				div.appendChild(appElement);
 						
 			}
-		}
 	
 		this.clearElement(aonMenuTopnav);
 		aonMenuTopnav.appendChild(div);
@@ -551,7 +527,6 @@ export class AonNewMenu extends AonElement {
 	showSideNav() {
 		if (LS.isTopMenu())
 			this.reloadTopNav();
-	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let menulist = this.getElement("aonMenuList");
 		let rootPanel = this.getElement("rootPanel");
@@ -579,7 +554,6 @@ export class AonNewMenu extends AonElement {
 	hideSideNav() {
 		if (LS.isTopMenu())
 			this.reloadTopNav();
-	
 		let sidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let rootPanel = this.getElement("rootPanel");
 		let menulist = this.getElement("aonMenuList");
@@ -745,7 +719,6 @@ export class AonNewMenu extends AonElement {
 		div.addEventListener("mouseenter", () => {
 			if (LS.isCompanySelected()){
 				this.showSideNav();
-				this.getElement("topMenuHome").style.display = "none";
 			}
 		});
 
@@ -754,21 +727,12 @@ export class AonNewMenu extends AonElement {
 
 			if (!buttonNew?.contains(event.target) && !LS.isPortalChecked()) {
 				this.hideSideNav();
-				this.isSideVisible(true);
 				this.reloadTopNav();
 			}
 
 
 		});
 	
-	}
-
-	isSideVisible(visible){
-		if(visible){
-			return visible;
-		}else{
-			return false;
-		}
 	}
 
 
