@@ -3,6 +3,7 @@
 
 // Variables colores
 $color-0  : #000;
+$color-login    : #fff;
 $color-50 : #13001f;  // Fondo principal
 $color-100: #1c003d;
 $color-200: #220649;
@@ -13,8 +14,8 @@ $color-600: #371b5c;
 $color-700: #482b6e;
 $color-800: #523a77;
 $color-900: #6e578f;
-$color-grad-min: $color-900;
-$color-grad-max: #5A1C9C;
+$color-grad-min: #F52A52;
+$color-grad-max: #3D0089;
 
 $color-sky-50 : #f0f9ff;
 $color-sky-100: #e0f2fe;
@@ -84,6 +85,8 @@ $color-yellow-900: #713f12;
 
 // Color de textos
 $color-text               : #ede5f8;
+$color-text-head          : #fff;
+$color-text-login         : #64748b;
 $color-text-button        : #ede5f8;
 $color-text-button-transp : #ede5f8;
 
@@ -93,17 +96,17 @@ $logoHead-width  : v.$px-200;
 $logoHead-height : v.$px-24;
 
 // Logo
-$logo: "../images/ayudat/logo-gris.svg";
+$logo: "../images/aon/logo-blanco.svg";
 $logo-width: v.$px-200; 
 $logo-height: v.$px-55;
 
 @mixin dark-theme {
   @include t.theme(
-    $color-0, $color-50, $color-100, $color-200, $color-300, 
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-500, $color-green-900,
     $color-blue-100, $color-blue-500, $color-blue-900,

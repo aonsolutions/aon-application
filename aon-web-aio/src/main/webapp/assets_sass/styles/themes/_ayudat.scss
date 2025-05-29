@@ -3,6 +3,7 @@
 
 // Variables colores
 $color-0  : #fff;
+$color-login    : #0f172a;
 $color-50 : #f8fafc;
 $color-100: #f1f5f9;
 $color-200: #e2e8f0;
@@ -84,6 +85,8 @@ $color-yellow-900: #713f12;
 
 // Colores textos
 $color-text               : #1E293B;
+$color-text-head          : #fff;
+$color-text-login         : #64748b;
 $color-text-button        : #ffffff;
 $color-text-button-transp : #1E293B;
 
@@ -99,11 +102,11 @@ $logo-height: v.$px-100;
 
 @mixin ayudat-theme {
   @include t.theme(
-    $color-0, $color-50, $color-100, $color-200, $color-300, 
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-500, $color-green-900,
     $color-blue-100, $color-blue-500, $color-blue-900,
