@@ -2672,7 +2672,22 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
 		
+		draft("ENFERMEDAD PROFESIONAL, PPE");
 		
+		calculate(Calendar.MAY, 2025);
+		click("costsCheck-input");
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JUNE, 2025);
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JULY, 2025);
+		assertText("other_cost", 100.00);
+		click("costsCheck-input");
+		
+		draft("ENFERMEDAD COMÚN, PPE");
+		
+		calculate(Calendar.JUNE, 2025);
+		assertValue("quote-label-11", 66.67);
+
 	}
 
 	@Test
