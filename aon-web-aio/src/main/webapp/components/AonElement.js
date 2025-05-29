@@ -10,6 +10,7 @@ export class AonElement extends HTMLElement{
 
   ROOT_PANEL = 'rootPanel';
   dur;
+  sessionData;
 
   constructor () {
     super();

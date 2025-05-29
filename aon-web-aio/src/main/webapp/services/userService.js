@@ -1,23 +1,23 @@
 import {  post, get, remove, put } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-export const getUserList = (data) => get(`${API_URL}/user`, data);
-export const getUserListSpeed = (data) => get(`${API_URL}/user/list`, data);
-export const getUserRoles = (data) => get(`${API_URL}/user/roles`, data);
-export const saveUser = (data) => post(`${API_URL}/user`, data);
-export const saveServiceAccount = (data) => put(`${API_URL}/user/service`, data); 
+export const getUserList = (data, sessionData) => get(`${API_URL}/user`, data, sessionData);
+export const getUserListSpeed = (data, sessionData) => get(`${API_URL}/user/list`, data, sessionData);
+export const getUserRoles = (data, sessionData) => get(`${API_URL}/user/roles`, data, sessionData);
+export const saveUser = (data, sessionData) => post(`${API_URL}/user`, data, sessionData);
+export const saveServiceAccount = (data, sessionData) => put(`${API_URL}/user/service`, data, sessionData); 
 
 
-export const getUser = (data) => get(`${API_URL}/user/info`, data);
+export const getUser = (data, sessionData) => get(`${API_URL}/user/info`, data, sessionData);
 
-export const getUserNotice = (data) => get(`${API_URL}/user/notice`, data);
+export const getUserNotice = (data, sessionData) => get(`${API_URL}/user/notice`, data, sessionData);
 
-export const deleteUser = (data) => remove(`${API_URL}/user`, data);
+export const deleteUser = (data, sessionData) => remove(`${API_URL}/user`, data, sessionData);
 
-export const sendUserInfoEmail = (data) => post(`${API_URL}/user/email`, data);
+export const sendUserInfoEmail = (data, sessionData) => post(`${API_URL}/user/email`, data, sessionData);
 
-export const assignUserWorkgroup = (data) => put(`${API_URL}/user/workgroup`, data);
-export const removeUserWorkgroup = (data) => remove(`${API_URL}/user/workgroup`, data);
+export const assignUserWorkgroup = (data, sessionData) => put(`${API_URL}/user/workgroup`, data, sessionData);
+export const removeUserWorkgroup = (data, sessionData) => remove(`${API_URL}/user/workgroup`, data, sessionData);
 
 export const generateToken = (data) => open(`${API_URL}/generate_token?json=${data}`);
 

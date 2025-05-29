@@ -58,89 +58,87 @@ public class CustomViewServlet extends HttpServlet {
 		resp.setContentType(MimeType.CSS.getName());
 
 		Domain domain = AON.getDomain(domainStr, 1, "", f -> f.getNameProperty().eq(domainStr));
-		Integer parentId = domain.getParentId();
-		if(parentId != null) {
-			boolean customView = AON_SOLUTIONS.getDomainApp(domainStr, parentId, "", f-> f.getDomainProperty().eq(parentId)
-				.and(f.getAppProperty().eq(AonApp.CUSTOM_VIEW.value())
-				.and(f.getActiveProperty().eq((byte) 1)))).count() > 0;
-			if(customView == true) {
-				try ( InputStream is = req.getServletContext().getResourceAsStream("/css/theme/customView.css")
-						) {
-					Map<String, String> paramsMap = new HashMap<>();
+		Integer customViewdomainId = domain.getParentId() != null ? domain.getParentId() : domain.getId();
+		boolean customView = AON_SOLUTIONS.getDomainApp(domainStr, customViewdomainId, "", f-> f.getDomainProperty().eq(customViewdomainId)
+			.and(f.getAppProperty().eq(AonApp.CUSTOM_VIEW.value())
+			.and(f.getActiveProperty().eq((byte) 1)))).count() > 0;
+		if(customView == true) {
+			try ( InputStream is = req.getServletContext().getResourceAsStream("/css/theme/customView.css")
+					) {
+				Map<String, String> paramsMap = new HashMap<>();
 
-					AON.getApplicationParameterStream(
-					        domainStr, 
-					        parentId, 
-					        "", 
-					        p -> p.getDomainProperty().eq(parentId)
-				            .and((p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL.toString()))
-				             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString())) 
-				             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_ID.toString())) 
-				             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString())) 
-				             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_TITLE.toString())))
-							).forEach(p -> paramsMap.put(p.getName(), p.getValue()));
-	
-					String email = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL.toString());
-					String phone = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString());
-					String title = paramsMap.get(AppParam.AON_CUSTOMIZE_TITLE.toString());
-					String idStr = paramsMap.get(AppParam.AON_CUSTOMIZE_ID.toString());
-					Integer id = AonNumberUtils.toInteger(idStr);
-					String heritableIdStr = paramsMap.get(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString());
-					Integer heritableId = AonNumberUtils.toInteger(heritableIdStr);
-	
-					Attach faviconAttach = AON.getAttach(
-							domainStr, 
-						    parentId, 
-						    "", 
-						    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-						         .and(p.getTypeProperty().eq((byte) 2))
-						         .and(p.getDescriptionProperty().eq("favicon.svg")), 
-						    AttachType.REGISTRY);
-					Attach headerLogoAttach = AON.getAttach(
-							domainStr, 
-						    parentId, 
-						    "", 
-						    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-						         .and(p.getTypeProperty().eq((byte) 2))
-						         .and(p.getDescriptionProperty().eq("aon-header-logo")), 
-						    AttachType.REGISTRY);
-					Attach loginLogoAttach = AON.getAttach(
-							domainStr, 
-						    parentId, 
-						    "", 
-						    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-						         .and(p.getTypeProperty().eq((byte) 2))
-						         .and(p.getDescriptionProperty().eq("aon-login-logo")), 
-						    AttachType.REGISTRY);
-					
-					String headerLogoMd5 = getMd5(headerLogoAttach.getData());
-					String faviconMd5 = getMd5(faviconAttach.getData());
-					String loginLogoMd5 = getMd5(loginLogoAttach.getData());
-					byte [] bytes = is.readAllBytes();
-					String css = new String(bytes, StandardCharsets.UTF_8);
+				AON.getApplicationParameterStream(
+				        domainStr, 
+				        customViewdomainId, 
+				        "", 
+				        p -> p.getDomainProperty().eq(customViewdomainId)
+			            .and((p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL.toString()))
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString())) 
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_ID.toString())) 
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString())) 
+			             .or(p.getNameProperty().eq(AppParam.AON_CUSTOMIZE_TITLE.toString())))
+						).forEach(p -> paramsMap.put(p.getName(), p.getValue()));
+
+				String email = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL.toString());
+				String phone = paramsMap.get(AppParam.AON_CUSTOMIZE_SUPPORT_PHONE.toString());
+				String title = paramsMap.get(AppParam.AON_CUSTOMIZE_TITLE.toString());
+				String idStr = paramsMap.get(AppParam.AON_CUSTOMIZE_ID.toString());
+				Integer id = AonNumberUtils.toInteger(idStr);
+				String heritableIdStr = paramsMap.get(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString());
+				Integer heritableId = AonNumberUtils.toInteger(heritableIdStr);
+
+				Attach faviconAttach = AON.getAttach(
+						domainStr, 
+					    customViewdomainId, 
+					    "", 
+					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+					         .and(p.getTypeProperty().eq((byte) 2))
+					         .and(p.getDescriptionProperty().eq("favicon.svg")), 
+					    AttachType.REGISTRY);
+				Attach headerLogoAttach = AON.getAttach(
+						domainStr, 
+					    customViewdomainId, 
+					    "", 
+					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+					         .and(p.getTypeProperty().eq((byte) 2))
+					         .and(p.getDescriptionProperty().eq("aon-header-logo")), 
+					    AttachType.REGISTRY);
+				Attach loginLogoAttach = AON.getAttach(
+						domainStr, 
+					    customViewdomainId, 
+					    "", 
+					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+					         .and(p.getTypeProperty().eq((byte) 2))
+					         .and(p.getDescriptionProperty().eq("aon-login-logo")), 
+					    AttachType.REGISTRY);
 				
-					css = AonStringUtils.replace(css, "phoneCustom", phone==null ? "" : phone);
-					if (phone==null) {
-						css = AonStringUtils.replace(css, "phoneIcon", "none");
-					}
-					css = AonStringUtils.replace(css, "emailCustom", email==null ? "" : email);
-					if (email==null) {
-						css = AonStringUtils.replace(css, "emailIcon", "none");
-					}
-					css = AonStringUtils.replace(css, "titleCustom", title==null ? "" : title);
-					if (title==null) {
-						css = AonStringUtils.replace(css, "titleIcon", "none");
-					}
-					css = AonStringUtils.replace(css, "logoCustom", "aonDocuments/" + headerLogoAttach.getId() + "-" + headerLogoMd5);
-					css = AonStringUtils.replace(css, "faviconCustom", "aonDocuments/" + faviconAttach.getId() + "-" + faviconMd5);
-					css = AonStringUtils.replace(css, "loginLogoCustom", "aonDocuments/" + loginLogoAttach.getId() + "-" + loginLogoMd5);
-					
-					byte[] finalCssBytes = css.getBytes(StandardCharsets.UTF_8);
-					resp.setContentLength(finalCssBytes.length);  
-					resp.getOutputStream().write(finalCssBytes);
-				} catch (IOException e) {
-					throw new IllegalArgumentException(e);
+				String headerLogoMd5 = getMd5(headerLogoAttach.getData());
+				String faviconMd5 = getMd5(faviconAttach.getData());
+				String loginLogoMd5 = getMd5(loginLogoAttach.getData());
+				byte [] bytes = is.readAllBytes();
+				String css = new String(bytes, StandardCharsets.UTF_8);
+			
+				css = AonStringUtils.replace(css, "phoneCustom", phone==null ? "" : phone);
+				if (phone==null) {
+					css = AonStringUtils.replace(css, "phoneIcon", "none");
 				}
+				css = AonStringUtils.replace(css, "emailCustom", email==null ? "" : email);
+				if (email==null) {
+					css = AonStringUtils.replace(css, "emailIcon", "none");
+				}
+				css = AonStringUtils.replace(css, "titleCustom", title==null ? "" : title);
+				if (title==null) {
+					css = AonStringUtils.replace(css, "titleIcon", "none");
+				}
+				css = AonStringUtils.replace(css, "logoCustom", "aonDocuments/" + headerLogoAttach.getId() + "-" + headerLogoMd5);
+				css = AonStringUtils.replace(css, "faviconCustom", "aonDocuments/" + faviconAttach.getId() + "-" + faviconMd5);
+				css = AonStringUtils.replace(css, "loginLogoCustom", "aonDocuments/" + loginLogoAttach.getId() + "-" + loginLogoMd5);
+				
+				byte[] finalCssBytes = css.getBytes(StandardCharsets.UTF_8);
+				resp.setContentLength(finalCssBytes.length);  
+				resp.getOutputStream().write(finalCssBytes);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
 			}
 		}
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
