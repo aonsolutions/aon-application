@@ -35,7 +35,7 @@ import net.aonsolutions.aon.tedi.TediParser;
 
 class TediValidationTest {
 	private LinkedList<InvoiceError> getMessages(TediResult result) {
-		return result.messageStream().collect(Collectors.toCollection(LinkedList::new));
+		return result.getAccountingInvoice().messageStream().collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	@AfterEach

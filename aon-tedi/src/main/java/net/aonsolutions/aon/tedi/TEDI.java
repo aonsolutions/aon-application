@@ -39,7 +39,7 @@ public class TEDI {
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
-			result.clearMessages();
+			result.getAccountingInvoice().clearMessages();
 			if (ctx == null) {
 				fillAONContext( tctx );
 				ctx = tctx.getAONContext();

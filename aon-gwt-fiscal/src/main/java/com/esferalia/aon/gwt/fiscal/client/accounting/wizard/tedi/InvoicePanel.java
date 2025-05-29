@@ -653,10 +653,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	protected void afterTediParse(TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
-		LOGGER.info("setDocument result.isImportable() --- > " + result.isImportable());
+		LOGGER.info("setDocument result.isImportable() --- > " + ai.isImportable());
 		setWrapper(ai);
 		getCallback().getModule().syncCurrent();
-		if (result.isImportable()) {
+		if (ai.isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 			innerPaintEntry();
 			editInvoice();

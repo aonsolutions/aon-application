@@ -168,7 +168,18 @@ public class RawdocDAO {
 			.map(new RawdocFiller())
 			.findFirst();
 	}
-
+	
+	public static Optional<byte[]> getRawdocData(AONContext ctx, Integer rawdocId){
+		return ctx.getDslContext()
+			.select( RAWDOC.DATA )
+			.from(RAWDOC)
+			.where(RAWDOC.ID.eq(rawdocId))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue(RAWDOC.DATA) )
+			.findFirst();
+	}
+	
 	public static Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select().from(RAWDOC);
 		return RAWDOC_PROPERTIES.build(select, filter).fetchInto(RAWDOC).stream().map(new RawdocAttachFiller());

@@ -832,30 +832,18 @@ public class AccountingInvoiceDAO {
 		attach.setType( InvoiceAttachmentType.INVOICE.value() );
 		attach.setDate(accInvoice.getInvoice().getIssueDate());
 		attach.setDescription("Factura");
-		if (attach.getData() == null) {
-			if (attach.getAttachURL() != null) {
-				InputStream in = null;
-				try {
-					URL url = new URI(attach.getAttachURL()).toURL();
-					URLConnection conn = url.openConnection();
-					conn.connect();
-					in = new BufferedInputStream(conn.getInputStream());
-					attach.setData( AonIOUtils.toByteArray(in) );
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} finally {
-					AonIOUtils.closeQuietly(in);
-				}
+		if ( accInvoice.isFromRawdoc()) {
+			if (attach.getData() == null) {
+				RawdocDAO.getRawdocData(ctx, attach.getId() )
+					.ifPresent(b -> attach.setData( b ));
 			}
 		} else {
 			String data = new String(attach.getData());
 			// Si se cambia este método de sitio, se debería tener en cuenta  
 			// que attach.data puede ser ya binario y no necesite unserialize.
-			if ( !accInvoice.isFromRawdoc()) {
-				DataUrlSerializer serializer = new DataUrlSerializer();
-				DataUrl unserialized = serializer.unserialize(data);
-				attach.setData( unserialized.getData() );
-			}
+			DataUrlSerializer serializer = new DataUrlSerializer();
+			DataUrl unserialized = serializer.unserialize(data);
+			attach.setData( unserialized.getData() );
 		}
 		if (attach.getData() != null) {
 			Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
