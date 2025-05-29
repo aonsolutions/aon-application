@@ -174,6 +174,10 @@
           border: $input-border;
           background-color: $color-input;
           color: $color-text;
+          &::placeholder{
+            color: $color-300;
+            opacity: 0.9;
+          }
         }
       }
       // 
