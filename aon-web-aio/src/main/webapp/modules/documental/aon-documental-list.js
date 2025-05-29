@@ -185,6 +185,9 @@ export class AonDocumentalList extends AonElement {
 		  
 				cleanDetail.name = cleanDetail.search;
 		  
+				cleanDetail.page = 1;
+				cleanDetail.perPage = 15;
+				
 				// Usamos el detalle limpio
 				this.setFilter(cleanDetail);
 				this.init();
