@@ -2,21 +2,21 @@
 @use '../variables' as v;
 
 // Variables colores
-$color-0  : #000;
-$color-50 : #13001f;  // Fondo principal
-$color-100: #1c003d;
-$color-200: #220649;
-$color-300: #2b0b57;
-$color-400: #321063;
-$color-500: #452277;  
-$color-600: #371b5c;
-$color-700: #482b6e;
-$color-800: #523a77;
-$color-900: #6e578f;
-$color-grad-min: #F52A52;
-$color-grad-max: #3D0089;
-$color-login    : #fff;
-$color-input    : #fff;
+$color-0        : #232c40;
+$color-50       : #232c40;
+$color-100      : #232c40;
+$color-200      : #232c40;
+$color-300      : #232c40;
+$color-400      : #334155;
+$color-500      : #334155;
+$color-600      : #475569;
+$color-700      : #232c40;
+$color-800      : #1e293b;
+$color-900      : #0f172a;
+$color-grad-min : #F52A52;
+$color-grad-max : #3D0089;
+$color-login    : #0f172a;
+$color-input    : #334155;
 
 $color-sky-50 : #f0f9ff;
 $color-sky-100: #e0f2fe;
@@ -85,11 +85,11 @@ $color-yellow-800: #854d0e;
 $color-yellow-900: #713f12;
 
 // Color de textos
-$color-text               : #ede5f8;
+$color-text               : #fff;
 $color-text-head          : #fff;
-$color-text-login         : #64748b;
-$color-text-button        : #ede5f8;
-$color-text-button-transp : #ede5f8;
+$color-text-login         : #adafb3;
+$color-text-button        : #ffffff;
+$color-text-button-transp : #fff;
 
 // Logo del header
 $logoHead        : "../images/aon/logo-horizontal.svg";
