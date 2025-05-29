@@ -1,16 +1,14 @@
 @use '../variables' as v;
 
 $iconbutton-font-size        : v.$px-16;
-$position                       : relative;
+$position                    : relative;
 $iconbutton-font-size-hidden : v.$px-0;
-$iconbutton-before-width     : 1.0419rem;
-$iconbutton-before-height    : 1.0419rem;
-$iconbutton-after-width      : v.$px-24;
-$iconbutton-after-height     : v.$px-24;
-$content                        : '';
-$display                        : inline-flex;
-$mask                           : no-repeat center;
-$mask-size                      : contain;
+$iconbutton-width            : v.$px-24;
+$iconbutton-height           : v.$px-24;
+$content                     : '';
+$display                     : inline-flex;
+$mask                        : no-repeat center;
+$mask-size                   : contain;
 
 // Mapa con iconos y texto
 $icons: (
@@ -19,34 +17,36 @@ $icons: (
   "language"      : '../icons/globe.svg'
 );
 
-// Estilos comunes para <i> (el texto por defecto)
-aon-icon-button i {
-  font-size: $iconbutton-font-size; /* Tamaño de texto por defecto */
-  position: $position; /* Necesario para el posicionamiento de iconos */
-}
-
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
-  aon-icon-button[icon="#{$icon-name}"] i {
-    font-size: $iconbutton-font-size-hidden; /* Ocultar el texto */
-  }
-
-  aon-icon-button[icon="#{$icon-name}"] i::before {
-    content : #{$icon-name}; /* Cargar el icono SVG */
-    width   : $iconbutton-before-width;
-    height  : $iconbutton-before-height;
-  }
-
-  aon-icon-button[icon="#{$icon-name}"] i {
-    &::after {
-      width             : $iconbutton-after-width;
-      height            : $iconbutton-after-height;
-      content           : $content;
-      display           : $display;
-      mask              : url(#{$icon-data}) $mask;
-      mask-size         : $mask-size;
-      -webkit-mask      : url(#{$icon-data}) $mask;
-      -webkit-mask-size : $mask-size;
+  aon-icon-button[icon="#{$icon-name}"]{
+    width : $iconbutton-width;
+    height: $iconbutton-height;
+    button{
+      width : $iconbutton-width;
+      height: $iconbutton-height;
+      i {
+        font-size : $iconbutton-font-size;
+        position  : $position;
+        font-size : $iconbutton-font-size-hidden; /* Ocultar el texto */
+        width     : $iconbutton-width;
+        height    : $iconbutton-height;
+        &::before {
+          content : #{$icon-name}; /* Cargar el icono SVG */
+          width   : $iconbutton-width;
+          height  : $iconbutton-height;
+        }
+        &::after {
+          width             : $iconbutton-width;
+          height            : $iconbutton-height;
+          content           : $content;
+          display           : $display;
+          mask              : url(#{$icon-data}) $mask;
+          mask-size         : $mask-size;
+          -webkit-mask      : url(#{$icon-data}) $mask;
+          -webkit-mask-size : $mask-size;
+        }
+      }
     }
-  }
+  }  
 }

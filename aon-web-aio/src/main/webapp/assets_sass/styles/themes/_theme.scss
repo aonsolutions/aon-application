@@ -60,9 +60,11 @@
           width: $logoHead-width;
           height: $logoHead-height; 
         }
-        aon-icon-button i {
-          &::after {
-            background-color: $color-0;
+        aon-icon-button {
+          i {
+            &::after {
+              background-color: $color-0;
+            }
           }
         }
       }
@@ -93,6 +95,23 @@
           }
         }
       }
+      // dialog
+      aon-dialog-menu{
+        background-color: $color-700;
+        box-shadow: rgba(0, 0, 0, 0.07) v.$px-0 v.$px-1 v.$px-1,
+          rgba(0, 0, 0, 0.07) v.$px-0 v.$px-2 v.$px-2, 
+          rgba(0, 0, 0, 0.07) v.$px-0 v.$px-4 v.$px-4, 
+          rgba(0, 0, 0, 0.07) v.$px-0 v.$px-8 v.$px-8, 
+          rgba(0, 0, 0, 0.07) v.$px-0 v.$px-16 v.$px-16;
+        ul{
+          li{
+            &:hover, &.selected{
+              background-color: $color-500;
+            }
+          }
+        }
+      }
+
       // Botones
       button{
         background-color  : $color-900;

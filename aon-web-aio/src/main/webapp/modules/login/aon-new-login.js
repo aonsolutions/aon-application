@@ -8,7 +8,6 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-
 import * as LS from '../../services/localStorageService.js';
 import { AonLoader } from "../../components/aon-loader.js";
 import { AonToast } from "../../components/aon-toast.js";
@@ -19,7 +18,6 @@ import { AonMobileParent } from "../company/aon-mobile-parent.js";
 import { AonParent } from "aonparent";
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import { createInput } from "../../components/CreateComponent.js";
-
 import { changeUrl } from '../../services/actionService.js';
 
 import * as UA from '../../services/userAgentService.js';
@@ -43,11 +41,6 @@ export class AonNewLogin extends AonElement {
   initialize() {}
 
   build() {
-    
-    
-    console.log('********* LOGIN ***********');
-    console.log(this.isNewStyle());
-    
     if(!this.isNewStyle()){
       this.style.display        = "flex";
       this.style.height         = "100vh";
@@ -81,10 +74,12 @@ export class AonNewLogin extends AonElement {
     }
     divLanguage.appendChild(languageButton);
 
-    let spanLanguage = this.createElement(TAG.SPAN);
-    spanLanguage.id = "aonLoginLanguageSpanToolbar";
-    spanLanguage.innerHTML = this.getLanguageText();
-    divLanguage.appendChild(spanLanguage);
+    if(!this.isNewStyle()){
+      let spanLanguage = this.createElement(TAG.SPAN);
+      spanLanguage.id = "aonLoginLanguageSpanToolbar";
+      spanLanguage.innerHTML = this.getLanguageText();
+      divLanguage.appendChild(spanLanguage);
+    }
 
     // Content
     if(this.isNewStyle()){
@@ -416,9 +411,11 @@ export class AonNewLogin extends AonElement {
 
   languageDialog() {
     let divLanguage = this.getElement("aonLoginLanguageDivToolbar");
-    let spanLanguage = this.getElement("aonLoginLanguageSpanToolbar");
-    const top = spanLanguage.getBoundingClientRect().top + 25;
-    const left = spanLanguage.getBoundingClientRect().left;
+    if(!this.isNewStyle()){
+      let spanLanguage = this.getElement("aonLoginLanguageSpanToolbar");
+      const top = spanLanguage.getBoundingClientRect().top + 25;
+      const left = spanLanguage.getBoundingClientRect().left;
+    }
     let d = this.getElement("aonHeaderDialogHelpOption");
     if (!d) {
       d = new AonDialogMenu();
@@ -430,61 +427,55 @@ export class AonNewLogin extends AonElement {
       {
         name: MSG.SPANISH,
         title: MSG.SPANISH,
+        selectLanguage: Language.SPANISH,
         permission: true,
-        image: "../assets/img/aonIconCastellano.png",
-        fn: () => LS.setLanguage(Language.SPANISH),
+        fn: () => LS.setLanguage(Language.SPANISH)
       },
       {
         name: MSG.ENGLISH,
         title: MSG.ENGLISH,
+        selectLanguage: Language.ENGLISH,
         permission: true,
-        image: "../assets/img/aonIconEnglish.png",
-        fn: () => LS.setLanguage(Language.ENGLISH),
+        fn: () => LS.setLanguage(Language.ENGLISH)
       },
       {
         name: MSG.FRENCH,
         title: MSG.FRENCH,
+        selectLanguage: Language.FRENCH,
         permission: true,
-        image: "../assets/img/aonIconFrancais.png",
-        fn: () => LS.setLanguage(Language.FRENCH),
+        fn: () => LS.setLanguage(Language.FRENCH)
       },
       {
         name: MSG.DEUTSCH,
         title: MSG.DEUTSCH,
+        selectLanguage: Language.DEUTSCH,
         permission: true,
-        image: "../assets/img/aonIconDeutsch.png",
-        fn: () => LS.setLanguage(Language.DEUTSCH),
+        fn: () => LS.setLanguage(Language.DEUTSCH)
       },
       {
         name: MSG.BASQUE,
         title: MSG.BASQUE,
+        selectLanguage: Language.BASQUE,
         permission: true,
-        image: "../assets/img/aonIconEuskera.png",
-        fn: () => LS.setLanguage(Language.BASQUE),
+        fn: () => LS.setLanguage(Language.BASQUE)
       },
       {
         name: MSG.CATALAN,
         title: MSG.CATALAN,
+        selectLanguage: Language.CATALAN,
         permission: true,
-        image: "../assets/img/aonIconCatala.png",
-        fn: () => LS.setLanguage(Language.CATALAN),
+        fn: () => LS.setLanguage(Language.CATALAN)
       },
       {
         name: MSG.GALICIAN,
         title: MSG.GALICIAN,
+        selectLanguage: Language.GALICIAN,
         permission: true,
-        image: "../assets/img/aonIconGalego.png",
-        fn: () => LS.setLanguage(Language.GALICIAN),
-      },
+        fn: () => LS.setLanguage(Language.GALICIAN)
+      }
     ];
-
-    d.setMenuOptions(options, top, left);
+    d.setMenuOptions(options);
     d.open();
-
-    d.getContent().addEventListener(EVENT.MOUSELEAVE, () => {
-      console.log("Close lenguage");
-      d.close();
-    });
   }
 
   getLanguageText() {

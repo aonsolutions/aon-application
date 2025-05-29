@@ -2,7 +2,9 @@
 
 .aonToolbar2{
   height          : v.$px-64;
+  min-height      : v.$px-64;
   position        : sticky;
+  z-index         : 1; 
   top             : v.$px-0;
   padding         : 0 v.$px-20;
   display         : flex;

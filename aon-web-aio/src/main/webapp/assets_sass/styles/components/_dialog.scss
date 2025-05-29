@@ -1,0 +1,24 @@
+@use '../variables' as v;
+
+aon-dialog-menu{
+  width: v.$px-200;
+  height: auto;
+  position: fixed;
+  border-radius: v.$border-radius;
+  ul{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    li{
+      padding: 1rem; /* lo mismo que de gap */
+      cursor : pointer;
+      &:first-child{
+        border-radius: v.$border-radius v.$border-radius 0 0;
+      }
+      &:last-child{
+        border-radius: 0 0 v.$border-radius v.$border-radius;
+      }
+    }
+  }
+}
