@@ -4,7 +4,7 @@ import { AonCard } from '../components/aon-card.js';
 import { getManifest, getDomainUserRoles} from "../services/service.js";
 import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
-import { getCompany, getParentCompany } from '../services/companyService.js';
+import { getParentCompany } from '../services/companyService.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import * as JSF from './aon-jsf-app.js';
 
@@ -80,6 +80,7 @@ export class AonHelp extends AonElement {
 		
 		helpContentIndexDiv.addEventListener(EVENT.CLICK, () => {
 			this.rootPanel(new JSF.AonJsfHelpContent())
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
 
 		let helpNotificationDiv = this.createSpan();
@@ -99,7 +100,8 @@ export class AonHelp extends AonElement {
 		helpContent.appendChild(helpNotificationDiv);
 
 		helpNotificationDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new JSF.AonJsfHelpNotification())
+			this.rootPanel(new JSF.AonJsfHelpNotification());
+			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
 
 		getSupport().then(r => {

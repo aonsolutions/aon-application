@@ -183,6 +183,10 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(invoiceDetail.getPrice());
         		} else if(IConstants.DESCUENTO.equalsIgnoreCase(title)) {
         			cell.setCellValue(invoiceDetail.getDiscount());
+        		} else if(IConstants.IMPORTE_BRUTO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(getTotalPrice(invoiceDetail));
+        		} else if(IConstants.IMPORTE_NETO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(getTotalNetPrice(invoiceDetail));
         		} else if(IConstants.FECHA_INICIO.equalsIgnoreCase(title)) {
         			cell.setCellValue("");
         			cell.setCellStyle(dateStyle);
@@ -250,6 +254,10 @@ public class DownloadFeeServlet extends HttpServlet {
         			cell.setCellValue(fee.getPrice());
         		} else if(IConstants.DESCUENTO.equalsIgnoreCase(title)) {
         			cell.setCellValue(fee.getDiscount());
+        		} else if(IConstants.IMPORTE_BRUTO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getTotalPrice());
+        		} else if(IConstants.IMPORTE_NETO.equalsIgnoreCase(title)) {
+        			cell.setCellValue(fee.getTotalNetPrice());
         		} else if(IConstants.FECHA_INICIO.equalsIgnoreCase(title)&& fee.getStartDate() != null) {
         			cell.setCellValue(fee.getStartDate());
         			cell.setCellStyle(dateStyle);
@@ -337,6 +345,18 @@ public class DownloadFeeServlet extends HttpServlet {
         out.flush();
         out.close();
 		
+	}
+	
+	private double getNetCost(InvoiceDetail invoiceDetail) {
+		return invoiceDetail.getPrice() * (1 - invoiceDetail.getDiscount()/100);
+	}
+	
+	 private double getTotalPrice(InvoiceDetail invoiceDetail) {
+		return invoiceDetail.getPrice() * invoiceDetail.getQuantity();
+	}
+	 
+	private double getTotalNetPrice(InvoiceDetail invoiceDetail) {
+		return getNetCost(invoiceDetail) * invoiceDetail.getQuantity();
 	}
 
 	private Filter feeFilter(Domain domain, JSONObject filterJSON, FeeProperties f, Integer[] a) {
@@ -688,7 +708,7 @@ public class DownloadFeeServlet extends HttpServlet {
 		params.setPeriod(Byte.parseByte(filterJSON.optString("period")));
 		params.setScope(AonStringUtils.isBlank(filterJSON.optString("scope")) ? null : Integer.parseInt(filterJSON.optString("scope")));
 		params.setActive(Byte.parseByte(filterJSON.optString("active")));
-		params.setCustomers(Byte.parseByte(filterJSON.optString("customer")));
+		params.setCustomers(AonStringUtils.isBlank(filterJSON.optString("customer")) ? null : Byte.parseByte(filterJSON.optString("customer")));
 		params.setDescription(filterJSON.optString("description"));
 		
 		params.setOffset(0);

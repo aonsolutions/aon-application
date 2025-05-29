@@ -202,7 +202,8 @@ export class AonHome extends AonElement {
 					if(rightPanelContent) this.closeRightPanel();
 					
 					this.rightPanel.clear();
-					this.rightPanel.setContent(new AonHelp());
+					let aonHelp = new AonHelp();
+					this.rightPanel.setContent(aonHelp);
 					this.rightPanel.setTitle(MSG.HELP);
 					
 					this.helpButton.style.display='block';
@@ -212,7 +213,8 @@ export class AonHome extends AonElement {
 					
 					this.rightPanel.open();
 					this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerHelp);
-					document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
+					document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer
+					aonHelp.addEventListener(EVENT.AON_APPLICATION_OPEN, () => this.closeRightPanel() ); 
 				}
 			});
 		}

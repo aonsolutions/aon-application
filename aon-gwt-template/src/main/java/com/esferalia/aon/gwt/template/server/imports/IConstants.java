@@ -178,6 +178,8 @@ public interface IConstants {
 	String BASE_IMPONIBLE = "BASE IMPONIBLE";
 	
 	String IMPUESTO = "IMPUESTO";
+	String IMPORTE_NETO = "I. NETO";
+	String IMPORTE_BRUTO = "I. BRUTO";
 	String IVA = "IVA";
 	String CUOTA_IMPUESTO = "CUOTA IMPUESTO";
 	String CUOTA_IVA = "CUOTA IVA";
