@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -87,12 +88,11 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				.setTediParsed(true)
 			;
 			Attach attach = result.getAccountingInvoice().getAttach();
-			if (attach != null && attach.getAttachURL() == null && attach.getData() != null) {
+			if (attach != null && AonStringUtils.equals("RAWDOC_URL",attach.getAttachURL())) {
 				String url = getRawdocDataAttachURL(occam,rawdocId);
 				result.getAccountingInvoice().getAttach()
 					.setAttachURL(url)
 					.setData( null );
-				System.out.println( "url ..: " + url);
 			}
 			return result;
 		} catch ( TediException t) {
@@ -127,36 +127,35 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	private String getRawdocDataAttachURL(Occam occam, Integer rawdocId) {
 		String url = null;
-		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId).orElse(null);
-		if (rawdoc != null) {
-			if (rawdoc.getData() != null) {
-				
-				HttpServletRequest req = getThreadLocalRequest();
-				String serverName = req.getServerName();
-				int serverPort = req.getServerPort();
-				StringBuilder baseURL = new StringBuilder();
-				if (serverPort != 80 && serverPort != 443) {
-					String scheme = req.getScheme();
-					baseURL
-					.append(scheme).append(":")
-					.append("//").append(serverName)
-					.append(":").append(serverPort);
-				}
-				baseURL.append( getThreadLocalRequest().getContextPath() );
-				
-				String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
-				params = Base64.getEncoder().encodeToString(params.getBytes());
-				url = baseURL.toString() + "/ms/download_rawdoc" 
-						+ "/" + occam.getDomainName() 
-						+ "/" + occam.getUser() 
-						+ "/" +  params;
+		Rawdoc rawdoc = AON.getRawdocFull(occam, rawdocId)
+			.orElseThrow( () -> 
+				new AonCoreException(MessageFormat.format("No se ha encontrado el documento {0} en el dominio ( {1} - {2})"
+					,rawdocId,occam.getDomain(),occam.getDomainName())));
+		
+		if (!AonStringUtils.isBlank(rawdoc.getS3Key())) {
+			url = S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
+		} else if (rawdoc.getData() != null) {
+			HttpServletRequest req = getThreadLocalRequest();
+			String serverName = req.getServerName();
+			int serverPort = req.getServerPort();
+			StringBuilder baseURL = new StringBuilder();
+			if (serverPort != 80 && serverPort != 443) {
+				String scheme = req.getScheme();
+				baseURL
+				.append(scheme).append(":")
+				.append("//").append(serverName)
+				.append(":").append(serverPort);
 			}
-			if(!AonStringUtils.isBlank(rawdoc.getS3Key())) {
-				url = S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
-			}
-		} else {
-			System.out.println( "Rawdoc Not found" + rawdocId);
+			baseURL.append( getThreadLocalRequest().getContextPath() );
+			
+			String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
+			params = Base64.getEncoder().encodeToString(params.getBytes());
+			url = baseURL.toString() + "/ms/download_rawdoc" 
+					+ "/" + occam.getDomainName() 
+					+ "/" + occam.getUser() 
+					+ "/" +  params;
 		}
+		System.out.println( "getRawdocDataAttachURL...: " + url);
 		return url;
 	}
 	
