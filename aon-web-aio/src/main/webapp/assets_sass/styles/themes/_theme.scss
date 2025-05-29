@@ -3,7 +3,7 @@
 @mixin theme(
   $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
   $color-400, $color-500, $color-600, $color-700, 
-  $color-800, $color-900,
+  $color-800, $color-900, $color-input,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
   $color-red-100,  $color-red-500, $color-red-900,
@@ -37,7 +37,7 @@
   $loginbutton-transition            : background v.$t-03 ease;
   $loginbutton-hover-background-size : v.$pct-100 v.$px-0;
 
-  $magicbutton-background-color : transparent;
+  $magicbutton-background-color : $color-input;
   $magicbutton-color            : $color-text-button-transp;
   $magicbutton-border           : v.$px-1 solid $color-300;
   $magicbutton-padding          : v.$px-7 v.$px-15;
@@ -111,7 +111,6 @@
           }
         }
       }
-
       // Botones
       button{
         background-color  : $color-900;
@@ -173,7 +172,7 @@
         }
         input{
           border: $input-border;
-          background-color: $color-0;
+          background-color: $color-input;
           color: $color-text;
         }
       }

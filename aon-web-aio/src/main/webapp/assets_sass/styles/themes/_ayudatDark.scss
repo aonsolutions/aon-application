@@ -3,7 +3,6 @@
 
 // Variables colores
 $color-0  : #fff;
-$color-login    : #0f172a;
 $color-50 : #f8fafc;
 $color-100: #f1f5f9;
 $color-200: #e2e8f0;
@@ -16,6 +15,8 @@ $color-800: #1e293b;
 $color-900: #0f172a;
 $color-grad-min: #586078;
 $color-grad-max: #0E1030;
+$color-login    : #fff;
+$color-input    : #fff;
 
 $color-sky-50 : #f0f9ff;
 $color-sky-100: #e0f2fe;
@@ -104,7 +105,7 @@ $logo-height: v.$px-100;
   @include t.theme(
     $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
-    $color-800, $color-900,
+    $color-800, $color-900, $color-input,
     $color-grad-min, $color-grad-max,
     $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
     $color-red-100,  $color-red-500, $color-red-900,
