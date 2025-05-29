@@ -3098,8 +3098,9 @@ background-image: url("../favicon.png");
 .aonHeaderHome .material-icons,
 .aonHeaderApps .material-icons,
 .aonHeaderStart .material-icons,
-.aonHeaderApplications .material-icons  {
-color: var(--aonWhite);
+.aonHeaderApplications .material-icons,
+#aonHeaderHomeButtonIconButton {
+color: var(--aonWhite) !important;
 }
 
 .aonHeaderNote #aon-search-buttonIcon,
@@ -4813,3 +4814,4 @@ font-weight: 600;
   	width: 24px;
   	font-size: 0.7rem;
   }
+
