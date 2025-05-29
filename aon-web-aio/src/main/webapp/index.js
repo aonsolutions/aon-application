@@ -28,6 +28,24 @@ window.setResumeApp = (data) =>  {
 };
 
 function loadNew(){
+    // Detectamos si el usuario tiene el navegador en modo oscuro
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+      const hostname = window.location.hostname;
+      // Aplica el tema correspondiente segun el dominio
+      if (hostname.includes("ayudat.aon.solutions")) {
+        document.documentElement.classList.add("ayudat-dark");
+      } else if (hostname.includes("infoautonomo.aon.solutions")) {
+        document.documentElement.classList.add("infoautonomo-dark");
+      } else {
+        document.documentElement.classList.add("theme-dark");
+      }
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+      document.documentElement.classList.toggle('theme-dark', event.matches);
+      document.documentElement.classList.toggle('theme-light', !event.matches);
+    });
+    
   favicon();
   title();
   document.body.appendChild(new AonModule());

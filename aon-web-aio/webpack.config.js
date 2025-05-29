@@ -2,6 +2,7 @@ const path                  = require('path');
 const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
 const CssMinimizerPlugin    = require('css-minimizer-webpack-plugin');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -29,6 +30,14 @@ module.exports = {
       filename: '../new',
       chunks  : ['appSass', 'sass'],  // Solo incluye estos
       inject  : false
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'assets_sass/favicons'),
+          to: path.resolve(__dirname, 'dist/favicons'),
+        },
+      ],
     })
   ],
   module: {
