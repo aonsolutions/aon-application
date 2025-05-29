@@ -16,6 +16,8 @@ public class SellerParams implements Serializable{
 	private Integer scope;
 	private Byte active;
 	
+	private Boolean byProject;
+	
 	private String description;
 	
 	private int limit;
@@ -79,6 +81,13 @@ public class SellerParams implements Serializable{
 	}
 	public SellerParams setActive(Byte active) {
 		this.active = active;
+		return this;
+	}
+	public Boolean getByProject() {
+		return byProject;
+	}
+	public SellerParams setByProject(Boolean byProject) {
+		this.byProject = byProject;
 		return this;
 	}
 	public String getDescription() {

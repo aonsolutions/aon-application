@@ -1,20 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -39,7 +34,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -47,9 +41,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
@@ -146,6 +137,20 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		this.fee = fee;
 		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
+	protected CustomerFeeDialog(Fee fee, Customer customer, RegistryModuleOptions options) {
+		setCaption("Edici\u00f3n Cuota");
+		
+		this.fee = fee;
+		this.options = options;
+		this.customer = customer;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -831,12 +836,15 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		projectSuggestBox.addKeyUpHandler(e -> {
 			String projectQuery = projectSuggestBox.getValue();
 			
-			Integer customerId = null;
-			if(null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
+			Integer customerId = null != customer ? customer.getId() : null;
+			
+			if(null == customerId && null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
 				Customer customer = customerSuggestions.get(customerSuggestBox.getValue());
 				if(null != customer) customerId = customer.getId();
 				else if(null != fee && null != fee.getCustomer()) customerId = fee.getCustomer().getId();
 			}
+			
+			
 			
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				projectSuggestBox.setValue("", false);
