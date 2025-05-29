@@ -92,6 +92,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.naming.Context;
+
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
@@ -1774,7 +1776,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			PaymentType contractPaymentType = getPaymentType(contractPayment);
 			
-			if ( isExtra(expressionContext)
+			if (isLog(name) ) {
+				// Nothing at all
+			} else if ( isExtra(expressionContext)
 				//&& contractPaymentType != PaymentType.CRA_0000
 				&& contractPayment.getScope() == ExpressionScope.SALARY ) {
 				; // Skip EXTRA Concepts
@@ -2132,6 +2136,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch ( Exception e ) {
 			return false;
 		}
+	}
+
+	private static boolean isLog(String name) {
+		for ( String var :  ContextVariable.LOGS ) 
+			if ( AonStringUtils.equalsIgnoreCase(var, name))
+				return  true;
+		return false;
 	}
 
 	private static boolean isExtra(ExpressionContext expressionContext) {
