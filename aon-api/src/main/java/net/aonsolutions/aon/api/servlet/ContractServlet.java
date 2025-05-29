@@ -4,25 +4,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.ContractExtendedDataJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.AonCompany;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ContractExtendedDataProperties;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -105,7 +101,9 @@ public class ContractServlet extends AonApiHttpServlet {
 	
 	private static Filter buildFilter(ContractExtendedDataProperties properties, AonApiData api, Filter filter) {
 		JSONObject params = api.getData();
+		String pattern = JsonUtils.getString(params, IJsonNames.PATTERN);
 		String name = JsonUtils.getString(params, IJsonNames.NAME);
+		String document = JsonUtils.getString(params, IJsonNames.DOCUMENT);
 		Boolean status = JsonUtils.getBoolean(params, IJsonNames.STATUS);
 		Date to = JsonUtils.getDate(params, IJsonNames.TO);
 		Date from = JsonUtils.getDate(params, IJsonNames.FROM);
@@ -113,12 +111,31 @@ public class ContractServlet extends AonApiHttpServlet {
 		if(workplace != null) {
 			filter = filter.and(properties.getWorkplaceProperty().eq(workplace));
 		}
+
+		if(pattern != null) {
+			
+			Filter nameFilter = null;
+			String[] words = pattern.split("\\s");
+			for (String word : words) {
+				Filter wordFilter = properties.getPersonFullNameProperty().like("%"+word+"%");
+				nameFilter = nameFilter == null ? wordFilter : nameFilter.and(wordFilter);
+			}
+			Filter documentFilter = properties.getPersonDocumentProperty().like("%"+pattern+"%");
+			
+			filter = filter.and(nameFilter.or(documentFilter));
+			
+		}
+
 		if(name != null) {
 			String[] words = name.split("\\s");
 			for (String word : words) {
 				filter = filter.and(properties.getPersonFullNameProperty().like("%"+word+"%"));
 			}
 		}
+		if(document != null) {
+				filter = filter.and(properties.getPersonDocumentProperty().like("%"+document+"%"));
+		}
+		
 		if(status != null) {			
 			if(Boolean.TRUE.equals(status)) {
 				if(to != null) {
