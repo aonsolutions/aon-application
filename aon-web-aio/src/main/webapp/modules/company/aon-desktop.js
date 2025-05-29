@@ -93,8 +93,8 @@ export class AonDesktop extends AonElement {
 
 	connectedCallback() {
 		if (LS.isNewTheme()) {
-			let span = this.getElement('aonHeaderHome');
-			if (span) span.style.display = 'none';
+			/*let span = this.getElement('aonHeaderHome');
+			if (span) span.style.display = 'none';*/
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
 			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
