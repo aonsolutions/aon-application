@@ -181,18 +181,6 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompany);
 
-		let aonHeaderHome = this.createElement(TAG.SPAN);
-		aonHeaderHome.id = this.AON_HEADER_HOME;
-		aonHeaderHome.style.display = "none";
-
-		let aonHeaderHomeButton = new AonIconButton();
-		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
-		aonHeaderHomeButton.icon = "home";
-		aonHeaderHomeButton.outlined = true;
-		aonHeaderHome.appendChild(aonHeaderHomeButton);
-
-		aonHeaderButtons.appendChild(aonHeaderHome);
-
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
 		aonHeaderCompanyList.classList.add("aonHeaderCompanyList");
@@ -205,6 +193,16 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
 
+		let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHome);
+				
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
 		aonHeaderHelp.title = MSG.HELP;
@@ -280,12 +278,16 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch2.style.marginLeft = '108px';
 			}
 
-			// let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
-			// aonHeaderHomeButton.addEventListener('click', () => {
-			// 	this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-			// 	let aonDesktop = this.getElement('aonDesktop');
-			// 	aonDesktop.setAttribute('company', this.getAttribute('company'));
-			// });
+			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
+			aonHeaderHomeButton.addEventListener('click', () => {
+				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+				let aonDesktop = this.getElement('aonDesktop');
+				aonDesktop.setAttribute('company', this.getAttribute('company'));
+				let aonLogo = this.getElement('aonLogo');
+				aonLogo.style.display =	"block";
+				let aonHeaderApp = this.getElement('aonHeaderApp');
+				aonHeaderApp.style.display = 'none';
+			});
 			if(!this.newTheme){
 				let aonHeaderHelpButton = this.getElement(this.BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
@@ -402,7 +404,6 @@ export class AonHeader extends AonElement {
 				aonHeaderSearch.style.display = 'flex';
 
 				let aonHeaderHome = this.getElement(this.BASE_ID + 'Home');
-				aonHeaderHome.style.display = 'none';
 
 				let aonHeaderCompany = this.getElement(this.BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
@@ -923,7 +924,7 @@ export class AonHeader extends AonElement {
 		getCompanies().then(companies => {
 			let searchCompanies = companies.filter( company =>  {
 				const name = AonStringUtils.containsMatching(company?.name, aonHeaderSearchBoxValue);
-				const document = AonStringUtils.containsMatching(company?.name,aonHeaderSearchBoxValue);
+				const document = AonStringUtils.containsMatching(company?.document,aonHeaderSearchBoxValue);
 				return document || name;
 			});
 		
@@ -938,11 +939,12 @@ export class AonHeader extends AonElement {
 			searchCompanies.slice(0, 10).forEach(company => {
 
 				const companyName = this.decorateMatching(company.name, aonHeaderSearchBoxValue);
+				const companyDocument = this.decorateMatching(company.document, aonHeaderSearchBoxValue);
 				
 				searchOptions.push({
 					id: `Company${company.id}`,
 					icon: aonHeader.getIcon(company),
-					name: `<span>${companyName}</span><span style="float:right;">${company.document}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
+					name: `<span>${companyName}</span><span style="float:right;">${companyDocument}<i id="Company${company.id}Copy" style="display: none; vertical-align: middle; font-size: 16px;" class="${CSS.MATERIAL_SYMBOLS_OUTLINED}">${MATERIAL_ICONS.CONTENT_COPY}</i></span>`,
 					title: `${company.domain}`,
 					fn: () => { aonHeader.companySelection(company); },
 				});
@@ -966,21 +968,23 @@ export class AonHeader extends AonElement {
 			let firstDayOfMonth = new Date(); 
 			firstDayOfMonth.setUTCHours(0,0,0,0);
 			
-			getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, name: aonHeaderSearchBoxValue, limit: 26 })
+			getAllContracts({ to: firstDayOfMonth.toISOString(), status: true, pattern: aonHeaderSearchBoxValue, limit: 26 })
 			.then(contracts => {
 				
 				let searchOptions = [];
-				contracts.slice(0,10)
+				contracts
 				.map( contract => {
 					contract.company = companies.find( company => company.domain == contract.domain );  
 					return contract;
 				})
 				.filter( contract => contract.company)
+				.slice(0,10)
 				.forEach(contract => {
 					const contractName = this.decorateMatching(contract.name, aonHeaderSearchBoxValue);
+					const contractDocument = this.decorateMatching(contract.document, aonHeaderSearchBoxValue);
 					searchOptions.push({
 						icon : MATERIAL_ICONS.PERSON,
-						name : `<span>${contractName}</span><span style="float:right;">${contract.company.name}</span>`,
+						name : `<span>${contractName}</span><span style="margin-left: 16px" >${contractDocument}</span><span style="float:right;">${contract.company.name}</span>`,
 						fn: () => {
 							this.companySelection(contract.company, false , () => {GWT.iLoad(GWT.EMPLOYEES, undefined, {employeeSearch: contract.document || contract.name})} );
 						},
@@ -999,6 +1003,11 @@ export class AonHeader extends AonElement {
 	}
 	
 	decorateMatching (text, searcher) {
+		if ( !text )
+			return '';
+		if ( !searcher )
+			return text;
+		
 		let decoratedText = text;
 		let matchingWords = AonStringUtils.getMatching(decoratedText, searcher);
 		for ( let matchingWord of matchingWords ) {

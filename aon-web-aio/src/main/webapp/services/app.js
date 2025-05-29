@@ -1613,12 +1613,31 @@ export const SUPERSET = {
 	logo: "../assets/apps/superset.png",
 };
 
+export function getConstNewApps(dur, url) {
+//  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise)) || (url.includes('infoautonomos')) && (dur.isAdmin() || dur.isEnterprise)) {
+  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise))) {
+    return {
+      app: CONSTANT.APPS,
+      title: MSG.PLAN,
+      description: MSG.PLAN,
+      symbol: MATERIAL_ICONS.APPS
+    }
+  } else {
+      return {
+      app: CONSTANT.APPS,
+      title: MSG.APPLICATIONS,
+      description: MSG.APPLICATIONS,
+      symbol: MATERIAL_ICONS.APPS
+    }
+  }
+};
+
 export const NEW_APPS = {
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
 	description: MSG.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPS
-}
+};
 
 export const AON_APPS = [ 
 	AON_SOLUTIONS, 

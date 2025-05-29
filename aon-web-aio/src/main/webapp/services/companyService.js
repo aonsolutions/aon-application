@@ -1,4 +1,4 @@
-import { request, put, get, getDefaultSessionData, getParentSessionData } from "./request.js";
+import { request, put, get, post, getDefaultSessionData, getParentSessionData } from "./request.js";
 import { API, API_URL } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -145,13 +145,7 @@ export const getDomainApps = (domain) => {
   };
 
   export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);
-  export const getThemeUrl = async (data) => {
-  	const query = new URLSearchParams(data).toString();
-  	const response = await fetch(`${API_URL}/themeurl?${query}`);
-  	if (!response.ok) throw new Error("Error al obtener la URL del tema");
 
-  	const json = await response.json();
-  	return json.url; // <- esto es lo que querés
-  };
-
+  export const getContratado = (data) => get(`${API_URL}/contracted_plans_servlet/apps`, data);
+  export const sendFormData = (data) => post(`${API_URL}/contracted_plans_servlet/callForm`, data);
 

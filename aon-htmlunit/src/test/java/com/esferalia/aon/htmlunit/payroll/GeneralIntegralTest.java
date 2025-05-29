@@ -2683,6 +2683,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertText("other_cost", 100.00);
 		click("costsCheck-input");
 		
+		draft("ENFERMEDAD COMÚN, PPE");
+		
+		calculate(Calendar.JUNE, 2025);
+		assertValue("quote-label-11", 66.67);
+
 	}
 
 	@Test
