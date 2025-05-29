@@ -144,6 +144,7 @@ public abstract class AonProjectPanel extends SimplePanel {
         		project.setName(name.getValue());
         		project.setAlias(alias.getValue());
         		project.setDate(date.getValue());
+        		project.setActive(true);
         		
         		ProjectHolder projectHolder = new ProjectHolder();
         		projectHolder.setDomain(domainId);
