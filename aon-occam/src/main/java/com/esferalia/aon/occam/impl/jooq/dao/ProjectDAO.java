@@ -198,7 +198,8 @@ public class ProjectDAO {
 				.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
 				.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 				.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))				
-				.where(condition);
+				.where(condition)
+				.and(PROJECT.ACTIVE.eq((byte)1));
 		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))

@@ -133,7 +133,6 @@ export class AonConfig extends AonElement {
         langCard.setContent(langsDiv);
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
-            LS.setTopMenu(topNavSwitch.checked);
             let topnav = this.getElement("aonMenuTopnav");
 
             if(LS.isTopMenu()) {
@@ -152,7 +151,6 @@ export class AonConfig extends AonElement {
             if(!welcome){
                 if(side.style.width == "0px") {
                     aonMenu.showSideNav();
-                    this.getElement("topMenuHome").style.display = "none";
                 } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };
@@ -162,7 +160,6 @@ export class AonConfig extends AonElement {
 
         let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
-        
     }
 
     isCSSLoaded(cssFileName) {

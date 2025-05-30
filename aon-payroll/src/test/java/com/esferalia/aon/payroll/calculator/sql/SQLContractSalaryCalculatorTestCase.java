@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -38,6 +39,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -50,6 +52,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import junit.framework.Assert;
 
@@ -1588,6 +1591,43 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		ISalary salary = calculator.calculate(ctx);
 		
 		Assert.assertEquals( 1250.00 + 1250.00/12, salary.getTotalPayment());
+	}
+
+	@Test
+	public void testNOTE()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+	
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						},
+				new String[] { });
+	
+		PaymentConceptRecord noteConcept = addConcept(aonContext, "NOTA", PaymentType.CRA_0000, "0.00");
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+		
+		
+		String note = "Hello World!!!!";
+		addPayment(aonContext, contract, start, end, noteConcept, note, "0.00", "_P", "_P", PaymentType.CRA_0000);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, start, end, 1500.00 / 30.00);
+		
+	
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, start, end, end, contract); 
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+		for ( IPayment payment :  salary.getPaymentS()) {
+			if ( AonStringUtils.equals(payment.getName(), noteConcept.getCode()) &&  
+					AonStringUtils.equals(payment.getDescription(), note))
+				return;
+			System.out.println(payment.getName() + ", " + payment.getDescription() );
+		}
+		fail();
 	}
 
 	private static void load(Map<String, ITimedVariable<?>> context,

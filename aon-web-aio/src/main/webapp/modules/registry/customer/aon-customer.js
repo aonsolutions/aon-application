@@ -360,8 +360,8 @@ export class AonCustomer extends AonReg {
 		main.style.display = "flex";
 		this.clearElement(main);
 
-		div.style.position = 'absolute';
-		div.style.height = '100%';
+		main.style.position = 'absolute';
+		main.style.height = '100%';
 
 		localStorage.setItem("customer", this.registry.getId());
 
