@@ -3098,9 +3098,8 @@ background-image: url("../favicon.png");
 .aonHeaderHome .material-icons,
 .aonHeaderApps .material-icons,
 .aonHeaderStart .material-icons,
-.aonHeaderApplications .material-icons,
-#aonHeaderHomeButtonIconButton {
-color: var(--aonWhite) !important;
+.aonHeaderApplications .material-icons {
+color: var(--aonWhite);
 }
 
 .aonHeaderNote #aon-search-buttonIcon,
@@ -3256,6 +3255,7 @@ color: var(--aonWhite);
 	display: block;
 }
 
+#aonHeaderHome:hover,
 #aonHeaderCompanyList:hover,
 #aonHeaderHelp:hover,
 #aonHeaderConfig:hover,

@@ -180,6 +180,16 @@ export class AonHeader extends AonElement {
 		aonHeaderCompany.appendChild(aonHeaderCompanyName);
 
 		aonHeaderButtons.appendChild(aonHeaderCompany);
+		
+		let aonHeaderHome = this.createElement(TAG.SPAN);
+		aonHeaderHome.id = this.AON_HEADER_HOME;
+
+		let aonHeaderHomeButton = new AonIconButton();
+		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
+		aonHeaderHomeButton.icon = "home";
+		aonHeaderHome.appendChild(aonHeaderHomeButton);
+
+		aonHeaderButtons.appendChild(aonHeaderHome);
 
 		let aonHeaderCompanyList = this.createElement(TAG.SPAN);
 		aonHeaderCompanyList.id = this.AON_HEADER_COMPANY_LIST;
@@ -192,16 +202,6 @@ export class AonHeader extends AonElement {
 		aonHeaderCompanyList.appendChild(aonHeaderHomeCompanyListButton);
 
 		aonHeaderButtons.appendChild(aonHeaderCompanyList);
-
-		let aonHeaderHome = this.createElement(TAG.SPAN);
-		aonHeaderHome.id = this.AON_HEADER_HOME;
-
-		let aonHeaderHomeButton = new AonIconButton();
-		aonHeaderHomeButton.id = this.AON_HEADER_HOME_BUTTON;
-		aonHeaderHomeButton.icon = "home";
-		aonHeaderHome.appendChild(aonHeaderHomeButton);
-
-		aonHeaderButtons.appendChild(aonHeaderHome);
 				
 		let aonHeaderHelp = this.createElement(TAG.SPAN);
 		aonHeaderHelp.id = this.AON_HEADER_HELP;
