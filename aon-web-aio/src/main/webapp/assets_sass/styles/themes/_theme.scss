@@ -48,6 +48,16 @@
 
   $input-border : v.$px-1 solid $color-300;
   
+  $favicon: url('../images/aon/favicon-light.svg');
+
+  root::before {
+    content: '';
+    background-image: $favicon; // Esto obliga a Sass a incluirlo si usas una herramienta como Webpack o Vite
+  }
+ // --favicon : assets_sass/images/aon/favicon-light.svg;
+  --favicon: dist/#{str-slice(str-slice(#{$favicon}, 5), 1, str-length(str-slice(#{$favicon}, 5)) - 1)};
+ // --favicon: dist/#{$favicon};
+
   body {
     color            : $color-text;
     margin           : $body-margin;
