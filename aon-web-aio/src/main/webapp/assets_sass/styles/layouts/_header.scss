@@ -1,6 +1,6 @@
 @use '../variables' as v;
 
-.aonToolbar2{
+.aonToolbar2, aon-header{
   height          : v.$px-64;
   min-height      : v.$px-64;
   position        : sticky;

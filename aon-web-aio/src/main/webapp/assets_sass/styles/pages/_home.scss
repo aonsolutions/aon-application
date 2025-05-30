@@ -1,0 +1,10 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+aon-home{
+  width         : v.$pct-100;
+  height        : v.$pct-100;
+  display       : flex;
+  flex-direction: column;
+  
+}

@@ -56,7 +56,7 @@
       width   : $aonmodule-width;
       height  : $aonmodule-height;
       // Cabecera
-      .aonToolbar2{
+      .aonToolbar2, aon-header{
         background-color  : $color-900;
         color             : $color-text-head;
         .aonLoginLogo{
