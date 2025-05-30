@@ -1,4 +1,5 @@
 :root{
+  --aonDarkColor: rgba(0, 0, 0, 0.87);
   --aonBlue: #002469;
   --aonClearBlue: #4F91FF;
   --aonOrange: #e6970a;
@@ -12,10 +13,13 @@
   --aonLightBlue: #eaf1fb;
   --aonSelectedBlue: #d3e3fd;
   --aonGray: gray;
+  --gray-50: rgba(120, 120, 133, 1);
+  --gray-90: rgba(41, 42, 49, 1);
   --aonLightGray: #f1f1f1;
   --aonLightGray2: #f6f6f6;
   --aonDarkGray: #5F6368;
   --aonBlack: #212529;
+  --aonBlack100: rgba(0, 0, 0, 1);
   --aonWhite: #ffffff;
   --onlineGreen: #5cb85c;
   --grayson: #787878;
@@ -157,6 +161,7 @@
   --aonMenuSidenav: true;
   --aonConfigSwitchApps: false;
 
+  --aonFontFamily: "Noto Sans", sans-serif
 }
 
 /* Estilos para ocultar la barra de desplazamiento en todos los elementos */
@@ -259,7 +264,7 @@ color: var(--aonSearchButton);
   color: rgb(66, 66, 66);
   text-rendering: optimizeLegibility;
  
-  font-family: "Noto Sans", sans-serif !important;
+  font-family: var(--aonFontFamily) !important;
   font-optical-sizing: auto;
   font-size: 14px !important;
   font-weight: 400 !important;
@@ -271,7 +276,7 @@ color: var(--aonSearchButton);
   background-color: #f6f8fc !important;
   padding: 0px !important;
   margin: 0px !important;
-  font-family: "Noto Sans", sans-serif;
+  font-family: var(--aonFontFamily);
   font-optical-sizing: auto;
   font-size: 14px !important;
   font-weight: 400 !important;
@@ -356,7 +361,7 @@ color: var(--aonSearchButton);
   text-decoration: none;
   background: var(--aonBlue);
   color: #ffffff;
-  font-family: sans-serif;
+  font-family: var(--aonFontFamily);
   font-size: 1rem;
   cursor: pointer;
   text-align: center;
@@ -481,6 +486,7 @@ color: var(--aonSearchButton);
   /*background-color: #FAF9F8;*/
   /*box-shadow: var(--shadow4,0 0 2px var(--colorNeutralShadowAmbient,rgba(0,0,0,.12)),0 0px 4px var(--colorNeutralShadowKey,rgba(0,0,0,.14)));*/
   border-left: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 .rightPanel {
@@ -1104,6 +1110,19 @@ background-color: var(--aonLightGray);
   background-color: #fafafa;
 }
 
+.aonRightSidenav {
+  position: relative;
+  flex-basis: 0px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  right: 0;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+  height: calc(100vh - 102px);
+  border: 0px none;
+  background-color: #fafafa;
+}
+
 .sidenav {
   height: 100%;
   width: 0px;
@@ -1449,7 +1468,7 @@ margin-top: 20px;
 }
 
 .aonFiscalCardTotal .aonBankCardTotal{
-  color: var(--dark-color);
+  color: var(--aonDarkColor);
 }
 
 .aonCard:hover .aonCardTotal{
@@ -1629,7 +1648,7 @@ margin-top: 20px;
     position: relative;
     display: inline-block;
     color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
-    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    font-family: var(--aonFontFamily);
     font-size: 16px;
     line-height: 1.5;
 }
@@ -2299,7 +2318,7 @@ size: 32px;
   border: none;
   color: #202124;
   cursor: pointer;
-  font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  font-family: var(--aonFontFamily) !important;
   font-size: .8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -2320,11 +2339,11 @@ size: 32px;
 .noteBody{
   resize: none;
   background: none;
-    background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0);
   border: none;
   width: 100%;
   cursor: pointer;
-  font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  font-family: var(--aonFontFamily) !important;
   color: #202124;
   font-size: .9rem;
 }
@@ -2332,7 +2351,7 @@ size: 32px;
 .noteDate{
   font-weight: 500;
   border: none;
-  font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  font-family: var(--aonFontFamily) !important;
   color: #202124;
   font-size: .9rem;
 }
@@ -2342,7 +2361,7 @@ size: 32px;
   text-align: center;
   margin-top: 1rem;
   font-weight: 500;
-  font-family: Roboto,Helvetica,Arial,sans-serif !important;
+  font-family: var(--aonFontFamily) !important;
   color: rgb(120, 120, 133);
   font-size: 1.2rem;
 }
@@ -4132,7 +4151,7 @@ font-weight: 600;
 }
 
 .aonLoginTitle {
-  font-family: var(--roboto-34-sp-h4-font-family);
+  font-family: var(--aonFontFamily);
   color: var(--gray-90);
   font-size: 2rem;
   margin-bottom: -10px !important;
@@ -4154,28 +4173,28 @@ font-weight: 600;
 } 
 
 .aonLoginSubTitle {
-  font-family: var(--roboto-body-big-font-family);
-  font-weight: var(--roboto-body-big-font-weight);
+  font-family: var(--aonFontFamily);
+  font-weight: 400;
   color: var(--gray-50);
-  font-size: var(--roboto-body-big-font-size);
+  font-size: 20px;
   letter-spacing: 0.44px;
 }
 
 .aonLoginButton {
   width: 100%;
   border-radius: 4px;
-  font-family: var(--roboto-button-font-family);
-  letter-spacing: var(--roboto-button-letter-spacing);
+  font-family: var(--aonFontFamily);
+  letter-spacing: 0.75px;;
   height: 3rem;
   cursor: pointer;
   margin-top: 1rem;
-  color: var(--white-base);
+  color: var(--aonWhite);
   background-color: var(--gray-90);
   border: 1px solid var(--gray-90);
 }
 
 .aonLoginButton:hover {
-  background-color: var(--black-100);
+  background-color: var(--aonBlack100);
 }
 
 .aonDividerButtons {
@@ -4187,9 +4206,9 @@ font-weight: 600;
 }
 
 .aonDividerSpan {
-  background: var(--white-base);
+  background: var(--aonWhite);
   padding: 0 10px;
-  color: var(--icons-gray-50);
+  color: var(--gray-50);
   font-size: 10px;
 }
 
@@ -4197,28 +4216,28 @@ font-weight: 600;
   width: 100%;
   border-radius: 4px;
   border: 1px solid var(--gray-90);
-  font-family: var(--roboto-button-font-family);
-  letter-spacing: var(--roboto-button-letter-spacing);
+  font-family: var(--aonFontFamily);
+  letter-spacing: 0.75px;;
   height: 3rem;
   cursor: pointer;
-  background-color: var(--white-base);
+  background-color: var(--aonWhite);
   color: var(--gray-90);
 }
 .aonMagicButton:focus, 
 .aonMagicButton:hover{
   background-color: var(--gray-90);
-  color: var(--white-base);
+  color: var(--aonWhite);
 }
 
 .aonMagicButtonHover{
   width: 100%;
   border-radius: 4px;
-  font-family: var(--roboto-button-font-family);
-  letter-spacing: var(--roboto-button-letter-spacing);
+  font-family: var(--aonFontFamily);
+  letter-spacing: 0.75px;;
   height: 3rem;
   cursor: pointer;
   margin-top: 1rem;
-  background-color: var(--white-base);
+  background-color: var(--aonWhite);
   color: var(--gray-90);
   border: 1px solid var(--gray-90);
 }

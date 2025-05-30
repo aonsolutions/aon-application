@@ -87,34 +87,34 @@ public class CustomViewServlet extends HttpServlet {
 				String heritableIdStr = paramsMap.get(AppParam.AON_CUSTOMIZE_HERITABLE_ID.toString());
 				Integer heritableId = AonNumberUtils.toInteger(heritableIdStr);
 
-				Attach faviconAttach = AON.getAttach(
-						domainStr, 
-					    customViewdomainId, 
-					    "", 
-					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-					         .and(p.getTypeProperty().eq((byte) 2))
-					         .and(p.getDescriptionProperty().eq("favicon.svg")), 
-					    AttachType.REGISTRY);
-				Attach headerLogoAttach = AON.getAttach(
-						domainStr, 
-					    customViewdomainId, 
-					    "", 
-					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-					         .and(p.getTypeProperty().eq((byte) 2))
-					         .and(p.getDescriptionProperty().eq("aon-header-logo")), 
-					    AttachType.REGISTRY);
-				Attach loginLogoAttach = AON.getAttach(
-						domainStr, 
-					    customViewdomainId, 
-					    "", 
-					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
-					         .and(p.getTypeProperty().eq((byte) 2))
-					         .and(p.getDescriptionProperty().eq("aon-login-logo")), 
-					    AttachType.REGISTRY);
+//				Attach faviconAttach = AON.getAttach(
+//						domainStr, 
+//					    customViewdomainId, 
+//					    "", 
+//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+//					         .and(p.getTypeProperty().eq((byte) 2))
+//					         .and(p.getDescriptionProperty().eq("favicon.svg")), 
+//					    AttachType.REGISTRY);
+//				Attach headerLogoAttach = AON.getAttach(
+//						domainStr, 
+//					    customViewdomainId, 
+//					    "", 
+//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+//					         .and(p.getTypeProperty().eq((byte) 2))
+//					         .and(p.getDescriptionProperty().eq("aon-header-logo")), 
+//					    AttachType.REGISTRY);
+//				Attach loginLogoAttach = AON.getAttach(
+//						domainStr, 
+//					    customViewdomainId, 
+//					    "", 
+//					    p -> (p.getAttachModuleProperty().eq(id).or(p.getAttachModuleProperty().eq(heritableId)))
+//					         .and(p.getTypeProperty().eq((byte) 2))
+//					         .and(p.getDescriptionProperty().eq("aon-login-logo")), 
+//					    AttachType.REGISTRY);
 				
-				String headerLogoMd5 = getMd5(headerLogoAttach.getData());
-				String faviconMd5 = getMd5(faviconAttach.getData());
-				String loginLogoMd5 = getMd5(loginLogoAttach.getData());
+//				String headerLogoMd5 = getMd5(headerLogoAttach.getData());
+//				String faviconMd5 = getMd5(faviconAttach.getData());
+//				String loginLogoMd5 = getMd5(loginLogoAttach.getData());
 				byte [] bytes = is.readAllBytes();
 				String css = new String(bytes, StandardCharsets.UTF_8);
 			
@@ -130,9 +130,8 @@ public class CustomViewServlet extends HttpServlet {
 				if (title==null) {
 					css = AonStringUtils.replace(css, "titleIcon", "none");
 				}
-				css = AonStringUtils.replace(css, "logoCustom", "aonDocuments/" + headerLogoAttach.getId() + "-" + headerLogoMd5);
-				css = AonStringUtils.replace(css, "faviconCustom", "aonDocuments/" + faviconAttach.getId() + "-" + faviconMd5);
-				css = AonStringUtils.replace(css, "loginLogoCustom", "aonDocuments/" + loginLogoAttach.getId() + "-" + loginLogoMd5);
+				css = AonStringUtils.replace(css, "faviconCustom", "cvDocument/faviconCustom");
+
 				
 				byte[] finalCssBytes = css.getBytes(StandardCharsets.UTF_8);
 				resp.setContentLength(finalCssBytes.length);  
