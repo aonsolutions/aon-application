@@ -81,6 +81,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
@@ -250,13 +251,13 @@ public class FinanceImpl implements IFinance {
 	
 	@Override
 	public LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
-		return InvoiceDAO.getInvoicingGroupList(ctx, filter);
+		return InvoicingGroupDAO.getInvoicingGroupList(ctx, filter);
 	}
 
 	@Override
 	public InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> InvoiceDAO.save(ctx, invoicingGroup));
+				-> InvoicingGroupDAO.save(ctx, invoicingGroup));
 	}
 	
 	// ------------------------------------- INVOICE SERIES

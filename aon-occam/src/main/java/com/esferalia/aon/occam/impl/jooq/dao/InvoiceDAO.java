@@ -18,7 +18,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTracking.INVOICE_TRACKING;
-import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
@@ -71,9 +70,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.InvoiceCounter;
 import com.esferalia.aon.occam.api.model.InvoiceNotice;
 import com.esferalia.aon.occam.api.model.InvoiceUserData;
-import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
-import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -90,8 +87,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
-import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
@@ -172,25 +167,6 @@ public class InvoiceDAO {
 	}
 
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
-	private static final InvoicingGroupPropertiesDAO INVOICING_GROUP_PROPERTIES = new InvoicingGroupPropertiesDAO();
-	private static class InvoicingGroupPropertiesDAO implements InvoicingGroupProperties {
-
-		private Condition[] getConditions(InvoicingGroupFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
-				return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CREATION_USER);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER);}
-		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER_GROUPED);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DESCRIPTION);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DOMAIN);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.ID);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_USER);}
-	}
 
 	public static Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return INVOICE_PROPERTIES.build(ctx.getDslContext().select().from(INVOICE)
@@ -713,48 +689,6 @@ public class InvoiceDAO {
 		
 	}
 	
-	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
-		return ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
-				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
-				.fetchInto(INVOICING_GROUP).stream().map(new InvoicingGroupFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	private static InvoicingGroup insert(AONContext ctx, InvoicingGroup invoicingGroup) {
-		Integer id = ctx.getDslContext()
-			.insertInto(INVOICING_GROUP)
-			.set(INVOICING_GROUP.DOMAIN, invoicingGroup.getDomain())
-			.set(INVOICING_GROUP.CUSTOMER, invoicingGroup.getCustomer())
-			.set(INVOICING_GROUP.CUSTOMER_GROUPED, invoicingGroup.getCustomerGrouped())
-			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
-			.set(INVOICING_GROUP.CREATION_DATE,  new Timestamp(new Date().getTime()))
-			.set(INVOICING_GROUP.CREATION_USER, ctx.getUser())
-			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
-			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
-			.returning(INVOICING_GROUP.ID).fetchOne().getValue(INVOICING_GROUP.ID);
-		return invoicingGroup.setId(id);
-	}
-	
-	private static InvoicingGroup update(AONContext ctx, InvoicingGroup invoicingGroup) {
-		ctx.getDslContext()
-			.update(INVOICING_GROUP)
-			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
-			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
-			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
-			.where(INVOICING_GROUP.ID.eq(invoicingGroup.getId()))
-			.execute();
-
-		
-		return invoicingGroup;
-	}
-	
-	public static InvoicingGroup save(AONContext ctx, InvoicingGroup invoicingGroup) {
-		return invoicingGroup.getId() != null 
-				? update(ctx, invoicingGroup) 
-				: insert(ctx, invoicingGroup) ;
-	}
-	
-	
 	private static class InvoiceDetailFiller extends Filler implements Function<Record, InvoiceDetail> {
 
 		@Override
@@ -778,27 +712,6 @@ public class InvoiceDAO {
 							r.getValue(INVOICE_DETAIL.QUANTITY) != null ? r.getValue(INVOICE_DETAIL.QUANTITY) : 0.0);
 		}
 
-	}
-	
-	static class InvoicingGroupFiller implements Function<Record, InvoicingGroup> {
-
-		@Override
-		public InvoicingGroup apply(Record r) {
-			return buildInvoicingGroup(r);			
-		}
-		
-		static InvoicingGroup buildInvoicingGroup(Record r) {
-			return new InvoicingGroup()
-					.setId(r.getValue(INVOICING_GROUP.ID))
-					.setDomain(r.getValue(INVOICING_GROUP.DOMAIN))
-					.setCustomer(r.getValue(INVOICING_GROUP.CUSTOMER))
-					.setCustomerGrouped(r.getValue(INVOICING_GROUP.CUSTOMER_GROUPED))
-					.setDescription(r.getValue(INVOICING_GROUP.DESCRIPTION))
-					.setCreationDate(r.getValue(INVOICING_GROUP.CREATION_DATE))
-					.setCreationUser(r.getValue(INVOICING_GROUP.CREATION_USER))
-					.setModificationDate(r.getValue(INVOICING_GROUP.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(INVOICING_GROUP.MODIFICATION_USER));		
-		}
 	}
 	
 	public static int getMinNumber(AONContext ctx, InvoiceType type, String series ) {
