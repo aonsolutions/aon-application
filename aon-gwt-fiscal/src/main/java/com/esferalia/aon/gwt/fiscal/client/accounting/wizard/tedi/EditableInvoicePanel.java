@@ -487,7 +487,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		regTable.add(labelsPanel);
 		
-		if (invoiceCallback.getInvoice().isTediParsed() 
+		if (invoiceCallback.getInvoice() != null 
+			&& invoiceCallback.getInvoice().getInvoice() != null
+			&& invoiceCallback.getInvoice().isTediParsed() 
 			&& invoiceCallback.getInvoice().hasMessages() ) {
 			AonTableButton tediButton  = new AonTableButton("Avisos proceso OCR",AON.CSS.aonIconWarning());
 			tediButton.addStyleName(AON.CSS.aonMarginRight());
@@ -661,10 +663,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			
 			@Override
 			public void onSuccess(AccountingInvoice result) {
-				invoiceCallback.getInvoice().getInvoice().getDoc().ifPresent(d -> {
-					result.getInvoice().setDoc(d);
-					result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
-				});
+				if ( invoiceCallback.getInvoice().getInvoice() != null) {
+					invoiceCallback.getInvoice().getInvoice().getDoc().ifPresent(d -> {
+						result.getInvoice().setDoc(d);
+						result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
+					});
+				}
 				AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 				invoiceCallback.setInvoice(result);
 				invoiceCallback.setAccountEntry(ae);
@@ -929,10 +933,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								if (!result.getInvoice().isSales()) {
 									result.getInvoice().setReferenceCode(referenceCode.getValue());
 								}
-								if (result.getInvoice().hasFinances()) {
-									result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
-									// TODO Manage due dates for all finances.
-								}
+								// TODO Manage due dates for all finances.
+								result.getInvoice().getUniqueFinance()
+									.ifPresent(f -> f.setDueDate(invoiceCallback.getModule().getEntryDate()));
 								result.getInvoice().setId(null);
 								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
 								

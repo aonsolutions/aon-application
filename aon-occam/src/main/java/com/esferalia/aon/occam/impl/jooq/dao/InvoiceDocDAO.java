@@ -185,10 +185,10 @@ public class InvoiceDocDAO {
 		if (doc.getExternalStorage() == null) return null;
 		AonURIBuilder builder = new AonURIBuilder()
 // --------------
-			.setScheme("https")
+//			.setScheme("https")
 // --------------
-//			.setScheme("http")
-//			.setPort(8080)
+			.setScheme("http")
+			.setPort(8080)
 // --------------
 			.setHost(domain)
 			.setPath("/ms/api/doc")
