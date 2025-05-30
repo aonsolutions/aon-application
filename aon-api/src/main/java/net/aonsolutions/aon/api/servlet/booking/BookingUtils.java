@@ -59,15 +59,19 @@ public class BookingUtils {
 		String body = content(domain, user, newBooking, oldBooking);
 		Set<String> mails = new HashSet<>();
 		
-		List<String> ownersEmail = new ArrayList<String>();
+		List<String> ownersEmail = new ArrayList<>();
 		
 		if(!console) {
-			Integer[] domains = domain.isChild() ? new Integer[] {domain.getId(), domain.getParentId()} : new Integer[] {domain.getId()};
+			Integer parentDomain = domain.isChild() ? domain.getParentId() : domain.getId();
+			Integer[] domains = domain.isChild() && !AonStringUtils.isBlank(newBooking.getPayer()) 
+					? new Integer[] {domain.getId(), domain.getParentId()} 
+					: new Integer[] {parentDomain};
+
 			Integer[] companies = AON.getCompanyStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().in(domains))
 				.map(Company::getId).toArray(Integer[]::new);
 		
 			List<String> rmediaMails = AON.getRegistryMediaStream(domain, user, f -> f.getRegistryProperty().in(companies).and(f.getDomainProperty().in(domains)).and(f.getMediaProperty().eq((byte)4)))
-					.map(RegistryMedia::getValue).toList();
+				.map(RegistryMedia::getValue).toList();
 			
 			mails.addAll(rmediaMails);
 			

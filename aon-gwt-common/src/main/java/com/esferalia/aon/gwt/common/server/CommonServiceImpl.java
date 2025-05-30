@@ -995,7 +995,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	@Override
 	public Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException {
-		return AON.getCustomer(domainName, domain, user, f -> f.getDocumentProperty().eq(document));
+		return AON.getCustomer(domainName, domain, user, f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().eq(domain)));
 	}
 	
 	@Override

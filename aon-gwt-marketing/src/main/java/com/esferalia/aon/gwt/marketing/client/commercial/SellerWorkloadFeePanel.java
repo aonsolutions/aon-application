@@ -52,7 +52,7 @@ public abstract class SellerWorkloadFeePanel extends ScrollPanel {
 		DES(AON.MSG.customer()						,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA(AON.MSG.status()						,"5rem"				,"")
 		, CON("Producto"							,"-moz-available"	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, PER("Perido"								,"4rem"				,"")
+		, PER("Periodo"								,"4rem"				,"")
 		, QUA("Cantidad"							,"4rem"				,"text-align: right;")
 		, PRI("Pre. Bruto"							,"5.5rem"			,"text-align: right;")
 		, DIS("Descuento"							,"5rem"				,"text-align: right;")

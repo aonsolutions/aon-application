@@ -7,8 +7,9 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Byte customers;
-	private Byte period; // 0 == Mes acutal, 1 == 2 Meses, 2 == 3 Meses
+	private Byte period;
 	private Integer seller;
+	private Integer taskHolder;
 	
 	public SellerWorkloadParams() {
 		super();
@@ -38,6 +39,15 @@ public class SellerWorkloadParams extends SellerParams implements Serializable{
 
 	public SellerWorkloadParams setSeller(Integer seller) {
 		this.seller = seller;
+		return this;
+	}
+	
+	public Integer getTaskHolder() {
+		return taskHolder;
+	}
+
+	public SellerWorkloadParams setTaskHolder(Integer taskHolder) {
+		this.taskHolder = taskHolder;
 		return this;
 	}
 	
