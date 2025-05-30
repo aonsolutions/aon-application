@@ -1456,6 +1456,10 @@ public class AccountingInvoiceDAO {
 		ai.getAccountEntry().setPeriod(ap.getId());
 		ai.getAccountEntry().setJournal(null);
 		ai.getAccountEntry().setComments(data.getCause());
+		
+		ai.setAttach(null);
+		ai.getInvoice().setDoc(null);
+		
 		InvoiceDAO.mergeRecitificationData(ai.getInvoice(), data);
 		
 		for (InvoiceVAT vat : ai.getVats()) {
@@ -1466,25 +1470,31 @@ public class AccountingInvoiceDAO {
 		}
 		ai.getWithholdingData().setBase( AonMathUtils.round(ai.getWithholdingData().getBase() * (-1),4));
 		ai.getWithholdingData().setQuota( AonMathUtils.round(ai.getWithholdingData().getQuota() * (-1)));
-		for (Finance finance : ai.getInvoice().getFinances()) {
-			Integer oldId = finance.getId();
-			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceTrackingDAO.settle(ctx, oldId);
-			} 
-			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)))
-				.setInvoice(null)
-				.setId( null )
-				.setFinanceStatus(FinanceStatus.PENDING)
-				.setDirty(true);
-		}
+		ai.getInvoice().financeStream()
+			.forEach(f -> {
+				Integer oldId = f.getId();
+				if (data.isSettleFinances() && f.getFinanceStatus() == FinanceStatus.PENDING) {
+					FinanceTrackingDAO.settle(ctx, oldId);
+				} 
+				f.setAmount(AonMathUtils.round(f.getAmount() * (-1)))
+					.setInvoice(null)
+					.setId( null )
+					.setFinanceStatus(FinanceStatus.PENDING)
+					.setDirty(true);
+			});
+
 		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
-		ai = save(ctx, config, ai);
+		save(ctx, config, ai);
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
-		for (Finance finance : ai.getInvoice().getFinances()) {
-			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceTrackingDAO.settle(ctx, finance.getId());
-				finance.setFinanceStatus(FinanceStatus.SETTLED);
-			} 
+		
+		if (data.isSettleFinances()) {
+			ai.getInvoice().financeStream()
+				.filter(f -> f.getFinanceStatus() == FinanceStatus.PENDING)
+				.forEach(f -> {
+					FinanceTrackingDAO.settle(ctx, f.getId());
+					f.setFinanceStatus(FinanceStatus.SETTLED);
+				});
+			
 		}
 		return ai;
 	}

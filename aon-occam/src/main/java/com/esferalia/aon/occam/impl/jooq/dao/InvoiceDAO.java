@@ -75,7 +75,6 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -100,7 +99,6 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource.IInvoiceSourceVisitor;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -144,6 +142,9 @@ public class InvoiceDAO {
 	private static final String DETAIL_MSG = "Fra. n\u00AA: {0} del {1,date,dd/MM/yyyy}. ";
 	static final Date VAT_ACCRUAL_START_DATE = AonDateUtils.getDate(2014, 0, 1);
 	
+	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
+	private static final Field<Byte> MAX_SOURCE = DSL.maxDistinct( INVOICE_DETAIL.SOURCE);
+
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
 	
@@ -1295,31 +1296,31 @@ public class InvoiceDAO {
 		.execute();
 	}
 	
-	private static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
-		Invoice inv = getInvoice(ctx, invoiceId);
-		if (inv == null) {
-			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
-		}
-		if (data == null || data.getRectificationtype() == null) {
-			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATA.getMessage());
-		}
-		if (data.getRectificationtype() != RectificationType.SPECIAL_RECTIFIER) {
-			throw new AonCoreException("Las facturas rectificativas especiales, no se encuentran implementadas.");
-		}
-		if (data.getRectificationtype() != RectificationType.NORMAL_RECTIFIER) {
-			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_TYPE
-					.format(data.getRectificationtype().getDescription()));
-		}
-		
-		RectificationType oldRectificationType = inv.getRectificationType();
-		mergeRecitificationData(inv,data);
-		rectifyInvoiceDetails(inv);
-		inv = InvoiceDAO.insert(ctx, inv);
-		LinkedList<Finance> finances = FinanceDAO.getInvoiceFinances(ctx, invoiceId);
-		rectifyInvoiceFinances(ctx,finances, inv, data);
-		rectifyInvoiceUpdate(ctx,invoiceId, inv.getId(), oldRectificationType); 
-		return inv;
-	}
+//	private static Invoice rectify(AONContext ctx, Integer invoiceId, InvoiceRectificationData data)  {
+//		Invoice inv = getInvoice(ctx, invoiceId);
+//		if (inv == null) {
+//			throw new AonCoreException(AonError.INVOICE_NOT_FOUND.getMessage());
+//		}
+//		if (data == null || data.getRectificationtype() == null) {
+//			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_DATA.getMessage());
+//		}
+//		if (data.getRectificationtype() != RectificationType.SPECIAL_RECTIFIER) {
+//			throw new AonCoreException("Las facturas rectificativas especiales, no se encuentran implementadas.");
+//		}
+//		if (data.getRectificationtype() != RectificationType.NORMAL_RECTIFIER) {
+//			throw new AonCoreException(AonError.INVOICE_INVALID_RECTIFICATION_TYPE
+//					.format(data.getRectificationtype().getDescription()));
+//		}
+//		
+//		RectificationType oldRectificationType = inv.getRectificationType();
+//		mergeRecitificationData(inv,data);
+//		rectifyInvoiceDetails(inv);
+//		inv = InvoiceDAO.insert(ctx, inv);
+//		LinkedList<Finance> finances = FinanceDAO.getInvoiceFinances(ctx, invoiceId);
+//		rectifyInvoiceFinances(ctx,finances, inv, data);
+//		rectifyInvoiceUpdate(ctx,invoiceId, inv.getId(), oldRectificationType); 
+//		return inv;
+//	}
 	
 	public static void mergeRecitificationData(Invoice inv, InvoiceRectificationData data) {
 		Integer invoiceId = inv.getId();
@@ -1348,23 +1349,23 @@ public class InvoiceDAO {
 		inv.setTotal(AonMathUtils.round(inv.getTotal() * (-1)));
 	}
 
-	private static void rectifyInvoiceDetails(Invoice inv) {
-		for (InvoiceDetail detail : inv.getDetails()) {
-			detail.setId(null);
-			detail.setQuantity( AonMathUtils.round(detail.getQuantity() * (-1),3));	
-			detail.setSource((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSource() : InvoiceSource.DIRECT_INVOICE);
-			detail.setSourceId((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSourceId() : null);
-			detail.setTaxableBase(AonMathUtils.round(detail.getTaxableBase() * (-1), 4));
-			
-			for (InvoiceTax tax : detail.getInvoiceTaxes()) {
-				tax.setId(null);
-				tax.setBase( AonMathUtils.round(tax.getBase() * (-1),4));
-				tax.setQuota(AonMathUtils.round(tax.getQuota() * (-1)));
-				tax.setSurchargeQuota(AonMathUtils.round(tax.getSurchargeQuota() * (-1)));
-				tax.setDeductibleQuota(AonMathUtils.round(tax.getDeductibleQuota() * (-1)));
-			}
-		}
-	}
+//	private static void rectifyInvoiceDetails(Invoice inv) {
+//		for (InvoiceDetail detail : inv.getDetails()) {
+//			detail.setId(null);
+//			detail.setQuantity( AonMathUtils.round(detail.getQuantity() * (-1),3));	
+//			detail.setSource((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSource() : InvoiceSource.DIRECT_INVOICE);
+//			detail.setSourceId((detail.getSource() == InvoiceSource.RESERVATION) ? detail.getSourceId() : null);
+//			detail.setTaxableBase(AonMathUtils.round(detail.getTaxableBase() * (-1), 4));
+//			
+//			for (InvoiceTax tax : detail.getInvoiceTaxes()) {
+//				tax.setId(null);
+//				tax.setBase( AonMathUtils.round(tax.getBase() * (-1),4));
+//				tax.setQuota(AonMathUtils.round(tax.getQuota() * (-1)));
+//				tax.setSurchargeQuota(AonMathUtils.round(tax.getSurchargeQuota() * (-1)));
+//				tax.setDeductibleQuota(AonMathUtils.round(tax.getDeductibleQuota() * (-1)));
+//			}
+//		}
+//	}
 	
 	public static void rectifyInvoiceUpdate(AONContext ctx, Integer invoiceId, Integer rectifierInvoice, RectificationType oldRectificationType) {
 		ctx.getDslContext().update(INVOICE)
@@ -1378,24 +1379,24 @@ public class InvoiceDAO {
 			.execute();
 	}
 	
-	private static void rectifyInvoiceFinances(AONContext ctx, LinkedList<Finance> finances, Invoice newInvoice,
-			InvoiceRectificationData data) {
-		for (Finance finance : finances) {
-			Integer oldId = finance.getId();
-			
-			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
-			finance.setFinanceStatus(FinanceStatus.PENDING);
-			finance.setInvoice(newInvoice);
-			finance.setId( null );
-			Integer financeId = FinanceDAO.insert(ctx, finance);
-			
-			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceTrackingDAO.settle(ctx, oldId    );
-				FinanceTrackingDAO.settle(ctx, financeId);
-			}
-			
-		}
-	}
+//	private static void rectifyInvoiceFinances(AONContext ctx, LinkedList<Finance> finances, Invoice newInvoice,
+//			InvoiceRectificationData data) {
+//		for (Finance finance : finances) {
+//			Integer oldId = finance.getId();
+//			
+//			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
+//			finance.setFinanceStatus(FinanceStatus.PENDING);
+//			finance.setInvoice(newInvoice);
+//			finance.setId( null );
+//			Integer financeId = FinanceDAO.insert(ctx, finance);
+//			
+//			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+//				FinanceTrackingDAO.settle(ctx, oldId    );
+//				FinanceTrackingDAO.settle(ctx, financeId);
+//			}
+//			
+//		}
+//	}
 	
 	private static void beforeInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		if(detail.getId() != null) {
@@ -1960,11 +1961,10 @@ public class InvoiceDAO {
 	}
 	
 	
-	private static final Field<Byte> MIN_SOURCE = DSL.minDistinct( INVOICE_DETAIL.SOURCE);
-	private static final Field<Byte> MAX_SOURCE = DSL.maxDistinct( INVOICE_DETAIL.SOURCE);
-	
+	/**
+	 * Devuelve el InvoiceSource de la factura en el caso de que todos los de los detalles sean iguales, en caso contrario EMPTY.   
+	 */
 	public static Optional<InvoiceSource> getInvoiceSource(AONContext ctx, Integer invoiceId) {
-		
 		return ctx.getDslContext()
 			.select( MIN_SOURCE, MAX_SOURCE)
 				.from(INVOICE_DETAIL)
