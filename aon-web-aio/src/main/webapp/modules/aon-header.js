@@ -19,7 +19,7 @@ import { AonSearchBox } from '../components/aon-search-box.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonNotificationIcon } from './notification/aon-notification-icon.js';
-import { AonParent } from 'aonparent';
+import { AonParent } from './aon-parent.js';
 import { AonDesktop } from './company/aon-desktop.js';
 
 import * as GWT from '../gwt/gwt.js';
@@ -280,9 +280,10 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderHomeButton = this.getElement(this.BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
-				let aonDesktop = this.getElement('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
+				this.rootPanel(LS.isCompanySelected() ? new AonDesktop() : new AonParent());
+				// this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+				// let aonDesktop = this.getElement('aonDesktop');
+				// aonDesktop.setAttribute('company', this.getAttribute('company'));
 				let aonLogo = this.getElement('aonLogo');
 				aonLogo.style.display =	"block";
 				let aonHeaderApp = this.getElement('aonHeaderApp');
