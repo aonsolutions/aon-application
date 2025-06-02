@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -9,8 +10,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -19,13 +22,15 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AonProjectPanel extends SimplePanel {
+public class AonProjectPanel extends AonCustomDialog {
 	
 	public static interface AonProjectPanelCallback {
 		void onAccept(Project project);
@@ -51,6 +56,7 @@ public abstract class AonProjectPanel extends SimplePanel {
 	private AonCustomDateBox date = new AonCustomDateBox("Fecha");
 	private AonCustomListBox workgroup = new AonCustomListBox("Grupo Trabajo");
 	private AonCustomListBox taskHolder = new AonCustomListBox("Operario");
+	private AonCustomListBox activity = new AonCustomListBox("Actividad");
 	
 	private String domainName;
 	private Integer domainId;
@@ -62,6 +68,7 @@ public abstract class AonProjectPanel extends SimplePanel {
 	private List<ProjectType> projectTypes;
 	private List<Workgroup> workgroups;
 	private List<TaskHolder> taskHolders;
+	private List<ActivityType> activityType;
 	
 	public AonProjectPanel(String domainName, int domain, String user, Integer registry, AonProjectPanelCallback callback) {
 		initializeCommonService();
@@ -71,13 +78,17 @@ public abstract class AonProjectPanel extends SimplePanel {
 		
 		this.registry = registry;
 		
-		this.getElement().getStyle().setProperty("min-width", "30rem");
+		this.getElement().getStyle().setProperty("min-width", "35rem");
+		
+		setCaption("Nuevo Expediente");
 		
 		getAviableProjectType(projectTypes -> {
 			getCustomer(customer -> {
 				getWorkgroups(workgroups -> {
 					getTaskHolders(taskHolders -> {
-						show(new Project(), callback);
+						getActivityTypes(projectActivities -> {
+							show(new Project(), callback);
+						});
 					});
 				});
 			});
@@ -104,21 +115,22 @@ public abstract class AonProjectPanel extends SimplePanel {
 		});
 		
 		name.setValue(customer.getRegistry().getName());
-		alias.setValue(customer.getRegistry().getAlias());
 		date.setValue(new Date());
 		
-		container.add(type);
-		container.add(name);
-		container.add(alias);
-		container.add(date);
+		container.add(createRowPanel(type, date));
+		container.add(createRowPanel(name, alias));
 		
 		workgroup.addItem("-", "");
 		workgroups.forEach(workgroupIt -> workgroup.addItem(workgroupIt.getDescription(), workgroupIt.getId().toString()));
-		container.add(workgroup);
 		
 		taskHolder.addItem("-", "");
 		taskHolders.forEach(taskHoldeIt -> taskHolder.addItem(taskHoldeIt.getName(), taskHoldeIt.getId().toString()));
-		container.add(taskHolder);
+		taskHolder.addChangeHandler(e -> center());
+		container.add(createRowPanel(workgroup, taskHolder));
+		
+		activity.addItem("-", "");
+		activityType.forEach(act -> activity.addItem(act.getDescription(), act.getId().toString()));
+		container.add(activity);
 		
 		content.add(container);
 		
@@ -146,6 +158,19 @@ public abstract class AonProjectPanel extends SimplePanel {
         		project.setDate(date.getValue());
         		project.setActive(true);
         		
+        		if(AonStringUtils.isNotBlank(activity.getValue())){
+        			ProjectActivity projectActivity = new ProjectActivity()
+					.setActive(true)
+					.setActivityType(new ActivityType().setId(Integer.parseInt(activity.getValue())))
+					.setDomain(domainId)
+					.setProject(project.getId());
+        			
+        			List<ProjectActivity> projectActivities = new ArrayList<>();
+        			projectActivities.add(projectActivity);
+        			
+        			project.setProjectActivities(projectActivities);
+        		}
+        		
         		ProjectHolder projectHolder = new ProjectHolder();
         		projectHolder.setDomain(domainId);
         		projectHolder.setStartDate(date.getValue());
@@ -164,6 +189,7 @@ public abstract class AonProjectPanel extends SimplePanel {
 
     				@Override
     				public void onSuccess(Project project) {
+    					hide();
     					callback.onAccept(project);
     				}
     				@Override
@@ -183,6 +209,7 @@ public abstract class AonProjectPanel extends SimplePanel {
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addClickHandler(e -> {
     		cancelButton.setEnabled(false);
+    		hide();
 			callback.onCancel();
     	});
     	buttons.add(cancelButton);
@@ -190,9 +217,26 @@ public abstract class AonProjectPanel extends SimplePanel {
     	content.add(buttons);
 		setWidget(content);
 		
-		name.setFocus(true);
-    	onResize();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				name.setFocus(true);
+				center();
+				show();
+				center();
+			}
+		});
 		
+	}
+	
+	private HTMLPanel createRowPanel(Widget w1, Widget w2) {
+		HTMLPanel row = new HTMLPanel("");
+		row.addStyleName(AON.CSS.aonItemFlex());
+		
+		row.add(w1);
+		row.add(w2);
+		
+		return row;
 	}
 	
 	private void getAviableProjectType(Consumer<List<ProjectType>> success) {
@@ -265,7 +309,22 @@ public abstract class AonProjectPanel extends SimplePanel {
 			
 		});
 	}
-
-	protected abstract void onResize();
+	
+	private void getActivityTypes(Consumer<List<ActivityType>> success) {
+		commonService.getActivityTypes(domainName, domainId, user, new AsyncCallback<List<ActivityType>>() {
+			
+			@Override
+			public void onSuccess(List<ActivityType> activityTypeDb) {
+				activityType = activityTypeDb;
+				success.accept(activityType);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				AonMessagePanel.showError(messagePanel, "Error obtenci\u00f3n actividades. " + caught.getMessage());
+			}
+			
+		});
+	}
 
 }

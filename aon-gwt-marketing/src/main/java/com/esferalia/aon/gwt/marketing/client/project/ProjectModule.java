@@ -87,7 +87,6 @@ public class ProjectModule extends MainEntryPoint {
 			@Override
 			protected void onBackClick() {
 				showProjectList();
-				projectModulePanel.getSearchTextBox().setValue(null, false);
 			}
 
 			@Override

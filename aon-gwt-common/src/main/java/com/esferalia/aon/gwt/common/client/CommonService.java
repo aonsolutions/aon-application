@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -378,5 +379,6 @@ public interface CommonService extends RemoteService {
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId) throws AonCoreException;
 	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user) throws AonCoreException;
 
-	
+	List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException;
+
 }

@@ -15,13 +15,14 @@ import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 
-public abstract class AonProjectHolderPanel extends SimplePanel {
+public class AonProjectHolderPanel extends AonCustomDialog {
 	
 	public static interface AonProjectHolderPanelCallback {
 		void onAccept(ProjectHolder projectHolder);
@@ -65,7 +66,7 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 		this.projectId = projectId;
 		this.projectHolders = projectHolders;
 		
-		this.getElement().getStyle().setProperty("min-width", "30rem");
+		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
 		getWorkgroups(workgroups -> {
 			getTaskHolders(taskHolders -> {
@@ -156,7 +157,6 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 	        			 List<ProjectHolder> optProjectHolders = projectHolders.stream()
 	        				.filter(projectHolderIt -> 
 	        					null != projectHolderIt.getTaskHolder().getId() && 
-	//        					projectHolderIt.getTaskHolder().getId().equals(projectHolder.getTaskHolder().getId()) &&
 	        					(null == projectHolderIt.getEndDate() || projectHolderIt.getEndDate().after(start.getValue()))
 	        				).collect(Collectors.toList());
 	        			 
@@ -165,7 +165,7 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 	        			 optProjectHolders.forEach(projectHolderIt -> {
 	        				 projectHolderIt.setEndDate(endDate);
 	        				 
-	        				 commonService.saveProjectHolder(domainName, getAbsoluteLeft(), user, projectHolderIt, new AsyncCallback<ProjectHolder>() {
+	        				 commonService.saveProjectHolder(domainName, domainId, user, projectHolderIt, new AsyncCallback<ProjectHolder>() {
 	
 	        	    				@Override
 	        	    				public void onSuccess(ProjectHolder projectHolder) {}
@@ -178,7 +178,6 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 	        			List<ProjectHolder> optProjectHolders = projectHolders.stream()
 	            				.filter(projectHolderIt -> 
 	            					null != projectHolderIt.getWorkgroup().getId() && 
-	//            					projectHolderIt.getWorkgroup().getId().equals(projectHolder.getWorkgroup().getId()) &&
 	            					(null == projectHolderIt.getEndDate() || projectHolderIt.getEndDate().after(start.getValue()))
 	            				).collect(Collectors.toList());
 	            			 
@@ -187,7 +186,7 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 	            			 optProjectHolders.forEach(projectHolderIt -> {
 	            				 projectHolderIt.setEndDate(endDate);
 	            				 
-	            				 commonService.saveProjectHolder(domainName, getAbsoluteLeft(), user, projectHolderIt, new AsyncCallback<ProjectHolder>() {
+	            				 commonService.saveProjectHolder(domainName, domainId, user, projectHolderIt, new AsyncCallback<ProjectHolder>() {
 	
 	            	    				@Override
 	            	    				public void onSuccess(ProjectHolder projectHolder) {}
@@ -200,10 +199,11 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
         		}
         		
         		// Guardar el nuevo operario o grupo de trabajo
-        		commonService.saveProjectHolder(domainName, getAbsoluteLeft(), user, projectHolder, new AsyncCallback<ProjectHolder>() {
+        		commonService.saveProjectHolder(domainName, domainId, user, projectHolder, new AsyncCallback<ProjectHolder>() {
 
     				@Override
     				public void onSuccess(ProjectHolder projectHolder) {
+    		    		hide();
     					callback.onAccept(projectHolder);
     				}
     				@Override
@@ -223,6 +223,7 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addClickHandler(e -> {
     		cancelButton.setEnabled(false);
+    		hide();
 			callback.onCancel();
     	});
     	buttons.add(cancelButton);
@@ -238,7 +239,14 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
     	
 		setWidget(content);
 		
-    	onResize();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				center();
+				show();
+				center();
+			}
+		});
 		
 	}
 	
@@ -278,7 +286,5 @@ public abstract class AonProjectHolderPanel extends SimplePanel {
 			
 		});
 	}
-
-	protected abstract void onResize();
 
 }

@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -1070,6 +1071,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				new User().setName(user).setLogin(user), 
 				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)), 
 				new Options().setFull(true))
+				.collect(Collectors.toList());
+	}
+	@Override
+	public List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException {
+		return AON.getActivityTypeStream(
+				new Domain().setName(domainName).setId(domain), 
+				new User().setName(user).setLogin(user), 
+				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)))
 				.collect(Collectors.toList());
 	}
 

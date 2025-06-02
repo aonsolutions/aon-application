@@ -434,8 +434,9 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		
 		if (AonStringUtils.isNotBlank(address)) {
 			
+			// Conseguir del padre
 			Optional<GeoZone> geozoneOpt = GeoZoneDAO.getStream(ctx, 
-				f -> f.getDomainProperty().eq(api.getDomain().getId())
+				f -> f.getDomainProperty().eq(newDomain.getParentId())
 					.and(f.getCodeProperty().eq(geozoneCode))
 				).findFirst();
 
@@ -455,7 +456,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 			comapnyRaddressId = registryAddress.getId();
 		}
 
-		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.CELLULAR, phone, comapnyRaddressId);
+		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.FIXED_PHONE, phone, comapnyRaddressId);
 		saveMedia(api, ctx, newDomain.getId(), newCompany.getId(), MediaType.EMAIL, email, comapnyRaddressId);
 
 		if (null != comapnyRaddressId) {
