@@ -2,6 +2,7 @@
 
 export const ABOUT = 'Acerca de';
 export const ACADEMIES = 'Academias';
+export const ACADEMY = 'Académie';
 export const ACCEPT = 'Aceptar';
 export const ACCESS = 'Acceso';
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede a tu cuenta de AON';
@@ -87,7 +88,7 @@ export const CLOSED = 'Fermé';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
-export const COMMERCE = 'Comercio';
+export const COMMERCE = 'Commerce';
 export const COMMUNICATION = 'Comunicación';
 export const COMUNICA = "Comunic@";// TODO
 export const COMPANIES = 'Empresas';
@@ -209,6 +210,7 @@ export const FRENCH = 'Français';
 // ----- G
 
 export const GALICIAN = 'Gallego';
+export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'Información General';
 export const GET_INVOICE = 'Obtener Factura';
 export const GET_INVOICES = 'Obtener Facturas';
