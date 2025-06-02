@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -374,5 +375,8 @@ public interface CommonServiceAsync {
 	void saveProjectHolder(String domainName, int domain, String user, ProjectHolder project, AsyncCallback<ProjectHolder> asyncCallback) throws AonCoreException;
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	void getTaskHolders(String domainName, Integer domainId, String user, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+	
+	void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> asyncCallback) throws AonCoreException;
+
 
 }

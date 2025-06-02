@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -1090,6 +1091,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getTaskHolders(String domainName, Integer domain, String user, AsyncCallback<List<TaskHolder>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getTaskHolders(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getActivityTypes(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

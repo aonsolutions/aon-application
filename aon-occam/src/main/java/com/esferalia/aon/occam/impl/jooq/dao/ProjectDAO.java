@@ -198,8 +198,7 @@ public class ProjectDAO {
 				.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
 				.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
 				.leftOuterJoin(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))				
-				.where(condition)
-				.and(PROJECT.ACTIVE.eq((byte)1));
+				.where(condition);
 		
 		if(params.isAsc()) {
 			if(AonStringUtils.equals(params.getOrderBy(), "name"))
@@ -222,6 +221,7 @@ public class ProjectDAO {
 		}
 		
 		List<Project> projects = select
+				.orderBy(PROJECT.ACTIVE.desc(), PROJECT.NAME)
 				.limit(params.getOffset(), params.getLimit())
 				.fetch()
 				.stream()
