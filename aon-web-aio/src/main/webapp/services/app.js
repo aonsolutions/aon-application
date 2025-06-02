@@ -1615,7 +1615,7 @@ export const SUPERSET = {
 
 export function getConstNewApps(dur, isAyudaT) {
 //  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise)) || (url.includes('infoautonomos')) && (dur.isAdmin() || dur.isEnterprise)) {
-  if((isAyudaT && (dur.isAdmin() || dur.isEnterprise))) {
+  if((isAyudaT && (dur.isAdmin() || dur.isEnterprise()))) {
     return {
       app: CONSTANT.APPS,
       title: MSG.PLAN,
