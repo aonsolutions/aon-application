@@ -362,6 +362,7 @@ export class AonCustomer extends AonReg {
 
 		main.style.position = 'absolute';
 		main.style.height = '100%';
+		main.style.marginTop = '.5rem';
 
 		localStorage.setItem("customer", this.registry.getId());
 
