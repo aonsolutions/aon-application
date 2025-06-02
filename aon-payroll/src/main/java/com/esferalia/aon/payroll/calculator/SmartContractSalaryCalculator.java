@@ -2243,63 +2243,37 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
 		
 		Field<Integer> COUNT = DSL.count().as("COUNT");		
-		
+		Field<Byte> TYPE = DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE).as("TYPE");
 		
 		dslContext
 		.select(
-		PAYMENT_CONCEPT.DESCRIPTION
-		,PAYMENT_CONCEPT.TYPE
-		, COUNT
+		AGREEMENT_PAYMENT.DESCRIPTION
+		,TYPE
+		,COUNT
 		)
-		.from(PAYMENT_CONCEPT)
-		.where(PAYMENT_CONCEPT.DESCRIPTION.isNotNull())
-		.groupBy(PAYMENT_CONCEPT.DESCRIPTION, PAYMENT_CONCEPT.TYPE)
-		.orderBy(PAYMENT_CONCEPT.DESCRIPTION, COUNT.desc())
+		.from(AGREEMENT_PAYMENT)
+		.leftJoin(PAYMENT_CONCEPT).onKey()
+		.where(AGREEMENT_PAYMENT.AGREEMENT.gt(0))
+		.and(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
+		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION, TYPE)
+		.orderBy(AGREEMENT_PAYMENT.DESCRIPTION, COUNT.desc())
 		.fetchLazy()
 		.forEach(
 		(r) -> {
 			try {
-				PaymentType paymentType = AonEnumUtils.enumValue(PaymentType.class, r.getValue(PAYMENT_CONCEPT.TYPE) );
+				PaymentType paymentType = PaymentType.values()[r.get(TYPE)];
 				if ( paymentType == CRA_0001 )
 					return;
 				if ( paymentType == CRA_0000)
 					return;
 				
-				String description = normalize(r.getValue(PAYMENT_CONCEPT.DESCRIPTION));
-				System.out.println(r.getValue(PAYMENT_CONCEPT.DESCRIPTION) + " = " + description);
+				String description = normalize(r.get(AGREEMENT_PAYMENT.DESCRIPTION));
 				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
 			} catch ( Exception e ) {
 			}
 		}
 		);
 
-//		dslContext
-//		.select(
-//		CONTRACT_PAYMENT.DESCRIPTION
-//		,DSL.ifnull(CONTRACT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
-//		)
-//		.from(CONTRACT_PAYMENT)
-//		.leftJoin(PAYMENT_CONCEPT).onKey()
-//		.where(CONTRACT_PAYMENT.DESCRIPTION.isNotNull())
-//		.groupBy(CONTRACT_PAYMENT.DESCRIPTION)
-//		.fetchLazy()
-//		.forEach(
-//		(r) -> {
-//			try {
-//				
-//				PaymentType paymentType = PaymentType.values()[r.value2()];
-//				if ( paymentType == CRA_0001 )
-//					return;
-//				if ( paymentType == CRA_0000 )
-//					return;
-//				
-//				String description = normalize(r.value1());
-//				
-//				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
-//			} catch ( Exception e ) {
-//			}
-//		}
-//		);
 	}
 
 	
