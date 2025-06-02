@@ -35,6 +35,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Activo");
 	private AonCustomListBox customer = new AonCustomListBox("Agentes");
+	private AonCustomListBox type = new AonCustomListBox("Tipo");
 	
 	private AonCustomListBox sort = new AonCustomListBox("Ordenar Por");
 	private AonCustomListBox asc = new AonCustomListBox("Orden");
@@ -66,7 +67,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		period.addItem( "Mes anterior y actual", "1");
 		period.addItem( "Mes actual ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, 1)) + ")", "2");
 		period.addItem( "Mes actual y pr\u00f3ximo mes", "3");
-		period.addItem( "Pr\u00f3ximos mes ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, 1)) + ")", "4");
+		period.addItem( "Pr\u00f3ximo mes ("  + AonDateUtils.formatMonthYear(DateUtils.addMonths2Date(date, 1)) + ")", "4");
 		period.setValue("2");
 		period.getListBox().addChangeHandler(event -> {
 			onSearch( options );
@@ -89,10 +90,20 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 		customer.getListBox().setSelectedIndex(1);
 		customer.getListBox().addChangeHandler(event -> onSearch( options ));
 		
+		type.addItem( "Cuotas", "false");
+		type.addItem( "Expedientes", "true");
+		type.getListBox().addChangeHandler(event -> {
+			boolean typeValue = Boolean.parseBoolean(type.getValue());
+			scope.setVisible(!typeValue);
+			active.setVisible(!typeValue);
+			onSearch( options );
+		});
+		
 		addFilterWidget(period);
 		addFilterWidget(scope);
 		addFilterWidget(active);
 		addFilterWidget(customer);
+		addFilterWidget(type);
 		
 		sort.addItem("Nombre", "name");
 		sort.addItem("Alias", "alias");
@@ -156,6 +167,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			
 			json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 			json.put("isSellersWorkload", new JSONString("true"));
+			json.put("byProject", new JSONString(type.getValue()));
 			
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
 	            	+ "?filter=" + btoa(json.toString())
@@ -213,6 +225,7 @@ public abstract class SellerWorkloadModulePanel extends AonCustomDockLayout {
 			.setDescription(getSearchTextBox().getValue())
 			.setScope(AonStringUtils.isBlank(scope.getValue()) ? null : Integer.parseInt(scope.getValue()))
 			.setActive(AonStringUtils.isBlank(active.getValue()) ? null : Byte.parseByte(active.getValue()))
+			.setByProject(Boolean.parseBoolean(type.getValue()))
 			.setOrderBy(sort.getValue())
 			.setAsc(Boolean.parseBoolean(asc.getValue()))
 			;

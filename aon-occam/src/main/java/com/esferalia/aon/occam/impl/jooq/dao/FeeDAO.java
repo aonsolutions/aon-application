@@ -997,7 +997,7 @@ public class FeeDAO {
 			condition = condition.and(PROJECT.NAME.like("%" + query + "%")
 						.or(PROJECT.ALIAS.like("%" + query + "%"))
 					);
-//		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
+		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
 		
 		Result<Record> projectRecords = ctx.getDslContext()
 				.select().from(PROJECT)

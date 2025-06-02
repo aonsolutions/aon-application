@@ -2,7 +2,8 @@
  * The file contains styles for GWT widgets in the 365 theme.
  */
 @import url(/css/aon.css);
-
+@import url(/css/noto-sans.css);
+@import url(/css/material-symbols-outlined.css);
 @import url(/css/header.css);
 
 #rootPanel>div {
