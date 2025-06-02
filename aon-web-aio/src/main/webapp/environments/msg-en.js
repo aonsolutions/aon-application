@@ -2,6 +2,7 @@
 
 export const ABOUT = 'About';
 export const ACADEMIES = 'Academies';
+export const ACADEMY = 'Academy';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Acces to your AON account';
@@ -207,6 +208,7 @@ export const FRENCH = 'French';
 // ----- G
 
 export const GALICIAN = 'Galician';
+export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'General Information';
 export const GET_INVOICE = 'Get Invoice';
 export const GET_INVOICES = 'Get Invoices';

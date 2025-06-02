@@ -31,6 +31,7 @@ if(Language.ENGLISH === language) {
 
 export const ABOUT = MSG.ABOUT;
 export const ACADEMIES = MSG.ACADEMIES;
+export const ACADEMY = MSG.ACADEMY;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCESS_TO_YOUR_AON_ACCOUNT = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
@@ -315,6 +316,7 @@ export const FRENCH = MSG.FRENCH;
 // ----- G
 
 export const GALICIAN = MSG.GALICIAN;
+export const GARAGE = MSG.GARAGE;
 export const GENERAL_DATA = 'Datos Generales'; //TODO
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 export const GET_INVOICE = MSG.GET_INVOICE;
