@@ -1,3 +1,6 @@
+import './css/noto-sans.css';
+import './css/material-symbols-outlined.css';
+
 import './modules/documental/aon-documental.js';
 import './modules/laboral/aon-comunica.js';
 import './modules/user/aon-user-panel.js';

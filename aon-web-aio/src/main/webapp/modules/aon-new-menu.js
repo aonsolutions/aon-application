@@ -399,7 +399,7 @@ export class AonNewMenu extends AonElement {
 		ul.id = 'aonMenuList';
 		ul.classList.add("aonNewMenuSideNavUl");
 
-		const newApps = getConstNewApps(this.getDur(), window.location.href);
+		const newApps = getConstNewApps(this.getDur(), this.isAyudaT());
 		const index = MENU_APPS.findIndex(app => app.app === CONSTANT.APPS);
 		if (index !== -1) {
 			MENU_APPS[index] = newApps;  // Reemplazamos el valor segun donde estemos
