@@ -112,6 +112,7 @@ export class AonConfig extends AonElement {
     let i = this.createElement(TAG.I);
     i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
     i.setAttribute("data-icon", "language");
+    i.innerHTML= "language";
     div.appendChild(i);
 
     let span = this.createElement(TAG.SPAN);
@@ -120,10 +121,7 @@ export class AonConfig extends AonElement {
     div.appendChild(span);
 
     if(language == LS.getLanguage()) {
-        i.innerHTML = "done";
-        span.style.fontWeight = "bold";
-    }else{
-        i.innerHTML= "language";
+      div.classList.add('active');
     }
 
     div.addEventListener(EVENT.CLICK, () => {
