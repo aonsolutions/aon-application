@@ -39,12 +39,12 @@ aon-new-login{
       .aonLoginTitle{
         display         : flex;
         justify-content : center;
-        padding         : v.$px-25;
+        padding         : v.$padding;
       }
       .aonLoginFormContent{
         display : grid;
-        gap     : v.$px-16;
-        padding : v.$px-0 v.$px-25 v.$px-25 v.$px-25;
+        gap     : v.$gap;
+        padding : v.$px-0 v.$padding v.$padding v.$padding;
         .aonDividerSpan{
           display         : flex;
           justify-content : center;

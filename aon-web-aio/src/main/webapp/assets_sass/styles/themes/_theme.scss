@@ -4,7 +4,7 @@
   $theme, $favicon, $title,
   $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
   $color-400, $color-500, $color-600, $color-700, 
-  $color-800, $color-900, $color-input,
+  $color-800, $color-900, $color-input, $color-box,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
   $color-red-100,  $color-red-500, $color-red-900,
@@ -75,6 +75,33 @@
           }
         }
       }
+      aon-right-panel{
+        background: $color-50;
+        #aonRightPanel{
+          #aonToolbarPanel{
+            background: #475569;
+            color: $color-text-head;
+            aon-icon-button{
+              i{
+                &::after{
+                  background-color: $color-text-head;
+                }
+              }
+            }
+          }
+          #aonRightPanelContent{
+            #aonConfig{
+              aon-card{
+                background-color: $color-box;
+                .aonCardTittleSection{
+                  border-bottom: v.$px-1 solid silver;
+                }
+              }
+            }
+          }
+        }
+      }
+
       // cargandos
       aon-loader{
         // Barra de progreso
