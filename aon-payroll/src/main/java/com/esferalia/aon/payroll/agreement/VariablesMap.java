@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.agreement;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -767,6 +766,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIETA_ALOJAMIENTO_PORTUGAL_DIARIO", "D_ALOJAMIENTO_PT_D");
 		variablesMap.put("DIETA_BOCADILLO_DIARIO", "DIETA_BOCADILLO_D");
 		variablesMap.put("DIETA_BOCADILLO_MENSUAL", "DIETA_BOCADILLO_M");
+		variablesMap.put("DIETA_CAMPO_ANUAL", "DIETA_CAMPO_A");
 		variablesMap.put("DIETA_CANASTO_DIARIO", "DIETA_CANASTO");
 		variablesMap.put("DIETA_CENA_MENSUAL", "CENA_M");
 		variablesMap.put("DIETA_CENA_DIARIO", "CENA_D");
@@ -1212,6 +1212,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HOTEL_EMBLEMATICO_MENSUAL", "HOTEL_EMBLEM_M");
 		variablesMap.put("HOTEL_RURAL_MENSUAL", "HOTEL_RURAL");
 		variablesMap.put("IGUALA_MENSUAL", "IGUALA");
+		variablesMap.put("IMPOSIBILIDAD_PRESTACION_DIARIO", "IMPOS_PRESTACION_D");
 		variablesMap.put("INCAPACIDAD_ABSOLUTA_POR_ACCIDENTE_DE_TRABAJO_ANUAL", "INCAPACIDAD_ABS_ACC");
 		variablesMap.put("INCAPACIDAD_ABSOLUTA_POR_ENFERMEDAD_COMUN_ANUAL", "INCAPACIDAD_ABS_EC");
 		variablesMap.put("INCENTIVOS_DIARIO", "INCENTIVO_DIARIO");
@@ -1221,6 +1222,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("INCENTIVOS_70_PUNTOS_BEDAUX_MENSUAL", "INCENT_70PTS_BEDAUX_M");
 		variablesMap.put("INCENTIVOS_80_PUNTOS_BEDAUX_DIARIO", "INCENT_80PTS_BEDAUX_D");
 		variablesMap.put("INCENTIVOS_80_PUNTOS_BEDAUX_MENSUAL", "INCENT_80PTS_BEDAUX_M");
+		variablesMap.put("INCENTIVO_MINIMO_RECAUDACION_MENSUAL", "INCENT_MIN_RECAUDACION_M");
 		variablesMap.put("INDEMNIZACION_MENSUAL", "INDEMNIZACION_M");
 		variablesMap.put("INDEMNIZACION_DIARIO", "INDEMNIZACION_D");
 		variablesMap.put("INDEMNIZACION_POR_ACCIDENTE_DE_TRABAJO_ANUAL", "INDEMNIZACION_ACT_A");
@@ -1384,8 +1386,10 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_ASISTENCIA_DIARIO", "ASISTENCIA_D");
 		variablesMap.put("PLUS_ASISTENCIA_MENSUAL", "ASISTENCIA_M");
 		variablesMap.put("PLUS_ASISTENCIA_HORAS", "ASISTENCIA_H");
-		variablesMap.put("PLUS_ASISTENCIA_LUNEAS_A_VIERNES_MENSUAL", "PLUS_ASISTENCIA_L_V");
-		variablesMap.put("PLUS_ASISTENCIA_SABADO_MENSUAL", "PLUS_ASISTENCIA_S");
+		variablesMap.put("PLUS_ASISTENCIA_LUNEAS_A_VIERNES_MENSUAL", "PLUS_ASISTENCIA_L_V_M");
+		variablesMap.put("PLUS_ASISTENCIA_LUNEAS_A_VIERNES_DIARIO", "PLUS_ASISTENCIA_L_V_D");
+		variablesMap.put("PLUS_ASISTENCIA_SABADO_MENSUAL", "ASISTENCIA_SABADO_M");
+		variablesMap.put("PLUS_ASISTENCIA_SABADO_DIARIO", "ASISTENCIA_SABADO_D");
 		variablesMap.put("PLUS_ARTILLERO_DIARIO", "PLUS_ARTILLERO_D");
 		variablesMap.put("PLUS_ARTILLERO_HORAS", "PLUS_ARTILLERO_H");
 		variablesMap.put("PLUS_ARRASTRE_VEHICULOS_MENSUAL", "ARRASTRE_VEH_M");
@@ -1668,6 +1672,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_MECANIZACION_MENSUAL", "MECANIZACION_M");
 		variablesMap.put("PLUS_SEMI_MECANIZACION_DIARIO", "SEMI_MECANIZACION_D");
 		variablesMap.put("PLUS_SEMI_MECANIZACION_MENSUAL", "SEMI_MECANIZACION_M");
+		variablesMap.put("PLUS_SIERRA_ANUAL", "PLUS_SIERRA_A");
 		variablesMap.put("PLUS_NOCTURNIDAD_ANUAL", "P_NOCTURNIDAD_A");
 		variablesMap.put("PLUS_NOCTURNIDAD_CON_ANTIGUEDAD_MENSUAL", "P_NOCTURNIDAD_ANTIG");
 		variablesMap.put("PLUS_NOCTURNIDAD_DIARIO", "PLUS_NOCTURNIDAD");
@@ -2139,6 +2144,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_HORA__VACACIONES_HORAS", "HORA_VACACIONES_H");
 		variablesMap.put("SALARIO_INICIAL_MENSUAL", "SALARIO_INICIAL_M");
 		variablesMap.put("SALARIO_INICIAL_DIARIO", "SALARIO_INICIAL_D");
+		variablesMap.put("SALARIO_INICIAL_HORAS", "SALARIO_INICIAL_H");
 		variablesMap.put("SALARIO_MENSUAL_CON_PRORRATA_MENSUAL", "SAL_MENSUAL_PRORRATA_M");
 		variablesMap.put("SALARIO_MINIMO_CONVENIO_ANUAL", "SM_CONVENIO_A");
 		variablesMap.put("SALARIO_MINIMO_CONVENIO_MENSUAL", "SM_CONVENIO_M");
@@ -2267,6 +2273,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("VACACIONES_ANUAL", "VACACIONES_A");
 		variablesMap.put("VACACIONES_DIARIO", "VACACIONES_D");
 		variablesMap.put("VACACIONES_MENSUAL", "VACACIONES_M");
+		variablesMap.put("VACACIONES_HORAS", "VACACIONES_H");
 		
 		variablesMap.put("VACACIONES_ANTIGUEDAD_5_ANUAL", "VACACIONES_ANT_5_A");
 		variablesMap.put("VACACIONES_ANTIGUEDAD_10_ANUAL", "VACACIONES_ANT_10_A");

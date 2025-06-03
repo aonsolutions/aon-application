@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -377,6 +378,11 @@ public interface CommonServiceAsync {
 	void getTaskHolders(String domainName, Integer domainId, String user, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 	
 	void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> asyncCallback) throws AonCoreException;
-
+	
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+	
+	void getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
 
 }

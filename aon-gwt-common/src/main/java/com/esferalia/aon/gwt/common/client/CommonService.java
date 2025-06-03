@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -380,5 +381,11 @@ public interface CommonService extends RemoteService {
 	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user) throws AonCoreException;
 
 	List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException;
+
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+	
+	List<RegistryNote> getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
 
 }
