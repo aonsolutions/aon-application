@@ -81,9 +81,7 @@ export class AonCard extends AonElement {
 		let div = this.createElement(TAG.DIV);
 		div.id = this.CARD;
     	div.className = 'aonCard';
-		if(LS.isNewTheme()) {
-			div.style.boxShadow = "none";
-		} 
+        
 		if(this.flex) div.classList.add("aonCardFlex");
 		this.appendChild(div);
 
@@ -91,15 +89,12 @@ export class AonCard extends AonElement {
 		title.id = this.TITLE;
 		title.className = 'aonCardTitle';
 
-
 		let section1 = this.createElement(TAG.SECTION);
 		section1.id = this.TITLE_SECTION1;
 		section1.className = 'aonCardTitleSection';
 		if(LS.isNewTheme() && this.getApp()) {
 			let arrowTitleSpan = this.createElement(TAG.SPAN);
 			arrowTitleSpan.className = CSS.AON_SIDENAV_TITLE_ARROW;
-			arrowTitleSpan.style.borderColor = this.getApp().color;
-			arrowTitleSpan.style.height = '2.35rem';
 			section1.appendChild(arrowTitleSpan);
 		}
 		let titleSpan = this.createElement(TAG.DIV);
@@ -121,8 +116,9 @@ export class AonCard extends AonElement {
 
 		div.appendChild(title);
 
-		let content = this.createElement(TAG.DIV);
-		content.id = this.CONTENT;
+		let content       = this.createElement(TAG.DIV);
+		content.id        = this.CONTENT;
+		content.className = 'aonCardContent';
 		div.appendChild(content);
 	}
 
@@ -168,13 +164,11 @@ export class AonCard extends AonElement {
 	}
 
 	clearContent() {
-		this.clear();
-		// this.getContent().appendChild(el);
+      this.clear();
 	}
 
 	setContent(el) {
-		this.addContent(el);
-		// this.getContent().appendChild(el);
+      this.addContent(el);
 	}
 
 	clear(){
