@@ -2,10 +2,14 @@ package com.esferalia.aon.occam.api.model.doc;
 
 import java.net.URL;
 
+import com.esferalia.aon.occam.api.GwtIncompatible;
+
 import solutions.aon.aws.s3.S3;
 
 public class S3Doc<T extends Enum<?>> extends Doc<T> {
 
+	private static final long serialVersionUID = -6063413454102491151L;
+	
 	private String aonTable;
 	private String s3Bucket;
 	private String s3Key;
@@ -38,17 +42,19 @@ public class S3Doc<T extends Enum<?>> extends Doc<T> {
 	}
 
 	@Override
+	@GwtIncompatible
 	public URL getDownloadURL() {
 		return s3Bucket != null
-			? S3.getDownloadURL(s3Bucket, s3Key)
-			: S3.getAonTableDownloadURL(aonTable, s3Key);
+			? S3.getInstance().getDownloadURL(s3Bucket, s3Key)
+			: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key);
 	}
 	
 	@Override
+	@GwtIncompatible
 	public URL getDownloadURL(String contentDisposition) {
 		return s3Bucket != null
-			? S3.getDownloadURL(s3Bucket, s3Key, contentDisposition)
-			: S3.getAonTableDownloadURL(aonTable, s3Key, contentDisposition);
+			? S3.getInstance().getDownloadURL(s3Bucket, s3Key, contentDisposition)
+			: S3.getInstance().getAonTableDownloadURL(aonTable, s3Key, contentDisposition);
 	}
 	
 }

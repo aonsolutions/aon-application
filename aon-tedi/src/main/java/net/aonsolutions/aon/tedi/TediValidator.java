@@ -354,7 +354,7 @@ public class TediValidator {
 			return result;
 		}
 		public void add(InvoiceError err) {
-			this.getResult().add(err);
+			this.getResult().getAccountingInvoice().add(err);
 		}
 		public Invoice getInvoice() {
 			return this.getResult().getInvoice();

@@ -277,7 +277,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		String str = "";
 		if (ai != null && ai.getAccountEntry() != null && ai.getAccountEntry().getDetails() != null) {
 			for (AccountEntryDetail aed : ai.getAccountEntry().getDetails()) {
-				Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login, aed.getAccount());
+				Account a = ACCOUNTING.getAccount(domain.getName(), domain.getId(), login, aed.getAccountId());
 				if (a.getCode().substring(0, 1).equals("6") || a.getCode().substring(0, 1).equals("7")) {
 					str = str + a.getDescription() + "-";
 				}

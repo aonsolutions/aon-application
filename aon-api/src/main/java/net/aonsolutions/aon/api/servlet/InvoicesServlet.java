@@ -217,7 +217,8 @@ public class InvoicesServlet extends AonApiHttpServlet {
     private static JSONObject getRawdoc(AonApiData api) {
   		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
   		Integer invoiceId = vars.getInt(IJsonNames.ID);
-   		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
+   		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId)
+   				.orElse(null);
   		return new JSONObject(rawdoc.getJson());
     }
     

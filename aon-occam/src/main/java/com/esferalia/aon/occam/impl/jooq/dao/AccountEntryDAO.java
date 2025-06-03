@@ -401,12 +401,12 @@ public class AccountEntryDAO {
 			insertMore =  insert
 				.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
 				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
-				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount())
+				.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccountId())
 				.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( ++line ))
 				.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
 				.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
 				.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
-				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
+				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccountId())
 				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 				.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
 				.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
@@ -452,12 +452,12 @@ public class AccountEntryDAO {
 						int i = ctx.getDslContext().update(ACCOUNT_ENTRY_DETAIL)
 							.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
 							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
-							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount())
+							.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccountId())
 							.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
 							.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
 							.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
 							.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
-							.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
+							.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccountId())
 							.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_USER,ctx.getUser())
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
@@ -469,12 +469,12 @@ public class AccountEntryDAO {
 					ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
 						.set(ACCOUNT_ENTRY_DETAIL.DOMAIN,ae.getDomain())
 						.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY,ae.getId())
-						.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccount())
+						.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT,detail.getAccountId())
 						.set(ACCOUNT_ENTRY_DETAIL.LINE,UInteger.valueOf( line ))
 						.set(ACCOUNT_ENTRY_DETAIL.CONCEPT,detail.getConcept()) 
 						.set(ACCOUNT_ENTRY_DETAIL.DEBIT,detail.getDebit())
 						.set(ACCOUNT_ENTRY_DETAIL.CREDIT,detail.getCredit())
-						.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
+						.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccountId())
 						.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
@@ -881,14 +881,14 @@ public class AccountEntryDAO {
 				.setId( record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
 				.setDomain( record.getValue(ACCOUNT_ENTRY_DETAIL.DOMAIN))
 				.setAccountEntry( record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
-				.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
+				.setAccountId(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
 				.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
 				.setLine( record.getValue(ACCOUNT_ENTRY_DETAIL.LINE).intValue() )
 				.setConcept(record.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))
 				.setDebit(record.getValue(ACCOUNT_ENTRY_DETAIL.DEBIT))
 				.setCredit(record.getValue(ACCOUNT_ENTRY_DETAIL.CREDIT))
-				.setBalancingAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+				.setBalancingAccountId(record.getValue(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.setBalancingAccountCode(record.getValue(BAL_ACCOUNT.CODE))
 				.setBalancingAccountDescription(record.getValue(BAL_ACCOUNT.DESCRIPTION))
 				.setDocumentNumber(record.getValue(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER))
@@ -1161,7 +1161,9 @@ public class AccountEntryDAO {
 					AccountingInvoice ai = (AccountingInvoice) wrapper;
 					Integer oldAccountId = null;
 					if (ai.getVats() != null && ai.getVats().size() > 0) {
-						oldAccountId = ai.getVats().get(0).getExpAccountId();
+						oldAccountId = ai.getVats().get(0).getExpAccount()
+							.map(a -> a.getId())
+							.orElse(null);
 					}
 					Integer newAccountId = null;
 					String description = null;
@@ -1173,7 +1175,7 @@ public class AccountEntryDAO {
 					if (oldAccountId != null && newAccountId != null) {
 						AccountEntry ae = wrapper.getAccountEntry();
 						for (AccountEntryDetail detail : ae.getDetails()) {
-							if (AonNumberUtils.equals( detail.getAccount(), oldAccountId)) {
+							if (AonNumberUtils.equals( detail.getAccountId(), oldAccountId)) {
 								int i = ctx.getDslContext()
 									.update(ACCOUNT_ENTRY_DETAIL)
 									.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, newAccountId)
@@ -1181,7 +1183,7 @@ public class AccountEntryDAO {
 									.execute();
 								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL ACCOUNT id: {0} count({1})",detail.getId(),i);
 							}
-							if (AonNumberUtils.equals( detail.getBalancingAccount(), oldAccountId)) {
+							if (AonNumberUtils.equals( detail.getBalancingAccountId(), oldAccountId)) {
 								int i = ctx.getDslContext()
 									.update(ACCOUNT_ENTRY_DETAIL)
 									.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, newAccountId)
@@ -1367,10 +1369,10 @@ public class AccountEntryDAO {
 						Integer account = null;
 						for (InvoiceVAT vat : ai.getVats() ) {
 							if ( account == null) {
-								account = vat.getExpAccountId();
+								account = vat.getExpAccount().map(a->a.getId()).orElse(null);
 								add = true;
 							}
-							if ( !AonNumberUtils.equals(account,vat.getExpAccountId())) {
+							if ( !AonNumberUtils.equals(account,vat.getExpAccount().map(a->a.getId()).orElse(null))) {
 								add = false;
 								break;
 							}

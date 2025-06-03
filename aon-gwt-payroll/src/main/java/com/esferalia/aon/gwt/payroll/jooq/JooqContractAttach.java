@@ -264,7 +264,7 @@ public class JooqContractAttach {
 		
 		String s3Key = contractDataRecord.get(CONTRACT_DOC.S3_KEY);		
 		if ( s3Key != null ) 
-		    return S3.getAonTableDownloadURL("contract_doc", s3Key).toString();
+		    return S3.getInstance().getAonTableDownloadURL("contract_doc", s3Key).toString();
 		
 		byte [] data = contractDataRecord.get(CONTRACT_ATTACH.DATA);
 		return  Base64.getEncoder().encodeToString(data);

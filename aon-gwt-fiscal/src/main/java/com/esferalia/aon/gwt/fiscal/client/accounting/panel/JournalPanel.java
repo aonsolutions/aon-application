@@ -308,14 +308,14 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			out.setDomain(flatEntry.getEntryDomain());
 			out.setId(flatEntry.getDetailId());
 			out.setAccountEntry(flatEntry.getEntryId());
-			out.setAccount(flatEntry.getAccount());
+			out.setAccountId(flatEntry.getAccount());
 			out.setAccountCode(flatEntry.getAccountCode());
 			out.setAccountDescription(flatEntry.getAccountDescription());
 			out.setLine(flatEntry.getLine());
 			out.setConcept(flatEntry.getConcept());
 			out.setDebit(AonNumberUtils.zeroIfNull(flatEntry.getDebit()));
 			out.setCredit(AonNumberUtils.zeroIfNull(flatEntry.getCredit()));
-			out.setBalancingAccount(flatEntry.getBalancingAccount());
+			out.setBalancingAccountId(flatEntry.getBalancingAccount());
 			out.setBalancingAccountCode(flatEntry.getBalancingAccountCode());
 			out.setBalancingAccountDescription(flatEntry.getBalancingAccountDescription());
 			out.setDocumentNumber(flatEntry.getDocumentNumber());
