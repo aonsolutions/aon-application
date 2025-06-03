@@ -3333,6 +3333,7 @@ color: var(--aonWhite);
   width: 100%;
   gap: .5rem;
   align-items: center;
+  margin-top: -16px;
 }
 
 .helpCardText:hover{
