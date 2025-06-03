@@ -1,24 +1,38 @@
 let manualOverride  = localStorage.getItem('theme-mode'); // 'light' | 'dark' | 'auto' | null
 const darkQuery     = window.matchMedia('(prefers-color-scheme: dark)');
 const root          = document.documentElement;
+const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // sólo en local
 
 const themes = [
   {
-    hostnameIncludes: 'ayudat.aon.solutions',
-    themeLight: 'theme-ayudat',
-    themeDark: 'theme-ayudat-dark'
+    hostnameIncludes: ['ayudat.aon.solutions', fakeHost],
+    themeLight      : 'theme-ayudat',
+    themeDark       : 'theme-ayudat-dark'
   },
   {
-    hostnameIncludes: 'infoautonomo.aon.solutions',
-    themeLight: 'theme-infoautonomo',
-    themeDark: 'theme-infoautonomo-dark'
+    hostnameIncludes: ['infoautonomos.aon.solutions'],
+    themeLight      : 'theme-infoautonomos',
+    themeDark       : 'theme-infoautonomos-dark'
+  },
+  {
+    hostnameIncludes: ['openges.aon.solutions'],
+    themeLight      : 'theme-openges',
+    themeDark       : 'theme-openges-dark'
+  },
+  {
+    hostnameIncludes: ['etl.aon.solutions'],
+    themeLight      : 'theme-etl',
+    themeDark       : 'theme-etl-dark'
   }
 ];
 
 const getThemeClass = (isDark) => {
   const hostname = window.location.hostname;
   for (const t of themes) {
-    if (hostname.includes(t.hostnameIncludes)) {
+    const match = Array.isArray(t.hostnameIncludes)
+      ? t.hostnameIncludes.some(h => hostname.includes(h))
+      : hostname.includes(t.hostnameIncludes);
+    if (match) {
       return isDark ? t.themeDark : t.themeLight;
     }
   }

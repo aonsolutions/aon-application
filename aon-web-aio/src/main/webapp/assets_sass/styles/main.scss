@@ -10,8 +10,8 @@
 @use './themes/dark' as dark;
 @use './themes/ayudat' as ayudat;
 @use './themes/ayudatDark' as ayudatDark;
-@use './themes/infoautonomo' as infoautonomo;
-@use './themes/infoautonomoDark' as infoautonomoDark;
+@use './themes/infoautonomos' as infoautonomos;
+@use './themes/infoautonomosDark' as infoautonomosDark;
 
 // Importamos componentes
 @use './components/loader' as loader;
@@ -133,9 +133,9 @@
   @include ayudatDark.ayudatDark-theme;
 }
 // Si el body tiene la clase theme-infoautonomo, aplicamos el tema infoautonomo
-:root.theme-infoautonomo {
-  @include infoautonomo.infoautonomo-theme;
+:root.theme-infoautonomos {
+  @include infoautonomos.infoautonomos-theme;
 }
 :root.theme-infoautonomo-dark {
-  @include infoautonomoDark.infoautonomoDark-theme;
+  @include infoautonomosDark.infoautonomosDark-theme;
 }
