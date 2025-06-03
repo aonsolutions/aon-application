@@ -67,6 +67,12 @@ export class AonNewLogin extends AonElement {
     languageButton.title  = MSG.SELECT_LANGUAGE;
     divLanguage.appendChild(languageButton);
 */
+
+    const rightPanel = new AonRightPanel();
+    this.appendChild(rightPanel);
+    rightPanel.setTitle(MSG.CONFIGURATION);
+    rightPanel.setContent(new AonConfig());
+
     let headerConfig    = this.createElement(TAG.DIV);
     headerConfig.id     = "loginConfig";
     headerConfig.title  = MSG.CONFIGURATION;
@@ -75,16 +81,12 @@ export class AonNewLogin extends AonElement {
     headerConfigButton.id   = "loginConfigButton";
     headerConfigButton.icon = "settings";
     headerConfigButton.addEventListener(EVENT.CLICK, () => {
-      console.log('abrir');
+      rightPanel.open();
     });
     headerConfig.appendChild(headerConfigButton);
 
     toolbar.appendChild(headerConfig);
     
-    const rightPanel = new AonRightPanel();
-    this.appendChild(rightPanel);
-    rightPanel.setTitle(MSG.CONFIGURATION);
-    rightPanel.setContent(new AonConfig());
 
 /*
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

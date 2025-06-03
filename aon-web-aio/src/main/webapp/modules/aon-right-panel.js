@@ -49,7 +49,7 @@ export class AonRightPanel extends AonElement {
 
     build(){
       // Ocultar el menu
-      // this.classList.add('hiddenSidenav');
+      this.classList.add('hiddenSidenav');
         
       let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
 
@@ -94,7 +94,10 @@ export class AonRightPanel extends AonElement {
         this.clearElement(this.getTitle());
     }
 
+//    open(height,marginTop,boxShadow){
     open(height,marginTop,boxShadow){
+      this.classList.remove('hiddenSidenav');
+    /*
         let welcome = this.getElement("aonCompanyTabFilter");
         //this.getRightPanel().style.visibility = "visible";
         
@@ -118,6 +121,7 @@ export class AonRightPanel extends AonElement {
 			this.getRightPanel().style.marginTop = "0px";
         else 
 			this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+    */
     }
 
     toogle() {
@@ -127,6 +131,8 @@ export class AonRightPanel extends AonElement {
 	}
 
     close(){
+      this.classList.add('hiddenSidenav');
+      /*
 		this.getRightPanel().classList.remove("open");
         //this.getRightPanel().style.visibility = "hidden";
         this.getEditButton().style.display = "none";
@@ -136,6 +142,8 @@ export class AonRightPanel extends AonElement {
         this.getNotificationOpenButton().style.display = "none";
         this.clearElement(this.getContent());
         this.dispatchEvent(new Event(EVENT.CLOSE));
+     
+      */
     }
 
     isClose() {

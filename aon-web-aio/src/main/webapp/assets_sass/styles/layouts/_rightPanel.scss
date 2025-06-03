@@ -8,6 +8,10 @@ aon-right-panel{
   width: 500px;
   height: 100%;
   z-index: 1;
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+  opacity: 1;
+  transition: transform 0.3s ease, opacity 0.3s ease;
   
   #aonRightPanel{ 
     height: 100%;
@@ -56,6 +60,8 @@ aon-right-panel{
     }
   }
   &.hiddenSidenav{
-    visibility: hidden;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
   }
 }
