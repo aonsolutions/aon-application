@@ -10,8 +10,13 @@ on:
       - master
   workflow_dispatch:
     inputs:
-      skipTests:
-        description: 'Skip running the tests'
+      skipUnitTests:
+        description: 'Skip running unit tests'
+        type: boolean
+        required: true
+        default: false
+      skipIntegrationTests:
+        description: 'Skip running integration tests'
         type: boolean
         required: true
         default: false
@@ -40,7 +45,8 @@ env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
+  SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
+  SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || false }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   
@@ -115,7 +121,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
+      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
       uses: docker/build-push-action@v6
@@ -153,7 +159,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
-        -DskipTests=${SKIP_TESTS} \
+        -DskipTests=${SKIP_INTEGRATION_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
         -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
