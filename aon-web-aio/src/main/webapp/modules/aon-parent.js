@@ -7,6 +7,7 @@ import * as LS from '../services/localStorageService.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import { MenuApps, ClassicApps, Apps } from '../services/app.js';
 import { AonSign } from "../modules/timecontrol/aon-sign.js";
+import * as JSF from './aon-jsf-app.js';
 
 
 export class AonParent extends AonElement {
@@ -530,17 +531,13 @@ export class AonParent extends AonElement {
 			    name: MSG.NOTIFICATIONS,
 			    icon: MATERIAL_ICONS.RSS_FEED,
 				app: Apps.HOME,
-			    fn: () => {
-			      // Filter selectOption method
-			    }
+			    fn: () => this.rootPanel(new JSF.AonJsfHelpNotification())
 			},{
   			    id: CONSTANT.HELP.initCap() + "ContentIndex",
   			    name: MSG.CONTENT_INDEX,
   			    icon: MATERIAL_ICONS.SCHOOL,
   				app: Apps.HOME,
-  			    fn: () => {
-  			      // Filter selectOption method
-  			    },
+  			    fn: () => this.rootPanel(new JSF.AonJsfHelpContent())
 			},
 		  ]
 		};
