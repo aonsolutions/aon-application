@@ -4,7 +4,7 @@ name: Java CI with Maven
 on:
   push:
     branches: 
-      - invoicedoc
+      - master
   pull_request:
     branches: 
       - master
@@ -40,7 +40,7 @@ env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.event.inputs.skipTests || true }}
+  SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   
@@ -213,9 +213,10 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Tag, and push images to Amazon ECR (Ireland)
+      if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-        IMAGE_TAG: ${{ 'invoicedoc' }}
+        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
