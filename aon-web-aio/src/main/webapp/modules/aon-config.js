@@ -75,6 +75,8 @@ export class AonConfig extends AonElement {
   }
 
   buildThemeData(){
+    // Obtén el modo activo actual
+    const currentMode = localStorage.getItem('theme-mode') || 'auto';
     // Theme Mode Selector
     const themeSelector = this.createElement(TAG.DIV);
     themeSelector.className = "theme-toggle-container";
@@ -83,6 +85,10 @@ export class AonConfig extends AonElement {
       const div = this.createElement(TAG.DIV);
       div.className = "theme-toggle-btn";
       div.setAttribute('data-theme-mode', mode);
+      // Marca el botón activo
+      if (mode === currentMode) {
+        div.classList.add('active');
+      }
       // Icono
       const i = this.createElement(TAG.I);
       i.setAttribute("data-icon", "palette");
