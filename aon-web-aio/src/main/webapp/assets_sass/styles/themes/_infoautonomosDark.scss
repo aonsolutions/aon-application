@@ -2,7 +2,7 @@
 @use '../variables' as v;
 
 $theme  : 'theme-infoautonomos-dark';
-$favicon: 'dist/favicons/aon/favicon-light.svg';
+$favicon: 'dist/favicons/infoautonomos/favicon-dark.svg';
 $title  : 'Infoautonomos';
 
 // Variables colores
@@ -97,12 +97,12 @@ $color-text-button        : #ffffff;
 $color-text-button-transp : #fff;
 
 // Logo del header
-$logoHead        : "../images/ayudat/logo-horizontal.svg";
-$logoHead-width  : auto;
-$logoHead-height : v.$px-27;
+$logoHead        : "../images/infoautonomos/logo-horizontal.svg";
+$logoHead-width  : v.$px-130;
+$logoHead-height : v.$px-24;
 
 // Logo
-$logo: "../images/ayudat/logo-gris.svg";
+$logo: "../images/infoautonomos/logo.svg";
 $logo-width: v.$px-100;
 $logo-height: v.$px-100;
 
