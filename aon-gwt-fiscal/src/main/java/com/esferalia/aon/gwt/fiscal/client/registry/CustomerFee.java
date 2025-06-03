@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -144,6 +145,7 @@ public class CustomerFee extends MainEntryPoint {
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -178,6 +180,7 @@ public class CustomerFee extends MainEntryPoint {
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -1263,6 +1266,13 @@ public class CustomerFee extends MainEntryPoint {
 		tab.addInlineStyle(discount, COLS.DIS.getStyles());
 		tab.addRow(row, discount, COLS.DIS.getColWidth());
 		
+		double totalValue = getTotalNetPrice(fee);
+		Label total = new Label(totalValue + "");
+		discount.setTitle(totalValue + "");
+		tab.addInlineStyle(total, COLS.IMP.getStyles());
+		tab.addRow(row, total, COLS.IMP.getColWidth());
+		
+		
 		String startValue = null == fee.getStartDate() ? "" : formatDate.format(fee.getStartDate()) ;
 		Label start = new Label(startValue);
 		start.setTitle(startValue);
@@ -1301,6 +1311,14 @@ public class CustomerFee extends MainEntryPoint {
 		
 		rowFees.put(fee.getId(), fee);
 		selectedItems.put(fee.getId(), checkButton);
+	}
+	
+	private double getNetCost(Fee fee) {
+		return fee.getPrice() * (1 - fee.getDiscount()/100);
+	}
+	 
+	private double getTotalNetPrice(Fee fee) {
+		return getNetCost(fee) * fee.getQuantity();
 	}
 
 	private void checkFeeStatus(Label label, AonDateBox startDateBox, AonDateBox endDateBox, Fee fee) {
