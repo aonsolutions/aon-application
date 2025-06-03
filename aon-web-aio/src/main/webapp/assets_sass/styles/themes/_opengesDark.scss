@@ -1,27 +1,27 @@
 @use './theme' as t;
 @use '../variables' as v;
 
-$theme  : 'theme-infoautonomos';
-$favicon: 'dist/favicons/infoautonomos/favicon.svg';
-$title  : 'Infoautonomos';
+$theme  : 'theme-openges-dark';
+$favicon: 'dist/favicons/openges/favicon.svg';
+$title  : 'Openges';
 
 // Variables colores
-$color-0        : #fff;
-$color-50       : #f8fafc;
-$color-100      : #f1f5f9;
-$color-200      : #e2e8f0;
-$color-300      : #cbd5e1;
-$color-400      : #94a3b8;
-$color-500      : #64748b;
+$color-0        : #232c40;
+$color-50       : #232c40;
+$color-100      : #232c40;
+$color-200      : #232c40;
+$color-300      : #232c40;
+$color-400      : #334155;
+$color-500      : #334155;
 $color-600      : #475569;
-$color-700      : #334155;
+$color-700      : #232c40;
 $color-800      : #1e293b;
 $color-900      : #0f172a;
-$color-grad-min : #41e0e0;
-$color-grad-max : #0E1030;
-$color-login    : $color-0;
-$color-input    : $color-0;
-$color-box      : $color-0;
+$color-grad-min : #52D9A0;
+$color-grad-max : #0f172a;
+$color-login    : #0f172a;
+$color-input    : #334155;
+$color-box      : #334155;
 
 $color-sky-50 : #f0f9ff;
 $color-sky-100: #e0f2fe;
@@ -90,23 +90,23 @@ $color-yellow-800: #854d0e;
 $color-yellow-900: #713f12;
 
 // Colores textos
-$color-text               : #1E293B;
+$color-text               : #fff;
 $color-text-head          : #fff;
-$color-text-login         : #64748b;
+$color-text-login         : #adafb3;
 $color-text-button        : #ffffff;
-$color-text-button-transp : #1E293B;
+$color-text-button-transp : #fff;
 
 // Logo del header
-$logoHead        : "../images/infoautonomos/logo-horizontal.svg";
+$logoHead        : "../images/openges/logo-horizontal.svg";
 $logoHead-width  : v.$px-130;
 $logoHead-height : v.$px-24;
 
 // Logo
-$logo: "../images/infoautonomos/logo.svg";
+$logo: "../images/openges/logo.svg";
 $logo-width: v.$px-100;
 $logo-height: v.$px-100;
 
-@mixin infoautonomos-theme {
+@mixin opengesDark-theme {
   @include t.theme(
     $theme, $favicon, $title,
     $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 

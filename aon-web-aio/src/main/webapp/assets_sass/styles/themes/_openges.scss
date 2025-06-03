@@ -1,9 +1,9 @@
 @use './theme' as t;
 @use '../variables' as v;
 
-$theme  : 'theme-infoautonomos';
-$favicon: 'dist/favicons/infoautonomos/favicon.svg';
-$title  : 'Infoautonomos';
+$theme  : 'theme-openges';
+$favicon: 'dist/favicons/openges/favicon.svg';
+$title  : 'Openges';
 
 // Variables colores
 $color-0        : #fff;
@@ -17,7 +17,7 @@ $color-600      : #475569;
 $color-700      : #334155;
 $color-800      : #1e293b;
 $color-900      : #0f172a;
-$color-grad-min : #41e0e0;
+$color-grad-min : #52D9A0;
 $color-grad-max : #0E1030;
 $color-login    : $color-0;
 $color-input    : $color-0;
@@ -97,16 +97,16 @@ $color-text-button        : #ffffff;
 $color-text-button-transp : #1E293B;
 
 // Logo del header
-$logoHead        : "../images/infoautonomos/logo-horizontal.svg";
+$logoHead        : "../images/openges/logo-horizontal.svg";
 $logoHead-width  : v.$px-130;
 $logoHead-height : v.$px-24;
 
 // Logo
-$logo: "../images/infoautonomos/logo.svg";
+$logo: "../images/openges/logo.svg";
 $logo-width: v.$px-100;
 $logo-height: v.$px-100;
 
-@mixin infoautonomos-theme {
+@mixin openges-theme {
   @include t.theme(
     $theme, $favicon, $title,
     $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 

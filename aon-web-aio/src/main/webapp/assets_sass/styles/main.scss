@@ -12,6 +12,8 @@
 @use './themes/ayudatDark' as ayudatDark;
 @use './themes/infoautonomos' as infoautonomos;
 @use './themes/infoautonomosDark' as infoautonomosDark;
+@use './themes/openges' as openges;
+@use './themes/opengesDark' as opengesDark;
 
 // Importamos componentes
 @use './components/loader' as loader;
@@ -136,6 +138,13 @@
 :root.theme-infoautonomos {
   @include infoautonomos.infoautonomos-theme;
 }
-:root.theme-infoautonomo-dark {
+:root.theme-infoautonomos-dark {
   @include infoautonomosDark.infoautonomosDark-theme;
+}
+// Si el body tiene la clase theme-openges, aplicamos el tema openges
+:root.theme-openges {
+  @include openges.openges-theme;
+}
+:root.theme-openges-dark {
+  @include opengesDark.opengesDark-theme;
 }
