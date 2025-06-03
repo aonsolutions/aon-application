@@ -26,6 +26,10 @@ import { AonDesktop } from "../company/aon-desktop.js";
 
 import * as GWT from '../../gwt/gwt.js';
 
+import {setupThemeToggleButtons} from '../utils/theme';
+import { AonRightPanel } from '../aon-right-panel.js';
+import { AonConfig } from '../aon-config.js';
+
 export class AonNewLogin extends AonElement {
   tag;
   userInput;
@@ -41,12 +45,6 @@ export class AonNewLogin extends AonElement {
   initialize() {}
 
   build() {
-    if(!this.isNewStyle()){
-      this.style.display        = "flex";
-      this.style.height         = "100vh";
-      this.style.flexDirection  = "column";
-    }
-
     // Toolbar
     let toolbar = this.createElement(TAG.DIV);
     toolbar.className = CSS.AON_TOOLBAR2;
@@ -57,34 +55,60 @@ export class AonNewLogin extends AonElement {
     divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
+/*
     let divLanguage = this.createElement(TAG.DIV);
     divLanguage.id = "aonLoginLanguageDivToolbar";
-    if(!this.isNewStyle()){
-      divLanguage.style.cursor = "pointer";
-    }
     divLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
     toolbar.appendChild(divLanguage);
 
-    let languageButton = new AonIconButton();
-    languageButton.id = "aonLoginLanguageButton";
-    languageButton.icon = MATERIAL_ICONS.LANGUAGE;
-    languageButton.title = MSG.SELECT_LANGUAGE;
-    if(!this.isNewStyle()){
-      if (LS.isDarkBetaTheme()) languageButton.color = "var(--aonNewWhite)";
-    }
+    let languageButton    = new AonIconButton();
+    languageButton.id     = "aonLoginLanguageButton";
+    languageButton.icon   = MATERIAL_ICONS.LANGUAGE;
+    languageButton.title  = MSG.SELECT_LANGUAGE;
     divLanguage.appendChild(languageButton);
+*/
+    let headerConfig    = this.createElement(TAG.DIV);
+    headerConfig.id     = "loginConfig";
+    headerConfig.title  = MSG.CONFIGURATION;
 
-    if(!this.isNewStyle()){
-      let spanLanguage = this.createElement(TAG.SPAN);
-      spanLanguage.id = "aonLoginLanguageSpanToolbar";
-      spanLanguage.innerHTML = this.getLanguageText();
-      divLanguage.appendChild(spanLanguage);
-    }
+    let headerConfigButton  = new AonIconButton();
+    headerConfigButton.id   = "loginConfigButton";
+    headerConfigButton.icon = "settings";
+    headerConfigButton.addEventListener(EVENT.CLICK, () => {
+      console.log('abrir');
+    });
+    headerConfig.appendChild(headerConfigButton);
+
+    toolbar.appendChild(headerConfig);
+    
+    const rightPanel = new AonRightPanel();
+    this.appendChild(rightPanel);
+    rightPanel.setTitle(MSG.CONFIGURATION);
+    rightPanel.setContent(new AonConfig());
+
+/*
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Theme Mode Selector
+    const themeSelector = this.createElement(TAG.DIV);
+    themeSelector.className = "theme-toggle-container";
+
+    ['light', 'dark', 'auto'].forEach(mode => {
+      const btn = this.createElement(TAG.BUTTON);
+      btn.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+      btn.setAttribute('data-theme-mode', mode);
+      btn.className = "theme-toggle-btn";
+      themeSelector.appendChild(btn);
+    });
+
+    toolbar.appendChild(themeSelector);
+    setupThemeToggleButtons();
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+
+
 
     // Content
-    if(this.isNewStyle()){
-      this.createLogo();
-    }
+    this.createLogo();
     this.createLoginPanel();
   }
   
@@ -411,11 +435,6 @@ export class AonNewLogin extends AonElement {
 
   languageDialog() {
     let divLanguage = this.getElement("aonLoginLanguageDivToolbar");
-    if(!this.isNewStyle()){
-      let spanLanguage = this.getElement("aonLoginLanguageSpanToolbar");
-      const top = spanLanguage.getBoundingClientRect().top + 25;
-      const left = spanLanguage.getBoundingClientRect().left;
-    }
     let d = this.getElement("aonHeaderDialogHelpOption");
     if (!d) {
       d = new AonDialogMenu();

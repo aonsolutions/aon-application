@@ -1,0 +1,61 @@
+@use '../variables' as v;
+
+aon-right-panel{
+  position: fixed;
+  top: v.$px-64;
+  right: 0;
+  background: #e2e8f0;
+  width: 500px;
+  height: 100%;
+  z-index: 1;
+  
+  #aonRightPanel{ 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  
+    #aonToolbarPanel{
+      background: #475569;
+      color: #fff;
+      display: flex;
+      margin: 0;
+      padding: 1rem;
+      align-content: center;
+      justify-content: space-between;
+      #aonRightPanelTitle{
+        align-content: center;
+      }
+      aon-icon-button {
+        i {
+          &::after {
+            background-color: #fff;
+          }
+        }
+      }
+    }
+    #aonRightPanelContent{
+      padding: 1rem 1rem 10rem 1rem; // para que baje hasta abajo viendo todo el contenido
+      flex: 1;
+      overflow-y: auto;
+
+      #aonConfig{
+        display: grid;
+        gap: 1rem;
+
+        aon-card{
+          display: block;
+          background-color: #fff;
+          border-radius: 1rem;
+          padding: 1rem;
+
+          .aonCardTitleSection{
+            border-bottom: .1rem solid silver;
+          }
+        }
+      }
+    }
+  }
+  &.hiddenSidenav{
+    visibility: hidden;
+  }
+}

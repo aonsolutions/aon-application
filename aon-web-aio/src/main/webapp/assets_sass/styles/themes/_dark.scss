@@ -1,6 +1,10 @@
 @use './theme' as t;
 @use '../variables' as v;
 
+$theme  : 'theme-dark';
+$favicon: 'dist/favicons/aon/favicon-dark.svg';
+$title  : 'aon | solutions';
+
 // Variables colores
 $color-0        : #232c40;
 $color-50       : #232c40;
@@ -103,6 +107,7 @@ $logo-height: v.$px-55;
 
 @mixin dark-theme {
   @include t.theme(
+    $theme, $favicon, $title,
     $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input,

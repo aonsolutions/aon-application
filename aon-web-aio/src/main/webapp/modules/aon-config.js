@@ -68,7 +68,7 @@ export class AonConfig extends AonElement {
         
         let topNavSwitch = new AonSwitch();
         topNavSwitch.id = this.TOP_NAV_SWITCH;
-        topNavSwitch.checked = aonMenu.isTopNavVisible();
+//        topNavSwitch.checked = aonMenu.isTopNavVisible();
         topNavDiv.appendChild(topNavSwitch);
 
         this.appendChild(topNavDiv);
@@ -91,8 +91,8 @@ export class AonConfig extends AonElement {
 
             appsSwitch.addEventListener(EVENT.CHANGE, () => {
                 LS.setAppMenu(appsSwitch.checked);
-                aonMenu.buildMenuTopnav();
-                aonMenu.reloadTopNav();
+//                aonMenu.buildMenuTopnav();
+//                aonMenu.reloadTopNav();
             });
         }
 
@@ -137,9 +137,9 @@ export class AonConfig extends AonElement {
             let topnav = this.getElement("aonMenuTopnav");
 
             if(LS.isTopMenu()) {
-            	aonMenu.showTopNav();
+//            	aonMenu.showTopNav();
             } else {
-                aonMenu.hideTopNav();
+//                aonMenu.hideTopNav();
             };
 			
 		});
@@ -151,17 +151,17 @@ export class AonConfig extends AonElement {
             let side = this.getElement("aonMenuSidenav");
             if(!welcome){
                 if(side.style.width == "0px") {
-                    aonMenu.showSideNav();
+//                    aonMenu.showSideNav();
                     this.getElement("topMenuHome").style.display = "none";
                 } else if(side.style.width == "68px") {
-                    aonMenu.hideSideNav();
+//                    aonMenu.hideSideNav();
                 };
             }
             
         });
 
-        let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
+//        let openButton = this.getElement("openNotificationButton");
+//		openButton.style.display = "none";
         
     }
 
@@ -180,6 +180,7 @@ export class AonConfig extends AonElement {
         div.className = "configPanelLanguageDiv";
 
         let i = this.createElement(TAG.I);
+        i.setAttribute("data-icon", "palette");
         i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
         div.appendChild(i);
 
@@ -209,6 +210,7 @@ export class AonConfig extends AonElement {
 
         let i = this.createElement(TAG.I);
         i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";
+        i.setAttribute("data-icon", "language");
         div.appendChild(i);
         
         let span = this.createElement(TAG.SPAN);

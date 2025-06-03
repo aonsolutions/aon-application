@@ -7,6 +7,8 @@ import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
 import {favicon, title, loadLink } from './css/aon-customView.js';
 
+import { loadTheme } from './modules/utils/theme';
+
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
@@ -28,27 +30,9 @@ window.setResumeApp = (data) =>  {
 };
 
 function loadNew(){
-    // Detectamos si el usuario tiene el navegador en modo oscuro
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (prefersDark) {
-      const hostname = window.location.hostname;
-      // Aplica el tema correspondiente segun el dominio
-      if (hostname.includes("ayudat.aon.solutions")) {
-        document.documentElement.classList.add("ayudat-dark");
-      } else if (hostname.includes("infoautonomo.aon.solutions")) {
-        document.documentElement.classList.add("infoautonomo-dark");
-      } else {
-        document.documentElement.classList.add("theme-dark");
-      }
-    }
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-      document.documentElement.classList.toggle('theme-dark', event.matches);
-      document.documentElement.classList.toggle('theme-light', !event.matches);
-    });
-    
-  favicon();
-  title();
-  document.body.appendChild(new AonModule());
+  loadTheme().then(() => {
+    document.body.appendChild(new AonModule());
+  });
 }
 
 const load = () => {
@@ -62,7 +46,7 @@ const load = () => {
 	LS.set(LS.NEW_THEME, true);
 	
 	loadScripts();
-	loadTheme().then(
+	loadThemeOld().then(
       () => {
           favicon();
           title();
@@ -82,7 +66,7 @@ const load = () => {
 	console.debug("Fantastic aonSolutions loaded :-).");
 };
 
-export const loadTheme = async  () => {
+export const loadThemeOld = async  () => {
     // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
 	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
 	

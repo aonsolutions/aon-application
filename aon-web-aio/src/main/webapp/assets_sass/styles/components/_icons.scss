@@ -3,8 +3,7 @@
 $iconbutton-font-size        : v.$px-16;
 $position                    : relative;
 $iconbutton-font-size-hidden : v.$px-0;
-$iconbutton-width            : v.$px-24;
-$iconbutton-height           : v.$px-24;
+$icon-size                   : v.$px-24;
 $content                     : '';
 $display                     : inline-flex;
 $mask                        : no-repeat center;
@@ -14,31 +13,34 @@ $mask-size                   : contain;
 $icons: (
   "visibility"    : '../icons/eye.svg',
   "visibility_off": '../icons/eye-off.svg',
-  "language"      : '../icons/globe.svg'
+  "settings"      : '../icons/settings.svg',
+  "close"         : '../icons/x.svg',
+  "language"      : '../icons/globe.svg',
+  "palette"       : '../icons/palette.svg'
 );
 
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
   aon-icon-button[icon="#{$icon-name}"]{
-    width : $iconbutton-width;
-    height: $iconbutton-height;
+    width : $icon-size;
+    height: $icon-size;
     button{
-      width : $iconbutton-width;
-      height: $iconbutton-height;
+      width : $icon-size;
+      height: $icon-size;
       i {
         font-size : $iconbutton-font-size;
         position  : $position;
         font-size : $iconbutton-font-size-hidden; /* Ocultar el texto */
-        width     : $iconbutton-width;
-        height    : $iconbutton-height;
+        width     : $icon-size;
+        height    : $icon-size;
         &::before {
           content : #{$icon-name}; /* Cargar el icono SVG */
-          width   : $iconbutton-width;
-          height  : $iconbutton-height;
+          width   : $icon-size;
+          height  : $icon-size;
         }
         &::after {
-          width             : $iconbutton-width;
-          height            : $iconbutton-height;
+          width             : $icon-size;
+          height            : $icon-size;
           content           : $content;
           display           : $display;
           mask              : url(#{$icon-data}) $mask;
@@ -48,5 +50,17 @@ $icons: (
         }
       }
     }
-  }  
+  }
+  i[data-icon="#{$icon-name}"] {
+    display: inline-block;
+    width: $icon-size;
+    height: $icon-size;
+    font-size: 0; // ocultar texto si queda alguno
+    background-color: currentColor;
+
+    mask: url(#{$icon-data}) $mask;
+    mask-size: $mask-size;
+    -webkit-mask: url(#{$icon-data}) $mask;
+    -webkit-mask-size: $mask-size;
+  }
 }

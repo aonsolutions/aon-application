@@ -1,6 +1,7 @@
 @use '../variables' as v;
 
 @mixin theme(
+  $theme, $favicon, $title,
   $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
   $color-400, $color-500, $color-600, $color-700, 
   $color-800, $color-900, $color-input,
@@ -47,17 +48,9 @@
   $iconbutton-hover-background-color : transparent;
 
   $input-border : v.$px-1 solid $color-300;
-  
-  $favicon: url('../images/aon/favicon-light.svg');
 
-  root::before {
-    content: '';
-    background-image: $favicon; // Esto obliga a Sass a incluirlo si usas una herramienta como Webpack o Vite
-  }
- // --favicon : assets_sass/images/aon/favicon-light.svg;
-  --favicon: dist/#{str-slice(str-slice(#{$favicon}, 5), 1, str-length(str-slice(#{$favicon}, 5)) - 1)};
- // --favicon: dist/#{$favicon};
-
+  --favicon-#{$theme}: #{$favicon};
+  --title-#{$theme}: #{$title};
   body {
     color            : $color-text;
     margin           : $body-margin;

@@ -131,9 +131,7 @@ export class AonHome extends AonElement {
           aonHeader.setBackgroundColor();
           let appName = app.app[0].toUpperCase() + app.app.slice(1);
           aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
-
       });
-
 
       let rootPanel = this.createElement(TAG.DIV);
       rootPanel.id = this.ROOT_PANEL;
@@ -165,28 +163,28 @@ export class AonHome extends AonElement {
 
       let headerConfig = this.getElement('aonHeaderConfig');
       if (headerConfig) {
-          headerConfig.addEventListener(EVENT.CLICK, () => {
-              let config = this.getElement('aonConfig');
-              if (!this.rightPanel.isClose() && config) {
-                  this.closeRightPanel();
-              } else {
-                  let rightPanelContent = document.querySelector(".rightPanel");
-                  if(rightPanelContent) this.closeRightPanel();
+        headerConfig.addEventListener(EVENT.CLICK, () => {
+          let config = this.getElement('aonConfig');
+          if (!this.rightPanel.isClose() && config) {
+              this.closeRightPanel();
+          } else {
+              let rightPanelContent = document.querySelector(".rightPanel");
+              if(rightPanelContent) this.closeRightPanel();
 
-                  this.rightPanel.clear();
-                  this.rightPanel.setContent(new AonConfig());
-                  this.rightPanel.setTitle(MSG.CONFIGURATION);
+              this.rightPanel.clear();
+              this.rightPanel.setContent(new AonConfig());
+              this.rightPanel.setTitle(MSG.CONFIGURATION);
 
-                  this.configButton.style.display='block';
-                  this.helpButton.style.display='none';
-                  this.editButton.style.display='none';
-                  this.notificationButton.style.display='none';
+              this.configButton.style.display='block';
+              this.helpButton.style.display='none';
+              this.editButton.style.display='none';
+              this.notificationButton.style.display='none';
 
-                  this.rightPanel.open();
-                  this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerConfig);
-                  document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
-              }
-          });
+              this.rightPanel.open();
+              this.closeRightPanelHandler = this.closePopupOnOutsideClick.bind(this, headerConfig);
+              document.addEventListener('click', this.closeRightPanelHandler); // Agregar evento de cerrar al hacer 
+          }
+        });
       }
 
       let headerHelp = this.getElement('aonHeaderHelp');

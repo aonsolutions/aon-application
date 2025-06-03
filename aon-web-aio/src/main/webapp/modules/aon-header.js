@@ -222,7 +222,7 @@ export class AonHeader extends AonElement {
 
         let aonHeaderConfigButton = new AonIconButton();
         aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
-        aonHeaderConfigButton.icon = "settings"
+        aonHeaderConfigButton.icon = "settings";
         aonHeaderConfig.appendChild(aonHeaderConfigButton);
 
         aonHeaderButtons.appendChild(aonHeaderConfig);
@@ -496,7 +496,6 @@ export class AonHeader extends AonElement {
           });
       }
 
-
       let header1 = this.getElement("aonHeaderCompanyName")
       header1.style.color = "var--(aonGrayHeaderButtonsColor)";
 
@@ -518,8 +517,6 @@ export class AonHeader extends AonElement {
       let aonHeaderSearchDialogMenu = new AonDialogSearch();
       aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
       this.appendChild(aonHeaderSearchDialogMenu);
-
-
   }
 
   timeControlStatus(signin) {
