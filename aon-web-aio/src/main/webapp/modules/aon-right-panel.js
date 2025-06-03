@@ -97,31 +97,6 @@ export class AonRightPanel extends AonElement {
 //    open(height,marginTop,boxShadow){
     open(height,marginTop,boxShadow){
       this.classList.remove('hiddenSidenav');
-    /*
-        let welcome = this.getElement("aonCompanyTabFilter");
-        //this.getRightPanel().style.visibility = "visible";
-        
-        this.getRightPanel().classList.add("open");
-		
-        if(height) 
-			this.getRightPanel().style.height = height;
-        else 
-		this.getRightPanel().style.height = "";
-        if (marginTop) 
-			this.getRightPanel().style.marginTop = marginTop;
-        else 
-			this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
-        
-		if (boxShadow) 
-			this.getRightPanel().style.boxShadow = boxShadow;
-        else 
-		this.getRightPanel().style.boxShadow = "";
-        
-		if(welcome) 
-			this.getRightPanel().style.marginTop = "0px";
-        else 
-			this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
-    */
     }
 
     toogle() {
@@ -132,18 +107,6 @@ export class AonRightPanel extends AonElement {
 
     close(){
       this.classList.add('hiddenSidenav');
-      /*
-		this.getRightPanel().classList.remove("open");
-        //this.getRightPanel().style.visibility = "hidden";
-        this.getEditButton().style.display = "none";
-        this.getConfigButton().style.display = "none";
-        this.getHelpButton().style.display = "none";
-        this.getNotificationButton().style.display = "none";
-        this.getNotificationOpenButton().style.display = "none";
-        this.clearElement(this.getContent());
-        this.dispatchEvent(new Event(EVENT.CLOSE));
-     
-      */
     }
 
     isClose() {
