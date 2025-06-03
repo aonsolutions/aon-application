@@ -75,6 +75,19 @@ export class AonRightPanel extends AonElement {
       let content = this.createDiv(this.CONTENT);
 
       rightPanel.appendChild(content);
+      
+      // Cerrar con la tecla esc
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          this.close();
+        }
+      });
+      // Cerar al hacer click fuera
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target)) {
+          this.close();
+        }
+      });
     }
 
     setTitle(title){
@@ -94,15 +107,12 @@ export class AonRightPanel extends AonElement {
         this.clearElement(this.getTitle());
     }
 
-//    open(height,marginTop,boxShadow){
-    open(height,marginTop,boxShadow){
+    open(){
       this.classList.remove('hiddenSidenav');
     }
 
     toogle() {
-		if(this.style.marginRight === "0px") {
-			this.close()
-		} else this.open();
+      this.classList.toggle('hiddenSidenav');
 	}
 
     close(){
@@ -110,8 +120,7 @@ export class AonRightPanel extends AonElement {
     }
 
     isClose() {
-		return  !this.getRightPanel().classList.contains("open");
-		//return this.getRightPanel().style.marginRight == "-360px";
+      return !this.getRightPanel().classList.contains("open");
     }
 
     isOpen(){

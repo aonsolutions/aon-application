@@ -80,8 +80,9 @@ export class AonNewLogin extends AonElement {
     let headerConfigButton  = new AonIconButton();
     headerConfigButton.id   = "loginConfigButton";
     headerConfigButton.icon = "settings";
-    headerConfigButton.addEventListener(EVENT.CLICK, () => {
-      rightPanel.open();
+    headerConfigButton.addEventListener(EVENT.CLICK, (e) => {
+      e.stopPropagation();
+      rightPanel.toogle();
     });
     headerConfig.appendChild(headerConfigButton);
 
