@@ -223,7 +223,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     private static Optional<MimeMessage> handleMessage(String bucket, String key, Callback callback, Handler ...handlers ) {
     	MimeMessage mimeMessage = null;
 		try {
-			byte[] data = S3.download(bucket, key);
+			byte[] data = S3.getInstance().download(bucket, key);
 			try ( InputStream is = new ByteArrayInputStream(data)) {
 				mimeMessage = handleMIME(is , callback, handlers );
 			} catch ( Exception e ) {
