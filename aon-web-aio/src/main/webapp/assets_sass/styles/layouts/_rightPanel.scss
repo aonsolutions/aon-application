@@ -4,7 +4,7 @@ aon-right-panel{
   position: fixed;
   top: v.$height-cabecera;
   right: v.$px-0;
-  width: v.$px-500;
+  min-width: 350px;
   height: v.$pct-100;
   z-index: v.$num-1;
   transform: translateX(v.$px-0);
@@ -39,7 +39,32 @@ aon-right-panel{
         aon-card{
           display: block;
           border-radius: v.$border-radius;
-          padding: v.$px-16;
+          .aonCard{
+            .aonCardTitle{
+              #aonConfigThemesCardTitleSection1, #aonConfigHelpLangCardTitleSection1{
+                padding: v.$px-16;
+                font-weight: 500;
+                font-size: 18px;
+              }
+            }
+            .aonCardContent{
+              >div{
+                display: grid;
+                gap: 10px;
+                padding: 1rem 0 1rem 0;
+                div{
+                  padding: 0px 1rem 0px 1rem;
+                  display: flex;
+                  gap: 5px;
+                  color: #64748B;
+                  cursor: pointer;
+                  &.active {
+                    background-color: #f8fafc;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

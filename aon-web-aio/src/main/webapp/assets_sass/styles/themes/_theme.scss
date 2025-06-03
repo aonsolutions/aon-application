@@ -79,7 +79,7 @@
         background: $color-50;
         #aonRightPanel{
           #aonToolbarPanel{
-            background: #475569;
+            background: $color-600;
             color: $color-text-head;
             aon-icon-button{
               i{
@@ -93,8 +93,8 @@
             #aonConfig{
               aon-card{
                 background-color: $color-box;
-                .aonCardTittleSection{
-                  border-bottom: v.$px-1 solid silver;
+                .aonCardTitle{
+                  border-bottom: v.$px-1-6 solid $color-300;
                 }
               }
             }
