@@ -138,16 +138,16 @@ public class CustomerFee extends MainEntryPoint {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
 		, CUS("Cliente"								,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STS("Estado"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, LIN("Linea"								,"3.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, CON("Concepto"							,"12rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
 		;
 
 		String headerLabel;
@@ -172,18 +172,18 @@ public class CustomerFee extends MainEntryPoint {
 	
 	private static enum CUSTOMER_COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
-		, LIN("Linea"								,"3.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"-moz-available" 	,"min-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"-moz-available" 	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRO("Expediente"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, SEL("Agente"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
 		;
 
 		String headerLabel;
