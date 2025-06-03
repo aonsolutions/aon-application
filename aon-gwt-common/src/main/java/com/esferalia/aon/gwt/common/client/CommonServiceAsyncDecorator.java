@@ -69,6 +69,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -1097,6 +1098,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getActivityTypes(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+
+	@Override
+	public void getCustomerNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

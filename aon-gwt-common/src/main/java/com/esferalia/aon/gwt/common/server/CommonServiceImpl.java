@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -1079,6 +1080,19 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
 				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)))
+				.collect(Collectors.toList());
+	}
+
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+
+	@Override
+	public List<RegistryNote> getCustomerNotes(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
+		return AON.getRegistryNoteStream(
+				new Domain().setName(domainName).setId(domain), 
+				new User().setName(user).setLogin(user), 
+				f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)))
 				.collect(Collectors.toList());
 	}
 

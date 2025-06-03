@@ -231,6 +231,13 @@ export const AUDIT = {
     icon: MATERIAL_ICONS.PRIVACY_TIP
 }
 
+export const NOTES = {
+    id: CONSTANT.NOTES.initCap(),
+    name: MSG.NOTES,
+    title: MSG.NOTES,
+    icon: MATERIAL_ICONS.NOTES
+}
+
 export const EDIT_FILE = {
     id: CONSTANT.EDIT_FILE.initCap(),
     name: MSG.EDIT_FILE,
