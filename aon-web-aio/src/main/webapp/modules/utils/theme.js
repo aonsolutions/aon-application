@@ -10,12 +10,12 @@ const themes = [
     themeDark       : 'theme-ayudat-dark'
   },
   {
-    hostnameIncludes: ['infoautonomos.aon.solutions', fakeHost],
+    hostnameIncludes: ['infoautonomos.aon.solutions'],
     themeLight      : 'theme-infoautonomos',
     themeDark       : 'theme-infoautonomos-dark'
   },
   {
-    hostnameIncludes: ['openges.aon.solutions'],
+    hostnameIncludes: ['openges.aon.solutions', fakeHost],
     themeLight      : 'theme-openges',
     themeDark       : 'theme-openges-dark'
   },
