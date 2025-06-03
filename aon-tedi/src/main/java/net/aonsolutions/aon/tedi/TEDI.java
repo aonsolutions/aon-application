@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.tedi;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
@@ -10,6 +9,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -39,7 +39,7 @@ public class TEDI {
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
-			result.clearMessages();
+			result.getAccountingInvoice().clearMessages();
 			if (ctx == null) {
 				fillAONContext( tctx );
 				ctx = tctx.getAONContext();
@@ -99,7 +99,7 @@ public class TEDI {
 		tctx.setAONContext(AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser()));
 	}
 
-	public static TediResult fromRawdoc(TediContext tctx, int rawdocId) throws TediException {
+	public static TediResult fromRawdoc(TediContext tctx, final int rawdocId) throws TediException {
 		if (tctx == null) throw new IllegalArgumentException(TEDI_CONTEXT_CAN_NOT_BE_NULL);
 		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
@@ -120,33 +120,32 @@ public class TEDI {
 					new TediException(MessageFormat.format("No se ha encontrado el documento {0} en el dominio ( {1} - {2})"
 							,rawdocId,tctx.getAONContext().getDomainId(),tctx.getAONContext().getDomainName())
 			));
-			String rawdocJson = rawdoc.getJson();
-			if(rawdoc.getData() == null && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
-				byte[] data = S3.download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
-				rawdoc.setData(data);
+			String urlData = null;
+			if (!AonStringUtils.isBlank(rawdoc.getS3Key())) {
+				urlData = S3.getInstance().getURL(rawdoc.getS3Bucket(), rawdoc.getS3Key()).toExternalForm();
 				rawdoc.setMimeType(MimeType.PDF);
-				//rawdoc.setJson(null);
+			} else if (RawdocDAO.hasData(ctx, rawdocId)) {
+				urlData = "RAWDOC_URL";
 			}
-			TediResult result = null;
-			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
-				if(rawdoc.getData() == null)
-					rawdoc = RawdocDAO.getFull(ctx, rawdocId);
-				try {
-					result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()), rawdoc.getMimeType());
-				} catch (Exception e) {
-					rawdoc.setJson(rawdocJson);
-					result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
-				}
-			} else {
-				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
-			}
+			TediResult result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc);
+			
 			Attach attach = new Attach();
 			attach.setId(rawdoc.getId());
 			attach.setAttachType(AttachType.INVOICE);
 			attach.setMimeType( rawdoc.getMimeType());
 			attach.setData(rawdoc.getData());
-			attach.setAttachURL("RAWDOC");
+			attach.setAttachURL(urlData);
 			result.getAccountingInvoice().setAttach(attach);
+			if ( AonStringUtils.notEquals("RAWDOC_URL", urlData)) {
+				InvoiceDoc doc = new InvoiceDoc()
+					.setS3Bucket( rawdoc.getS3Bucket() )
+					.setS3Key( rawdoc.getS3Key() )
+					.setExternalStorage( rawdoc.getExternalStorage() )
+					.setUrl(urlData)
+					.setMimeType(rawdoc.getMimeType())
+				;
+				result.getAccountingInvoice().getInvoice().setDoc(doc);			
+			}
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -2576,7 +2576,7 @@ export class AonInvoice extends AonElement {
 			let viewer = new AonViewer();
 			if (this.getInvoice().file) {
 				viewer.type = this.getInvoice().file.content_type;
-				viewer.file = this.getInvoice().file.path;
+				viewer.file = this.getInvoice().file.path || this.getInvoice().file.url;
 			} else {
 				let json = {
 					id: this.getInvoice().id,

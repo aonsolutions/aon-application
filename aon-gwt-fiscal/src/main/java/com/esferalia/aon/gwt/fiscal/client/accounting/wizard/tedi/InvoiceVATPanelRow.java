@@ -273,22 +273,11 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	
 	private void defineExpAccount(final IEditableInvoicePanelCallback callback, final int vatIdx) {
 		expAccount = new AonAccountBox(callback.getOccam(), false);
-		expAccount.setValue(
-			callback.getVat(vatIdx).getExpAccountId(),
-			callback.getVat(vatIdx).getExpAccountCode(),
-			callback.getVat(vatIdx).getExpAccountDescription(),
+		expAccount.setAccount(callback.getVat(vatIdx).getExpAccount().orElse(null),
 			(callback.getInvoice().getRegistry() != null && callback.getInvoice().getRegistry().getId() != null));
 		expAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
-			if (a != null) {
-				callback.getVat(vatIdx).setExpAccountId(a.getId());
-				callback.getVat(vatIdx).setExpAccountCode(a.getCode());
-				callback.getVat(vatIdx).setExpAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setExpAccountId(null);
-				callback.getVat(vatIdx).setExpAccountCode(null);
-				callback.getVat(vatIdx).setExpAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setExpAccount(a);
 			SelectionEvent.<Account>fire(this, a);
 		});
 	}
@@ -389,21 +378,9 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineInputVatAccount(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		inputVatAccount = new AonAccountBox(callback.getOccam(), false);
 		inputVatAccount.setRequired(false);
-		inputVatAccount.setValue(
-			callback.getVat(vatIdx).getInputAccountId(),
-			callback.getVat(vatIdx).getInputAccountCode(),
-			callback.getVat(vatIdx).getInputAccountDescription(),true);
+		inputVatAccount.setAccount(callback.getVat(vatIdx).getInputAccount().orElse(null),true);
 		inputVatAccount.addSelectionHandler( event -> {
-			Account a = event.getSelectedItem();
-			if (a!=null) {
-				callback.getVat(vatIdx).setInputAccountId(a.getId());
-				callback.getVat(vatIdx).setInputAccountCode(a.getCode());
-				callback.getVat(vatIdx).setInputAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setInputAccountId(null);
-				callback.getVat(vatIdx).setInputAccountCode(null);
-				callback.getVat(vatIdx).setInputAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setInputAccount(event.getSelectedItem());
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}
@@ -411,21 +388,9 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineOutputVatAccount(IEditableInvoicePanelCallback callback, final int vatIdx) {
 		outputVatAccount = new AonAccountBox(callback.getOccam(), false);
 		outputVatAccount.setRequired(false);
-		outputVatAccount.setValue(
-			callback.getVat(vatIdx).getOutputAccountId(),
-			callback.getVat(vatIdx).getOutputAccountCode(),
-			callback.getVat(vatIdx).getOutputAccountDescription(),true);
+		outputVatAccount.setAccount(callback.getVat(vatIdx).getOutputAccount().orElse(null),true);
 		outputVatAccount.addSelectionHandler( event -> {
-			Account a = event.getSelectedItem();
-			if (a!=null) {
-				callback.getVat(vatIdx).setOutputAccountId(a.getId());
-				callback.getVat(vatIdx).setOutputAccountCode(a.getCode());
-				callback.getVat(vatIdx).setOutputAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setOutputAccountId(null);
-				callback.getVat(vatIdx).setOutputAccountCode(null);
-				callback.getVat(vatIdx).setOutputAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setOutputAccount(event.getSelectedItem());
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}
@@ -508,21 +473,9 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 	private void defineAdjAccount(IEditableInvoicePanelCallback callback, int vatIdx) {
 		adjAccount = new AonAccountBox(callback.getOccam(), false);
 		adjAccount.setRequired(false);
-		adjAccount.setValue(
-			callback.getVat(vatIdx).getAdjAccountId(),
-			callback.getVat(vatIdx).getAdjAccountCode(),
-			callback.getVat(vatIdx).getAdjAccountDescription(),true);
+		adjAccount.setAccount(callback.getVat(vatIdx).getAdjAccount().orElse(null),true);
 		adjAccount.addSelectionHandler( event -> {
-			Account a = event.getSelectedItem();
-			if (a != null) {
-				callback.getVat(vatIdx).setAdjAccountId(a.getId());
-				callback.getVat(vatIdx).setAdjAccountCode(a.getCode());
-				callback.getVat(vatIdx).setAdjAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setAdjAccountId(null);
-				callback.getVat(vatIdx).setAdjAccountCode(null);
-				callback.getVat(vatIdx).setAdjAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setAdjAccount(event.getSelectedItem());
 			ValueChangeEvent.fire(this, callback.getVat(vatIdx) );
 		});
 	}
@@ -555,21 +508,10 @@ class InvoiceVATPanelRow extends AonDisplayGridRow implements Focusable, HasSele
 
 	private void defineDirectTaxAccount(IEditableInvoicePanelCallback callback, int vatIdx) {
 		directTaxAccount = new AonAccountBox(callback.getOccam(), false);
-		directTaxAccount.setValue(
-			callback.getVat(vatIdx).getAdjDirectTaxAccountId(),
-			callback.getVat(vatIdx).getAdjDirectTaxAccountCode(),
-			callback.getVat(vatIdx).getAdjDirectTaxAccountDescription(),true);
+		directTaxAccount.setAccount(callback.getVat(vatIdx).getAdjDirectTaxAccount().orElse(null),true);
 		directTaxAccount.addSelectionHandler( event -> {
 			Account a = event.getSelectedItem();
-			if (a != null) {
-				callback.getVat(vatIdx).setAdjDirectTaxAccountId(a.getId());
-				callback.getVat(vatIdx).setAdjDirectTaxAccountCode(a.getCode());
-				callback.getVat(vatIdx).setAdjDirectTaxAccountDescription(a.getDescription());
-			} else {
-				callback.getVat(vatIdx).setAdjDirectTaxAccountId(null);
-				callback.getVat(vatIdx).setAdjDirectTaxAccountCode(null);
-				callback.getVat(vatIdx).setAdjDirectTaxAccountDescription(null);
-			}
+			callback.getVat(vatIdx).setAdjDirectTaxAccount(a);
 			SelectionEvent.<Account>fire(this, a);
 		});
 	}

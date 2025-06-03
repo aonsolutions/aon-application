@@ -31,33 +31,37 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.Tagging;
-import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 public class S3 {
-	
-	private static Map<String, List<String>> AON_TABLE_BUCKETS_MAP;
+
 	public static final String AON_TABLE = "AON_TABLE";
 	
-	private S3() {
+	private Map<String, List<String>> AON_TABLE_BUCKETS_MAP;	
+
+	protected S3() {
 		
 	}
 	
-	private static S3Client getClient() {
+	public static S3 getInstance() {
+		return new S3();
+	}
+	
+	public S3Client getClient() {
 		return S3Client.create();
 	}
 	
 	// ----- BUCKET OPTIONS
 	
-	public static boolean existBucket(String bucket) {
+	public boolean existBucket(String bucket) {
 		try(S3Client client = getClient()) {
 			return existBucket(client, bucket);
 		}
 	}
 	
-	public static boolean existBucket(S3Client client, String bucket) {
+	public boolean existBucket(S3Client client, String bucket) {
 		HeadBucketRequest request = HeadBucketRequest.builder().bucket(bucket).build();
 		try {
 			client.headBucket(request);
@@ -74,7 +78,7 @@ public class S3 {
 	 * @param aonTable
 	 * @return
 	 */
-	public static String getAonTableBucket(String aonTable) {
+	public String getAonTableBucket(String aonTable) {
 		try(S3Client client = getClient()) {
 			List<String> list = getBucketsNames(client, aonTable);
 			return list.isEmpty() 
@@ -83,25 +87,25 @@ public class S3 {
 		}
 	}
 	
-	private static Optional<String> getBucketName(String aonTable, String key) {
+	private Optional<String> getBucketName(String aonTable, String key) {
 		try (S3Client client = getClient()){
 			return getBucketName(client,  aonTable, key);
 		}
 	}
 	
-	private static Optional<String> getBucketName(S3Client client, String aonTable, String key ) {
+	private Optional<String> getBucketName(S3Client client, String aonTable, String key ) {
 	    return getBucketsNames(client, aonTable).stream().filter( bucketName ->
 	    	existObject(client, bucketName, key)).findFirst();
 	}
 	
-	private static List<String> getBucketsNames(S3Client client, String aonTable ) {
+	private List<String> getBucketsNames(S3Client client, String aonTable ) {
 		if ( AON_TABLE_BUCKETS_MAP == null || !AON_TABLE_BUCKETS_MAP.containsKey(aonTable))
 			AON_TABLE_BUCKETS_MAP = getBucketsTagMap(client, AON_TABLE);
 		
 		return AON_TABLE_BUCKETS_MAP.getOrDefault(aonTable,Collections.emptyList());
 	}
 	
-	private static Map<String, List<String>> getBucketsTagMap(S3Client client, String tag) {
+	private Map<String, List<String>> getBucketsTagMap(S3Client client, String tag) {
 		return client.listBuckets().buckets().stream()
 		.map (bucket -> new String [] {getBucketTag(client, bucket.name(), tag), bucket.name()} )
 		.filter(arr -> arr[0] != null )
@@ -109,7 +113,7 @@ public class S3 {
 		.collect(Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, (l1,l2) -> Stream.concat(l1.stream(), l2.stream()).toList() ));
 	}
 
-	private static String getBucketTag( S3Client client, String bucketName, String tag) {
+	private String getBucketTag( S3Client client, String bucketName, String tag) {
 		try {
 			GetBucketTaggingResponse response = client.getBucketTagging(GetBucketTaggingRequest.builder().bucket(bucketName).build());
 			return response.tagSet().stream().filter(t -> t.key().equals(tag)).map(Tag::value).findFirst().orElse(null);
@@ -120,13 +124,13 @@ public class S3 {
 	
 	// ----- CREATE BUCKET
 	
-	public static String createBucket(String bucket, String aonTable) {
+	public String createBucket(String bucket, String aonTable) {
 		try(S3Client client = getClient()) {
 			return createBucket(client, bucket, aonTable);
 		}
 	}
 	
-	public static String createBucket(S3Client client, String bucket, String aonTable) {
+	public String createBucket(S3Client client, String bucket, String aonTable) {
 		createBucket(bucket);
 		
 		List<Tag> tags = new LinkedList<>();
@@ -139,13 +143,13 @@ public class S3 {
 		return bucket;
 	}
 	
-	public static String createBucket(String bucket) {
+	public String createBucket(String bucket) {
 		try(S3Client client = getClient()) {
 		    return createBucket(client, bucket);
 		}
 	}
 	
-	public static String createBucket(S3Client client, String bucket) {
+	public String createBucket(S3Client client, String bucket) {
 		CreateBucketRequest request = CreateBucketRequest.builder().bucket(bucket).build();
 		client.createBucket(request);
 	    return bucket;
@@ -153,13 +157,13 @@ public class S3 {
 
 	// ----- DELETE BUCKET
 	
-	public static String deleteBucket(String bucket) {
+	public String deleteBucket(String bucket) {
 		try(S3Client client = getClient()) {
 		    return deleteBucket(client, bucket);
 		}
 	}
 	
-	public static String deleteBucket(S3Client client, String bucket) {
+	public String deleteBucket(S3Client client, String bucket) {
 		DeleteBucketRequest request = DeleteBucketRequest.builder().bucket(bucket).build();
 		client.deleteBucket(request);
 	    return bucket;
@@ -167,13 +171,13 @@ public class S3 {
 	
 	// ----- OBJECT OPTIONS
 	
-	public static boolean existObject(String bucket, String key) {
+	public boolean existObject(String bucket, String key) {
 		try(S3Client client = getClient()) {
 			return existObject(client, bucket, key);
 		}
 	}
 	
-	public static boolean existObject(S3Client client, String bucket, String key) {
+	public boolean existObject(S3Client client, String bucket, String key) {
 		HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
 		try {
 			client.headObject(request);
@@ -183,7 +187,7 @@ public class S3 {
 		}
 	}
 	
-	public static List<S3Object> listObjects(String bucket, String prefix) {
+	public List<S3Object> listObjects(String bucket, String prefix) {
 		try(S3Client client = getClient()) {
 			return client.listObjectsV2Paginator(builder -> builder.bucket(bucket).prefix(prefix)).stream()
 					.flatMap(objects -> objects.contents().stream()).toList();
@@ -192,12 +196,12 @@ public class S3 {
 
 	// ----- UPLOAD OBJECT
 	
-	public static String upload(String bucket, File file) {
+	public String upload(String bucket, File file) {
 		String key = UUID.randomUUID().toString().replace("-", "");
 		return upload(bucket, key, file);
 	}
 	
-	public static String upload(String bucket, String key, File file) {
+	public String upload(String bucket, String key, File file) {
 		try(S3Client client = getClient()) {
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 			client.putObject(request, RequestBody.fromFile(file));
@@ -205,12 +209,12 @@ public class S3 {
 		}
 	}
 
-	public static String upload(String bucket, byte[] bytes) {
+	public String upload(String bucket, byte[] bytes) {
 		String key = UUID.randomUUID().toString().replace("-", "");
 		return upload(bucket, key, bytes);
 	}
 	
-	public static String upload(String bucket, String key, byte [] bytes) {
+	public String upload(String bucket, String key, byte [] bytes) {
 		try(S3Client client = getClient()) {
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 		    client.putObject(request, RequestBody.fromBytes(bytes));
@@ -218,12 +222,12 @@ public class S3 {
 		}
 	}
 	
-	public static String upload(String bucket, String content) {
+	public String upload(String bucket, String content) {
 		String key = UUID.randomUUID().toString().replace("-", "");
 		return upload(bucket, key, content);
 	}
 	
-	public static String upload(String bucket, String key, String content) {
+	public String upload(String bucket, String key, String content) {
 		try(S3Client client = getClient()) {
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 		    client.putObject(request, RequestBody.fromString(content, StandardCharsets.UTF_8));
@@ -231,12 +235,12 @@ public class S3 {
 		}
 	}
 	
-	public static String upload(String bucket, InputStream is, long contentLength) {
+	public String upload(String bucket, InputStream is, long contentLength) {
 		String key = UUID.randomUUID().toString().replace("-", "");
 		return upload(bucket, key, is, contentLength);
 	}
 	
-	public static String upload(String bucket, String key, InputStream is, long contentLength) {
+	public String upload(String bucket, String key, InputStream is, long contentLength) {
 		try(S3Client client = getClient()) {
 			PutObjectRequest request = PutObjectRequest.builder().bucket(bucket).key(key).build();
 		    client.putObject(request, RequestBody.fromInputStream(is, contentLength));
@@ -246,11 +250,11 @@ public class S3 {
 	
 	// ----- COPY OBJECT
 	
-	public static void copy(String fromBucket, String toBucket, String key) {
+	public void copy(String fromBucket, String toBucket, String key) {
 		copy(fromBucket, toBucket, key, key);
 	}
 	
-	public static void copy(String fromBucket, String toBucket, String fromKey, String toKey) {
+	public void copy(String fromBucket, String toBucket, String fromKey, String toKey) {
 		try(S3Client client = getClient()) {
 			CopyObjectRequest request = CopyObjectRequest.builder()
 					.sourceBucket(fromBucket).sourceKey(fromKey)
@@ -262,32 +266,32 @@ public class S3 {
 
 	// ----- GET OBJECT URL
 	
-	public static URL getURL(String bucket, String key) {
+	public URL getURL(String bucket, String key) {
 		try(S3Client client = getClient()) {
 			GetUrlRequest request = GetUrlRequest.builder().bucket(bucket).key(key).build();
 			return client.utilities().getUrl(request);
 		}
 	}
 	
-	public static URL getAonTableDownloadURL(String aonTable, String key) {
+	public URL getAonTableDownloadURL(String aonTable, String key) {
 		String bucket = getBucketName(aonTable, key).orElseThrow();
 		return getDownloadURL(bucket, key);
 	}
 	
-	public static URL getAonTableDownloadURL(String aonTable, String key, String contentDisposition) {
+	public URL getAonTableDownloadURL(String aonTable, String key, String contentDisposition) {
 		String bucket = getBucketName(aonTable, key).orElseThrow();
 		return getDownloadURL(bucket, key, contentDisposition);
 	}
 	
-	public static URL getDownloadURL(String bucket, String key) {
+	public URL getDownloadURL(String bucket, String key) {
 		return generatePresignedUrl(bucket, key, null);
 	}
 	
-	public static URL getDownloadURL(String bucket, String key, String contentDisposition) {
+	public URL getDownloadURL(String bucket, String key, String contentDisposition) {
 		return generatePresignedUrl(bucket, key, contentDisposition);
 	}
 	
-	public static URL generatePresignedUrl(String bucket, String key, String contentDisposition) {
+	public URL generatePresignedUrl(String bucket, String key, String contentDisposition) {
         try (S3Presigner presigner = S3Presigner.create()) {
 
             GetObjectRequest objectRequest = contentDisposition != null
@@ -307,14 +311,14 @@ public class S3 {
 	
 	// GET OBJECT METADATA
 
-	public static String getContentType(String bucket, String key) {
+	public String getContentType(String bucket, String key) {
 		try(S3Client client = getClient()) {
 			HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
 			return client.headObject(request).contentType();
 		}
 	}
 
-	public static Map<String, String> getObjectMetadata(String bucket, String key) {
+	public Map<String, String> getObjectMetadata(String bucket, String key) {
 		try(S3Client client = getClient()) {
 			HeadObjectRequest request = HeadObjectRequest.builder().bucket(bucket).key(key).build();
 			return client.headObject(request).metadata();
@@ -323,7 +327,7 @@ public class S3 {
 	
 	// ----- DOWNLOAD OBJECT
 	
-	public static byte[] download(String bucket, String key) throws IOException {
+	public byte[] download(String bucket, String key) throws IOException {
 		try(S3Client client = getClient()) {
 			GetObjectRequest request = GetObjectRequest.builder().bucket(bucket).key(key).build();
 			return client.getObject(request).readAllBytes();
@@ -332,7 +336,7 @@ public class S3 {
 	
 	// ----- DELETE OBJECT
 	
-	public static void delete(String bucket, String key) {
+	public void delete(String bucket, String key) {
 		try(S3Client client = getClient()) {
 			DeleteObjectRequest request = DeleteObjectRequest.builder().bucket(bucket).key(key).build();
 			client.deleteObject(request);

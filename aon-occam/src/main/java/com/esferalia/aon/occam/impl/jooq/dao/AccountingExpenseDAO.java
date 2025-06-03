@@ -102,7 +102,7 @@ public class AccountingExpenseDAO {
 		EXP_ACCOUNT {
 			@Override
 			AccountingExpense visit( AONContext ctx, AccountingExpense inc, AccountEntryDetail aed ) {
-				return inc.setExpAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+				return inc.setExpAccount( AccountDAO.get( ctx, aed.getAccountId() ) )
 					.setConcept( aed.getConcept())
 					.setReferenceCode( aed.getDocumentNumber())
 					.setAmount( AonMathUtils.round(aed.getDebit() - aed.getCredit()));
@@ -116,7 +116,7 @@ public class AccountingExpenseDAO {
 		CASH_ACCOUNT {
 			@Override
 			AccountingExpense visit( AONContext ctx, AccountingExpense inc, AccountEntryDetail aed  ) {
-				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccountId() ) )
 					.setConcept( aed.getConcept())
 					.setReferenceCode( aed.getDocumentNumber());
 			}
@@ -129,7 +129,7 @@ public class AccountingExpenseDAO {
 		CREDITOR_ACCOUNT {
 			@Override
 			AccountingExpense visit( AONContext ctx, AccountingExpense inc, AccountEntryDetail aed  ) {
-				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccount() ) )
+				return inc.setCashAccount( AccountDAO.get( ctx, aed.getAccountId() ) )
 					.setConcept( aed.getConcept())
 					.setReferenceCode( aed.getDocumentNumber());
 			}
@@ -267,37 +267,37 @@ public class AccountingExpenseDAO {
 		
 		ae.getDetails().add( 
 			new AccountEntryDetail()
-				.setAccount( expAccount.getId() )
+				.setAccountId( expAccount.getId() )
 				.setConcept( expense.getConcept() )
 				.setDocumentNumber( expense.getReferenceCode() )
 				.setDebit( expense.getAmount())
-				.setBalancingAccount(creditorAccount.map( Account::getId ).orElse(bankAccount.getId()))
+				.setBalancingAccountId(creditorAccount.map( Account::getId ).orElse(bankAccount.getId()))
 		);
 		creditorAccount.ifPresent( ca -> {
 			ae.getDetails().add( 
 				new AccountEntryDetail()
-					.setAccount( ca.getId() )
+					.setAccountId( ca.getId() )
 					.setConcept( expense.getConcept() )
 					.setDocumentNumber( expense.getReferenceCode() )
 					.setCredit( expense.getAmount())
-					.setBalancingAccount(expAccount.getId())
+					.setBalancingAccountId(expAccount.getId())
 			);
 			ae.getDetails().add( 
 				new AccountEntryDetail()
-					.setAccount( ca.getId() )
+					.setAccountId( ca.getId() )
 					.setConcept( expense.getConcept() )
 					.setDocumentNumber( expense.getReferenceCode() )
 					.setDebit( expense.getAmount())
-					.setBalancingAccount(bankAccount.getId())
+					.setBalancingAccountId(bankAccount.getId())
 			);
 		});
 		ae.getDetails().add( 
 			new AccountEntryDetail()
-				.setAccount( bankAccount.getId() )
+				.setAccountId( bankAccount.getId() )
 				.setConcept( expense.getConcept() )
 				.setDocumentNumber( expense.getReferenceCode() )
 				.setCredit( expense.getAmount())
-				.setBalancingAccount(creditorAccount.map( Account::getId ).orElse(expAccount.getId()))
+				.setBalancingAccountId(creditorAccount.map( Account::getId ).orElse(expAccount.getId()))
 		);
 		AccountEntryDAO.save( ctx, ae);
 		return expense;

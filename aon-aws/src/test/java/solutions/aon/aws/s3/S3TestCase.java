@@ -19,36 +19,38 @@ public class S3TestCase {
 	@Ignore
 	public void testBucket() {	
 		String bucket = TEST_BUCKET + UUID.randomUUID().toString().replace("-", "");
-		if(S3.existBucket(bucket)) 
-			S3.deleteBucket(bucket);
+		S3 s3 = S3.getInstance();
+		if(s3.existBucket(bucket)) 
+			s3.deleteBucket(bucket);
 		
-		boolean existBucket = S3.existBucket(bucket);
+		boolean existBucket = s3.existBucket(bucket);
 		assertEquals(false, existBucket);
 		
-		S3.createBucket(bucket);
+		s3.createBucket(bucket);
 		
-		boolean existBucket2 = S3.existBucket(bucket);
+		boolean existBucket2 = s3.existBucket(bucket);
 		assertEquals(true, existBucket2);
 
-		S3.deleteBucket(bucket);
+		s3.deleteBucket(bucket);
 	}
 	
 	@Test
 	@Ignore
 	public void testBucketAonTable() {
 		String aonTable = TEST_AON_TABLE + UUID.randomUUID().toString().replace("-", "");
-		if(S3.existBucket(aonTable)) 
-			S3.deleteBucket(aonTable);
+		S3 s3 = S3.getInstance();
+		if(s3.existBucket(aonTable)) 
+			s3.deleteBucket(aonTable);
 		
-		boolean existBucket = S3.existBucket(aonTable);
+		boolean existBucket = s3.existBucket(aonTable);
 		assertEquals(false, existBucket);
 		
-		String bucket = S3.getAonTableBucket(aonTable);
+		String bucket = s3.getAonTableBucket(aonTable);
 		
-		boolean existBucket2 = S3.existBucket(bucket);
+		boolean existBucket2 = s3.existBucket(bucket);
 		assertEquals(true, existBucket2);
 		
-		S3.deleteBucket(aonTable);
+		s3.deleteBucket(aonTable);
 	}
 	
 	@Test
@@ -57,49 +59,49 @@ public class S3TestCase {
 
 		String bucket = TEST_BUCKET + UUID.randomUUID().toString().replace("-", "");
 		String aonTable = TEST_AON_TABLE + UUID.randomUUID().toString().replace("-", "");
+		S3 s3 = S3.getInstance();
+		if(!s3.existBucket(bucket)) 
+			s3.createBucket(bucket);
+		String key = s3.upload(bucket, file);
 		
-		if(!S3.existBucket(bucket)) 
-			S3.createBucket(bucket);
-		String key = S3.upload(bucket, file);
-		
-		boolean existObject = S3.existObject(bucket, key);
+		boolean existObject = s3.existObject(bucket, key);
 		assertEquals(true, existObject);
 	
-		String url = S3.getURL(bucket, key).toExternalForm();
+		String url = s3.getURL(bucket, key).toExternalForm();
 		assertNotNull(url);
 		assertNotEquals("", url);
-		String downloadUrl = S3.getDownloadURL(bucket, key).toExternalForm();
+		String downloadUrl = s3.getDownloadURL(bucket, key).toExternalForm();
 		assertNotNull(downloadUrl);
 		assertNotEquals("", downloadUrl);
 		
-		String aonTableBucket = S3.getAonTableBucket(aonTable);
+		String aonTableBucket = s3.getAonTableBucket(aonTable);
 		
-		S3.copy(bucket, aonTableBucket, key, key);
+		s3.copy(bucket, aonTableBucket, key, key);
 		
-		boolean existObject2 = S3.existObject(aonTableBucket, key);
+		boolean existObject2 = s3.existObject(aonTableBucket, key);
 		assertEquals(true, existObject2);
 		
-		String url2 = S3.getURL(aonTableBucket, key).toExternalForm();
+		String url2 = s3.getURL(aonTableBucket, key).toExternalForm();
 		assertNotNull(url2);
 		assertNotEquals("", url2);
-		String downloadUrl2 = S3.getDownloadURL(aonTableBucket, key).toExternalForm();
+		String downloadUrl2 = s3.getDownloadURL(aonTableBucket, key).toExternalForm();
 		assertNotNull(downloadUrl2);
 		assertNotEquals("", downloadUrl2);
-		String downloadUrl3 = S3.getAonTableDownloadURL(aonTable, key).toExternalForm();
+		String downloadUrl3 = s3.getAonTableDownloadURL(aonTable, key).toExternalForm();
 		assertNotNull(downloadUrl3);
 		assertNotEquals("", downloadUrl3);
 		
-		S3.delete(bucket, key);
-		S3.delete(aonTableBucket, key);
+		s3.delete(bucket, key);
+		s3.delete(aonTableBucket, key);
 		
-		boolean existObject3 = S3.existObject(bucket, key);
+		boolean existObject3 = s3.existObject(bucket, key);
 		assertEquals(false, existObject3);
 		
-		boolean existObject4 = S3.existObject(aonTableBucket, key);
+		boolean existObject4 = s3.existObject(aonTableBucket, key);
 		assertEquals(false, existObject4);
 		
-		S3.deleteBucket(bucket);
-		S3.deleteBucket(aonTableBucket);
+		s3.deleteBucket(bucket);
+		s3.deleteBucket(aonTableBucket);
 	}
 	
 	

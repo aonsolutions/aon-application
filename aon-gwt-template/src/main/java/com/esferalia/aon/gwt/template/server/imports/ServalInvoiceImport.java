@@ -846,7 +846,7 @@ public class ServalInvoiceImport extends ImportUtils{
 					vat.setSurcharge(0.0);
 					vat.setSurchargeQuota(0.0);
 				}
-				detail.addInvoiceTax(vat);
+				detail.addTax(vat);
 				
 				if(invoice.isWithholding()) {
 					InvoiceTax wh = new InvoiceTax()
@@ -859,7 +859,7 @@ public class ServalInvoiceImport extends ImportUtils{
 						.setQuota(retQuota)
 //						.setAccount(retentionAccount.getId())
 						;
-					detail.addInvoiceTax(wh);
+					detail.addTax(wh);
 				}
 				
 				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
