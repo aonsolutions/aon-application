@@ -99,13 +99,13 @@ $color-text-card          : #fff;
 
 // Logo del header
 $logoHead        : "../images/etl/logo-horizontal-bicolor.svg";
-$logoHead-width  : v.$px-200;
-$logoHead-height : v.$px-24;
+$logoHead-width  : v.$px-222;
+$logoHead-height : v.$px-27;
 
 // Logo
 $logo: "../images/etl/logo.svg";
-$logo-width: v.$px-200; 
-$logo-height: v.$px-55;
+$logo-width: v.$px-150;
+$logo-height: v.$px-150;
 
 @mixin etlDark-theme {
   @include t.theme(

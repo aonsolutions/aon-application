@@ -1,7 +1,7 @@
 let manualOverride  = localStorage.getItem('theme-mode'); // 'light' | 'dark' | 'auto' | null
 const darkQuery     = window.matchMedia('(prefers-color-scheme: dark)');
 const root          = document.documentElement;
-const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // sólo en local
+const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // sï¿½lo en local
 
 const themes = [
   {
@@ -15,12 +15,12 @@ const themes = [
     themeDark       : 'theme-infoautonomos-dark'
   },
   {
-    hostnameIncludes: ['openges.aon.solutions', fakeHost],
+    hostnameIncludes: ['openges.aon.solutions'],
     themeLight      : 'theme-openges',
     themeDark       : 'theme-openges-dark'
   },
   {
-    hostnameIncludes: ['etl.aon.solutions'],
+    hostnameIncludes: ['etl.aon.solutions', fakeHost],
     themeLight      : 'theme-etl',
     themeDark       : 'theme-etl-dark'
   }
@@ -68,7 +68,7 @@ export const applyTitle = (themeClass) => {
 const getEffectiveMode = () => {
   if (manualOverride === 'light') return false;
   if (manualOverride === 'dark') return true;
-  return darkQuery.matches; // automático
+  return darkQuery.matches; // automï¿½tico
 };
 
 const applyTheme = () => {
