@@ -232,10 +232,8 @@ public class TediParser {
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
 						.setQuota( ib.getQuota() )
-						.setAccountId( retentionAccount == null? null : retentionAccount.getId() )
-						.setAccountCode( retentionAccount == null? null : retentionAccount.getCode() )
-						.setAccountDescription( retentionAccount == null? null : retentionAccount.getDescription() )
-						;
+						.setAccount( retentionAccount )
+					;
 					ai.setWithholdingData(iw);
 					break;
 				}
@@ -277,31 +275,20 @@ public class TediParser {
 	
 	private static InvoiceVAT getInvoiceVAT( InvoiceDetail detail, InvoiceTax tax,Account outputAccount,Account inputAccount,Account adjAccount,Account expAccount, boolean withholding) {
 		return new InvoiceVAT()
-				.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-				.setBase(detail.getTaxableBase())
-				.setPercentage(tax.getPercentage())
-				.setQuota(tax.getQuota())
-				.setSurcharge(tax.getSurcharge())
-				.setSurchargeQuota(tax.getSurchargeQuota())
-				.setInvestAsset(tax.getInvestAsset())
-				.setDeductiblePercent(tax.getDeductiblePercent())
-				.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
-
-				.setOutputAccountId(outputAccount == null ? null : outputAccount.getId())
-				.setOutputAccountCode(outputAccount == null ? null : outputAccount.getCode())
-				.setOutputAccountDescription(outputAccount == null ? null : outputAccount.getDescription())
-
-				.setInputAccountId(inputAccount == null ? null : inputAccount.getId())
-				.setInputAccountCode(inputAccount == null ? null : inputAccount.getCode())
-				.setInputAccountDescription(inputAccount == null ? null : inputAccount.getDescription())
-
-				.setAdjAccountId(adjAccount == null ? null : adjAccount.getId())
-				.setAdjAccountCode(adjAccount == null ? null : adjAccount.getCode())
-				.setAdjAccountDescription(adjAccount == null ? null : adjAccount.getDescription())
-
-				.setExpAccountId(expAccount == null ? null : expAccount.getId())
-				.setExpAccountCode(expAccount == null ? null : expAccount.getCode())
-				.setExpAccountDescription(expAccount == null ? null : expAccount.getDescription());
+			.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+			.setBase(detail.getTaxableBase())
+			.setPercentage(tax.getPercentage())
+			.setQuota(tax.getQuota())
+			.setSurcharge(tax.getSurcharge())
+			.setSurchargeQuota(tax.getSurchargeQuota())
+			.setInvestAsset(tax.getInvestAsset())
+			.setDeductiblePercent(tax.getDeductiblePercent())
+			.setDeductibleQuota(tax.getDeductibleQuota()).setWithholding(withholding)
+			.setOutputAccount(outputAccount)
+			.setInputAccount(inputAccount)
+			.setAdjAccount(adjAccount)
+			.setExpAccount(expAccount)
+		;
 	}
 	
 	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
@@ -393,7 +380,7 @@ public class TediParser {
 		if (ctx.getAonConfiguration() != null && ctx.getAonConfiguration().getWorkplaces() != null && ctx.getAonConfiguration().getWorkplaces().size() > 0) {
 			ctx.getTediResult().getAccountingInvoice().setWorkplace(ctx.getAonConfiguration().getWorkplaces().get(0).getId()); 	
 		} else {
-			ctx.getTediResult().add( InvoiceErrorMessages.C016.err(InvoiceErrorKey.WORKPLACE));
+			ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C016.err(InvoiceErrorKey.WORKPLACE));
 		}
 	};
 	
@@ -420,8 +407,8 @@ public class TediParser {
 				}
 			}
 			if (allRegistries.size() > 0) {
-				ctx.getTediResult().setPosibleRegistries(allRegistries);
-				ctx.getTediResult().add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
+				ctx.getTediResult().getAccountingInvoice().setPosibleRegistries(allRegistries);
+				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 			}
 		}
 
@@ -436,7 +423,7 @@ public class TediParser {
 		if (ctx.getTediResult().getInvoice().getIssueDate() == null
 			&& ctx.getTediResult().getInvoice().getRegistry() != null) {
 			ctx.getTediResult().getInvoice().setIssueDate( new Date());
-			ctx.getTediResult().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.ISSUE_DATE
+			ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.ISSUE_DATE
 					,InvoiceErrorKey.ISSUE_DATE.getDescription()
 					, new SimpleDateFormat("dd/MM/yyyy").format(new Date())));
 		}
@@ -462,13 +449,13 @@ public class TediParser {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.EXPENSES );
-						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
+						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
 					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
-						result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
+						result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.TYPE,InvoiceErrorKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));
 					}
 				}
 			}
@@ -506,14 +493,14 @@ public class TediParser {
 					ar.getType().visit(ar, new InvoiceRegistryInitializer(ctx.getAONContext(), ai.getInvoice(), ctx.getAonConfiguration()));
 					return true;
 				} else {
-					result.setPosibleRegistries(registries);
-					result.add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
+					result.getAccountingInvoice().setPosibleRegistries(registries);
+					result.getAccountingInvoice().add( InvoiceErrorMessages.C011.err(InvoiceErrorKey.AMBIGUOUS_REGISTRY));
 				}
 			}
 		}
 		if (result.getInvoice().getRegistryDocumentCountry() == null) {
 			result.getInvoice().setRegistryDocumentCountry(Country.ES);
-			result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
+			result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.RDOCUMENT_COUNTRY,InvoiceErrorKey.RDOCUMENT_COUNTRY.getDescription(),Country.ES.getIso2()));
 		}
 		return false;
 	}		
@@ -524,7 +511,7 @@ public class TediParser {
 			if (willOverflow(INVOICE.SERIES, ctx.getTediResult().getInvoice().getSeries())) {
 				String series = AonStringUtils.substring(ctx.getTediResult().getInvoice().getSeries(), 0, INVOICE.SERIES.getDataType().length());
 				ctx.getTediResult().getInvoice().setSeries( series );	
-				ctx.getTediResult().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
+				ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.SERIES,InvoiceErrorKey.SERIES.getDescription(), series ));	
 			}
 		}
 	};
@@ -535,7 +522,7 @@ public class TediParser {
 			if (result.getTedi().getNumber() != null) {
 				result.getInvoice().setNumber(result.getTedi().getNumber());
 			} else {
-				result.add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
+				result.getAccountingInvoice().add( InvoiceErrorMessages.C003.inf(InvoiceErrorKey.NUMBER, InvoiceErrorKey.NUMBER.getDescription(), 0) );
 				result.getInvoice().setNumber(0);
 			}
 		}
@@ -622,7 +609,7 @@ public class TediParser {
 			double quota = AonMathUtils.round( base * percent / 100 );
 			double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
 			double deductibleQuota = AonMathUtils.round( quota + surchargeQuota );
-			ctx.getAonDetail().addInvoiceTax( 
+			ctx.getAonDetail().addTax( 
 					new InvoiceTax()
 					.setTaxType( TaxType.VAT )
 					.setBase( base )
@@ -712,7 +699,7 @@ public class TediParser {
 				if (irpfTax != null && result.getInvoice().getDetails() != null) {
 					for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 						double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-						id.addInvoiceTax( 
+						id.addTax( 
 							new InvoiceTax()
 								.setTaxType( TaxType.RETENTION )
 								.setBase( id.getTaxableBase() )
@@ -749,7 +736,7 @@ public class TediParser {
 						;
 					result.getInvoice().setDetails( new LinkedList<InvoiceDetail>());
 					result.getInvoice().getDetails().add(id);
-					id.addInvoiceTax( new InvoiceTax()
+					id.addTax( new InvoiceTax()
 						.setTaxType( TaxType.VAT )
 						.setBase( ib.getBase() )
 						.setPercentage( ib.getPercentage() )
@@ -766,7 +753,7 @@ public class TediParser {
 				result.getInvoice().getBreakdown().add(irpfTax);
 				for ( InvoiceDetail id : result.getInvoice().getDetails()) {
 					double irpfQuota = AonMathUtils.round(id.getTaxableBase() * irpfTax.getPercentage() / 100);
-					id.addInvoiceTax( 
+					id.addTax( 
 							new InvoiceTax()
 								.setTaxType( TaxType.RETENTION )
 								.setBase( id.getTaxableBase() )
@@ -849,7 +836,7 @@ public class TediParser {
 
 	private static Consumer<TediParserContext> INVOICE_SETTLED_MANUALLY = (ctx) -> {
 		if (ctx.getTediResult().getTedi().getInsight() != null && ctx.getTediResult().getTedi().getInsight().isSettledManually()) {
-			ctx.getTediResult().add( InvoiceErrorMessages.C017.inf(InvoiceErrorKey.BASES_QUOTAS,InvoiceErrorKey.BASES_QUOTAS.getDescription()));
+			ctx.getTediResult().getAccountingInvoice().add( InvoiceErrorMessages.C017.inf(InvoiceErrorKey.BASES_QUOTAS,InvoiceErrorKey.BASES_QUOTAS.getDescription()));
 		}		
 	};
 
@@ -885,7 +872,7 @@ public class TediParser {
 		
 		fillVats(ctx, aonCtx, result);
 		ai.setAccountEntry(getEntryBase(ctx,aonCtx,ai));
-		if (result.isImportable()) {
+		if (result.getAccountingInvoice().isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 		}
 		// ----------

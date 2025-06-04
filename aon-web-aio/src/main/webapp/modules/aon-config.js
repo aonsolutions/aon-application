@@ -1,9 +1,7 @@
 import { AonElement } from '../components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, TAG } from "../environments/environments.js";
-import { AonSwitch } from "../components/aon-switch.js";
 import { AonCard } from '../components/aon-card.js';
 import { Language } from '../models/Language.js';
-import { loadTheme } from '..';
 import * as LS from '../services/localStorageService.js';
 import {setupThemeToggleButtons} from './utils/theme';
 
@@ -75,7 +73,7 @@ export class AonConfig extends AonElement {
   }
 
   buildThemeData(){
-    // Obtén el modo activo actual
+    // Obtï¿½n el modo activo actual
     const currentMode = localStorage.getItem('theme-mode') || 'auto';
     // Theme Mode Selector
     const themeSelector = this.createElement(TAG.DIV);
@@ -85,7 +83,7 @@ export class AonConfig extends AonElement {
       const div = this.createElement(TAG.DIV);
       div.className = "theme-toggle-btn";
       div.setAttribute('data-theme-mode', mode);
-      // Marca el botón activo
+      // Marca el botï¿½n activo
       if (mode === currentMode) {
         div.classList.add('active');
       }

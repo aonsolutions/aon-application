@@ -247,6 +247,20 @@
 			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/seller_workload.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_projectModule</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/project.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_customerNotesModule</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/marketing/facelet/customerNotes.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
 		

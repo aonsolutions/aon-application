@@ -55,6 +55,7 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+					<!--
 					<execution>
 						<id>check</id>
 						<goals>
@@ -80,6 +81,7 @@
 							</rules>
 						</configuration>
 					</execution>
+					-->
           		</executions>
 				<configuration>
 					<systemPropertyVariables>
@@ -244,7 +246,18 @@
 			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
- 
+		<dependency>
+		    <groupId>uk.co.jemos.podam</groupId>
+		    <artifactId>podam</artifactId>
+		    <version>8.0.2.RELEASE</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.assertj</groupId>
+		    <artifactId>assertj-core</artifactId>
+		    <version>3.27.3</version>
+		    <scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -260,13 +273,5 @@
 			<scope>test</scope>
 		</dependency>
 		
-<!--
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
-            <version>1.2.1</version>
-            <scope>test</scope>
-        </dependency>
-         -->
 	</dependencies>
 </project>

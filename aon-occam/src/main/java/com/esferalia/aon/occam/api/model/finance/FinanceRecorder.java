@@ -37,12 +37,12 @@ public class FinanceRecorder {
 						String code = obtainAccountCode(finance);
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
-							.setAccount(finance.getRegistryAccountId())
+							.setAccountId(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(obtainDocumentNumber(finance))
-							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountId(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription())
 							;
@@ -65,12 +65,12 @@ public class FinanceRecorder {
 						String code = obtainAccountCode(finance);
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
-							.setAccount(finance.getRegistryAccountId())
+							.setAccountId(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(obtainDocumentNumber(finance))
-							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountId(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription())
 							;
@@ -92,12 +92,12 @@ public class FinanceRecorder {
 						String code = obtainAccountCode(finance); 
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
-							.setAccount(finance.getRegistryAccountId())
+							.setAccountId(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(obtainDocumentNumber(finance))
-							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountId(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription());
 						map.put(finance.getId(),detail);
@@ -118,12 +118,12 @@ public class FinanceRecorder {
 						String code = obtainAccountCode(finance); 
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
-							.setAccount(finance.getRegistryAccountId())
+							.setAccountId(finance.getRegistryAccountId())
 							.setAccountCode(code)
 							.setAccountDescription(description)
 							.setConcept(concept)
 							.setDocumentNumber(obtainDocumentNumber(finance))
-							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountId(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
 							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
 							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription());
 						map.put(finance.getId(),detail);
@@ -216,11 +216,11 @@ public class FinanceRecorder {
 				concept = obtainConcept(uniqueFinance,ae.getEntryType(),financeEntry.getManualConcept());
 			} 
 			AccountEntryDetail detail = new AccountEntryDetail()
-					.setAccount(financeEntry.getExpensesAccount().getId())
+					.setAccountId(financeEntry.getExpensesAccount().getId())
 					.setAccountCode(financeEntry.getExpensesAccount().getCode())
 					.setAccountDescription(financeEntry.getExpensesAccount().getDescription())
 					.setConcept(concept)
-					.setBalancingAccount(financeEntry.getBankAccount().getId())
+					.setBalancingAccountId(financeEntry.getBankAccount().getId())
 					.setBalancingAccountCode(financeEntry.getBankAccount().getCode())
 					.setBalancingAccountDescription(financeEntry.getBankAccount().getDescription());
 			detail.addDebit( financeEntry.getExpenses()  );
@@ -240,11 +240,11 @@ public class FinanceRecorder {
 				balancingAccountDescription = obtainAccountDescription(uniqueFinance);
 			}
 			AccountEntryDetail detail = new AccountEntryDetail()
-				.setAccount(financeEntry.getBankAccount().getId())
+				.setAccountId(financeEntry.getBankAccount().getId())
 				.setAccountCode(financeEntry.getBankAccount().getCode())
 				.setAccountDescription(financeEntry.getBankAccount().getDescription())
 				.setConcept(concept)
-				.setBalancingAccount(balancingAccount)
+				.setBalancingAccountId(balancingAccount)
 				.setBalancingAccountCode(balancingAccountCode)
 				.setBalancingAccountDescription(balancingAccountDescription)
 				.setDocumentNumber(documentNumber)

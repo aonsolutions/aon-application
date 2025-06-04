@@ -17,12 +17,12 @@ public class S3Invoice {
     private static int JSON_INDENT_FACTOR = 1;
       
     public static String getCompanyName(String bucketName, String key) {
-    	return S3.getObjectMetadata(bucketName, key).getOrDefault(COMPANY_NAME, "");
+    	return S3.getInstance().getObjectMetadata(bucketName, key).getOrDefault(COMPANY_NAME, "");
     }
 
     public static JSONObject getLoadBatchTask(String bucketName, String key) throws NoSuchLoadBatchException {
     	try {
-    	   	byte[] loadBatch = S3.download(bucketName, key);
+    	   	byte[] loadBatch = S3.getInstance().download(bucketName, key);
     		String jsonString = new String ( loadBatch, StandardCharsets.UTF_8 );
     		return new JSONObject(jsonString);     		
     	} catch (Exception e) {
@@ -31,7 +31,7 @@ public class S3Invoice {
     }
 
     public static void setLoadBatchTask(String bucketName, String key, JSONObject loadBatch ) throws JSONException, IOException {
-    	S3.upload(bucketName, key, loadBatch.toString(JSON_INDENT_FACTOR));
+    	S3.getInstance().upload(bucketName, key, loadBatch.toString(JSON_INDENT_FACTOR));
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {

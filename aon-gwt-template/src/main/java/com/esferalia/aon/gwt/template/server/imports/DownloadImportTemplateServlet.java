@@ -160,6 +160,8 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 		columnList.add(IConstants.CANTIDAD);
 		columnList.add(IConstants.PRECIO);
 		columnList.add(IConstants.DESCUENTO);
+		columnList.add(IConstants.IMPORTE_BRUTO);
+		columnList.add(IConstants.IMPORTE_NETO);
 		columnList.add(IConstants.FECHA_INICIO);
 		columnList.add(IConstants.FECHA_FIN);
 		columnList.add(IConstants.FECHA_FACTURACION);

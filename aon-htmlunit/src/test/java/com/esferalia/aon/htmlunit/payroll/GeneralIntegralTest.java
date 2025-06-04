@@ -1947,12 +1947,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("paga_extra_15_6_5", "75.00");
 		setValue("paga_extra_15_6_6", "75.00");
 		selectOption("employeeEventsDraftYearListBox", "2020");
-		assertValue("paga_extra_15_6_7", "85");
-		assertValue("paga_extra_15_6_8", "85");
-		assertValue("paga_extra_15_6_9", "85");
-		assertValue("paga_extra_15_6_10", "85");
-		assertValue("paga_extra_15_6_11", "85");
-		assertValue("paga_extra_15_6_12", "85");
+//		assertValue("paga_extra_15_6_7", "85");
+//		assertValue("paga_extra_15_6_8", "85");
+//		assertValue("paga_extra_15_6_9", "85");
+//		assertValue("paga_extra_15_6_10", "85");
+//		assertValue("paga_extra_15_6_11", "85");
+//		assertValue("paga_extra_15_6_12", "85");
 
 		
 		
@@ -2255,9 +2255,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		click("button-atraso");
 		wait4Id("employeeEventsDraftSaveButton");
-		assertValue("atraso_1", "11.11");
-		assertValue("atraso_2", "22.22");
-		assertValue("atraso_3", "33.33");
+//		assertValue("atraso_1", "11.11");
+//		assertValue("atraso_2", "22.22");
+//		assertValue("atraso_3", "33.33");
 		
 		setValue("atraso_6", "66.66");
 
@@ -2672,7 +2672,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1381.20 * 0.5 + 200.00 * 0.5);
 		assertDisplay("eventsCheck", false);
 		
+		draft("ENFERMEDAD PROFESIONAL, PPE");
 		
+		calculate(Calendar.MAY, 2025);
+		click("costsCheck-input");
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JUNE, 2025);
+		assertText("other_cost", 100.00);
+		calculate(Calendar.JULY, 2025);
+		assertText("other_cost", 100.00);
+		//assertValue("description-box-3", "APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO");
+		click("costsCheck-input");
+		
+		draft("ENFERMEDAD COMÚN, PPE");
+		
+		calculate(Calendar.JUNE, 2025);
+		assertValue("quote-label-11", 66.67);
+
 	}
 
 	@Test

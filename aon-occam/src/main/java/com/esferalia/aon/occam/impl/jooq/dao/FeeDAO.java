@@ -73,7 +73,7 @@ import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoicingGroupFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoicingGroupDAO.InvoicingGroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
@@ -997,7 +997,7 @@ public class FeeDAO {
 			condition = condition.and(PROJECT.NAME.like("%" + query + "%")
 						.or(PROJECT.ALIAS.like("%" + query + "%"))
 					);
-//		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
+		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
 		
 		Result<Record> projectRecords = ctx.getDslContext()
 				.select().from(PROJECT)

@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.PayMethodParams;
 import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -107,6 +108,7 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -3953,6 +3955,12 @@ public class AON {
 			return getProject().getProject(ctx, filter);
 		}
 	}
+	
+	public static Project getProjectFull(String domainName, Integer domainId, String login, ProjectFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectFull(ctx, filter);
+		}
+	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
 		return getProjectStream(domainName, domainId, login, filter)
@@ -3968,6 +3976,18 @@ public class AON {
 	public static void deleteProject(Domain domain, User user, Integer projectId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			getProject().deleteProject(ctx, projectId);
+		}
+	}
+	
+	public static List<Project> getProjectList(ProjectParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getProject().getProjectList(ctx, params);
+		}
+	}
+
+	public static Integer getProjectsCount(ProjectParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())){
+			return getProject().getProjectsCount(ctx, params);
 		}
 	}
 	
@@ -7655,12 +7675,12 @@ public class AON {
 			return getRawdoc().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
-	public static Rawdoc getRawdocFull(Occam occam, int id) {
+	public static Optional<Rawdoc> getRawdocFull(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}
 	}
-	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
+	public static Optional<Rawdoc> getRawdocFull(String domainName, int domain, String user, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}
@@ -8811,4 +8831,18 @@ public class AON {
 		}
 	}
 
+	// INVOICE DOC
+	
+	public static Optional<InvoiceDoc> getInvoiceDoc(Occam occam, int domain, int invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceDoc(ctx, domain, invoiceId);
+		}
+	}
+	
+	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
 }

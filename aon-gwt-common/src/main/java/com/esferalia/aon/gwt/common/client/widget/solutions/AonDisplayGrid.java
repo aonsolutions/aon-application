@@ -107,6 +107,9 @@ public class AonDisplayGrid extends FlowPanel {
 		public AonDisplayGridRow addCellIf( boolean condition, Widget widget ) {
 			return condition?addCell(widget):this;
 		}
+		public AonDisplayGridRow addCellIfElse( boolean condition, Widget widget, Widget elseWidget ) {
+			return condition?addCell(widget):addCell(elseWidget);
+		}
 		public AonDisplayGridRow addCell( Widget widget ) {
 			addCell().add(widget);
 			return this;

@@ -275,6 +275,7 @@ export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 export const PROCESSING = 'processing'
 export const PROFORMA_INVOICES = 'proformaInvoices';
+export const PLANS = 'plans';
 
 // ----- Q
 

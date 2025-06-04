@@ -777,7 +777,7 @@ public class SalaryDraftBuilder
 		myBonus.setStartDate(startDate);
 		myBonus.setEndDate(endDate);
 
-		CompositeBonus compositeBonus = getBonus(myBonus.getId());
+		CompositeBonus compositeBonus = getBonus(myBonus);
 
 		if (compositeBonus != null) {
 			compositeBonus.addChild(myBonus);
@@ -1588,11 +1588,14 @@ public class SalaryDraftBuilder
 		return null;
 	}
 
-	private CompositeBonus getBonus(Integer id) {
+	private CompositeBonus getBonus(Bonus b) {
 		List<Bonus> bonuses = salaryDraft.getBonuses();
 		for (int i = 0; i < bonuses.size(); i++) {
 			Bonus bonus = bonuses.get(i);
-			if (bonus.getId().equals(id)) {
+			if (bonus.getId().equals(b.getId()) || 
+				(AonStringUtils.equals(bonus.getExpression(), b.getExpression()) 
+				&& AonStringUtils.equals(bonus.getDescriptionTemplate(), b.getDescriptionTemplate()) 
+				)) {
 				if (bonus instanceof CompositeBonus)
 					return (CompositeBonus) bonus;
 

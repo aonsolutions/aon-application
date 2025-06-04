@@ -79,7 +79,7 @@ export class AonIframe extends AonElement {
 
       await this.loadCss();
 
-      this.setFontFamily('Roboto, Helvetica, Arial, sans-serif !important');
+      this.setFontFamily('"Noto Sans", sans-serif !important');
 
     } catch (err) {
       console.log(err);
@@ -89,9 +89,11 @@ export class AonIframe extends AonElement {
   async loadCss(){
     // /css/aon-gwt.css
     let promises = [
-      this.loadLink("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"),
-      this.loadLink("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"),
-//      this.loadLink("../dist/app.min.css")
+      // this.loadLink("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"),
+      // this.loadLink("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"),
+      this.loadLink("../css/noto-sans.css"),
+      this.loadLink("../css/material-symbols-outlined.css"), 
+      this.loadLink("../dist/app.min.css")
     ];
 
     await Promise.all(promises);

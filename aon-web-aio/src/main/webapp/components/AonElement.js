@@ -9,6 +9,7 @@ import * as UA from '../services/userAgentService.js';
 export class AonElement extends HTMLElement{
   ROOT_PANEL = 'rootPanel';
   dur;
+  sessionData;
 
   constructor () {
     super();
@@ -190,8 +191,8 @@ export class AonElement extends HTMLElement{
   };
   
   isAyudaTorInfoautonomos(){
-	const href = localStorage.getItem("aon_domain_name")
-	return href.includes('ayudat') || href.includes('infoautonomos')
+	  const href = localStorage.getItem("aon_domain_name")
+	  return href.includes('ayudat') || href.includes('infoautonomos')
   }
   
   isAyudat() {

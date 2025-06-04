@@ -50,6 +50,17 @@ public class AonCustomTable extends HTMLPanel {
 		return label;
 	}
 	
+	public Widget addHeader(Widget wdiget, String width, String styles) {
+		addCellHeaderStyle(wdiget);
+		if(AonStringUtils.equalsIgnoreCase(width, "-moz-available")) {
+			wdiget.getElement().getStyle().setProperty("width", width);
+			wdiget.getElement().getStyle().setProperty("width", "-webkit-fill-available");
+		} else wdiget.getElement().getStyle().setProperty("min-width", width);
+		header.add(wdiget);
+		addInlineStyle(wdiget, styles);
+		return wdiget;
+	}
+	
 	public void createFooter() {
 		footer = new HTMLPanel(EMPTY_STRING);
 		addFooterStyle();
@@ -127,6 +138,10 @@ public class AonCustomTable extends HTMLPanel {
 	}
 
 	public void addCellHeaderStyle(Label label) {
+		label.addStyleName(AON.CSS.aonCustomTableCellHeader());
+	}
+	
+	public void addCellHeaderStyle(Widget label) {
 		label.addStyleName(AON.CSS.aonCustomTableCellHeader());
 	}
 	

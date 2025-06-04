@@ -10,8 +10,18 @@ on:
       - master
   workflow_dispatch:
     inputs:
-      skipTests:
-        description: 'Skip running the tests'
+      imageTag:
+        description: 'Docker image tag'
+        type: string
+        required: true
+        default: 'snapshot'
+      skipUnitTests:
+        description: 'Skip running unit tests'
+        type: boolean
+        required: true
+        default: false
+      skipIntegrationTests:
+        description: 'Skip running integration tests'
         type: boolean
         required: true
         default: false
@@ -39,10 +49,12 @@ on:
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
+  IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
+  SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
+  SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || false }}
   
 jobs:
   build:
@@ -115,7 +127,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
+      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
       uses: docker/build-push-action@v6
@@ -153,7 +165,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
-        -DskipTests=${SKIP_TESTS} \
+        -DskipTests=${SKIP_INTEGRATION_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
         -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
@@ -216,7 +228,6 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
@@ -239,7 +250,6 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
         docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 

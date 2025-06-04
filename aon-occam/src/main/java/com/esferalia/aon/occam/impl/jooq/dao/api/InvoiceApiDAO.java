@@ -309,7 +309,7 @@ public class InvoiceApiDAO {
 				.setSeller(new Seller().copy(new Registry().setId(record.getValue(INVOICE_DETAIL.SELLER))))
 				.setWorkplace( new Workplace().setId(record.getValue(INVOICE_DETAIL.WORKPLACE)))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
-				.setAccount(record.getValue(ACCOUNT.ID))
+				.setAccountId(record.getValue(ACCOUNT.ID))
 				.setAccountCode(record.getValue(ACCOUNT.CODE))
 				.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION));
 		

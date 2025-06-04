@@ -41,14 +41,24 @@
 								<f:param name="outputFormat" value="DOCX" />
 							</aon:htmlCommandLink>
 						</aon:if>
-						<aon:htmlCommandLink id="purchaseInvoice-report"
-							value="#{bundle.finance_invoice}" target="_new" 
-							rendered="#{!purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
-							action="#{purchaseInvoiceSigner.onReport}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="purchaseInvoice" />
-						</aon:htmlCommandLink>
+						<aon:if test="#{purchaseInvoice.hasInvoiceDoc()}">
+							<aon:outputLink id="purchaseInvoice-downloadPdf"
+								target="_blank" value="#{purchaseInvoice.invoiceDoc.url}" 
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						    </aon:outputLink>
+						</aon:if>
+						
+						<aon:if test="#{!purchaseInvoice.hasInvoiceDoc()}">
+							<aon:htmlCommandLink id="purchaseInvoice-report"
+								value="#{bundle.finance_invoice}" target="_new" 
+								rendered="#{!purchaseInvoice.accountSource and purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
+								action="#{purchaseInvoiceSigner.onReport}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+								<f:param name="reportKey" value="purchaseInvoice" />
+							</aon:htmlCommandLink>
+						</aon:if>						
+
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">

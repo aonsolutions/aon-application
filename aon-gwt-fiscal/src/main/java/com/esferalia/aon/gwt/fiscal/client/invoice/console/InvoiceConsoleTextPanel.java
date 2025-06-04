@@ -12,9 +12,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,6 +71,7 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		totals(invoice, out);
 		finances(invoice, out);
 		fiscal(invoice, out);
+		doc(invoice, out);
 		messages(invoice, out);
 		HTMLPanel panel = new HTMLPanel("pre",out.toString());
 		panel.setStyleName( AON.CSS.aonFixedFont() );
@@ -190,7 +191,7 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		buf.append(VERTICAL_LEFT_BAR);
 		println(out,buf.toString());
 
-		invoice.getDetails().forEach(det -> detail(det, out));
+		invoice.detailStream().forEach(det -> detail(det, out));
 
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
@@ -218,7 +219,7 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		buf.append(AonStringUtils.leftPad(" ", getLineSize() - buf.length()));
 		buf.append(VERTICAL_BAR);
 		println(out,buf.toString());
-		detail.getInvoiceTaxes().forEach(tax -> invoiceTax(tax, out));
+		detail.taxStream().forEach(tax -> invoiceTax(tax, out));
 		
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
@@ -437,7 +438,7 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 		buf.append(VERTICAL_LEFT_BAR);
 		println(out,buf.toString());
 
-		AonCollectionUtils.stream(invoice.getFinances()).forEach(f -> finance(f, out));
+		invoice.financeStream().forEach(f -> finance(f, out));
 
 		buf = new StringBuilder();
 		buf.append(AonStringUtils.SPACE);
@@ -649,9 +650,65 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 			+ "."
 			; 
 	}
+	
+	private InvoiceConsoleTextPanel doc(Invoice invoice, StringBuilder out) {
+		invoice.getDoc()
+			.ifPresent( d -> {
+				
+				StringBuilder buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(10));
+				buf.append( TOP_LEFT_CORNER );
+				buf.append(AonStringUtils.repeat(HORIZONTAL_BAR,92));
+				buf.append( TOP_RIGHT_CORNER);
+				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));
+				println(out, buf.toString() );
 
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(10));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.SPACE);
+				buf.append("AON ID .:");
+				buf.append(AonStringUtils.SPACE);
+				buf.append(AonStringUtils.rightPad( AonStringUtils.defaultIfBlank(AonNumberUtils.toString(d.getAonId()), "<NULL>") ,81));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
+				println(out,buf.toString());
+
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(10));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.SPACE);
+				buf.append("Bucket..:");
+				buf.append(AonStringUtils.SPACE);
+				buf.append(AonStringUtils.rightPad( d.getS3Bucket() ,81));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
+				println(out,buf.toString());
+
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(10));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.SPACE);
+				buf.append("Key ....:");
+				buf.append(AonStringUtils.SPACE);
+				buf.append(AonStringUtils.abbreviateMiddle( d.getS3Key(), " [...] " ,81));
+				buf.append(VERTICAL_BAR);
+				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));			
+				println(out,buf.toString());
+
+				buf = new StringBuilder();
+				buf.append(AonStringUtils.spaces(10));
+				buf.append(LOWER_LEFT_CORNER);
+				buf.append(AonStringUtils.repeat(HORIZONTAL_BAR, 92));
+				buf.append(LOWER_RIGHT_CORNER);
+				buf.append(AonStringUtils.spaces(getLineSize() - buf.length()));
+				println(out,buf.toString());
+			});
+		return this;
+	}
+			
 	private InvoiceConsoleTextPanel messages(Invoice invoice, StringBuilder out) {
-		if (AonCollectionUtils.isNotEmpty(invoice.getMessages())) {
+		if (invoice.hasMessages()) {
 			println(out,"");
 			StringBuilder buf = new StringBuilder();
 			buf.append(AonStringUtils.spaces(15));
@@ -693,20 +750,21 @@ public class InvoiceConsoleTextPanel extends ScrollPanel {
 			buf.append(VERTICAL_LEFT_BAR);
 			println(out,buf.toString());
 
-			for (InvoiceError e : invoice.getMessages()) {
-				buf = new StringBuilder();
-				buf.append(AonStringUtils.spaces(15));
-				buf.append(VERTICAL_BAR);
-				buf.append(AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4));
-				buf.append(VERTICAL_BAR);
-				buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5));
-				buf.append(VERTICAL_BAR);
-				buf.append(AonStringUtils.rightPad(e.getContext() == null ? "" : e.getContext().toString(), 25));
-				buf.append(VERTICAL_BAR);
-				buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(e.getMessage()),79),80));
-				buf.append(VERTICAL_BAR);
-				println(out,buf.toString());			
-			}
+			invoice.messageStream()
+			.forEach( e -> {
+				StringBuilder bf = new StringBuilder();
+				bf.append(AonStringUtils.spaces(15));
+				bf.append(VERTICAL_BAR);
+				bf.append(AonStringUtils.rightPad(e.getLevel() == null ? "" : e.getLevel().toString(), 4));
+				bf.append(VERTICAL_BAR);
+				bf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(e.getCode()), 5));
+				bf.append(VERTICAL_BAR);
+				bf.append(AonStringUtils.rightPad(e.getContext() == null ? "" : e.getContext().toString(), 25));
+				bf.append(VERTICAL_BAR);
+				bf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(e.getMessage()),79),80));
+				bf.append(VERTICAL_BAR);
+				println(out,bf.toString());			
+			});
 			buf = new StringBuilder();
 			buf.append(AonStringUtils.spaces(15));
 			buf.append(LOWER_LEFT_CORNER);
