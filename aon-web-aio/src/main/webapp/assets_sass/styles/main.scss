@@ -14,6 +14,8 @@
 @use './themes/infoautonomosDark' as infoautonomosDark;
 @use './themes/openges' as openges;
 @use './themes/opengesDark' as opengesDark;
+@use './themes/etl' as etl;
+@use './themes/etlDark' as etlDark;
 
 // Importamos componentes
 @use './components/loader' as loader;
@@ -147,4 +149,11 @@
 }
 :root.theme-openges-dark {
   @include opengesDark.opengesDark-theme;
+}
+// Si el body tiene la clase theme-etl, aplicamos el tema etl
+:root.theme-etl {
+  @include etl.etl-theme;
+}
+:root.theme-etl-dark {
+  @include etlDark.etlDark-theme;
 }
