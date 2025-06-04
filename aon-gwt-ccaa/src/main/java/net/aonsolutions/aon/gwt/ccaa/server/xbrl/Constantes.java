@@ -16,9 +16,9 @@ public abstract class Constantes {
 	public static final Map<String,String> datosIdentificacion = new LinkedHashMap<>();  	
 	static {
 		datosIdentificacion.put("1010", "B50111111"); // NIF
-//		datosIdentificacion.put("1011", ""); // Forma juridica SA
-//		datosIdentificacion.put("1012", ""); // Forma juridica SL 
-		datosIdentificacion.put("1013", "SOC.COOP."); // Forma juridida OTRAS
+		datosIdentificacion.put("1011", "001"); // Forma juridica SA
+//		datosIdentificacion.put("1012", "023"); // Forma juridica SL 
+//		datosIdentificacion.put("1013", "SOC.COOP."); // Forma juridida OTRAS
 		datosIdentificacion.put("1009", "CODIGO LEI"); // LEI
 		datosIdentificacion.put("1020", "DENOMINACION SOCIAL"); // Denominación social
 		datosIdentificacion.put("1022", "DOMICILIO SOCIAL"); // Domicilio social
@@ -27,8 +27,11 @@ public abstract class Constantes {
 		datosIdentificacion.put("1024", "50001"); // Código postal
 		datosIdentificacion.put("1031", "976000000"); // Teléfono
 		datosIdentificacion.put("1037", "info@mail.com"); // Direccion email
-		datosIdentificacion.put("2009", "EDICION DE LIBROS"); // Actividad principal (nombre)
-		datosIdentificacion.put("2001", "5811"); // Actividad principal (codigo CNAE)
+//		datosIdentificacion.put("2009", "EDICION DE LIBROS"); // Actividad principal (nombre)
+//		datosIdentificacion.put("2001", "5811"); // Actividad principal (codigo CNAE)
+		datosIdentificacion.put("2009", "ELABORACION DE ALIMENTOS"); // Actividad principal (nombre)
+		datosIdentificacion.put("2001", "1086"); // Actividad principal (codigo CNAE)
+		
 		datosIdentificacion.put("1901", "35");
 		datosIdentificacion.put("1903", "CAUSAS DE NO CONSIGNAR CIFRAS");
 		
@@ -52,7 +55,7 @@ public abstract class Constantes {
         datosIdentificacion.put("42129", "42129");
         datosIdentificacion.put("42139", "42139");
         
-        datosIdentificacion.put("1902","0");  // Micropymes 0-false, 1-true 
+        datosIdentificacion.put("1902","1");  // Micropymes 0-false, 1-true 
         
         datosIdentificacion.put("91000", "91000");
         datosIdentificacion.put("91001", "91001");

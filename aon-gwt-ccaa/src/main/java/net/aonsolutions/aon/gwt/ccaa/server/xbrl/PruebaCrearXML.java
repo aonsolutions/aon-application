@@ -4,7 +4,6 @@ import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ACTUAL;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ANTERIOR;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ACTUAL;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ANTERIOR;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.datosIdentificacion;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONTEXTOS_MEM_ABREVIADO;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_BAL_ABREVIADO;
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_MEM_ABREVIADO;
@@ -25,6 +24,9 @@ import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.URI_SCHE
 import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.URI_SCHEMA_PYMES_MEMORIA;
 
 import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +45,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PruebaCrearXML {
@@ -53,19 +56,29 @@ public class PruebaCrearXML {
 	private static final SimpleDateFormat DATE_FORMAT_DAY = new SimpleDateFormat("dd");
 	
 	private static ArrayList<String> notas = new ArrayList<>(); // Notas de la Memoria
+	private static Esquema schemaXml;
 	
-    public static void pruebaCrearXBRL() {
+    public static void pruebaCrearXBRL(Esquema schema, File parent) throws IOException {
     	
         try {
-	        // ESTOS DATOS SON PRARA PROBAR, SE COGERAN DEL XML, SI FECHAINIANTERIOR = NULL Y FECHAFINANTERIOR = NULL SE SUPONE QUE NO HAY EJERCICIO ANTERIOR
-	        String nifEmpresa = "B50111111";
-	        Date fechaIniActual = new Date("01/01/2024");
-			Date fechaFinActual = new Date("12/31/2024");
-	        Date fechaIniAnterior = new Date("01/01/2023");
-			Date fechaFinAnterior = new Date("12/31/2023");
-			boolean formatoPymes = false; // Formato PYMES o Abreviado
-			boolean llevaMemoria = true;  // Indica si lleva memoria normalizada
+	        // ESTOS DATOS SON PARA PROBAR, SE COGERAN DEL XML, SI FECHAINIANTERIOR = NULL Y FECHAFINANTERIOR = NULL SE SUPONE QUE NO HAY EJERCICIO ANTERIOR
+//        	File f = new File("C:\\TMP\\prueba.xml");
+//	        String nifEmpresa = "B50111111";
+//	        Date fechaIniActual = new Date("01/01/2024");
+//			Date fechaFinActual = new Date("12/31/2024");
+//	        Date fechaIniAnterior = new Date("01/01/2023");
+//			Date fechaFinAnterior = new Date("12/31/2023");
+//			boolean formatoPymes = true; // Formato PYMES o Abreviado
+//			boolean llevaMemoria = true;  // Indica si lleva memoria normalizada
 			// ----------------------------------------------
+        	schemaXml = schema;
+	        String nifEmpresa = schema.getCabecera().getCIF();
+	        Date fechaIniActual = buscarFecha("1102",""); 
+			Date fechaFinActual = buscarFecha("1101","");
+	        Date fechaIniAnterior = buscarFecha("1102","9");
+			Date fechaFinAnterior = buscarFecha("1101","9");
+			boolean formatoPymes = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()); // Formato PYMES o Abreviado
+			boolean llevaMemoria = schema.getCabecera().isMemoriaNormalizada();  // Indica si lleva memoria normalizada
 			
             // Llenamos los espacios de nombres e inicializamos algunas variables, según el formato
             String uriSchema;
@@ -155,13 +168,11 @@ public class PruebaCrearXML {
 	        
 	        // Balance de situación
 	        for (String key : datosConversionBal.keySet()) {
-//	        	addElementoBal(document.getDocumentElement(), key, I_ACTUAL, llevaAnterior ? I_ANTERIOR : null, datosConversionBal);
 	        	addElementoBal(document.getDocumentElement(), key, datosConversionBal.get(key), I_ACTUAL, llevaAnterior ? I_ANTERIOR : null);
 	        }
 	        
 	        // Cuenta de Perdidas y Ganancias
 	        for (String key : datosConversionPyG.keySet()) {
-//	        	addElementoBal(document.getDocumentElement(), key, D_ACTUAL, llevaAnterior ? D_ANTERIOR : null, datosConversionPyG);
 	        	addElementoBal(document.getDocumentElement(), key, datosConversionPyG.get(key), D_ACTUAL, llevaAnterior ? D_ANTERIOR : null);
 	        }
 	        
@@ -188,12 +199,15 @@ public class PruebaCrearXML {
 	        }
         
             // Escribir el contenido del documento en un archivo XML
+//	        File f = File.createTempFile("deposito", ".xbrl", parent);
+//	        File f = new File(parent.getPath() + "\\deposito.xbrl");
+//	        File f = new File("c:\\tmp\\deposito.xbrl");	        
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "");
             DOMSource source = new DOMSource(document);
-            StreamResult result = new StreamResult(new File("C:\\TMP\\prueba.xml"));
+            StreamResult result = new StreamResult(new File(parent, "deposito.xbrl"));
             transformer.transform(source, result);
             System.out.println("Archivo XBRL creado con éxito!");
 
@@ -201,6 +215,25 @@ public class PruebaCrearXML {
             e.printStackTrace();
         }
     }
+
+	private static Date buscarFecha(String key, String sufijo) {
+		
+		String y = buscar(key + "1" + sufijo); // Año
+		String m = buscar(key + "2" + sufijo); // Mes
+		String d = buscar(key + "3" + sufijo); // Día
+		
+		if (AonStringUtils.isNotBlank(y) && AonStringUtils.isNotBlank(m) && AonStringUtils.isNotBlank(d)) {
+			try {
+				return DATE_FORMAT.parse(y + "-" + m + "-" + d);
+			} catch (ParseException e) {
+				// FALTA - CONTROLAR EXCEPCION O DEVOLVER AL CLIENTE
+				e.printStackTrace();
+				return null;
+			}			
+		} else {
+			return null;
+		}
+	}
 
 	private static void addContext(Document doc, String id, String identifier, Date fechaFin) {
     	addContext(doc, id, identifier, null, fechaFin, null, null);
@@ -295,7 +328,6 @@ public class PruebaCrearXML {
 			notas.add(nota);
 		}
 
-		// FALTA - CONTROLAR POSIBLE VALOR QUE NO EXISTA O QUE NO LLEVE VALOR SI NO SE PONE SI NO LLEVA VALOR
 		if (AonStringUtils.isNotBlank(valor) || AonStringUtils.isNotBlank(nota)) {
 			addElemento(padre, nombre, contextoActual, valor, "2", "euro", idNota); // Añadir el elemento actual	
 		}
@@ -304,42 +336,45 @@ public class PruebaCrearXML {
 		if (AonStringUtils.isNotBlank(contextoAnterior)) {
 			valor = buscar(key + "9"); // Se busca en el XML (clave + "9")
 			if (AonStringUtils.isNotBlank(valor)) {
-				addElemento(padre, nombre, contextoAnterior, valor, "2", "euro", ""); // Añadir el elemento anterior	
+				addElemento(padre, nombre, contextoAnterior, valor, "2", "euro", null); // Añadir el elemento anterior	
 			}
 		}
 
     }
     
+    // Añadir elemento: Cuadros normalizados de la memoria
     private static void addElementoMem(Element padre, String key, String name, String context) {
 
-    	// FALTA - AÑADIR SOLO SI ENCUENTRA LA CLAVE - CONTROLAR SI HAY EJERCICIO ANTERIOR
-    	String valor = buscar(key); // Se busca la clave en el XML y se obtiene el valor
-    	if (AonStringUtils.isNotBlank(valor)) {
-    		addElemento(padre, name, context, valor, "2", "euro", null);
-    	}
+    	addElementoIde(padre, name, context, key, "euro", "2");
     	
 	}
     
-    // FALTA - PARA PROBAR SE DEVUELVE EL MISMO VALOR DE LA CLAVE
     // Busca la clave que se le pasa en el XML y devuelve su valor  
     private static String buscar(String key) {
-    	if (key.length() == 6)
-    		return AonStringUtils.removeEnd(key, "9") + ".9";
-    	else
-    		return key;
+    	
+    	// Buscar en el XML (PARA PROBAR BUSCAMOS EN datosIdentificacion)
+		for (int i = 0; i < schemaXml.getClaves().getClave().size(); i++) {
+			BigInteger code = new BigInteger(key);
+			if (schemaXml.getClaves().getClave().get(i).getCodigo().equals(code)) {				
+				return schemaXml.getClaves().getClave().get(i).getValor();
+			}
+		}
+		return null;
+		
     }
     
+    // Añadir elemento buscando previamente en el XML
     private static void addElementoIde(Element padre, String nombre, String contexto, String key) {
     	addElementoIde(padre, nombre, contexto, key, null, null);
     }
-    
     private static void addElementoIde(Element padre, String nombre, String contexto, String key, String unit, String decimals) {
-    	// Se busca la clave en el XML y si contiene datos se añade el elemento
-    	String valor = datosIdentificacion.get(key); // FALTA - PARA PROBAR SE BUSCA EN ESTE MAP
 
+    	// Se busca la clave en el XML y si contiene datos se añade el elemento
+    	String valor = buscar(key); 
     	if (AonStringUtils.isNotBlank(valor)) {
     		addElemento(padre, nombre, contexto, valor, decimals, unit, null);
     	}
+    	
     }
     
     private static Element addElemento(Element padre, String nombre) {
@@ -430,32 +465,39 @@ public class PruebaCrearXML {
         // Identificación de la Empresa
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:IdentificacionEmpresaTupla");
         addElemento(ele, "dgi-lc-es:Xcode_IDC.NIF", D_ACTUAL, "NIF");
-        addElementoIde(ele, "dgi-est-gen:IdentifierValue", D_ACTUAL, "1010"); // NIF Clave XML 01010
-        addElementoIde(ele, "dgi-lc-es:Xcode_LFC.001", D_ACTUAL, "1011");  // Forma juridica SA: Clave 01011                    
-        addElementoIde(ele, "dgi-lc-es:Xcode_LFC.023", D_ACTUAL, "1012");  // Forma juridica SL: Clave 01012                
-        addElementoIde(ele, "dgi-gen-ex:OthersLegalForm", D_ACTUAL, "1013"); // Forma juridica Otras: Clave 01013
-        addElementoIde(ele, "dgi-lc-es:Xcode_IDC.LEI", D_ACTUAL, "1009"); // LEI: Clave 01009
+        addElementoIde(ele, "dgi-est-gen:IdentifierValue", D_ACTUAL, "1010"); // NIF
+        if ("1".equals(buscar("1011")))
+        	addElemento(ele, "dgi-lc-es:Xcode_LFC.001", D_ACTUAL, "001");     // Forma juridica SA // FALTA - EN EL XML VA 0 O 1
+        if ("1".equals(buscar("1012")))
+        	addElemento(ele, "dgi-lc-es:Xcode_LFC.023", D_ACTUAL, "023");     // Forma juridica SL // FALTA - EN EL XML VA 0 O 1               
+        addElementoIde(ele, "dgi-gen-ex:OthersLegalForm", D_ACTUAL, "1013");  // Forma juridica Otras
+        addElementoIde(ele, "dgi-lc-es:Xcode_IDC.LEI", D_ACTUAL, "1009");     // LEI
         addElemento(ele, "dgi-lc-es:Xcode_NMT.DS", D_ACTUAL, "DS");
-        addElementoIde(ele, "dgi-est-gen:LegalNameValue", D_ACTUAL, "1020"); // Denominación Social: Clave 01020
+        addElementoIde(ele, "dgi-est-gen:LegalNameValue", D_ACTUAL, "1020");  // Denominación Social
         addElemento(ele, "dgi-lc-es:Xcode_ADL.01", D_ACTUAL, "01");
-        addElementoIde(ele, "dgi-est-gen:AddressLine", D_ACTUAL, "1022");    // Domicilio social
-        addElementoIde(ele, "dgi-est-gen:MunicipalityName", D_ACTUAL, "1023"); // Municipio
-        addElementoIde(ele, "dgi-est-gen:SpecifyRegion", D_ACTUAL, "1025"); // Provincia
-        addElementoIde(ele, "dgi-est-gen:ZipPostalCode", D_ACTUAL, "1024"); // Código postal
-        addElementoIde(ele, "dgi-est-gen:CommunicationValue", D_ACTUAL, "1031"); // Teléfono
+        addElementoIde(ele, "dgi-est-gen:AddressLine", D_ACTUAL, "1022");               // Domicilio social
+        addElementoIde(ele, "dgi-est-gen:MunicipalityName", D_ACTUAL, "1023");          // Municipio
+//        addElementoIde(ele, "dgi-est-gen:SpecifyRegion", D_ACTUAL, "1025");             // Provincia // FALTA EN EL XML EN EL 1025 VA LA CLAVE DE PROVINCIA
+        addElementoIde(ele, "dgi-lc-es:Xcode_RCI." + buscar("1025"), D_ACTUAL, "1025"); // Provincia (se guarda el código de provincia en el XML)
+        addElementoIde(ele, "dgi-est-gen:ZipPostalCode", D_ACTUAL, "1024");             // Código postal
+        addElementoIde(ele, "dgi-est-gen:CommunicationValue", D_ACTUAL, "1031");        // Teléfono
         addElementoIde(ele, "pgc07mc-apdo0:CommunicationValueEMail", D_ACTUAL, "1037"); // Dirección email
 
         // Unidades
         if (formatoPymes) {
-        	// Unidades (en PYMES siempre Euros (unidad))
+        	// Unidades (en PYMES siempre Euros) 
             addElemento(doc.getDocumentElement(), "dgi-lc-es:Xcode_COT.01", D_ACTUAL, "01"); // UNIDAD EUROS
         } else {
+        	// Unidades (en ABREVIADO Euros, Miles de Euros, Millones de Euros)
         	// FALTA - POR AHORA SE PONE EUROS
         	// ABREVIADO: EN AON SE PUEDE SELECCIONAR LA UNIDAD (EUROS, MILES DE EUROS, MILLONES DE EUROS)
             ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:UnidadesTupla");
-            addElemento(ele, "dgi-lc-es:Xcode_COT.01", D_ACTUAL, "01"); // UNIDAD EUROS
-//            addElemento(ele, "dgi-lc-es:Xcode_COT.02", D_ACTUAL, "02"); // MILES DE EUROS
-//            addElemento(ele, "dgi-lc-es:Xcode_COT.03", D_ACTUAL, "03"); // MILLONES DE EUROS
+            if (buscar("9002").equals("1"))
+            	addElemento(ele, "dgi-lc-es:Xcode_COT.02", D_ACTUAL, "02"); // MILES DE EUROS
+            else if (buscar("9003").equals("1"))
+            	addElemento(ele, "dgi-lc-es:Xcode_COT.03", D_ACTUAL, "03"); // MILLONES DE EUROS
+            else	
+            	addElemento(ele, "dgi-lc-es:Xcode_COT.01", D_ACTUAL, "01"); // UNIDAD EUROS
         }
         
         // Pertenencia a Grupo de Sociedades (solo Abreviado)
@@ -480,9 +522,9 @@ public class PruebaCrearXML {
 
         // Actividad 
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:ActividadTupla");
-        addElementoIde(ele, "dgi-eco-bas:ActivityDescription", D_ACTUAL, "2009");
+        addElementoIde(ele, "dgi-eco-bas:ActivityDescription", D_ACTUAL, "2009");  // Actividad: Descripción
         ele = addElemento(ele, "dgi-eco-bas:ActivityCodeCNAE2009");
-        addElementoIde(ele, "dgi-cnae-09:Xcode_ACC.CNAE." + datosIdentificacion.get("2001"), D_ACTUAL, "2001");
+        addElementoIde(ele, "dgi-cnae-09:Xcode_ACC.CNAE." + buscar("2001"), D_ACTUAL, "2001"); // Actividad: CNAE
 
         // Personal Asalariado - Ejercicio Actual
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:PersonalAsalariadoTupla");
@@ -585,7 +627,7 @@ public class PruebaCrearXML {
     }
     
     public static void main(String[] args) {
-    	pruebaCrearXBRL();
+//    	pruebaCrearXBRL();
     }
 
 }
