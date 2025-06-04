@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -50,6 +51,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 
 	private List<RegistryNote> notes;
 	private Integer customerId;
+	
+	private RegistryNote observation;
 
 	private boolean observationsOpen = true;
 	private boolean messagesOpen = true;
@@ -92,11 +95,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		content.clear();
 		
 		getCustomerNotes(customerNotes -> {
-			if(notes.isEmpty()) {
-				Label emptyNotes = new Label("No existe notas");
-				content.add(emptyNotes);
-			} else
-				createNotesPanel();
+			createNotesPanel();
 		});
 	}
 
@@ -117,107 +116,117 @@ public class CustomerNotesModule extends MainEntryPoint {
 	
 	private void createObservations() {
 		List<RegistryNote> observations = notes.stream().filter(note -> note.getNoteType().equals(NoteType.OBSERVATION)).collect(Collectors.toList());
+		
+		observation = new RegistryNote()
+				.setDomain(getCurrentDomain())
+				.setNoteDate(new Date())
+				.setNoteType(NoteType.OBSERVATION)
+				.setRegistry(customerId)
+				.setConfidential(false)
+				.setSecurityLevel(SecurityLevel.OFFICIAL);
+		
 		if(!observations.isEmpty()) {
-			HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
-			cardsPanel.addStyleName(AON.CSS.aonFlexColumn());
-			
-			observations.forEach(observation -> {
-				AonTableButton openBtn = new AonTableButton(
-						observationsOpen ? "Cerrar observaciones" : "Abrir observaciones" , 
-						observationsOpen ?  AON.CSS.aonIconUp() : AON.CSS.aonIconDown());
-				
-				TextBox description = new TextBox();
-				description.setValue(observation.getDescription());
-				description.getElement().getStyle().setProperty("font-size", "1rem");
-				description.getElement().getStyle().setProperty("font-weight", "700");
-				description.getElement().getStyle().setProperty("color", "#5f6368");
-				description.getElement().getStyle().setProperty("border", "none");
-				description.getElement().getStyle().setProperty("cursor", "pointer");
-				description.getElement().setPropertyString("placeholder", "Descripci\u00f3n");
-				description.getElement().getStyle().setProperty("background", "transparent");
-				description.addValueChangeHandler(e -> {
-					observation.setDescription(description.getValue());
-					saveNote(observation);
-				});
-				
-				TextArea comments = new TextArea();
-				comments.setValue(observation.getComments());
-				comments.setVisibleLines(4);
-				comments.getElement().getStyle().setProperty("font-size", ".8rem");
-				comments.getElement().getStyle().setProperty("font-weight", "500");
-				comments.getElement().getStyle().setProperty("color", "#5f6368");
-				comments.getElement().getStyle().setProperty("border", "none");
-				comments.getElement().getStyle().setProperty("cursor", "pointer");
-				comments.getElement().getStyle().setProperty("background", "transparent");
-				comments.getElement().getStyle().setProperty("resize", "vertical");
-				comments.getElement().setPropertyString("placeholder", "Observaci\u00f3n");	
-				comments.addValueChangeHandler(e -> {
-					observation.setComments(comments.getValue());
-					saveNote(observation);
-				});
-				
-				AonCustomCardSmall card = new AonCustomCardSmall(description, openBtn);
-				card.setToolbarWidgetShown();
-				
-				HTMLPanel cardContentPanel = new HTMLPanel(AonStringUtils.EMPTY);
-				cardContentPanel.addStyleName(AON.CSS.aonFlexColumn());
-				
-				cardContentPanel.add(comments);
-				
-				HTMLPanel footerPanel = new HTMLPanel(AonStringUtils.EMPTY);
-				footerPanel.addStyleName(AON.CSS.aonItemFlex());
-				footerPanel.addStyleName(AON.CSS.aonFlexBetween());
-				
-				HTMLPanel buttonsPanel = new HTMLPanel(AonStringUtils.EMPTY);
-				buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
-				buttonsPanel.addStyleName(AON.CSS.aonCustomCardButton());
-				footerPanel.add(buttonsPanel);
-				
-				AonTableButton deleteBtn = new AonTableButton("Borrar observaci\u00f3n", AON.CSS.aonIconDelete());
-				deleteBtn.addClickHandler(e -> {
-					e.stopPropagation();
-					
-					observation.setDescription(AonStringUtils.EMPTY);
-					observation.setComments(AonStringUtils.EMPTY);
-					observation.setNoteDate(null);
-					
-					saveNote(observation);
-				});
-				buttonsPanel.add(deleteBtn);
-				
-				AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
-				noteBtn.addClickHandler(e -> {
-					e.stopPropagation();
-					moveToNotes(observation);
-				});
-				buttonsPanel.add(noteBtn);
-					
-				footerPanel.add(new Label(null == observation.getNoteDate() ? "" : formatDate.format(observation.getNoteDate())));
-				
-				cardContentPanel.add(footerPanel);
-				
-				card.add(cardContentPanel);
-				
-				cardsPanel.add(card);
-				
-				openBtn.addClickHandler(e -> {
-					observationsOpen = !observationsOpen;
-					cardContentPanel.setVisible(observationsOpen);
-					openBtn.setTitle(observationsOpen ? "Cerrar observaciones" : "Abrir observaciones");
-					
-					if(observationsOpen) {
-						openBtn.removeStyleName(AON.CSS.aonIconDown());
-						openBtn.addStyleName(AON.CSS.aonIconUp());
-					} else {
-						openBtn.removeStyleName(AON.CSS.aonIconUp());
-						openBtn.addStyleName(AON.CSS.aonIconDown());
-					}
-					
-				});
-			});
-			
-			content.add(cardsPanel);
+			observation = observations.get(0);
 		}
+		
+		HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		cardsPanel.addStyleName(AON.CSS.aonFlexColumn());
+		
+		AonTableButton openBtn = new AonTableButton(
+				observationsOpen ? "Cerrar observaciones" : "Abrir observaciones" , 
+				observationsOpen ?  AON.CSS.aonIconUp() : AON.CSS.aonIconDown());
+		
+		TextBox description = new TextBox();
+		description.setValue(observation.getDescription());
+		description.getElement().getStyle().setProperty("font-size", "1rem");
+		description.getElement().getStyle().setProperty("font-weight", "700");
+		description.getElement().getStyle().setProperty("color", "#5f6368");
+		description.getElement().getStyle().setProperty("border", "none");
+		description.getElement().getStyle().setProperty("cursor", "pointer");
+		description.getElement().setPropertyString("placeholder", "Descripci\u00f3n");
+		description.getElement().getStyle().setProperty("background", "transparent");
+		description.addValueChangeHandler(e -> {
+			observation.setDescription(description.getValue());
+			saveNote(observation);
+		});
+		
+		TextArea comments = new TextArea();
+		comments.setValue(observation.getComments());
+		comments.setVisibleLines(4);
+		comments.getElement().getStyle().setProperty("font-size", ".8rem");
+		comments.getElement().getStyle().setProperty("font-weight", "500");
+		comments.getElement().getStyle().setProperty("color", "#5f6368");
+		comments.getElement().getStyle().setProperty("border", "none");
+		comments.getElement().getStyle().setProperty("cursor", "pointer");
+		comments.getElement().getStyle().setProperty("background", "transparent");
+		comments.getElement().getStyle().setProperty("resize", "vertical");
+		comments.getElement().setPropertyString("placeholder", "Observaci\u00f3n");	
+		comments.addValueChangeHandler(e -> {
+			observation.setComments(comments.getValue());
+			saveNote(observation);
+		});
+		
+		AonCustomCardSmall card = new AonCustomCardSmall(description, openBtn);
+		card.setToolbarWidgetShown();
+		
+		HTMLPanel cardContentPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		cardContentPanel.addStyleName(AON.CSS.aonFlexColumn());
+		
+		cardContentPanel.add(comments);
+		
+		HTMLPanel footerPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		footerPanel.addStyleName(AON.CSS.aonItemFlex());
+		footerPanel.addStyleName(AON.CSS.aonFlexBetween());
+		
+		HTMLPanel buttonsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		buttonsPanel.addStyleName(AON.CSS.aonItemFlex());
+		buttonsPanel.addStyleName(AON.CSS.aonCustomCardButton());
+		footerPanel.add(buttonsPanel);
+		
+		AonTableButton deleteBtn = new AonTableButton("Borrar observaci\u00f3n", AON.CSS.aonIconDelete());
+		deleteBtn.addClickHandler(e -> {
+			e.stopPropagation();
+			
+			observation.setDescription(AonStringUtils.EMPTY);
+			observation.setComments(AonStringUtils.EMPTY);
+			observation.setNoteDate(null);
+			
+			saveNote(observation);
+		});
+		buttonsPanel.add(deleteBtn);
+		
+		AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
+		noteBtn.addClickHandler(e -> {
+			e.stopPropagation();
+			moveToNotes(observation);
+		});
+		buttonsPanel.add(noteBtn);
+			
+		footerPanel.add(new Label(null == observation.getNoteDate() ? "" : formatDate.format(observation.getNoteDate())));
+		
+		cardContentPanel.add(footerPanel);
+		
+		card.add(cardContentPanel);
+		
+		cardsPanel.add(card);
+		
+		openBtn.addClickHandler(e -> {
+			observationsOpen = !observationsOpen;
+			cardContentPanel.setVisible(observationsOpen);
+			openBtn.setTitle(observationsOpen ? "Cerrar observaciones" : "Abrir observaciones");
+			
+			if(observationsOpen) {
+				openBtn.removeStyleName(AON.CSS.aonIconDown());
+				openBtn.addStyleName(AON.CSS.aonIconUp());
+			} else {
+				openBtn.removeStyleName(AON.CSS.aonIconUp());
+				openBtn.addStyleName(AON.CSS.aonIconDown());
+			}
+			
+		});
+		
+		content.add(cardsPanel);
+		
 	}
 
 	private void createNotes() {
