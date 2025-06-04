@@ -1110,4 +1110,16 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void saveNote(String domainName, int domain, String user, RegistryNote note, AsyncCallback<RegistryNote> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveNote(domainName, domain, user, note, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteNote(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteNote(domainName, domain, user, id, new AsyncCallbackWrapper<>(callback));
+	}
+
 }
