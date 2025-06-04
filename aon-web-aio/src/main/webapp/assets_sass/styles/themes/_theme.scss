@@ -7,6 +7,7 @@
   $color-800, $color-900, $color-input, $color-box,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
+  $color-text-card,
   $color-red-100,  $color-red-500, $color-red-900,
   $color-green-100, $color-green-500, $color-green-900,
   $color-blue-100, $color-blue-500, $color-blue-900,
@@ -95,6 +96,19 @@
                 background-color: $color-box;
                 .aonCardTitle{
                   border-bottom: v.$px-1-6 solid $color-300;
+                }
+                .aonCardContent{
+                  >div{
+                    div{
+                      color: $color-text-card;
+                      &:hover{
+                        background-color: $color-50;
+                      }
+                      &.active{
+                        background-color: $color-100;
+                      }
+                    }
+                  }
                 }
               }
             }

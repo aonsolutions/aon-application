@@ -4,7 +4,7 @@ aon-right-panel{
   position: fixed;
   top: v.$height-cabecera;
   right: v.$px-0;
-  min-width: 350px;
+  min-width: v.$px-350;
   height: v.$pct-100;
   z-index: v.$num-1;
   transform: translateX(v.$px-0);
@@ -25,8 +25,8 @@ aon-right-panel{
       justify-content: space-between;
       #aonRightPanelTitle{
         align-content: center;
-        font-weight: 500;
-        font-size: 20px;
+        font-weight: v.$font-weight-medium;
+        font-size: v.$px-20;
       }
     }
     #aonRightPanelContent{
@@ -45,25 +45,18 @@ aon-right-panel{
             .aonCardTitle{
               #aonConfigThemesCardTitleSection1, #aonConfigHelpLangCardTitleSection1{
                 padding: v.$px-16;
-                font-weight: 500;
-                font-size: 18px;
+                font-weight: v.$font-weight-medium;
+                font-size: v.$px-18;
               }
             }
             .aonCardContent{
               >div{
-                padding: 1rem 0 1rem 0;
+                padding: v.$px-16 v.$px-0 v.$px-16 v.$px-0;
                 div{
-                  padding: 8px 1rem 8px 1rem;
+                  padding: v.$px-8 v.$px-16 v.$px-8 v.$px-16;
                   display: flex;
-                  gap: 8px;
-                  color: #64748B;
+                  gap: v.$px-8;
                   cursor: pointer;
-                  &:hover {
-                    background-color: #f8fafc;
-                  }
-                  &.active {
-                    background-color: #f1f5f9;
-                  }
                 }
               }
             }
