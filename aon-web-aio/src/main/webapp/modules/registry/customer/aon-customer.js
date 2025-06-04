@@ -723,7 +723,6 @@ export class AonCustomer extends AonReg {
 			display: flex;
 			flex-direction: column;
 			gap: 10px;
-			margin-top: 16px;
 			height: 100%;
 		`;
 		div.id = "customerNotesId";
