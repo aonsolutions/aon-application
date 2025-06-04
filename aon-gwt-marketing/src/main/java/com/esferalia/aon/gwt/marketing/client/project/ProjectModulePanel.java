@@ -151,7 +151,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	public void onSearch() {
 		ProjectParams params = getWidgetParams();
 		centerPanel.clear();
-		projectPanel = new ProjectPanel(params, centerPanel, customerId) {
+		projectPanel = new ProjectPanel(params, customerId) {
 
 			@Override
 			protected void onProjectOpen(Project project) {
