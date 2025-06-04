@@ -190,19 +190,19 @@ export class AonElement extends HTMLElement{
     return localStorage.getItem('sass') === 'true';
   };
   
-  isAyudaTorInfoautonomos(){
-	  const href = localStorage.getItem("aon_domain_name")
-	  return href.includes('ayudat') || href.includes('infoautonomos')
-  }
-  
-  isAyudat() {
+  isAyudaTorInfoautonomos() {
     const href = localStorage.getItem("aon_domain_name");
-    return href.includes('ayudat');
+    return href ? href.includes('ayudat') || href.includes('infoautonomos') : false;
+  }
+
+  isAyudaT() {
+    const href = localStorage.getItem("aon_domain_name");
+    return href ? href.includes('ayudat') : false;
   }
 
   isInfoautonomos() {
     const href = localStorage.getItem("aon_domain_name");
-    return href.includes('infoautonomos');
+    return href ? href.includes('infoautonomos') : false;
   }
 
   isSig(){

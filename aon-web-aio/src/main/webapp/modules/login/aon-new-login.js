@@ -26,7 +26,6 @@ import { AonDesktop } from "../company/aon-desktop.js";
 
 import * as GWT from '../../gwt/gwt.js';
 
-import {setupThemeToggleButtons} from '../utils/theme';
 import { AonRightPanel } from '../aon-right-panel.js';
 import { AonConfig } from '../aon-config.js';
 
@@ -55,19 +54,6 @@ export class AonNewLogin extends AonElement {
     divLogoToolbar.className = CSS.AON_LOGIN_LOGO;
     toolbar.appendChild(divLogoToolbar);
 
-/*
-    let divLanguage = this.createElement(TAG.DIV);
-    divLanguage.id = "aonLoginLanguageDivToolbar";
-    divLanguage.addEventListener(EVENT.CLICK, () => this.languageDialog());
-    toolbar.appendChild(divLanguage);
-
-    let languageButton    = new AonIconButton();
-    languageButton.id     = "aonLoginLanguageButton";
-    languageButton.icon   = MATERIAL_ICONS.LANGUAGE;
-    languageButton.title  = MSG.SELECT_LANGUAGE;
-    divLanguage.appendChild(languageButton);
-*/
-
     const rightPanel = new AonRightPanel();
     this.appendChild(rightPanel);
     rightPanel.setTitle(MSG.CONFIGURATION);
@@ -87,28 +73,6 @@ export class AonNewLogin extends AonElement {
     headerConfig.appendChild(headerConfigButton);
 
     toolbar.appendChild(headerConfig);
-    
-
-/*
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Theme Mode Selector
-    const themeSelector = this.createElement(TAG.DIV);
-    themeSelector.className = "theme-toggle-container";
-
-    ['light', 'dark', 'auto'].forEach(mode => {
-      const btn = this.createElement(TAG.BUTTON);
-      btn.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-      btn.setAttribute('data-theme-mode', mode);
-      btn.className = "theme-toggle-btn";
-      themeSelector.appendChild(btn);
-    });
-
-    toolbar.appendChild(themeSelector);
-    setupThemeToggleButtons();
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-*/
-
-
 
     // Content
     this.createLogo();

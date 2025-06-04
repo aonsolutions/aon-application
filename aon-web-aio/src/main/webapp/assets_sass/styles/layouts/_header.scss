@@ -19,4 +19,14 @@
   #loginConfiguration{
     display: flex;
   }
+  
+  // Cabecera que no es login
+  #aonHeaderWeb{
+    display: flex;
+    
+    #aonHeaderButtons{
+      display: flex;
+      gap: v.$gap;
+    }
+  }
 }
