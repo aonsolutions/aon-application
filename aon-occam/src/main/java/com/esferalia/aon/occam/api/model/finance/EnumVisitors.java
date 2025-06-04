@@ -128,7 +128,7 @@ public class EnumVisitors {
 	}
 	
 	public static interface IInvoiceCommunicationTypeVisitor {
-		void visitSII();
+		void visitSII() throws Exception;
 		void visitTBAI();
 		void visitLROE() throws Exception;
 		void visitSERES();		

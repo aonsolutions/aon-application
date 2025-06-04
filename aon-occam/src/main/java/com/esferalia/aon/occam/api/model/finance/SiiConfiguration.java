@@ -19,7 +19,9 @@ public class SiiConfiguration implements Serializable{
 	private boolean autosend;
 	private Date includeDate;
 	private String registryDate;
-
+	
+	private boolean prepareNewSii;
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -118,6 +120,15 @@ public class SiiConfiguration implements Serializable{
 	
 	public boolean isAuditDate() {
 		return "audit".equalsIgnoreCase(getRegistryDate());
+	}
+	
+	public boolean isPrepareNewSii() {
+		return prepareNewSii;
+	}
+	
+	public SiiConfiguration setPrepareNewSii(boolean prepareNewSii) {
+		this.prepareNewSii = prepareNewSii;
+		return this;
 	}
 	
 }

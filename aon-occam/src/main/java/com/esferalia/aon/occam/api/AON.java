@@ -8053,6 +8053,14 @@ public class AON {
 		}
 	}
 	
+	// SII 
+	
+	public static void prepareNewSii(Domain domain, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
+			getFinance().prepareNewSii(ctx);
+		}
+	}
+	
 	// GEOZONE
 	
 	public static GeoZone get(String domainName, Integer domainId, String login, GeoZoneFilter filter) {

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.sii;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -9,6 +10,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMenu;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -22,6 +24,8 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -29,11 +33,18 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,17 +52,21 @@ public class SiiMain extends DockLayoutPanel {
 	
 	private final AonMenuItem chapter1 = new AonMenuItem()
 			.setTitle("Facturas emitidas")
-			.addItem(new AonMenuItem().setTitle("Generales"))
-			.addItem(new AonMenuItem().setTitle("Simplificadas"))
-			.addItem(new AonMenuItem().setTitle("Rectificativas"))
-			.addItem(new AonMenuItem().setTitle("Intracomunitarias"));
+			.setHandler(issuedInvoiceHandler())
+//			.addItem(new AonMenuItem().setTitle("Generales"))
+//			.addItem(new AonMenuItem().setTitle("Simplificadas"))
+//			.addItem(new AonMenuItem().setTitle("Rectificativas"))
+//			.addItem(new AonMenuItem().setTitle("Intracomunitarias"))
+			;
 	
 	private final AonMenuItem chapter2 = new AonMenuItem()
 			.setTitle("Facturas recibidas")
-			.addItem(new AonMenuItem().setTitle("Compras"))
-			.addItem(new AonMenuItem().setTitle("Gastos"))
-			.addItem(new AonMenuItem().setTitle("Rectificativas"))
-			.addItem(new AonMenuItem().setTitle("Intracomunitarias"));
+			.setHandler(receivedInvoiceHandler())
+//			.addItem(new AonMenuItem().setTitle("Compras"))
+//			.addItem(new AonMenuItem().setTitle("Gastos"))
+//			.addItem(new AonMenuItem().setTitle("Rectificativas"))
+//			.addItem(new AonMenuItem().setTitle("Intracomunitarias"))
+			;
 	
 	private final AonMenuItem chapter3 = new AonMenuItem()
 			.setTitle("Bienes de inversi\u00f3n");
@@ -75,10 +90,14 @@ public class SiiMain extends DockLayoutPanel {
 	private FiscalModelModuleOptions<FiscalModel> options;
 	private SiiConfiguration siiConfiguration;
 	InvoiceGrid invoiceGrid;
+	
+	Sii sii;
 
-	protected SiiMain(API api, FiscalModelModuleOptions<FiscalModel> options) {
+	protected SiiMain(Sii sii, API api, FiscalModelModuleOptions<FiscalModel> options) {
 		super(Unit.PX);
 		this.api = api;
+		this.sii = sii;
+		
 		SII_SERVICE.getSiiConfiguration(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<SiiConfiguration>() {
 			
 			@Override
@@ -135,13 +154,40 @@ public class SiiMain extends DockLayoutPanel {
 		return filterParams;
 	}
 	
+	private ClickHandler issuedInvoiceHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getFilterParams()
+				.setCommunicationType(InvoiceCommunicationType.SII)
+				.setType(InvoiceType.SALES);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		};
+	}
+	
+	private ClickHandler receivedInvoiceHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				getFilterParams()
+				.setCommunicationType(InvoiceCommunicationType.SII)
+				.setType(InvoiceType.PURCHASE)
+				.addType(InvoiceType.EXPENSES);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		};
+	}
+	
 	private AonMenu getMenu() {
 		AonMenu aonMenu = new AonMenu();
 		aonMenu.addItem(chapter1);
 		aonMenu.addItem(chapter2);
-		aonMenu.addItem(chapter3);
-		aonMenu.addItem(chapter4);
-		aonMenu.addItem(chapter5);
+//		aonMenu.addItem(chapter3);
+//		aonMenu.addItem(chapter4);
+//		aonMenu.addItem(chapter5);
 		return aonMenu;
 	}
 	
@@ -173,6 +219,9 @@ public class SiiMain extends DockLayoutPanel {
 		this.options = options;
 	}
 	
+	public Sii getSii() {
+		return sii;
+	}
 	
 	AonToolbarButton sendButton;
 	AonToolbarButton bajaButton;
@@ -198,14 +247,87 @@ public class SiiMain extends DockLayoutPanel {
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
 		};
+		searchBox.setAdvancedSearch(advancedSearchPanel());
 		toolbarPanel.showSearchPanel(searchBox);
 		
 		return toolbarPanel;
 	}
 
+	private VerticalPanel advancedSearchPanel() {
+		VerticalPanel vp = new VerticalPanel();
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		Label label2 = new Label(AON.MSG.from());
+		label2.setWidth("50px");
+		label2.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp2.add(label2);
+		DateBoxEx from = new DateBoxEx();
+		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				getFilterParams().setFrom(from.getValue()).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp2.add(from);
+		vp.add(hp2);
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		Label label3 = new Label(AON.MSG.to());
+		label3.setWidth("50px");
+		label3.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp3.add(label3);
+		DateBoxEx to = new DateBoxEx();
+		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				getFilterParams().setTo(to.getValue()).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp3.add(to);
+		vp.add(hp3);
+		
+		HorizontalPanel hp4 = new HorizontalPanel();
+		Label label4 = new Label(AON.MSG.status());
+		label4.setWidth("50px");
+		label4.getElement().getStyle().setPaddingBottom(10, Unit.PX);
+		hp4.add(label4);
+
+		ListBox status = new ListBox();
+		status.addItem("-", "-");
+		for(InvoiceCommunicationStatus st : InvoiceCommunicationStatus.values()) {
+			status.addItem(getStatusName(st), st.name());
+		}
+
+		status.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				InvoiceCommunicationStatus st = InvoiceCommunicationStatus.safeValueOf(status.getSelectedValue());
+				getFilterParams().setCommunicationStatus(st).setPage(1).setPerPage(30);
+				invoiceGrid.setFilterParams(getFilterParams());
+			}
+		});
+		hp4.add(status);
+		vp.add(hp4);
+		return vp;
+	}
+	
+	private String getStatusName(InvoiceCommunicationStatus st) {
+		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
+		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
+		else if(InvoiceCommunicationStatus.CANCELLED.equals(st)) return "Anulada";
+		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
+		else return "Pendiente";
+	}
+	
 	public void initializeFilter() {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
+			.setCommunicationType(InvoiceCommunicationType.SII)
 			.setType(InvoiceType.SALES);
 	}
 	

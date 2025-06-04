@@ -75,7 +75,7 @@ public class Sii extends MainEntryPoint {
 		declarationContainer = new SimpleLayoutPanel();
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		splitLayoutPanel.add(declarationContainer);
-		declarationContainer.setWidget(new SiiMain(api, options));
+		declarationContainer.setWidget(new SiiMain(this, api, options));
 		options.getParentWidget().add(aonLayout);		
 	}
 

@@ -29,6 +29,7 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	private Company company;
 	private Person person;
 	private TbaiConfiguration tbaiConfiguration;
+	private SiiConfiguration siiConfiguration;
 	
 	public BasicCommunicationInvoiceTypeVisitor(Domain domain, User user, Invoice invoice) {
 		this.domain = domain;
@@ -97,7 +98,9 @@ public class BasicCommunicationInvoiceTypeVisitor {
 	}
 	
 	protected SiiConfiguration getSiiConfiguration() {
-		return AON.getSiiConfiguration(getDomain(), getUser())
+		return siiConfiguration != null
+			? siiConfiguration
+			: AON.getSiiConfiguration(getDomain(), getUser())
 				.setCertificate(getCertificate());
 	}
 	

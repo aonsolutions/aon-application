@@ -1,10 +1,17 @@
 package net.aonsolutions.aon.invoice.communication.visitor;
 
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 
+import net.aonsolutions.aon.sii.SIIManager;
 import net.aonsolutions.aon.tbai.TBAI;
 
 public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInvoiceTypeVisitor implements IInvoiceCommunicationTypeVisitor {
@@ -18,8 +25,17 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	}
 	
 	@Override
-	public void visitSII() {
+	public void visitSII() throws Exception {
+		SIIManager manager = SIIManager.getInstance(getSiiConfiguration());
 		
+		AccountingReportParams params = new AccountingReportParams();
+		params.setDomain(getDomain().getId());
+		params.setInvoices(new Integer[] {getInvoice().getId()});
+		
+		LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(getDomain().getName(), getDomain().getId(), getUser().getLogin(), params, "")
+				.collect(Collectors.toCollection(LinkedList::new));
+			
+		manager.bajaFacturas(getDomain(), getUser().getLogin(), getCompany(), getInvoice(), contextList, null);
 	}
 
 	@Override

@@ -237,6 +237,7 @@ public interface IFinance {
 
 	public SiiConfiguration getSiiConfiguration(AONContext ctx);
 	public SiiConfiguration saveSiiConfiguration(AONContext ctx, SiiConfiguration config);
+	public void prepareNewSii(AONContext ctx);
 
 	
 	// 	***********************************************

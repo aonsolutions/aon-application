@@ -29,7 +29,7 @@ public interface InvoiceCommunicationServiceAsync {
 	void bajaLroe240(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<String> callback);
 	void altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
-			AsyncCallback<String> callback);
+			AsyncCallback<ICResponse> callback);
 	void bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams,
 			AsyncCallback<String> callback);
 	

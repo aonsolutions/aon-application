@@ -46,7 +46,21 @@ public class SIIManager {
 		this.siiConfiguration = siiConfiguration;
 	}
 
-	// -------------------- FACTURAS EMITIDAS
+	// -------------------- FACTURAS 
+	
+	public JSONArray suministroFacturas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) throws Exception {
+		return invoice.isSales() 
+				? suministroFacturasEmitidas(domain, login, company, invoice, contextList, terceros)
+				: suministroFacturasRecibidas(domain, login, company, invoice.getId(), contextList, terceros, false);
+	}
+	
+	public JSONArray bajaFacturas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+		return invoice.isSales() 
+				? bajaFacturasEmitidas(domain, login, company, invoice.getId(), contextList, terceros)
+				: bajaFacturasRecibidas(domain, login, company, invoice.getId(), contextList, terceros);
+	}
+
+	// -------------------- FACTURAS EMITIDAS	
 
 	protected byte[] getSuministroFacturasEmitidas(Domain domain, String login, Company company, Invoice invoice, LinkedList<VatContext> contextList, String terceros) {		
 		LinkedList<VatContext> modList = contextList.stream().filter(v->  "Correcto".equals(v.getSiiStatus())
@@ -137,7 +151,7 @@ public class SIIManager {
 		return new JSONArray();
 	}
 	
-	protected JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	public JSONArray bajaFacturasEmitidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getSiiConfiguration(), SIIType.FACTURAS_EMITIDAS);
 		
 		if(getSiiConfiguration().isAraba()) {
@@ -253,7 +267,7 @@ public class SIIManager {
     	return new JSONArray();
     }
 	
-	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	public JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		String uri = SIIUri.getInstance().getURI(getSiiConfiguration(), SIIType.FACTURAS_RECIBIDAS);
 
 		if(getSiiConfiguration().isAraba()) {

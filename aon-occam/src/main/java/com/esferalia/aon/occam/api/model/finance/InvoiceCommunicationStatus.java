@@ -1,24 +1,30 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum InvoiceCommunicationStatus implements Serializable{
-
+	
 	PENDING("Pendiente"),
-	ACCEPTED("Aceptada"),
-	ACCEPTED_WITH_ERRORS("Aceptada con Errores"),
-	WRONG("Incorrecta"),
+	ACCEPTED("Aceptada", "Correcto"),
+	ACCEPTED_WITH_ERRORS("Aceptada con Errores", "AceptadoConErrores"),
+	WRONG("Incorrecta", "Incorrecto"),
 	CANCELLED("Anulada");
 	
-	String description;
-	private InvoiceCommunicationStatus(String description) {
+	String[] description;
+	private InvoiceCommunicationStatus(String... description) {
 		this.description = description;
 	}
 	
 	public String getDescription() {
-		return description;
+		return description[0];
+	}
+	
+	public List<String> getDescriptions() {
+		return Arrays.asList(description);
 	}
 	
 	public Byte value(){
@@ -39,7 +45,7 @@ public enum InvoiceCommunicationStatus implements Serializable{
 	public static InvoiceCommunicationStatus safeValueOf( String i ) {
 		if(AonStringUtils.isBlank(i)) return null;
 		for (InvoiceCommunicationStatus rs : values()) {
-			if(i.equalsIgnoreCase(rs.name()))
+			if(i.equalsIgnoreCase(rs.name()) || rs.getDescriptions().contains(i))
 				return rs;
 		}
 		return null;

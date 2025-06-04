@@ -54,7 +54,12 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 
 	@Override
 	public SiiConfiguration getSiiConfiguration(String domainName, int domainId, String user) {
-		return AON.getSiiConfiguration(domainName, domainId, user);
+		Domain domain = new Domain().setName(domainName).setId(domainId);
+		SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, user);
+		if(!siiConfiguration.isPrepareNewSii()) {
+			AON.prepareNewSii(domain, user);
+		}
+		return siiConfiguration;
 	}
 	
 	@Override
@@ -209,14 +214,56 @@ public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceSe
 		}
 	}
 	
+	// SII
+	
 	@Override
-	public String altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
-		return null;
+	public ICResponse altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
+		try {
+			Domain domain = AON.getDomain(domainName, domainId, user);
+			Company company = AON.getCompanyForDomain(domainName, domainId, user);
+			
+			Integer invoiceId = invoice.getId();
+			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
+			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+			
+			AcceptInvoiceCommunicationTypeVisitor visitor = (AcceptInvoiceCommunicationTypeVisitor) 
+					new AcceptInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())
+						.setCompany(company);
+
+			InvoiceCommunicationType.SII.visit(visitor);
+			return new ICResponse().setError(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(true);
+			icResponse.setErrorMessage(e.getMessage());
+			return icResponse;
+		}
 	}
 
 	@Override
 	public String bajaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams) {
-		return null;
+		try {
+			Domain domain = AON.getDomain(domainName, domainId, user);
+			Company company = AON.getCompanyForDomain(domainName, domainId, user);
+			
+			Integer invoiceId = invoice.getId();
+			invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user, invoiceId);
+			invoice.setInvoiceInfo(AON.getInvoiceInfo(domain, new User().setLogin(user), f -> f.getInvoiceProperty().eq(invoiceId)));
+			
+			CancelInvoiceCommunicationTypeVisitor visitor = (CancelInvoiceCommunicationTypeVisitor) 
+					new CancelInvoiceCommunicationTypeVisitor(domain, new User().setLogin(user), invoice, aeatParams.getCertificateId())
+						.setCompany(company);
+
+			InvoiceCommunicationType.SII.visit(visitor);
+			return null; // new ICResponse().setError(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ICResponse icResponse = new ICResponse();
+			icResponse.setError(true);
+			icResponse.setErrorMessage(e.getMessage());
+			return e.getMessage(); // icResponse;
+		}
 	}
 
 	@Override

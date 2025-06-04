@@ -705,6 +705,12 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
+	public void prepareNewSii(AONContext ctx) {
+		ctx.getDslContext().transaction(configuration -> SiiConfigurationDAO.prepareNewSii(ctx));
+	}
+
+	
+	@Override
 	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceFiscalDAO.save(ctx, config, invoice));

@@ -80,7 +80,7 @@ public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommuni
 	}
 	
 	@Override
-	public void altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+	public void altaSii(String domainName, int domainId, String user, Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.altaSii(domainName, domainId, user, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
 		
