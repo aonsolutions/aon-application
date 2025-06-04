@@ -77,6 +77,10 @@ export class AonCustomer extends AonReg {
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
 		if (this.registry.id && this.registry.getCreationUser) {
+			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
+		}
+		
+		if (this.registry.id && this.registry.getCreationUser) {
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
 		}
 
@@ -480,6 +484,7 @@ export class AonCustomer extends AonReg {
 
 		div.style.position = 'absolute';
 		div.style.height = '100%';
+		div.style.marginTop = '.5rem';
 
 		localStorage.setItem("customer", this.registry.getId());
 
@@ -710,6 +715,40 @@ export class AonCustomer extends AonReg {
 
 	setOffice(office) {
 		this.office = office;
+	}
+	
+	notes(){
+		let div = this.createElement(TAG.DIV);
+		div.style = `
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-top: 16px;
+			height: 100%;
+		`;
+		div.id = "customerNotesId";
+
+		if(this.isMobile() || !this.isBeta()) {
+			let dialog = this.getApplication().getDialog();
+			dialog.clear();
+			dialog.setTitle(MSG.NOTES);
+			if(this.isMobile()) dialog.type = 'fullscreen';
+			else dialog.width = '400px';
+			dialog.setContent(div);
+			dialog.addAcceptAction(() => {});
+			dialog.open();
+		} else {
+			let rightSidenav = this.getApplication().getRightSidenav();
+			this.clearElement(rightSidenav);
+			if (rightSidenav.style.flexBasis === "0px") {
+				rightSidenav.appendChild(div);
+				
+				localStorage.setItem("customer", this.registry.getId());
+				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+			}
+			
+			this.getApplication().toogleRightSidenav();
+		}	
 	}
 }
 

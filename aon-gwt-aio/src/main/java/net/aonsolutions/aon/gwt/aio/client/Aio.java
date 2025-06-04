@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.issues.client.IssuesEntryPoint;
 import com.esferalia.aon.gwt.marketing.client.commercial.SellerModule;
 import com.esferalia.aon.gwt.marketing.client.commercial.SellerWorkloadModule;
+import com.esferalia.aon.gwt.marketing.client.customer.CustomerNotesModule;
 import com.esferalia.aon.gwt.marketing.client.marketing.campaign.MarketingCompaignModule;
 import com.esferalia.aon.gwt.marketing.client.project.ProjectModule;
 import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
@@ -377,6 +378,22 @@ public class Aio implements EntryPoint {
 				public void onSuccess() {
 					ProjectModule projectModule = new ProjectModule();
 					projectModule.onModuleLoad();
+				}
+			});		
+			break;
+			
+		case Modules.CUSTOMER_NOTES_MODULE:
+			GWT.runAsync(CustomerNotesModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerNotesModule customerNotesModule = new CustomerNotesModule();
+					customerNotesModule.onModuleLoad();
 				}
 			});		
 			break;
