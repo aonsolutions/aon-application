@@ -1,4 +1,4 @@
-import { request, put, get, getDefaultSessionData, getParentSessionData } from "./request.js";
+import { request, put, get, post, getDefaultSessionData, getParentSessionData } from "./request.js";
 import { API, API_URL } from "../environments/environments.js";
 import * as LS from './localStorageService.js';
 
@@ -84,7 +84,7 @@ export const getCompany = () => {
   });
 }
 
-export const setDomainApp = (data) => put(API.COMPANY_BOOKING, data);
+export const setDomainApp = (data, sessionData) => put(API.COMPANY_BOOKING, data, sessionData);
 
 export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 
@@ -98,7 +98,7 @@ export const getCompanyActivities = (data) => get(API.COMPANY_ACTIVITIES, data);
 
 export const saveCompany = (data) => put(API.COMPANY, data)
 
-// export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
+export const getBookingDomainUserRoles = (data, sessionData) => get(API.COMPANY_APPROLES, data, sessionData);
 
 export const getDomainUserRoles = (data) => {
   const domain = LS.getDomainId();
@@ -145,13 +145,7 @@ export const getDomainApps = (domain) => {
   };
 
   export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);
-  export const getThemeUrl = async (data) => {
-  	const query = new URLSearchParams(data).toString();
-  	const response = await fetch(`${API_URL}/themeurl?${query}`);
-  	if (!response.ok) throw new Error("Error al obtener la URL del tema");
 
-  	const json = await response.json();
-  	return json.url; // <- esto es lo que querés
-  };
-
+  export const getContratado = (data) => get(`${API_URL}/contracted_plans_servlet/apps`, data);
+  export const sendFormData = (data) => post(`${API_URL}/contracted_plans_servlet/callForm`, data);
 

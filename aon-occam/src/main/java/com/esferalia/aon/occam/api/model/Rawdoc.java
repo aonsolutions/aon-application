@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
@@ -40,7 +41,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public Integer getId() {
 		return id;
 	}
-	
 	public Rawdoc setId(Integer id) {
 		this.id = id;
 		return this;
@@ -49,7 +49,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public Integer getDomain() {
 		return domain;
 	}
-	
 	public Rawdoc setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
@@ -58,7 +57,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public RawdocNature getNature() {
 		return nature;
 	}
-	
 	public Rawdoc setNature(RawdocNature nature) {
 		this.nature = nature;
 		return this;
@@ -67,7 +65,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public RawdocType getType() {
 		return type;
 	}
-	
 	public Rawdoc setType(RawdocType type) {
 		this.type = type;
 		return this;
@@ -76,7 +73,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public RawdocStatus getStatus() {
 		return status;
 	}
-	
 	public Rawdoc setStatus(RawdocStatus status) {
 		this.status = status;
 		return this;
@@ -85,7 +81,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public String getJson() {
 		return json;
 	}
-	
 	public Rawdoc setJson(String json) {
 		this.json = json;
 		return this;
@@ -94,7 +89,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public TediInvoice getTediInvoice() {
 		return tediInvoice;
 	}
-	
 	public Rawdoc setTediInvoice(TediInvoice tediInvoice) {
 		this.tediInvoice = tediInvoice;
 		return this;
@@ -106,7 +100,6 @@ public class Rawdoc implements Serializable, HasAudit {
 		}
 		return invoice;
 	}
-	
 	public Rawdoc setInvoice(Invoice invoice) {
 		this.invoice = invoice;
 		return this;
@@ -115,7 +108,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public String getLog() {
 		return log;
 	}
-	
 	public Rawdoc setLog(String log) {
 		this.log = log;
 		return this;
@@ -124,7 +116,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public MimeType getMimeType() {
 		return mimeType;
 	}
-	
 	public Rawdoc setMimeType(MimeType mimeType) {
 		this.mimeType = mimeType;
 		return this;
@@ -133,7 +124,6 @@ public class Rawdoc implements Serializable, HasAudit {
 	public byte[] getData() {
 		return data;
 	}
-	
 	public Rawdoc setData(byte[] data) {
 		this.data = data;
 		return this;
@@ -142,14 +132,16 @@ public class Rawdoc implements Serializable, HasAudit {
 	public String getS3Bucket() {
 		return BUCKET;
 	}
-	
 	public String getS3Key() {
 		return s3Key;
 	}
-	
 	public Rawdoc setS3Key(String s3Key) {
 		this.s3Key = s3Key;
 		return this;
+	}
+	
+	public ExternalStorage getExternalStorage() {
+		return ExternalStorage.AWS;
 	}
 	
 	@Override
@@ -201,8 +193,9 @@ public class Rawdoc implements Serializable, HasAudit {
 	}
 	
 	public boolean isInbox() 		{return (this.getStatus() == RawdocStatus.INBOX);}
+	public boolean isProcessing() 	{return (this.getStatus() == RawdocStatus.PROCESSING);}
 	public boolean isProcessed() 	{return (this.getStatus() == RawdocStatus.PROCESSED);}
-	public boolean isRecordable() 	{return isInbox() || isProcessed();}	
+	public boolean isRecordable() 	{return (this.isInbox() || isProcessed());}	
 	public boolean isRejected() 	{return (this.getStatus() == RawdocStatus.REJECTED);}
 	public boolean isDraft() 		{return (this.getStatus() == RawdocStatus.DRAFT);}
 }

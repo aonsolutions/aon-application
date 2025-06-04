@@ -14,14 +14,14 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 	private Integer id;
 	private Integer domain;
 	private Integer accountEntry;
-	private Integer account;
+	private Integer accountId;
 	private String accountCode;
 	private String accountDescription;
 	private Integer line;
 	private String concept;
 	private double debit;
 	private double credit;
-	private Integer balancingAccount;
+	private Integer balancingAccountId;
 	private String balancingAccountCode;
 	private String balancingAccountDescription;
 	private String documentNumber;
@@ -63,13 +63,13 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return this;
 	}
 
-	public Integer getAccount() {
-		return account;
+	public Integer getAccountId() {
+		return accountId;
 	}
 
-	public AccountEntryDetail setAccount(Integer account) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.account , account) );
-		this.account = account;
+	public AccountEntryDetail setAccountId(Integer accountId) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.accountId , accountId) );
+		this.accountId = accountId;
 		return this;
 	}
 	
@@ -178,13 +178,13 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 		return setCredit(newCredit);
 	}
 
-	public Integer getBalancingAccount() {
-		return balancingAccount;
+	public Integer getBalancingAccountId() {
+		return balancingAccountId;
 	}
 
-	public AccountEntryDetail setBalancingAccount(Integer balancingAccount) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.balancingAccount, balancingAccount) );
-		this.balancingAccount = balancingAccount;
+	public AccountEntryDetail setBalancingAccountId(Integer balancingAccountId) {
+		this.setDirty( isDirty()?true:AonUtils.notEquals(this.balancingAccountId, balancingAccountId) );
+		this.balancingAccountId = balancingAccountId;
 		return this;
 	}
 	
@@ -268,14 +268,14 @@ public class AccountEntryDetail implements Serializable, HasAudit {
 				.setId(detail.id)
 				.setDomain(detail.domain)
 				.setAccountEntry(detail.accountEntry)
-				.setAccount(detail.account)
+				.setAccountId(detail.accountId)
 				.setAccountCode(detail.accountCode)
 				.setAccountDescription(detail.accountDescription)
 				.setLine(detail.line)
 				.setConcept(detail.concept)
 				.setDebit(detail.debit)
 				.setCredit(detail.credit)
-				.setBalancingAccount(detail.balancingAccount)
+				.setBalancingAccountId(detail.balancingAccountId)
 				.setBalancingAccountCode(detail.balancingAccountCode)
 				.setBalancingAccountDescription(detail.balancingAccountDescription)
 				.setDocumentNumber(detail.documentNumber)

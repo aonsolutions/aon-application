@@ -226,12 +226,6 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.run();
 			}
 		},
-		RawdocRecordModule {
-			@Override
-			void run() {
-				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule.run();
-			}
-		}
 		;
 		abstract void run();
 	}

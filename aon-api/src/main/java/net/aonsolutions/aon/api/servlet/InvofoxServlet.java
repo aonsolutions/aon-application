@@ -247,7 +247,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.append(jobId + "/")
 						.append(keyParams[5]);
 				
-				S3.copy(r.getS3Bucket(), r.getS3Bucket(), r.getS3Key(), newKey.toString());
+				S3.getInstance().copy(r.getS3Bucket(), r.getS3Bucket(), r.getS3Key(), newKey.toString());
 				
 				AON.rawdocDelete(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), r.getId());
 				// S3.delete(r.getS3Bucket(), r.getS3Key());
@@ -694,7 +694,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 							.setPercentage(21.0).setQuota(AonMathUtils.round(detail.getAmount() * 0.21))
 							.setVatDeductionType(VatDeductionType.WITH_RIGHT).setDeductiblePercent(100)
 							.setDeductibleQuota(AonMathUtils.round(detail.getAmount() * 0.21));
-					detail.addInvoiceTax(invoiceTax);
+					detail.addTax(invoiceTax);
 				}
 				return detail;
 			}).toList());
@@ -715,10 +715,11 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		JSONObject jsonObject = new JSONObject();
 		ocrDocument.getClientData().ifPresent(clientData -> clientData.getS3Object()
 				.ifPresent(s3Object -> s3Object.getBucket().ifPresent(bucketName -> s3Object.getKey().ifPresent(key -> {
-					URL url = S3.getURL(bucketName, key);
+					S3 s3 = S3.getInstance();
+					URL url = s3.getURL(bucketName, key);
 					jsonObject.put("url", url.toExternalForm());
 					jsonObject.put("path", url.toExternalForm());
-					String contentType = S3.getContentType(bucketName, key);
+					String contentType = s3.getContentType(bucketName, key);
 					jsonObject.put("content_type", contentType);
 					jsonObject.put("s3Bucket", key);
 					jsonObject.put("s3Key", key);
@@ -825,7 +826,7 @@ public class InvofoxServlet extends AonApiHttpServlet {
 		if (!accounts.isEmpty()) {
 			Account account = accounts.get(0);
 			invoice.setTediCategory(account.getCode());
-			invoice.getDetails().stream().forEach(d -> d.setAccount(account.getId()).setAccountCode(account.getCode())
+			invoice.getDetails().stream().forEach(d -> d.setAccountId(account.getId()).setAccountCode(account.getCode())
 					.setAccountDescription(account.getDescription()));
 		}
 		return invoice;

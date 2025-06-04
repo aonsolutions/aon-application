@@ -1,76 +1,84 @@
 import { AonElement } from '../components/AonElement.js';
-import { MSG, CSS, EVENT, TAG } from '../environments/environments.js'; 
-import * as LS  from '../services/localStorageService.js';
+import { MSG, CSS, EVENT, TAG } from '../environments/environments.js';
+import * as LS from '../services/localStorageService.js';
 
 export class AonJsfApp extends AonElement {
-	
+
 	IFRAME;
 	
-	viewId;
-	action;
-	actionListener;
-	
-	constructor () {
+	viewId = '';
+	action = '';
+	redirectUrl = '';
+	actionListener = '';
+	expireSession = 'true';
+
+	constructor() {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.clear();
 		this.init();
 		this.build();
 	}
 
 	init() {
-        this.id = 'aonJsfApp';
+		this.id = 'aonJsfApp';
 		this.IFRAME = this.id + 'Frame';
 	}
 
 	build() {
-		
-        let iframe = this.createElement(TAG.IFRAME, this.IFRAME);
-        iframe.name = this.IFRAME;
-        iframe.style.border = 'none';
-        iframe.style.width = '100%';
+
+		let iframe = this.getIFrame();
+		iframe.name = this.IFRAME;
+		iframe.style.border = 'none';
+		iframe.style.width = '100%';
 		let top = this.getBoundingClientRect().top;
-        iframe.style.height = `calc(100vh - ${top + 10}px)`;
-        
+		iframe.style.height = `calc(100vh - ${top + 10}px)`;
 
-        this.appendChild(iframe);
 
-        let form = this.createElement(TAG.FORM);
-		form.style.display = 'none';        
-        form.action = 'jsfapp';
-        form.target = this.IFRAME;
-        
-        let viewIdInput = this.createElement(TAG.INPUT);
-        viewIdInput.type = 'hidden';
-        viewIdInput.name = 'viewId';
-        viewIdInput.value = this.viewId;
+		this.appendChild(iframe);
+
+		let form = this.createElement(TAG.FORM);
+		form.style.display = 'none';
+		form.action = 'jsfapp';
+		form.target = this.IFRAME;
+
+		let viewIdInput = this.createElement(TAG.INPUT);
+		viewIdInput.type = 'hidden';
+		viewIdInput.name = 'viewId';
+		viewIdInput.value = this.viewId;
 		form.appendChild(viewIdInput);
-		
-        let actionInput = this.createElement(TAG.INPUT);
-        actionInput.type = 'hidden';
-        actionInput.name = 'action';
-        actionInput.value = this.action;
+
+		let actionInput = this.createElement(TAG.INPUT);
+		actionInput.type = 'hidden';
+		actionInput.name = 'action';
+		actionInput.value = this.action;
 		form.appendChild(actionInput);
 
-        let actionListenerInput = this.createElement(TAG.INPUT);
-        actionListenerInput.type = 'hidden';
-        actionListenerInput.name = 'actionListener';
-        actionListenerInput.value = this.actionListener;
+		let actionListenerInput = this.createElement(TAG.INPUT);
+		actionListenerInput.type = 'hidden';
+		actionListenerInput.name = 'actionListener';
+		actionListenerInput.value = this.actionListener;
 		form.appendChild(actionListenerInput);
 
-        let tokenInput = this.createElement(TAG.INPUT);
-        tokenInput.type = 'hidden';
-        tokenInput.name = 'token';
-        tokenInput.value = LS.getToken();
+		let tokenInput = this.createElement(TAG.INPUT);
+		tokenInput.type = 'hidden';
+		tokenInput.name = 'token';
+		tokenInput.value = LS.getToken();
 		form.appendChild(tokenInput);
 
-		let domainInput = this.createElement(TAG.INPUT);
-		domainInput.type = 'hidden';
-		domainInput.name = 'com.code.aon.jaas.domain';
-		domainInput.value = LS.getDomainName();
-		form.appendChild(domainInput);
+		let domainIdInput = this.createElement(TAG.INPUT);
+		domainIdInput.type = 'hidden';
+		domainIdInput.name = 'domainId';
+		domainIdInput.value = LS.getDomainId();
+		form.appendChild(domainIdInput);
+
+		let domainNameInput = this.createElement(TAG.INPUT);
+		domainNameInput.type = 'hidden';
+		domainNameInput.name = 'com.code.aon.jaas.domain';
+		domainNameInput.value = LS.getDomainName();
+		form.appendChild(domainNameInput);
 
 		let languageInput = this.createElement(TAG.INPUT);
 		languageInput.type = 'hidden';
@@ -78,21 +86,63 @@ export class AonJsfApp extends AonElement {
 		languageInput.value = LS.getLanguage();
 		form.appendChild(languageInput);
 
+		let redirectUrlInput = this.createElement(TAG.INPUT);
+		redirectUrlInput.type = 'hidden';
+		redirectUrlInput.name = 'redirectUrl';
+		redirectUrlInput.value = this.redirectUrl;
+		form.appendChild(redirectUrlInput);
+
+		let expireSessionInput = this.createElement(TAG.INPUT);
+		expireSessionInput.type = 'hidden';
+		expireSessionInput.name = 'expireSession';
+		expireSessionInput.value = this.expireSession;
+		form.appendChild(expireSessionInput);
+
 		this.appendChild(form);
 
-        form.submit();
-        
+		form.submit();
+
+		this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }))
+
+
 	}
 
-    getIFrame(){
-        return this.getElement(this.IFRAME);
-    }
-    
-     setViewId(viewId){
+	getIFrame() {
+		return this.getElement(this.IFRAME) || this.createElement(TAG.IFRAME, this.IFRAME);
+	}
+
+	setViewId(viewId) {
 		this.viewId = viewId;
-	}AonJsfApp
-	
-	
+	}
+
+	setExpireSession(expireSession) {
+		this.expireSession = expireSession;
+	}
+
+	setRedirectUrl(redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	isLoaded() {
+		let iframe = this.getIFrame();
+		let idocument = iframe.document || iframe.contentDocument || iframe.contentWindow?.document;
+
+		return new Promise((resolve, reject) => {
+			if (idocument?.readyState === "complete") {
+				resolve();
+			} else if ( iframe.isConnected ) {
+				iframe.addEventListener( EVENT.LOAD, resolve );
+			} else  {
+				this.addEventListener(EVENT.BUILD, () => {
+					iframe.addEventListener( EVENT.LOAD, resolve );						
+				});
+			}
+		});
+
+	}
+
+
+
 }
 
 /*
@@ -100,89 +150,89 @@ export class AonJsfApp extends AonElement {
 */
 
 export class AonJsfSale extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/sale.xhtml');
 	}
-	
+
 }
 
 export class AonJsfPurchase extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/purchase.xhtml');
 	}
-	
+
 }
 
 export class AonJsfExpense extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/expense.xhtml');
 	}
-	
+
 }
 
 export class AonJsfProduct extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/product.xhtml');
 	}
-	
+
 }
 
 export class AonJsfCustomer extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/customer.xhtml');
 	}
-	
+
 }
 
 export class AonJsfSupplier extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/supplier.xhtml');
 	}
-	
+
 }
 
 export class AonJsfCreditor extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/creditor.xhtml');
 	}
-	
+
 }
 
 
 export class AonJsfSaleInvoice extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/saleInvoice.xhtml');
 	}
-	
+
 }
 
 export class AonJsfPurchaseInvoice extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/purchaseInvoice.xhtml');
 	}
-	
+
 }
 
 export class AonJsfExpenseInvoice extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/expenseInvoice.xhtml');
@@ -190,7 +240,7 @@ export class AonJsfExpenseInvoice extends AonJsfApp {
 }
 
 export class AonJsfUndeductibleInvoice extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/undeductibleInvoice.xhtml');
@@ -199,7 +249,7 @@ export class AonJsfUndeductibleInvoice extends AonJsfApp {
 
 
 export class AonJsfInvoicePrint extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoicePrint.xhtml');
@@ -207,7 +257,7 @@ export class AonJsfInvoicePrint extends AonJsfApp {
 }
 
 export class AonJsfInvoiceRemove extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoiceRemove.xhtml');
@@ -215,7 +265,7 @@ export class AonJsfInvoiceRemove extends AonJsfApp {
 }
 
 export class AonJsfInvoiceDelivery extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoiceDelivery.xhtml');
@@ -223,7 +273,7 @@ export class AonJsfInvoiceDelivery extends AonJsfApp {
 }
 
 export class AonJsfFinanceCharge extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/financeCharge.xhtml');
@@ -231,7 +281,7 @@ export class AonJsfFinanceCharge extends AonJsfApp {
 }
 
 export class AonJsfFinancePayment extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/financePayment.xhtml');
@@ -239,7 +289,7 @@ export class AonJsfFinancePayment extends AonJsfApp {
 }
 
 export class AonJsfFBatchCharge extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/fbatchCharge.xhtml');
@@ -247,7 +297,7 @@ export class AonJsfFBatchCharge extends AonJsfApp {
 }
 
 export class AonJsfFBatchPayment extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/fbatchPayment.xhtml');
@@ -255,7 +305,7 @@ export class AonJsfFBatchPayment extends AonJsfApp {
 }
 
 export class AonJsfPayMethod extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/payMethod.xhtml');
@@ -263,7 +313,7 @@ export class AonJsfPayMethod extends AonJsfApp {
 }
 
 export class AonJsfProductCategory extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/productCategory.xhtml');
@@ -271,7 +321,7 @@ export class AonJsfProductCategory extends AonJsfApp {
 }
 
 export class AonJsfSegment extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/segment.xhtml');
@@ -279,7 +329,7 @@ export class AonJsfSegment extends AonJsfApp {
 }
 
 export class AonJsfGeotree extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/geotree.xhtml');
@@ -287,7 +337,7 @@ export class AonJsfGeotree extends AonJsfApp {
 }
 
 export class AonJsfSddMandate extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/sddMandate.xhtml');
@@ -295,7 +345,7 @@ export class AonJsfSddMandate extends AonJsfApp {
 }
 
 export class AonJsfFPaymentPrint extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/fPaymentPrint.xhtml');
@@ -303,7 +353,7 @@ export class AonJsfFPaymentPrint extends AonJsfApp {
 }
 
 export class AonJsfBankStatement extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/bankStatement.xhtml');
@@ -311,7 +361,7 @@ export class AonJsfBankStatement extends AonJsfApp {
 }
 
 export class AonJsfPrepayment extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/prepayment.xhtml');
@@ -319,7 +369,7 @@ export class AonJsfPrepayment extends AonJsfApp {
 }
 
 export class AonJsfIncreaseItem extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/increaseItem.xhtml');
@@ -327,7 +377,7 @@ export class AonJsfIncreaseItem extends AonJsfApp {
 }
 
 export class AonJsfInvoicingGroup extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoicingGroup.xhtml');
@@ -335,7 +385,7 @@ export class AonJsfInvoicingGroup extends AonJsfApp {
 }
 
 export class AonJsfInvoiceSigner extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoiceSigner.xhtml');
@@ -343,7 +393,7 @@ export class AonJsfInvoiceSigner extends AonJsfApp {
 }
 
 export class AonJsfFinancePrint extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/financePrint.xhtml');
@@ -351,7 +401,7 @@ export class AonJsfFinancePrint extends AonJsfApp {
 }
 
 export class AonJsfFinanceChequing extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/financeChequing.xhtml');
@@ -359,7 +409,7 @@ export class AonJsfFinanceChequing extends AonJsfApp {
 }
 
 export class AonJsfCashFlowForecast extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/cashFlowForecast.xhtml');
@@ -367,7 +417,7 @@ export class AonJsfCashFlowForecast extends AonJsfApp {
 }
 
 export class AonJsfCashFlowForecastReport extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/cashFlowForecastReport.xhtml');
@@ -375,7 +425,7 @@ export class AonJsfCashFlowForecastReport extends AonJsfApp {
 }
 
 export class AonJsfFeeInvoicing extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/feeInvoicing.xhtml');
@@ -383,7 +433,7 @@ export class AonJsfFeeInvoicing extends AonJsfApp {
 }
 
 export class AonJsfFeePreInvoicing extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/feePreInvoicing.xhtml');
@@ -391,7 +441,7 @@ export class AonJsfFeePreInvoicing extends AonJsfApp {
 }
 
 export class AonJsfFeePrint extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/feePrint.xhtml');
@@ -399,7 +449,7 @@ export class AonJsfFeePrint extends AonJsfApp {
 }
 
 export class AonJsfFeeAssigment extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/feeAssignment.xhtml');
@@ -407,7 +457,7 @@ export class AonJsfFeeAssigment extends AonJsfApp {
 }
 
 export class AonJsfProjectCommercial extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/projectCommercial.xhtml');
@@ -415,7 +465,7 @@ export class AonJsfProjectCommercial extends AonJsfApp {
 }
 
 export class AonJsfCommercialTerm extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialTerm.xhtml');
@@ -423,7 +473,7 @@ export class AonJsfCommercialTerm extends AonJsfApp {
 }
 
 export class AonJsfCommercialTracking extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialTracking.xhtml');
@@ -431,7 +481,7 @@ export class AonJsfCommercialTracking extends AonJsfApp {
 }
 
 export class AonJsfCommercialActivity extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialActivity.xhtml');
@@ -439,7 +489,7 @@ export class AonJsfCommercialActivity extends AonJsfApp {
 }
 
 export class AonJsfOffer extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/offer.xhtml');
@@ -447,7 +497,7 @@ export class AonJsfOffer extends AonJsfApp {
 }
 
 export class AonJsfCommercialStatSeller extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialStatSeller.xhtml');
@@ -455,7 +505,7 @@ export class AonJsfCommercialStatSeller extends AonJsfApp {
 }
 
 export class AonJsfCommercialStatProduct extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialStatProduct.xhtml');
@@ -463,7 +513,7 @@ export class AonJsfCommercialStatProduct extends AonJsfApp {
 }
 
 export class AonJsfCommercialStatTarget extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialStatTarget.xhtml');
@@ -471,7 +521,7 @@ export class AonJsfCommercialStatTarget extends AonJsfApp {
 }
 
 export class AonJsfCommercialStatCategory extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialStatCategory.xhtml');
@@ -479,7 +529,7 @@ export class AonJsfCommercialStatCategory extends AonJsfApp {
 }
 
 export class AonJsfSeller extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/seller.xhtml');
@@ -487,7 +537,7 @@ export class AonJsfSeller extends AonJsfApp {
 }
 
 export class AonJsfTarget extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/target.xhtml');
@@ -495,7 +545,7 @@ export class AonJsfTarget extends AonJsfApp {
 }
 
 export class AonJsfTargetDeduplication extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/targetDeduplication.xhtml');
@@ -503,7 +553,7 @@ export class AonJsfTargetDeduplication extends AonJsfApp {
 }
 
 export class AonJsfCommercialSellerStat extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialSellerStat.xhtml');
@@ -511,7 +561,7 @@ export class AonJsfCommercialSellerStat extends AonJsfApp {
 }
 
 export class AonJsfCommercialProductStat extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialProductStat.xhtml');
@@ -519,7 +569,7 @@ export class AonJsfCommercialProductStat extends AonJsfApp {
 }
 
 export class AonJsfCommercialTargetStat extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialTargetStat.xhtml');
@@ -527,7 +577,7 @@ export class AonJsfCommercialTargetStat extends AonJsfApp {
 }
 
 export class AonJsfCommercialCategoryStat extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialCategoryStat.xhtml');
@@ -535,7 +585,7 @@ export class AonJsfCommercialCategoryStat extends AonJsfApp {
 }
 
 export class AonJsfOfferDetailCommission extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/offerDetailCommission.xhtml');
@@ -543,7 +593,7 @@ export class AonJsfOfferDetailCommission extends AonJsfApp {
 }
 
 export class AonJsfCommission extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commission.xhtml');
@@ -551,7 +601,7 @@ export class AonJsfCommission extends AonJsfApp {
 }
 
 export class AonJsfCommissionCalc extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commissionCalc.xhtml');
@@ -559,7 +609,7 @@ export class AonJsfCommissionCalc extends AonJsfApp {
 }
 
 export class AonJsfCommissionType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commissionType.xhtml');
@@ -567,7 +617,7 @@ export class AonJsfCommissionType extends AonJsfApp {
 }
 
 export class AonJsfCommercialGeozoneStat extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/commercialGeozoneStat.xhtml');
@@ -575,7 +625,7 @@ export class AonJsfCommercialGeozoneStat extends AonJsfApp {
 }
 
 export class AonJsfNews extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/news.xhtml');
@@ -583,7 +633,7 @@ export class AonJsfNews extends AonJsfApp {
 }
 
 export class AonJsfNewsletter extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/newsletter.xhtml');
@@ -591,7 +641,7 @@ export class AonJsfNewsletter extends AonJsfApp {
 }
 
 export class AonJsfMessages extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/messages.xhtml');
@@ -599,7 +649,7 @@ export class AonJsfMessages extends AonJsfApp {
 }
 
 export class AonJsfHtmlTemplate extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/htmlTemplate.xhtml');
@@ -607,7 +657,7 @@ export class AonJsfHtmlTemplate extends AonJsfApp {
 }
 
 export class AonJsfMarketingTemplate extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/marketingTemplate.xhtml');
@@ -615,7 +665,7 @@ export class AonJsfMarketingTemplate extends AonJsfApp {
 }
 
 export class AonJsfCompanyImages extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/companyImages.xhtml');
@@ -623,7 +673,7 @@ export class AonJsfCompanyImages extends AonJsfApp {
 }
 
 export class AonJsfMailProcess extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/mailProcess.xhtml');
@@ -631,7 +681,7 @@ export class AonJsfMailProcess extends AonJsfApp {
 }
 
 export class AonJsfCommunicationCenter extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/communicationCenter.xhtml');
@@ -639,7 +689,7 @@ export class AonJsfCommunicationCenter extends AonJsfApp {
 }
 
 export class AonJsfMarketingCampaign extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/marketingCampaign.xhtml');
@@ -647,7 +697,7 @@ export class AonJsfMarketingCampaign extends AonJsfApp {
 }
 
 export class AonJsfSurvey extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/survey.xhtml');
@@ -655,7 +705,7 @@ export class AonJsfSurvey extends AonJsfApp {
 }
 
 export class AonJsfSurveyResponse extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/surveyResponse.xhtml');
@@ -663,7 +713,7 @@ export class AonJsfSurveyResponse extends AonJsfApp {
 }
 
 export class AonJsfProject extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/project.xhtml');
@@ -671,7 +721,7 @@ export class AonJsfProject extends AonJsfApp {
 }
 
 export class AonJsfProjectType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/projectType.xhtml');
@@ -679,7 +729,7 @@ export class AonJsfProjectType extends AonJsfApp {
 }
 
 export class AonJsfActivityType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/activityType.xhtml');
@@ -687,7 +737,7 @@ export class AonJsfActivityType extends AonJsfApp {
 }
 
 export class AonJsfMailContact extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/mailContact.xhtml');
@@ -695,7 +745,7 @@ export class AonJsfMailContact extends AonJsfApp {
 }
 
 export class AonJsfMailAccount extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/mailAccount.xhtml');
@@ -703,7 +753,7 @@ export class AonJsfMailAccount extends AonJsfApp {
 }
 
 export class AonJsfMailSignature extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/mailSignature.xhtml');
@@ -711,7 +761,7 @@ export class AonJsfMailSignature extends AonJsfApp {
 }
 
 export class AonJsfGlobalConfig extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/globalConfig.xhtml');
@@ -719,7 +769,7 @@ export class AonJsfGlobalConfig extends AonJsfApp {
 }
 
 export class AonJsfTask extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/task.xhtml');
@@ -727,7 +777,7 @@ export class AonJsfTask extends AonJsfApp {
 }
 
 export class AonJsfGantt extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/gantt.xhtml');
@@ -735,7 +785,7 @@ export class AonJsfGantt extends AonJsfApp {
 }
 
 export class AonJsfDailyTracking extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/dailyTracking.xhtml');
@@ -743,7 +793,7 @@ export class AonJsfDailyTracking extends AonJsfApp {
 }
 
 export class AonJsfDailyTrackingReport extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/dailyTrackingReport.xhtml');
@@ -751,7 +801,7 @@ export class AonJsfDailyTrackingReport extends AonJsfApp {
 }
 
 export class AonJsfJobType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/jobType.xhtml');
@@ -759,7 +809,7 @@ export class AonJsfJobType extends AonJsfApp {
 }
 
 export class AonJsfProcess extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/process.xhtml');
@@ -767,7 +817,7 @@ export class AonJsfProcess extends AonJsfApp {
 }
 
 export class AonJsfProcessTransactionType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/processTransactionType.xhtml');
@@ -775,7 +825,7 @@ export class AonJsfProcessTransactionType extends AonJsfApp {
 }
 
 export class AonJsfProcessWizard extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/processWizard.xhtml');
@@ -783,7 +833,7 @@ export class AonJsfProcessWizard extends AonJsfApp {
 }
 
 export class AonJsfCampaign extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/campaign.xhtml');
@@ -791,7 +841,7 @@ export class AonJsfCampaign extends AonJsfApp {
 }
 
 export class AonJsfCampaignType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/campaignType.xhtml');
@@ -799,7 +849,7 @@ export class AonJsfCampaignType extends AonJsfApp {
 }
 
 export class AonJsfTaskHolder extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/taskHolder.xhtml');
@@ -807,7 +857,7 @@ export class AonJsfTaskHolder extends AonJsfApp {
 }
 
 export class AonJsfWorkgroup extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/workgroup.xhtml');
@@ -815,7 +865,7 @@ export class AonJsfWorkgroup extends AonJsfApp {
 }
 
 export class AonJsfCostProfile extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/costProfile.xhtml');
@@ -823,7 +873,7 @@ export class AonJsfCostProfile extends AonJsfApp {
 }
 
 export class AonJsfBrand extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/brand.xhtml');
@@ -831,7 +881,7 @@ export class AonJsfBrand extends AonJsfApp {
 }
 
 export class AonJsfProductTag extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/productTag.xhtml');
@@ -839,7 +889,7 @@ export class AonJsfProductTag extends AonJsfApp {
 }
 
 export class AonJsfPackingTag extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/packingTag.xhtml');
@@ -847,7 +897,7 @@ export class AonJsfPackingTag extends AonJsfApp {
 }
 
 export class AonJsfTariff extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/tariff.xhtml');
@@ -855,7 +905,7 @@ export class AonJsfTariff extends AonJsfApp {
 }
 
 export class AonJsfCatalogue extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/catalogue.xhtml');
@@ -863,7 +913,7 @@ export class AonJsfCatalogue extends AonJsfApp {
 }
 
 export class AonJsfTax extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/tax.xhtml');
@@ -871,7 +921,7 @@ export class AonJsfTax extends AonJsfApp {
 }
 
 export class AonJsfSeries extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/series.xhtml');
@@ -879,7 +929,7 @@ export class AonJsfSeries extends AonJsfApp {
 }
 
 export class AonJsfBankConcept extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/bankConcept.xhtml');
@@ -887,7 +937,7 @@ export class AonJsfBankConcept extends AonJsfApp {
 }
 
 export class AonJsfRelationship extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/relationship.xhtml');
@@ -895,7 +945,7 @@ export class AonJsfRelationship extends AonJsfApp {
 }
 
 export class AonJsfLoader extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/loader.xhtml');
@@ -903,7 +953,7 @@ export class AonJsfLoader extends AonJsfApp {
 }
 
 export class AonJsfContractBatch extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/contractBatch.xhtml');
@@ -911,7 +961,7 @@ export class AonJsfContractBatch extends AonJsfApp {
 }
 
 export class AonJsfIrpfData extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/irpfData.xhtml');
@@ -919,7 +969,7 @@ export class AonJsfIrpfData extends AonJsfApp {
 }
 
 export class AonJsfAmortization extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/amortization.xhtml');
@@ -927,7 +977,7 @@ export class AonJsfAmortization extends AonJsfApp {
 }
 
 export class AonJsfPeriodAmortization extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/periodAmortization.xhtml');
@@ -935,7 +985,7 @@ export class AonJsfPeriodAmortization extends AonJsfApp {
 }
 
 export class AonJsfEndPeriodEntries extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/endPeriodEntries.xhtml');
@@ -943,7 +993,7 @@ export class AonJsfEndPeriodEntries extends AonJsfApp {
 }
 
 export class AonJsfInvoiceReport extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoiceReport.xhtml');
@@ -951,7 +1001,7 @@ export class AonJsfInvoiceReport extends AonJsfApp {
 }
 
 export class AonJsfInvoiceRecorder extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/invoiceRecorder.xhtml');
@@ -959,7 +1009,7 @@ export class AonJsfInvoiceRecorder extends AonJsfApp {
 }
 
 export class AonJsfFinanceTrackingEntry extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/financeTrackingEntry.xhtml');
@@ -967,7 +1017,7 @@ export class AonJsfFinanceTrackingEntry extends AonJsfApp {
 }
 
 export class AonJsfIncome extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/income.xhtml');
@@ -975,7 +1025,7 @@ export class AonJsfIncome extends AonJsfApp {
 }
 
 export class AonJsfDelivery extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/delivery.xhtml');
@@ -983,7 +1033,7 @@ export class AonJsfDelivery extends AonJsfApp {
 }
 
 export class AonJsfWarehouseTransfer extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/warehouseTransfer.xhtml');
@@ -991,7 +1041,7 @@ export class AonJsfWarehouseTransfer extends AonJsfApp {
 }
 
 export class AonJsfOrderServer extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/orderServer.xhtml');
@@ -999,7 +1049,7 @@ export class AonJsfOrderServer extends AonJsfApp {
 }
 
 export class AonJsfOrderProposal extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/orderProposal.xhtml');
@@ -1007,7 +1057,7 @@ export class AonJsfOrderProposal extends AonJsfApp {
 }
 
 export class AonJsfStock extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/stock.xhtml');
@@ -1015,7 +1065,7 @@ export class AonJsfStock extends AonJsfApp {
 }
 
 export class AonJsfInventory extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/inventory.xhtml');
@@ -1023,7 +1073,7 @@ export class AonJsfInventory extends AonJsfApp {
 }
 
 export class AonJsfInventoryClose extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/inventoryClose.xhtml');
@@ -1031,7 +1081,7 @@ export class AonJsfInventoryClose extends AonJsfApp {
 }
 
 export class AonJsfStockReportItem extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/stockReportItem.xhtml');
@@ -1039,7 +1089,7 @@ export class AonJsfStockReportItem extends AonJsfApp {
 }
 
 export class AonJsfStockReportWarehouse extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/stockReportWarehouse.xhtml');
@@ -1047,7 +1097,7 @@ export class AonJsfStockReportWarehouse extends AonJsfApp {
 }
 
 export class AonJsfStockReportItemValued extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/stockReportItemValued.xhtml');
@@ -1055,7 +1105,7 @@ export class AonJsfStockReportItemValued extends AonJsfApp {
 }
 
 export class AonJsfStockReportWarehouseValued extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/stockReportWarehouseValued.xhtml');
@@ -1063,7 +1113,7 @@ export class AonJsfStockReportWarehouseValued extends AonJsfApp {
 }
 
 export class AonJsfWarehouse extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/warehouse.xhtml');
@@ -1071,7 +1121,7 @@ export class AonJsfWarehouse extends AonJsfApp {
 }
 
 export class AonJsfCarrier extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/carrier.xhtml');
@@ -1079,7 +1129,7 @@ export class AonJsfCarrier extends AonJsfApp {
 }
 
 export class AonJsfAccount extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/account.xhtml');
@@ -1087,7 +1137,7 @@ export class AonJsfAccount extends AonJsfApp {
 }
 
 export class AonJsfBalance extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/balance.xhtml');
@@ -1095,7 +1145,7 @@ export class AonJsfBalance extends AonJsfApp {
 }
 
 export class AonJsfAccPeriod extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/accPeriod.xhtml');
@@ -1103,7 +1153,7 @@ export class AonJsfAccPeriod extends AonJsfApp {
 }
 
 export class AonJsfAmortizationType extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/amortizationType.xhtml');
@@ -1111,7 +1161,7 @@ export class AonJsfAmortizationType extends AonJsfApp {
 }
 
 export class AonJsfAutConcept extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/autConcept.xhtml');
@@ -1119,7 +1169,7 @@ export class AonJsfAutConcept extends AonJsfApp {
 }
 
 export class AonJsfNewDomain extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/newDomain.xhtml');
@@ -1127,7 +1177,7 @@ export class AonJsfNewDomain extends AonJsfApp {
 }
 
 export class AonJsfRemoveDomain extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/removeDomain.xhtml');
@@ -1135,529 +1185,611 @@ export class AonJsfRemoveDomain extends AonJsfApp {
 }
 
 export class AonJsfAccountingBook extends AonJsfApp {
-	
+
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/accountingBook.xhtml');
 	}
 }
 
-if(!window.customElements.get(TAG.AON_JSF_APP)){
+export class AonJsfHelpContent extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/helpContent.xhtml');
+	}
+}
+
+export class AonJsfHelpNotification extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/helpNotification.xhtml');
+	}
+}
+
+export class AonJsfGraph extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setExpireSession(false);
+	}
+
+	connectedCallback() {
+		super.clear();
+		super.build();
+		this.getIFrame().style.height = `22.5rem`;
+	}
+
+}
+
+export class AonJsfAccountingGraph extends AonJsfGraph {
+
+	constructor() {
+		super();
+		this.id = 'aonJsfAccountingGraph';
+		this.IFRAME = this.id + 'Frame';
+		this.setRedirectUrl('/facelet/app/accountingGraph.jsf');
+	}
+
+}
+
+export class AonJsfPayrollGraph extends AonJsfGraph {
+
+	constructor() {
+		super();
+		this.id = 'aonJsfPayrollGraph';
+		this.IFRAME = this.id + 'Frame';
+		this.setRedirectUrl('/facelet/app/payrollGraph.jsf');
+
+	}
+
+}
+
+export class AonJsfContractGraph extends AonJsfGraph {
+
+	constructor() {
+		super();
+		this.id = 'aonJsfContractGraph';
+		this.IFRAME = this.id + 'Frame';
+		this.setRedirectUrl('/facelet/app/contractGraph.jsf');
+
+	}
+
+}
+
+if (!window.customElements.get(TAG.AON_JSF_APP)) {
 	window.customElements.define(TAG.AON_JSF_APP, AonJsfApp);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SALE)){
+if (!window.customElements.get(TAG.AON_JSF_SALE)) {
 	window.customElements.define(TAG.AON_JSF_SALE, AonJsfSale);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PURCHASE)){
+if (!window.customElements.get(TAG.AON_JSF_PURCHASE)) {
 	window.customElements.define(TAG.AON_JSF_PURCHASE, AonJsfPurchase);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_EXPENSE)){
+if (!window.customElements.get(TAG.AON_JSF_EXPENSE)) {
 	window.customElements.define(TAG.AON_JSF_EXPENSE, AonJsfExpense);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PRODUCT)){
+if (!window.customElements.get(TAG.AON_JSF_PRODUCT)) {
 	window.customElements.define(TAG.AON_JSF_PRODUCT, AonJsfProduct);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CUSTOMER)){
+if (!window.customElements.get(TAG.AON_JSF_CUSTOMER)) {
 	window.customElements.define(TAG.AON_JSF_CUSTOMER, AonJsfCustomer);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CREDITOR)){
+if (!window.customElements.get(TAG.AON_JSF_CREDITOR)) {
 	window.customElements.define(TAG.AON_JSF_CREDITOR, AonJsfCreditor);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SUPPLIER)){
+if (!window.customElements.get(TAG.AON_JSF_SUPPLIER)) {
 	window.customElements.define(TAG.AON_JSF_SUPPLIER, AonJsfSupplier);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SALE_INVOICE)){
+if (!window.customElements.get(TAG.AON_JSF_SALE_INVOICE)) {
 	window.customElements.define(TAG.AON_JSF_SALE_INVOICE, AonJsfSaleInvoice);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PURCHASE_INVOICE)){
+if (!window.customElements.get(TAG.AON_JSF_PURCHASE_INVOICE)) {
 	window.customElements.define(TAG.AON_JSF_PURCHASE_INVOICE, AonJsfPurchaseInvoice);
 }
-if(!window.customElements.get(TAG.AON_JSF_EXPENSE_INVOICE)){
+if (!window.customElements.get(TAG.AON_JSF_EXPENSE_INVOICE)) {
 	window.customElements.define(TAG.AON_JSF_EXPENSE_INVOICE, AonJsfExpenseInvoice);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_UNDEDUCTIBLE_INVOICE)){
+if (!window.customElements.get(TAG.AON_JSF_UNDEDUCTIBLE_INVOICE)) {
 	window.customElements.define(TAG.AON_JSF_UNDEDUCTIBLE_INVOICE, AonJsfUndeductibleInvoice);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_PRINT, AonJsfInvoicePrint);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_REMOVE)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_REMOVE, AonJsfInvoiceRemove);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_DELIVERY)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_DELIVERY, AonJsfInvoiceDelivery);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FINANCE_CHARGE)){
+if (!window.customElements.get(TAG.AON_JSF_FINANCE_CHARGE)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_CHARGE, AonJsfFinanceCharge);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FINANCE_PAYMENT)){
+if (!window.customElements.get(TAG.AON_JSF_FINANCE_PAYMENT)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_PAYMENT, AonJsfFinancePayment);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PAY_METHOD)){
+if (!window.customElements.get(TAG.AON_JSF_PAY_METHOD)) {
 	window.customElements.define(TAG.AON_JSF_PAY_METHOD, AonJsfPayMethod);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PRODUCT_CATEGORY)){
+if (!window.customElements.get(TAG.AON_JSF_PRODUCT_CATEGORY)) {
 	window.customElements.define(TAG.AON_JSF_PRODUCT_CATEGORY, AonJsfProductCategory);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SEGMENT)){
+if (!window.customElements.get(TAG.AON_JSF_SEGMENT)) {
 	window.customElements.define(TAG.AON_JSF_SEGMENT, AonJsfSegment);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_GEOTREE)){
+if (!window.customElements.get(TAG.AON_JSF_GEOTREE)) {
 	window.customElements.define(TAG.AON_JSF_GEOTREE, AonJsfGeotree);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FBATCH_CHARGE)){
+if (!window.customElements.get(TAG.AON_JSF_FBATCH_CHARGE)) {
 	window.customElements.define(TAG.AON_JSF_FBATCH_CHARGE, AonJsfFBatchCharge);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FBATCH_PAYMENT)){
+if (!window.customElements.get(TAG.AON_JSF_FBATCH_PAYMENT)) {
 	window.customElements.define(TAG.AON_JSF_FBATCH_PAYMENT, AonJsfFBatchPayment);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SDD_MANDATE)){
+if (!window.customElements.get(TAG.AON_JSF_SDD_MANDATE)) {
 	window.customElements.define(TAG.AON_JSF_SDD_MANDATE, AonJsfSddMandate);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FPAYMENT_PRINT)){
+if (!window.customElements.get(TAG.AON_JSF_FPAYMENT_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_FPAYMENT_PRINT, AonJsfFPaymentPrint);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_BANK_STATEMENT)){
+if (!window.customElements.get(TAG.AON_JSF_BANK_STATEMENT)) {
 	window.customElements.define(TAG.AON_JSF_BANK_STATEMENT, AonJsfBankStatement);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PREPAYMENT)){
+if (!window.customElements.get(TAG.AON_JSF_PREPAYMENT)) {
 	window.customElements.define(TAG.AON_JSF_PREPAYMENT, AonJsfPrepayment);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INCREASE_ITEM)){
+if (!window.customElements.get(TAG.AON_JSF_INCREASE_ITEM)) {
 	window.customElements.define(TAG.AON_JSF_INCREASE_ITEM, AonJsfIncreaseItem);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICING_GROUP)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICING_GROUP)) {
 	window.customElements.define(TAG.AON_JSF_INVOICING_GROUP, AonJsfInvoicingGroup);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_SIGNER)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_SIGNER)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_SIGNER, AonJsfInvoiceSigner);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FINANCE_PRINT)){
+if (!window.customElements.get(TAG.AON_JSF_FINANCE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_PRINT, AonJsfFinancePrint);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FINANCE_CHEQUING)){
+if (!window.customElements.get(TAG.AON_JSF_FINANCE_CHEQUING)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_CHEQUING, AonJsfFinanceChequing);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST)){
+if (!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST)) {
 	window.customElements.define(TAG.AON_JSF_CASHFLOW_FORECAST, AonJsfCashFlowForecast);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST_REPORT)){
+if (!window.customElements.get(TAG.AON_JSF_CASHFLOW_FORECAST_REPORT)) {
 	window.customElements.define(TAG.AON_JSF_CASHFLOW_FORECAST_REPORT, AonJsfCashFlowForecastReport);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FEE_PRINT)){
+if (!window.customElements.get(TAG.AON_JSF_FEE_PRINT)) {
 	window.customElements.define(TAG.AON_JSF_FEE_PRINT, AonJsfFeePrint);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FEE_INVOICING)){
+if (!window.customElements.get(TAG.AON_JSF_FEE_INVOICING)) {
 	window.customElements.define(TAG.AON_JSF_FEE_INVOICING, AonJsfFeeInvoicing);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FEE_PRE_INVOICING)){
+if (!window.customElements.get(TAG.AON_JSF_FEE_PRE_INVOICING)) {
 	window.customElements.define(TAG.AON_JSF_FEE_PRE_INVOICING, AonJsfFeePreInvoicing);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FEE_ASSIGNMENT)){
+if (!window.customElements.get(TAG.AON_JSF_FEE_ASSIGNMENT)) {
 	window.customElements.define(TAG.AON_JSF_FEE_ASSIGNMENT, AonJsfFeeAssigment);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROJECT_COMMERCIAL)){
+if (!window.customElements.get(TAG.AON_JSF_PROJECT_COMMERCIAL)) {
 	window.customElements.define(TAG.AON_JSF_PROJECT_COMMERCIAL, AonJsfProjectCommercial);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TERM)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TERM)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_TERM, AonJsfCommercialTerm);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TRACKING)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TRACKING)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_TRACKING, AonJsfCommercialTracking);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_ACTIVITY)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_ACTIVITY)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_ACTIVITY, AonJsfCommercialActivity);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_OFFER)){
+if (!window.customElements.get(TAG.AON_JSF_OFFER)) {
 	window.customElements.define(TAG.AON_JSF_OFFER, AonJsfOffer);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_SELLER)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_SELLER)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_STAT_SELLER, AonJsfCommercialStatSeller);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_PRODUCT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_PRODUCT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_STAT_PRODUCT, AonJsfCommercialStatProduct);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_CATEGORY)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_CATEGORY)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_STAT_CATEGORY, AonJsfCommercialStatCategory);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_TARGET)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_STAT_TARGET)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_STAT_TARGET, AonJsfCommercialStatTarget);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SELLER)){
+if (!window.customElements.get(TAG.AON_JSF_SELLER)) {
 	window.customElements.define(TAG.AON_JSF_SELLER, AonJsfSeller);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TARGET)){
+if (!window.customElements.get(TAG.AON_JSF_TARGET)) {
 	window.customElements.define(TAG.AON_JSF_TARGET, AonJsfTarget);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TARGET_DEDUPLICATION)){
+if (!window.customElements.get(TAG.AON_JSF_TARGET_DEDUPLICATION)) {
 	window.customElements.define(TAG.AON_JSF_TARGET_DEDUPLICATION, AonJsfTargetDeduplication);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_SELLER_STAT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_SELLER_STAT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_SELLER_STAT, AonJsfCommercialSellerStat);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_PRODUCT_STAT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_PRODUCT_STAT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_PRODUCT_STAT, AonJsfCommercialProductStat);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_CATEGORY_STAT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_CATEGORY_STAT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_CATEGORY_STAT, AonJsfCommercialCategoryStat);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TARGET_STAT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_TARGET_STAT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_TARGET_STAT, AonJsfCommercialTargetStat);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMERCIAL_GEOZONE_STAT)){
+if (!window.customElements.get(TAG.AON_JSF_COMMERCIAL_GEOZONE_STAT)) {
 	window.customElements.define(TAG.AON_JSF_COMMERCIAL_GEOZONE_STAT, AonJsfCommercialGeozoneStat);
 }
 
 
-if(!window.customElements.get(TAG.AON_JSF_OFFER_DETAIL_COMMISSION)){
+if (!window.customElements.get(TAG.AON_JSF_OFFER_DETAIL_COMMISSION)) {
 	window.customElements.define(TAG.AON_JSF_OFFER_DETAIL_COMMISSION, AonJsfOfferDetailCommission);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMISSION)){
+if (!window.customElements.get(TAG.AON_JSF_COMMISSION)) {
 	window.customElements.define(TAG.AON_JSF_COMMISSION, AonJsfCommission);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMISSION_CALC)){
+if (!window.customElements.get(TAG.AON_JSF_COMMISSION_CALC)) {
 	window.customElements.define(TAG.AON_JSF_COMMISSION_CALC, AonJsfCommissionCalc);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMISSION_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_COMMISSION_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_COMMISSION_TYPE, AonJsfCommissionType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MESSAGES)){
+if (!window.customElements.get(TAG.AON_JSF_MESSAGES)) {
 	window.customElements.define(TAG.AON_JSF_MESSAGES, AonJsfMessages);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_NEWS)){
+if (!window.customElements.get(TAG.AON_JSF_NEWS)) {
 	window.customElements.define(TAG.AON_JSF_NEWS, AonJsfNews);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_NEWSLETTER)){
+if (!window.customElements.get(TAG.AON_JSF_NEWSLETTER)) {
 	window.customElements.define(TAG.AON_JSF_NEWSLETTER, AonJsfNewsletter);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_HTML_TEMPLATE)){
+if (!window.customElements.get(TAG.AON_JSF_HTML_TEMPLATE)) {
 	window.customElements.define(TAG.AON_JSF_HTML_TEMPLATE, AonJsfHtmlTemplate);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MARKETING_TEMPLATE)){
+if (!window.customElements.get(TAG.AON_JSF_MARKETING_TEMPLATE)) {
 	window.customElements.define(TAG.AON_JSF_MARKETING_TEMPLATE, AonJsfMarketingTemplate);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMPANY_IMAGES)){
+if (!window.customElements.get(TAG.AON_JSF_COMPANY_IMAGES)) {
 	window.customElements.define(TAG.AON_JSF_COMPANY_IMAGES, AonJsfCompanyImages);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MAIL_PROCESS)){
+if (!window.customElements.get(TAG.AON_JSF_MAIL_PROCESS)) {
 	window.customElements.define(TAG.AON_JSF_MAIL_PROCESS, AonJsfMailProcess);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MARKETING_CAMPAIGN)){
+if (!window.customElements.get(TAG.AON_JSF_MARKETING_CAMPAIGN)) {
 	window.customElements.define(TAG.AON_JSF_MARKETING_CAMPAIGN, AonJsfMarketingCampaign);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COMMUNICATION_CENTER)){
+if (!window.customElements.get(TAG.AON_JSF_COMMUNICATION_CENTER)) {
 	window.customElements.define(TAG.AON_JSF_COMMUNICATION_CENTER, AonJsfCommunicationCenter);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SURVEY)){
+if (!window.customElements.get(TAG.AON_JSF_SURVEY)) {
 	window.customElements.define(TAG.AON_JSF_SURVEY, AonJsfSurvey);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SURVEY_RESPONSE)){
+if (!window.customElements.get(TAG.AON_JSF_SURVEY_RESPONSE)) {
 	window.customElements.define(TAG.AON_JSF_SURVEY_RESPONSE, AonJsfSurveyResponse);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROJECT)){
+if (!window.customElements.get(TAG.AON_JSF_PROJECT)) {
 	window.customElements.define(TAG.AON_JSF_PROJECT, AonJsfProject);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROJECT_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_PROJECT_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_PROJECT_TYPE, AonJsfProjectType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ACTIVITY_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_ACTIVITY_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_ACTIVITY_TYPE, AonJsfActivityType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MAIL_CONTACT)){
+if (!window.customElements.get(TAG.AON_JSF_MAIL_CONTACT)) {
 	window.customElements.define(TAG.AON_JSF_MAIL_CONTACT, AonJsfMailContact);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MAIL_ACCOUNT)){
+if (!window.customElements.get(TAG.AON_JSF_MAIL_ACCOUNT)) {
 	window.customElements.define(TAG.AON_JSF_MAIL_ACCOUNT, AonJsfMailAccount);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_MAIL_SIGNATURE)){
+if (!window.customElements.get(TAG.AON_JSF_MAIL_SIGNATURE)) {
 	window.customElements.define(TAG.AON_JSF_MAIL_SIGNATURE, AonJsfMailSignature);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_GLOBAL_CONFIG)){
+if (!window.customElements.get(TAG.AON_JSF_GLOBAL_CONFIG)) {
 	window.customElements.define(TAG.AON_JSF_GLOBAL_CONFIG, AonJsfGlobalConfig);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TASK)){
+if (!window.customElements.get(TAG.AON_JSF_TASK)) {
 	window.customElements.define(TAG.AON_JSF_TASK, AonJsfTask);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_GANTT)){
+if (!window.customElements.get(TAG.AON_JSF_GANTT)) {
 	window.customElements.define(TAG.AON_JSF_GANTT, AonJsfGantt);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING)){
+if (!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING)) {
 	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING, AonJsfDailyTracking);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING_REPORT)){
+if (!window.customElements.get(TAG.AON_JSF_DAILY_TRACKING_REPORT)) {
 	window.customElements.define(TAG.AON_JSF_DAILY_TRACKING_REPORT, AonJsfDailyTrackingReport);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_JOB_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_JOB_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_JOB_TYPE, AonJsfJobType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROCESS)){
+if (!window.customElements.get(TAG.AON_JSF_PROCESS)) {
 	window.customElements.define(TAG.AON_JSF_PROCESS, AonJsfProcess);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROCESS_WIZARD)){
+if (!window.customElements.get(TAG.AON_JSF_PROCESS_WIZARD)) {
 	window.customElements.define(TAG.AON_JSF_PROCESS_WIZARD, AonJsfProcessWizard);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_PROCESS_TRANSACTION_TYPE, AonJsfProcessTransactionType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN)){
+if (!window.customElements.get(TAG.AON_JSF_CAMPAIGN)) {
 	window.customElements.define(TAG.AON_JSF_CAMPAIGN, AonJsfCampaign);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CAMPAIGN_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_CAMPAIGN_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_CAMPAIGN_TYPE, AonJsfCampaignType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TASK_HOLDER)){
+if (!window.customElements.get(TAG.AON_JSF_TASK_HOLDER)) {
 	window.customElements.define(TAG.AON_JSF_TASK_HOLDER, AonJsfTaskHolder);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_WORKGROUP)){
+if (!window.customElements.get(TAG.AON_JSF_WORKGROUP)) {
 	window.customElements.define(TAG.AON_JSF_WORKGROUP, AonJsfWorkgroup);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_COST_PROFILE)){
+if (!window.customElements.get(TAG.AON_JSF_COST_PROFILE)) {
 	window.customElements.define(TAG.AON_JSF_COST_PROFILE, AonJsfCostProfile);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PRODUCT_TAG)){
+if (!window.customElements.get(TAG.AON_JSF_PRODUCT_TAG)) {
 	window.customElements.define(TAG.AON_JSF_PRODUCT_TAG, AonJsfProductTag);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PACKING_TAG)){
+if (!window.customElements.get(TAG.AON_JSF_PACKING_TAG)) {
 	window.customElements.define(TAG.AON_JSF_PACKING_TAG, AonJsfPackingTag);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_BRAND)){
+if (!window.customElements.get(TAG.AON_JSF_BRAND)) {
 	window.customElements.define(TAG.AON_JSF_BRAND, AonJsfBrand);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TARIFF)){
+if (!window.customElements.get(TAG.AON_JSF_TARIFF)) {
 	window.customElements.define(TAG.AON_JSF_TARIFF, AonJsfTariff);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CATALOGUE)){
+if (!window.customElements.get(TAG.AON_JSF_CATALOGUE)) {
 	window.customElements.define(TAG.AON_JSF_CATALOGUE, AonJsfCatalogue);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_TAX)){
+if (!window.customElements.get(TAG.AON_JSF_TAX)) {
 	window.customElements.define(TAG.AON_JSF_TAX, AonJsfTax);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_SERIES)){
+if (!window.customElements.get(TAG.AON_JSF_SERIES)) {
 	window.customElements.define(TAG.AON_JSF_SERIES, AonJsfSeries);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_BANK_CONCEPT)){
+if (!window.customElements.get(TAG.AON_JSF_BANK_CONCEPT)) {
 	window.customElements.define(TAG.AON_JSF_BANK_CONCEPT, AonJsfBankConcept);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_RELATIONSHIP)){
+if (!window.customElements.get(TAG.AON_JSF_RELATIONSHIP)) {
 	window.customElements.define(TAG.AON_JSF_RELATIONSHIP, AonJsfRelationship);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_LOADER)){
+if (!window.customElements.get(TAG.AON_JSF_LOADER)) {
 	window.customElements.define(TAG.AON_JSF_LOADER, AonJsfLoader);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CONTRACT_BATCH)){
+if (!window.customElements.get(TAG.AON_JSF_CONTRACT_BATCH)) {
 	window.customElements.define(TAG.AON_JSF_CONTRACT_BATCH, AonJsfContractBatch);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_IRPF_DATA)){
+if (!window.customElements.get(TAG.AON_JSF_IRPF_DATA)) {
 	window.customElements.define(TAG.AON_JSF_IRPF_DATA, AonJsfIrpfData);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_AMORTIZATION)){
+if (!window.customElements.get(TAG.AON_JSF_AMORTIZATION)) {
 	window.customElements.define(TAG.AON_JSF_AMORTIZATION, AonJsfAmortization);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_PERIOD_AMORTIZATION)){
+if (!window.customElements.get(TAG.AON_JSF_PERIOD_AMORTIZATION)) {
 	window.customElements.define(TAG.AON_JSF_PERIOD_AMORTIZATION, AonJsfPeriodAmortization);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_END_PERIOD_ENTRIES)){
+if (!window.customElements.get(TAG.AON_JSF_END_PERIOD_ENTRIES)) {
 	window.customElements.define(TAG.AON_JSF_END_PERIOD_ENTRIES, AonJsfEndPeriodEntries);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_REPORT)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_REPORT)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_REPORT, AonJsfInvoiceReport);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)){
+if (!window.customElements.get(TAG.AON_JSF_INVOICE_RECORDER)) {
 	window.customElements.define(TAG.AON_JSF_INVOICE_RECORDER, AonJsfInvoiceRecorder);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)){
+if (!window.customElements.get(TAG.AON_JSF_FINANCE_TRACKING_ENTRY)) {
 	window.customElements.define(TAG.AON_JSF_FINANCE_TRACKING_ENTRY, AonJsfFinanceTrackingEntry);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INCOME)){
+if (!window.customElements.get(TAG.AON_JSF_INCOME)) {
 	window.customElements.define(TAG.AON_JSF_INCOME, AonJsfIncome);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_DELIVERY)){
+if (!window.customElements.get(TAG.AON_JSF_DELIVERY)) {
 	window.customElements.define(TAG.AON_JSF_DELIVERY, AonJsfDelivery);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_WAREHOUSE_TRANSFER)){
+if (!window.customElements.get(TAG.AON_JSF_WAREHOUSE_TRANSFER)) {
 	window.customElements.define(TAG.AON_JSF_WAREHOUSE_TRANSFER, AonJsfWarehouseTransfer);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ORDER_SERVER)){
+if (!window.customElements.get(TAG.AON_JSF_ORDER_SERVER)) {
 	window.customElements.define(TAG.AON_JSF_ORDER_SERVER, AonJsfOrderServer);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_STOCK)){
+if (!window.customElements.get(TAG.AON_JSF_STOCK)) {
 	window.customElements.define(TAG.AON_JSF_INVENTORY, AonJsfStock);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVENTORY)){
+if (!window.customElements.get(TAG.AON_JSF_INVENTORY)) {
 	window.customElements.define(TAG.AON_JSF_INVENTORY, AonJsfInventory);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_INVENTORY_CLOSE)){
+if (!window.customElements.get(TAG.AON_JSF_INVENTORY_CLOSE)) {
 	window.customElements.define(TAG.AON_JSF_INVENTORY_CLOSE, AonJsfInventoryClose);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ORDER_PROPOSAL)){
+if (!window.customElements.get(TAG.AON_JSF_ORDER_PROPOSAL)) {
 	window.customElements.define(TAG.AON_JSF_ORDER_PROPOSAL, AonJsfOrderProposal);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM)){
+if (!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM)) {
 	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_ITEM, AonJsfStockReportItem);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE)){
+if (!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE)) {
 	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE, AonJsfStockReportWarehouse);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM_VALUED)){
+if (!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_ITEM_VALUED)) {
 	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_ITEM_VALUED, AonJsfStockReportItemValued);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED)){
+if (!window.customElements.get(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED)) {
 	window.customElements.define(TAG.AON_JSF_STOCK_REPORT_WAREHOUSE_VALUED, AonJsfStockReportWarehouseValued);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_CARRIER)){
+if (!window.customElements.get(TAG.AON_JSF_CARRIER)) {
 	window.customElements.define(TAG.AON_JSF_CARRIER, AonJsfCarrier);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_WAREHOUSE)){
+if (!window.customElements.get(TAG.AON_JSF_WAREHOUSE)) {
 	window.customElements.define(TAG.AON_JSF_WAREHOUSE, AonJsfWarehouse);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ACCOUNT)){
+if (!window.customElements.get(TAG.AON_JSF_ACCOUNT)) {
 	window.customElements.define(TAG.AON_JSF_ACCOUNT, AonJsfAccount);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_BALANCE)){
+if (!window.customElements.get(TAG.AON_JSF_BALANCE)) {
 	window.customElements.define(TAG.AON_JSF_BALANCE, AonJsfBalance);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ACC_PERIOD)){
+if (!window.customElements.get(TAG.AON_JSF_ACC_PERIOD)) {
 	window.customElements.define(TAG.AON_JSF_ACC_PERIOD, AonJsfAccPeriod);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_AMORTIZATION_TYPE)){
+if (!window.customElements.get(TAG.AON_JSF_AMORTIZATION_TYPE)) {
 	window.customElements.define(TAG.AON_JSF_AMORTIZATION_TYPE, AonJsfAmortizationType);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_AUT_CONCEPT)){
+if (!window.customElements.get(TAG.AON_JSF_AUT_CONCEPT)) {
 	window.customElements.define(TAG.AON_JSF_AUT_CONCEPT, AonJsfAutConcept);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_NEW_DOMAIN)){
+if (!window.customElements.get(TAG.AON_JSF_NEW_DOMAIN)) {
 	window.customElements.define(TAG.AON_JSF_NEW_DOMAIN, AonJsfNewDomain);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_REMOVE_DOMAIN)){
+if (!window.customElements.get(TAG.AON_JSF_REMOVE_DOMAIN)) {
 	window.customElements.define(TAG.AON_JSF_REMOVE_DOMAIN, AonJsfRemoveDomain);
 }
 
-if(!window.customElements.get(TAG.AON_JSF_ACCOUNTING_BOOK)){
-	window.customElements.define(TAG.AON_JSF_ACCOUNTING_BOOK, AonJsfAccountingBook);
+if (!window.customElements.get(TAG.AON_JSF_HELP_CONTENT)) {
+	window.customElements.define(TAG.AON_JSF_HELP_CONTENT, AonJsfHelpContent);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_HELP_NOTIFICATION)) {
+	window.customElements.define(TAG.AON_JSF_HELP_NOTIFICATION, AonJsfHelpNotification);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_GRAPH)) {
+	window.customElements.define(TAG.AON_JSF_ACCOUNTING_GRAPH, AonJsfAccountingGraph);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PAYROLL_GRAPH)) {
+	window.customElements.define(TAG.AON_JSF_PAYROLL_GRAPH, AonJsfPayrollGraph);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_CONTRACT_GRAPH)) {
+	window.customElements.define(TAG.AON_JSF_CONTRACT_GRAPH, AonJsfContractGraph);
 }

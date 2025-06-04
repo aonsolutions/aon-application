@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -27,25 +29,33 @@ public class InvoiceAttachPanel extends SimpleLayoutPanel {
 		setWidth("100%");
 		setHeight("100%");
 		setStyleName(AON.CSS.aonTextCenter());
-		
 		AccountingInvoice ai = callback.getInvoice();
 		if (ai != null && ai.isDocumentAttached() ) {
-			String url = null;
-			if (AonStringUtils.isNotBlank( ai.getAttach().getAttachURL())) {
-				url = ai.getAttach().getAttachURL();
-			} else {
+			String attachURL = null;
+			MimeType mimeType = null; 
+			if (ai.getAttach() != null) {
+				attachURL = ai.getAttach().getAttachURL();
+				mimeType = ai.getAttach().getMimeType();
+			}
+
+			InvoiceDoc d = callback.getInvoice().getInvoice().getDoc().orElse(null);
+			String url = d == null ? attachURL : d.getUrl();
+			mimeType = d == null ? mimeType : d.getMimeType();
+			
+			if (d != null && AonStringUtils.isBlank( url )) {
 				String params = "domain="+ callback.getOccam().getDomain() 
-				+ "&id=" +  ai.getAttach().getId() 
-				+ "&attach_type=invoice";
+						+ "&id=" +  d.getId() 
+						+ "&attach_type=invoice";
 				params = InvoiceAttachPanel.b64encode(params);
 				url = URL.encode(GWT.getModuleBaseURL() + "ms/download_attachment" 
 						+ "/" + callback.getOccam().getDomainName() 
 						+ "/" + callback.getOccam().getUser() 
 						+ "/" +  params);
 			}
-			if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isPDF()) {
+			
+			if ( mimeType != null && mimeType.isPDF()) {
 				this.setWidget(new FullViewer(url,ViewerDefaultScale.PAGE_WIDTH));
-			} else if ( ai.getAttach().getMimeType() != null && ai.getAttach().getMimeType().isImage()) {
+			} else if ( mimeType != null && mimeType.isImage()) {
 				AonScalableImage scalableImage = new AonScalableImage();
 				InvoiceAttachPanel.this.setWidget(scalableImage);
 				final String finalURL = url;

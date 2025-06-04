@@ -161,14 +161,11 @@ class InvoiceConsoleTable extends ScrollPanel{
 				
 				AonTableButton showEntry = new AonTableButton(AON.MSG.viewAccountEntry(),AON.CSS.aonIconLink());
 				showEntry.addClickHandler( event -> showEntry(opts, inv.getId()));
-
+				
 				return row
 					.addCell( new InvoiceMessagesLabel( inv )  )
-					.addCellIf( invConsole.hastAttach(), debugInvoice)
-					
-					.addCellIf(!inv.isRecorded(), recordInvoice)	
-					.addCellIf(inv.isRecorded(), showEntry)
-					
+					.addCellIfElse( invConsole.getInvoice().getDoc().isPresent(),debugInvoice,new Label())
+					.addCellIfElse(inv.isRecorded(), showEntry, recordInvoice)
 					.addCell(new Label( getSourceDescription(invConsole.getSource())))
 					.addCell(new Label(ensure(inv.getType(),inv.getType()::getAbbrDescription)))
 					.addCell(new Label(ensure(inv.getTransaction(),inv.getTransaction()::getTediName)))
@@ -293,7 +290,7 @@ class InvoiceConsoleTable extends ScrollPanel{
 		dialog.setGlassEnabled(true);
 		dialog.setModal(true);
 		dialog.setCaption(AON.MSG.invoice());
-		dialog.add(InvoiceConsoleTextPrinter.print(invoice));
+		dialog.add(new InvoiceConsoleTextPanel(invoice));
 		dialog.center();
 		dialog.show();
 	}

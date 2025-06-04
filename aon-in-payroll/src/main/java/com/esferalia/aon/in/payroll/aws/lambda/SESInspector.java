@@ -19,7 +19,7 @@ public class SESInspector {
 
     private static Optional<MimeMessage> handleMessage(String bucket, String key, Consumer<BodyPart>... handlers) throws IOException {
     	MimeMessage mimeMessage = null;
-    	byte[] data = S3.download(bucket, key);
+    	byte[] data = S3.getInstance().download(bucket, key);
     	try (InputStream is = new ByteArrayInputStream(data)) {
     		mimeMessage = handleMIME(is, handlers);
     	} catch (Exception e) {

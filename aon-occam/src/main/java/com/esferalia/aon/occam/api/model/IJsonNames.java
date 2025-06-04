@@ -46,7 +46,9 @@ public final class IJsonNames {
 	public static final String AMOUNT_347 = "amount347";
 	public static final String ANNULLED = "annulled";
 	public static final String AON_CUSTOMER = "aonCustomer";
+	public static final String AON_ID = "aonId";
 	public static final String AON_STATUS = "aonStatus";
+	public static final String AON_TABLE = "aonTable";
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
@@ -252,6 +254,7 @@ public final class IJsonNames {
 	public static final String EXPIRE_DATE = "expireDate";
 	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
+	public static final String EXTERNAL_STORAGE = "externalStorage";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";
 	public static final String FAX = "fax";
@@ -310,6 +313,7 @@ public final class IJsonNames {
 	public static final String INITIATION_DATE = "initiationDate";
 	public static final String INPUT_ACCOUNT = "inputAccount";
 	public static final String INSIDE_PERIOD = "insidePeriod";
+	public static final String INSIGHT = "insight";
 	public static final String INTE = "inte";
 	public static final String INTERNET = "internet";
 	public static final String INTERVAL = "interval";
@@ -317,9 +321,11 @@ public final class IJsonNames {
 	public static final String INVENTORIABLE = "inventoriable";
 	public static final String INVEST_ASSET = "investAsset";
 	public static final String INVESTMENT = "investment";
+	public static final String INVOFOX_ID = "invofoxId";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
 	public static final String INVOICE_DETAIL = "invoiceDetail";
+	public static final String INVOICE_DOC = "invoiceDoc";
 	public static final String INVOICE_TAXES = "invoiceTaxes";
 	public static final String INVOICE_TYPE = "invoiceType";
 	public static final String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
@@ -375,6 +381,7 @@ public final class IJsonNames {
 	public static final String MEDIA = "media";
 	public static final String MESSAGE = "message";
 	public static final String MESSAGES = "messages";
+	public static final String MIME_TYPE = "mimeType";
 	public static final String MADE_MODELS_VISIBLE = "madeModelsVisible";
 	public static final String MAX_DOCUMENT_SIZE = "maxDocumentSize";
 	public static final String MAX_TOTAL_DOCUMENT_SIZE = "maxTotalDocumentSize";
@@ -537,6 +544,7 @@ public final class IJsonNames {
 	public static final String REGISTRATION = "registration";
 	public static final String REGISTRY_ACCOUNT = "registryAccount";
 	public static final String REGISTRY_ADDRESS = "registryAddress";
+	public static final String REGISTRY_COMPANY = "registryCompany";
 	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";
@@ -622,6 +630,7 @@ public final class IJsonNames {
 	public static final String STATUS = "status";
 	public static final String STATUS_MODIFICATION_DATE = "statusModificationDate";
 	public static final String STOCK_UNIT_TAG = "stockUnitTag";
+	public static final String STORAGE = "storage";
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
 	public static final String SUFIX = "sufix";

@@ -49,4 +49,6 @@ public interface InvoiceProperties extends Serializable {
 	Property<Byte> getInvoiceInfoTypeProperty();
 	Property<Byte> getInvoiceInfoStatusProperty();
 	
+	Property<Integer> getDetailIdProperty();
+	
 }

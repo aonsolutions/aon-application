@@ -26,8 +26,12 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.gob.afirma.core.misc.http.HttpError;
 import jakarta.servlet.ServletContext;
@@ -44,9 +48,12 @@ public class JsfAppServlet extends HttpServlet {
 	private static final String TOKEN = "token";
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
-	private static final String DOMAIN = "domain";
+	private static final String DOMAIN_ID = "domainId";
 	private static final String LANGUAGE = "language";
+	private static final String REDIRECT_URL = "redirectUrl";
+	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
+	private static final String DOMAIN_NAME = "com.code.aon.jaas.domain";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -61,14 +68,26 @@ public class JsfAppServlet extends HttpServlet {
 			initFacesContext(req, resp);
 			initDesktopController(req);
 			initConfigurationController(req);
+			initDomainSwitcher(req);
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = facesContext.getExternalContext();
 			
-			externalContext.redirect("app.jsf");
+			externalContext.redirect( AonStringUtils.defaultIfBlank(req.getParameter(REDIRECT_URL), "app.jsf") );
 		} finally {
 			releaseFacesContext();
 		}	
+	}
+
+	private void initDomainSwitcher(HttpServletRequest req) {
+		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		Integer domainId = AonNumberUtils.toInteger(req.getParameter(DOMAIN_ID));
+		String domainName = req.getParameter(DOMAIN_NAME);
+		String currentDomainName = domainSwitcher.getCurrentDomainName();
+		if ( AonStringUtils.notEquals(currentDomainName, domainName ) ) {
+			domainSwitcher.select(domainId, domainName);
+		}
 	}
 
 	private void initConfigurationController(HttpServletRequest req) {
@@ -91,13 +110,16 @@ public class JsfAppServlet extends HttpServlet {
 
 		Request request = getRealRequest(httpRequest);
 		if ( request != null ) {
-			expireSession(request);
+			boolean expireSession = Boolean.parseBoolean(request.getParameter(EXPIRE_SESSION));
+			if ( expireSession ) {
+				expireSession(request);
+			}
 
 			Session session = request.getSessionInternal();
-            Manager manager = request.getContext().getManager();
-            String sessionId  = manager.getSessionIdGenerator().generateSessionId();
-            manager.changeSessionId(session, sessionId );
-            request.changeSessionId(session.getId());
+            //Manager manager = request.getContext().getManager();
+            //String sessionId  = manager.getSessionIdGenerator().generateSessionId();
+            //manager.changeSessionId(session, sessionId );
+            //request.changeSessionId(session.getId());
 			Principal principal = session.getPrincipal();
 			
 			if ( principal == null ) {

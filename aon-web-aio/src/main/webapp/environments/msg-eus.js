@@ -2,6 +2,7 @@
 
 export const ABOUT = 'Guri buruz';
 export const ACADEMIES = 'Akademiak';
+export const ACADEMY = 'Akademia';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Sartu zure AON kontura';
@@ -28,6 +29,8 @@ export const ADD_TYPE = 'Mota Gehitu';
 export const ADDITIONAL_HIRING = "Gehigarrizko kontratazioa";
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
+export const AGENT = 'Agentea';
+export const AGENTS = 'Agenteak';
 export const ALL = 'Guztia';
 export const ALL1 = 'Guztiak';
 export const ALL2 = 'Guztiak';
@@ -203,6 +206,7 @@ export const FRENCH = 'Frantsesa';
 // ----- G
 
 export const GALICIAN = 'Galiziera';
+export const GARAGE = 'Garajea';
 export const GENERAL_INFORMATION = 'Informazio Generala';
 export const GET_INVOICE = 'Faktura Lortu';
 export const GET_INVOICES = 'Fakturak Lortu';

@@ -200,13 +200,13 @@ public class AccountEntryTest {
 			String balancingAccountCode, String balancingAccountDescription,
 			String documentNumber) {
 		return new AccountEntryDetail()
-			.setAccount(account)
+			.setAccountId(account)
 			.setAccountCode(accountCode)
 			.setAccountDescription(accountDescription)
 			.setConcept(concept)
 			.setDebit(debit)
 			.setCredit(credit)
-			.setBalancingAccount(account)
+			.setBalancingAccountId(account)
 			.setBalancingAccountCode(accountCode)
 			.setBalancingAccountDescription(accountDescription)
 			.setDocumentNumber(documentNumber);

@@ -249,7 +249,10 @@ public class PropertiesDAO {
 
 		// INVOICE COMMUNICATION
 		@Override public Property<Byte> getInvoiceInfoTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.TYPE);}
-		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}	
+		@Override public Property<Byte> getInvoiceInfoStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_INFO.STATUS);}
+
+		@Override public Property<Integer> getDetailIdProperty() { return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.ID);}
+			
 		
 	}
 	
@@ -913,6 +916,7 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
+		@Override public Property<String> getPersonDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
 	}
 	

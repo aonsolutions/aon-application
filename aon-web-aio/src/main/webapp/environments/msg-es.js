@@ -2,6 +2,7 @@
 
 export const ABOUT = 'Acerca de';
 export const ACADEMIES = 'Academias';
+export const ACADEMY = 'Academia';
 export const ACCEPT = 'Aceptar';
 export const ACCESS = 'Acceso';
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Accede a tu cuenta de AON';
@@ -9,6 +10,7 @@ export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidad';
+export const ACCOUNTING_SUMMARY = 'Resumen Contabilidad';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas'
@@ -28,6 +30,8 @@ export const ADD_TYPE = 'Añadir Tipo';
 export const ADDITIONAL_HIRING = "Contratación adicional";
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
 export const ADDRESS = 'Dirección';
+export const AGENT = 'Agente';
+export const AGENTS = 'Agentes';
 export const ALL = 'Todo';
 export const ALL1 = 'Todos';
 export const ALL2 = 'Todas';
@@ -207,6 +211,7 @@ export const FRENCH = 'Francés';
 // ----- G
 
 export const GALICIAN = 'Gallego';
+export const GARAGE = 'Garaje';
 export const GENERAL_INFORMATION = 'Información General';
 export const GET_INVOICE = 'Obtener Factura';
 export const GET_INVOICES = 'Obtener Facturas';

@@ -5,8 +5,10 @@ import java.util.Date;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
+public class InvoiceDoc extends ExternalDoc<InvoiceAttachmentType> {
 
+	private static final long serialVersionUID = -2784454660963628068L;
+	
 	private static final String INVOICE_DOC = "invoice_doc";
 	private Integer invoice;
 	
@@ -20,6 +22,30 @@ public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
 	
 	public InvoiceDoc setInvoice(Integer invoice) {
 		this.invoice = invoice;
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setAonId(Integer aonId) {
+		super.setAonId(aonId);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setAonTable(String aonTable) {
+		super.setAonTable(aonTable);
+		return this;
+	}
+
+	@Override
+	public InvoiceDoc setDriveId(String driveId) {
+		super.setDriveId(driveId);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setExternalStorage(ExternalStorage externalStorage) {
+		super.setExternalStorage(externalStorage);
 		return this;
 	}
 	
@@ -68,6 +94,12 @@ public class InvoiceDoc extends S3Doc<InvoiceAttachmentType> {
 	@Override
 	public InvoiceDoc setType(InvoiceAttachmentType type) {
 		super.setType(type);
+		return this;
+	}
+	
+	@Override
+	public InvoiceDoc setUrl(String url) {
+		super.setUrl(url);
 		return this;
 	}
 }

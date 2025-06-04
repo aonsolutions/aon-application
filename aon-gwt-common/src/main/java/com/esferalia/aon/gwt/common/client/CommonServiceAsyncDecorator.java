@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -24,6 +26,7 @@ import com.esferalia.aon.occam.api.model.MarketingCompaignParams;
 import com.esferalia.aon.occam.api.model.Newsletter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.PayMethodParams;
+import com.esferalia.aon.occam.api.model.ProjectParams;
 import com.esferalia.aon.occam.api.model.Question;
 import com.esferalia.aon.occam.api.model.QuestionParams;
 import com.esferalia.aon.occam.api.model.SellerParams;
@@ -35,7 +38,6 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
-import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -55,19 +57,23 @@ import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
+import com.esferalia.aon.occam.api.model.registry.SellerWorkloadContent;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -751,15 +757,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getSellersWorkloadFees(SellerWorkloadParams params, AsyncCallback<List<Fee>> callback) throws AonCoreException {
+	public void getSellersWorkloadContent(SellerWorkloadParams params, AsyncCallback<SellerWorkloadContent> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getSellersWorkloadFees(params, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void getSellersWorkloadFeesIds(SellerWorkloadParams params, AsyncCallback<List<Integer>> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.getSellersWorkloadFeesIds(params, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getSellersWorkloadContent(params, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1028,6 +1028,86 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> callback) throws AonCoreException {
 		AON.start();
 		serviceAsync.getTargetFull(domainName, domain, user, registry, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getCompanyByDocument(String domainName, int domain, String user, String document, AsyncCallback<Company> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCompanyByDocument(domainName, domain, user, document, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// **************************************** [PROJECT]
+	// **************************************************
+
+	@Override
+	public void getProjects(ProjectParams params, AsyncCallback<List<Project>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProjects(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProject(String domainName, int domain, String user, Integer projectId, AsyncCallback<Project> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProject(domainName, domain, user, projectId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteProject(String domainName, int domain, String user, Integer projectId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteProject(domainName, domain, user, projectId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveProject(String domainName, int domain, String user, Project project, AsyncCallback<Project> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveProject(domainName, domain, user, project, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProjectsCount(ProjectParams params, AsyncCallback<Integer> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProjectsCount(params, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getProjectHolders(String domainName, int domain, String user, Integer projectId, AsyncCallback<List<ProjectHolder>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getProjectHolders(domainName, domain, user, projectId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void saveProjectHolder(String domainName, int domain, String user, ProjectHolder projectHolder, AsyncCallback<ProjectHolder> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.saveProjectHolder(domainName, domain, user, projectHolder, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.deleteProjectHolder(domainName, domain, user, projectHolderId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getTaskHolders(String domainName, Integer domain, String user, AsyncCallback<List<TaskHolder>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getTaskHolders(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getActivityTypes(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+
+	@Override
+	public void getCustomerNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

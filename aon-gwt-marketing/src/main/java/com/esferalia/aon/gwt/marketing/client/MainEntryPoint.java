@@ -128,6 +128,17 @@ public class MainEntryPoint implements EntryPoint {
 	/*-{
 		return $wnd.getCurrentUser();
 	}-*/;
+	
+	public static native int getCustomer()
+	/*-{
+		return $wnd.localStorage.getItem("customer");
+	}-*/;
+	
+	public static native int removeCustomer()
+	/*-{
+		return $wnd.localStorage.removeItem("customer");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

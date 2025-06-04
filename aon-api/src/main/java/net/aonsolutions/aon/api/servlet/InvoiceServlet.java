@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -41,6 +42,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.doc.ExternalStorage;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceData;
@@ -443,42 +446,52 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
-		Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
-				f -> f.getAttachModuleProperty().eq(invoice.getId())
-				, AttachType.INVOICE);
-
 		JSONObject json = new JSONObject();
-		if(invoiceAttach != null && invoiceAttach.getId() != null) {
-			JSONObject data = new JSONObject();
-			data.put(IConstants.DOMAIN_NAME, domain.getName());
-			data.put(IConstants.DOMAIN_ID, domain.getId());
-			data.put(IJsonNames.ID, invoiceAttach.getId());
-			data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String path = "/ms/api/file/" +  result;	
-			String url = "https://" + domain.getName() + path; 
-		    json.put(IJsonNames.URL, url);
-		    json.put(IJsonNames.PATH, path);
-		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
-			return json;
-		} else if(invoice.isSales()){
-			JSONObject data = new JSONObject();
-			data.put(IConstants.DOMAIN_NAME, domain.getName());
-			data.put(IConstants.DOMAIN_ID, domain.getId());
-			data.put(IJsonNames.ID, invoice.getId());
-			data.put(IConstants.SOURCE, "invoice");
-			data.put(IJsonNames.LOGIN, login);
+
+		InvoiceDoc invoiceDoc = invoice.getDoc().orElse(null);
+		Occam occam = new Occam().setDomain(domain.getId()).setDomainName(domain.getName()).setUser(login);
+		if(invoiceDoc == null) invoiceDoc = AON.getInvoiceDoc(occam, invoice.getDomain(), invoice.getId()).orElse(null);
 		
-			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String path = "/ms/api/download_invoice_pdf?json=" +  result;
-			String url = "https://" + domain.getName() + path;
-		    json.put(IJsonNames.URL, url);
-		    json.put(IJsonNames.PATH, path);
-		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+		if(invoiceDoc != null) {
+		    json.put(IJsonNames.URL, invoiceDoc.getUrl());
+		    json.put(IConstants.CONTENT_TYPE, invoiceDoc.getMimeType().getName());
 			return json;
+		} else {
+			Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
+					f -> f.getAttachModuleProperty().eq(invoice.getId())
+					, AttachType.INVOICE);
+
+			if(invoiceAttach != null && invoiceAttach.getId() != null) {
+				JSONObject data = new JSONObject();
+				data.put(IConstants.DOMAIN_NAME, domain.getName());
+				data.put(IConstants.DOMAIN_ID, domain.getId());
+				data.put(IJsonNames.ID, invoiceAttach.getId());
+				data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
+				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+				String path = "/ms/api/file/" +  result;	
+				String url = "https://" + domain.getName() + path; 
+			    json.put(IJsonNames.URL, url);
+			    json.put(IJsonNames.PATH, path);
+			    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
+				return json;
+			} else if(invoice.isSales()){
+				JSONObject data = new JSONObject();
+				data.put(IConstants.DOMAIN_NAME, domain.getName());
+				data.put(IConstants.DOMAIN_ID, domain.getId());
+				data.put(IJsonNames.ID, invoice.getId());
+				data.put(IConstants.SOURCE, "invoice");
+				data.put(IJsonNames.LOGIN, login);
+			
+				String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
+				String path = "/ms/api/download_invoice_pdf?json=" +  result;
+				String url = "https://" + domain.getName() + path;
+			    json.put(IJsonNames.URL, url);
+			    json.put(IJsonNames.PATH, path);
+			    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
+				return json;
+			}	
 		}
 		return null;
-
 	}
 	
 	private static JSONArray getInvoices(AonApiData api, InvoiceFilter filter) {
@@ -607,25 +620,38 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(!fileJSON.isEmpty()) {
 			String s3Key = JsonUtils.getString(fileJSON, IJsonNames.S3_KEY);
 			String contentType = JsonUtils.getString(fileJSON, "content_type");
+					
 			if(s3Key != null) {
-				try {
-					byte[] data = S3.download("aon-upload-post", s3Key);
-					if(data != null) {
-						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
-						Attach attach = new Attach()
-							.setDate(new Date())
-							.setDomain(new Domain().setId(invoice.getDomain()))
-							.setAttachModule(invoice.getId())
-							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
-							.setAttachType(AttachType.INVOICE)
-							.setType(InvoiceAttachmentType.INVOICE.value())
-							.setData(data);
+				MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+				InvoiceDoc invoiceDoc = new InvoiceDoc()
+						.setExternalStorage(ExternalStorage.AWS)
+						.setS3Bucket("aon-upload-post")
+						.setS3Key(s3Key)
+						.setInvoice(invoice.getId())
+						.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+						.setType(InvoiceAttachmentType.INVOICE)
+						.setDomain(invoice.getDomain());
 
-						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				AON.saveInvoiceDoc(api.getOccam(), invoiceDoc);
+
+//				try {
+//					byte[] data = S3.getInstance().download("aon-upload-post", s3Key);
+//					if(data != null) {
+//						MimeType mimetype = MimeType.safeValueFromContenType(contentType);
+//						Attach attach = new Attach()
+//							.setDate(new Date())
+//							.setDomain(new Domain().setId(invoice.getDomain()))
+//							.setAttachModule(invoice.getId())
+//							.setMimeType(mimetype != null ? mimetype : MimeType.PDF)
+//							.setAttachType(AttachType.INVOICE)
+//							.setType(InvoiceAttachmentType.INVOICE.value())
+//							.setData(data);
+//
+//						AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+//					}
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
 			}
 		}
 	}

@@ -26,6 +26,7 @@ export class Registry {
     paymethod;
     record_data;
     rsegment;
+    registryCompany;
 
     constructor(registry) {
         if(registry) {
@@ -56,6 +57,7 @@ export class Registry {
             this.rsegment = registry.rsegment 
                 ? registry.rsegment.map(a => new RegistrySegment(a))
                 : [];
+            this.registryCompany = registry.registryCompany;
         } else {
             this.domain = new Domain();
             this.document = '';
@@ -71,7 +73,6 @@ export class Registry {
             this.banks = [];
             this.paymethod = new RegistryPaymethod();
             this.record_data = new RecordData();
-
             this.rsegment = [];
         }
     }

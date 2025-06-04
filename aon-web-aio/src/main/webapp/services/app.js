@@ -795,6 +795,7 @@ export const ACADEMY = {
   icon: AON_ICONS.AON_ACADEMY,
   symbol: MATERIAL_ICONS.DICTIONARY,
   title: "Academia",
+  description: MSG.ACADEMY,
   color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
@@ -804,6 +805,7 @@ export const GARAGE = {
   icon: AON_ICONS.AON_GTA,
   symbol: MATERIAL_ICONS.CAR_REPAIR,
   title: "Taller",
+  description: MSG.GARAGE,
   color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
@@ -813,6 +815,7 @@ export const COMMERCE = {
   icon: AON_ICONS.AON_COMMERCE,
   symbol: MATERIAL_ICONS.POINT_OF_SALE,
   title: "Comercio",
+  description: MSG.COMMERCE,
   color: "var(--aonTopMenuSpecial)",
   domainType: true,
 };
@@ -1613,12 +1616,31 @@ export const SUPERSET = {
 	logo: "../assets/apps/superset.png",
 };
 
+export function getConstNewApps(dur, isAyudaT) {
+//  if((url.includes('ayudat') && (dur.isAdmin() || dur.isEnterprise)) || (url.includes('infoautonomos')) && (dur.isAdmin() || dur.isEnterprise)) {
+  if((isAyudaT && (dur.isAdmin() || dur.isEnterprise()))) {
+    return {
+      app: CONSTANT.APPS,
+      title: MSG.PLAN,
+      description: MSG.PLAN,
+      symbol: MATERIAL_ICONS.APPS
+    }
+  } else {
+      return {
+      app: CONSTANT.APPS,
+      title: MSG.APPLICATIONS,
+      description: MSG.APPLICATIONS,
+      symbol: MATERIAL_ICONS.APPS
+    }
+  }
+};
+
 export const NEW_APPS = {
 	app: CONSTANT.APPS,
 	title: MSG.APPLICATIONS,
 	description: MSG.APPLICATIONS,
 	symbol: MATERIAL_ICONS.APPS
-}
+};
 
 export const AON_APPS = [ 
 	AON_SOLUTIONS, 

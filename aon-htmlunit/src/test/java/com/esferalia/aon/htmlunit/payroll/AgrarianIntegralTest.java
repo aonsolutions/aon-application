@@ -22,6 +22,10 @@ public class AgrarianIntegralTest extends BaseIntegralTestCase {
 		setup(url, user, password);
 		
 		wait4Id("regimen_especial_agrario");
+
+		click("viewButton");
+		wait4Id("formerMenuItem");
+		click("formerMenuItem");
 	}
 
 	// ------------------------------------------------------------------------

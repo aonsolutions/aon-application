@@ -143,7 +143,7 @@ public class AccountEntryValidation {
 	 * La cuenta contable del apunte es un dato obligatorio.
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> EMPTY_ACCOUNT = (detail,ctx) -> {
-		if (detail.getAccount() == null )
+		if (detail.getAccountId() == null )
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_ACCOUNT.format(detail.getLine()
 				,detail.getConcept(),detail.getDebit(),detail.getCredit()));
 	};
@@ -151,18 +151,18 @@ public class AccountEntryValidation {
 
 	private static void validateAccount(AccountEntryDetail detail,
 			Integer accountId, AONContext ctx) {
-		Account account = AccountDAO.get(ctx, detail.getAccount());
+		Account account = AccountDAO.get(ctx, detail.getAccountId());
 		if (account == null)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_NOT_FOUND
-					.format(Objects.toString(detail.getAccount())
+					.format(Objects.toString(detail.getAccountId())
 					,detail.getAccountCode(),detail.getAccountDescription()));
 		if (!account.isActive())
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_INACTIVE
-					.format(Objects.toString(detail.getAccount())
+					.format(Objects.toString(detail.getAccountId())
 					,detail.getAccountCode(),detail.getAccountDescription()));
 		if (account.getCode().length() != 9)
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_ACCOUNT_INVALID_LENGTH
-					.format(Objects.toString(detail.getAccount())
+					.format(Objects.toString(detail.getAccountId())
 					,detail.getAccountCode(),detail.getAccountDescription()));
 	}
 	
@@ -174,7 +174,7 @@ public class AccountEntryValidation {
 	 * 
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> VALID_ACCOUNT = (detail,ctx) -> {
-		validateAccount(detail,detail.getAccount(),ctx);
+		validateAccount(detail,detail.getAccountId(),ctx);
 	};
 
 	/**
@@ -185,8 +185,8 @@ public class AccountEntryValidation {
 	 * 
 	 */
 	public static BiConsumer<AccountEntryDetail,AONContext> VALID_BALANCING_ACCOUNT = (detail,ctx) -> {
-		if (detail.getBalancingAccount() != null) {
-			validateAccount(detail,detail.getBalancingAccount(),ctx);
+		if (detail.getBalancingAccountId() != null) {
+			validateAccount(detail,detail.getBalancingAccountId(),ctx);
 		}
 	};
 

@@ -118,7 +118,7 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 
 	private static MimeMessage getMimeMessage(String messageId) throws IOException, MessagingException {
 		String key = String.format("%s/%s", INVOICE_DIR, messageId);
-		byte[] data = S3.download(S3_SES_BUCKET, key);
+		byte[] data = S3.getInstance().download(S3_SES_BUCKET, key);
 
 		try (InputStream is = new ByteArrayInputStream(data)) {
 			Session session = Session.getInstance(System.getProperties());

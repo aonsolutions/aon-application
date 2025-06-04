@@ -418,11 +418,11 @@ public class DiaryImport extends ImportUtils {
 			
 			for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
 				Account acc = ensureAccount(domain,user,error,ae,i,ae.getEntry().getDetails().get(i).getAccountCode());
-				ae.getEntry().getDetails().get(i).setAccount(acc.getId());
+				ae.getEntry().getDetails().get(i).setAccountId(acc.getId());
 				String balAccount = ae.getEntry().getDetails().get(i).getBalancingAccountCode();
 				if (AonStringUtils.isNotBlank( balAccount )) {
 					Account balAcc = ensureAccount(domain,user,error,ae,i,balAccount);
-					ae.getEntry().getDetails().get(i).setBalancingAccount(balAcc.getId());
+					ae.getEntry().getDetails().get(i).setBalancingAccountId(balAcc.getId());
 				}
 			}
 			if(ae.getEntry().getEntryType() == null) {
