@@ -246,6 +246,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 				.setNoteType(NoteType.MESSAGE)
 				.setNoteDate(new Date())
 				.setRegistry(customerId)
+				.setConfidential(false)
+				.setSecurityLevel(SecurityLevel.OFFICIAL)
 			);
 			
 			createNotes();

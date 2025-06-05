@@ -727,27 +727,16 @@ export class AonCustomer extends AonReg {
 		`;
 		div.id = "customerNotesId";
 
-		if(this.isMobile() || !this.isBeta()) {
-			let dialog = this.getApplication().getDialog();
-			dialog.clear();
-			dialog.setTitle(MSG.NOTES);
-			if(this.isMobile()) dialog.type = 'fullscreen';
-			else dialog.width = '400px';
-			dialog.setContent(div);
-			dialog.addAcceptAction(() => {});
-			dialog.open();
-		} else {
-			let rightSidenav = this.getApplication().getRightSidenav();
-			this.clearElement(rightSidenav);
-			if (rightSidenav.style.flexBasis === "0px") {
-				rightSidenav.appendChild(div);
-				
-				localStorage.setItem("customer", this.registry.getId());
-				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
-			}
+		let rightSidenav = this.getApplication().getRightSidenav();
+		this.clearElement(rightSidenav);
+		if (rightSidenav.style.flexBasis === "0px") {
+			rightSidenav.appendChild(div);
 			
-			this.getApplication().toogleRightSidenav();
-		}	
+			localStorage.setItem("customer", this.registry.getId());
+			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+		}
+		
+		this.getApplication().toogleRightSidenav();	
 	}
 }
 
