@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +21,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 	@Test
-	public void testGlobalManagerUser() {
+	public void testGlobalManagerUser() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
 		String user = System.getProperty("integration.test.env.app.user", "asesor");
@@ -27,8 +29,9 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		WebDriver webDriver = null;
 		try {
-			// webDriver = newChromeDriver();
-			webDriver = newFirefoxDriver();
+			//webDriver = newChromeDriver();
+			//webDriver = newFirefoxDriver();
+			webDriver = newRemoteDriver();
 
 			login(webDriver, url, user, password);
 
@@ -54,6 +57,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		} finally {
 			webDriver.close();
+			webDriver.quit();
 		}
 	}
 	

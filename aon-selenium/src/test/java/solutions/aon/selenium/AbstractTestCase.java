@@ -1,8 +1,10 @@
 package solutions.aon.selenium;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,10 +12,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import solutions.aon.selenium.solutions.TimeControlTestCase;
 
 public class AbstractTestCase {
 
@@ -30,10 +31,6 @@ public class AbstractTestCase {
 	}
 
 	protected static WebDriver newChromeDriver() {
-//		URL chromedriverURL =  TimeControlTestCase.class.getResource("/solutions/aon/selenium/webdriver/linux64/chromedriver");
-//		System.out.println(chromedriverURL.getPath());
-//		System.setProperty("webdriver.chrome.driver", chromedriverURL.getPath());
-		
 		
 		
 		ChromeOptions options = new ChromeOptions();
@@ -45,23 +42,32 @@ public class AbstractTestCase {
 		options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
 		options.addArguments("--remote-debugging-port=9222");
 		
-//		Map<String, Object> prefs = new HashMap<String, Object>();
-//		prefs.put("download.default_directory", "/home/igonzalez/a/");
-//		options.setExperimentalOption("prefs", prefs);
+		
 		
 		WebDriver driver = new ChromeDriver(options);
+		
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 	    
 		return driver;
 	}
 
 	protected static WebDriver newFirefoxDriver() {
-//		URL chromedriverURL =  TimeControlTestCase.class.getResource("/solutions/aon/selenium/webdriver/linux64/geckodriver");
-//		System.setProperty("webdriver.gecko.driver", chromedriverURL.getPath());
 		
 		WebDriver driver = new FirefoxDriver();
 	    
 		
+		return driver;
+	}
+
+	protected static WebDriver newRemoteDriver() throws URISyntaxException, MalformedURLException {
+		
+		
+		ChromeOptions chromeOptions = new ChromeOptions();
+		
+		RemoteWebDriver driver = new RemoteWebDriver(new URI("http://localhost:4444").toURL(), chromeOptions);
+		
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+	    
 		return driver;
 	}
 
