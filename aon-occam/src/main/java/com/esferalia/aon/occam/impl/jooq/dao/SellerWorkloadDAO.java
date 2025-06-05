@@ -410,7 +410,7 @@ public class SellerWorkloadDAO {
 		customerFeeParams.setAsc(params.isAsc());
 
 		LinkedList<Fee> feeList = customerFeeIds.size() > 0 ? getFees(ctx, customerFeeParams) : new LinkedList<Fee>();
-		List<InvoiceDetail> invoiceList = InvoiceDAO.getInvoiceDetails(ctx, f -> f.getDetailIdProperty().in(customerFeeParams.getInvoiceIds())).collect(Collectors.toList());
+		List<InvoiceDetail> invoiceList = InvoiceDetailExtendedDAO.getInvoiceDetails(ctx, f -> f.getDetailIdProperty().in(customerFeeParams.getInvoiceIds())).collect(Collectors.toList());
 
 		System.out.println("Project : " + params.getTaskHolder());
 		System.out.println("Seller : " + params.getSeller());
