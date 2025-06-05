@@ -134,6 +134,14 @@ export class AonOfficePanel extends AonElement {
 		const { OfficeOptions } = OfficeEnums;
 		let customerSideNavOpt = this.getElement("aonOfficePanelSidenavsideNavcustomer");
 		customerSideNavOpt.click();
+		
+		let aonContentBeta = this.getElementsByClassName("aonContentBeta");
+		aonContentBeta.style.height = 'auto';
+		
+		let rootPanel = this.getElement("rootPanel");
+	    rootPanel.style.height = 'auto';
+	    rootPanel.style.marginTop = '4rem';
+		
 	}
 
 	buildSidenav() {
@@ -692,8 +700,8 @@ export class AonOfficePanel extends AonElement {
 						aonView = new AonTarget();
 						aonView.back = () => {
 							let rightSidenav = this.getApplication().getRightSidenav();
+							rightSidenav.style.flexBasis = "0px";
 							this.clearElement(rightSidenav);
-							this.getApplication().toogleRightSidenav();
 							
 							if(searchPanel) searchPanel.style.display = "block";
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
@@ -706,8 +714,8 @@ export class AonOfficePanel extends AonElement {
 						aonView.setOffice(true);
 						aonView.back = () => {
 							let rightSidenav = this.getApplication().getRightSidenav();
+							rightSidenav.style.flexBasis = "0px";
 							this.clearElement(rightSidenav);
-							this.getApplication().toogleRightSidenav();
 							
 							if(searchPanel) searchPanel.style.display = "block";
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {

@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomerNotes } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -78,6 +78,27 @@ export class AonCustomer extends AonReg {
 
 		if (this.registry.id && this.registry.getCreationUser) {
 			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
+			
+			getCustomerNotes({customer: this.registry.getId()})
+				.then(notes => {
+					console.log(notes);
+					const existsNotes = notes.some(item => item.type === "MESSAGE" );
+					
+					if(existsNotes){
+						let badge = this.createElement('div');
+						badge.id = 'customerNotesUnread';
+						badge.className = 'aonConnected';
+						badge.style.backgroundColor = "#DC4D30";
+			
+						let customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIconButton');
+						customerNotesButton.appendChild(badge);
+					}
+					
+					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
+					console.log("existsObservation : " + existsObservation);
+					if(existsObservation) this.notes();
+					
+				});
 		}
 		
 		if (this.registry.id && this.registry.getCreationUser) {
@@ -91,6 +112,9 @@ export class AonCustomer extends AonReg {
 		div.style.display = "flex";
 		div.style.width = "100%";
 		div.style.flexWrap = "wrap";
+		div.style.height = 'calc(100vh - 15rem)';
+  		div.style.overflowY = 'auto';
+  		div.style.margin = '.5rem 0';
 		this.appendChild(div);
 
 		this.buildGeneralData();
@@ -363,10 +387,10 @@ export class AonCustomer extends AonReg {
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
 		this.clearElement(main);
-
-		main.style.position = 'absolute';
-		main.style.height = '100%';
-		main.style.marginTop = '.5rem';
+		
+		main.style.height = 'calc(100vh - 15rem)';
+  		main.style.overflowY = 'auto';
+  		main.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
 
@@ -403,6 +427,9 @@ export class AonCustomer extends AonReg {
 		
 		let main = this.getElement(this.DIV);
 		main.style.display = "block";
+		main.style.height = 'calc(100vh - 15rem)';
+  		main.style.overflowY = 'auto';
+  		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let booking = new AonBooking();
@@ -415,6 +442,9 @@ export class AonCustomer extends AonReg {
 		
 		let main = this.getElement(this.DIV);
 		main.style.display = "block";
+		main.style.height = 'calc(100vh - 15rem)';
+  		main.style.overflowY = 'auto';
+  		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let userList = new AonUserList();
@@ -462,6 +492,9 @@ export class AonCustomer extends AonReg {
 		
 		let main = this.getElement(this.DIV);
 		main.style.display = "flex";
+		main.style.height = 'calc(100vh - 15rem)';
+  		main.style.overflowY = 'auto';
+  		main.style.margin = '.5rem 0';
 		this.clearElement(main);
 
 		let registryId = this.registry.getId();
@@ -482,9 +515,9 @@ export class AonCustomer extends AonReg {
 		div.style.display = "flex";
 		this.clearElement(div);
 
-		div.style.position = 'absolute';
-		div.style.height = '100%';
-		div.style.marginTop = '.5rem';
+		div.style.height = 'calc(100vh - 15rem)';
+  		div.style.overflowY = 'auto';
+  		div.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
 
@@ -718,6 +751,11 @@ export class AonCustomer extends AonReg {
 	}
 	
 	notes(){
+		let rightSidenav = this.getApplication().getRightSidenav();
+		this.clearElement(rightSidenav);
+		
+		let notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
+		
 		let div = this.createElement(TAG.DIV);
 		div.style = `
 			display: flex;
@@ -726,17 +764,26 @@ export class AonCustomer extends AonReg {
 			height: 100%;
 		`;
 		div.id = "customerNotesId";
-
-		let rightSidenav = this.getApplication().getRightSidenav();
-		this.clearElement(rightSidenav);
-		if (rightSidenav.style.flexBasis === "0px") {
+		
+		console.log("rightSidenav");
+		console.log(rightSidenav);
+		console.log(rightSidenav.style);
+		console.log(rightSidenav.style.flexBasis);
+		console.log(rightSidenav.style.flexBasis.length == 0);
+		
+		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
+			notesIcon.innerHTML = 'speaker_notes_off';
+			
 			rightSidenav.appendChild(div);
 			
 			localStorage.setItem("customer", this.registry.getId());
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+		} else {
+			notesIcon.innerHTML = 'speaker_notes';
 		}
 		
 		this.getApplication().toogleRightSidenav();	
+		
 	}
 }
 
