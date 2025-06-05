@@ -70,7 +70,7 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
-
+/*
 		let gradiantHeader = this.createElement(TAG.DIV);
 		gradiantHeader.className = 'aonRootGradiantHeader';
 		gradiantHeader.id = 'aonRootGradiantHeader';
@@ -87,15 +87,19 @@ export class AonHome extends AonElement {
 		gradiantHeaderBlur.className = 'aonRootGradiantHeaderBlur';
 		gradiantHeaderBlur.id = 'aonRootGradiantHeaderBlur';
 		//this.appendChild(gradiantHeaderBlur);
+*/
 
 		let aonHeader = new AonHeader();
 		aonHeader.id = this.AON_HEADER;
 		aonHeader.newTheme = true;
 		this.appendChild(aonHeader);
 
-		aonHeader.setVisibleHomeButton(false);
+		//aonHeader.setVisibleHomeButton(false);
 		aonHeader.setVisibleCompanyListButton(false);
-		
+
+		let content = this.createElement(TAG.DIV);
+		content.id  = "homeContent";
+        
 		let aonMenu = new AonNewMenu();
 		aonMenu.id = this.AON_MENU;
 		aonMenu.className = CSS.AON_MENU;
@@ -135,14 +139,17 @@ export class AonHome extends AonElement {
 			aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
 			
 		});
+//		this.appendChild(aonMenu);
+        content.appendChild(aonMenu);
 
-		
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
 		rootPanel.style.overflowY = "auto";
-		this.appendChild(rootPanel);
-		this.appendChild(aonMenu);
+//		this.appendChild(rootPanel);
+		content.appendChild(rootPanel);
+		
+		this.appendChild(content);
 
 		this.rightPanel = new AonRightPanel();
 		this.rightPanel.addEventListener(EVENT.CLOSE, () => {

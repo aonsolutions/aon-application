@@ -214,19 +214,16 @@ export class AonHeader extends AonElement {
 
 		aonHeaderButtons.appendChild(aonHeaderHelp);
 
-		if(this.newTheme){
-			let aonHeaderConfig = this.createElement(TAG.SPAN);
-			aonHeaderConfig.id = this.AON_HEADER_CONFIG;
-			aonHeaderConfig.title = MSG.CONFIGURATION;
+        let aonHeaderConfig = this.createElement(TAG.SPAN);
+        aonHeaderConfig.id = this.AON_HEADER_CONFIG;
+        aonHeaderConfig.title = MSG.CONFIGURATION;
 
-			let aonHeaderConfigButton = new AonIconButton();
-			aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
-			aonHeaderConfigButton.icon = "settings"
-			aonHeaderConfig.appendChild(aonHeaderConfigButton);
+        let aonHeaderConfigButton = new AonIconButton();
+        aonHeaderConfigButton.id = this.AON_HEADER_CONFIG_BUTTON;
+        aonHeaderConfigButton.icon = "settings"
+        aonHeaderConfig.appendChild(aonHeaderConfigButton);
 
-			aonHeaderButtons.appendChild(aonHeaderConfig);
-		}
-
+        aonHeaderButtons.appendChild(aonHeaderConfig);
 
 		let aonHeaderNotiication = this.createElement(TAG.SPAN);
 		aonHeaderNotiication.id = this.AON_HEADER_NOTIFICATION;
@@ -252,10 +249,9 @@ export class AonHeader extends AonElement {
 		let aonHeaderUser = this.createElement(TAG.SPAN)
 		aonHeaderUser.id = this.AON_HEADER_USER;
 		getAuth().then(auth => {
-			aonHeaderUser.title = auth.name + " " +  auth.surname;		
+			aonHeaderUser.title = auth.name + " " +  auth.surname;
 		});
-		
-		
+
 		let aonHeaderUserButton = new AonIconButton();
 		aonHeaderUserButton.id = this.AON_HEADER_USER_BUTTON;
 		aonHeaderUserButton.icon = "account_circle";
@@ -395,7 +391,6 @@ export class AonHeader extends AonElement {
 			}
 
 		}
-			
 
 		let aonHeaderCompanyListButton = this.getElement(this.BASE_ID + 'CompanyListButton');
 
@@ -559,7 +554,6 @@ export class AonHeader extends AonElement {
 		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
 		this.appendChild(aonHeaderSearchDialogMenu);
 
-		
 	}
 
 	timeControlStatus(signin) {
@@ -715,8 +709,7 @@ export class AonHeader extends AonElement {
 		aboutContent.appendChild(divInfo);
 		return aboutContent;
 	}
-	
-	
+
 	setColor(color, backgroundColor) {
 		let buttons = [
 			this.getElement('aonHeaderHelpButton'),
@@ -880,7 +873,6 @@ export class AonHeader extends AonElement {
 		headerApp.replaceChild(a, headerApp.firstChild);
 	}
 
-	
 	setApp(el) {
 		let headerApp = this.getElement('aonHeaderApp');
 		headerApp.replaceChild(el, headerApp.firstChild);
@@ -1127,7 +1119,15 @@ export class AonHeader extends AonElement {
 			aonHeaderHome.style.right = '140px';
 			aonHeaderCompany.style.right = '180px';
 		}
-		
+/*		
+/		
+/     MIRARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr		
+/     MIRARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr		
+/     MIRARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr		
+/     MIRARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr		
+      Cambio de empresa menu - modifico estilo
+/		
+*/		
 		let aonMenu = this.getElement('aonMenu');
 		aonMenu.init().then(() => {
 			aonMenu.open();
@@ -1136,12 +1136,11 @@ export class AonHeader extends AonElement {
 				favicon();
 				title();
 			}).catch(() => {});
-		}
-		);
+		});
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			callback();				
+			callback();
 		});
 	}
 	

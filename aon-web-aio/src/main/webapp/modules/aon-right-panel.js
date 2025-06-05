@@ -32,7 +32,7 @@ export class AonRightPanel extends AonElement {
 
     connectedCallback() {
       this.initialize();
-      this.build();
+      this.buildOld();
     }
 
     initialize() {
@@ -90,6 +90,88 @@ export class AonRightPanel extends AonElement {
       });
     }
 
+    buildOld(){
+      let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
+      rightPanel.classList.add('hiddenSidenav');
+
+      let toolbarPanel = this.createDiv(this.TOOLBAR_PANEL, "toolbarSidenavPanel");
+      let toolbarTitlePanel = this.createDiv(this.TOOLBAR_PANEL, "toolbarSidenavTitlePanel");
+      let toolbarRightButtonsPanel = this.createDiv("toolbarRightButtonsPanel", "toolbarSidenavTitlePanel");
+
+      toolbarPanel.appendChild(toolbarTitlePanel);
+      toolbarPanel.appendChild(toolbarRightButtonsPanel);
+      rightPanel.appendChild(toolbarPanel);
+
+      this.appendChild(rightPanel);
+
+      let rightPanelEditButton = new AonIconButton(); 
+      rightPanelEditButton.id = this.EDIT_BUTTON;
+      rightPanelEditButton.icon ='manage_accounts';
+      rightPanelEditButton.className = "rightPanelEditButton";
+      toolbarTitlePanel.appendChild(rightPanelEditButton);
+
+      let rightPanelConfigButton = new AonIconButton(); 
+      rightPanelConfigButton.id = 'aonRightPanelConfigButton';
+      rightPanelConfigButton.icon ='settings';
+      rightPanelConfigButton.className = "rightPanelButtons";
+      toolbarTitlePanel.appendChild(rightPanelConfigButton);
+
+      let rightPanelHelpButton = new AonIconButton(); 
+      rightPanelHelpButton.id = 'aonRightPanelHelpButton';
+      rightPanelHelpButton.icon ='help_outline';
+      rightPanelHelpButton.className = "rightPanelButtons";
+      toolbarTitlePanel.appendChild(rightPanelHelpButton);
+
+      let rightPanelNotificationButton = new AonIconButton();
+      rightPanelNotificationButton.id = 'aonRightPanelNotificationButton';
+      rightPanelNotificationButton.icon ='notifications';
+      rightPanelNotificationButton.className = "rightPanelButtons";
+      toolbarTitlePanel.appendChild(rightPanelNotificationButton);
+
+      let openNotificationButton =new AonIconButton();
+      openNotificationButton.id = "openNotificationButton";
+      openNotificationButton.icon = "open_in_new";
+      openNotificationButton.title = "Ver en pantalla completa";
+      openNotificationButton.className = "rightPanelButtons";
+      toolbarRightButtonsPanel.appendChild(openNotificationButton);
+
+      let rightPanelCloseButton = new AonIconButton(); 
+      rightPanelCloseButton.id = this.CLOSE_BUTTON;
+      rightPanelCloseButton.icon ='close';
+      rightPanelCloseButton.className = "rightPanelCloseButton";
+      toolbarRightButtonsPanel.appendChild(rightPanelCloseButton);
+
+      rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
+        this.close();
+      });
+
+      let title = this.createElement(TAG.H1);
+      title.id = this.TITLE;
+      title.style.fontSize = '16px';
+      title.style.fontWeight = 'bold';
+      toolbarTitlePanel.appendChild(title);
+
+      let content = this.createDiv(this.CONTENT);
+
+      rightPanel.appendChild(content);
+
+
+      // Cerrar con la tecla esc
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          this.close();
+        }
+      });
+      // Cerar al hacer click fuera
+    /*
+      document.addEventListener('click', (e) => {
+        if (!this.contains(e.target)) {
+          this.close();
+        }
+      });
+    */
+    }
+
     setTitle(title){
       this.title = title;
       let titleElement = this.getElement(this.TITLE);
@@ -106,7 +188,7 @@ export class AonRightPanel extends AonElement {
         this.clearElement(this.getContent());
         this.clearElement(this.getTitle());
     }
-
+/*
     open(){
       this.classList.remove('hiddenSidenav');
     }
@@ -117,6 +199,57 @@ export class AonRightPanel extends AonElement {
 
     close(){
       this.classList.add('hiddenSidenav');
+    }
+*/
+    open(height,marginTop,boxShadow){
+      this.classList.remove('hiddenSidenav');
+      
+      let welcome = this.getElement("aonCompanyTabFilter");
+      //this.getRightPanel().style.visibility = "visible";
+
+      this.getRightPanel().classList.add("open");
+    
+      if(height) 
+        this.getRightPanel().style.height = height;
+      else 
+        this.getRightPanel().style.height = "";
+      
+      if (marginTop) 
+        this.getRightPanel().style.marginTop = marginTop;
+      else 
+        this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+        
+      if (boxShadow) 
+        this.getRightPanel().style.boxShadow = boxShadow;
+      else 
+      this.getRightPanel().style.boxShadow = "";
+        
+      if(welcome) 
+        this.getRightPanel().style.marginTop = "0px";
+      else
+        this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+    }
+
+    toogle() {
+      this.classList.toggle('hiddenSidenav');
+
+      if(this.style.marginRight === "0px") {
+        this.close();
+      } else this.open();
+    }
+
+    close(){
+      this.classList.add('hiddenSidenav');
+
+      this.getRightPanel().classList.remove("open");
+      //this.getRightPanel().style.visibility = "hidden";
+      this.getEditButton().style.display = "none";
+      this.getConfigButton().style.display = "none";
+      this.getHelpButton().style.display = "none";
+      this.getNotificationButton().style.display = "none";
+      this.getNotificationOpenButton().style.display = "none";
+      this.clearElement(this.getContent());
+      this.dispatchEvent(new Event(EVENT.CLOSE));
     }
 
     isClose() {

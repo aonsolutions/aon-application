@@ -42,7 +42,7 @@ export class AonConfig extends AonElement {
     let sideNavDiv        = this.createDiv();
     sideNavDiv.className  = CSS.AON_CONFIG_SIDE_NAV;
 
-    let sideNavTitle       = this.createSpan(); 
+    let sideNavTitle       = this.createSpan();
     sideNavTitle.className = `${CSS.AON_CONFIG_SIDE_NAV}Title`;
     sideNavTitle.innerHTML = MSG.SIDE_MENU;
     sideNavDiv.appendChild(sideNavTitle);
@@ -117,8 +117,9 @@ export class AonConfig extends AonElement {
     span.className = CSS.AON_CARD_TEXT;
     span.innerHTML = value;
     div.appendChild(span);
-
-    if(language == LS.getLanguage()) {
+    
+    // Seleccionamos el idioma marcado, si no esta marcado ninguno ponemos el castellano
+    if(language == LS.getLanguage() || (language == Language.SPANISH && LS.getLanguage() === '' )) {
       div.classList.add('active');
     }
 

@@ -389,7 +389,7 @@ export class AonNewLogin extends AonElement {
         let toast = this.getElement("aonLoginToast");
         toast.start({
           type: "success",
-          message: "El mensaje se ha enviado correctamente.",
+          message: "El mensaje se ha enviado correctamente."
         });
       })
       .catch((e) => {

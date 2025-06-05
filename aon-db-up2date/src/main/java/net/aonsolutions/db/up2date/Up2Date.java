@@ -544,14 +544,14 @@ public class Up2Date {
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			// HomePrestITInsert.HOMEPRESTITINSERT,
 			// PPEITUpdate.PPE_IT_UPDATE,
-			PPEITFix.PPE_IT_FIX,
+			// PPEITFix.PPE_IT_FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
-			RdocTag.RDOC_TAG,
-			UpdateCategoryTree.UPDATE_CATEGORY_TREE
+			// DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+			// RdocTag.RDOC_TAG,
+			// UpdateCategoryTree.UPDATE_CATEGORY_TREE
 
 	};
 

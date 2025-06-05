@@ -9,7 +9,6 @@ import { favicon, title, loadLink } from './css/aon-customView.js';
 
 import { loadTheme } from './modules/utils/theme';
 
-
 import './css/noto-sans.css';
 import './css/material-symbols-outlined.css';
 import './css/aon-css-utils.css';
@@ -38,7 +37,6 @@ function loadNew(){
 }
 
 const load = () => {
-
 	console.debug("Start loading aonSolutions.");
 	console.debug("Keep your fingers crossed!" );
 	console.debug("We need all the luck we can get.");
@@ -69,17 +67,12 @@ const load = () => {
 };
 
 export const loadThemeOld = async  () => {
-
 	// LS.AON_THEME 
-	
 	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
-	
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
-	 		
 	let themeUrl = UA.isMobile() ? mobileCss : paramCss  || "/customview" || LS.AON_THEME;
-		
+
 	return new Promise((resolve, reject) => {
-		
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
 			aonThemeSpan.className = 'aonTheme';
@@ -90,7 +83,6 @@ export const loadThemeOld = async  () => {
 				resolve();
 				aonThemeSpan.remove();
 			});
-			
 		} catch ( err ) {
 			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
 		}
@@ -170,9 +162,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Estamos cargando el estilo nuevo
   const isNew = window.location.pathname.includes('/new');
   localStorage.setItem('sass', isNew ? 'true' : 'false');
-  
-  if(isNew)
+
+  if(isNew){
     loadNew();
-  else
+  }else{
     load();
+  }
 });

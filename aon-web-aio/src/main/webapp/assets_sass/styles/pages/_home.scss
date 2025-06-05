@@ -7,4 +7,80 @@ aon-home{
   display       : flex;
   flex-direction: column;
   
+  #homeContent{
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+  }
+  
+
+/*  
+  Fila 1: [ Menu superior (100% ancho de #rootPanel)     ] ? #aonMenuTopnav
+  Fila 2: [ Menu lateral izquierda | Contenido principal ] ? #aonMenuSidenav | #rootPanel
+
+  <div id="content">
+    <div id="aon-new-menu">
+      <div id="aonMenuSidenav">Menu lateral izquierda</div>
+      <div id="aonMenuTopnav">Menu superior</div>
+    </div>
+    <div id="rootPanel">Contenido</div>
+  </div>
+*/
+
+  /* Menu lateral izquierdo */
+  
+  $left-aonMenuLeft : v.$px-200;
+  #aonMenuSidenav {
+    width: $left-aonMenuLeft;
+    background-color: #ccc;
+    
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  /* Contenedor que agrupa topnav + contenido */
+  #rootPanel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  
+  $top-aonMenuTopnav : v.$px-60;
+  /* Menu superior */
+  #aonMenuTopnav {
+    background-color: #ddd;
+    width: calc(v.$pct-100 - $left-aonMenuLeft);
+    height: $top-aonMenuTopnav;
+    position: fixed;
+    top: v.$height-cabecera;
+    left: $left-aonMenuLeft;
+    overflow-x: hidden;
+    
+    #aonTopMenuDiv{
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  /* Contenido principal debajo del topnav */
+  #rootPanel::after {
+    content: '';
+    display: block;
+    height: 100%;
+  }
+
+  /* Contenido principal como tal */
+  #rootPanel {
+    overflow: auto;
+    margin-top: v.$height-cabecera;
+    padding: v.$px-20;
+    background-color: #f9f9f9;
+  }
+
+  
 }
+
