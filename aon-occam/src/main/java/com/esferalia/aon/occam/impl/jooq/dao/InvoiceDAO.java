@@ -1400,7 +1400,7 @@ public class InvoiceDAO {
 	
 	private static void beforeInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		if(detail.getId() != null) {
-			InvoiceDetail d = InvoiceDetailDAO.get(ctx, f-> f.getIdProperty().eq(detail.getId()));
+			InvoiceDetail d = InvoiceDetailDAO.get(ctx, detail.getId());
 			if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(invoice.getId())) {
 				throw new AonCoreException("No se ha podido guardar la factura.");
 			}

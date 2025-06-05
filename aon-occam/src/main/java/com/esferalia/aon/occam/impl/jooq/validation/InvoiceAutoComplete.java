@@ -517,7 +517,7 @@ public class InvoiceAutoComplete {
 		inv.getDetails().stream().forEach(detail -> {
 			
 			if(detail.getId() != null) {
-				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), f-> f.getIdProperty().eq(detail.getId()));
+				InvoiceDetail d = InvoiceDetailDAO.get(ctx.getContext(), detail.getId());
 				if(d != null && d.getInvoice() != null && d.getInvoice().getId() != null && !d.getInvoice().getId().equals(inv.getId())) {
 					detail.setId(null);
 				}
