@@ -104,7 +104,7 @@ export class AonParent extends AonElement {
 				this.page = 1;
 				this.cleanCompanies();
 				
-				let filteredCompanies = this.filterCompanies(companies, filter);
+  			let filteredCompanies = this.filterCompanies(companies, filter);
 				
 				this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 				
@@ -156,7 +156,8 @@ export class AonParent extends AonElement {
 		let companyTitleSpan = this.getElement(this.COMPANY_TITLE_SPAN);
 		companyTitleSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
 		for( let companyFilterTab of companyFilterTabs ){
-			let companyFilterTabCompanies = companies.filter(f => this.companyFilter(f, { ...companyFilterTab, ...filter }));
+			let companyFilterTabCompanies = companies.filter(f => !this.isLocationCompany(f) && this.companyFilter(f, { ...companyFilterTab, ...filter }));
+			
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
 			if ( companyFilterTabCompanies.length === 0 ){
 				companyFilterTabSpan.parentElement.classList.add(CSS.AON_COMPANY_FILTER_EMPTY);
@@ -195,23 +196,30 @@ export class AonParent extends AonElement {
 			}
 	
 			if(filter.active) {
-				value &&= company.active && (company.parentId || company.type !== 'CONSULTANCY') ;
+				value &&= company.active ;
+				//value &&= (company.parentId || company.type !== 'CONSULTANCY') ;
 			}
 	
 			if(filter.inactive) {
 				value &&= !company.active;
-			}
+			} 
 	
 			if(filter.shared) {
 				value &&= company.shared;
+			} else {
+				value &&= !company.shared;
 			}
 	
 			if(filter.entorno) {
 				value &&= !company.parentId && company.type === 'CONSULTANCY';
+			} else {
+				value &&= company.parentId || company.type !== 'CONSULTANCY';
 			}
 	
 			if(filter.despacho) {
 				value &&= company.type === 'OFFICE';
+			} else {
+				value &&= company.type !== 'OFFICE';
 			}
 	
 			if(filter.ids) {
@@ -562,7 +570,7 @@ export class AonParent extends AonElement {
 
 			aonSign.buildSignin(r);
 			let aonHeader = this.getElement('aonHeader');
-			aonHeader?.timeControlStatus(r);
+			aonHeader?.timeControlStatus(r);		
 		});
 		
 		this.getNotices();
@@ -669,6 +677,10 @@ export class AonParent extends AonElement {
 	filterCompanies(companies, filter) {
 		let filteredCompanies = companies.filter(f => this.companyFilter(f, filter));
 		return filteredCompanies.sort( (c1,c2) => ( filter.count?.[c2.domain] || 0 )  -  ( filter.count?.[c1.domain] || 1 ) );
+	}
+	
+	isLocationCompany( company ) {
+		return company?.domain?.toUpperCase() == window?.location?.hostname?.toUpperCase();
 	}
 }
 
