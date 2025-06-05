@@ -177,6 +177,7 @@ public class RawdocDAO {
 			.fetch()
 			.stream()
 			.map( r -> r.getValue(RAWDOC.DATA) )
+			.filter( b -> b != null)
 			.findFirst();
 	}
 	

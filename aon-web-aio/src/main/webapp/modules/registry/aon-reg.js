@@ -1202,22 +1202,14 @@ export class AonReg extends AonElement {
 			div.appendChild(divModification);
 		}
 
-		if(this.isMobile() || !this.isBeta()) {
-			let dialog = this.getApplication().getDialog();
-			dialog.clear();
-			dialog.setTitle(MSG.AUDIT);
-			if(this.isMobile()) dialog.type = 'fullscreen';
-			else dialog.width = '400px';
-			dialog.setContent(div);
-			dialog.addAcceptAction(() => {});
-			dialog.open();
-		} else {
-			let rightSidenav = this.getApplication().getRightSidenav();
-			this.clearElement(rightSidenav);
-			if (rightSidenav.style.flexBasis === "0px") 
-				rightSidenav.appendChild(div);
-			this.getApplication().toogleRightSidenav();
-		}	
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		dialog.setTitle(MSG.AUDIT);
+		if(this.isMobile()) dialog.type = 'fullscreen';
+		else dialog.width = '400px';
+		dialog.setContent(div);
+		dialog.addAcceptAction(() => {});
+		dialog.open();	
 	}
 
 	setRegistry(registry) {

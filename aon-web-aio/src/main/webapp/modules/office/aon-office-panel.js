@@ -691,6 +691,10 @@ export class AonOfficePanel extends AonElement {
 					if (this.getFilterCustomers().type == "false") {
 						aonView = new AonTarget();
 						aonView.back = () => {
+							let rightSidenav = this.getApplication().getRightSidenav();
+							this.clearElement(rightSidenav);
+							this.getApplication().toogleRightSidenav();
+							
 							if(searchPanel) searchPanel.style.display = "block";
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
 								...this.getFilterCustomers(),
@@ -701,6 +705,10 @@ export class AonOfficePanel extends AonElement {
 						aonView = new AonCustomer();
 						aonView.setOffice(true);
 						aonView.back = () => {
+							let rightSidenav = this.getApplication().getRightSidenav();
+							this.clearElement(rightSidenav);
+							this.getApplication().toogleRightSidenav();
+							
 							if(searchPanel) searchPanel.style.display = "block";
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
 								...this.getFilterCustomers(),

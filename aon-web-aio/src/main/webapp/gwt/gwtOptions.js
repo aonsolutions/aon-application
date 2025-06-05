@@ -617,3 +617,8 @@ export const PROJECT = {
   entryPoint: 'ProjectModule'
 };
 
+export const CUSTOMER_NOTES = {
+  module: GWT_AIO,
+  entryPoint: 'CustomerNotesModule'
+};
+
