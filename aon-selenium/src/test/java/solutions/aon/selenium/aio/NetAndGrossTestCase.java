@@ -11,6 +11,7 @@ import static solutions.aon.selenium.tools.SeleniumTools.retryingFindClick;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +59,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	public static void setUpBeforeClass() throws Exception {
         driver = newChromeDriver();
         
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         login(driver, GENERAL);
         
         // Click on Top Menu 'Laboral'        
@@ -229,7 +230,7 @@ public class NetAndGrossTestCase extends AioBaseTestCase {
 	}
 	
 	private static void selectMonth (WebDriver driver, Date date) throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' YYYY", new Locale("es", "ES"));
 		String dateString = df.format(date);
 		

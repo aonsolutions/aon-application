@@ -5,6 +5,7 @@ import static solutions.aon.selenium.tools.Logger.log;
 import static solutions.aon.selenium.tools.Logger.Status.CLICK;
 import static solutions.aon.selenium.tools.Logger.Status.INPUT;
 
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public class AioBaseTestCase extends AbstractTestCase{
 		loginBtn.click();
 		log(CLICK, "Login button.");
 		
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		if (section != null) {
 			wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@class='aon-outputText' and contains(text(), '" + section + "')]")));
@@ -65,7 +66,7 @@ public class AioBaseTestCase extends AbstractTestCase{
 	}
 	
 	private static boolean checkIfEntered(WebDriver driver, String text) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		return wait.until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector("span.aon-header-domain-title"), text));
 	}
 
@@ -99,7 +100,7 @@ public class AioBaseTestCase extends AbstractTestCase{
 		
 		String regex = String.format("\\s*\\d+\\/%1$d\\/%2$d\\s*-\\s*\\d+\\/%1$d\\/%2$d\\s*", month, year);
 		
-		new WebDriverWait(driver, 10).until(ExpectedConditions.textMatches(By.id(GWT_ID_PROFIX + "periodLabel"), Pattern.compile(regex)));
+		new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.textMatches(By.id(GWT_ID_PROFIX + "periodLabel"), Pattern.compile(regex)));
 	}
 	
 }

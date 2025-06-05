@@ -21,7 +21,12 @@ on:
         required: true
         default: false
       skipIntegrationTests:
-        description: 'Skip running integration tests'
+        description: 'Skip running HtmlUnit integration  tests'
+        type: boolean
+        required: true
+        default: false
+      skipSeleniumTests:
+        description: 'Skip running Selenium integration tests'
         type: boolean
         required: true
         default: false
@@ -45,7 +50,14 @@ on:
           - corretto
         required: true
         default: temurin
-
+      browser:
+        type: choice
+        description: Which browser to test
+        required: true
+        options:
+          - chrome
+          - firefox
+          - edge
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
@@ -55,10 +67,16 @@ env:
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || false }}
+  SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
   
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      selenium:
+        image: selenium/standalone-${{ github.event.inputs.browser }}
+        options: --shm-size=2gb
 
     permissions:
       contents: read
@@ -143,9 +161,9 @@ jobs:
         load: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    
+
     - name: Setup environment for integration testing
-      if: github.ref == 'refs/heads/master'
+      # if: github.ref == 'refs/heads/master'
       run: |
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
@@ -160,8 +178,8 @@ jobs:
         127.0.0.1    general-payroll-test.aonsolutions.org
         127.0.0.1    trainning-payroll-test.aonsolutions.org
         EOF
-    
-    - name: Running integration tests
+
+    - name: Running HtmlUnit integration tests
       if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
@@ -174,7 +192,14 @@ jobs:
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
-        
+
+    - name: Running Selenium integration tests
+      # if: github.ref == 'refs/heads/master'
+      run: |
+        mvn -B \
+        -DskipTests=${SKIP_SELENIUM_TESTS} \
+        -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
+
     - name: Build production version with Maven
       if: github.ref == 'refs/heads/master'
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install

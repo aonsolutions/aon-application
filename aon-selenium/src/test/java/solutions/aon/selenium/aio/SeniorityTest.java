@@ -5,6 +5,7 @@ import static solutions.aon.selenium.tools.SeleniumTools.checkAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmount;
 import static solutions.aon.selenium.tools.SeleniumTools.getAmountNotEmptyValue;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.junit.AfterClass;
@@ -26,7 +27,7 @@ public class SeniorityTest extends AioBaseTestCase {
 	public static void setUpBeforeClass() throws Exception {
         driver = newChromeDriver();
         
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         login(driver, GENERAL);
         
         // Click on Top Menu 'Laboral'
