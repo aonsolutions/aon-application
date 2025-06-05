@@ -7,7 +7,7 @@
   $color-800, $color-900, $color-input, $color-box,
   $color-grad-min, $color-grad-max,
   $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
-  $color-text-card,
+  $color-text-card, $color-icon-menu,
   $color-red-100,  $color-red-500, $color-red-900,
   $color-green-100, $color-green-500, $color-green-900,
   $color-blue-100, $color-blue-500, $color-blue-900,
@@ -108,6 +108,28 @@
                         background-color: $color-100;
                       }
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      // Menu izquierda y top
+      #aonMenu{
+        background-color: $color-50;
+        // Menu izquierda
+        #aonMenuSidenav {
+          ul{
+            background-color: $color-box;
+            li{
+              a{
+                div{
+                  &:hover{
+                    background-color: $color-100;
+                  }
+                  .aonNewMenuAppIcon{
+                    background-color: $color-icon-menu;
                   }
                 }
               }

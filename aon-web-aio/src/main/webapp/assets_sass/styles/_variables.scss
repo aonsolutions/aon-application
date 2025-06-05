@@ -160,9 +160,11 @@ $px-130 : 8.125rem;
 $px-150 : 9.375rem;
 $px-160 : 10rem;
 $px-200 : 12.5rem;
+$px-220 : 13.75rem;
 $px-222 : 13.85rem;
 $px-250 : 15.625rem; 
 $px-300 : 18.75rem;
+$px-327 : 20.4375rem;
 $px-350 : 21.875rem;
 $px-400 : 25rem;
 $px-500 : 31.25rem;
@@ -179,7 +181,9 @@ $pct-300 : 300%;
 
 // VIEWPORT
 $vh-100 : 100vh;
+$vw-16  : 16vw;
 $vw-100 : 100vw;
+
 
 // NUMEROS
 $num-0  : 0;
@@ -277,3 +281,6 @@ $gap: $px-16;
 
 // ALTURA DE LA CABECERA
 $height-cabecera: $px-64;
+
+// ANCHO MENU LATERAL IZQUIERDO
+$left-aonMenuLeft : $px-327;

@@ -1,5 +1,95 @@
 @use '../variables' as v;
 
 #aonMenu{
-  
+  #aonMenuSidenav {
+    width: v.$vw-16;
+    min-width: v.$px-220;
+    max-width: v.$left-aonMenuLeft;
+    
+    ul {
+      list-style-type: none;
+      margin: v.$px-0;
+      padding: v.$px-18 v.$px-0 v.$px-18 v.$px-0;
+
+      li{
+        height: v.$px-48;
+        a{
+          div{
+            display:flex;
+            height: v.$px-48;
+            padding-left: v.$px-34 !important;
+            align-items: center;
+            justify-content: flex-start !important;
+            flex-direction: row !important;
+            gap: v.$px-34;
+            cursor: pointer;
+
+            .aonNewMenuAppIcon{
+              display: inline-block;
+              width: v.$px-24;
+              height: v.$px-24;
+              // Oculta el texto
+              font-size: v.$px-0;
+              line-height: v.$px-0;
+              color: transparent;
+              overflow: hidden;
+              // para el icono (cada icono tiene su propia ruta, mas abajo)
+              mask-repeat: no-repeat;
+              mask-position: center;
+              mask-size: contain;
+              -webkit-mask-repeat: no-repeat;
+              -webkit-mask-position: center;
+              -webkit-mask-size: contain;
+            }
+            // mostrar cada icono
+            #aonMenuListAppImgTop-home{
+              mask-image: url('../icons/home.svg');
+              -webkit-mask-image: url('../icons/home.svg');
+            }
+            #aonMenuListAppImgTop-apps{
+              mask-image: url('../icons/box.svg');
+              -webkit-mask-image: url('../icons/box.svg');
+            }
+            #aonMenuListAppImgTop-new{
+              mask-image: url('../icons/plus-square.svg');
+              -webkit-mask-image: url('../icons/plus-square.svg');
+            }
+            #aonMenuListAppImgTop-invoice{
+              mask-image: url('../icons/calculator.svg');
+              -webkit-mask-image: url('../icons/calculator.svg');
+            }
+            #aonMenuListAppImgTop-documental{
+              mask-image: url('../icons/folder-open.svg');
+              -webkit-mask-image: url('../icons/folder-open.svg');
+            }
+            #aonMenuListAppImgTop-accounting{
+              mask-image: url('../icons/calculator.svg');
+              -webkit-mask-image: url('../icons/calculator.svg');
+            }
+            #aonMenuListAppImgTop-fiscal{
+              mask-image: url('../icons/building.svg');
+              -webkit-mask-image: url('../icons/building.svg');
+            }
+            #aonMenuListAppImgTop-payroll{
+              mask-image: url('../icons/users.svg');
+              -webkit-mask-image: url('../icons/users.svg');
+            }
+            #aonMenuListAppImgTop-note{
+              mask-image: url('../icons/bookmark.svg');
+              -webkit-mask-image: url('../icons/bookmark.svg');
+            }
+            #aonMenuListAppImgTop-warehouse{
+              mask-image: url('../icons/archive.svg');
+              -webkit-mask-image: url('../icons/archive.svg');
+            }
+            // texto visible
+            .aonNewMenuAppSpan{
+              font-size: v.$px-16;
+              line-height: v.$px-24;
+            }
+          }
+        }
+      }
+    }
+  }
 }

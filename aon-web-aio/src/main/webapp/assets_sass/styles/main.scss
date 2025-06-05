@@ -28,6 +28,7 @@
 // Importamos layouts
 @use './layouts/header' as header;
 @use './layouts/rightPanel' as rightPanel;
+@use './layouts/menu' as menu;
 
 // Importamos vistas
 @use './pages/index' as index;  // login

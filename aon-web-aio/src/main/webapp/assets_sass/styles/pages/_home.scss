@@ -27,19 +27,7 @@ aon-home{
   </div>
 */
 
-  /* Menu lateral izquierdo */
-  
-  $left-aonMenuLeft : v.$px-200;
-  #aonMenuSidenav {
-    width: $left-aonMenuLeft;
-    background-color: #ccc;
-    
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
+// MENU LATERAL IZQUIERDO ESTA EN _menu.SCSS
 
   /* Contenedor que agrupa topnav + contenido */
   #rootPanel {
@@ -53,11 +41,11 @@ aon-home{
   /* Menu superior */
   #aonMenuTopnav {
     background-color: #ddd;
-    width: calc(v.$pct-100 - $left-aonMenuLeft);
+    width: calc(v.$pct-100 - v.$left-aonMenuLeft);
     height: $top-aonMenuTopnav;
     position: fixed;
     top: v.$height-cabecera;
-    left: $left-aonMenuLeft;
+    left: v.$left-aonMenuLeft;
     overflow-x: hidden;
     
     #aonTopMenuDiv{
