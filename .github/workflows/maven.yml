@@ -68,7 +68,7 @@ env:
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || false }}
   SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-${{ github.event.inputs.browser }}
-        options: --add-host=payroll-test.aonsolutions.org:$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+') --shm-size=2gb
+        options: --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
       contents: read
