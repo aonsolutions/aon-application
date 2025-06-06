@@ -14,20 +14,18 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCardSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -40,8 +38,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 	}
 
 	private static CommonServiceAsync COMMON_SERVICE;
-	
-	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private HTMLPanel container;
 	private ScrollPanel scrollPanel;
@@ -122,8 +118,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				.setNoteDate(new Date())
 				.setNoteType(NoteType.OBSERVATION)
 				.setRegistry(customerId)
-				.setConfidential(false)
-				.setSecurityLevel(SecurityLevel.OFFICIAL);
+				.setConfidential(false);
 		
 		if(!observations.isEmpty()) {
 			observation = observations.get(0);
@@ -143,12 +138,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 		description.getElement().getStyle().setProperty("color", "#5f6368");
 		description.getElement().getStyle().setProperty("border", "none");
 		description.getElement().getStyle().setProperty("cursor", "pointer");
-		description.getElement().setPropertyString("placeholder", "Descripci\u00f3n");
+		description.getElement().setPropertyString("placeholder", "Observaci\u00f3n");
 		description.getElement().getStyle().setProperty("background", "transparent");
-		description.addValueChangeHandler(e -> {
-			observation.setDescription(description.getValue());
-			saveNote(observation);
-		});
+		description.setEnabled(false);
 		
 		TextArea comments = new TextArea();
 		comments.setValue(observation.getComments());
@@ -160,14 +152,26 @@ public class CustomerNotesModule extends MainEntryPoint {
 		comments.getElement().getStyle().setProperty("cursor", "pointer");
 		comments.getElement().getStyle().setProperty("background", "transparent");
 		comments.getElement().getStyle().setProperty("resize", "vertical");
-		comments.getElement().setPropertyString("placeholder", "Observaci\u00f3n");	
+		comments.getElement().setPropertyString("placeholder", "Escriba su observaci\u00f3n...");	
 		comments.addValueChangeHandler(e -> {
+			observation.setDescription("Obrservaci\u00f3n");
 			observation.setComments(comments.getValue());
 			saveNote(observation);
 		});
 		
+		DateBoxEx noteDate = new DateBoxEx();
+		noteDate.setValue(observation.getNoteDate());
+		noteDate.getElement().getStyle().setProperty("font-size", ".8rem");
+		noteDate.getElement().getStyle().setProperty("font-weight", "500");
+		noteDate.getElement().getStyle().setProperty("color", "#5f6368");
+		noteDate.getElement().getStyle().setProperty("border", "none");
+		noteDate.getElement().getStyle().setProperty("cursor", "pointer");
+		noteDate.getElement().getStyle().setProperty("background", "transparent");
+		noteDate.setEnabled(false);
+		
 		AonCustomCardSmall card = new AonCustomCardSmall(description, openBtn);
 		card.setToolbarWidgetShown();
+		card.getElement().getStyle().setProperty("background-color", "#ebebeb");
 		
 		HTMLPanel cardContentPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		cardContentPanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -183,26 +187,28 @@ public class CustomerNotesModule extends MainEntryPoint {
 		buttonsPanel.addStyleName(AON.CSS.aonCustomCardButton());
 		footerPanel.add(buttonsPanel);
 		
-		AonTableButton deleteBtn = new AonTableButton("Borrar observaci\u00f3n", AON.CSS.aonIconDelete());
-		deleteBtn.addClickHandler(e -> {
-			e.stopPropagation();
+		if(AonStringUtils.isNotBlank(observation.getComments())) {
+			AonTableButton deleteBtn = new AonTableButton("Borrar observaci\u00f3n", AON.CSS.aonIconDelete());
+			deleteBtn.addClickHandler(e -> {
+				e.stopPropagation();
+				
+				observation.setDescription(AonStringUtils.EMPTY);
+				observation.setComments(AonStringUtils.EMPTY);
+				observation.setNoteDate(null);
+				
+				saveNote(observation);
+			});
+			buttonsPanel.add(deleteBtn);
 			
-			observation.setDescription(AonStringUtils.EMPTY);
-			observation.setComments(AonStringUtils.EMPTY);
-			observation.setNoteDate(null);
+			AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
+			noteBtn.addClickHandler(e -> {
+				e.stopPropagation();
+				moveToNotes(observation);
+			});
+			buttonsPanel.add(noteBtn);
+		}
 			
-			saveNote(observation);
-		});
-		buttonsPanel.add(deleteBtn);
-		
-		AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
-		noteBtn.addClickHandler(e -> {
-			e.stopPropagation();
-			moveToNotes(observation);
-		});
-		buttonsPanel.add(noteBtn);
-			
-		footerPanel.add(new Label(null == observation.getNoteDate() ? "" : formatDate.format(observation.getNoteDate())));
+		footerPanel.add(noteDate);
 		
 		cardContentPanel.add(footerPanel);
 		
@@ -235,10 +241,10 @@ public class CustomerNotesModule extends MainEntryPoint {
 		List<RegistryNote> messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.MESSAGE)).collect(Collectors.toList());
 		messages.sort(Comparator.comparing(RegistryNote::getNoteDate, Comparator.nullsFirst(Comparator.reverseOrder())));
 		
-		AonToolbarSmall toolbar = new AonToolbarSmall((messages.isEmpty() ? "Sin" : messages.size()) + (messages.isEmpty() || messages.size() > 1 ? " Notas" : " Nota"));
+		AonToolbarSmall toolbar = new AonToolbarSmall((messages.isEmpty() ? "Sin" : messages.size()) + (messages.isEmpty() || messages.size() > 1 ? " Anotaciones" : " Anotaci\u00f3n"));
 		toolbar.getElement().getStyle().setProperty("min-width", "auto");
 		
-		AonTableButton newBtn = new AonTableButton("Nueva nota", AON.CSS.aonIconAdd());
+		AonTableButton newBtn = new AonTableButton("Nueva anotaci\u00f3n", AON.CSS.aonIconAdd());
 		newBtn.addClickHandler(e -> {
 			notes.add(
 				new RegistryNote()
@@ -247,7 +253,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 				.setNoteDate(new Date())
 				.setRegistry(customerId)
 				.setConfidential(false)
-				.setSecurityLevel(SecurityLevel.OFFICIAL)
 			);
 			
 			createNotes();
@@ -258,8 +263,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		if(!messages.isEmpty()) {
 			AonTableButton openBtn = new AonTableButton(
-					messagesOpen ? "Cerrar mensajes" : "Abrir mensajes" , 
-					messagesOpen ? AON.CSS.aonIconDown() : AON.CSS.aonIconLeft());
+					messagesOpen ? "Cerrar anotaciones" : "Abrir anotaciones" , 
+					messagesOpen ?  AON.CSS.aonIconUp() : AON.CSS.aonIconDown());
 			toolbar.add(openBtn);
 			
 			HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
@@ -269,7 +274,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				notesOpen.put(message.getId(), true);
 				
 				AonTableButton openCardBtn = new AonTableButton(
-						notesOpen.get(message.getId()) ? "Cerrar nota" : "Abrir nota" , 
+						notesOpen.get(message.getId()) ? "Cerrar anotaci\u00f3n" : "Abrir anotaci\u00f3n" , 
 						notesOpen.get(message.getId()) ?  AON.CSS.aonIconUp() : AON.CSS.aonIconDown());
 				
 				TextBox description = new TextBox();
@@ -296,9 +301,22 @@ public class CustomerNotesModule extends MainEntryPoint {
 				comments.getElement().getStyle().setProperty("cursor", "pointer");
 				comments.getElement().getStyle().setProperty("background", "transparent");
 				comments.getElement().getStyle().setProperty("resize", "vertical");
-				comments.getElement().setPropertyString("placeholder", "Nota");	
+				comments.getElement().setPropertyString("placeholder", "Escriba su nota...");	
 				comments.addValueChangeHandler(e -> {
 					message.setComments(comments.getValue());
+					saveNote(message);
+				});
+				
+				DateBoxEx noteDate = new DateBoxEx();
+				noteDate.setValue(message.getNoteDate());
+				noteDate.getElement().getStyle().setProperty("font-size", ".8rem");
+				noteDate.getElement().getStyle().setProperty("font-weight", "500");
+				noteDate.getElement().getStyle().setProperty("color", "#5f6368");
+				noteDate.getElement().getStyle().setProperty("border", "none");
+				noteDate.getElement().getStyle().setProperty("cursor", "pointer");
+				noteDate.getElement().getStyle().setProperty("background", "transparent");
+				noteDate.addValueChangeHandler(e -> {
+					message.setNoteDate(noteDate.getValue());
 					saveNote(message);
 				});
 				
@@ -325,8 +343,20 @@ public class CustomerNotesModule extends MainEntryPoint {
 					deleteNote(message);
 				});
 				buttonsPanel.add(deleteBtn);
+				
+				AonTableButton confidentialBtn = new AonTableButton(
+						message.isConfidential() ? "Confidencial" : "Publico", 
+						message.isConfidential() ? AON.CSS.aonIconLock()  : AON.CSS.aonIconUnLock());
+				
+				confidentialBtn.addClickHandler(e -> {
+					e.stopPropagation();
+					message.setConfidential(!message.isConfidential());
+					saveNote(message);
+				});
+				
+				buttonsPanel.add(confidentialBtn);
 					
-				footerPanel.add(new Label(null == message.getNoteDate() ? "" : formatDate.format(message.getNoteDate())));
+				footerPanel.add(noteDate);
 				
 				cardContentPanel.add(footerPanel);
 				
@@ -423,8 +453,6 @@ public class CustomerNotesModule extends MainEntryPoint {
 	}
 
 	private void saveNote(RegistryNote note) {
-		note.setNoteDate(new Date());
-		
 		COMMON_SERVICE.saveNote(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), note,
 			new AsyncCallback<RegistryNote>() {
 

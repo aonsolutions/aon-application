@@ -274,6 +274,10 @@ export class AonNewMenu extends AonElement {
 					break;
 		}
 		
+	    let rootPanel = this.getElement("rootPanel");
+	    rootPanel.style.height = 'calc(100vh - 7rem)';
+	    rootPanel.style.marginTop = '4rem';
+		
 	}
 	
 		let detail = {
