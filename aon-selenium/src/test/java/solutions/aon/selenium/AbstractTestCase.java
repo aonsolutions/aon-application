@@ -18,7 +18,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AbstractTestCase {
 
-
 	protected static String getUrl() {
 		return System.getProperty("url", "http://127.0.0.1:8080/app");
 	}
@@ -29,10 +28,6 @@ public class AbstractTestCase {
 
 	protected static String getPassword() {
 		return System.getProperty("password", "123456");
-	}
-
-	protected static String getSelenium() {
-		return System.getProperty("selenium", "http://selenium:4444");
 	}
 
 	protected static WebDriver newChromeDriver() {
@@ -69,7 +64,7 @@ public class AbstractTestCase {
 		
 		ChromeOptions chromeOptions = new ChromeOptions();
 		
-		RemoteWebDriver driver = new RemoteWebDriver(new URI(getSelenium()).toURL(), chromeOptions);
+		RemoteWebDriver driver = new RemoteWebDriver(new URI("http://localhost:4444").toURL(), chromeOptions);
 		
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 	    
