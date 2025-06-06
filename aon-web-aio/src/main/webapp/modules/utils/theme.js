@@ -5,7 +5,7 @@ const fakeHost      = 'b72384936-ayudat.aonsolutions.org'; // s�lo en local
 
 const themes = [
   {
-    hostnameIncludes: ['ayudat.aon.solutions'],
+    hostnameIncludes: ['ayudat.aon.solutions', fakeHost],
     themeLight      : 'theme-ayudat',
     themeDark       : 'theme-ayudat-dark'
   },
@@ -20,7 +20,7 @@ const themes = [
     themeDark       : 'theme-openges-dark'
   },
   {
-    hostnameIncludes: ['etl.aon.solutions', fakeHost],
+    hostnameIncludes: ['etl.aon.solutions'],
     themeLight      : 'theme-etl',
     themeDark       : 'theme-etl-dark'
   }

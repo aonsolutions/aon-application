@@ -108,6 +108,9 @@ $logo: "../images/etl/logo.svg";
 $logo-width: v.$px-150;
 $logo-height: v.$px-150;
 
+// Colores icono y texto del menu
+$color-menu-green: $color-green-400;
+
 @mixin etlDark-theme {
   @include t.theme(
     $theme, $favicon, $title,
@@ -118,7 +121,7 @@ $logo-height: v.$px-150;
     $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
     $color-text-card, $color-icon-menu,
     $color-red-100,  $color-red-500, $color-red-900,
-    $color-green-100, $color-green-500, $color-green-900,
+    $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,
     $logoHead, $logoHead-width, $logoHead-height,
     $logo, $logo-width, $logo-height

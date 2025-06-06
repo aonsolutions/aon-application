@@ -32,7 +32,11 @@ export class AonRightPanel extends AonElement {
 
     connectedCallback() {
       this.initialize();
-      this.buildOld();
+      if(this.isNewStyle()){
+        this.build();
+      } else {
+        this.buildOld();
+      }
     }
 
     initialize() {
@@ -50,7 +54,7 @@ export class AonRightPanel extends AonElement {
     build(){
       // Ocultar el menu
       this.classList.add('hiddenSidenav');
-        
+
       let rightPanel = this.createDiv(this.RIGHT_PANEL, "rightPanel");
 
       let titlePanel = this.createDiv(this.TOOLBAR_PANEL, "titlePanel");
@@ -154,22 +158,6 @@ export class AonRightPanel extends AonElement {
       let content = this.createDiv(this.CONTENT);
 
       rightPanel.appendChild(content);
-
-
-      // Cerrar con la tecla esc
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          this.close();
-        }
-      });
-      // Cerar al hacer click fuera
-    /*
-      document.addEventListener('click', (e) => {
-        if (!this.contains(e.target)) {
-          this.close();
-        }
-      });
-    */
     }
 
     setTitle(title){
@@ -188,72 +176,69 @@ export class AonRightPanel extends AonElement {
         this.clearElement(this.getContent());
         this.clearElement(this.getTitle());
     }
-/*
-    open(){
-      this.classList.remove('hiddenSidenav');
-    }
 
-    toogle() {
-      this.classList.toggle('hiddenSidenav');
-	}
-
-    close(){
-      this.classList.add('hiddenSidenav');
-    }
-*/
     open(height,marginTop,boxShadow){
-      this.classList.remove('hiddenSidenav');
-      
-      let welcome = this.getElement("aonCompanyTabFilter");
-      //this.getRightPanel().style.visibility = "visible";
+      if(this.isNewStyle()){
+        this.classList.remove('hiddenSidenav');
+      } else {
+        let welcome = this.getElement("aonCompanyTabFilter");
+        //this.getRightPanel().style.visibility = "visible";
 
-      this.getRightPanel().classList.add("open");
-    
-      if(height) 
-        this.getRightPanel().style.height = height;
-      else 
-        this.getRightPanel().style.height = "";
-      
-      if (marginTop) 
-        this.getRightPanel().style.marginTop = marginTop;
-      else 
-        this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
-        
-      if (boxShadow) 
-        this.getRightPanel().style.boxShadow = boxShadow;
-      else 
-      this.getRightPanel().style.boxShadow = "";
-        
-      if(welcome) 
-        this.getRightPanel().style.marginTop = "0px";
-      else
-        this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+        this.getRightPanel().classList.add("open");
+
+        if(height)
+          this.getRightPanel().style.height = height;
+        else
+          this.getRightPanel().style.height = "";
+
+        if (marginTop)
+          this.getRightPanel().style.marginTop = marginTop;
+        else
+          this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+
+        if (boxShadow)
+          this.getRightPanel().style.boxShadow = boxShadow;
+        else
+        this.getRightPanel().style.boxShadow = "";
+
+        if(welcome)
+          this.getRightPanel().style.marginTop = "0px";
+        else
+          this.getRightPanel().style.marginTop = this.getDefaultMarginTop(); //"65px";
+      }
     }
 
     toogle() {
-      this.classList.toggle('hiddenSidenav');
-
-      if(this.style.marginRight === "0px") {
-        this.close();
-      } else this.open();
+      if(this.isNewStyle()){
+        this.classList.toggle('hiddenSidenav');
+      } else {
+        if(this.style.marginRight === "0px") {
+          this.close();
+        } else this.open();
+      }
     }
 
     close(){
-      this.classList.add('hiddenSidenav');
-
-      this.getRightPanel().classList.remove("open");
-      //this.getRightPanel().style.visibility = "hidden";
-      this.getEditButton().style.display = "none";
-      this.getConfigButton().style.display = "none";
-      this.getHelpButton().style.display = "none";
-      this.getNotificationButton().style.display = "none";
-      this.getNotificationOpenButton().style.display = "none";
-      this.clearElement(this.getContent());
-      this.dispatchEvent(new Event(EVENT.CLOSE));
+      if(this.isNewStyle()){
+        this.classList.add('hiddenSidenav');
+      } else {
+        this.getRightPanel().classList.remove("open");
+        //this.getRightPanel().style.visibility = "hidden";
+        this.getEditButton().style.display = "none";
+        this.getConfigButton().style.display = "none";
+        this.getHelpButton().style.display = "none";
+        this.getNotificationButton().style.display = "none";
+        this.getNotificationOpenButton().style.display = "none";
+        this.clearElement(this.getContent());
+        this.dispatchEvent(new Event(EVENT.CLOSE));
+      }
     }
 
     isClose() {
-      return !this.getRightPanel().classList.contains("open");
+      if(this.isNewStyle())
+        return this.classList.contains('hiddenSidenav');
+      else
+        return !this.getRightPanel().classList.contains("open");
     }
 
     isOpen(){

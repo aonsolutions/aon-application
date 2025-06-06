@@ -284,3 +284,7 @@ $height-cabecera: $px-64;
 
 // ANCHO MENU LATERAL IZQUIERDO
 $left-aonMenuLeft : $px-327;
+
+// ALTURA DEL MENU ADMIN DE ARRIBA
+$menu-top-Left  : $left-aonMenuLeft;   // distancia a la izquierda
+$menu-top-height: $px-60;   // Altura que tiene

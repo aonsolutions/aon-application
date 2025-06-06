@@ -9,7 +9,7 @@
   $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
   $color-text-card, $color-icon-menu,
   $color-red-100,  $color-red-500, $color-red-900,
-  $color-green-100, $color-green-500, $color-green-900,
+  $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
   $color-blue-100, $color-blue-500, $color-blue-900,
   $logoHead, $logoHead-width, $logoHead-height,
   $logo, $logo-width, $logo-height
@@ -128,16 +128,30 @@
                   &:hover{
                     background-color: $color-100;
                   }
-                  .aonNewMenuAppIcon{
+                  i{
                     background-color: $color-icon-menu;
+                  }
+                }
+                &.color-green{
+                  i{
+                    background-color: $color-menu-green;
+                  }
+                  span{
+                    color: $color-menu-green;
                   }
                 }
               }
             }
           }
         }
+        #aonMenuTopnav{
+          background-color: $color-box;
+        }
       }
-
+      // Carga el contenido
+      #rootPanel{
+        background-color: $color-100;
+      }
       // cargandos
       aon-loader{
         // Barra de progreso

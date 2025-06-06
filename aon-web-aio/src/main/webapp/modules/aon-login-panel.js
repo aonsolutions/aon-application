@@ -6,7 +6,6 @@ import { AonConfiguration } from '../modules/configuration/aon-configuration.js'
 import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
-
 	CARD;
     NAME;
 	LOGOUT;
@@ -42,100 +41,102 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	build() {
-		getAuth().then(auth => {
-			this.create(auth);
-		});
+      getAuth().then(auth => {
+        this.create(auth);
+      });
 	}
 
 	create(auth) {
-		//auth = "";
-		this.rightPanel = this.getElement("aonRightPanel"); 
-		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
-		this.rightPanel.style.marginTop = '0px';
-		this.rightPanel.style.height = '234px';
-		
-		let loginContent = this.createDiv("loginContent", "aonFlexColumn");
+      this.rightPanel = this.getElement("aonRightPanel");
+      if(!this.isNewStyle()){
+        this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
+        this.rightPanel.style.marginTop = '0px';
+        this.rightPanel.style.height = '234px';
+      }
+      let loginContent = this.createDiv("loginContent", "aonFlexColumn");
 
-		let divGeneral = this.createDiv();
-		divGeneral.style.display = "flex";
-		divGeneral.style.alignItems = "center";
-		divGeneral.style.gap = "1rem";
-		divGeneral.style.width = "100%";
-		divGeneral.style.padding = "0 1rem";
-		
-		
-		let avatar = new AonAvatar();
-		avatar.setAuth(auth);
-		//avatar.setScale("1.8", "23px");
-		divGeneral.appendChild(avatar);
+      let divGeneral = this.createDiv();
+      if(!this.isNewStyle()){
+        divGeneral.style.display = "flex";
+        divGeneral.style.alignItems = "center";
+        divGeneral.style.gap = "1rem";
+        divGeneral.style.width = "100%";
+        divGeneral.style.padding = "0 1rem";
+      }
+      let avatar = new AonAvatar();
+      avatar.setAuth(auth);
+      divGeneral.appendChild(avatar);
 
-		let divUserInfo = this.createDiv();
-		divUserInfo.className = "userPanelDivUserInfo";
-		if ((!auth.name && !auth.email && !auth.document && !auth.phone) || !auth) {
-			divUserInfo.appendChild(this.buildName(MSG.EXPIRED_SESSION));
-			divUserInfo.style.marginBottom = "54px";
-			divUserInfo.style.marginTop = "0px";
-			divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ERROR, "Cierra sesion para reconectar"));
-		} else {
-			if (auth.name)
-				divUserInfo.appendChild(this.buildName(auth.name));
-			else
-				divUserInfo.appendChild(this.buildName(MSG.NO_DATA));
-			
-			if (auth.email)
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL, auth.email));
-			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL, MSG.NO_DATA));
-			
-			if (auth.phone)
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE, auth.phone));
-			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE, MSG.NO_DATA));
-			
-			if (auth.document)
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, auth.document));
-			else
-				divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, MSG.NO_DATA));
-		}
-		
-		if (auth.name) {
-			let divConfiguration = this.createDiv();
-			divConfiguration.className = 'aonUserConfigLink';
-			divConfiguration.innerText = MSG.CONFIGURATION;
-			divConfiguration.addEventListener(EVENT.CLICK, () => {
-				let aonConfiguration = new AonConfiguration();
-				aonConfiguration.user = auth.name;
-				this.rootPanel(aonConfiguration);
-				let rightPanel = document.querySelector('aon-right-panel'); 
-                if (rightPanel) {
-                    rightPanel.close(); 
-                }
-				let companyy = this.getElement("aonHeaderCompanyListButton");
-				let companyyy = this.getElement("aonHeaderCompanyList");
-				companyy.style.display = "block";
-				companyyy.style.display = "block";
-			});
-			divUserInfo.appendChild(divConfiguration);
-		}
-	
-		divGeneral.appendChild(divUserInfo);
+      let divUserInfo = this.createDiv();
+      divUserInfo.className = "userPanelDivUserInfo";
+      if ((!auth.name && !auth.email && !auth.document && !auth.phone) || !auth) {
+        divUserInfo.appendChild(this.buildName(MSG.EXPIRED_SESSION));
+        if(!this.isNewStyle()){
+          divUserInfo.style.marginBottom = "54px";
+          divUserInfo.style.marginTop = "0px";
+        }
+        divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ERROR, "Cierra sesion para reconectar"));
+      } else {
+        if (auth.name)
+          divUserInfo.appendChild(this.buildName(auth.name));
+        else
+          divUserInfo.appendChild(this.buildName(MSG.NO_DATA));
 
-		let divLogout = this.createDiv();
-		divLogout.id = this.LOGOUT;
-		divLogout.className = 'divLogout';
-		divLogout.addEventListener(EVENT.CLICK, () => {
-			closeSession();
-			LS.setNewTheme(true);
-		});
-		divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
-		
-		loginContent.appendChild(divGeneral);
-		loginContent.appendChild(divLogout);
-		
-		let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
+        if (auth.email)
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL, auth.email));
+        else
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.MAIL, MSG.NO_DATA));
 
-		this.appendChild(loginContent);
+        if (auth.phone)
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE, auth.phone));
+        else
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.PHONE, MSG.NO_DATA));
+
+        if (auth.document)
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, auth.document));
+        else
+          divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, MSG.NO_DATA));
+      }
+
+      if (auth.name) {
+        let divConfiguration = this.createDiv();
+        divConfiguration.className = 'aonUserConfigLink';
+        divConfiguration.innerText = MSG.CONFIGURATION;
+        divConfiguration.addEventListener(EVENT.CLICK, () => {
+            let aonConfiguration = new AonConfiguration();
+            aonConfiguration.user = auth.name;
+            this.rootPanel(aonConfiguration);
+            let rightPanel = document.querySelector('aon-right-panel'); 
+            if (rightPanel) {
+                rightPanel.close(); 
+            }
+            let companyy = this.getElement("aonHeaderCompanyListButton");
+            let companyyy = this.getElement("aonHeaderCompanyList");
+            companyy.style.display = "block";
+            companyyy.style.display = "block";
+        });
+        divUserInfo.appendChild(divConfiguration);
+      }
+
+      divGeneral.appendChild(divUserInfo);
+
+      let divLogout = this.createDiv();
+      divLogout.id = this.LOGOUT;
+      divLogout.className = 'divLogout';
+      divLogout.addEventListener(EVENT.CLICK, () => {
+          closeSession();
+          LS.setNewTheme(true);
+      });
+      divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
+
+      loginContent.appendChild(divGeneral);
+      loginContent.appendChild(divLogout);
+
+      if(!this.isNewStyle()){
+        let openButton = this.getElement("openNotificationButton");
+        openButton.style.display = "none";
+      }
+      this.appendChild(loginContent);
 	}
 
 	handleDocumentClick(event) {

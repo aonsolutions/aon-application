@@ -310,9 +310,11 @@ export class AonSuiteMenu extends AonElement {
 
         let rootPanel = this.getElement("rootPanel");
         span.addEventListener(EVENT.CLICK, value.action);
-        span.addEventListener(EVENT.CLICK, function(){
-            rootPanel.style.backgroundColor = "rgb(250, 249, 248)"; 
-        });
+        if(!this.isNewStyle()){
+          span.addEventListener(EVENT.CLICK, function(){
+              rootPanel.style.backgroundColor = "rgb(250, 249, 248)"; 
+          });
+        }
 		return div;
 	}
 

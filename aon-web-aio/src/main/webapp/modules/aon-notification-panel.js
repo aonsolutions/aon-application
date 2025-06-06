@@ -16,7 +16,6 @@ import * as LS from '../services/localStorageService.js';
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export class AonNotificationPanel extends AonElement {
-
     DIV_GENERAL;
     AON_NOTIFICATION_PANEL;
 
@@ -40,11 +39,11 @@ export class AonNotificationPanel extends AonElement {
     }
 
     goAonNotification(){
-        try {
-            this.rootPanel(new AonNotification());
-        } catch(e){
-            console.log(e);
-        }
+      try {
+        this.rootPanel(new AonNotification());
+      } catch(e){
+        console.log(e);
+      }
     }
 
     initialize() {
@@ -67,22 +66,28 @@ export class AonNotificationPanel extends AonElement {
   
         let welcome = this.getElement("aonCompanyTabFilter");
         if(!welcome){
-			let openButton = this.getElement("openNotificationButton");
+          let openButton = this.getElement("openNotificationButton") || new AonIconButton();
+          if(!this.isNewStyle()){
 			openButton.style.display = "block";
-       
-            openButton.addEventListener(EVENT.CLICK, () =>  {
-                this.goAonNotification();
-                let rightPanel = document.querySelector('aon-right-panel'); 
-                if (rightPanel) {
-                    rightPanel.close(); 
-                }
-                header.className = "aonHeader aonHeaderNotification";
-                apps.className = "aonMenuLeftop aonMenuLeftopNotification";
-                aonHeader.buildApp(NOTIFICATION);
-                aonHeader.setVisibleLogo(false);
-                aonHeader.setVisibleApp(true);
-            });
-            
+          } else {
+            openButton.id = "openNotificationButton";
+            openButton.icon = "open_in_new";
+            openButton.title = "Ver en pantalla completa";
+            openButton.className = "rightPanelButtons";
+            divGeneral.appendChild(openButton);
+          }
+          openButton.addEventListener(EVENT.CLICK, () =>  {
+            this.goAonNotification();
+            let rightPanel = document.querySelector('aon-right-panel');
+            if (rightPanel) {
+                rightPanel.close(); 
+            }
+            header.className = "aonHeader aonHeaderNotification";
+            apps.className = "aonMenuLeftop aonMenuLeftopNotification";
+            aonHeader.buildApp(NOTIFICATION);
+            aonHeader.setVisibleLogo(false);
+            aonHeader.setVisibleApp(true);
+          });
         } 
         
         let enterprise = this.getElement("aonHeaderCompanyListButton");

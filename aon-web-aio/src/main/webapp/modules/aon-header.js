@@ -735,7 +735,6 @@ export class AonHeader extends AonElement {
 				button.setColor(color);
 				button.setBackgroundColor(backgroundColor);
 			});
-			//imgs.forEach( (img) => img.style.filter = 'invert(100%) sepia(0%) saturate(7470%) hue-rotate(111deg) brightness(106%) contrast(94%)' );
 		} else {
 			imgs.forEach( (img) => img.style.removeProperty ('filter') );
 			texts.forEach( (text) => text.style.removeProperty('color') );
@@ -831,41 +830,13 @@ export class AonHeader extends AonElement {
 				div.appendChild(img);
 			}
 		}
-		
-		// ((!sidenav && app.symbol) || (sidenav && !app.icon && app.symbol)) {
-		// 	let icon = this.createElement(TAG.SPAN);
-		// 	icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
-		// 	icon.id = `aonMenuListAppImg-${app.app}`;
-		// 	icon.innerHTML = app.symbol;
-		// 	icon.classList.add("aonHeaderAppIcon");
-		// 	div.appendChild(icon);
-		// } else if (app.icon) {
-		// 	let aonIcon = new AonIcon();
-		// 	aonIcon.id = `aonMenuListAppImg-${app.app}`;
-		// 	aonIcon.icon = app.icon;
-		// 	aonIcon.color = "var(--aonIcon)";
-		// 	aonIcon.size = app.iconSize || "32px";
-		// 	div.appendChild(aonIcon);
-		// } else if (app.logo) {
-		// 	let img = this.createElement(TAG.IMG);
-		// 	img.id = `aonMenuListAppImg-${app.app}`;
-		// 	//img.style.width = '24px';
-		// 	img.src = app.logo;
-		// 	img.title = app.title;
-		// 	div.appendChild(img);
-		// }
-
-		
 
 		if (app.title) {
-			// let titles = app.title.match(/\b\w+\b/g);
-			// for (let i = 0; i < 2; i++) {
-				let span = this.createElement(TAG.SPAN);
-				span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
-				span.classList.add("aonHeaderAppSpan");
-				span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
-				div.appendChild(span);
-			// }
+          let span = this.createElement(TAG.SPAN);
+          span.id = `aonMenuListAppTitle-${app.app}`;//-${i}`;
+          span.classList.add("aonHeaderAppSpan");
+          span.innerHTML = app.title; // titles.length > i ? titles[i] : '&nbsp;';
+          div.appendChild(span);
 		}
 
 		a.appendChild(div);
@@ -891,7 +862,7 @@ export class AonHeader extends AonElement {
 	}
 
 	setVisibleCompanyListButton(visible) {
-		this.setVisibleElement('aonHeaderCompanyListButton', visible)
+		this.setVisibleElement('aonHeaderCompanyListButton', visible);
 	}
 	
 	setVisibleElement(elementId, visible) {
