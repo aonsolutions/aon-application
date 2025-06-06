@@ -220,8 +220,8 @@ public class RawdocServlet extends AonApiHttpServlet {
 			JSONObject fileJSON =  JsonUtils.getJSONObject(json, IJsonNames.FILE);
 			rawdoc.setS3Key(JsonUtils.getString(fileJSON, IJsonNames.S3_KEY));
 			
-			// TEDI PARSER!!!		    
-		    if(!api.getDur().isInvofox() && api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
+			// TEDI PARSER!!!
+		    if(!api.getDur().hasInvofox() && api.getDur().isOcr() && !AonStringUtils.isBlank(rawdoc.getS3Key())) {
 		    	try {
 		    		byte[] data = S3.getInstance().download(rawdoc.getS3Bucket(), rawdoc.getS3Key());
 			    	

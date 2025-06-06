@@ -7,12 +7,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PurchaseImportManager {
 
@@ -46,12 +48,27 @@ public class PurchaseImportManager {
 			PurchaseDetail purchaseDetail = sourceDetail;
 			purchaseDetail.setId(null);
 			purchaseDetail.setPurchase(purchase);
+			purchaseDetail.setItem(getBaseItem(purchaseDetail.getItem()));
+			purchaseDetail.setDescription(getDescription(purchaseDetail.getItem()));
 			purchaseDetailBean.insert(purchaseDetail);
-
 			if (lastDetail) {
 				purchase = purchaseDetail.getPurchase();
 			}
 		}
+	}
+	
+	private Item getBaseItem(Item item) throws ManagerBeanException {
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+		criteria.addNullExpression(itemBean.getFieldName(IEntityAlias.ITEM_SERIAL_NUMBER));
+		List<ITransferObject> toList = itemBean.getList(criteria);
+		return !toList.isEmpty() ? (Item) toList.getFirst() : item;	
+	}
+	
+	private String getDescription(Item item) throws ManagerBeanException {
+		return !AonStringUtils.isBlank(item.getDescription())
+			? item.getDescription() : item.getProduct().getFullName(); 
 	}
 
 }
