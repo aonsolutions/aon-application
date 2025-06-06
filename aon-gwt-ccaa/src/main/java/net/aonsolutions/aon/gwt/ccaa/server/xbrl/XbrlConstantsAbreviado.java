@@ -1,13 +1,20 @@
 package net.aonsolutions.aon.gwt.ccaa.server.xbrl;
 
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ANTERIOR;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.D_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ANTERIOR;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class ConstantesAbreviado {
+public abstract class XbrlConstantsAbreviado {
+	
+	// Estos datos corresponden al ejercicio 2024 y siguientes.
+	// Para obtenerlos podemos consultar los siguientes archivos XML que estan en el subdirectorio Metadatos2024, dentro 
+	// del directorio donde está instalado el programa D2:
+	// - PlantillaAbreviado.xml
+	// - PlantillaAbreviadoMemoria.xml
+	// - ConversionAbreviado.xml
 	
 	public static final String URI_SCHEMA_ABREVIADO = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-abreviado.xsd";
 	public static final String URI_SCHEMA_ABREVIADO_MEMORIA = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-abreviado-completo.xsd";
@@ -236,13 +243,12 @@ public abstract class ConstantesAbreviado {
 	    CONVERSION_MEM_ABREVIADO.put("9079001","pgc07ma-rsm:DescripcionNoNormalizadaApartado7Resumen");  // Pasivos financieros                                          
 	    CONVERSION_MEM_ABREVIADO.put("9089001","pgc07ma-rsm:DescripcionNoNormalizadaApartado8Resumen");  // Fondos propios                                               
 	    CONVERSION_MEM_ABREVIADO.put("9099001","pgc07ma-rsm:DescripcionNoNormalizadaApartado9Resumen");  // Situación fiscal                                             
-	    CONVERSION_MEM_ABREVIADO.put("9109001","pgc07ma-rsm:DescripcionNoNormalizadaApartado10Resumen"); // FALTA - ESTE APARTADO IGUAL ES DE OTROS AÑOS ANTERIORES                             
+	    CONVERSION_MEM_ABREVIADO.put("9109001","pgc07ma-rsm:DescripcionNoNormalizadaApartado10Resumen"); //                              
 	    CONVERSION_MEM_ABREVIADO.put("9129001","pgc07ma-rsm:DescripcionNoNormalizadaApartado12Resumen"); // Operaciones con partes vinculadas                                             
 	    CONVERSION_MEM_ABREVIADO.put("9139001","pgc07ma-rsm:DescripcionNoNormalizadaApartado13Resumen"); // Otra información
     }
     
     static {
-    	// FALTA
     	// Contextos apartados normalizados de la memoria ABREVIADO
     	// id, {dimension, member}
     	CONTEXTOS_MEM_ABREVIADO.put("Y1_ACTUAL_apdo5_Duration_InmovilizadoMaterialIntangibleInversionesInmobiliariasPresentacion", new String[]{"pgc07ma-d-inm:InmovilizadoMaterialIntangibleInversionesInmobiliariasInmovilizadoIntangibleMaterialInversionesInmobiliariasDesgloseDimension", "pgc07mc-ap:InmovilizadoMaterialIntangibleInversionesInmobiliariasPresentacion"});
@@ -366,7 +372,6 @@ public abstract class ConstantesAbreviado {
     }
     
     static {   	
-    	// FALTA
     	// Conversion Memoria ABREVIADO (cuadros normalizados) 
     	// claveXML, {nombre,contexto}
     	CONVERSION_MEM_CUADROS_ABREVIADO.put("933019", new String[]{"pgc07mc-bs:InstrumentosFinancierosCorreccionesDeterioroValorOriginadasRiesgoCreditoPerdidaDeterioroInicioEjercicio", "Y1_ANTERIOR_apdo6d_Instant_InstrumentosFinancierosLargoPlazoClasesActivoValoresRepresentativosDeuda"});

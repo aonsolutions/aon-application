@@ -1,30 +1,29 @@
 package net.aonsolutions.aon.gwt.ccaa.server.xbrl;
 
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ANTERIOR;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ANTERIOR;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONTEXTOS_MEM_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_BAL_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_MEM_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_MEM_CUADROS_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.CONVERSION_PYG_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.NAME_SPACES_URI_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.NAME_SPACES_URI_ABREVIADO_MEMORIA;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.URI_SCHEMA_ABREVIADO;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesAbreviado.URI_SCHEMA_ABREVIADO_MEMORIA;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.CONTEXTOS_MEM_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.CONVERSION_BAL_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.CONVERSION_MEM_CUADROS_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.CONVERSION_MEM_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.CONVERSION_PYG_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.NAME_SPACES_URI_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.NAME_SPACES_URI_PYMES_MEMORIA;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.URI_SCHEMA_PYMES;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.ConstantesPymes.URI_SCHEMA_PYMES_MEMORIA;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.D_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.D_ANTERIOR;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ANTERIOR;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.CONTEXTOS_MEM_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.CONVERSION_BAL_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.CONVERSION_MEM_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.CONVERSION_MEM_CUADROS_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.CONVERSION_PYG_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.NAME_SPACES_URI_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.NAME_SPACES_URI_ABREVIADO_MEMORIA;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.URI_SCHEMA_ABREVIADO;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsAbreviado.URI_SCHEMA_ABREVIADO_MEMORIA;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.CONTEXTOS_MEM_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.CONVERSION_BAL_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.CONVERSION_MEM_CUADROS_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.CONVERSION_MEM_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.CONVERSION_PYG_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.NAME_SPACES_URI_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.NAME_SPACES_URI_PYMES_MEMORIA;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.URI_SCHEMA_PYMES;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstantsPymes.URI_SCHEMA_PYMES_MEMORIA;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,29 +47,27 @@ import org.w3c.dom.Element;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class PruebaCrearXML {
+public class XmlToXbrl {
 	
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	private static final SimpleDateFormat DATE_FORMAT_YEAR = new SimpleDateFormat("yyyy");
-	private static final SimpleDateFormat DATE_FORMAT_MONTH = new SimpleDateFormat("MM");
-	private static final SimpleDateFormat DATE_FORMAT_DAY = new SimpleDateFormat("dd");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private final SimpleDateFormat dateFormatYear = new SimpleDateFormat("yyyy");
+	private final SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MM");
+	private final SimpleDateFormat dateFormatDay = new SimpleDateFormat("dd");
 	
-	private static ArrayList<String> notas = new ArrayList<>(); // Notas de la Memoria
-	private static Esquema schemaXml;
+	private ArrayList<String> notas = new ArrayList<>(); // Notas de la Memoria
+	private Esquema schemaXml;
 	
-    public static void pruebaCrearXBRL(Esquema schema, File parent) throws IOException {
+	protected XmlToXbrl() {
+		
+	}
+	
+	public static XmlToXbrl getInstance() {
+		return new XmlToXbrl();
+	}
+	
+    public void createXbrl(Esquema schema, File parent) {
     	
         try {
-	        // ESTOS DATOS SON PARA PROBAR, SE COGERAN DEL XML, SI FECHAINIANTERIOR = NULL Y FECHAFINANTERIOR = NULL SE SUPONE QUE NO HAY EJERCICIO ANTERIOR
-//        	File f = new File("C:\\TMP\\prueba.xml");
-//	        String nifEmpresa = "B50111111";
-//	        Date fechaIniActual = new Date("01/01/2024");
-//			Date fechaFinActual = new Date("12/31/2024");
-//	        Date fechaIniAnterior = new Date("01/01/2023");
-//			Date fechaFinAnterior = new Date("12/31/2023");
-//			boolean formatoPymes = true; // Formato PYMES o Abreviado
-//			boolean llevaMemoria = true;  // Indica si lleva memoria normalizada
-			// ----------------------------------------------
         	schemaXml = schema;
 	        String nifEmpresa = schema.getCabecera().getCIF();
 	        Date fechaIniActual = buscarFecha("1102",""); 
@@ -199,9 +196,6 @@ public class PruebaCrearXML {
 	        }
         
             // Escribir el contenido del documento en un archivo XML
-//	        File f = File.createTempFile("deposito", ".xbrl", parent);
-//	        File f = new File(parent.getPath() + "\\deposito.xbrl");
-//	        File f = new File("c:\\tmp\\deposito.xbrl");	        
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -216,7 +210,7 @@ public class PruebaCrearXML {
         }
     }
 
-	private static Date buscarFecha(String key, String sufijo) {
+	private Date buscarFecha(String key, String sufijo) {
 		
 		String y = buscar(key + "1" + sufijo); // Año
 		String m = buscar(key + "2" + sufijo); // Mes
@@ -224,9 +218,8 @@ public class PruebaCrearXML {
 		
 		if (AonStringUtils.isNotBlank(y) && AonStringUtils.isNotBlank(m) && AonStringUtils.isNotBlank(d)) {
 			try {
-				return DATE_FORMAT.parse(y + "-" + m + "-" + d);
+				return dateFormat.parse(y + "-" + m + "-" + d);
 			} catch (ParseException e) {
-				// FALTA - CONTROLAR EXCEPCION O DEVOLVER AL CLIENTE
 				e.printStackTrace();
 				return null;
 			}			
@@ -235,19 +228,19 @@ public class PruebaCrearXML {
 		}
 	}
 
-	private static void addContext(Document doc, String id, String identifier, Date fechaFin) {
+	private void addContext(Document doc, String id, String identifier, Date fechaFin) {
     	addContext(doc, id, identifier, null, fechaFin, null, null);
     }
     
-    private static void addContext(Document doc, String id, String identifier, Date fechaIni, Date fechaFin) {
+    private void addContext(Document doc, String id, String identifier, Date fechaIni, Date fechaFin) {
     	addContext(doc, id, identifier, fechaIni, fechaFin, null, null);
     }
     
-    private static void addContext(Document doc, String id, String identifier, Date fechaFin, String dimension, String member) {
+    private void addContext(Document doc, String id, String identifier, Date fechaFin, String dimension, String member) {
     	addContext(doc, id, identifier, null, fechaFin, dimension, member);
     }
     
-    private static void addContext(Document doc, String id, String identifier, Date fechaIni, Date fechaFin, String dimension, String member) {
+    private void addContext(Document doc, String id, String identifier, Date fechaIni, Date fechaFin, String dimension, String member) {
     	
 	      Element ele;
 	      ele = doc.createElement("xbrli:context");
@@ -268,16 +261,16 @@ public class PruebaCrearXML {
 	      if (fechaIni == null) {
 	          // Periodo instant si no lleva fecha inicio
 	          ele3 = doc.createElement("xbrli:instant");
-	          ele3.setTextContent(DATE_FORMAT.format(fechaFin));  // Final del ejercicio
+	          ele3.setTextContent(dateFormat.format(fechaFin));  // Final del ejercicio
 	          ele2.appendChild(ele3);
 	      } else {
 	          // Periodo duration si lleva fecha ini y fecha fin
 	          ele3 = doc.createElement("xbrli:startDate");
-	          ele3.setTextContent(DATE_FORMAT.format(fechaIni));  // Inicio del ejercicio
+	          ele3.setTextContent(dateFormat.format(fechaIni));  // Inicio del ejercicio
 	          ele2.appendChild(ele3);
 	
 	          ele3 = doc.createElement("xbrli:endDate");
-	          ele3.setTextContent(DATE_FORMAT.format(fechaFin));  // Final del ejercicio
+	          ele3.setTextContent(dateFormat.format(fechaFin));  // Final del ejercicio
 	          ele2.appendChild(ele3);
 	      }
 	      ele.appendChild(ele2);
@@ -297,7 +290,7 @@ public class PruebaCrearXML {
     	
     }
     
-    private static void addUnit(Document doc, String id, String measure) {
+    private void addUnit(Document doc, String id, String measure) {
     	
         Element ele;
         ele = doc.createElement("xbrli:unit");
@@ -314,7 +307,7 @@ public class PruebaCrearXML {
     }
     
     // Añadir elemento: Balance y Cuenta PYG
-    private static void addElementoBal(Element padre, String key, String nombre, String contextoActual, String contextoAnterior) {
+    private void addElementoBal(Element padre, String key, String nombre, String contextoActual, String contextoAnterior) {
     	
 		// Ejercicio Actual
 		String valor = buscar(key); // Se busca la clave en el XML y se obtiene el valor
@@ -343,16 +336,16 @@ public class PruebaCrearXML {
     }
     
     // Añadir elemento: Cuadros normalizados de la memoria
-    private static void addElementoMem(Element padre, String key, String name, String context) {
+    private void addElementoMem(Element padre, String key, String name, String context) {
 
     	addElementoIde(padre, name, context, key, "euro", "2");
     	
 	}
     
     // Busca la clave que se le pasa en el XML y devuelve su valor  
-    private static String buscar(String key) {
+    private String buscar(String key) {
     	
-    	// Buscar en el XML (PARA PROBAR BUSCAMOS EN datosIdentificacion)
+    	// Buscar en el XML 
 		for (int i = 0; i < schemaXml.getClaves().getClave().size(); i++) {
 			BigInteger code = new BigInteger(key);
 			if (schemaXml.getClaves().getClave().get(i).getCodigo().equals(code)) {				
@@ -364,10 +357,10 @@ public class PruebaCrearXML {
     }
     
     // Añadir elemento buscando previamente en el XML
-    private static void addElementoIde(Element padre, String nombre, String contexto, String key) {
+    private void addElementoIde(Element padre, String nombre, String contexto, String key) {
     	addElementoIde(padre, nombre, contexto, key, null, null);
     }
-    private static void addElementoIde(Element padre, String nombre, String contexto, String key, String unit, String decimals) {
+    private void addElementoIde(Element padre, String nombre, String contexto, String key, String unit, String decimals) {
 
     	// Se busca la clave en el XML y si contiene datos se añade el elemento
     	String valor = buscar(key); 
@@ -377,18 +370,18 @@ public class PruebaCrearXML {
     	
     }
     
-    private static Element addElemento(Element padre, String nombre) {
+    private Element addElemento(Element padre, String nombre) {
     	return addElemento(padre, nombre, null, null, null, null, null);
     }
     
-    private static Element addElemento(Element padre, String nombre, String contexto, String valor) {
+    private Element addElemento(Element padre, String nombre, String contexto, String valor) {
     	return addElemento(padre, nombre, contexto, valor, null, null, null);
     }
     
-    private static Element addElemento(Element padre, String nombre, String contexto, String valor, String decimals, String unitRef, String idNota) {
+    private Element addElemento(Element padre, String nombre, String contexto, String valor, String decimals, String unitRef, String idNota) {
         Element ele = padre.getOwnerDocument().createElement(nombre);
         if (AonStringUtils.isNotBlank(contexto)) {
-            ele.setAttribute("contextRef", contexto.toString());
+            ele.setAttribute("contextRef", contexto);
         }
         if (AonStringUtils.isNotBlank(decimals)) {
             ele.setAttribute("decimals", decimals);
@@ -406,7 +399,7 @@ public class PruebaCrearXML {
         return ele;
     }
     
-    private static void addNotasMemoria(Document doc) {
+    private void addNotasMemoria(Document doc) {
         // Bloque para poner todas las notas
         //<link:footnoteLink xlink:role="http://www.xbrl.org/2003/role/link" xlink:type="extended">
         //    <link:loc xlink:href="#id_footnote_elem_b11cea7a-c259-42f3-8203-6bfccd196368" xlink:label="PerdidasGananciasOperacionesContinuadasImporteNetoCifraNegocios_b11cea7a-c259-42f3-8203-6bfccd196368" xlink:type="locator"/>
@@ -447,7 +440,7 @@ public class PruebaCrearXML {
                 ele2.setAttribute("xlink:label", labelTo);
                 ele2.setAttribute("xlink:role", "http://www.xbrl.org/2003/role/footnote");
                 ele2.setAttribute("xlink:type", "resource");
-                ele2.setAttribute("xml:lang", "es");  // xml:lang="es"
+                ele2.setAttribute("xml:lang", "es");  
                 ele2.setTextContent(notas.get(i));
                 ele.appendChild(ele2);
             }
@@ -456,7 +449,7 @@ public class PruebaCrearXML {
     }
     
     // Hojas Identificacion
-    private static void addIdentificacion(Document doc, Date fechaIniActual, Date fechaFinActual, Date fechaIniAnterior, Date fechaFinAnterior, boolean formatoPymes) {
+    private void addIdentificacion(Document doc, Date fechaIniActual, Date fechaFinActual, Date fechaIniAnterior, Date fechaFinAnterior, boolean formatoPymes) {
     	
         Element ele;
         Element ele2;
@@ -467,9 +460,9 @@ public class PruebaCrearXML {
         addElemento(ele, "dgi-lc-es:Xcode_IDC.NIF", D_ACTUAL, "NIF");
         addElementoIde(ele, "dgi-est-gen:IdentifierValue", D_ACTUAL, "1010"); // NIF
         if ("1".equals(buscar("1011")))
-        	addElemento(ele, "dgi-lc-es:Xcode_LFC.001", D_ACTUAL, "001");     // Forma juridica SA // FALTA - EN EL XML VA 0 O 1
+        	addElemento(ele, "dgi-lc-es:Xcode_LFC.001", D_ACTUAL, "001");     // Forma juridica SA 
         if ("1".equals(buscar("1012")))
-        	addElemento(ele, "dgi-lc-es:Xcode_LFC.023", D_ACTUAL, "023");     // Forma juridica SL // FALTA - EN EL XML VA 0 O 1               
+        	addElemento(ele, "dgi-lc-es:Xcode_LFC.023", D_ACTUAL, "023");     // Forma juridica SL                
         addElementoIde(ele, "dgi-gen-ex:OthersLegalForm", D_ACTUAL, "1013");  // Forma juridica Otras
         addElementoIde(ele, "dgi-lc-es:Xcode_IDC.LEI", D_ACTUAL, "1009");     // LEI
         addElemento(ele, "dgi-lc-es:Xcode_NMT.DS", D_ACTUAL, "DS");
@@ -477,7 +470,6 @@ public class PruebaCrearXML {
         addElemento(ele, "dgi-lc-es:Xcode_ADL.01", D_ACTUAL, "01");
         addElementoIde(ele, "dgi-est-gen:AddressLine", D_ACTUAL, "1022");               // Domicilio social
         addElementoIde(ele, "dgi-est-gen:MunicipalityName", D_ACTUAL, "1023");          // Municipio
-//        addElementoIde(ele, "dgi-est-gen:SpecifyRegion", D_ACTUAL, "1025");             // Provincia // FALTA EN EL XML EN EL 1025 VA LA CLAVE DE PROVINCIA
         addElementoIde(ele, "dgi-lc-es:Xcode_RCI." + buscar("1025"), D_ACTUAL, "1025"); // Provincia (se guarda el código de provincia en el XML)
         addElementoIde(ele, "dgi-est-gen:ZipPostalCode", D_ACTUAL, "1024");             // Código postal
         addElementoIde(ele, "dgi-est-gen:CommunicationValue", D_ACTUAL, "1031");        // Teléfono
@@ -489,12 +481,10 @@ public class PruebaCrearXML {
             addElemento(doc.getDocumentElement(), "dgi-lc-es:Xcode_COT.01", D_ACTUAL, "01"); // UNIDAD EUROS
         } else {
         	// Unidades (en ABREVIADO Euros, Miles de Euros, Millones de Euros)
-        	// FALTA - POR AHORA SE PONE EUROS
-        	// ABREVIADO: EN AON SE PUEDE SELECCIONAR LA UNIDAD (EUROS, MILES DE EUROS, MILLONES DE EUROS)
             ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:UnidadesTupla");
-            if (buscar("9002").equals("1"))
+            if ("1".equals(buscar("9002")))
             	addElemento(ele, "dgi-lc-es:Xcode_COT.02", D_ACTUAL, "02"); // MILES DE EUROS
-            else if (buscar("9003").equals("1"))
+            else if ("1".equals(buscar("9003")))
             	addElemento(ele, "dgi-lc-es:Xcode_COT.03", D_ACTUAL, "03"); // MILLONES DE EUROS
             else	
             	addElemento(ele, "dgi-lc-es:Xcode_COT.01", D_ACTUAL, "01"); // UNIDAD EUROS
@@ -558,29 +548,29 @@ public class PruebaCrearXML {
 
         // Presentación de Cuentas - Ejercicio Actual
         ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:PresentacionCuentasTupla");
-        addElemento(ele, "pgc07mc-apdo0:YearFechaInicioCuentas", D_ACTUAL, DATE_FORMAT_YEAR.format(fechaIniActual));
-        addElemento(ele, "pgc07mc-apdo0:MonthFechaInicioCuentas", D_ACTUAL, DATE_FORMAT_MONTH.format(fechaIniActual));
-        addElemento(ele, "pgc07mc-apdo0:DayFechaInicioCuentas", D_ACTUAL, DATE_FORMAT_DAY.format(fechaIniActual));
-        addElemento(ele, "pgc07mc-apdo0:YearFechaCierreCuentas", D_ACTUAL, DATE_FORMAT_YEAR.format(fechaFinActual));
-        addElemento(ele, "pgc07mc-apdo0:MonthFechaCierreCuentas", D_ACTUAL, DATE_FORMAT_MONTH.format(fechaFinActual));
-        addElemento(ele, "pgc07mc-apdo0:DayFechaCierreCuentas", D_ACTUAL, DATE_FORMAT_DAY.format(fechaFinActual));
+        addElemento(ele, "pgc07mc-apdo0:YearFechaInicioCuentas", D_ACTUAL, dateFormatYear.format(fechaIniActual));
+        addElemento(ele, "pgc07mc-apdo0:MonthFechaInicioCuentas", D_ACTUAL, dateFormatMonth.format(fechaIniActual));
+        addElemento(ele, "pgc07mc-apdo0:DayFechaInicioCuentas", D_ACTUAL, dateFormatDay.format(fechaIniActual));
+        addElemento(ele, "pgc07mc-apdo0:YearFechaCierreCuentas", D_ACTUAL, dateFormatYear.format(fechaFinActual));
+        addElemento(ele, "pgc07mc-apdo0:MonthFechaCierreCuentas", D_ACTUAL, dateFormatMonth.format(fechaFinActual));
+        addElemento(ele, "pgc07mc-apdo0:DayFechaCierreCuentas", D_ACTUAL, dateFormatDay.format(fechaFinActual));
         addElementoIde(ele, "dgi-dat-inf:TotalPagesPresented", D_ACTUAL, "1901", "pure", "0");
         addElementoIde(ele, "dgi-dat-inf:AbsenceFinancialStatementPurpose", D_ACTUAL, "1903");
 
         // Presentación de Cuentas - Ejercicio Anterior
         if (fechaIniAnterior != null && fechaFinAnterior != null) {
             ele = addElemento(doc.getDocumentElement(), "pgc07mc-apdo0:PresentacionCuentasTupla");
-            addElemento(ele, "pgc07mc-apdo0:YearFechaInicioCuentas", D_ANTERIOR, DATE_FORMAT_YEAR.format(fechaIniAnterior));
-            addElemento(ele, "pgc07mc-apdo0:MonthFechaInicioCuentas", D_ANTERIOR, DATE_FORMAT_MONTH.format(fechaIniAnterior));
-            addElemento(ele, "pgc07mc-apdo0:DayFechaInicioCuentas", D_ANTERIOR, DATE_FORMAT_DAY.format(fechaIniAnterior));
-            addElemento(ele, "pgc07mc-apdo0:YearFechaCierreCuentas", D_ANTERIOR, DATE_FORMAT_YEAR.format(fechaFinAnterior));
-            addElemento(ele, "pgc07mc-apdo0:MonthFechaCierreCuentas", D_ANTERIOR, DATE_FORMAT_MONTH.format(fechaFinAnterior));
-            addElemento(ele, "pgc07mc-apdo0:DayFechaCierreCuentas", D_ANTERIOR, DATE_FORMAT_DAY.format(fechaFinAnterior));                
+            addElemento(ele, "pgc07mc-apdo0:YearFechaInicioCuentas", D_ANTERIOR, dateFormatYear.format(fechaIniAnterior));
+            addElemento(ele, "pgc07mc-apdo0:MonthFechaInicioCuentas", D_ANTERIOR, dateFormatMonth.format(fechaIniAnterior));
+            addElemento(ele, "pgc07mc-apdo0:DayFechaInicioCuentas", D_ANTERIOR, dateFormatDay.format(fechaIniAnterior));
+            addElemento(ele, "pgc07mc-apdo0:YearFechaCierreCuentas", D_ANTERIOR, dateFormatYear.format(fechaFinAnterior));
+            addElemento(ele, "pgc07mc-apdo0:MonthFechaCierreCuentas", D_ANTERIOR, dateFormatMonth.format(fechaFinAnterior));
+            addElemento(ele, "pgc07mc-apdo0:DayFechaCierreCuentas", D_ANTERIOR, dateFormatDay.format(fechaFinAnterior));                
         }
 
         if (formatoPymes) {
             // Microempresas (Solo PYMES)
-            addElementoIde(doc.getDocumentElement(), "pgc07mp-apdo0:CasoAdopcionConjuntaCrteriosEspecificosMicroPyme", D_ACTUAL, "1902"); // ) == "S" ? "true" : "false");
+            addElementoIde(doc.getDocumentElement(), "pgc07mp-apdo0:CasoAdopcionConjuntaCrteriosEspecificosMicroPyme", D_ACTUAL, "1902"); 
         }
         
         // Número de mujeres y miembros en organo de administración
@@ -624,10 +614,6 @@ public class PruebaCrearXML {
             addElementoIde(doc.getDocumentElement(), "pgc07mc-bs:PeriodoMedioPagoPeriodoMedioPagoProveedores", D_ANTERIOR, "947059", "euro", "2");
         }
 
-    }
-    
-    public static void main(String[] args) {
-//    	pruebaCrearXBRL();
     }
 
 }

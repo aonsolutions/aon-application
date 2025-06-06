@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Deque;
@@ -41,7 +43,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
-import net.aonsolutions.aon.gwt.ccaa.server.xbrl.PruebaCrearXML;
+import net.aonsolutions.aon.gwt.ccaa.server.xbrl.XmlToXbrl;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*",
 												  "/aon_gwt_aio/gwt_download_deposit/*"})
@@ -67,7 +69,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 	private static final String D2_FILE_CONVOC_2015 = "Convocatoria";
 	private static final String D2_FILE_SICAV_2015 = "SICAV";
 	
-	private static String cifEmpresa = "";
+//	private static String cifEmpresa = "";
 	
 	@Override
 	protected void doGet(HttpServletRequest p_request,
@@ -88,7 +90,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		File f;
 		if (year >= 2024) {
 			f = getXmlFile2024(domain, domainId, year);
-			p_response.addHeader("Content-Disposition", "inline; filename=\"" + cifEmpresa + "_" + year +".zip\""); // FALTA - NOMBRE DEL FICHERO, POR EJEMPLO NIF + EJERCICIO
+			p_response.addHeader("Content-Disposition", "inline; filename=\"" + AonStringUtils.left(f.getName(), 9) + "_" + year +".zip\""); 
 		} else {
 			f = /*DBConsults.*/getXmlFile(domain, domainId, year);
 			p_response.addHeader("Content-Disposition", "inline; filename=\"DEPOSITO.zip\"");
@@ -385,66 +387,30 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			
 			byte[] data;
 			if (xml != null && xml.getId() != null) {
-//				parent = File.createTempFile(xml.getDescription() + "%", "");
-//				parent.delete();
-//				parent.mkdir();
-
-				// FALTA - DOCUMENTOS
-//				File documents = File.createTempFile("Documentos%", "", parent);
-//				documents.delete();
-//				documents.mkdir();
-//
-//				// **************************
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_NO_FINANCIERA, documents, year);
-//				getFileDocuments2Zip(domain, domainId, D2_FILE_TITULAR_REAL, documents, year);
-//				// **************************
-
-//				File tmpDocuments = File.createTempFile("Documentos TMP%", "", parent);
-//				tmpDocuments.delete();
-//				tmpDocuments.mkdir();
-//
-//				File otherDocuments = File.createTempFile("Otros Documentos%", "", parent);
-//				otherDocuments.delete();
-//				otherDocuments.mkdir();
-//
-//				File otherTmpDocuments = File.createTempFile("Otros Documentos TMP%", "", parent);
-//				otherTmpDocuments.delete();
-//				otherTmpDocuments.mkdir();
-
-//				parent = File.createTempFile(xml.getDescription() + "%", "");
-//				parent.delete();
-//				parent.mkdir();
-//				File f = File.createTempFile("deposito%", ".xml", parent);
 
 				Esquema schema = DBConsults.getDeposit(xml);
-				cifEmpresa = AonStringUtils.trimToEmpty(schema.getCabecera().getCIF());
 
-				if (!schema.getCabecera().isMemoriaNormalizada()) {
-					Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY + year);
-					if (id.get(0) == -1) {
-						schema.getCabecera().setMemoriaNormalizada(true);
-					}
-				}
-
-				Integer count = 0;
+				// Si existe el fichero de la memoria, se asume que no se cumplimenta la memoria				
+				Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY + year);
+				schema.getCabecera().setMemoriaNormalizada(id.get(0) == -1);
+				
+				// Revisar las claves que lleva el esquema por si hay que modificar o quitar alguna
 				Esquema.Claves claves = new Esquema.Claves();
 				for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
 
-					BigInteger code = new BigInteger(D2DepositHeaderKey.BA2121300.getCode());
-					if (schema.getClaves().getClave().get(i).getCodigo().equals(code)) {
-						count++;
+					// Servicios a terceros, si clave 8080832 esta a cero la 831001 se deja vacia, pues por defecto se guarda un 1 
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(831001))) {
+						if (buscar(schema, "8080832").equals("0")) {
+							schema.getClaves().getClave().get(i).setValor("");
+						}
 					}
-					if (!schema.getClaves().getClave().get(i).getCodigo().equals(code) || count <= 1) {						
-						// Clave 8080855 se ignora, ahora no se usa y se está grabando en el XML
-						if (!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080855)))						
-							claves.getClave().add(schema.getClaves().getClave().get(i));
+					
+					// Claves 8080854, 8080855 se ignoran, ahora no se usan y se están grabando en el XML
+					if (!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080854)) && 
+						!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080855))) {
+						claves.getClave().add(schema.getClaves().getClave().get(i));
 					}
+					
 				}
 				
 				// Añadir clave C8081010
@@ -452,17 +418,16 @@ public class DownloadXmlFileServlet extends HttpServlet {
 				c8081010.setCodigo(BigInteger.valueOf(8081010));
 				c8081010.setValor(getC8081010(schema));
 				claves.getClave().add(c8081010);
+				System.out.println(c8081010.getValor());
 				
 				// Asignar lista de claves modificada al schema
 				schema.setClaves(claves);
-				
-//				parent = File.createTempFile(xml.getDescription() + "%", "");
-				parent = File.createTempFile(schema.getCabecera().getCIF(), "");				
-				parent.delete();
-				parent.mkdir();
+
+				Path parentPath = Files.createTempDirectory(schema.getCabecera().getCIF());
+				parent = parentPath.toFile();
 				
 				// Crear el archivo XBRL
-				PruebaCrearXML.pruebaCrearXBRL(schema, parent);
+				XmlToXbrl.getInstance().createXbrl(schema, parent);
 				
 				// Crear el archivo XML
 				File f = File.createTempFile("deposito%", ".xml", parent);
@@ -481,12 +446,13 @@ public class DownloadXmlFileServlet extends HttpServlet {
 						data = null;
 				}
 
-				if (data != null)
+				if (data != null) {
 					try {
 						AonFileUtils.writeByteArrayToFile(f, data);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}
 
 				// Añadir documentos
 				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, parent, year);
@@ -532,22 +498,21 @@ public class DownloadXmlFileServlet extends HttpServlet {
 //				"v" es la Hoja COVID-19 (0 no hay)
 			
 			String formato = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()) ? "3" : "2"; // Formato PYMES o Abreviado
-			String c = schema.getCabecera().isMemoriaNormalizada() ? formato : buscar(schema, "8080805").equals("1") ? "2" : buscar(schema, "8080852").equals("1") ? "3" : "0";
 			String g = buscar(schema, "8080807");
 			String h = buscar(schema, "8080817"); 
 			String i = buscar(schema, "8080809"); 
 			String j = buscar(schema, "8080823"); 
 			String k = buscar(schema, "8080821"); 
 			String l = buscar(schema, "8080811");
-			String m = buscar(schema, "9002").equals("1") ? "M" : buscar(schema, "9003").equals("1") ? "B" : "E";  // "m" es la moneda utilizada (E euros, M miles de euros, B millones de euros) // FALTA - SI ABREVIADO PUEDE SER MILES O MILLONES DE EUROS
+			String m = buscar(schema, "9002").equals("1") ? "M" : buscar(schema, "9003").equals("1") ? "B" : "E";  // "m" es la moneda utilizada (E euros, M miles de euros, B millones de euros) 
 			String q = buscar(schema, "8080825"); 
-			String t = buscar(schema, "8080832");
+			String t = buscar(schema, "8080832"); 
 			
-            //        a         b      c    def    g   h   i   j   k   l   m    nnop    q    s    t    ruv
-            return formato + formato + c + "001" + g + h + i + j + k + l + m + "0001" + q + "1" + t + "000";
+            //        a         b         c       def    g   h   i   j   k   l   m    nnop    q    s    t    ruv
+            return formato + formato + formato + "001" + g + h + i + j + k + l + m + "0001" + q + "1" + t + "000";
 		}
 		
-	    // Busca la clave que se le pasa en el XML y devuelve su valor  
+	    // Busca la clave que se le pasa en el XML y devuelve su valor o "0" si no se encuentra  
 	    private static String buscar(Esquema schema, String key) {
 	    	
 			for (int i = 0; i < schema.getClaves().getClave().size(); i++) {
@@ -560,8 +525,5 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			return "0";
 			
 	    }
-
-		
-		
 		
 }

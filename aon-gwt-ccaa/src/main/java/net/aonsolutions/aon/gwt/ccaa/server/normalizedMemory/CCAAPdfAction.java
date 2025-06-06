@@ -142,11 +142,17 @@ public abstract class CCAAPdfAction {
 		
 		identification.addCell(tableCell(str, 4));
 		
+		if (d2Deposit.getYear() >= 2024) {
+			identification.addCell(tableCell("IRUS", 1));
+			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01008.getCode()), 7));
+		}
+		
 		if(d2Deposit.getYear() >= 2015){
 			identification.addCell(tableCell("LEI", 1));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01009.getCode()), 1));
 			identification.addCell(tableCell("Solo para las empresas que dispongan de c\u00f3digo LEI (Legal Entity Identifier)", 6));
 		}
+		
 		identification.addCell(tableCell("Raz\u00f3n social " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01020.getCode()), 4));
 		identification.addCell(tableCell("Domicilio social "+ d2Deposit.getMap().get(D2DepositHeaderKey.IDA01022.getCode()), 4));
 		
@@ -195,7 +201,28 @@ public abstract class CCAAPdfAction {
 		document.add(new Paragraph(" "));
 		document.add(activity);
 		
-		if(d2Deposit.getYear() >= 2022) {
+		if(d2Deposit.getYear() >= 2023) {
+			PdfPTable administrationOrgan = new PdfPTable(8);
+			administrationOrgan.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+			administrationOrgan.setWidthPercentage(100);
+        
+			administrationOrgan.addCell(tableHeader("\u00d3rgano de Administraci\u00f3n", 8, 10));
+		
+			administrationOrgan.addCell(tableCell(" ", 4));
+			administrationOrgan.addCell(tableCell("Ejercicio " + d2Deposit.getYear(),2));
+			administrationOrgan.addCell(tableCell("Ejercicio " + (d2Deposit.getYear() - 1),2));
+	
+			administrationOrgan.addCell(tableCell("N\u00famero de mujeres en el \u00f3rgano de administraci\u00f3n", 4));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA04212.getCode()),2));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA042129.getCode()),2));
+			
+			administrationOrgan.addCell(tableCell("N\u00famero total de miembros del \u00f3rgano de administraci\u00f3n", 4));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA04213.getCode()),2));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA042139.getCode()),2));
+			
+			document.add(new Paragraph(" "));
+			document.add(administrationOrgan);
+		} else if (d2Deposit.getYear() == 2022) {
 			PdfPTable administrationOrgan = new PdfPTable(8);
 			administrationOrgan.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 			administrationOrgan.setWidthPercentage(100);
@@ -213,6 +240,7 @@ public abstract class CCAAPdfAction {
 			document.add(new Paragraph(" "));
 			document.add(administrationOrgan);
 		}
+		
 		PdfPTable salariedPersonal = new PdfPTable(8);
 		salariedPersonal.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		salariedPersonal.setWidthPercentage(100);

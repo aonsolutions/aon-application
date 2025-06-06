@@ -6,11 +6,6 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,11 +16,15 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PruebaLeerXML {
 	
+	// UTILIDADES QUE ME HAN SERVIDO PARA OBTENER PRACTICAMENTE TODOS LOS ELEMEMTOS DE LOS MAP CONTEXTOS_MEM Y CONVERSION_MEM PARA EL 2024 Y SIGUIENTES
+	
+	// PYMES
 //	private static final String FILE_NAME_PLANTILLA = "C:\\TMP\\PlantillaPymesMemoria.xml"; // PYMES
 //	private static final String FILE_NAME_CONVERSION = "C:\\TMP\\ConversionPymes.xml"; // PYMES
 //	private static final String CONTEXTO = "CONTEXTOS_MEM_PYMES";
 //	private static final String CONVERSION = "CONVERSION_MEM_CUADROS_PYMES";
 	
+	// ABREVIADO
 	private static final String FILE_NAME_PLANTILLA = "C:\\TMP\\PlantillaAbreviadoMemoria.xml"; // ABREVIADO
 	private static final String FILE_NAME_CONVERSION = "C:\\TMP\\ConversionAbreviado.xml"; // ABREVIADO
 	private static final String CONTEXTO = "CONTEXTOS_MEM_ABREVIADO";
@@ -230,109 +229,108 @@ public class PruebaLeerXML {
     		return contextRef;
     }
 
-	private static void LeerGrabar() {
-        try {
-            File xmlFile = new File("c:\\tmp\\plantillapymesmemoria.xml");
-            
-            // Crear el constructor de documentos
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xmlFile);
-            doc.getDocumentElement().normalize();
-
-            // Obtener el nodo raíz
-            Element root = doc.getDocumentElement();
-            System.out.println("Raíz: " + root.getNodeName());
-            System.out.println("");
-
-            // Obtener todos los nodos de cierto tipo
-            NodeList nodeList = doc.getElementsByTagName("xbrli:instant"); 
-
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node node = nodeList.item(i);
-                
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    
-                    String value = element.getTextContent();
-                    System.out.println("Instant: " + value);
-                    
-                    if (AonStringUtils.equals(value, "@FECHA_CIERRE_ACTUAL@")) {
-                    	element.setTextContent("2024-12-31");	
-                    } else if (AonStringUtils.equals(value, "@FECHA_CIERRE_ANTERIOR@")) {
-                    	element.setTextContent("2023-12-31");
-                    }
-                    
-                    // Obtener ID
-                    String id = element.getAttribute("id");
-                    if (id.startsWith("Y1_")) {
-//                    	System.out.println("Elemento encontrado: " + element.getTagName());
-//                    	System.out.println("id: " + id);
-                        NodeList childNodesList = element.getChildNodes();
-                        for (int j = 0; j < childNodesList.getLength(); j++) {
-                            Node childNode = childNodesList.item(j);
-                            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                            	Element childElement = (Element) childNode;
-//                            	System.out.println("Elemento hijo: " + childElement.getTagName());
-//                            	if (childElement.getTagName() == "xbrli:period") {
-//                            		NodeList list = childElement.getElementsByTagName("xbrli:instant");
-//                            		if (list.getLength() > 0)
-//                            			System.out.println("Period: Existe instant");
-//                            	}
-                            	if (childElement.getTagName() == "xbrli:scenario") {
-//                            		Node child = childElement.getFirstChild();
-//                            		Element element2 = (Element) child;
-                            		
-//                            		String dimension = element2.getAttribute("dimension");
-//                            		String member = element2.getTextContent();
-                            		
-                            		NodeList childNodesList2 = childElement.getChildNodes();
-                            		for (int k = 0; k < childNodesList2.getLength(); k++) {
-                            			Node childNode2 = childNodesList2.item(k);
-                            			if (childNode2.getNodeType() == Node.ELEMENT_NODE) {
-                                        	Element childElement2 = (Element) childNode2;
-//                                        	System.out.println("Elemento hijo: " + childElement2.getTagName());
-                                        	String dimension = childElement2.getAttribute("dimension");
-                                    		String member = childElement2.getTextContent();
-//                                    		System.out.println("dimension: " + dimension);
-//                                    		System.out.println("member: " + member);
-//                                    		System.out.println("CONTEXTOS_MEM_PYMES.put(\"" + id +"\", new String[]{\""+dimension+"\", \""+member+"\"});");
-                            			}
-                            		}
-//                            		String dimension = childElement.getAttribute("dimension");
-//                            		String member = childElement.getTextContent();
-//                            		
-//                            		System.out.println("dimension: " + dimension);
-//                            		System.out.println("member: " + member);
-                            	}
-                            	
-                            }
-                        }
-                        
-//                        System.out.println("");
-                    }
+//	private static void LeerGrabar() {
+//        try {
+//            File xmlFile = new File("c:\\tmp\\plantillapymesmemoria.xml");
+//            
+//            // Crear el constructor de documentos
+//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder builder = factory.newDocumentBuilder();
+//            Document doc = builder.parse(xmlFile);
+//            doc.getDocumentElement().normalize();
+//
+//            // Obtener el nodo raíz
+//            Element root = doc.getDocumentElement();
+//            System.out.println("Raíz: " + root.getNodeName());
+//            System.out.println("");
+//
+//            // Obtener todos los nodos de cierto tipo
+//            NodeList nodeList = doc.getElementsByTagName("xbrli:instant"); 
+//
+//            for (int i = 0; i < nodeList.getLength(); i++) {
+//                Node node = nodeList.item(i);
+//                
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    Element element = (Element) node;
 //                    
-//                    // Obtener el contenido del nodo
-//                    String contenido = element.getTextContent();
-//                    System.out.println("Contenido: " + contenido);
-                }
-            }
-            
-            // Grabar el archivo xml con otro nombre
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "");
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("C:\\TMP\\prueba.xml"));
-            transformer.transform(source, result);
-            System.out.println("Archivo XBRL creado con éxito!");            
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+//                    String value = element.getTextContent();
+//                    System.out.println("Instant: " + value);
+//                    
+//                    if (AonStringUtils.equals(value, "@FECHA_CIERRE_ACTUAL@")) {
+//                    	element.setTextContent("2024-12-31");	
+//                    } else if (AonStringUtils.equals(value, "@FECHA_CIERRE_ANTERIOR@")) {
+//                    	element.setTextContent("2023-12-31");
+//                    }
+//                    
+//                    // Obtener ID
+//                    String id = element.getAttribute("id");
+//                    if (id.startsWith("Y1_")) {
+////                    	System.out.println("Elemento encontrado: " + element.getTagName());
+////                    	System.out.println("id: " + id);
+//                        NodeList childNodesList = element.getChildNodes();
+//                        for (int j = 0; j < childNodesList.getLength(); j++) {
+//                            Node childNode = childNodesList.item(j);
+//                            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+//                            	Element childElement = (Element) childNode;
+////                            	System.out.println("Elemento hijo: " + childElement.getTagName());
+////                            	if (childElement.getTagName() == "xbrli:period") {
+////                            		NodeList list = childElement.getElementsByTagName("xbrli:instant");
+////                            		if (list.getLength() > 0)
+////                            			System.out.println("Period: Existe instant");
+////                            	}
+//                            	if (childElement.getTagName() == "xbrli:scenario") {
+////                            		Node child = childElement.getFirstChild();
+////                            		Element element2 = (Element) child;
+//                            		
+////                            		String dimension = element2.getAttribute("dimension");
+////                            		String member = element2.getTextContent();
+//                            		
+//                            		NodeList childNodesList2 = childElement.getChildNodes();
+//                            		for (int k = 0; k < childNodesList2.getLength(); k++) {
+//                            			Node childNode2 = childNodesList2.item(k);
+//                            			if (childNode2.getNodeType() == Node.ELEMENT_NODE) {
+//                                        	Element childElement2 = (Element) childNode2;
+////                                        	System.out.println("Elemento hijo: " + childElement2.getTagName());
+//                                        	String dimension = childElement2.getAttribute("dimension");
+//                                    		String member = childElement2.getTextContent();
+////                                    		System.out.println("dimension: " + dimension);
+////                                    		System.out.println("member: " + member);
+////                                    		System.out.println("CONTEXTOS_MEM_PYMES.put(\"" + id +"\", new String[]{\""+dimension+"\", \""+member+"\"});");
+//                            			}
+//                            		}
+////                            		String dimension = childElement.getAttribute("dimension");
+////                            		String member = childElement.getTextContent();
+////                            		
+////                            		System.out.println("dimension: " + dimension);
+////                            		System.out.println("member: " + member);
+//                            	}
+//                            	
+//                            }
+//                        }
+//                        
+////                        System.out.println("");
+//                    }
+////                    
+////                    // Obtener el contenido del nodo
+////                    String contenido = element.getTextContent();
+////                    System.out.println("Contenido: " + contenido);
+//                }
+//            }
+//            
+//            // Grabar el archivo xml con otro nombre
+//            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+//            Transformer transformer = transformerFactory.newTransformer();
+//            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//            transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "");
+//            DOMSource source = new DOMSource(doc);
+//            StreamResult result = new StreamResult(new File("C:\\TMP\\prueba.xml"));
+//            transformer.transform(source, result);
+//            System.out.println("Archivo XBRL creado con éxito!");            
+//            
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
     
     public static void main(String[] args) {
 //    	ObtenerContext();

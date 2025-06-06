@@ -1,13 +1,20 @@
 package net.aonsolutions.aon.gwt.ccaa.server.xbrl;
 
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.D_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ACTUAL;
-import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.Constantes.I_ANTERIOR;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.D_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ACTUAL;
+import static net.aonsolutions.aon.gwt.ccaa.server.xbrl.XbrlConstants.I_ANTERIOR;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class ConstantesPymes {
+public abstract class XbrlConstantsPymes {
+	
+	// Estos datos corresponden al ejercicio 2024 y siguientes.
+	// Para obtenerlos podemos consultar los siguientes archivos XML que estan en el subdirectorio Metadatos2024, dentro 
+	// del directorio donde está instalado el programa D2:
+	// - PlantillaPymes.xml
+	// - PlantillaPymesMemoria.xml
+	// - ConversionPymes.xml
 	
 	public static final String URI_SCHEMA_PYMES = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-pymes.xsd";
 	public static final String URI_SCHEMA_PYMES_MEMORIA = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-pymes-completo.xsd";
@@ -217,18 +224,6 @@ public abstract class ConstantesPymes {
         CONVERSION_PYG_PYMES.put("41900", "pgc-07-c-bs:PerdidasGananciasOperacionesContinuadasImpuestosSobreBeneficios");
         CONVERSION_PYG_PYMES.put("49500", "pgc-07-c-bs:PerdidasGananciasResultadoEjercicio");
     }
-    
-    // POR AHORA SOLO SE PONEN LOS DE PYMES
-    // ABREVIADO (ademas de las claves que lleva la de PYMES)            
-//    
-//    // Balance de Situacion
-//    datosConversion.Add("12100", "pgc-07-c-na:ActivoCorrienteActivosNoCorrientesMantenidosParaVenta");
-//    if (formato == "A")
-//        datosConversion.Add("21900", "pgc-07-c-na:PatrimonioNetoFondosPropiosOtrosInstrumentosPatrimonioNeto");
-//    datosConversion.Add("32100", "pgc-07-c-na:PasivoCorrientePasivosVinculadosActivosNoCorrientesMantenidosVenta");
-//    
-//    // Cuenta de Perdidas y Ganancias
-//    datosConversion.Add("41200", "pgc-07-c-na:PerdidasGananciasOperacionesContinuadasDiferenciaNegativaCombinacionesNegocios");
     
     static {
     	// Conversion Memoria PYMES (apartados texto libre)

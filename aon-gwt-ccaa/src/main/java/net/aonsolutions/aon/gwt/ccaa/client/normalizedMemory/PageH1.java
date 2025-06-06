@@ -39,7 +39,10 @@ public class PageH1 extends PageAbs {
 	@UiField HTMLPanel unityPanel;
 	@UiField HTMLPanel societyPanel;
 	@UiField HorizontalPanel LEIPanel;
-	@UiField HTMLPanel administrationOrganPanel;
+	@UiField HTMLPanel administrationOrganPanel2022;
+	@UiField HTMLPanel administrationOrganPanel2023;
+	@UiField HorizontalPanel IRUSPanel;
+	@UiField TextBox IDA01008; // IRUS
 	@UiField Label LEILabel;
 	@UiField TextBox IDA01009; // LEI
 	@UiField DocumentTextBox IDA01010; // document 
@@ -62,6 +65,11 @@ public class PageH1 extends PageAbs {
 	
 	@UiField DoubleBox IDA04211; // women percentage
 	@UiField DoubleBox IDA042119; // women percentage
+	
+	@UiField DoubleBox IDA04212;  // Número de mujeres en el organo de administración - Ejercicio actual
+	@UiField DoubleBox IDA042129; // Número de mujeres en el organo de administración - Ejercicio anterior
+	@UiField DoubleBox IDA04213;  // Número total de miembros del órgano de administración - Ejercicio actual
+	@UiField DoubleBox IDA042139; // Número total de miembros del órgano de administración - Ejercicio anterior
 	
 	@UiField DoubleBox IDA04001; // fixedCurrentAvg;
 	@UiField DoubleBox IDA040019; // fixedPreviousAvg;
@@ -96,6 +104,8 @@ public class PageH1 extends PageAbs {
 	@UiField Label ant3;
 	@UiField Label current4;
 	@UiField Label ant4;
+	@UiField Label current5;
+	@UiField Label ant5;
 
 	@UiField
 	Button showCnae;
@@ -112,6 +122,7 @@ public class PageH1 extends PageAbs {
 	}
 	
 	private void initialize() {
+		IDA01008 = new TextBox();
 		IDA01009 = new TextBox();
 		IDA01010 = new DocumentTextBox();
 		IDA01011 = new CheckBox(); 
@@ -132,10 +143,15 @@ public class PageH1 extends PageAbs {
 		IDA01060 = new TextBox(); 
 		IDA02009 = new InlineLabel(); 
 		
-		IDA02001 = new TextBox(); //TODO CNAE
+		IDA02001 = new TextBox(); 
 
 		IDA04211 = new DoubleBox();
 		IDA042119 = new DoubleBox();
+		
+		IDA04212 = new DoubleBox();
+		IDA042129 = new DoubleBox();
+		IDA04213 = new DoubleBox();
+		IDA042139 = new DoubleBox();
 		
 		IDA04001 = new DoubleBox();
 		IDA040019 = new DoubleBox(); 
@@ -170,6 +186,8 @@ public class PageH1 extends PageAbs {
 		ant3 = new Label();
 		current4 = new Label();
 		ant4 = new Label();
+		current5 = new Label();
+		ant5 = new Label();
 
 		Widget ui = header1Binder.createAndBindUi(this);
 		initWidget(ui);
@@ -194,32 +212,40 @@ public class PageH1 extends PageAbs {
 			public void onSelect(CNAE2009 selected) {
 				IDA02001.setEnabled(false);
 				IDA02001.setText(selected.getCodeWithoutPoint());
-		
 				onEdit("2001", selected.getCodeWithoutPoint());
-
 				IDA02009.setText(selected.getDescription());
-				onEdit("2009", selected.getDescription());				
+				onEdit("2009", selected.getDescription());
 			}
 			@Override
 			public void onClose() {
 				// Nothing
 			}
 		});
+		
 		current1.setText("Ejercicio " + getYear());
 		ant1.setText("Ejercicio " + (getYear()-1));
 		current2.setText("Ejercicio " + getYear());
 		ant2.setText("Ejercicio " + (getYear()-1));
 		current3.setText("Ejercicio " + getYear());
-		ant3.setText("Ejercicio" + (getYear()-1));
+		ant3.setText("Ejercicio " + (getYear()-1));
 		current4.setText("Ejercicio " + getYear());
-		ant4.setText("Ejercicio" + (getYear()-1));
+		ant4.setText("Ejercicio " + (getYear()-1));
+		current5.setText("Ejercicio " + getYear());
+		ant5.setText("Ejercicio " + (getYear()-1));
 		
-		if(getYear() >= 2015){
-			keyExe("1009", IDA01009, "text", true);	
-		} else{
+		if (getYear() >= 2015) {
+			keyExe("1009", IDA01009, "text", true);
+			if (getYear() >= 2024) {
+				IRUSPanel.setVisible(true);
+				keyExe("1008", IDA01008, "text", true);
+			} else {
+				IRUSPanel.setVisible(false);
+			}
+		} else {
 			IDA01009.setVisible(false);
 			LEILabel.setVisible(false);
 			LEIPanel.setVisible(false);
+			IRUSPanel.setVisible(false);
 		}	
 		
 		keyExe("1010", IDA01010, "text", false);	
@@ -240,15 +266,26 @@ public class PageH1 extends PageAbs {
 		keyExe("1061", IDA01061, "text", true);
 		keyExe("1060", IDA01060, "text", true);
 		keyExe("2009", IDA02009, "label", true);
-
-		if(getYear() >=2022) {
-			administrationOrganPanel.setVisible(true);
-			keyExe("4211", IDA04211, "double", true);
-			keyExe("42119", IDA042119, "double", true);
-		} else administrationOrganPanel.setVisible(false);
-		
 		IDA02001.setEnabled(false);
 		keyExe("2001", IDA02001, "text", false);
+
+		if(getYear() >= 2023) {
+			administrationOrganPanel2022.setVisible(false);
+			administrationOrganPanel2023.setVisible(true);
+			keyExe("4212", IDA04212, "double", true);
+			keyExe("42129", IDA042129, "double", true);
+			keyExe("4213", IDA04213, "double", true);
+			keyExe("42139", IDA042139, "double", true);
+		} else if(getYear() == 2022) {
+			administrationOrganPanel2022.setVisible(true);
+			administrationOrganPanel2023.setVisible(false);
+			keyExe("4211", IDA04211, "double", true);
+			keyExe("42119", IDA042119, "double", true);
+		} else {
+			administrationOrganPanel2022.setVisible(false);
+			administrationOrganPanel2023.setVisible(false);
+		}
+		
 		keyExe("4001", IDA04001, "double", true);
 		keyExe("40019", IDA040019, "double", true);
 		keyExe("4002", IDA04002, "double", true);
