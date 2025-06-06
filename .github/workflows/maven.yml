@@ -203,7 +203,6 @@ jobs:
       # if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
-        -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
 
     - name: Build production version with Maven
