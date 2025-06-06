@@ -175,7 +175,7 @@ jobs:
         mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
         # docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
         #docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
-        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:master
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:rtrepiana
         sudo tee -a /etc/hosts >/dev/null <<-EOF
         127.0.0.1    payroll-test.aonsolutions.org
         127.0.0.1    tgss-payroll-test.aonsolutions.org
@@ -203,6 +203,7 @@ jobs:
       # if: github.ref == 'refs/heads/master'
       run: |
         mvn -B \
+        -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
 
     - name: Build production version with Maven
