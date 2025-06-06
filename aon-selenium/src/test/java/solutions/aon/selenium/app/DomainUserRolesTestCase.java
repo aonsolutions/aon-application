@@ -56,8 +56,10 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			
 
 		} finally {
-			webDriver.close();
-			webDriver.quit();
+			if ( webDriver != null ) {
+				webDriver.close();
+				webDriver.quit();
+			}
 		}
 	}
 	

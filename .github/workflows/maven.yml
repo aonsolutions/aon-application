@@ -76,7 +76,7 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-${{ github.event.inputs.browser }}
-        options: --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
+        options: --name selenium --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
       contents: read
@@ -167,13 +167,15 @@ jobs:
 
     - name: Setup environment for integration testing
       # if: github.ref == 'refs/heads/master'
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
         mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
         # docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
         #docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
-        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ${{ steps.login-ecr-spain.outputs.registry }}/aon-application:${IMAGE_TAG}
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ${ECR_REGISTRY}/aon-application:${IMAGE_TAG}
         sudo tee -a /etc/hosts >/dev/null <<-EOF
         127.0.0.1    payroll-test.aonsolutions.org
         127.0.0.1    tgss-payroll-test.aonsolutions.org
@@ -200,6 +202,7 @@ jobs:
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
       run: |
+        docker exec selenium cat /etc/hosts
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
