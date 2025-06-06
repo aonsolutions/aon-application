@@ -67,8 +67,7 @@ public class PurchaseImportManager {
 	}
 	
 	private String getDescription(Item item) throws ManagerBeanException {
-		return !AonStringUtils.isBlank(item.getDescription())
-			? item.getDescription() : item.getProduct().getFullName(); 
+		return item.getProduct().getFullName(); 
 	}
 
 }
