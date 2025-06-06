@@ -202,7 +202,6 @@ jobs:
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
       run: |
-        docker exec selenium cat /etc/hosts
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
