@@ -760,7 +760,7 @@ export class AonCustomer extends AonReg {
 			height: 100%;
 		`;
 		div.id = "customerNotesId";
-		
+    
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
 			notesIcon.innerHTML = 'speaker_notes_off';
 			
@@ -784,8 +784,6 @@ export class AonCustomer extends AonReg {
 			
 			localStorage.setItem("customer", this.registry.getId());
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
-			
-			
 		} else {
 			notesIcon.innerHTML = 'speaker_notes';
 		}

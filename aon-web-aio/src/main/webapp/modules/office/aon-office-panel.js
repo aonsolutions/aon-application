@@ -704,6 +704,7 @@ export class AonOfficePanel extends AonElement {
 					if (this.getFilterCustomers().type == "false") {
 						aonView = new AonTarget();
 						aonView.back = () => {if(searchPanel) searchPanel.style.display = "block";
+
 							this.showView(officeViews.AON_CUSTOMER_LIST, undefined, {
 								...this.getFilterCustomers(),
 								page: 1,
