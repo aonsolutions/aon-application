@@ -383,6 +383,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-delete.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDelete();
+	
+	@Source("icons/aon-icon-no-encryption.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNoEncryption();
 
 	@Source("icons/aon-icon-back.svg")
 	@MimeType("image/svg+xml")

@@ -23,6 +23,7 @@ import * as ACTION from '../../actions.js';
 import * as GWT from '../../../gwt/gwt.js';
 import * as LS from '../../../services/localStorageService.js';
 import { AonUserList } from "../../user/aon-user-list.js";
+import { AonIconButton } from "../../../components/aon-icon-button.js";
 
 export class AonCustomer extends AonReg {
 	
@@ -85,13 +86,8 @@ export class AonCustomer extends AonReg {
 					const existsNotes = notes.some(item => item.type === "MESSAGE" );
 					
 					if(existsNotes){
-						let badge = this.createElement('div');
-						badge.id = 'customerNotesUnread';
-						badge.className = 'aonConnected';
-						badge.style.backgroundColor = "#DC4D30";
-			
 						let customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIconButton');
-						customerNotesButton.appendChild(badge);
+						customerNotesButton.style.color = 'green';
 					}
 					
 					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
@@ -764,17 +760,27 @@ export class AonCustomer extends AonReg {
 			height: 100%;
 		`;
 		div.id = "customerNotesId";
-		
-		console.log("rightSidenav");
-		console.log(rightSidenav);
-		console.log(rightSidenav.style);
-		console.log(rightSidenav.style.flexBasis);
-		console.log(rightSidenav.style.flexBasis.length == 0);
-		
+    
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
 			notesIcon.innerHTML = 'speaker_notes_off';
 			
 			rightSidenav.appendChild(div);
+			
+			// Loader
+			let loaderSpan = this.createElement(TAG.SPAN);
+			loaderSpan.className = CONSTANT.SPIN;
+			loaderSpan.style.display = 'flex';
+			loaderSpan.style.height = '100%';
+			loaderSpan.style.justifyContent = 'center';
+			loaderSpan.style.alignItems = 'center';
+			
+			let aib = new AonIconButton();
+			aib.id = 'spinLoader';
+			aib.icon  = 'sync';
+			aib.title = 'Cargando...';
+			loaderSpan.appendChild(aib);
+			
+			div.appendChild(loaderSpan);
 			
 			localStorage.setItem("customer", this.registry.getId());
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);

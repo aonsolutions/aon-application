@@ -86,6 +86,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_delete")
 	String aonIconDelete();
+	
+	@ClassName("aon_icon_no_encryption")
+	String aonIconNoEncryption();
 
 	@ClassName("aon_icon_search")
 	String aonIconSearch();
@@ -921,6 +924,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_custom_card_button")
 	String aonCustomCardButton();
+	
+	@ClassName("aon_custom_card_button_hide_on_hover")
+	String aonCustomCardButtonHideOnHover();
 	
 	@ClassName("aon_custom_row")
 	String aonCustomRow();
