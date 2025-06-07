@@ -129,6 +129,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.LroeData;
@@ -252,7 +253,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	
 	public InvoiceDoc getInvoiceDoc() {
 		Invoice invoice = getInvoice();
-		if(invoiceDoc == null || !invoiceDoc.getInvoice().equals(invoice.getId())) {
+		if(invoice != null && !isNevv() && invoice.getId() != null
+				&& (invoiceDoc == null || AonNumberUtils.notEquals(invoiceDoc.getInvoice(), invoice.getId()))) {
 			invoiceDoc = AON.getInvoiceDoc(getOccam(), invoice.getDomain(), invoice.getId()).orElse(null);
 		}
 		return invoiceDoc;

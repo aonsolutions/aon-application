@@ -608,7 +608,7 @@ public class OCRInvoiceBuilder {
 		BigDecimal percentage = uniqueVatPercent.orElse( ocrBreakdown.getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocrBreakdown.getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
 		
-		BigDecimal rePercentage = uniqueVatPercent.orElse( ocrBreakdown.getReRate().flatMap( d -> d.getValue() ).orElse(null) );
+		BigDecimal rePercentage = ocrBreakdown.getReRate().flatMap( d -> d.getValue()).orElse(null);
 		BigDecimal reQuota = ocrBreakdown.getReAmount().flatMap( d -> d.getValue() ).orElse(null);
 
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {

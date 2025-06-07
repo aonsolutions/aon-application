@@ -50,7 +50,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	try {
 	    String userLogin = s3UploadEventObject.getUser();
 	    String domainName = s3UploadEventObject.getDomain();
-	    URL url = S3.getURL(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
+	    URL url = S3.getInstance().getURL(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
 	    
 	    AonTGSS.loadIvlccc(domainName, userLogin, url.toExternalForm());
 
@@ -105,7 +105,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     static JSONObject getLoadTask(String bucketName, String key) throws NoSuchLoadTaskException{
 	
 	try{
-	    byte [] allBytes = S3.download(bucketName, key);
+	    byte [] allBytes = S3.getInstance().download(bucketName, key);
 	    String jsonString = new String ( allBytes, StandardCharsets.UTF_8 );
 	    return new JSONObject(jsonString);
 	} catch (Exception e) {
@@ -114,7 +114,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     static void setLoadTask(String bucketName, String key, JSONObject loadTaskJson ) throws JSONException, IOException {
-	    S3.upload(bucketName, key, loadTaskJson.toString(JSON_INDENT_FACTOR).getBytes());
+	    S3.getInstance().upload(bucketName, key, loadTaskJson.toString(JSON_INDENT_FACTOR).getBytes());
     }
     
 
