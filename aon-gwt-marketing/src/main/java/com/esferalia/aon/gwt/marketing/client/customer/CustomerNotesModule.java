@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -167,6 +168,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		noteDate.getElement().getStyle().setProperty("border", "none");
 		noteDate.getElement().getStyle().setProperty("cursor", "pointer");
 		noteDate.getElement().getStyle().setProperty("background", "transparent");
+		noteDate.getElement().getStyle().setProperty("width", "70px");
 		noteDate.setEnabled(false);
 		
 		AonCustomCardSmall card = new AonCustomCardSmall(description, openBtn);
@@ -315,6 +317,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				noteDate.getElement().getStyle().setProperty("border", "none");
 				noteDate.getElement().getStyle().setProperty("cursor", "pointer");
 				noteDate.getElement().getStyle().setProperty("background", "transparent");
+				noteDate.getElement().getStyle().setProperty("width", "70px");
 				noteDate.addValueChangeHandler(e -> {
 					message.setNoteDate(noteDate.getValue());
 					saveNote(message);
@@ -344,19 +347,31 @@ public class CustomerNotesModule extends MainEntryPoint {
 				});
 				buttonsPanel.add(deleteBtn);
 				
-				AonTableButton confidentialBtn = new AonTableButton(
-						message.isConfidential() ? "Confidencial" : "Publico", 
-						message.isConfidential() ? AON.CSS.aonIconLock()  : AON.CSS.aonIconUnLock());
-				
-				confidentialBtn.addClickHandler(e -> {
-					e.stopPropagation();
-					message.setConfidential(!message.isConfidential());
-					saveNote(message);
-				});
-				
-				buttonsPanel.add(confidentialBtn);
+				if(message.getId() != null) {
+					AonTableButton confidentialBtn = new AonTableButton(
+							message.isConfidential() ? "Confidencial" : "Publico", 
+							message.isConfidential() ? AON.CSS.aonIconLock()  : AON.CSS.aonIconNoEncryption());
 					
-				footerPanel.add(noteDate);
+					confidentialBtn.addClickHandler(e -> {
+						e.stopPropagation();
+						message.setConfidential(!message.isConfidential());
+						saveNote(message);
+					});
+					
+					buttonsPanel.add(confidentialBtn);
+				}
+				
+				HTMLPanel datePanel = new HTMLPanel(AonStringUtils.EMPTY);
+				datePanel.addStyleName(AON.CSS.aonItemFlex());
+				footerPanel.add(datePanel);
+				
+				if(message.isConfidential()) {
+					AonTableButton confidentialIcon = new AonTableButton("Confidencial", AON.CSS.aonIconLock());
+					confidentialIcon.addStyleName(AON.CSS.aonCustomCardButtonHideOnHover());
+					datePanel.add(confidentialIcon);
+				}
+				
+				datePanel.add(noteDate);
 				
 				cardContentPanel.add(footerPanel);
 				
@@ -378,6 +393,11 @@ public class CustomerNotesModule extends MainEntryPoint {
 					}
 					
 				});
+				
+				if(message.getId() == null)
+					Scheduler.get().scheduleDeferred(() -> {
+						description.setFocus(true);
+					});
 			});
 			
 			openBtn.addClickHandler(e -> {
@@ -453,6 +473,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 	}
 
 	private void saveNote(RegistryNote note) {
+		// Protect against description empty
+		if(AonStringUtils.isBlank(note.getDescription())) note.setDescription("Descripci\u00f3n");
+		
 		COMMON_SERVICE.saveNote(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), note,
 			new AsyncCallback<RegistryNote>() {
 
