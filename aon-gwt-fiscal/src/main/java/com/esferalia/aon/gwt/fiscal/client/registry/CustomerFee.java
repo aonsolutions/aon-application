@@ -1318,7 +1318,11 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	 
 	private double getTotalNetPrice(Fee fee) {
-		return getNetCost(fee) * fee.getQuantity();
+		return roundTwoDecimals( getNetCost(fee) * fee.getQuantity() );
+	}
+	
+	private double roundTwoDecimals(double value) {
+	    return Math.round(value * 100.0) / 100.0;
 	}
 
 	private void checkFeeStatus(Label label, AonDateBox startDateBox, AonDateBox endDateBox, Fee fee) {
