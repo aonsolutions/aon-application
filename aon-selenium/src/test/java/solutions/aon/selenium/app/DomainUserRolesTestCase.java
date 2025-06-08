@@ -28,17 +28,17 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		WebDriver webDriver = null;
 		try {
-			// webDriver = newChromeDriver();
+			 webDriver = newChromeDriver();
 			// webDriver = newFirefoxDriver();
-			webDriver = newRemoteDriver();
+			// webDriver = newRemoteDriver();
 
 			login(webDriver, url, user, password);
 
 			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
 
-			assertSideMenu(webDriver, wait, "home", "apps", "documental");
 			assertTopMenu(webDriver, wait, "enterpriseMenu", "accountingMenu", "fiscalMenu", "payrollMenu");
+			assertSideMenu(webDriver, wait, "home", "apps", "documental");
 			assertCompaniesTabs(webDriver, wait, "Activas", "Inactivas", "Despacho");
 
 			selectEnterprise(webDriver, wait, "office", "DESPACHO");
@@ -94,7 +94,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	private void assertTopMenu(WebDriver webDriver, WebDriverWait wait, String... ids) {
-		WebElement aonTopMenuDiv = webDriver.findElement(By.id("aonTopMenuDiv"));
+		WebElement aonTopMenuDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonTopMenuDiv")));//webDriver.findElement(By.id("aonTopMenuDiv"));
 		List<WebElement> topMenuElements = aonTopMenuDiv.findElements(By.xpath("child::*"));
 		List<String> topMenuExpectedIds = Arrays.stream(ids).map(id -> "aonMenuBar-" + id).toList();
 		assertEquals(topMenuExpectedIds.size(), topMenuElements.size());
@@ -103,7 +103,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	private void assertSideMenu(WebDriver webDriver, WebDriverWait wait, String... ids) {
-		WebElement aonMenuSidenav = webDriver.findElement(By.id("aonMenuSidenav"));
+		WebElement aonMenuSidenav = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("aonMenuSidenav")));//webDriver.findElement(By.id("aonMenuSidenav"));
 
 		List<WebElement> sideMenuElements = aonMenuSidenav
 				.findElements(By.xpath("ul/li[starts-with(@id,'aonMenuList-')]"));

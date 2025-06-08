@@ -145,11 +145,11 @@ jobs:
         EOF
 
     - name: Build with Maven
-      if: github.ref == 'never'
+      # if: github.ref == 'never'
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
-      if: github.ref == 'never'
+      # if: github.ref == 'never'
       uses: docker/build-push-action@v6
       with:
         context: .
