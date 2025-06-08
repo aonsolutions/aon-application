@@ -145,11 +145,11 @@ jobs:
         EOF
 
     - name: Build with Maven
-      # if: github.ref == 'never'
+      if: github.ref == 'never'
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
-      # if: github.ref == 'never'
+      if: github.ref == 'never'
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -173,9 +173,8 @@ jobs:
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
         mysql -h ${DB_HOST} -u dbuser --password=serubd2000 < ${DB_FILE}
-        # docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
-        #docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
-        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:rtrepiana
+        docker run -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${BRANCH_NAME}
+        docker run -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=${DB_HOST} ghcr.io/${{ github.repository_owner }}/aon-application:${BRANCH_NAME}
         sudo tee -a /etc/hosts >/dev/null <<-EOF
         127.0.0.1    payroll-test.aonsolutions.org
         127.0.0.1    tgss-payroll-test.aonsolutions.org
@@ -202,6 +201,7 @@ jobs:
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
       run: |
+        ping selenium \
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
