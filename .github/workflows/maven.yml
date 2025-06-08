@@ -201,7 +201,6 @@ jobs:
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
       run: |
-        ping selenium
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
