@@ -346,7 +346,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 					deleteNote(message);
 				});
 				buttonsPanel.add(deleteBtn);
-				
+		
 				if(message.getId() != null) {
 					AonTableButton confidentialBtn = new AonTableButton(
 							message.isConfidential() ? "Confidencial" : "Publico", 

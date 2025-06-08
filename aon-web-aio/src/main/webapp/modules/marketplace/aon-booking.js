@@ -688,6 +688,8 @@ export class AonBooking extends AonElement {
 			return dur.hasProfessionalManagement();
 		else if(App.WAREHOUSE === app)
 			return dur.hasWarehouse();
+		else if(App.MANAGEMENT === app)
+			return dur.hasManagement();
 		else if(App.MARKETING === app)
 			return dur.hasMarketing();
 		else if(App.TREASURY === app)
@@ -734,6 +736,8 @@ export class AonBooking extends AonElement {
 			return dur.hasParentProfessionalManagement();
 		} else if(App.WAREHOUSE === app) {
 			return dur.hasParentWarehouse();
+		} else if(App.MANAGEMENT === app) {
+			return dur.hasParentManagement();
 		} else if(App.TREASURY === app) {
 			return dur.hasParentTreasury();
 		} else if(App.GROUPWARE === app) {
