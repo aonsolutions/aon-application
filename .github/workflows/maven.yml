@@ -149,7 +149,7 @@ jobs:
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
-      if: github.ref == 'never'
+      # if: github.ref == 'never'
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -157,7 +157,7 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build Docker aon-db-up2date image
-      if: github.ref == 'never'
+      # if: github.ref == 'never'
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
