@@ -28,9 +28,9 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 		WebDriver webDriver = null;
 		try {
-			 webDriver = newChromeDriver();
+			// webDriver = newChromeDriver();
 			// webDriver = newFirefoxDriver();
-			// webDriver = newRemoteDriver();
+			webDriver = newRemoteDriver();
 
 			login(webDriver, url, user, password);
 
