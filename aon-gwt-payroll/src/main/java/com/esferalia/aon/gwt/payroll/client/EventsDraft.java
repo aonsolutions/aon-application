@@ -231,9 +231,9 @@ public class EventsDraft extends ResizeComposite {
 	// ----------------------------------------------- Constructor
 	
 	public EventsDraft() {
-		getToolbarPanel();
-		
 		initWidget(binder.createAndBindUi(this));
+		
+		getToolbarPanel();
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		

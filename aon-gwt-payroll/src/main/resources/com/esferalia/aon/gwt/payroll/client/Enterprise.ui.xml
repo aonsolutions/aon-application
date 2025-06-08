@@ -8,9 +8,9 @@
 		.container {
 			min-width: 600px;
 			padding: 0 1rem;
-			margin-top: 15px;
 			display: flex;
 			flex-direction: column;
+			overflow-y: scroll; 
 		}
 		
 		.documentError {
@@ -59,10 +59,6 @@
 		.inputTextHeight {
 			height: 1.2rem !important;
 			text-transform: uppercase;
-		}
-		
-		.mt20 {
-			margin-top: 20px;
 		}
 		
 		.mw30 {
@@ -223,7 +219,7 @@
 		</g:HTMLPanel>
 
 		<g:HTMLPanel
-			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
+			styleName="{style.widthAll} {style.heightAll}"
 			debugId="otherDataHTMLPanel">
 			<g:HTMLPanel styleName="{style.aonEnterpriseCard}">
 				<g:Label styleName='{style.aonEnterpriseCardTitle}'>Otros datos</g:Label>
@@ -255,7 +251,7 @@
 		</g:HTMLPanel>
 		
 		<g:HTMLPanel
-			styleName="{style.widthAll} {style.heightAll} {style.mt20}"
+			styleName="{style.widthAll} {style.heightAll}"
 			debugId="otherDataHTMLPanel">
 			<g:HTMLPanel styleName="{style.aonEnterpriseCard}">
 				<g:Label styleName='{style.aonEnterpriseCardTitle}'>Sistema RED</g:Label>

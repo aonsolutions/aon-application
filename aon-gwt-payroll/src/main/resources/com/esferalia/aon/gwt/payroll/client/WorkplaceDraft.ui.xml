@@ -4,12 +4,8 @@
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.WorkplaceDraft.MyStyle">
+	<ui:style>
 
-		.container {
-			margin: 0 10px;
-		}
-		
 		.flexCenter	{
 			width: 100%;
 			margin-top: 50px;
