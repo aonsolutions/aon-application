@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -80,13 +79,6 @@ public abstract class WorkplaceDraft extends Composite {
 	// ------------------------------------------------- UiFields
 
 	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String container();
-	}
-	
-	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
@@ -114,7 +106,6 @@ public abstract class WorkplaceDraft extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		dockLayoutPanel.addStyleName(style.container());
 		
 		centerContainer.add(workplace);
 	}
