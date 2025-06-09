@@ -164,7 +164,7 @@ jobs:
 
     - name: Setup environment for integration testing
       # if: github.ref == 'refs/heads/master'
-      if: $SKIP_INTEGRATION_TESTS == false || $SKIP_SELENIUM_TESTS == false
+      if: ${{ env.SKIP_INTEGRATION_TESTS == false || end.SKIP_SELENIUM_TESTS == false }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |
@@ -184,7 +184,7 @@ jobs:
 
     - name: Running HtmlUnit integration tests
       # if: github.ref == 'refs/heads/master'
-      if: $SKIP_INTEGRATION_TESTS == false
+      if: ${{ env.SKIP_INTEGRATION_TESTS == false }}
       run: |
         mvn -B \
         -DskipTests=${SKIP_INTEGRATION_TESTS} \
@@ -199,7 +199,7 @@ jobs:
 
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
-      if: $SKIP_SELENIUM_TESTS == false
+      if: ${{ env.SKIP_SELENIUM_TESTS == false }}
       run: |
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
