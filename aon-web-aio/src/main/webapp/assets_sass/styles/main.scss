@@ -28,6 +28,8 @@
 // Importamos layouts
 @use './layouts/header' as header;
 @use './layouts/rightPanel' as rightPanel;
+@use './layouts/rightPanel-config' as rightPanel-config;
+@use './layouts/rightPanel-user' as rightPanel-user;
 @use './layouts/menu' as menu;
 
 // Importamos vistas

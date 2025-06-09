@@ -33,36 +33,6 @@ aon-right-panel{
       padding: v.$padding v.$padding v.$px-80 v.$padding; // para que baje hasta abajo viendo todo el contenido
       flex: v.$num-1;
       overflow-y: auto;
-
-      #aonConfig{
-        display: grid;
-        gap: v.$gap;
-
-        aon-card{
-          display: block;
-          border-radius: v.$border-radius;
-          .aonCard{
-            .aonCardTitle{
-              #aonConfigThemesCardTitleSection1, #aonConfigHelpLangCardTitleSection1{
-                padding: v.$px-16;
-                font-weight: v.$font-weight-medium;
-                font-size: v.$px-18;
-              }
-            }
-            .aonCardContent{
-              >div{
-                padding: v.$px-16 v.$px-0 v.$px-16 v.$px-0;
-                div{
-                  padding: v.$px-8 v.$px-16 v.$px-8 v.$px-16;
-                  display: flex;
-                  gap: v.$px-8;
-                  cursor: pointer;
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
   &.hiddenSidenav{

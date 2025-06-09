@@ -179,6 +179,7 @@ export class AonLoginPanel extends AonElement {
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS + " userPanelInfoI";
+ 		i.setAttribute("data-icon", icon);
 		i.innerHTML = icon;
 		div.appendChild(i);
 
@@ -197,6 +198,7 @@ export class AonLoginPanel extends AonElement {
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS + " userPanelInfoLinkI";
+		i.setAttribute("data-icon", icon);
 		i.innerHTML = icon;
 		div.appendChild(i);
 

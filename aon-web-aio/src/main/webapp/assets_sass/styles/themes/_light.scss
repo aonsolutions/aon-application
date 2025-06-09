@@ -96,6 +96,8 @@ $color-text-login         : #64748b;
 $color-text-button        : #fff;
 $color-text-button-transp : #1E293B;
 $color-text-card          : #64748b;
+$color-button-card        : #f1f5f9;
+$color-button-card-hover  : #cbd5e1;
 $color-icon-menu          : #0f172a;
 
 // Logo del header
@@ -119,7 +121,7 @@ $color-menu-green: $color-green-600;
     $color-800, $color-900,  $color-input, $color-box,
     $color-grad-min, $color-grad-max,
     $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
-    $color-text-card, $color-icon-menu,
+    $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,
