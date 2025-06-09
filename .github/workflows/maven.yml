@@ -16,17 +16,17 @@ on:
         required: true
         default: 'snapshot'
       skipUnitTests:
-        description: 'Skip running unit tests'
-        type: boolean
-        required: true
-        default: false
-      skipIntegrationTests:
-        description: 'Skip running HtmlUnit integration  tests'
+        description: 'Skip unit tests'
         type: boolean
         required: true
         default: false
       skipSeleniumTests:
-        description: 'Skip running Selenium integration tests'
+        description: 'Skip Selenium integration tests'
+        type: boolean
+        required: true
+        default: false
+      skipIntegrationTests:
+        description: 'Skip HtmlUnit integration  tests'
         type: boolean
         required: true
         default: false
@@ -164,7 +164,7 @@ jobs:
 
     - name: Setup environment for integration testing
       # if: github.ref == 'refs/heads/master'
-      if: ${{ env.SKIP_INTEGRATION_TESTS == false || end.SKIP_SELENIUM_TESTS == false }}
+      if: ${{ env.SKIP_INTEGRATION_TESTS == false || env.SKIP_SELENIUM_TESTS == false }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |
