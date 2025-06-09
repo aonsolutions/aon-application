@@ -279,6 +279,7 @@ export class AonApplication extends AonElement {
   }
 
   toogleRightSidenav() {
+   /*
     if (this.isSidenavBlock()) {
       this.closeRightSidenav();
     } else {
@@ -289,6 +290,15 @@ export class AonApplication extends AonElement {
         rightSidenav.style.flexBasis = "0px";
       }
     }
+    */
+    
+    let rightSidenav = this.getRightSidenav();
+	  if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
+	    rightSidenav.style.flexBasis = "350px";
+	  } else {
+	    rightSidenav.style.flexBasis = "0px";
+	  }
+	  
   }
 
   closeRightSidenav() {

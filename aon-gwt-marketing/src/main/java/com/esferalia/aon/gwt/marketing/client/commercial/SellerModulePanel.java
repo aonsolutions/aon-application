@@ -54,6 +54,8 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			}
 		});
 		
+		setSearchPlaceholder("Buscar por nombre ...");
+		
 		scope.addItem("-", "");
 		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
 		scope.getListBox().setSelectedIndex(0);

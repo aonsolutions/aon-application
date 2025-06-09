@@ -26,7 +26,6 @@ public enum AonApp implements Serializable {
 	CONVENIOS(getEmptyModules(), "Convenios"),
 	BANK(getEmptyModules(), "Bancos"),
 	TIMECONTROL(getEmptyModules(), "Control Horario"),
-	@Deprecated
 	MANAGEMENT(getManagementModules(), "Gesti\u00f3n"),
 	PACK_SUITE(getEmptyModules(), "Suite Completa"),
 	PACK_PORTAL(getEmptyModules(), "Pack Portal"),

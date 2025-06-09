@@ -932,9 +932,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("base_minima_diaria,_i.t");
 
+		draft("EN ESPECIE, IT");
+		calculate(Calendar.JUNE,2025);
+		double cgcBase = getValue("cgcBaseLabel");
+		assertText("totalDeductionLabel", Math.round((cgcBase * ( 4.70 + 1.55 + 0.10 + 0.13 + 13.00 ) / 100.00 + 90.00) * 100 ) / 100.00);
+		
+
 		draft("LACTANCIA, PERIODO");
 		calculate(Calendar.APRIL,2018);
-		double cgcBase = getValue("cgcBaseLabel");
+		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.MAY,2018);
 		assertValue("cgcBaseLabel", cgcBase );
 		calculate(Calendar.JUNE,2018);

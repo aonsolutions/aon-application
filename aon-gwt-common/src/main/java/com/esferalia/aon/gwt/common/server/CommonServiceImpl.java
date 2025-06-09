@@ -1095,5 +1095,13 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)))
 				.collect(Collectors.toList());
 	}
+	@Override
+	public RegistryNote saveNote(String domainName, int domain, String currentUser, RegistryNote note) throws AonCoreException {
+		return AON.saveRegistryNote(new Domain().setName(domainName).setId(domain), currentUser, note);
+	}
+	@Override
+	public void deleteNote(String domainName, int domain, String currentUser, Integer id) throws AonCoreException {
+		AON.deleteRegistryNote(new Domain().setName(domainName).setId(domain), currentUser, id);
+	}
 
 }
