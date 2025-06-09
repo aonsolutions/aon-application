@@ -86,15 +86,15 @@
           }
         }
         >div{
-          height: 100%;
+          height: v.$pct-100;
           display: grid;
           align-content: center;
           justify-items: center;
           i{
-            transition: transform 0.2s ease;
+            transition: transform v.$t-02 ease;
           }
           span{
-            transition: transform 0.2s ease;
+            transition: transform v.$t-02 ease;
             font-size: v.$px-10;
           }
         }
