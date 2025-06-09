@@ -5,14 +5,17 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.InsertValuesStep11;
+import org.jooq.Record2;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
@@ -58,17 +61,23 @@ public class NordigenDAO {
 		Double balance = 0.0;
 		Double remainder = 0.0;
 		List<NordigenAccountBalance> balances = account.getBalances();
+		
 		NordigenAccountBalance consolidado = filterConsolidado(balances);
 		NordigenAccountBalance real = filterReal(balances);
+
 		if (consolidado != null && consolidado.getBalanceAmount() != null) {
-			balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
+		    balance = AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
 		}
 		if (real == null || real.getBalanceAmount() == null) {
-			real = consolidado;
+		    real = consolidado;
 		}
 		if (real != null && real.getBalanceAmount() != null) {
-			remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
+		    remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
 		}
+		if (balance == 0.0 && remainder == 0.0) {
+		    return account;
+		}
+
 		ctx.getDslContext().update(RBANK)
 			.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
 			.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
@@ -181,6 +190,64 @@ public class NordigenDAO {
 		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, rec.getStatus()));
 		return bs;
 	}
+	
+
+	public static NordigenBankAccount loadStoredBalance(AONContext ctx, NordigenBankAccount account) {
+	    RegistryBank rbank = account.getRbank();
+
+	   Record2<Double, Double> result = ctx.getDslContext()
+	        .select(RBANK.BALANCE, RBANK.AVAILABLE_BALANCE)
+	        .from(RBANK)
+	        .where(RBANK.ID.eq(rbank.getId()))
+	        .fetchOne();
+
+	    if (result != null) {
+	    	Double balanceStored = result.value1();
+	    	Double availableStored = result.value2();
+
+	        LinkedList<NordigenAccountBalance> balanceList = new LinkedList<>();
+
+	        if (balanceStored != null) {
+	            NordigenAccountAmount amount = new NordigenAccountAmount();
+	            amount.setAmount(balanceStored.doubleValue());
+
+	            NordigenAccountBalance consolidated = new NordigenAccountBalance()
+	                .setBalanceAmount(amount)
+	                .setBalanceType(NordigenBalanceType.INTERIM_AVAILABLE);
+//	            System.out.println("consolidatedDAO : " + consolidated.getBalanceAmount().getAmount());
+	            balanceList.add(consolidated);
+	        }
+	        
+	        
+
+	        if (availableStored != null) {
+	            NordigenAccountAmount amount = new NordigenAccountAmount();
+	            amount.setAmount(availableStored.doubleValue());
+
+	            NordigenAccountBalance real = new NordigenAccountBalance()
+	                .setBalanceAmount(amount)
+	                .setBalanceType(NordigenBalanceType.CLOSING_BOOKED); 
+//	            System.out.println("realDAO : " + real.getBalanceAmount().getAmount());
+	            balanceList.add(real);
+	        }
+
+
+	        account.setBalances(balanceList);
+	    }
+//	    System.out.println("== BALANCES CARGADOS DE BD ==");
+//
+//	    for (NordigenAccountBalance bal : account.getBalances()) {
+//	        System.out.println("Tipo: " + bal.getBalanceType() + " - Cantidad: " + bal.getBalanceAmount().getAmount());
+//	    }
+
+
+	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+
+	    return account;
+	}
+
+
+
 
 	// ***********************************************************************************
 	// ***********************************************************************************

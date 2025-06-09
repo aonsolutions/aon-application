@@ -9418,6 +9418,20 @@ CREATE TABLE `rdoc_tag` (
   CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asociacion N:N de rdocs con tags.';
 
+CREATE TABLE `nordigen_call_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain` int NOT NULL COMMENT 'dominio al que pertenece el banco',
+  `rbank` int NOT NULL COMMENT 'Referencia a la cuenta bancaria',
+  `call_type` VARCHAR(50) NOT NULL COMMENT 'Tipo de llamada: balance, transaction, etc.',
+  `call_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la llamada',
+  `was_rate_limited` BOOLEAN DEFAULT FALSE COMMENT 'Indica si se alcanzó el límite de llamadas',
+  `retry_after` DATETIME NULL COMMENT 'Cuándo se puede volver a intentar en caso de rate limit',
+  `retry_count` int DEFAULT 4 COMMENT 'Número de intentos restantes en el día',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historial de llamadas a Nordigen para controlar el rate limit.';
+
+
+
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 
 COMMIT;

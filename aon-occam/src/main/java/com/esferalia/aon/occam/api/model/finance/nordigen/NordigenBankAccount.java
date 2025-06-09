@@ -194,5 +194,4 @@ public class NordigenBankAccount implements Serializable {
 			.findFirst()
 			.orElse("");
 	}
-	
 }

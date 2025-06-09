@@ -30,9 +30,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 	
 	@Override
-	public void setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback) {
+	public void setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account, boolean refresh, AsyncCallback<NordigenBankAccount> callback) {
 		AON.start();
-		fsa.setAccountValues(token, occam, account, callback);
+		fsa.setAccountValues(token, occam, account, refresh, callback);
 	}
 
 	@Override
@@ -89,5 +89,25 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		AON.start();
 		fsa.getInstitutions(token, country, callback);
 	}
+	
+	@Override
+	public void setAllBankAccountValues(Occam occam, NordigenAccessToken token, AsyncCallback<List<NordigenBankAccount>> callback){
+		AON.start();
+		fsa.setAllBankAccountValues(occam,token, callback);
+	}
+	
+	@Override
+	public void getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition,AsyncCallback<Integer> callback) {
+		AON.start();
+		fsa.getRemainingDays(token, requisition, callback);
+	}
+	
+	@Override
+	public void getRemainingCallsToday(Occam occam, NordigenBankAccount account,AsyncCallback<Integer> callback ) {
+		AON.start();
+		fsa.getRemainingCallsToday(occam, account, callback);
+	}
+	
+	
 
 }

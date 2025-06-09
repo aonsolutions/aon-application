@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface NordigenService extends RemoteService {
 	
 	NordigenConfiguration getConfiguration(Occam occam) throws NordigenException;
-	NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account) throws NordigenException;
+	NordigenBankAccount setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account ,boolean refresh) throws NordigenException;
 	List<NordigenRequisition> getDomainRequisitions(NordigenAccessToken token, String currentDomainName) throws NordigenException;
 	Boolean deleteRequisitionById (NordigenAccessToken token, Occam occam, String requisitionId) throws NordigenException;
 	void cancelRequisition (NordigenAccessToken token, Occam occam, Integer rbankId) throws NordigenException;
@@ -29,4 +29,7 @@ public interface NordigenService extends RemoteService {
 	List<NordigenInstitution> getInstitutionsByBic(NordigenAccessToken token, String bic) throws NordigenException;
 	Integer insertTransactions(Occam occam, NordigenBankAccount nordigenBankAccount) throws NordigenException;
 	List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country) throws NordigenException;
+	List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) throws NordigenException;
+	Integer getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition) throws NordigenException;
+	int getRemainingCallsToday(Occam occam, NordigenBankAccount account) throws NordigenException;
 }

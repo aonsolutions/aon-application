@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
 import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
 import net.aonsolutions.db.up2date.attach.RdocTag;
 import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
+import net.aonsolutions.db.up2date.finance.NordigenCallsLog;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
@@ -544,14 +545,15 @@ public class Up2Date {
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			// HomePrestITInsert.HOMEPRESTITINSERT,
 			// PPEITUpdate.PPE_IT_UPDATE,
-			PPEITFix.PPE_IT_FIX,
+//			PPEITFix.PPE_IT_FIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
-			RdocTag.RDOC_TAG,
-			UpdateCategoryTree.UPDATE_CATEGORY_TREE
+//			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+//			RdocTag.RDOC_TAG,
+//			UpdateCategoryTree.UPDATE_CATEGORY_TREE,
+			NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE
 
 	};
 

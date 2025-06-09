@@ -577,6 +577,7 @@ public class AonExporter extends GenericExporter{
 		
 		//AON-DOCUMENTAL
 		map.put("Rdoc","com.code.aon.documental.Rdoc");
+		map.put("NordigenCallLog", "com.code.aon.nordigen.NordigenCallLog");
 		
 		//AON-MESSAGING
 		//map.put("Message","com.code.aon.messaging.Message");
