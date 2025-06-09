@@ -145,11 +145,9 @@ jobs:
         EOF
 
     - name: Build with Maven
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
       run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -157,7 +155,6 @@ jobs:
         tags: ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }}
 
     - name: Build Docker aon-db-up2date image
-      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
       uses: docker/build-push-action@v6
       with:
         context: ./aon-db-up2date
@@ -166,7 +163,6 @@ jobs:
 
 
     - name: Setup environment for integration testing
-      # if: github.ref == 'refs/heads/master'
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
@@ -186,7 +182,6 @@ jobs:
         EOF
 
     - name: Running Selenium integration tests
-      # if: github.ref == 'refs/heads/master'
       if: ${{ env.SKIP_SELENIUM_TESTS == 'false' }}
       run: |
         mvn -B \
@@ -194,7 +189,6 @@ jobs:
         -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
 
     - name: Running HtmlUnit integration tests
-      # if: github.ref == 'refs/heads/master'
       if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
       run: |
         mvn -B \
