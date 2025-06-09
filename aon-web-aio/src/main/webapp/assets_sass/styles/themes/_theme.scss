@@ -76,6 +76,7 @@
           }
         }
       }
+      // Menu de la derecha
       aon-right-panel{
         background: $color-50;
         #aonRightPanel{
@@ -91,6 +92,7 @@
             }
           }
           #aonRightPanelContent{
+            // Menu derecha - Boton configuracion
             #aonConfig{
               aon-card{
                 background-color: $color-box;
@@ -112,6 +114,7 @@
                 }
               }
             }
+            // Menu derecha - Boton usuario
             #aonLoginPanel{
               #loginContent{
                 >div{
