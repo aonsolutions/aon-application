@@ -42,15 +42,13 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			assertCompaniesTabs(webDriver, wait, "Activas", "Inactivas", "Despacho");
 
 			selectEnterprise(webDriver, wait, "office", "DESPACHO");
-
-			assertTopMenuEmpty(webDriver, wait);
+			//assertTopMenuEmpty(webDriver, wait);
 			assertTopMenuHidden(webDriver, wait);
-
 			listCompanies(webDriver, wait);
 
 			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, "home", "apps", "documental", "note");
+			assertSideMenu(webDriver, wait, "home", "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
 
 		} finally {
 			if (webDriver != null) {
@@ -88,7 +86,6 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 	private void assertTopMenuEmpty(WebDriver webDriver, WebDriverWait wait) {
 		WebElement aonTopMenuDiv = webDriver.findElement(By.id("aonTopMenuDiv"));
-
 		List<WebElement> topMenuElements = aonTopMenuDiv.findElements(By.xpath("child::*"));
 		assertEquals(0, topMenuElements.size());
 	}

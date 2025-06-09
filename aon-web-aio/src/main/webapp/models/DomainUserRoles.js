@@ -343,7 +343,7 @@ export class DomainUserRoles {
 			&& (this.isAdmin() || this.hasRole(Role.PAYROLL) || this.hasOldRole(Role.PAYROLL));
 	}
 
-	isPayrollEmployee() {
+	isPayrollUser() {
 		return this.isPayroll() && !this.isPayrollManager();
 	}
 

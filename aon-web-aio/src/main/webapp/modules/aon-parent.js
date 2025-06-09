@@ -64,11 +64,12 @@ export class AonParent extends AonElement {
 
 		this.build();
 		this.buildSidenav();
-		this.select(filter, companies =>  { 
+		this.select(filter)
+		.then(companies => {
 			this.decorateTabs(companies);
 			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
 			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`); 
-		} );
+		});
 	}
 	
 
@@ -77,57 +78,60 @@ export class AonParent extends AonElement {
 		this.clearSelectedTab(this.filter);		
 		//TODO: aonParent.startLoader();
 		let limit = 100;
-		getCompanies({limit}).then( companies => {
-			let cps = companies.filter(r => r.id == LS.getDomainId());
-			if(cps.length > 0 && !cps[0].parent) {
-				this.companySelection(cps[0], companies.length == 1 );
-			} else if ( LS.getCompany() ) {
-				this.companySelection(LS.getCompany(), companies.length == 1 );
-			} else if(companies.length === 1) {
-				this.companySelection(companies[0], true);
-			} else {
-				
-				
-				let aonMenu = this.getElement('aonMenu');
-				aonMenu.init()
-				.then(() => {
-					LS.setDomainLogin(aonMenu.getDur().getUser().login);
-					LS.setDomainId(aonMenu.getDur().getDomain().getId());
-					LS.setDomainName(aonMenu.getDur().getDomain().getName());
-					aonMenu.open();
-				})
-				.catch((err) => {
-				});
-
-				this.selectTab(filter);		
-				//TODO: aonParent.stopLoader();
-				this.page = 1;
-				this.cleanCompanies();
-				
-  			let filteredCompanies = this.filterCompanies(companies, filter);
-				
-				this.buildCompanies(filteredCompanies.slice(0, 30), filter);
-				
-				if ( companies.length == limit ){
-					getCompanies().then(companies => {
-						this.cleanCompanies();
-						let filteredCompanies = this.filterCompanies(companies, filter);
-						this.buildCompanies(filteredCompanies.slice(0, 30), filter);
-						callback?.(companies);
-					});
-				} 
-				else {
-					callback?.(companies);
-				}
+		return new Promise((resolve, reject) => { 
+			
+			getCompanies({limit}).then( companies => {
+				let cps = companies.filter(r => r.id == LS.getDomainId());
+				if(cps.length > 0 && !cps[0].parent) {
+					this.companySelection(cps[0], companies.length == 1 );
+				} else if ( LS.getCompany() ) {
+					this.companySelection(LS.getCompany(), companies.length == 1 );
+				} else if(companies.length === 1) {
+					this.companySelection(companies[0], true);
+				} else {
 					
-				
-
-			}	
-		}, () => closeSession());
-
-		if(filter){
-			this.setFilter(filter);
-		}
+					
+					let aonMenu = this.getElement('aonMenu');
+					aonMenu.init()
+					.then(() => {
+						LS.setDomainLogin(aonMenu.getDur().getUser().login);
+						LS.setDomainId(aonMenu.getDur().getDomain().getId());
+						LS.setDomainName(aonMenu.getDur().getDomain().getName());
+						aonMenu.open();
+					})
+					.catch((err) => {
+						reject(err);
+					});
+	
+					this.selectTab(filter);		
+					//TODO: aonParent.stopLoader();
+					this.page = 1;
+					this.cleanCompanies();
+					
+	  			let filteredCompanies = this.filterCompanies(companies, filter);
+					
+					this.buildCompanies(filteredCompanies.slice(0, 30), filter);
+					
+					if ( companies.length == limit ){
+						getCompanies().then(companies => {
+							this.cleanCompanies();
+							let filteredCompanies = this.filterCompanies(companies, filter);
+							this.buildCompanies(filteredCompanies.slice(0, 30), filter);
+							resolve(companies);
+							callback?.(companies);
+						});
+					} 
+					else {
+						resolve(companies);
+						callback?.(companies);
+					}
+				}	
+			}, () => closeSession());
+	
+			if(filter){
+				this.setFilter(filter);
+			}
+		});
 	}
 	
 	decorateTabs(companies, filter = {}) {
@@ -136,38 +140,46 @@ export class AonParent extends AonElement {
 				active: true,
 				name: MSG.ACTIVES,
 			}, {
-				id: 'inactive',
-				inactive: true,
-				name: MSG.INACTIVES
+				id: 'office',
+				despacho:true,
+				name: MSG.OFFICE
+			}, {
+				id: 'consultancy',
+				entorno:true,
+				name: MSG.ENVIRONMENT
 			}, {
 				id: 'shared',
 				shared: true,
 				name: MSG.SHARED
 			}, {
-				id: 'consultancy',
-				entorno:true,
-				name: MSG.ENVIRONMENT
-			},{
-				id: 'office',
-				despacho:true,
-				name: MSG.OFFICE
+				id: 'inactive',
+				inactive: true,
+				name: MSG.INACTIVES
 			}
 		];	
 		let companyTitleSpan = this.getElement(this.COMPANY_TITLE_SPAN);
 		companyTitleSpan.classList.remove(CSS.AON_COMPANY_FILTER_LOADING);
+		let tabCompanies = {};
 		for( let companyFilterTab of companyFilterTabs ){
 			let companyFilterTabCompanies = companies.filter(f => !this.isLocationCompany(f) && this.companyFilter(f, { ...companyFilterTab, ...filter }));
-			
 			let companyFilterTabSpan = this.getElement(`${this.COMPANY_FILTER_TAB}-${companyFilterTab.id}`);
 			if ( companyFilterTabCompanies.length === 0 ){
 				companyFilterTabSpan.parentElement.classList.add(CSS.AON_COMPANY_FILTER_EMPTY);
 			}
 			else {
+				tabCompanies[companyFilterTab.id] = companyFilterTab;
 				companyFilterTabSpan.parentElement.classList.remove(CSS.AON_COMPANY_FILTER_EMPTY);
 				companyFilterTabSpan.innerHTML = `${companyFilterTab.name} (${companyFilterTabCompanies.length})`;
 			}
 		}
+		
+		if ( tabCompanies[this.filter.id ]  ) 
+			return;
 
+		for ( let id in tabCompanies ) {
+			this.select( tabCompanies[id] );
+			return;
+		}
 	}
 
 	selectTab(filter) {
@@ -455,7 +467,8 @@ export class AonParent extends AonElement {
 				app: ClassicApps.AON_SOLUTIONS,
 				fn: () => {
 					let enterprisesFilter = {ids:undefined, count:undefined};
-					this.select({...this.getFilter(),...enterprisesFilter }, companies => this.decorateTabs(companies, enterprisesFilter));
+					this.select({...this.getFilter(),...enterprisesFilter })
+					.then(companies => this.decorateTabs(companies, enterprisesFilter));
 				},
 		  	}]
 		};
@@ -491,7 +504,8 @@ export class AonParent extends AonElement {
 						}
 
 						let tramitFilter = { ids: domains, count: domainCount };
-						this.select({...this.getFilter(), ...tramitFilter}, companies => this.decorateTabs(companies, tramitFilter));																  
+						this.select({...this.getFilter(), ...tramitFilter})
+						.then(companies => this.decorateTabs(companies, tramitFilter));																  
 					},
 				},
 				{
@@ -501,7 +515,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let reviewFilter = { ids: this.notice?.invoice?.rejected?.domains, count: this.notice?.invoice?.rejected?.domainCount };
-						this.select({...this.getFilter(), ...reviewFilter}, companies => this.decorateTabs(companies, reviewFilter));
+						this.select({...this.getFilter(), ...reviewFilter}
+						.then(companies => this.decorateTabs(companies, reviewFilter)));
 					},
 				},
 				{
@@ -511,7 +526,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let unaccountedFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
-						this.select({...this.getFilter(), ...unaccountedFilter}, companies => this.decorateTabs(companies, unaccountedFilter));
+						this.select({...this.getFilter(), ...unaccountedFilter}
+						.then(companies => this.decorateTabs(companies, unaccountedFilter)));
 					},
 				},
 				{
@@ -521,7 +537,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
-						this.select({...this.getFilter(), ...draftsFilter}, companies => this.decorateTabs(companies, draftsFilter));
+						this.select({...this.getFilter(), ...draftsFilter}
+						.then(companies => this.decorateTabs(companies, draftsFilter)));
 					},
 				}
 			]

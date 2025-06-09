@@ -1063,11 +1063,11 @@ export class AonNewMenu extends AonElement {
 		if (CONSOLE_MENU.app === app.app)
 			return this.getDur().isConsole();
 		if (MenuApps.ACCOUNTING.app === app.app)
-			return this.getDur().isAccounting();
+			return this.getDur().isAccountingUser();
 		if (MenuApps.FISCAL.app === app.app)
-			return this.getDur().isFiscal();
+			return this.getDur().isFiscalUser();
 		if (MenuApps.PAYROLL.app === app.app)
-			return this.getDur().isPayroll();
+			return this.getDur().isPayrollUser();
 		if (MenuApps.COMUNICA.app === app.app) 
 			return !this.getDur().isPayroll() 
 				&& (this.getDur().isComunica() 
@@ -1079,16 +1079,16 @@ export class AonNewMenu extends AonElement {
 				( 	this.getDur().isTimecontrol()   
 				|| 	this.getDur().isTimecontrolManager() );
 		if (MenuApps.INVOICE.app === app.app)
-			return this.getDur().isInvoice();
+			return this.getDur().isInvoiceUser();
 		if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		if (AON_CLASSIC.app === app.app)
 			return this.getDur().isAon();
 		if (NEW.app === app.app)
 			return this.getDur().isAon()
-				|| this.getDur().isInvoice()
 				|| this.getDur().isMessenger()
-				|| this.getDur().isDocumental();
+				|| this.getDur().isDocumental()
+				|| this.getDur().isInvoiceUser();
 		if (HOME.app === app.app)
 			return !this.getDur().isConsole();
 		if (APPS.app === app.app)
@@ -1172,7 +1172,7 @@ export class AonNewMenu extends AonElement {
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
-		if(this.getDur().isInvoice()){
+		if(this.getDur().isInvoiceUser()){
 			let optionsMenu = [
 				{
 					name: MSG.ISSUEDS,
