@@ -129,7 +129,6 @@
 		let queryString = Object.keys( params ).map( key => `${key}=${params[key]}`).join('&');
 		
 		localStorage.setItem('aon_solutions', true);
-		removeRootPanel(panel);
 		
 		if (window.document.createElement && window.document.getElementsByTagName) {
 			
@@ -235,6 +234,8 @@
 
 				}
 			});
+			
+			removeRootPanel(panel);
 			
 			document.getElementById(panel)?.appendChild(iframe);
 			

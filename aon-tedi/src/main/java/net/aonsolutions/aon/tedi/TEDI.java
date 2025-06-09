@@ -136,7 +136,7 @@ public class TEDI {
 			attach.setData(rawdoc.getData());
 			attach.setAttachURL(urlData);
 			result.getAccountingInvoice().setAttach(attach);
-			if ( AonStringUtils.notEquals("RAWDOC_URL", urlData)) {
+			if ( urlData != null && AonStringUtils.notEquals("RAWDOC_URL", urlData)) {
 				InvoiceDoc doc = new InvoiceDoc()
 					.setS3Bucket( rawdoc.getS3Bucket() )
 					.setS3Key( rawdoc.getS3Key() )

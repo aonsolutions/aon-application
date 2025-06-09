@@ -53,6 +53,7 @@ export class AonMessengerCard extends AonElement {
     cardContent.className = CSS.AON_FLEX_COLUMN;
     cardContent.style.height = "100%";
     cardContent.style.gap = "0";
+    cardContent.style.justifyContent = "flex-start";
     cardContent.id = "messengerCardTable";
 
     this.appendChild(cardContent);
