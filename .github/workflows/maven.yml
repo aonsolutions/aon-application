@@ -95,6 +95,7 @@ jobs:
         cache: maven
 
     - name: Set up MySQL
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       run: |
         sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
         sudo systemctl start mysql.service
@@ -164,7 +165,7 @@ jobs:
 
     - name: Setup environment for integration testing
       # if: github.ref == 'refs/heads/master'
-      if: ${{ env.SKIP_INTEGRATION_TESTS == false || env.SKIP_SELENIUM_TESTS == false }}
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |
@@ -184,7 +185,7 @@ jobs:
 
     - name: Running HtmlUnit integration tests
       # if: github.ref == 'refs/heads/master'
-      if: ${{ env.SKIP_INTEGRATION_TESTS == false }}
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
       run: |
         mvn -B \
         -DskipTests=${SKIP_INTEGRATION_TESTS} \
@@ -199,7 +200,7 @@ jobs:
 
     - name: Running Selenium integration tests
       # if: github.ref == 'refs/heads/master'
-      if: ${{ env.SKIP_SELENIUM_TESTS == false }}
+      if: ${{ env.SKIP_SELENIUM_TESTS == 'false' }}
       run: |
         mvn -B \
         -DskipTests=${SKIP_SELENIUM_TESTS} \
