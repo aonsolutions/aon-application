@@ -346,6 +346,19 @@ public class ConsoleDAO {
 		
 	}
 
+	public static boolean enableRemoteAccess(AONContext ctx, Integer domainId) {
+		if (!isRemoteAccessEnabled(ctx, domainId)) {
+			int count = ctx.getDslContext()
+				.insertInto(APP_PARAM)
+				.set(APP_PARAM.DOMAIN, domainId)
+				.set(APP_PARAM.NAME, AppParam.AON_SUPPORT_ENABLED.toString())
+				.set(APP_PARAM.VALUE, String.valueOf(new Date().getTime()))
+				.execute();
+			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
+		}
+		return true;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static TableField<?, Integer> getPkField(String tableName) {
 		return (TableField<?, Integer>) AON_MASTER.getTable(tableName).getPrimaryKey().getFields().get(0);
