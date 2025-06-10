@@ -67,7 +67,7 @@ env:
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
-  SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || github.ref != 'refs/heads/master' }}
+  SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
   SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || github.ref != 'refs/heads/master' }}
 
 jobs:
@@ -77,7 +77,10 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-${{ github.event.inputs.browser || 'chrome' }}
-        options: -p 4444:4444 -p 7900:7900  --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
+        ports:
+          - 4444:4444
+          - 7900:7900
+        options: --add-host=payroll-test.aonsolutions.org:host-gateway --add-host=test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
       contents: read
