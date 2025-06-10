@@ -142,11 +142,17 @@ public abstract class CCAAPdfAction {
 		
 		identification.addCell(tableCell(str, 4));
 		
+		if (d2Deposit.getYear() >= 2024) {
+			identification.addCell(tableCell("IRUS", 1));
+			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01008.getCode()), 7));
+		}
+		
 		if(d2Deposit.getYear() >= 2015){
 			identification.addCell(tableCell("LEI", 1));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01009.getCode()), 1));
 			identification.addCell(tableCell("Solo para las empresas que dispongan de c\u00f3digo LEI (Legal Entity Identifier)", 6));
 		}
+		
 		identification.addCell(tableCell("Raz\u00f3n social " + d2Deposit.getMap().get(D2DepositHeaderKey.IDA01020.getCode()), 4));
 		identification.addCell(tableCell("Domicilio social "+ d2Deposit.getMap().get(D2DepositHeaderKey.IDA01022.getCode()), 4));
 		
@@ -178,7 +184,7 @@ public abstract class CCAAPdfAction {
 			identification.addCell(tableCell("Sociedad dominante \u00faltima del grupo", 4));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01061.getCode()),2));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01060.getCode()),2));
-		}
+		}		
 		document.add(new Paragraph(" "));
 		document.add(identification);
 		
@@ -188,14 +194,42 @@ public abstract class CCAAPdfAction {
         
 		activity.addCell(tableHeader("Actividad", 8, 10));
 		
-		activity.addCell(tableCell("C\u00f3digo CNAE", 1));
-		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()) +"-"+
-				d2Deposit.getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 7));
+		activity.addCell(tableCell("Actividad principal", 2));
+		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 6));
+		
+		activity.addCell(tableCell("C\u00f3digo CNAE09", 2));
+		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 6));
+		
+		if(d2Deposit.getYear() >= 2024) {
+			activity.addCell(tableCell("C\u00f3digo CNAE25", 2));
+			activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02014.getCode()), 6));
+		}
 
 		document.add(new Paragraph(" "));
 		document.add(activity);
 		
-		if(d2Deposit.getYear() >= 2022) {
+		if(d2Deposit.getYear() >= 2023) {
+			PdfPTable administrationOrgan = new PdfPTable(8);
+			administrationOrgan.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+			administrationOrgan.setWidthPercentage(100);
+        
+			administrationOrgan.addCell(tableHeader("\u00d3rgano de Administraci\u00f3n", 8, 10));
+		
+			administrationOrgan.addCell(tableCell(" ", 4));
+			administrationOrgan.addCell(tableCell("Ejercicio " + d2Deposit.getYear(),2));
+			administrationOrgan.addCell(tableCell("Ejercicio " + (d2Deposit.getYear() - 1),2));
+	
+			administrationOrgan.addCell(tableCell("N\u00famero de mujeres en el \u00f3rgano de administraci\u00f3n", 4));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA04212.getCode()),2));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA042129.getCode()),2));
+			
+			administrationOrgan.addCell(tableCell("N\u00famero total de miembros del \u00f3rgano de administraci\u00f3n", 4));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA04213.getCode()),2));
+			administrationOrgan.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA042139.getCode()),2));
+			
+			document.add(new Paragraph(" "));
+			document.add(administrationOrgan);
+		} else if (d2Deposit.getYear() == 2022) {
 			PdfPTable administrationOrgan = new PdfPTable(8);
 			administrationOrgan.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 			administrationOrgan.setWidthPercentage(100);
@@ -213,6 +247,7 @@ public abstract class CCAAPdfAction {
 			document.add(new Paragraph(" "));
 			document.add(administrationOrgan);
 		}
+		
 		PdfPTable salariedPersonal = new PdfPTable(8);
 		salariedPersonal.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		salariedPersonal.setWidthPercentage(100);
@@ -1036,13 +1071,19 @@ public abstract class CCAAPdfAction {
 		String tomo = getValue(D2DepositFooterKey.PR8081002);
 		String folio = getValue(D2DepositFooterKey.PR8081003);
 		String hojasReg = getValue(D2DepositFooterKey.PR8081004);
+		String irus = getValue(D2DepositHeaderKey.IDA01008);
 		
 		PdfPTable ip2 = new PdfPTable(8);
 		ip2.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		ip2.setWidthPercentage(100);
 		ip2.addCell(tableHeader("Identificación de la entidad que presenta las cuentas a depósito" , 8, 10));
 		ip2.addCell(tableCell("Denominación de la entidad: " + name , 4));
-		ip2.addCell(tableCell("NIF: " + nif , 4));
+		if (d2Deposit.getYear() >= 2024) {
+			ip2.addCell(tableCell("NIF: " + nif , 2));
+			ip2.addCell(tableCell("IRUS: " + irus , 2));
+		} else {
+			ip2.addCell(tableCell("NIF: " + nif , 4));
+		}
 		ip2.addCell(tableCell("Datos Registrales: " , 8));
 		ip2.addCell(tableCell("Tomo: " + tomo , 2));
 		ip2.addCell(tableCell("Folio: " + folio , 2));

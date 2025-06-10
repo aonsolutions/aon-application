@@ -5,9 +5,9 @@ public enum D2DepositHeaderKey {
 	// DATOS GENERALES DE IDENTIFICACIÓN
 	//IDENTIFICACIÓN DE LA EMPRESA
 	
-	//***************** A partir ej. 2015 **********************
-	IDA01009(1009) // LEI (A partir del ej. 2015)
-	//**********************************************************
+	 IDA01008(1008) // IRUS (a partir de 2024)
+	,IDA01009(1009) // LEI (A partir del ej. 2015)
+	
 	,IDA01010(1010)
 	,IDA01011(1011)
 	,IDA01012(1012)
@@ -25,12 +25,14 @@ public enum D2DepositHeaderKey {
 	,IDA01061(1061)
 	
 	//ACTIVIDAD
-	,IDA02001(2001)
-	,IDA02009(2009)
+	,IDA02001(2001) // Código CNAE-2025
+	,IDA02014(2014) // Código CNAE-2025 (a partir de 2024)
+	,IDA02009(2009) // Descripción actividad principal
 	
-	//ACTIVIDAD
-	,IDA04211(4211)
-	,IDA042119(42119)
+	// ÓRGANO DE ADMINISTRACIÓN
+	,IDA04211(4211), IDA042119(42119) // Porcentaje de mujeres en el organo de administración (solo 2022)
+	,IDA04212(4212), IDA042129(42129) // Número de mujeres en el órgano de administración (a partir de 2023)
+	,IDA04213(4213), IDA042139(42139) // Número total de miembros del órgano de administración (a partir de 2023)
 	
 	//PERSONAL ASALARIADDO
 	,IDA04001(4001)
