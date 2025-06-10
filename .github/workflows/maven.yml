@@ -61,8 +61,9 @@ on:
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
-  IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
+  BROWSER: ${{ github.event.inputs.browser || chrome }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
   SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
@@ -75,7 +76,7 @@ jobs:
 
     services:
       selenium:
-        image: selenium/standalone-${{ github.event.inputs.browser }}
+        image: selenium/standalone-$BROWSER
         options: -p 4444:4444 -p 7900:7900  --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
