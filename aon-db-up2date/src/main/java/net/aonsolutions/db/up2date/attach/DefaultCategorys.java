@@ -32,7 +32,7 @@ public class DefaultCategorys implements Update {
 		System.out.println("[START]");
 		System.out.println("Add default categorys");
 		ArrayList<Integer> domains = new ArrayList<>();
-		dslContext.select(Domain.DOMAIN.ID).from(Domain.DOMAIN).where(Domain.DOMAIN.PARENT.isNull().and(Domain.DOMAIN.TYPE.ne((byte)5))).fetch().stream().forEach(r -> {
+		dslContext.select(Domain.DOMAIN.ID).from(Domain.DOMAIN).where(Domain.DOMAIN.PARENT.isNull().and(Domain.DOMAIN.TYPE.eq((byte)1))).fetch().stream().forEach(r -> {
 			domains.add(r.get(Domain.DOMAIN.ID));
 		});
 		for(Integer domain: domains) {

@@ -470,7 +470,7 @@ public class NewDomainController implements Serializable {
 				.setDomain(domain.getId())
 				.setDomainName(domain.getName())
 				.setUser(user.getLogin());
-		if(getParentDomain() == null && getType() != DomainType.ADMIN)
+		if(getParentDomain() == null && getType() == DomainType.CONSULTANCY)
 			try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 				addDefaultCategories(ctx.getDslContext(), domain.getId());
 			}
