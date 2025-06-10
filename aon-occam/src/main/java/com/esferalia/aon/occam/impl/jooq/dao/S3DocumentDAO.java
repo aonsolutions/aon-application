@@ -126,8 +126,9 @@ public class S3DocumentDAO {
 			.map(new S3DocumentFiller());
 	}
 	
-	public static long getCount(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter) {
+	public static long getCount(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer category) {
 		ctx.checkRead();
+		Result<Record1<Integer>> recursiveIds = null;
 		SelectConditionStep<Record1<Integer>> queryRDoc = ctx.getDslContext()
 				.select(Rdoc.RDOC.ID)
 				.from(Rdoc.RDOC)
@@ -136,6 +137,27 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.from(Rattach.RATTACH)
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
+		if(category != null) {
+			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.CATEGORY, CategoryTree.CATEGORY_TREE.PARENT)
+	                        .from(CategoryTree.CATEGORY_TREE)
+	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .unionAll(
+	                            DSL.select(CategoryTree.CATEGORY_TREE.field("category", Integer.class), CategoryTree.CATEGORY_TREE.field("parent", Integer.class))
+	                                .from(CategoryTree.CATEGORY_TREE)
+	                                .join(DSL.table("category_hierarchy"))
+	                                .on(CategoryTree.CATEGORY_TREE.field("parent", Integer.class).eq(DSL.field("category_hierarchy.category", Integer.class)))
+	                        )
+	                )
+	                .select(DSL.field("category", Integer.class))
+	                .from(DSL.table("category_hierarchy"))
+	                .unionAll(
+	                        DSL.select(DSL.val(category).as("category"))
+	                    )
+	                .fetch();
+			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
+			queryRAttach = queryRAttach.and(Rattach.RATTACH.CATEGORY.in(recursiveIds));
+		}
 		return queryRDoc.union(queryRAttach).fetch().stream().count();
 	}
 	

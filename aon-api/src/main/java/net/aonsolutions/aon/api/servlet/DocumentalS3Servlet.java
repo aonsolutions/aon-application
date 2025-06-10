@@ -175,7 +175,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 						api.getDomain(), 
 						api.getUser(), 
 						f -> generateFilter(f, api, getScopes(api)), 
-						f -> generateFilterRAttach(f, api, getScopes(api))));
+						f -> generateFilterRAttach(f, api, getScopes(api)),
+						api.getData().has(IJsonNames.CATEGORY) ? api.getData().getInt(IJsonNames.CATEGORY) : null)
+				);
 	}
 	
 	private static Attach getFile(AonApiData api) throws Exception {

@@ -1,10 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.ProjectHolder.PROJECT_HOLDER;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-
 import static com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TASK_HOLDER_ALIAS;
 
 import java.sql.Timestamp;
@@ -110,7 +108,7 @@ public class ProjectHolderDAO {
 			.set(PROJECT_HOLDER.PROJECT, projectHolder.getProject())
 			.set(PROJECT_HOLDER.TASK_HOLDER, projectHolder.getTaskHolder().getId())
 			.set(PROJECT_HOLDER.START_DATE, AonDateUtils.toTimestamp(projectHolder.getStartDate()))	
-			.set(PROJECT_HOLDER.END_DATE, AonDateUtils.toTimestamp(projectHolder.getEndDate()))
+			.set(PROJECT_HOLDER.END_DATE, null == projectHolder.getEndDate() ? null : AonDateUtils.toTimestamp(projectHolder.getEndDate()))
 			.set(PROJECT_HOLDER.WORKGROUP, projectHolder.getWorkgroup().getId())
 			.where(PROJECT_HOLDER.ID.eq(projectHolder.getId()))
 			.execute();

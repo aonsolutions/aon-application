@@ -1,10 +1,11 @@
 import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
-   EMPLOYEE_TYPE_OPTION, 
-   ASESOR_TYPE,
-   EMPLOYEE_TYPE,
-   ENTERPRISE_TYPE} from './DocumentalEnums.js';
+  EMPLOYEE_TYPE_OPTION,
+  ASESOR_TYPE,
+  EMPLOYEE_TYPE,
+  ENTERPRISE_TYPE
+} from './DocumentalEnums.js';
 import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document, sendS3DocumentMail, sendDocumentMail, getS3DocumentCount } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
@@ -82,7 +83,7 @@ export class AonDocument extends AonElement {
 		this.docList = JSON.parse(this.getAttribute("documentList"));
 		this.typeList = JSON.parse(this.getAttribute("typesList"));
 		this.filter =  JSON.parse(this.getAttribute("filter"));
-		this.filter.page  = this.filter.page - 1; 
+		this.filter.page  = this.filter.page - 1;
 	}
   }
 
@@ -106,6 +107,8 @@ export class AonDocument extends AonElement {
     fileDiv.style.width   = '50%';
     
     if(this.isBetaDoc()){
+      // Barra loader de AonApplication - Iniciar
+      this.getApplication().startLoading();
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
           this.docS3 = document;
@@ -121,7 +124,8 @@ export class AonDocument extends AonElement {
             let offset2 = dataDiv.getBoundingClientRect();
             dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
           }
-    
+          
+          this.getApplication().stopLoading();
           this.buildData();
           this.buildDocumentToolbar();
       });
@@ -492,7 +496,7 @@ export class AonDocument extends AonElement {
     name.setValue(s3Doc.name);
 
     if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-        name.setDisabled(true)
+        name.setDisabled(true);
     }
     name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
     // Scope
@@ -1011,7 +1015,6 @@ export class AonDocument extends AonElement {
       }
     });
   }
-  
 
   checkAndUpdateCategory() {
     const modelSelect = document.getElementById("ModelosSelect");
@@ -1142,7 +1145,7 @@ export class AonDocument extends AonElement {
 			this.document = await getS3Document({id: nextPageDocs[0].id, type: nextPageDocs[0].type});
 			await this.build();
 		}
-	} else {		
+	} else {
     	this.getApplication().development();
 	}
   }
@@ -1161,7 +1164,7 @@ export class AonDocument extends AonElement {
 			this.document = await getS3Document({id: prevPageDocs[prevPageDocs.length -1].id, type: prevPageDocs[prevPageDocs.length -1].type});
 			await this.build();
 		}
-	} else {		
+	} else {
 		this.getApplication().development();
 	}
   }
@@ -1187,7 +1190,6 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
-
   
   removeS3() {
     let aonDocumental = this.getApplication();
@@ -1211,6 +1213,7 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
+
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
@@ -1256,7 +1259,7 @@ export class AonDocument extends AonElement {
   }
   updateCategory(category) {
     if(this.isBetaDoc()){
-      this.doc.category = category
+      this.doc.category = category;
     }else{
       if(!this.doc.category)
       this.doc.category = {};
@@ -1267,7 +1270,7 @@ export class AonDocument extends AonElement {
 
   updateScope(scope) {
     if(this.isBetaDoc()){
-      this.doc.scope = scope
+      this.doc.scope = scope;
     }else{
       if(!this.doc.scope)
         this.doc.scope = {};
@@ -1278,7 +1281,7 @@ export class AonDocument extends AonElement {
 
   updateType(type) {
     if(this.isBetaDoc()){
-      this.doc.registryType = type
+      this.doc.registryType = type;
     }else{
       this.doc.type = type;
     }
@@ -1290,8 +1293,8 @@ export class AonDocument extends AonElement {
     this.save();
   }
 
-  updateName(name) { 
-    if(this.isBetaDoc()){ 
+  updateName(name) {
+    if(this.isBetaDoc()){
       this.doc.name = name;
     } else {
       this.doc.title = name;
@@ -1333,4 +1336,4 @@ export class AonDocument extends AonElement {
 
 }
 
-window.customElements.define('aon-document',  AonDocument);
+window.customElements.define('aon-document', AonDocument);

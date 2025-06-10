@@ -539,6 +539,7 @@ public final class IJsonNames {
 	public static final String REGISTRATION = "registration";
 	public static final String REGISTRY_ACCOUNT = "registryAccount";
 	public static final String REGISTRY_ADDRESS = "registryAddress";
+	public static final String REGISTRY_COMPANY = "registryCompany";
 	public static final String REGISTRY_DATE = "registryDate";
 	public static final String REGISTRY_DOCUMENT = "registryDocument";
 	public static final String REGISTRY_DOCUMENT_TYPE = "registryDocumentType";

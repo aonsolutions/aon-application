@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME } from '../services/app.js';
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps } from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
 import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
@@ -185,7 +185,6 @@ export class AonNewMenu extends AonElement {
 			header2.className = 'aonHeader aonHeaderStart';
 			let applications = this.getElement('applications');
 			applications.className = 'aonMenuLeftopStart';
-
 		} else {
 			switch (app.app) {
 				case NEW_APPS:
@@ -399,7 +398,13 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.id = 'aonMenuList';
 		ul.classList.add("aonNewMenuSideNavUl");
-		
+
+		const newApps = getConstNewApps(this.getDur(), window.location.href);
+		const index = MENU_APPS.findIndex(app => app.app === CONSTANT.APPS);
+		if (index !== -1) {
+			MENU_APPS[index] = newApps;  // Reemplazamos el valor segun donde estemos
+		}
+
 		for (let item in MENU_APPS) {
 			if (this.isSidenavApp(MENU_APPS[item])) {
 				let app = MENU_APPS[item];
@@ -429,7 +434,6 @@ export class AonNewMenu extends AonElement {
 		app.cssLogo = this.getCssVariable(`${app.app}SideNavLogo`) ;
 		app.cssIcon = this.getCssVariable(`${app.app}SideNavIcon`) ;
 		app.cssSymbol = this.getCssVariable(`${app.app}SideNavSymbol`);
-
 		li.appendChild(this.buildApp(app,{color: `var(--aonSidenavIconColor, ${app.newColor || app.color})`}));
 		ul.appendChild(li);
 	}
@@ -649,6 +653,9 @@ export class AonNewMenu extends AonElement {
 			icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
 			icon.style.fontVariationSettings = "'FILL' 0, 'wght' 230, 'GRAD' 0, 'opsz' 24";
 			icon.innerHTML = app.symbol;
+			if(app.title == 'Planes' && this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
+				icon.style.color = "green";
+			} 
 			if(app.newColor || app.color) {
 				icon.style.color = app.newColor || app.color;
 			}

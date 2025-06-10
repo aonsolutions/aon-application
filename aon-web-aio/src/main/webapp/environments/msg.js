@@ -44,7 +44,6 @@ export const ACTIVES= MSG.ACTIVES;
 export const ACTIVITY = MSG.ACTIVITY;
 export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
-
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
 export const ADD_COMPOSITION = MSG.ADD_COMPOSITION;
@@ -69,6 +68,8 @@ export const ADDITIONAL_HIRING = MSG.ADDITIONAL_HIRING;
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
+export const AGENT = MSG.AGENT;
+export const AGENTS = MSG.AGENTS;
 export const ALIAS = 'Alias';// TODO
 export const ALL = MSG.ALL;
 export const ALL1 = MSG.ALL1;
@@ -579,6 +580,7 @@ export const PROTOCOL = "Protocolo";
 export const PROVINCE = MSG.PROVINCE;
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PARENT = "Padre"; // TODO
+export const PLAN = "Planes";
 
 // ----- Q
 

@@ -916,6 +916,7 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
+		@Override public Property<String> getPersonDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 		@Override public Property<String> getPersonFullNameProperty() {return new FilterDAO.PropertyDAO<>(ContractDAO.PERSON_FULL_NAME);}
 	}
 	
