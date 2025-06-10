@@ -163,8 +163,14 @@ export class DomainUserRoles {
 	}
 
 	hasRole(aonRole) {
-		return (this.getDomainUserRoles() && this.getDomainUserRoles().includes(aonRole))
+		if ( this.getDomainUserRoles()?.length )  {
+			return this.getDomainUserRoles().includes(aonRole);
+		} else {
+			return (this.isParentUser() && this.getParentDomainUserRoles() && this.getParentDomainUserRoles().includes(aonRole));
+		} 
+/*		return (this.getDomainUserRoles() && this.getDomainUserRoles().includes(aonRole))
 			|| (this.isParentUser() && this.getParentDomainUserRoles() && this.getParentDomainUserRoles().includes(aonRole));
+*/	
 	}
 
 	isAdmin() {
@@ -270,6 +276,10 @@ export class DomainUserRoles {
 			&& (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
 	}
 
+	isManagementManager() {
+		return (this.hasManagement() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentManagement()))
+			&& (this.isAdmin() || this.hasRole(Role.MANAGEMENT_MANAGER));
+	}
 	// ACCOUNTING
 
 	hasAccounting() {
@@ -441,7 +451,7 @@ export class DomainUserRoles {
 	}
 
 	isTimecontrolManager() {
-		return this.hasTaskHolder() && this.hasTimeControl() && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_MANAGER));
+		return this.hasTimeControl() && (this.isAdmin() || this.hasRole(Role.TIMECONTROL_MANAGER));
 	}
 
 	// MESSENGER - MENSAJERÍA
@@ -459,7 +469,7 @@ export class DomainUserRoles {
 	}
 
 	isMessengerManager() {
-		return this.hasTaskHolder() && this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
+		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
 
 	// CALL CENTER
@@ -773,6 +783,10 @@ export class DomainUserRoles {
 	isDomainManagementAvailable() {
 		return this.domain?.domainManagement;
 	}
+	
+	
+	// ------------------------------------------------------------------------
+	
 	
 	
 }
