@@ -61,7 +61,7 @@ on:
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
-  BROWSER: ${{ github.event.inputs.browser || chrome }}
+  BROWSER: ${{ github.event.inputs.browser || 'chrome' }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
