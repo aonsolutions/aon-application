@@ -268,7 +268,8 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 
 	private static boolean isShared(AonCompany aonCompany, AonApiData api ) {
-		return AonNumberUtils.notEquals(aonCompany.getDomain().getId(), api.getDomain().getId())
+		return  api.getDur() != null
+				&& AonNumberUtils.notEquals(aonCompany.getDomain().getId(), api.getDomain().getId())
 				&& AonNumberUtils.notEquals(aonCompany.getDomain().getParentId(), api.getDomain().getId());
 	}
 	

@@ -2,6 +2,7 @@ package solutions.aon.selenium.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
@@ -20,7 +21,47 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 	@Test
-	public void testGlobalManagerUser() throws MalformedURLException, URISyntaxException {
+	public void testGlobalManagerUserMain() throws MalformedURLException, URISyntaxException {
+		String url = System.getProperty("integration.test.env.app.url",
+				"http://test.aonsolutions.org:8080/app");
+		String email = System.getProperty("integration.test.env.app.auth", "asesor@payroll-test.aonsolutions.org");
+		String password = System.getProperty("integration.test.env.app.password", "org");
+
+		WebDriver webDriver = null;
+		try {
+			// webDriver = newChromeDriver();
+			// webDriver = newFirefoxDriver();
+			webDriver = newRemoteDriver();
+
+			login(webDriver, url, email, password);
+
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
+
+			
+			assertNotTopMenu(webDriver, wait);
+			assertNotSideMenu(webDriver, wait );
+			assertCompaniesTabs(webDriver, wait, "Activas", "Inactivas", "Despacho", "Entorno");
+
+			selectEnterprise(webDriver, wait, "office", "DESPACHO");
+			//assertTopMenuEmpty(webDriver, wait);
+			assertTopMenuHidden(webDriver, wait);
+			listCompanies(webDriver, wait);
+
+			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
+			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
+			assertSideMenu(webDriver, wait, "home", "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+
+		} finally {
+			if (webDriver != null) {
+				webDriver.close();
+				webDriver.quit();
+			}
+		}
+	}
+
+	@Test
+	public void testGlobalManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
 		String user = System.getProperty("integration.test.env.app.user", "asesor");
@@ -57,6 +98,9 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			}
 		}
 	}
+	
+	
+	
 
 	private void listCompanies(WebDriver webDriver, WebDriverWait wait) {
 		wait.until(ExpectedConditions.elementToBeClickable(By.id("aonHeaderCompanyListButton"))).click();
@@ -76,12 +120,26 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 
 	}
 
+	private void assertSideMenuHidden(WebDriver webDriver, WebDriverWait wait) {
+		assertFalse(webDriver.findElement(By.id("aonMenuSidenav")).isDisplayed());
+	}
+
+
 	private void assertTopMenuHidden(WebDriver webDriver, WebDriverWait wait) {
 		assertFalse(webDriver.findElement(By.id("aonMenuTopnav")).isDisplayed());
 	}
 
+	private void assertNotSideMenu(WebDriver webDriver, WebDriverWait wait) {
+		assertNotElement(webDriver, wait, "aonMenuSidenav");
+	}
+
 	private void assertNotTopMenu(WebDriver webDriver, WebDriverWait wait) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("aonTopMenuDiv")));
+		assertNotElement(webDriver, wait, "aonMenuTopnav");
+	}
+
+	private void assertNotElement(WebDriver webDriver, WebDriverWait wait, String id) {
+		// assertNull( webDriver.findElement(By.id(id)));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id(id)));
 	}
 
 	private void assertTopMenuEmpty(WebDriver webDriver, WebDriverWait wait) {
