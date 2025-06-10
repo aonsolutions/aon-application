@@ -73,7 +73,7 @@ export class AonConfig extends AonElement {
   }
 
   buildThemeData(){
-    // Obt�n el modo activo actual
+    // Obten el modo activo actual
     const currentMode = localStorage.getItem('theme-mode') || 'auto';
     // Theme Mode Selector
     const themeSelector = this.createElement(TAG.DIV);
@@ -81,7 +81,7 @@ export class AonConfig extends AonElement {
 
     ['light', 'dark', 'auto'].forEach(mode => {
       const div = this.createElement(TAG.DIV);
-      div.className = "theme-toggle-btn";
+      div.className = "theme-toggle-btn card-list-buttom";
       div.setAttribute('data-theme-mode', mode);
       // Marca el bot�n activo
       if (mode === currentMode) {
@@ -105,7 +105,7 @@ export class AonConfig extends AonElement {
   buildLanguageData(value,language) {
     let div = this.createDiv();
     div.style.title = "Idioma";
-    div.className = "configPanelLanguageDiv";
+    div.className = "configPanelLanguageDiv card-list-buttom";
 
     let i = this.createElement(TAG.I);
     i.className = CSS.MATERIAL_ICONS + " configPanelLanguageI";

@@ -18,8 +18,8 @@ $color-700      : #232c40;
 $color-800      : #1e293b;
 $color-900      : #0f172a;
 $color-grad-min : #092268;
-$color-grad-max : #0f172a;
-$color-login    : #0f172a;
+$color-grad-max : $color-900;
+$color-login    : $color-900;
 $color-input    : #334155;
 $color-box      : #334155;
 
@@ -96,9 +96,20 @@ $color-text-login         : #adafb3;
 $color-text-button        : #ffffff;
 $color-text-button-transp : #fff;
 $color-text-card          : #fff;
-$color-button-card        : #1e293b;
-$color-button-card-hover  : #0f172a;
+$color-button-card        : $color-800;
+$color-button-card-hover  : $color-900;
 $color-icon-menu          : #fff;
+
+// Colores login
+$color-login      : $color-900;
+$color-login-form : #232c40;
+$color-input      : #334155;
+$color-box        : #334155;
+
+// Colores switch
+$color-switch     : $color-600;
+$color-switch-on  : #fff;
+$color-switch-off : $color-800;
 
 // Logo del header
 $logoHead        : "../images/ayudat/logo-horizontal.svg";
@@ -116,12 +127,13 @@ $color-menu-green: $color-green-400;
 @mixin ayudatDark-theme {
   @include t.theme(
     $theme, $favicon, $title,
-    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover,
+    $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,

@@ -1,0 +1,12 @@
+@use '../variables' as v;
+
+aon-right-panel{
+  #aonRightPanel{   
+    #aonRightPanelContent{
+      #aonConfig{
+        display: grid;
+        gap: v.$gap;
+      }
+    }
+  }
+}

@@ -100,6 +100,17 @@ $color-button-card        : #1e293b;
 $color-button-card-hover  : #0f172a;
 $color-icon-menu          : #fff;
 
+// Colores login
+$color-login      : $color-900;
+$color-login-form : #232c40;
+$color-input      : #334155;
+$color-box        : #334155;
+
+// Colores switch
+$color-switch     : $color-600;
+$color-switch-on  : #fff;
+$color-switch-off : $color-900;
+
 // Logo del header
 $logoHead        : "../images/infoautonomos/logo-horizontal.svg";
 $logoHead-width  : v.$px-130;
@@ -116,12 +127,13 @@ $color-menu-green: $color-green-400;
 @mixin infoautonomosDark-theme {
   @include t.theme(
     $theme, $favicon, $title,
-    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover,
+    $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,

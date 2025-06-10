@@ -1,0 +1,40 @@
+@use '../variables' as v;
+
+aon-switch{
+  .aonSwitch{
+    position: relative;
+    display: inline-block;
+    width: v.$px-40;
+    height: v.$px-22;
+    input{
+      opacity: v.$num-0;
+      width: v.$px-0;
+      height: v.$px-0;
+      &:checked + span {
+        &::before {
+          transform: translateX(v.$px-18);
+        }
+      }
+    }
+    span{
+      position: absolute;
+      cursor: pointer;
+      top: v.$px-0;
+      left: v.$px-0;
+      right: v.$px-0;
+      bottom: v.$px-0;
+      border-radius: v.$px-22;
+      transition: background-color v.$t-03;
+      &::before {
+        content: "";
+        position: absolute;
+        height: v.$px-18;
+        width: v.$px-18;
+        left: v.$px-2;
+        bottom: v.$px-2;
+        border-radius: v.$pct-50;
+        transition: transform v.$t-03;
+      }
+    }
+  }
+}

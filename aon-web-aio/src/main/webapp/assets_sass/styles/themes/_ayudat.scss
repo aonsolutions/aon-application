@@ -19,9 +19,6 @@ $color-800: #1e293b;
 $color-900: #0f172a;
 $color-grad-min: #586078;
 $color-grad-max: #0E1030;
-$color-login    : $color-0;
-$color-input    : $color-0;
-$color-box      : $color-0;
 
 $color-sky-50 : #f0f9ff;
 $color-sky-100: #e0f2fe;
@@ -90,15 +87,26 @@ $color-yellow-800: #854d0e;
 $color-yellow-900: #713f12;
 
 // Colores textos
-$color-text               : #1E293B;
-$color-text-head          : #fff;
-$color-text-login         : #64748b;
-$color-text-button        : #ffffff;
-$color-text-button-transp : #1E293B;
-$color-text-card          : #64748b;
-$color-button-card        : #f1f5f9;
-$color-button-card-hover  : #cbd5e1;
-$color-icon-menu          : #0f172a;
+$color-text               : $color-800;
+$color-text-head          : $color-0;
+$color-text-login         : $color-500;
+$color-text-button        : $color-0;
+$color-text-button-transp : $color-800;
+$color-text-card          : $color-500;
+$color-button-card        : $color-100;
+$color-button-card-hover  : $color-300;
+$color-icon-menu          : $color-900;
+
+// Colores login
+$color-login      : $color-0;
+$color-login-form : $color-0;
+$color-input      : $color-0;
+$color-box        : $color-0;
+
+// Colores switch
+$color-switch     : $color-300;
+$color-switch-on  : $color-600;
+$color-switch-off : $color-0;
 
 // Logo del header
 $logoHead        : "../images/ayudat/logo-horizontal.svg";
@@ -116,12 +124,13 @@ $color-menu-green: $color-green-600;
 @mixin ayudat-theme {
   @include t.theme(
     $theme, $favicon, $title,
-    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300, 
+    $color-login, $color-0, $color-50, $color-100, $color-200, $color-300,
     $color-400, $color-500, $color-600, $color-700, 
     $color-800, $color-900, $color-input, $color-box,
     $color-grad-min, $color-grad-max,
-    $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
+    $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
     $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover,
+    $color-switch-off, $color-switch-on, $color-switch,
     $color-red-100,  $color-red-500, $color-red-900,
     $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
     $color-blue-100, $color-blue-500, $color-blue-900,

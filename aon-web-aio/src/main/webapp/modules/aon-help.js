@@ -68,6 +68,7 @@ export class AonHelp extends AonElement {
 		let helpContentIndexI = this.createElement(TAG.I);
 		helpContentIndexI.className = CSS.MATERIAL_ICONS;
 		helpContentIndexI.classList.add("aonHelpI");
+		helpContentIndexI.setAttribute("data-icon", "school");
 		helpContentIndexI.innerHTML= "school";
 		helpContentIndexDiv.appendChild(helpContentIndexI);
 
@@ -89,6 +90,7 @@ export class AonHelp extends AonElement {
 		let helpNotificationI = this.createElement(TAG.I);
 		helpNotificationI.className = CSS.MATERIAL_ICONS;
 		helpNotificationI.classList.add("aonHelpI");
+		helpNotificationI.setAttribute("data-icon", "rss_feed");
 		helpNotificationI.innerHTML= "rss_feed";
 		helpNotificationDiv.appendChild(helpNotificationI);
 
@@ -113,7 +115,7 @@ export class AonHelp extends AonElement {
 			setSupport(data).then(r => {})
 		});
 
-    	if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
+		if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
 			let rightPanelAboutContactCard = new AonCard();
 			rightPanelAboutContactCard.id = this.ABOUT_CONTACT_CARD;
 			rightPanelAboutContactCard.title = MSG.CONTACT_DATA2;
@@ -170,8 +172,6 @@ export class AonHelp extends AonElement {
 				divGeneral.appendChild(this.buildSupportData(phone, MSG.PHONE, MATERIAL_ICONS.PHONE));
 				divGeneral.appendChild(this.buildSupportData(email, "Correo electrónico", MATERIAL_ICONS.MAIL));
 				rightPanelAboutContactCard.setContent(divGeneral);
-				
-				
 			});
 		}
 		
@@ -193,30 +193,35 @@ export class AonHelp extends AonElement {
 				  helpContent.appendChild(divInfo);
 			}
 		);
-      if(!this.isNewStyle()){
-		let openButton = this.getElement("openNotificationButton");
-		openButton.style.display = "none";
-      }
+		if(!this.isNewStyle()){
+			let openButton = this.getElement("openNotificationButton");
+			openButton.style.display = "none";
+		}
 	}
 
 	buildSupportData(value, title, icon, className) {
-		let div = this.createDiv();
-		div.style.marginTop = '10px';
+		let div 				= this.createDiv();
+		div.className		= "card-list";
 		div.style.title = title;
-		div.style.display = "flex";
-
+		if(!this.isNewStyle()){
+			div.style.marginTop = '10px';
+			div.style.display = "flex";
+		}
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS + " mailIcon";
 		i.id = "aonContactIcon" + this.cont;
-		i.style.marginRight = '5px';
-		i.style.verticalAlign = "middle";
+		if(!this.isNewStyle()){
+			i.style.marginRight = '5px';
+			i.style.verticalAlign = "middle";
+		}
+		i.setAttribute("data-icon", icon);
 		i.innerHTML= icon;
 		div.appendChild(i);
 
 		let span = this.createDiv();
 		span.className = `${CSS.AON_CARD_TEXT} ${className}`;
 		
-		if(className==null){
+		if(className==null || this.isNewStyle()){
 			span.innerHTML = value;
 		}
 		

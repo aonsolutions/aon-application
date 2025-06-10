@@ -6,8 +6,9 @@
   $color-400, $color-500, $color-600, $color-700, 
   $color-800, $color-900, $color-input, $color-box,
   $color-grad-min, $color-grad-max,
-  $color-text, $color-text-head, $color-text-login, $color-text-button, $color-text-button-transp,
+  $color-text, $color-text-head, $color-text-login, $color-login-form, $color-text-button, $color-text-button-transp,
   $color-text-card, $color-icon-menu, $color-button-card, $color-button-card-hover,
+  $color-switch-off, $color-switch-on, $color-switch,
   $color-red-100,  $color-red-500, $color-red-900,
   $color-green-100, $color-green-400, $color-green-500, $color-green-900, $color-menu-green,
   $color-blue-100, $color-blue-500, $color-blue-900,
@@ -92,28 +93,6 @@
             }
           }
           #aonRightPanelContent{
-            // Menu derecha - Boton configuracion
-            #aonConfig{
-              aon-card{
-                background-color: $color-box;
-                .aonCardTitle{
-                  border-bottom: v.$px-1-6 solid $color-300;
-                }
-                .aonCardContent{
-                  >div{
-                    div{
-                      color: $color-text-card;
-                      &:hover{
-                        background-color: $color-50;
-                      }
-                      &.active{
-                        background-color: $color-100;
-                      }
-                    }
-                  }
-                }
-              }
-            }
             // Menu derecha - Boton usuario
             #aonLoginPanel{
               #loginContent{
@@ -186,6 +165,9 @@
       #rootPanel{
         background-color: $color-100;
       }
+      // 
+      // Componentes
+      // 
       // cargandos
       aon-loader{
         // Barra de progreso
@@ -292,6 +274,51 @@
             color: $color-300;
             opacity: 0.9;
           }
+        }
+      }
+      // Card
+      aon-card{
+        background-color: $color-box;
+        .aonCardTitle{
+          border-bottom: v.$px-1-6 solid $color-300;
+        }
+        .aonCardContent{
+          >div{
+            .card-list, .card-list-buttom{
+              color: $color-text-card;
+            }
+            .card-list-buttom{
+              &:hover{
+                background-color: $color-50;
+              }
+              &.active{
+                background-color: $color-100;
+              }
+            }
+          }
+        }
+      }
+      // Switch
+      aon-switch{
+        .aonSwitch{
+          span{
+            // fondo
+            background-color: $color-switch;
+            &::before {
+              // circulo
+              background-color: $color-switch-off;
+            }
+          }
+        }
+        &[checked="true"]{
+          .aonSwitch{
+            span{
+              &::before {
+                // circulo
+                background-color: $color-switch-on;
+              }
+            }
+          } 
         }
       }
       // 

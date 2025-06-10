@@ -24,12 +24,15 @@
 @use './components/buttons' as button;
 @use './components/inputs' as input;
 @use './components/icons' as icon;
+@use './components/card' as card;
+@use './components/switch' as switch;
 
 // Importamos layouts
 @use './layouts/header' as header;
 @use './layouts/rightPanel' as rightPanel;
-@use './layouts/rightPanel-config' as rightPanel-config;
-@use './layouts/rightPanel-user' as rightPanel-user;
+@use './layouts/rightPanelConfig' as rightPanelConfig;
+@use './layouts/rightPanelUser' as rightPanelUser;
+@use './layouts/rightPanelHelp' as rightPanelHelp;
 @use './layouts/menu' as menu;
 
 // Importamos vistas
