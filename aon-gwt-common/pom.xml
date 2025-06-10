@@ -70,6 +70,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+      		<groupId>com.esferalia.aon</groupId>
+     	 	<artifactId>aon.in.payroll</artifactId>
+      		<version>${project.version}</version>
+      		<scope>compile</scope>
+    	</dependency>
+		<dependency>
 			<groupId>jakarta.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>1.2_14</version>
