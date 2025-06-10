@@ -76,7 +76,7 @@ jobs:
 
     services:
       selenium:
-        image: selenium/standalone-$BROWSER
+        image: selenium/standalone-${{ env.BROWSER }}
         options: -p 4444:4444 -p 7900:7900  --add-host=payroll-test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
