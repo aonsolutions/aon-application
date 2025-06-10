@@ -7,9 +7,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2025Panel;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
+import com.esferalia.aon.occam.api.model.type.CNAE2025;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -60,16 +62,18 @@ public class PageH1 extends PageAbs {
 	@UiField TextBox IDA01040; // groupMainEnterpriseDocument;
 	@UiField TextBox IDA01061; // groupLastEnterpriseName;
 	@UiField TextBox IDA01060; // groupLastEnterpriseDocument;
-	@UiField InlineLabel IDA02009; // enterpriseMainActivity;
-	@UiField TextBox IDA02001; // cnaeCode;
+	@UiField InlineLabel IDA02009; // enterpriseMainActivity; 
+	@UiField TextBox IDA02001; // Codigo CNAE 2009;
+	@UiField TextBox IDA02014; // Código CNAE 2025;
+	@UiField Label CNAE2025Label;
 	
-	@UiField DoubleBox IDA04211; // women percentage
-	@UiField DoubleBox IDA042119; // women percentage
+	@UiField DoubleBox IDA04211; // women percentage (solo ejercicio 2022)
+	@UiField DoubleBox IDA042119; // women percentage (solo ejercicio 2022)
 	
-	@UiField DoubleBox IDA04212;  // Número de mujeres en el organo de administración - Ejercicio actual
-	@UiField DoubleBox IDA042129; // Número de mujeres en el organo de administración - Ejercicio anterior
-	@UiField DoubleBox IDA04213;  // Número total de miembros del órgano de administración - Ejercicio actual
-	@UiField DoubleBox IDA042139; // Número total de miembros del órgano de administración - Ejercicio anterior
+	@UiField DoubleBox IDA04212;  // Número de mujeres en el organo de administración - Ejercicio actual (a partir de 2023)
+	@UiField DoubleBox IDA042129; // Número de mujeres en el organo de administración - Ejercicio anterior (a partir de 2023)
+	@UiField DoubleBox IDA04213;  // Número total de miembros del órgano de administración - Ejercicio actual (a partir de 2023)
+	@UiField DoubleBox IDA042139; // Número total de miembros del órgano de administración - Ejercicio anterior (a partir de 2023)
 	
 	@UiField DoubleBox IDA04001; // fixedCurrentAvg;
 	@UiField DoubleBox IDA040019; // fixedPreviousAvg;
@@ -109,8 +113,9 @@ public class PageH1 extends PageAbs {
 
 	@UiField
 	Button showCnae;
-
+	
 	Cnae2009Panel cnaePanel;
+	AonCnae2025Panel cnaePanel2025;
 
 	interface Header1Binder extends UiBinder<Widget, PageH1> {}
 
@@ -133,7 +138,6 @@ public class PageH1 extends PageAbs {
 		IDA01023 = new TextBox(); 
 		IDA01025 = new ListBox();
 		
-		
 		IDA01024 = new TextBox(); 
 		IDA01031 = new TextBox(); 
 		IDA01037 = new TextBox(); 
@@ -141,9 +145,10 @@ public class PageH1 extends PageAbs {
 		IDA01040 = new TextBox(); 
 		IDA01061 = new TextBox(); 
 		IDA01060 = new TextBox(); 
+
 		IDA02009 = new InlineLabel(); 
-		
-		IDA02001 = new TextBox(); 
+		IDA02001 = new TextBox();
+		IDA02014 = new TextBox();
 
 		IDA04211 = new DoubleBox();
 		IDA042119 = new DoubleBox();
@@ -207,19 +212,35 @@ public class PageH1 extends PageAbs {
 	}
 	
 	private void init(){
+		
 		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 			@Override
 			public void onSelect(CNAE2009 selected) {
-				IDA02001.setEnabled(false);
 				IDA02001.setText(selected.getCodeWithoutPoint());
-				onEdit("2001", selected.getCodeWithoutPoint());
 				IDA02009.setText(selected.getDescription());
+				getMap().put("2001", selected.getCodeWithoutPoint());
 				onEdit("2009", selected.getDescription());
+				
+				// A partir del ejercicio 2024:
+				// Cumplimentar casilla 2014 con el CNAE2025 correspondiente, si tiene mas de uno, se sacará una lista para seleccionarlo
+				if(getYear() >= 2024) {
+					cnaePanel2025.onShowCnae2009ToCnae2025(selected.getCode());
+				}
 			}
 			@Override
 			public void onClose() {
 				// Nothing
 			}
+		});
+		
+		cnaePanel2025 = new AonCnae2025Panel(); 
+		cnaePanel2025.addSelectionHandler( event -> {
+			CNAE2025 selected = event.getSelectedItem();
+			IDA02014.setText(selected.getCodeWithoutPoint());
+			// Como hace el programa del Depósito Dígital (D2), la descripción que se pone en la casilla 2009, será la que tenga la del CNAE2025
+			IDA02009.setText(selected.getDescription());
+			getMap().put("2014",selected.getCodeWithoutPoint());
+			onEdit("2009", selected.getDescription());	
 		});
 		
 		current1.setText("Ejercicio " + getYear());
@@ -268,6 +289,15 @@ public class PageH1 extends PageAbs {
 		keyExe("2009", IDA02009, "label", true);
 		IDA02001.setEnabled(false);
 		keyExe("2001", IDA02001, "text", false);
+
+		if(getYear() >= 2024) {
+			CNAE2025Label.setVisible(true);
+			IDA02014.setVisible(true);
+			keyExe("2014", IDA02014, "text", false);
+		} else {
+			CNAE2025Label.setVisible(false);
+			IDA02014.setVisible(false);
+		}
 
 		if(getYear() >= 2023) {
 			administrationOrganPanel2022.setVisible(false);
@@ -476,7 +506,6 @@ public class PageH1 extends PageAbs {
 				}
 			});
 		}
-		
 		
 		if(type.equals("list")){
 			ListBox lb = (ListBox) w;

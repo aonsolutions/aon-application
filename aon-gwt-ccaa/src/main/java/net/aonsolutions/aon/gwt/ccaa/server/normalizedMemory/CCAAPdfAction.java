@@ -184,7 +184,7 @@ public abstract class CCAAPdfAction {
 			identification.addCell(tableCell("Sociedad dominante \u00faltima del grupo", 4));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01061.getCode()),2));
 			identification.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA01060.getCode()),2));
-		}
+		}		
 		document.add(new Paragraph(" "));
 		document.add(identification);
 		
@@ -194,9 +194,16 @@ public abstract class CCAAPdfAction {
         
 		activity.addCell(tableHeader("Actividad", 8, 10));
 		
-		activity.addCell(tableCell("C\u00f3digo CNAE", 1));
-		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()) +"-"+
-				d2Deposit.getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 7));
+		activity.addCell(tableCell("Actividad principal", 2));
+		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02009.getCode()), 6));
+		
+		activity.addCell(tableCell("C\u00f3digo CNAE09", 2));
+		activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02001.getCode()), 6));
+		
+		if(d2Deposit.getYear() >= 2024) {
+			activity.addCell(tableCell("C\u00f3digo CNAE25", 2));
+			activity.addCell(tableCell(d2Deposit.getMap().get(D2DepositHeaderKey.IDA02014.getCode()), 6));
+		}
 
 		document.add(new Paragraph(" "));
 		document.add(activity);
@@ -1064,13 +1071,19 @@ public abstract class CCAAPdfAction {
 		String tomo = getValue(D2DepositFooterKey.PR8081002);
 		String folio = getValue(D2DepositFooterKey.PR8081003);
 		String hojasReg = getValue(D2DepositFooterKey.PR8081004);
+		String irus = getValue(D2DepositHeaderKey.IDA01008);
 		
 		PdfPTable ip2 = new PdfPTable(8);
 		ip2.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 		ip2.setWidthPercentage(100);
 		ip2.addCell(tableHeader("Identificación de la entidad que presenta las cuentas a depósito" , 8, 10));
 		ip2.addCell(tableCell("Denominación de la entidad: " + name , 4));
-		ip2.addCell(tableCell("NIF: " + nif , 4));
+		if (d2Deposit.getYear() >= 2024) {
+			ip2.addCell(tableCell("NIF: " + nif , 2));
+			ip2.addCell(tableCell("IRUS: " + irus , 2));
+		} else {
+			ip2.addCell(tableCell("NIF: " + nif , 4));
+		}
 		ip2.addCell(tableCell("Datos Registrales: " , 8));
 		ip2.addCell(tableCell("Tomo: " + tomo , 2));
 		ip2.addCell(tableCell("Folio: " + folio , 2));

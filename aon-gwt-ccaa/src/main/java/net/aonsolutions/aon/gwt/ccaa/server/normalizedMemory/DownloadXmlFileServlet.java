@@ -69,8 +69,6 @@ public class DownloadXmlFileServlet extends HttpServlet {
 	private static final String D2_FILE_CONVOC_2015 = "Convocatoria";
 	private static final String D2_FILE_SICAV_2015 = "SICAV";
 	
-//	private static String cifEmpresa = "";
-	
 	@Override
 	protected void doGet(HttpServletRequest p_request,
 			HttpServletResponse p_response) throws ServletException,
@@ -90,9 +88,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		File f;
 		if (year >= 2024) {
 			f = getXmlFile2024(domain, domainId, year);
-			p_response.addHeader("Content-Disposition", "inline; filename=\"" + AonStringUtils.left(f.getName(), 9) + "_" + year +".zip\""); 
+			p_response.addHeader("Content-Disposition", "inline; filename=\"D2_" + AonStringUtils.left(f.getName(), 9) + "_" + year +".zip\""); 
 		} else {
-			f = /*DBConsults.*/getXmlFile(domain, domainId, year);
+			f = getXmlFile(domain, domainId, year);
 			p_response.addHeader("Content-Disposition", "inline; filename=\"DEPOSITO.zip\"");
 		}
 		
@@ -405,6 +403,19 @@ public class DownloadXmlFileServlet extends HttpServlet {
 						}
 					}
 					
+					// Hoja presentación claves memoria (8080805, 8080852), en ocasiones se quedan vacias o a cero ambas, se ponen segun el formato
+					boolean isPymes = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()); // Formato PYMES o Abreviado
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080805))) {
+						if ("0".equals(schema.getClaves().getClave().get(i).getValor()) && !isPymes) {
+							schema.getClaves().getClave().get(i).setValor("1");
+						}						
+					}
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080852))) {
+						if ("0".equals(schema.getClaves().getClave().get(i).getValor()) && isPymes) {
+							schema.getClaves().getClave().get(i).setValor("1");
+						}						
+					}
+					
 					// Claves 8080854, 8080855 se ignoran, ahora no se usan y se están grabando en el XML
 					if (!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080854)) && 
 						!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080855))) {
@@ -504,7 +515,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			String j = buscar(schema, "8080823"); 
 			String k = buscar(schema, "8080821"); 
 			String l = buscar(schema, "8080811");
-			String m = buscar(schema, "9002").equals("1") ? "M" : buscar(schema, "9003").equals("1") ? "B" : "E";  // "m" es la moneda utilizada (E euros, M miles de euros, B millones de euros) 
+			String m = buscar(schema, "9002").equals("1") ? "M" : buscar(schema, "9003").equals("1") ? "B" : "E";   
 			String q = buscar(schema, "8080825"); 
 			String t = buscar(schema, "8080832"); 
 			

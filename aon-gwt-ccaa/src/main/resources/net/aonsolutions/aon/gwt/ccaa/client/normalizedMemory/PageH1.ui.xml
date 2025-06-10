@@ -159,19 +159,31 @@
 											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
 												<tr>
 													<td>
-														<g:Label text="Código CNAE" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:Label text="Actividad Principal" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="Código CNAE-2009" styleName="{aonResources.css.aonInnerLabel}" />
 														<g:TextBox visibleLength="4" maxLength="4"
 															ui:field="IDA02001" styleName="{aonResources.css.aonInputText}" />
 														<g:Button ui:field="showCnae"
 															styleName="aon-icon-lookup {aonResources.css.aonBorderNone}">
 															&#160;
 														</g:Button>
-														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/>
+<!-- 														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/> -->
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label ui:field="CNAE2025Label" text="Código CNAE-2025" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:TextBox visibleLength="4" maxLength="4"
+															ui:field="IDA02014" styleName="{aonResources.css.aonInputText}" />
 													</td>
 												</tr>
 											</table>
 										</div>
-
 									</div>
 									
 									<g:HTMLPanel ui:field="administrationOrganPanel2022">

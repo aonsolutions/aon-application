@@ -9,6 +9,7 @@ import java.util.Map;
 
 public abstract class XbrlConstantsPymes {
 	
+	// TAXONOMIA PGC2007 versión 1.7.1
 	// Estos datos corresponden al ejercicio 2024 y siguientes.
 	// Para obtenerlos podemos consultar los siguientes archivos XML que estan en el subdirectorio Metadatos2024, dentro 
 	// del directorio donde está instalado el programa D2:
@@ -16,8 +17,8 @@ public abstract class XbrlConstantsPymes {
 	// - PlantillaPymesMemoria.xml
 	// - ConversionPymes.xml
 	
-	public static final String URI_SCHEMA_PYMES = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-pymes.xsd";
-	public static final String URI_SCHEMA_PYMES_MEMORIA = "https://www.icac.gob.es/sites/default/files/pgc2007/v170/pgc07-pymes-completo.xsd";
+	public static final String URI_SCHEMA_PYMES = "https://www.icac.gob.es/sites/default/files/pgc2007/v171/pgc07-pymes.xsd";
+	public static final String URI_SCHEMA_PYMES_MEMORIA = "https://www.icac.gob.es/sites/default/files/pgc2007/v171/pgc07-pymes-completo.xsd";
 	
 	public static final Map<String,String> NAME_SPACES_URI_PYMES = new LinkedHashMap<>();
 	public static final Map<String,String> NAME_SPACES_URI_PYMES_MEMORIA = new LinkedHashMap<>();
@@ -31,99 +32,101 @@ public abstract class XbrlConstantsPymes {
 	
 	static {
     	// NAMES SPACES PYMES SIN MEMORIA
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07p","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p-bal","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/balance/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-gen-bas","http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-c-ap","http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07p","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p-bal","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/balance/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-gen-bas","http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-c-ap","http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mp","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mp","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:iso4217","http://www.xbrl.org/2003/iso4217"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07m-roles","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-c-bs","http://www.icac.meh.es/es/fr/gaap/pgc07/comun-base/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-gen-ex","http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07m-roles","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-c-bs","http://www.icac.meh.es/es/fr/gaap/pgc07/comun-base/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-gen-ex","http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:xlink","http://www.w3.org/1999/xlink"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-ref","http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-rel","http://www.xbrl.org.es/es/2008/dgi/gp/rel/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-lc-int","http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-apdo0","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/apartado0/IdentificacionGeneral/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-ref","http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-rel","http://www.xbrl.org.es/es/2008/dgi/gp/rel/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-lc-int","http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-apdo0","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/apartado0/IdentificacionGeneral/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:link","http://www.xbrl.org/2003/linkbase"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-eco-bas","http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-dat-inf","http://www.xbrl.org.es/es/2008/dgi/gp/dat-inf/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-eco-bas","http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-dat-inf","http://www.xbrl.org.es/es/2008/dgi/gp/dat-inf/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:xbrli","http://www.xbrl.org/2003/instance"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p-pyg","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/PerdidasGanancias/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-reclsf","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ReclasificacionInstrumentosFinancieros/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07m-d-pv","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-est-gen","http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-bs","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-plzven","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PlazoVencimientoInstrumentosFinancieros/Dimension/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p-pyg","http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/PerdidasGanancias/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-reclsf","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ReclasificacionInstrumentosFinancieros/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07m-d-pv","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-est-gen","http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-bs","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-plzven","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PlazoVencimientoInstrumentosFinancieros/Dimension/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:xbrldt","http://xbrl.org/2005/xbrldt"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p","http://www.icac.meh.es/es/fr/gaap/pgc07/pymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-types","http://www.icac.meh.es/es/fr/gaap/pgc07/types/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-lc-es","http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-clase","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ClasesInstrumentosFinancieros/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mp-apdo0","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado0/IdentificacionGeneral/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-types","http://www.xbrl.org.es/es/2008/dgi/gp/types/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-ap","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-roles","http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2024-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-p","http://www.icac.meh.es/es/fr/gaap/pgc07/pymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-types","http://www.icac.meh.es/es/fr/gaap/pgc07/types/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-lc-es","http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07d-clase","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ClasesInstrumentosFinancieros/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mp-apdo0","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado0/IdentificacionGeneral/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-types","http://www.xbrl.org.es/es/2008/dgi/gp/types/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc07mc-ap","http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES.put("xmlns:pgc-07-roles","http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2025-01-01"); 
 		NAME_SPACES_URI_PYMES.put("xmlns:ref","http://www.xbrl.org/2004/ref"); 
-		NAME_SPACES_URI_PYMES.put("xmlns:dgi-cnae-09","http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2009/2024-01-01");
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-cnae-09","http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2009/2025-01-01");
+		NAME_SPACES_URI_PYMES.put("xmlns:dgi-cnae-25","http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2025/2025-01-01");
 	}
 	
 	static {
 		// NAMES SPACES PYMES CON MEMORIA
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07pymes", "http://www.icac.meh.es/es/fr/gaap/pgc07/modelo-pymes/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07pymes", "http://www.icac.meh.es/es/fr/gaap/pgc07/modelo-pymes/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:xbrldi", "http://xbrl.org/2006/xbrldi"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo5", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado5/ActivosFinancieros/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p-bal", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/balance/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-gen-bas", "http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-c-ap", "http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo5", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado5/ActivosFinancieros/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p-bal", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/balance/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-gen-bas", "http://www.xbrl.org.es/es/2008/dgi/gp/gen-bas/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-c-ap", "http://www.icac.meh.es/es/fr/gaap/pgc07/comun-abreviadopymes/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:iso4217", "http://www.xbrl.org/2003/iso4217"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-d-sf", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/SituacionFiscal/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-roles", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-c-bs", "http://www.icac.meh.es/es/fr/gaap/pgc07/comun-base/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo7", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado7/FondosPropios/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-gen-ex", "http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo8", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado8/SituacionFiscal/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo9", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado9/OperacionesPartesVinculadas/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-d-sf", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/SituacionFiscal/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-roles", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/roles/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-c-bs", "http://www.icac.meh.es/es/fr/gaap/pgc07/comun-base/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo7", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado7/FondosPropios/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-gen-ex", "http://www.xbrl.org.es/es/2008/dgi/gp/gen-ex/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo8", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado8/SituacionFiscal/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo9", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado9/OperacionesPartesVinculadas/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:xlink", "http://www.w3.org/1999/xlink"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo2", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado2/BasesPresentacionCuentasAnuales/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-ref", "http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-rel", "http://www.xbrl.org.es/es/2008/dgi/gp/rel/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo6", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado6/PasivosFinancieros/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-lc-int", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-apdo0", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/apartado0/IdentificacionGeneral/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo2", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado2/BasesPresentacionCuentasAnuales/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-ref", "http://www.icac.meh.es/es/fr/gaap/pgc07/referenceParts/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-rel", "http://www.xbrl.org.es/es/2008/dgi/gp/rel/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo6", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado6/PasivosFinancieros/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-lc-int", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-int/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-apdo0", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/apartado0/IdentificacionGeneral/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:link", "http://www.xbrl.org/2003/linkbase"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo10", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado10/OtraInformacion/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-eco-bas", "http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-dat-inf", "http://www.xbrl.org.es/es/2008/dgi/gp/dat-inf/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo10", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado10/OtraInformacion/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-eco-bas", "http://www.xbrl.org.es/es/2008/dgi/gp/eco-bas/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-dat-inf", "http://www.xbrl.org.es/es/2008/dgi/gp/dat-inf/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:xbrli", "http://www.xbrl.org/2003/instance"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-rsm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/resumen/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p-pyg", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/PerdidasGanancias/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-reclsf", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ReclasificacionInstrumentosFinancieros/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo4", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado4/InmovilizadoMaterialIntangibleInversionesInmobiliarias/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-pv_2", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07pm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-est-gen", "http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-bs", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-pv", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas-ap/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-plzven", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PlazoVencimientoInstrumentosFinancieros/Dimension/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-rsm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/resumen/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p-pyg", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/PerdidasGanancias/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-reclsf", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ReclasificacionInstrumentosFinancieros/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo4", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado4/InmovilizadoMaterialIntangibleInversionesInmobiliarias/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-pv_2", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07pm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/ModeloPymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-est-gen", "http://www.xbrl.org.es/es/2008/dgi/gp/est-gen/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-bs", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/base/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-pv", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PartesVinculadas-ap/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-plzven", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/PlazoVencimientoInstrumentosFinancieros/Dimension/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:xbrldt", "http://xbrl.org/2005/xbrldt"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07p", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo3", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado3/NormasRegistroValoracion/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p", "http://www.icac.meh.es/es/fr/gaap/pgc07/pymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-lc-es", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-d-inm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InmovilizadoMaterialIntangibleInversionesInmobiliarias/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-types", "http://www.icac.meh.es/es/fr/gaap/pgc07/types/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-clase", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ClasesInstrumentosFinancieros/Dimension/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-ap", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-types", "http://www.xbrl.org.es/es/2008/dgi/gp/types/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo0", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado0/IdentificacionGeneral/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-roles", "http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2024-01-01"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-cp", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/CategoriasProfesionales/Dimension/2024-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07p", "http://www.icac.meh.es/es/fr/gaap/pgc07/cuentas/pymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo3", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado3/NormasRegistroValoracion/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-p", "http://www.icac.meh.es/es/fr/gaap/pgc07/pymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-lc-es", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-es/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-d-inm", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/InmovilizadoMaterialIntangibleInversionesInmobiliarias/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-types", "http://www.icac.meh.es/es/fr/gaap/pgc07/types/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07d-clase", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/ClasesInstrumentosFinancieros/Dimension/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mc-ap", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/abreviadoPymes/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-types", "http://www.xbrl.org.es/es/2008/dgi/gp/types/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07mp-apdo0", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/pymes/apartado0/IdentificacionGeneral/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc-07-roles", "http://www.icac.meh.es/es/fr/gaap/pgc07/roles/2025-01-01"); 
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:pgc07m-d-cp", "http://www.icac.meh.es/es/fr/gaap/pgc07/memoria/comun/CategoriasProfesionales/Dimension/2025-01-01"); 
 		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:ref", "http://www.xbrl.org/2004/ref"); 
-		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-cnae-09", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2009/2024-01-01");		
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-cnae-09", "http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2009/2025-01-01");
+		NAME_SPACES_URI_PYMES_MEMORIA.put("xmlns:dgi-cnae-25","http://www.xbrl.org.es/es/2008/dgi/gp/lc-cnae-2025/2025-01-01");
 	}
 	
     static {

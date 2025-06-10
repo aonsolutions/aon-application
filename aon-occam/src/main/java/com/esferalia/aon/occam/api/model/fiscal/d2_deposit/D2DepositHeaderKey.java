@@ -25,8 +25,9 @@ public enum D2DepositHeaderKey {
 	,IDA01061(1061)
 	
 	//ACTIVIDAD
-	,IDA02001(2001)
-	,IDA02009(2009)
+	,IDA02001(2001) // Código CNAE-2025
+	,IDA02014(2014) // Código CNAE-2025 (a partir de 2024)
+	,IDA02009(2009) // Descripción actividad principal
 	
 	// ÓRGANO DE ADMINISTRACIÓN
 	,IDA04211(4211), IDA042119(42119) // Porcentaje de mujeres en el organo de administración (solo 2022)
