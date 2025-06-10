@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -386,5 +387,12 @@ public interface CommonServiceAsync {
 	void getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
 	void saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note, AsyncCallback<RegistryNote> asyncCallback) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ****************************** [CUSTOMER INVOICES]
+	// **************************************************
+	
+	void getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<Invoice>> asyncCallback) throws AonCoreException;
+	void getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer invoiceId, AsyncCallback<String> asyncCallback) throws AonCoreException;
 
 }

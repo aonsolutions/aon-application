@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -90,7 +91,6 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -390,5 +390,12 @@ public interface CommonService extends RemoteService {
 	List<RegistryNote> getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
 	RegistryNote saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id) throws AonCoreException;
+
+	// **************************************************
+	// ****************************** [CUSTOMER INVOICES]
+	// **************************************************
+	
+	List<Invoice> getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
+	String getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer invoiceId) throws AonCoreException;
 
 }
