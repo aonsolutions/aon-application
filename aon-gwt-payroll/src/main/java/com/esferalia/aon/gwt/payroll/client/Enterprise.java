@@ -37,6 +37,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -65,6 +66,9 @@ public abstract class Enterprise extends ResizeComposite {
 	}
 	
 	// TABLA DATOS EMPRESA
+	
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	@UiField
 	TextBox enterpriseName;
@@ -162,6 +166,7 @@ public abstract class Enterprise extends ResizeComposite {
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
+		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
 		initializeView();
 	}
 	
