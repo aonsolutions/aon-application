@@ -12,7 +12,10 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.CNAE2025;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -115,7 +118,7 @@ public class PageH1 extends PageAbs {
 	Button showCnae;
 	
 	Cnae2009Panel cnaePanel;
-	AonCnae2025Panel cnaePanel2025;
+	AonCnae2025Panel cnaePanel2025 = null;
 
 	interface Header1Binder extends UiBinder<Widget, PageH1> {}
 
@@ -211,7 +214,7 @@ public class PageH1 extends PageAbs {
 		cnaePanel.onShow();
 	}
 	
-	private void init(){
+	private void init() {
 		
 		cnaePanel = new Cnae2009Panel( new Cnae2009Panel.SelectionCallBack() {
 			@Override
@@ -219,12 +222,14 @@ public class PageH1 extends PageAbs {
 				IDA02001.setText(selected.getCodeWithoutPoint());
 				IDA02009.setText(selected.getDescription());
 				getMap().put("2001", selected.getCodeWithoutPoint());
-				onEdit("2009", selected.getDescription());
-				
-				// A partir del ejercicio 2024:
-				// Cumplimentar casilla 2014 con el CNAE2025 correspondiente, si tiene mas de uno, se sacará una lista para seleccionarlo
-				if(getYear() >= 2024) {
+				getMap().put("2009", selected.getDescription());
+				IDA02001.setEnabled(false);
+				// A partir del ejercicio 2024: Cumplimentar casilla 2014 con el CNAE2025 correspondiente, 
+				// si tiene mas de uno, se sacará una lista para seleccionarlo
+				if (getYear() >= 2024) {
 					cnaePanel2025.onShowCnae2009ToCnae2025(selected.getCode());
+				} else {
+					onEdit("2009", selected.getDescription());
 				}
 			}
 			@Override
@@ -237,9 +242,12 @@ public class PageH1 extends PageAbs {
 		cnaePanel2025.addSelectionHandler( event -> {
 			CNAE2025 selected = event.getSelectedItem();
 			IDA02014.setText(selected.getCodeWithoutPoint());
-			// Como hace el programa del Depósito Dígital (D2), la descripción que se pone en la casilla 2009, será la que tenga la del CNAE2025
+			// Como hace el programa del Depósito Dígital (D2), la descripción que se pone en la 
+			// casilla 2009, será la que tenga la del CNAE2025
 			IDA02009.setText(selected.getDescription());
 			getMap().put("2014",selected.getCodeWithoutPoint());
+			getMap().put("2009", selected.getDescription());
+			IDA02014.setEnabled(false);
 			onEdit("2009", selected.getDescription());	
 		});
 		
@@ -287,12 +295,13 @@ public class PageH1 extends PageAbs {
 		keyExe("1061", IDA01061, "text", true);
 		keyExe("1060", IDA01060, "text", true);
 		keyExe("2009", IDA02009, "label", true);
-		IDA02001.setEnabled(false);
+//		IDA02001.setEnabled(false);
 		keyExe("2001", IDA02001, "text", false);
 
-		if(getYear() >= 2024) {
+		if (getYear() >= 2024) {
 			CNAE2025Label.setVisible(true);
 			IDA02014.setVisible(true);
+//			IDA02014.setEnabled(false); 
 			keyExe("2014", IDA02014, "text", false);
 		} else {
 			CNAE2025Label.setVisible(false);
@@ -352,11 +361,25 @@ public class PageH1 extends PageAbs {
 			micropymePanel.setVisible(false);
 			unityPanel.setVisible(true);
 		}
+		
 	}
 	
 	@Override
 	protected void initializeTable() {
-		init();		
+		init();
+		
+		// A partir del ejercicio 2024: Comprobar si el CNAE 2025 está vacio y si es así, cumplimentarlo con la 
+		// correspondencia del CNAE-2009, si es necesario se mostrará una lista para que el cliente seleccione el CNAE-2025		
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				if (getYear() >= 2024 && AonStringUtils.isBlank(IDA02014.getText()) && AonStringUtils.isNotBlank(IDA02001.getText())) {
+					String code2009 = AonStringUtils.left(IDA02001.getText(), 2) + "." + AonStringUtils.right(IDA02001.getText(), 2);
+					cnaePanel2025.onShowCnae2009ToCnae2025(code2009);
+				}
+			}
+		});
+		
 	}
 	
 	String key2Aux;

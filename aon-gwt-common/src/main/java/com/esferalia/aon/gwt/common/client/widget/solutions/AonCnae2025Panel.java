@@ -66,6 +66,7 @@ public class AonCnae2025Panel extends AonCustomDialog implements HasSelectionHan
 	
 	private boolean paintCnae2009ToCnae2025(String code2009) {
 		setCaption("CORRESPONDENCIA C.N.A.E. 2009 Y C.N.A.E. 2025");
+		showCloseButton(false);
 		AonDisplayGrid table = new AonDisplayGrid();
 		table.addStyleName(AON.CSS.aonWidthAll());
 		table.addHeaderRow()
