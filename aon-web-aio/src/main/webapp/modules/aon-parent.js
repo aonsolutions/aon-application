@@ -515,8 +515,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let reviewFilter = { ids: this.notice?.invoice?.rejected?.domains, count: this.notice?.invoice?.rejected?.domainCount };
-						this.select({...this.getFilter(), ...reviewFilter}
-						.then(companies => this.decorateTabs(companies, reviewFilter)));
+						this.select({...this.getFilter(), ...reviewFilter})
+						.then(companies => this.decorateTabs(companies, reviewFilter));
 					},
 				},
 				{
@@ -526,8 +526,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let unaccountedFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
-						this.select({...this.getFilter(), ...unaccountedFilter}
-						.then(companies => this.decorateTabs(companies, unaccountedFilter)));
+						this.select({...this.getFilter(), ...unaccountedFilter})
+						.then(companies => this.decorateTabs(companies, unaccountedFilter));
 					},
 				},
 				{
@@ -537,8 +537,8 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
-						this.select({...this.getFilter(), ...draftsFilter}
-						.then(companies => this.decorateTabs(companies, draftsFilter)));
+						this.select({...this.getFilter(), ...draftsFilter})
+						.then(companies => this.decorateTabs(companies, draftsFilter));
 					},
 				}
 			]
