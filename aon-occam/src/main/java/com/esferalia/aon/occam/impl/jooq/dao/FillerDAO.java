@@ -80,6 +80,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.CCCType;
@@ -422,7 +423,7 @@ public class FillerDAO {
 				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
 					.setId(r.getValue(parent.ID))
 					.setName(r.getValue(parent.NAME)))
-				.setShared(r.getValue(USER.SHARED) == 1)
+				.setShared(AonEnumUtils.enumValue(UserType.class, r.getValue(USER.TYPE)) == UserType.SHARED)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))))
 				.setLogin(r.getValue(USER.LOGIN));

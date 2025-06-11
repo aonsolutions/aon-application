@@ -302,6 +302,28 @@ export const WAREHOUSE = {
 };
 
 
+export const MANAGEMENT = {
+  app: CONSTANT.MANAGEMENT,
+  title: MSG.MANAGEMENT,
+  description: MSG.MANAGEMENT,
+  tag: MSG_ES.MANAGEMENT,
+  icon: AON_ICONS.AON_MANAGEMENT,
+  symbol: MATERIAL_ICONS.MONITORING,
+  color: "#002469",
+  backgroundColor: "rgba(0, 36, 105, .2)",
+  hover: 'aonSidenavHover',
+  price: " ", 
+  disabled: false,
+  options: {
+    menu: false,
+    add: false,
+    upload: true,
+    stat: false,
+  },
+  getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
+};
+
+
 export const INVOICE = {
   app: CONSTANT.INVOICE,
   title: MSG.BILLING, //MSG.INVOICES,
@@ -703,6 +725,7 @@ export const BookingApps = {
   TIMECONTROL,
   MESSENGER,
   INVOICE,
+  MANAGEMENT,
   COMMERCIAL,
   MARKETING,
   TREASURY,

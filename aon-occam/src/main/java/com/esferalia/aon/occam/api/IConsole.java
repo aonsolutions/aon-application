@@ -27,6 +27,7 @@ public interface IConsole {
 	public Domain changeActive(AONContext ctx, Integer domainId, boolean active);
 	public Domain changeExpirationDate(AONContext ctx, Integer domainId, Date expireDate);
 	public boolean switchRemoteAccess(AONContext ctx, Integer domainId);
+	public boolean enableRemoteAccess(AONContext ctx, Integer domainId);
 	public Stream<User> availableUsers(AONContext ctx, Integer domainId);
 	public String[] getAonTables();		
 	public ConsoleTableRow getTableRow(AONContext ctx, ConsoleTableRow row);

@@ -350,6 +350,7 @@ export const SHOW_FILE = 'showFile';
 export const SHOW_PASSWORD = 'showPassword';
 export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
+export const SPIN = 'spin';
 export const SRC = 'src';
 export const STAFF_EXPENSES = 'staffExpenses';
 export const STATUS = 'status';

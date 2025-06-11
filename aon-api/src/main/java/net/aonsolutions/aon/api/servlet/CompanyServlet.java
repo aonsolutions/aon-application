@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.api.json.EnterpriseActivityJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -234,8 +236,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			
 			Integer limit = api.getData().optInt(IJsonNames.LIMIT, Integer.MAX_VALUE); 
 			
-			List<String> schemas = AONContext.getSchemas(api.getDomain().getName());
-		
+			List<String> schemas = AONContext.getSchemas(); //AONContext.getSchemas(api.getDomain().getName());
+			
+			
 			try {
 				for(String schema : schemas) {
 					LinkedList<Integer> ds = new LinkedList<>();	
@@ -243,10 +246,13 @@ public class CompanyServlet extends AonApiHttpServlet{
 					AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, 1, limit)
 					.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
 					.forEach(
-						ac -> {
-						if(!ds.contains(ac.getDomain().getId())){
-							jsArray.put(ac.toJSON());
-							ds.add(ac.getDomain().getId());
+						aonCompany -> {
+						if(!ds.contains(aonCompany.getDomain().getId())){
+							
+							JSONObject jsonCompany = aonCompany.toJSON();
+							jsonCompany.put("shared", isShared(aonCompany, api));
+							jsArray.put(jsonCompany);
+							ds.add(aonCompany.getDomain().getId());
 						}
 						if ( jsArray.length() == limit ) 
 							throw new LimitExceededException();
@@ -260,6 +266,13 @@ public class CompanyServlet extends AonApiHttpServlet{
 			return jsArray;
 		}
 	}
+
+	private static boolean isShared(AonCompany aonCompany, AonApiData api ) {
+		return  api.getDur() != null
+				&& AonNumberUtils.notEquals(aonCompany.getDomain().getId(), api.getDomain().getId())
+				&& AonNumberUtils.notEquals(aonCompany.getDomain().getParentId(), api.getDomain().getId());
+	}
+	
 	
 	private JSONArray getDomainCompanies(AonApiData api) {
 		JSONArray jsArray = new JSONArray();

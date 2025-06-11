@@ -53,6 +53,7 @@ import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -61,6 +62,9 @@ import com.code.aon.webmail.db.Contact;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class DomainUserController extends BasicController {
 
@@ -278,6 +282,61 @@ public class DomainUserController extends BasicController {
 
 	public String getActiveUsersMessage() {
 		return AonUtil.getMessage(ICommonMessages.ACTIVE_USERS, getNumberOfActiveUsers());		
+	}
+	
+	public Domain getUserDomain() {
+		User user = getDomainUser();
+		if (user != null) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+				Domain domain = (Domain) bean.get( user.getDomain() );
+				return domain;
+			} catch (ManagerBeanException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	public Integer getLoggedUserDomain() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		return (principal != null) ? principal.getDomainId() : null;
+	}
+	
+	public boolean isImpersonateUserEnabled() {
+		if (!isNevv()) {
+			String dn1 = getCurrentURLDomain();
+			String dn2 = getUserDomain().getName();
+			return !StringUtils.equals( dn1 , dn2 );
+		}
+		return false;	
+	}
+	
+	public String getImpersonateUserURL() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		StringBuilder url = new StringBuilder();
+		
+		if (request.getServerPort() != 80 && request.getServerPort() != 443)  {
+			url.append( (AonStringUtils.isBlank(request.getScheme())? "http" : request.getScheme()) )
+				.append("://")
+				.append( getUserDomain().getName() )
+				.append(":" + request.getServerPort())
+			;	
+		} else {
+			url.append( "https://")
+				.append( getUserDomain().getName() );
+		}
+		url
+			.append(request.getContextPath())
+			.append("/impuser/home.jsf")
+		;
+		return url.toString();
+	}
+
+
+	public String getCurrentURLDomain() {
+		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		return request.getServerName();
 	}
 	
 	private Domain getDomain() {

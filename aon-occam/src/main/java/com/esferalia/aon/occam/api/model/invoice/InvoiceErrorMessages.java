@@ -36,7 +36,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),
-	
+	C201("El ejercicio del apunte contable está cerrado, en explotaci\u00F3n o inactivo."),
 	
 	C500("Error desconocido");
 	

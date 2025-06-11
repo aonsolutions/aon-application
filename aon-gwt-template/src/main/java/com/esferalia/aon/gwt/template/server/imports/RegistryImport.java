@@ -139,7 +139,7 @@ public class RegistryImport extends Import {
 		}
 		
 		if(IConstants.CIF.equalsIgnoreCase(title) || IConstants.DOCUMENTO.equalsIgnoreCase(title)) {
-			reg.getRegistry().setDocument(o.toString());
+			reg.getRegistry().setDocument(o.toString().replace(" ", ""));
 			reg.getAccount().setAlias(o.toString());
 			return;
 		}

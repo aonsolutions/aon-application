@@ -63,9 +63,12 @@ public interface IRequestParamsNames {
 	String FINANCE_PARAMS = "financeParams";	
 	String FOOTER_TEXT = "footerText";
 	String FROM_DATE = "fromDate";
+	String FROM_DOMAIN = "fromDomain";
+	String FROM_DOMAIN_NAME = "fromDomainName";
 	String FROM_DUE_DATE = "fromDueDate";
 	String FROM_EXPIRATION_DATE = "fromExpirationDate";
 	String FROM_LAST_ACCESS_DATE = "fromLastAccessDate";
+	String FROM_USER = "fromUser";
 	String GROUPED_BY = "groupedBy";
 	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
 	String HEADER_TEXT = "headerText";
@@ -149,9 +152,12 @@ public interface IRequestParamsNames {
 	String TEST = "test";
 	String TITLE = "title";
 	String TO_DATE = "toDate";
+	String TO_DOMAIN = "toDomain";
+	String TO_DOMAIN_NAME = "toDomainName";
 	String TO_DUE_DATE = "toDueDate";
 	String TO_EXPIRATION_DATE = "toExpirationDate";
 	String TO_LAST_ACCESS_DATE = "toLastAccessDate";
+	String TO_USER = "toUser";
 	String TYPE = "type";
 	String UNIFIED_BOOK = "unifiedBook";  // Libro Registro AEAT Unificado (IVA e IRPF)
 	String USER = "user";

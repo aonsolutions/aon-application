@@ -364,14 +364,14 @@ export class AonInvoice extends AonElement {
 					remarks.backgroundColor = INVOICE.color;
 					remarks.fn = () => this.addInvoiceRemarks();
 					moreActions.push(remarks);
+					
+					let comment = ACTION.COMMENT;
+					comment.permission = true;
+					comment.backgroundColor = INVOICE.color;
+					comment.fn = () => this.addInvoiceComment();
+					moreActions.push(comment);
 				}
-	
-				let comment = ACTION.COMMENT;
-				comment.permission = true;
-				comment.backgroundColor = INVOICE.color;
-				comment.fn = () => this.addInvoiceComment();
-				moreActions.push(comment);
-	
+
 				if(this.getInvoice().isEmitida()) {
 					let send = ACTION.SEND_INVOICE;
 					send.permission = true;

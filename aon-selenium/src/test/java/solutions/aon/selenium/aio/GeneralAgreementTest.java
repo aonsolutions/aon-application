@@ -1,5 +1,7 @@
 package solutions.aon.selenium.aio;
 
+import java.time.Duration;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,7 +32,7 @@ public class GeneralAgreementTest extends AioBaseTestCase {
 	public static void setUpBeforeClass() throws Exception {
         driver = newChromeDriver();
         
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         login(driver, GENERAL);
 	}
 	
@@ -59,7 +61,7 @@ public class GeneralAgreementTest extends AioBaseTestCase {
 	}
 	
 	private static void clickShowAllAgreements (WebDriver driver) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		By showAll = By.cssSelector("button[title='Mostrar todos los convenios']");
 		SeleniumTools.click(driver, wait, showAll);
 	}

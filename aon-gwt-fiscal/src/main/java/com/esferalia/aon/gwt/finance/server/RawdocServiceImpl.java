@@ -139,12 +139,14 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			String serverName = req.getServerName();
 			int serverPort = req.getServerPort();
 			StringBuilder baseURL = new StringBuilder();
-			String scheme = req.getScheme();
-			baseURL
+			if (serverPort != 80 && serverPort != 443) {
+				String scheme = req.getScheme();
+				baseURL
 				.append(scheme).append(":")
 				.append("//").append(serverName)
-				.append(":").append(serverPort)
-				.append( getThreadLocalRequest().getContextPath() );
+				.append(":").append(serverPort);
+			}
+			baseURL.append( getThreadLocalRequest().getContextPath() );
 			
 			String params = "domain="+ occam.getDomain() + "&id=" +  rawdocId;
 			params = Base64.getEncoder().encodeToString(params.getBytes());

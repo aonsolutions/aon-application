@@ -34,10 +34,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class ProjectPanel extends ScrollPanel {
 
@@ -59,7 +57,6 @@ public abstract class ProjectPanel extends ScrollPanel {
 	private ProjectParams params;
 	private Map<Integer, Project> rowProjects = new HashMap<>();
 	
-	private SimplePanel parentPanel;
 	private Integer customerId;
 	
 	private static enum COLS {
@@ -94,11 +91,9 @@ public abstract class ProjectPanel extends ScrollPanel {
 		}
 	}
 
-	public ProjectPanel(ProjectParams params, SimplePanel centerPanel, Integer customerId) {
+	public ProjectPanel(ProjectParams params, Integer customerId) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
-		
-		this.parentPanel = centerPanel;
 		
 		this.params = params;
 		this.rowProjects.clear();
@@ -220,11 +215,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 			}
 			
 			if (!something) {
-				FlowPanel line = new FlowPanel();
-				InlineLabel label = new InlineLabel(AON.MSG.noData());
-				line.add(label);
-				parentPanel.clear();
-				parentPanel.add(line);
+				paintEmptyRow();
 				disableMoreData();
 			}
 			enableSearch();
@@ -233,6 +224,15 @@ public abstract class ProjectPanel extends ScrollPanel {
 		
 	}
 	
+	private void paintEmptyRow() {
+		HTMLPanel row = tab.createRow();
+		
+		Label name = new Label("No existen expdientes");
+		name.setTitle("No existen expdientes");
+		tab.addInlineStyle(name, COLS.DES.getStyles());
+		tab.addRow(row, name, COLS.DES.getColWidth());
+	}
+
 	private void paintRow(Project project) {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
