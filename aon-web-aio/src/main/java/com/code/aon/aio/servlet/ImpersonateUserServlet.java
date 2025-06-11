@@ -1,5 +1,6 @@
 package com.code.aon.aio.servlet;
 
+import static com.code.aon.aio.servlet.LoginServlet.LOGIN_SERVLET_FAIL_ATTRIBUTE;
 import static com.code.aon.aio.servlet.LoginServlet.getRealRequest;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
@@ -46,6 +47,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "Impersonate User Servlet", urlPatterns = { "/impuser/*" })
 public class ImpersonateUserServlet extends HttpServlet {
@@ -193,6 +195,21 @@ public class ImpersonateUserServlet extends HttpServlet {
 					if ( principal != null ) {
 						request.setUserPrincipal(principal);
 						session.setPrincipal(principal);
+					}
+					
+					boolean sessionUpdated = false;
+					if ( session instanceof HttpSession httpSession ) {
+						if ( principal == null ) {
+							httpSession.setAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE, Boolean.TRUE.toString());
+						} else {
+							httpSession.removeAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE);
+						}
+						sessionUpdated =true;
+					}
+					if ( (principal == null) && (!sessionUpdated) ) {
+						throw new HttpError(SC_INTERNAL_SERVER_ERROR, null, null);
+					} else {
+						response.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
 					}
 				}
 			}
