@@ -58,14 +58,22 @@
 
 				<aon:outputLabel for="User_login"
 					value="#{bundle.aon_login}" />
-				<h:panelGrid styleClass="aon-nomargin">
+				<h:panelGrid styleClass="aon-nomargin" columns="2">
 					<aon:inputText id="User_login"
 						size="20" maxlength="16" required="true" 
 						validator="#{domainUser.idCheck}"
 						value="#{domainUser.to.login}" />
-					<aon:outputText value="#{bundle.admin_user_init_password}"
-						styleClass="aon-margin-left"
-						rendered="#{domainUser.nevv}" />							
+						
+					<aon:div>
+						<aon:outputText value="#{bundle.admin_user_init_password}"
+							styleClass="aon-margin-left"
+							rendered="#{domainUser.nevv}" />
+						<aon:outputLink id="impersonateUser"
+							styleClass="aon-margin-left aon-button-goto aon-icon"
+							onclick="document.getElementById('impersonateUserForm').submit(); return false;"
+							rendered="#{domainSwitcher.parentDomainUserInChildDomain and domainUser.impersonateUserEnabled}" />
+					</aon:div>
+													
 				</h:panelGrid>
 				
 				<aon:outputLabel for="User_toolbar"
@@ -241,6 +249,18 @@
 
 		</aon:div>
 	</aon:form>
+	
+	<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain and domainUser.impersonateUserEnabled}" >
+		<form id="impersonateUserForm" method="POST" target="#{domainUser.userDomain.name}" action="#{domainUser.impersonateUserURL}">
+			<input type="hidden" id="fromDomain" name="fromDomain" value="#{domainUser.loggedUserDomain}"  /> 
+			<input type="hidden" id="fromDomainName" name="fromDomainName" value="#{domainUser.currentURLDomain}"  />
+			<input type="hidden" id="fromUser" name="fromUser" value="#{domainSwitcher.currentUser}"  />
+	
+			<input type="hidden" id="toDomain" name="toDomain" value="#{domainUser.userDomain.id}"  />
+			<input type="hidden" id="toDomainName" name="toDomainName" value="#{domainUser.userDomain.name}" />
+			<input type="hidden" id="toUser" name="toUser" value="#{domainUser.to.login}" />
+		</form>
+	</aon:if>
 
 	<aon:if test="#{aonRole.sysAdmin}" >
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />

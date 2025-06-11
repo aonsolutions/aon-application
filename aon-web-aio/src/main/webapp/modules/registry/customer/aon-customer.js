@@ -10,7 +10,6 @@ import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, ge
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
-import { AonProjectList } from "../../project/aon-project-list.js";
 import { AonBookingItemList } from "../target/item/aon-booking-item-list.js";
 import { AonItemList } from "../target/item/aon-item-list.js";
 import { AonSellerList } from "../seller/aon-seller-list.js";
@@ -55,6 +54,8 @@ export class AonCustomer extends AonReg {
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 			this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
+			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
+			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
 				this.options.push({ title: MSG.USERS, fn: () => this.buildUsersData() });
@@ -76,26 +77,8 @@ export class AonCustomer extends AonReg {
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
-
-		if (this.registry.id && this.registry.getCreationUser) {
-			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
-			
-			getCustomerNotes({customer: this.registry.getId()})
-				.then(notes => {
-					console.log(notes);
-					const existsNotes = notes.some(item => item.type === "MESSAGE" );
-					
-					if(existsNotes){
-						let customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIconButton');
-						customerNotesButton.style.color = 'green';
-					}
-					
-					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
-					console.log("existsObservation : " + existsObservation);
-					if(existsObservation) this.notes();
-					
-				});
-		}
+		
+		this.buildNotesToobar();
 		
 		if (this.registry.id && this.registry.getCreationUser) {
 			toolbar.addButtonTitle(ACTION.AUDIT, () => this.audit());
@@ -115,6 +98,30 @@ export class AonCustomer extends AonReg {
 
 		this.buildGeneralData();
 
+	}
+	
+	buildNotesToobar(){
+		if (this.registry.id && this.registry.getCreationUser) {
+			let toolbar = this.getElement(this.REGISTRY_TOOLBAR);
+			
+			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
+			
+			getCustomerNotes({customer: this.registry.getId()})
+				.then(notes => {
+					console.log(notes);
+					const existsNotes = notes.some(item => item.type === "MESSAGE" );
+					
+					if(existsNotes){
+						let customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIconButton');
+						customerNotesButton.style.color = 'green';
+					}
+					
+					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
+					console.log("existsObservation : " + existsObservation);
+					if(existsObservation) this.notes();
+					
+				});
+		}
 	}
 
 	buildGeneralData = () => {
@@ -518,6 +525,22 @@ export class AonCustomer extends AonReg {
 		localStorage.setItem("customer", this.registry.getId());
 
 		GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+	}
+	
+	buildInvoices(){
+		this.hideSaveButton();
+		
+		let div = this.getElement(this.DIV);
+		div.style.display = "flex";
+		this.clearElement(div);
+
+		div.style.height = 'calc(100vh - 15rem)';
+  		div.style.overflowY = 'auto';
+  		div.style.margin = '.5rem 0';
+
+		localStorage.setItem("customer", this.registry.getId());
+
+		GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
 	}
 
 	getOptionsLinked(element, rrelationship = undefined) {

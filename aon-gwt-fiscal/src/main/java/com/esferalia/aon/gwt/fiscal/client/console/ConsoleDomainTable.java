@@ -25,6 +25,7 @@ class ConsoleDomainTable extends AonDisplayGrid implements HasSelectionHandlers<
 	}
 	
 	interface ConsoleDomainTableCallback {
+		public ConsoleModuleOptions getOptions();
 		public String getSchema();
 		public String[] getSchemas();
 		public int addCount();
