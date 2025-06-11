@@ -879,5 +879,17 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-gpp-maybe.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGppMaybe();
+	
+	@Source("icons/aon-icon-check-circle.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCheckCircle();
+	
+	@Source("icons/aon-icon-check-circle-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCheckCircleGreen();
+	
+	@Source("icons/aon-icon-error-exclamation.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconErrorExclamation();
 }
 
