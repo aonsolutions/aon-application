@@ -347,7 +347,8 @@ public class ConsoleDAO {
 	}
 
 	public static boolean enableRemoteAccess(AONContext ctx, Integer domainId) {
-		if (!isRemoteAccessEnabled(ctx, domainId)) {
+		boolean wasEnabled = isRemoteAccessEnabled(ctx, domainId);
+		if (!wasEnabled) {
 			int count = ctx.getDslContext()
 				.insertInto(APP_PARAM)
 				.set(APP_PARAM.DOMAIN, domainId)
@@ -356,7 +357,7 @@ public class ConsoleDAO {
 				.execute();
 			ctx.log().info("Remote Access Change: ON " + domainId + "(" + count + " rows)");
 		}
-		return true;
+		return wasEnabled;
 	}
 
 	@SuppressWarnings("unchecked")

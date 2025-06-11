@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -51,12 +54,8 @@ public class ImpersonateUserServlet extends HttpServlet {
 	
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
-	private static final String DOMAIN_ID = "domainId";
 	private static final String LANGUAGE = "language";
-	private static final String REDIRECT_URL = "redirectUrl";
-	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
-	private static final String DOMAIN_NAME = "com.code.aon.jaas.domain";
 
 	
 	
@@ -175,7 +174,18 @@ public class ImpersonateUserServlet extends HttpServlet {
 				session = request.getSessionInternal();
 				principal = session.getPrincipal();
 				if ( principal == null ) {
-					CONSOLE.enableRemoteAccess( occam,  toDomain);
+					boolean wasEnabled = CONSOLE.enableRemoteAccess( occam,  toDomain);
+					
+					// Si el acceso remoto no estaba habilitado, se da tiempo al 
+					// login (10 segundos) para después deshabilitar el acceso remoto.
+					if (!wasEnabled) {
+						ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+						Runnable disableRemoteAccess = () -> {
+							CONSOLE.switchRemoteAccess( occam,  toDomain);
+						};
+						scheduler.schedule(disableRemoteAccess, 10, TimeUnit.SECONDS);
+					}
+			        
 					
 					String username = "cau="+toUser; 
 					String password = "aonc4u"; 
