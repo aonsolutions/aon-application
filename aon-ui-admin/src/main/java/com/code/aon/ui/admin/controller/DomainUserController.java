@@ -305,14 +305,9 @@ public class DomainUserController extends BasicController {
 	
 	public boolean isImpersonateUserEnabled() {
 		if (!isNevv()) {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
-			try {
-				String dn1 = ds.getCurrentDomainURL();
-				String dn2 = getUserDomain().getName();
-				return !StringUtils.equals( dn1 , dn2 );
-			} catch (ManagerBeanException e) {
-				return false;
-			}
+			String dn1 = getCurrentURLDomain();
+			String dn2 = getUserDomain().getName();
+			return !StringUtils.equals( dn1 , dn2 );
 		}
 		return false;	
 	}
