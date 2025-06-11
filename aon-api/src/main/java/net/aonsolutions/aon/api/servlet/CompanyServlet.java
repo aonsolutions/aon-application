@@ -239,6 +239,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			List<String> schemas = AONContext.getSchemas(); //AONContext.getSchemas(api.getDomain().getName());
 			
 			
+			String domainName = api.getRequest().getServerName();
+			Domain domain = AON_SOLUTIONS.getDomain(domainName);
+
 			try {
 				for(String schema : schemas) {
 					LinkedList<Integer> ds = new LinkedList<>();	
@@ -250,7 +253,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 						if(!ds.contains(aonCompany.getDomain().getId())){
 							
 							JSONObject jsonCompany = aonCompany.toJSON();
-							jsonCompany.put("shared", isShared(aonCompany, api));
+							jsonCompany.put("shared", isShared(aonCompany, domain));
 							jsArray.put(jsonCompany);
 							ds.add(aonCompany.getDomain().getId());
 						}
@@ -267,10 +270,12 @@ public class CompanyServlet extends AonApiHttpServlet{
 		}
 	}
 
-	private static boolean isShared(AonCompany aonCompany, AonApiData api ) {
-		return  api.getDur() != null
-				&& AonNumberUtils.notEquals(aonCompany.getDomain().getId(), api.getDomain().getId())
-				&& AonNumberUtils.notEquals(aonCompany.getDomain().getParentId(), api.getDomain().getId());
+	private static boolean isShared(AonCompany aonCompany, Domain domain) {
+		return  domain != null 
+				//TODO: && !AonStringUtils.endsWith(aonCompany.getDomain().getName(), domainName)
+				&& AonNumberUtils.notEquals(aonCompany.getDomain().getId(), domain.getId())
+				&& AonNumberUtils.notEquals(aonCompany.getDomain().getParentId(), domain.getId())
+				;
 	}
 	
 	

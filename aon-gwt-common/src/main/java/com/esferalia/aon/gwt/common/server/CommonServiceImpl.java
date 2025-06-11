@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.server;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -118,7 +119,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 import jakarta.servlet.annotation.WebServlet;
 
@@ -1131,7 +1131,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public String getInvoicePDF(String domainName, int domainId, String login, Integer invoiceId) throws AonCoreException {
-		try (ByteOutputStream os = new ByteOutputStream(30 * 1024)){
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){
 			
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
