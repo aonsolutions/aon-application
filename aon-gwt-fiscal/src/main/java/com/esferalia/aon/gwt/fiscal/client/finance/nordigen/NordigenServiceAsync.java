@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccessToken;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -30,5 +29,6 @@ public interface NordigenServiceAsync {
 	void setAllBankAccountValues(Occam occam, NordigenAccessToken token, AsyncCallback<List<NordigenBankAccount>> callback);
 	void getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition,AsyncCallback<Integer> callback);
 	void getRemainingCallsToday(Occam occam, NordigenBankAccount account, AsyncCallback<Integer> callback) ;
+	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback); 
 
 }

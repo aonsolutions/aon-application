@@ -32,4 +32,5 @@ public interface NordigenService extends RemoteService {
 	List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) throws NordigenException;
 	Integer getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition) throws NordigenException;
 	int getRemainingCallsToday(Occam occam, NordigenBankAccount account) throws NordigenException;
+	String getLatestRetryAfter(Occam occam, NordigenBankAccount account) throws NordigenException;
 }
