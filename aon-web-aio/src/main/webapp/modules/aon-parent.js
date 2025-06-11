@@ -64,8 +64,7 @@ export class AonParent extends AonElement {
 
 		this.build();
 		this.buildSidenav();
-		this.select(filter)
-		.then(companies => {
+		this.select(filter,companies => {
 			this.decorateTabs(companies);
 			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
 			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`); 
@@ -108,7 +107,7 @@ export class AonParent extends AonElement {
 					this.page = 1;
 					this.cleanCompanies();
 					
-	  			let filteredCompanies = this.filterCompanies(companies, filter);
+	  				let filteredCompanies = this.filterCompanies(companies, filter);
 					
 					this.buildCompanies(filteredCompanies.slice(0, 30), filter);
 					
@@ -467,8 +466,7 @@ export class AonParent extends AonElement {
 				app: ClassicApps.AON_SOLUTIONS,
 				fn: () => {
 					let enterprisesFilter = {ids:undefined, count:undefined};
-					this.select({...this.getFilter(),...enterprisesFilter })
-					.then(companies => this.decorateTabs(companies, enterprisesFilter));
+					this.select({...this.getFilter(),...enterprisesFilter }, companies => this.decorateTabs(companies, enterprisesFilter));
 				},
 		  	}]
 		};
@@ -504,8 +502,7 @@ export class AonParent extends AonElement {
 						}
 
 						let tramitFilter = { ids: domains, count: domainCount };
-						this.select({...this.getFilter(), ...tramitFilter})
-						.then(companies => this.decorateTabs(companies, tramitFilter));																  
+						this.select({...this.getFilter(), ...tramitFilter}, companies => this.decorateTabs(companies, tramitFilter));																  
 					},
 				},
 				{
@@ -515,8 +512,7 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let reviewFilter = { ids: this.notice?.invoice?.rejected?.domains, count: this.notice?.invoice?.rejected?.domainCount };
-						this.select({...this.getFilter(), ...reviewFilter})
-						.then(companies => this.decorateTabs(companies, reviewFilter));
+						this.select({...this.getFilter(), ...reviewFilter}, companies => this.decorateTabs(companies, reviewFilter));
 					},
 				},
 				{
@@ -526,8 +522,7 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let unaccountedFilter = { ids: this.notice?.invoice?.pending?.domains, count: this.notice?.invoice?.pending?.domainCount };
-						this.select({...this.getFilter(), ...unaccountedFilter})
-						.then(companies => this.decorateTabs(companies, unaccountedFilter));
+						this.select({...this.getFilter(), ...unaccountedFilter}, companies => this.decorateTabs(companies, unaccountedFilter));
 					},
 				},
 				{
@@ -537,8 +532,7 @@ export class AonParent extends AonElement {
 					app: Apps.INVOICE,
 					fn: () => {
 						let draftsFilter = { ids: this.notice?.invoice?.inbox?.domains, count: this.notice?.invoice?.inbox?.domainCount };
-						this.select({...this.getFilter(), ...draftsFilter})
-						.then(companies => this.decorateTabs(companies, draftsFilter));
+						this.select({...this.getFilter(), ...draftsFilter}, companies => this.decorateTabs(companies, draftsFilter));
 					},
 				}
 			]
@@ -574,7 +568,8 @@ export class AonParent extends AonElement {
 		this.getApplication().getSidenav().appendChild(appsDiv);
 
 		
-		getTimeControl().then(r => {
+		getTimeControl()
+		.then(r => {
 			let option = {
 				id: "signing",
 				title: MSG.SIGNING.toUpperCase(),
