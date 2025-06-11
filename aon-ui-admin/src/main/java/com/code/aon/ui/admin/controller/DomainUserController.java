@@ -319,13 +319,23 @@ public class DomainUserController extends BasicController {
 	
 	public String getImpersonateUserURL() {
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		return 
-				(AonStringUtils.isBlank(request.getScheme())? "http" : request.getScheme())
-				+ "://"
-				+ getUserDomain().getName()
-				+ ((request.getServerPort() != 80 && request.getServerPort() != 443) ? (":" + request.getServerPort()) : "") 
-				+ request.getContextPath()
-				+ "/impuser/home.jsf";
+		StringBuilder url = new StringBuilder();
+		
+		if (request.getServerPort() != 80 && request.getServerPort() != 443)  {
+			url.append( (AonStringUtils.isBlank(request.getScheme())? "http" : request.getScheme()) )
+				.append("://")
+				.append( getUserDomain().getName() )
+				.append(":" + request.getServerPort())
+			;	
+		} else {
+			url.append( "https://")
+				.append( getUserDomain().getName() );
+		}
+		url
+			.append(request.getContextPath())
+			.append("/impuser/home.jsf")
+		;
+		return url.toString();
 	}
 
 
