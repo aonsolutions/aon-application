@@ -180,7 +180,7 @@ export class AonElement extends HTMLElement{
 
   isBeta(){
     const href = window.location.href;
-    return href.includes('aonsolutions.org') || this.isLocal();
+    return href.includes('aonsolutions.org') || LS.isBeta();
   }
 
   isBetaDoc(){
