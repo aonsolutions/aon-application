@@ -80,6 +80,7 @@ export const CITY = 'Ciudad';
 export const CLASSIC = 'Clàssic';
 export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
 export const CLASSIC_VIEW = 'Vista Clàssica';
+export const CLIENT_FILE = 'Fitxa Client';
 export const CLOSE = 'Tancar';
 export const CLOSE_SESSION = 'Tancar Sessió';
 export const CLOSED = 'Tancat';
