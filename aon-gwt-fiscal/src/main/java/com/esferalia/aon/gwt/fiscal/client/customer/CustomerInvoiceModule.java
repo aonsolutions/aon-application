@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.customer;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -23,6 +25,7 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -91,13 +94,17 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 	private Map<Integer, CustomerInvoiceRow> rows = new HashMap<Integer, CustomerInvoiceRow>();
 	
 	private static enum COLS {
-		  DAT("Fecha"								,"5rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		  STA(AonStringUtils.EMPTY					,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DAT("Fecha"								,"5rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, NUM("N. Factura"							,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BAS("Base"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IVA("IVA"									,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, IRP("IRPF"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TOT("Total"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, STA("Estado"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, BAS("Base"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;")
+		, IVA("IVA"									,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;")
+		, IRP("IRPF"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;")
+		, TOT("Total"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;")
+		, PAY("F. Pago"								,"10rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, VEN("Vto."								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe."							,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;")
+		, EST("Estado"								,"5.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BUT(AonStringUtils.EMPTY					,"3rem" 			,"")
 		;
 
@@ -166,6 +173,9 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 				paintHeader();
 				tableContainer.add(tableScrollPanel);
 				
+				invoices.sort(Comparator.comparing(Invoice::getIssueDate,
+				        Comparator.nullsFirst(Comparator.reverseOrder())));
+				
 				invoices.forEach(invoice -> paintRow(invoice));
 			} else {
 				tableContainer.add(new Label("No existen facturas para este cliente"));
@@ -209,6 +219,11 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 			else closePDF(row, openDocument, closeDocument);
 		}, ClickEvent.getType());
 		
+		AonTableButton status = new AonTableButton(
+				invoice.isRecorded() ? InvoiceStatus.SCORED.getName() : InvoiceStatus.PENDING.getName(), 
+				invoice.isRecorded() ? AON.CSS.aonIconCheckCircleGreen() : AON.CSS.aonIconErrorExclamation());
+		tab.addRow(row, status, COLS.STA.getColWidth());
+		
 		Label date = new Label(null == invoice.getIssueDate() ? "" : formatDate.format(invoice.getIssueDate()));
 		tab.addInlineStyle(date, COLS.DAT.getCellStyleClass());
 		tab.addRow(row, date, COLS.DAT.getColWidth());
@@ -236,15 +251,92 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		tab.addInlineStyle(total, COLS.TOT.getCellStyleClass());
 		tab.addRow(row, total, COLS.TOT.getColWidth());
 		
-		Label status = new Label(invoice.isRecorded() ? InvoiceStatus.SCORED.getName() : InvoiceStatus.PENDING.getName());
-		tab.addInlineStyle(status, COLS.STA.getCellStyleClass());
-		tab.addRow(row, status, COLS.STA.getColWidth());
+		// Finance
+		Finance finance = null;
+		if(invoice.hasFinances()) finance = invoice.financeStream().findFirst().get();
+		
+		Label payMethod = new Label(null == finance ? "" : finance.getPayMethodName());
+		tab.addInlineStyle(payMethod, COLS.PAY.getCellStyleClass());
+		tab.addRow(row, payMethod, COLS.PAY.getColWidth());
+		
+		Label vto = new Label(null == finance || null == finance.getDueDate() ? "" : formatDate.format(finance.getDueDate()));
+		tab.addInlineStyle(vto, COLS.VEN.getCellStyleClass());
+		tab.addRow(row, vto, COLS.VEN.getColWidth());
+		
+		Label amount = new Label(null == finance ? "" : formatToEuro(finance.getAmount() + finance.getExpenses()));
+		tab.addInlineStyle(amount, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, amount, COLS.IMP.getColWidth());
+		
+		Label statusFinance = new Label(null == finance || finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
+		tab.addInlineStyle(statusFinance, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, statusFinance, COLS.IMP.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
 		
 		rows.put(invoice.getId(), new CustomerInvoiceRow(row, openDocument, closeDocument));
+		
+		// FinanceRows
+		if(invoice.hasFinances() && null != finance) {
+			Integer financeId = finance.getId();
+			invoice.financeStream()
+				.filter(f -> !f.getId().equals(financeId))
+				.forEach(finan -> paintRow(finan));
+		}
 	}
 	
+	private void paintRow(Finance finance) {
+		HTMLPanel row = tab.createRow();
+		
+		FlowPanel buttonContainer = new FlowPanel();
+
+		Label sta = new Label();
+		tab.addInlineStyle(sta, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, sta, COLS.STA.getColWidth());
+		
+		Label dat = new Label();
+		tab.addInlineStyle(dat, COLS.DAT.getCellStyleClass());
+		tab.addRow(row, dat, COLS.DAT.getColWidth());
+		
+		Label num = new Label();
+		tab.addInlineStyle(num, COLS.NUM.getCellStyleClass());
+		tab.addRow(row, num, COLS.NUM.getColWidth());
+		
+		Label bas = new Label();
+		tab.addInlineStyle(bas, COLS.BAS.getCellStyleClass());
+		tab.addRow(row, bas, COLS.BAS.getColWidth());
+		
+		Label iva = new Label();
+		tab.addInlineStyle(iva, COLS.IVA.getCellStyleClass());
+		tab.addRow(row, iva, COLS.IVA.getColWidth());
+		
+		Label irp = new Label();
+		tab.addInlineStyle(irp, COLS.IRP.getCellStyleClass());
+		tab.addRow(row, irp, COLS.IRP.getColWidth());
+		
+		Label tot = new Label();
+		tab.addInlineStyle(tot, COLS.TOT.getCellStyleClass());
+		tab.addRow(row, tot, COLS.TOT.getColWidth());
+		
+		// Finance
+		Label payMethod = new Label(null == finance ? "" : finance.getPayMethodName());
+		tab.addInlineStyle(payMethod, COLS.PAY.getCellStyleClass());
+		tab.addRow(row, payMethod, COLS.PAY.getColWidth());
+		
+		Label vto = new Label(null == finance || null == finance.getDueDate() ? "" : formatDate.format(finance.getDueDate()));
+		tab.addInlineStyle(vto, COLS.VEN.getCellStyleClass());
+		tab.addRow(row, vto, COLS.VEN.getColWidth());
+		
+		Label amount = new Label(null == finance  ? "" : formatToEuro(finance.getAmount() + finance.getExpenses()));
+		tab.addInlineStyle(amount, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, amount, COLS.IMP.getColWidth());
+		
+		Label statusFinance = new Label(null == finance || finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
+		tab.addInlineStyle(statusFinance, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, statusFinance, COLS.IMP.getColWidth());
+		
+		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+	}
+
 	private void openPDF(HTMLPanel row, Integer invoiceId, AonTableButton openDocument, AonTableButton closeDocument) {
 		dockPanel.setWidgetSize(viewer, 45);
 		dockPanel.animate(500);
@@ -278,14 +370,12 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		});
 	}
 
-	private static String formatToEuro(double value) {
-        // Round to two decimal places
-        long scaledValue = Math.round(value * 100); // Scale to avoid floating-point precision issues
-        long integerPart = scaledValue / 100;      // Extract integer part
-        long decimalPart = scaledValue % 100;      // Extract decimal part
+	private static String formatToEuro(double amount) {
+        // Format the double value as a number with two decimal places
+        NumberFormat numberFormat = NumberFormat.getFormat("#,##0.00");
 
-        // Format the result
-        return integerPart + "." + (decimalPart < 10 ? "0" : "") + decimalPart + " \u20ac";
+        // Manually append the Euro symbol ()
+        return numberFormat.format(amount) + " \u20AC";
     }
 
 	private void getInvoices(Consumer<List<Invoice>> success) {
