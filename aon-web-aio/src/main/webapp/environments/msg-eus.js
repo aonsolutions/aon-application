@@ -81,6 +81,7 @@ export const CITY = 'Hiria';
 export const CLASSIC = 'Klasikoa';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
+export const CLIENT_FILE = 'Bezeroaren Fitxategia';
 export const CLOSE = 'Itxi';
 export const CLOSE_SESSION = 'Saioa Itxi';
 export const CLOSED = 'Itxita';
