@@ -1079,16 +1079,17 @@ export class AonNewMenu extends AonElement {
 				( 	this.getDur().isTimecontrol()   
 				|| 	this.getDur().isTimecontrolManager() );
 		if (MenuApps.INVOICE.app === app.app)
-			return this.getDur().isInvoiceUser();
+			return this.getDur().isInvoice();
 		if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
 		if (AON_CLASSIC.app === app.app)
 			return this.getDur().isAon();
 		if (NEW.app === app.app)
 			return this.getDur().isAon()
+				|| this.getDur().isInvoice()
 				|| this.getDur().isMessenger()
 				|| this.getDur().isDocumental()
-				|| this.getDur().isInvoiceUser();
+				;
 		if (HOME.app === app.app)
 			return !this.getDur().isConsole();
 		if (APPS.app === app.app)
