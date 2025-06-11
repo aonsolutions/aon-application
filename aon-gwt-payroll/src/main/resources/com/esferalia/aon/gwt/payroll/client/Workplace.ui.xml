@@ -79,47 +79,49 @@
 		
 	</ui:style>
 	
-	<g:HTMLPanel styleName="{style.container}">
-		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}">
-	   		<g:HTMLPanel styleName="{style.styleBorder}">
-	    		<g:Label styleName='{style.tittle}'>Datos Generales</g:Label>
-		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel ui:field="workplaceDescriptionPanel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
-		    			<g:TextBox ui:field="workplaceDescription" debugId="workplaceDescriptionTB" styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="workplaceAddressParentPanel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceAddressPanel" styleName='{style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Concierto económico</g:Label>
-		    			<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll}' />
-					</g:HTMLPanel>
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>
-	   	
-	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="activityHTMLPanel">
-	   		<g:HTMLPanel styleName="{style.styleBorder} ">
-	    		<g:Label styleName='{style.tittle}'>Datos Laborables</g:Label>
-		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
-		    		<g:HTMLPanel ui:field="workplaceCalendarHTMLPanel" styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Calendario</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceCalendarPanel" styleName='{style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label  styleName='{style.firstColumn}'>Convenio</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceAgreementPanel" styleName='{style.widthAll}' />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Actividad</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceActivityPanel" styleName='{style.widthAll}' />
-					</g:HTMLPanel>
-		    	</g:HTMLPanel>
-		    </g:HTMLPanel>
-	   	</g:HTMLPanel>
-	</g:HTMLPanel>
+	<g:ScrollPanel ui:field="scrollPanel">
+		<g:HTMLPanel styleName="{style.container}">
+			<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}">
+		   		<g:HTMLPanel styleName="{style.styleBorder}">
+		    		<g:Label styleName='{style.tittle}'>Datos Generales</g:Label>
+			    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+			    		<g:HTMLPanel ui:field="workplaceDescriptionPanel" styleName="{style.flex}">
+			    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
+			    			<g:TextBox ui:field="workplaceDescription" debugId="workplaceDescriptionTB" styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="workplaceAddressParentPanel" styleName="{style.flex}">
+			    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
+			    			<g:HTMLPanel ui:field="workplaceAddressPanel" styleName='{style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label styleName='{style.firstColumn}'>Concierto económico</g:Label>
+			    			<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll}' />
+						</g:HTMLPanel>
+			    	</g:HTMLPanel>
+			    </g:HTMLPanel>
+		   	</g:HTMLPanel>
+		   	
+		   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="activityHTMLPanel">
+		   		<g:HTMLPanel styleName="{style.styleBorder} ">
+		    		<g:Label styleName='{style.tittle}'>Datos Laborables</g:Label>
+			    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
+			    		<g:HTMLPanel ui:field="workplaceCalendarHTMLPanel" styleName="{style.flex}">
+			    			<g:Label  styleName='{style.firstColumn}'>Calendario</g:Label>
+			    			<g:HTMLPanel ui:field="workplaceCalendarPanel" styleName='{style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label  styleName='{style.firstColumn}'>Convenio</g:Label>
+			    			<g:HTMLPanel ui:field="workplaceAgreementPanel" styleName='{style.widthAll}' />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+			    			<g:Label styleName='{style.firstColumn}'>Actividad</g:Label>
+			    			<g:HTMLPanel ui:field="workplaceActivityPanel" styleName='{style.widthAll}' />
+						</g:HTMLPanel>
+			    	</g:HTMLPanel>
+			    </g:HTMLPanel>
+		   	</g:HTMLPanel>
+		</g:HTMLPanel>
+	</g:ScrollPanel>
 			
 </ui:UiBinder> 
 

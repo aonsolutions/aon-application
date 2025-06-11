@@ -53,7 +53,6 @@ export class AonNewDesktop extends AonElement {
 		}else{
 			let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
 			app.main = "true";
-			this.appendChild(app);
 			app.closeSidenav();
 
 			let div = this.createDiv();	

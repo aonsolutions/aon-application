@@ -1,14 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.jooq.Named;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -63,6 +61,11 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public boolean switchRemoteAccess(AONContext ctx, Integer domainId) {
 		return ConsoleDAO.switchRemoteAccess(ctx, domainId);
+	}
+
+	@Override
+	public boolean enableRemoteAccess(AONContext ctx, Integer domainId) {
+		return ConsoleDAO.enableRemoteAccess(ctx, domainId);
 	}
 
 	@Override

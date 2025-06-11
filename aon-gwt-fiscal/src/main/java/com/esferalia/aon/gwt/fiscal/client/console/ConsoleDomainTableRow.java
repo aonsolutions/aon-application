@@ -1,37 +1,34 @@
 package com.esferalia.aon.gwt.fiscal.client.console;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.console.ConsoleDomainTable.ConsoleDomainTableCallback;
+import com.esferalia.aon.gwt.fiscal.client.console.ImpersonateUserPanel.ImpersonateUserParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleSchema;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window.Location;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 class ConsoleDomainTableRow extends AonDisplayGridRow {
@@ -249,6 +246,34 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	}
 	
 	private void switchRemoteAccess(JsConsoleDomain domain, ConsoleDomainTableCallback callback) {
+		if (domain.isRemoteAccessEnabled()) {
+			AonConfirmDialog.showConfirm("Pregunta"
+					, "Desea navegar a \"" + domain.getName() + "\"?"
+					, new AonConfirmDialogCallback() {
+						
+						@Override
+						public void onAccept() {
+							offerNavigate( domain, callback);
+						}
+						
+						@Override
+						public void onCancel() {
+							innerSwitchRemoteAccess(domain, callback);
+						}
+						
+						@Override
+						public void onClose() {
+							// Prevent "onCancel" method to be called;
+							
+						};
+					}  
+			);
+		} else {
+			innerSwitchRemoteAccess(domain, callback);		
+		}
+	}
+	
+	private void innerSwitchRemoteAccess(JsConsoleDomain domain, ConsoleDomainTableCallback callback) {
 		callback.onSwitchRemoteAccess(domain.getSchema(), getId(domain), new AsyncCallback<Boolean>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -258,6 +283,7 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 			@Override
 			public void onSuccess(Boolean result) {
 				if (result != null) {
+					domain.setRemoteAccessEnabled( result );
 					decorateRemoteAccess(result);
 					if (result) {
 						offerNavigate( domain, callback );
@@ -269,84 +295,26 @@ class ConsoleDomainTableRow extends AonDisplayGridRow {
 	}
 	
 	private void offerNavigate(JsConsoleDomain domain, ConsoleDomainTableCallback callback) {
-		callback.onAvailableUsers(domain, new AsyncCallback<LinkedList<User>>() {
-
-			@Override
-			public void onFailure(Throwable t) {
-				callback.showError( "No se pudo mostrar los usuarios. ("+ t.getMessage() +")");
-			}
-
-			@Override
-			public void onSuccess(LinkedList<User> users) {
-				AonCustomPopup popup = new AonCustomPopup(true); 
-				popup.setWidth("600px");
-				popup.setHeight("600px");
-				FlowPanel container = new FlowPanel();
-				Hidden userHidden = new Hidden("j_username");
-				Hidden passwordHidden = new Hidden("j_password");
-				FormPanel locForm = new FormPanel(BLANK);
-				locForm.setMethod(FormPanel.METHOD_POST);
-				FlowPanel locFormPanel = new FlowPanel();
-				locFormPanel.add(userHidden);
-				locFormPanel.add(passwordHidden);
-				locForm.setWidget(locFormPanel);
-				container.add(locForm);
-				
-				AonDisplayGrid grid = new AonDisplayGrid();
-				grid.addStyleName(AON.CSS.aonMarginTop());
-				grid.addStyleName(AON.CSS.aonWidthAlmostAll());
-				grid.addStyleName(AON.CSS.aonBlockCenter());
-				grid.addHeaderRow()
-					.addCell(new Label(""), AON.CSS.aonWidth30())
-					.addCell(new Label("Usuario"), AON.CSS.aonWidth150())
-					.addCell(new Label("Nombre"), AON.CSS.aonFlexGrow1());
-				users.stream()	
-					.forEach( u -> {
-						Label topLevel = new Label();
-						if (AonNumberUtils.notEquals(domain.getId(),u.getDomain().getId())) {
-							topLevel.setStyleName(AON.CSS.aonTabIcon());
-							topLevel.addStyleName(AON.CSS.aonIconLevelTop());
-						}
-						grid.addRow()
-							.addCell( topLevel )
-							.addCell(new Label(u.getLogin()))
-							.addCell(new Label(u.getName()))
-							.addClickHandler( e -> {
-								String url = 
-									(AonStringUtils.isBlank(Location.getProtocol()) ?"http:":Location.getProtocol())
-									+ "//"
-									+ domain.getName()
-									+ (AonStringUtils.isNotBlank(Location.getPort())
-										?":" + Location.getPort() + "/aon-aio"
-										:"")
-									+ "/login"
-								;
-								AonConfirmDialog.showConfirm("Pregunta"
-								, "Desea navegar a \"" + url + "\"?"
-								, () -> {
-									locForm.setAction(url);
-									userHidden.setValue("cau="+u.getLogin());
-									passwordHidden.setValue(PSW);
-									locForm.submit();
-									popup.hide();
-								});
-							});
-						
-					});
-				ScrollPanel scroll = new ScrollPanel();
-				container.add(grid);
-				scroll.add(container);
-				popup.add(scroll);
-				popup.center();
-				popup.show();
-			}
-		});
+		ImpersonateUserParams params = new ImpersonateUserParams()
+			.setFromDomainName(callback.getOptions().getOccam().getDomainName())
+			.setFromDomain(callback.getOptions().getOccam().getDomain())
+			.setFromUser(callback.getOptions().getOccam().getUser())
+			
+			.setToDomainName(domain.getName())
+			.setToDomain(domain.getId())
+			.setToUser( null )
+		;
+		AonCustomPopup popup = new AonCustomPopup(true); 
+		popup.setWidth("600px");
+		popup.setHeight("600px");
+		popup.add(new ImpersonateUserPanel(params));
+		popup.center();
+		popup.show();
 	}
 	
 	private native void  copyToClipboard(String copyText) /*-{
 		try {
 			if (!navigator.clipboard) {
-				window.alert("Clipboard access not allowed");
 				return;
 			};
 		    navigator.clipboard.writeText(copyText);

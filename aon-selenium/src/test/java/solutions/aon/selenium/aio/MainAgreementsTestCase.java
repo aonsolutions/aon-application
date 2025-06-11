@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -38,7 +39,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	public static void setUpBeforeClass() throws Exception {
         driver = newChromeDriver();
         
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         login(driver, null);
         
 	}
@@ -161,7 +162,7 @@ public class MainAgreementsTestCase extends AioBaseTestCase {
 	}
 	
 	private static void clickShowAllAgreements (WebDriver driver) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		By showAll = By.cssSelector("button[title='Mostrar todos los convenios']");
 		SeleniumTools.click(driver, wait, showAll);
 	}

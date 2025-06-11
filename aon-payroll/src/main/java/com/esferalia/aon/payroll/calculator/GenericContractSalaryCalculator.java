@@ -1138,20 +1138,22 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
         					    .map( v -> 
         					    	( v instanceof IExpressionVariable ) ?
         					    	new IExpressionVariable<Object>() {
+										@Override
                 						public Period getPeriod() {
                 						    return irpfPeriod;
                 						}
+										@Override
                 						public Object getValue(Period period) {
                 						    return v.getValue(v.getPeriod());
                 						}
-								@Override
-								public IExpression getExpression() {
-								    return ((IExpressionVariable<Object>)v).getExpression();
-								}
-								@Override
-								public Map<String, ITimedVariable<?>> getContext() {
-								    return ((IExpressionVariable<Object>)v).getContext();
-								}
+										@Override
+										public IExpression getExpression() {
+										    return ((IExpressionVariable<Object>)v).getExpression();
+										}
+										@Override
+										public Map<String, ITimedVariable<?>> getContext() {
+										    return ((IExpressionVariable<Object>)v).getContext();
+										}
                 						
         					    	}
         					    	:
@@ -1166,6 +1168,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
     					    }
 
 					    expressionContext = irpfExpressionContext;
+					} else {
+					    for ( String irpfVar : new String  [] {
+							    TMP_IN_KIND.getName(),
+							  } ) {
+					    	if ( expressionContext.isDef(irpfVar)  && !expressionContext.containsVariable(irpfVar, deductionStart, deductionEnd) ) {
+					    		expressionContext.setVariable(irpfVar, 0.00, deductionStart, deductionEnd);
+					    	}
+					    }
 					}
 					
 				} else {

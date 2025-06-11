@@ -43,9 +43,12 @@
 					<aon:outputText value="Altas y Bajas de Contratos" />
 					<aon:selectOneMenu id="contractYearSelect"
 						style="border: none;" value="#{dashboard.contractYear}">
-						<a4j:support event="onchange"
+						<a4j:support 
+							event="onchange"
+							ajaxSingle="true" 
+							oncomplete="onComplete()"
 							actionListener="#{dashboard.onContractYearChanged}"
-							reRender="ContractsGraphContainer,messageList" ajaxSingle="true" />
+							reRender="ContractsGraphContainer,messageList" />
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{dashboard.payrollYears}" />
 					</aon:selectOneMenu>
@@ -101,6 +104,16 @@
 			</aon:div>
 			<script type="text/javascript" > 
 				//<![CDATA[
+				
+				function onComplete() {
+					var completeSpan = document.createElement('span');
+					completeSpan.id = 'completeSpan';
+					completeSpan.style.display = 'none';
+					document.body.appendChild(completeSpan);
+					
+					document.dispatchEvent(new Event("completed"));
+				}
+
 				function selectPayrollYear() {
 					// current year
 					payrollYear = new Date().getFullYear() ; 
@@ -112,10 +125,13 @@
 							if ( select.value != option.value ){
 								select.value = option.value;
 								select.onchange();
+							} else {
+								onComplete();
 							}
-							break;
+							return;
 						}
 					}
+					onComplete();
 				}
 				document.addEventListener('DOMContentLoaded', selectPayrollYear, false );
 				//]]>
