@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -1120,7 +1121,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Invoice> getCustomerInvoices(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
-		return AON.getInvoiceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)));
+		List<Invoice> invoices = AON.getInvoiceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)));
+		invoices.forEach(invoice -> {
+			LinkedList<Finance> finances = AON.getFinanceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getInvoiceProperty().eq(invoice.getId())));
+			finances.forEach(finance -> invoice.addFinance(finance));
+		});
+		return invoices;
 	}
 	
 	@Override
