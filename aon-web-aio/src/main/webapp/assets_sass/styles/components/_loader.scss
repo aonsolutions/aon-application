@@ -3,20 +3,20 @@
 aon-loader{
   // Barra de progreso
   .aonProgress {
-    display: none;
-    height : v.$px-3;
+    display : none;
+    height  : v.$px-3;
     &:before {
-      display   : flex;
-      height    : v.$px-3;
-      width     : v.$pct-100;
-      content   : "";
-      animation : running-progress v.$t-2 cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      -webkit-animation: running-progress v.$t-2 cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      display           : flex;
+      height            : v.$px-3;
+      width             : v.$pct-100;
+      content           : "";
+      animation         : running-progress v.$t-2 cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      -webkit-animation : running-progress v.$t-2 cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
     @keyframes running-progress {
       100% {
-        margin-left : v.$pct-100;
-        margin-right: v.$px-0;
+        margin-left  : v.$pct-100;
+        margin-right : v.$px-0;
       }
     }
   }
@@ -24,11 +24,11 @@ aon-loader{
 
   // spinner
   .aonLoader {
-    position: relative;
-    height: v.$px-20;
-    width: v.$px-20;
-    display: inline-block;
-    animation: around v.$t-5-4 infinite;
+    position  : relative;
+    height    : v.$px-20;
+    width     : v.$px-20;
+    display   : inline-block;
+    animation : around v.$t-5-4 infinite;
   }
 
   @keyframes around {
@@ -41,24 +41,24 @@ aon-loader{
   }
 
   .aonLoader::after, .aonLoader::before {
-    content: "";
-    background: transparent;
-    position: absolute;
-    display: inline-block;
-    width: v.$pct-100;
-    height: v.$pct-100;
-    border-width: v.$px-2;
-    border-color: #333 #333 transparent transparent;
-    border-style: solid;
-    border-radius: v.$px-20;
-    box-sizing: border-box;
-    top: v.$px-0;
-    left: v.$px-0;
-    animation: around v.$t-07 ease-in-out infinite;
+    content       : "";
+    background    : transparent;
+    position      : absolute;
+    display       : inline-block;
+    width         : v.$pct-100;
+    height        : v.$pct-100;
+    border-width  : v.$px-2;
+    border-color  : #333 #333 transparent transparent;
+    border-style  : solid;
+    border-radius : v.$px-20;
+    box-sizing    : border-box;
+    top           : v.$px-0;
+    left          : v.$px-0;
+    animation     : around v.$t-07 ease-in-out infinite;
   }
 
   .aonLoader::after {
-    animation: around v.$t-07 ease-in-out v.$t-01 infinite;
-    background: transparent;
+    animation  : around v.$t-07 ease-in-out v.$t-01 infinite;
+    background : transparent;
   }   
 }

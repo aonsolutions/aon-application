@@ -1,8 +1,8 @@
 import { AonElement } from '../components/AonElement.js';
 import { CONSTANT, TAG, EVENT } from "../environments/environments.js";
 import { AonIconButton } from '../components/aon-icon-button.js';
-import { AonImageEditor } from '../components/aon-image-editor.js';
-import * as LS from '../services/localStorageService.js';
+//import { AonImageEditor } from '../components/aon-image-editor.js';
+//import * as LS from '../services/localStorageService.js';
 
 export class AonRightPanel extends AonElement {
     RIGHT_PANEL;
@@ -45,6 +45,7 @@ export class AonRightPanel extends AonElement {
         this.CLOSE_BUTTON = this.RIGHT_PANEL+'CloseButton';
         this.CONTENT = this.RIGHT_PANEL+'Content';
         this.TITLE = this.RIGHT_PANEL+'Title';
+        this.TITLE_BUTTONS = this.RIGHT_PANEL+ 'Buttons';
         this.EDIT_BUTTON = this.RIGHT_PANEL+ 'EditButton';
         this.CONFIG_BUTTON = this.RIGHT_PANEL + 'ConfigButton';
         this.HELP_BUTTON = this.RIGHT_PANEL + 'HelpButton';
@@ -62,19 +63,10 @@ export class AonRightPanel extends AonElement {
       this.appendChild(rightPanel);
 
       // Agregamos cabecera
-      let rightPanelCloseButton       = new AonIconButton(); 
-      rightPanelCloseButton.id        = this.CLOSE_BUTTON;
-      rightPanelCloseButton.icon      ='close';
-      rightPanelCloseButton.className = "rightPanelCloseButton";
-
-      rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
-        this.close();
-      });
-
       let title = this.createElement(TAG.DIV);
       title.id = this.TITLE;
       titlePanel.appendChild(title);
-      titlePanel.appendChild(rightPanelCloseButton);
+      titlePanel.appendChild(this.titleButtonOptions()); // Div que tiene el boton de cerrar y donde metemos mas, si es necesario
       // Agregamos el contenido
       let content = this.createDiv(this.CONTENT);
 
@@ -164,8 +156,25 @@ export class AonRightPanel extends AonElement {
       this.title = title;
       let titleElement = this.getElement(this.TITLE);
       if(titleElement) {
-          titleElement.innerHTML = this.title;
+        titleElement.innerHTML = this.title;
+        // Cuanto metemos un nuevo titulo, reseteamos los buttons agreagados para dejar solo el cerrado
+        this.clearToolbarButKeepCloseButton();
       }
+    }
+
+    titleButtonOptions(){
+      let toolbarRightButtonsPanel    = this.createDiv(this.TITLE_BUTTONS);
+      let rightPanelCloseButton       = new AonIconButton(); 
+      rightPanelCloseButton.id        = this.CLOSE_BUTTON;
+      rightPanelCloseButton.icon      ='close';
+      rightPanelCloseButton.className = "rightPanelCloseButton";
+
+      rightPanelCloseButton.addEventListener(EVENT.CLICK, () => {
+        this.close();
+      });
+      
+      toolbarRightButtonsPanel.appendChild(rightPanelCloseButton);
+      return toolbarRightButtonsPanel;
     }
 
     setContent(content){
@@ -175,6 +184,17 @@ export class AonRightPanel extends AonElement {
     clear(){
         this.clearElement(this.getContent());
         this.clearElement(this.getTitle());
+    }
+
+    clearToolbarButKeepCloseButton() {
+      const divButtons = this.getElement(this.TITLE_BUTTONS);
+      if(divButtons){
+        Array.from(divButtons.children).forEach(child => {
+          if (child.id !== this.CLOSE_BUTTON) {
+            divButtons.removeChild(child);
+          }
+        });
+      }
     }
 
     open(height,marginTop,boxShadow){

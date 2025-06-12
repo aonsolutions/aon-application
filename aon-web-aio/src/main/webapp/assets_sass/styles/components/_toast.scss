@@ -1,39 +1,39 @@
 @use '../variables' as v;
 
 aon-toast {
-  position: absolute;
-  bottom: v.$pct-10;
-  min-width: v.$px-250;
-  max-width: v.$px-300;
-  margin-left: auto;
-  margin-right: auto;
-  left: v.$px-0;
-  right: v.$px-0;
-  text-align: center;
-  z-index: v.$num-99;
-  visibility: hidden;
-  display: none;
+  position     : absolute;
+  bottom       : v.$pct-10;
+  min-width    : v.$px-250;
+  max-width    : v.$px-300;
+  margin-left  : auto;
+  margin-right : auto;
+  left         : v.$px-0;
+  right        : v.$px-0;
+  text-align   : center;
+  z-index      : v.$num-99;
+  visibility   : hidden;
+  display      : none;
   &.view{
-    visibility: visible;
-    display: grid;
+    visibility : visible;
+    display    : grid;
   }
   > div {
-    border-radius: v.$border-radius;
-    padding: v.$px-16;
-    font-size: v.$px-17;
-    word-wrap: break-word;
-    opacity: v.$px-0;
-    transition: opacity v.$t-05 ease, visibility v.$t-05 ease;
-    display: unset;
+    border-radius : v.$border-radius;
+    padding       : v.$px-16;
+    font-size     : v.$px-17;
+    word-wrap     : break-word;
+    opacity       : v.$px-0;
+    transition    : opacity v.$t-05 ease, visibility v.$t-05 ease;
+    display       : unset;
     
     &.error, &.success, &.primary{
-      display: flex;
-      justify-content: center;
-      opacity: v.$num-1;
+      display         : flex;
+      justify-content : center;
+      opacity         : v.$num-1;
     }
     &.hidden{
-      display: none;
-      opacity: v.$px-0;
+      display : none;
+      opacity : v.$px-0;
     }
   }
 }

@@ -1,0 +1,47 @@
+@use '../variables' as v;
+
+aon-right-panel{
+  #aonRightPanel{   
+    #aonRightPanelContent{
+      #aonNotificationPanel{
+        .notificationPanelGeneralDiv{
+          display        : flex;
+          flex-direction : column;
+          border-radius  : v.$border-radius;
+          .notificationPanelRowPrincipalDiv{
+            padding : v.$px-10 v.$padding v.$px-10 v.$padding;
+            &:first-of-type{
+              border-radius : v.$border-radius v.$border-radius v.$px-0 v.$px-0;
+            }
+            &:last-of-type{
+              border-radius : v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
+            }
+            .notifcationPanelRowGeneralDiv{
+              display     : flex;
+              align-items : center;
+              gap         : v.$px-8;
+              .notificationPanelRowDiv{
+                display        : flex;
+                flex-direction : column;
+                gap            : v.$px-2;
+                cursor         : pointer;
+                .notificationPanelRowSubDiv1{
+                  font-weight : v.$font-weight-semibold;
+                }
+                .notificationPanelRowSubDiv3{
+                  font-size : v.$px-14;
+                }
+                .notificationPanelRowSubDiv2{
+                  font-size : v.$px-14;
+                }
+              }
+              .notificationPanelRowSpan{
+                cursor : pointer;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

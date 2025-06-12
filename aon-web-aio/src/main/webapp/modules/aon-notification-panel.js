@@ -70,11 +70,12 @@ export class AonNotificationPanel extends AonElement {
           if(!this.isNewStyle()){
 			openButton.style.display = "block";
           } else {
+            const divButtons = this.getElement("aonRightPanelButtons");
             openButton.id = "openNotificationButton";
             openButton.icon = "open_in_new";
             openButton.title = "Ver en pantalla completa";
             openButton.className = "rightPanelButtons";
-            divGeneral.appendChild(openButton);
+            divButtons.insertBefore(openButton, divButtons.firstChild); // Agregamos delante del cerrar
           }
           openButton.addEventListener(EVENT.CLICK, () =>  {
             this.goAonNotification();
@@ -148,7 +149,6 @@ export class AonNotificationPanel extends AonElement {
             icon.title = "Solicitudes";
             
             divGeneral.appendChild(icon);
-
         }else{
             let noti = this.createElement(TAG.SPAN);
             noti.className = "material-icons notificationPanelRowNoti";
@@ -178,23 +178,23 @@ export class AonNotificationPanel extends AonElement {
 
         divGeneral.appendChild(div);
 
-        let span = this.createElement(TAG.SPAN);
-        span.className = "material-icons";
-        span.classList.add("notificationPanelRowSpan");
-        span.title = "Marcar como leído";
-        span.innerHTML = "visibility_off";
-        span.style.visibility = "hidden";
-
-        divGeneral.appendChild(span);
+        let iconVisibility = new AonIcon();
+        iconVisibility.className = "material-icons";
+        iconVisibility.classList.add("notificationPanelRowSpan");
+        iconVisibility.title = "Marcar como leído";
+        iconVisibility.innerHTML = "visibility_off";
+        iconVisibility.setAttribute("data-icon", "visibility_off");
+        iconVisibility.style.visibility = "hidden";
+        divGeneral.appendChild(iconVisibility);
 
         divPrincipal.appendChild(divGeneral);
 
         divPrincipal.addEventListener(EVENT.MOUSEOVER, () => {
-            span.style.visibility = "visible";
+            iconVisibility.style.visibility = "visible";
         });
 
         divPrincipal.addEventListener(EVENT.MOUSELEAVE, () => {
-            span.style.visibility = "hidden";
+            iconVisibility.style.visibility = "hidden";
         });
 
         divPrincipal.addEventListener(EVENT.CLICK, () => {
@@ -213,13 +213,12 @@ export class AonNotificationPanel extends AonElement {
             }
         });
         
-        span.addEventListener(EVENT.CLICK, (event) => {
+        iconVisibility.addEventListener(EVENT.CLICK, (event) => {
             event.stopPropagation(); 
             this.markReadNotification(res);
             divGeneral.style.display = "none";
         });
         
-
         return divPrincipal;
     }
 
@@ -277,6 +276,8 @@ export class AonNotificationPanel extends AonElement {
         } 
     */
         datos.forEach((res) => {
+
+            console.log(res)
           this.getElement(this.DIV_GENERAL).appendChild(
             this.buildRow(res)
           );

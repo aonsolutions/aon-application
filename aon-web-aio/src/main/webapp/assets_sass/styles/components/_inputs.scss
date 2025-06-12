@@ -2,9 +2,9 @@
 
 // Generales
 $padding-top    : v.$px-8;
-$padding-right  : v.$px-12;
+$padding-right  : v.$padding;
 $padding-bottom : v.$px-8;
-$padding-left   : v.$px-12;
+$padding-left   : v.$padding;
 $padding: $padding-top $padding-right $padding-bottom $padding-left;
 // .aonInputBox
 $inputbox-display : grid;
@@ -36,7 +36,7 @@ $icon-padding-right : v.$px-40;
 aon-input, aon-new-input{ 
 
   .aonInputBox{
-    display: $inputbox-display;
+    display : $inputbox-display;
     
     .aonInputBoxLabel{
       display        : $inputboxlabel-display;
@@ -68,20 +68,20 @@ aon-input, aon-new-input{
         align-content : $iconbutton-align-content;
 
         button{
-          width : $button-height;
-          height: $button-width;
+          width  : $button-height;
+          height : $button-width;
         }
       }
     }
   }
   // Mensaje de error en los input
   .aonInputMsg{
-    padding-left: $padding-left;
+    padding-left : $padding-left;
   }
   // Este input tiene un icono, por lo que tiene un padding distinto
   &[type="password"]{
     .aonInputBox .aonInputBoxLabel input{
-      padding-right: $icon-padding-right;
+      padding-right : $icon-padding-right;
     }
   }
 }

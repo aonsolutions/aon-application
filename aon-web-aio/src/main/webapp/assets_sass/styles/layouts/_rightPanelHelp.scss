@@ -5,28 +5,29 @@ aon-right-panel{
     #aonRightPanelContent{
       #aonHelp{
         #helpContent{
-          display: flex;
-          flex-direction: column;
-          gap: v.$gap;
+          display        : flex;
+          flex-direction : column;
+          gap            : v.$gap;
           #supportContent{
-            padding: v.$px-0 v.$px-16 !important;
-            display: flex;
-            justify-content: space-between;
+            padding         : v.$px-0 v.$padding !important;
+            display         : flex;
+            justify-content : space-between;
             span{
-              font-size: v.$px-16;
+              font-size     : v.$px-16;
             }
           }
           .helpCardText{
-            display: flex;
-            gap: v.$gap;
-            font-size: v.$px-16;
-            border-radius: v.$border-radius;
+            display       : flex;
+            gap           : v.$px-8;
+            font-size     : v.$px-16;
+            border-radius : v.$border-radius;
             cursor: pointer;
-            background-color: #f1f5f9;
-            padding: v.$px-8 v.$px-16 v.$px-8 v.$px-16;
+            // estos colores no estan en themes.scss porque no sera asi. Seran buttons normales
+            background-color : #f1f5f9;
+            padding          : v.$px-8 v.$padding v.$px-8 v.$padding;
             &:hover{
-              background-color: #cbd5e1;
-              color: #1E293B;
+              background-color : #cbd5e1;
+              color            : #1E293B;
             }
           }
         }  

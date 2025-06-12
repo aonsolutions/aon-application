@@ -287,7 +287,7 @@ export class AonHome extends AonElement {
 //
 	}
 
-// Lógica común de apertura/cierre
+// Logica comun de apertura/cierre
     toggleRightPanel(sectionKey, title, contentInstance) {
       if (this.currentRightPanelSection === sectionKey && this.rightPanel.isOpen()) {
         this.rightPanel.close();

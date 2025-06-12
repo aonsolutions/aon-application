@@ -1,43 +1,48 @@
 @use '../variables' as v;
 
 aon-right-panel{
-  position: fixed;
-  top: v.$height-cabecera;
-  right: v.$px-0;
-  min-width: v.$px-350;
-  height: v.$pct-100;
-  z-index: v.$num-1;
-  transform: translateX(v.$px-0);
-  transition: transform v.$t-03 ease-in-out;
-  opacity: v.$num-1;
-  transition: transform v.$t-03 ease, opacity v.$t-03 ease;
+  position   : fixed;
+  top        : v.$height-cabecera;
+  right      : v.$px-0;
+  min-width  : v.$px-350;
+  height     : v.$pct-100;
+  z-index    : v.$num-1;
+  transform  : translateX(v.$px-0);
+  transition : transform v.$t-03 ease-in-out;
+  opacity    : v.$num-1;
+  transition : transform v.$t-03 ease, opacity v.$t-03 ease;
   
   #aonRightPanel{ 
-    height: v.$pct-100;
-    display: flex;
-    flex-direction: column;
+    height         : v.$pct-100;
+    display        : flex;
+    flex-direction : column;
   
     #aonToolbarPanel{
-      display: flex;
-      margin: v.$px-0;
-      padding: v.$px-16;
-      align-content: center;
-      justify-content: space-between;
+      display         : flex;
+      margin          : v.$px-0;
+      padding         : v.$px-16 v.$padding;
+      align-content   : center;
+      justify-content : space-between;
       #aonRightPanelTitle{
-        align-content: center;
-        font-weight: v.$font-weight-medium;
-        font-size: v.$px-20;
+        align-content : center;
+        font-weight   : v.$font-weight-medium;
+        font-size     : v.$px-20;
+      }
+      #aonRightPanelButtons{
+        display     : flex;
+        align-items : center;
+        gap         : v.$padding;
       }
     }
     #aonRightPanelContent{
-      padding: v.$padding v.$padding v.$px-80 v.$padding; // para que baje hasta abajo viendo todo el contenido
-      flex: v.$num-1;
-      overflow-y: auto;
+      padding    : v.$padding v.$padding v.$px-80 v.$padding; // para que baje hasta abajo viendo todo el contenido
+      flex       : v.$num-1;
+      overflow-y : auto;
     }
   }
   &.hiddenSidenav{
-    transform: translateX(v.$pct-100);
-    opacity: v.$num-0;
-    pointer-events: none;
+    transform      : translateX(v.$pct-100);
+    opacity        : v.$num-0;
+    pointer-events : none;
   }
 }

@@ -11,29 +11,30 @@ $mask-size                   : contain;
 
 // Mapa con iconos y texto
 $icons: (
-  "visibility"    : '../icons/eye.svg',
-  "visibility_off": '../icons/eye-off.svg',
-  "settings"      : '../icons/settings.svg',
-  "close"         : '../icons/x-square.svg',
-  "language"      : '../icons/globe.svg',
-  "palette"       : '../icons/palette.svg',
-  "account_circle": '../icons/user.svg',
-  "notifications" : '../icons/bell.svg',
-  "help_outline"  : '../icons/help-circle.svg',
-  "business"      : '../icons/building.svg',
-  "home"          : '../icons/home.svg',
+  "visibility"     : '../icons/eye.svg',
+  "visibility_off" : '../icons/eye-off.svg',
+  "settings"       : '../icons/settings.svg',
+  "close"          : '../icons/x-square.svg',
+  "open_in_new"    : '../icons/maximize-2.svg',
+  "language"       : '../icons/globe.svg',
+  "palette"        : '../icons/palette.svg',
+  "account_circle" : '../icons/user.svg',
+  "notifications"  : '../icons/bell.svg',
+  "help_outline"   : '../icons/help-circle.svg',
+  "business"       : '../icons/building.svg',
+  "home"           : '../icons/home.svg',
   /* nombres que le han puesto en los iconos de la izquierda... */
-  "widgets"           : '../icons/box.svg',
-  "add_circle_outline": '../icons/plus-square.svg',
-  "monitoring"        : '../icons/calculator.svg',
-  "folder_open"       : '../icons/folder-open.svg',
-  "calculate"         : '../icons/calculator.svg',
-  "account_balance"   : '../icons/building-2.svg',
-  "group"             : '../icons/users.svg',
-  "alarm"             : '../icons/timer.svg',
-  "pinboard"          : '../icons/bookmark.svg',
-  "speaker_notes"     : '../icons/sticky-note.svg',
-  "trolley"           : '../icons/package.svg',
+  "widgets"            : '../icons/box.svg',
+  "add_circle_outline" : '../icons/plus-square.svg',
+  "monitoring"         : '../icons/calculator.svg',
+  "folder_open"        : '../icons/folder-open.svg',
+  "calculate"          : '../icons/calculator.svg',
+  "account_balance"    : '../icons/building-2.svg',
+  "group"              : '../icons/users.svg',
+  "alarm"              : '../icons/timer.svg',
+  "pinboard"           : '../icons/bookmark.svg',
+  "speaker_notes"      : '../icons/sticky-note.svg',
+  "trolley"            : '../icons/package.svg',
   /* nombres que le han puesto en los iconos de arriba... */
   "euro_symbol"     : '../icons/euro.svg',
   "note_stack"      : '../icons/files.svg',
@@ -49,17 +50,23 @@ $icons: (
   /* nombres que le han puesto en los iconos de la derecha - help... */
   "school"   : '../icons/graduation-cap.svg',
   "rss_feed" : '../icons/bell.svg',
-  "schedule" : '../icons/clock.svg'
+  "schedule" : '../icons/clock.svg',
+  /* nombres que le han puesto en los iconos de la derecha - notificaciones... */
+  // aun no estan funcionando, hay que modificar el icono en el js (el de la izquierda)
+  "aon_new_documental" : '../icons/file.svg',
+  "aon_new_messenger"  : '../icons/graduation-cap.svg',
+  "aon_new_payroll"    : '../icons/graduation-cap.svg',
+  "aon_new_invoice"    : '../icons/graduation-cap.svg'
 );
 
 // Estilos para los iconos usando el mapa
 @each $icon-name, $icon-data in $icons {
   aon-icon-button[icon="#{$icon-name}"]{
-    width : $icon-size;
-    height: $icon-size;
+    width  : $icon-size;
+    height : $icon-size;
     button{
-      width : $icon-size;
-      height: $icon-size;
+      width  : $icon-size;
+      height : $icon-size;
       i {
         font-size : $iconbutton-font-size;
         position  : $position;
@@ -84,16 +91,16 @@ $icons: (
       }
     }
   }
-  i[data-icon="#{$icon-name}"] {
-    display: inline-block;
-    width: $icon-size;
-    height: $icon-size;
-    font-size: 0; // ocultar texto si queda alguno
-    background-color: currentColor;
+  i[data-icon="#{$icon-name}"], aon-icon[data-icon="#{$icon-name}"]{
+    display          : inline-block;
+    width            : $icon-size;
+    height           : $icon-size;
+    font-size        : 0; // ocultar texto si queda alguno
+    background-color : currentColor;
 
     mask: url(#{$icon-data}) $mask;
-    mask-size: $mask-size;
-    -webkit-mask: url(#{$icon-data}) $mask;
-    -webkit-mask-size: $mask-size;
+    mask-size         : $mask-size;
+    -webkit-mask      : url(#{$icon-data}) $mask;
+    -webkit-mask-size : $mask-size;
   }
 }

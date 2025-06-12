@@ -154,7 +154,7 @@ export class AonNewLogin extends AonElement {
 
     // Buttons
     let signIn = this.createElement(TAG.BUTTON);
-	signIn.type = 'submit';
+	  signIn.type = 'submit';
     signIn.id = "aonLoginSignin";
     signIn.className = CSS.AON_LOGIN_BUTTON;
     signIn.innerHTML = MSG.SIGN_IN.toUpperCase();

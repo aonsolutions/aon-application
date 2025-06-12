@@ -5,66 +5,66 @@ aon-right-panel{
     #aonRightPanelContent{
       #aonLoginPanel{
         #loginContent{
-          gap: v.$px-15;
-          display: flex;
-          flex-direction: column;
+          gap            : v.$px-15;
+          display        : flex;
+          flex-direction : column;
           >div{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: v.$px-25;
+            display        : flex;
+            flex-direction : column;
+            align-items    : center;
+            gap            : v.$px-25;
             aon-avatar{
               div{
                 .profile-avatar-letters{
-                  width: v.$px-96;
-                  height: v.$px-96;
-                  border-radius: v.$pct-50;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  font-size: v.$px-32;
+                  width           : v.$px-96;
+                  height          : v.$px-96;
+                  border-radius   : v.$pct-50;
+                  display         : flex;
+                  justify-content : center;
+                  align-items     : center;
+                  font-size       : v.$px-32;
                 }
               }
             }
             .userPanelDivUserInfo{
-              display: flex;
-              flex-direction: column;
-              gap: v.$px-15;
-              width: v.$pct-100;
-              padding: v.$px-20 v.$px-0 v.$px-0 v.$px-0;
-              border-radius: v.$border-radius;
+              display        : flex;
+              flex-direction : column;
+              gap            : v.$px-15;
+              width          : v.$pct-100;
+              padding        : v.$padding v.$px-0 v.$px-0 v.$px-0;
+              border-radius  : v.$border-radius;
               .userPanelNameInfoDiv{
-                display: flex;
-                gap: v.$px-10;
-                padding-left: v.$px-56;
-                align-items: center;
+                display      : flex;
+                gap          : v.$px-10;
+                padding-left : v.$px-56;
+                align-items  : center;
                 &:first-of-type {
-                  justify-content: center;
-                  padding-bottom: v.$px-5;
-                  font-weight: v.$font-weight-semibold;
-                  font-size: v.$px-20;
-                  padding-left: v.$px-0;
+                  justify-content : center;
+                  padding-bottom  : v.$px-5;
+                  font-weight     : v.$font-weight-semibold;
+                  font-size       : v.$px-20;
+                  padding-left    : v.$px-0;
                  }
               }
               .aonUserConfigLink{
-                display: flex;
-                justify-content: center;
-                padding: v.$px-10 v.$px-0;
-                cursor: pointer;
-                border-radius: v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
+                display         : flex;
+                justify-content : center;
+                padding         : v.$px-10 v.$px-0;
+                cursor          : pointer;
+                border-radius   : v.$px-0 v.$px-0 v.$border-radius v.$border-radius;
               }
             }
           }
           #aonLoginPanelLogout{
             border-radius: v.$border-radius;
             .userPanelInfoLinkDiv{
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: v.$px-7 v.$px-0;
-              width: v.$pct-100;
-              cursor: pointer;
-              gap: v.$px-10;
+              display         : flex;
+              align-items     : center;
+              justify-content : center;
+              padding         : v.$px-7 v.$px-0;
+              width           : v.$pct-100;
+              cursor          : pointer;
+              gap             : v.$px-10;
             }
           }
         }
