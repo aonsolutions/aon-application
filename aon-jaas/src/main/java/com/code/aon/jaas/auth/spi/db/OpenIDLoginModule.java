@@ -30,6 +30,7 @@ import net.aonsolutions.core.pool.ConnectionInfo;
 public class OpenIDLoginModule extends LoginModule {
 	private static final String OPENID_EMAIL = "OpenID_Email=";
 	private static final String UUID = "uuid";
+	private static final String SUP_USER = "supUser";
 	
 	private String domain ;
 	private String token; 
@@ -183,6 +184,8 @@ public class OpenIDLoginModule extends LoginModule {
 			if(token != null) {
 				JSONObject json = decodeJWT(token);
 				uuid = json.getString(UUID);
+				String supuser = json.optString(SUP_USER);
+				if(supuser != null) adminUserLogin = supuser;
 				stmt.setString(1, uuid);
 			} else if(uuid != null) {
 				stmt.setString(1, uuid);
