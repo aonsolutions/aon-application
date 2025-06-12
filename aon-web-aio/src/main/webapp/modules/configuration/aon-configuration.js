@@ -28,11 +28,13 @@ import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonNewsList } from "../news/news/aon-news-list.js";
+import { AonCustomerList } from "../registry/customer/aon-customer-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
   COMPANY;
   COMPANY_LIST;
+  CUSTOMER_LIST;
 
   selected;
   company;
@@ -84,6 +86,7 @@ export class AonConfiguration extends AonElement {
     this.AON_CONFIGURATION = "aonConfiguration";
     this.COMPANY = this.AON_CONFIGURATION + "Company";
     this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
+	this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
   }
 
   build() {
@@ -99,7 +102,7 @@ export class AonConfiguration extends AonElement {
 			officeOptions.push({
 				name: MSG.CLIENT_FILE,
 				icon: MATERIAL_ICONS.CONTACTS,
-				fn: () => alert("En construción"),
+				fn: () => this.buildCustomerList(),
 			});
 		  }
  
@@ -351,7 +354,23 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(new AonNewsList());
   }
 
-  buildCompanyList() {
+  buildCustomerList() {
+          let aonConfiguration = this.getApplication();
+          //aonConfiguration.removeToolbarOptions();
+
+          let aonCustomerList = new AonCustomerList(this);
+          aonCustomerList.id = this.CUSTOMER_LIST;
+          aonCustomerList.filter = {
+                  page: 1,
+                  perPage: 50,
+                  target: false,
+                  status: ["ACTIVE", "BLOCKED"],
+          };
+          aonConfiguration.setContent(aonCustomerList);
+
+  }
+
+    buildCompanyList() {
     let aonConfiguration = this.getApplication();
     aonConfiguration.removeToolbarOptions();
 
