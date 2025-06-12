@@ -30,6 +30,10 @@ aon-right-panel{
               color            : #1E293B;
             }
           }
+          .divInfo{
+            padding-left: v.$padding;
+            font-size: v.$px-12;
+          }
         }  
       } 
     }
