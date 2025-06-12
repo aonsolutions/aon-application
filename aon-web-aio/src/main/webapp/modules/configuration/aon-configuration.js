@@ -93,29 +93,24 @@ export class AonConfiguration extends AonElement {
 			aonConfiguration.addMobileSidenavHeader(CONFIGURATION);
 		}
 
-    let userOptions = [
-      {
-        name: MSG.MY_DATA,
-        icon: "person",
-        fn: () => this.buildPersonal(),
-      }
-    ];
+    let officeOptions = [];
+	
+	if(this.isBeta()){
+			officeOptions.push({
+				name: MSG.CLIENT_FILE,
+				icon: MATERIAL_ICONS.CONTACTS,
+				fn: () => alert("En construción"),
+			});
+		  }
  
     aonConfiguration.addSidenavOptions(
-      MSG.USER.toUpperCase(),
-      userOptions
+      MSG.OFFICE.toUpperCase(),
+      officeOptions
     );
 
     if ( localStorage.getItem("aon_domain_id") ) {
 
       let companyOptions = [];
-	  if(this.isBeta()){
-		companyOptions.push({
-			name: MSG.CLIENT_FILE,
-			icon: MATERIAL_ICONS.CONTACTS,
-			fn: () => alert("En construción"),
-		});
-	  }
 
       if(this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())){
         companyOptions.push({

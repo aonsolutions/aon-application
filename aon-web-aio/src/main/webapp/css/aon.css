@@ -4086,6 +4086,11 @@ display: block;
   color: var(--aonLink,--aonBlue);
 }
 
+.aonUserPasswordLink {
+	display: flex;
+	align-items: center;
+}
+
 .aonConfigApps,
 .aonConfigDark,
 .aonConfigBrand,

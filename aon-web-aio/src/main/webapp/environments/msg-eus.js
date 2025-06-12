@@ -211,6 +211,7 @@ export const GARAGE = 'Garajea';
 export const GENERAL_INFORMATION = 'Informazio Generala';
 export const GET_INVOICE = 'Faktura Lortu';
 export const GET_INVOICES = 'Fakturak Lortu';
+export const GO_CONFIGURATION = 'Joan konfiguraziora';
 export const GROUP_DATA = 'Taldeko Datuak';
 export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';

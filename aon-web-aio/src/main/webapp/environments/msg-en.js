@@ -213,6 +213,7 @@ export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'General Information';
 export const GET_INVOICE = 'Get Invoice';
 export const GET_INVOICES = 'Get Invoices';
+export const GO_CONFIGURATION = 'Go to settings';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
