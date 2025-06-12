@@ -44,13 +44,13 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			assertCompaniesTabs(webDriver, wait, "Activas", "Inactivas", "Despacho", "Entorno");
 
 			selectEnterprise(webDriver, wait, "office", "DESPACHO");
-			//assertTopMenuEmpty(webDriver, wait);
-			assertTopMenuHidden(webDriver, wait);
+			//assertTopMenuHidden(webDriver, wait);
+			assertTopMenu(webDriver, wait, "office");
 			listCompanies(webDriver, wait);
 
 			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, "home", "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
 
 		} finally {
 			if (webDriver != null) {
@@ -79,17 +79,19 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("UlCompanies")));
 
 			assertTopMenu(webDriver, wait, "enterpriseMenu", "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, "home", "apps", "documental");
+			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "documental");
 			assertCompaniesTabs(webDriver, wait, "Activas", "Inactivas", "Despacho");
 
 			selectEnterprise(webDriver, wait, "office", "DESPACHO");
-			//assertTopMenuEmpty(webDriver, wait);
-			assertTopMenuHidden(webDriver, wait);
+			//assertTopMenuHidden(webDriver, wait);
+			assertTopMenu(webDriver, wait, "office");
 			listCompanies(webDriver, wait);
 
 			selectEnterprise(webDriver, wait, "active", "RÉGIMEN GENERAL");
 			assertTopMenu(webDriver, wait, "accountingMenu", "fiscalMenu", "payrollMenu");
-			assertSideMenu(webDriver, wait, "home", "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+			assertSideMenu(webDriver, wait, /*"home",*/ "apps", "new", "documental", "note", "warehouse" /*only for local*/ );
+			
+			
 
 		} finally {
 			if (webDriver != null) {
