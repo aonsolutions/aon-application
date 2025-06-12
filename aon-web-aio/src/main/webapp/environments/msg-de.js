@@ -81,6 +81,7 @@ export const CITY = 'Stadt';
 export const CLASSIC = 'Klassiker';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
+export const CLIENT_FILE = 'Kundendatei';
 export const CLOSE = 'nah dran';
 export const CLOSE_SESSION = 'Ausloggen';
 export const CLOSED = 'Geschlossen';

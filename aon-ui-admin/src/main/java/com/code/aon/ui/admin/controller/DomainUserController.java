@@ -305,27 +305,32 @@ public class DomainUserController extends BasicController {
 	
 	public boolean isImpersonateUserEnabled() {
 		if (!isNevv()) {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
-			try {
-				String dn1 = ds.getCurrentDomainURL();
-				String dn2 = getUserDomain().getName();
-				return !StringUtils.equals( dn1 , dn2 );
-			} catch (ManagerBeanException e) {
-				return false;
-			}
+			String dn1 = getCurrentURLDomain();
+			String dn2 = getUserDomain().getName();
+			return !StringUtils.equals( dn1 , dn2 );
 		}
 		return false;	
 	}
 	
 	public String getImpersonateUserURL() {
 		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		return 
-				(AonStringUtils.isBlank(request.getScheme())? "http" : request.getScheme())
-				+ "://"
-				+ getUserDomain().getName()
-				+ ((request.getServerPort() != 80 && request.getServerPort() != 443) ? (":" + request.getServerPort()) : "") 
-				+ request.getContextPath()
-				+ "/impuser/home.jsf";
+		StringBuilder url = new StringBuilder();
+		
+		if (request.getServerPort() != 80 && request.getServerPort() != 443)  {
+			url.append( (AonStringUtils.isBlank(request.getScheme())? "http" : request.getScheme()) )
+				.append("://")
+				.append( getUserDomain().getName() )
+				.append(":" + request.getServerPort())
+			;	
+		} else {
+			url.append( "https://")
+				.append( getUserDomain().getName() );
+		}
+		url
+			.append(request.getContextPath())
+			.append("/impuser/home.jsf")
+		;
+		return url.toString();
 	}
 
 

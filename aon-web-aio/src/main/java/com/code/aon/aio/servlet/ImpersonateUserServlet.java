@@ -1,5 +1,6 @@
 package com.code.aon.aio.servlet;
 
+import static com.code.aon.aio.servlet.LoginServlet.LOGIN_SERVLET_FAIL_ATTRIBUTE;
 import static com.code.aon.aio.servlet.LoginServlet.getRealRequest;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
@@ -7,6 +8,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -43,6 +47,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "Impersonate User Servlet", urlPatterns = { "/impuser/*" })
 public class ImpersonateUserServlet extends HttpServlet {
@@ -51,12 +56,8 @@ public class ImpersonateUserServlet extends HttpServlet {
 	
 	private static final String VIEW_ID = "viewId";
 	private static final String ACTION = "action";
-	private static final String DOMAIN_ID = "domainId";
 	private static final String LANGUAGE = "language";
-	private static final String REDIRECT_URL = "redirectUrl";
-	private static final String EXPIRE_SESSION = "expireSession";
 	private static final String ACTION_LISTENER = "actionListener";
-	private static final String DOMAIN_NAME = "com.code.aon.jaas.domain";
 
 	
 	
@@ -175,7 +176,18 @@ public class ImpersonateUserServlet extends HttpServlet {
 				session = request.getSessionInternal();
 				principal = session.getPrincipal();
 				if ( principal == null ) {
-					CONSOLE.enableRemoteAccess( occam,  toDomain);
+					boolean wasEnabled = CONSOLE.enableRemoteAccess( occam,  toDomain);
+					
+					// Si el acceso remoto no estaba habilitado, se da tiempo al 
+					// login (10 segundos) para después deshabilitar el acceso remoto.
+					if (!wasEnabled) {
+						ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+						Runnable disableRemoteAccess = () -> {
+							CONSOLE.switchRemoteAccess( occam,  toDomain);
+						};
+						scheduler.schedule(disableRemoteAccess, 10, TimeUnit.SECONDS);
+					}
+			        
 					
 					String username = "cau="+toUser; 
 					String password = "aonc4u"; 
@@ -183,6 +195,21 @@ public class ImpersonateUserServlet extends HttpServlet {
 					if ( principal != null ) {
 						request.setUserPrincipal(principal);
 						session.setPrincipal(principal);
+					}
+					
+					boolean sessionUpdated = false;
+					if ( session instanceof HttpSession httpSession ) {
+						if ( principal == null ) {
+							httpSession.setAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE, Boolean.TRUE.toString());
+						} else {
+							httpSession.removeAttribute(LOGIN_SERVLET_FAIL_ATTRIBUTE);
+						}
+						sessionUpdated =true;
+					}
+					if ( (principal == null) && (!sessionUpdated) ) {
+						throw new HttpError(SC_INTERNAL_SERVER_ERROR, null, null);
+					} else {
+						response.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
 					}
 				}
 			}

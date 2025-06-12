@@ -341,6 +341,7 @@ public class AyudatInvofoxCounters {
 						if (AonStringUtils.isNotBlank( document )) {
 							double processed = row.getCell( 3 ).getNumericCellValue();
 							double duplicated = row.getCell( 6 ).getNumericCellValue();
+							System.out.print( "processed , duplicated --> " + processed + " , " + duplicated);
 							Invofox invofox = map.get( document );
 							if (invofox == null) {
 								invofox = new Invofox()
@@ -352,7 +353,7 @@ public class AyudatInvofoxCounters {
 							} else {
 								invofox
 									.addProcessed( processed )
-									.addDuplicated( processed );
+									.addDuplicated( duplicated );
 							}
 						} else {
 							System.out.print(" EMPTY");
@@ -524,6 +525,7 @@ public class AyudatInvofoxCounters {
 			}
 			
 			if (!grouped || counter == 0) {
+				System.out.print( " ["+invofox.getProcessed() + " , "+ invofox.getDuplicated() +"]");
 				addCell(invofox.getProcessed());
 				addCell(invofox.getDuplicated());
 			} else {

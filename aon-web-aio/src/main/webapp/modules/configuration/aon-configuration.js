@@ -21,6 +21,7 @@ import { AonReg } from "../registry/aon-reg.js";
 import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
+import { AonConfigurationMenu } from './aon-configuration-menu.js';
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 import { AonBooking } from '../marketplace/aon-booking.js';
 import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
@@ -108,6 +109,13 @@ export class AonConfiguration extends AonElement {
     if ( localStorage.getItem("aon_domain_id") ) {
 
       let companyOptions = [];
+	  if(this.isBeta()){
+		companyOptions.push({
+			name: MSG.CLIENT_FILE,
+			icon: MATERIAL_ICONS.CONTACTS,
+			fn: () => alert("En construción"),
+		});
+	  }
 
       if(this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())){
         companyOptions.push({
@@ -161,10 +169,7 @@ export class AonConfiguration extends AonElement {
       if (this.dur.isInvoice()) {
         appOptions.push({
           name: INVOICE.title,
-          aonIcon: {
-            icon: AON_ICONS.AON_INVOICE,
-            color: INVOICE.color
-          },
+          icon: MATERIAL_ICONS.MONITORING,
           fn: () => this.buildInvoiceConfiguration(),
         });
       }
@@ -173,10 +178,7 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           id: MESSENGER.title,
           name: MESSENGER.title,
-          aonIcon: {
-            icon: MESSENGER.icon,
-            color: MESSENGER.color
-          },
+          icon: MATERIAL_ICONS.SPEAKER_NOTES,
           fn: () => this.buildMessengerConfiguration(),
         });
       }
@@ -185,20 +187,14 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           id: AON_SALTRA.title,
           name: AON_SALTRA.title,
-          aonIcon: {
-            icon: AON_SALTRA.icon,
-            color: AON_SALTRA.color
-          },
+          icon: AON_SALTRA.icon,
           fn: () => this.buildComunicaConfiguration(),
         });
       } else if(this.dur.isComunicaManager()){
         appOptions.push({
           id:  COMUNICA.title,
           name: COMUNICA.title,
-          aonIcon: {
-            icon: COMUNICA.icon,
-            color: COMUNICA.color
-          },
+          icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
           fn: () => this.buildComunicaConfiguration(),
         });
       } 
@@ -214,8 +210,21 @@ export class AonConfiguration extends AonElement {
 
       aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
+	
+	if ( localStorage.getItem("aon_domain_id") && this.isBeta()) {
+		let menuOptions = [];
+		
+		menuOptions.push({
+			id: "options panel",
+			icon: "dashboard",
+			name: "Opciones Configuración",
+			fn: () => this.buildConfigurationMenu(),
+		});
+		
+		aonConfiguration.addSidenavOptions(MSG.MENU.toUpperCase(), menuOptions);
+	}
 
-    this.buildPersonal();
+    this.buildConfigurationMenu();
   }
 
   buildPersonal() {
@@ -337,6 +346,10 @@ export class AonConfiguration extends AonElement {
 
   buildComunicaConfiguration(){
     this.getApplication().setContent(new AonComunicaConfig());
+  }
+  
+  buildConfigurationMenu(){
+	this.getApplication().setContent(new AonConfigurationMenu());
   }
 
   buildNews(){

@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Advertising;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -60,6 +61,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.tariff.Tariff;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -71,6 +73,7 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AttachmentDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -211,6 +214,10 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				System.out.println("----------------------- Domain Apps / Config");
 				
 				insertDomainConfiguration(ctx, newDomain);
+				
+				System.out.println("----------------------- Account Period");
+				
+				insertAccountPeriod(ctx, newDomain);
 				
 				if(AonStringUtils.equalsIgnoreCase(source, "SALE")) {
 				
@@ -462,7 +469,8 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		if (null != comapnyRaddressId) {
 			
 			Customer customer = CustomerDAO.get(ctx, f -> f.getRegistryProperty().eq(registry));
-			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId());
+			createWorkplace(ctx, newDomain, newCompany.getId(), comapnyRaddressId, customer.getId(), geozoneCode);
+		
 		}
 		
 		createRRelationShip(api, ctx, newCompany);
@@ -484,7 +492,7 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId) {
+	private static void createWorkplace(CloseableAONContext ctx, Domain newDomain, Integer companyId, Integer raddressId, Integer customerId, String geozoneCode) {
 		Workplace workplace = new Workplace()
 				.setActive(true)
 				.setDescription("PRINCIPAL")
@@ -492,10 +500,29 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setEnterprise(companyId)
 				.setAddress(raddressId)
 				.setCustomer(customerId)
-				.setEconomicAgreement(Administration.COMMON_TERRITORY)
+				.setEconomicAgreement(getEconomicAgreement(geozoneCode))
 				;
 
 		WorkplaceDAO.save(ctx, workplace);
+	}
+	
+	private static Administration getEconomicAgreement(String geozoneCode) {
+		if(AonStringUtils.isBlank(geozoneCode)) return Administration.COMMON_TERRITORY;
+		
+		switch (geozoneCode) {
+			case "01":
+				return Administration.ALAVA;
+			case "20":
+				return Administration.GIPUZKOA;
+			case "48":
+				return Administration.BIZKAIA;
+			case "31":
+				return Administration.NAVARRA;
+			case "35":
+				return Administration.CANARIAS;
+			default:
+				return Administration.COMMON_TERRITORY;
+		}
 	}
 	
 	private static void createRRelationShip(AonApiData api, CloseableAONContext ctx, Company newCompany) {
@@ -866,6 +893,17 @@ public class RegistryEnterpriseCreationServlet extends AonApiHttpServlet {
 				.setActive(true);
 		
 		SecurityDAO.saveDomainApp(ctx, domainApp);
+	}
+	
+	private static void insertAccountPeriod(CloseableAONContext ctx, Domain newDomain) {
+		AccountPeriod accPeriod = new AccountPeriod()
+				.setDomain(newDomain.getId())
+				.setName("EC")
+				.setInitiationDate(AonDateUtils.getYearFirstDay(new Date()))
+				.setDeadline(AonDateUtils.getYearLastDay(new Date()))
+				.setStatus(AccountPeriodStatus.ACTIVE);
+		
+		AccountPeriodDAO.save(ctx, accPeriod);
 	}
 	
 	private static void createCustomerFee(AonApiData api, CloseableAONContext ctx) {
