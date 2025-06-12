@@ -458,6 +458,12 @@
 .aon_icon_accounting_record { background-image: iconAccountingRecord;}
 @url iconAccountingUnrecord aonIconAccountingUnrecord;
 .aon_icon_accounting_unrecord { background-image: iconAccountingUnrecord;}
+@url iconCheckCircle aonIconCheckCircle;
+.aon_icon_check_circle { background-image: iconCheckCircle;}
+@url iconCheckCircleGreen aonIconCheckCircleGreen;
+.aon_icon_check_circle_green { background-image: iconCheckCircleGreen;}
+@url iconErrorExclamation aonIconErrorExclamation;
+.aon_icon_error_exclamation { background-image: iconErrorExclamation;}
 
 
 /* BASICS */
