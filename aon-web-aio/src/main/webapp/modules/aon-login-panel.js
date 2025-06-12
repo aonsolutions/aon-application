@@ -3,6 +3,7 @@ import { AonAvatar } from '../components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { closeSession, getAuth } from '../services/service.js';
 import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
+import {AonUser} from '../modules/user/aon-user.js';
 import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
@@ -52,7 +53,7 @@ export class AonLoginPanel extends AonElement {
 		this.rightPanel = this.getElement("aonRightPanel"); 
 		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		this.rightPanel.style.marginTop = '0px';
-		this.rightPanel.style.height = '234px';
+		this.rightPanel.style.height = '260px';
 		
 		let loginContent = this.createDiv("loginContent", "aonFlexColumn");
 
@@ -99,9 +100,29 @@ export class AonLoginPanel extends AonElement {
 		}
 		
 		if (auth.name) {
+			let divPassword = this.createDiv();
+			divPassword.className = 'aonUserPasswordLink';
+			divPassword.appendChild(this.buildInfo(MATERIAL_ICONS.PASSWORD, MSG.CHANGE_PASSWORD));			
+			let editIcon = document.createElement("i");
+			editIcon.className = "material-icons";
+			editIcon.textContent = "edit";
+			editIcon.style.cursor = "pointer";
+			editIcon.style.marginLeft = "0.5rem";
+			editIcon.style.fontSize = "24px";
+			editIcon.title = MSG.CHANGE_PASSWORD;
+			editIcon.addEventListener("click", (e) => {
+				let aonUser = new AonUser();
+			    aonUser.editPassword();
+			});
+
+			divPassword.appendChild(editIcon);
+			divUserInfo.appendChild(divPassword);
+		}
+				
+		if (auth.name) {
 			let divConfiguration = this.createDiv();
 			divConfiguration.className = 'aonUserConfigLink';
-			divConfiguration.innerText = MSG.CONFIGURATION;
+			divConfiguration.innerText = MSG.GO_CONFIGURATION;
 			divConfiguration.addEventListener(EVENT.CLICK, () => {
 				let aonConfiguration = new AonConfiguration();
 				aonConfiguration.user = auth.name;
