@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -72,20 +73,35 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject generateTokenJson(AonApiData api){
-		Integer id = Integer.parseInt(api.getRequest().getHeader(IJsonNames.ID)); 
-		Integer time = Integer.parseInt(api.getRequest().getHeader("time"));
+
+		String idStr = api.getRequest().getHeader(IJsonNames.ID);
+		
+		Integer id = idStr != null && AonNumberUtils.isNumber(idStr)
+				? Integer.parseInt(idStr) 
+				: JsonUtils.getInteger(api.getData(), IJsonNames.ID);
+
+		String timeStr = api.getRequest().getHeader("time");
+		Integer time = timeStr != null && AonNumberUtils.isNumber(timeStr)
+				? Integer.parseInt(timeStr)
+				: JsonUtils.getInteger(api.getData(), "time");
 		
 		User user = AON.getUser(api.getDomain(), api.getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(api.getDomain().getId())
 			.and(f.getIdProperty().eq(id)));
-		Date expireDate = getExpireDate(time); 
-		JSONObject userTokenInfo = new JSONObject()
+		Date expireDate = getExpireDate(time != null ? time : 0); 
+		
+		JSONObject tokenObject = new JSONObject()
+			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, api.getDomain().getName())
+			.put(IJsonNames.USER, user.getId())
+			.put(IJsonNames.LOGIN, user.getLogin())
+			.put(IJsonNames.DOMAIN, user.getDomain().getId())
+			.put("supUser", JsonUtils.getString(api.getData(), "supUser"));
+		
+		return new JSONObject()
 			.put("domain_name", api.getDomain().getName())
 			.put("domain_id", api.getDomain().getId())
 			.put("domain_login", user.getLogin())
-			.put("session_id", AonToken.build(user, expireDate, api.getDomain().getName()));
-		
-		return userTokenInfo;
+			.put("session_id", AonToken.build(tokenObject, expireDate));
 	}
 
 	private static JSONObject generateTokenSig(AonApiData api){
@@ -95,13 +111,11 @@ public class GenerateTokenServlet extends AonApiHttpServlet {
 
 		Date expireDate = AonDateUtils.addHours(new Date(), 1);
 		User user = new User().setLogin(login);
-		JSONObject userTokenInfo = new JSONObject()
+		return new JSONObject()
 			.put("domain_name", domainName)
 			.put("domain_id", domainId)
 			.put("domain_login", login)
 			.put("session_id", AonToken.build(user, expireDate, api.getDomain().getName()));
-		
-		return userTokenInfo;
 	}
 	
 	private static JSONObject buildTokenJSON(JSONObject json) {

@@ -1,10 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUserListSpeed, getUserRoles} from  '../../services/service.js';
+import {generateTokenJson, getUserListSpeed, getUserRoles} from  '../../services/service.js';
 import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
 import { AonUser } from './aon-user.js';
 import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
+
+import * as LS from '../../services/localStorageService.js';
 
 export class AonUserList extends AonElement {
 
@@ -57,8 +59,9 @@ export class AonUserList extends AonElement {
 		
 		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '25%');
 		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
-		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '25%');
-		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '25%');
+		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '20%');
+		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '5%');
+		table.addColumn('', "fn", "option", '5%');
 		table.addEventListener('more', () => {
 			if(this.more) this.loadMore()
 		});
@@ -76,6 +79,7 @@ export class AonUserList extends AonElement {
 			if(this.back) {
 				this.back = false;
 				getUsers().forEach((user, i) => {
+					user.option =  this.getOptions(user);
 					table.addRow(user, () => this.aonUser(user, i));
 				});
 			} else {
@@ -84,6 +88,7 @@ export class AonUserList extends AonElement {
 					setUsers(users);
 					table.removeRows();
 					users.forEach((user, i) => {
+						user.option =  this.getOptions(user);
 						table.addRow(user, () => this.aonUser(user, i));
 					});
 				});
@@ -105,6 +110,37 @@ export class AonUserList extends AonElement {
 				});
 			});
 		}
+	}
+
+	getOptions(user) {
+		return this.isBeta() ?
+			[{
+				name: "Suplantar",
+				icon: "token",
+				id:"supplant",
+				fn: () => this.supplant(user)
+			}
+		] : [];
+	}
+
+	supplant(user) {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle("Suplantar Usuario");
+		
+		d.setContentHTML("Estás seguro de suplantar a " + user.login);
+		d.addAcceptAction(() => {
+			let data = {
+				supUser: LS.getDomainLogin(),
+				id: user.id,
+				time: 0
+			};
+			generateTokenJson(data).then(token => {
+				open(`https://${LS.getDomainName()}/app?token=${token.session_id}`, '_blank');
+			}).catch(e => this.showError(e));
+		});			
+		d.open();
 	}
 
 	aonUser(user, index) {

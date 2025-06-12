@@ -2,22 +2,28 @@ package com.code.aon.aio.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.IDN;
 import java.security.Principal;
+
+import org.apache.catalina.Manager;
+import org.apache.catalina.Session;
+import org.apache.catalina.connector.Request;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.code.aon.AonVersion;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import org.apache.catalina.Manager;
-import org.apache.catalina.Session;
-import org.apache.catalina.connector.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.AonVersion;
-import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class LoginServlet extends HttpServlet {
 
@@ -36,10 +42,16 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest httpRequest,
 			HttpServletResponse httpResponse) throws ServletException, IOException {
+		
+		boolean closeSession = closeSession(httpRequest);
 
 		Request request = getRealRequest(httpRequest);
 		if ( request != null ) {
 			Session session = request.getSessionInternal(false);
+			if(closeSession) {
+				session.expire();
+				session = null;
+			}
 			if ( session == null ) {
 				session = request.getSessionInternal();
 	            Manager manager = request.getContext().getManager();
@@ -84,8 +96,20 @@ public class LoginServlet extends HttpServlet {
 			
 		} else {
 			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
-		}
-		
+		}	
+	}
+	
+	private boolean closeSession(HttpServletRequest request) {
+		String token = request.getParameter("token") != null ? IDN.toUnicode(request.getParameter("token")) : null;
+		if(token == null) return false;
+		JSONObject json = decodeJWT(token);
+		String supuser = json.optString(IJsonNames.SUP_USER);
+		return AonStringUtils.isNotBlank(supuser);
+	}
+	
+	public static JSONObject decodeJWT(String token) {
+		DecodedJWT jwt = JWT.decode(token);
+		return new JSONObject(jwt.getSubject());
 	}
 
 	static Request getRealRequest( HttpServletRequest request ) {

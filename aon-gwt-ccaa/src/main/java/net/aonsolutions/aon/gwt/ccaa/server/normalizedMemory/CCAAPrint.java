@@ -105,8 +105,8 @@ public class CCAAPrint extends HttpServlet {
 		if(d2Deposit.getYear() >= 2016){
 			if(options.substring(index, index+1).equals("T")) action.AP3();index++;
 		}
-		if(d2Deposit.getYear() >= 2020) {
-			if(options.substring(index, index+1).equals("T"))  action.CVA();index++;
+		if(d2Deposit.getYear() == 2020 || d2Deposit.getYear() == 2021) {
+			if(options.substring(index, index+1).equals("T"))  action.CVA();index++; // Hoja COVID
 		}
 		
     	if(d2Deposit.getYear() >= 2017) {
@@ -137,8 +137,10 @@ public class CCAAPrint extends HttpServlet {
 		String fileName = "CCAA";
 		
 		ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
-		resp.setContentType(MimeType.MS_EXCEL.getName());
-		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
+//		resp.setContentType(MimeType.MS_EXCEL.getName());
+//		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL.getExtension()+ "\";");
+		resp.setContentType(MimeType.MS_EXCEL_2007.getName());
+		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 		AonIOUtils.copy(in, resp.getOutputStream());
 		resp.flushBuffer();
 	}

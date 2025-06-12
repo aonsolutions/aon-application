@@ -21,4 +21,6 @@ export const removeUserWorkgroup = (data, sessionData) => remove(`${API_URL}/use
 
 export const generateToken = (data) => open(`${API_URL}/generate_token?json=${data}`);
 
+export const generateTokenJson = (data, sessionData) => get(`${API_URL}/generate_token/json`, data, sessionData);
+
 export const generateTokenSig = (data) => get(`${API_URL}/generate_token/sig`, data);
