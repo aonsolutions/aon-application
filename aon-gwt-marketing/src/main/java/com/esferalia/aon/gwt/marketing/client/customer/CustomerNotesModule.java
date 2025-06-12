@@ -350,7 +350,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				if(message.getId() != null) {
 					AonTableButton confidentialBtn = new AonTableButton(
 							message.isConfidential() ? "Confidencial" : "Publico", 
-							message.isConfidential() ? AON.CSS.aonIconLock()  : AON.CSS.aonIconNoEncryption());
+							message.isConfidential() ? AON.CSS.aonIconNoEncryption() : AON.CSS.aonIconLock());
 					
 					confidentialBtn.addClickHandler(e -> {
 						e.stopPropagation();
@@ -367,7 +367,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 				
 				if(message.isConfidential()) {
 					AonTableButton confidentialIcon = new AonTableButton("Confidencial", AON.CSS.aonIconLock());
-					confidentialIcon.addStyleName(AON.CSS.aonCustomCardButtonHideOnHover());
+					// Hide on hover card
+					// confidentialIcon.addStyleName(AON.CSS.aonCustomCardButtonHideOnHover());
 					datePanel.add(confidentialIcon);
 				}
 				

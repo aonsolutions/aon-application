@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.server;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -117,7 +119,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 import jakarta.servlet.annotation.WebServlet;
 
@@ -1120,12 +1121,17 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Invoice> getCustomerInvoices(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
-		return AON.getInvoiceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)));
+		List<Invoice> invoices = AON.getInvoiceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)));
+		invoices.forEach(invoice -> {
+			LinkedList<Finance> finances = AON.getFinanceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getInvoiceProperty().eq(invoice.getId())));
+			finances.forEach(finance -> invoice.addFinance(finance));
+		});
+		return invoices;
 	}
 	
 	@Override
 	public String getInvoicePDF(String domainName, int domainId, String login, Integer invoiceId) throws AonCoreException {
-		try (ByteOutputStream os = new ByteOutputStream(30 * 1024)){
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){
 			
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);

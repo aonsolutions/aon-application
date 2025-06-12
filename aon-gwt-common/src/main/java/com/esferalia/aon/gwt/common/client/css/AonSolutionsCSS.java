@@ -1527,5 +1527,14 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_gpp_maybe")
 	String aonIconGppMaybe();
 	
+	@ClassName("aon_icon_check_circle")
+	String aonIconCheckCircle();
+	
+	@ClassName("aon_icon_check_circle_green")
+	String aonIconCheckCircleGreen();
+	
+	@ClassName("aon_icon_error_exclamation")
+	String aonIconErrorExclamation();
+	
 }
 
