@@ -23,7 +23,7 @@
     ul {
       list-style-type : none;
       margin          : v.$px-0;
-      padding         : v.$padding v.$px-0 v.$padding v.$padding;
+      padding         : v.$padding v.$px-0 v.$padding 0;
 
       li{
         height : v.$px-48;
@@ -35,6 +35,7 @@
             justify-content : flex-start !important;
             flex-direction  : row !important;
             gap             : v.$padding;
+            padding-left    : v.$padding;
             cursor          : pointer;
 
             .aonNewMenuAppIcon{
