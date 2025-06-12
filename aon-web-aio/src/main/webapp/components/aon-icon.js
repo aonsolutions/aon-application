@@ -60,7 +60,9 @@ export class AonIcon extends AonElement {
 	}
 
 	connectedCallback () {
-    this.build();
+    if(!this.isNewStyle()){
+      this.build();
+    }
   }
 
   build() {

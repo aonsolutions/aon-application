@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Rectángulo superior centrado -->
+  <rect x="1" y="1" width="22" height="2.5" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Path superior centrado -->
+  <path fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"
+        d="M11.35,24 l-11.26,-0.02 v-5.26 h16.11 C16.06,21.80 14.10,23.70 11.35,24 z"/>
+  <!-- Rectángulo central -->
+  <rect x="7.85" y="12.31" width="8.34" height="3.30" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+   <!-- Path inferior centrado -->
+  <path fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"
+        d="M12.43,6.24 l11.51,-0.03 v5.22 H7.91 C7.65,8.37 10.52,6.19 12.43,6.24 z"/>
+</svg>
+

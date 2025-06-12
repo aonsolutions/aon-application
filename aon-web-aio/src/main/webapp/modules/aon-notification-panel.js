@@ -133,15 +133,20 @@ export class AonNotificationPanel extends AonElement {
             let icon = new AonIcon();
             icon.size = "40px";
             icon.classList.add("notificationPanelRowIcon");
-            if(res.source == "DOCUMENTAL")
+            if(res.source == "DOCUMENTAL"){
                 icon.icon = "aon_new_documental";
-            else if (res.source == "MESSENGER")
+                icon.setAttribute("data-icon", icon.icon);
+            }else if (res.source == "MESSENGER"){
                 icon.icon = "aon_new_messenger";
-            else if (res.source == "COMUNICA")
+                icon.setAttribute("data-icon", icon.icon);
+            }else if (res.source == "COMUNICA"){
                 icon.icon = "aon_new_payroll";
-            else if (res.source == "INVOICE")
+                icon.setAttribute("data-icon", icon.icon);
+            }else if (res.source == "INVOICE"){
                 icon.icon = "aon_new_invoice";
-                
+                icon.setAttribute("data-icon", icon.icon); 
+            }    
+            
             if(LS.isDarkBetaTheme())
             	icon.color = "var(--aonNewWhite)";
             else
@@ -276,8 +281,6 @@ export class AonNotificationPanel extends AonElement {
         } 
     */
         datos.forEach((res) => {
-
-            console.log(res)
           this.getElement(this.DIV_GENERAL).appendChild(
             this.buildRow(res)
           );
