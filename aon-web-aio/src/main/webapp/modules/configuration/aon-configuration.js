@@ -348,8 +348,8 @@ export class AonConfiguration extends AonElement {
     this.getApplication().setContent(new AonComunicaConfig());
   }
   
-  buildConfigurationMenu(){
-	this.getApplication().setContent(new AonConfigurationMenu());
+  buildConfigurationMenu() {
+  	this.getApplication().setContent(new AonConfigurationMenu());
   }
 
   buildNews(){

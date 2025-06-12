@@ -1,4 +1,4 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
@@ -17,10 +17,12 @@ export class AonConfigurationMenu extends AonSuiteMenu {
     }
 
     connectedCallback () {
-        this.clear();
-        this.initialize();
-        this.build();
-        this.setTitle("Opciones de configuración");
+        this.buildDur().then(() => {
+            this.clear();
+            this.initialize();
+            this.build();
+            this.setTitle("Opciones de configuración");
+        })
     }
 
     configurationInitialize() {
@@ -197,11 +199,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             }]
         }];
     }
-    /*
-    build() {
-        
-    }
-    */
+
 }
 if(!window.customElements.get(TAG.AON_CONFIGURATION_MENU)){
     window.customElements.define(TAG.AON_CONFIGURATION_MENU, AonConfigurationMenu);
