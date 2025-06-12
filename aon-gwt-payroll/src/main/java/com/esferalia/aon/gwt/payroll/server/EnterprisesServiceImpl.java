@@ -3470,6 +3470,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<Integer> getServiAgreementDates(String agreementCode) throws IllegalArgumentException {
 		try {
+			if(AonStringUtils.isNotBlank(agreementCode) && AonStringUtils.equalsIgnoreCase(agreementCode, "c0000802"))
+				throw new IllegalArgumentException("El convenio Hosteleria Santa Cruz de Tenerife (38000905011981) es demasiado grande. P\u00f3ngase en contacto con soporte indicando los niveles retributivos que desea importar.");
+			
 			return AgreementParser.getAgreementYears(agreementCode);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
