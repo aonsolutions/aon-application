@@ -168,7 +168,19 @@ public class RawdocDAO {
 			.map(new RawdocFiller())
 			.findFirst();
 	}
-
+	
+	public static Optional<byte[]> getRawdocData(AONContext ctx, Integer rawdocId){
+		return ctx.getDslContext()
+			.select( RAWDOC.DATA )
+			.from(RAWDOC)
+			.where(RAWDOC.ID.eq(rawdocId))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue(RAWDOC.DATA) )
+			.filter( b -> b != null)
+			.findFirst();
+	}
+	
 	public static Stream<Attach> getRawdocAttachStream(AONContext ctx, RawdocFilter filter){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select().from(RAWDOC);
 		return RAWDOC_PROPERTIES.build(select, filter).fetchInto(RAWDOC).stream().map(new RawdocAttachFiller());
@@ -185,16 +197,15 @@ public class RawdocDAO {
 				.map(new RawdocFiller());
 	}
 	
-	public static Rawdoc getFull(AONContext ctx, Integer id) {
+	public static Optional<Rawdoc> getFull(AONContext ctx, Integer id) {
 		return ctx.getDslContext()
-				.select( RAWDOC.fields() )
-				.from(RAWDOC)
-				.where(RAWDOC.ID.eq(id))
-				.fetch()
-				.stream()
-				.map(new RawdocFiller())
-				.findFirst()
-				.orElse(null);
+			.select( RAWDOC.fields() )
+			.from(RAWDOC)
+			.where(RAWDOC.ID.eq(id))
+			.fetch()
+			.stream()
+			.map(new RawdocFiller())
+			.findFirst();
 	}
 	
 	public static Rawdoc insert(AONContext ctx, Rawdoc rawdoc) {

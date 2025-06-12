@@ -313,7 +313,7 @@ export class AonMenu extends AonElement {
 				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 					item.style.display = 'inline-block';
 					item.style.fontSize = '12px';
-					item.style.fontFamily = 'Roboto,sans-serif';
+					item.style.fontFamily = '"Noto Sans", sans-serif';
 					item.style.color = 'black';
 					item.style.right = '50px';
 					item.style.margin = '10px';

@@ -161,7 +161,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		manualAgreement.setText("Modo avanzado");
 		manualAgreement.setStyleName(AON.CSS.aonIconEditNote());
 		manualAgreement.addStyleName(style.button());
-		manualAgreement.setEnabled(true);
 		manualAgreement.addClickHandler(e -> {
 			hide();
 			onManualEdition();
@@ -172,7 +171,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		acceptBtn.setText("Aceptar");
 		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtn.ensureDebugId("acceptNewPaymentButton");
-		manualAgreement.setEnabled(false);
 		acceptBtn.addClickHandler(e -> {
 			hide();
 			onAccept(payment);
@@ -259,7 +257,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			}
 				
 			acceptBtn.setEnabled(true);
-			manualAgreement.setEnabled(false);
 		});
 		
 		descriptionSuggest.addKeyDownHandler(event -> {

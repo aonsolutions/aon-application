@@ -81,7 +81,9 @@ public interface RegistryServiceAsync {
 	void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> asyncCallback);
 	void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback);
 	
-	void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback);
+	void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException;
+	void getCustomerWithoutFee(CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException;
+	
 	
 	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> asyncCallback);
 	

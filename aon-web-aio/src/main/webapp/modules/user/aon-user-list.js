@@ -22,6 +22,8 @@ export class AonUserList extends AonElement {
 	type;
 	back;
 
+	parent;
+
 	constructor () {
 		super();
 	}
@@ -78,7 +80,7 @@ export class AonUserList extends AonElement {
 				});
 			} else {
 				this.filter.page = 1;
-				getUserListSpeed(this.filter).then(users => {
+				getUserListSpeed(this.filter, this.sessionData).then(users => {
 					setUsers(users);
 					table.removeRows();
 					users.forEach((user, i) => {
@@ -94,7 +96,7 @@ export class AonUserList extends AonElement {
 		let table = this.getElement(this.TABLE);
 		if(table && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			getUserListSpeed(this.filter).then(users => {
+			getUserListSpeed(this.filter, this.sessionData).then(users => {
 				addUsers(users);
 				if(users.length > 0)
 					this.more = true;
@@ -108,17 +110,20 @@ export class AonUserList extends AonElement {
 	aonUser(user, index) {
 		setIndex(index);
 		setFilter(this.filter);
-
-		getUserRoles({user: user.id}).then(roles => {
+		getUserRoles({user: user.id}, this.sessionData).then(roles => {
 			user.roles = roles;
 			let aonUser = new AonUser();
+			aonUser.sessionData = this.sessionData;
+			aonUser.parent = this.parent;
 			aonUser.id = 'aonUser-' + user.id;
 			aonUser.setShowApps(true);
 			aonUser.setShowToolbar(true);
 			aonUser.setUser(user);
 			aonUser.style.width = "100%";
-	
-			this.getApplication().setContent(aonUser);
+			if(this.parent) {
+				this.parent.innerHTML = '';
+				this.parent.appendChild(aonUser);
+			} else this.getApplication().setContent(aonUser);
 		});
 	
 	}

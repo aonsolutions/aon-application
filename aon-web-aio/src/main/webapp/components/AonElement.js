@@ -10,6 +10,7 @@ export class AonElement extends HTMLElement{
 
   ROOT_PANEL = 'rootPanel';
   dur;
+  sessionData;
 
   constructor () {
     super();
@@ -179,7 +180,7 @@ export class AonElement extends HTMLElement{
 
   isBeta(){
     const href = window.location.href;
-    return href.includes('aonsolutions.org') || this.isLocal();
+    return href.includes('aonsolutions.org') || LS.isBeta();
   }
 
   isBetaDoc(){
@@ -188,7 +189,12 @@ export class AonElement extends HTMLElement{
   
   isAyudaTorInfoautonomos(){
 	const href = localStorage.getItem("aon_domain_name")
-			return href.includes('ayudat') || href.includes('infoautonomos')
+    return href?.includes('ayudat') || href?.includes('infoautonomos')
+  }
+  
+  isAyudaT(){
+	const href = localStorage.getItem("aon_domain_name")
+    return href?.includes('ayudat')
   }
 
   isSig(){

@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.main.xhtml"
+	>
+	
+	
+	<ui:define name="mainScripts">
+	</ui:define>
+
+	<ui:define name="mainStyleSheets">
+		<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">
+			<a4j:loadStyle src="#{fn:startsWith(styleSheet, 'aonResource') ? '/' : '' }#{styleSheet}"/>
+		</c:forEach>
+	</ui:define>
+
+	<ui:define name="head">
+		<link rel="stylesheet" type="text/css" href="../../css/material-symbols-outlined.css" />
+		<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,200,0,0" /> -->
+	</ui:define>
+
+	<ui:define name="mainHeader">
+		<aon:div id="#{app.standAloneAppId}" /> 
+		<ui:include src="/facelet/app/header.xhtml" />
+	</ui:define>
+	
+	<ui:define name="mainContent">
+		<aon:form id="graphForm" >
+		
+			<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
+	
+			<aon:div id="ContractsGraphContainer"
+				style="width: 100%; height: 22.5rem; text-align: center; border: none !important; box-shadow: none !important; font-size: 12px !important; font-family: 'Noto Sans', sans-serif; ">
+				<aon:div styleClass="aon-bold">
+					<aon:outputText value="Altas y Bajas de Contratos" />
+					<aon:selectOneMenu id="contractYearSelect"
+						style="border: none;" value="#{dashboard.contractYear}">
+						<a4j:support 
+							event="onchange"
+							ajaxSingle="true" 
+							oncomplete="onComplete()"
+							actionListener="#{dashboard.onContractYearChanged}"
+							reRender="ContractsGraphContainer,messageList" />
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{dashboard.payrollYears}" />
+					</aon:selectOneMenu>
+				</aon:div>
+				<aon:div id="contractChartDiv"
+					style="width: 100%; height: 180px;" />
+
+				<script type="text/javascript"> 
+						function drawContractColumnChart(){
+				
+							var data = new google.visualization.DataTable();
+							data.addColumn('string', 'Mes');
+							data.addColumn('number', 'Altas');
+							data.addColumn('number', 'Bajas');							
+							
+							<c:forEach var="staff" items="#{dashboard.periodContractCount}">
+							
+								data.addRow(['#{staff.month}',
+								             #{staff.altas},
+								             #{staff.bajas} ]);	
+								
+							</c:forEach>
+							
+							var options = {
+								chartArea:{
+									left:30,
+									right:5,
+									top:15,
+									width:"90%",
+									height:"60%"
+								},									       
+							    legend: { 
+							    	position:'top', 
+							        maxLines: 12 
+							    },
+							    tooltip: {
+							    	isHtml: true
+							    },
+								bar: { 
+									groupWidth: '75%' 
+								},
+							    //isStacked: true,
+							    theme: 'material',
+							};
+							var chart = new google.visualization.ColumnChart(document.getElementById('graphForm:contractChartDiv'));
+							chart.draw(data, options);
+						}
+						
+						google.charts.load('current', {packages: ['corechart']});
+						google.charts.setOnLoadCallback(drawContractColumnChart);
+											
+				   </script>
+			</aon:div>
+			<script type="text/javascript" > 
+				//<![CDATA[
+				
+				function onComplete() {
+					var completeSpan = document.createElement('span');
+					completeSpan.id = 'completeSpan';
+					completeSpan.style.display = 'none';
+					document.body.appendChild(completeSpan);
+					
+					document.dispatchEvent(new Event("completed"));
+				}
+
+				function selectPayrollYear() {
+					// current year
+					payrollYear = new Date().getFullYear() ; 
+					
+					let select = document.getElementById('graphForm:contractYearSelect');
+						
+					for ( option of select.options ) {
+						if ( option.text == payrollYear ) {
+							if ( select.value != option.value ){
+								select.value = option.value;
+								select.onchange();
+							} else {
+								onComplete();
+							}
+							return;
+						}
+					}
+					onComplete();
+				}
+				document.addEventListener('DOMContentLoaded', selectPayrollYear, false );
+				//]]>
+			</script>
+		</aon:form>
+ 	</ui:define>
+
+</ui:composition>
+

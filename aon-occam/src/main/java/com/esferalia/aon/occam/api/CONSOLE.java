@@ -198,6 +198,12 @@ public class CONSOLE {
 		}
 	}
 	
+	public static boolean enableRemoteAccess(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getConsole().enableRemoteAccess(ctx,domainId);
+		}
+	}
+
 	public static boolean switchRemoteAccess(Occam occam, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getConsole().switchRemoteAccess(ctx,domainId);

@@ -2,6 +2,8 @@ package solutions.aon.selenium.solutions;
 
 import static solutions.aon.selenium.tools.SeleniumTools.setFakeLocation;
 
+import java.time.Duration;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,7 +58,7 @@ public class TimeControlTestCase extends AbstractTestCase {
 	
 	@Test
 	public void test() {
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		setFakeLocation(driver);
 		
 		WebElement timeElem = wait.until(ExpectedConditions

@@ -364,14 +364,14 @@ export class AonInvoice extends AonElement {
 					remarks.backgroundColor = INVOICE.color;
 					remarks.fn = () => this.addInvoiceRemarks();
 					moreActions.push(remarks);
+					
+					let comment = ACTION.COMMENT;
+					comment.permission = true;
+					comment.backgroundColor = INVOICE.color;
+					comment.fn = () => this.addInvoiceComment();
+					moreActions.push(comment);
 				}
-	
-				let comment = ACTION.COMMENT;
-				comment.permission = true;
-				comment.backgroundColor = INVOICE.color;
-				comment.fn = () => this.addInvoiceComment();
-				moreActions.push(comment);
-	
+
 				if(this.getInvoice().isEmitida()) {
 					let send = ACTION.SEND_INVOICE;
 					send.permission = true;
@@ -421,8 +421,9 @@ export class AonInvoice extends AonElement {
 			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 			invoiceToolbar.addButton2(ACTION.REJECT, () => this.rejectInvoice());
 		} 
+		
 		if((this.getInvoice().isOcrStatus(CONSTANT.APPROVED, CONSTANT.PENDING_CORRECTION) 
-		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()){
+		   || this.getInvoice().isPending()) && this.getDur().isInvoiceManager()) {
 			// invoiceToolbar.addButton2(ACTION.RECORD, () => this.recordInvoice());
 		}
 		
@@ -434,8 +435,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			if(this.isBeta() || (this.getInvoice().isEmitida() && this.getInvoice().isInbox())) 
-				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
@@ -2318,7 +2318,6 @@ export class AonInvoice extends AonElement {
 		});
 
 		bankAccount.addEventListener(EVENT.CHANGE, () => {
-			alert(bankAccount.value);
 			this.setFocus(this.FINANCE_AMOUNT + i);	
 			finance.bank_account = bankAccount.value;
 			this.invoice.setFinance(finance, i);
@@ -2577,7 +2576,7 @@ export class AonInvoice extends AonElement {
 			let viewer = new AonViewer();
 			if (this.getInvoice().file) {
 				viewer.type = this.getInvoice().file.content_type;
-				viewer.file = this.getInvoice().file.path;
+				viewer.file = this.getInvoice().file.path || this.getInvoice().file.url;
 			} else {
 				let json = {
 					id: this.getInvoice().id,

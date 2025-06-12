@@ -141,7 +141,12 @@ export class AonTreasuryMenu extends AonSuiteMenu {
                 description: "Panel Facturación de Cuotas",
                 title: "Panel Facturación de Cuotas",
                 action: () => GWT.iLoad(GWT.CUSTOMER_FEE)
-            }]
+            }, {
+                description: "Panel Carga Trabajo",
+                title: "Panel Carga Trabajo",
+                action: () => GWT.iLoad(GWT.SELLER_WORKLOAD_MODULE)
+            }
+            ]
         }, {
             title: 'Utilidades',
             options: [{

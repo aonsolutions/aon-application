@@ -2,7 +2,8 @@
  * The file contains styles for GWT widgets in the 365 theme.
  */
 @import url(/css/aon.css);
-
+@import url(/css/noto-sans.css);
+@import url(/css/material-symbols-outlined.css);
 @import url(/css/header.css);
 
 #rootPanel>div {
@@ -47,6 +48,22 @@
 	display:none;
 }
 */
+
+/*
+* Grid template
+*/
+
+.aon_grid_two_cols{
+	display: grid;
+	grid-template-columns: 1fr;
+   	gap: 1rem;
+}
+ 
+@media(min-width: 1150px) {
+	.aon_grid_two_cols {
+		grid-template-columns: repeat(2, 1fr);
+    }
+}
 
 /*
  * Card
@@ -287,9 +304,11 @@
 	background-color: #fff;
 }
 
+/*
 .aon-EmployeeTree-EmployeeDetail {
 	margin-left: 32px;
 }
+*/
 
 .aon-EmployeeTree-EmployeeDetail .aon-finding-title-toolbar {
 	background-color: #fafafa;
@@ -530,6 +549,11 @@
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M146-346v-28h280v28H146Zm0-160v-28h440v28H146Zm0-160v-28h440v28H146Zm520 480v-160H506v-28h160v-160h28v160h160v28H694v160h-28Z"/></svg>');
 }
 
+.aon_icon_add_task {
+	background-size: 24px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='black'%3E%3Cpath d='M479.63-120q-74.5 0-140.03-28.42-65.52-28.43-114.18-76.99-48.66-48.56-77.04-114.2Q120-405.26 120-479.9q0-74.64 28.35-140.38 28.35-65.73 76.95-114.36 48.6-48.63 114.3-76.99Q405.3-840 480-840q61.41 0 116.2 19 54.8 19 99.95 53l-28.77 29.77q-39.53-29.39-86.98-45.58Q532.96-800 480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q35.08 0 68.15-7.54 33.08-7.54 63.39-20.84l30 30.23q-36.39 18.46-77.16 28.3-40.76 9.85-84.75 9.85ZM780-180v-120H660v-40h120v-120h40v120h120v40H820v120h-40ZM422.46-323.69 280.15-466l28.31-28.31 114 114 389.23-389.46L840-741.46 422.46-323.69Z'/%3E%3C/svg%3E");
+}
+
 .aon_toolbar_button.aon_icon_receipt {
 	background-size: 28px;
 	background-image:
@@ -581,6 +605,66 @@
 	background-size: 19px;
 	background-image:
 		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M118-164v-668h348v160h376v336h-28v-308H466v132h100v28H466v132h100v28H466v132h200v28H118Zm28-28h132v-132H146v132Zm0-160h132v-132H146v132Zm0-160h132v-132H146v132Zm0-160h132v-132H146v132Zm160 480h132v-132H306v132Zm0-160h132v-132H306v132Zm0-160h132v-132H306v132Zm0-160h132v-132H306v132ZM814-84v-80h-80v-28h80v-80h28v80h80v28h-80v80h-28ZM666-484v-28h28v28h-28Zm0 160v-28h28v28h-28Z"/></svg>');
+}
+
+.aon_icon_gpp_maybe {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M480-320q17 0 28.5-11.5T520-360q0-17-11.5-28.5T480-400q-17 0-28.5 11.5T440-360q0 17 11.5 28.5T480-320Zm-40-160h80v-200h-80v200Zm40 400q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"/></svg>');
+}
+
+.aon_icon_move_group {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M326-292q-26 0-43-17t-17-43v-54h28v54q0 12 10 22t22 10h416q12 0 22-10t10-22v-368H294v86h-28v-134q0-26 17-43t43-17h416q26 0 43 17t17 43v416q0 26-17 43t-43 17H326ZM218-184q-26 0-43-17t-17-43v-444h28v444q0 12 10 22t22 10h444v28H218Zm272-193-19-19 108-110H266v-28h313L471-644l19-19 143 143-143 143Z"/></svg>');
+}
+
+.aon_icon_group_off {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M852-68 659-261v29H123v-52q0-26 13.5-43.5t36.45-28.59Q222-379 269.5-393.5 317-408 391-408q45 0 78.5 5.5T532-388L407-513q-4 1-8 1h-8q-44.55 0-76.27-31.72Q283-575.45 283-620v-8q0-4 1-8L90-830l20-20L872-88l-20 20ZM697-392q23 6 45 15.5t45 20.5q23 11 36.5 30.16T837-284v49L728-344q-6-14-13.5-26T697-392Zm-306 12q-66 0-114 12.5T187-332q-21 11-28.5 22t-7.5 26v24h480v-29l-51-51q-39-20-84-30t-105-10Zm158-143q14-21 22-46t8-51q0-30-10.5-57T541-728q44.55 0 76.28 31.72Q649-664.55 649-620q0 41.25-26 70.62Q597-520 559-513l-10-10Zm-57-57-23-23q1-4 1.5-8t.5-9q0-33-23.5-56.5T391-700q-5 0-9 .5t-8 1.5l-23-23q10-3 19.62-5 9.63-2 20.38-2 44.55 0 76.27 31.72Q499-664.55 499-620q0 10.75-2 20.38-2 9.62-5 19.62ZM381-260Zm42-392Z"/></svg>');
+}
+
+.aon_icon_move_to_inbox {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M232-172q-26 0-43-17t-17-43v-496q0-26 17-43t43-17h496q26 0 43 17t17 43v496q0 26-17 43t-43 17H232Zm0-28h496q14 0 23-9t9-23v-108H610q-20 38-54.5 59T480-260q-41 0-75.5-21T350-340H200v108q0 14 9 23t23 9Zm248-88q38 0 69-22t43-58h168v-360q0-14-9-23t-23-9H232q-14 0-23 9t-9 23v360h168q12 36 43 58t69 22Zm0-148L356-560l20-20 90 90v-194h28v194l90-90 20 20-124 124ZM232-200h-32 560-528Z"/></svg>');
+}
+
+.aon_icon_up {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m256-461-19-19 243-243 243 243-19 19-224-223-224 223Z"/></svg>');
+}
+
+.aon_icon_down {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M480-380 276-584l20-20 184 184 184-184 20 20-204 204Z"/></svg>');
+}
+
+.aon_icon_no_encryption {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m748-254-28-28v-246q0-14-9-23t-23-9H442l-28-28h186v-80q0-51-36.5-85.5T476-788q-51 0-87.5 35T352-668v12l-26-26q5-57 47.5-95.5T476-816q63 0 107.5 43T628-668v80h60q26 0 43 17t17 43v274Zm72 226L712-136q-9 3-19 3.5t-25 .5H272q-26 0-43-17t-17-43v-336q0-22 14-38t36-20L28-820l20-20L840-48l-20 20ZM686-160 521-327q-8 8-18 12t-21 4q-23 0-38.5-15.5T428-365q0-11 4-21t12-18L286-560h-14q-14 0-23 9t-9 23v336q0 14 9 23t23 9h414ZM486-360Zm95-61Z"/></svg>');
+}
+
+.aon_icon_check_circle {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="m422-332 248-248-20-20-228 228-114-114-20 20 134 134Zm58.17 200q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+.aon_icon_check_circle_green {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="green"><path d="m422-332 248-248-20-20-228 228-114-114-20 20 134 134Zm58.17 200q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
+}
+
+.aon_icon_error_exclamation {
+	background-size: 24px;
+	background-image:
+		url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="black"><path d="M480-308q8.5 0 14.25-5.75T500-328q0-8.5-5.75-14.25T480-348q-8.5 0-14.25 5.75T460-328q0 8.5 5.75 14.25T480-308Zm-14-124h28v-240h-28v240Zm14.17 300q-72.17 0-135.73-27.39-63.56-27.39-110.57-74.35-47.02-46.96-74.44-110.43Q132-407.65 132-479.83q0-72.17 27.39-135.73 27.39-63.56 74.35-110.57 46.96-47.02 110.43-74.44Q407.65-828 479.83-828q72.17 0 135.73 27.39 63.56 27.39 110.57 74.35 47.02 46.96 74.44 110.43Q828-552.35 828-480.17q0 72.17-27.39 135.73-27.39 63.56-74.35 110.57-46.96 47.02-110.43 74.44Q552.35-132 480.17-132Zm-.17-28q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>');
 }
 
 .aon_icon_ {

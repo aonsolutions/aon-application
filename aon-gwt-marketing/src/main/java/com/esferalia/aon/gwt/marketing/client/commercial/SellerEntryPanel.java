@@ -48,7 +48,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -136,7 +135,7 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 		showWidget(sellerEntryPanel);
 		
 		tablayoutPanel = new TabLayoutPanel(25.00, Unit.PX);
-		tablayoutPanel.setHeight((Window.getClientHeight() - 180) + "px");
+		tablayoutPanel.setHeight("100%");
 		tablayoutPanel.getElement().getStyle().setProperty("margin", "0 1rem");
 	
 		createToolbar();
@@ -293,19 +292,11 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			container.addStyleName(AON.CSS.aonFlexColumn());
 			container.add(messagePanel);
 			
-			HTMLPanel rootPanel = new HTMLPanel(EMPTY_STRING);
-			rootPanel.addStyleName(AON.CSS.aonFlexColumn());
-			
-			FlowPanel tablesPanel = new FlowPanel();
-			tablesPanel.setStyleName(AON.CSS.aonItemFlex());
-			tablesPanel.getElement().getStyle().setProperty("flex-wrap", "wrap");
-			tablesPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+			HTMLPanel gridPanel = new HTMLPanel(EMPTY_STRING);
+			gridPanel.setStyleName(AON.CSS.aonGridTwoCols());
 			
 			sellerStatus = new SellerStatusSelect(seller.getStatus());
 			AonCustomCard infoCard = new AonCustomCard("Informaci\u00f3n", sellerStatus);
-			infoCard.getElement().getStyle().setProperty("max-width", "550px");
-			infoCard.getElement().getStyle().setProperty("min-height", "150px");
-			infoCard.getElement().getStyle().setProperty("width", "100%");
 			infoCard.setToolbarWidgetShown();
 			
 			FlexTable table1 = new FlexTable();
@@ -366,12 +357,9 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			
 			infoCard.add(table1);
 			
-			tablesPanel.add(infoCard);
+			gridPanel.add(infoCard);
 			
 			AonCustomCard agentCard = new AonCustomCard("Agente Comercial");
-			agentCard.getElement().getStyle().setProperty("max-width", "550px");
-			agentCard.getElement().getStyle().setProperty("min-height", "150px");
-			agentCard.getElement().getStyle().setProperty("width", "100%");
 			
 			FlexTable table2 = new FlexTable();
 			table2.setStyleName(AON.CSS.aonTable());
@@ -459,14 +447,11 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			
 			agentCard.add(table2);
 			
-			tablesPanel.add( agentCard );
+			gridPanel.add( agentCard );
 			
 			AonToolbarButton addAddress = new AonToolbarButton("Nueva Direcci\u00f3n", AON.CSS.aonIconAdd());
 			addAddress.addClickHandler(e -> createAddres());
 			AonCustomCard addressCard = new AonCustomCard("Direcci\u00f3n", addAddress);
-			addressCard.getElement().getStyle().setProperty("max-width", "550px");
-			addressCard.getElement().getStyle().setProperty("min-height", "150px");
-			addressCard.getElement().getStyle().setProperty("width", "100%");
 			
 			addressTable = new AddressTable(options.getDomainName(), options.getDomain(), options.getUser(), seller.getId()) {
 
@@ -483,14 +468,11 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			};
 			addressCard.add(addressTable);
 			
-			tablesPanel.add( addressCard );
+			gridPanel.add( addressCard );
 			
 			AonToolbarButton addMedia = new AonToolbarButton("Nuevo contacto", AON.CSS.aonIconAdd());
 			addMedia.addClickHandler(e -> createMedia());
 			AonCustomCard mediaCard = new AonCustomCard("Contacto", addMedia);
-			mediaCard.getElement().getStyle().setProperty("max-width", "550px");
-			mediaCard.getElement().getStyle().setProperty("min-height", "150px");
-			mediaCard.getElement().getStyle().setProperty("width", "100%");
 			
 			mediaTable = new MediaTable(options.getDomainName(), options.getDomain(), options.getUser(), seller.getId()) {
 
@@ -502,11 +484,9 @@ public abstract class SellerEntryPanel extends DeckLayoutPanel {
 			};
 			mediaCard.add(mediaTable);
 			
-			tablesPanel.add( mediaCard );
+			gridPanel.add( mediaCard );
 			
-			rootPanel.add( tablesPanel );
-			
-			ScrollPanel rootScroll = new ScrollPanel(rootPanel);
+			ScrollPanel rootScroll = new ScrollPanel(gridPanel);
 			rootScroll.getElement().getStyle().setProperty("margin-top", "1rem");
 			tablayoutPanel.add(rootScroll, "Datos Generales");
 			

@@ -585,7 +585,7 @@ public class OCRInvoiceBuilder {
 			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
 			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
 			
-			detail.addInvoiceTax(vat);
+			detail.addTax(vat);
 		}
 	}
 
@@ -607,15 +607,21 @@ public class OCRInvoiceBuilder {
 		Optional<BigDecimal> uniqueVatPercent = checkIfOnlyOneVat(invoice);
 		BigDecimal percentage = uniqueVatPercent.orElse( ocrBreakdown.getTaxRate().flatMap( d -> d.getValue() ).orElse(null) );
 		BigDecimal quota = ocrBreakdown.getTaxAmount().flatMap( d -> d.getValue() ).orElse(null);
+		
+		BigDecimal rePercentage = ocrBreakdown.getReRate().flatMap( d -> d.getValue()).orElse(null);
+		BigDecimal reQuota = ocrBreakdown.getReAmount().flatMap( d -> d.getValue() ).orElse(null);
+
 		if ( AonMathUtils.isNotZero(taxableBase) && AonMathUtils.isNotZero(percentage) && AonMathUtils.isNotZero(quota)) {
 		    InvoiceTax vat = new InvoiceTax().setDomain(detail.getDomain()).setTaxType(TaxType.VAT)
 			    .setVatDeductionType(VatDeductionType.WITH_RIGHT);
 			vat.setBase( AonNumberUtils.zeroIfNull(taxableBase));
 			vat.setPercentage( AonNumberUtils.zeroIfNull(percentage));
 			vat.setQuota( AonNumberUtils.zeroIfNull(quota));
-			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota));
-			
-			detail.addInvoiceTax(vat);
+			vat.setSurcharge(AonNumberUtils.zeroIfNull(rePercentage));
+			vat.setSurchargeQuota(AonNumberUtils.zeroIfNull(reQuota));
+			vat.setDeductibleQuota( AonNumberUtils.zeroIfNull(quota) + AonNumberUtils.zeroIfNull(reQuota));			
+			detail.addTax(vat);
+			if(vat.getSurcharge() > 0.0) invoice.setSurcharge(true);
 		}
 	}
 
@@ -1092,8 +1098,8 @@ public class OCRInvoiceBuilder {
 	}
 
 	private static boolean mustImportFromBreakdown(OCRInvoice ocrInvoice) {
-		// Mientras los se devuelvan las línea correctamente, se importa siempre el BreakDown
-		// En otro caso descomentar el método.
+		// Mientras los se devuelvan las lï¿½nea correctamente, se importa siempre el BreakDown
+		// En otro caso descomentar el mï¿½todo.
 		return Boolean.TRUE;
 		//----------------
 			
@@ -1143,12 +1149,12 @@ public class OCRInvoiceBuilder {
 		
 		guessItemsOrAccounts(ocr.getCtx(),ocr.getInvoice(),ocr.getDetail());
 		
-		// Si no se ha rellenado ni iten ni account, se busca el parámetro por defecto. 
-		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccount() == null) {
+		// Si no se ha rellenado ni iten ni account, se busca el parï¿½metro por defecto. 
+		if ( ocr.getDetail().getItem() == null && ocr.getDetail().getAccountId() == null) {
 			if (ocr.getConfig() != null && ocr.getConfig().getOcrDefaultItem() != null) {
 				ocr.getDetail().setItem( ocr.getConfig().getOcrDefaultItem() );	
 			} else {
-				throw new AonCoreException("No existe producto por defecto definido en la configuración");
+				throw new AonCoreException("No existe producto por defecto definido en la configuraciï¿½n");
 			}
 		}
 	}
@@ -1160,7 +1166,7 @@ public class OCRInvoiceBuilder {
 					guessItemsOrAccounts(ctx, invoice, invoice.getDetails().get(i) );			
 				} else {
 					invoice.getDetails().get(i).setItem( invoice.getDetails().get(0).getItem() );
-					invoice.getDetails().get(i).setAccount( invoice.getDetails().get(0).getAccount() );
+					invoice.getDetails().get(i).setAccountId( invoice.getDetails().get(0).getAccountId() );
 					invoice.getDetails().get(i).setAccountCode( invoice.getDetails().get(0).getAccountCode() );
 					invoice.getDetails().get(i).setAccountDescription( invoice.getDetails().get(0).getAccountDescription() );
 				}
@@ -1171,7 +1177,7 @@ public class OCRInvoiceBuilder {
 
 	private static void guessItemsOrAccounts(AONContext ctx, Invoice invoice, InvoiceDetail invoiceDetail) {
 		if (invoice != null && invoice.getRegistry() != null) {
-			// Se busca el último item del registry que se trata
+			// Se busca el ï¿½ltimo item del registry que se trata
 			Optional<Item> opItem = AON.getLastItem(ctx, invoice.getRegistry());
 			if (opItem.isPresent()) {
 				invoiceDetail.setItem( opItem.get() );	
@@ -1182,14 +1188,14 @@ public class OCRInvoiceBuilder {
 					.findFirst()
 					.orElse(null);
 				if (account != null) {
-					invoiceDetail.setAccount( account.getId() );	
+					invoiceDetail.setAccountId( account.getId() );	
 					invoiceDetail.setAccountCode( account.getCode() );
 					invoiceDetail.setAccountDescription( account.getDescription() );
 				}
 			}
 		}
 	}
-	// Buscar en facturas anteriores para suponer el tipo de retención con mas seguridad.
+	// Buscar en facturas anteriores para suponer el tipo de retenciï¿½n con mas seguridad.
 	private static WithholdingType guessWitholdingType(Invoice invoice, double percentage) {
 		if(percentage == 19.0) return WithholdingType.RENTING;
 		else if(percentage == 2.0) return WithholdingType.FARMER;

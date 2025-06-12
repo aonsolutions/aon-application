@@ -218,7 +218,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 	private Focusable paintActiveRow(final AccountEntryModuleOptions options, int rowNumber,AonDisplayGridRow row,final AccountEntryDetail aed) {
 		
 		final AonAccountBox detailAccountBox = new AonAccountBox(options.getOccam());
-		detailAccountBox.setValue(aed.getAccount(), aed.getAccountCode(),aed.getAccountDescription());
+		detailAccountBox.setValue(aed.getAccountId(), aed.getAccountCode(),aed.getAccountDescription());
 		focusable = detailAccountBox;
 
 		final TextBox conceptBox = new TextBox();
@@ -235,7 +235,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		creditBox.setValue(aed.getCredit());
 		
 		final AonAccountBox balancingAccountBox = new AonAccountBox(options.getOccam(), false);
-		balancingAccountBox.setValue(aed.getBalancingAccount(), aed.getBalancingAccountCode(),
+		balancingAccountBox.setValue(aed.getBalancingAccountId(), aed.getBalancingAccountCode(),
 				aed.getBalancingAccountDescription());
 		balancingAccountBox.setRequired(false);
 		
@@ -295,11 +295,11 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		// ---------------------------------------------------- [DETAIL ACCOUNT]
 		detailAccountBox.addSelectionHandler( event -> {
 			if (event.getSelectedItem() != null) {
-				aed.setAccount(event.getSelectedItem().getId());
+				aed.setAccountId(event.getSelectedItem().getId());
 				aed.setAccountCode(event.getSelectedItem().getCode());
 				aed.setAccountDescription(event.getSelectedItem().getDescription());
 			} else {
-				aed.setAccount(null);
+				aed.setAccountId(null);
 				aed.setAccountCode(null);
 				aed.setAccountDescription(null);
 			}
@@ -439,11 +439,11 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		// ------------------------------------------------- [BALANCING ACCOUNT]
 		balancingAccountBox.addSelectionHandler( event -> {
 			if (event.getSelectedItem() != null) {
-				aed.setBalancingAccount(event.getSelectedItem().getId());
+				aed.setBalancingAccountId(event.getSelectedItem().getId());
 				aed.setBalancingAccountCode(event.getSelectedItem().getCode());
 				aed.setBalancingAccountDescription(event.getSelectedItem().getDescription());
 			} else {
-				aed.setBalancingAccount(null);
+				aed.setBalancingAccountId(null);
 				aed.setBalancingAccountCode(null);
 				aed.setBalancingAccountDescription(null);
 			}
@@ -601,14 +601,14 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 			newDetail.setLine(++line);
 			
 			if ( wizardContent.getMainEntry().getDetailsSize() == 1) {
-				newDetail.setAccount(aed.getBalancingAccount());
+				newDetail.setAccountId(aed.getBalancingAccountId());
 				newDetail.setAccountCode(aed.getBalancingAccountCode());
 				newDetail.setAccountDescription(aed.getBalancingAccountDescription());
-				newDetail.setBalancingAccount(aed.getAccount());
+				newDetail.setBalancingAccountId(aed.getAccountId());
 				newDetail.setBalancingAccountCode(aed.getAccountCode());
 				newDetail.setBalancingAccountDescription(aed.getAccountDescription());
 			} else {
-				newDetail.setBalancingAccount(aed.getBalancingAccount());
+				newDetail.setBalancingAccountId(aed.getBalancingAccountId());
 				newDetail.setBalancingAccountCode(aed.getBalancingAccountCode());
 				newDetail.setBalancingAccountDescription(aed.getBalancingAccountDescription());
 			}
@@ -624,7 +624,7 @@ public class AccountEntryTable extends AonDisplayGrid implements HasErrorHandler
 		wizardContent.getMainEntry().getDetails().add(newDetail);
 		paintRow(options, rowNumber, newDetail);
 		refreshTotals();
-		if (newDetail.getAccount() != null) {
+		if (newDetail.getAccountId() != null) {
 			ValueChangeEvent.<AccountEntryDetail>fire(AccountEntryTable.this, aed);
 		}
 		Scheduler.get().scheduleDeferred(() -> AccountEntryTable.this.setFocus(true));

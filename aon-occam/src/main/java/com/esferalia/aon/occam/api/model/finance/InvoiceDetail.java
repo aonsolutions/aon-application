@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.DiscountExpression;
 import com.esferalia.aon.occam.api.model.InvestAsset;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 public class InvoiceDetail implements Serializable {
 
 	private static final long serialVersionUID = 7597157186868662372L;
@@ -42,15 +44,10 @@ public class InvoiceDetail implements Serializable {
 	// WAREHOUSE
 	private Integer warehouse;
 	private String warehouseName;
-	
-	// WORKPLACE
 	private Workplace workplace;
-	
-	// ACCOUNT
-	private Integer account;
+	private Integer accountId;
 	private String accountCode;
 	private String accountDescription;
-	
 	private List<InvoiceTax> invoiceTaxes;
 	
 	// SOURCE INFO
@@ -61,6 +58,13 @@ public class InvoiceDetail implements Serializable {
 	private DeliveryDetail deliveryDetail;
 	private IncomeDetail incomeDetail;
 	private OfferDetail offerDetail;
+	
+	public boolean isDeleted() {
+		return (getId() != null && getId() < 0);
+	}
+	public boolean isNotDeleted() {
+		return !isDeleted();
+	}
 	
 	public Integer getId() {
 		return id;
@@ -247,26 +251,11 @@ public class InvoiceDetail implements Serializable {
 		return this;
 	}
 
-	public List<InvoiceTax> getInvoiceTaxes() {
-		if(invoiceTaxes == null) {
-			invoiceTaxes = new LinkedList<>();
-		}
-		return invoiceTaxes;
+	public Integer getAccountId() {
+		return accountId;
 	}
-	public InvoiceDetail setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
-		this.invoiceTaxes = invoiceTaxes;
-		return this;
-	}
-	public InvoiceDetail addInvoiceTax(InvoiceTax invoiceTax) {
-		getInvoiceTaxes().add(invoiceTax);
-		return this;
-	}
-	
-	public Integer getAccount() {
-		return account;
-	}
-	public InvoiceDetail setAccount(Integer account) {
-		this.account = account;
+	public InvoiceDetail setAccountId(Integer accountId) {
+		this.accountId = accountId;
 		return this;
 	}
 	
@@ -286,11 +275,23 @@ public class InvoiceDetail implements Serializable {
 		this.accountDescription = accountDescription;
 		return this;
 	}
-
-	public boolean isDeleted() {
-		return (getId() != null && getId() < 0);
-	}
 	
+	// ---------------------------------------------------- [TAXES]
+	public Stream<InvoiceTax> taxStream() {
+		return AonCollectionUtils.stream(this.invoiceTaxes);
+	}
+	private List<InvoiceTax> ensureTaxes() {
+	    if ( this.invoiceTaxes == null ) invoiceTaxes = new LinkedList<>();
+	    return this.invoiceTaxes;
+	}
+	public boolean hasTaxes() {
+		return AonCollectionUtils.isEmpty(this.invoiceTaxes);
+	}
+	public InvoiceDetail addTax(InvoiceTax tax) {
+		ensureTaxes().add(tax);
+	    return this;
+	}
+	// ------------------------------------------------- [SOURCE INFO]
 	public PurchaseDetail getPurchaseDetail() {
 		return purchaseDetail;
 	}
@@ -331,4 +332,25 @@ public class InvoiceDetail implements Serializable {
 		this.offerDetail = offerDetail;
 	}
 
+	// **********************************************************************************
+	// ***************************************************** [ DEPRECATED METHODS ] *****
+	// **********************************************************************************
+	/**
+	 * @deprecated This method will be removed 
+	 * use taxStream()
+	 */
+	public List<InvoiceTax> getInvoiceTaxes() {
+		if(invoiceTaxes == null) {
+			invoiceTaxes = new LinkedList<>();
+		}
+		return invoiceTaxes;
+	}
+	/**
+	 * @deprecated This method will be removed 
+	 * use addTax(InvoiceTax tax)
+	 */
+	public InvoiceDetail setInvoiceTaxes(List<InvoiceTax> invoiceTaxes) {
+		this.invoiceTaxes = invoiceTaxes;
+		return this;
+	}
 }

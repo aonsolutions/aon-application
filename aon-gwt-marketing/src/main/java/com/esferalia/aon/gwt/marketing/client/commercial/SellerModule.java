@@ -13,12 +13,10 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.SellerParams;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 
 public class SellerModule extends MainEntryPoint {
 	
@@ -63,8 +61,6 @@ public class SellerModule extends MainEntryPoint {
 	
 	public void moduleLoad() {
 		AON.ensureInjected();
-		
-		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		
 		deckLayoutPanel = new DeckLayoutPanel();
 		
@@ -115,9 +111,7 @@ public class SellerModule extends MainEntryPoint {
 		deckLayoutPanel.add(sellerEntryPanel);
 		deckLayoutPanel.showWidget(sellerModulePanel);
 		
-		dockLayoutPanel.add( deckLayoutPanel );
-		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		root.add(dockLayoutPanel);
+		options.getParentWidget().add(deckLayoutPanel);
 	}
 	
 	private void showSellerList() {

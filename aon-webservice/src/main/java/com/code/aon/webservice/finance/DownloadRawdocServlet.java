@@ -35,10 +35,8 @@ public class DownloadRawdocServlet extends HttpServlet {
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(pathInfo[bool ? 1 : 3]);
 		Integer domainId = Integer.parseInt(parameters.get("domain"));
 		Integer id = Integer.parseInt(parameters.get("id"));
-		Rawdoc rawdoc = AON.getRawdocFull(domainName, domainId, userName, id);
-		if (rawdoc == null)  {
-			throw new ServletException("Documento no encontrado");
-		}
+		Rawdoc rawdoc = AON.getRawdocFull(domainName, domainId, userName, id)
+			.orElseThrow(() -> new ServletException("Documento no encontrado"));
 		if (rawdoc.getData() != null)  {
 	        Integer length = rawdoc.getData().length;
 	

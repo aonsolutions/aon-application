@@ -16,6 +16,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 
 public abstract class SellerModulePanel extends AonCustomDockLayout {
@@ -25,7 +26,7 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 	
 	private AonToolbarButton deleteButton;
 	
-	private SimpleLayoutPanel centerPanel;
+	private SimplePanel centerPanel;
 	
 	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	private AonCustomListBox active = new AonCustomListBox("Activo");
@@ -52,6 +53,8 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 				onSearch( options );
 			}
 		});
+		
+		setSearchPlaceholder("Buscar por nombre ...");
 		
 		scope.addItem("-", "");
 		options.getConfiguration().getAvailableScopes().forEach(sc -> scope.addItem(sc.getDescription(), sc.getId() + ""));
@@ -167,7 +170,8 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 
 	public void onSearch( SellerModuleOptions options ) {
 		SellerParams params = getWidgetParams( options );
-		sellerPanel = new SellerPanel(params) {
+		centerPanel.clear();
+		sellerPanel = new SellerPanel(params, centerPanel) {
 
 			@Override
 			protected void onSellerOpen(Seller seller) {
@@ -195,7 +199,7 @@ public abstract class SellerModulePanel extends AonCustomDockLayout {
 			}
 		
 		};
-			
+		
 		centerPanel.setWidget(sellerPanel);
 	}
 

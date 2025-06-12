@@ -76,8 +76,7 @@
 										<f:selectItem itemLabel="#{bundle.aon_expenses}" itemValue="EXPENSES" />
 										<f:selectItem itemLabel="#{bundle.finance_undeductible_invoice_management_module}" itemValue="UNDEDUCTIBLE" />
 									    <a4j:support event="onchange"
-									    action="#{controller.afterSearchAction}"
-										actionListener="#{controller.onSearchList}"
+									    action="#{controller.refreshFilter}"
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
 									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
@@ -90,14 +89,13 @@
 									<f:selectItem itemLabel="#{bundle.finance_not_recorded}" itemValue="PENDING" />
 									<f:selectItem itemLabel="#{bundle.finance_invoice_recorded}" itemValue="SCORED" />
 									<a4j:support event="onchange"
-									    action="#{controller.afterSearchAction}"
-										actionListener="#{controller.onSearchList}"
+									    action="#{controller.refreshFilter}"
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
 									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
 								</aon:selectOneMenu>
 								
-								<!-- <aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-bold aon-margin-left"/>
+								<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-bold aon-margin-left"/>
 									<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label aon-padding-right" 
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="Invoice_issueDate-From"
@@ -112,18 +110,29 @@
 										timeZone="#{timeZoneController.timeZone}"
 										popupDateFormat="#{bundle.aon_date_pattern}"
     									onchange="setTimeout(function() { document.getElementById(aonContent:invoiceRecorderList:dateForm:searchDateButton).click(); }, 100);" /> 								
-									<aon:commandButton id="searchDateButton"
-										styleClass="aon-finding-toolbar-item aon-icon-close"
-										action="#{controller.afterSearchAction}"
-										actionListener="#{controller.onSearchList}"
+								
+								<aon:outputLabel value="("
+										style="vertical-align: middle;"/>
+								<aon:commandButton id="refreshDateButton"
+										style="margin:0px; vertical-align: middle;"
+										styleClass="aon-finding-toolbar-item aon-event-repeat"
+										action="#{controller.refreshFilter}"
 									    reRender="invoiceRecorderList"
 									    onsubmit="Richfaces.showModalPanel('waitProccess')"
-									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/> -->
+									    oncomplete="Richfaces.hideModalPanel('waitProccess')"/>
+								<aon:outputLabel value="Aplicar/Actualizar filtro de fechas )"
+										style="vertical-align: middle;"/> 
 							</aon:div>
 							<aon:div style="text-align: right;">
+								<aon:commandButton id="clearFilterButton"
+										styleClass="aon-finding-toolbar-item aon-icon-clear"
+										action="#{controller.refreshFilter}"
+										actionListener="#{invoiceRecorderSearch.resetFilter}"
+										reRender="invoiceRecorderList"/>
 								<aon:commandButton id="InvoiceRecorder-close"
-									styleClass="aon-finding-toolbar-item aon-icon-close"
-									onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; return false;"/>
+									styleClass="aon-finding-toolbar-item aon-icon-close aon-margin-left"
+									onclick="document.querySelector('[id$=invoiceRecorderCommandContainer]').style.display = 'none'; document.querySelector('[id$=filterButton]').style.display = 'inline'; document.querySelector('[id$=noFilterButton]').style.display = 'none'; 
+			            			return false;"/>
 							</aon:div>
 						</aon:panelGrid>
 						<aon:panelGrid id="filterTable2" columns="1" style="padding: 0px !important;">

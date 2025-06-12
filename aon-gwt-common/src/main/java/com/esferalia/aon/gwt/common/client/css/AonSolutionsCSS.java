@@ -86,6 +86,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_delete")
 	String aonIconDelete();
+	
+	@ClassName("aon_icon_no_encryption")
+	String aonIconNoEncryption();
 
 	@ClassName("aon_icon_search")
 	String aonIconSearch();
@@ -335,6 +338,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
+	
+	@ClassName("aon_icon_move_to_inbox")
+	String aonIconMoveToInbox();
 	
 	@ClassName("aon_icon_domain_add")
 	String aonIconDomainAdd();
@@ -913,8 +919,14 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_custom_card")
 	String aonCustomCard();
 	
+	@ClassName("aon_custom_card_small")
+	String aonCustomCardSmall();
+	
 	@ClassName("aon_custom_card_button")
 	String aonCustomCardButton();
+	
+	@ClassName("aon_custom_card_button_hide_on_hover")
+	String aonCustomCardButtonHideOnHover();
 	
 	@ClassName("aon_custom_row")
 	String aonCustomRow();
@@ -1508,5 +1520,21 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_badge")
 	String aonBadge();
+	
+	@ClassName("aon_grid_two_cols")
+	String aonGridTwoCols();
+	
+	@ClassName("aon_icon_gpp_maybe")
+	String aonIconGppMaybe();
+	
+	@ClassName("aon_icon_check_circle")
+	String aonIconCheckCircle();
+	
+	@ClassName("aon_icon_check_circle_green")
+	String aonIconCheckCircleGreen();
+	
+	@ClassName("aon_icon_error_exclamation")
+	String aonIconErrorExclamation();
+	
 }
 

@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -25,6 +24,7 @@ public class InvoiceMessagesLabel extends AonTableButton {
 				;
 				addClickHandler(event -> {
 					final AonCustomPopup infoPanel = new AonCustomPopup();
+					infoPanel.setAutoHideEnabled( true );
 					infoPanel.setWidth( "600px");
 					infoPanel.setHeight("400px");
 					infoPanel.add(new InvoiceRecorderMessagesPanel( invoice ));
@@ -57,7 +57,7 @@ public class InvoiceMessagesLabel extends AonTableButton {
 				.addCell(new Label(""), AON.CSS.aonWidth30())
 				.addCell(new Label(AON.MSG.message()), AON.CSS.aonWidthAuto())
 			;
-			AonCollectionUtils.stream(invoice.getMessages())
+			invoice.messageStream()
 				.forEach( e -> {
 					Label errorIcon = new Label("");
 					errorIcon.setStyleName(AON.CSS.aonIconLabel());

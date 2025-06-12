@@ -24,6 +24,7 @@ export const ALARM_OFF = 'alarm_off';
 export const ALARM_ON = 'alarm_on';
 export const ALL_INBOX = 'all_inbox';
 export const ALL_OUT = 'all_out';
+export const ALTERNATE_EMAIL = 'Alternate_Email';
 export const ANALYTICS = 'analytics';
 export const ANCHOR = 'anchor';
 export const ANDROID = 'android';
@@ -106,11 +107,12 @@ export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
 export const CONTRACT = 'contract';
+export const CONTACTS = 'contacts';
 export const CREDIT_CARD = 'credit_card';
 export const CONTENT_COPY = 'content_copy';
 
 // ----- D
-
+export const DASHBOARD = 'dashboard';
 export const DATA_OBJECT = 'data_object';
 export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
@@ -226,6 +228,7 @@ export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';
 export const PERSON_ADD_ALT = 'person_add_alt';
+export const PERSON_PLAY = 'person_play';
 export const PHONE = 'phone';
 export const PINBOARD = 'pinboard';
 export const PLAYLIST_ADD_CIRCLE = 'playlist_add_circle';

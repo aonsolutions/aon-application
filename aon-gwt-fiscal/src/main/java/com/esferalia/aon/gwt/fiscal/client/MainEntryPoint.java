@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.fiscal.client.booking.BookingCustomerPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.BookingPanel;
 import com.esferalia.aon.gwt.fiscal.client.booking.CustomerBookingResumeModule;
 import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
+import com.esferalia.aon.gwt.fiscal.client.customer.CustomerInvoiceModule;
 import com.esferalia.aon.gwt.fiscal.client.customer.CustomerSupportAgentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.FBatchPaymentModule.FBATCH_TYPE;
@@ -226,12 +227,6 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule.run();
 			}
 		},
-		RawdocRecordModule {
-			@Override
-			void run() {
-				com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocRecordModule.run();
-			}
-		}
 		;
 		abstract void run();
 	}
@@ -311,6 +306,9 @@ public class MainEntryPoint implements EntryPoint {
 	//  ================================================================== TARGET ENTERPRISE
 	//
 	private static final String TARGET_ENTERPRISE_MODULE_ENTRY_POINT = "TargetEnterpriseModule";
+	//  ================================================================== TARGET ENTERPRISE
+	//
+	private static final String CUSTOMER_INVOICE_MODULE_ENTRY_POINT = "CustomerInvoiceModule";
 	
 	
 
@@ -1005,6 +1003,21 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
+		}  else if( entryPoint.equalsIgnoreCase(CUSTOMER_INVOICE_MODULE_ENTRY_POINT) ) {
+			GWT.runAsync(TargetEnterpriseModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerInvoiceModule customerInvoiceModule = new CustomerInvoiceModule();
+					customerInvoiceModule.onModuleLoad();
+				}
+				
+			});
 		}
 		
 	}
@@ -1038,6 +1051,11 @@ public class MainEntryPoint implements EntryPoint {
 	public static native int getCustomer()
 	/*-{
 		return $wnd.localStorage.getItem("customer");
+	}-*/;
+	
+	public static native int removeCustomer()
+	/*-{
+		return $wnd.localStorage.removeItem("customer");
 	}-*/;
 	
 	public static String getCurrentUser() {

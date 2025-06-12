@@ -338,5 +338,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Customer Invoice Module ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_customer_invoice_module</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/customer/customerInvoice.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 		

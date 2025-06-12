@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -72,7 +71,7 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		addButtonsToolbar();
 		getSearchTextBox().addKeyUpHandler(e -> {
 			String value = getSearchTextBox().getValue();
-			if(AonStringUtils.isNotBlank(value) && value.length() > 3) {
+			if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
 				onSearch( getSellerWorkloadListParams() );
 			} else if(AonStringUtils.isBlank(value)) {
 				sellerWorkloadFeePanel.resetSearchOffset();
@@ -157,7 +156,12 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		SellerWorkloadParams sellerWorkloadListParams = getWidgetParams( getSellerWorkloadListParams() );
 		
 		json.put("period", new JSONString(sellerWorkloadListParams.getPeriod().toString()));
-		json.put("seller", new JSONString(sellerWorkloadListParams.getSeller().toString()));
+		
+		if(null != sellerWorkloadListParams.getTaskHolder())
+			json.put("taskHolder", new JSONString(sellerWorkloadListParams.getTaskHolder().toString()));
+		else
+			json.put("seller", new JSONString(sellerWorkloadListParams.getSeller().toString()));
+		
 		json.put("description", new JSONString(sellerWorkloadListParams.getDescription()));
 		json.put("isSellerWorkload", new JSONString("true"));
 		
@@ -205,7 +209,11 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 		SellerWorkloadParams sellerWorkloadParams = new SellerWorkloadParams();
 		sellerWorkloadParams.setPeriod(params.getPeriod());
 		sellerWorkloadParams.setCustomers(params.getCustomers());
-		sellerWorkloadParams.setSeller(sellerWorkload.getId());
+		
+		if(sellerWorkload.getProjectHolder() != null)
+			sellerWorkloadParams.setTaskHolder(sellerWorkload.getProjectHolder().getTaskHolder().getId());
+		else
+			sellerWorkloadParams.setSeller(sellerWorkload.getId());
 		
 		sellerWorkloadParams.setDomainName(params.getDomainName())
 			.setDomain(params.getDomain())
@@ -261,32 +269,13 @@ public abstract class SellerWorkloadEntryPanel extends AonCustomDockLayout {
 	}
 	
 	public void setSellerWorkload(SellerWorkloadParams params, SellerWorkload sellerWorkload, Consumer<Void> finish) {
-		getSellerWorkload(sellerWorkload.getId(), dbSeller -> {
-			this.sellerWorkload = sellerWorkload;
-			
-			setToolbarTitle("Carga Trabajo / " + sellerWorkload.getName());
-			
-			updatePosition(f -> {
-				onSearch(params);
-				finish.accept(null);
-			});
-			
-		});
-	}
-	
-	private void getSellerWorkload(Integer sellerId, Consumer<Seller> success) {
-		commonService.getSeller(options.getDomainName(), options.getDomain(), options.getUser(), sellerId, new AsyncCallback<Seller>() {
-			
-			@Override
-			public void onSuccess(Seller seller) {
-				success.accept(seller);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-			
+		this.sellerWorkload = sellerWorkload;
+		
+		setToolbarTitle("Carga Trabajo / " + (params.getByProject() ? sellerWorkload.getProjectHolder().getTaskHolder().getName() : sellerWorkload.getName()));
+		
+		updatePosition(f -> {
+			onSearch(params);
+			finish.accept(null);
 		});
 	}
 	

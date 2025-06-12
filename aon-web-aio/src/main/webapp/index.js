@@ -6,13 +6,17 @@ import { setPosition } from './services/maps.js';
 import { waitEl } from './services/utils.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
-import {favicon, title, loadLink } from './css/aon-customView.js';
+import { favicon, title, loadLink } from './css/aon-customView.js';
 
+
+import './css/noto-sans.css';
+import './css/material-symbols-outlined.css';
+
+import './css/aon-css-utils.css';
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
 import './css/aon-mobile.css';
 import './css/aon-figma.css';
-import { getThemeUrl } from './services/companyService.js';
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {
@@ -57,43 +61,28 @@ const load = () => {
 }
 
 export const loadTheme = async  () => {
-    // let themeUrl = UA.isMobile() ? LS.AON_MOBILE_THEME
-	// 	: getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME; 
-	
-	let params = {
-		domain: document.domain, 
-		paramTheme: getParam("theme") || '', 
-		lsTheme: LS.getTheme() || '', 
-		cookieTheme: getCookie("theme") || '', 
-		lsAonTheme: LS.AON_THEME || ''
-	};
-	
-	let themeUrl = UA.isMobile() 
-        ? LS.AON_MOBILE_ANDROID 
-        : await getThemeUrl(params);
-	console.log(themeUrl);
 		
+	// LS.AON_THEME 
+	
+	
+	let paramCss = getParam("theme") || LS.getTheme() || getCookie("theme");
+	
+	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
+	 		
+	let themeUrl = UA.isMobile() ? mobileCss : paramCss  || "/customview" || LS.AON_THEME;
 		
-		/* location.origin + '/customview?domain=' + document.domain || getParam("theme") || LS.getTheme() || getCookie("theme") || LS.AON_THEME;*/
-
 	return new Promise((resolve, reject) => {
+		
 		try {
 			const aonThemeSpan = document.createElement(TAG.SPAN);
 			aonThemeSpan.className = 'aonTheme';
 			aonThemeSpan.style.display = 'none';
 			document.body.appendChild(aonThemeSpan);
 			
-			loadLink(themeUrl, 'stylesheet', 'text/css');
-			let tries = 0;
-			let interval = setInterval(() => {
-				const aonThemeStyle = getComputedStyle(aonThemeSpan);
-				const aonThemeProperty = aonThemeStyle.getPropertyValue('--aon-theme');
-				if ( ( tries++ > 5 ) || aonThemeProperty ) {
-					resolve();
-					aonThemeSpan.remove();
-					clearInterval(interval);
-				}
-			}, 200);
+			loadLink(themeUrl, 'stylesheet', 'text/css').then(() => {
+				resolve();
+				aonThemeSpan.remove();
+			});
 			
 		} catch ( err ) {
 			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
@@ -101,25 +90,6 @@ export const loadTheme = async  () => {
 	});
 }
 
-/*const favicon = () => {
-	let favicon = getComputedStyle(document.body).getPropertyValue('--favicon');
-	if ( favicon ) {
-		loadLink('', 'icon', 'image/x-icon')
-		.then( faviconLink  => {
-			faviconLink.href = favicon;
-		});
-	}
-}
-
-const loadLink = (url, rel, type) => new Promise((resolve, reject) => {
-    const link = document.createElement('link');
-    document.head.appendChild(link);
-    link.onload = resolve(link);
-    link.onerror = reject;
-    link.href = url;
-    link.rel = rel || "stylesheet";
-    link.type = type || "text/css";
-});*/
 
 const loadScript = (url, module=false) => new Promise((resolve, reject) => {
     let script = document.querySelector(`script[src="${url}"]`);

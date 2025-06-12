@@ -2,6 +2,7 @@
 
 export const ABOUT = 'Um'
 export const ACADEMIES = 'Akademien';
+export const ACADEMY = 'Akademie';
 export const ACCEPT = 'Akzeptieren';
 export const ACCESS = "Zugang";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'zugriff auf ihr AON-konto';
@@ -28,6 +29,8 @@ export const ADD_TYPE = 'Typ Hinzufügen';
 export const ADDITIONAL_HIRING = "Zusätzliche Einstellung";
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
+export const AGENT = 'Agent';
+export const AGENTS = 'Agenten';
 export const ALL = 'Alle';
 export const ALL1 = 'Alle';
 export const ALL2 = 'Alle'
@@ -78,6 +81,7 @@ export const CITY = 'Stadt';
 export const CLASSIC = 'Klassiker';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
+export const CLIENT_FILE = 'Kundendatei';
 export const CLOSE = 'nah dran';
 export const CLOSE_SESSION = 'Ausloggen';
 export const CLOSED = 'Geschlossen';
@@ -204,6 +208,7 @@ export const FRENCH = 'Französisch';
 // ----- G
 
 export const GALICIAN = 'Galician';
+export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'General Information';
 export const GET_INVOICE = 'Rechnung Bekommen';
 export const GET_INVOICES = 'Rechnungen Bekommen';

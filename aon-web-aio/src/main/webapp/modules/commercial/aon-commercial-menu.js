@@ -78,7 +78,8 @@ export class AonCommercialMenu extends AonSuiteMenu {
             options: [{
                 description: "Agentes Comerciales",
                 title: "Agentes Comerciales",
-                action: () => this.rootPanel(new JSF.AonJsfSeller())
+                action: () => GWT.iLoad(GWT.SELLER_MODULE)
+                //action: () => this.rootPanel(new JSF.AonJsfSeller())
             },{
                 description: "Clientes Potenciales",
                 title: "Clientes Potenciales",

@@ -117,9 +117,11 @@ import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -127,6 +129,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.LroeData;
@@ -199,6 +202,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private RegistryAddressFilter addressesFilter;
 	private TbaiConfiguration tbaiConfiguration;
 	
+	private InvoiceDoc invoiceDoc;
+	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
 	}
@@ -236,6 +241,27 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
+	}
+	
+	Boolean hasInvoiceDoc;
+	public boolean hasInvoiceDoc() {
+		if(hasInvoiceDoc == null) {
+			hasInvoiceDoc = getInvoiceDoc() != null;
+		}
+		return hasInvoiceDoc;
+	}
+	
+	public InvoiceDoc getInvoiceDoc() {
+		Invoice invoice = getInvoice();
+		if(invoice != null && !isNevv() && invoice.getId() != null
+				&& (invoiceDoc == null || AonNumberUtils.notEquals(invoiceDoc.getInvoice(), invoice.getId()))) {
+			invoiceDoc = AON.getInvoiceDoc(getOccam(), invoice.getDomain(), invoice.getId()).orElse(null);
+		}
+		return invoiceDoc;
+	}
+
+	public void setInvoiceDoc(InvoiceDoc invoiceDoc) {
+		this.invoiceDoc = invoiceDoc;
 	}
 	
 	public AonFile getInvoiceAttachFile() {
@@ -824,6 +850,13 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		onSearch(event);
 		getModel().setRowIndex(0);
 		onSelect(event);
+	}
+	
+	public Occam getOccam() {
+		return new Occam()
+				.setDomain(DomainManager.getCurrentDomain())
+				.setDomainName(AonUtil.getDomainName())
+				.setUser("");
 	}
 
 	public boolean isShowDiscountsWindow() {

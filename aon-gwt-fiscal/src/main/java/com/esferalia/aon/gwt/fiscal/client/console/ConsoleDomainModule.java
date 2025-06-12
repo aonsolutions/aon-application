@@ -100,6 +100,10 @@ public class ConsoleDomainModule extends AonLayoutPanel {
 
 	class ConsoleDomainTableCallbackImpl implements ConsoleDomainTableCallback {
 		@Override
+		public ConsoleModuleOptions getOptions() {
+			return ConsoleDomainModule.this.options;
+		}
+		@Override
 		public boolean isAdvancedMode() {
 			return ConsoleDomainModule.this.filterPanel.isAdvancedMode();
 		}

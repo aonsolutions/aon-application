@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -162,7 +163,10 @@ public abstract class AonCustomDockLayout extends DockLayoutPanel {
 		toolbar.getFilterPanel().getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
-	
+	public void hideToolbar() {
+		addNorth(new Label(), 0);
+//		toolbar.getElement().getStyle().setDisplay(Display.NONE);
+	}
 	
 	protected abstract void onClearFilter();
 

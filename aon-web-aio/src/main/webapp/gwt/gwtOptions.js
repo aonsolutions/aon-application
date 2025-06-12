@@ -406,8 +406,8 @@ export const MODEL_390 = {
 export const MODEL_SII = {
   title: "Modelo SII",
   name: "Modelo SII",
-  module: GWT_FISCAL,
-  entryPoint: 'Sii'
+  module: GWT_AIO,
+  entryPoint: 'sii'
 };
 
 export const INVOICE_STAT = {
@@ -505,6 +505,13 @@ export const QUESTION = {
   entryPoint: 'QuestionModule',
 }
 
+export const SELLER_MODULE = {
+  title: 'Agentes',
+  name: 'Agentes',
+  module: GWT_AIO,
+  entryPoint: 'Seller',
+}
+
 export const CONTRACT_MEDIA = {
   module: GWT_AIO,
   entryPoint: 'templates',
@@ -562,6 +569,11 @@ export const CUSTOMER_FEE = {
   entryPoint: 'customerFee'
 };
 
+export const CUSTOMER_INVOICE = {
+  module: GWT_FISCAL,
+  entryPoint: 'CustomerInvoiceModule'
+};
+
 export const COMMISSION_CALC = {
   module: GWT_AIO,
   entryPoint: 'commission_calculate',
@@ -588,6 +600,11 @@ export const MARKETING_CAMPAIGN = {
   entryPoint: 'MarketingCampaign'
 };
 
+export const SELLER_WORKLOAD_MODULE = {
+  module: GWT_AIO,
+  entryPoint: 'SellerWorkload'
+};
+
 export const TARIFF_MODULE = {
   title: 'Tarifas',
   module: GWT_FISCAL,
@@ -598,5 +615,15 @@ export const CONSOLE = {
   title: 'Consola',
   module: GWT_FISCAL,
   entryPoint: 'ConsoleModule'
+};
+
+export const PROJECT = {
+  module: GWT_AIO,
+  entryPoint: 'ProjectModule'
+};
+
+export const CUSTOMER_NOTES = {
+  module: GWT_AIO,
+  entryPoint: 'CustomerNotesModule'
 };
 

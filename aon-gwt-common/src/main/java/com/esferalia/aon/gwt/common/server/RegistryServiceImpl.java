@@ -231,6 +231,11 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
+	public List<Customer> getCustomerWithoutFee(CustomerParams params) {
+		return AON.getCustomerWithoutFee(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
+	}
+	
+	@Override
 	public void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer) {
 		AON.reorderCustomerFeeLine(domainName, domain, user, customer);
 	}

@@ -275,6 +275,7 @@ export const PRODUCT = 'product';
 export const PROFESSIONAL = 'professional'
 export const PROCESSING = 'processing'
 export const PROFORMA_INVOICES = 'proformaInvoices';
+export const PLANS = 'plans';
 
 // ----- Q
 
@@ -349,6 +350,7 @@ export const SHOW_FILE = 'showFile';
 export const SHOW_PASSWORD = 'showPassword';
 export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
+export const SPIN = 'spin';
 export const SRC = 'src';
 export const STAFF_EXPENSES = 'staffExpenses';
 export const STATUS = 'status';

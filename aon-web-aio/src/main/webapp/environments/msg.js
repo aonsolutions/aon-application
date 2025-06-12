@@ -31,6 +31,7 @@ if(Language.ENGLISH === language) {
 
 export const ABOUT = MSG.ABOUT;
 export const ACADEMIES = MSG.ACADEMIES;
+export const ACADEMY = MSG.ACADEMY;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCESS_TO_YOUR_AON_ACCOUNT = MSG.ACCESS_TO_YOUR_AON_ACCOUNT;
@@ -44,7 +45,6 @@ export const ACTIVES= MSG.ACTIVES;
 export const ACTIVITY = MSG.ACTIVITY;
 export const ACTIVITY_SUMMARY = MSG.ACTIVITY_SUMMARY;
 export const ADD = MSG.ADD;
-
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
 export const ADD_COMPOSITION = MSG.ADD_COMPOSITION;
@@ -69,6 +69,8 @@ export const ADDITIONAL_HIRING = MSG.ADDITIONAL_HIRING;
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
+export const AGENT = MSG.AGENT;
+export const AGENTS = MSG.AGENTS;
 export const ALIAS = 'Alias';// TODO
 export const ALL = MSG.ALL;
 export const ALL1 = MSG.ALL1;
@@ -141,6 +143,7 @@ export const CITY = MSG.CITY;
 export const CLASSIC = MSG.CLASSIC;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
+export const CLIENT_FILE = MSG.CLIENT_FILE;
 export const CLOSE = MSG.CLOSE;
 export const CLOSE_SESSION = MSG.CLOSE_SESSION;
 export const CLOSED = MSG.CLOSED;
@@ -181,6 +184,7 @@ export const CONTRACTED_USERS = MSG.CONTRACTED_USERS;
 export const CONTRACTS = MSG.CONTRACTS;
 export const COPIED_TO_CLIPBOARD = MSG.COPIED_TO_CLIPBOARD;
 export const COPY = MSG.COPY;
+export const CUSTOMER_FEE = 'Cuotas';
 export const COUNTRY = MSG.COUNTRY;
 export const CREATE = MSG.CREATE;
 export const CREATE_INVOICE = 'Crear Factura';
@@ -313,6 +317,7 @@ export const FRENCH = MSG.FRENCH;
 // ----- G
 
 export const GALICIAN = MSG.GALICIAN;
+export const GARAGE = MSG.GARAGE;
 export const GENERAL_DATA = 'Datos Generales'; //TODO
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
 export const GET_INVOICE = MSG.GET_INVOICE;
@@ -447,6 +452,7 @@ export const MARK_ENTRY = MSG.MARK_ENTRY;
 export const MARK_EXIT = MSG.MARK_EXIT;
 export const MARKETING = MSG.MARKETING;
 export const MANAGEMENT = MSG.MANAGEMENT;
+export const MENU = MSG.MENU;
 export const MODEL = "Modelo"; //TODO
 export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
@@ -578,6 +584,7 @@ export const PROTOCOL = "Protocolo";
 export const PROVINCE = MSG.PROVINCE;
 export const PURCHASE_PRICE = 'Precio Coste'; // TODO
 export const PARENT = "Padre"; // TODO
+export const PLAN = "Planes";
 
 // ----- Q
 

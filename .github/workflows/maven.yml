@@ -3,15 +3,30 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: 
+    branches:
       - master
   pull_request:
-    branches: 
+    branches:
       - master
   workflow_dispatch:
     inputs:
-      skipTests:
-        description: 'Skip running the tests'
+      imageTag:
+        description: 'Docker image tag'
+        type: string
+        required: true
+        default: 'snapshot'
+      skipUnitTests:
+        description: 'Skip unit tests'
+        type: boolean
+        required: true
+        default: false
+      skipSeleniumTests:
+        description: 'Skip Selenium integration tests'
+        type: boolean
+        required: true
+        default: false
+      skipIntegrationTests:
+        description: 'Skip HtmlUnit integration  tests'
         type: boolean
         required: true
         default: false
@@ -35,18 +50,37 @@ on:
           - corretto
         required: true
         default: temurin
-
+      browser:
+        type: choice
+        description: Which browser to test
+        required: true
+        options:
+          - chrome
+          - firefox
+          - edge
 env:
   TZ: Europe/Madrid
   AWS_REGION: eu-west-1
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-  SKIP_TESTS: ${{ github.event.inputs.skipTests || false }}
+  BROWSER: ${{ github.event.inputs.browser || 'chrome' }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  IMAGE_TAG: ${{ github.event.inputs.imageTag || 'snapshot' }}
   JAVA_VERSION: ${{ github.event.inputs.javaVersion || 21 }}
   JAVA_DISTRIBUTION: ${{ github.event.inputs.javaDistribution || 'temurin' }}
-  
+  SKIP_UNIT_TESTS: ${{ github.event.inputs.skipUnitTests || false }}
+  SKIP_SELENIUM_TESTS: ${{ github.event.inputs.skipSeleniumTests || false }}
+  SKIP_INTEGRATION_TESTS: ${{ github.event.inputs.skipIntegrationTests || github.ref != 'refs/heads/master' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      selenium:
+        image: selenium/standalone-${{ github.event.inputs.browser || 'chrome' }}
+        ports:
+          - 4444:4444
+          - 7900:7900
+        options: --add-host=payroll-test.aonsolutions.org:host-gateway --add-host=test.aonsolutions.org:host-gateway --shm-size=2gb
 
     permissions:
       contents: read
@@ -57,13 +91,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: ${{ env.JAVA_DISTRIBUTION }}
         cache: maven
-        
+
     - name: Set up MySQL
       run: |
         sudo sed -i "s/\(bind-address.*\)=.*/\1= 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -76,7 +110,7 @@ jobs:
         CREATE USER 'dbuser'@'%' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'%' ;
         --
-        -- default privileges include a row with Host='localhost' and User=''. 
+        -- default privileges include a row with Host='localhost' and User=''.
         CREATE USER 'dbuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'serubd2000' ;
         GRANT ALL ON *.* TO 'dbuser'@'localhost';
         EOSQL
@@ -87,21 +121,21 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-  
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-        
+
     - name: Install AWS CLI v2
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
         unzip -q /tmp/awscliv2.zip -d /tmp
         sudo /tmp/aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
         aws --version
-          
+
     - name: Create connection file
       run: |
         sudo mkdir /etc/aon-aio
@@ -115,7 +149,7 @@ jobs:
         EOF
 
     - name: Build with Maven
-      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_TESTS} -T 1C clean install
+      run: mvn -B -Dgwt.working=true -DskipTests=${SKIP_UNIT_TESTS} -T 1C clean install
 
     - name: Build Docker aon-application image
       uses: docker/build-push-action@v6
@@ -131,9 +165,11 @@ jobs:
         load: true
         tags: ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }}
 
-    
+
     - name: Setup environment for integration testing
-      if: github.ref == 'refs/heads/master'
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' || env.SKIP_SELENIUM_TESTS == 'false' }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
       run: |
         DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')
         DB_FILE=$(find aon-htmlunit/src -name "test-aonsolutions-org.sql")
@@ -148,12 +184,19 @@ jobs:
         127.0.0.1    general-payroll-test.aonsolutions.org
         127.0.0.1    trainning-payroll-test.aonsolutions.org
         EOF
-    
-    - name: Running integration tests
-      if: github.ref == 'refs/heads/master'
+
+    - name: Running Selenium integration tests
+      if: ${{ env.SKIP_SELENIUM_TESTS == 'false' }}
       run: |
         mvn -B \
-        -DskipTests=${SKIP_TESTS} \
+        -DskipTests=${SKIP_SELENIUM_TESTS} \
+        -Dtest='DomainUserRolesTestCase' -f aon-selenium/pom.xml integration-test
+
+    - name: Running HtmlUnit integration tests
+      if: ${{ env.SKIP_INTEGRATION_TESTS == 'false' }}
+      run: |
+        mvn -B \
+        -DskipTests=${SKIP_INTEGRATION_TESTS} \
         -Dintegration.test.user=admin \
         -Dintegration.test.password=org \
         -Dintegration.test.payroll.url=http://payroll-test.aonsolutions.org:8080/ \
@@ -162,7 +205,7 @@ jobs:
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
-        
+
     - name: Build production version with Maven
       if: github.ref == 'refs/heads/master'
       run: mvn -B --resume-from aon-js-payroll -Drpm.release=false -DskipTests=true clean install
@@ -216,19 +259,18 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-ireland.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
-        # docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
+        # docker push $ECR_REGISTRY/aonsolutions/aon-solutions:$IMAGE_TAG
+        docker push $ECR_REGISTRY/aonsolutions/aon-application:$IMAGE_TAG
+        docker push $ECR_REGISTRY/aonsolutions/aon-db-up2date:$IMAGE_TAG
 
     # - name: Set AWS region to (Spain)
     #  if: github.ref == 'refs/heads/master'
     #  run: aws configure set default.region eu-south-2
-        
+
     - name: Login to Amazon ECR (Spain)
       id: login-ecr-spain
       uses: aws-actions/amazon-ecr-login@v1
@@ -239,14 +281,13 @@ jobs:
       if: github.ref == 'refs/heads/master'
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-spain.outputs.registry }}
-        IMAGE_TAG: ${{ github.ref_name == 'master' && 'snapshot' }}
       run: |
         # docker tag ghcr.io/${{ github.repository_owner }}/aon-solutions:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG 
-        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-application:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-application:$IMAGE_TAG
+        docker tag ghcr.io/${{ github.repository_owner }}/aon-db-up2date:${{ env.BRANCH_NAME }} $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
         # docker push $ECR_REGISTRY/aon-solutions:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG 
+        docker push $ECR_REGISTRY/aon-application:$IMAGE_TAG
+        docker push $ECR_REGISTRY/aon-db-up2date:$IMAGE_TAG
 
     # - name: Deploy to Amazon ECS AON 
     #  if: github.ref == 'refs/heads/master'

@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, invoiceDuplicateFix, refreshProcessing, saveInvoiceClosing, downloadRegistryExcel } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getInvoice, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -153,8 +153,12 @@ export class AonInvoicePanel extends AonElement {
     this.dispatchEvent(new CustomEvent(EVENT.BUILD, { panel: this }));
   }
 
+  buildEmptyToolbarOptions() {
+    this.clearToolbar();
+  } 
+
   buildInvoiceHomeToolbarOptions() {
-     this.clearToolbar();
+    this.clearToolbar();
     if(!this.isMobile()) {
       this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());      
       this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
@@ -173,7 +177,6 @@ export class AonInvoicePanel extends AonElement {
       this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
       if (this.getDur().isOcr() || this.getDur().isInvofox())
         this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
-      if(processing) this.getApplication().addToolbarOption2(ACTION.REPROCESS, () => this.refreshProcessing()); 
       if(acceptedInvoices) this.getApplication().addToolbarOption2(ACTION.DOWNLOAD_EXCEL_INVOICE, () => this.downloadInvoiceExcel());
       if(this.isConsole()) this.getApplication().addToolbarOption('FIX', 'healing', () => invoiceDuplicateFix());
     } else {
@@ -859,13 +862,6 @@ export class AonInvoicePanel extends AonElement {
     this.buildInvoiceHomeToolbarOptions();
     this.aonInvoiceHome();
     this.buildCounter();
-  }
-
-  refreshProcessing() {
-    refreshProcessing({}).then(r => {
-      this.buildCounter();
-      this.aonInvoiceList({status: CONSTANT.PROCESSING});
-    }).catch(e => console.log(e));
   }
 
   addInvoiceFile() {

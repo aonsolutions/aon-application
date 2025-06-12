@@ -91,6 +91,7 @@ import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -769,7 +770,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		for ( Entry<String,PaymentType> entry : PAYMENTS_DESCRIPTIONS.entrySet() )
 			if ( AonStringUtils.getLevenshteinDistance(entry.getKey(), description, 2) != -1 )
-				return entry.getValue();
+				if ( entry.getValue() != null )
+					return entry.getValue();
 		
 		return CRA_0001;
 		
@@ -2240,67 +2242,38 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		DSLContext dslContext = new AONContext(ctx.getConnection()).getDslContext();
 		
-		Field<Integer> count = DSL.count().as("COUNT");		
-		Field<Byte> agreementPaymentType = 
-		DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE).as("TYPE");
+		Field<Integer> COUNT = DSL.count().as("COUNT");		
+		Field<Byte> TYPE = DSL.ifnull(AGREEMENT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE).as("TYPE");
 		
 		dslContext
 		.select(
 		AGREEMENT_PAYMENT.DESCRIPTION
-		,agreementPaymentType
-		,count
+		,TYPE
+		,COUNT
 		)
 		.from(AGREEMENT_PAYMENT)
 		.leftJoin(PAYMENT_CONCEPT).onKey()
-		.where(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
-		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION, agreementPaymentType)
-		.orderBy(AGREEMENT_PAYMENT.DESCRIPTION, count)
+		.where(AGREEMENT_PAYMENT.AGREEMENT.gt(0))
+		.and(AGREEMENT_PAYMENT.DESCRIPTION.isNotNull())
+		.groupBy(AGREEMENT_PAYMENT.DESCRIPTION, TYPE)
+		.orderBy(AGREEMENT_PAYMENT.DESCRIPTION, COUNT.desc())
 		.fetchLazy()
 		.forEach(
 		(r) -> {
 			try {
-				PaymentType paymentType = PaymentType.values()[r.value2()];
+				PaymentType paymentType = PaymentType.values()[r.get(TYPE)];
 				if ( paymentType == CRA_0001 )
 					return;
 				if ( paymentType == CRA_0000)
 					return;
 				
-				String description = normalize(r.value1());
-				
-				
+				String description = normalize(r.get(AGREEMENT_PAYMENT.DESCRIPTION));
 				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
 			} catch ( Exception e ) {
 			}
 		}
 		);
 
-//		dslContext
-//		.select(
-//		CONTRACT_PAYMENT.DESCRIPTION
-//		,DSL.ifnull(CONTRACT_PAYMENT.TYPE, PAYMENT_CONCEPT.TYPE)
-//		)
-//		.from(CONTRACT_PAYMENT)
-//		.leftJoin(PAYMENT_CONCEPT).onKey()
-//		.where(CONTRACT_PAYMENT.DESCRIPTION.isNotNull())
-//		.groupBy(CONTRACT_PAYMENT.DESCRIPTION)
-//		.fetchLazy()
-//		.forEach(
-//		(r) -> {
-//			try {
-//				
-//				PaymentType paymentType = PaymentType.values()[r.value2()];
-//				if ( paymentType == CRA_0001 )
-//					return;
-//				if ( paymentType == CRA_0000 )
-//					return;
-//				
-//				String description = normalize(r.value1());
-//				
-//				PAYMENTS_DESCRIPTIONS.putIfAbsent(description, paymentType);
-//			} catch ( Exception e ) {
-//			}
-//		}
-//		);
 	}
 
 	
@@ -2311,6 +2284,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		.toUpperCase()
 		.replaceAll("\\s","")
 		.replaceAll("\\[([^\\]])*\\]","")
+		.replaceAll("\\(([^\\)])*\\)","")
 		;
 	}
 	

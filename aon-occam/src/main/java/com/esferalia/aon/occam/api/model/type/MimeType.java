@@ -48,7 +48,8 @@ public enum MimeType implements Serializable {
     PKCS12("application/x-pkcs12","p12"),
     JKS("application/x-java-keystore","jks"),
     SVG ("image/svg+xml", "svg"),
-    WEBM("video/webm","webm")
+    WEBM("video/webm","webm"),
+    RAR("application/x-rar-compressed", "rar")
     ;
     
 	private String name;
@@ -183,6 +184,10 @@ public enum MimeType implements Serializable {
 			}
 		}
 		return null;
+	}
+
+	public static String name(MimeType mimeType) {
+		return mimeType==null?null:mimeType.name;
 	}
     
 }

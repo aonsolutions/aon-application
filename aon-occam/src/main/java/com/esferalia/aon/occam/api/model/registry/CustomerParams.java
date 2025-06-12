@@ -7,59 +7,114 @@ public class CustomerParams implements Serializable {
 
 	private static final long serialVersionUID = -7078789958353911216L;
 	
-	private Integer domain;
+	private String domainName; 
+	private int domain;
+	private String user;
 	
-	private String customer;
-	private Byte customerStatus;
+	private String description;
+	
+	private Byte status;
+	
+	private List<Integer> customerIds;
 
 	private Integer limit;
 	private Integer offset;
 	
-	private List<Integer> customerIds;
+	private String orderBy;
+	private boolean asc = true;
 	
 	public CustomerParams() {
 		super();
 	}
-	
-	public Integer getDomain() {
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public CustomerParams setDomainName(String domainName) {
+		this.domainName = domainName;
+		return this;
+	}
+
+	public int getDomain() {
 		return domain;
 	}
-	public CustomerParams setDomain(Integer domain) {
+
+	public CustomerParams setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
-	public String getCustomer() {
-		return customer;
+
+	public String getUser() {
+		return user;
 	}
-	public CustomerParams setCustomer(String customer) {
-		this.customer = customer;
+
+	public CustomerParams setUser(String user) {
+		this.user = user;
 		return this;
 	}
-	public Byte getCustomerStatus() {
-		return customerStatus;
+
+	public String getDescription() {
+		return description;
 	}
-	public CustomerParams setCustomerStatus(Byte customerStatus) {
-		this.customerStatus = customerStatus;
+
+	public CustomerParams setDescription(String description) {
+		this.description = description;
 		return this;
 	}
+
+	public Byte getStatus() {
+		return status;
+	}
+
+	public CustomerParams setStatus(Byte status) {
+		this.status = status;
+		return this;
+	}
+
+	public List<Integer> getCustomerIds() {
+		return customerIds;
+	}
+
+	public CustomerParams setCustomerIds(List<Integer> customerIds) {
+		this.customerIds = customerIds;
+		return this;
+	}
+
 	public Integer getLimit() {
 		return limit;
 	}
+
 	public CustomerParams setLimit(Integer limit) {
 		this.limit = limit;
 		return this;
 	}
+
 	public Integer getOffset() {
 		return offset;
 	}
+
 	public CustomerParams setOffset(Integer offset) {
 		this.offset = offset;
 		return this;
 	}
-	public List<Integer> getCustomerIds() {
-		return this.customerIds;
+
+	public String getOrderBy() {
+		return orderBy;
 	}
-	public void setCustomerIds(List<Integer> ids) {
-		this.customerIds = ids;
+
+	public CustomerParams setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+		return this;
 	}
+
+	public boolean isAsc() {
+		return asc;
+	}
+
+	public CustomerParams setAsc(boolean asc) {
+		this.asc = asc;
+		return this;
+	}
+	
 }

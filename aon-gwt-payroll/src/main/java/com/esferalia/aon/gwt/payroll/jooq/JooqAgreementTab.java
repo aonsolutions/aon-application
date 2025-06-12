@@ -659,24 +659,37 @@ public class JooqAgreementTab {
 					
 					// Se actualizar el paymentConcept si no es del dominio 0	
 					} else {
-						UpdateSetMoreStep<PaymentConceptRecord> update = dslContext.update(PAYMENT_CONCEPT)
-								.set(PAYMENT_CONCEPT.CODE, payment.getName())
-								.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
-								.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
-								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-								.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
-								.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression());
 						
-						if(!(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE")))
-							update.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
+						Result<Record> agreementPaymentsAssociatedPaymentConcept = dslContext.select().from(AGREEMENT_PAYMENT)
+								.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+								.and(AGREEMENT_PAYMENT.DOMAIN.eq(agreementInfo.getDomain()))
+								.fetch();
 						
-						update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
-							.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain() ).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
-							.execute();
+						if(agreementPaymentsAssociatedPaymentConcept.size() <= 1) {
+							UpdateSetMoreStep<PaymentConceptRecord> update = dslContext.update(PAYMENT_CONCEPT)
+									.set(PAYMENT_CONCEPT.CODE, payment.getName())
+									.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+									.set(PAYMENT_CONCEPT.TYPE, null == payment.getType() ? (byte) 1 : (byte) payment.getType().ordinal())
+									.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+									.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
+									.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression());
+							
+							if(!(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE")))
+								update.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression());
+							
+							update.where(PAYMENT_CONCEPT.ID.eq( payment.getConceptId() ))
+								.and(PAYMENT_CONCEPT.DOMAIN.eq( payment.getDomain() ).and(PAYMENT_CONCEPT.DOMAIN.ne(0)) )
+								.execute();
+						}
 					}
 							
 				}
-			
+				
+				Result<Record> agreementPaymentsAssociatedPaymentConcept = dslContext.select().from(AGREEMENT_PAYMENT)
+						.where(AGREEMENT_PAYMENT.PAYMENT_CONCEPT.eq(payment.getConceptId()))
+						.and(AGREEMENT_PAYMENT.DOMAIN.eq(agreementInfo.getDomain()))
+						.fetch();
+				
 				UpdateSetMoreStep<AgreementPaymentRecord> updateAgreementPayment = dslContext.update(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.getConceptId())
 					.set(AGREEMENT_PAYMENT.START_DATE, null == payment.getStartDate() ? parseToSqlDate((java.util.Date)agreementInfo.getSortedDates().toArray()[agreementInfo.getSortedDates().size()-1]) : parseToSqlDate(payment.getStartDate()))
@@ -691,8 +704,10 @@ public class JooqAgreementTab {
 				
 				if(AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "DISABLE"))
 					updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, "DISABLE();");
-				else
+				else if(agreementPaymentsAssociatedPaymentConcept.size() <= 1)
 					updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, DSL.castNull(AGREEMENT_PAYMENT.EXPRESSION));
+				else
+					updateAgreementPayment.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression());
 				
 				updateAgreementPayment
 					.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
