@@ -54,6 +54,7 @@ export class AonCustomerList extends AonRegistryList {
 			let aonCustomer = new AonCustomer();
 			aonCustomer.id = this.getApplication().id + 'Customer';
 			aonCustomer.setCustomer(r);
+			aonCustomer.setCustomerList(this);
 			aonCustomer.setOffice(this.office);
 			this.getApplication().setContent(aonCustomer);
 		});

@@ -76,6 +76,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoiceController.setSavedInvestAsset(invoice.getInvestAsset());
 			invoiceController.setFinanceGenerationMode(0);
 			invoiceController.setInvoiceAttachFile(null);
+			invoiceController.initializeInvoiceDoc();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

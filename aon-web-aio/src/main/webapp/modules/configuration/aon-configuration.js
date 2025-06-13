@@ -10,7 +10,7 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { AON_ICONS, CONSTANT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { AON_ICONS, CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
@@ -366,18 +366,28 @@ export class AonConfiguration extends AonElement {
   }
 
   buildCustomerList() {
-          let aonConfiguration = this.getApplication();
-          //aonConfiguration.removeToolbarOptions();
+	  let aonConfiguration = this.getApplication();
+	  //aonConfiguration.removeToolbarOptions();
 
-          let aonCustomerList = new AonCustomerList(this);
-          aonCustomerList.id = this.CUSTOMER_LIST;
-          aonCustomerList.filter = {
-                  page: 1,
-                  perPage: 50,
-                  target: false,
-                  status: ["ACTIVE", "BLOCKED"],
-          };
-          aonConfiguration.setContent(aonCustomerList);
+	  let aonCustomerList = new AonCustomerList(this);
+	  aonCustomerList.id = this.CUSTOMER_LIST;
+	  aonCustomerList.filter = {
+		  page: 1,
+		  perPage: 50,
+		  target: false,
+		  status: ["ACTIVE", "BLOCKED"],
+		  relatedRegistry: true
+	  };
+
+	  let buildListener = (event) => {
+		  if (event.detail.registries.length === 1) {
+			  aonCustomerList.buildRegistry(event.detail.registries[0])
+		  }
+		  aonCustomerList.removeEventListener(EVENT.BUILD, buildListener);
+	  };
+	  aonCustomerList.addEventListener(EVENT.BUILD, buildListener);
+	  
+	  aonConfiguration.setContent(aonCustomerList);
 
   }
 

@@ -571,6 +571,8 @@ public final class IJsonNames {
 	public static final String ROOT_BAR = "/";
 	public static final String RSELLER = "rseller";
 	public static final String RSS = "rss";
+	public static final String RRELATIONSHIP = "rrelationship";
+	public static final String RELATED_REGISTRY = "relatedRegistry";
 	// ---------------------------------------------------------------------------------------------	[S] 
 
 	public static final String S3_BUCKET = "s3Bucket";

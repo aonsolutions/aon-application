@@ -29,6 +29,7 @@ export class AonCustomer extends AonReg {
 	saveBool;
 	ENTERPRISE_LINKED;
 	office;
+	aonCustomerList;
 
 	connectedCallback() {
 		this.customerInitialize();
@@ -734,9 +735,11 @@ export class AonCustomer extends AonReg {
 	}
 
 	back() {
-		let list = new AonCustomerList();
-		list.id = this.getApplication().id + "CustomerList";
-		this.getApplication().setContent(list);
+		if ( !this.aonCustomerList ) {
+			this.aonCustomerList = new AonCustomerList();
+			this.aonCustomerList.id = this.getApplication().id + "CustomerList";
+		}
+		this.getApplication().setContent(this.aonCustomerList);
 	}
 
 	save() {
@@ -813,6 +816,10 @@ export class AonCustomer extends AonReg {
 		
 		this.getApplication().toogleRightSidenav();	
 		
+	}
+	
+	setCustomerList(aonCustomerList) {
+		this.aonCustomerList = aonCustomerList;
 	}
 }
 
