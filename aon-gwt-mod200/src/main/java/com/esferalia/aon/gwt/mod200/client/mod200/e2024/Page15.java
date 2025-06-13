@@ -11,14 +11,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page15 extends PageAbs {
 
-//	private AonTextBox nrsAnexoIII;
-//	private AonTextBox justCanarias;
-//	private AonTextBox nrsAnexoIV;
-//	private AonTextBox nrsAnexoV;
-//	private AonTextBox nrsAnexoVric;
-//	private AonTextBox justActivos;
-//	private AonTextBox nrsAnexoVI;
-
 	public Page15( Model2002024PageCallback callback ) {
 		super(callback);
 	}
@@ -121,7 +113,6 @@ public class Page15 extends PageAbs {
 		});
 		otherInputs.add(justCanarias);
 
-		// FALTA - CAMPO NUEVO SI AL FINAL ES NECESARIO
 		// Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Illes Balears
 		AonTextBox justBaleares = new AonTextBox();
 		justBaleares.setVisibleLength(22);

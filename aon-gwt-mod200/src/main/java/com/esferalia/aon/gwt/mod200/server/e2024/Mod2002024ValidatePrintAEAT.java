@@ -89,7 +89,7 @@ public class Mod2002024ValidatePrintAEAT extends HttpServlet {
 			if (mod200 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
-			// FALTA - PROBAR SI ES NECESARIO YA HACERLO CON SERVALIDOS O AUN SIRVE SERVALI
+			// FALTA - PROBAR SI ES NECESARIO YA HACERLO CON SERVALIDOS O AUN SIRVE SERVALI - POR AHORA FUNCIONA CON SERVALI
 //			if (mod200.getYear() >= 2024) {
 //				ModelAdmonUtils.serValiDos(resp, aeatParams, mod200);
 //			} else {

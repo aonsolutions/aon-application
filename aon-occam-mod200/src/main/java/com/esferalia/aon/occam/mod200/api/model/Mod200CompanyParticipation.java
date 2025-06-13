@@ -21,7 +21,7 @@ public class Mod200CompanyParticipation implements Serializable {
 	private double incomes;
 	
 	private double valueCorrection;       // [Campo a_value ] Corrección de valor ... (Totaliza en 1504)
-	private double lossReversion;         // [Campo b_value ] Reversión de pérdidas ... (Totaliza en 1505 HASTA 2022) // FALTA - CASILLA 2376 A PARTIR DE 2024
+	private double lossReversion;         // [Campo b_value ] Reversión de pérdidas ... (Totaliza en 1505 hasta 2022) (Totaliza en 2376 a partir de 2024)
 	private double correctionEffect;      // [Campo c_value ] Efecto de la corrección valorativa ... (Totaliza en 1507)
 	private double accountingElimination; // [Campo cc_value] Eliminación del deterioro contable ... (Totaliza en 1506)
 	private double correctionsBalance;    // [Campo d_value ] Saldo de correcciones fiscales ... (Totaliza en 1508)

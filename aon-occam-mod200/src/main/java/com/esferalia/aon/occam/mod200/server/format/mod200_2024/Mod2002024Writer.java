@@ -514,8 +514,8 @@ public class Mod2002024Writer {
 					// Casillas BN103x van con formato 7,2
 					if (key == Mod2002024Key.BN103A || key == Mod2002024Key.BN103B || key == Mod2002024Key.BN103C || key == Mod2002024Key.BN103D)
 						addUnSignedKey(l, m, key, 7, 4); // Según los errores que da el fichero, se está esperando 4 decimales
-					// Elemento 2 de cada fila es un porcentaje (formato 4,2)	
-					else if (pos == 2) 
+					// Elemento 2 de cada fila es un porcentaje (formato 4,2) // FALTA - EXCEPTO CASILLAS 586 Y 254 QUE TAMBIEN VAN A 17,2 	
+					else if (pos == 2 && key != Mod2002024Key.BN586 && key != Mod2002024Key.BN254) 
 						addUnSignedKey(l, m, key, 4, 2);
 					// Resto importe normal
 					else addSignedKey(l, m, key);
@@ -721,22 +721,21 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0 ? "1" : "0")  // Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del período impositivo - de al menos 60 millones de euros
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(21))  // RESERVADO PARA LA A.E.A.T. (Dejar en blanco) Incluye Nº Referencia
 				
-				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPygType() == null || mod200.getDoubleValue(Mod2002024Key.C0026) == 1 ? 0 : mod200.getPygType().ordinal() + 1, 1, 0))
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0061, 1, 0)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0068, 1, 0)				
-				,(line, mod200, label) -> line.append("0") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC) (No se usa en AON)
-				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0041, 9, 2)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0042, 9, 2)				
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getPygType() == null || mod200.getDoubleValue(Mod2002024Key.C0026) == 1 ? 0 : mod200.getPygType().ordinal() + 1, 1, 0))
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0061, 1, 0)
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0068, 1, 0)				
+//				,(line, mod200, label) -> line.append("0") // Modelo de estados contables que se va a cumplimentar (No se usa, es solo para estados contables entidades de credito, entidades aseguradoras, sociedades de garantía reciproca e IIC) (No se usa en AON)
+//				,(line, mod200, label) -> line.append(AonStringUtils.isEmpty(mod200.getFiscalGroup()) ? AonFiscalFileUtils.spaces(7) : AonFiscalFileUtils.number(mod200.getFiscalGroup(), 7))
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
+//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0041, 9, 2)
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.C0042, 9, 2)				
 				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(20))  // Identificador cliente EEDD. RESERVADO PARA LAS EEDD.              
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(50))  // Nombre y Apellidos de la persona de contacto para incidencias     
@@ -756,12 +755,11 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))               // Grupo fiscal - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))  // Grupo fiscal - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
 				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
-//				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(("ES".equals(Country.safeIso2(mod200.getUltimateDocumentCountry())) ? "" : Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país (solo si no es España)
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
-				// FALTA // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))  	// Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
-				// FALTA // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				      // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				      // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateGroupName(), 40))                         // FALTA // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateResidenceCountry()), 2)) // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateResidenceDocument(), 15))                 // FALTA // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))                                             // Balance 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))   // ECPN 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
@@ -849,7 +847,7 @@ public class Mod2002024Writer {
 							addNIF(line, mod200.getSicav2(), s2++); // E. Socios de SICAV - NIF de la/las IIC donde reinvierte
 						}
 						
-						addUnSignedKey(line, mod200, Mod2002024Key.NOITR, 1, 0); // FALTA - SEGUN DISEÑO DE REGISTRO SALE EN TODAS LAS HOJAS, INCLUSO LAS COMPLEMENTARIAS ??
+						addUnSignedKey(line, mod200, Mod2002024Key.NOITR, 1, 0); // No obligado a identificar el titular real - Según el diseño del registro sale en todas las hojas, incluso en las complementarias
 						addTitularReal(line, mod200, t++); // F. Identificación del titular real de la entidad (solo 1 por pagina)
 						
 						line.append(AonFiscalFileUtils.text(isComplementary ? "" : mod200.getSecretary().getName(), 21));    // Secretario - Apellidos y Nombre
@@ -1733,7 +1731,7 @@ public class Mod2002024Writer {
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")				
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN570Key.values())  
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS BLANCOS EN UNO DE LOS PORCENTAJES VER SI AL FINAL SE QUEDA ASI 
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS CEROS EN UNO DE LOS PORCENTAJES (CASILLA 586) VER SI AL FINAL SE QUEDA ASI 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN1280Key.values())
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN572Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1743,7 +1741,7 @@ public class Mod2002024Writer {
 		, PAG16("T20016000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS BLANCOS EN UNO DE LOS PORCENTAJES VER SI AL FINAL SE QUEDA ASI
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS CEROS EN UNO DE LOS PORCENTAJES (CASILLA 254) VER SI AL FINAL SE QUEDA ASI
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN573Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN585Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN584Key.values())
@@ -1943,7 +1941,7 @@ public class Mod2002024Writer {
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoVI()), 22));    // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoV()), 22));     // Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustCanarias()), 13));  // Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustBaleares()), 13));  // Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears
+						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustBaleares()), 13));  // FALTA CAMPO NUEVO - Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustActivos()), 13));   // Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 						
 						addUnSignedKey(line, mod200, Mod2002024Key.IPCRG01, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Producciones cinematográficas (excepto series audiovisuales)
@@ -2093,6 +2091,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_3)
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_4)
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_5)
+				// FALTA - CASILLAS [02378][02379][02407][02408][00466] VAN AL FINAL DE LA PAGINA Y NO ENTREMEDIAS DE COMBINED_TAXATION_3 
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})

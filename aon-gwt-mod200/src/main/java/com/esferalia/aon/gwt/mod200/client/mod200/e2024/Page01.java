@@ -183,24 +183,18 @@ public class Page01 extends PageAbs {
 		}
 		
 		// GRUPO MERCANTIL (solo habilitados si caracteres 81, 82 o 39 marcados)
-		// FALTA - CAMPOS NUEVOS A VER COMO SE QUEDA AL FINAL
-		// SEGUN EL DOC PADIS SE QUEDAN ESTOS CAMPOS:
-		// - NIF
-		// - RAZON SOCIAL
-		// - NOMBRE DE GRUPO
-		// - IDENTIFICACION FISCAL DEL PAIS DE RESIDENCIA
-		// - NIF EN PAIS DE RESIDENCIA
 		
 		AonDocumentTextBox ultimateDocument = new AonDocumentTextBox();           
-		CountryListBox ultimateDocumentCountry = new CountryListBox();
-		AonTextBox ultimateName = new AonTextBox();				
-		CountryListBox ultimateCountry = new CountryListBox();
+		AonTextBox ultimateName = new AonTextBox();
+		AonTextBox ultimateGroupName = new AonTextBox();
+		CountryListBox ultimateResidenceCountry = new CountryListBox();
+		AonDocumentTextBox ultimateResidenceDocument = new AonDocumentTextBox(false);
 		
-//		if (callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0081)) {
 		if (isCheckedOr(Mod2002024Key.C0081,Mod2002024Key.C0082,Mod2002024Key.C0039)) {
 		
 			basePanel.add(getTitle("Grupo mercantil"));
-			paintLabel(basePanel, "Datos de la sociedad matriz \u00FAltima:", false);
+			
+			paintLabel(basePanel, "Datos identificativos de la sociedad matriz \u00FAltima:", false);
 			
 			AonDisplayTable tab3 = new AonDisplayTable();
 			tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -214,14 +208,6 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(ultimateDocument);
 			
-			ultimateDocumentCountry.setWidth("240px");
-			ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
-			ultimateDocumentCountry.addChangeHandler( event -> {
-				callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
-				callback.markAsDirty();				
-			});
-			otherInputs.add(ultimateDocumentCountry);
-			
 			ultimateName.setVisibleLength(40); 
 			ultimateName.setMaxLength(40);
 		    ultimateName.setValue(callback.getMod200Object().getMod200().getUltimateName());
@@ -231,27 +217,53 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(ultimateName);
 			
-			ultimateCountry.setWidth("240px");
-			ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
-			ultimateCountry.addChangeHandler( event -> {						
-				callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
-				callback.markAsDirty();				
+			ultimateGroupName.setVisibleLength(40); 
+			ultimateGroupName.setMaxLength(40);
+		    ultimateGroupName.setValue(callback.getMod200Object().getMod200().getUltimateGroupName());
+			ultimateGroupName.addValueChangeHandler(event -> {
+			    callback.getMod200Object().getMod200().setUltimateGroupName(ultimateGroupName.getValue());
+				callback.markAsDirty();
 			});
-			otherInputs.add(ultimateCountry);
+			otherInputs.add(ultimateGroupName);
 			
 			tab3.addRow()				
-			    .addCell(new Label("NIF o equivalente"), AON.CSS.aonWidth200())
-				.addCell(ultimateDocument);
+		    	.addCell(new Label("NIF"), AON.CSS.aonWidth200())
+		    	.addCell(ultimateDocument);
 			tab3.addRow()
-				.addCell(new Label("C\u00F3digo pa\u00EDs"), AON.CSS.aonWidth200())
-				.addCell(ultimateDocumentCountry);
-			tab3.addRow()
-				.addCell(new Label("Nombre o raz\u00F3n social"), AON.CSS.aonWidth200())
+				.addCell(new Label("Raz\u00F3n social"), AON.CSS.aonWidth200())
 				.addCell(ultimateName);
 			tab3.addRow()
-				.addCell(new Label("Pa\u00EDs o jurisdicci\u00F3n de residencia fiscal"), AON.CSS.aonWidth200())
-				.addCell(ultimateCountry);
-		
+				.addCell(new Label("Nombre de grupo"), AON.CSS.aonWidth200())
+				.addCell(ultimateGroupName);
+			
+			paintLabel(basePanel, "Identificaci\u00F3n fiscal del pa\u00EDs de residencia:", false);
+			
+			AonDisplayTable tab4 = new AonDisplayTable();
+			tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
+			tab4.addStyleName(AON.CSS.aonBlockCenter());
+			basePanel.add(tab4);
+			
+			ultimateResidenceCountry.setWidth("240px");
+			ultimateResidenceCountry.setValue(callback.getMod200Object().getMod200().getUltimateResidenceCountry());
+			ultimateResidenceCountry.addChangeHandler( event -> {						
+				callback.getMod200Object().getMod200().setUltimateResidenceCountry(Country.safeValueOf(ultimateResidenceCountry.getSelectedValue()));
+				callback.markAsDirty();				
+			});
+			otherInputs.add(ultimateResidenceCountry);
+			
+			ultimateResidenceDocument.setValue(callback.getMod200Object().getMod200().getUltimateResidenceDocument());
+			ultimateResidenceDocument.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().setUltimateResidenceDocument(ultimateResidenceDocument.getValue());         
+				callback.markAsDirty();
+			});
+			otherInputs.add(ultimateResidenceDocument);
+			
+			tab4.addRow()
+				.addCell(new Label("Pa\u00EDs de residencia"), AON.CSS.aonWidth200())
+				.addCell(ultimateResidenceCountry);
+			tab4.addRow()				
+		    	.addCell(new Label("NIF en el pa\u00EDs de residencia (TIN)"), AON.CSS.aonWidth200())
+		    	.addCell(ultimateResidenceDocument);
 		}
 		
 	}

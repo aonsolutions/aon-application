@@ -199,9 +199,6 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle("Identificaci\u00F3n del titular real de la entidad"));
 		
-		// FALTA - SUPONGO QUE ESTE CHECK ES INDEPENDIENTE DE LA TABLA, AUNQUE EN EL FICHERO APAREZCA EN TODAS LAS COMPLEMENTARIAS
-//		"Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo"
-		
 		AonDisplayTable tab1 = new AonDisplayTable();
 		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
 		tab1.addStyleName(AON.CSS.aonBlockCenter());
@@ -215,8 +212,7 @@ public class Page02 extends PageAbs {
 		});
 		otherInputs.add(titularRealCheck);
 		
-//		tab1.addLabelWidgetRow(Mod2002024Key.T0001.getDescription(), rectificationMotive1);
-		addLabelWidgetRow600(tab1, Mod2002024Key.NOITR.getDescription(), titularRealCheck);
+		addLabelWidgetRow600(tab1, Mod2002024Key.NOITR.getDescription(), titularRealCheck); // Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo
 		
 		AonDisplayTable tab6 = addRegistryTable("Tipo Documento", "Documento", "Apellidos y nombre", "Pa\u00EDs de expedici\u00F3n del documento de identificaci\u00F3n", "Fecha de nacimiento", "Pa\u00EDs de residencia", "Nacionalidad");
 		

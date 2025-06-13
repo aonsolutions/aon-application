@@ -192,10 +192,10 @@ public class Mod2002024Import2023 {
 			,(mod200old,mod200new) -> mod200new.setDominantIdentificationNumber( mod200old.getDominantIdentificationNumber() ) // Grupo Fiscal - Nº identificación de la entidad dominante (en el caso de grupos constituidos sólo por entidades dependientes)
 			
 			// FALTA - VER AL FINAL QUE CAMPOS SE QUEDAN Y CUALES DESAPARECEN PARA NO COPIARLOS DEL AÑO PASADO
-			,(mod200old,mod200new) -> mod200new.setUltimateDocument( mod200old.getUltimateDocument() )    // Grupo Mercantil - Datos de la sociedad matriz última: NIF o equivalente
-			,(mod200old,mod200new) -> mod200new.setUltimateDocumentCountry( mod200old.getUltimateDocumentCountry() )    // Grupo Mercantil - Datos de la sociedad matriz última: Código Pais (NIF)
-			,(mod200old,mod200new) -> mod200new.setUltimateName( mod200old.getUltimateName() )            // Grupo Mercantil - Datos de la sociedad matriz última: Nombre o razón social
-			,(mod200old,mod200new) -> mod200new.setUltimateCountry( mod200old.getUltimateCountry() )      // Grupo Mercantil - Datos de la sociedad matriz última: País o jurisdicción de residencia fiscal
+			,(mod200old,mod200new) -> mod200new.setUltimateDocument( mod200old.getUltimateDocument() )    // Grupo Mercantil - Datos de la sociedad matriz última: NIF
+//			,(mod200old,mod200new) -> mod200new.setUltimateDocumentCountry( mod200old.getUltimateDocumentCountry() )    // Grupo Mercantil - Datos de la sociedad matriz última: Código Pais (NIF) - ESTE DATO SE ELIMINA PARA EL 2024
+			,(mod200old,mod200new) -> mod200new.setUltimateName( mod200old.getUltimateName() )            // Grupo Mercantil - Datos de la sociedad matriz última: Razón social
+			,(mod200old,mod200new) -> mod200new.setUltimateResidenceCountry( mod200old.getUltimateCountry() )      // Grupo Mercantil - Datos de la sociedad matriz última: País de residencia fiscal
 			
 			// ESTADOS DE CUENTAS 
 			

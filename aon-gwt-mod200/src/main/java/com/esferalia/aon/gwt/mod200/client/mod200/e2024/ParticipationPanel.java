@@ -28,7 +28,7 @@ public class ParticipationPanel extends AonCustomDialog {
 			this.onCancel();
 		}
 	}
-	// FALTA - SE SUPONE QUE HAY UN CAMPO NUEVO (b), REVISAR CUANDO SALGA LA ORDEN
+
 	private AonDocumentTextBox document;
 	private AonTextBox name;
 	private ProvinceCountryListBox province;
@@ -37,11 +37,12 @@ public class ParticipationPanel extends AonCustomDialog {
 	private AonDoubleBox bookValue;
 	private AonDoubleBox incomes;
 	private AonDoubleBox aValue; // a) Corrección de valor incluida en pérdidas y ganancias del período                        
-	private AonDoubleBox bValue; // b) Eliminación del deterioro contable incluido en P y G                                
-	private AonDoubleBox cValue; // c) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
-	private AonDoubleBox dValue; // d) Ajuste por la disminución de valor originada por criterio de valor razonable        
-	private AonDoubleBox eValue; // e) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d)         
-	private AonDoubleBox fValue; // f) Saldo de correcciones fiscales                                                      
+	private AonDoubleBox bValue; // b) Reversión de pérdidas por deterioro de valores
+	private AonDoubleBox cValue; // c) Eliminación del deterioro contable incluido en P y G                                
+	private AonDoubleBox dValue; // d) Eliminación del deterioro de valores repr. de partic. en el capital o fondos propios
+	private AonDoubleBox eValue; // e) Ajuste por la disminución de valor originada por criterio de valor razonable        
+	private AonDoubleBox fValue; // f) Efecto de la corrección valorativa en la BI del ejercicio (= a + b + c + d + e)         
+	private AonDoubleBox gValue; // g) Saldo de correcciones fiscales                                                      
 	private AonDoubleBox capital;
 	private AonDoubleBox reserve;
 	private AonDoubleBox otherAmounts;
@@ -95,11 +96,12 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.bookValue.setValue(companyParticipation.getBookValue());
 		this.incomes.setValue(companyParticipation.getIncomes());
 		this.aValue.setValue(companyParticipation.getValueCorrection());
-		this.bValue.setValue(companyParticipation.getAccountingElimination());
-		this.cValue.setValue(companyParticipation.getValuesElimination());
-		this.dValue.setValue(companyParticipation.getAdjustmentDecrease());
-		this.eValue.setValue(companyParticipation.getCorrectionEffect());
-		this.fValue.setValue(companyParticipation.getCorrectionsBalance());
+		this.bValue.setValue(companyParticipation.getLossReversion());
+		this.cValue.setValue(companyParticipation.getAccountingElimination());
+		this.dValue.setValue(companyParticipation.getValuesElimination());
+		this.eValue.setValue(companyParticipation.getAdjustmentDecrease());
+		this.fValue.setValue(companyParticipation.getCorrectionEffect());
+		this.gValue.setValue(companyParticipation.getCorrectionsBalance());
 		this.capital.setValue(companyParticipation.getCapital());
 		this.reserve.setValue(companyParticipation.getReserve());
 		this.otherAmounts.setValue(companyParticipation.getOtherAmounts());
@@ -117,8 +119,9 @@ public class ParticipationPanel extends AonCustomDialog {
 		this.bValue.setEnabled(isEnabled);
 		this.cValue.setEnabled(isEnabled);
 		this.dValue.setEnabled(isEnabled);
-		this.eValue.setEnabled(false); // e = a + b + c + d
-		this.fValue.setEnabled(isEnabled);
+		this.eValue.setEnabled(isEnabled); 
+		this.fValue.setEnabled(false); // f = a + b + c + d + e
+		this.gValue.setEnabled(isEnabled);
 		this.capital.setEnabled(isEnabled);
 		this.reserve.setEnabled(isEnabled);
 		this.otherAmounts.setEnabled(isEnabled);
@@ -171,11 +174,12 @@ public class ParticipationPanel extends AonCustomDialog {
 		companyParticipation.setIncomes(this.incomes.getValue());
 		
 		companyParticipation.setValueCorrection(this.aValue.getValue());
-		companyParticipation.setAccountingElimination(this.bValue.getValue());
-		companyParticipation.setValuesElimination(this.cValue.getValue());
-		companyParticipation.setAdjustmentDecrease(this.dValue.getValue());
-		companyParticipation.setCorrectionEffect(this.aValue.getValue()+this.bValue.getValue()+this.cValue.getValue()+this.dValue.getValue());
-		companyParticipation.setCorrectionsBalance(this.fValue.getValue());
+		companyParticipation.setLossReversion(this.bValue.getValue());
+		companyParticipation.setAccountingElimination(this.cValue.getValue());
+		companyParticipation.setValuesElimination(this.dValue.getValue());
+		companyParticipation.setAdjustmentDecrease(this.eValue.getValue());
+		companyParticipation.setCorrectionEffect(this.aValue.getValue()+this.bValue.getValue()+this.cValue.getValue()+this.dValue.getValue()+this.eValue.getValue());
+		companyParticipation.setCorrectionsBalance(this.gValue.getValue());
 		
 		companyParticipation.setCapital(this.capital.getValue());
 		companyParticipation.setReserve(this.reserve.getValue());
@@ -274,17 +278,21 @@ public class ParticipationPanel extends AonCustomDialog {
 		dValue = new AonDoubleBox();         
 		dValue.addValueChangeHandler(event -> eValueCompute(dValue));
 		
-		eValue = new AonDoubleBox();          
+		eValue = new AonDoubleBox();         
+		eValue.addValueChangeHandler(event -> eValueCompute(eValue));
+		
+		fValue = new AonDoubleBox();          
 
-		fValue = new AonDoubleBox();                                                       
-		fValue.addValueChangeHandler(event -> doubleValueChanged(fValue));	
+		gValue = new AonDoubleBox();                                                       
+		gValue.addValueChangeHandler(event -> doubleValueChanged(gValue));	
 		
 		addRow(tab3, Mod2002024Key.P1504.getDescription()+" (**)", aValue);
-		addRow(tab3, Mod2002024Key.P1506.getDescription(), bValue);
-		addRow(tab3, Mod2002024Key.P1809.getDescription(), cValue);
-		addRow(tab3, Mod2002024Key.P1810.getDescription(), dValue);
-		addRow(tab3, Mod2002024Key.P1507.getDescription(), eValue);
-		addRow(tab3, Mod2002024Key.P1508.getDescription(), fValue);
+		addRow(tab3, Mod2002024Key.P2376.getDescription(), bValue);
+		addRow(tab3, Mod2002024Key.P1506.getDescription(), cValue);
+		addRow(tab3, Mod2002024Key.P1809.getDescription(), dValue);
+		addRow(tab3, Mod2002024Key.P1810.getDescription(), eValue);
+		addRow(tab3, Mod2002024Key.P1507.getDescription(), fValue);
+		addRow(tab3, Mod2002024Key.P1508.getDescription(), gValue);
 		
 		String text = "(**) Incluya la variaci\u00F3n del deterioro y, en general, los cambios valorativos con efectos sobre el resultado del per\u00EDodo, con el signo con que opere en el c\u00E1lculo del resultado. "
 					+ "Incluya tambi\u00E9n, en su caso, el efecto sobre el \"resultado por enajenaci\u00F3n de participaciones\" por la aplicaci\u00F3n de los deterioros acumulados (y de los cambios valorativos acumulados, en general). "
@@ -346,7 +354,7 @@ public class ParticipationPanel extends AonCustomDialog {
 	
 	private void eValueCompute(AonDoubleBox text) {
 		doubleValueChanged(text);
-		eValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue());
+		fValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue()+eValue.getValue());
 //		setModified(true);
 	}
 	

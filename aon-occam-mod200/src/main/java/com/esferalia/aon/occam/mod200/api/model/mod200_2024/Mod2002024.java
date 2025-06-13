@@ -47,25 +47,25 @@ public class Mod2002024 extends Mod200 {
 	
 	private String ultimateDocument;            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
 	private String ultimateName;				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
-//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
-	private Country ultimateDocumentCountry; 	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país ESTE DESAPARECE
-    private Country ultimateCountry; 			// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción  ESTE SERIA EL NUEVO País de residencia
-//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
-//	FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+	private String ultimateGroupName; 			// FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
+//	private Country ultimateDocumentCountry; 	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país ESTE DESAPARECE
+//	private Country ultimateCountry; 			// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción  ESTE SERIA EL NUEVO País de residencia
+    private Country ultimateResidenceCountry;   // FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
+    private String ultimateResidenceDocument;   // FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 	
 	private BalanceType balanceType;
 	private EcpnType ecpnType;
 	private BalanceType pygType;
 	
-	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante	                                                 
+	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
 	
 	// FALTA - HABRA QUE MODIFICAR EL TIPO DE LOS CAMPOS TYPE Y PROVINCE DE LA TABLA FS_MODEL_REGISTRY 
 	// QUE PASE DE TINYINT(1) A TINYINT (QUE SERIA LONGITUD 4), PARA EVITAR LOS PROBLEMAS QUE HABIA ESTOS 
-	// AÑOS PASADOS AL DUPLICAR UN DOMINIO
+	// AÑOS PASADOS AL DUPLICAR UN DOMINIO Y TAMBIEN EL CAMPO PERIOD_TYPE DE FS_MODEL200 QUE ESTA EN LA MISMA SITUACION
 	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // FALTA CAMPO NUEVO b - B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
 	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
 	private LinkedList<MinorEntity> minorEntities = new LinkedList<>();                    // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	private LinkedList<UteForeign> uteForeign = new LinkedList<>();                        // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
@@ -93,9 +93,9 @@ public class Mod2002024 extends Mod200 {
 	private String nrsAnexoVI;   // Presentación de documentación previa en la sede electrónica. Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 	private String justBaleares; // FALTA CAMPO NUEVO - Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears	
 	
-	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<IMod200Key,DoubleVariableEx>();
-	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<IMod200Key,DoubleVariableEx>();
-	private HashMap<IMod200Key,Boolean> visibleMap = new HashMap<IMod200Key,Boolean>();
+	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<>();
+	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<>();
+	private HashMap<IMod200Key,Boolean> visibleMap = new HashMap<>();
 
 	public boolean isInitializedFromLastYear() {
 		return initializedFromLastYear;
@@ -391,24 +391,24 @@ public class Mod2002024 extends Mod200 {
 	public void setUltimateDocument(String ultimateDocument) {
 		this.ultimateDocument = ultimateDocument;
 	}
-	public Country getUltimateDocumentCountry() {
-		return ultimateDocumentCountry;
-	}
-	public void setUltimateDocumentCountry(Country ultimateDocumentCountry) {
-		this.ultimateDocumentCountry = ultimateDocumentCountry;
-	}
+//	public Country getUltimateDocumentCountry() {
+//		return ultimateDocumentCountry;
+//	}
+//	public void setUltimateDocumentCountry(Country ultimateDocumentCountry) {
+//		this.ultimateDocumentCountry = ultimateDocumentCountry;
+//	}
 	public String getUltimateName() {
 		return ultimateName;
 	}
 	public void setUltimateName(String ultimateName) {
 		this.ultimateName = ultimateName;
 	}
-	public Country getUltimateCountry() {
-		return ultimateCountry;
-	}
-	public void setUltimateCountry(Country ultimateCountry) {
-		this.ultimateCountry = ultimateCountry;
-	}
+//	public Country getUltimateCountry() {
+//		return ultimateCountry;
+//	}
+//	public void setUltimateCountry(Country ultimateCountry) {
+//		this.ultimateCountry = ultimateCountry;
+//	}
 	
 	public HashMap<IMod200Key, DoubleVariableEx> getKeysMap() {
 		return keysMap;
@@ -492,6 +492,28 @@ public class Mod2002024 extends Mod200 {
 	@Override
 	public boolean isStrictToDeposit() {
 		return (canBeSent() || isSent()) && ("I".equals(getPayType()));
+	}
+	
+	public String getUltimateGroupName() {
+		return ultimateGroupName;
+	}
+	public Mod2002024 setUltimateGroupName(String ultimateGroupName) {
+		this.ultimateGroupName = ultimateGroupName;
+		return this;
+	}
+	public Country getUltimateResidenceCountry() {
+		return ultimateResidenceCountry;
+	}
+	public Mod2002024 setUltimateResidenceCountry(Country ultimateResidenceCountry) {
+		this.ultimateResidenceCountry = ultimateResidenceCountry;
+		return this;
+	}
+	public String getUltimateResidenceDocument() {
+		return ultimateResidenceDocument;
+	}
+	public Mod2002024 setUltimateResidenceDocument(String ultimateResidenceDocument) {
+		this.ultimateResidenceDocument = ultimateResidenceDocument;
+		return this;
 	}
 	
 }

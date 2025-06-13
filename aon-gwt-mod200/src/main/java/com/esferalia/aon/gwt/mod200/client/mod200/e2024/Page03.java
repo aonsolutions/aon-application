@@ -70,7 +70,6 @@ public class Page03 extends PageAbs {
 		otherInputs.clear();
 		basePanel.clear();
 		
-		// FALTA - AÑADIR CAMPO NUEVO (b) SI REALMENTE SE AÑADE AL FINAL		
 		// B.1. PARTICIPACIONES DE LA DECLARANTE EN OTRAS ENTIDADES		
 		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
@@ -78,8 +77,6 @@ public class Page03 extends PageAbs {
 		addLabel(PARTICIPATIONS_LABEL, true);
 
 		AonDisplayGrid grid = new AonDisplayGrid();
-//		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		grid.addStyleName(AON.CSS.aonBlockCenter());
 		grid.addStyleName(AON.CSS.aonMarginTop());
 		grid.getElement().getStyle().setProperty("margin-left", "1%");
 		basePanel.add(grid);

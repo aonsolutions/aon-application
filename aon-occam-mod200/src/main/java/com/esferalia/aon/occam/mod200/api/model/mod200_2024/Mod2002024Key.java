@@ -64,8 +64,6 @@ public enum Mod2002024Key implements IMod200Key {
 	
 // --------------- PAGINA 1 BIS ----------- //
 	
-	// FALTA - CAMBIAN LOS CAMPOS EN GRUPO MERCANTIL IGUAL ES NECESARIO AÑADIR ALGUN CAMPO EN FS_MODEL200
-	
 	// ESTADOS DE CUENTAS
 	,C0050	,C0075	,C0053
 	,C0051  ,C0076  ,C0054
@@ -96,7 +94,6 @@ public enum Mod2002024Key implements IMod200Key {
 	
 // --------------- PAGINA 2 BIS ----------- //
 	
-	// FALTA - EN EL DISEÑO DEL REGISTRO TAMBIEN SE PONE EN LAS COMPLEMENTARIAS, PERO NO FORMARA PARTE DEL TITULAR REAL SE SUPONE
 	,NOITR // Entidad sin obligación de identificar el titular real conforme al apartado 2 del artículo 4 de la Ley 10/2010, de 28 de abril, de prevención del blanqueo de capitales y de la financiación del terrorismo
 	
 // --------------- PAGINA 3 --------------- //

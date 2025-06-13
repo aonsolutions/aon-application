@@ -86,7 +86,10 @@ public class Mod2002024DAO  {
 				.setNominalValue(reg.getNominalValue())
 				.setBookValue(reg.getBookValue())
 				.setIncomes(reg.getIncomes())
-				.setValueCorrection(reg.getAValue())				
+				.setValueCorrection(reg.getAValue())
+				// FALTA - VER SI ES NECESARIO CONTROLAR POSIBLES NULOS
+//				.setLossReversion(reg.getBValue() == null ? 0.0 : reg.getBValue())				
+				.setLossReversion(reg.getBValue())
 				.setAccountingElimination(reg.getCcValue())
 				.setValuesElimination(reg.getDdValue())
 				.setAdjustmentDecrease(reg.getEValue())
@@ -337,14 +340,19 @@ public class Mod2002024DAO  {
 			 .set(FS_MODEL200.BIC,mod200.getBic())
 			 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
 			 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
+			// FALTA - CAMPO NUEVO DOC BALEARES
+//			 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
 			 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 			 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 			 .set(FS_MODEL200.NRS_ANEXOV_RIC,mod200.getNrsAnexoVric())
 			 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
+			 // FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 			 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+//			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
-			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
+//			 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
+			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
+//			 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
 			 .set(FS_MODEL200.CREATION_USER, mod200.getCreationUser())
 			 .set(FS_MODEL200.CREATION_DATE, AonDateUtils.toTimestamp(mod200.getCreationDate()))
 			 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
@@ -397,7 +405,8 @@ public class Mod2002024DAO  {
 				detail.setNominalValue(cp.getNominalValue());
 				detail.setBookValue(cp.getBookValue());
 				detail.setIncomes(cp.getIncomes());
-				detail.setAValue(cp.getValueCorrection());				
+				detail.setAValue(cp.getValueCorrection());
+				detail.setBValue(cp.getLossReversion());
 				detail.setCcValue(cp.getAccountingElimination());
 				detail.setCValue(cp.getCorrectionEffect());
 				detail.setDValue(cp.getCorrectionsBalance());
@@ -716,14 +725,19 @@ public class Mod2002024DAO  {
 		 .set(FS_MODEL200.BIC,mod200.getBic())
 		 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
 		 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
+		// FALTA - CAMPO NUEVO DOC BALEARES
+//		 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
 		 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 		 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 		 .set(FS_MODEL200.NRS_ANEXOV_RIC,mod200.getNrsAnexoVric())
 		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
+		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 		 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+//		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
-		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
+//		 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
+		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
+//		 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
 		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
 		 .set(FS_MODEL200.MODIFICATION_USER, mod200.getModificationUser())
 		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))
@@ -860,14 +874,19 @@ public class Mod2002024DAO  {
 		mod200.setBic(record.getBic());
 		mod200.setNrsAnexoIII(record.getNrsAnexoiii());
 		mod200.setJustCanarias(record.getJustCanarias());
+		// FALTA - CAMPOS NUEVO DOC BALEARES
+//		mod200.setJustBaleares(record.getJustBaleares());
 		mod200.setNrsAnexoIV(record.getNrsAnexoiv());
 		mod200.setNrsAnexoV(record.getNrsAnexov());
 		mod200.setNrsAnexoVric(record.getNrsAnexovRic());
 		mod200.setJustActivos(record.getJustActivos());
+		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 		mod200.setUltimateDocument(record.getUltimateDocument());
-		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
+//		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
 		mod200.setUltimateName(record.getUltimateName());
-		mod200.setUltimateCountry(Country.safeValueOf(record.getUltimateCountry()));
+//		mod200.setUltimateGroupName(record.getUltimateGroupName());
+		mod200.setUltimateResidenceCountry(Country.safeValueOf(record.getUltimateCountry()));
+//		mod200.setUltimateResidenceDocument(record.getUltimateResidenceDocument());
 		mod200.setStatus(FiscalStatus.safeValueOf(record.getStatus()));
 		mod200.setCreationUser(record.getCreationUser());
 		mod200.setCreationDate(record.getCreationDate());
@@ -1045,11 +1064,14 @@ public class Mod2002024DAO  {
 			}
 			
 			// Datos grupo mercantil, no se graban si hemos desmarcado el caracter 0081
-			if (mod200.isNotChecked(Mod2002024Key.C0081)) {			
-				mod200.setUltimateDocument("");            // Grupo - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-				mod200.setUltimateDocumentCountry(null);   // Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
-				mod200.setUltimateName("");				   // Grupo - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-				mod200.setUltimateCountry(null); 		   // Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción		
+			if (mod200.isNotChecked(Mod2002024Key.C0081)) {		
+				// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
+				mod200.setUltimateDocument("");            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
+//				mod200.setUltimateDocumentCountry(null);   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país
+				mod200.setUltimateName("");				   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
+				mod200.setUltimateGroupName("");		   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo 
+				mod200.setUltimateResidenceCountry(null);  // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País de residencia
+				mod200.setUltimateResidenceDocument("");   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Número de identificación fiscal en el país de residencia (TIN)
 		    }	
 			
 			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras

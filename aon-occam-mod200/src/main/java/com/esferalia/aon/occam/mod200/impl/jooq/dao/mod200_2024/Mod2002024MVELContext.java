@@ -913,6 +913,17 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		}
 		return 0.0;
 	}
+	
+	public double computeP2376() throws AonCoreException {
+		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
+			double x = 0.0;
+			for (Mod200CompanyParticipation p : mod200.getParticipationsOut()) {
+				x += p.getLossReversion();
+			}
+			return round( x ); 
+		}
+		return 0.0;
+	}
 
 	public double computeP1506() throws AonCoreException {
 		if (mod200.getParticipationsOut() != null && mod200.getParticipationsOut().size() > 0) {
