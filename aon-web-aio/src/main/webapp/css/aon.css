@@ -3342,7 +3342,19 @@ color: var(--aonWhite);
   margin-top: -16px;
 }
 
-.helpCardText:hover{
+.configCardText {
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  padding: .5rem 1rem;
+  transition: background-color .2s;
+  width: 100%;
+  gap: .5rem;
+  align-items: center;
+}
+
+.helpCardText:hover,
+.configCardText:hover {
   background-color:rgba(0,36,105,0.1);
 }
 
@@ -4079,16 +4091,11 @@ border-radius: 5px;
 display: block;
 }
 
-.aonUserConfigLink {
+.aonUserPasswordLink {
   font-size: 12px;
   cursor: pointer;
   text-decoration: underline;
   color: var(--aonLink,--aonBlue);
-}
-
-.aonUserPasswordLink {
-	display: flex;
-	align-items: center;
 }
 
 .aonConfigApps,
