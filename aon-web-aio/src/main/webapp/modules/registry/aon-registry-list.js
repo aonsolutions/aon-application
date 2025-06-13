@@ -94,6 +94,7 @@ export class AonRegistryList extends AonElement {
 					let tr = this.TABLE.addRow(registry, () => this.buildRegistry(registry));
 					tr.id = "aonInvoiceRow";
 				});
+				this.dispatchEvent(new CustomEvent(EVENT.BUILD, {detail: {registries: registries}}));
 			});	
 		}
 	}
