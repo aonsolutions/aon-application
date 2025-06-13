@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne } from "../../services/service.js";
+import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne, getRelationShipCompany, getSiblingsOffice } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -101,17 +101,43 @@ export class AonConfiguration extends AonElement {
     let officeOptions = [];
 	
 	if(this.isBeta()){
-			officeOptions.push({
-				name: MSG.CLIENT_FILE,
-				icon: MATERIAL_ICONS.CONTACTS,
-				fn: () => this.buildCustomerList(),
-			});
-		  }
- 
-    aonConfiguration.addSidenavOptions(
-      MSG.OFFICE.toUpperCase(),
-      officeOptions
-    );
+		let company = LS.getCompany();
+		getSiblingsOffice({
+			domain: company.id
+		}).then(siblings => {
+			if(
+				company && company.registry && company.type !== "OFFICE" && 
+				siblings.siblingsOffice && siblings.siblingsOffice.length > 0 &&
+				this.dur.user.domain === this.dur.domain.parentId
+			){
+		       	getRelationShipCompany({
+					url: company.domain,
+		            relatedRegistry: company.registry
+		        }).then(relationshipCompany => {
+					
+					if(relationshipCompany.rrelationship){
+						officeOptions.push({
+							name: MSG.CLIENT_FILE,
+							icon: MATERIAL_ICONS.CONTACTS,
+							fn: () => this.buildCustomerList(),
+						});
+		            } else {
+		            	officeOptions.push({
+							name: MSG.LINK_CLIENT,
+							icon: MATERIAL_ICONS.DATASET_LINKED,
+							fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
+						});
+		            }
+		            
+		            aonConfiguration.addSidenavOptionsFirst(
+				      MSG.OFFICE.toUpperCase(),
+				      officeOptions
+				    );
+		        });
+		    }
+		});
+		
+	}
 
     if ( localStorage.getItem("aon_domain_id") ) {
 
@@ -371,6 +397,8 @@ export class AonConfiguration extends AonElement {
 
 	  let aonCustomerList = new AonCustomerList(this);
 	  aonCustomerList.id = this.CUSTOMER_LIST;
+	  aonCustomerList.office = true;
+	  aonCustomerList.clientFile = true;
 	  aonCustomerList.filter = {
 		  page: 1,
 		  perPage: 50,

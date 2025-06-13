@@ -279,6 +279,7 @@ export const LINK_CLIENT = "Vincular Cliente";
 export const LINKING = "Vinculación";
 export const LINKED = 'Vinculado';
 export const LINKED1 = 'Vinculados';
+export const LINK_CUSTOMER = 'Lier le client';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
 export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';

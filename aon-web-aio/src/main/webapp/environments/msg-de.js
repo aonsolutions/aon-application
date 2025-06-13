@@ -276,6 +276,7 @@ export const LINK_CLIENT = "Client vinden";
 export const LINKED = 'Verlinkt';
 export const LINKED1 = 'Verlinkt';
 export const LINKING = "Verlinkung";
+export const LINK_CUSTOMER = 'Link-Client';
 export const LINK_DOMAINS = 'Domains Verknüpfen';
 export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
 export const LOADING = 'Wird geladen';
