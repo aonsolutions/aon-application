@@ -275,6 +275,7 @@ export const LINK_CLIENT = "Bezeroa estekatu";
 export const LINKED = 'Estekatuta';
 export const LINKED1 = 'Estekatuak';
 export const LINKING = "Estekamendua";
+export const LINK_CUSTOMER = 'Esteka bezeroa';
 export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
 export const LINK_DOMAIN_QUESTION = "Domeinuarekin bezero hau estekatu nahi duzu?";
 export const LOADING = 'Kargatzen';

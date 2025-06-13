@@ -274,6 +274,7 @@ export const LINK_CLIENT = "Vincular cliente";
 export const LINKED = 'Vinculat';
 export const LINKED1 = 'Vinculats';
 export const LINKING = "Vinculació";
+export const LINK_CUSTOMER = 'Vincular Client';
 export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
 export const LOADING = 'Carregant';
