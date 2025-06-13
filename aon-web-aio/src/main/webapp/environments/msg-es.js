@@ -217,6 +217,7 @@ export const GENERAL_INFORMATION = 'Información General';
 export const GET_INVOICE = 'Obtener Factura';
 export const GET_INVOICES = 'Obtener Facturas';
 export const GO_CONFIGURATION = 'Ir a configuración';
+export const GLOBAL_CONFIGURATION = 'Configuración Global';
 export const GROUP_DATA = 'Datos del Grupo';
 export const GROUP_MANAGEMENT = 'Gestión de Grupos';
 export const GROUP = 'Grupo';

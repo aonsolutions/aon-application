@@ -32,6 +32,7 @@ import { AonCustomerList } from "../registry/customer/aon-customer-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
+  ROOT_PANEL
   COMPANY;
   COMPANY_LIST;
   CUSTOMER_LIST;
@@ -84,6 +85,7 @@ export class AonConfiguration extends AonElement {
 
   initialize() {
     this.AON_CONFIGURATION = "aonConfiguration";
+	this.ROOT_PANEL = "rootPanel";
     this.COMPANY = this.AON_CONFIGURATION + "Company";
     this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
 	this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
@@ -122,7 +124,15 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildGeneral(),
         });
       }
-
+		
+	  /*if(this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())){
+	    companyOptions.push({
+	      name: MSG.GLOBAL_CONFIGURATION,
+	      icon: MATERIAL_ICONS.BUSINESS,
+	      action: () => this.rootPanel(new JSF.AonJsfGlobalConfig()),
+	    });
+	  }*/
+			
       if(this.dur.isAdmin()){
         companyOptions.push({
           name: MSG.USER_MANAGEMENT,
@@ -307,6 +317,7 @@ export class AonConfiguration extends AonElement {
       : new AonServiceAccountList();
     aonConfiguration.setContent(serviceAccountList);
   }
+ 
 
   createServiceAccount() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
