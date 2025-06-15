@@ -1240,11 +1240,8 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
-		// ONLY IF IS TICKET BAI.
-		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
-			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
-		}
+		// SAVE INVOICE TRACKING ON DELETE.
+		saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 	}
 
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
