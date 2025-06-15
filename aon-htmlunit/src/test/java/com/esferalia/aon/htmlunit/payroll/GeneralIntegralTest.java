@@ -2696,7 +2696,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		click("costsCheck-input");
 		assertValue("quote-label-11", 66.67);
 		//REDUCCIÓN APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO
-		Assert.assertNotNull(getElementByXpath("//*[text()=\"15,73\"]"));
+		Assert.assertNotNull(getElementByXpath("//*[text()=\"-15,73\"]"));
 		click("costsCheck-input");
 	}
 
