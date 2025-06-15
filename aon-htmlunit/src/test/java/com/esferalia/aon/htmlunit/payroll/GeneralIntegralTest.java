@@ -2693,8 +2693,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("ENFERMEDAD COMÚN, PPE");
 		
 		calculate(Calendar.JUNE, 2025);
+		click("costsCheck-input");
 		assertValue("quote-label-11", 66.67);
-
+		//REDUCCIÓN APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO
+		Assert.assertNotNull(getElementByXpath("//*[text()=\"15,73\"]"));
+		click("costsCheck-input");
 	}
 
 	@Test

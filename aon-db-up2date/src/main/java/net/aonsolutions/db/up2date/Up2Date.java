@@ -31,6 +31,7 @@ import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
+import net.aonsolutions.db.up2date.payroll.PPEITUpdateII;
 
 public class Up2Date {
 
@@ -544,7 +545,8 @@ public class Up2Date {
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			// HomePrestITInsert.HOMEPRESTITINSERT,
 			// PPEITUpdate.PPE_IT_UPDATE,
-			PPEITFix.PPE_IT_FIX,
+			// PPEITFix.PPE_IT_FIX,
+			PPEITUpdateII.PPE_IT_UPDATEII,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
