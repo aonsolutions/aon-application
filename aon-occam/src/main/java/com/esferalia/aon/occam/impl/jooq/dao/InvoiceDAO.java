@@ -1240,8 +1240,11 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 
-		// SAVE INVOICE TRACKING ON DELETE.
-		saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+		// ONLY IF IS TICKET BAI.
+		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
+		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
+			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
+		}
 	}
 
 	private static void saveInvoiceTracking(AONContext ctx, Invoice invoice, InvoiceTrackingStatus status) {
@@ -1250,7 +1253,7 @@ public class InvoiceDAO {
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		
 		ctx.getDslContext().insertInto(INVOICE_TRACKING)
-//		.set(INVOICE_TRACKING.ID, invoice.getId())
+		.set(INVOICE_TRACKING.ID, invoice.getId())
 		.set(INVOICE_TRACKING.DOMAIN, invoice.getDomain())
 		.set(INVOICE_TRACKING.SERIES, invoice.getSeries())
 		.set(INVOICE_TRACKING.NUMBER, invoice.getNumber())
