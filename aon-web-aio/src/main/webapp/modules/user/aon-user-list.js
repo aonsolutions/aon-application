@@ -113,7 +113,7 @@ export class AonUserList extends AonElement {
 	}
 
 	getOptions(user) {
-		return this.isBeta() ?
+		return this.isBeta() || this.isAyudaT() ?
 			[{
 				name: "Suplantar",
 				icon: "token",

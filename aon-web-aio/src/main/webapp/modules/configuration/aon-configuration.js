@@ -100,7 +100,7 @@ export class AonConfiguration extends AonElement {
 
     let officeOptions = [];
 	
-	if(this.isBeta()){
+	if(this.isBeta() || this.isAyudaT()){
 		let company = LS.getCompany();
 		getSiblingsOffice({
 			domain: company.id
