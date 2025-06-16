@@ -326,6 +326,7 @@ export const NEW_WAREHOUSE = 'Nuevo Almacén';
 export const NEXT = 'Siguiente';
 export const NIF = 'NIF';
 export const NO_DATA = `Il n'y a aucune information`;
+export const NO_LINK_CLIENT = 'Client non lié';
 export const NOT_LINKED = 'No vinculado';
 export const NOT_LINKED1 = 'No vinculados';
 export const NOTIFICATION = 'Notificación';
