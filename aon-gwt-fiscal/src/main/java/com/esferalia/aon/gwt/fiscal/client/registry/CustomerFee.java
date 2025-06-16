@@ -250,7 +250,7 @@ public class CustomerFee extends MainEntryPoint {
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
 		
-		customerId = getCustomer();
+		customerId = getCustomer() > 0 ? getCustomer() : null;
 		removeCustomer();
 		
 		this.onModuleLoad(options);
