@@ -215,6 +215,7 @@ public interface IFinance {
 	// 	***********************************************
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Integer officeDomain, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
 	
 	// 	***********************************************

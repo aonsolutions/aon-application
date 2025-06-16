@@ -80,11 +80,15 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	private List<ActivityType> activityType;
 	private Project project;
 	private Integer count;
+	
+	private Integer officeDomain;
 
-	public ProjectEntryPanel(ProjectModuleOptions options) {
+	public ProjectEntryPanel(ProjectModuleOptions options, Integer officeDomain) {
 		super("Expediente");
 		
 		this.options = options;
+		this.officeDomain = officeDomain;
+		
 		initializeCommonService();
 		
 		addButtonsToolbar();
@@ -127,7 +131,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	        			ProjectActivity projectActivity = new ProjectActivity()
 	    					.setActive(true)
 	    					.setActivityType(new ActivityType().setId(Integer.parseInt(activity.getValue())))
-	    					.setDomain( options.getDomain())
+	    					.setDomain( officeDomain )
 	    					.setProject(project.getId());
 	                    			
 	        			project.getProjectActivities().add(projectActivity);
@@ -228,7 +232,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	}
 	
 	private void showProjectHolderDialog() {
-		new AonProjectHolderPanel( options.getDomainName(), options.getDomain(), options.getUser(), project.getId(), projectHolders, new AonProjectHolderPanelCallback() {
+		new AonProjectHolderPanel( options.getDomainName(), options.getDomain(), options.getUser(), project.getId(), officeDomain, projectHolders, new AonProjectHolderPanelCallback() {
 			
 			@Override
 			public void onCancel() {}
@@ -342,7 +346,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 		newButton.addClickHandler(e -> showProjectHolderDialog());
 		AonCustomCard projectHolderCard = new AonCustomCard("Operarios", newButton);
 		
-		projectHolderTable = new ProjectHolderTable(options.getDomainName(), options.getDomain(), options.getUser(), this.project) {
+		projectHolderTable = new ProjectHolderTable(options.getDomainName(), options.getDomain(), options.getUser(), this.project, officeDomain) {
 
 			@Override
 			protected void onDelete() {
@@ -396,7 +400,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	}
 
 	private void getAviableProjectType(Consumer<List<ProjectType>> success) {
-		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ProjectType>>() {
+		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, new AsyncCallback<List<ProjectType>>() {
 			
 			@Override
 			public void onSuccess(List<ProjectType> projectTypesDb) {
@@ -413,7 +417,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	}
 	
 	private void getActivityTypes(Consumer<List<ActivityType>> success) {
-		commonService.getActivityTypes(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ActivityType>>() {
+		commonService.getActivityTypes(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, new AsyncCallback<List<ActivityType>>() {
 			
 			@Override
 			public void onSuccess(List<ActivityType> activityTypeDb) {
