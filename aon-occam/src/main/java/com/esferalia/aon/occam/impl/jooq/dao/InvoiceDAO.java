@@ -1250,7 +1250,7 @@ public class InvoiceDAO {
 		JSONObject json = InvoiceJSON.toJSON(invoice);
 		
 		ctx.getDslContext().insertInto(INVOICE_TRACKING)
-		.set(INVOICE_TRACKING.ID, invoice.getId())
+//		.set(INVOICE_TRACKING.ID, invoice.getId())
 		.set(INVOICE_TRACKING.DOMAIN, invoice.getDomain())
 		.set(INVOICE_TRACKING.SERIES, invoice.getSeries())
 		.set(INVOICE_TRACKING.NUMBER, invoice.getNumber())
