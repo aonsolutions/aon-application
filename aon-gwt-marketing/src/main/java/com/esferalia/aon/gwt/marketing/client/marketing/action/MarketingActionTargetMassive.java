@@ -418,7 +418,7 @@ public abstract class MarketingActionTargetMassive extends SimplePanel {
 	}
 
 	private void getAviableProjectType(Consumer<List<ProjectType>> success) {
-		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ProjectType>>() {
+		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<List<ProjectType>>() {
 			
 			@Override
 			public void onSuccess(List<ProjectType> projectTypes) {

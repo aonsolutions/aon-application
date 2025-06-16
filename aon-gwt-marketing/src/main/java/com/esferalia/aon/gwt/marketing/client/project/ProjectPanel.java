@@ -58,6 +58,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 	private Map<Integer, Project> rowProjects = new HashMap<>();
 	
 	private Integer customerId;
+	private Integer customerDomain;
 	
 	private static enum COLS {
 		  DES(AON.MSG.name()						,"10rem"			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -91,7 +92,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 		}
 	}
 
-	public ProjectPanel(ProjectParams params, Integer customerId) {
+	public ProjectPanel(ProjectParams params, Integer customerId, Integer customerDomain) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
@@ -99,6 +100,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 		this.rowProjects.clear();
 		
 		this.customerId = customerId;
+		this.customerDomain = customerDomain;
 
 		addScrollHandler(new ScrollHandler() {
 
@@ -181,7 +183,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 	}
 	
 	private void showSellerDialog() {
-		new AonProjectPanel( params.getDomainName(), params.getDomain(), params.getUser(), customerId, new AonProjectPanelCallback() {
+		new AonProjectPanel( params.getDomainName(), params.getDomain(), params.getUser(), customerId, customerDomain, new AonProjectPanelCallback() {
 			
 			@Override
 			public void onCancel() { }
@@ -281,7 +283,7 @@ public abstract class ProjectPanel extends ScrollPanel {
 			String projectHoldersValue = projectHolder.getTaskHolder().getId() == null ? null : projectHolder.getTaskHolder().getName();
 			holdersValue = AonStringUtils.isBlank(pworkgroupsValue) 
 					? projectHoldersValue : 
-					(pworkgroupsValue + ", " + projectHoldersValue);
+					(pworkgroupsValue + (AonStringUtils.isBlank(projectHoldersValue) ? "" : ", " + projectHoldersValue));
 			holdersValue += " (" + formatDate.format(projectHolder.getStartDate()) + (null == projectHolder.getEndDate() ? "" : " - " + formatDate.format(projectHolder.getEndDate())) + ")";
 		} 
 		

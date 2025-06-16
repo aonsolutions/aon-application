@@ -83,6 +83,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		// Remove customer from LS
 		removeCustomer();
+		removeOfficeDomain();
 	}
 	
 	private void initializeService() {

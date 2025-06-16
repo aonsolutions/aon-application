@@ -1385,7 +1385,7 @@ public abstract class MarketingActionEntryPanel extends AonCustomDockLayout {
 	}
 	
 	private void getAviableWorkgroups(Consumer<List<Workgroup>> success) {
-		commonService.getAviableWorkgroups(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<Workgroup>>() {
+		commonService.getAviableWorkgroups(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<List<Workgroup>>() {
 			
 			@Override
 			public void onSuccess(List<Workgroup> workgroups) {
