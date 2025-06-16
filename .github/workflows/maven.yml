@@ -179,6 +179,7 @@ jobs:
         sudo tee -a /etc/hosts >/dev/null <<-EOF
         127.0.0.1    payroll-test.aonsolutions.org
         127.0.0.1    tgss-payroll-test.aonsolutions.org
+        127.0.0.1    artist-payroll-test.aonsolutions.org
         127.0.0.1    home-payroll-test.aonsolutions.org
         127.0.0.1    agrarian-payroll-test.aonsolutions.org
         127.0.0.1    general-payroll-test.aonsolutions.org
@@ -204,6 +205,7 @@ jobs:
         -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/ \
+        -Dintegration.test.artist.payroll.url=http://artist-payroll-test.aonsolutions.org:8080/ \
         -Dtest='!GeneralEnterpriseTest' -f aon-htmlunit/pom.xml integration-test
 
     - name: Build production version with Maven
