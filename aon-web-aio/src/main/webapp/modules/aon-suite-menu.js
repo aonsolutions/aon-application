@@ -1,5 +1,4 @@
 import { AonElement } from '../components/AonElement.js';
-import { AonApplication } from '../components/aon-application.js';
 import { MSG, CSS, EVENT, TAG, CONSTANT } from '../environments/environments.js'; 
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonButton } from '../components/aon-button.js';
@@ -20,27 +19,11 @@ export class AonSuiteMenu extends AonElement {
     last; 
     new;
     cardData;
-	
-/*
-	dur;
-*/
+
 	constructor () {
 		super();
 	}
 	
-	
-	
-/*	
-	getDur(){
-		alert( "get " + this.dur );
-		return this.dur || super.getDur();		
-	}
-	
-	setDur( dur ){
-		alert( "set " + dur );
-		this.dur = dur;
-	}
-*/
 	connectedCallback () {
 		this.clear();
 		this.initialize();
@@ -57,10 +40,6 @@ export class AonSuiteMenu extends AonElement {
         this.CONF_BUTTON = this.id + 'ConfButton';
         this.DROPDOWN_BUTTON = this.id + "DropDownButton";
         this.OPTIONS = this.id + "Options";
-
-		let aonApplication = new AonApplication();
-		aonApplication.setAttribute("sidenav_width", "0px");
-		this.createApplication('AonSuiteMenu', "", aonApplication);
 	}
 	
 	initOptions(){
@@ -68,11 +47,10 @@ export class AonSuiteMenu extends AonElement {
 	}
 
 	build() {
-
         let divFlex = this.createDiv();
         divFlex.className = "aonFlex";
-        //this.appendChild(divFlex);
-		this.getApplication().setContent(divFlex);
+        this.appendChild(divFlex);
+		// this.getApplication().setContent(divFlex);
 
         let sideMenu = this.createDiv();
         sideMenu.id = this.SIDE_MENU;

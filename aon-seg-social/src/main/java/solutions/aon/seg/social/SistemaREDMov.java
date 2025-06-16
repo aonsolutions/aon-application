@@ -906,8 +906,8 @@ class SistemaREDMov {
 			
 			form.getInputByName("txt_SDFTESCTACOT").setValue(ctaCti.substring(0, 2));
 			form.getInputByName("txt_SDFCTACOT").setValue(ctaCti.substring(2));
-
-			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207001004_42");
+			
+			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207001004_40");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
@@ -919,7 +919,7 @@ class SistemaREDMov {
 			
 			if(cno != null) form.getInputByName("txt_SDFCNOCUP_ayuda").setValue(cno);
 
-			btnSubmit = htmlPage.querySelector("#Sub2207001004_85");
+			btnSubmit = htmlPage.querySelector("#Sub2207001004_83");
 			htmlPage = btnSubmit.click();
 			
 			HtmlInput confirmButton = (HtmlInput) htmlPage.getElementById("Sub2204701006_83");

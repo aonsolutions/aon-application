@@ -11,12 +11,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonSecret;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SECURITY {
@@ -106,5 +108,17 @@ public class SECURITY {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getSecurity().delete(ctx, user);
 		}
+	}
+	
+	public static String getSupplantToken(Domain domain, Domain supplantDomain, User user, User supplantUser) {
+		JSONObject tokenObject = new JSONObject()
+			.put(IJsonNames.SCHEMA_FIRST_DOMAIN, domain.getName())
+			.put(IJsonNames.DOMAIN, domain.getId())
+			.put(IJsonNames.USER, user.getId())
+			.put(IJsonNames.LOGIN, user.getLogin())
+			.put(IJsonNames.SUP_USER, supplantUser.getLogin())
+			.put(IJsonNames.SUP_DOMAIN, supplantDomain.getName());
+		
+		return AonToken.build(tokenObject, AonDateUtils.addDays(new Date(), 1));
 	}
 }

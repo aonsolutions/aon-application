@@ -202,6 +202,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private RegistryAddressFilter addressesFilter;
 	private TbaiConfiguration tbaiConfiguration;
 	
+	private Boolean hasInvoiceDoc;
 	private InvoiceDoc invoiceDoc;
 	
 	public InvoiceController() {
@@ -243,9 +244,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return priceStrategy;
 	}
 	
-	Boolean hasInvoiceDoc;
 	public boolean hasInvoiceDoc() {
-		if(hasInvoiceDoc == null) {
+		if (hasInvoiceDoc == null) {
 			hasInvoiceDoc = getInvoiceDoc() != null;
 		}
 		return hasInvoiceDoc;
@@ -260,8 +260,9 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return invoiceDoc;
 	}
 
-	public void setInvoiceDoc(InvoiceDoc invoiceDoc) {
-		this.invoiceDoc = invoiceDoc;
+	public void initializeInvoiceDoc() {
+		this.hasInvoiceDoc = null;
+		this.invoiceDoc = null;
 	}
 	
 	public AonFile getInvoiceAttachFile() {
