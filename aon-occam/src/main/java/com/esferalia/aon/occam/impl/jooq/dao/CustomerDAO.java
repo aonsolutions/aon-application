@@ -86,7 +86,8 @@ public class CustomerDAO {
         @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}	
         
         @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}	
-	}
+        @Override public Property<Integer> getRelatedRegistryProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.RELATED_REGISTRY); }
+		}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
 

@@ -846,8 +846,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 						onCnoContract(afiChangesMap.getChangeValue("CNO"), afiChangesMap.getChangeDate());
 					
 					// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
-					if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
+					if (!isChangeContract() && isTransform) {
 						onChangeContract(this.tc2Original, (null == this.partialityCoefOriginal ? null : this.partialityCoefOriginal.toString()), afiChangesMap.getChangeDate());
+					}
+					
 					
 				}
 			}

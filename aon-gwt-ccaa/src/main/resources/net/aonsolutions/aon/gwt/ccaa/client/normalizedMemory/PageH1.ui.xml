@@ -39,6 +39,14 @@
 										</tr>
 										<tr>
 											<td>
+												<g:HorizontalPanel ui:field="IRUSPanel">
+													<g:Label text="IRUS" styleName="{aonResources.css.aonInnerLabel}" />
+													<g:TextBox ui:field="IDA01008" styleName="{aonResources.css.aonInputText}"/>
+												</g:HorizontalPanel>
+											</td>
+										</tr>
+										<tr>
+											<td>
 												<g:HorizontalPanel ui:field="LEIPanel">
 													<g:Label text="LEI" styleName="{aonResources.css.aonInnerLabel}" />
 													<g:TextBox ui:field="IDA01009" styleName="{aonResources.css.aonInputText}"/>
@@ -149,25 +157,36 @@
 										</div>
 										<div class="{aonResources.css.aonGroupBody}">
 											<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
-											
 												<tr>
 													<td>
-														<g:Label text="Código CNAE" styleName="{aonResources.css.aonInnerLabel}" />
-														<g:TextBox visibleLength="42" maxLength="40"
+														<g:Label text="Actividad Principal" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label text="Código CNAE-2009" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:TextBox visibleLength="4" maxLength="4"
 															ui:field="IDA02001" styleName="{aonResources.css.aonInputText}" />
 														<g:Button ui:field="showCnae"
 															styleName="aon-icon-lookup {aonResources.css.aonBorderNone}">
 															&#160;
 														</g:Button>
-														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/>
+<!-- 														<g:InlineLabel ui:field="IDA02009" styleName="{aonResources.css.aonMarginLeft}"/> -->
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<g:Label ui:field="CNAE2025Label" text="Código CNAE-2025" styleName="{aonResources.css.aonInnerLabel}" />
+														<g:TextBox visibleLength="4" maxLength="4"
+															ui:field="IDA02014" styleName="{aonResources.css.aonInputText}" />
 													</td>
 												</tr>
 											</table>
 										</div>
-
 									</div>
 									
-									<g:HTMLPanel ui:field="administrationOrganPanel">
+									<g:HTMLPanel ui:field="administrationOrganPanel2022">
 										<div class="{aonResources.css.aonGroup}">
 											<div class="{aonResources.css.aonGroupTitle}">
 												<g:InlineLabel text="Organo de Administración" />
@@ -200,6 +219,50 @@
 
 										</div>
 									</g:HTMLPanel>
+									<g:HTMLPanel ui:field="administrationOrganPanel2023">
+										<div class="{aonResources.css.aonGroup}">
+											<div class="{aonResources.css.aonGroupTitle}">
+												<g:InlineLabel text="Organo de Administración" />
+											</div>
+											<div class="{aonResources.css.aonGroupBody}">
+												<table style="margin-top: 10px;" class="{aonResources.css.aonWidthAll}">
+													<tr>
+														<td>
+														</td>
+														<td colspan="2">
+															<g:Label ui:field="current5" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+														<td colspan="2">
+															<g:Label ui:field="ant5" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:Label text="Número de mujeres en el organo de administración" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA04212"  />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA042129"  />
+														</td>
+													</tr>
+													<tr>
+														<td>
+															<g:Label text="Número total de miembros del órgano de administración" styleName="{aonResources.css.aonInnerLabel}" />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA04213"  />
+														</td>
+														<td colspan="2">
+															<aon:DoubleBox ui:field="IDA042139"  />
+														</td>
+													</tr>
+												</table>
+											</div>
+										</div>
+									</g:HTMLPanel>
+									
 									<div class="{aonResources.css.aonGroup}">
 										<div class="{aonResources.css.aonGroupTitle}">
 											<g:InlineLabel text="Personal asalariado" />

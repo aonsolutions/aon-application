@@ -1103,7 +1103,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getRegistryNoteStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)))
+				f -> f.getRegistryProperty().eq(customerId))
 				.collect(Collectors.toList());
 	}
 	@Override

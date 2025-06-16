@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Deque;
@@ -28,9 +30,11 @@ import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.DBConsults;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema;
+import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Esquema.Claves.Clave;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.Utils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 
 import jakarta.servlet.ServletException;
@@ -39,6 +43,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.gwt.ccaa.server.xbrl.XmlToXbrl;
 
 @WebServlet(name = "DownloadXml", urlPatterns = { "/aon_gwt_deposit/gwt_download_deposit/*",
 												  "/aon_gwt_aio/gwt_download_deposit/*"})
@@ -69,9 +74,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			HttpServletResponse p_response) throws ServletException,
 			IOException {
 		
-		p_response.addHeader("Content-Disposition",
-				"inline; filename=\"DEPOSITO.zip\"");
-		p_response.setContentType(MimeType.ZIP.getName());
+//		p_response.addHeader("Content-Disposition",
+//				"inline; filename=\"DEPOSITO.zip\"");
+//		p_response.setContentType(MimeType.ZIP.getName());
 
 		String domain_id = p_request.getParameter("domain_id");
 		Integer domainId = Integer.parseInt(domain_id);
@@ -80,11 +85,20 @@ public class DownloadXmlFileServlet extends HttpServlet {
 		String yearStr = p_request.getParameter("year");
 		Integer year = Integer.parseInt(yearStr);
 		
-		File f = /*DBConsults.*/getXmlFile(domain, domainId, year);
+		File f;
+		if (year >= 2024) {
+			f = getXmlFile2024(domain, domainId, year);
+			p_response.addHeader("Content-Disposition", "inline; filename=\"D2_" + AonStringUtils.left(f.getName(), 9) + "_" + year +".zip\""); 
+		} else {
+			f = getXmlFile(domain, domainId, year);
+			p_response.addHeader("Content-Disposition", "inline; filename=\"DEPOSITO.zip\"");
+		}
+		
+		p_response.setContentType(MimeType.ZIP.getName());
 		
 		ZipOutputStream zos = null;
 		try {
-			zos = makeZip(f, p_response.getOutputStream());
+			zos = makeZip(f, p_response.getOutputStream(), year);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -93,7 +107,6 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			if (zos != null)
 				zos.close();
 		}
-		
 
 		// FileInputStream input = new FileInputStream(zos.toString());
 		//
@@ -121,7 +134,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 
 	// *****************************************************************************
 
-	private static ZipOutputStream makeZip (File directory, OutputStream os) throws IOException {
+	private static ZipOutputStream makeZip(File directory, OutputStream os, int year) throws IOException {
 		
 		URI base = directory.toURI();
 		Deque<File> queue = new LinkedList<File>();
@@ -144,7 +157,6 @@ public class DownloadXmlFileServlet extends HttpServlet {
 					String name = base.relativize(kid.toURI()).getPath();
 					String changeName = (name.endsWith("/")) ? getChangeName(name)+"/" : getChangeName(name);
 					
-					
 					if (kid.isDirectory()) {
 						
 						queue.push(kid);
@@ -162,7 +174,7 @@ public class DownloadXmlFileServlet extends HttpServlet {
 						zos.putNextEntry(new ZipEntry(fileName));
 						
 					} else {
-						String fileName= dirName+getChangeName(name);
+						String fileName= (year >= 2024 ? "" : dirName) + getChangeName(name);
 						zos.putNextEntry(new ZipEntry(fileName));
 						copy(kid, zos);
 						zos.closeEntry();
@@ -170,7 +182,9 @@ public class DownloadXmlFileServlet extends HttpServlet {
 					
 					kid.delete();
 				}
-				zos.putNextEntry(new ZipEntry(dirName));
+				if (year < 2024) {
+					zos.putNextEntry(new ZipEntry(dirName));
+				}
 				directory.delete();
 				queue.clear();
 				
@@ -205,7 +219,10 @@ public class DownloadXmlFileServlet extends HttpServlet {
 	  
 	  private static String getChangeName (String name) {
 		  
-		  Integer startPosition = null;
+		  Integer startPosition = name.indexOf('%');
+		  if (startPosition == -1)
+			  return name;
+		  
 		  Integer extPosition = name.lastIndexOf('.');
 		  
 		  if (extPosition > 0) {
@@ -350,4 +367,174 @@ public class DownloadXmlFileServlet extends HttpServlet {
 			}
 			return null;
 		}
+		
+	    // Generar XML y XBRL a partir del ejercicio 2024	
+		public static File getXmlFile2024(String domain, Integer domainId, Integer year) throws IOException {
+
+			File parent = null;
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.YEAR, year);
+			calendar.set(Calendar.MONTH, Month.DECEMBER.ordinal());
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+
+			Attach xml = AON.getAttach(domain, domainId, "",
+					f -> f.getTypeProperty().eq(RegistryAttachmentType.D2_DEPOSIT.value())
+							.and(f.getDomainProperty().eq(domainId)
+							.and(f.getAttachDateProperty().eq(AonDateUtils.toSql(calendar.getTime())))),
+					AttachType.REGISTRY);
+			
+			byte[] data;
+			if (xml != null && xml.getId() != null) {
+
+				Esquema schema = DBConsults.getDeposit(xml);
+
+				// Si existe el fichero de la memoria, se asume que no se cumplimenta la memoria				
+				Vector<Integer> id = DBConsults.getMemoryFile(domain, domainId, D2_FILE_MEMORY + year);
+				schema.getCabecera().setMemoriaNormalizada(id.get(0) == -1);
+				
+				// Revisar las claves que lleva el esquema por si hay que modificar o quitar alguna
+				Esquema.Claves claves = new Esquema.Claves();
+				for (Integer i = 0; i < schema.getClaves().getClave().size(); i++) {
+
+					// Servicios a terceros, si clave 8080832 esta a cero la 831001 se deja vacia, pues por defecto se guarda un 1 
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(831001))) {
+						if (buscar(schema, "8080832").equals("0")) {
+							schema.getClaves().getClave().get(i).setValor("");
+						}
+					}
+					
+					// Hoja presentación claves memoria (8080805, 8080852), en ocasiones se quedan vacias o a cero ambas, se ponen segun el formato
+					boolean isPymes = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()); // Formato PYMES o Abreviado
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080805))) {
+						if ("0".equals(schema.getClaves().getClave().get(i).getValor()) && !isPymes) {
+							schema.getClaves().getClave().get(i).setValor("1");
+						}						
+					}
+					if (schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080852))) {
+						if ("0".equals(schema.getClaves().getClave().get(i).getValor()) && isPymes) {
+							schema.getClaves().getClave().get(i).setValor("1");
+						}						
+					}
+					
+					// Claves 8080854, 8080855 se ignoran, ahora no se usan y se están grabando en el XML
+					if (!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080854)) && 
+						!schema.getClaves().getClave().get(i).getCodigo().equals(BigInteger.valueOf(8080855))) {
+						claves.getClave().add(schema.getClaves().getClave().get(i));
+					}
+					
+				}
+				
+				// Añadir clave C8081010
+				Clave c8081010 = new Clave();
+				c8081010.setCodigo(BigInteger.valueOf(8081010));
+				c8081010.setValor(getC8081010(schema));
+				claves.getClave().add(c8081010);
+				System.out.println(c8081010.getValor());
+				
+				// Asignar lista de claves modificada al schema
+				schema.setClaves(claves);
+
+				Path parentPath = Files.createTempDirectory(schema.getCabecera().getCIF());
+				parent = parentPath.toFile();
+				
+				// Crear el archivo XBRL
+				XmlToXbrl.getInstance().createXbrl(schema, parent);
+				
+				// Crear el archivo XML
+				File f = File.createTempFile("deposito%", ".xml", parent);
+
+				try {
+					data = Utils.writeXml(schema);
+				} catch (JAXBException | IOException e) {
+					e.printStackTrace();
+					if (xml.getData() != null)
+						data = xml.getData();
+					else if (xml.getDriveId() != null) {
+						DomainGserviceaccount g = AON.getDomainGserviceaccount(domain, domainId, "");
+						Drive drive = AonDrive.getInstace().serviceInitialize(g);
+						data = AonDrive.getInstace().downloadFileByteArray(drive, xml.getDriveId());
+					} else
+						data = null;
+				}
+
+				if (data != null) {
+					try {
+						AonFileUtils.writeByteArrayToFile(f, data);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				// Añadir documentos
+				getFileDocuments2Zip(domain, domainId, D2_FILE_MEMORY, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUTOCARTERA_MODEL, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_GESTION, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_AUDIT, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_CONVOC, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_SICAV, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_NO_FINANCIERA, parent, year);
+				getFileDocuments2Zip(domain, domainId, D2_FILE_TITULAR_REAL, parent, year);
+				
+			}
+
+			return parent;
+		}
+		
+		private static String getC8081010(Esquema schema) {
+			
+			// Codificación de documentos (clave 8081010)
+			
+//			Cadena tipo "abcdefghijklmnnopqstruv" donde:
+//				"a" es el balance (0 no hay, 1 es normal, 2 es abreviado, 3 es PYME, 4 es Mixto)
+//				"b" es la cuenta de pérdidas y ganancias (0 no hay, 1 es normal, 2 es abreviada, 3 es PYME)
+//				"c" es la memoria (0 no hay, 1 es normal, 2 es abreviada, 3 es PYME) Claves 8080805 abr y 8080852 pymes
+//				"d" es el estado de cambios en el patrimonio neto (0 no hay, 1 es normal)
+//				"e" es el estado de flujos de efectivo (0 no hay, 1 es normal)
+//				"f" es la hoja identificativa de la sociedad (0 no hay, 1 si hay)
+//				"g" es el informe de gestión (0 no hay, 1 si hay) Clave 8080807
+//				"h" es el informe de auditoría (0 no hay, 1 si hay) Clave 8080817
+//				"i" es el modelo de autocartera (0 no hay, 1 si hay) Clave 8080809
+//				"j" son los anuncios de convocatoria (0 no hay, 1 si hay) Clave 8080823
+//				"k" es el certificado SICAV (0 no hay, 1 si hay) Clave 8080821
+//				"l" es la certificación del acuerdo (0 no hay, 1 si hay) 8080811
+//				"m" es la moneda utilizada (E euros, M miles de euros, B millones de euros)
+//				"nn" es el número de otros documentos (00 - 89)
+//				"o" son los otros documentos (0 no hay, 1 si hay)
+//				"p" es la declaración medioambiental (0 no hay, 1 si hay)
+//				"q" es el estado sobre información no financiera (0 no hay, 1 si hay) Clave 8080825
+//				"s" es la declaración de identificación del titular real (0 no hay, 1 si hay)
+//				"t" es el documento sobre servicios a terceros (0 no hay, 1 si hay) Clave 8080832
+//				"r" es la retención (0 no hay, 1 si hay)
+//				"u" es el formato de presentación (0 si no es ESEF / FEUE, 1 si es ESEF/ FEUE)
+//				"v" es la Hoja COVID-19 (0 no hay)
+			
+			String formato = "PYMES".equalsIgnoreCase(schema.getCabecera().getTipoCuestionario()) ? "3" : "2"; // Formato PYMES o Abreviado
+			String g = buscar(schema, "8080807");
+			String h = buscar(schema, "8080817"); 
+			String i = buscar(schema, "8080809"); 
+			String j = buscar(schema, "8080823"); 
+			String k = buscar(schema, "8080821"); 
+			String l = buscar(schema, "8080811");
+			String m = buscar(schema, "9002").equals("1") ? "M" : buscar(schema, "9003").equals("1") ? "B" : "E";   
+			String q = buscar(schema, "8080825"); 
+			String t = buscar(schema, "8080832"); 
+			
+            //        a         b         c       def    g   h   i   j   k   l   m    nnop    q    s    t    ruv
+            return formato + formato + formato + "001" + g + h + i + j + k + l + m + "0001" + q + "1" + t + "000";
+		}
+		
+	    // Busca la clave que se le pasa en el XML y devuelve su valor o "0" si no se encuentra  
+	    private static String buscar(Esquema schema, String key) {
+	    	
+			for (int i = 0; i < schema.getClaves().getClave().size(); i++) {
+				BigInteger code = new BigInteger(key);
+				if (schema.getClaves().getClave().get(i).getCodigo().equals(code)) {				
+					return schema.getClaves().getClave().get(i).getValor();
+				}
+			}
+			// Si no la encuentra, se devuelve "0"
+			return "0";
+			
+	    }
+		
 }

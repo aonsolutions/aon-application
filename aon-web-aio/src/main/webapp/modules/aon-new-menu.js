@@ -2,7 +2,7 @@ import { AonElement } from '../components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps} from '../services/app.js';
 import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
 
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU,NEW_CONFIG_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
+import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
@@ -259,7 +259,6 @@ export class AonNewMenu extends AonElement {
 				case PAYROLL_MENU.app:
 				case MARKETING_MENU.app:
 				case CONFIGURATION_MENU.app:
-				case NEW_CONFIG_MENU.app:
 				case ACADEMY.app:
 				case COMMERCE.app:
 				case GARAGE.app:
@@ -330,8 +329,6 @@ export class AonNewMenu extends AonElement {
 		case MARKETING_MENU.app:
 			return new AonMarketingMenu();
 		case CONFIGURATION_MENU.app:
-			return new AonConfigurationMenu();
-		case NEW_CONFIG_MENU.app:
 			return new AonConfiguration();
 		case ACADEMY.app:
 			return new AonAcademyMenu();
@@ -456,25 +453,23 @@ export class AonNewMenu extends AonElement {
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 
 		for (let item in TOP_MENU_APPS) {
-			
-				let app = TOP_MENU_APPS[item];
-				if (!this.isApp(app)) {
-					if (!showAllApps || excludedApps.includes(app.app)) {
-						continue;
-					} else {
-						let appElement = this.buildTopApp(app);
-	
-						appElement.classList.add("aonNewMenuTopNavAppElement");
-						app.color = "var(--aonTopMenuNotAvailable)";
-						div.appendChild(appElement);
-						continue;
-					}
-				}else if(app.app == "newConfigurationMenu" && !this.isBeta()){
+
+			let app = TOP_MENU_APPS[item];
+
+			if (!this.isApp(app)) {
+				if (!showAllApps || excludedApps.includes(app.app)) {
 					continue;
-				}else {
+				} else {
 					let appElement = this.buildTopApp(app);
-					div.appendChild(appElement);
-				}
+
+					appElement.classList.add("aonNewMenuTopNavAppElement");
+					app.color = "var(--aonTopMenuNotAvailable)";
+					aonTopMenuDiv.appendChild(appElement);
+					continue;
+				} 
+			}
+				let appElement = this.buildTopApp(app);
+				aonTopMenuDiv.appendChild(appElement);
 		}
 		
 	
@@ -1035,7 +1030,8 @@ export class AonNewMenu extends AonElement {
 		if (OFFICE.app === app.app)
 			return (this.isBeta() || this.isAyudaTorInfoautonomos()) 
 				&& this.getDur().getDomain().isOffice() 
-				&& this.getDur().isManagementManager();
+				//&& this.getDur().isManagementManager()
+				;
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
 		if (COMMERCE.app === app.app)
@@ -1061,8 +1057,6 @@ export class AonNewMenu extends AonElement {
 		if (MARKETING_MENU.app === app.app)
 			return this.getDur().isMarketing();
 		if (CONFIGURATION_MENU.app === app.app)
-			return this.getDur().isAdmin();
-		if (NEW_CONFIG_MENU.app === app.app)
 			return this.getDur().isAdmin();
 		if (ENTERPRISE_MENU.app === app.app)
 			return this.getDur().isDomainManagementAvailable();

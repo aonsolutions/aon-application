@@ -1,11 +1,8 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,12 +11,18 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import net.aonsolutions.aon.api.servlet.AonRouting;
@@ -32,6 +35,8 @@ public class RelationshipServlet extends AonApiHttpServlet {
 	
 	private static final String RELATIONS = "/";
 	private static final String RELATION = "/:id";
+	private static final String RELATION_COMPANY = "/company";
+	private static final String SIBLINGS_OFFICE = "/siblingsOffice";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,6 +64,8 @@ public class RelationshipServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
+				.addRoute(RELATION_COMPANY, RelationshipServlet::getRelationshipByCompany)
+				.addRoute(SIBLINGS_OFFICE, RelationshipServlet::getSiblingsOffice)
 				.addRoute(RELATIONS, RelationshipServlet::getRelationships)
 				.addRoute(RELATION, RelationshipServlet::getRelationship)
 				.apply();
@@ -129,6 +136,42 @@ public class RelationshipServlet extends AonApiHttpServlet {
 		);
 		
 		json.put("companies", CompanyJSON.toJSON(companies));
+		
+		return json;
+	}
+	
+	private static JSONObject getRelationshipByCompany(AonApiData api) {
+		JSONObject params = api.getData();
+		JSONObject json = new JSONObject();
+		
+		String url = params.optString(IJsonNames.URL);
+		Integer relatedRegistry = params.optInt(IJsonNames.RELATED_REGISTRY);
+		
+		AON_SOLUTIONS.getRegistryRelationship(api.getDomain(), api.getUser(), 
+			f-> f.getRelatedRegistryProperty().eq(relatedRegistry)
+			.and(f.getRelationshipProperty().eq(-1))
+			.and(f.getCommentsProperty().eq(url))
+		)
+		.ifPresent(relation->
+			json.put("rrelationship", RegistryRelationshipJSON.toJSON(relation))
+		);
+		
+		return json;
+	}
+	
+	private static JSONObject getSiblingsOffice(AonApiData api) {
+		JSONObject params = api.getData();
+		JSONObject json = new JSONObject();
+		
+		Integer domainId = params.optInt(IJsonNames.DOMAIN);
+		
+		Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(domainId));
+		if(null != domain.getParentId()) {
+			LinkedList<Domain> siblingsOffice = AON.getDomainList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getParentProperty().eq(domain.getParentId()).and(f.getTypeProperty().eq(DomainType.OFFICE.value())));
+			if(!siblingsOffice.isEmpty()) {
+				json.put("siblingsOffice", DomainJSON.toJSON(siblingsOffice));
+			}
+		}
 		
 		return json;
 	}
