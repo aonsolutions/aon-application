@@ -67,6 +67,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -579,11 +580,20 @@ public class NordigenModule extends MainEntryPoint {
 			
 			FlowPanel remainingAttempsPanel = new FlowPanel();
             remainingAttempsPanel.setStyleName(AON.CSS.aonPaddingBottom());
+            
+            
+			HTML attempsBox = new HTML();
+            loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
+            remainingAttempsPanel.add(attempsBox);
+
+    /*
 			InlineLabel attempsBox = new InlineLabel("Actualizaciones restantes durante el dia de hoy : 0/3");
 			attempsBox.setStyleName(AON.CSS.aonTableLabel());
 			attempsBox.setStyleName(AON.CSS.aonBold());
 			attempsBox.setStyleName(AON.CSS.aonFontSmall());
 			remainingAttempsPanel.add(attempsBox);
+            
+      */      
 
 			FlowPanel diasAcuerdoPanel = new FlowPanel();
             diasAcuerdoPanel.setStyleName(AON.CSS.aonBorderTop());
@@ -742,9 +752,8 @@ public class NordigenModule extends MainEntryPoint {
 			updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
-
 			    refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-			        allMovementsButton, balanceJsonButton, true, diasBox, attempsBox);
+                  allMovementsButton, balanceJsonButton, true);
 			});
 
 			getMenuPanel().add(updateButton);
@@ -757,11 +766,9 @@ public class NordigenModule extends MainEntryPoint {
 			}
 
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-			    allMovementsButton, balanceJsonButton, forceRefresh, diasBox, attempsBox);
+              allMovementsButton, balanceJsonButton, forceRefresh);
 
 			loadRemainingDays(opt, nordigenBankAccount, diasBox);
-			
-			loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
 		}
 		
 		private void loadRemainingDays(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel diasBox) {
@@ -775,7 +782,6 @@ public class NordigenModule extends MainEntryPoint {
 		            	}else {
 		            		diasBox.setVisible(false);
 		            	}
-                        
 		            }
 
 		            @Override
@@ -786,17 +792,20 @@ public class NordigenModule extends MainEntryPoint {
 		        });
 			}
 		
-		private void loadRemainingCalls(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel attempsBox) {
+		private void loadRemainingCalls(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, HTML attempsBox) {
 		    NORDIGEN_SERVICE.getCallStatuses(opt.getOccam(), nordigenBankAccount, new AsyncCallback<List<String>>() {
 		        @Override
 		        public void onSuccess(List<String> callStatuses) {
-		            StringBuilder sb = new StringBuilder();
-		            sb.append("Estado de actualizaciones:\n");
-		            for (String status : callStatuses) {
-		                sb.append("- ").append(status).append("\n");
-		            }
-		            attempsBox.setText(sb.toString());
-
+                    StringBuilder sb = new StringBuilder();
+		            sb.append("Tus actualizaciones:");
+		            sb.append("<ul>");
+                    for (String status : callStatuses) {
+                      sb.append("<li>").append(status).append("</li>");
+                    }
+                    sb.append("</ul>");
+		          
+                    attempsBox.setHTML(sb.toString());
+                    
 		            attempsBox.removeStyleName(AON.CSS.aonColorRed());
 		            attempsBox.removeStyleName(AON.CSS.aonBackgroundLigthYellow());
 		            attempsBox.addStyleName(AON.CSS.aonBold());
@@ -811,7 +820,7 @@ public class NordigenModule extends MainEntryPoint {
 		                }
 		            } else {
 		                if (updateButton != null) {
-		                    updateButton.setVisible(true); 
+		                    updateButton.setVisible(true);
 		                }
 		            }
 		        }
@@ -1016,8 +1025,8 @@ public class NordigenModule extends MainEntryPoint {
 		}
 
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
-				InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh, InlineLabel diasBox, InlineLabel attempsBox) {
+          InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
+          AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh) {
 			balanceJsonButton.setVisible(false);
 			allMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
