@@ -351,11 +351,6 @@ public class NordigenModule extends MainEntryPoint {
 		InlineLabel balanceBox;
 		balancesMap = new HashMap<>();
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonTextCenter());
-		panel.addStyleName(AON.CSS.aonWidthAlmostAll());
-		panel.addStyleName(AON.CSS.aonBlockCenter());
-		panel.addStyleName(AON.CSS.aonBorder());
-		panel.addStyleName(AON.CSS.aonPadding());
 
 		Label linkedTitle = new Label("Cuentas vinculadas");
 		linkedTitle.addStyleName(AON.CSS.aonTextLeft());
@@ -372,6 +367,7 @@ public class NordigenModule extends MainEntryPoint {
             // El div con las class: aon_cards
             Element aonCardsElementCards = cards.getElement().getFirstChildElement().getFirstChildElement();
             // Modificar el estilo CSS del div 'aon_cards'
+            aonCardsElementCards.getStyle().setProperty("display", "flex");
             aonCardsElementCards.getStyle().setProperty("gap", "1rem");
             aonCardsElementCards.getStyle().setProperty("margin", "0px");
             aonCardsElementCards.getStyle().setProperty("padding", "0px");
@@ -391,7 +387,7 @@ public class NordigenModule extends MainEntryPoint {
 	            double remainder = real != null && real.getBalanceAmount() != null
 	                ? AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount())
 	                : bankBalance;
-	            	            
+
 	            balanceTotal += bankBalance;
 	            remainderTotal += remainder;
 
@@ -411,13 +407,9 @@ public class NordigenModule extends MainEntryPoint {
 
 	        FlowPanel totals = new FlowPanel();
 	        totals.setStyleName(AON.CSS.aonTextCenter());
-	        totals.addStyleName(AON.CSS.aonWidthAlmostAll());
-	        totals.addStyleName(AON.CSS.aonMarginTop());
-	        totals.addStyleName(AON.CSS.aonBlockCenter());
 	        totals.addStyleName(AON.CSS.aonPaddingBottom());
-	        totals.addStyleName(AON.CSS.aonPaddingTop());
 
-	        Label accumLabel = new Label("Acumulados ");
+	        Label accumLabel = new Label("Acumulados");
 	        accumLabel.setStyleName(AON.CSS.aonTableLabel());
 	        accumLabel.addStyleName(AON.CSS.aonFontMedium());
 	        accumLabel.addStyleName(AON.CSS.aonTextLeft());
@@ -471,7 +463,6 @@ public class NordigenModule extends MainEntryPoint {
 	    return panel;
 	}
 
-	
 	private Widget paintUnlinkedBanks(NordigenModuleOptions opt) {
 		FlowPanel panel = new FlowPanel();
 		panel.setStyleName(AON.CSS.aonTextCenter());
@@ -504,7 +495,6 @@ public class NordigenModule extends MainEntryPoint {
 	    Label title;
 	    FlowPanel titlePanel;
 	    AonTableButton allMovementsButton;
-//	    AonTableButton insertMovementsButton;
 	    AonTableButton balanceJsonButton;
 		FlowPanel bottomTable = new FlowPanel();
 		AonTableButton continueLinkButton;
@@ -622,7 +612,6 @@ public class NordigenModule extends MainEntryPoint {
 			this.setBody(body);
 
 			this.getElement().getStyle().setProperty(MIN_WIDTH, "20rem");
-			this.getElement().getStyle().setProperty("flex", "unset");
 			this.getElement().getStyle().setProperty("margin", "0");
 			this.getElement().getStyle().setBorderWidth(1, Unit.PX);
 			this.getElement().getStyle().setBorderColor("#ccc");
