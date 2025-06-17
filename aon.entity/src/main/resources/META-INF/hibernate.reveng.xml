@@ -3484,16 +3484,4 @@
         <key-column name="id" type="java.lang.Integer"/>
     </primary-key>
    </table>
-
-<<<<<<< HEAD
-    <table name="nordigen_call_log">
-      <primary-key>
-        <generator class="identity"/>
-        <key-column name="id" type="java.lang.Integer"/>
-      </primary-key>
-    </table>
-
-=======
-	
->>>>>>> 4f2e314930938d92c4cca42339bb5b9ad5b433fd
 </hibernate-reverse-engineering>
