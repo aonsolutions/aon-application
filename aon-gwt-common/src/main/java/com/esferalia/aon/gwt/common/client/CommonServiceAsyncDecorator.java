@@ -522,9 +522,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getAviableWorkgroups(String domainName, int domain, String user, AsyncCallback<List<Workgroup>> callback) throws AonCoreException {
+	public void getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<Workgroup>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getAviableWorkgroups(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getAviableWorkgroups(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -570,9 +570,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getAviableProjectType(String domainName, int domain, String user, AsyncCallback<List<ProjectType>> callback) throws AonCoreException {
+	public void getAviableProjectType(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ProjectType>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getAviableProjectType(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getAviableProjectType(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
 	}
 
 	// **************************************************
@@ -1090,15 +1090,15 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getTaskHolders(String domainName, Integer domain, String user, AsyncCallback<List<TaskHolder>> callback) throws AonCoreException {
+	public void getTaskHolders(String domainName, Integer domain, String user, Integer domainSearch, AsyncCallback<List<TaskHolder>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getTaskHolders(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getTaskHolders(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> callback) throws AonCoreException {
+	public void getActivityTypes(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ActivityType>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getActivityTypes(domainName, domain, user, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getActivityTypes(domainName, domain, user, domainSearch, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	// **************************************************
@@ -1134,9 +1134,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	}
 
 	@Override
-	public void getInvoicePDF(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<String> callback) throws AonCoreException {
+	public void getInvoicePDF(String domainName, int domain, String user, Integer officeDomain, Integer invoiceId, AsyncCallback<String> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getInvoicePDF(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getInvoicePDF(domainName, domain, user, officeDomain, invoiceId, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

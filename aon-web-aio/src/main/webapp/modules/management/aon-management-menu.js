@@ -58,8 +58,8 @@ export class AonManagementMenu extends AonSuiteMenu {
         this.options = [{
             title: 'Ventas',
             options: [{
-                description: "Clientes",
-                title: "Clientes",
+                description: MSG.CUSTOMERS,
+                title: MSG.CUSTOMERS,
                 action: () => this.rootPanel(new JSF.AonJsfCustomer())
             }, {
                 description: "Facturas de Venta",
@@ -126,11 +126,13 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: "Formas de Pago",
                 title: "Formas de Pago",
                 action: () => this.rootPanel(new JSF.AonJsfPayMethod())
-            }, {
-                description: "Borrado de Facturas",
-                title: "Borrado de Facturas",
-                action: () => this.rootPanel(new JSF.AonJsfInvoiceRemove())
-            }, {
+            }, 
+            // {
+            //     description: "Borrado de Facturas",
+            //     title: "Borrado de Facturas",
+            //     action: () => this.rootPanel(new JSF.AonJsfInvoiceRemove())
+            // }
+            , {
                 description: "Estadisticas Globales",
                 title: "Estadisticas Globales",
                 action: () => GWT.iLoad(GWT.INVOICE_STAT)

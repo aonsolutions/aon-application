@@ -1052,11 +1052,18 @@ public class AON {
 		}
 
 	}
+	
 	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyFull(ctx, domainId);
 		}
 
+	}
+	
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login, Integer officeDomain){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, officeDomain);
+		}
 	}
 		
 	public static Company getCompany(Occam occam, CompanyFilter filter){

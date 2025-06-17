@@ -231,13 +231,13 @@ public interface CommonServiceAsync {
 	
 	void getTargetSuggestion(String domainName, int domain, String user, AsyncCallback<List<Target>> asyncCallback) throws AonCoreException;
 	
-	void getAviableWorkgroups(String domainName, int domain, String user, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
+	void getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
 	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 
 	void getAviableServiceUsers(String domainName, int domain, String user, AsyncCallback<List<User>> asyncCallback) throws AonCoreException;
 	
 	void getAviableProjectActivity(String domainName, int domain, String user, AsyncCallback<List<ProjectActivity>> asyncCallback) throws AonCoreException;
-	void getAviableProjectType(String domainName, int domain, String user, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
+	void getAviableProjectType(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// ***************************** [PROJECT COMMERCIAL]
@@ -376,9 +376,9 @@ public interface CommonServiceAsync {
 	void getProjectHolders(String domainName, int domain, String user, Integer projectId, AsyncCallback<List<ProjectHolder>> asyncCallback) throws AonCoreException;
 	void saveProjectHolder(String domainName, int domain, String user, ProjectHolder project, AsyncCallback<ProjectHolder> asyncCallback) throws AonCoreException;
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-	void getTaskHolders(String domainName, Integer domainId, String user, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+	void getTaskHolders(String domainName, Integer domainId, String user, Integer domainSearch, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 	
-	void getActivityTypes(String domainName, int domain, String user, AsyncCallback<List<ActivityType>> asyncCallback) throws AonCoreException;
+	void getActivityTypes(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ActivityType>> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// ********************************* [CUSTOMER NOTES]
@@ -393,6 +393,6 @@ public interface CommonServiceAsync {
 	// **************************************************
 	
 	void getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<Invoice>> asyncCallback) throws AonCoreException;
-	void getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer invoiceId, AsyncCallback<String> asyncCallback) throws AonCoreException;
+	void getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer officeDomain, Integer invoiceId, AsyncCallback<String> asyncCallback) throws AonCoreException;
 
 }

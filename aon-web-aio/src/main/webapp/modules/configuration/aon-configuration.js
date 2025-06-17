@@ -122,11 +122,18 @@ export class AonConfiguration extends AonElement {
 							fn: () => this.buildCustomerList(),
 						});
 		            } else {
+						officeOptions.push({
+							name: MSG.NO_LINK_CLIENT,
+							icon: MATERIAL_ICONS.INFO,
+							//fn: () => {},
+						});
+		            	/*
 		            	officeOptions.push({
 							name: MSG.LINK_CLIENT,
 							icon: MATERIAL_ICONS.DATASET_LINKED,
 							fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
 						});
+						*/
 		            }
 		            
 		            aonConfiguration.addSidenavOptionsFirst(

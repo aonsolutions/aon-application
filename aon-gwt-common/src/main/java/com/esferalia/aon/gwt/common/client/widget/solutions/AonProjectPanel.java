@@ -63,6 +63,7 @@ public class AonProjectPanel extends AonCustomDialog {
 	private String user;
 	
 	private Integer registry;
+	private Integer registryDomain;
 	private CustomerFull customer;
 	
 	private List<ProjectType> projectTypes;
@@ -70,13 +71,14 @@ public class AonProjectPanel extends AonCustomDialog {
 	private List<TaskHolder> taskHolders;
 	private List<ActivityType> activityType;
 	
-	public AonProjectPanel(String domainName, int domain, String user, Integer registry, AonProjectPanelCallback callback) {
+	public AonProjectPanel(String domainName, int domain, String user, Integer registry, Integer registryDomain, AonProjectPanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
 		
 		this.registry = registry;
+		this.registryDomain = registryDomain;
 		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
 		
@@ -146,11 +148,11 @@ public class AonProjectPanel extends AonCustomDialog {
     		if(AonStringUtils.isBlank(type.getValue())) {
     			okButton.setEnabled(true);
     			AonMessagePanel.showWarning(messagePanel, "El campo tipo es obligatorio");
-    		} else if(AonStringUtils.isBlank(taskHolder.getValue()) ) {
+    		} else if(AonStringUtils.isBlank(taskHolder.getValue()) && AonStringUtils.isBlank(workgroup.getValue()) ) {
     			okButton.setEnabled(true);
-    			AonMessagePanel.showWarning(messagePanel, "El operario es obligatorio");
+    			AonMessagePanel.showWarning(messagePanel, "El grupo de trabajo u operario es obligatorio");
     		} else {
-    			project.setDomain(new Domain().setId(domainId));
+    			project.setDomain(new Domain().setId(registryDomain));
         		project.setType(AonStringUtils.isBlank(type.getValue()) ? null : new ProjectType().setId(Integer.parseInt(type.getValue())));
         		project.setRegistry(new Registry().setId(registry));
         		project.setName(name.getValue());
@@ -162,7 +164,7 @@ public class AonProjectPanel extends AonCustomDialog {
         			ProjectActivity projectActivity = new ProjectActivity()
 					.setActive(true)
 					.setActivityType(new ActivityType().setId(Integer.parseInt(activity.getValue())))
-					.setDomain(domainId)
+					.setDomain(registryDomain)
 					.setProject(project.getId());
         			
         			List<ProjectActivity> projectActivities = new ArrayList<>();
@@ -172,7 +174,7 @@ public class AonProjectPanel extends AonCustomDialog {
         		}
         		
         		ProjectHolder projectHolder = new ProjectHolder();
-        		projectHolder.setDomain(domainId);
+        		projectHolder.setDomain(registryDomain);
         		projectHolder.setStartDate(date.getValue());
         		projectHolder.setWorkgroup(AonStringUtils.isBlank(workgroup.getValue()) ? null : new Workgroup().setId(Integer.parseInt(workgroup.getValue())));
         		
@@ -240,7 +242,7 @@ public class AonProjectPanel extends AonCustomDialog {
 	}
 	
 	private void getAviableProjectType(Consumer<List<ProjectType>> success) {
-		commonService.getAviableProjectType(domainName, domainId, user, new AsyncCallback<List<ProjectType>>() {
+		commonService.getAviableProjectType(domainName, domainId, user, registryDomain, new AsyncCallback<List<ProjectType>>() {
 			
 			@Override
 			public void onSuccess(List<ProjectType> projectTypesDb) {
@@ -274,7 +276,7 @@ public class AonProjectPanel extends AonCustomDialog {
 	}
 	
 	private void getWorkgroups(Consumer<List<Workgroup>> success) {
-		commonService.getAviableWorkgroups(domainName, domainId, user, new AsyncCallback<List<Workgroup>>() {
+		commonService.getAviableWorkgroups(domainName, domainId, user, registryDomain, new AsyncCallback<List<Workgroup>>() {
 			
 			@Override
 			public void onSuccess(List<Workgroup> workgroupsDb) {
@@ -291,7 +293,7 @@ public class AonProjectPanel extends AonCustomDialog {
 	}
 	
 	private void getTaskHolders(Consumer<List<TaskHolder>> success) {
-		commonService.getTaskHolders(domainName, domainId, user, new AsyncCallback<List<TaskHolder>>() {
+		commonService.getTaskHolders(domainName, domainId, user, registryDomain, new AsyncCallback<List<TaskHolder>>() {
 			
 			@Override
 			public void onSuccess(List<TaskHolder> taskHoldersDb) {
@@ -311,7 +313,7 @@ public class AonProjectPanel extends AonCustomDialog {
 	}
 	
 	private void getActivityTypes(Consumer<List<ActivityType>> success) {
-		commonService.getActivityTypes(domainName, domainId, user, new AsyncCallback<List<ActivityType>>() {
+		commonService.getActivityTypes(domainName, domainId, user, registryDomain, new AsyncCallback<List<ActivityType>>() {
 			
 			@Override
 			public void onSuccess(List<ActivityType> activityTypeDb) {

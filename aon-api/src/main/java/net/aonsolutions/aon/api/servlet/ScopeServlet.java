@@ -1,15 +1,15 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ScopeJSON;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -104,7 +104,8 @@ public class ScopeServlet extends AonApiHttpServlet {
 			if(api.getUser().getDomain().getId().equals(api.getDomain().getId())) {
 				return ScopeJSON.toJSON(AON.getUserScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
 			} else {
-				return ScopeJSON.toJSON(AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId())));
+				Integer domainSearch = JsonUtils.getInteger(api.getData(), "searchDomain");
+				return ScopeJSON.toJSON(AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(null == domainSearch ? api.getDomain().getId() : domainSearch)));
 			}
 		}
 	}
