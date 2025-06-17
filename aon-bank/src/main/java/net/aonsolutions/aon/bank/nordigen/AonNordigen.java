@@ -372,9 +372,9 @@ public class AonNordigen  {
 
 			if (shouldSkip(account))
 				return account;
-
+			
 			setBasicAccountInfo(ctx, token, account);
-
+			
 			if (shouldUpdateAgreementDays(ctx, account)) {
 				updateAgreementDays(ctx, token, account);
 			}
@@ -701,6 +701,8 @@ public class AonNordigen  {
 	        if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
 	            account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
 	        }
+			System.out.println("id de acuerdo : " + account.getRequisition().getAgreement());
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        account.addLog(e.getMessage());
@@ -714,13 +716,20 @@ public class AonNordigen  {
 
 	private static void updateAgreementDays(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
 	    String agreementId = NordigenDAO.getAgreementId(ctx, account);
-	    NordigenAgreement agreement = NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
-
-	    LocalDate acceptedDate = agreement.getAccepted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	    long daysElapsed = ChronoUnit.DAYS.between(acceptedDate, LocalDate.now());
-	    int remainingDays = (int) (agreement.getAccessValidForDays() - daysElapsed);
-
-	    NordigenDAO.insertAgreementDays(ctx, account, remainingDays);
+	    if(agreementId == null) {
+	    	NordigenDAO.insertAgreement(ctx, account, account.getRequisition().getAgreement());
+	    	NordigenAgreement agreement = NordigenAPI.getEndUserAgreement(token.getAccess(), account.getRequisition().getAgreement());
+		    LocalDate acceptedDate = agreement.getAccepted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		    long daysElapsed = ChronoUnit.DAYS.between(acceptedDate, LocalDate.now());
+		    int remainingDays = (int) (agreement.getAccessValidForDays() - daysElapsed);
+		    NordigenDAO.insertAgreementDays(ctx, account, remainingDays);
+	    }else {
+	    	NordigenAgreement agreement = NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
+		    LocalDate acceptedDate = agreement.getAccepted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		    long daysElapsed = ChronoUnit.DAYS.between(acceptedDate, LocalDate.now());
+		    int remainingDays = (int) (agreement.getAccessValidForDays() - daysElapsed);
+		    NordigenDAO.insertAgreementDays(ctx, account, remainingDays);
+	    }
 	}
 
 	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam,
