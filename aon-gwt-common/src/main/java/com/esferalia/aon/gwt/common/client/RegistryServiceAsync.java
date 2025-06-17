@@ -84,7 +84,6 @@ public interface RegistryServiceAsync {
 	void getCustomerWithoutFee(String domainName, int domain, String user, CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException;
 	void getCustomerWithoutFee(CustomerParams customerParams, AsyncCallback<List<Customer>> asyncCallback) throws IllegalArgumentException;
 	
-	
 	void reorderCustomerFeeLine(String domainName, int domain, String user, Integer customer, AsyncCallback<Void> asyncCallback);
 	
 	// **************************************************

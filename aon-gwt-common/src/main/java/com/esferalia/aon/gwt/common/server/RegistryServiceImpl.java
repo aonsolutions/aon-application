@@ -399,5 +399,4 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return customers;
 	}
 	
-	
 }

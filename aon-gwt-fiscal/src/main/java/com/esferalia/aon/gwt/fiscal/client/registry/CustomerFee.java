@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -55,10 +54,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -1386,6 +1393,9 @@ public class CustomerFee extends MainEntryPoint {
 									deleteFeeButton.setEnabled(false);
 									exportButton.setEnabled(false);
 									onSearch();
+									
+									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+										sendFeeEmail(customerFee.getId());
 								}
 								
 								@Override
@@ -1432,6 +1442,9 @@ public class CustomerFee extends MainEntryPoint {
 								deleteFeeButton.setEnabled(false);
 								exportButton.setEnabled(false);
 								onSearch();
+								
+								if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+									sendFeeEmail(customerFee.getId());
 							}
 							
 							@Override
@@ -1923,6 +1936,60 @@ public class CustomerFee extends MainEntryPoint {
 	private native String btoa(String str) /*-{
 	    return btoa(str);
 	}-*/;
+	
+	private void sendFeeEmail(Integer feeId) {
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/fee-mail/";
+
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+
+		JSONObject body = new JSONObject();
+
+		body.put("feeId", new JSONString(feeId.toString()));
+		
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+
+		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+
+		try {
+			// Send the request
+			requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				public void onResponseReceived(Request request, Response response) {
+					JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+					String message = "";
+
+					if (jsonValue != null && jsonValue.isObject() != null) {
+						JSONObject jsonObject = jsonValue.isObject();
+
+						JSONValue messageValue = jsonObject.get("message");
+						message = null != messageValue ? messageValue.isString().stringValue()
+								: "Error desconocido";
+					}
+
+					if (response.getStatusCode() == 400)
+						AonMessagePanel.showError(messagePanel, message);
+					else
+						AonMessagePanel.showSuccess(messagePanel, message);
+				}
+
+				public void onError(Request request, Throwable exception) {
+					Window.alert(exception.getMessage());
+				}
+			});
+		} catch (RequestException exception) {
+			Window.alert("Catch : " + exception.getMessage());
+		}
+	}
 	
 	// ------------------------------------------ Eval Expression
 	
