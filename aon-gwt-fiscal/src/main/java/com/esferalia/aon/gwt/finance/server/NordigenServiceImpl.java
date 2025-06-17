@@ -82,8 +82,8 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return AonNordigen.setAllBankAccountValues(occam, token);
 	}
 	@Override
-	public Integer getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition) {
-		return AonNordigen.remainingDaysAgreement(token, requisition);
+	public Integer getRemainingDays(Occam occam,NordigenBankAccount account) {
+		return AonNordigen.remainingDaysAgreement(occam, account);
 	}
 	
 	@Override
@@ -94,5 +94,10 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public String getLatestRetryAfter(Occam occam, NordigenBankAccount account) {
 		return AonNordigen.getLatestRetryAfter(occam, account);
+	}
+	
+	@Override
+	public List<String> getCallStatuses(Occam occam, NordigenBankAccount account){
+		return AonNordigen.getCallStatuses(occam, account);
 	}
 }

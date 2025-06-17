@@ -43,17 +43,23 @@ public class NordigenDAO {
 
 	public static List<NordigenBankAccount> getAllAccounts(AONContext ctx) {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-		return RegistryBankDAO.getStream(ctx
-			,f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
-				.and(f.getRegistryProperty().eq(company.getId())))
-			.map(rbank -> new NordigenBankAccount()
-				.setRbank(rbank)
-				.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
-				.setBankAlias(rbank != null ? rbank.getAlias() : null)
-				.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
-				.setRequisitionId(rbank.getRequisition())
-				.setLastMovementDate(  BankStatementDAO.getLastMovementDate(ctx, rbank.getId()) ))
-			.collect(Collectors.toList());
+		
+		return RegistryBankDAO.getStream(ctx,
+		        f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
+		            .and(f.getRegistryProperty().eq(company.getId())))
+		    .map(rbank -> {
+		        NordigenBankAccount account = new NordigenBankAccount()
+		            .setRbank(rbank)
+		            .setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+		            .setBankAlias(rbank != null ? rbank.getAlias() : null)
+		            .setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+		            .setRequisitionId(rbank.getRequisition())
+		            .setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+
+		        return NordigenDAO.loadStoredBalance(ctx, account);
+		    })
+		    .collect(Collectors.toList());
+
 	}
 	
 	public static NordigenBankAccount updateRegistryBank(AONContext ctx, NordigenBankAccount account) {
@@ -209,7 +215,7 @@ public class NordigenDAO {
 
 	        if (balanceStored != null) {
 	            NordigenAccountAmount amount = new NordigenAccountAmount();
-	            amount.setAmount(balanceStored.doubleValue());
+	            amount.setAmount(balanceStored);
 
 	            NordigenAccountBalance consolidated = new NordigenAccountBalance()
 	            	    .setBalanceAmount(amount)
@@ -221,7 +227,7 @@ public class NordigenDAO {
 
 	        if (availableStored != null) {
 	            NordigenAccountAmount amount = new NordigenAccountAmount();
-	            amount.setAmount(availableStored.doubleValue());
+	            amount.setAmount(availableStored);
 
 	            NordigenAccountBalance real = new NordigenAccountBalance()
 	            	    .setBalanceAmount(amount)
@@ -229,23 +235,45 @@ public class NordigenDAO {
 	            balanceList.add(real);
 	        }
 
-
 	        account.setBalances(balanceList);
 	    }
-	    System.out.println("== BALANCES CARGADOS DE BD ==");
-
-	    for (NordigenAccountBalance bal : account.getBalances()) {
-	        System.out.println("Tipo: " + bal.getBalanceType() + " - Cantidad: " + bal.getBalanceAmount().getAmount());
-	    }
-
-
 	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
 
 	    return account;
 	}
-
-
-
+	
+	public static NordigenBankAccount insertAgreement(AONContext ctx, NordigenBankAccount account, String agreement) {
+		ctx.getDslContext().update(RBANK)
+		.set(RBANK.AGREEMENT, agreement)
+		.where(RBANK.ID.eq(account.getRbank().getId()))
+		.execute();
+		return account;
+	}
+	
+	public static NordigenBankAccount insertAgreementDays(AONContext ctx, NordigenBankAccount account, int daysRemaining) {
+		ctx.getDslContext()
+		.update(RBANK)
+		.set(RBANK.DAYS_UNTIL_AGREEMENT_ENDS, daysRemaining)
+		.where(RBANK.ID.eq(account.getRbank().getId()))
+		.execute();
+		return account;
+	}
+	
+	public static String getAgreementId(AONContext ctx, NordigenBankAccount account) {
+		return ctx.getDslContext()
+				.select(RBANK.AGREEMENT)
+				.from(RBANK)
+				.where(RBANK.ID.eq(account.getRbank().getId()))
+				.fetchOne(RBANK.AGREEMENT);
+	}
+	
+	public static Integer getRemainingDays(AONContext ctx, NordigenBankAccount account) {
+	    return ctx.getDslContext()
+	              .select(RBANK.DAYS_UNTIL_AGREEMENT_ENDS)
+	              .from(RBANK)
+	              .where(RBANK.ID.eq(account.getRbank().getId()))
+	              .fetchOneInto(Integer.class);
+	}
 
 	// ***********************************************************************************
 	// ***********************************************************************************

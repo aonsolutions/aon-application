@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.bank.nordigen;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -89,8 +92,14 @@ public class AonNordigen  {
 		return NordigenAPI.getInstitution(token.getAccess(), institutionId);
 	}
 	
-	static NordigenAgreement createAgreement(NordigenAccessToken token, String institutionId)  {
-		return NordigenAPI.createEndUserAgreement(token.getAccess(), MAX_DAYS, MAX_DAYS, null, institutionId);
+	static NordigenAgreement createAgreement(Occam occam, NordigenBankAccount account, NordigenAccessToken token, String institutionId)  {
+		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(token.getAccess(), MAX_DAYS, MAX_DAYS, null, institutionId);
+		if(agreement != null) {
+			try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
+				NordigenDAO.insertAgreement(ctx, account, agreement.getId());
+			}
+		}
+		return agreement;
 	}
 	
 	static NordigenAgreement getAgreement(NordigenAccessToken token, String agreementId) {
@@ -184,7 +193,8 @@ public class AonNordigen  {
 	public static int getRemainingCallsToday(Occam occam, NordigenBankAccount account) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
 
-		return NordigenCallLogDAO.getCallsMadeToday(ctx, occam.getDomain(), account.getRbank().getId());
+		return NordigenCallLogDAO.getCallsMadeToday(ctx, occam.getDomain(), account.getRbank().getId(), "update");
+		
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -207,10 +217,71 @@ public class AonNordigen  {
 	   
 	    return null;
 	}
+	
+	public static List<String> getCallStatuses(Occam occam, NordigenBankAccount account) {
+	    List<String> statuses = new ArrayList<>();
+	    int maxCallsPerDay = 3;
 
-//	private static NordigenAccountDetail getAccountDetail(NordigenAccessToken token, String nordigenAccountId) {
-//		return NordigenAPI.getDetail(token.getAccess(), nordigenAccountId);
-//	}
+	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+
+	        List<LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(ctx, occam.getDomain(), account.getRbank().getId(), "update");
+	        LocalDateTime now = LocalDateTime.now();
+
+	        List<LocalDateTime> recentCallsFailed = NordigenCallLogDAO.getRecentCallTimes(ctx, occam.getDomain(), account.getRbank().getId(), "fail_update");
+
+	        LocalDateTime retryAfter = null;
+	        if (!recentCallsFailed.isEmpty()) {
+	            retryAfter = NordigenCallLogDAO.getLatestRetryAfter(ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update");
+	        }
+
+	        for (int i = 1; i <= maxCallsPerDay; i++) {
+
+	            if (retryAfter != null && retryAfter.isAfter(now)) {
+	                Duration remaining = Duration.between(now, retryAfter);
+	                long hours = remaining.toHours();
+	                long minutes = remaining.toMinutes() % 60;
+	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en " + hours + "h " + minutes + "m");
+	                return statuses;
+	            }
+
+	            if (i <= recentCalls.size()) {
+	                LocalDateTime callTime = recentCalls.get(i - 1);
+	                LocalDateTime availableAgain = callTime.plusHours(24);
+
+	                if (availableAgain.isAfter(now)) {
+	                    Duration remaining = Duration.between(now, availableAgain);
+	                    long hours = remaining.toHours();
+	                    long minutes = remaining.toMinutes() % 60;
+	                    statuses.add("Actualizacion " + i + ": realizada, disponible en " + hours + "h " + minutes + "m");
+	                } else {
+	                    statuses.add("Actualizacion " + i + ": disponible");
+	                }
+	            } else {
+	                if (recentCalls.size() >= maxCallsPerDay) {
+	                    LocalDateTime oldestCall = recentCalls.get(0);
+	                    LocalDateTime nextAvailableTime = oldestCall.plusHours(24);
+
+	                    if (nextAvailableTime.isAfter(now)) {
+	                        Duration remaining = Duration.between(now, nextAvailableTime);
+	                        long hours = remaining.toHours();
+	                        long minutes = remaining.toMinutes() % 60;
+	                        statuses.add("Actualizacion " + i + ": no disponible. Disponible en " + hours + "h " + minutes + "m");
+	                    } else {
+	                        statuses.add("Actualizacion " + i + ": disponible");
+	                    }
+	                } else {
+	                    statuses.add("Actualizacion " + i + ": disponible");
+	                }
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        statuses.clear();
+	        statuses.add("Error al obtener estado de llamadas");
+	    }
+	    return statuses;
+	}
+
 
 	private static LinkedList<NordigenAccountBalance> getAccountBalances(AONContext ctx, NordigenAccessToken token, String nordigenAccountId) {
 	    return NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
@@ -266,31 +337,11 @@ public class AonNordigen  {
 	public static NordigenBankAccount loadStoredAccount(Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
 	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 	        RegistryBank rbank = account.getRbank();
-
 	        if (rbank != null) {
 	            account = NordigenDAO.loadStoredBalance(ctx, account);
 	            account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
 	        }
-	        NordigenAccountBalance consolidado =  filterConsolidado(account.getBalances());
-//	        System.out.println("consolidado : " + consolidado.getBalanceAmount().getAmount());
-//	        NordigenAccountBalance real =  filterReal(account.getBalances());
-//	        System.out.println("real : " + real.getBalanceAmount().getAmount());
-
-//	        for (int i = 0; i < account.getBalances().size(); i++) {
-//				System.out.println(account.getBalances().size());
-//				NordigenAccountBalance bal = account.getBalances().get(0);
-//				double	bankBalance = bal.getBalanceAmount().getAmount();
-//				double remainder = bal.getBalanceAmount().getAmount();
-//				System.out.println(bankBalance);
-//				System.out.println(remainder);
-//	        	System.out.println(account.getBalances().get(i).getBalanceType());
-//				System.out.println(account.getBalances().get(i).getBalanceAmount().getAmount());
-//			}
 	        
-	        double	bankBalance = consolidado != null && consolidado.getBalanceAmount() != null
-				    ? AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount())
-				    : 0;
-	        System.out.println("bankbalance: " + bankBalance);
 	        return account;
 	    }
 	}
@@ -311,79 +362,40 @@ public class AonNordigen  {
 	        }
 	    }
 	    account.addLog("Cuenta no llegó al estado READY tras " + maxRetries + " intentos.");
+	    
 	    return false;
 	}
 
 	public static NordigenBankAccount setBankAccountValues(Occam occam, NordigenAccessToken token,
 			NordigenBankAccount account, boolean refresh) {
-
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 
-			RegistryBank rbank = account.getRbank();
-
-			if (rbank.getRequisition() == null || AonStringUtils.isBlank(rbank.getRequisition())) {
+			if (shouldSkip(account))
 				return account;
-			}
 
-			account.setLinked(true);
-			account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+			setBasicAccountInfo(ctx, token, account);
 
-			account.setRequisition(getRequisition(token, rbank.getRequisition()));
-			account.setMetadata(getNordigenAccountMetadata(token, account.getRequisition(), rbank));
-
-			try {
-				if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
-					account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				account.addLog(e.getMessage());
+			if (shouldUpdateAgreementDays(ctx, account)) {
+				updateAgreementDays(ctx, token, account);
 			}
 
 			if (!refresh) {
-				System.out.println("entra en loadStoreAccount");
+				NordigenRateLimiter.checkAllowed(ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update");
 				return loadStoredAccount(occam, token, account);
 			}
-			boolean ready = waitForAccountReady(token, account, 10, 2000);
 
-			if (!ready) {
+			if (!waitForAccountReady(token, account, 10, 2000)) {
 				account.addLog("La cuenta no alcanzó el estado READY. No se obtendrán balances ni transacciones.");
 				return account;
 			}
 
-			try {
-				CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture = CompletableFuture
-						.supplyAsync(() -> getAccountBalances(ctx, token, account.getMetadata().getId()));
-
-				CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture = CompletableFuture
-						.supplyAsync(() -> getNotInsertedTransactions(ctx, token, account));
-
-				CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
-
-				LinkedList<NordigenAccountBalance> balances = balancesFuture.get();
-				LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
-
-				account.setBalances(balances);
-				account.setNotInsertedMovements(notInserted);
-
-				if (notInserted != null && !notInserted.isEmpty()) {
-					insertStatements(occam, account);
-				}
-				NordigenRateLimiter.registerCall(ctx, ctx.getDomainId(), account.getRbank().getId(), "update");
-				NordigenDAO.updateRegistryBank(ctx, account);
-			} catch (Exception e) {
-				NordigenRateLimiter.handleRateLimitException(ctx, ctx.getDomainId(), account.getRbank().getId(),
-						"fail_update", e);
-				e.printStackTrace();
-			}
+			updateBalancesAndTransactions(ctx, occam, token, account);
 		} catch (Exception e) {
 			throw new AonCoreException(e);
 		}
 		return account;
-
 	}
 
-	
 	public static List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) {
 	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 
@@ -414,33 +426,6 @@ public class AonNordigen  {
 	            if (account.getMetadata() != null &&
 	                AonStringUtils.isNotBlank(account.getMetadata().getId()) &&
 	                NordigenRequisitionStatus.LINKED.equals(account.getRequisition().getStatus())) {
-
-//	                try {
-//	                    // Ejecutar ambas tareas en paralelo
-//	                    CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
-//	                        CompletableFuture.supplyAsync(() -> getAccountBalances(ctx,token, account.getMetadata().getId(), account.getRbank().getId()));
-//
-//	                    CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
-//	                        CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(ctx, token, account));
-//
-//	                    CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
-//
-//	                    LinkedList<NordigenAccountBalance> balances = balancesFuture.get();
-//	                    LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
-//
-//	                    account.setBalances(balances);
-//	                    account.setNotInsertedMovements(notInserted);
-//
-//	                    if (notInserted != null && !notInserted.isEmpty()) {
-//	                        insertStatements(occam, account);
-//	                    }
-//
-//	                    NordigenDAO.updateRegistryBank(ctx, account);
-//
-//	                } catch (Exception e) {
-//	                    e.printStackTrace();
-//	                    account.addLog("Error actualizando balances desde Nordigen: " + e.getMessage());
-//	                }
 	            }
 	        }
 
@@ -449,53 +434,6 @@ public class AonNordigen  {
 	    } catch (Exception e) {
 	        throw new AonCoreException(e);
 	    }
-	}
-
-	
-	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
-		NordigenAccountMetadata metadata = account.getMetadata();
-		String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
-		Date dateFrom = guessDateForm( account );
-		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
-
-			StringBuilder exceptionMessage = new StringBuilder();
-			NordigenAccountTransactions transactions = AonNordigen.getTransactions(ctx, token, accId, dateFrom);
-			stList.addAll( getPendingAccountTransactions(account, transactions));
-			stList.addAll( getBookedAccountTransactions(account, transactions, dateFrom) );
-			if (!exceptionMessage.isEmpty()) {
-				throw new NordigenException(exceptionMessage.toString());
-			}
-			
-			NordigenAccountBalance consBalance = filterConsolidado(account.getBalances());
-			if (consBalance != null && consBalance.getBalanceAmount() != null) {
-				double amount = consBalance.getBalanceAmount().getAmount();
-				for (NordigenBankStatement statement : stList) {
-					statement.setCurrentBalance(amount);
-					int factor = (statement.isPayment() ? (-1) : 1);
-					amount = AonMathUtils.round( amount - (statement.getAmount() * factor));
-				}
-			}
-			return stList;
-	}
-
-
-	private static Date guessDateForm(NordigenBankAccount account) {
-		Date lastMovDate = account.getLastMovementDate();
-		Date today = new Date();
-		Date dateFrom = null;
-		if (lastMovDate != null) {
-			dateFrom = AonDateUtils.addDays(lastMovDate, 1);
-		} else {
-			NordigenInstitution institution = account.getInstitution();
-			if (institution != null && institution.getTransactionTotalDays() != null) {
-				Integer days = institution.getTransactionTotalDays();
-				dateFrom = AonDateUtils.addDays(today, -days);		
-			}
-		}
-		if (dateFrom != null && (AonDateUtils.isSameDay(today, dateFrom) || today.compareTo(dateFrom) >= 0)) {
-			return dateFrom;
-		}
-		return null;
 	}
 
 	public static List<RegistryBank> getRbanksByRequisition(Occam occam, String requisitionId) {
@@ -578,27 +516,6 @@ public class AonNordigen  {
 			List<NordigenBankStatement> list = new LinkedList<>();
 			List<NordigenBankStatement> orderedList = new LinkedList<>();
 			if (nordigenBankAccount != null && nordigenBankAccount.getMetadata() != null) {
-//				System.out.println("getMovements");
-//				String id = nordigenBankAccount.getMetadata().getId();
-//				if (online) {
-//					System.out.println(online);
-//					NordigenAccountTransactions transactions = AonNordigen.getTransactions(token, id, endDate);
-//					list.addAll( getPendingAccountTransactions(nordigenBankAccount, transactions));
-//					list.addAll( getBookedAccountTransactions(nordigenBankAccount, transactions, endDate) );
-//					if (transactions != null) {
-//						AonCollectionUtils.stream(AonNordigen.getPendingAccountTransactions(transactions))
-//						.map(tr -> nordigenBankAccount.toBankStatement(tr)).forEach(bs -> {
-//							bs.setPending(true);
-//							list.add(bs);
-//						});
-//						AonCollectionUtils.stream(AonNordigen.getBookedAccountTransactions(transactions,endDate))
-//						.map(tr -> nordigenBankAccount.toBankStatement(tr)).forEach(bs -> {
-//							bs.setPending(false);
-//							list.add(bs);
-//						});
-//					}
-//				} else {
-//					list.addAll(nordigenBankAccount.getNotInsertedMovements());
 					list.addAll(AonNordigen.getStoredBankStatements(occam, nordigenBankAccount.getRbank(), endDate));
 					orderedList = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
 					List<NordigenAccountBalance> balances = nordigenBankAccount.getBalances();
@@ -609,9 +526,7 @@ public class AonNordigen  {
 					for(NordigenBankStatement bs : orderedList) {
 						bs.setCurrentBalance(remaining);
 						remaining += (bs.getAmount() * (bs.isPayment() ? 1 : -1));
-					}
-//				}
-				
+					}				
 			}
 		
 			return orderedList;
@@ -651,36 +566,22 @@ public class AonNordigen  {
 			throw new NordigenException("Too much institutions");
 		}
 		
-		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
+		NordigenAgreement agreement = AonNordigen.createAgreement(occam, nordigenBankAccount, token, inst != null ? inst.getId() : institutionId);
 		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + occam .getDomainName() + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));
 		AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
-		
 		return requisition;
+	}
+	
+	public static Integer remainingDaysAgreement(Occam occam,NordigenBankAccount account) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
+			return NordigenDAO.getRemainingDays(ctx, account);
+		}
 	}
 
 	// -----------------------------------------------------------------
 	// -------------------------------------------------------- [PRIVATE]
 	// -----------------------------------------------------------------
 
-//	private static void deleteAgreement(NordigenAccessToken token, String agreementId) {
-//		NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreementId);
-//	}
-	
-	
-//	private static List<NordigenAccountTransaction> getBookedAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
-//		JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, new Date());
-//		if (json != null) {
-//			JSONObject transactionsJson = json.optJSONObject("transactions");
-//			JSONArray bookedTransactionsJson = null;
-//			if (transactionsJson != null) {
-//				bookedTransactionsJson = transactionsJson.optJSONArray("booked");
-//			}
-//			return NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
-//		}
-//		return Collections.emptyList();
-//	}
-	
-	
 	private static NordigenAccountMetadata getNordigenAccountMetadata(NordigenAccessToken token, NordigenRequisition requisition, RegistryBank rbank) {
 		if (requisition != null && rbank != null && rbank.getBankAccount() != null) {
 			String iban = rbank.getBankAccount().getIban();
@@ -692,9 +593,6 @@ public class AonNordigen  {
 				for (String accId : accs) {
 					try {
 						return getAccountMetadata(token, accId);
-//						NordigenAccountDetail detail = NordigenAPI.getDetail(token.getAccess(), accId);
-//						if (metadata != null && AonStringUtils.equalsIgnoreCase(iban, metadata.getIban()) && detail.getCurrency().equals("EUR")) {
-//						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -703,47 +601,18 @@ public class AonNordigen  {
 		}
 		return null;
 	}
-	
-//	private static Map<Integer, NordigenRequisition> filterNonValidRequisitions(Map<Integer, NordigenRequisition> requisitions) {
-//		Map<Integer, NordigenRequisition> nonValid = new HashMap<>();
-//		if (requisitions != null) {
-//			requisitions.entrySet().stream()
-//			.filter(entry -> entry != null && !isRequisitionLinked(entry.getValue()))
-//			.forEach(entry -> nonValid.put(entry.getKey(), entry.getValue()));
-//		}
-//		return nonValid;
-//	}
-	public static Integer remainingDaysAgreement(NordigenAccessToken token, NordigenRequisition requisition) {
-		NordigenAgreement agreement = NordigenAPI.getEndUserAgreement(token.getAccess(), requisition.getAgreement());
-	    
-	    // Fecha de aceptación del acuerdo
-		Date acceptedDateRaw = agreement.getAccepted();
-	    LocalDate acceptedDate = acceptedDateRaw.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	    
-	    // Fecha actual
-	    LocalDate currentDate = LocalDate.now();
-	    
-	    // Días transcurridos desde la aceptación
-	    long daysElapsed = ChronoUnit.DAYS.between(acceptedDate, currentDate);
-	    
-	    // Días válidos para acceso
-	    int validDays = agreement.getAccessValidForDays();
-
-	    // Días restantes
-	    return (int) (validDays - daysElapsed);
-	}
-	
-	
 		
 	private static NordigenAccountBalance filterConsolidado(List<NordigenAccountBalance> balances) {
 		NordigenAccountBalance consolidado = null;
+		
 		consolidado = balances.stream()
 				.filter(bal -> NordigenBalanceType.CLOSING_BOOKED.equals(bal.getBalanceType()))
 				.findFirst().orElse(null);
 		
-		if (consolidado == null && balances.isEmpty()) {
+		if (consolidado == null && !balances.isEmpty()) {
 			return balances.get(0);
-		}		
+		}
+		
 		return consolidado;
 	}
 	
@@ -770,6 +639,133 @@ public class AonNordigen  {
 		}
 		return new NordigenException(err);						
 	}
+	
+	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
+		NordigenAccountMetadata metadata = account.getMetadata();
+		String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
+		Date dateFrom = guessDateForm( account );
+		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
+
+			StringBuilder exceptionMessage = new StringBuilder();
+			NordigenAccountTransactions transactions = AonNordigen.getTransactions(ctx, token, accId, dateFrom);
+			stList.addAll( getPendingAccountTransactions(account, transactions));
+			stList.addAll( getBookedAccountTransactions(account, transactions, dateFrom) );
+			if (!exceptionMessage.isEmpty()) {
+				throw new NordigenException(exceptionMessage.toString());
+			}
+			
+			NordigenAccountBalance consBalance = filterConsolidado(account.getBalances());
+			if (consBalance != null && consBalance.getBalanceAmount() != null) {
+				double amount = consBalance.getBalanceAmount().getAmount();
+				for (NordigenBankStatement statement : stList) {
+					statement.setCurrentBalance(amount);
+					int factor = (statement.isPayment() ? (-1) : 1);
+					amount = AonMathUtils.round( amount - (statement.getAmount() * factor));
+				}
+			}
+			return stList;
+	}
+	
+	private static Date guessDateForm(NordigenBankAccount account) {
+		Date lastMovDate = account.getLastMovementDate();
+		Date today = new Date();
+		Date dateFrom = null;
+		if (lastMovDate != null) {
+			dateFrom = AonDateUtils.addDays(lastMovDate, 1);
+		} else {
+			NordigenInstitution institution = account.getInstitution();
+			if (institution != null && institution.getTransactionTotalDays() != null) {
+				Integer days = institution.getTransactionTotalDays();
+				dateFrom = AonDateUtils.addDays(today, -days);		
+			}
+		}
+		if (dateFrom != null && (AonDateUtils.isSameDay(today, dateFrom) || today.compareTo(dateFrom) >= 0)) {
+			return dateFrom;
+		}
+		return null;
+	}
+	
+	private static boolean shouldSkip(NordigenBankAccount account) {
+	    RegistryBank rbank = account.getRbank();
+	    return rbank.getRequisition() == null || AonStringUtils.isBlank(rbank.getRequisition());
+	}
+
+	private static void setBasicAccountInfo(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
+	    RegistryBank rbank = account.getRbank();
+	    account.setLinked(true);
+	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+	    account.setRequisition(getRequisition(token, rbank.getRequisition()));
+	    account.setMetadata(getNordigenAccountMetadata(token, account.getRequisition(), rbank));
+
+	    try {
+	        if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
+	            account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        account.addLog(e.getMessage());
+	    }
+	}
+
+	private static boolean shouldUpdateAgreementDays(AONContext ctx, NordigenBankAccount account) {
+	    Integer remainingDays = NordigenDAO.getRemainingDays(ctx, account);
+	    return (remainingDays == null || remainingDays == 0) && account.getRequisition() != null;
+	}
+
+	private static void updateAgreementDays(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
+	    String agreementId = NordigenDAO.getAgreementId(ctx, account);
+	    NordigenAgreement agreement = NordigenAPI.getEndUserAgreement(token.getAccess(), agreementId);
+
+	    LocalDate acceptedDate = agreement.getAccepted().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	    long daysElapsed = ChronoUnit.DAYS.between(acceptedDate, LocalDate.now());
+	    int remainingDays = (int) (agreement.getAccessValidForDays() - daysElapsed);
+
+	    NordigenDAO.insertAgreementDays(ctx, account, remainingDays);
+	}
+
+	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam,
+	                                                  NordigenAccessToken token, NordigenBankAccount account) {
+	    try {
+	        CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
+	                CompletableFuture.supplyAsync(() -> getAccountBalances(ctx, token, account.getMetadata().getId()));
+	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
+	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(ctx, token, account));
+
+	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
+
+	        account.setBalances(balancesFuture.get());
+	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
+	        account.setNotInsertedMovements(notInserted);
+
+	        if (notInserted != null && !notInserted.isEmpty()) {
+	            insertStatements(occam, account);
+	        }
+
+	        Integer calls = NordigenCallLogDAO.getCallsMadeToday(ctx, ctx.getDomainId(),
+	                account.getRbank().getId(), "update");
+	        NordigenRateLimiter.registerCall(ctx, ctx.getDomainId(), account.getRbank().getId(), "update", calls);
+
+	        NordigenDAO.updateRegistryBank(ctx, account);
+	    } catch (CompletionException e) {
+	        handleRateLimitException(ctx, account, e);
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
+	}
+
+	private static void handleRateLimitException(AONContext ctx, NordigenBankAccount account, CompletionException e) {
+	    int secondsLeft = NordigenRateLimiter.extractRetrySeconds(e.getMessage());
+	    Instant retryInstant = Instant.now().plusSeconds(secondsLeft);
+	    String retryTimeStr = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+	            .withZone(ZoneId.systemDefault()).format(retryInstant);
+
+	    account.addLog("Limite diario de llamadas alcanzado, inténtelo otra vez en " + retryTimeStr);
+
+	    NordigenRateLimiter.handleRateLimitException(ctx, ctx.getDomainId(), account.getRbank().getId(),
+	            "fail_update", e);
+	    e.printStackTrace();
+	}
+
 
 	// -------------------------- Métodos con tests.
 

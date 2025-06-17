@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -98,9 +97,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	}
 	
 	@Override
-	public void getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition,AsyncCallback<Integer> callback) {
+	public void getRemainingDays(Occam occam,NordigenBankAccount account,AsyncCallback<Integer> callback) {
 		AON.start();
-		fsa.getRemainingDays(token, requisition, callback);
+		fsa.getRemainingDays(occam, account , callback);
 	}
 	
 	@Override
@@ -114,4 +113,9 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		AON.start();
 		fsa.getLatestRetryAfter(occam, account, callback);
 	}
+	
+	public void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>> callback) {
+		AON.start();
+		fsa.getCallStatuses(occam, account, callback);
+	} 
 }

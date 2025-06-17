@@ -32,6 +32,7 @@ import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
+import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
 
 public class Up2Date {
 
@@ -553,7 +554,8 @@ public class Up2Date {
 //			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 //			RdocTag.RDOC_TAG,
 //			UpdateCategoryTree.UPDATE_CATEGORY_TREE,
-			NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE
+//			NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
+			AddRegistryBankAgreement.ADD_AGREEMENT_COLUMN
 
 	};
 

@@ -27,8 +27,9 @@ public interface NordigenServiceAsync {
 	void insertTransactions(Occam occam, NordigenBankAccount nordigenBankAccount, AsyncCallback<Integer> callback);
 	void getInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback);
 	void setAllBankAccountValues(Occam occam, NordigenAccessToken token, AsyncCallback<List<NordigenBankAccount>> callback);
-	void getRemainingDays(NordigenAccessToken token, NordigenRequisition requisition,AsyncCallback<Integer> callback);
+	void getRemainingDays(Occam occam,NordigenBankAccount account,AsyncCallback<Integer> callback);
 	void getRemainingCallsToday(Occam occam, NordigenBankAccount account, AsyncCallback<Integer> callback) ;
 	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback); 
+	void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>>callback); 
 
 }

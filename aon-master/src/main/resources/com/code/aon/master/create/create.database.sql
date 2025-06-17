@@ -7287,6 +7287,8 @@ CREATE TABLE `rbank` (
   `balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo banco',
   `available_balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo disponible banco',
   `balance_date` datetime DEFAULT NULL COMMENT 'Fecha actualizacion saldo',
+  `agreement` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Acuerdo asociado a la cuenta bancaria',
+  `days_until_agreement_ends` int DEFAULT NULL COMMENT 'Días hasta la finalización del acuerdo',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
