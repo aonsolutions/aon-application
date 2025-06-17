@@ -1239,9 +1239,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static long getCountS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter) {
+	public static long getCountS3Document(Domain domain, User user, S3DocumentFilter filter, AttachFilter attachFilter, Integer category) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getAttachment().getCountS3Document(ctx, filter, attachFilter);
+			return getAttachment().getCountS3Document(ctx, filter, attachFilter, category);
 		}
 	}
 	

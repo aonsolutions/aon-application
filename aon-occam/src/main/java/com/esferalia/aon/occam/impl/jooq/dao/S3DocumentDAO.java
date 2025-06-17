@@ -60,11 +60,12 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.CATEGORY)
 				.select(Rdoc.RDOC.REGISTRY)
 				.select(Rdoc.RDOC.SCOPE)
-			    .select(Rdoc.RDOC.TYPE) 
+			    .select(Rdoc.RDOC.TYPE)
+			    .select(Rdoc.RDOC.DELETE_DATE)
+			    .select(Rdoc.RDOC.DELETE_USER)
 				.from(Rdoc.RDOC)
 				.leftJoin(RdocTag.RDOC_TAG).on(Rdoc.RDOC.ID.eq(RdocTag.RDOC_TAG.RDOC))
-				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-				.and(Rdoc.RDOC.DELETE_DATE.isNull());
+				.where(S3DOCUMENT_PROPERTIES.getConditions(filter));
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
 				.selectDistinct(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.select(DSL.inline((Integer) 1).as(TYPE_DOC))
@@ -84,6 +85,8 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.REGISTRY.as(Rdoc.RDOC.REGISTRY))
 				.select(Rattach.RATTACH.SCOPE.as(Rdoc.RDOC.SCOPE))
 				.select(Rattach.RATTACH.TYPE.as(Rdoc.RDOC.TYPE))
+				.select(DSL.inline((String) null).as(Rdoc.RDOC.DELETE_DATE))
+			    .select(DSL.inline((String) null).as(Rdoc.RDOC.DELETE_USER))
 				.from(Rattach.RATTACH)
 				.leftJoin(RattachTag.RATTACH_TAG).on(Rattach.RATTACH.ID.eq(RattachTag.RATTACH_TAG.RATTACH))
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
@@ -126,8 +129,9 @@ public class S3DocumentDAO {
 			.map(new S3DocumentFiller());
 	}
 	
-	public static long getCount(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter) {
+	public static long getCount(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer category) {
 		ctx.checkRead();
+		Result<Record1<Integer>> recursiveIds = null;
 		SelectConditionStep<Record1<Integer>> queryRDoc = ctx.getDslContext()
 				.select(Rdoc.RDOC.ID)
 				.from(Rdoc.RDOC)
@@ -136,6 +140,27 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.from(Rattach.RATTACH)
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
+		if(category != null) {
+			recursiveIds = ctx.getDslContext().withRecursive("category_hierarchy")
+	                .as(DSL.select(CategoryTree.CATEGORY_TREE.CATEGORY, CategoryTree.CATEGORY_TREE.PARENT)
+	                        .from(CategoryTree.CATEGORY_TREE)
+	                        .where(CategoryTree.CATEGORY_TREE.PARENT.eq(category))  // Encuentra los hijos directos del ID inicial
+	                        .unionAll(
+	                            DSL.select(CategoryTree.CATEGORY_TREE.field("category", Integer.class), CategoryTree.CATEGORY_TREE.field("parent", Integer.class))
+	                                .from(CategoryTree.CATEGORY_TREE)
+	                                .join(DSL.table("category_hierarchy"))
+	                                .on(CategoryTree.CATEGORY_TREE.field("parent", Integer.class).eq(DSL.field("category_hierarchy.category", Integer.class)))
+	                        )
+	                )
+	                .select(DSL.field("category", Integer.class))
+	                .from(DSL.table("category_hierarchy"))
+	                .unionAll(
+	                        DSL.select(DSL.val(category).as("category"))
+	                    )
+	                .fetch();
+			queryRDoc = queryRDoc.and(Rdoc.RDOC.CATEGORY.in(recursiveIds));
+			queryRAttach = queryRAttach.and(Rattach.RATTACH.CATEGORY.in(recursiveIds));
+		}
 		return queryRDoc.union(queryRAttach).fetch().stream().count();
 	}
 	
@@ -241,15 +266,17 @@ public class S3DocumentDAO {
 	public static void delete(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter){
 		ctx.checkWrite();
 		java.util.Date date = new java.util.Date();
-		ctx.getDslContext()
-			.update(Rdoc.RDOC)
-			.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
-			.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
-			.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-			.execute();
-		ctx.getDslContext().delete(Rattach.RATTACH)
-			.where(ATTACH_PROPERTIES.getConditions(attachFilter))
-			.execute();
+		if(filter != null)
+			ctx.getDslContext()
+				.update(Rdoc.RDOC)
+				.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
+				.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
+				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+				.execute();
+		if(attachFilter != null)
+			ctx.getDslContext().delete(Rattach.RATTACH)
+				.where(ATTACH_PROPERTIES.getConditions(attachFilter))
+				.execute();
 	}
 	
 	public static byte[] getFile(AONContext ctx, Integer id) {
@@ -292,6 +319,8 @@ public class S3DocumentDAO {
 					.setType(r.get(TYPE_DOC))
 					.setScope(r.get(Rdoc.RDOC.SCOPE))
 					.setRegistryType(r.get(Rdoc.RDOC.TYPE))
+					.setDeleteDate(r.get(Rdoc.RDOC.DELETE_DATE))
+					.setDeleteUser(r.get(Rdoc.RDOC.DELETE_USER))
 					;
 		}
 	}

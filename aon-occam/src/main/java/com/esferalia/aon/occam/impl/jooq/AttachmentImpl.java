@@ -477,9 +477,9 @@ public class AttachmentImpl implements IAttachment{
 	}
 	
 	@Override
-	public long getCountS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter) {
+	public long getCountS3Document(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter, Integer category) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> S3DocumentDAO.getCount(ctx, filter, attachFilter));
+				configuration -> S3DocumentDAO.getCount(ctx, filter, attachFilter, category));
 	}
 	
 	@Override
