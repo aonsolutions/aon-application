@@ -33,12 +33,9 @@ import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
-<<<<<<< HEAD
 import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
-=======
 import net.aonsolutions.db.up2date.payroll.PPEITUpdateII;
 import net.aonsolutions.db.up2date.payroll.PPEUpdate2Cost;
->>>>>>> master
 
 public class Up2Date {
 
