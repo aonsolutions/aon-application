@@ -240,7 +240,7 @@ public class AonNordigen  {
 	                Duration remaining = Duration.between(now, retryAfter);
 	                long hours = remaining.toHours();
 	                long minutes = remaining.toMinutes() % 60;
-	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en " + hours + "h " + minutes + "m");
+	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en : " + hours + "h " + minutes + "m");
 	                return statuses;
 	            }
 
@@ -252,9 +252,9 @@ public class AonNordigen  {
 	                    Duration remaining = Duration.between(now, availableAgain);
 	                    long hours = remaining.toHours();
 	                    long minutes = remaining.toMinutes() % 60;
-	                    statuses.add("Actualizacion " + i + ": realizada, disponible en " + hours + "h " + minutes + "m");
+	                    statuses.add("Actualizacion " + i + " disponible en :" + hours + "h " + minutes + "m");
 	                } else {
-	                    statuses.add("Actualizacion " + i + ": disponible");
+	                    statuses.add("Actualizacion " + i + " disponible");
 	                }
 	            } else {
 	                if (recentCalls.size() >= maxCallsPerDay) {
@@ -265,12 +265,12 @@ public class AonNordigen  {
 	                        Duration remaining = Duration.between(now, nextAvailableTime);
 	                        long hours = remaining.toHours();
 	                        long minutes = remaining.toMinutes() % 60;
-	                        statuses.add("Actualizacion " + i + ": no disponible. Disponible en " + hours + "h " + minutes + "m");
+	                        statuses.add("Actualizacion " + i + " no disponible. Disponible en :" + hours + "h " + minutes + "m");
 	                    } else {
-	                        statuses.add("Actualizacion " + i + ": disponible");
+	                        statuses.add("Actualizacion " + i + " disponible");
 	                    }
 	                } else {
-	                    statuses.add("Actualizacion " + i + ": disponible");
+	                    statuses.add("Actualizacion " + i + " disponible");
 	                }
 	            }
 	        }
@@ -283,11 +283,11 @@ public class AonNordigen  {
 	}
 
 
-	private static LinkedList<NordigenAccountBalance> getAccountBalances(AONContext ctx, NordigenAccessToken token, String nordigenAccountId) {
+	private static LinkedList<NordigenAccountBalance> getAccountBalances(NordigenAccessToken token, String nordigenAccountId) {
 	    return NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
 	}
 
-	private static NordigenAccountTransactions getTransactions(AONContext ctx, NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
+	private static NordigenAccountTransactions getTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) {
 	    return NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
 	}
 
@@ -640,14 +640,14 @@ public class AonNordigen  {
 		return new NordigenException(err);						
 	}
 	
-	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
+	private static LinkedList<NordigenBankStatement> getNotInsertedTransactions(NordigenAccessToken token, NordigenBankAccount account) {
 		NordigenAccountMetadata metadata = account.getMetadata();
 		String accId = metadata != null ? AonStringUtils.trimToNull(metadata.getId()) : null;
 		Date dateFrom = guessDateForm( account );
 		LinkedList<NordigenBankStatement> stList = new LinkedList<>();
 
 			StringBuilder exceptionMessage = new StringBuilder();
-			NordigenAccountTransactions transactions = AonNordigen.getTransactions(ctx, token, accId, dateFrom);
+			NordigenAccountTransactions transactions = AonNordigen.getTransactions(token, accId, dateFrom);
 			stList.addAll( getPendingAccountTransactions(account, transactions));
 			stList.addAll( getBookedAccountTransactions(account, transactions, dateFrom) );
 			if (!exceptionMessage.isEmpty()) {
@@ -701,8 +701,6 @@ public class AonNordigen  {
 	        if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
 	            account.setInstitution(getInstitution(token, account.getRequisition().getInstitutionId()));
 	        }
-			System.out.println("id de acuerdo : " + account.getRequisition().getAgreement());
-
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        account.addLog(e.getMessage());
@@ -736,9 +734,9 @@ public class AonNordigen  {
 	                                                  NordigenAccessToken token, NordigenBankAccount account) {
 	    try {
 	        CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
-	                CompletableFuture.supplyAsync(() -> getAccountBalances(ctx, token, account.getMetadata().getId()));
+	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
 	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
-	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(ctx, token, account));
+	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account));
 
 	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
 
