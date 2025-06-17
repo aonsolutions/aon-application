@@ -587,7 +587,6 @@ public class DownloadFeeServlet extends HttpServlet {
 	
 	private CustomerFeeParams getCondition(Domain domain, JSONObject filterJSON) {
 		CustomerFeeParams params = new CustomerFeeParams();
-		params.setDomain(domain.getId());
 		
 		if(null != filterJSON.opt("month") && null == filterJSON.opt("year")) {
 			params.setMonth(filterJSON.optInt("month"));
@@ -604,7 +603,8 @@ public class DownloadFeeServlet extends HttpServlet {
 		
 		if(filterJSON.opt("customer") != null) {
 			params.setCustomer(filterJSON.optInt("customer"));
-		}
+		} else
+			params.setDomain(domain.getId());
 		
 		if(filterJSON.opt("description") != null) {
 			params.setDescription(filterJSON.optString("description"));

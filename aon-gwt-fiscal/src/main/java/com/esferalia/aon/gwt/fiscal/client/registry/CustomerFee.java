@@ -240,6 +240,7 @@ public class CustomerFee extends MainEntryPoint {
 	
 	// Custome id from JS customer fee page (Portal)
 	private Integer customerId = null;
+	private Integer searchDomain = null;
 
 	@Override
 	public void onModuleLoad() {
@@ -251,7 +252,10 @@ public class CustomerFee extends MainEntryPoint {
 		options.setUser(getCurrentUser());
 		
 		customerId = getCustomer() > 0 ? getCustomer() : null;
+		searchDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
+		
 		removeCustomer();
+		removeOfficeDomain();
 		
 		this.onModuleLoad(options);
 	}
@@ -290,7 +294,6 @@ public class CustomerFee extends MainEntryPoint {
 	private void loadModule(final RegistryModuleOptions opt) {
 		initializeCustomerFeePanel(opt);
 		initializeCustomerPanel(opt);
-		
 	}
 
 	private void initializeCustomerPanel(final RegistryModuleOptions opt) {
@@ -530,7 +533,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createYearListBox(Consumer<AonCustomListBox> consumer) {
-		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
+		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -619,7 +622,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -662,7 +665,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductCategoriesSuggestion(String productCategoryQuery) {
-		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productCategorySuggestionsDB) {
@@ -705,7 +708,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductTagsSuggestion(String productTagQuery) {
-		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productTagQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productTagQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productTagSuggestionsDB) {
@@ -750,7 +753,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getSellerSuggestion(String sellerQuery) {
-		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
@@ -795,7 +798,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getWorkplaceSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
@@ -840,7 +843,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getInvoicingGroupQuerySuggestion(String invoicingGroupQuery) {
-		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
 			
 			@Override
 			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
@@ -885,7 +888,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProjectQuerySuggestion(String projectQuery) {
-		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, projectQuery, new AsyncCallback<Map<String, Project>>() {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, searchDomain, projectQuery, new AsyncCallback<Map<String, Project>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Project> projectSuggestionsDB) {
@@ -1071,7 +1074,7 @@ public class CustomerFee extends MainEntryPoint {
 
 	private void getWidgetParams() {
 		if(null == params) params = new CustomerFeeParams();
-		params.setDomain(options.getDomain());
+		params.setDomain(searchDomain);
 		params.setSeller(1);
 		
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getValue()) ? null : Integer.parseInt(monthListBox.getValue()));
@@ -1109,7 +1112,7 @@ public class CustomerFee extends MainEntryPoint {
 		row.addDomHandler(e -> {
 			e.stopPropagation();
 			if(!isCustomer()) {
-				new CustomerFeeDialog(fee, options) {
+				new CustomerFeeDialog(fee, options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {
@@ -1151,7 +1154,7 @@ public class CustomerFee extends MainEntryPoint {
 				};
 			} else {
 				getCustomer(customer -> {
-					new CustomerFeeDialog(fee, customer, options) {
+					new CustomerFeeDialog(fee, customer, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1370,7 +1373,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 				getCustomer(customer -> {
 					
-					new CustomerFeeDialog(options, customer) {
+					new CustomerFeeDialog(options, customer, searchDomain) {
 						
 						@Override
 						protected void onCreate(Fee fee) {
@@ -1416,7 +1419,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 			} else {
 			
-				new CustomerFeeDialog(options) {
+				new CustomerFeeDialog(options, searchDomain) {
 					
 					@Override
 					protected void onCreate(Fee fee) {
@@ -1470,7 +1473,7 @@ public class CustomerFee extends MainEntryPoint {
 			if(selectedItemList.size() == 1) {
 				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
 				if(null != selectedFee)
-					new CustomerFeeDialog(selectedFee, options) {
+					new CustomerFeeDialog(selectedFee, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1511,7 +1514,7 @@ public class CustomerFee extends MainEntryPoint {
 						
 					};
 			} else {
-				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options) {
+				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
@@ -1537,7 +1540,7 @@ public class CustomerFee extends MainEntryPoint {
 							offset.setValue(0);
 							getWidgetParams();
 							
-							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 								
 								@Override
 								public void onSuccess(Map<Integer, Integer> result) {
@@ -1666,7 +1669,7 @@ public class CustomerFee extends MainEntryPoint {
 				offset.setValue(0);
 				getWidgetParams();
 				
-				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 					
 					@Override
 					public void onSuccess(Map<Integer, Integer> result) {

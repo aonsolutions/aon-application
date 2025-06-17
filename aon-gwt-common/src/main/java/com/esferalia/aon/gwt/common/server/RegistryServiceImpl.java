@@ -111,27 +111,28 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	// **************************************************
 	
 	@Override
-	public Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getCustomersSuggestion(domainName, domain, user, query);
-	}
-	@Override
-	public Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getProductsSuggestion(domainName, domain, user, query);
+	public Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getCustomersSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getProductCategoriesSuggestion(domainName, domain, user, query);
+	public Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getProductsSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getProductTagsSuggestion(domainName, domain, user, query);
+	public Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getProductCategoriesSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) {
-		return AON.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams);
+	public Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getProductTagsSuggestion(domainName, domain, user, searchDomain, query);
+	}
+	
+	@Override
+	public Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, Integer searchDomain, CustomerFeeParams customerFeeParams) {
+		return AON.getCustomerProductsUpdates(domainName, domain, user, searchDomain, customerFeeParams);
 	}
 	
 	@Override
@@ -151,8 +152,10 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	
 	@Override
 	public Fee createCustomerFeeList(String domainName, int domainId, String user, Fee fee) {
-		Domain domain = AON.getDomain(domainName, domainId, user);
-		fee.setDomain(domain);
+		if(null == fee.getDomain()){
+			Domain domain = AON.getDomain(domainName, domainId, user);
+			fee.setDomain(domain);
+		}
 		return AON.createCustomerFeeList(domainName, domainId, user, fee);
 	}
 
@@ -162,8 +165,8 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user) {
-		return AON.getMinMaxCustomerFeeYear(domainName, domain, user);
+	public Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user, Integer searchDomain) {
+		return AON.getMinMaxCustomerFeeYear(domainName, domain, user, searchDomain);
 	}
 	
 	@Override
@@ -189,23 +192,23 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getWorkplacesSuggestion(domainName, domain, user, query);
+	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getWorkplacesSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getSellersSuggestion(domainName, domain, user, query);
+	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getSellersSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query) {
-		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, query);
+	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query) {
+		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query);
 	}
 	
 	@Override
-	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query) {
-		return AON.getProjectsSuggestion(domainName, domain, user, customerId, query);
+	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String query) {
+		return AON.getProjectsSuggestion(domainName, domain, user, customerId, searchDomain, query);
 	}
 
 	@Override

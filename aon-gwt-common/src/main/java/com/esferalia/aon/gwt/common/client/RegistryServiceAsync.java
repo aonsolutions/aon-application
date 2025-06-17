@@ -54,27 +54,27 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************
-	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Customer>> asyncCallback);
-	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> asyncCallback);
-	void getProductCategoriesSuggestion(String domainName, int domain, String user, String productCategoryQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
-	void getProductTagsSuggestion(String domainName, int domain, String user, String productTagQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
-	void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
+	void getCustomersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Customer>> asyncCallback);
+	void getProductsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, OldItem>> asyncCallback);
+	void getProductCategoriesSuggestion(String domainName, int domain, String user, Integer searchDomain, String productCategoryQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
+	void getProductTagsSuggestion(String domainName, int domain, String user, Integer searchDomain, String productTagQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
+	void getCustomerProductsUpdates(String domainName, int domain, String user, Integer searchDomain, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
 	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> asyncCallback);
 	void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Fee> asyncCallback);
 	void updateRitemCustomerFee(String domainName, int domain, String user, Integer id, Integer ritem, AsyncCallback<Void> asyncCallback);
 	void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> asyncCallback);
-	void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> asyncCallback);
+	void getMinMaxCustomerFeeYear(String domainName, int domain, String user, Integer searchDomain, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFee(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
 	
-	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
-	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
-	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
-	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
+	void getWorkplacesSuggestion(String domainName, int domain, String user, Integer searchDomain, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
+	void getSellersSuggestion(String domainName, int domain, String user, Integer searchDomain, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
+	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
+	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
 	
 	void getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery, AsyncCallback<Map<String, Fee>> asyncCallback);
 	
