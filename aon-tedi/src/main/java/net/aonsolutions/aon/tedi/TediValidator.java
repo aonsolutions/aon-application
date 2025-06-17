@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -277,6 +278,37 @@ public class TediValidator {
 	private static final Consumer<ValidationContext> DETAILS_VALIDATION = ctx -> 
 		ctx.getInvoice().detailStream().forEach(d -> OVERFLOW_DETAIL_DESCRIPTION.accept(ctx,d));
 	
+	private static final Consumer<ValidationContext> INVEST_ASSET_VALIDATION = ctx -> {
+		if ( !ctx.getInvoice().isSales() && ctx.getInvoice().getRegistry() != null ) {
+			Field<BigDecimal> nullField = DSL.sum(DSL.decode().when(INVOICE_DETAIL.INVEST_ASSET.isNull(), 1).otherwise(0));
+			Field<BigDecimal> notNullField = DSL.sum(DSL.decode().when(INVOICE_DETAIL.INVEST_ASSET.isNotNull(), 1).otherwise(0));
+			if (ctx.getCtx().getDslContext().select(notNullField,nullField)
+				.from(INVOICE)
+				.innerJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
+				.where(INVOICE.DOMAIN.eq(ctx.getInvoice().getDomain()))
+				.and(INVOICE.REGISTRY.eq(ctx.getInvoice().getRegistry()))
+				.orderBy( INVOICE.ID.desc() )
+				.limit(20)
+				.fetch()
+				.stream()
+				.filter( r -> r != null)
+//				.map( r -> {
+//					System.out.println(
+//						" notNullField ..: " + r.getValue(notNullField) +
+//						" nullField ..: " + r.getValue(nullField) +
+//						" ---> " + (AonNumberUtils.compare(r.getValue(nullField),r.getValue(notNullField)) > 0)
+//					);
+//					return r;
+//				})
+				.map( r -> AonNumberUtils.compare(r.getValue(notNullField),r.getValue(nullField)) > 0)
+				.findFirst()
+				.orElse( false )) {
+				
+				ctx.add( InvoiceErrorMessages.C202.wrn(InvoiceErrorKey.DETAILS) );
+				
+			};			
+		}
+	};
 
 	private static final BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount())) {
@@ -421,6 +453,7 @@ public class TediValidator {
 			.andThen(CHECK_LINES)
 			
 			.andThen(DETAILS_VALIDATION)
+			.andThen(INVEST_ASSET_VALIDATION)
 			
 			.andThen(FINANCES_VALIDATION)
 			
