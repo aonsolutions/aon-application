@@ -1220,6 +1220,34 @@ export class AonJsfGraph extends AonJsfApp {
 		super.build();
 		this.getIFrame().style.height = `22.5rem`;
 	}
+	
+	getDocument(iframe) {
+		return iframe.document 
+		|| iframe.contentDocument 
+		|| iframe.contentWindow?.document
+	}
+	
+	isLoaded() {
+		return new Promise((resolve, reject) => {
+			let iframe = this.getIFrame();
+			let idocument = this.getDocument(iframe);
+			if ( idocument?.getElementById("completeSpan")){
+				resolve();
+			} else {
+				iframe?.addEventListener("load", () => {
+					let idocument = this.getDocument(iframe);
+					if ( idocument?.getElementById("completeSpan")){
+						resolve();
+					} else {
+						idocument?.addEventListener ("completed", resolve );	
+					}
+				});
+				idocument?.addEventListener("completed", resolve );
+			}
+		});
+
+	}
+	
 
 }
 

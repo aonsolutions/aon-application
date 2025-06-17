@@ -95,7 +95,13 @@
 								<f:param name="outputFormat" value="DOCX" />
 							</aon:htmlCommandLink>
 						</aon:if>
-
+						
+						<aon:outputLink id="saleInvoice-downloadPdf"
+							target="_blank" value="#{saleInvoice.downloadURL}" 
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and (saleInvoice.tbai or printParams.saleInvoiceDefault) }"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+					    </aon:outputLink>
+						<!-- 
 						<aon:if test="#{saleInvoice.hasInvoiceDoc()}">
 							<aon:outputLink id="saleInvoice-downloadPdf"
 								target="_blank" value="#{saleInvoice.invoiceDoc.url}" 
@@ -110,8 +116,7 @@
 								styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						    </aon:outputLink>
 						</aon:if>
-		
-				
+		 				-->
 
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 

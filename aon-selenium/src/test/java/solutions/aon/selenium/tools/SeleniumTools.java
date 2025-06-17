@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class SeleniumTools {
 		/**
 		 * Set browser options
 		 */
-		options.setHeadless(true);
+		////options.setHeadless(true);
 		options.addArguments("--disable-gpu"); 
 		options.addArguments("--start-maximized"); 
 		options.addArguments("--disable-infobars"); 
@@ -180,7 +181,7 @@ public class SeleniumTools {
 		 * Setting firefox options
 		 */
 		options.setProfile(profile);
-		options.setHeadless(true);	
+		//options.setHeadless(true);	
 		options.addArguments("--width=" + device.getWidth());			
 		options.addArguments("--height=" + device.getHeight());			
 		options.addArguments("--pixelRatio=" + device.getPixelRatio());		
@@ -189,7 +190,7 @@ public class SeleniumTools {
 		 * Setting log level
 		 */
 		if(level == LOG_LEVEL.NONE) {
-			System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
+			//System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
 		}else {
 			options.addArguments("--log-level=" + level.ordinal());		
 		}
@@ -263,7 +264,7 @@ public class SeleniumTools {
 	 * @param by The selector
 	 */
 	public static void rightClick(WebDriver driver, By by) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Actions actions = new Actions(driver)
 				.contextClick(wait.until(ExpectedConditions.elementToBeClickable(by)));
 		Action action = actions.build();
@@ -276,7 +277,7 @@ public class SeleniumTools {
 	 * @param by The selector
 	 */
 	public static void doubleClick(WebDriver driver, By by) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Actions actions = new Actions(driver)
 				.doubleClick(wait.until(ExpectedConditions.elementToBeClickable(by)));
 		Action action = actions.build();
@@ -309,7 +310,7 @@ public class SeleniumTools {
 	 * @param customTimeout The custom timeout to wait for the wished element
 	 */
 	public static void waitNClick(WebDriver driver, By by, int customTimeout) {
-		WebDriverWait wait = new WebDriverWait(driver, customTimeout);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(customTimeout));
 		wait.until(ExpectedConditions.elementToBeClickable(by));
 		retryingFindClick(driver, by);
 	}
@@ -358,7 +359,7 @@ public class SeleniumTools {
 	public static boolean clickUntilNotExists(WebDriver driver, By by) {
 	    boolean result = false;
 	    int attempts = 0;
-	    WebElement elem = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(by));
+	    WebElement elem = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(by));
 	    while(attempts < 8) {
 	    	try {
 	            elem.click();
@@ -399,7 +400,7 @@ public class SeleniumTools {
 	 * @return The Double after parsing the text or null if incompatible or no value found
 	 */
 	public static Double getAmount(WebDriver driver, By selector) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
 		
@@ -436,7 +437,7 @@ public class SeleniumTools {
 	 * @return The Double after parsing the text or null if incompatible or no value found
 	 */
 	public static Double getAmountNotEmptyValue(WebDriver driver, By selector) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
 		wait.until(ExpectedConditions.attributeToBeNotEmpty(baseSalaryAmount, "value"));
@@ -468,7 +469,7 @@ public class SeleniumTools {
 	 * @return The Double after parsing the text or null if incompatible or no value found
 	 */
 	public static Double getAmountNotEmptyText(WebDriver driver, By selector) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		WebElement baseSalaryAmount = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
 		wait.until(ExpectedConditions.attributeToBeNotEmpty(baseSalaryAmount, "innerText"));
@@ -497,7 +498,7 @@ public class SeleniumTools {
 	 * @return Whether the attribute matches the extected value
 	 */
 	public static boolean waitAndCheckAmount(WebDriver driver, By selector, String attrName, Double expected) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		try {
 			wait.until(d -> {
 				String str = d.findElement(selector).getAttribute(attrName);
@@ -661,7 +662,7 @@ public class SeleniumTools {
 	 * @throws Exception
 	 */
 	public static String getAttribute(WebDriver driver, By selector, String attributeName) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
 		String attribute = null;
 		int attempts = 0;
@@ -686,7 +687,7 @@ public class SeleniumTools {
 	 * @throws Exception
 	 */
 	public static String getAttributeNotEmpty(WebDriver driver, By selector, String attributeName) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement elem = wait.until(ExpectedConditions.presenceOfElementLocated(selector));
 		String attribute = null;
 		int attempts = 0;
@@ -704,7 +705,7 @@ public class SeleniumTools {
 	}
 	
 	private static void selectMonthScrollingCommon (WebDriver driver, Date date, String boxId, SalaryType type) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 7);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(7));
 		String formatStr = "MMMMMMMMMM 'de' yyyy";
 		if (type == SalaryType.SETTLE)
 			formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
@@ -784,7 +785,7 @@ public class SeleniumTools {
 
 	private static void selectMonthScrollingSettlement (WebDriver driver, Date date) throws Exception {
 		String boxId = "gwt-debug-dateListBox";
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		String formatStr = "d 'de' MMMMMMMMMM 'de' yyyy";
 		
 		DateFormat df = new SimpleDateFormat(formatStr, new Locale("es", "ES"));
@@ -873,7 +874,7 @@ public class SeleniumTools {
 	 */
 	public static void checkSalaryPeriod (WebDriver driver, Date date) {
 		String xpath = "";
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		String periodId = "gwt-debug-periodLabel";
 		wait.until(ExpectedConditions.attributeContains(By.id(periodId), "innerText", getPeriodStr(date)));
 		xpath = "//div[@id='" + periodId + "' and contains(text(), '" + getPeriodStr(date) + "')]";
@@ -887,13 +888,13 @@ public class SeleniumTools {
 	 */
 	public static void checkSettlePeriod (WebDriver driver, Date date) {
 		String xpath = "";
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		String periodId = "gwt-debug-periodLabel";
 		String formatStr = "d/M/yyyy";
 		DateFormat df = new SimpleDateFormat(formatStr);
 		
 		xpath = "//div[@id='" + periodId + "' and contains(text(), '" + df.format(date) + "')]";
-		wait = new WebDriverWait(driver, 10);
+		wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
 	}
 	
@@ -928,7 +929,7 @@ public class SeleniumTools {
 	 * @throws InterruptedException
 	 */
 	public static void draft(WebDriver driver, String employee) throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		By xpath = By.xpath("//tr [.//div[contains(text(), '"+employee+"')]] //td[1]");
 		click(driver, wait, xpath);
 		String xpathStr = "//div[./table//div[contains(text(), '"+employee+"')]] //div[contains(@id, '-draft-content')]";
@@ -959,7 +960,7 @@ public class SeleniumTools {
 	 * @throws InterruptedException
 	 */
 	public static void mainAgreementFromIndex(WebDriver driver) throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		log(CLICK, "Entering \"Laboral\"");
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		log(CLICK, "Entering \"Convenios\"");
@@ -972,7 +973,7 @@ public class SeleniumTools {
 	 * @throws InterruptedException
 	 */
 	public static void generalAgreementFromIndex(WebDriver driver) throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		log(CLICK, "Entering \"Laboral\"");
 		retryingFindClick(driver, By.cssSelector("a[id='aonContent:mainMenuForm:menu_payroll']"));
 		log(CLICK, "Entering \"Convenios\"");
@@ -987,7 +988,7 @@ public class SeleniumTools {
 	 */
 	public static void openWorkplace(WebDriver driver, String workplaceId) throws InterruptedException {
 		By selector = By.cssSelector("*[id='" + workplaceId + "'] > table > tbody > tr > td:nth-of-type(1)");
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		log(CLICK, "Deploying \"WORKPLACE\"");
 		click(driver, wait, selector);
 	}
@@ -1000,7 +1001,7 @@ public class SeleniumTools {
 	 * @throws Exception
 	 */
 	public static void delay (WebDriver driver, Date startDate, Date endDate) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		SeleniumTools.selectPayrollType(driver, SalaryType.DELAY);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("gwt-debug-fromMonthListBox")));
 		
@@ -1045,7 +1046,7 @@ public class SeleniumTools {
 	 * @param text The text to input
 	 */
 	public static void safeInput (WebDriver driver, String cssSelector, String text) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)));
 		String value = "";
 		int attempts = 0;
@@ -1075,7 +1076,7 @@ public class SeleniumTools {
 	 * @throws Exception
 	 */
 	public static boolean changingElementAssert (WebDriver driver, By selector, String attribute, String text) throws Exception {	
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		try {
 		return wait.until(ExpectedConditions.attributeContains(selector, attribute, text));
 		} catch (Exception e) {
@@ -1106,7 +1107,7 @@ public class SeleniumTools {
 	 * @param searchText The employee name to be found
 	 */
 	public static void search(WebDriver driver, String searchText) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		By searchBoxSelector = By.id("gwt-debug-searchTextBox");
 		click(driver, wait, searchBoxSelector);
 		safeInput(driver, "#gwt-debug-searchTextBox", searchText);
@@ -1129,7 +1130,7 @@ public class SeleniumTools {
 	 * @param containingText The text which must be contained into the element
 	 */
 	public static void focusUntilValueContains (WebDriver driver, By selector, String containingText) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		boolean focused;
 		int max = 4;
 		do {
@@ -1148,7 +1149,7 @@ public class SeleniumTools {
 	 * @param driver The WebDriver
 	 */
 	public static void wait4periodStabilization(WebDriver driver) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(d -> {
 			DateFormat df = new SimpleDateFormat("MMMMMMMMMM 'de' yyyy");
 			String currentDateStr = df.format(new Date());
@@ -1172,7 +1173,7 @@ public class SeleniumTools {
 	 * @param exitBtnToClick The exit button to click
 	 */
 	public static void safelyCloseModal (WebDriver driver, By exitBtnToClick) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		int max = 4;
 		boolean modalClosed;
 		do {			
@@ -1191,7 +1192,7 @@ public class SeleniumTools {
 	 * @param driver The WebDriver
 	 */
 	public static void wait4SettleToLoadDate(WebDriver driver) {
-		new WebDriverWait(driver, 10).until(d -> {
+		new WebDriverWait(driver, Duration.ofSeconds(10)).until(d -> {
 			Pattern pattern = Pattern.compile("\\s*\\d+\\s*de\\s*\\w+\\s*de\\s*\\d+\\s*", Pattern.CASE_INSENSITIVE);
 			String date = d.findElement(By.id("gwt-debug-dateListBox-item0")).getText();
 			return pattern.matcher(date).matches();
@@ -1199,7 +1200,7 @@ public class SeleniumTools {
 	}
 	
 	private static void checkboxCheckUncheck(WebDriver driver, By checkboxId, boolean checked) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		wait.until(ExpectedConditions.elementToBeClickable(checkboxId));
 		
@@ -1247,7 +1248,7 @@ public class SeleniumTools {
 	 * @param agreement The agreement name
 	 */
 	public static void agreementSearch (WebDriver driver, String agreement) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		String cssSel = "#gwt-debug-agreementsTreeToolbar > input";
 		By input = By.cssSelector(cssSel );
 		click(driver, wait, input);
@@ -1260,7 +1261,7 @@ public class SeleniumTools {
 	 * @param agreement The agreement name
 	 */
 	public static void searchAndEnterAgreement (WebDriver driver, String agreement) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		
 		SeleniumTools.agreementSearch(driver, agreement);
 		

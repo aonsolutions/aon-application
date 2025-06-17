@@ -59,9 +59,9 @@ public abstract class SalaryTable extends ScrollPanel {
 	private static enum ENT_WORK_COL {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"")
 		, ENT("Empresa"								,"15rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, WOR("C. Trabajo"							,"10rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, EMP("Trabajador"							,"-moz-available"  	,"min-width: 10rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, TYP("Tipo"								,"7rem" 			,"")
+		, WOR("C. Trabajo"							,"6rem"  			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, EMP("Trabajador"							,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, TYP("Tipo"								,"5rem" 			,"")
 		, STD("F. Inicio"							,"5rem" 			,"")
 		, END("F. Fin"								,"5rem" 			,"")
 		, BRU("Bruto"								,"5rem" 			,"text-align: right;")

@@ -3,6 +3,7 @@ import { AonAvatar } from '../components/aon-avatar.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { closeSession, getAuth } from '../services/service.js';
 import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
+import {AonUser} from '../modules/user/aon-user.js';
 import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
@@ -99,9 +100,21 @@ export class AonLoginPanel extends AonElement {
 		}
 		
 		if (auth.name) {
+			let divPassword = this.createDiv();
+			divPassword.className = 'aonUserPasswordLink';
+			divPassword.innerText =  MSG.CHANGE_PASSWORD;
+			divPassword.addEventListener("click", (e) => {
+				let aonUser = new AonUser();
+				aonUser.editPassword();
+			});
+			
+			divUserInfo.appendChild(divPassword);
+		}
+				
+		/*if (auth.name) {
 			let divConfiguration = this.createDiv();
 			divConfiguration.className = 'aonUserConfigLink';
-			divConfiguration.innerText = MSG.CONFIGURATION;
+			divConfiguration.innerText = MSG.GO_CONFIGURATION;
 			divConfiguration.addEventListener(EVENT.CLICK, () => {
 				let aonConfiguration = new AonConfiguration();
 				aonConfiguration.user = auth.name;
@@ -116,7 +129,7 @@ export class AonLoginPanel extends AonElement {
 				companyyy.style.display = "block";
 			});
 			divUserInfo.appendChild(divConfiguration);
-		}
+		}*/
 	
 		divGeneral.appendChild(divUserInfo);
 

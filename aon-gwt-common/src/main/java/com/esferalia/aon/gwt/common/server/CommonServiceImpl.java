@@ -1,5 +1,9 @@
 package com.esferalia.aon.gwt.common.server;
 
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -51,11 +56,15 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.news.News;
@@ -76,6 +85,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -107,6 +117,7 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -500,8 +511,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException {
-		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
+		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domainSearch)).collect(Collectors.toList());
 		return workgroups;
 	}
 	
@@ -528,8 +539,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException {
-		return AON.getProjectTypeStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	public List<ProjectType> getAviableProjectType(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
+		return AON.getProjectTypeStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domainSearch)).collect(Collectors.toList());
 	}
 	
 	// **************************************************
@@ -1066,20 +1077,20 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public List<TaskHolder> getTaskHolders(String domainName, Integer domain, String user) throws AonCoreException {
+	public List<TaskHolder> getTaskHolders(String domainName, Integer domain, String user, Integer domainSearch) throws AonCoreException {
 		return AON.getTaskHolderStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)), 
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1)), 
 				new Options().setFull(true))
 				.collect(Collectors.toList());
 	}
 	@Override
-	public List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException {
+	public List<ActivityType> getActivityTypes(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
 		return AON.getActivityTypeStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)))
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1)))
 				.collect(Collectors.toList());
 	}
 
@@ -1092,7 +1103,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return AON.getRegistryNoteStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)))
+				f -> f.getRegistryProperty().eq(customerId))
 				.collect(Collectors.toList());
 	}
 	@Override
@@ -1102,6 +1113,72 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deleteNote(String domainName, int domain, String currentUser, Integer id) throws AonCoreException {
 		AON.deleteRegistryNote(new Domain().setName(domainName).setId(domain), currentUser, id);
+	}
+	
+	// **************************************************
+	// ****************************** [CUSTOMER INVOICES]
+	// **************************************************
+
+	@Override
+	public List<Invoice> getCustomerInvoices(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
+		List<Invoice> invoices = AON.getInvoiceList(domainName, domain, user, f -> f.getRegistryProperty().eq(customerId));
+		invoices.forEach(invoice -> {
+			LinkedList<Finance> finances = AON.getFinanceList(domainName, domain, user, f -> f.getInvoiceProperty().eq(invoice.getId()));
+			finances.forEach(finance -> invoice.addFinance(finance));
+		});
+		return invoices;
+	}
+	
+	@Override
+	public String getInvoicePDF(String domainName, int domainId, String login, Integer officeDomain, Integer invoiceId) throws AonCoreException {
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){
+			
+			PrintInvoiceConfiguration config;
+			if(null == officeDomain)
+				config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			else
+				config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, officeDomain, true);
+			
+			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
+			
+			CompanyFull company;
+			if(null == officeDomain)
+				company = AON.getCompanyFull(domainName, domainId, login);
+			else
+				company = AON.getCompanyFull(domainName, domainId, login, officeDomain);
+			
+			Attach logo = new Attach();
+			
+			if(config.isLogo()) {
+				Integer logoId = company.getRegistry().getId();
+				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+			}
+
+			String qrUrl = "https://" + domainName + "/dip?d=" + company.getRegistry().getDocument() 
+						+ "&f=" + AonDateUtils.simpleFormat(invoice.getIssueDate())
+						+ "&s=" + invoice.getSeries()
+						+ "&n=" + invoice.getNumber()
+						+ "&t=" + invoice.getTotal();  
+			
+			PdfMaker.printInvoice(os, company, invoice, config, qrUrl, logo.getData(), null);
+			
+			byte[] bytes = os.toByteArray();
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(bytes);
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

@@ -27,12 +27,18 @@ import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
 import net.aonsolutions.db.up2date.finance.NordigenCallsLog;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
+import net.aonsolutions.db.up2date.tgss.Artist2025CgcTempRemove;
 import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
+<<<<<<< HEAD
 import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
+=======
+import net.aonsolutions.db.up2date.payroll.PPEITUpdateII;
+import net.aonsolutions.db.up2date.payroll.PPEUpdate2Cost;
+>>>>>>> master
 
 public class Up2Date {
 
@@ -202,7 +208,7 @@ public class Up2Date {
 			// SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
 			// TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
 			// AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
-			// TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
+			// TrainingPercentages2021EUpdate.TRAINNINGPERCENTAGES2021UPDATE,
 			// FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
 			// DataRequestUpdate.DATA_REQUEST_UPDATE,
 			// WorkplaceUpdate.WORKPLACE_UPDATE,
@@ -504,7 +510,7 @@ public class Up2Date {
 
 			// MEI2025Insert.MEI2025INSERT,
 			// Holidays2025Insert.HOLIDAYS2025INSERT
-			// BasesMax2025Update.BASESMAX2025UPDATE
+			// BasesMax2025Update.BASESMAX2025UPDATEl
 			
 			// SalaryHoursFixIII.SALARYHOURSFIXIII
 			
@@ -546,7 +552,11 @@ public class Up2Date {
 			// AlterContractCostExpression.ALTERCONTRACTCOSTEXPRESSION,
 			// HomePrestITInsert.HOMEPRESTITINSERT,
 			// PPEITUpdate.PPE_IT_UPDATE,
-//			PPEITFix.PPE_IT_FIX,
+			// PPEITFix.PPE_IT_FIX,
+			// PPEITUpdateII.PPE_IT_UPDATEII,
+			PPEUpdate2Cost.PPE_IT_UPDATE2COST,
+			Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
+
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

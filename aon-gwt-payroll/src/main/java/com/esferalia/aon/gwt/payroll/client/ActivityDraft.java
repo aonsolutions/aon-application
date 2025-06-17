@@ -217,8 +217,6 @@ public abstract class ActivityDraft extends Composite{
 
 		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 185.00, Unit.PX);
 		
-		activity.setActivityDraftCCCHeight();
-		
 		mainPanel.add(activity);
 	}
 	

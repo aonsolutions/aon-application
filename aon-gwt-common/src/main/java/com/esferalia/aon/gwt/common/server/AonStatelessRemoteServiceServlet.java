@@ -122,6 +122,17 @@ public class AonStatelessRemoteServiceServlet extends RemoteServiceServlet {
 			writer.write(base64);
 		}
 	}
+	
+	static void encodeURIComponent(String mime, String base64, Writer writer ) 
+	throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		writer.write("data:");
+		writer.write(mime);
+		writer.write(";base64,");
+		base64 = base64.replace('$', '+');
+		base64 = base64.replace('_', '/');
+		writer.write(base64);
+	}
 
 	static ClassLoader getResourceLoader() {
 		return Thread.currentThread().getContextClassLoader();

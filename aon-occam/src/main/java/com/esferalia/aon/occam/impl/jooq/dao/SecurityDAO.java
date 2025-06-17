@@ -827,7 +827,7 @@ public class SecurityDAO {
 	public static Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter){
 		return ctx.getDslContext().select().from(SCOPE)
 				.where(SCOPE_PROPERTIES.getConditions(filter))
-				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
+//				.and(SCOPE.DOMAIN.in(getInheritanceDomainIds(ctx)))
 				.fetch().stream().map(new ScopeFiller());
 	}
 	

@@ -2,6 +2,7 @@ package solutions.aon.selenium.aio;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -33,7 +34,7 @@ public class HomeIntegralTest extends AioBaseTestCase {
 	public static void setUpBeforeClass() throws Exception {
         driver = newChromeDriver();
         
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         login(driver, HOME);
         
 	}
