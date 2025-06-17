@@ -87,9 +87,12 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
-	public int  getRemainingCallsToday(Occam occam, NordigenBankAccount account) {
+	public int getRemainingCallsToday(Occam occam, NordigenBankAccount account) {
 		return AonNordigen.getRemainingCallsToday(occam, account);
 	}
 	
-
+	@Override
+	public String getLatestRetryAfter(Occam occam, NordigenBankAccount account) {
+		return AonNordigen.getLatestRetryAfter(occam, account);
+	}
 }

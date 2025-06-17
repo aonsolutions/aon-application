@@ -212,9 +212,8 @@ public class NordigenDAO {
 	            amount.setAmount(balanceStored.doubleValue());
 
 	            NordigenAccountBalance consolidated = new NordigenAccountBalance()
-	                .setBalanceAmount(amount)
-	                .setBalanceType(NordigenBalanceType.INTERIM_AVAILABLE);
-//	            System.out.println("consolidatedDAO : " + consolidated.getBalanceAmount().getAmount());
+	            	    .setBalanceAmount(amount)
+	            	    .setBalanceType(NordigenBalanceType.CLOSING_BOOKED);
 	            balanceList.add(consolidated);
 	        }
 	        
@@ -225,20 +224,19 @@ public class NordigenDAO {
 	            amount.setAmount(availableStored.doubleValue());
 
 	            NordigenAccountBalance real = new NordigenAccountBalance()
-	                .setBalanceAmount(amount)
-	                .setBalanceType(NordigenBalanceType.CLOSING_BOOKED); 
-//	            System.out.println("realDAO : " + real.getBalanceAmount().getAmount());
+	            	    .setBalanceAmount(amount)
+	            	    .setBalanceType(NordigenBalanceType.INTERIM_AVAILABLE);
 	            balanceList.add(real);
 	        }
 
 
 	        account.setBalances(balanceList);
 	    }
-//	    System.out.println("== BALANCES CARGADOS DE BD ==");
-//
-//	    for (NordigenAccountBalance bal : account.getBalances()) {
-//	        System.out.println("Tipo: " + bal.getBalanceType() + " - Cantidad: " + bal.getBalanceAmount().getAmount());
-//	    }
+	    System.out.println("== BALANCES CARGADOS DE BD ==");
+
+	    for (NordigenAccountBalance bal : account.getBalances()) {
+	        System.out.println("Tipo: " + bal.getBalanceType() + " - Cantidad: " + bal.getBalanceAmount().getAmount());
+	    }
 
 
 	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));

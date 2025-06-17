@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.nordigen;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -384,27 +385,44 @@ public class NordigenModule extends MainEntryPoint {
 			boolean logs = false;
 			for (NordigenBankAccount bankAccount : opt.getConfiguration().getLinkedAccounts()) {
 				List<NordigenAccountBalance> balances = bankAccount.getBalances();
+			
+
+//				NordigenAccountBalance consolidado = filterConsolidado(balances);
+//				NordigenAccountBalance real = filterReal(balances);
+//				
+//				double bankBalance = 0;
+//				double remainder = 0;
+//				
+//				if (bankAccount.getBalances() != null && bankAccount.getBalances().size() == 1) {
+//					NordigenAccountBalance bal = bankAccount.getBalances().get(0);
+//					bankBalance = bal.getBalanceAmount().getAmount();
+//					remainder = bal.getBalanceAmount().getAmount();
+//				} else {
+//					bankBalance = consolidado != null &&
+//				              consolidado.getBalanceAmount() != null
+//				              ? AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount())
+//				              : 0;
+//
+//					
+//					remainder = bankBalance;
+//					if (real != null && real.getBalanceAmount() != null) {
+//						remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());					
+//					}					
+//				}
 				
 				NordigenAccountBalance consolidado = filterConsolidado(balances);
 				NordigenAccountBalance real = filterReal(balances);
-				
+
 				double bankBalance = 0;
 				double remainder = 0;
-				
-				if (bankAccount.getBalances() != null && bankAccount.getBalances().size() == 1) {
-					NordigenAccountBalance bal = bankAccount.getBalances().get(0);
-					bankBalance = bal.getBalanceAmount().getAmount();
-					remainder = bal.getBalanceAmount().getAmount();
-				} else {
-					bankBalance = consolidado != null && consolidado.getBalanceAmount() != null
-                      ? AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount())
-                      : 0;
 
-					remainder = bankBalance;
-					if (real != null && real.getBalanceAmount() != null) {
-						remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
-					}
-				}
+				bankBalance = consolidado != null && consolidado.getBalanceAmount() != null
+				    ? AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount())
+				    : 0;
+
+				remainder = real != null && real.getBalanceAmount() != null
+				    ? AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount())
+				    : bankBalance;
 
 				balanceTotal = balanceTotal + bankBalance;
 				remainderTotal = remainderTotal + remainder;
@@ -444,6 +462,7 @@ public class NordigenModule extends MainEntryPoint {
 			balanceBox.addStyleName(AON.CSS.aonFontMedium());
 			balanceBox.addStyleName(AON.CSS.aonTextRight());
 			balanceBox.addStyleName(AON.CSS.aonBold());
+			balanceBox.addStyleName(AON.CSS.aonBorder());
 			if (AonMathUtils.isLessThanZero( balanceTotal )) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());	
 			}
@@ -513,7 +532,7 @@ public class NordigenModule extends MainEntryPoint {
 	    Label title;
 	    FlowPanel titlePanel;
 	    AonTableButton allMovementsButton;
-	    AonTableButton insertMovementsButton;
+//	    AonTableButton insertMovementsButton;
 	    AonTableButton balanceJsonButton;
 		FlowPanel bottomTable = new FlowPanel();
 		AonTableButton continueLinkButton;
@@ -750,8 +769,8 @@ public class NordigenModule extends MainEntryPoint {
 				allMovementsButton.addClickHandler(movementsClickHandler);
 			}
 
-			insertMovementsButton = new AonTableButton("Insertar movimientos pendientes", AON.CSS.aonIconSave());
-			insertMovementsButton.setTabIndex(-6);
+//			insertMovementsButton = new AonTableButton("Insertar movimientos pendientes", AON.CSS.aonIconSave());
+//			insertMovementsButton.setTabIndex(-6);
 
 			balanceJsonButton = new AonTableButton("JSON de los saldos", AON.CSS.aonIconInfo());
 			balanceJsonButton.setTabIndex(-7);
@@ -765,21 +784,36 @@ public class NordigenModule extends MainEntryPoint {
 			updateButton = new AonTableButton("Actualizar", AON.CSS.aonIconRefresh());
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
+				
+			        String currentText = attempsBox.getText(); 
+			        String[] parts = currentText.split(":");
+			        String[] countParts = parts[1].trim().split("/");
+			        
+			        int madeCalls = Integer.parseInt(countParts[0]);
+			        int newMadeCalls = madeCalls + 1;
+			        
+			        attempsBox.setText("Actualizaciones realizadas : " + newMadeCalls + "/4");
+
+			        if (newMadeCalls >= 4) {
+						attempsBox.addStyleName(AON.CSS.aonColorRed());
+						updateButton.setVisible(false);
+					}
+
 			    refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-			        allMovementsButton, insertMovementsButton, balanceJsonButton, true, diasBox);
+			        allMovementsButton, balanceJsonButton, true, diasBox);
 			});
 
 			getMenuPanel().add(updateButton);
-
+            
 			boolean forceRefresh = false;
 			Storage sessionStorage = Storage.getSessionStorageIfSupported();
 			if (sessionStorage != null && "true".equals(sessionStorage.getItem("nordigenRefreshAfterAuth"))) {
 			    forceRefresh = true;
-			    sessionStorage.removeItem("nordigenRefreshAfterAuth"); // limpiar
+			    sessionStorage.removeItem("nordigenRefreshAfterAuth"); 
 			}
 
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-			    allMovementsButton, insertMovementsButton, balanceJsonButton, forceRefresh, diasBox);
+			    allMovementsButton, balanceJsonButton, forceRefresh, diasBox);
 
 			new Timer() {
 			    @Override
@@ -827,25 +861,39 @@ public class NordigenModule extends MainEntryPoint {
 		private void loadRemainingCalls(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel attempsBox) {
 		    NORDIGEN_SERVICE.getRemainingCallsToday(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
 		        @Override
-		        public void onSuccess(Integer remaining) {
-		            attempsBox.setText("Actualizaciones restantes durante el dia de hoy: " + remaining + "/4");
-
+		        public void onSuccess(Integer madeCalls) {
+		            attempsBox.setText("Actualizaciones realizadas : " + madeCalls + "/4");
+		            
 		            attempsBox.removeStyleName(AON.CSS.aonColorRed());
 		            attempsBox.removeStyleName(AON.CSS.aonBackgroundLigthYellow());
 
 		            attempsBox.addStyleName(AON.CSS.aonBold());
 
-		            if (remaining == 0) {
+		            if (madeCalls >= 4) {
 		                attempsBox.addStyleName(AON.CSS.aonColorRed());
 		                if (updateButton != null) {
 		                    updateButton.setVisible(false);
+		                    NORDIGEN_SERVICE.getLatestRetryAfter(opt.getOccam(), nordigenBankAccount, new AsyncCallback<String>() {
+								
+								@Override
+								public void onSuccess(String retryDate) {
+									attempsBox.setText("Actualizaciones realizadas : " + madeCalls + "/4 "
+											+ "Podra volver a actualizar a partir de : " + retryDate );
+					                attempsBox.addStyleName(AON.CSS.aonColorRed());									
+								}
+								
+								@Override
+								public void onFailure(Throwable arg0) {
+									attempsBox.setText("");
+								}
+							});
 		                }
 		            }
 		        }
 
 		        @Override
 		        public void onFailure(Throwable caught) {
-		            attempsBox.setText("Error al cargar actualizaciones restantes");
+		            attempsBox.setText("Error al cargar actualizaciones");
 		            attempsBox.addStyleName(AON.CSS.aonColorRed());
 		        }
 		    });
@@ -1044,10 +1092,10 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
 				InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton insertMovementsButton, AonTableButton balanceJsonButton ,boolean refresh, InlineLabel diasBox) {
+				AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh, InlineLabel diasBox) {
 			balanceJsonButton.setVisible(false);
 			allMovementsButton.setVisible(false);
-			insertMovementsButton.setVisible(false);
+//			insertMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
 
 			NORDIGEN_SERVICE.setAccountValues(opt.getConfiguration().getToken(), opt.getOccam(), nordigenBankAccount, refresh, new AsyncCallback<NordigenBankAccount>() {
@@ -1061,7 +1109,7 @@ public class NordigenModule extends MainEntryPoint {
 				public void onSuccess(NordigenBankAccount result) {
 				    copyBankAccount(nordigenBankAccount, result);
 				    allMovementsButton.setVisible(true);
-				    updateCard(opt, result, atDateBox, lastDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, insertMovementsButton, balanceJsonButton);
+				    updateCard(opt, result, atDateBox, lastDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, balanceJsonButton);
 				    clearBottomMessage();
 
 				    // Filtrar los movimientos no pendientes
@@ -1135,7 +1183,7 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void updateCard(NordigenModuleOptions opt, NordigenBankAccount result, InlineLabel atDateBox, InlineLabel lastDateBox,
 				InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-				AonTableButton allMovementsButton, AonTableButton insertMovementsButton, AonTableButton balanceJsonButton) {
+				AonTableButton allMovementsButton, AonTableButton balanceJsonButton) {
 			
 			for (String log : result.getLogs()) {
 				clearBottomMessage();
@@ -1198,21 +1246,13 @@ public class NordigenModule extends MainEntryPoint {
 			if (requisition != null) {
 				if (NordigenRequisitionStatus.LINKED.equals(requisition.getStatus())) {
 					List<NordigenBankStatement> movs = result.getNotInsertedMovements();
-					long movCount = AonCollectionUtils.stream(movs).filter(m -> m != null && !m.isPending()).count();
 					long pendingMovCount = AonCollectionUtils.stream(movs).filter(m -> m != null && m.isPending()).count();
 					String pendingString = pendingMovCount + " movimientos no consolidados";
 					Label noConsLabel = pendingMovCount > 0 ? new Label(pendingString) : null;
+					getMenuPanel().add(allMovementsButton);
+
 					if (noConsLabel != null) {
 						noConsLabel.getElement().getStyle().setColor("darkOrange");
-					}
-					if (!isMobile()) {
-						getMenuPanel().add(allMovementsButton);
-						if (movCount > 0) {
-							getMenuPanel().add(insertMovementsButton);
-							insertMovementsButton.setVisible(true);
-						} else {
-							insertMovementsButton.setVisible(false);
-						}
 					}
 				} else if (NordigenRequisitionStatus.EXPIRED.equals(requisition.getStatus())) {
 					showBottomMessage("red", "Las credenciales expiraron, debe volver a vincular la cuenta");
