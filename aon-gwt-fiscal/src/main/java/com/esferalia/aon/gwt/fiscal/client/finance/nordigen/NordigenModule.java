@@ -580,25 +580,15 @@ public class NordigenModule extends MainEntryPoint {
 			
 			FlowPanel remainingAttempsPanel = new FlowPanel();
             remainingAttempsPanel.setStyleName(AON.CSS.aonPaddingBottom());
-            
-            
-			HTML attempsBox = new HTML();
+
+            HTML attempsBox = new HTML();
             loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
             remainingAttempsPanel.add(attempsBox);
-
-    /*
-			InlineLabel attempsBox = new InlineLabel("Actualizaciones restantes durante el dia de hoy : 0/3");
-			attempsBox.setStyleName(AON.CSS.aonTableLabel());
-			attempsBox.setStyleName(AON.CSS.aonBold());
-			attempsBox.setStyleName(AON.CSS.aonFontSmall());
-			remainingAttempsPanel.add(attempsBox);
-            
-      */      
 
 			FlowPanel diasAcuerdoPanel = new FlowPanel();
             diasAcuerdoPanel.setStyleName(AON.CSS.aonBorderTop());
             diasAcuerdoPanel.addStyleName(AON.CSS.aonPaddingTop());
-			InlineLabel diasBox = new InlineLabel("Renovaci\u00F3n del acuerdo en: ");
+			InlineLabel diasBox = new InlineLabel();
 			diasBox.setStyleName(AON.CSS.aonTableLabel());
 			diasBox.setStyleName(AON.CSS.aonBold());
 			diasBox.setStyleName(AON.CSS.aonFontSmall());
@@ -779,7 +769,7 @@ public class NordigenModule extends MainEntryPoint {
 		            		diasBox.setText("Renovaci\u00F3n del acuerdo en: "+ result +" d\u00EDas");
 			                diasBox.addStyleName(AON.CSS.aonBold());
 			                diasBox.addStyleName(AON_BLUE);
-		            	}else {
+		            	}else{
 		            		diasBox.setVisible(false);
 		            	}
 		            }
