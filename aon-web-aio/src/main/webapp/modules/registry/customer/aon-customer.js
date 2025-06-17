@@ -57,10 +57,9 @@ export class AonCustomer extends AonReg {
 		if (this.office) {
 			if(!this.clientFile){
 				this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
-				this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			}
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
-			
+			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 			
 			if(this.registry.registryCompany) {
@@ -581,7 +580,18 @@ export class AonCustomer extends AonReg {
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
 	}
 	
 	buildInvoices(){

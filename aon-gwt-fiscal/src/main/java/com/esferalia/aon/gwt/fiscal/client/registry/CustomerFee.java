@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -55,10 +54,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -240,6 +247,7 @@ public class CustomerFee extends MainEntryPoint {
 	
 	// Custome id from JS customer fee page (Portal)
 	private Integer customerId = null;
+	private Integer searchDomain = null;
 
 	@Override
 	public void onModuleLoad() {
@@ -251,7 +259,10 @@ public class CustomerFee extends MainEntryPoint {
 		options.setUser(getCurrentUser());
 		
 		customerId = getCustomer() > 0 ? getCustomer() : null;
+		searchDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
+		
 		removeCustomer();
+		removeOfficeDomain();
 		
 		this.onModuleLoad(options);
 	}
@@ -290,7 +301,6 @@ public class CustomerFee extends MainEntryPoint {
 	private void loadModule(final RegistryModuleOptions opt) {
 		initializeCustomerFeePanel(opt);
 		initializeCustomerPanel(opt);
-		
 	}
 
 	private void initializeCustomerPanel(final RegistryModuleOptions opt) {
@@ -530,7 +540,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createYearListBox(Consumer<AonCustomListBox> consumer) {
-		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
+		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -619,7 +629,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -662,7 +672,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductCategoriesSuggestion(String productCategoryQuery) {
-		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productCategorySuggestionsDB) {
@@ -705,7 +715,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductTagsSuggestion(String productTagQuery) {
-		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productTagQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productTagQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productTagSuggestionsDB) {
@@ -750,7 +760,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getSellerSuggestion(String sellerQuery) {
-		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
@@ -795,7 +805,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getWorkplaceSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
@@ -840,7 +850,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getInvoicingGroupQuerySuggestion(String invoicingGroupQuery) {
-		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
 			
 			@Override
 			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
@@ -885,7 +895,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProjectQuerySuggestion(String projectQuery) {
-		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, projectQuery, new AsyncCallback<Map<String, Project>>() {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, searchDomain, projectQuery, new AsyncCallback<Map<String, Project>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Project> projectSuggestionsDB) {
@@ -1071,7 +1081,7 @@ public class CustomerFee extends MainEntryPoint {
 
 	private void getWidgetParams() {
 		if(null == params) params = new CustomerFeeParams();
-		params.setDomain(options.getDomain());
+		params.setDomain(searchDomain);
 		params.setSeller(1);
 		
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getValue()) ? null : Integer.parseInt(monthListBox.getValue()));
@@ -1109,7 +1119,7 @@ public class CustomerFee extends MainEntryPoint {
 		row.addDomHandler(e -> {
 			e.stopPropagation();
 			if(!isCustomer()) {
-				new CustomerFeeDialog(fee, options) {
+				new CustomerFeeDialog(fee, options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {
@@ -1151,7 +1161,7 @@ public class CustomerFee extends MainEntryPoint {
 				};
 			} else {
 				getCustomer(customer -> {
-					new CustomerFeeDialog(fee, customer, options) {
+					new CustomerFeeDialog(fee, customer, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1370,7 +1380,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 				getCustomer(customer -> {
 					
-					new CustomerFeeDialog(options, customer) {
+					new CustomerFeeDialog(options, customer, searchDomain) {
 						
 						@Override
 						protected void onCreate(Fee fee) {
@@ -1383,6 +1393,9 @@ public class CustomerFee extends MainEntryPoint {
 									deleteFeeButton.setEnabled(false);
 									exportButton.setEnabled(false);
 									onSearch();
+									
+									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+										sendFeeEmail(customerFee.getId());
 								}
 								
 								@Override
@@ -1416,7 +1429,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 			} else {
 			
-				new CustomerFeeDialog(options) {
+				new CustomerFeeDialog(options, searchDomain) {
 					
 					@Override
 					protected void onCreate(Fee fee) {
@@ -1429,6 +1442,9 @@ public class CustomerFee extends MainEntryPoint {
 								deleteFeeButton.setEnabled(false);
 								exportButton.setEnabled(false);
 								onSearch();
+								
+								if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+									sendFeeEmail(customerFee.getId());
 							}
 							
 							@Override
@@ -1470,7 +1486,7 @@ public class CustomerFee extends MainEntryPoint {
 			if(selectedItemList.size() == 1) {
 				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
 				if(null != selectedFee)
-					new CustomerFeeDialog(selectedFee, options) {
+					new CustomerFeeDialog(selectedFee, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1511,7 +1527,7 @@ public class CustomerFee extends MainEntryPoint {
 						
 					};
 			} else {
-				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options) {
+				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
@@ -1537,7 +1553,7 @@ public class CustomerFee extends MainEntryPoint {
 							offset.setValue(0);
 							getWidgetParams();
 							
-							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 								
 								@Override
 								public void onSuccess(Map<Integer, Integer> result) {
@@ -1666,7 +1682,7 @@ public class CustomerFee extends MainEntryPoint {
 				offset.setValue(0);
 				getWidgetParams();
 				
-				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 					
 					@Override
 					public void onSuccess(Map<Integer, Integer> result) {
@@ -1920,6 +1936,60 @@ public class CustomerFee extends MainEntryPoint {
 	private native String btoa(String str) /*-{
 	    return btoa(str);
 	}-*/;
+	
+	private void sendFeeEmail(Integer feeId) {
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/fee-mail/";
+
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+
+		JSONObject body = new JSONObject();
+
+		body.put("feeId", new JSONString(feeId.toString()));
+		
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+
+		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+
+		try {
+			// Send the request
+			requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				public void onResponseReceived(Request request, Response response) {
+					JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+					String message = "";
+
+					if (jsonValue != null && jsonValue.isObject() != null) {
+						JSONObject jsonObject = jsonValue.isObject();
+
+						JSONValue messageValue = jsonObject.get("message");
+						message = null != messageValue ? messageValue.isString().stringValue()
+								: "Error desconocido";
+					}
+
+					if (response.getStatusCode() == 400)
+						AonMessagePanel.showError(messagePanel, message);
+					else
+						AonMessagePanel.showSuccess(messagePanel, message);
+				}
+
+				public void onError(Request request, Throwable exception) {
+					Window.alert(exception.getMessage());
+				}
+			});
+		} catch (RequestException exception) {
+			Window.alert("Catch : " + exception.getMessage());
+		}
+	}
 	
 	// ------------------------------------------ Eval Expression
 	
