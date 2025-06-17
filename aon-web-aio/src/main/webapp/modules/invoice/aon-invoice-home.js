@@ -247,7 +247,7 @@ export class AonInvoiceHome extends AonElement {
 		// INVOICE
 
 		let invoiceDiv = this.createDiv();
-		invoiceDiv.id = 'invoice';
+		invoiceDiv.id = this.ID + 'Invoice';
 		invoiceDiv.classList.add("aonInvoiceHomePendingDiv");
 		invoiceDiv.overflow = 'hidden';
 		div.appendChild(invoiceDiv);
@@ -257,7 +257,7 @@ export class AonInvoiceHome extends AonElement {
 		invoiceDiv.appendChild(invoiceNameRow);
 
 		let invoiceName = this.createDiv();
-		invoiceName.id = 'invoiceName';
+		invoiceName.id = this.ID + 'invoiceName';
 		invoiceName.innerHTML = "Facturas (" + new Date().getFullYear() + ")";
 		invoiceName.classList.add("aonInvoiceHomePendingName");
 		invoiceNameRow.appendChild(invoiceName);

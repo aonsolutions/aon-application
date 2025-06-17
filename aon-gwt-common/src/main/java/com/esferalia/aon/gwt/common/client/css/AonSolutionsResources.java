@@ -185,6 +185,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-move-to-inbox.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconMoveToInbox();
+	
 	@Source("icons/aon-icon-domain-add.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDomainAdd();
@@ -379,6 +383,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-delete.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDelete();
+	
+	@Source("icons/aon-icon-no-encryption.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNoEncryption();
 
 	@Source("icons/aon-icon-back.svg")
 	@MimeType("image/svg+xml")
@@ -871,5 +879,17 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-gpp-maybe.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGppMaybe();
+	
+	@Source("icons/aon-icon-check-circle.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCheckCircle();
+	
+	@Source("icons/aon-icon-check-circle-green.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCheckCircleGreen();
+	
+	@Source("icons/aon-icon-error-exclamation.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconErrorExclamation();
 }
 

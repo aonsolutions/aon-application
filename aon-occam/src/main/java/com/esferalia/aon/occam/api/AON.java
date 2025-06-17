@@ -108,6 +108,7 @@ import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
+import com.esferalia.aon.occam.api.model.doc.InvoiceDoc;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -1051,11 +1052,18 @@ public class AON {
 		}
 
 	}
+	
 	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyFull(ctx, domainId);
 		}
 
+	}
+	
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login, Integer officeDomain){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, officeDomain);
+		}
 	}
 		
 	public static Company getCompany(Occam occam, CompanyFilter filter){
@@ -7674,12 +7682,12 @@ public class AON {
 			return getRawdoc().getRawdocFullStream(ctx, filter,offset,limit);
 		}
 	}
-	public static Rawdoc getRawdocFull(Occam occam, int id) {
+	public static Optional<Rawdoc> getRawdocFull(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}
 	}
-	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
+	public static Optional<Rawdoc> getRawdocFull(String domainName, int domain, String user, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)){
 			return getRawdoc().getRawdocFull(ctx, id);
 		}
@@ -8830,4 +8838,18 @@ public class AON {
 		}
 	}
 
+	// INVOICE DOC
+	
+	public static Optional<InvoiceDoc> getInvoiceDoc(Occam occam, int domain, int invoiceId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceDoc(ctx, domain, invoiceId);
+		}
+	}
+	
+	public static void saveInvoiceDoc(Occam occam, InvoiceDoc invoiceDoc) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().saveInvoiceDoc(ctx, invoiceDoc);
+		}
+	}
+	
 }

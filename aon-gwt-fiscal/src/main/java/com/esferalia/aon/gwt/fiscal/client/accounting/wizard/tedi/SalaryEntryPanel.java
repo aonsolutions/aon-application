@@ -615,10 +615,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getMoneySalaryAccount() != null 
 			&& getWrapper().getMoneySalaryAccount().getId() != null) {
 			list.add( new AccountEntryDetail()
-				.setAccount(getWrapper().getMoneySalaryAccount().getId())
+				.setAccountId(getWrapper().getMoneySalaryAccount().getId())
 				.setAccountCode(getWrapper().getMoneySalaryAccount().getCode())
 				.setAccountDescription(getWrapper().getMoneySalaryAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setDebit(getWrapper().getMoneySalary())
 			);
@@ -628,10 +628,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getInKindSalaryAccount() != null 
 			&& getWrapper().getInKindSalaryAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getInKindSalaryAccount().getId())
+				.setAccountId(getWrapper().getInKindSalaryAccount().getId())
 				.setAccountCode(getWrapper().getInKindSalaryAccount().getCode())
 				.setAccountDescription(getWrapper().getInKindSalaryAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setDebit(getWrapper().getInKindSalary())
 			);
@@ -641,10 +641,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getAllowanceAccount() != null 
 			&& getWrapper().getAllowanceAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getAllowanceAccount().getId())
+				.setAccountId(getWrapper().getAllowanceAccount().getId())
 				.setAccountCode(getWrapper().getAllowanceAccount().getCode())
 				.setAccountDescription(getWrapper().getAllowanceAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setDebit(getWrapper().getAllowance())
 			);
@@ -654,10 +654,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getSalaryDedAdvPaymentAccount() != null 
 			&& getWrapper().getSalaryDedAdvPaymentAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getSalaryDedAdvPaymentAccount().getId())
+				.setAccountId(getWrapper().getSalaryDedAdvPaymentAccount().getId())
 				.setAccountCode(getWrapper().getSalaryDedAdvPaymentAccount().getCode())
 				.setAccountDescription(getWrapper().getSalaryDedAdvPaymentAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getSalaryDedAdvPayment())
 			);
@@ -667,10 +667,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getSalaryDedSeizeAccount() != null 
 			&& getWrapper().getSalaryDedSeizeAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getSalaryDedSeizeAccount().getId())
+				.setAccountId(getWrapper().getSalaryDedSeizeAccount().getId())
 				.setAccountCode(getWrapper().getSalaryDedSeizeAccount().getCode())
 				.setAccountDescription(getWrapper().getSalaryDedSeizeAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getSalaryDedSeize())
 			);
@@ -680,10 +680,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getSalaryOtherDeductionsAccount() != null 
 			&& getWrapper().getSalaryOtherDeductionsAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getSalaryOtherDeductionsAccount().getId())
+				.setAccountId(getWrapper().getSalaryOtherDeductionsAccount().getId())
 				.setAccountCode(getWrapper().getSalaryOtherDeductionsAccount().getCode())
 				.setAccountDescription(getWrapper().getSalaryOtherDeductionsAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getSalaryOtherDeductions())
 			);
@@ -693,10 +693,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 				&& getWrapper().getSalaryCompensationAccount() != null 
 				&& getWrapper().getSalaryCompensationAccount().getId() != null) {
 				list.add(new AccountEntryDetail()
-					.setAccount(getWrapper().getSalaryCompensationAccount().getId())
+					.setAccountId(getWrapper().getSalaryCompensationAccount().getId())
 					.setAccountCode(getWrapper().getSalaryCompensationAccount().getCode())
 					.setAccountDescription(getWrapper().getSalaryCompensationAccount().getDescription())
-					.setBalancingAccount(null)
+					.setBalancingAccountId(null)
 					.setConcept(getWrapper().getConcept())
 					.setDebit(getWrapper().getSalaryCompensation())
 				);
@@ -708,10 +708,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getCompanySocialInsuranceAccount() != null 
 			&& getWrapper().getCompanySocialInsuranceAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getCompanySocialInsuranceAccount().getId())
+				.setAccountId(getWrapper().getCompanySocialInsuranceAccount().getId())
 				.setAccountCode(getWrapper().getCompanySocialInsuranceAccount().getCode())
 				.setAccountDescription(getWrapper().getCompanySocialInsuranceAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setDebit(getWrapper().getCompanySocialInsurance())
 			);
@@ -721,10 +721,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getIrpfAccount() != null 
 			&& getWrapper().getIrpfAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getIrpfAccount().getId())
+				.setAccountId(getWrapper().getIrpfAccount().getId())
 				.setAccountCode(getWrapper().getIrpfAccount().getCode())
 				.setAccountDescription(getWrapper().getIrpfAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getIrpf())
 			);
@@ -734,10 +734,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getInKindIrpfAccount() != null 
 			&& getWrapper().getInKindIrpfAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getInKindIrpfAccount().getId())
+				.setAccountId(getWrapper().getInKindIrpfAccount().getId())
 				.setAccountCode(getWrapper().getInKindIrpfAccount().getCode())
 				.setAccountDescription(getWrapper().getInKindIrpfAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getInKindIrpf())
 			);
@@ -747,10 +747,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getEmployeeSocialInsuranceAccount() != null 
 			&& getWrapper().getEmployeeSocialInsuranceAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getEmployeeSocialInsuranceAccount().getId())
+				.setAccountId(getWrapper().getEmployeeSocialInsuranceAccount().getId())
 				.setAccountCode(getWrapper().getEmployeeSocialInsuranceAccount().getCode())
 				.setAccountDescription(getWrapper().getEmployeeSocialInsuranceAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getTotalSocialInsurance())
 			);
@@ -760,10 +760,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			&& getWrapper().getNetSalaryAccount() != null 
 			&& getWrapper().getNetSalaryAccount().getId() != null) {
 			list.add(new AccountEntryDetail()
-				.setAccount(getWrapper().getNetSalaryAccount().getId())
+				.setAccountId(getWrapper().getNetSalaryAccount().getId())
 				.setAccountCode(getWrapper().getNetSalaryAccount().getCode())
 				.setAccountDescription(getWrapper().getNetSalaryAccount().getDescription())
-				.setBalancingAccount(null)
+				.setBalancingAccountId(null)
 				.setConcept(getWrapper().getConcept())
 				.setCredit(getWrapper().getNetSalary())
 			);

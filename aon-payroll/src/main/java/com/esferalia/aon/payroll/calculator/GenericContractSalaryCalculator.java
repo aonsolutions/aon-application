@@ -92,6 +92,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.naming.Context;
+
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
@@ -1136,20 +1138,22 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
         					    .map( v -> 
         					    	( v instanceof IExpressionVariable ) ?
         					    	new IExpressionVariable<Object>() {
+										@Override
                 						public Period getPeriod() {
                 						    return irpfPeriod;
                 						}
+										@Override
                 						public Object getValue(Period period) {
                 						    return v.getValue(v.getPeriod());
                 						}
-								@Override
-								public IExpression getExpression() {
-								    return ((IExpressionVariable<Object>)v).getExpression();
-								}
-								@Override
-								public Map<String, ITimedVariable<?>> getContext() {
-								    return ((IExpressionVariable<Object>)v).getContext();
-								}
+										@Override
+										public IExpression getExpression() {
+										    return ((IExpressionVariable<Object>)v).getExpression();
+										}
+										@Override
+										public Map<String, ITimedVariable<?>> getContext() {
+										    return ((IExpressionVariable<Object>)v).getContext();
+										}
                 						
         					    	}
         					    	:
@@ -1164,6 +1168,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
     					    }
 
 					    expressionContext = irpfExpressionContext;
+					} else {
+					    for ( String irpfVar : new String  [] {
+							    TMP_IN_KIND.getName(),
+							  } ) {
+					    	if ( expressionContext.isDef(irpfVar)  && !expressionContext.containsVariable(irpfVar, deductionStart, deductionEnd) ) {
+					    		expressionContext.setVariable(irpfVar, 0.00, deductionStart, deductionEnd);
+					    	}
+					    }
 					}
 					
 				} else {
@@ -1774,7 +1786,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			PaymentType contractPaymentType = getPaymentType(contractPayment);
 			
-			if ( isExtra(expressionContext)
+			if (isLog(name) ) {
+				// Nothing at all
+			} else if ( isExtra(expressionContext)
 				//&& contractPaymentType != PaymentType.CRA_0000
 				&& contractPayment.getScope() == ExpressionScope.SALARY ) {
 				; // Skip EXTRA Concepts
@@ -2132,6 +2146,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		} catch ( Exception e ) {
 			return false;
 		}
+	}
+
+	private static boolean isLog(String name) {
+		for ( String var :  ContextVariable.LOGS ) 
+			if ( AonStringUtils.equalsIgnoreCase(var, name))
+				return  true;
+		return false;
 	}
 
 	private static boolean isExtra(ExpressionContext expressionContext) {

@@ -5,7 +5,7 @@
 	export const removeRootPanel = (panel) => {
 		panel = panel || 'rootPanel';
 		const myNode = window.document.getElementById(panel);
-		myNode.innerHTML = '';
+		if(myNode) myNode.innerHTML = '';
 	}
 
 	export const rootPanel = (html) => new Promise((resolve)=>{
@@ -122,13 +122,14 @@
 	}
 
 	export const iStartModule = (module, entrypoint, subEntryPoint, rootPanel, customize, params = {}) => {
+		
 		let panel = rootPanel || 'rootPanel';
 		localStorage.removeItem('rootPanel');
 
 		let queryString = Object.keys( params ).map( key => `${key}=${params[key]}`).join('&');
 		
 		localStorage.setItem('aon_solutions', true);
-		removeRootPanel(panel);
+		
 		if (window.document.createElement && window.document.getElementsByTagName) {
 			
 			let iframe = window.document.createElement(TAG.IFRAME)
@@ -160,7 +161,6 @@
 					iwindow.getCurrentUser = () => LS.getDomainLogin();
 					iwindow.isSysAdmin = () => true;
 
-
 					// inject 'gwt' script 
 					
 					for (const sheet of document.styleSheets) {
@@ -179,7 +179,7 @@
 					let rootPanel = idocument.createElement(TAG.DIV);
 					rootPanel.id = 'rootPanel';
 					idocument.body.appendChild(rootPanel);
-
+					
 					let script = idocument.createElement(TAG.SRIPT);
 					script.type = "text/javascript";
 					script.defer = "true";
@@ -221,7 +221,7 @@
 					aonRichCssLink.type= 'text/css';
 					aonRichCssLink.href = '/aonResource/aon-richCss.css';
 					idocument.head.insertBefore(aonRichCssLink, idocument.head.firstChild);
-					
+
 					fetch('css/gwt.css')
 					.then(response => response.text())
 					.then((text) => {
@@ -234,6 +234,8 @@
 
 				}
 			});
+			
+			removeRootPanel(panel);
 			
 			document.getElementById(panel)?.appendChild(iframe);
 			

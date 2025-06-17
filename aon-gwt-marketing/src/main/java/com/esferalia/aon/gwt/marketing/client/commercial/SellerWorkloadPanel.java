@@ -279,13 +279,18 @@ public abstract class SellerWorkloadPanel extends ScrollPanel {
 		}, ClickEvent.getType());
 		row.getElement().getStyle().setProperty("padding", "0 12px");
 		
-		Label name = new Label(sellerWorkload.getName());
-		name.setTitle(sellerWorkload.getName());
+		Label name = new Label(null != sellerWorkload.getProjectHolder() ? sellerWorkload.getProjectHolder().getTaskHolder().getName() : sellerWorkload.getName());
+		name.setTitle(null != sellerWorkload.getProjectHolder() ? sellerWorkload.getProjectHolder().getTaskHolder().getName() : sellerWorkload.getName());
 		tab.addInlineStyle(name, COLS.DES.getStyles());
 		tab.addRow(row, name, COLS.DES.getColWidth());
 		
 		tab.addRow(row, new Label(sellerWorkload.getScope() == null ? null : sellerWorkload.getScope().getDescription()), COLS.TYP.getColWidth());
-		tab.addRow(row, new Label(sellerWorkload.isActive() ? "Activo" : "Inactivo"), COLS.ACT.getColWidth());
+		
+		String activeValue = sellerWorkload.isActive() ? "Activo" : "Inactivo";
+		if(null != sellerWorkload.getProjectHolder())
+			activeValue = sellerWorkload.getProjectHolder().getTaskHolder().getStatus().getDescription();
+		
+		tab.addRow(row, new Label(activeValue), COLS.ACT.getColWidth());
 		
 		List<Entry<Date, SellerWorkloadPeriod>> entries = sellerWorkload.getPeriods().entrySet().stream().collect(Collectors.toList());
 		for(int i=0; i < entries.size(); i++) {

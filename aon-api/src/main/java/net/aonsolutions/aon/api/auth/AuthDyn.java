@@ -104,7 +104,7 @@ public class AuthDyn {
 				try {
 					File file = File.createTempFile(AVATAR, auth.getAttach().getMimetype().getExtension());
 					AonFileUtils.writeByteArrayToFile(file, auth.getAttach().getData());
-					String fileId = S3.upload(AUTH_ATTACH_BUCKET, auth.getUuid(), file);
+					String fileId = S3.getInstance().upload(AUTH_ATTACH_BUCKET, auth.getUuid(), file);
 					auth.setAvatar(fileId);
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -8,7 +8,6 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
@@ -44,6 +43,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	private ProjectPanel projectPanel;
 	
 	private Integer customerId;
+	private Integer officeDomain;
 	
 	private static CommonServiceAsync commonService;
 	
@@ -54,51 +54,54 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 		}
 	}
 	
-	public ProjectModulePanel(ProjectModuleOptions options, Integer customer) {
-		super("Agentes Comerciales");
+	public ProjectModulePanel(ProjectModuleOptions options, Integer customer, Integer officeDomain) {
+		super(customer <= 0 ? "Expedientes" : null);
 		
 		initializeCommonService();
 		
 		this.options = options;
-		this.customerId = customer > 0 ? customer : null;
-		
-		addButtonsToolbar();
+		this.customerId = customer;
+		this.officeDomain = officeDomain;
 		
 		if(null == customerId) {
-			setSearchPlaceholder("Busqueda por nombre, alias, titular...");
+			addButtonsToolbar();
 			
-			addKeyUpHandler(e -> {
-				String value = getSearchTextBox().getValue();
-				if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
-					onSearch();
-				} else if(AonStringUtils.isBlank(value)) {
-					onSearch();
-				}
-			});
-		} else
-			showSeachButton();
-		
-		
-		type.addItem("-", "");
-		getProjectTypes(projectTypes -> projectTypes.forEach(projectType -> type.addItem(projectType.getDescription(), projectType.getId().toString())));
-		type.addChangeHandler(e -> onSearch());
-		
-		date.addValueChangeHandler(e -> onSearch());
-		
-		addFilterWidget(type);
-		addFilterWidget(date);
-		
-		sort.addItem("Nombre", "name");
-		sort.addItem("Tipo", "type");
-		sort.addItem("Fecha", "date");
-		sort.getListBox().addChangeHandler(event -> onSearch());
-		
-		asc.addItem("Ascendente", "true");
-		asc.addItem("Descendete", "false");
-		asc.getListBox().addChangeHandler(event -> onSearch());
-		
-		addSortWidget(sort);
-		addSortWidget(asc);
+			if(null == customerId) {
+				setSearchPlaceholder("Busqueda por nombre, alias, titular...");
+				
+				addKeyUpHandler(e -> {
+					String value = getSearchTextBox().getValue();
+					if(AonStringUtils.isNotBlank(value) && value.length() > 2) {
+						onSearch();
+					} else if(AonStringUtils.isBlank(value)) {
+						onSearch();
+					}
+				});
+			} else
+				showSeachButton();
+			
+			
+			type.addItem("-", "");
+			getProjectTypes(projectTypes -> projectTypes.forEach(projectType -> type.addItem(projectType.getDescription(), projectType.getId().toString())));
+			type.addChangeHandler(e -> onSearch());
+			
+			date.addValueChangeHandler(e -> onSearch());
+			
+			addFilterWidget(type);
+			addFilterWidget(date);
+			
+			sort.addItem("Nombre", "name");
+			sort.addItem("Tipo", "type");
+			sort.addItem("Fecha", "date");
+			sort.getListBox().addChangeHandler(event -> onSearch());
+			
+			asc.addItem("Ascendente", "true");
+			asc.addItem("Descendete", "false");
+			asc.getListBox().addChangeHandler(event -> onSearch());
+			
+			addSortWidget(sort);
+			addSortWidget(asc);
+		}
 		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
@@ -121,6 +124,9 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 		
 		projectPanel.resetSearchOffset();
 		
+		type.setValue("");
+		date.setValue(null);
+		
 		onSearch();
 	}
 
@@ -132,34 +138,22 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	}
 
 	private void showSellerDialog() {
-		AonCustomDialog dialog = new AonCustomDialog();
-		dialog.setCaption( "Nuevo Expediente" );
-		AonProjectPanel projectPanel = new AonProjectPanel( options.getDomainName(), options.getDomain(), options.getUser(), customerId, new AonProjectPanelCallback() {
-			
-			@Override
-			public void onCancel() {
-				dialog.hide();
-			}
-			
-			@Override
-			public void onAccept(Project project) {
-				dialog.hide();
-				onProjectCreate(project);
-			}
-		}) {
-
-			@Override
-			protected void onResize() {
-				dialog.showLoaded();
-			}};
-		
-		dialog.add( projectPanel );
+		 new AonProjectPanel( options.getDomainName(), options.getDomain(), options.getUser(), customerId, officeDomain, new AonProjectPanelCallback() {
+				
+				@Override
+				public void onCancel() {}
+				
+				@Override
+				public void onAccept(Project project) {
+					onProjectCreate(project);
+				}
+		});
 	}
 
 	public void onSearch() {
 		ProjectParams params = getWidgetParams();
 		centerPanel.clear();
-		projectPanel = new ProjectPanel(params, centerPanel, customerId) {
+		projectPanel = new ProjectPanel(params, customerId, officeDomain) {
 
 			@Override
 			protected void onProjectOpen(Project project) {
@@ -180,6 +174,11 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 			protected void onShowLoadingMessage(String loadingMessage) {
 				AonMessagePanel.showLoading(messagePanel, loadingMessage);
 			}
+
+			@Override
+			protected void onProjectCreation(Project project) {
+				onProjectCreate(project);
+			}
 		
 		};
 		
@@ -194,12 +193,13 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 		
 		if(null != customerId)
 			params.setRegistry(customerId);
-		else 
+		else {
 			params.setDescription(getSearchTextBox().getValue());
-			
+			params.setDate(date.getValue());
+			params.setProjectType(AonStringUtils.isBlank(type.getValue()) ? null : Integer.parseInt(type.getValue()));
+		}
 		
-		params.setProjectType(AonStringUtils.isBlank(type.getValue()) ? null : Integer.parseInt(type.getValue()))
-			.setOrderBy(sort.getValue())
+		params.setOrderBy(sort.getValue())
 			.setAsc(Boolean.parseBoolean(asc.getValue()))
 			;
 		
@@ -215,7 +215,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	}
 	
 	private void getProjectTypes(Consumer<List<ProjectType>> finish) {
-		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ProjectType>>() {
+		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, new AsyncCallback<List<ProjectType>>() {
 			
 			@Override
 			public void onSuccess(List<ProjectType> projectTypes) {

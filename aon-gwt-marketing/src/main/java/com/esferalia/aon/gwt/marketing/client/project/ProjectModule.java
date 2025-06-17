@@ -32,6 +32,9 @@ public class ProjectModule extends MainEntryPoint {
 	private DeckLayoutPanel deckLayoutPanel;
 	private ProjectModulePanel projectModulePanel;
 	private ProjectEntryPanel projectEntryPanel;
+	
+	private Integer customerId;
+	private Integer officeDomain;
 
 	@Override
 	public void onModuleLoad() {
@@ -45,6 +48,9 @@ public class ProjectModule extends MainEntryPoint {
 		options.setDomainName(getCurrentDomainName());
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
+		
+		customerId = getCustomer() > 0 ? getCustomer() : null;
+		officeDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
 
 		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),
 				new AsyncCallback<AonConfiguration>() {
@@ -68,7 +74,7 @@ public class ProjectModule extends MainEntryPoint {
 
 		deckLayoutPanel = new DeckLayoutPanel();
 
-		projectModulePanel = new ProjectModulePanel(options, getCustomer()) {
+		projectModulePanel = new ProjectModulePanel(options, customerId, officeDomain) {
 
 			@Override
 			protected void onProjectSelect(Project project) {
@@ -82,12 +88,11 @@ public class ProjectModule extends MainEntryPoint {
 
 		};
 
-		projectEntryPanel = new ProjectEntryPanel(options) {
+		projectEntryPanel = new ProjectEntryPanel(options, officeDomain) {
 
 			@Override
 			protected void onBackClick() {
 				showProjectList();
-				projectModulePanel.getSearchTextBox().setValue(null, false);
 			}
 
 			@Override
@@ -119,6 +124,7 @@ public class ProjectModule extends MainEntryPoint {
 		
 		// Remove customer from LS
 		removeCustomer();
+		removeOfficeDomain();
 	}
 
 	private void showProjectList() {

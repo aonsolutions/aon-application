@@ -26,7 +26,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -149,7 +148,7 @@ public abstract class Variables extends Composite {
 	// & DataGrid)
 
 	private void setScrollPanelHeight() {
-		variablesDG.setHeight((Window.getClientHeight() - 230) + "px");
+		variablesDG.setHeight("95%");
 	}
 
 	// ----------------------------------------------- ProvidevariablesDG

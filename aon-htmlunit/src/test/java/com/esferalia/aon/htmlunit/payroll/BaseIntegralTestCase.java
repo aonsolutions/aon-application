@@ -182,6 +182,10 @@ public abstract class BaseIntegralTestCase {
 		return (List<T>) htmlPage.getElementsById(GWT_DEBUG_ID_PREFIX +id);
 	}
 
+	protected static <T extends DomElement> T getElementByXpath(String xpath) {
+		return (T) htmlPage.getFirstByXPath(xpath);
+	}
+
 	protected static void calculate(int month) throws IOException, InterruptedException, ParseException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MONTH, month);

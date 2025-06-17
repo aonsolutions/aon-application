@@ -2,6 +2,7 @@
 
 export const ABOUT = 'Um'
 export const ACADEMIES = 'Akademien';
+export const ACADEMY = 'Akademie';
 export const ACCEPT = 'Akzeptieren';
 export const ACCESS = "Zugang";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'zugriff auf ihr AON-konto';
@@ -80,6 +81,7 @@ export const CITY = 'Stadt';
 export const CLASSIC = 'Klassiker';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
+export const CLIENT_FILE = 'Kundendatei';
 export const CLOSE = 'nah dran';
 export const CLOSE_SESSION = 'Ausloggen';
 export const CLOSED = 'Geschlossen';
@@ -206,9 +208,11 @@ export const FRENCH = 'Französisch';
 // ----- G
 
 export const GALICIAN = 'Galician';
+export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'General Information';
 export const GET_INVOICE = 'Rechnung Bekommen';
 export const GET_INVOICES = 'Rechnungen Bekommen';
+export const GO_CONFIGURATION = 'Gehen Sie zu den Einstellungen';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
@@ -272,6 +276,7 @@ export const LINK_CLIENT = "Client vinden";
 export const LINKED = 'Verlinkt';
 export const LINKED1 = 'Verlinkt';
 export const LINKING = "Verlinkung";
+export const LINK_CUSTOMER = 'Link-Client';
 export const LINK_DOMAINS = 'Domains Verknüpfen';
 export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
 export const LOADING = 'Wird geladen';
@@ -316,6 +321,7 @@ export const NEW_WAREHOUSE = 'Neue Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
 export const NO_DATA = 'Keine Daten verfügbar';
+export const NO_LINK_CLIENT = 'Nicht verknüpfter Client';
 export const NOT_LINKED = 'Nicht verbunden';
 export const NOT_LINKED1 = 'Nicht verbunden';
 export const NOTIFICATION = 'Benachrichtigung';

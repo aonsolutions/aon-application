@@ -14,6 +14,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -27,6 +28,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TediValidator {
@@ -75,7 +77,9 @@ public class TediValidator {
 	 * Si la factura es de ventas, debe tener número de factura.
 	 */
 	private static final Consumer<ValidationContext> EMPTY_SALES_NUMBER = ctx -> {
-		if (ctx.getInvoice().isSales() && ctx.getInvoice().getNumber() == 0 ) {
+		if (ctx.getInvoice().isSales() 
+			&& ctx.getInvoice().getNumber() == 0 
+			&& AonStringUtils.isBlank(ctx.getInvoice().getReferenceCode())) {
 			ctx.add( InvoiceErrorMessages.C001.wrn(InvoiceErrorKey.NUMBER));
 		}
 	};
@@ -158,6 +162,21 @@ public class TediValidator {
 			ctx.add( InvoiceErrorMessages.C001.err(InvoiceErrorKey.TAX_DATE) );
 		}
 	};
+	
+	/**
+	 * Si se ha indicado una fecha de límte de operaciones en los parámetros de la 
+	 * empresa, debe ser anterior a la fecha de factura.
+	 * 
+	 */
+	private static final Consumer<ValidationContext> OPERATIONS_DEADLINE = ctx -> {
+		if (ctx.getConfig() != null) {
+			Date deadline = ctx.getConfig().getOperationsDeadline();
+			if (deadline != null && deadline.after(ctx.getInvoice().getIssueDate()))
+				ctx.add( InvoiceErrorMessages.C007.wrn(InvoiceErrorKey.ISSUE_DATE) );
+		}
+	};
+
+	
 	/**
 	 * El Tipo de la factura no puede ser null.
 	 */
@@ -255,14 +274,9 @@ public class TediValidator {
 		}
 	};
 
-	private static final Consumer<ValidationContext> DETAILS_VALIDATION = ctx -> {
-		if (ctx.getInvoice().getDetails() != null) {
-			for (InvoiceDetail detail : ctx.getInvoice().getDetails()) {
-				OVERFLOW_DETAIL_DESCRIPTION
-				 .accept(ctx,detail);
-			}
-		}
-	};
+	private static final Consumer<ValidationContext> DETAILS_VALIDATION = ctx -> 
+		ctx.getInvoice().detailStream().forEach(d -> OVERFLOW_DETAIL_DESCRIPTION.accept(ctx,d));
+	
 
 	private static final BiConsumer<Finance,ValidationContext> CHECK_FINANCE_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount())) {
@@ -283,16 +297,13 @@ public class TediValidator {
 		}
 	};
 	
-	private static final Consumer<ValidationContext> FINANCES_VALIDATION = ctx -> {
-		if (ctx.getResult().getAccountingInvoice() != null && ctx.getResult().getAccountingInvoice().getInvoice().getFinances() != null) {
-			for (Finance finance : ctx.getResult().getAccountingInvoice().getInvoice().getFinances()) {
+	private static final Consumer<ValidationContext> FINANCES_VALIDATION = ctx -> 
+		ctx.getInvoice().financeStream()
+			.forEach(f -> 
 				CHECK_FINANCE_AMOUNT_ZERO
-				.andThen(CHECK_BANK_ACCOUNT)			
-			 	.accept(finance, ctx);
-			}
-		}
-	};
-
+					.andThen(CHECK_BANK_ACCOUNT)			
+				 	.accept(f, ctx)
+			);
 	
 	/**
 	 * Si el año de la factura no es anterior en cinco años al actual.
@@ -308,7 +319,7 @@ public class TediValidator {
 	};
 
 	private static final Consumer<ValidationContext> CHECK_LINES = ctx -> {
-		if (AonCollectionUtils.isEmpty(ctx.getInvoice().getDetails())) {
+		if (!ctx.getInvoice().hasDetails()) {
 			ctx.add( InvoiceErrorMessages.C010.err(InvoiceErrorKey.DETAILS) );
 		}
 	};
@@ -335,33 +346,57 @@ public class TediValidator {
 		}
 	};
 
+	private static final Consumer<ValidationContext> ACCOUNT_PERIOD_VALIDATION = ctx -> {
+		if (ctx.getResult().getAccountingInvoice() != null 
+		 && ctx.getResult().getAccountingInvoice().getAccountEntry() != null
+		 && ctx.getConfig() != null
+		 && ctx.getConfig().accounting() != null
+		 ) {
+			AccountEntry ae = ctx.getResult().getAccountingInvoice().getAccountEntry();
+			AonCollectionUtils.stream(ctx.getConfig().accounting().getPeriods())
+				.filter( p -> AonNumberUtils.equals(p.getId(),ae.getPeriod()) && p.getStatus().isActive() )
+				.findFirst()
+				.ifPresentOrElse( 
+					p -> {}
+					, () -> {
+						ctx.add( InvoiceErrorMessages.C201.wrn(InvoiceErrorKey.ACCOUNT_ENTRY) );		
+					}
+				);
+		}
+	};
+	
 	private static boolean willOverflow(Field<String> field, String series) {
 		return (AonStringUtils.length(series) > field.getDataType().length());
 	}
 
 	private static class ValidationContext {
 		private AONContext ctx;
+		private AonConfiguration config;
 		private TediResult result; 
 		
-		private ValidationContext(AONContext ctx,TediResult result) {
+		private ValidationContext(AONContext ctx,AonConfiguration config,TediResult result) {
 			this.ctx = ctx;
+			this.config = config;
 			this.result = result;
 		}
 		private AONContext getCtx() {
 			return ctx;
 		}
+		public AonConfiguration getConfig() {
+			return config;
+		}
 		private TediResult getResult() {
 			return result;
 		}
 		public void add(InvoiceError err) {
-			this.getResult().add(err);
+			this.getResult().getAccountingInvoice().add(err);
 		}
 		public Invoice getInvoice() {
 			return this.getResult().getInvoice();
 		}
 	}
 	
-	public static void validateInvoice(AONContext ctx,TediResult result) throws AonCoreException {
+	public static void validateInvoice(AONContext ctx,AonConfiguration config, TediResult result) throws AonCoreException {
 		
 		EMPTY_DOMAIN
 			.andThen(EMPTY_INVOICE_SCOPE)
@@ -370,6 +405,7 @@ public class TediValidator {
 			.andThen(EMPTY_SALES_NUMBER)
 			.andThen(OVERFLOW_REFERENCE_CODE)
 			.andThen(EMPTY_DATE)
+			.andThen(OPERATIONS_DEADLINE)
 			.andThen(DUPLICATED_SERIES_NUMBER)
 			.andThen(DUPLICATED_REFERENCE_CODE)
 			.andThen(EMPTY_TAX_DATE)
@@ -389,9 +425,10 @@ public class TediValidator {
 			.andThen(FINANCES_VALIDATION)
 			
 			.andThen(ENTRY_SETTLED)
+			.andThen(ACCOUNT_PERIOD_VALIDATION)
 			
-		.accept(new ValidationContext(ctx,result));
-		
+		.accept(new ValidationContext(ctx,config,result));
+
 //		.andThen(EMPTY_TRANSACTION)
 //		.andThen(VALIDATE_INVOICE_DETAILS)
 //		.andThen(OPERATIONS_DEADLINE)

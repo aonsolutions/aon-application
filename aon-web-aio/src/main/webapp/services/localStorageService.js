@@ -31,7 +31,11 @@ export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
 
+export const BETA = 'beta';
+
 export const BETADOC = 'betadoc';
+
+
 export const get = (item) => {
 	let value = getParam(item);
 	if ( value === null ){
@@ -328,6 +332,11 @@ export const isSuite = () => {
 export const setSuite = (suite) => {
     set(SUITE, suite);
     location.reload();
+}
+
+export const isBeta = () => {
+    const beta = get(BETA);
+    return CONSTANT.TRUE == beta;
 }
 
 export const isBetaDoc = () => {

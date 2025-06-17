@@ -9,6 +9,9 @@ const CREDITORS = `${API_URL}/creditors`;
 const SUPPLIERS = `${API_URL}/suppliers`;
 const SEGMENTS = `${API_URL}/segments`;
 const RELATIONSHIP = `${API_URL}/relationship`;
+const RELATIONSHIP_COMPANY = `${API_URL}/relationship/company`;
+const SIBLINGS_OFFICE = `${API_URL}/relationship/siblingsOffice`;
+const CUSTOMER_NOTES = `${API_URL}/customersNotes`;
 const EMAILS = `emails`;
 const TRANSACTION = `transaction`;
 
@@ -55,9 +58,15 @@ export const getRelationShips = (data) => get(RELATIONSHIP, data);
 export const getRelationShip = (data) => get(`${RELATIONSHIP}/${data.registry}`, data);
 export const saveRelationShip = (data) => put(`${RELATIONSHIP}/${data.registry}`, data);
 export const removeRelationShip = (data) => remove(`${RELATIONSHIP}/${data.registry}`, data);
+export const getRelationShipCompany = (data) => get(RELATIONSHIP_COMPANY, data);
+export const getSiblingsOffice = (data) => get(SIBLINGS_OFFICE, data);
 
 // SUGGESTED ACCOUNT
 
 export const getRegistrySuggestedAccount = (data) => get(SUGGESTED_ACCOUNT, data);
 
 export const downloadRegistryExcel = (data) => openFileUrl(`${API_URL}/downloadRegistryExcel?json=${data}`);
+
+// CUSTOMER NOTES
+
+export const getCustomerNotes = (data) => get(CUSTOMER_NOTES, data);

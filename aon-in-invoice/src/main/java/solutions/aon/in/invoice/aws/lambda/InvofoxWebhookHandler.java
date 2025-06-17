@@ -211,7 +211,7 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 		String s3Key = get(data, "clientData/loadS3/key");
 		String s3Bucket = get(data, "clientData/loadS3/bucket");
 
-		URL downloadURL = S3.getURL(s3Bucket, s3Key);
+		URL downloadURL = S3.getInstance().getURL(s3Bucket, s3Key);
 		params.put("downloadURL", downloadURL.toExternalForm());
 
 		String documentNumber = get(data, "data/documentNumber/value");

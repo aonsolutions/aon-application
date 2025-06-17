@@ -108,7 +108,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
             			s3UploadEventObject.setKey(s3UploadEventObject.getKey().replace(extension, ".pdf"), s3UploadEventObject);
             			s3UploadEventObject.setFileName(s3UploadEventObject.getFileName().replace(extension, ".pdf"));	
         			}
-        			solutions.aon.aws.s3.S3.upload(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey(), pdf);	
+        			solutions.aon.aws.s3.S3.getInstance().upload(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey(), pdf);	
         			s3UploadEventObject.setContentType("application/pdf", s3UploadEventObject);
     			} catch (Exception e) {
     				e.printStackTrace();
@@ -168,7 +168,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     static boolean isImage(S3EventObject s3UploadEventObject) {
     	System.out.println(s3UploadEventObject.getBucket());
     	System.out.println(s3UploadEventObject.getKey());
-    	String contentType = solutions.aon.aws.s3.S3.getContentType(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
+    	String contentType = solutions.aon.aws.s3.S3.getInstance().getContentType(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
     	System.out.println(contentType);
     	return contentType != null && contentType.toLowerCase().contains("image");
     }
@@ -186,11 +186,11 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     static String getDowloadURL(S3EventObject s3Object) {
-    	return S3.getURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
+    	return S3.getInstance().getURL(s3Object.getBucket(), s3Object.getKey()).toExternalForm();
     }
 
     static byte[] download(S3EventObject s3Object) throws IOException {
-    	return S3.download(s3Object.getBucket(), s3Object.getKey());
+    	return S3.getInstance().download(s3Object.getBucket(), s3Object.getKey());
 	}
     
     static String getLoadBatchKey(S3UploadEventObject s3Object) {
@@ -402,7 +402,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     	
     	String contentType = s3UploadEventObject.getContentType() != null
     			? s3UploadEventObject.getContentType()
-    			: solutions.aon.aws.s3.S3.getContentType(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
+    			: solutions.aon.aws.s3.S3.getInstance().getContentType(s3UploadEventObject.getBucket(), s3UploadEventObject.getKey());
     	file.put("content_type", contentType);
     	json.put(IJsonNames.FILE, file);
     	json.put(IJsonNames.STATUS, rawdocStatus.getTediName());

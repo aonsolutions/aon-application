@@ -93,8 +93,8 @@ export class AonDesktop extends AonElement {
 
 	connectedCallback() {
 		if (LS.isNewTheme()) {
-			let span = this.getElement('aonHeaderHome');
-			if (span) span.style.display = 'none';
+			/*let span = this.getElement('aonHeaderHome');
+			if (span) span.style.display = 'none';*/
 
 			let expandButtonDiv = this.getElement('aonExpandButtonDiv');
 			if (expandButtonDiv) expandButtonDiv.style.display = 'block';
@@ -613,7 +613,7 @@ export class AonDesktop extends AonElement {
 			contractGraphCard.firstChild.children.item(1).style.height = "22.5rem";
 			contractGraphCard.firstChild.style.margin = '0';
 
-		} else if ( this.getDur().isPayrollManager() ){
+		} if ( this.getDur().isPayrollManager() ){
 			let payrollCard = new AonCard();
 			payrollCard.classList.add(CSS.AON_DASHBOARD_CARD);
 			payrollCard.id = CONSTANT.PAYROLL;

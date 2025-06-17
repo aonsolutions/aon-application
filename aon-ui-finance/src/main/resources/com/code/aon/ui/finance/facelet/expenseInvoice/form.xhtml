@@ -23,13 +23,22 @@
 					<ui:param name="saveButtonReRender" value="expenseInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!expenseInvoice.nevv and expenseInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:htmlCommandLink id="expenseInvoice-report"
-							value="#{bundle.finance_invoice}" target="_new" 
-							rendered="#{expenseInvoice.attachmentAvailable}"
-							action="#{expenseInvoiceSigner.onReport}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-						</aon:htmlCommandLink>											
+						<aon:if test="#{expenseInvoice.hasInvoiceDoc()}">
+							<aon:outputLink id="expenseInvoice-downloadPdf"
+								target="_blank" value="#{expenseInvoice.invoiceDoc.url}" 
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						    </aon:outputLink>
+						</aon:if>
+						
+						<aon:if test="#{!expenseInvoice.hasInvoiceDoc()}">
+							<aon:htmlCommandLink id="expenseInvoice-report"
+								value="#{bundle.finance_invoice}" target="_new" 
+								rendered="#{expenseInvoice.attachmentAvailable}"
+								action="#{expenseInvoiceSigner.onReport}"
+								accesskey="#{bundle.aon_key_print}"
+								styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							</aon:htmlCommandLink>
+						</aon:if>											
 					</ui:define>
 					<ui:define name="moreMenuContent">
 						<aon:menuItem id="finances"

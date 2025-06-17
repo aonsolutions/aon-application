@@ -328,7 +328,7 @@ const createText = (properties) => newComponent({
   styles: {
       color: properties.color,
       fontSize: properties.fontSize ? properties.fontSize : "1em",
-      fontFamily: properties.fontFamily ? properties.fontFamily : "Roboto",
+      fontFamily: properties.fontFamily ? properties.fontFamily : '"Noto Sans", sans-serif',
       fontWeight: properties.fontWeight ? properties.fontWeight : "500",
   }
 });

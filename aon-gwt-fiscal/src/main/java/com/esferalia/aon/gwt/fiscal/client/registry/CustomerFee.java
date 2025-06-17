@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -138,16 +139,17 @@ public class CustomerFee extends MainEntryPoint {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
 		, CUS("Cliente"								,"-moz-available"  	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STS("Estado"								,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, LIN("Linea"								,"3.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, CON("Concepto"							,"12rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
 		;
 
 		String headerLabel;
@@ -172,18 +174,19 @@ public class CustomerFee extends MainEntryPoint {
 	
 	private static enum CUSTOMER_COLS {
 		  CHK(AonStringUtils.EMPTY					,"2rem"				,"") 
-		, LIN("Linea"								,"3.5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, CON("Concepto"							,"-moz-available" 	,"min-width: 15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, LIN("#"									,"2rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, CON("Concepto"							,"-moz-available" 	,"min-width: 5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PER("Periodo"								,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, QUA("Cant."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRI("Precio"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, DIS("Dto."								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, DIS("Dto."								,"3rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
+		, IMP("Importe"								,"4rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, STA("F. Desde"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, BIL("F. Factur."							,"6rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, END("F. Hasta"							,"5rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, PRO("Expediente"							,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
 		, SEL("Agente"								,"7rem" 			,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
-		, BUT(AonStringUtils.EMPTY					,"2.5rem" 			,"")
+		, BUT(AonStringUtils.EMPTY					,"2.3rem" 			,"")
 		;
 
 		String headerLabel;
@@ -247,7 +250,7 @@ public class CustomerFee extends MainEntryPoint {
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
 		
-		customerId = getCustomer();
+		customerId = getCustomer() > 0 ? getCustomer() : null;
 		removeCustomer();
 		
 		this.onModuleLoad(options);
@@ -1105,46 +1108,93 @@ public class CustomerFee extends MainEntryPoint {
 		HTMLPanel row = tab.createRow();
 		row.addDomHandler(e -> {
 			e.stopPropagation();
-			new CustomerFeeDialog(fee, options) {
-				
-				@Override
-				protected void onAccept(Fee fee) {
-					LinkedList<Fee> fees = new LinkedList<Fee>();
-					fee.setModify(true);
-					fees.add(fee);
+			if(!isCustomer()) {
+				new CustomerFeeDialog(fee, options) {
 					
-					SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
-							new AsyncCallback<Integer>() {
+					@Override
+					protected void onAccept(Fee fee) {
+						LinkedList<Fee> fees = new LinkedList<Fee>();
+						fee.setModify(true);
+						fees.add(fee);
+						
+						SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
+								new AsyncCallback<Integer>() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
-								}
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+									}
 
-								@Override
-								public void onSuccess(Integer updates) {
-									AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
-									addValueButton.setEnabled(false);
-									deleteFeeButton.setEnabled(false);
-									exportButton.setEnabled(false);
-									onSearch();
-								}
-							});
-				}
+									@Override
+									public void onSuccess(Integer updates) {
+										AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+										addValueButton.setEnabled(false);
+										deleteFeeButton.setEnabled(false);
+										exportButton.setEnabled(false);
+										onSearch();
+									}
+								});
+					}
 
-				@Override
-				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+					@Override
+					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
 
-				@Override
-				protected void onCreate(Fee fee) {}
+					@Override
+					protected void onCreate(Fee fee) {}
 
-				@Override
-				protected void onCreate(Fee fee, Integer ritem) {
-					// TODO Auto-generated method stub
+					@Override
+					protected void onCreate(Fee fee, Integer ritem) {
+						// TODO Auto-generated method stub
+						
+					}
 					
-				}
+				};
+			} else {
+				getCustomer(customer -> {
+					new CustomerFeeDialog(fee, customer, options) {
+						
+						@Override
+						protected void onAccept(Fee fee) {
+							LinkedList<Fee> fees = new LinkedList<Fee>();
+							fee.setModify(true);
+							fees.add(fee);
+							
+							SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
+									new AsyncCallback<Integer>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+											AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+										}
+
+										@Override
+										public void onSuccess(Integer updates) {
+											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+											addValueButton.setEnabled(false);
+											deleteFeeButton.setEnabled(false);
+											exportButton.setEnabled(false);
+											onSearch();
+										}
+									});
+						}
+
+						@Override
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+						@Override
+						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					};
+				});
 				
-			};
+			}
+			
 		}, ClickEvent.getType());
 		
 		AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction(), AON.CSS.aonIconCheck());
@@ -1216,6 +1266,13 @@ public class CustomerFee extends MainEntryPoint {
 		tab.addInlineStyle(discount, COLS.DIS.getStyles());
 		tab.addRow(row, discount, COLS.DIS.getColWidth());
 		
+		double totalValue = getTotalNetPrice(fee);
+		Label total = new Label(totalValue + "");
+		discount.setTitle(totalValue + "");
+		tab.addInlineStyle(total, COLS.IMP.getStyles());
+		tab.addRow(row, total, COLS.IMP.getColWidth());
+		
+		
 		String startValue = null == fee.getStartDate() ? "" : formatDate.format(fee.getStartDate()) ;
 		Label start = new Label(startValue);
 		start.setTitle(startValue);
@@ -1254,6 +1311,18 @@ public class CustomerFee extends MainEntryPoint {
 		
 		rowFees.put(fee.getId(), fee);
 		selectedItems.put(fee.getId(), checkButton);
+	}
+	
+	private double getNetCost(Fee fee) {
+		return fee.getPrice() * (1 - fee.getDiscount()/100);
+	}
+	 
+	private double getTotalNetPrice(Fee fee) {
+		return roundTwoDecimals( getNetCost(fee) * fee.getQuantity() );
+	}
+	
+	private double roundTwoDecimals(double value) {
+	    return Math.round(value * 100.0) / 100.0;
 	}
 
 	private void checkFeeStatus(Label label, AonDateBox startDateBox, AonDateBox endDateBox, Fee fee) {

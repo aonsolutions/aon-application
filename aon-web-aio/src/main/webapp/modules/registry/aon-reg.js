@@ -1182,15 +1182,6 @@ export class AonReg extends AonElement {
 	}
 
 	audit(){
-		let dialog = this.getApplication().getDialog();
-		dialog.clear();
-		dialog.setTitle(MSG.AUDIT);
-		if(this.isMobile()) {
-		  dialog.type = 'fullscreen';
-		} else {
-		  dialog.width = '400px';
-		}
-
 		let div = this.createElement(TAG.DIV);
 		div.style = `
 			display: flex;
@@ -1198,8 +1189,6 @@ export class AonReg extends AonElement {
 			gap: 10px;
 			margin-top: 16px;
 		`;
-		dialog.setContent(div);
-
 
 		if(this.registry.getCreationUser && this.registry.getCreationUser() && this.registry.getCreationDate()){
 			let divCreation = this.createElement(TAG.DIV);
@@ -1213,8 +1202,14 @@ export class AonReg extends AonElement {
 			div.appendChild(divModification);
 		}
 
+		let dialog = this.getApplication().getDialog();
+		dialog.clear();
+		dialog.setTitle(MSG.AUDIT);
+		if(this.isMobile()) dialog.type = 'fullscreen';
+		else dialog.width = '400px';
+		dialog.setContent(div);
 		dialog.addAcceptAction(() => {});
-		dialog.open();
+		dialog.open();	
 	}
 
 	setRegistry(registry) {

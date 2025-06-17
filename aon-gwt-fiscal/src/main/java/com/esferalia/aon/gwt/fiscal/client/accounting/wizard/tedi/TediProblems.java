@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
@@ -37,71 +36,73 @@ public class TediProblems extends ScrollPanel {
 			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
 			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
 			mainPanel.addStyleName(AON.CSS.aonFixedFont());
-			for (InvoiceError error : callback.getResult().getAccountingInvoice().getMessages()) {
-				FlowPanel flowPanel = new FlowPanel();
-				InlineLabel colorLabel = new InlineLabel("");
-				colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
-				colorLabel.addStyleName(AON.CSS.aonPaddingRight());
-				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-				flowPanel.add(colorLabel);
-
-				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-				errLabel.setStyleName(AON.CSS.aonPaddingLeft());
-				errLabel.addStyleName(AON.CSS.aonPaddingRight());
-				errLabel.addStyleName(AON.CSS.aonBold());
-				flowPanel.add(errLabel);
-
-				InlineLabel msgLabel = new InlineLabel(error.getMessage());
-				msgLabel.setStyleName(AON.CSS.aonMarginLeft());
-				flowPanel.add(msgLabel);
-
-				if (error.canBeFixed()) {
-					FlowPanel container = new FlowPanel();
-					container.setStyleName(AON.CSS.aonMarginTop());
-					container.addStyleName(AON.CSS.aonMarginBottom());
-					flowPanel.add(container);
-					TediContextVisitor tediContextVisitor = new TediContextVisitor(callback.getModuleOptions(), container);
-					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
-
-						@Override
-						public TediResult getResult() {
-							return callback.getResult();
-						}
-
-						@Override
-						public AonConfiguration getConfiguration() {
-							return callback.getConfiguration();
-						}
-
-						@Override
-						public void onCancel() {
-							// Nothing
-						}
-
-						@Override
-						public void onAccept(TediResult result) {
-							SERVICE.validateInvoice(
-								callback.getOccam().getDomainName()
-								,callback.getOccam().getUser()
-								,callback.getOccam().getDomain()
-								,result
-								,new AsyncCallback<TediResult>() {
-									
-									@Override
-									public void onSuccess(TediResult result) {
-										callback.onChanged(result);
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.onError(caught);
-									}
-								});
-						}
-					});
+			callback.getResult().getAccountingInvoice().messageStream()
+				.forEach( error -> {
+					FlowPanel flowPanel = new FlowPanel();
+					InlineLabel colorLabel = new InlineLabel("");
+					colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
+					colorLabel.addStyleName(AON.CSS.aonPaddingRight());
+					colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
+					flowPanel.add(colorLabel);
+	
+					InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
+					errLabel.setStyleName(AON.CSS.aonPaddingLeft());
+					errLabel.addStyleName(AON.CSS.aonPaddingRight());
+					errLabel.addStyleName(AON.CSS.aonBold());
+					flowPanel.add(errLabel);
+	
+					InlineLabel msgLabel = new InlineLabel(error.getMessage());
+					msgLabel.setStyleName(AON.CSS.aonMarginLeft());
+					flowPanel.add(msgLabel);
+	
+					if (error.canBeFixed()) {
+						FlowPanel container = new FlowPanel();
+						container.setStyleName(AON.CSS.aonMarginTop());
+						container.addStyleName(AON.CSS.aonMarginBottom());
+						flowPanel.add(container);
+						TediContextVisitor tediContextVisitor = new TediContextVisitor(callback.getModuleOptions(), container);
+						error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
+	
+							@Override
+							public TediResult getResult() {
+								return callback.getResult();
+							}
+	
+							@Override
+							public AonConfiguration getConfiguration() {
+								return callback.getConfiguration();
+							}
+	
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+	
+							@Override
+							public void onAccept(TediResult result) {
+								SERVICE.validateInvoice(
+									callback.getOccam().getDomainName()
+									,callback.getOccam().getUser()
+									,callback.getOccam().getDomain()
+									,result
+									,new AsyncCallback<TediResult>() {
+										
+										@Override
+										public void onSuccess(TediResult result) {
+											callback.onChanged(result);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											callback.onError(caught);
+										}
+									});
+							}
+						});
+					}
+					mainPanel.add(flowPanel);
 				}
-				mainPanel.add(flowPanel);
-			}
+			);
 		}
 	}
 

@@ -2,6 +2,7 @@
 
 export const ABOUT = 'About';
 export const ACADEMIES = 'Academies';
+export const ACADEMY = 'Academy';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
 export const ACCESS_TO_YOUR_AON_ACCOUNT = 'Acces to your AON account';
@@ -80,6 +81,7 @@ export const CITY = 'City';
 export const CLASSIC = 'Classic';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
+export const CLIENT_FILE = 'Client File';
 export const CLOSE = 'Close';
 export const CLOSE_SESSION = 'Logout';
 export const CLOSED = 'Closed'
@@ -207,9 +209,11 @@ export const FRENCH = 'French';
 // ----- G
 
 export const GALICIAN = 'Galician';
+export const GARAGE = 'Garage';
 export const GENERAL_INFORMATION = 'General Information';
 export const GET_INVOICE = 'Get Invoice';
 export const GET_INVOICES = 'Get Invoices';
+export const GO_CONFIGURATION = 'Go to settings';
 export const GROUP_DATA = 'Group Data';
 export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
@@ -273,6 +277,7 @@ export const LINK_CLIENT = "Link client";
 export const LINKED = 'Linked';
 export const LINKED1 = 'Linked';
 export const LINKING = "Linking";
+export const LINK_CUSTOMER = 'Link Client';
 export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LINK_DOMAIN_QUESTION = "Do you want to link this client to the domain?";
 export const LOADING = 'Loading';
@@ -317,6 +322,7 @@ export const NEW_WAREHOUSE = 'New Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
 export const NO_DATA = 'There is no data';
+export const NO_LINK_CLIENT = 'Unlinked client';
 export const NOT_LINKED = 'Not linked';
 export const NOT_LINKED1 = 'Not linked';
 export const NOTIFICATION = 'Notification';

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -68,6 +70,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -228,13 +231,13 @@ public interface CommonService extends RemoteService {
 	
 	List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException;
 	
-	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException;
+	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
 
 	List<User> getAviableServiceUsers(String domainName, int domain, String user) throws AonCoreException;
 	
 	List<ProjectActivity> getAviableProjectActivity(String domainName, int domain, String user) throws AonCoreException;
-	List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException;
+	List<ProjectType> getAviableProjectType(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 	
 	
 	// **************************************************
@@ -376,7 +379,23 @@ public interface CommonService extends RemoteService {
 	List<ProjectHolder> getProjectHolders(String domainName, int domain, String user, Integer projectId) throws AonCoreException;
 	ProjectHolder saveProjectHolder(String domainName, int domain, String user, ProjectHolder projectHolder) throws AonCoreException;
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId) throws AonCoreException;
-	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user, Integer domainSearch) throws AonCoreException;
 
+	List<ActivityType> getActivityTypes(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
+
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
 	
+	List<RegistryNote> getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
+	RegistryNote saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note) throws AonCoreException;
+	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id) throws AonCoreException;
+
+	// **************************************************
+	// ****************************** [CUSTOMER INVOICES]
+	// **************************************************
+	
+	List<Invoice> getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
+	String getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer officeDomain, Integer invoiceId) throws AonCoreException;
+
 }

@@ -487,7 +487,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 		regTable.add(labelsPanel);
 		
-		if (invoiceCallback.getInvoice().isTediParsed() && invoiceCallback.getInvoice().getMessages() != null && !invoiceCallback.getInvoice().getMessages().isEmpty() ) {
+		if (invoiceCallback.getInvoice() != null 
+			&& invoiceCallback.getInvoice().getInvoice() != null
+			&& invoiceCallback.getInvoice().isTediParsed() 
+			&& invoiceCallback.getInvoice().hasMessages() ) {
 			AonTableButton tediButton  = new AonTableButton("Avisos proceso OCR",AON.CSS.aonIconWarning());
 			tediButton.addStyleName(AON.CSS.aonMarginRight());
 			tediButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -498,7 +501,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				dialog.setWidth((Window.getClientWidth() - 100) + "px");
 				dialog.setHeight((Window.getClientHeight() - 100) + "px");
 				dialog.setCaption( "Avisos proceso OCR");
-				TediProblemsList problemsPanel = new TediProblemsList( invoiceCallback.getInvoice().getMessages());
+				TediProblemsList problemsPanel = new TediProblemsList( invoiceCallback.getInvoice().getInvoice() );
 				dialog.add( problemsPanel );
 				dialog.center();
 				dialog.show();
@@ -660,9 +663,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			
 			@Override
 			public void onSuccess(AccountingInvoice result) {
-				if (invoiceCallback.getInvoice().isDocumentAttached()) {
-					result.setAttach(invoiceCallback.getInvoice().getAttach());
-					result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
+				if ( invoiceCallback.getInvoice().getInvoice() != null) {
+					invoiceCallback.getInvoice().getInvoice().getDoc().ifPresent(d -> {
+						result.getInvoice().setDoc(d);
+						result.setFromRawdoc(invoiceCallback.getInvoice().isFromRawdoc());
+					});
 				}
 				AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 				invoiceCallback.setInvoice(result);
@@ -706,9 +711,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					
 					@Override
 					public void onSuccess(AccountingInvoice result) {
-						if (invoiceCallback.getInvoice().isDocumentAttached()) {
-							result.setAttach(invoiceCallback.getInvoice().getAttach());
-						}
+						invoiceCallback.getInvoice().getInvoice().getDoc().ifPresent(d -> {
+							result.getInvoice().setDoc(d);
+						});
 						AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
 						invoiceCallback.setInvoice(result);
 						invoiceCallback.setAccountEntry(ae);
@@ -928,10 +933,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								if (!result.getInvoice().isSales()) {
 									result.getInvoice().setReferenceCode(referenceCode.getValue());
 								}
-								if (result.getInvoice().hasFinances()) {
-									result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
-									// TODO Manage due dates for all finances.
-								}
+								// TODO Manage due dates for all finances.
+								result.getInvoice().getUniqueFinance()
+									.ifPresent(f -> f.setDueDate(invoiceCallback.getModule().getEntryDate()));
 								result.getInvoice().setId(null);
 								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
 								

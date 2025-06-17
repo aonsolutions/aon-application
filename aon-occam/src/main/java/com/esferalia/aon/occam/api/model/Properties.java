@@ -889,6 +889,7 @@ public interface Properties {
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
 		
+		Property<Integer> getRelatedRegistryProperty();
 		Property<Integer> getRegistryRelationProperty();
 	}
 	

@@ -364,14 +364,14 @@ export class AonInvoice extends AonElement {
 					remarks.backgroundColor = INVOICE.color;
 					remarks.fn = () => this.addInvoiceRemarks();
 					moreActions.push(remarks);
+					
+					let comment = ACTION.COMMENT;
+					comment.permission = true;
+					comment.backgroundColor = INVOICE.color;
+					comment.fn = () => this.addInvoiceComment();
+					moreActions.push(comment);
 				}
-	
-				let comment = ACTION.COMMENT;
-				comment.permission = true;
-				comment.backgroundColor = INVOICE.color;
-				comment.fn = () => this.addInvoiceComment();
-				moreActions.push(comment);
-	
+
 				if(this.getInvoice().isEmitida()) {
 					let send = ACTION.SEND_INVOICE;
 					send.permission = true;
@@ -2576,7 +2576,7 @@ export class AonInvoice extends AonElement {
 			let viewer = new AonViewer();
 			if (this.getInvoice().file) {
 				viewer.type = this.getInvoice().file.content_type;
-				viewer.file = this.getInvoice().file.path;
+				viewer.file = this.getInvoice().file.path || this.getInvoice().file.url;
 			} else {
 				let json = {
 					id: this.getInvoice().id,

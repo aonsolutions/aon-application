@@ -185,5 +185,9 @@ public enum MimeType implements Serializable {
 		}
 		return null;
 	}
+
+	public static String name(MimeType mimeType) {
+		return mimeType==null?null:mimeType.name;
+	}
     
 }

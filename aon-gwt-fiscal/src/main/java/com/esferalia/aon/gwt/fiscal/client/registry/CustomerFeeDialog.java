@@ -1,20 +1,15 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestOracle;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -39,7 +34,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -47,9 +41,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
@@ -83,6 +74,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private HTMLPanel datesPanel;
 	private AonDateBox startDateBox;
 	private AonDateBox endDateBox;
+	private TextBox totalAmount;
 	
 	private HTMLPanel periodicityPanel;
 	private ListBox monthListBox;
@@ -146,6 +138,20 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		this.fee = fee;
 		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
+	
+	protected CustomerFeeDialog(Fee fee, Customer customer, RegistryModuleOptions options) {
+		setCaption("Edici\u00f3n Cuota");
+		
+		this.fee = fee;
+		this.options = options;
+		this.customer = customer;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -473,8 +479,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			quantityTextBox.setWidth("8.8em");
 			quantityTextBox.setHeight("2em");
 			quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-			quantityTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setQuantity(Double.parseDouble(e.getValue()));});
+			quantityTextBox.addValueChangeHandler(e -> { 
+				if(null != fee) fee.setQuantity(Double.parseDouble(e.getValue()));
+				recalculateTotalAmount();
+			});
 			if(null != fee && null != fee.getQuantity()) quantityTextBox.setValue(fee.getQuantity().toString());
+			else if(this.isNewFee) quantityTextBox.setValue("1");
 		}
 		
 		Label priceLabel = new Label("Precio");
@@ -486,7 +496,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		priceTextBox.setHeight("2em");
 		priceTextBox.setWidth("8.8em");
 		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-		priceTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setPrice(Double.parseDouble(e.getValue()));});
+		priceTextBox.addValueChangeHandler(e -> { 
+			if(null != fee) fee.setPrice(Double.parseDouble(e.getValue()));
+			recalculateTotalAmount();
+		});
 		if(null != fee && null != fee.getPrice()) priceTextBox.setValue(fee.getPrice().toString());
 		
 		Label discountLabel = new Label("Dto.");
@@ -497,7 +510,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		discountTextBox.setHeight("2em");
 		discountTextBox.setWidth("8.8em");
 		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-		discountTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setDiscountExpr(e.getValue());});
+		discountTextBox.addValueChangeHandler(e -> { 
+			if(null != fee) fee.setDiscountExpr(e.getValue());
+			recalculateTotalAmount();
+		});
 		if(null != fee) discountTextBox.setValue(fee.getDiscountExpr());
 		
 		if(null != this.fee || this.isNewFee) {
@@ -544,12 +560,57 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		endDateBox.addValueChangeHandler(e -> { if(null != fee) fee.setEndDate(e.getValue());});
 		if(null != fee) endDateBox.setValue(fee.getEndDate());
 		
+		Label totalAmountLabel = new Label("Importe");
+		if(null == this.fee && !this.isNewFee) totalAmountLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		else totalAmountLabel.setWidth("3.5rem");
+		totalAmountLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		totalAmount = new TextBox();
+		totalAmount.setHeight("2em");
+		totalAmount.setWidth("8.8em");
+		totalAmount.getElement().getStyle().setProperty("padding", "0 5px");
+		totalAmount.setEnabled(false);
+		if(null != fee && null != fee.getPrice()) recalculateTotalAmount();
+		
 		datesPanel.add(startDateLabel);
 		datesPanel.add(startDateBox);
 		datesPanel.add(endDateLabel);
 		datesPanel.add(endDateBox);
+		datesPanel.add(totalAmountLabel);
+		datesPanel.add(totalAmount);
 		
 		container.add(datesPanel);
+	}
+	
+	private void recalculateTotalAmount() {
+		Double quantity = 0.00;
+		try {
+			quantity = Double.parseDouble(quantityTextBox.getValue());
+		} catch (Exception e) {}
+		
+		Double price = 0.00;
+		try {
+			price = Double.parseDouble(priceTextBox.getValue());
+		} catch (Exception e) {}
+		
+		Double dto = 0.00;
+		try {
+			dto = Double.parseDouble(discountTextBox.getValue());
+		} catch (Exception e) {}
+		
+		totalAmount.setValue(getTotalNetPrice(quantity, price, dto) + "");
+	}
+	
+	private double getTotalNetPrice(Double quantity, Double price, Double dto) {
+		return roundTwoDecimals( getNetCost(price, dto) * quantity );
+	}
+
+	private double getNetCost(Double price, Double dto) {
+		return price * (1 - dto/100);
+	}
+	
+	private double roundTwoDecimals(double value) {
+	    return Math.round(value * 100.0) / 100.0;
 	}
 
 	private void createPeriodicityPanel() {
@@ -831,12 +892,15 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		projectSuggestBox.addKeyUpHandler(e -> {
 			String projectQuery = projectSuggestBox.getValue();
 			
-			Integer customerId = null;
-			if(null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
+			Integer customerId = null != customer ? customer.getId() : null;
+			
+			if(null == customerId && null != customerSuggestBox && AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
 				Customer customer = customerSuggestions.get(customerSuggestBox.getValue());
 				if(null != customer) customerId = customer.getId();
 				else if(null != fee && null != fee.getCustomer()) customerId = fee.getCustomer().getId();
 			}
+			
+			
 			
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				projectSuggestBox.setValue("", false);

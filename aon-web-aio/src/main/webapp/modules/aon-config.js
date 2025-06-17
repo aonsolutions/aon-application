@@ -5,6 +5,8 @@ import { AonCard } from '../components/aon-card.js';
 import { Language } from '../models/Language.js';
 import { loadTheme } from '..';
 import * as LS from '../services/localStorageService.js';
+import { AonConfiguration } from './configuration/aon-configuration.js';
+
 
 export class AonConfig extends AonElement {
   
@@ -16,6 +18,8 @@ export class AonConfig extends AonElement {
     LANG_CARD;
     THEMES_CARD;
     TYPE_CARD;
+	ROOT_PANEL;
+
 
     get id() {
         return this.getAttribute(CONSTANT.ID);
@@ -38,6 +42,8 @@ export class AonConfig extends AonElement {
         this.LANG_CARD = this.id + 'HelpLangCard';
         this.THEMES_CARD = this.id + 'ThemesCard';
         this.TYPE_CARD = this.id + 'TypeCard';
+		this.ROOT_PANEL = 'rootPanel';
+
     }
 
     build() {
@@ -95,6 +101,31 @@ export class AonConfig extends AonElement {
                 aonMenu.reloadTopNav();
             });
         }
+		
+		let configDiv = this.createSpan();
+		configDiv.className = "configCardText";
+
+		let configContentIndexI = this.createElement(TAG.I);
+		configContentIndexI.className = CSS.MATERIAL_ICONS;
+		configContentIndexI.classList.add("aonHelpI");
+		configContentIndexI.innerHTML= "construction";
+		configDiv.appendChild(configContentIndexI);
+
+		let configContentIndexSpan = this.createDiv();
+		configContentIndexSpan.className = CSS.AON_CARD_TEXT;
+        configContentIndexSpan.classList.add("aonHelpSpan2");
+		configContentIndexSpan.innerHTML = "Cofiguración Datos de Empresa";
+		configDiv.appendChild(configContentIndexSpan);
+		this.appendChild(configDiv);
+		
+		configDiv.addEventListener(EVENT.CLICK, () => {
+			let aonConfiguration = new AonConfiguration();
+			this.rootPanel(aonConfiguration);
+			let rightPanel = document.querySelector('aon-right-panel'); 
+			if (rightPanel) {
+			   rightPanel.close(); 
+			}
+		});
 
         let themesCard = new AonCard();
         themesCard.id = this.THEMES_CARD;
@@ -133,7 +164,6 @@ export class AonConfig extends AonElement {
         langCard.setContent(langsDiv);
 
         topNavSwitch.addEventListener(EVENT.CHANGE, () => {
-            LS.setTopMenu(topNavSwitch.checked);
             let topnav = this.getElement("aonMenuTopnav");
 
             if(LS.isTopMenu()) {
@@ -152,7 +182,6 @@ export class AonConfig extends AonElement {
             if(!welcome){
                 if(side.style.width == "0px") {
                     aonMenu.showSideNav();
-                    this.getElement("topMenuHome").style.display = "none";
                 } else if(side.style.width == "68px") {
                     aonMenu.hideSideNav();
                 };
@@ -162,7 +191,6 @@ export class AonConfig extends AonElement {
 
         let openButton = this.getElement("openNotificationButton");
 		openButton.style.display = "none";
-        
     }
 
     isCSSLoaded(cssFileName) {

@@ -509,7 +509,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}, false);
 		reader.readAsDataURL( file );
 	}-*/;
-	
+
+	// Used in fileSelectHandler. JSNI Call. 
 	protected void addAttach(final String doc, final String name, String type) {
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
 		setDocument(invoiceCallback, doc, name, type,false);
@@ -652,10 +653,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	protected void afterTediParse(TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
-		LOGGER.info("setDocument result.isImportable() --- > " + result.isImportable());
+		LOGGER.info("setDocument result.isImportable() --- > " + ai.isImportable());
 		setWrapper(ai);
 		getCallback().getModule().syncCurrent();
-		if (result.isImportable()) {
+		if (ai.isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 			innerPaintEntry();
 			editInvoice();
@@ -666,8 +667,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 	
 	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
-		  TediProblems scrollPanel = new TediProblems( new ITediProblemsCallback() {
-		    
+		TediProblems scrollPanel = new TediProblems( new ITediProblemsCallback() {
 		    @Override public AccountEntryModuleOptions getModuleOptions() {return getCallback().getModuleOptions();}
 		    @Override public AccountEntryModule getModule() {return getCallback().getModule();}
 		    @Override public Occam getOccam() { return getCallback().getOccam();}
@@ -690,8 +690,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		    public TediResult getResult() {
 		      return result;
 		    }
-		  });
-	  contentPanel.setWidget(scrollPanel);
+		});
+		contentPanel.setWidget(scrollPanel);
 	}
 
 }

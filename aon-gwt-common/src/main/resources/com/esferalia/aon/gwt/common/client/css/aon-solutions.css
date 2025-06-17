@@ -61,6 +61,8 @@
 .aon_icon_save { background-image: iconSave;}
 @url iconDelete aonIconDelete;
 .aon_icon_delete { background-image: iconDelete;}
+@url iconNoEncryption aonIconNoEncryption;
+.aon_icon_no_encryption { background-image: iconNoEncryption;}
 @url iconSearch aonIconSearch;
 .aon_icon_search { background-image: iconSearch;}
 @url iconBack aonIconBack;
@@ -240,6 +242,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconMoveToInbox aonIconMoveToInbox;
+.aon_icon_move_to_inbox { background-image: iconMoveToInbox;}
 @url iconDomainAdd aonIconDomainAdd;
 .aon_icon_domain_add { background-image: iconDomainAdd;}
 @url iconRepair aonIconRepair;
@@ -454,6 +458,12 @@
 .aon_icon_accounting_record { background-image: iconAccountingRecord;}
 @url iconAccountingUnrecord aonIconAccountingUnrecord;
 .aon_icon_accounting_unrecord { background-image: iconAccountingUnrecord;}
+@url iconCheckCircle aonIconCheckCircle;
+.aon_icon_check_circle { background-image: iconCheckCircle;}
+@url iconCheckCircleGreen aonIconCheckCircleGreen;
+.aon_icon_check_circle_green { background-image: iconCheckCircleGreen;}
+@url iconErrorExclamation aonIconErrorExclamation;
+.aon_icon_error_exclamation { background-image: iconErrorExclamation;}
 
 
 /* BASICS */
@@ -1143,8 +1153,20 @@
 	border-radius: 0.5rem;
 }
 
-.aon_custom_card:hover .aon_custom_card_button{
+.aon_custom_card_small{
+	padding: .5rem 1rem !important;
+	border: 1px solid rgb(235, 235, 235);
+	border-radius: 0.5rem;
+}
+
+.aon_custom_card:hover .aon_custom_card_button,
+.aon_custom_card_small:hover .aon_custom_card_button{
 	visibility: visible;
+}
+
+.aon_custom_card:hover .aon_custom_card_button_hide_on_hover,
+.aon_custom_card_small:hover .aon_custom_card_button_hide_on_hover{
+	visibility: hidden;
 }
 
 .aon_custom_row{
@@ -1169,6 +1191,10 @@
 
 .aon_custom_row_button, .aon_custom_card_button{
 	visibility: hidden;
+}
+
+.aon_custom_row_button, .aon_custom_card_button_hide_on_hover{
+	visibility: visible;
 }
 
 .aon_custom_row:hover .aon_custom_row_button{

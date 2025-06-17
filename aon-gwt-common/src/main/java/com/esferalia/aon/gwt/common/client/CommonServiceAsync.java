@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -39,6 +40,7 @@ import com.esferalia.aon.occam.api.model.catalogue.Catalogue;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.FBatch;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.management.Sales;
@@ -69,6 +71,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.occam.api.model.registry.RegistrySeller;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.SellerWorkload;
@@ -228,13 +231,13 @@ public interface CommonServiceAsync {
 	
 	void getTargetSuggestion(String domainName, int domain, String user, AsyncCallback<List<Target>> asyncCallback) throws AonCoreException;
 	
-	void getAviableWorkgroups(String domainName, int domain, String user, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
+	void getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<Workgroup>> asyncCallback) throws AonCoreException;
 	void getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
 
 	void getAviableServiceUsers(String domainName, int domain, String user, AsyncCallback<List<User>> asyncCallback) throws AonCoreException;
 	
 	void getAviableProjectActivity(String domainName, int domain, String user, AsyncCallback<List<ProjectActivity>> asyncCallback) throws AonCoreException;
-	void getAviableProjectType(String domainName, int domain, String user, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
+	void getAviableProjectType(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ProjectType>> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// ***************************** [PROJECT COMMERCIAL]
@@ -373,6 +376,23 @@ public interface CommonServiceAsync {
 	void getProjectHolders(String domainName, int domain, String user, Integer projectId, AsyncCallback<List<ProjectHolder>> asyncCallback) throws AonCoreException;
 	void saveProjectHolder(String domainName, int domain, String user, ProjectHolder project, AsyncCallback<ProjectHolder> asyncCallback) throws AonCoreException;
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId, AsyncCallback<Void> asyncCallback) throws AonCoreException;
-	void getTaskHolders(String domainName, Integer domainId, String user, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+	void getTaskHolders(String domainName, Integer domainId, String user, Integer domainSearch, AsyncCallback<List<TaskHolder>> asyncCallback) throws AonCoreException;
+	
+	void getActivityTypes(String domainName, int domain, String user, Integer domainSearch, AsyncCallback<List<ActivityType>> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ********************************* [CUSTOMER NOTES]
+	// **************************************************
+	
+	void getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
+	void saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note, AsyncCallback<RegistryNote> asyncCallback) throws AonCoreException;
+	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
+	
+	// **************************************************
+	// ****************************** [CUSTOMER INVOICES]
+	// **************************************************
+	
+	void getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<Invoice>> asyncCallback) throws AonCoreException;
+	void getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer officeDomain, Integer invoiceId, AsyncCallback<String> asyncCallback) throws AonCoreException;
 
 }

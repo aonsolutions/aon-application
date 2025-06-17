@@ -116,8 +116,6 @@ public class InvoiceTemplate {
 	public static final float TITLE_BOX_SIZE = 17f;
 	public static final float LEGAL_TEXT_SIZE = 6;
 	
-	
-	
 	private static final String STANDARD_DATE_FORMAT = "dd/MM/yyyy";
 	
 	PDDocument document;
@@ -404,7 +402,8 @@ public class InvoiceTemplate {
 			if (company.getMedias() != null && !company.getMedias().isEmpty() && getConfig().isContactData()) {
 				LinkedList<RegistryMedia> medias = company.getMedias();
 			
-				List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
+				List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) 
+						&& m.getMedia().equals(MediaType.WEB)).toList();
 				if (!webMedias.isEmpty()) {
 					webStr = "Web: ";
 					StringBuilder sb = new StringBuilder(webStr);
@@ -419,7 +418,8 @@ public class InvoiceTemplate {
 					fullStr = sb.toString();
 				}
 
-				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) 
+						&& (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).toList();
 				if (!webMedias.isEmpty()) {
 					phoneStr = "Teléfono/s: ";
 					StringBuilder sb = new StringBuilder(phoneStr);
@@ -434,7 +434,8 @@ public class InvoiceTemplate {
 					fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
 				}	
 			
-				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.EMAIL) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) 
+						&& m.getMedia().equals(MediaType.EMAIL)).toList();
 				if (!webMedias.isEmpty()) {
 					emailStr = "Email: ";
 					StringBuilder sb = new StringBuilder(emailStr);
@@ -2204,7 +2205,7 @@ public class InvoiceTemplate {
 		newInvoiceDetail.setWarehouse(original.getWarehouse());
 		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
 		newInvoiceDetail.setWorkplace(original.getWorkplace());
-		newInvoiceDetail.setAccount(original.getAccount());
+		newInvoiceDetail.setAccountId(original.getAccountId());
 		newInvoiceDetail.setAccountCode(original.getAccountCode());
 		newInvoiceDetail.setAccountDescription(original.getAccountDescription());
 		newInvoiceDetail.setInvoiceTaxes(original.getInvoiceTaxes());

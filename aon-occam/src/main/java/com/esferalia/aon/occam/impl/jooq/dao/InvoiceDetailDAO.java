@@ -237,7 +237,7 @@ public class InvoiceDetailDAO {
 							: new Workplace().setId(getValue(r, INVOICE_DETAIL.WORKPLACE)))
 					.setWarehouse(getValue(r, INVOICE_DETAIL.WAREHOUSE))
 					.setWarehouseName(getString(r, WAREHOUSE.NAME))
-					.setAccount(getValue(r,ACCOUNT.ID))
+					.setAccountId(getValue(r,ACCOUNT.ID))
 					.setAccountCode(getValue(r, ACCOUNT.CODE))
 					.setAccountDescription(getValue(r, ACCOUNT.DESCRIPTION))
 					.setInvestAsset(getValue(r, INVOICE_DETAIL.INVEST_ASSET))

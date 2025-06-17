@@ -50,11 +50,11 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		private ScriptContext setAccount(Account account) {
 			this.account = account;
 			if ( account == null) {
-				this.aed.setAccount(null);
+				this.aed.setAccountId(null);
 				this.aed.setAccountCode(null);
 				this.aed.setAccountDescription(null);
 			} else  {
-				this.aed.setAccount(getAccount().getId());
+				this.aed.setAccountId(getAccount().getId());
 				this.aed.setAccountCode(getAccount().getCode());
 				this.aed.setAccountDescription(getAccount().getDescription());
 			}
@@ -68,11 +68,11 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		private ScriptContext setBalancingAccount(Account balancingAccount) {
 			this.balancingAccount = balancingAccount;
 			if ( this.balancingAccount == null) {
-				this.aed.setBalancingAccount(null);
+				this.aed.setBalancingAccountId(null);
 				this.aed.setBalancingAccountCode(null);
 				this.aed.setBalancingAccountDescription(null);
 			} else  {
-				this.aed.setBalancingAccount(getBalancingAccount().getId());
+				this.aed.setBalancingAccountId(getBalancingAccount().getId());
 				this.aed.setBalancingAccountCode(getBalancingAccount().getCode());
 				this.aed.setBalancingAccountDescription(getBalancingAccount().getDescription());
 			}
@@ -142,7 +142,7 @@ public abstract class AccSctiptMVELContext<T> extends HashMap<String, Object> {
 		AccountEntryDetail added =  ae.getDetails()
 			.stream()
 			.filter(Objects::nonNull)
-			.filter(det -> AonNumberUtils.equals(det.getAccount(), aed.getAccount()))
+			.filter(det -> AonNumberUtils.equals(det.getAccountId(), aed.getAccountId()))
 			.map(det -> det.addDebit(aed.getDebit()))
 			.map(det -> det.addCredit(aed.getCredit()))
 			.findFirst()

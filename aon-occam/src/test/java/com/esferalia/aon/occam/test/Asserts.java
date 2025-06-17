@@ -1351,14 +1351,14 @@ public class Asserts {
 			assertEquals("Id",expected.getId(), actual.getId());
 			assertEquals("Domain",expected.getDomain(), actual.getDomain());
 			assertEquals("AccountEntry",expected.getAccountEntry(), actual.getAccountEntry());
-			assertEquals("Account",expected.getAccount(), actual.getAccount());
+			assertEquals("Account",expected.getAccountId(), actual.getAccountId());
 			assertEquals("AccountCode",expected.getAccountCode(), actual.getAccountCode());
 			assertEquals("AccountDescription",expected.getAccountDescription(), actual.getAccountDescription());
 			assertEquals("Line",expected.getLine(), actual.getLine());
 			assertEquals("Concept",expected.getConcept(), actual.getConcept());
 			assertEquals("Debit",expected.getDebit(), actual.getDebit(), DELTA);
 			assertEquals("Credit",expected.getCredit(), actual.getCredit(), DELTA);
-			assertEquals("BalancingAccount",expected.getBalancingAccount(), actual.getBalancingAccount());
+			assertEquals("BalancingAccount",expected.getBalancingAccountId(), actual.getBalancingAccountId());
 			assertEquals("BalancingAccountCode",expected.getBalancingAccountCode(), actual.getBalancingAccountCode());
 			assertEquals("BalancingAccountDescription",expected.getBalancingAccountDescription(), actual.getBalancingAccountDescription());
 			assertEquals("DocumentNumber",expected.getDocumentNumber(), actual.getDocumentNumber());
