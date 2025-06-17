@@ -520,6 +520,10 @@ public class NordigenModule extends MainEntryPoint {
 
 			FlowPanel body = new FlowPanel();
             body.addStyleName(AON.CSS.aonPaddingRight());
+            body.addStyleName(AON.CSS.aonPaddingRight());
+            body.getElement().getStyle().setProperty("width", "max-content");
+            body.getElement().getStyle().setProperty("display", "grid");
+            body.getElement().getStyle().setProperty("gap", "0.5rem");
             getMenuPanel().addStyleName(AON.CSS.aonPaddingLeft());
             bottomTable.addStyleName(AON.CSS.aonPaddingLeft());
 			FlowPanel ibanPanel = new FlowPanel();
@@ -611,6 +615,7 @@ public class NordigenModule extends MainEntryPoint {
 
 			this.setBody(body);
 
+			this.getElement().getStyle().setProperty("display", "table");
 			this.getElement().getStyle().setProperty(MIN_WIDTH, "20rem");
 			this.getElement().getStyle().setProperty("margin", "0");
 			this.getElement().getStyle().setBorderWidth(1, Unit.PX);
@@ -743,7 +748,7 @@ public class NordigenModule extends MainEntryPoint {
 			updateButton.setTabIndex(-5);
 			updateButton.addClickHandler((ev) -> {
 			    refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-                  allMovementsButton, balanceJsonButton, true);
+                  allMovementsButton, balanceJsonButton, true, attempsBox);
 			});
 
 			getMenuPanel().add(updateButton);
@@ -756,7 +761,7 @@ public class NordigenModule extends MainEntryPoint {
 			}
 
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
-              allMovementsButton, balanceJsonButton, forceRefresh);
+              allMovementsButton, balanceJsonButton, forceRefresh, attempsBox);
 
 			loadRemainingDays(opt, nordigenBankAccount, diasBox);
 		}
@@ -788,7 +793,7 @@ public class NordigenModule extends MainEntryPoint {
 		        public void onSuccess(List<String> callStatuses) {
                     StringBuilder sb = new StringBuilder();
 		            sb.append("Tus actualizaciones:");
-		            sb.append("<ul>");
+		            sb.append("<ul style='list-style: none; text-align: left;'>");
                     for (String status : callStatuses) {
                       sb.append("<li>").append(status).append("</li>");
                     }
@@ -1016,7 +1021,7 @@ public class NordigenModule extends MainEntryPoint {
 
 		private void refreshCard(final NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount,
           InlineLabel atDateBox, InlineLabel lastDateBox, InlineLabel balanceBox, InlineLabel availableBox, Label title, FlowPanel titlePanel,
-          AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh) {
+          AonTableButton allMovementsButton, AonTableButton balanceJsonButton ,boolean refresh, HTML attempsBox) {
 			balanceJsonButton.setVisible(false);
 			allMovementsButton.setVisible(false);
 			showBottomMessage("red", AON.CSS.aonLoader());
@@ -1046,6 +1051,7 @@ public class NordigenModule extends MainEntryPoint {
 				    label.addStyleName(AON.CSS.aonColorGreen());
 				    sessionLog.add(label);
 				    openFootPanel();
+                    loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
 				}
 			});
 		}
