@@ -1976,6 +1976,7 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getSecurityLevelProperty();
 		Property<Integer> getTagProperty();
+		Property<Timestamp> getDeleteDateProperty();
 	}
 	
 	public interface S3CategoryProperties{

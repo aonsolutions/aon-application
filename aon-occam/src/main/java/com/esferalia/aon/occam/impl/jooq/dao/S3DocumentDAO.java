@@ -60,11 +60,12 @@ public class S3DocumentDAO {
 				.select(Rdoc.RDOC.CATEGORY)
 				.select(Rdoc.RDOC.REGISTRY)
 				.select(Rdoc.RDOC.SCOPE)
-			    .select(Rdoc.RDOC.TYPE) 
+			    .select(Rdoc.RDOC.TYPE)
+			    .select(Rdoc.RDOC.DELETE_DATE)
+			    .select(Rdoc.RDOC.DELETE_USER)
 				.from(Rdoc.RDOC)
 				.leftJoin(RdocTag.RDOC_TAG).on(Rdoc.RDOC.ID.eq(RdocTag.RDOC_TAG.RDOC))
-				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-				.and(Rdoc.RDOC.DELETE_DATE.isNull());
+				.where(S3DOCUMENT_PROPERTIES.getConditions(filter));
 		SelectConditionStep<Record> queryRAttach = ctx.getDslContext()
 				.selectDistinct(Rattach.RATTACH.ID.as(Rdoc.RDOC.ID))
 				.select(DSL.inline((Integer) 1).as(TYPE_DOC))
@@ -84,6 +85,8 @@ public class S3DocumentDAO {
 				.select(Rattach.RATTACH.REGISTRY.as(Rdoc.RDOC.REGISTRY))
 				.select(Rattach.RATTACH.SCOPE.as(Rdoc.RDOC.SCOPE))
 				.select(Rattach.RATTACH.TYPE.as(Rdoc.RDOC.TYPE))
+				.select(DSL.inline((String) null).as(Rdoc.RDOC.DELETE_DATE))
+			    .select(DSL.inline((String) null).as(Rdoc.RDOC.DELETE_USER))
 				.from(Rattach.RATTACH)
 				.leftJoin(RattachTag.RATTACH_TAG).on(Rattach.RATTACH.ID.eq(RattachTag.RATTACH_TAG.RATTACH))
 				.where(ATTACH_PROPERTIES.getConditions(attachFilter));
@@ -263,15 +266,17 @@ public class S3DocumentDAO {
 	public static void delete(AONContext ctx, S3DocumentFilter filter, AttachFilter attachFilter){
 		ctx.checkWrite();
 		java.util.Date date = new java.util.Date();
-		ctx.getDslContext()
-			.update(Rdoc.RDOC)
-			.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
-			.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
-			.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
-			.execute();
-		ctx.getDslContext().delete(Rattach.RATTACH)
-			.where(ATTACH_PROPERTIES.getConditions(attachFilter))
-			.execute();
+		if(filter != null)
+			ctx.getDslContext()
+				.update(Rdoc.RDOC)
+				.set(Rdoc.RDOC.DELETE_DATE, new Timestamp(date.getTime()))
+				.set(Rdoc.RDOC.DELETE_USER, ctx.getUser())
+				.where(S3DOCUMENT_PROPERTIES.getConditions(filter))
+				.execute();
+		if(attachFilter != null)
+			ctx.getDslContext().delete(Rattach.RATTACH)
+				.where(ATTACH_PROPERTIES.getConditions(attachFilter))
+				.execute();
 	}
 	
 	public static byte[] getFile(AONContext ctx, Integer id) {
@@ -314,6 +319,8 @@ public class S3DocumentDAO {
 					.setType(r.get(TYPE_DOC))
 					.setScope(r.get(Rdoc.RDOC.SCOPE))
 					.setRegistryType(r.get(Rdoc.RDOC.TYPE))
+					.setDeleteDate(r.get(Rdoc.RDOC.DELETE_DATE))
+					.setDeleteUser(r.get(Rdoc.RDOC.DELETE_USER))
 					;
 		}
 	}

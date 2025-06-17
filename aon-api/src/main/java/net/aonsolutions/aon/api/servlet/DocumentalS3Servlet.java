@@ -6,6 +6,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -73,11 +75,14 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	public static final String COUNT = "/count";
 	public static final String BIDOQ = "/bidoq";
 	public static final String CHECK_BIDOQ = "/check_bidoq";
+	public static final String BIDOQ_OCR = "/bidoq_ocr";
+	public static final String BIDOQ_OCR_COUNT = "/bidoq_ocr_count";
 	
 	private static final String AON_BUCKET_NAME = "aon-documental-pro-01";
 	private static final String BIDOQ_BUCKET_NAME = "ayudat-mispapeles-docs-pro-02";
 	private static final String NO_FOLDER = "No_folder";
 	private static final String BIDOQ_NO_FOLDER = "Bidoq/No_folder";
+	
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -121,6 +126,12 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 					break;
 				case CHECK_BIDOQ:
 					response(req, resp, checkBidoqDocumentsToAon(api));
+					break;
+				case BIDOQ_OCR:
+					response(req, resp, getBidoqDocumentsToOCR(api));
+					break;
+				case BIDOQ_OCR_COUNT:
+					response(req, resp, getBidoqDocumentsToOCRCount(api));
 					break;
 			}
 		} catch (Exception e) {
@@ -183,7 +194,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static Attach getFile(AonApiData api) throws Exception {
 		try {
 			Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
+			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 			byte[] data = null;
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
@@ -243,7 +254,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				else
 					idsRattach[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
 			}
-			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
+			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
 			List<byte[]> files = new LinkedList<byte[]>();
 			List<String> filenames = new LinkedList<String>();
 			for (S3Document document : documents) {
@@ -336,7 +347,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		JSONArray jsArray = new JSONArray();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
 		JSONArray array = new JSONArray();
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			JSONObject doc = fullDocumentToJson(document);
 			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), type).forEach(id -> {
@@ -440,7 +451,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static Filter generateFilter(S3DocumentProperties f, AonApiData api, Integer[] scopes) {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDeleteDateProperty().isNull());
 		JSONObject json = api.getData();
 		String type = json.optString("registryType", null) != null ? json.optString("registryType") : "all";
 		if(scopes != null)
@@ -628,23 +639,24 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			JSONObject folders = json.getJSONObject("datos");
 			for(String folder : JSONObject.getNames(folders)) {
 				if(!folder.equals("no_folders")) {
-					if(!checkBidoqCategory(api, folders.getJSONObject(folder).getString("nombre")) && folders.getJSONObject(folder).has("docs")) {
-						S3Category category = createBidoqCategory(api, folders.getJSONObject(folder).getString("nombre"));
-						AON_SOLUTIONS.insertS3Category(api.getDomain(), api.getUser(), category);
-					}
-					if(folders.getJSONObject(folder).has("docs")) {
-						JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
-						for(int i = 0; i < array.length(); i++) {
-							if(array.get(i) instanceof JSONObject) {								
-								JSONObject doc = (JSONObject) array.get(i); 
-								if(!checkBidoqDocument(api, doc.getString("rutaS3"))) {
-									S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
-									AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
+					if(!folder.equals("A contabilizar")){
+						if(!checkBidoqCategory(api, folders.getJSONObject(folder).getString("nombre")) && folders.getJSONObject(folder).has("docs")) {
+							S3Category category = createBidoqCategory(api, folders.getJSONObject(folder).getString("nombre"));
+							AON_SOLUTIONS.insertS3Category(api.getDomain(), api.getUser(), category);
+						}
+						if(folders.getJSONObject(folder).has("docs")) {
+							JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
+							for(int i = 0; i < array.length(); i++) {
+								if(array.get(i) instanceof JSONObject) {								
+									JSONObject doc = (JSONObject) array.get(i); 
+									if(!checkBidoqDocument(api, doc.getString("rutaS3"))) {
+										S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
+										AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
+									}
 								}
 							}
 						}
 					}
-					
 				} else if(folder.equals("no_folders")){
 					if(!checkBidoqCategory(api, NO_FOLDER) && folders.getJSONArray(folder).length() > 0) {
 						S3Category category = createBidoqCategory(api, NO_FOLDER);
@@ -725,7 +737,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	}
 	
 	private static boolean checkBidoqDocument(AonApiData api, String s3key) {
-		Stream<S3Document> list = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(s3key)).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null));
+		Stream<S3Document> list = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(s3key)).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)).and(f.getDeleteDateProperty().isNull()), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null));
 		if(list.count() == 0)
 			return false;
 		else 
@@ -765,6 +777,111 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		} else {
 			return false;
 		}
+	}
+	
+	private static Integer getBidoqDocumentsToOCRCount(AonApiData api) {
+		String document = api.getData().getString(IJsonNames.DOCUMENT);
+//		JSONObject json = callBidoq("78150882x");
+		if(!document.equals("93176905H")) {
+			return 0;
+		}
+		JSONObject json = callBidoq(document);
+		int count = 0;
+		if(json.has("datos")) {
+			JSONObject folders = json.getJSONObject("datos");
+			for(String folder : JSONObject.getNames(folders)) {
+				if(!folder.equals("no_folders") && folders.getJSONObject(folder).has("nombre") && folders.getJSONObject(folder).getString("nombre").equals("A contabilizar")) {
+					if(folders.getJSONObject(folder).has("docs")) {
+						JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
+						for(int i = 0; i < array.length(); i++) {
+							if(array.get(i) instanceof JSONObject) {								
+								JSONObject doc = (JSONObject) array.get(i);
+								Optional<S3Document> optRdoc = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(doc.getString("rutaS3"))).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null)).findFirst();
+								if(!optRdoc.isPresent()) 
+									count++;
+								else if(optRdoc.get().getDeleteDate() == null)
+									count++;
+							}
+						}
+					}
+				}
+			}
+		}
+		return count;
+	}
+	
+	private static JSONObject getBidoqDocumentsToOCR(AonApiData api) {
+		String document = api.getData().getString(IJsonNames.DOCUMENT);
+		Integer order = api.getData().getInt(IJsonNames.ORDER);
+		Integer size = api.getData().getInt(IJsonNames.SIZE);
+		if(!document.equals("93176905H")) {
+			return new JSONObject().put("result", "OK");
+		}
+//		JSONObject json = callBidoq("78150882x");
+		JSONObject json = callBidoq(document);
+		int count = getBidoqDocumentsToOCRCount(api);
+		int cont = 0;
+		if(json.has("datos")) {		
+			JSONObject folders = json.getJSONObject("datos");
+			for(String folder : JSONObject.getNames(folders)) {
+				if(!folder.equals("no_folders") && folders.getJSONObject(folder).has("nombre") && folders.getJSONObject(folder).getString("nombre").equals("A contabilizar")){
+					if(folders.getJSONObject(folder).has("docs")) {
+						JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
+						for(int i = order; i < array.length(); i++) {
+							if(array.get(i) instanceof JSONObject) {
+								JSONObject doc = (JSONObject) array.get(i);
+								Optional<S3Document> optRdoc = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(doc.getString("rutaS3"))).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null)).findFirst();
+								if(optRdoc.isPresent()) {
+									S3Document rdoc = optRdoc.get();
+									if(rdoc.getDeleteDate() == null){
+										if(uploadDocumentOCR(api, rdoc, document, i)) {											
+											AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(rdoc.getId()), null);
+											cont++;
+										}
+									}
+								}else{
+									S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
+									if(uploadDocumentOCR(api, docu, document, i)) {										
+										S3Document fac = AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
+										AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(fac.getId()), null);
+										cont++;
+									}
+								}
+							}
+							if(cont >= (order + size < count ? order + size : count)) {
+								return new JSONObject().put("result", "OK");
+							}
+						}
+					}
+				}
+			}
+		}
+		return new JSONObject().put("result", "OK");
+	}
+	
+	private static boolean uploadDocumentOCR(AonApiData api, S3Document doc, String document, int orden) {
+		String url = "https://aon-upload-post.s3.amazonaws.com/";
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+            LocalDateTime now = LocalDateTime.now();
+        	byte[] file = S3rDoc.download(doc.getS3key(), doc.getS3bucket());
+            HttpPost post = new HttpPost(url);
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setCharset(StandardCharsets.UTF_8);
+            builder.addTextBody("key", "invoices/" + api.getDomain().getName() + "/" + document + "/" + api.getUser().getLogin() + "/" + now.format(formatter) + "/" + orden + "_bidoq_" + Base64.getEncoder().encodeToString(doc.getName().getBytes()) + "." + doc.getMimetype().getExtension());
+            builder.addTextBody("success_action_status", "201");
+            builder.addTextBody("Content-Type", doc.getMimetype().getName());
+            builder.addBinaryBody("file", file);
+            HttpEntity multipart = builder.build();
+            post.setEntity(multipart);
+            try (CloseableHttpResponse response = client.execute(post)) {
+                String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
 	}
 	
 }
