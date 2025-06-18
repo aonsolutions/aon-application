@@ -261,7 +261,10 @@ public class FeeDAO {
 	}
 
 	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
-		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
+		Condition condition = DSL.trueCondition();
+		
+		if(null != customerFeeParams.getDomain())
+			condition = condition.and( CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain()) );
 		
 		User user = SecurityDAO.getUser(ctx);
 		if(user.getDomain().getId() == ctx.getDomainId()) {

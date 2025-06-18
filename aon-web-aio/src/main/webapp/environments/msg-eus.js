@@ -321,6 +321,7 @@ export const NEW_WAREHOUSE = 'Biltegi Berria';
 export const NEXT = 'Hurrengoa';
 export const NIF = 'IFZ';
 export const NO_DATA = 'Ez dago daturik';
+export const NO_LINK_CLIENT = 'Loturarik gabeko bezeroa';
 export const NOT_LINKED = 'Estekatu gabea';
 export const NOT_LINKED1 = 'Estekatu gabeak';
 export const NOTIFICATION = 'Jakinarazpena';

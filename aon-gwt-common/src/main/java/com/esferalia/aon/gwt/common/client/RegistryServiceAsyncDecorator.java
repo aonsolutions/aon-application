@@ -106,33 +106,33 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	// **************************************************
 	
 	@Override
-	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Customer>> callback) {
+	public void getCustomersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Customer>> callback) {
 		AON.start();
-		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Customer>>(callback));
+		serviceAsync.getCustomersSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, Customer>>(callback));
 	}
 
 	@Override
-	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> callback) {
+	public void getProductsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, OldItem>> callback) {
 		AON.start();
-		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, OldItem>>(callback));
+		serviceAsync.getProductsSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, OldItem>>(callback));
 	}
 
 	@Override
-	public void getProductCategoriesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+	public void getProductCategoriesSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Integer>> callback) {
 		AON.start();
-		serviceAsync.getProductCategoriesSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+		serviceAsync.getProductCategoriesSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
 	}
 
 	@Override
-	public void getProductTagsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+	public void getProductTagsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Integer>> callback) {
 		AON.start();
-		serviceAsync.getProductTagsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+		serviceAsync.getProductTagsSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
 	}
 	
 	@Override
-	public void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
+	public void getCustomerProductsUpdates(String domainName, int domain, String user, Integer searchDomain, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
 		AON.start();
-		serviceAsync.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
+		serviceAsync.getCustomerProductsUpdates(domainName, domain, user, searchDomain, customerFeeParams, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
 	}
 	
 	@Override
@@ -165,9 +165,9 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	}
 
 	@Override
-	public void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> callback) {
+	public void getMinMaxCustomerFeeYear(String domainName, int domain, String user, Integer searchDomain, AsyncCallback<Map<Integer, Integer>> callback) {
 		AON.start();
-		serviceAsync.getMinMaxCustomerFeeYear(domainName, domain, user, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
+		serviceAsync.getMinMaxCustomerFeeYear(domainName, domain, user, searchDomain, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
 	}
 
 	@Override
@@ -195,27 +195,27 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	}
 
 	@Override
-	public void getWorkplacesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Workplace>> callback) {
+	public void getWorkplacesSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Workplace>> callback) {
 		AON.start();
-		serviceAsync.getWorkplacesSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Workplace>>(callback));
+		serviceAsync.getWorkplacesSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, Workplace>>(callback));
 	}
 
 	@Override
-	public void getSellersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Seller>> callback) {
+	public void getSellersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, Seller>> callback) {
 		AON.start();
-		serviceAsync.getSellersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Seller>>(callback));
+		serviceAsync.getSellersSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, Seller>>(callback));
 	}
 
 	@Override
-	public void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, InvoicingGroup>> callback) {
+	public void getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query, AsyncCallback<Map<String, InvoicingGroup>> callback) {
 		AON.start();
-		serviceAsync.getInvoicingGroupsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, InvoicingGroup>>(callback));
+		serviceAsync.getInvoicingGroupsSuggestion(domainName, domain, user, searchDomain, query, new AsyncCallbackWrapper<Map<String, InvoicingGroup>>(callback));
 	}
 
 	@Override
-	public void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query, AsyncCallback<Map<String, Project>> callback) {
+	public void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String query, AsyncCallback<Map<String, Project>> callback) {
 		AON.start();
-		serviceAsync.getProjectsSuggestion(domainName, domain, user, customerId, query, new AsyncCallbackWrapper<Map<String, Project>>(callback));
+		serviceAsync.getProjectsSuggestion(domainName, domain, user, customerId, searchDomain, query, new AsyncCallbackWrapper<Map<String, Project>>(callback));
 	}
 
 	@Override

@@ -231,13 +231,13 @@ public interface CommonService extends RemoteService {
 	
 	List<Target> getTargetSuggestion(String domainName, int domain, String user) throws AonCoreException;
 	
-	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException;
+	List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 	List<TaskHolder> getAviableTaskHolders(String domainName, int domain, String user, Integer workgroup) throws AonCoreException;
 
 	List<User> getAviableServiceUsers(String domainName, int domain, String user) throws AonCoreException;
 	
 	List<ProjectActivity> getAviableProjectActivity(String domainName, int domain, String user) throws AonCoreException;
-	List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException;
+	List<ProjectType> getAviableProjectType(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 	
 	
 	// **************************************************
@@ -379,9 +379,9 @@ public interface CommonService extends RemoteService {
 	List<ProjectHolder> getProjectHolders(String domainName, int domain, String user, Integer projectId) throws AonCoreException;
 	ProjectHolder saveProjectHolder(String domainName, int domain, String user, ProjectHolder projectHolder) throws AonCoreException;
 	void deleteProjectHolder(String domainName, int domain, String user, Integer projectHolderId) throws AonCoreException;
-	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user) throws AonCoreException;
+	List<TaskHolder> getTaskHolders(String domainName, Integer domainId, String user, Integer domainSearch) throws AonCoreException;
 
-	List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException;
+	List<ActivityType> getActivityTypes(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException;
 
 	// **************************************************
 	// ********************************* [CUSTOMER NOTES]
@@ -396,6 +396,6 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	
 	List<Invoice> getCustomerInvoices(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
-	String getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer invoiceId) throws AonCoreException;
+	String getInvoicePDF(String currentDomainName, int currentDomain, String currentUser, Integer officeDomain, Integer invoiceId) throws AonCoreException;
 
 }

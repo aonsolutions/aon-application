@@ -21,6 +21,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -270,7 +271,12 @@ public class ProjectDAO {
 	}
 	
 	private static Condition paramsToCondition(CloseableAONContext ctx, ProjectParams params) {
-		Condition condition = PROJECT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
+		Condition condition = DSL.trueCondition();
+		
+		if(null != params.getRegistry())
+			condition = condition.and(PROJECT.REGISTRY.eq(params.getRegistry()));
+		else
+			condition = PROJECT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx));
 		
 		if(AonStringUtils.isNotBlank(params.getDescription())) {
 			condition = condition.and(

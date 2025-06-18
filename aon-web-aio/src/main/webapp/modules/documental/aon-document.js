@@ -1,11 +1,12 @@
 import { AonElement } from '../../components/AonElement.js';
 import { ToolbarType } from '../../models/enums.js';
 import { ASESOR_TYPE_OPTION, ENTERPRISE_TYPE_OPTION,
-   EMPLOYEE_TYPE_OPTION, 
-   ASESOR_TYPE,
-   EMPLOYEE_TYPE,
-   ENTERPRISE_TYPE} from './DocumentalEnums.js';
-import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document, sendS3DocumentMail, sendDocumentMail } from '../../services/service.js';
+  EMPLOYEE_TYPE_OPTION,
+  ASESOR_TYPE,
+  EMPLOYEE_TYPE,
+  ENTERPRISE_TYPE
+} from './DocumentalEnums.js';
+import { deleteFile, getCategories, getScopes, updateFile, openFileUrl, getS3Document_File, putS3DocumentUpdate, deleteS3Document, downloadS3Documents, getS3Category, getTags, getS3Document, sendS3DocumentMail, sendDocumentMail, getS3DocumentCount } from '../../services/service.js';
 import { EVENT, MSG, TAG } from '../../environments/environments.js';
 import * as ACTION from '../actions.js';
 import '../../components/aon-toolbar.js';
@@ -18,6 +19,11 @@ import { AonSwitch } from '../../components/aon-switch.js';
 import { AonNewSelect } from '../../components/aon-new-select.js';
 import { loadOldCategories } from './DocumentalUtils.js';
 export class AonDocument extends AonElement {
+  docList;
+  typeList;
+  filter;
+  count;
+  
   doc;
   docS3;
   _tags;
@@ -71,6 +77,14 @@ export class AonDocument extends AonElement {
     this.SCOPE = this.id + 'Scope';
     this.TAG = this.id + 'Tag';
     this.TYPE = this.id + 'Type';
+	
+	if(this.isBetaDoc()){
+		getS3DocumentCount(JSON.parse(this.getAttribute('filter'))).then(docs => this.count = docs.count);
+		this.docList = JSON.parse(this.getAttribute("documentList"));
+		this.typeList = JSON.parse(this.getAttribute("typesList"));
+		this.filter =  JSON.parse(this.getAttribute("filter"));
+		this.filter.page  = this.filter.page - 1;
+	}
   }
 
   async build() {
@@ -93,6 +107,8 @@ export class AonDocument extends AonElement {
     fileDiv.style.width   = '50%';
     
     if(this.isBetaDoc()){
+      // Barra loader de AonApplication - Iniciar
+      this.getApplication().startLoading();
       let data = { type: this.document.type, id: this.document.id};
       getS3Document_File(data).then(document => {
           this.docS3 = document;
@@ -108,7 +124,8 @@ export class AonDocument extends AonElement {
             let offset2 = dataDiv.getBoundingClientRect();
             dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
           }
-    
+          
+          this.getApplication().stopLoading();
           this.buildData();
           this.buildDocumentToolbar();
       });
@@ -479,7 +496,7 @@ export class AonDocument extends AonElement {
     name.setValue(s3Doc.name);
 
     if (!this.getDur().isDocumentalManager() && !this.getDur().isDocumentalPortal()) {
-        name.setDisabled(true)
+        name.setDisabled(true);
     }
     name.addEventListener(EVENT.CHANGE, () => this.updateName(name.value));
     // Scope
@@ -998,7 +1015,6 @@ export class AonDocument extends AonElement {
       }
     });
   }
-  
 
   checkAndUpdateCategory() {
     const modelSelect = document.getElementById("ModelosSelect");
@@ -1092,7 +1108,12 @@ export class AonDocument extends AonElement {
         // Solo si no eres empleado o empresa, entiendo que es este permiso
         if (this.getDur().isDocumentalManager()) {
           documentToolbar.addButton2(ACTION.DELETE_FILE, () => this.removeS3());
-        }
+        } 				
+		const position = (this.filter.page - 1) * this.filter.perPage + this.docList.indexOf(this.document.id) + 1;
+		if(position < this.count)
+			documentToolbar.addButton2(ACTION.NEXT, () => this.next());
+		if(position > 1)
+			documentToolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
         documentToolbar.addButton2(ACTION.DOWNLOAD_FILE, () => this.downloadS3());
         documentToolbar.addButton2(ACTION.SEND_FILE, () => this.send());
       } else if(!this.isBetaDoc() && (this.getDur().isDocumentalManager() || this.getDur().isDocumentalPortal())){
@@ -1110,12 +1131,42 @@ export class AonDocument extends AonElement {
     aonDocumental.getParent().aonDocumentalList();
   }
 
-  next() {
-    this.getApplication().development();
+  async next() {
+	if(this.isBetaDoc()){
+		let index = this.docList.indexOf(this.document.id)
+		if(index != (-1) && index < this.docList.length - 1){
+			this.document = await getS3Document({id: this.docList[index + 1], type: this.typeList[index + 1]});
+			await this.build();
+		} else {
+			this.filter.page = this.filter.page + 1;
+			let nextPageDocs = await getS3Document(this.filter);
+			this.docList = nextPageDocs.map(document => document.id);
+			this.typeList = nextPageDocs.map(document => document.type);
+			this.document = await getS3Document({id: nextPageDocs[0].id, type: nextPageDocs[0].type});
+			await this.build();
+		}
+	} else {
+    	this.getApplication().development();
+	}
   }
 
-  previous() {
-    this.getApplication().development();
+  async previous() {
+	if(this.isBetaDoc()){
+		let index = this.docList.indexOf(this.document.id)
+		if(index > 0){
+			this.document = await getS3Document({id: this.docList[index - 1], type: this.typeList[index - 1]});
+			await this.build();
+		} else {
+			this.filter.page = this.filter.page - 1;
+			let prevPageDocs = await getS3Document(this.filter);
+			this.docList = prevPageDocs.map(document => document.id);
+			this.typeList = prevPageDocs.map(document => document.type);
+			this.document = await getS3Document({id: prevPageDocs[prevPageDocs.length -1].id, type: prevPageDocs[prevPageDocs.length -1].type});
+			await this.build();
+		}
+	} else {
+		this.getApplication().development();
+	}
   }
 
   send() {
@@ -1139,7 +1190,6 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
-
   
   removeS3() {
     let aonDocumental = this.getApplication();
@@ -1163,6 +1213,7 @@ export class AonDocument extends AonElement {
     });
     d.open();
   }
+
   remove() {
     let aonDocumental = this.getApplication();
     let d = document.getElementById(aonDocumental.DIALOG);
@@ -1208,7 +1259,7 @@ export class AonDocument extends AonElement {
   }
   updateCategory(category) {
     if(this.isBetaDoc()){
-      this.doc.category = category
+      this.doc.category = category;
     }else{
       if(!this.doc.category)
       this.doc.category = {};
@@ -1219,7 +1270,7 @@ export class AonDocument extends AonElement {
 
   updateScope(scope) {
     if(this.isBetaDoc()){
-      this.doc.scope = scope
+      this.doc.scope = scope;
     }else{
       if(!this.doc.scope)
         this.doc.scope = {};
@@ -1230,7 +1281,7 @@ export class AonDocument extends AonElement {
 
   updateType(type) {
     if(this.isBetaDoc()){
-      this.doc.registryType = type
+      this.doc.registryType = type;
     }else{
       this.doc.type = type;
     }
@@ -1242,8 +1293,8 @@ export class AonDocument extends AonElement {
     this.save();
   }
 
-  updateName(name) { 
-    if(this.isBetaDoc()){ 
+  updateName(name) {
+    if(this.isBetaDoc()){
       this.doc.name = name;
     } else {
       this.doc.title = name;
@@ -1285,4 +1336,4 @@ export class AonDocument extends AonElement {
 
 }
 
-window.customElements.define('aon-document',  AonDocument);
+window.customElements.define('aon-document', AonDocument);

@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -58,27 +57,27 @@ public interface RegistryService extends RemoteService {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query);
-	Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query);
-	Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String productCategoryQuery);
-	Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String productTagQuery);
-	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
+	Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, Integer searchDomain, String query);
+	Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, Integer searchDomain, String query);
+	Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, Integer searchDomain, String productCategoryQuery);
+	Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, Integer searchDomain, String productTagQuery);
+	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, Integer searchDomain, CustomerFeeParams customerFeeParams);
 	
 	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
 	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
 	Fee createCustomerFeeList(String domainName, int domain, String user, Fee fee);
 	void updateRitemCustomerFee(String domainName, int domain, String user, Integer id, Integer ritem);
-	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
+	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user, Integer searchDomain);
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params);
 	void deleteCustomerFee(String domainName, int domain, String user, Fee fee);
 	
-	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery);
-	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);
-	Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery);
-	Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery);
+	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, Integer searchDomain, String workplaceQuery);
+	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, Integer searchDomain, String sellerQuery);
+	Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String invoicingGroupQuery);
+	Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String projectQuery);
 	
 	Map<String, Fee> getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery);
 	

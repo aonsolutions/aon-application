@@ -86,6 +86,70 @@ public class PrintInvoiceConfigurationDAO {
 		
 		return config;	
 	}
+	
+	public static PrintInvoiceConfiguration get(AONContext ctx, Integer officeDomain, Boolean withData) {
+		ctx.checkRead();
+		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
+		AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(officeDomain)	
+			.and(f.getNameProperty().like("INVOICE_PRINT_CONFIG%")))
+			.forEach(r -> {
+				if(AppParam.INVOICE_PRINT_CONFIG_ADJUST.toString().equals(r.getName())) {
+					config.setAdjustImage(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_DETAILED.toString().equals(r.getName())) {
+					config.setDetailed(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_HEADER.toString().equals(r.getName())) {
+					config.setHeader(AonNumberUtils.toInteger(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_FOOTER.toString().equals(r.getName())) {
+					config.setFooter(AonNumberUtils.toInteger(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_LOGO.toString().equals(r.getName())) {
+					config.setLogo(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString().equals(r.getName())) {
+					config.setCompany(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_RECORD_DATA.toString().equals(r.getName())) {
+					config.setRecordData(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString().equals(r.getName())) {
+					config.setContactData(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString().equals(r.getName())) {
+					config.setLanguage(AonLanguage.safeValueOf(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_BORDER.toString().equals(r.getName())) {
+					config.setBorder(AonNumberUtils.isNumber(r.getValue()) ? Integer.parseInt(r.getValue()) : 0);
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME.toString().equals(r.getName())) {
+					config.getTheme().setTheme(r.getValue() != null ? PrintInvoiceTheme.safeValueOf(Integer.parseInt(r.getValue())) : PrintInvoiceTheme.BLACK_AND_WHITE);
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString().equals(r.getName())) {
+					config.getTheme().setBoxTitleBackgroundColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString().equals(r.getName())) {
+					config.getTheme().setBoxTitleTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString().equals(r.getName())) {
+					config.getTheme().setBoxBodyBackgroundColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBC.toString().equals(r.getName())) {
+					config.getTheme().setBorderColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TTC.toString().equals(r.getName())) {
+					config.getTheme().setTitleTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString().equals(r.getName())) {
+					config.getTheme().setTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString().equals(r.getName())) {
+					config.getTheme().setCustomerBackgroundColor(r.getValue());
+				}				
+			});
+		
+		ApplicationParameter saleInvoice = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getDomainProperty().eq(officeDomain).and(f.getNameProperty().eq(AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.name()))).findFirst().orElse(new ApplicationParameter());		
+		config.setActive(AonStringUtils.isBlank(saleInvoice.getValue()) || saleInvoice.getValue().equalsIgnoreCase("default"));
+		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(officeDomain).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
+				.findFirst().orElse(new Attach());
+		config.setBackground(attach);
+		
+		Attach legalAttach = AttachmentDAO.getRegistryAttachStream(ctx, f -> 
+			f.getDomainProperty().eq(officeDomain)
+			.and(f.getTypeProperty().eq(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value())),
+			true).findFirst().orElse(new Attach());	
+			
+		if(legalAttach.getData() != null) {
+			config.setLegal(new String(legalAttach.getData()));
+		}
+		
+		return config;	
+	}
 
 	public static PrintInvoiceConfiguration save(AONContext ctx, PrintInvoiceConfiguration pic) {
 		ctx.checkWrite();	

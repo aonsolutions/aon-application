@@ -2047,6 +2047,8 @@ public class SalaryDraftBuilder
 				return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
 			case "RED_CGC_E" :
 				return "Reducciones a Cargo de la TGSS";
+			case "RED_PPE_E" :
+				return "Reducci\u00f3n Aportaci\u00f3n Plan Pensiones";
 			default:
 				;
 			}

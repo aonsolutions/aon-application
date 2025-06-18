@@ -346,6 +346,7 @@ public class SLDSalaries {
 	private static Optional<DeductionType>  getReductionType(String description) {
 		switch (description) {
 		case "REDUCCIONES A CARGO DE LA TGSS":
+		case "REDUCCION APORTACI\u00D3N PLAN PENSIONES":
 		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		case "REDUCCIONES SEA A CARGO TGSS":
@@ -362,6 +363,8 @@ public class SLDSalaries {
 			return ContextVariable.SEA_ENTERPRISE.getName();
 		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 			return "RED_SEA_E";
+		case "REDUCCION APORTACI\u00D3N PLAN PENSIONES":
+			return "RED_PPE_E";
 		default:
 			return "RED_CGC_E";
 		}
@@ -404,6 +407,7 @@ public class SLDSalaries {
 		case "REDUCCIONES SEA A CARGO TGSS":
 		case "REDUCCIONES SEA EN IT A CARGO DEL SPEE":
 		case "REDUCCIONES A CARGO DE LA TGSS":
+		case "REDUCCION APORTACI\u00D3N PLAN PENSIONES":
 		case "REDUCCI\u00D3N PR\u00C1CTICAS FORMATIVAS":
 			return Optional.empty();
 		default:

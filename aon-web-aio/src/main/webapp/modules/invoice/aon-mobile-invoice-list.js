@@ -89,7 +89,14 @@ export class AonMobileInvoiceList extends AonMobileList {
   }
   
   aonInvoice(invoice, i) {
-    if(this.getFilter().status !== 'accounting') {
+    let st = this.getFilter().status;
+    if((st == 'pending' || st == 'processed') && this.getDur().hasInvofox() && this.getDur().isInvofox()) {
+        setIndex(i);
+	  		let aip = document.querySelector('aon-invoice-panel');
+  			aip.aonInvoice(invoice.type, invoice);
+    } else if (st == 'pending' || st == 'processed' || st == 'processing'){
+       
+    } else if(this.getFilter().status !== 'accounting') {
 			setIndex(i);
 			let aip = document.querySelector('aon-invoice-panel');
 			aip.aonInvoice(invoice.type, invoice);

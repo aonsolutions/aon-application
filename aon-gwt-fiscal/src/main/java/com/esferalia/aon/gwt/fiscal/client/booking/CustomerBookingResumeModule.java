@@ -1503,7 +1503,7 @@ public class CustomerBookingResumeModule extends MainEntryPoint {
 		
 		createCustomerFeeButton = new AonToolbarSmallButton("Nueva Cuota", AON.CSS.aonIconAdd());
 		createCustomerFeeButton.addClickHandler(e -> {
-			new CustomerFeeDialog(options, customer) {
+			new CustomerFeeDialog(options, customer, options.getDomain()) {
 				
 				@Override
 				protected void onCreate(Fee fee) {
