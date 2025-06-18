@@ -13,9 +13,7 @@ export const TIMECONTROL = {
   title: MSG.TIMECONTROL,
   description: MSG.TIMECTRL,
   tag: MSG_ES.TIMECONTROL,
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_TIMECONTROL : AON_ICONS.AON_TIMECONTROL,
   symbol: MATERIAL_ICONS.ALARM,
-  newIcon: AON_ICONS.AON_NEW_TIMECONTROL,
   color: "var(--aonTimecontrol)",
   backgroundColor: "rgba(209, 195, 109, .2)",
   hover: 'aonTimecontrolHover',
@@ -81,10 +79,7 @@ export const FISCAL = {
   title: MSG.FISCAL,
   description: MSG.FISCAL,
   tag: MSG_ES.FISCAL,
-  // _icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_FISCAL : AON_ICONS.AON_FISCAL,
-  headerIcon: AON_ICONS.AON_NEW_FISCAL,
   symbol: MATERIAL_ICONS.ACCOUNT_BALANCE,
-  logo: '/images/apps/aeat.png',
   color: "var(--aonFiscal)",
   // newColor: "var(--aonFiscal)",
   backgroundColor: '#fef3e7',
@@ -249,9 +244,7 @@ export const DOCUMENTAL = {
   title: MSG.DOCUMENTARY,
   description: MSG.DOCUMENTARY,
   tag: MSG_ES.DOCUMENTARY,
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_DOCUMENTAL : AON_ICONS.AON_DOCUMENTAL,
   symbol: MATERIAL_ICONS.FOLDER_OPEN,
-  newIcon: AON_ICONS.AON_NEW_DOCUMENTAL,
   color: "var(--aonDocumental)",
   // newColor: "var(--aonDocumental)",
   backgroundColor: 'var(--aonDocumentalBackground)',
@@ -307,7 +300,6 @@ export const MANAGEMENT = {
   title: MSG.MANAGEMENT,
   description: MSG.MANAGEMENT,
   tag: MSG_ES.MANAGEMENT,
-  icon: AON_ICONS.AON_MANAGEMENT,
   symbol: MATERIAL_ICONS.MONITORING,
   color: "#002469",
   backgroundColor: "rgba(0, 36, 105, .2)",
@@ -329,8 +321,6 @@ export const INVOICE = {
   title: MSG.BILLING, //MSG.INVOICES,
   description: MSG.BILLING,
   tag: MSG_ES.INVOICES,
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_INVOICE : AON_ICONS.AON_INVOICE,
-  newIcon: AON_ICONS.AON_NEW_INVOICE,
   symbol: MATERIAL_ICONS.MONITORING,
   color: "var(--aonInvoice)",
   // newColor: "var(--aonInvoice)", 
@@ -377,9 +367,7 @@ export const MESSENGER = {
   title: MSG.REQUESTS,
   description: MSG.REQUESTS,
   tag: MSG_ES.REQUESTS,
-  icon: LS.isNewTheme() ? AON_ICONS.AON_NEW_MESSENGER : AON_ICONS.AON_MESSENGER,
   symbol: MATERIAL_ICONS.SPEAKER_NOTES,
-  newIcon: AON_ICONS.AON_NEW_MESSENGER,
   color: "var(--aonMessenger)",
   // newColor: "va    r(--aonMessenger)",
   backgroundColor: '#feedec',
@@ -1824,17 +1812,6 @@ export const CONFIGURATION_MENU = {
 	price: " ",
 };
 
-export const NEW_CONFIG_MENU = {
-	app: "newConfigurationMenu",
-	symbol: "settings",
-	title: "New Config",
-	description: "New Config",
-	subtitle: "Config",
-	color: "var(--aonTopMenuAvailable)",
-	style: "aonTopNavConfigurationButton",
-	apps: [],
-	price: " ",
-};
 
 export const ENTERPRISE_MENU = {
 	app: "enterpriseMenu",
@@ -1877,7 +1854,6 @@ export const TOP_MENU_APPS = [
 	PAYROLL_MENU,
 	MARKETING_MENU,
 	CONFIGURATION_MENU,
-	NEW_CONFIG_MENU,
 
 	CONSOLE_MENU,
 ];

@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomerNotes } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomerNotes, getRelationShipCompany } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -29,6 +29,7 @@ export class AonCustomer extends AonReg {
 	saveBool;
 	ENTERPRISE_LINKED;
 	office;
+	clientFile;
 	aonCustomerList;
 
 	connectedCallback() {
@@ -46,14 +47,18 @@ export class AonCustomer extends AonReg {
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
 			{ title: MSG.BANK_DATA, fn: () => {
 				this.showSaveButton();
+				if(this.clientFile)
+					this.hideSaveButton();
 				this.buildBankData();
 			}},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
 		];
 
 		if (this.office) {
+			if(!this.clientFile){
+				this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
+			}
 			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
-			this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
 			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
 			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 			
@@ -77,7 +82,9 @@ export class AonCustomer extends AonReg {
 
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
-		toolbar.addButton2(ACTION.BACK, () => this.back());
+		
+		if(!this.clientFile)
+			toolbar.addButton2(ACTION.BACK, () => this.back());
 		
 		this.buildNotesToobar();
 		
@@ -109,16 +116,20 @@ export class AonCustomer extends AonReg {
 			
 			getCustomerNotes({customer: this.registry.getId()})
 				.then(notes => {
-					console.log(notes);
 					const existsNotes = notes.some(item => item.type === "MESSAGE" );
 					
 					if(existsNotes){
-						let customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIconButton');
+						let customerNotesButton;
+						
+						if(this.clientFile)
+							customerNotesButton = this.getElement('aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon');
+						else
+							customerNotesButton = this.getElement('aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon');
+						
 						customerNotesButton.style.color = 'green';
 					}
 					
 					const existsObservation = notes.some(item => item.type === "OBSERVATION" && item.comments && item.comments.trim() !== "");
-					console.log("existsObservation : " + existsObservation);
 					if(existsObservation) this.notes();
 					
 				});
@@ -175,6 +186,9 @@ export class AonCustomer extends AonReg {
 
 	buildDataAdditional() {
 		this.showSaveButton();
+		
+		if(this.clientFile)
+			this.hideSaveButton();
 				
 		let parent = this.getElement(this.DIV);
 		parent.style.display = "flex";
@@ -213,21 +227,43 @@ export class AonCustomer extends AonReg {
 
 		table.addRow();
 
-		let divSegment = this.createElement(TAG.DIV);
-		table.addCell(divSegment);
-		this.buildSegments(divSegment);
+		if(!this.clientFile){
+			let divSegment = this.createElement(TAG.DIV);
+			table.addCell(divSegment);
+			this.buildSegments(divSegment);
+		}
 
-		getScopes().then((scopes) => {
-			const registryScope = this.registry.getScope();
-			const scopeId =
-				registryScope && registryScope.id ? registryScope.id : null;
-
-			scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
-
-			if (scopeId) {
-				scope.value = scopeId;
-			}
-		});
+		if(this.clientFile){
+			let company = LS.getCompany();
+			getRelationShipCompany({
+					url: company.domain,
+		            relatedRegistry: company.registry
+		        }).then(relationshipCompany => {
+					getScopes({
+						searchDomain: relationshipCompany.rrelationship.domain.id
+					}).then((scopes) => {
+						const registryScope = this.registry.getScope();
+						const scopeId = registryScope && registryScope.id ? registryScope.id : null;
+						
+						scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
+			
+						if (scopeId) {
+							scope.value = scopeId;
+						}
+					});
+		        });
+		} else
+			getScopes().then((scopes) => {
+				const registryScope = this.registry.getScope();
+				const scopeId =
+					registryScope && registryScope.id ? registryScope.id : null;
+	
+				scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
+	
+				if (scopeId) {
+					scope.value = scopeId;
+				}
+			});
 	}
 
 	buildFiscalData(parent) {
@@ -310,7 +346,7 @@ export class AonCustomer extends AonReg {
 	buildEnterpriseLinkedView(resp) {
 		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
-
+		
 		const { rrelationship, companies } = resp;
 
 		const link = rrelationship && rrelationship.id;
@@ -375,12 +411,20 @@ export class AonCustomer extends AonReg {
 	}
 	
 	hideSaveButton(){
-		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		let saveBtn;
+		if(this.clientFile) 
+			saveBtn = this.getElement("aonConfigurationCustomerToolbarHeaderToolSectionSaveButton");
+		else
+			saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
 		if(saveBtn) saveBtn.style.display = 'none';
 	}
 	
 	showSaveButton(){
-		let saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
+		let saveBtn;
+		if(this.clientFile) 
+			saveBtn = this.getElement("aonConfigurationCustomerToolbarHeaderToolSectionSaveButton");
+		else
+			saveBtn = this.getElement("aonCustomerOfficeToolbarHeaderToolSectionSaveButton");
 		if(saveBtn) saveBtn.style.display = 'block';
 	}
 
@@ -398,7 +442,18 @@ export class AonCustomer extends AonReg {
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		GWT.iLoad(GWT.PROJECT, this.DIV);
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.PROJECT, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.PROJECT, this.DIV);
 	}
 
 	//ITEMS PRODUCTS
@@ -525,7 +580,18 @@ export class AonCustomer extends AonReg {
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
 	}
 	
 	buildInvoices(){
@@ -540,8 +606,20 @@ export class AonCustomer extends AonReg {
   		div.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
-
-		GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+		
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+		
 	}
 
 	getOptionsLinked(element, rrelationship = undefined) {
@@ -584,16 +662,18 @@ export class AonCustomer extends AonReg {
 				);
 			}
 		} else {
+			options.push(
+				{
+					name: "Vincular empresa",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.openDialogCompany();
+					},
+				}
+			);
 			if(this.isSig()){
 				options.push(
-					{
-						name: "Vincular con una existente",
-						value: "LINK",
-						icon: MATERIAL_ICONS.LINK,
-						fn: () => {
-							this.openDialogCompany();
-						},
-					},
 					{
 						name: "Crear nueva empresa",
 						value: "ENTERPRISE_NEW",
@@ -772,11 +852,20 @@ export class AonCustomer extends AonReg {
 		this.office = office;
 	}
 	
+	setClientFile(clientFile) {
+		this.clientFile = clientFile;
+	}
+	
 	notes(){
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
 		
-		let notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
+		let notesIcon;
+		
+		if(this.clientFile){
+			notesIcon = this.getElement("aonConfigurationCustomerToolbarHeaderTitleSectionNotesButtonIcon");
+		} else 
+			notesIcon = this.getElement("aonCustomerOfficeToolbarHeaderTitleSectionNotesButtonIcon");
 		
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -809,7 +898,22 @@ export class AonCustomer extends AonReg {
 			div.appendChild(loaderSpan);
 			
 			localStorage.setItem("customer", this.registry.getId());
-			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+			
+			if(this.clientFile){
+				let company = LS.getCompany();
+				
+				getRelationShipCompany({
+					url: company.domain,
+		            relatedRegistry: company.registry
+		        }).then(relationshipCompany => {
+					localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+					GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+		        });
+				
+			
+			} else 
+				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+				
 		} else {
 			notesIcon.innerHTML = 'speaker_notes';
 		}

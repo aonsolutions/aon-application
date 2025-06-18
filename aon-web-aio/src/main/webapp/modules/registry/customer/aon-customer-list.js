@@ -13,6 +13,7 @@ export class AonCustomerList extends AonRegistryList {
 
 	parent;
 	office;
+	clientFile;
 
 	constructor(parent) {
 		super();
@@ -56,6 +57,7 @@ export class AonCustomerList extends AonRegistryList {
 			aonCustomer.setCustomer(r);
 			aonCustomer.setCustomerList(this);
 			aonCustomer.setOffice(this.office);
+			aonCustomer.setClientFile(this.clientFile);
 			this.getApplication().setContent(aonCustomer);
 		});
 	}
@@ -212,6 +214,15 @@ export class AonCustomerList extends AonRegistryList {
 	setOffice(office) {
 		this.office = office;
 	}
+	
+	isClientFile() {
+		return this.clientFile;
+	}
+
+	setClientFile(clientFile) {
+		this.clientFile = clientFile;
+	}
+
 }
 
 if(!window.customElements.get(TAG.AON_CUSTOMER_LIST)) {

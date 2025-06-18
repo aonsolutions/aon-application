@@ -53,7 +53,7 @@ export class AonLoginPanel extends AonElement {
 		this.rightPanel = this.getElement("aonRightPanel"); 
 		this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
 		this.rightPanel.style.marginTop = '0px';
-		this.rightPanel.style.height = '260px';
+		this.rightPanel.style.height = '234px';
 		
 		let loginContent = this.createDiv("loginContent", "aonFlexColumn");
 
@@ -102,24 +102,16 @@ export class AonLoginPanel extends AonElement {
 		if (auth.name) {
 			let divPassword = this.createDiv();
 			divPassword.className = 'aonUserPasswordLink';
-			divPassword.appendChild(this.buildInfo(MATERIAL_ICONS.PASSWORD, MSG.CHANGE_PASSWORD));			
-			let editIcon = document.createElement("i");
-			editIcon.className = "material-icons";
-			editIcon.textContent = "edit";
-			editIcon.style.cursor = "pointer";
-			editIcon.style.marginLeft = "0.5rem";
-			editIcon.style.fontSize = "24px";
-			editIcon.title = MSG.CHANGE_PASSWORD;
-			editIcon.addEventListener("click", (e) => {
+			divPassword.innerText =  MSG.CHANGE_PASSWORD;
+			divPassword.addEventListener("click", (e) => {
 				let aonUser = new AonUser();
-			    aonUser.editPassword();
+				aonUser.editPassword();
 			});
-
-			divPassword.appendChild(editIcon);
+			
 			divUserInfo.appendChild(divPassword);
 		}
 				
-		if (auth.name) {
+		/*if (auth.name) {
 			let divConfiguration = this.createDiv();
 			divConfiguration.className = 'aonUserConfigLink';
 			divConfiguration.innerText = MSG.GO_CONFIGURATION;
@@ -137,7 +129,7 @@ export class AonLoginPanel extends AonElement {
 				companyyy.style.display = "block";
 			});
 			divUserInfo.appendChild(divConfiguration);
-		}
+		}*/
 	
 		divGeneral.appendChild(divUserInfo);
 

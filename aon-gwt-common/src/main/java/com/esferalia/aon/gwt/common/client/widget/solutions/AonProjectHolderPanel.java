@@ -52,18 +52,20 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 	private String user;
 	
 	private Integer projectId;
+	private Integer projectDomain;
 	private List<ProjectHolder> projectHolders;
 	
 	private List<Workgroup> workgroups;
 	private List<TaskHolder> taskHolders;
 	
-	public AonProjectHolderPanel(String domainName, int domain, String user, Integer projectId, List<ProjectHolder> projectHolders,  AonProjectHolderPanelCallback callback) {
+	public AonProjectHolderPanel(String domainName, int domain, String user, Integer projectId, Integer projectDomain, List<ProjectHolder> projectHolders,  AonProjectHolderPanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
 		
 		this.projectId = projectId;
+		this.projectDomain = projectDomain;
 		this.projectHolders = projectHolders;
 		
 		this.getElement().getStyle().setProperty("min-width", "35rem");
@@ -76,13 +78,14 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 		
 	}
 	
-	public AonProjectHolderPanel(String domainName, int domain, String user, Integer projectId, List<ProjectHolder> projectHolders, ProjectHolder projectHolder, AonProjectHolderPanelCallback callback) {
+	public AonProjectHolderPanel(String domainName, int domain, String user, Integer projectId, Integer projectDomain, List<ProjectHolder> projectHolders, ProjectHolder projectHolder, AonProjectHolderPanelCallback callback) {
 		initializeCommonService();
 		this.domainName = domainName;
 		this.domainId = domain;
 		this.user = user;
 		
 		this.projectId = projectId;
+		this.projectDomain = projectDomain;
 		this.projectHolders = projectHolders;
 		
 		this.getElement().getStyle().setProperty("min-width", "30rem");
@@ -130,9 +133,9 @@ public class AonProjectHolderPanel extends AonCustomDialog {
     		if(null == start.getValue()) {
     			okButton.setEnabled(true);
     			AonMessagePanel.showWarning(messagePanel, "El campo fecha de inicio es obligatorio");
-    		} else if(AonStringUtils.isBlank(taskHolder.getValue()) ) {
+    		} else if(AonStringUtils.isBlank(taskHolder.getValue()) && AonStringUtils.isBlank(workgroup.getValue()) ) {
     			okButton.setEnabled(true);
-    			AonMessagePanel.showWarning(messagePanel, "El campo operario es obligatorio");
+    			AonMessagePanel.showWarning(messagePanel, "El campo grupo de trabajo u operario es obligatorio");
     		} else {
     			
     			if(projectHolder.getId() == null) {
@@ -156,7 +159,7 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 	        		if(null != projectHolder.getTaskHolder().getId()) {
 	        			 List<ProjectHolder> optProjectHolders = projectHolders.stream()
 	        				.filter(projectHolderIt -> 
-	        					null != projectHolderIt.getTaskHolder().getId() && 
+	        					//null != projectHolderIt.getTaskHolder().getId() && 
 	        					(null == projectHolderIt.getEndDate() || projectHolderIt.getEndDate().after(start.getValue()))
 	        				).collect(Collectors.toList());
 	        			 
@@ -177,7 +180,7 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 	        		} else if(null != projectHolder.getWorkgroup().getId()) {
 	        			List<ProjectHolder> optProjectHolders = projectHolders.stream()
 	            				.filter(projectHolderIt -> 
-	            					null != projectHolderIt.getWorkgroup().getId() && 
+	            					//null != projectHolderIt.getWorkgroup().getId() && 
 	            					(null == projectHolderIt.getEndDate() || projectHolderIt.getEndDate().after(start.getValue()))
 	            				).collect(Collectors.toList());
 	            			 
@@ -251,7 +254,7 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 	}
 	
 	private void getWorkgroups(Consumer<List<Workgroup>> success) {
-		commonService.getAviableWorkgroups(domainName, domainId, user, new AsyncCallback<List<Workgroup>>() {
+		commonService.getAviableWorkgroups(domainName, domainId, user, projectDomain, new AsyncCallback<List<Workgroup>>() {
 			
 			@Override
 			public void onSuccess(List<Workgroup> workgroupsDb) {
@@ -268,7 +271,7 @@ public class AonProjectHolderPanel extends AonCustomDialog {
 	}
 	
 	private void getTaskHolders(Consumer<List<TaskHolder>> success) {
-		commonService.getTaskHolders(domainName, domainId, user, new AsyncCallback<List<TaskHolder>>() {
+		commonService.getTaskHolders(domainName, domainId, user, projectDomain, new AsyncCallback<List<TaskHolder>>() {
 			
 			@Override
 			public void onSuccess(List<TaskHolder> taskHoldersDb) {

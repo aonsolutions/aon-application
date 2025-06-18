@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
@@ -807,14 +808,23 @@ public abstract class EmployeeWidget extends FlowPanel {
 
 			if (addressZipValue.length() == 5) {
 				String zip = this.addressZip.getValue().substring(0, 2);
-				addressProvince.setValue(zip);
+				Optional<com.esferalia.aon.gwt.payroll.shared.Country> country = countries.stream().filter(c ->  AonStringUtils.equals(c.getCountry().getCode(), zip) || c.getProvinces().stream().filter(p -> AonStringUtils.equals(p.getCode(), zip)).findFirst().isPresent() ).findFirst();
+				if(country.isEmpty()) addressProvince.setValue(null);
+				else {
+					if(AonStringUtils.equals(zip, country.get().getCountry().getCode()))
+						addressProvince.setValue(country.get().getCountry().getId().toString());
+					else {
+						Optional<Geozone> provice = country.get().getProvinces().stream().filter(p -> AonStringUtils.equals(p.getCode(), zip)).findFirst();
+						if(provice.isEmpty()) addressProvince.setValue(null);
+						else addressProvince.setValue(provice.get().getId().toString());
+					}
+				}
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince.getListBox());
 			}
 		});
 		
 		addressProvince.addChangeHandler(e -> {
-			String provinceCode = String.valueOf(this.addressProvince.getValue());
-			Integer geozoneId = getProvincesGeozone(provinceCode);
+			Integer geozoneId = AonStringUtils.isBlank(this.addressProvince.getValue()) ? null : Integer.parseInt(this.addressProvince.getValue());
 			updateMunicipalities();
 			onEmployeeAddressProvinceChange(geozoneId);
 		});
@@ -1016,11 +1026,11 @@ public abstract class EmployeeWidget extends FlowPanel {
 		this.addressProvince.addItem("-", "-1");
 
 		for (com.esferalia.aon.gwt.payroll.shared.Country country : this.countries) {
-			addressProvince.addItem(country.getCountry().getName(), country.getCountry().getCode());
+			addressProvince.addItem(country.getCountry().getName(), country.getCountry().getId().toString());
 			addressProvince.getElement().getElementsByTagName("option").getItem(addressProvince.getListBox().getItemCount() - 1)
 					.setAttribute("disabled", "disabled");
 			for (Geozone province : country.getProvinces())
-				addressProvince.addItem(province.getName(), province.getCode());
+				addressProvince.addItem(province.getName(), province.getId().toString());
 		}
 		
 	}
@@ -1534,7 +1544,8 @@ public abstract class EmployeeWidget extends FlowPanel {
 	}
 
 	public void updateMunicipalities() {
-		String provinceCode = addressProvince.getValue();
+		
+		String provinceCode = getProvinceCode();
 		
 		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
 		List<String> municipalitySuggest = new ArrayList<>();
@@ -1543,6 +1554,19 @@ public abstract class EmployeeWidget extends FlowPanel {
 		orclNames.addAll(municipalitySuggest);
 		
 		addressMunicipality.setAutoSelectEnabled(false);
+	}
+	
+	private String getProvinceCode() {
+		if(AonStringUtils.isBlank(addressProvince.getValue()) || AonStringUtils.equalsIgnoreCase(addressProvince.getValue(), "-1")) return null;
+		
+		com.esferalia.aon.gwt.payroll.shared.Country country = countries.stream().filter(c -> c.getCountry().getId().equals(Integer.parseInt(addressProvince.getValue())) ||  c.getProvinces().stream().filter(p -> p.getId().equals(Integer.parseInt(addressProvince.getValue()))).findAny().isPresent() ).findFirst().get();
+		
+		if(country.getCountry().getId().equals(Integer.parseInt(addressProvince.getValue())))
+			return country.getCountry().getCode();
+		else {
+			Geozone geozone = country.getProvinces().stream().filter(p -> p.getId().equals(Integer.parseInt(addressProvince.getValue()))).findFirst().get();
+			return geozone.getCode();
+		}
 	}
 
 	private Integer getYears(Date actualDay, Date birthDate) {
@@ -1785,15 +1809,7 @@ public abstract class EmployeeWidget extends FlowPanel {
 	}
 
 	public void selectProvince(Integer geozoneId) {
-		addressProvince.setValue(getProvinceCode(geozoneId));
-	}
-
-	private String getProvinceCode(Integer geozoneId) {
-		for (com.esferalia.aon.gwt.payroll.shared.Country country : countries)
-			for (Geozone province : country.getProvinces())
-				if (province.getId().equals(geozoneId))
-					return province.getCode();
-		return null;
+		addressProvince.setValue(null == geozoneId ? "" : geozoneId.toString());
 	}
 	
 	// ------------------------------------------------- Abstract methods

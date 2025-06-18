@@ -2,6 +2,7 @@ import { TAG } from '../../environments/environments.js';
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
+import { AonConfiguration } from '../configuration/aon-configuration.js';
 
 
 export class AonConfigurationMenu extends AonSuiteMenu {
@@ -42,32 +43,18 @@ export class AonConfigurationMenu extends AonSuiteMenu {
 
     initOptions() {
         this.options = [{
-            title: 'Configuración correo',
-            options: [{
-                description: "Cuentas de Correo",
-                title: "Cuentas de Correo",
-                action: () => this.rootPanel(new JSF.AonJsfMailAccount())
-            }, {
-                description: "Firmas de Correo",
-                title: "Firmas de Correo",
-                action: () => this.rootPanel(new JSF.AonJsfMailSignature())
-            }, {
-                description: "Contactos",
-                title: "Contactos",
-                action: () => this.rootPanel(new JSF.AonJsfMailContact())
-            }]
-        }, {
-            title: 'Datos de Empresa',
-            options: [{
-                description: "Configuración Global",
-                title: "Configuración Global",
-                action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
-            }, {
-                description: "Descarga de Empresas",
-                title: "Descarga de Empresas",
-                action: () => window.open("https://www.aonsolutions.es/solicitud-copia-de-seguridad-datos-empresa/", "_blank")
-            }]
-        }, {
+			/*title: 'Datos de Empresa',
+	            options: [{
+	                description: "Configuración Global",
+	                title: "Configuración Global",
+	                action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
+	            }, {
+	                description: "Descarga de Empresas",
+	                title: "Descarga de Empresas",
+	                action: () => window.open("https://www.aonsolutions.es/solicitud-copia-de-seguridad-datos-empresa/", "_blank")
+	            }]
+        }, {*/
+			
             title: 'Tablas Principales',
             options: [{
                 description: "Clientes",
@@ -176,7 +163,7 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 action: () => this.rootPanel(new JSF.AonJsfCatalogue())
             }]
         }, {
-            title: 'Conect@',
+            title: 'Utilidades Carga de Datos',
             options: [{
                 description: "Carga de datos desde ficheros Excel",
                 title: "Carga de datos desde ficheros Excel",
@@ -197,6 +184,26 @@ export class AonConfigurationMenu extends AonSuiteMenu {
                 action: () => GWT.iLoad(GWT.INVOICE_REPORT),
                 filter: () => this.isNotDomainManagementAvailable()
             }]
+		},{
+			title: 'Configuración',
+	            options: [{
+					description: "Configuración Global",
+					title: "Configuración Global",
+					action: () => this.rootPanel(new JSF.AonJsfGlobalConfig())
+				},{
+	                description: "Cuentas de Correo",
+	                title: "Cuentas de Correo",
+	                action: () => this.rootPanel(new JSF.AonJsfMailAccount())
+	            }, {
+	                description: "Firmas de Correo",
+	                title: "Firmas de Correo",
+	                action: () => this.rootPanel(new JSF.AonJsfMailSignature())
+	            }, {
+	                description: "Contactos",
+	                title: "Contactos",
+	                action: () => this.rootPanel(new JSF.AonJsfMailContact())
+	            }]
+            
         }];
     }
 

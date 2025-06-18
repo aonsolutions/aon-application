@@ -619,6 +619,15 @@ export class AonUser extends AonElement {
 				img.style.width = '24px';
 				img.src = app.logo;
 				td1.appendChild(img);
+			} else if(app.symbol) {
+				let icon = this.createSpan();
+				icon.id = this.APP + app.app + 'Icon';
+				icon.classList.add(CSS.MATERIAL_SYMBOLS_OUTLINED);
+				icon.innerHTML = app.symbol;
+				icon.style.color = app.color;
+				icon.style.paddingTop = '5px';
+				icon.style.paddingLeft = '4px';
+				td1.appendChild(icon);
 			} else {
 				td1.innerHTML =  `<aon-icon icon="${app.icon}" color="${app.color}" size="30px"></aon-icon>`;
 			}
@@ -630,6 +639,7 @@ export class AonUser extends AonElement {
 			let span2 = document.createElement('span');
 			span2.style.padding = '10px';
 			span2.style.fontWeight = 'bold';
+			span2.style.fontSize = '14px';
 			span2.style.color = '#5f6368';
 			span2.innerHTML = app ? app.title : 'Administrador';
 			td2.appendChild(span2);

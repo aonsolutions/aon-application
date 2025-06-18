@@ -311,7 +311,7 @@ public class FinanceImpl implements IFinance {
 			FeeDAO.reorderCustomerFeeLine(ctx, domainId, customer);
 		});
 	}
-	
+
 	@Override
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
@@ -654,6 +654,12 @@ public class FinanceImpl implements IFinance {
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> PrintInvoiceConfigurationDAO.get(ctx, withData));
+	}
+	
+	@Override
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Integer officeDomain, Boolean withData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PrintInvoiceConfigurationDAO.get(ctx, officeDomain, withData));
 	}
 
 	@Override

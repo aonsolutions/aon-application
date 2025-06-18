@@ -179,7 +179,8 @@ public class FinanceDAO {
 			.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(SALARY).on(SALARY.ID.equal(FINANCE.SOURCE_ID))
 			.where(FINANCE_PROPERTIES.getConditions(filter))
-			.and(FINANCE.DOMAIN.eq(ctx.getDomainId()));
+//			.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
+			;
 	}
 	
 	public static Stream<Finance> fetch(AONContext ctx, FinanceFilter filter, int offset, int numberOfRows) {

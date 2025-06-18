@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne } from "../../services/service.js";
+import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccount, getCompanyOne, getRelationShipCompany, getSiblingsOffice } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -32,6 +32,7 @@ import { AonCustomerList } from "../registry/customer/aon-customer-list.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
+  ROOT_PANEL
   COMPANY;
   COMPANY_LIST;
   CUSTOMER_LIST;
@@ -84,6 +85,7 @@ export class AonConfiguration extends AonElement {
 
   initialize() {
     this.AON_CONFIGURATION = "aonConfiguration";
+	this.ROOT_PANEL = "rootPanel";
     this.COMPANY = this.AON_CONFIGURATION + "Company";
     this.COMPANY_LIST = this.AON_CONFIGURATION + "CompanyList";
 	this.CUSTOMER_LIST = this.AON_CONFIGURATION + "CustomerList";
@@ -98,18 +100,50 @@ export class AonConfiguration extends AonElement {
 
     let officeOptions = [];
 	
-	if(this.isBeta()){
-			officeOptions.push({
-				name: MSG.CLIENT_FILE,
-				icon: MATERIAL_ICONS.CONTACTS,
-				fn: () => this.buildCustomerList(),
-			});
-		  }
- 
-    aonConfiguration.addSidenavOptions(
-      MSG.OFFICE.toUpperCase(),
-      officeOptions
-    );
+		let company = LS.getCompany();
+    if(company && (this.isBeta() || this.isAyudaT())){
+      getSiblingsOffice({
+		  	domain: company.id
+		  }).then(siblings => {
+			  if(
+			  	company && company.registry && company.type !== "OFFICE" && 
+				  siblings.siblingsOffice && siblings.siblingsOffice.length > 0 &&
+				  this.dur.user.domain === this.dur.domain.parentId
+			  ){
+		     	getRelationShipCompany({
+				  	url: company.domain,
+		        relatedRegistry: company.registry
+		      }).then(relationshipCompany => {
+					  if(relationshipCompany.rrelationship){
+						  officeOptions.push({
+							  name: MSG.CLIENT_FILE,
+							  icon: MATERIAL_ICONS.CONTACTS,
+							  fn: () => this.buildCustomerList(),
+						  });
+		        } else {
+						  officeOptions.push({
+							  name: MSG.NO_LINK_CLIENT,
+							  icon: MATERIAL_ICONS.INFO,
+							  //fn: () => {},
+						  });
+		          /*
+		          officeOptions.push({
+							  name: MSG.LINK_CLIENT,
+							  icon: MATERIAL_ICONS.DATASET_LINKED,
+							  fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
+					  	});
+						  */
+		        }
+		            
+		        aonConfiguration.addSidenavOptionsFirst(
+				      MSG.OFFICE.toUpperCase(),
+				      officeOptions
+				    );
+		      });
+		    }
+		});
+		
+	}
 
     if ( localStorage.getItem("aon_domain_id") ) {
 
@@ -122,7 +156,15 @@ export class AonConfiguration extends AonElement {
           fn: () => this.buildGeneral(),
         });
       }
-
+		
+	  /*if(this.dur.isAdmin() || (!this.dur.isEmployee() && !this.isMobile())){
+	    companyOptions.push({
+	      name: MSG.GLOBAL_CONFIGURATION,
+	      icon: MATERIAL_ICONS.BUSINESS,
+	      action: () => this.rootPanel(new JSF.AonJsfGlobalConfig()),
+	    });
+	  }*/
+			
       if(this.dur.isAdmin()){
         companyOptions.push({
           name: MSG.USER_MANAGEMENT,
@@ -307,6 +349,7 @@ export class AonConfiguration extends AonElement {
       : new AonServiceAccountList();
     aonConfiguration.setContent(serviceAccountList);
   }
+ 
 
   createServiceAccount() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
@@ -360,6 +403,8 @@ export class AonConfiguration extends AonElement {
 
 	  let aonCustomerList = new AonCustomerList(this);
 	  aonCustomerList.id = this.CUSTOMER_LIST;
+	  aonCustomerList.office = true;
+	  aonCustomerList.clientFile = true;
 	  aonCustomerList.filter = {
 		  page: 1,
 		  perPage: 50,
@@ -377,10 +422,9 @@ export class AonConfiguration extends AonElement {
 	  aonCustomerList.addEventListener(EVENT.BUILD, buildListener);
 	  
 	  aonConfiguration.setContent(aonCustomerList);
-
   }
 
-    buildCompanyList() {
+  buildCompanyList() {
     let aonConfiguration = this.getApplication();
     aonConfiguration.removeToolbarOptions();
 

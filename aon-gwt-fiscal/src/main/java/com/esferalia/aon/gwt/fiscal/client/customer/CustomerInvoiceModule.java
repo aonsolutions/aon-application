@@ -90,6 +90,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 	private FullViewer viewer;
 	
 	private Integer customerId;
+	private Integer officeDomain;
 	
 	private Map<Integer, CustomerInvoiceRow> rows = new HashMap<Integer, CustomerInvoiceRow>();
 	
@@ -137,9 +138,11 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		
 		// Get customer from LS
 		customerId = getCustomer() > 0 ? getCustomer() : null;
+		officeDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
 		
 		// Remove customer from LS
 		removeCustomer();
+		removeOfficeDomain();
 		
 		moduleLoad();
 	}
@@ -255,88 +258,86 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		Finance finance = null;
 		if(invoice.hasFinances()) finance = invoice.financeStream().findFirst().get();
 		
-		Label payMethod = new Label(null == finance ? "" : finance.getPayMethodName());
-		tab.addInlineStyle(payMethod, COLS.PAY.getCellStyleClass());
-		tab.addRow(row, payMethod, COLS.PAY.getColWidth());
+		HTMLPanel payMethodPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		payMethodPanel.addStyleName(AON.CSS.aonItemFlex());
+		payMethodPanel.addStyleName(AON.CSS.aonFlexColumn());
+		payMethodPanel.addStyleName(AON.CSS.aonTextLeft());
 		
-		Label vto = new Label(null == finance || null == finance.getDueDate() ? "" : formatDate.format(finance.getDueDate()));
-		tab.addInlineStyle(vto, COLS.VEN.getCellStyleClass());
-		tab.addRow(row, vto, COLS.VEN.getColWidth());
-		
-		Label amount = new Label(null == finance ? "" : formatToEuro(finance.getAmount() + finance.getExpenses()));
-		tab.addInlineStyle(amount, COLS.IMP.getCellStyleClass());
-		tab.addRow(row, amount, COLS.IMP.getColWidth());
-		
-		Label statusFinance = new Label(null == finance || finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
-		tab.addInlineStyle(statusFinance, COLS.IMP.getCellStyleClass());
-		tab.addRow(row, statusFinance, COLS.IMP.getColWidth());
-		
-		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
-		
-		rows.put(invoice.getId(), new CustomerInvoiceRow(row, openDocument, closeDocument));
+		payMethodPanel.add(new Label(null == finance ? "" : finance.getPayMethodName()));
 		
 		// FinanceRows
 		if(invoice.hasFinances() && null != finance) {
 			Integer financeId = finance.getId();
 			invoice.financeStream()
 				.filter(f -> !f.getId().equals(financeId))
-				.forEach(finan -> paintRow(finan));
+				.forEach(finan -> payMethodPanel.add(new Label(null == finan ? "" : finan.getPayMethodName())));
 		}
-	}
-	
-	private void paintRow(Finance finance) {
-		HTMLPanel row = tab.createRow();
 		
-		FlowPanel buttonContainer = new FlowPanel();
-
-		Label sta = new Label();
-		tab.addInlineStyle(sta, COLS.IMP.getCellStyleClass());
-		tab.addRow(row, sta, COLS.STA.getColWidth());
+		tab.addInlineStyle(payMethodPanel, COLS.PAY.getCellStyleClass());
+		tab.addRow(row, payMethodPanel, COLS.PAY.getColWidth());
 		
-		Label dat = new Label();
-		tab.addInlineStyle(dat, COLS.DAT.getCellStyleClass());
-		tab.addRow(row, dat, COLS.DAT.getColWidth());
 		
-		Label num = new Label();
-		tab.addInlineStyle(num, COLS.NUM.getCellStyleClass());
-		tab.addRow(row, num, COLS.NUM.getColWidth());
+		HTMLPanel vtoPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		vtoPanel.addStyleName(AON.CSS.aonItemFlex());
+		vtoPanel.addStyleName(AON.CSS.aonFlexColumn());
+		vtoPanel.addStyleName(AON.CSS.aonTextLeft());
 		
-		Label bas = new Label();
-		tab.addInlineStyle(bas, COLS.BAS.getCellStyleClass());
-		tab.addRow(row, bas, COLS.BAS.getColWidth());
+		vtoPanel.add(new Label(null == finance || null == finance.getDueDate() ? "" : formatDate.format(finance.getDueDate())));
 		
-		Label iva = new Label();
-		tab.addInlineStyle(iva, COLS.IVA.getCellStyleClass());
-		tab.addRow(row, iva, COLS.IVA.getColWidth());
+		// FinanceRows
+		if(invoice.hasFinances() && null != finance) {
+			Integer financeId = finance.getId();
+			invoice.financeStream()
+				.filter(f -> !f.getId().equals(financeId))
+				.forEach(finan -> vtoPanel.add(new Label(null == finan || null == finan.getDueDate() ? "" : formatDate.format(finan.getDueDate()))));
+		}
 		
-		Label irp = new Label();
-		tab.addInlineStyle(irp, COLS.IRP.getCellStyleClass());
-		tab.addRow(row, irp, COLS.IRP.getColWidth());
+		tab.addInlineStyle(vtoPanel, COLS.VEN.getCellStyleClass());
+		tab.addRow(row, vtoPanel, COLS.VEN.getColWidth());
 		
-		Label tot = new Label();
-		tab.addInlineStyle(tot, COLS.TOT.getCellStyleClass());
-		tab.addRow(row, tot, COLS.TOT.getColWidth());
 		
-		// Finance
-		Label payMethod = new Label(null == finance ? "" : finance.getPayMethodName());
-		tab.addInlineStyle(payMethod, COLS.PAY.getCellStyleClass());
-		tab.addRow(row, payMethod, COLS.PAY.getColWidth());
+		HTMLPanel amountPanel = new HTMLPanel(AonStringUtils.EMPTY);
+		amountPanel.addStyleName(AON.CSS.aonItemFlex());
+		amountPanel.addStyleName(AON.CSS.aonFlexColumn());
+		amountPanel.addStyleName(AON.CSS.aonTextLeft());
 		
-		Label vto = new Label(null == finance || null == finance.getDueDate() ? "" : formatDate.format(finance.getDueDate()));
-		tab.addInlineStyle(vto, COLS.VEN.getCellStyleClass());
-		tab.addRow(row, vto, COLS.VEN.getColWidth());
+		amountPanel.add(new Label(null == finance ? "" : formatToEuro(finance.getAmount() + finance.getExpenses())));
 		
-		Label amount = new Label(null == finance  ? "" : formatToEuro(finance.getAmount() + finance.getExpenses()));
-		tab.addInlineStyle(amount, COLS.IMP.getCellStyleClass());
-		tab.addRow(row, amount, COLS.IMP.getColWidth());
+		// FinanceRows
+		if(invoice.hasFinances() && null != finance) {
+			Integer financeId = finance.getId();
+			invoice.financeStream()
+				.filter(f -> !f.getId().equals(financeId))
+				.forEach(finan -> amountPanel.add(new Label(null == finan ? "" : formatToEuro(finan.getAmount() + finan.getExpenses()))));
+		}
 		
-		Label statusFinance = new Label(null == finance || finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription());
-		tab.addInlineStyle(statusFinance, COLS.IMP.getCellStyleClass());
-		tab.addRow(row, statusFinance, COLS.IMP.getColWidth());
+		tab.addInlineStyle(amountPanel, COLS.IMP.getCellStyleClass());
+		tab.addRow(row, amountPanel, COLS.IMP.getColWidth());
+		
+		
+		HTMLPanel statusFinancePanel = new HTMLPanel(AonStringUtils.EMPTY);
+		statusFinancePanel.addStyleName(AON.CSS.aonItemFlex());
+		statusFinancePanel.addStyleName(AON.CSS.aonFlexColumn());
+		statusFinancePanel.addStyleName(AON.CSS.aonTextLeft());
+		
+		statusFinancePanel.add(new Label(null == finance || finance.getFinanceStatus() == null ? "" : finance.getFinanceStatus().getDescription()));
+		
+		// FinanceRows
+		if(invoice.hasFinances() && null != finance) {
+			Integer financeId = finance.getId();
+			invoice.financeStream()
+				.filter(f -> !f.getId().equals(financeId))
+				.forEach(finan -> statusFinancePanel.add(new Label(null == finan || finan.getFinanceStatus() == null ? "" : finan.getFinanceStatus().getDescription())));
+		}
+		
+		tab.addInlineStyle(statusFinancePanel, COLS.EST.getCellStyleClass());
+		tab.addRow(row, statusFinancePanel, COLS.EST.getColWidth());
 		
 		tab.addRow(row, buttonContainer, COLS.BUT.getColWidth());
+		
+		rows.put(invoice.getId(), new CustomerInvoiceRow(row, openDocument, closeDocument));
 	}
-
+	
 	private void openPDF(HTMLPanel row, Integer invoiceId, AonTableButton openDocument, AonTableButton closeDocument) {
 		dockPanel.setWidgetSize(viewer, 45);
 		dockPanel.animate(500);
@@ -395,7 +396,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 	}
 	
 	private void getInvoicePDF(Integer invoiceId, Consumer<String> success) {
-		COMMON_SERVICE.getInvoicePDF(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), invoiceId, new AsyncCallback<String>() {
+		COMMON_SERVICE.getInvoicePDF(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), officeDomain, invoiceId, new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {

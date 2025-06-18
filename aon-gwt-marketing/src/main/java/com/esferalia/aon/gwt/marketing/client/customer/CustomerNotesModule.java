@@ -48,6 +48,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 
 	private List<RegistryNote> notes;
 	private Integer customerId;
+	private Integer officeDomain;
 	
 	private RegistryNote observation;
 
@@ -64,6 +65,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		initializeService();
 		
 		customerId = getCustomer() > 0 ? getCustomer() : null;
+		officeDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
 		
 		container = new HTMLPanel(AonStringUtils.EMPTY);
 		container.setStyleName(AON.CSS.aonFlexColumn());
@@ -81,6 +83,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		// Remove customer from LS
 		removeCustomer();
+		removeOfficeDomain();
 	}
 	
 	private void initializeService() {
@@ -115,7 +118,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		List<RegistryNote> observations = notes.stream().filter(note -> note.getNoteType().equals(NoteType.OBSERVATION)).collect(Collectors.toList());
 		
 		observation = new RegistryNote()
-				.setDomain(getCurrentDomain())
+				.setDomain(officeDomain)
 				.setNoteDate(new Date())
 				.setNoteType(NoteType.OBSERVATION)
 				.setRegistry(customerId)
@@ -250,7 +253,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		newBtn.addClickHandler(e -> {
 			notes.add(
 				new RegistryNote()
-				.setDomain(getCurrentDomain())
+				.setDomain(officeDomain)
 				.setNoteType(NoteType.MESSAGE)
 				.setNoteDate(new Date())
 				.setRegistry(customerId)

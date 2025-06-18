@@ -49,7 +49,7 @@ public class CustomerNotesServlet extends AonApiHttpServlet {
 						api.getDomain().getName(), 
 						api.getDomain().getId(), 
 						api.getUser().getLogin(), 
-						f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getRegistryProperty().eq(customerId))
+						f -> f.getRegistryProperty().eq(customerId)
 				)
 		);
 	}

@@ -139,6 +139,16 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.removeItem("customer");
 	}-*/;
 	
+	public static native int getOfficeDomain()
+	/*-{
+		return $wnd.localStorage.getItem("officeDomain");
+	}-*/;
+	
+	public static native int removeOfficeDomain()
+	/*-{
+		return $wnd.localStorage.removeItem("officeDomain");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 
