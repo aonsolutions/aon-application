@@ -460,6 +460,8 @@ public class JooqPayrollBuilder {
 							: chooseDescription(d.getDeductionType());
 				})).forEach(d -> {
 					String deductionName = d.getName();
+					deductionName = AonStringUtils.replaceOnce(deductionName, "EXCESS_", "");
+					
 					DeductionType deductionType = d.getDeductionType();
 
 					if (deductionType == null)
@@ -600,6 +602,8 @@ public class JooqPayrollBuilder {
 					HashMap<Integer, ArrayList<PDFDeduction>> costMap = new HashMap<>();
 					salary.getCosts().forEach(cost -> {
 						String costName = cost.getName();
+						costName = AonStringUtils.replaceOnce(costName, "EXCESS_", "");
+
 						DeductionType costType = cost.getCostType();
 
 						if (costType == null)
