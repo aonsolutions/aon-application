@@ -32,7 +32,27 @@ public class S3Document implements Serializable {
 	private String modificationUser;
 	private Date creationDate;
 	private Date modificationDate;
+	private Date deleteDate;
+	private String deleteUser;
 	
+	public Date getDeleteDate() {
+		return deleteDate;
+	}
+
+	public S3Document setDeleteDate(Date deleteDate) {
+		this.deleteDate = deleteDate;
+		return this;
+	}
+
+	public String getDeleteUser() {
+		return deleteUser;
+	}
+
+	public S3Document setDeleteUser(String deleteUser) {
+		this.deleteUser = deleteUser;
+		return this;
+	}
+
 	public Byte getRegistryType() {
 		return registryType;
 	}

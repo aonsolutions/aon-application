@@ -1037,18 +1037,18 @@ public class NordigenModule extends MainEntryPoint {
 				    updateCard(opt, result, atDateBox, lastDateBox, balanceBox, availableBox, title, titlePanel, allMovementsButton, balanceJsonButton);
 				    clearBottomMessage();
 
-				    // Filtrar los movimientos no pendientes
-				    List<NordigenBankStatement> nonPendingStatements = result.getNotInsertedMovements()
-				        .stream()
-				        .filter(statement -> !statement.isPending())
-				        .collect(Collectors.toList());
-
-				    // Mostramos solo los que se insertaran
-				    Label label = new Label(nonPendingStatements.size() + " movimientos insertados");
-				    label.addStyleName(AON.CSS.aonColorGreen());
-				    sessionLog.add(label);
-				    openFootPanel();
-                    loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
+				    if(result.getNotInsertedMovements() != null) {
+					    // Filtrar los movimientos no pendientes
+					    List<NordigenBankStatement> nonPendingStatements = result.getNotInsertedMovements()
+						        .stream()
+						        .filter(statement -> !statement.isPending())
+						        .collect(Collectors.toList());
+					    // Mostramos solo los que se insertaran
+					    Label label = new Label(nonPendingStatements.size() + " movimientos insertados");
+					    label.addStyleName(AON.CSS.aonColorGreen());
+					    sessionLog.add(label);
+					    openFootPanel();
+				    }
 				}
 			});
 		}

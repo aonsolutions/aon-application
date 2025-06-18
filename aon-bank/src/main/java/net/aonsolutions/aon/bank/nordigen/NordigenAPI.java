@@ -115,14 +115,6 @@ class NordigenAPI {
 			HttpResponse<String> resp = HttpClient.newBuilder()
 				.build()
 				.send(request, BodyHandlers.ofString());
-			HttpHeaders headers = resp.headers();
-			Map<String, List<String>> headerMap = headers.map(); 
-			
-			headerMap.forEach((key, value) -> {
-				if(key.equals("http_x_ratelimit_account_success_reset")) {
-				    System.out.println(key + ": " + String.join(", ", value));
-				}
-			});
 			checkResposeStatus(resp);
 			return responseBuilder.apply(resp.body());
 		} catch (InterruptedException e) {

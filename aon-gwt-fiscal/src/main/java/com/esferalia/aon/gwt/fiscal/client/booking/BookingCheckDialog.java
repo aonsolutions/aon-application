@@ -203,7 +203,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	}
 
 	private void getCustomersSuggestion(String customerQuery) {
-		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
@@ -295,7 +295,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	}
 
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -474,7 +474,7 @@ public abstract class BookingCheckDialog extends AonCustomDialog {
 	}
 
 	private void getWorkplacesSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
