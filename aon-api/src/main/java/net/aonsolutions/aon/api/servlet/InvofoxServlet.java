@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorContext;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -847,6 +848,15 @@ public class InvofoxServlet extends AonApiHttpServlet {
 						.ifPresent(errors -> errors.forEach(ocrError -> getMessages(ocrError)
 								.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))))));
 
+		ocrDocument.getData().ifPresent(i -> i.getCurrency().ifPresent(c -> {
+			if(!AonStringUtils.containsIgnoreCase(c.getValue().orElse(""), "EUR")) {
+				InvoiceError invoiceError = new InvoiceError();
+				invoiceError.setLevel(InvoiceErrorLevel.WRN);
+				invoiceError.setCode(InvoiceErrorMessages.C020.name());
+				invoiceError.setMessage(InvoiceErrorMessages.C020.getMessage());
+				messages.add(InvoiceErrorJSON.toJSON(invoiceError));
+			}
+		}));
 		ocrDocument.getData().ifPresent(ocrInvoice -> getMessages(ocrInvoice, company)
 				.forEach(message -> messages.add(InvoiceErrorJSON.toJSON(message))));
 
