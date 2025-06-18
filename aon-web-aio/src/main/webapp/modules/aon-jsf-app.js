@@ -720,6 +720,14 @@ export class AonJsfProject extends AonJsfApp {
 	}
 }
 
+export class AonJsfProjectTas extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/projectTas.xhtml');
+	}
+}
+
 export class AonJsfProjectType extends AonJsfApp {
 
 	constructor() {
@@ -757,6 +765,38 @@ export class AonJsfMailSignature extends AonJsfApp {
 	constructor() {
 		super();
 		this.setViewId('/facelet/app/mailSignature.xhtml');
+	}
+}
+
+export class AonJsfMake extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/make.xhtml');
+	}
+}
+
+export class AonJsfModel extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/model.xhtml');
+	}
+}
+
+export class AonJsfTasItem extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/tasItem.xhtml');
+	}
+}
+
+export class AonJsfTasStat extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/tasStat.xhtml');
 	}
 }
 
@@ -1820,4 +1860,24 @@ if (!window.customElements.get(TAG.AON_JSF_PAYROLL_GRAPH)) {
 
 if (!window.customElements.get(TAG.AON_JSF_CONTRACT_GRAPH)) {
 	window.customElements.define(TAG.AON_JSF_CONTRACT_GRAPH, AonJsfContractGraph);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PROJECT_TAS)) {
+	window.customElements.define(TAG.AON_JSF_PROJECT_TAS, AonJsfProjectTas);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_MAKE)) {
+	window.customElements.define(TAG.AON_JSF_MAKE, AonJsfMake);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_MODEL)) {
+	window.customElements.define(TAG.AON_JSF_MODEL, AonJsfModel);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_TAS_ITEM)) {
+	window.customElements.define(TAG.AON_JSF_TAS_ITEM, AonJsfTasItem);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_TAS_STAT)) {
+	window.customElements.define(TAG.AON_JSF_TAS_STAT, AonJsfTasStat);
 }
