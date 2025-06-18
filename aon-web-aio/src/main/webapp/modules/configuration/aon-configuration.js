@@ -251,7 +251,7 @@ export class AonConfiguration extends AonElement {
 		menuOptions.push({
 			id: "options panel",
 			icon: "dashboard",
-			name: "Opciones Configuración",
+			name: "Panel Configuración",
 			fn: () => this.buildConfigurationMenu(),
 		});
 		

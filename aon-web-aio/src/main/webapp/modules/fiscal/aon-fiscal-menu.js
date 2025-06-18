@@ -22,11 +22,13 @@ export class AonFiscalMenu extends AonSuiteMenu {
     }
 
     async connectedCallback() {
-        this.clear();
-        await this.getAppParams(); 
-        this.initialize();
-        this.build();
-        this.setTitle("Opciones fiscales");
+		await this.getAppParams(); 
+		this.buildDur().then(() => {		
+	        this.clear();
+	        this.initialize();
+	        this.build();
+	        this.setTitle("Opciones fiscales");
+		})
     }
     
     async getAppParams() {

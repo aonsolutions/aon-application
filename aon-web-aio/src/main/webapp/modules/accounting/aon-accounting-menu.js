@@ -17,10 +17,12 @@ export class AonAccountingMenu extends AonSuiteMenu {
 	}
 
 	connectedCallback () {
-		this.clear();
-		this.initialize();
-		this.build();
-		this.setTitle("Opciones de contabilidad");
+		this.buildDur().then(() => {
+           this.clear();
+           this.initialize();
+           this.build();
+           this.setTitle("Opciones de contabilidad");
+		})
 	}
 
 	accountingInitialize() {

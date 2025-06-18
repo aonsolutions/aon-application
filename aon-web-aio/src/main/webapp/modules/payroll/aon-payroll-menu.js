@@ -17,10 +17,12 @@ export class AonPayrollMenu extends AonSuiteMenu {
     }
 
     connectedCallback () {
-        this.clear();
-        this.initialize();
-        this.build();
-        this.setTitle("Opciones de laboral");
+		this.buildDur().then(() => {		
+	        this.clear();
+	        this.initialize();
+	        this.build();
+	        this.setTitle("Opciones de laboral");
+		})
     }
 
     laboralInitialize() {

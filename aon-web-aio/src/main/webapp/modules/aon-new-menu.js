@@ -33,13 +33,16 @@ import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
 import { AonNewDesktop } from './aon-new-desktop.js';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
+import { AonAccountingBeta } from './accounting/aon-accounting-beta.js';
 import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
 import { AonManagementMenu } from './management/aon-management-menu.js';
 import { AonTreasuryMenu } from './treasury/aon-treasury-menu.js';
 import { AonGroupwareMenu } from './groupware/aon-groupware-menu.js';
 import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
 import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
+import { AonFiscalBeta } from './fiscal/aon-fiscal-beta.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
+import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
@@ -250,13 +253,34 @@ export class AonNewMenu extends AonElement {
 					this.showApplicationsDialog();
 					break;
 				case ACCOUNTING_MENU.app:
+					if(this.isBeta()){
+						this.rootPanel(new AonAccountingBeta());
+						break;
+					}else {
+						this.rootPanelMenu(this.getAonSuiteMenu(app));
+						break;					
+					}
+				case FISCAL_MENU.app:
+					if(this.isBeta()){
+						this.rootPanel(new AonFiscalBeta());
+						break;
+					}else {
+						this.rootPanelMenu(this.getAonSuiteMenu(app));
+						break;					
+					}
+				case PAYROLL_MENU.app:
+					if(this.isBeta()){
+						this.rootPanel(new AonPayrollBeta());
+						break;
+					}else {
+						this.rootPanelMenu(this.getAonSuiteMenu(app));
+						break;					
+					}
 				case COMMERCIAL_MENU.app:
 				case GROUPWARE_MENU.app:
 				case MANAGEMENT_MENU.app:
 				case TREASURY_MENU.app:
 				case WAREHOUSE_MENU.app:
-				case FISCAL_MENU.app:
-				case PAYROLL_MENU.app:
 				case MARKETING_MENU.app:
 				case CONFIGURATION_MENU.app:
 				case ACADEMY.app:
