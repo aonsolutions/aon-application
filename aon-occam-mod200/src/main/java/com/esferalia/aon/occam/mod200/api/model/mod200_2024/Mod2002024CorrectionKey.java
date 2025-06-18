@@ -192,8 +192,6 @@ public enum Mod2002024CorrectionKey implements Serializable, IMod200KeysProvider
 			                                       	new Mod2002024KeyDC[]{Mod2002024KeyDC.DC3309, Mod2002024KeyDC.DC3306, Mod2002024KeyDC.DC3307, Mod2002024KeyDC.DC3308, Mod2002024KeyDC.DC3310}, "Exenci\u00F3n transmisi\u00F3n bienes inmuebles (DA 6\u00AA LIS)")
 	,C092(null				, Mod2002024Key.D1824, 	null                                                                                                                                   	    , 
 			                                       	new Mod2002024KeyDC[]{null                  , Mod2002024KeyDC.DC3316, null                  , null                  , null                  }, "Rentas procedentes de transmisi\u00F3n de inmovilizado obtenidas por las Autoridades Portuarias (DA 68\u00AA Ley 6/2018)")
-//	,C90(Mod2002024Key.I1009, Mod2002024Key.D1013, new Mod2002024KeyDC[]{Mod2002024KeyDC.DC1860, Mod2002024KeyDC.DC1861, Mod2002024KeyDC.DC1862, Mod2002024KeyDC.DC1863, Mod2002024KeyDC.DC1864}, 
-//			                                       new Mod2002024KeyDC[]{Mod2002024KeyDC.DC1865, Mod2002024KeyDC.DC1866, Mod2002024KeyDC.DC1867, Mod2002024KeyDC.DC1868, Mod2002024KeyDC.DC1869}, "UEFA Europa League 2024 (RDL 3/2024)")
 	,C093(Mod2002024Key.I1905, Mod2002024Key.D1906, new Mod2002024KeyDC[]{Mod2002024KeyDC.DC2176, Mod2002024KeyDC.DC2177, Mod2002024KeyDC.DC2178, Mod2002024KeyDC.DC2179, Mod2002024KeyDC.DC2180}, 
 			                                       	new Mod2002024KeyDC[]{Mod2002024KeyDC.DC2289, Mod2002024KeyDC.DC2290, Mod2002024KeyDC.DC2291, Mod2002024KeyDC.DC2292, Mod2002024KeyDC.DC2293}, "XXXVII Copa Am\u00E9rica Barcelona (Ley 31/2024)")	
 	,C094(Mod2002024Key.I0510, Mod2002024Key.D0512, new Mod2002024KeyDC[]{Mod2002024KeyDC.DC3324, Mod2002024KeyDC.DC3321, Mod2002024KeyDC.DC3322, Mod2002024KeyDC.DC3323, Mod2002024KeyDC.DC3325}, 
@@ -317,7 +315,7 @@ final class CorrectionDetail implements Serializable, IMod200KeysProvider {
 	
 	private static final long serialVersionUID = 791258471554632660L;
 	
-	public static String[] DETAIL_DESCRIPTIONS = new String[] {			
+	public static final String[] DETAIL_DESCRIPTIONS = new String[] {			
 			 "Saldo pendiente de correcciones temporarias a principio de ejercicio"
 			,"Correcciones del ejercicio - Permanentes"
 			,"Correcciones del ejercicio - Temporarias (con origen en el ejercicio)" 

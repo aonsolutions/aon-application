@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.gwt.mod200.server.Model200AdmonUtils;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -36,44 +37,90 @@ public class Mod2002024ValidatePrintAEAT extends HttpServlet {
 	private static final long serialVersionUID = -4386488646925215116L;
 	private static final Logger LOGGER = Logger.getLogger(Mod2002024ValidatePrintAEAT.class.getName()); 
 
-	private enum AeatUrl {
-		URL_2024 {
-
-			@Override
-			protected boolean accept(Mod2002024 mod200) {
-				return true;
-			}
-
-			@Override
-			protected String getUrl() {
-				return "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
-			}
-
-			@Override
-			protected String getUrlParameters(Mod2002024 mod200) throws IOException {
-				ByteArrayOutputStream output = new ByteArrayOutputStream();
-				PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
-				Mod2002024Writer.fillWriter(mod200, writer);
-				return MessageFormat.format("MOD=200&EJF={0}&FIC={1}&IDI=ES"
-						,AonNumberUtils.toString( mod200.getYear())
-						,Model200AdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
-			}
-		};
-		private static AeatUrl getAeatUrl(Mod2002024 mod200) {
-			for (AeatUrl aeatUrl : AeatUrl.values()) {
-				if (aeatUrl.accept(mod200)) {
-					return aeatUrl;
-				}
-			}
-			throw new AonCoreException("No se encontró una configuración válida para la petición de validación a la AEAT." +
-				" Descargue el archivo para su presentación y acceda a los servidores de la Agencia Tributaria manualmente.");
-		}
-
-		protected abstract boolean accept( Mod2002024 mod200);
-		protected abstract String getUrl();
-		protected abstract String getUrlParameters(Mod2002024 mod200) throws IOException;
-	}
-
+//	private enum AeatUrl {
+//		URL_2024 {
+//
+//			@Override
+//			protected boolean accept(Mod2002024 mod200) {
+//				return true;
+//			}
+//
+//			@Override
+//			protected String getUrl() {
+//				return "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
+//			}
+//
+//			@Override
+//			protected String getUrlParameters(Mod2002024 mod200) throws IOException {
+//				ByteArrayOutputStream output = new ByteArrayOutputStream();
+//				PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
+//				Mod2002024Writer.fillWriter(mod200, writer);
+//				return MessageFormat.format("MOD=200&EJF={0}&FIC={1}&IDI=ES"
+//						,AonNumberUtils.toString( mod200.getYear())
+//						,Model200AdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+//			}
+//		};
+//		private static AeatUrl getAeatUrl(Mod2002024 mod200) {
+//			for (AeatUrl aeatUrl : AeatUrl.values()) {
+//				if (aeatUrl.accept(mod200)) {
+//					return aeatUrl;
+//				}
+//			}
+//			throw new AonCoreException("No se encontró una configuración válida para la petición de validación a la AEAT." +
+//				" Descargue el archivo para su presentación y acceda a los servidores de la Agencia Tributaria manualmente.");
+//		}
+//
+//		protected abstract boolean accept( Mod2002024 mod200);
+//		protected abstract String getUrl();
+//		protected abstract String getUrlParameters(Mod2002024 mod200) throws IOException;
+//	}
+//
+//	@Override
+//	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+//			throws ServletException, IOException {
+//
+//		try {
+//			AEATParams aeatParams = Model200AdmonUtils.getAEATParams(req);
+//			Occam occam = new Occam()
+//					.setDomainName(aeatParams.getDomainName())
+//					.setDomain(aeatParams.getDomainId())
+//					.setUser(aeatParams.getUser());
+//			Mod2002024 mod200 = MODEL2002024.getMod2002024ById(occam, Model200AdmonUtils.getFiscalModelId(aeatParams));
+//			
+//			if (mod200 == null) {
+//				throw new AonCoreException("[INT] Modelo no encontrado");
+//			}
+//			// FALTA - PROBAR SI ES NECESARIO YA HACERLO CON SERVALIDOS O AUN SIRVE SERVALI - POR AHORA FUNCIONA CON SERVALI
+////			if (mod200.getYear() >= 2024) {
+////				ModelAdmonUtils.serValiDos(resp, aeatParams, mod200);
+////			} else {
+////				
+////			}			
+//			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod200);
+//			HttpRequest request = HttpRequest.newBuilder()
+//				.uri(URI.create( aeatURL.getUrl() ))
+//				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod200)))
+//				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+//				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+//				.build();
+//			HttpClient httpClient = HttpClient.newBuilder()
+//	            .version(HttpClient.Version.HTTP_2)
+//	            .connectTimeout(Duration.ofSeconds(10))
+//	            .build();
+//			HttpResponse<byte[]> response = httpClient
+//				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+//			String headerValue = Model200AdmonUtils.getContentTypeHeader( response );  
+//			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
+//			Model200AdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+//		} catch (InterruptedException e) {	
+//			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
+//		    // Restore interrupted state...
+//		    Thread.currentThread().interrupt();
+//		} catch (IOException | AonCoreException e ) {
+//			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
+//		}
+//	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -91,33 +138,34 @@ public class Mod2002024ValidatePrintAEAT extends HttpServlet {
 			}
 			// FALTA - PROBAR SI ES NECESARIO YA HACERLO CON SERVALIDOS O AUN SIRVE SERVALI - POR AHORA FUNCIONA CON SERVALI
 //			if (mod200.getYear() >= 2024) {
-//				ModelAdmonUtils.serValiDos(resp, aeatParams, mod200);
+				ModelAdmonUtils.serValiDos(resp, aeatParams, mod200);
 //			} else {
 //				
 //			}			
-			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod200);
-			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create( aeatURL.getUrl() ))
-				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod200)))
-				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
-				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.build();
-			HttpClient httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_2)
-	            .connectTimeout(Duration.ofSeconds(10))
-	            .build();
-			HttpResponse<byte[]> response = httpClient
-				.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			String headerValue = Model200AdmonUtils.getContentTypeHeader( response );  
-			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
-			Model200AdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
-		} catch (InterruptedException e) {	
-			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
-		    // Restore interrupted state...
-		    Thread.currentThread().interrupt();
-		} catch (IOException | AonCoreException e ) {
+//			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod200);
+//			HttpRequest request = HttpRequest.newBuilder()
+//				.uri(URI.create( aeatURL.getUrl() ))
+//				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod200)))
+//				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+//				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+//				.build();
+//			HttpClient httpClient = HttpClient.newBuilder()
+//	            .version(HttpClient.Version.HTTP_2)
+//	            .connectTimeout(Duration.ofSeconds(10))
+//	            .build();
+//			HttpResponse<byte[]> response = httpClient
+//				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+//			String headerValue = Model200AdmonUtils.getContentTypeHeader( response );  
+//			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
+//			Model200AdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+//		} catch (InterruptedException e) {	
+//			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
+//		    // Restore interrupted state...
+//		    Thread.currentThread().interrupt();
+		} catch (AonCoreException e ) {
 			Model200AdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
+	
 }
 

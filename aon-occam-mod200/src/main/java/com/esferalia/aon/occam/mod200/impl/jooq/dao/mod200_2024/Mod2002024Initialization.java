@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024Key;
 
 public class Mod2002024Initialization {
 	
-	public static EnumMap<Mod2002024Key,String> INITIALIZE_EXPRESSION_MAP = new EnumMap<Mod2002024Key,String>(Mod2002024Key.class);
+	public static final EnumMap<Mod2002024Key,String> INITIALIZE_EXPRESSION_MAP = new EnumMap<Mod2002024Key,String>(Mod2002024Key.class);
 	
 	// FALTA - NUEVAS CASILLAS COOPERATIVAS, VER SI SE PUEDEN INICIALIZAR CON ALGUNAS CUENTAS
 	

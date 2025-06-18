@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 
 public class Mod2002024Code {
 	
-	public static HashMap<IMod200Key,String> CODE_MAP = new HashMap<IMod200Key,String>();
+	protected static final HashMap<IMod200Key,String> CODE_MAP = new HashMap<IMod200Key,String>();
 
 	static {
 		

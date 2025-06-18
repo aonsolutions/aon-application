@@ -185,7 +185,6 @@ public class Page10 extends PageAbs {
     			if (key == Mod2002024Key.LQ547 && !callback.getMod200Object().getMod200().isCooperativa()) {
 					row = paintKeyBreakdownLink(table, row, Mod2002024Key.LQ547, Mod2002024LQ547Key.values(), HEADERS_4, FOOTER_547);    				
 				} 
-    			//if (key == Mod2002024Key.LQ1034 && callback.getMod200Object().getMod200().isChecked(Mod2002024Key.C0006)) {
     			if (key == Mod2002024Key.LQ1034) {
 					row = paintKeyBreakdownLinkLQ1033(table, row);
 				}

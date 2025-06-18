@@ -2092,6 +2092,7 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_4)
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_5)
 				// FALTA - CASILLAS [02378][02379][02407][02408][00466] VAN AL FINAL DE LA PAGINA Y NO ENTREMEDIAS DE COMBINED_TAXATION_3 
+				// SI AL FINAL SE QUEDA ASI, HABRA QUE DIVIDIR COMBINED_TAXATION_3 EN 3 PARTES PARA PODER PONERLO BIEN EN EL WRITER
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
@@ -2219,7 +2220,7 @@ public class Mod2002024Writer {
 					
 					line.append(AonFiscalFileUtils.signedZero(rectificacion, DS, DD));  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
 					
-					boolean ponerCuentaDevolucion = (devolucion > 0 && "D".equals(mod200.getDevType())) || (rectificacion > 0); // Cuenta devolucion se indica si devolucion mayhor que cero y solitita devolucion o rectificacion mayor que cero
+					boolean ponerCuentaDevolucion = (devolucion > 0 && "D".equals(mod200.getDevType())) || (rectificacion > 0); // Cuenta devolucion se indica si devolucion mayor que cero y solitita devolucion o rectificacion mayor que cero
 					line.append(ponerCuentaDevolucion ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
                     line.append(AonFiscalFileUtils.text(ponerCuentaDevolucion ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
 					line.append(AonFiscalFileUtils.spaces(11));  // Cuenta Bancaria - Código SWIFT-BIC (No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la AEAT, lo pone por defecto en el apartado de cuenta extranjera UE)

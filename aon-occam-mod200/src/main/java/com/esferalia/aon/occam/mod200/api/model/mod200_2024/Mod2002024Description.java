@@ -15,7 +15,6 @@ public class Mod2002024Description {
 	// ª --> \u00AA  º --> \u00BA
 	// ¿ --> \u00BF
 		
-	//public static HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<IMod200Key,String>();
 	protected static final HashMap<IMod200Key,String> DESCRIPTION_MAP = new HashMap<>();
 
 	static {		
@@ -465,7 +464,6 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ632, "Compensaci\u00F3n de bases imponibles negativas de per\u00EDodos anteriores (a compensar \u00FAnicamente con la casilla 631)");
 		
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1029,"Base imponible individual a integrar por las entidades que forman parte del grupo");
-		// DESCRIPTION_MAP.put(Mod2002024Key.LQ814 ,"Base imponible negativa pendiente de integraci\u00F3n en periodos siguientes (DA 19\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1030,"Eliminaciones e incorporaciones correspondientes a la entidad");
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1031,"Integraci\u00F3n individual de las dotaciones del art. 11.12 LIS");
 		
@@ -809,6 +807,4 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.UT1934, "Dividendos y participaciones en beneficios percibidos procedentes de ejercicios posteriores a la adquisici\u00F3n de la participaci\u00F3n");
 	}
 	
-	
 }
-

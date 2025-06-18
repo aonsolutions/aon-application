@@ -305,7 +305,7 @@ public class Mod2002024DAO  {
         mod200.setCreationUser(ctx.getUser());
 		mod200.setCreationDate(new Timestamp(System.currentTimeMillis()));        
 		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
-		FsModel200Record record = ctx.getDslContext()
+		FsModel200Record rec = ctx.getDslContext()
 			.insertInto(FS_MODEL200)
 			 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 			 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
@@ -348,7 +348,7 @@ public class Mod2002024DAO  {
 			 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
 			 // FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 			 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-//			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+//			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry())) // ESTE SE ELIMINA ESTE AÑO
 			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 //			 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
 			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
@@ -360,9 +360,9 @@ public class Mod2002024DAO  {
 			 .set(FS_MODEL200.NRC,mod200.getNrc()) 
 			 .returning()
 			 .fetchOne();
-		mod200.setId(record.getValue(FS_MODEL200.ID));
-		mod200.setCreationUser(record.getValue(FS_MODEL200.CREATION_USER));
-		mod200.setCreationDate(record.getValue(FS_MODEL200.CREATION_DATE));
+		mod200.setId(rec.getValue(FS_MODEL200.ID));
+		mod200.setCreationUser(rec.getValue(FS_MODEL200.CREATION_USER));
+		mod200.setCreationDate(rec.getValue(FS_MODEL200.CREATION_DATE));
 		ctx.log().info("------ MOD 200 INSERTED (" + mod200.getId() + ")");
 		insertDetail(ctx, mod200);	
 		insertRegistry(ctx, mod200);
@@ -733,7 +733,7 @@ public class Mod2002024DAO  {
 		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
 		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 		 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-//		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+//		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))  // ESTE SE ELIMINA ESTE AÑO
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
 //		 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
@@ -838,70 +838,70 @@ public class Mod2002024DAO  {
 //		return mod200;
 //	}
 
-	private static Mod2002024 getMod200(FsModel200Record record) {
+	private static Mod2002024 getMod200(FsModel200Record rec) {
 		
 		Mod2002024 mod200 = new Mod2002024();
-		mod200.setId(record.getId());
-		mod200.setYear(record.getYear());
-		mod200.setDomain(record.getDomain());
-		mod200.setAdministration(AonEnumUtils.enumValue(Administration.class, record.getAdministration()));
-		mod200.setEnterprise(record.getEnterprise());
-		mod200.setDocument(record.getDocument());
-		mod200.setName(record.getName());
-		mod200.setEnterprisePhone1(record.getPhone1());
-		mod200.setEnterprisePhone2(record.getPhone2());
-		mod200.setComplementary(record.getComplementary()==1);
-		mod200.setReplacedNumber(record.getComplementaryReceipt());
-		mod200.setCnae(record.getCnae());
-		mod200.setPeriodEnd(record.getPeriodEnd());
-		mod200.setPeriodStart(record.getPeriodStart());
-		mod200.setPeriodType(record.getPeriodType());
-		mod200.setNumber(record.getReceipt());
-		mod200.setComments(record.getComments());
-		mod200.setFiscalGroup(record.getFiscalGroup());
-		mod200.setDominantDocument(record.getDominantDocument());
+		mod200.setId(rec.getId());
+		mod200.setYear(rec.getYear());
+		mod200.setDomain(rec.getDomain());
+		mod200.setAdministration(AonEnumUtils.enumValue(Administration.class, rec.getAdministration()));
+		mod200.setEnterprise(rec.getEnterprise());
+		mod200.setDocument(rec.getDocument());
+		mod200.setName(rec.getName());
+		mod200.setEnterprisePhone1(rec.getPhone1());
+		mod200.setEnterprisePhone2(rec.getPhone2());
+		mod200.setComplementary(rec.getComplementary()==1);
+		mod200.setReplacedNumber(rec.getComplementaryReceipt());
+		mod200.setCnae(rec.getCnae());
+		mod200.setPeriodEnd(rec.getPeriodEnd());
+		mod200.setPeriodStart(rec.getPeriodStart());
+		mod200.setPeriodType(rec.getPeriodType());
+		mod200.setNumber(rec.getReceipt());
+		mod200.setComments(rec.getComments());
+		mod200.setFiscalGroup(rec.getFiscalGroup());
+		mod200.setDominantDocument(rec.getDominantDocument());
 		Secretary secretary = new Secretary();
-		secretary.setDocument(record.getSecretaryDocument());
-		secretary.setName(record.getSecretaryName());
-		secretary.setIrnr(record.getIrnr());
+		secretary.setDocument(rec.getSecretaryDocument());
+		secretary.setName(rec.getSecretaryName());
+		secretary.setIrnr(rec.getIrnr());
 		mod200.setSecretary(secretary);
-		mod200.setComments(record.getComments());
-		mod200.setResultType(record.getResultType());
-		mod200.setDevType(record.getDevType());
-		mod200.setPayType(record.getPayType());
-		mod200.setAmount(record.getAmount());
-		mod200.setIban(record.getIban());
-		mod200.setBic(record.getBic());
-		mod200.setNrsAnexoIII(record.getNrsAnexoiii());
-		mod200.setJustCanarias(record.getJustCanarias());
+		mod200.setComments(rec.getComments());
+		mod200.setResultType(rec.getResultType());
+		mod200.setDevType(rec.getDevType());
+		mod200.setPayType(rec.getPayType());
+		mod200.setAmount(rec.getAmount());
+		mod200.setIban(rec.getIban());
+		mod200.setBic(rec.getBic());
+		mod200.setNrsAnexoIII(rec.getNrsAnexoiii());
+		mod200.setJustCanarias(rec.getJustCanarias());
 		// FALTA - CAMPOS NUEVO DOC BALEARES
 //		mod200.setJustBaleares(record.getJustBaleares());
-		mod200.setNrsAnexoIV(record.getNrsAnexoiv());
-		mod200.setNrsAnexoV(record.getNrsAnexov());
-		mod200.setNrsAnexoVric(record.getNrsAnexovRic());
-		mod200.setJustActivos(record.getJustActivos());
+		mod200.setNrsAnexoIV(rec.getNrsAnexoiv());
+		mod200.setNrsAnexoV(rec.getNrsAnexov());
+		mod200.setNrsAnexoVric(rec.getNrsAnexovRic());
+		mod200.setJustActivos(rec.getJustActivos());
 		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
-		mod200.setUltimateDocument(record.getUltimateDocument());
-//		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
-		mod200.setUltimateName(record.getUltimateName());
+		mod200.setUltimateDocument(rec.getUltimateDocument());
+//		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry())); // ESTE SE ELIMINA ESTE AÑO
+		mod200.setUltimateName(rec.getUltimateName());
 //		mod200.setUltimateGroupName(record.getUltimateGroupName());
-		mod200.setUltimateResidenceCountry(Country.safeValueOf(record.getUltimateCountry()));
+		mod200.setUltimateResidenceCountry(Country.safeValueOf(rec.getUltimateCountry()));
 //		mod200.setUltimateResidenceDocument(record.getUltimateResidenceDocument());
-		mod200.setStatus(FiscalStatus.safeValueOf(record.getStatus()));
-		mod200.setCreationUser(record.getCreationUser());
-		mod200.setCreationDate(record.getCreationDate());
-		mod200.setModificationUser(record.getModificationUser());
-		mod200.setModificationDate(record.getModificationDate());
-	    mod200.setFsModel(record.getFsModel());
-	    mod200.setNrsAnexoVI(record.getNrsAnexovi());
-	    mod200.setNrc(record.getNrc()); 
+		mod200.setStatus(FiscalStatus.safeValueOf(rec.getStatus()));
+		mod200.setCreationUser(rec.getCreationUser());
+		mod200.setCreationDate(rec.getCreationDate());
+		mod200.setModificationUser(rec.getModificationUser());
+		mod200.setModificationDate(rec.getModificationDate());
+	    mod200.setFsModel(rec.getFsModel());
+	    mod200.setNrsAnexoVI(rec.getNrsAnexovi());
+	    mod200.setNrc(rec.getNrc()); 
 		return mod200;
 	}
 	
-	private static Mod2002024 populateMod200(AONContext ctx, FsModel200Record record) {
+	private static Mod2002024 populateMod200(AONContext ctx, FsModel200Record rec) {
 		Mod2002024 mod200 = null;
-		if (record != null) {
-			mod200 = getMod200(record);
+		if (rec != null) {
+			mod200 = getMod200(rec);
 			fillDetail(mod200,ctx);
 			final Mod2002024 mod = mod200;
 			ctx.getDslContext() 
@@ -1067,7 +1067,7 @@ public class Mod2002024DAO  {
 			if (mod200.isNotChecked(Mod2002024Key.C0081)) {		
 				// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 				mod200.setUltimateDocument("");            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
-//				mod200.setUltimateDocumentCountry(null);   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país
+//				mod200.setUltimateDocumentCountry(null);   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país // ESTE SE ELIMINA ESTE AÑO
 				mod200.setUltimateName("");				   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
 				mod200.setUltimateGroupName("");		   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo 
 				mod200.setUltimateResidenceCountry(null);  // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País de residencia
@@ -1098,10 +1098,11 @@ public class Mod2002024DAO  {
 				mod200.getUteParticipationsBis().clear();
 			}
 			
+			// FALTA - ESTE AÑO HAY TRES OPCIONES, PROBAR A IMPORTAR COOPERATIVA Y NO COOPERATIVA 
 			// Volumen de operaciones: Si no es cooperativa y estaba marcado el 3, ponerle el 2 (este año solo hay 2 opciones, excepto cooperativas)			
-			if (mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0 && mod200.isNotChecked(Mod2002024Key.C0017) && mod200.isNotChecked(Mod2002024Key.C0018) && mod200.isNotChecked(Mod2002024Key.C0019)) {
-				mod200.setDoubleValue(Mod2002024Key.VOLOPE, 2.0);
-			}
+//			if (mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0 && mod200.isNotChecked(Mod2002024Key.C0017) && mod200.isNotChecked(Mod2002024Key.C0018) && mod200.isNotChecked(Mod2002024Key.C0019)) {
+//				mod200.setDoubleValue(Mod2002024Key.VOLOPE, 2.0);
+//			}
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002024Key)
 			Mod2002024MVELContext mvelCtx = new Mod2002024MVELContext( mod200, ACCEPTER );		

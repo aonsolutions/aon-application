@@ -13,8 +13,8 @@ public class Mod2002024ServiceAsyncDecorator implements Mod2002024ServiceAsync {
 
 	private Mod2002024ServiceAsync fsa;
 
-	public Mod2002024ServiceAsyncDecorator(Mod2002024ServiceAsync Mod2002024ServiceAsync) {
-		this.fsa = Mod2002024ServiceAsync;
+	public Mod2002024ServiceAsyncDecorator(Mod2002024ServiceAsync mod2002024ServiceAsync) {
+		this.fsa = mod2002024ServiceAsync;
 	}
 
 	@Override

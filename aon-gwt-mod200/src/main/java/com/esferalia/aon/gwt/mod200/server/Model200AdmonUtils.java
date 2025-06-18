@@ -267,10 +267,12 @@ public class Model200AdmonUtils {
 
 		@Override
 		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// DO NOTHING
 		}
 
 		@Override
 		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+			// DO NOTHING
 		}
 
 		@Override
@@ -546,7 +548,7 @@ public class Model200AdmonUtils {
 				.uri(URI.create( url ))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
-				.POST(HttpRequest.BodyPublishers.ofString(urlParameters.toString()))
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
 				.build();
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());

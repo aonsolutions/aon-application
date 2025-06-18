@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.mod200.api.model.mod200_2024;
 
 public class Mod2002024Constants {
 	
-	public static Mod2002024Key[] PARTICIPATION_KEYS = new Mod2002024Key[] {
+	public static final Mod2002024Key[] PARTICIPATION_KEYS = new Mod2002024Key[] {
 		 Mod2002024Key.P1501,
 		 Mod2002024Key.P1502,
 		 Mod2002024Key.P1503,
@@ -15,7 +15,7 @@ public class Mod2002024Constants {
 		 Mod2002024Key.P1508
 	};
 	
-	public static Mod2002024Key[] BALANCE_ACTIVE_KEYS = new Mod2002024Key[] {
+	public static final Mod2002024Key[] BALANCE_ACTIVE_KEYS = new Mod2002024Key[] {
 		Mod2002024Key.BA101,
 		Mod2002024Key.BA102,
 		Mod2002024Key.BA103,
@@ -100,7 +100,7 @@ public class Mod2002024Constants {
 		Mod2002024Key.BA180
 	};
 	
-	public static Mod2002024Key[] BALANCE_PASIVE_KEYS = new Mod2002024Key[] {
+	public static final Mod2002024Key[] BALANCE_PASIVE_KEYS = new Mod2002024Key[] {
 		Mod2002024Key.BP185, 
 		Mod2002024Key.BP186, 
 		Mod2002024Key.BP187, 
@@ -193,7 +193,7 @@ public class Mod2002024Constants {
 		Mod2002024Key.BP252 
 	};
 	
-	public static Mod2002024Key[] PYG_KEYS = new Mod2002024Key[] { 
+	public static final Mod2002024Key[] PYG_KEYS = new Mod2002024Key[] { 
 		Mod2002024Key.PG255,
 		Mod2002024Key.PG256, 
 		Mod2002024Key.PG257, 
@@ -296,31 +296,31 @@ public class Mod2002024Constants {
 		Mod2002024Key.PG500 
 	};
 	
-	public static Mod2002024Key[] ECPN_INCOME_KEYS = new Mod2002024Key[] {
-	  Mod2002024Key.T0500,
-	  Mod2002024Key.T0336,
-	  Mod2002024Key.T0337,
-	  Mod2002024Key.T0338,
-	  Mod2002024Key.T0339,
-	  Mod2002024Key.T0340,
-	  Mod2002024Key.T0341,
-	  Mod2002024Key.T0342,
-	  Mod2002024Key.T0343,
-	  Mod2002024Key.T0344,
-	  Mod2002024Key.T0345,
-	  Mod2002024Key.T0346,
-	  Mod2002024Key.T0347,
-	  Mod2002024Key.T0348,
-	  Mod2002024Key.T0349,
-	  Mod2002024Key.T0350,
-	  Mod2002024Key.T0351,
-	  Mod2002024Key.T0352,
-	  Mod2002024Key.T0353,
-	  Mod2002024Key.T0354,
-	  Mod2002024Key.T0355
+	public static final Mod2002024Key[] ECPN_INCOME_KEYS = new Mod2002024Key[] {
+	    Mod2002024Key.T0500,
+	    Mod2002024Key.T0336,
+	    Mod2002024Key.T0337,
+	    Mod2002024Key.T0338,
+	    Mod2002024Key.T0339,
+	    Mod2002024Key.T0340,
+	    Mod2002024Key.T0341,
+	    Mod2002024Key.T0342,
+	    Mod2002024Key.T0343,
+	    Mod2002024Key.T0344,
+	    Mod2002024Key.T0345,
+	    Mod2002024Key.T0346,
+	    Mod2002024Key.T0347,
+	    Mod2002024Key.T0348,
+	    Mod2002024Key.T0349,
+	    Mod2002024Key.T0350,
+	    Mod2002024Key.T0351,
+	    Mod2002024Key.T0352,
+	    Mod2002024Key.T0353,
+	    Mod2002024Key.T0354,
+	    Mod2002024Key.T0355
 	};
 	
-	public static Mod2002024Key[] LIQUIDATION_KEYS = new Mod2002024Key[] {
+	public static final Mod2002024Key[] LIQUIDATION_KEYS = new Mod2002024Key[] {
 								Mod2002024Key.LQ500, 
 		Mod2002024Key.LQ301, 	Mod2002024Key.LQ302,
 		Mod2002024Key.LQ004,
@@ -328,7 +328,7 @@ public class Mod2002024Constants {
 		Mod2002024Key.LQ1230, 	Mod2002024Key.LQ1231
 	};
 	
-	public static Mod2002024Key[] LIQUIDATION_II_KEYS = new Mod2002024Key[] {
+	public static final Mod2002024Key[] LIQUIDATION_II_KEYS = new Mod2002024Key[] {
 		
 		// Entidades navieras en régimen de tributación en función del tonelaje
 		Mod2002024Key.LQ578, 

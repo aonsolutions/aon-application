@@ -14,7 +14,8 @@ public class PageAEAT extends PageAbs {
 	}
 
 	@Override
-	protected void initializeTable() {				
+	protected void initializeTable() {
+		// DO NOTHING
 	}
 	
 	@Override

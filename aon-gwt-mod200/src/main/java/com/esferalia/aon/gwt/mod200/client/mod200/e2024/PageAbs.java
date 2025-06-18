@@ -538,8 +538,6 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	public AonDisplayTable addRegistryTable(String... headers) {
 		AonDisplayTable tab = new AonDisplayTable();
-//		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab4.addStyleName(AON.CSS.aonBlockCenter());
 		tab.getElement().getStyle().setProperty("margin-left", "1%");		
 		
 		if (headers.length > 0) {

@@ -355,7 +355,6 @@ public class ParticipationPanel extends AonCustomDialog {
 	private void eValueCompute(AonDoubleBox text) {
 		doubleValueChanged(text);
 		fValue.setValue(aValue.getValue()+bValue.getValue()+cValue.getValue()+dValue.getValue()+eValue.getValue());
-//		setModified(true);
 	}
 	
 	private Label getSubtitle(String text) {

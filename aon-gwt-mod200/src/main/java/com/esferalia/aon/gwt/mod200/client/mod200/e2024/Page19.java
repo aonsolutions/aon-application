@@ -367,8 +367,6 @@ public class Page19 extends PageAbs {
 		panelPar2.clear();
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
-//		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		grid.addStyleName(AON.CSS.aonBlockCenter());
 		grid.addStyleName(AON.CSS.aonMarginTop());
 		grid.getElement().getStyle().setProperty("margin-left", "1%");
 		

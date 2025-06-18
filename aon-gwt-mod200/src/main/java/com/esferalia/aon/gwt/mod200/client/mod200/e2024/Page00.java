@@ -403,12 +403,6 @@ public class Page00 extends PageAbs {
 		});
 		otherInputs.add(rectificationMotive3);
 		
-//		tab1.addLabelWidgetRow("Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification)
-//		    .addLabelWidgetRow(AON.MSG.previousReceipt(), rectificationNumber)
-//		    .addLabelWidgetRow(Mod2002024Key.R0001.getDescription(), rectificationMotive1)
-//		    .addLabelWidgetRow(Mod2002024Key.R0002.getDescription(), rectificationMotive2)
-//		    .addLabelWidgetRow(Mod2002024Key.R0003.getDescription(), rectificationMotive3);
-		
 		addLabelWidgetRow600(tab1,"Autoliquidaci\u00F3n rectificativa de otra anterior correspondiente al mismo concepto, ejercicio y per\u00EDodo", rectification);
 	    addLabelWidgetRow600(tab1,AON.MSG.previousReceipt(), rectificationNumber);
 	    addLabelWidgetRow600(tab1,Mod2002024Key.R0001.getDescription(), rectificationMotive1);
@@ -470,7 +464,7 @@ public class Page00 extends PageAbs {
 		
 		// CARACTERES DE LA DECLARACION
 		
-		inputsCheckBox = new HashMap<Mod2002024Key, CheckBox>();
+		inputsCheckBox = new HashMap<>();
 		
 		FlexTable charactersTable1 = new FlexTable();
 		FlexTable charactersTable2 = new FlexTable();

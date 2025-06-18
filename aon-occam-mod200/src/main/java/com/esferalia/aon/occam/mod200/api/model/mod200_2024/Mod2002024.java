@@ -451,7 +451,9 @@ public class Mod2002024 extends Mod200 {
 			return 0.0;
 		}
 		Object o = v.getValue();
-		if (o != null && o instanceof Double) {
+		// FALTA
+//		if (o != null && o instanceof Double) {
+		if (o instanceof Double) {
 			return (Double) o;
 		}
 		return 0.0;
