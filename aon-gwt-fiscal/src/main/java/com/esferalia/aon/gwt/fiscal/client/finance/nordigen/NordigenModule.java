@@ -753,11 +753,11 @@ public class NordigenModule extends MainEntryPoint {
 
 			getMenuPanel().add(updateButton);
 			boolean forceRefresh = false;
-			Storage sessionStorage = Storage.getSessionStorageIfSupported();
-			if (sessionStorage != null && "true".equals(sessionStorage.getItem("nordigenRefreshAfterAuth"))) {
-			    forceRefresh = true;
-			    sessionStorage.removeItem("nordigenRefreshAfterAuth"); 
-			}
+//			Storage sessionStorage = Storage.getSessionStorageIfSupported();
+//			if (sessionStorage != null && "true".equals(sessionStorage.getItem("nordigenRefreshAfterAuth"))) {
+//			    forceRefresh = true;
+//			    sessionStorage.removeItem("nordigenRefreshAfterAuth"); 
+//			}
 
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
               allMovementsButton, balanceJsonButton, forceRefresh, attempsBox);
@@ -1222,12 +1222,7 @@ public class NordigenModule extends MainEntryPoint {
 							}
 							
 							Window.open(requisition.getLink(), "REGISTRO DE CUENTA", "_blank");
-							Storage sessionStorage = Storage.getSessionStorageIfSupported();
-							if (sessionStorage != null) {
-							    sessionStorage.setItem("nordigenRefreshAfterAuth", "true");
-							}
 						});
-						
 						getMenuPanel().add(continueLinkButton);
 					}
 				}
@@ -1512,7 +1507,6 @@ public class NordigenModule extends MainEntryPoint {
 			
 			saveButton.setTabIndex(-2);
 			saveButton.addClickHandler(event -> {
-				//TODO
 				paintBankRegistration(opt, nordigenUnlinkedBankAccount);
 			});
 			getMenuPanel().add(saveButton);
@@ -1674,6 +1668,10 @@ public class NordigenModule extends MainEntryPoint {
 					public void onSuccess(NordigenRequisition result) {
 						if (registrationTable != null) {
 							drawShit(opt, dial, nordigenBankAccount, result, registrationTable);
+//							Storage sessionStorage = Storage.getSessionStorageIfSupported();
+//							if (sessionStorage != null) {
+//							    sessionStorage.setItem("nordigenRefreshAfterAuth", "true");
+//							}
 						}
 						Window.open(result.getLink(), "REGISTRO DE CUENTA", "_blank");
 						nordigenBankAccount.setInstitution(null);

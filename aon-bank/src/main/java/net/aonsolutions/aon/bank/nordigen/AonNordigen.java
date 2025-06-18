@@ -224,63 +224,66 @@ public class AonNordigen  {
 
 	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 
-	        List<LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(ctx, occam.getDomain(), account.getRbank().getId(), "update");
+	        List<LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(
+	            ctx, occam.getDomain(), account.getRbank().getId(), "update"
+	        );
+
+	        List<LocalDateTime> recentCallsFailed = NordigenCallLogDAO.getRecentCallTimes(
+	            ctx, occam.getDomain(), account.getRbank().getId(), "fail_update"
+	        );
+
 	        LocalDateTime now = LocalDateTime.now();
-
-	        List<LocalDateTime> recentCallsFailed = NordigenCallLogDAO.getRecentCallTimes(ctx, occam.getDomain(), account.getRbank().getId(), "fail_update");
-
 	        LocalDateTime retryAfter = null;
+
+	        // bloqueo por rate limit
 	        if (!recentCallsFailed.isEmpty()) {
-	            retryAfter = NordigenCallLogDAO.getLatestRetryAfter(ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update");
+	            retryAfter = NordigenCallLogDAO.getLatestRetryAfter(
+	                ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update"
+	            );
 	        }
 
-	        for (int i = 1; i <= maxCallsPerDay; i++) {
+	        if (retryAfter != null && retryAfter.isAfter(now)) {
+	            Duration remaining = Duration.between(now, retryAfter);
+	            statuses.add("Actualizacion no disponible (limite diario). Disponible en: " + formatRemaining(remaining));
+	            return statuses;
+	        }
 
-	            if (retryAfter != null && retryAfter.isAfter(now)) {
-	                Duration remaining = Duration.between(now, retryAfter);
-	                long hours = remaining.toHours();
-	                long minutes = remaining.toMinutes() % 60;
-	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en: " + hours + "h " + minutes + "m");
-	                return statuses;
-	            }
-
-	            if (i <= recentCalls.size()) {
-	                LocalDateTime callTime = recentCalls.get(i - 1);
+	        // comprobamos las 3 llamadas
+	        for (int i = 0; i < maxCallsPerDay; i++) {
+	            if (i < recentCalls.size()) {
+	                // ya se realizo una llamada 
+	                LocalDateTime callTime = recentCalls.get(i);
 	                LocalDateTime availableAgain = callTime.plusHours(24);
 
 	                if (availableAgain.isAfter(now)) {
 	                    Duration remaining = Duration.between(now, availableAgain);
-	                    long hours = remaining.toHours();
-	                    long minutes = remaining.toMinutes() % 60;
-	                    statuses.add("Actualizacion " + i + " disponible en: " + hours + "h " + minutes + "m");
+	                    statuses.add("Actualizacion " + (i + 1) + " no disponible. Disponible en: " + formatRemaining(remaining));
 	                } else {
-	                    statuses.add("Actualizacion " + i + " disponible");
+	                    statuses.add("Actualizacion " + (i + 1) + " disponible");
 	                }
 	            } else {
-	                if (recentCalls.size() >= maxCallsPerDay) {
-	                    LocalDateTime oldestCall = recentCalls.get(0);
-	                    LocalDateTime nextAvailableTime = oldestCall.plusHours(24);
-
-	                    if (nextAvailableTime.isAfter(now)) {
-	                        Duration remaining = Duration.between(now, nextAvailableTime);
-	                        long hours = remaining.toHours();
-	                        long minutes = remaining.toMinutes() % 60;
-	                        statuses.add("Actualizacion " + i + " no disponible. Disponible en: " + hours + "h " + minutes + "m");
-	                    } else {
-	                        statuses.add("Actualizacion " + i + " disponible");
-	                    }
-	                } else {
-	                    statuses.add("Actualizacion " + i + " disponible");
-	                }
+	                // llamada sin gastar
+	                statuses.add("Actualizacion " + (i + 1) + " disponible");
 	            }
 	        }
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        statuses.clear();
 	        statuses.add("Error al obtener estado de llamadas");
 	    }
+
 	    return statuses;
 	}
+
+
+
+	private static String formatRemaining(Duration duration) {
+	    long hours = duration.toHours();
+	    long minutes = duration.toMinutes() % 60;
+	    return hours + "h " + minutes + "m";
+	}
+
 
 
 	private static LinkedList<NordigenAccountBalance> getAccountBalances(NordigenAccessToken token, String nordigenAccountId) {
@@ -375,7 +378,7 @@ public class AonNordigen  {
 			
 			setBasicAccountInfo(ctx, token, account);
 			
-			if (shouldUpdateAgreementDays(ctx, account)) {
+			if (shouldUpdateAgreementDays(account)) {
 				updateAgreementDays(ctx, token, account);
 			}
 
@@ -539,6 +542,13 @@ public class AonNordigen  {
 
 	public static NordigenRequisition addAccount(NordigenAccessToken token, Occam occam, NordigenBankAccount nordigenBankAccount) {
 		RegistryBank rbank = nordigenBankAccount.getRbank();
+		if(rbank.getBankAccount().getIban().equals("GL8262400000062409") || rbank.getBankAccount().getIban().equals("GL4076010000076016")) {
+			  NordigenAgreement agreement = AonNordigen.createAgreement(occam,nordigenBankAccount, token,"SANDBOXFINANCE_SFIN0000");
+			    String redirect = "http://" + occam .getDomainName() + ":8080/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : "");
+			    NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, redirect);
+				AonNordigen.updateRequisitionId(occam, requisition, rbank.getId());
+				return requisition;
+		}
 		Pattern bicPattern = Pattern.compile("^(?<bic>.*?)X*$", Pattern.CASE_INSENSITIVE);
 		Matcher bicMatcher = bicPattern.matcher(AonStringUtils.trimToEmpty(rbank.getBic()));
 		StringBuilder bicBuilder = new StringBuilder();
@@ -707,9 +717,8 @@ public class AonNordigen  {
 	    }
 	}
 
-	private static boolean shouldUpdateAgreementDays(AONContext ctx, NordigenBankAccount account) {
-	    Integer remainingDays = NordigenDAO.getRemainingDays(ctx, account);
-	    return (remainingDays == null || remainingDays == 0) && account.getRequisition() != null;
+	private static boolean shouldUpdateAgreementDays(NordigenBankAccount account) {
+	    return account.getRequisition() != null;
 	}
 
 	private static void updateAgreementDays(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
@@ -730,8 +739,7 @@ public class AonNordigen  {
 	    }
 	}
 
-	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam,
-	                                                  NordigenAccessToken token, NordigenBankAccount account) {
+	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
 	    try {
 	        CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
 	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
