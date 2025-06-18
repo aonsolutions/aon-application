@@ -403,6 +403,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			productTextBox.setValue(item.getProduct().getName());
 			productTextBox.setVisible(true);
 			
+			if(null != fee)
+				fee.setDescription(item.getProduct().getName());
+			
 			if(null != fee) fee.setItem(item);
 		});
 		
