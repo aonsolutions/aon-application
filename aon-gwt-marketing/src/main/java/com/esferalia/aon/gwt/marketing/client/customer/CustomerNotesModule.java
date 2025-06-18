@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCardSmall;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
@@ -27,6 +28,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -197,11 +199,47 @@ public class CustomerNotesModule extends MainEntryPoint {
 			deleteBtn.addClickHandler(e -> {
 				e.stopPropagation();
 				
-				observation.setDescription(AonStringUtils.EMPTY);
-				observation.setComments(AonStringUtils.EMPTY);
-				observation.setNoteDate(null);
+				AonCustomPopup confirmPopup = new AonCustomPopup(false);
+				confirmPopup.setWidth("16rem");
+				confirmPopup.setHeight("4rem");
+				confirmPopup.setAutoHideEnabled(true);
+				confirmPopup.hideHeader();
 				
-				saveNote(observation);
+				// Crear panel de confirmación
+				HTMLPanel panel = new HTMLPanel(AonStringUtils.EMPTY);
+				panel.addStyleName(AON.CSS.aonFlexColumn());
+				panel.getElement().getStyle().setProperty("padding", "0 .5rem");
+				panel.getElement().getStyle().setProperty("gap", "0");
+				
+				Label msg = new Label("\u00bfEst\u00e1s seguro de que quieres borrar la observaci\u00f3n?");
+				AonTableButton delete4everBtn = new AonTableButton("Borrar observaci\u00f3n", AON.CSS.aonIconDeleteForeverRed());
+			    
+				HTMLPanel buttons = new HTMLPanel(AonStringUtils.EMPTY);
+				buttons.addStyleName(AON.CSS.aonItemFlex());
+				buttons.addStyleName(AON.CSS.aonDisplayFlexEnd());
+			    buttons.add(delete4everBtn);
+			    
+			    panel.add(msg);
+			    panel.add(buttons);
+			    confirmPopup.add(panel);
+			    
+			    // Posicionar el popup junto al botón
+			    int left = deleteBtn.getAbsoluteLeft();
+			    int top = deleteBtn.getAbsoluteTop() + deleteBtn.getOffsetHeight();
+			    confirmPopup.setPopupPosition(left, top);
+			    confirmPopup.show();
+			    
+			    // Lógica de confirmación
+			    delete4everBtn.addClickHandler(event -> {
+			    	observation.setDescription(AonStringUtils.EMPTY);
+					observation.setComments(AonStringUtils.EMPTY);
+					observation.setNoteDate(null);
+					
+					saveNote(observation);
+					
+			        confirmPopup.hide();
+			    });
+				
 			});
 			buttonsPanel.add(deleteBtn);
 			
@@ -346,7 +384,44 @@ public class CustomerNotesModule extends MainEntryPoint {
 				AonTableButton deleteBtn = new AonTableButton("Borrar nota", AON.CSS.aonIconDelete());
 				deleteBtn.addClickHandler(e -> {
 					e.stopPropagation();
-					deleteNote(message);
+					
+					AonCustomPopup confirmPopup = new AonCustomPopup(false);
+					confirmPopup.setWidth("16rem");
+					confirmPopup.setHeight("4rem");
+					confirmPopup.setAutoHideEnabled(true);
+					confirmPopup.hideHeader();
+					
+					// Crear panel de confirmación
+					HTMLPanel panel = new HTMLPanel(AonStringUtils.EMPTY);
+					panel.addStyleName(AON.CSS.aonFlexColumn());
+					panel.getElement().getStyle().setProperty("padding", "0 .5rem");
+					panel.getElement().getStyle().setProperty("gap", "0");
+					
+					Label msg = new Label("\u00bfEst\u00e1s seguro de que quieres borrar la nota?");
+					AonTableButton delete4everBtn = new AonTableButton("Borrar nota", AON.CSS.aonIconDeleteForeverRed());
+				    
+					HTMLPanel buttons = new HTMLPanel(AonStringUtils.EMPTY);
+					buttons.addStyleName(AON.CSS.aonItemFlex());
+					buttons.addStyleName(AON.CSS.aonDisplayFlexEnd());
+				    buttons.add(delete4everBtn);
+				    
+				    panel.add(msg);
+				    panel.add(buttons);
+				    confirmPopup.add(panel);
+				    
+				    // Posicionar el popup junto al botón
+				    int left = deleteBtn.getAbsoluteLeft();
+				    int top = deleteBtn.getAbsoluteTop() + deleteBtn.getOffsetHeight();
+				    confirmPopup.setPopupPosition(left, top);
+				    confirmPopup.show();
+				    
+				    // Lógica de confirmación
+				    delete4everBtn.addClickHandler(event -> {
+				    	deleteNote(message);
+						
+				        confirmPopup.hide();
+				    });
+					
 				});
 				buttonsPanel.add(deleteBtn);
 		
