@@ -752,7 +752,6 @@ public class NordigenModule extends MainEntryPoint {
 			});
 
 			getMenuPanel().add(updateButton);
-            
 			boolean forceRefresh = false;
 			Storage sessionStorage = Storage.getSessionStorageIfSupported();
 			if (sessionStorage != null && "true".equals(sessionStorage.getItem("nordigenRefreshAfterAuth"))) {
@@ -795,21 +794,19 @@ public class NordigenModule extends MainEntryPoint {
 		            sb.append("Tus actualizaciones:");
 		            sb.append("<ul style='list-style: none; text-align: left;'>");
                     for (String status : callStatuses) {
-                      sb.append("<li>").append(status).append("</li>");
+                      if(status.contains("disponible en:")){
+                        sb.append("<li style='color: red;'>").append(status).append("</li>");
+                      } else
+                        sb.append("<li>").append(status).append("</li>");
                     }
                     sb.append("</ul>");
 		          
                     attempsBox.setHTML(sb.toString());
-                    
-		            attempsBox.removeStyleName(AON.CSS.aonColorRed());
-		            attempsBox.removeStyleName(AON.CSS.aonBackgroundLigthYellow());
 		            attempsBox.addStyleName(AON.CSS.aonBold());
-		            
-		            long realizadas = callStatuses.stream().filter(s -> s.contains("realizada")).count();
-		            boolean allRealizadas = realizadas == 3;
 
+		            long realizadas = callStatuses.stream().filter(s -> s.contains("disponible en:")).count();
+		            boolean allRealizadas = realizadas == 3;
 		            if (allRealizadas) {
-		                attempsBox.addStyleName(AON.CSS.aonColorRed());
 		                if (updateButton != null) {
 		                    updateButton.setVisible(false);
 		                }

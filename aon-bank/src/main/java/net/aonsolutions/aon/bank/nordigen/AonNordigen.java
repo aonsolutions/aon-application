@@ -240,7 +240,7 @@ public class AonNordigen  {
 	                Duration remaining = Duration.between(now, retryAfter);
 	                long hours = remaining.toHours();
 	                long minutes = remaining.toMinutes() % 60;
-	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en : " + hours + "h " + minutes + "m");
+	                statuses.add("Actualizacion no disponible (limite diario alcanzado). Disponible en: " + hours + "h " + minutes + "m");
 	                return statuses;
 	            }
 
@@ -252,7 +252,7 @@ public class AonNordigen  {
 	                    Duration remaining = Duration.between(now, availableAgain);
 	                    long hours = remaining.toHours();
 	                    long minutes = remaining.toMinutes() % 60;
-	                    statuses.add("Actualizacion " + i + " disponible en :" + hours + "h " + minutes + "m");
+	                    statuses.add("Actualizacion " + i + " disponible en: " + hours + "h " + minutes + "m");
 	                } else {
 	                    statuses.add("Actualizacion " + i + " disponible");
 	                }
@@ -265,7 +265,7 @@ public class AonNordigen  {
 	                        Duration remaining = Duration.between(now, nextAvailableTime);
 	                        long hours = remaining.toHours();
 	                        long minutes = remaining.toMinutes() % 60;
-	                        statuses.add("Actualizacion " + i + " no disponible. Disponible en :" + hours + "h " + minutes + "m");
+	                        statuses.add("Actualizacion " + i + " no disponible. Disponible en: " + hours + "h " + minutes + "m");
 	                    } else {
 	                        statuses.add("Actualizacion " + i + " disponible");
 	                    }
