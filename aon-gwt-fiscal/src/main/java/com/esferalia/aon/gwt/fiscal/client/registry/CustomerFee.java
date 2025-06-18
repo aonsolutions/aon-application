@@ -1119,6 +1119,9 @@ public class CustomerFee extends MainEntryPoint {
 		row.addDomHandler(e -> {
 			e.stopPropagation();
 			if(!isCustomer()) {
+				
+				Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+				
 				new CustomerFeeDialog(fee, options, searchDomain) {
 					
 					@Override
@@ -1142,6 +1145,18 @@ public class CustomerFee extends MainEntryPoint {
 										deleteFeeButton.setEnabled(false);
 										exportButton.setEnabled(false);
 										onSearch();
+										
+										if(null != originalSeller) {
+											
+											// Desasignar
+											if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), false, originalSeller);
+											
+											if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), true, null);
+											
+										} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+											sendFeeEmail(fee.getId(), true, null);
 									}
 								});
 					}
@@ -1161,6 +1176,8 @@ public class CustomerFee extends MainEntryPoint {
 				};
 			} else {
 				getCustomer(customer -> {
+					Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+					
 					new CustomerFeeDialog(fee, customer, options, searchDomain) {
 						
 						@Override
@@ -1184,6 +1201,18 @@ public class CustomerFee extends MainEntryPoint {
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);
 										}
 									});
 						}
@@ -1395,7 +1424,7 @@ public class CustomerFee extends MainEntryPoint {
 									onSearch();
 									
 									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
-										sendFeeEmail(customerFee.getId());
+										sendFeeEmail(customerFee.getId(), true, null);
 								}
 								
 								@Override
@@ -1444,7 +1473,7 @@ public class CustomerFee extends MainEntryPoint {
 								onSearch();
 								
 								if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
-									sendFeeEmail(customerFee.getId());
+									sendFeeEmail(customerFee.getId(), true, null);
 							}
 							
 							@Override
@@ -1485,7 +1514,10 @@ public class CustomerFee extends MainEntryPoint {
 			List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
 			if(selectedItemList.size() == 1) {
 				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
-				if(null != selectedFee)
+				if(null != selectedFee) {
+					
+					Integer originalSeller = null == selectedFee.getSeller() ? null : selectedFee.getSeller().getId();
+					
 					new CustomerFeeDialog(selectedFee, options, searchDomain) {
 						
 						@Override
@@ -1509,6 +1541,18 @@ public class CustomerFee extends MainEntryPoint {
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);		
 										}
 									});
 						}
@@ -1526,6 +1570,7 @@ public class CustomerFee extends MainEntryPoint {
 						}
 						
 					};
+				}
 			} else {
 				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options, searchDomain) {
 					
@@ -1604,6 +1649,7 @@ public class CustomerFee extends MainEntryPoint {
 									.filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked()))
 									.map(entry -> entry.getKey())
 									.collect(Collectors.toCollection(LinkedList::new));
+							
 							AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
 									new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
 							
@@ -1937,7 +1983,7 @@ public class CustomerFee extends MainEntryPoint {
 	    return btoa(str);
 	}-*/;
 	
-	private void sendFeeEmail(Integer feeId) {
+	private void sendFeeEmail(Integer feeId, Boolean add, Integer oldSellerId) {
 		String host = Window.Location.getHost();
 		String endPoint = "/ms/api/fee-mail/";
 
@@ -1949,6 +1995,9 @@ public class CustomerFee extends MainEntryPoint {
 		JSONObject body = new JSONObject();
 
 		body.put("feeId", new JSONString(feeId.toString()));
+		
+		if(add)	body.put("add", new JSONString(add.toString()));
+		else if(null != oldSellerId) body.put("oldSellerId", new JSONString(oldSellerId.toString()));
 		
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();
