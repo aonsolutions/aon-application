@@ -54,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DeductionEvent;
 import com.esferalia.aon.gwt.payroll.shared.Event;
+import com.esferalia.aon.gwt.payroll.shared.ICompositeItem;
 import com.esferalia.aon.gwt.payroll.shared.InvalidVariable;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
@@ -1820,8 +1821,28 @@ public class SalaryDraftBuilder
 	}
 
 	private static <T extends ISalaryItem<?>> List<T> getDbItemCounterParts(
-			Collection<T> dbItems, Item<?> item) {
+			Collection<T> dbItems, ICompositeItem<?> item) {
+		
+		List<T> dbItemCounterParts = new LinkedList<T>();
+		List<T> dbRemainItems = new LinkedList<T>(dbItems); 
+		
+		for (Item<?> child : item.getChilds()) {
+			List<T> dbChildCounterparts = getDbItemCounterParts(dbRemainItems, child);
+			dbItemCounterParts.addAll(dbChildCounterparts);
+			dbRemainItems.removeAll(dbChildCounterparts);
+		}
+		
+		return dbItemCounterParts;
+		
+	}
 
+	private static <T extends ISalaryItem<?>> List<T> getDbItemCounterParts(
+			Collection<T> dbItems, Item<?> item) {
+		
+		if ( item instanceof ICompositeItem<?> compositeItem) {
+			return getDbItemCounterParts(dbItems, (ICompositeItem<?>) compositeItem);
+		}
+		
 		List<T> nameMatchDbItems = new LinkedList<T>();
 		List<T> fullMatchDbItems = new LinkedList<T>();
 
@@ -1848,8 +1869,28 @@ public class SalaryDraftBuilder
 	}
 
 	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
+			Collection<T> ssItems, ICompositeItem<?> item) {
+		
+		List<T> ssItemCounterParts = new LinkedList<T>();
+		List<T> ssRemainItems = new LinkedList<T>(ssItems); 
+		
+		for (Item<?> child : item.getChilds()) {
+			List<T> dbChildCounterparts = getSsItemCounterParts(ssRemainItems, child);
+			ssItemCounterParts.addAll(dbChildCounterparts);
+			ssRemainItems.removeAll(dbChildCounterparts);
+		}
+		
+		return ssItemCounterParts;
+		
+	}
+
+	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
 			Collection<T> ssItems, Item<?> item) {
 
+		if ( item instanceof ICompositeItem<?> compositeItem) {
+			return getSsItemCounterParts(ssItems, compositeItem);
+		}
+		
 		List<T> nameMatchDbItems = new LinkedList<T>();
 
 		String name = item.getName();
