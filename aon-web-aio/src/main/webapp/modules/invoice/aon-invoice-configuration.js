@@ -86,6 +86,7 @@ export class AonInvoiceConfiguration extends AonElement {
             this.configuration.eInvoice = communication.getFacturaeConfiguration();
             this.configuration.tbai = communication.getTbaiConfiguration();
             this.configuration.sii = communication.getSiiConfiguration();
+            this.configuration.verifactu = communication.getVerifactuConfiguration();
         });
         content.appendChild(communication);
     }

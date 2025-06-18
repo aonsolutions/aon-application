@@ -128,6 +128,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -7997,6 +7998,36 @@ public class AON {
 	public static InvofoxConfiguration saveInvofoxConfiguration(String domainName, Integer domainId, String login, InvofoxConfiguration config) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().saveInvofoxConfiguration(ctx, config);
+		}
+	}
+	
+	// VERIFACTU CONFIGURATION
+	
+	public static VerifactuConfiguration getVerifactuConfiguration(Domain domain, User user) {
+		return getVerifactuConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	}
+		
+	public static VerifactuConfiguration getVerifactuConfiguration(Domain domain, String login) {
+		return getVerifactuConfiguration(domain.getName(), domain.getId(), login);
+	}
+		
+	public static VerifactuConfiguration getVerifactuConfiguration(String domainName, Integer domainId, String login) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getVerifactuConfiguration(ctx);
+		}
+	}
+		
+	public static VerifactuConfiguration saveVerifactuConfiguration(Domain domain, User user, VerifactuConfiguration config) {
+		return saveVerifactuConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
+	}
+		
+	public static VerifactuConfiguration saveVerifactuConfiguration(Domain domain, String login, VerifactuConfiguration config) {
+		return saveVerifactuConfiguration(domain.getName(), domain.getId(), login, config);
+	}
+		
+	public static VerifactuConfiguration saveVerifactuConfiguration(String domainName, Integer domainId, String login, VerifactuConfiguration config) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveVerifactuConfiguration(ctx, config);
 		}
 	}
 	

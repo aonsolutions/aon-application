@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceSIIDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceInfoDAO;
 import com.esferalia.aon.watson.AonError;
@@ -307,6 +309,26 @@ public class InvoiceValidation {
 			}
 		}
 	};
+	
+	/**
+	 * Las facturas enviadas a Verifactu y que no se han dado de baja en Verifactu no se pueden borrar.
+	 */
+	private static final Consumer<InvoiceValidationContext> VERIFACTU = ivc -> {
+		VerifactuConfiguration verifactu = VerifactuConfigurationDAO.get(ivc.ctx);
+		if(verifactu.isActive()) {
+			boolean accepted = true;
+			InvoiceInfo info = InvoiceInfoDAO.get(ivc.ctx, f -> f.getInvoiceProperty().eq(ivc.inv.getId())
+					.and(f.getTypeProperty().eq(InvoiceCommunicationType.VERIFACTU.value())));
+			accepted = info.isAccepted() || info.isAcceptedWithErrors();
+			
+			DataResponse dr = DataResponseDAO.get(ivc.ctx, f -> f.getSourceProperty().eq(DataResponseSource.VERIFACTU.value())
+					.and(f.getSourceIdProperty().eq(ivc.inv.getId())), new Options().setFull(true));
+			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
+			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_VERIFACTU.getMessage());
+			}
+		}
+	};
 
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
@@ -349,6 +371,7 @@ public class InvoiceValidation {
 		.andThen(OPERATIONS_DEADLINE)
 		.andThen(SII)
 		.andThen(TBAI)
+		.andThen(VERIFACTU)
 		.andThen(ALCATRAZ)
 		.accept(new InvoiceValidationContext(ctx,config,inv));
 	}

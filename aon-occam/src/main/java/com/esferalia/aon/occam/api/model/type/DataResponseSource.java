@@ -40,7 +40,8 @@ public enum DataResponseSource implements Serializable{
 	MOD200,
 	LROE_TEST,
 	PACKAGING_DELIVERY,
-	MOD369
+	MOD369,
+	VERIFACTU
 	;
 
 

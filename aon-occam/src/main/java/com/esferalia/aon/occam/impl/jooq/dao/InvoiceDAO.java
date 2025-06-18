@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTrackingStatus;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -526,7 +527,8 @@ public class InvoiceDAO {
 	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && InvoiceType.contains(types, InvoiceType.SALES)) {
+		VerifactuConfiguration verifactuConfiguration = VerifactuConfigurationDAO.get(ctx);
+		if((verifactuConfiguration.isActive() || tbaiConfiguration.isActive()) && InvoiceType.contains(types, InvoiceType.SALES)) {
 			return getTbaiNextNumber(ctx, types, series);
 		} else {
 			Integer next = selectMaxInvoice(ctx, types, series)
@@ -926,7 +928,8 @@ public class InvoiceDAO {
 
 		// ONLY IF IS TICKET BAI.
 		TbaiConfiguration tbaiConfiguration = TbaiConfigurationDAO.get(ctx);
-		if(tbaiConfiguration.isActive() && invoice.getNumber() > 0 && invoice.isSales()) {
+		VerifactuConfiguration verifactuConfiguration = VerifactuConfigurationDAO.get(ctx);
+		if((verifactuConfiguration.isActive() || tbaiConfiguration.isActive()) && invoice.getNumber() > 0 && invoice.isSales()) {
 			saveInvoiceTracking(ctx, invoice, InvoiceTrackingStatus.DELETED);
 		}
 	}

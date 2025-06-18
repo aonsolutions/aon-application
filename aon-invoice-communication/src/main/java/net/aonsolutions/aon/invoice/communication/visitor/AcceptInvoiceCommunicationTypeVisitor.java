@@ -105,4 +105,9 @@ public class AcceptInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 		// Not implemented
 	}
 
+	@Override
+	public void visitVERIFACTU() {
+		// Not implemented
+	}
+
 }

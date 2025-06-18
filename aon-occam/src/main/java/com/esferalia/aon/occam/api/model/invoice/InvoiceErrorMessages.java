@@ -33,6 +33,7 @@ public enum InvoiceErrorMessages implements Serializable {
 	C017("No se han podido determinar bases y cuotas de la factura"),
 	C018("No se ha podido determinar el tipo de factura"),
 	C019("La fecha del vencimiento no es correcta."),
+	C020("La divisa de la factura no es euro"),
 	
 	// Mensajes previos a la contabilización
 	C200("No se puede Contabilizar. Hay un descuadre entre el total factura y la suma total de los vencimientos."),

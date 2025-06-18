@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.SiiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
+import com.esferalia.aon.occam.api.json.invoice.VerifactuConfigurationJSON;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -54,6 +55,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
@@ -792,14 +794,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		JSONObject companyJSON = RegistryServlet.getRegistryAdditionalInfo(CompanyJSON.toJSON(company), api, api.getData(), company.getId(), rais);;
 		
 		JSONObject json = new JSONObject();
-		json.put("print", getPrintConfiguration(api));
-		json.put("company", companyJSON);
+		json.put(IJsonNames.PRINT, getPrintConfiguration(api));
+		json.put(IJsonNames.COMPANY, companyJSON);
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
-		json.put("tbai", getTbaiConfiguration(api));
-		json.put("sii", getSiiConfiguration(api));
+		json.put(IJsonNames.TBAI, getTbaiConfiguration(api));
+		json.put(IJsonNames.SII, getSiiConfiguration(api));
+		json.put(IJsonNames.VERIFACTU, getVerifactuConfiguration(api));
 		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		json.put("withholdingPercent", withholdingPercent.getWithholdingType().name());
-		json.put("invofox", InvofoxServlet.getConfiguration(api));
+		json.put(IJsonNames.INVOFOX, InvofoxServlet.getConfiguration(api));
 		json.put(IJsonNames.WORKPLACES, WorkplaceJSON.toJSON( 
 			AON.getWorkplaceList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getDomainProperty().eq(api.getDomain().getId()))));
@@ -830,20 +833,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 
 		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));
 
-		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
-		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
-		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
-		
-		JSONObject invofox = JsonUtils.has(api.getData(), "invofox") ? 
-				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), "invofox"))) 
+		JSONObject print = savePrintConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.PRINT));
+		JSONObject tbai = saveTbaiConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.TBAI));
+		JSONObject sii = saveSiiConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.SII));
+		JSONObject verifactu = saveVerifactuConfiguration(api, JsonUtils.getJSONObject(api.getData(), IJsonNames.VERIFACTU));
+			
+		JSONObject invofox = JsonUtils.has(api.getData(), IJsonNames.INVOFOX) ? 
+				InvofoxServlet.saveConfiguration(api.setData(JsonUtils.getJSONObject(api.getData(), IJsonNames.INVOFOX))) 
 				: new JSONObject();
 		
 		return new JSONObject()
-			.put("administration", administration.name())	
-			.put("print", print)
-			.put("tbai", tbai)
-			.put("sii", sii)
-			.put("invofox", invofox)
+			.put(IJsonNames.ADMINISTRATION, administration.name())	
+			.put(IJsonNames.PRINT, print)
+			.put(IJsonNames.TBAI, tbai)
+			.put(IJsonNames.VERIFACTU, verifactu)
+			.put(IJsonNames.SII, sii)
+			.put(IJsonNames.INVOFOX, invofox)
 			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
 	
@@ -905,6 +910,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	private JSONObject saveTbaiConfiguration(AonApiData api, JSONObject json) {
 		TbaiConfiguration t = TbaiConfigurationJSON.fromJSON(json);
 		AON.saveTbaiConfiguration(api.getDomain(), api.getUser(), t);
+		return json;
+	}
+	
+	private JSONObject getVerifactuConfiguration(AonApiData api) {
+		VerifactuConfiguration verifactu = AON.getVerifactuConfiguration(api.getDomain(), api.getUser());
+		return VerifactuConfigurationJSON.toJSON(verifactu);
+	}
+	
+	private JSONObject saveVerifactuConfiguration(AonApiData api, JSONObject json) {
+		VerifactuConfiguration verifactu = VerifactuConfigurationJSON.fromJSON(json);
+		AON.saveVerifactuConfiguration(api.getDomain(), api.getUser(), verifactu);
 		return json;
 	}
 	

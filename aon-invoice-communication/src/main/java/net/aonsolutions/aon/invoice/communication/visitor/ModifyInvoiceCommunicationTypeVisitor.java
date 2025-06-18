@@ -44,5 +44,10 @@ public class ModifyInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	public void visitCLOSING() {
 		// Not implemented
 	}
+	
+	@Override
+	public void visitVERIFACTU() {
+		// Not implemented
+	}
 
 }

@@ -13,7 +13,8 @@ public enum InvoiceCommunicationType implements Serializable{
 	LROE { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) throws Exception { visitor.visitLROE();}},
 	SERES { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSERES();}},
 	EMAIL { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitEMAIL();}},
-	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitCLOSING();}}
+	CLOSING { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitCLOSING();}},
+	VERIFACTU { @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitVERIFACTU();}}
 	;
 
 	
@@ -64,5 +65,9 @@ public enum InvoiceCommunicationType implements Serializable{
 	
 	public boolean isSeres() {
 		return SERES.equals(this);
+	}
+	
+	public boolean isVerifactu() {
+		return VERIFACTU.equals(this);
 	}
 }

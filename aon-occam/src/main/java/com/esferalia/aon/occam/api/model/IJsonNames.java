@@ -321,6 +321,7 @@ public final class IJsonNames {
 	public static final String INVENTORIABLE = "inventoriable";
 	public static final String INVEST_ASSET = "investAsset";
 	public static final String INVESTMENT = "investment";
+	public static final String INVOFOX = "invofox";
 	public static final String INVOFOX_ID = "invofoxId";
 	public static final String INVOICING_GROUP = "invoicingGroup";
 	public static final String INVOICE = "invoice";
@@ -486,6 +487,7 @@ public final class IJsonNames {
 	public static final String PREVIOUS_PERIODS = "previousPeriods";
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
+	public static final String PRINT = "print";
 	public static final String PRINTER = "printer";
 	public static final String PRIORITY = "priority";
 	public static final String PROCESS_ID = "processId";
@@ -619,6 +621,7 @@ public final class IJsonNames {
 	public static final String SHIPPING_PERIOD = "shippingPeriod";
 	public static final String SHIPPING_STATUS = "shippingStatus";
 	public static final String SHOW_COVER = "showCover";
+	public static final String SII = "sii";
 	public static final String SII_STATUS = "siiStatus";
 	public static final String SIGNATURE = "signature";
 	public static final String SIGNED = "signed";
@@ -661,6 +664,7 @@ public final class IJsonNames {
 	public static final String TAG = "tag";
 	public static final String TAGS = "tags";
 	public static final String TAX_DATE = "taxDate";
+	public static final String TBAI = "tbai";
 	public static final String TBAI_ID = "tbaiId";
 	public static final String TECHNICAL = "technical";
 	public static final String TEST = "test";
@@ -712,6 +716,7 @@ public final class IJsonNames {
 	public static final String VAT_UNION = "vatUnion";
 	public static final String VAT_UNION_EXTERNAL = "vatUnionExternal";
 	public static final String VATS = "vats";
+	public static final String VERIFACTU = "verifactu";
 	public static final String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	public static final String WAREHOUSE = "warehouse";

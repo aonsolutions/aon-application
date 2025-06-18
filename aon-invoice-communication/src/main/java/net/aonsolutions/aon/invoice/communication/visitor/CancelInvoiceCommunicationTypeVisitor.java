@@ -70,5 +70,9 @@ public class CancelInvoiceCommunicationTypeVisitor extends BasicCommunicationInv
 	public void visitCLOSING() {
 		// Not implemented
 	}
-
+	
+	@Override
+	public void visitVERIFACTU() {
+		// Not implemented
+	}
 }

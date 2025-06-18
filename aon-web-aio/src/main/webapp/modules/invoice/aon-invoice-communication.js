@@ -3,10 +3,9 @@ import { CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { AonCard } from "../../components/aon-card.js";
 import { AonBasicTable } from "../../components/aon-basic-table.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { AonSelect} from "../../components/aon-select.js";
-import { AonDate} from "../../components/aon-date.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonDialog } from "../../components/aon-dialog.js";
+import { createDate, createSelect } from "../../components/CreateComponent.js";
 
 export class AonInvoiceCommunication extends AonElement {
     
@@ -23,11 +22,23 @@ export class AonInvoiceCommunication extends AonElement {
         this.CARD = this.id + 'Card';
         this.CARD_TABLE = this.CARD + 'Table';
         this.CARD_DIV = this.CARD + 'Div';
+
+        // FACTURAE
         this.FACTURAE = this.CARD_TABLE + 'Facturae';
+
+        // TBAI
         this.TBAI_ACTIVE = this.CARD_TABLE + 'TbaiActive';
         this.TBAI_TEST = this.CARD_TABLE + 'TbaiTest';
         this.TBAI_REGISTRY_DATE = this.CARD_TABLE + 'TbaiRegistryDate';
         this.TBAI_INCLUDE_DATE = this.CARD_TABLE + 'TbaiIncludeDate';
+        
+        // VERIFACTU
+        this.VERIFACTU_ACTIVE = this.CARD_TABLE + 'VerifactuActive';
+        this.VERIFACTU_TEST = this.CARD_TABLE + 'VerifactuTest';
+        this.VERIFACTU_REGISTRY_DATE = this.CARD_TABLE + 'VerifactuRegistryDate';
+        this.VERIFACTU_INCLUDE_DATE = this.CARD_TABLE + 'VerifactuIncludeDate';
+
+        // SII
         this.SII_ACTIVE = this.CARD_TABLE + 'SiiActive';
         this.SII_TEST = this.CARD_TABLE + 'SiiTest';
         this.SII_REGISTRY_DATE = this.CARD_TABLE + 'SiiRegistryDate';
@@ -47,6 +58,12 @@ export class AonInvoiceCommunication extends AonElement {
         this.buildCard(div);
     }
     
+    reload() {
+        let parent = this.getElement(this.DIV);
+        this.clearElement(parent);
+        this.buildCard(parent);
+    }
+
     buildCard(parent) {
         let card = new AonCard();
 		card.id = this.CARD;
@@ -63,9 +80,43 @@ export class AonInvoiceCommunication extends AonElement {
 		content.appendChild(table);
 
         table.addRow();
+        this.buildAdministration(table);
+        this.buildFacturae(table);
+        
+        if(this.isTicketBai()) {
+            this.buildTicketBai(table);
+        } else if(!this.isNavarra() && this.isBeta()){
+            this.buildVerifactu(table);
+        }
+        
+        this.buildSii(table);
+    }
 
-        // FACTURAE
+    buildAdministration(table) {
+        let administration = createSelect(this.ADMINISTRATION, 'Administración');
+        table.addCell(administration, 1).style.height = '50px';
+        administration.setOptions([
+            {value: 'ALAVA', name: 'Araba/Alava'},
+            {value: 'BIZKAIA', name: 'Bizkaia'},
+            {value: 'GIPUZKOA', name: 'Gipuzkoa'},
+            {value: 'NAVARRA', name: 'Navarra'},
+            {value: 'COMMON_TERRITORY', name: 'Territorio Común'},
+            {value: 'CANARIAS', name: 'A.T. Canaria'}
+        ]);
+        administration.value = this.configuration.administration;
+        administration.onChange(() => {
+            this.configuration.administration = administration.value;
+            if(this.isTicketBai() || this.isNavarra()) {
+                this.configuration.verifactu.active = false;
+            } else this.configuration.tbai.active = false;
+            this.reload();
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        });
 
+        table.addRow();
+    }
+
+    buildFacturae(table) {
         let facturae = new AonSwitch();
         facturae.id = this.FACTURAE;
 		facturae.title = 'Facturae';//MSG.FACTURAE;
@@ -76,41 +127,10 @@ export class AonInvoiceCommunication extends AonElement {
 		});
 		table.addCell(facturae, 1).style.height = '50px';
         facturae.setWidth('110px');
+                table.addRow();
+    }
 
-        const administrationOptions = [
-            {value: 'ALAVA', name: 'Araba/Alava'},
-            {value: 'BIZKAIA', name: 'Bizkaia'},
-            {value: 'GIPUZKOA', name: 'Gipuzkoa'},
-            {value: 'NAVARRA', name: 'Navarra'},
-            {value: 'COMMON_TERRITORY', name: 'Territorio Común'},
-            {value: 'CANARIAS', name: 'A.T. Canaria'}
-        ];
-
-        let administration = this.createAonElement(new AonSelect(), this.ADMINISTRATION, 'Administración');
-        administration.setOptions(administrationOptions);
-        administration.value = this.configuration.administration;
-        administration.onChange(() => {
-            this.configuration.administration = administration.value;
-            if(this.isTicketBai()) {
-                table.getRow(2).classList.remove(CSS.AON_NONE);
-            } else {
-                this.configuration.tbai.active = false;
-                this.getElement(this.TBAI_ACTIVE).checked = false;
-                this.getElement(this.TBAI_TEST).classList.add(CSS.AON_NONE);
-                table.getRow(2).classList.add(CSS.AON_NONE);
-            }
-            this.dispatchEvent(new Event(EVENT.CHANGE));
-        });
-        table.addCell(administration, 1).style.height = '50px';
-
-
-        table.addRow();
-        if(!this.isTicketBai()){
-            table.getRow(2).classList.add(CSS.AON_NONE);
-        }
-
-        // TICKET BAI
-
+    buildTicketBai(table) {
         let active = new AonSwitch();
         active.id = this.TBAI_ACTIVE;
  		active.title = MSG.TICKETBAI;
@@ -123,8 +143,15 @@ export class AonInvoiceCommunication extends AonElement {
                     this.buildPerson();
                 }
                 this.getElement(this.TBAI_TEST).classList.remove(CSS.AON_NONE);
-            } else this.getElement(this.TBAI_TEST).classList.add(CSS.AON_NONE);
-      	    this.configuration.tbai.active = active.isChecked();
+                this.getElement(this.TBAI_INCLUDE_DATE).classList.remove(CSS.AON_NONE);
+                this.getElement(this.TBAI_REGISTRY_DATE).classList.remove(CSS.AON_NONE);
+            } else {
+                this.getElement(this.TBAI_TEST).classList.add(CSS.AON_NONE);
+      	        this.getElement(this.TBAI_INCLUDE_DATE).classList.add(CSS.AON_NONE);
+                this.getElement(this.TBAI_REGISTRY_DATE).classList.add(CSS.AON_NONE);
+            }
+            
+            this.configuration.tbai.active = active.isChecked();
             this.dispatchEvent(new Event(EVENT.CHANGE));
 	    });
     	table.addCell(active, 1).style.height = '50px';
@@ -147,24 +174,24 @@ export class AonInvoiceCommunication extends AonElement {
     
         table.addRow();
 
-        const options = [
-            {value: 'tax', name: 'Fecha IVA'},
-            {value: 'audit', name: 'Fecha Auditoria'}
-        ];
-
-        let tbaiRegistryDate = this.createAonElement(new AonSelect(), this.TBAI_REGISTRY_DATE, 'Fecha Registro (TBAI)');
-        tbaiRegistryDate.setOptions(options);
-        tbaiRegistryDate.value = this.configuration.tbai.registryDate;
+        let tbaiRegistryDate = createSelect(this.TBAI_REGISTRY_DATE, 'Fecha Registro (TBAI)');
+ 
         if(!this.configuration.tbai.active) {
             tbaiRegistryDate.classList.add(CSS.AON_NONE);
         }
+        
+        table.addCell(tbaiRegistryDate, 1).style.height = '50px';
+        tbaiRegistryDate.setOptions([
+            {value: 'tax', name: 'Fecha IVA'},
+            {value: 'audit', name: 'Fecha Auditoria'}
+        ]);
+        tbaiRegistryDate.value = this.configuration.tbai.registryDate;
         tbaiRegistryDate.onChange(() => {
             this.configuration.tbai.registryDate = tbaiRegistryDate.value;
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
-        table.addCell(tbaiRegistryDate, 1).style.height = '50px';
 
-        let tbaiIncludeDate = this.createAonElement(new AonDate(), this.TBAI_INCLUDE_DATE, 'Fecha Inclusión TBAI');
+        let tbaiIncludeDate = createDate(this.TBAI_INCLUDE_DATE, 'Fecha Inclusión TBAI');
         if(!this.configuration.tbai.active) {
             tbaiIncludeDate.classList.add(CSS.AON_NONE);
         }
@@ -177,9 +204,80 @@ export class AonInvoiceCommunication extends AonElement {
             tbaiIncludeDate.value = this.configuration.tbai.includeDate;
         }
         table.addRow();
+    }
 
-        // SII
+    buildVerifactu(table) {
+        let active = new AonSwitch();
+        active.id = this.VERIFACTU_ACTIVE;
+ 		active.title = "Verifactu";
+    	active.checked = this.configuration.verifactu.active;
+        if(!this.isConsole())
+            active.disabled = this.configuration.verifactu.active; 
+        active.addEventListener(EVENT.CHANGE, () => {
+            if(active.isChecked()) {
+                this.getElement(this.VERIFACTU_TEST).classList.remove(CSS.AON_NONE);
+                this.getElement(this.VERIFACTU_INCLUDE_DATE).classList.remove(CSS.AON_NONE);
+                this.getElement(this.VERIFACTU_REGISTRY_DATE).classList.remove(CSS.AON_NONE);
+            } else {
+                this.getElement(this.VERIFACTU_TEST).classList.add(CSS.AON_NONE);
+                this.getElement(this.VERIFACTU_INCLUDE_DATE).classList.add(CSS.AON_NONE);
+                this.getElement(this.VERIFACTU_REGISTRY_DATE).classList.add(CSS.AON_NONE);
+            }
+      	    this.configuration.verifactu.active = active.isChecked();
 
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+	    });
+    	table.addCell(active, 1).style.height = '50px';
+        active.setWidth('110px');
+
+        let test = new AonSwitch();
+        test.id = this.VERIFACTU_TEST;
+		test.title = MSG.TEST_ENVIRONMENT;
+	    test.checked = this.configuration.verifactu.test;
+        if(!this.configuration.verifactu.test && !this.isConsole()) 
+            test.disabled = true; 
+        if(!this.configuration.verifactu.active) {
+            test.classList.add(CSS.AON_NONE);
+        }
+        test.addEventListener(EVENT.CHANGE, () => {
+		    this.configuration.verifactu.test = test.isChecked();
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+		});
+        table.addCell(test, 1).style.height = '50px';
+    
+        table.addRow();
+
+        let verifactuRegistryDate = createSelect(this.VERIFACTU_REGISTRY_DATE, 'Fecha Registro (VERIFACTU)');
+        if(!this.configuration.verifactu.active) {
+            verifactuRegistryDate.classList.add(CSS.AON_NONE);
+        }
+        table.addCell(verifactuRegistryDate, 1).style.height = '50px';
+        verifactuRegistryDate.setOptions([
+            {value: 'tax', name: 'Fecha IVA'},
+            {value: 'audit', name: 'Fecha Auditoria'}
+        ]);
+        verifactuRegistryDate.value = this.configuration.verifactu.registryDate;
+        verifactuRegistryDate.onChange(() => {
+            this.configuration.verifactu.registryDate = verifactuRegistryDate.value;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        });
+
+        let verifactuIncludeDate = createDate(this.VERIFACTU_INCLUDE_DATE, 'Fecha Inclusión VERIFACTU');
+        if(!this.configuration.verifactu.active) {
+            verifactuIncludeDate.classList.add(CSS.AON_NONE);
+        }
+        verifactuIncludeDate.onChange(() => {
+            this.configuration.verifactu.includeDate = verifactuIncludeDate.value;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
+        });
+        table.addCell(verifactuIncludeDate, 1).style.height = '50px';
+        if(this.configuration.verifactu.includeDate) {
+            verifactuIncludeDate.value = this.configuration.verifactu.includeDate;
+        }
+        table.addRow();
+    }
+
+    buildSii(table) {
         let siiActive = new AonSwitch();
         siiActive.id = this.SII_ACTIVE;
 		siiActive.title = "SII";
@@ -218,19 +316,22 @@ export class AonInvoiceCommunication extends AonElement {
 
         table.addRow();
 
-        let siiRegistryDate = this.createAonElement(new AonSelect(), this.SII_REGISTRY_DATE, 'Fecha Registro (SII)');
-        siiRegistryDate.setOptions(options);
-        siiRegistryDate.value = this.configuration.sii.registryDate;
+        let siiRegistryDate = createSelect(this.SII_REGISTRY_DATE, 'Fecha Registro (SII)');
         if(!this.configuration.sii.active) {
             siiRegistryDate.classList.add(CSS.AON_NONE);
         }
+        table.addCell(siiRegistryDate, 1).style.height = '50px';
+        siiRegistryDate.setOptions([
+            {value: 'tax', name: 'Fecha IVA'},
+            {value: 'audit', name: 'Fecha Auditoria'}
+        ]);
+        siiRegistryDate.value = this.configuration.sii.registryDate;
         siiRegistryDate.onChange(() => {
             this.configuration.sii.registryDate = siiRegistryDate.value;
             this.dispatchEvent(new Event(EVENT.CHANGE));
         });
-        table.addCell(siiRegistryDate, 1).style.height = '50px';
 
-        let siiIncludeDate = this.createAonElement(new AonDate(), this.SII_INCLUDE_DATE, 'Fecha Inclusión SII');
+        let siiIncludeDate = createDate(this.SII_INCLUDE_DATE, 'Fecha Inclusión SII');
         if(!this.configuration.sii.active) {
             siiIncludeDate.classList.add(CSS.AON_NONE);
         }
@@ -255,7 +356,7 @@ export class AonInvoiceCommunication extends AonElement {
             this.dispatchEvent(new Event(EVENT.CHANGE));
 		});
 		table.addCell(siiAutosend, 2).style.height = '50px';
-        siiAutosend.setWidth('230px');		
+        siiAutosend.setWidth('230px');
     }
 
     isTicketBai() {
@@ -263,6 +364,11 @@ export class AonInvoiceCommunication extends AonElement {
             || this.configuration.administration === 'BIZKAIA'
             || this.configuration.administration === 'GIPUZKOA';
     }
+
+    isNavarra() {
+        return this.configuration.administration === 'NAVARRA';
+    }
+
 
     getAdministrationConfiguration() {
         return this.configuration.administration;
@@ -274,6 +380,10 @@ export class AonInvoiceCommunication extends AonElement {
 
     getSiiConfiguration() {
         return this.configuration.sii;
+    }
+
+    getVerifactuConfiguration() {
+        return this.configuration.verifactu;
     }
 
     getTbaiConfiguration() {

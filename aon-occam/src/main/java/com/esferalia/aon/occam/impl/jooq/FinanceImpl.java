@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
@@ -89,6 +90,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SettleSalariesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SiiConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.VerifactuConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceClosingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceCommunicationTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceDataDAO;
@@ -669,7 +671,7 @@ public class FinanceImpl implements IFinance {
 				configuration -> PrintInvoiceConfigurationDAO.save(ctx, pic));
 	}
 
-	// ---------- TBAI CONFIGURATION
+	// ---------- INVOFOX CONFIGURATION
 	
 	@Override
 	public InvofoxConfiguration getInvofoxConfiguration(AONContext ctx) {
@@ -681,6 +683,20 @@ public class FinanceImpl implements IFinance {
 	public InvofoxConfiguration saveInvofoxConfiguration(AONContext ctx, InvofoxConfiguration config) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvofoxConfigurationDAO.save(ctx, config));
+	}
+	
+	// ---------- VERIFACTU CONFIGURATION
+	
+	@Override
+	public VerifactuConfiguration getVerifactuConfiguration(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> VerifactuConfigurationDAO.get(ctx));
+	}
+
+	@Override
+	public VerifactuConfiguration saveVerifactuConfiguration(AONContext ctx, VerifactuConfiguration vc) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> VerifactuConfigurationDAO.save(ctx, vc));
 	}
 	
 	// ---------- TBAI CONFIGURATION

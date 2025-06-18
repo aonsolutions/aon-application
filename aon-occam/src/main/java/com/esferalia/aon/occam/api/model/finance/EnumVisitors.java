@@ -134,6 +134,7 @@ public class EnumVisitors {
 		void visitSERES();		
 		void visitEMAIL();
 		void visitCLOSING();
+		void visitVERIFACTU();
 	}
 	
 	public static interface IFiscalModelKeyInfoVisitor<T> {

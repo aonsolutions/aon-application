@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.finance.VerifactuConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceDetailExtended;
@@ -231,6 +232,13 @@ public interface IFinance {
 
 	public TbaiConfiguration getTbaiConfiguration(AONContext ctx);
 	public TbaiConfiguration saveTbaiConfiguration(AONContext ctx, TbaiConfiguration config);
+	
+	// 	***********************************************
+	// 	********** VERIFACTU CONFIGURATION ************
+	// 	***********************************************
+
+	public VerifactuConfiguration getVerifactuConfiguration(AONContext ctx);
+	public VerifactuConfiguration saveVerifactuConfiguration(AONContext ctx, VerifactuConfiguration config);
 	
 	// 	***********************************************
 	// 	************* SII CONFIGURATION ***************
