@@ -29,6 +29,9 @@ import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
 import net.aonsolutions.db.up2date.tgss.Artist2025CgcTempRemove;
 import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
 import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsITIMSFix;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsNamesFix;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessRoundFix;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.payroll.PPEITFix;
 import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
@@ -549,8 +552,11 @@ public class Up2Date {
 			// PPEITUpdate.PPE_IT_UPDATE,
 			// PPEITFix.PPE_IT_FIX,
 			// PPEITUpdateII.PPE_IT_UPDATEII,
-			PPEUpdate2Cost.PPE_IT_UPDATE2COST,
-			Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
+			// PPEUpdate2Cost.PPE_IT_UPDATE2COST,
+			// Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
+			TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
+			TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
+			TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

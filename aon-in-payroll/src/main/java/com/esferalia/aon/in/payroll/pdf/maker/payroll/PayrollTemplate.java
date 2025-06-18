@@ -513,7 +513,8 @@ public class PayrollTemplate implements IPayrollTemplate {
 	y -= 40;
 
 	// FOR EACH DEDUCTION
-	deductions.get().entrySet().stream().sorted(Map.Entry.<Integer, ArrayList<PDFDeduction>>comparingByKey())
+	deductions.get().entrySet().stream()
+	.sorted(Map.Entry.<Integer, ArrayList<PDFDeduction>>comparingByKey())
 		.forEach(m -> {
 		    try {
 
@@ -533,6 +534,8 @@ public class PayrollTemplate implements IPayrollTemplate {
 			    m.getValue().stream()
 			    .sorted((d1,d2) -> { 
 			    	int compareTo = d1.getDeductionType().orElse(DeductionType.OTHER).compareTo(d2.getDeductionType().orElse(DeductionType.OTHER));
+			    	if ( compareTo == 0 )
+			    		compareTo = d1.getDescription().orElse("").compareTo(d2.getDescription().orElse(""));
 			    	if ( compareTo == 0 )
 			    		compareTo = d1.getName().orElse("").compareTo(d2.getName().orElse(""));
 			    	return compareTo;

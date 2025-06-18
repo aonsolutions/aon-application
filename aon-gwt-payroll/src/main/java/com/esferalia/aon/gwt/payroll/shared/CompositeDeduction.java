@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class CompositeDeduction extends Deduction {
+public class CompositeDeduction extends Deduction  implements ICompositeItem<Deduction>  {
 	
 	private static final String UNSET_DATE = new String(); 
 	private static final String UNSET_STRING = new String(); 
@@ -31,6 +31,9 @@ public class CompositeDeduction extends Deduction {
 		childs.add(child);
 	}
 
+	// ------------------------------------------------------------------------
+
+	@Override
 	public Collection<Deduction> getChilds() {
 		return childs;
 	}

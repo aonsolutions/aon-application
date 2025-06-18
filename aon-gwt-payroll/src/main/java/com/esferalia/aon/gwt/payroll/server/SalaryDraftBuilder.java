@@ -54,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DeductionEvent;
 import com.esferalia.aon.gwt.payroll.shared.Event;
+import com.esferalia.aon.gwt.payroll.shared.ICompositeItem;
 import com.esferalia.aon.gwt.payroll.shared.InvalidVariable;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
@@ -1530,7 +1531,7 @@ public class SalaryDraftBuilder
 				    && "IRPF".equals(d.getName()))
 			    
 			    || ( AonStringUtils.isNotBlank(d.getName()) 
-		    			&& AonStringUtils.equals(d.getName(), deduction.getName()))
+		    			&& ( AonStringUtils.equals(getName(d), getName(deduction) )))
 			    
 			    || (
 			    	// RED.CUOTA SS-PORCENT ( C.COMUN.)
@@ -1565,7 +1566,7 @@ public class SalaryDraftBuilder
 			if (	Objects.equals(c.getId(), cost.getId()) 
 		    		|| ( 
 		    		AonStringUtils.isNotBlank(c.getName()) 
-		    		&& AonStringUtils.equals(c.getName(), cost.getName()))
+		    		&& AonStringUtils.equals(getName(c), getName(cost)))
 //				    || 
 //				    ( // RED.CUOTA SS-PORCENT ( C.COMUN.)
 //			    	c.getAmount() < 0.00 
@@ -1820,8 +1821,28 @@ public class SalaryDraftBuilder
 	}
 
 	private static <T extends ISalaryItem<?>> List<T> getDbItemCounterParts(
-			Collection<T> dbItems, Item<?> item) {
+			Collection<T> dbItems, ICompositeItem<?> item) {
+		
+		List<T> dbItemCounterParts = new LinkedList<T>();
+		List<T> dbRemainItems = new LinkedList<T>(dbItems); 
+		
+		for (Item<?> child : item.getChilds()) {
+			List<T> dbChildCounterparts = getDbItemCounterParts(dbRemainItems, child);
+			dbItemCounterParts.addAll(dbChildCounterparts);
+			dbRemainItems.removeAll(dbChildCounterparts);
+		}
+		
+		return dbItemCounterParts;
+		
+	}
 
+	private static <T extends ISalaryItem<?>> List<T> getDbItemCounterParts(
+			Collection<T> dbItems, Item<?> item) {
+		
+		if ( item instanceof ICompositeItem<?> compositeItem) {
+			return getDbItemCounterParts(dbItems, (ICompositeItem<?>) compositeItem);
+		}
+		
 		List<T> nameMatchDbItems = new LinkedList<T>();
 		List<T> fullMatchDbItems = new LinkedList<T>();
 
@@ -1848,8 +1869,28 @@ public class SalaryDraftBuilder
 	}
 
 	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
+			Collection<T> ssItems, ICompositeItem<?> item) {
+		
+		List<T> ssItemCounterParts = new LinkedList<T>();
+		List<T> ssRemainItems = new LinkedList<T>(ssItems); 
+		
+		for (Item<?> child : item.getChilds()) {
+			List<T> dbChildCounterparts = getSsItemCounterParts(ssRemainItems, child);
+			ssItemCounterParts.addAll(dbChildCounterparts);
+			ssRemainItems.removeAll(dbChildCounterparts);
+		}
+		
+		return ssItemCounterParts;
+		
+	}
+
+	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
 			Collection<T> ssItems, Item<?> item) {
 
+		if ( item instanceof ICompositeItem<?> compositeItem) {
+			return getSsItemCounterParts(ssItems, compositeItem);
+		}
+		
 		List<T> nameMatchDbItems = new LinkedList<T>();
 
 		String name = item.getName();
@@ -2003,8 +2044,8 @@ public class SalaryDraftBuilder
 
 	private static String getChildDescription(Deduction deduction, Map<String, ITimedVariable<?>> context) {
 	    StringBuilder description = new StringBuilder(deduction.getDescription());
-	    if ( context.containsKey(ContextVariable.EXCESS_BASE.getName() ))  {
-		description.append(" Cotizaci\u00f3n por Exceso");
+	    if ( isExcess(deduction, context) )  {
+	    	description.append(" Cotizaci\u00f3n por Exceso");
 	    }
 	    return description.toString();
 	}
@@ -2018,8 +2059,29 @@ public class SalaryDraftBuilder
 		}
 		
 	}
-
 	private static String getDescription(Deduction deduction, String def) {
+		String description = getDescriptionImpl(deduction, def);
+		if ( isExcess(deduction)) {
+			description = AonStringUtils.appendIfMissing(description, " Cotizaci\u00f3n por Exceso");
+		}
+		return description;
+	}
+		
+	private static String getName (Deduction deduction ) {
+		return deduction.getName()
+				.replaceFirst("EXCESS_", "");
+	}
+
+	private static boolean isExcess (Deduction deduction ) {
+		return AonStringUtils.startsWith(deduction.getName(), "EXCESS_") || 
+				AonStringUtils.contains(deduction.getExpression(), ContextVariable.EXCESS_BASE.getName() ) ; 
+	}
+	
+	private static boolean isExcess (Deduction deduction, Map<String, ITimedVariable<?>> context ) {
+		return isExcess(deduction) || context.containsKey(ContextVariable.EXCESS_BASE.getName() ) ; 
+	}
+
+	private static String getDescriptionImpl(Deduction deduction, String def) {
 	    	
 		if ( deduction.getName() != null ) {
 		
