@@ -53,6 +53,7 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import java.util.Map;
 
 public class AonNordigen  {
 
@@ -224,19 +225,19 @@ public class AonNordigen  {
 
 	    try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 
-	        List<LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(
+	        Map<Integer, LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(
 	            ctx, occam.getDomain(), account.getRbank().getId(), "update"
 	        );
 
-	        List<LocalDateTime> recentCallsFailed = NordigenCallLogDAO.getRecentCallTimes(
-	            ctx, occam.getDomain(), account.getRbank().getId(), "fail_update"
+	        LocalDateTime recentCallsFailed = NordigenCallLogDAO.getRecentCallTimesFail(
+	            ctx, occam.getDomain(), account.getRbank().getId()
 	        );
 
 	        LocalDateTime now = LocalDateTime.now();
 	        LocalDateTime retryAfter = null;
 
 	        // bloqueo por rate limit
-	        if (!recentCallsFailed.isEmpty()) {
+	        if (recentCallsFailed != null) {
 	            retryAfter = NordigenCallLogDAO.getLatestRetryAfter(
 	                ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update"
 	            );
@@ -250,17 +251,12 @@ public class AonNordigen  {
 
 	        // comprobamos las 3 llamadas
 	        for (int i = 0; i < maxCallsPerDay; i++) {
-	            if (i < recentCalls.size()) {
-	                // ya se realizo una llamada 
+	        	if (recentCalls.containsKey(i)) {
+	        		// ya se realizo una llamada, al estar en 24 horas 
 	                LocalDateTime callTime = recentCalls.get(i);
 	                LocalDateTime availableAgain = callTime.plusHours(24);
-
-	                if (availableAgain.isAfter(now)) {
-	                    Duration remaining = Duration.between(now, availableAgain);
-	                    statuses.add("Actualizacion " + (i + 1) + " no disponible. Disponible en: " + formatRemaining(remaining));
-	                } else {
-	                    statuses.add("Actualizacion " + (i + 1) + " disponible");
-	                }
+	                Duration remaining = Duration.between(now, availableAgain);
+	                statuses.add("Actualizacion " + (i + 1) + " disponible en: " + formatRemaining(remaining));
 	            } else {
 	                // llamada sin gastar
 	                statuses.add("Actualizacion " + (i + 1) + " disponible");
@@ -276,15 +272,11 @@ public class AonNordigen  {
 	    return statuses;
 	}
 
-
-
 	private static String formatRemaining(Duration duration) {
 	    long hours = duration.toHours();
 	    long minutes = duration.toMinutes() % 60;
 	    return hours + "h " + minutes + "m";
 	}
-
-
 
 	private static LinkedList<NordigenAccountBalance> getAccountBalances(NordigenAccessToken token, String nordigenAccountId) {
 	    return NordigenAPI.getBalances(token.getAccess(), nordigenAccountId);
@@ -383,7 +375,6 @@ public class AonNordigen  {
 			}
 
 			if (!refresh) {
-				NordigenRateLimiter.checkAllowed(ctx, ctx.getDomainId(), account.getRbank().getId(), "fail_update");
 				return loadStoredAccount(occam, token, account);
 			}
 

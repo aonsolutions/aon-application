@@ -110,7 +110,15 @@ public class NordigenModule extends MainEntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-        applyStylesLoad(); // Mostrar cargando
+        // Mostrar cargando  
+        applyStylesLoad();
+        // Eliminar el vanco que se intento sincronizar, si existe
+        Storage storage = Storage.getLocalStorageIfSupported();
+        String storedValue = storage.getItem("bankSuccessAdd");
+        if (storedValue != null && storedValue == nordigenBankAccount.getRequisitionId()) {
+          storage.removeItem("bankSuccessAdd");
+        }
+        // Seguimos con la carga normla
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		NordigenModuleOptions options = new NordigenModuleOptions()
             .setParentWidget(root)
@@ -753,18 +761,18 @@ public class NordigenModule extends MainEntryPoint {
 
 			getMenuPanel().add(updateButton);
 			boolean forceRefresh = false;
-//			Storage sessionStorage = Storage.getSessionStorageIfSupported();
-//			if (sessionStorage != null && "true".equals(sessionStorage.getItem("nordigenRefreshAfterAuth"))) {
-//			    forceRefresh = true;
-//			    sessionStorage.removeItem("nordigenRefreshAfterAuth"); 
-//			}
-
+            Storage storage = Storage.getLocalStorageIfSupported();
+            String storedValue = storage.getItem("bankSuccessAdd");
+            if (storedValue != null && storedValue == nordigenBankAccount.getRequisitionId()) {
+              forceRefresh = true;
+              storage.removeItem("bankSuccessAdd");
+            }
 			refreshCard(opt, nordigenBankAccount, atDateBox, lastDateBox, balanceBoxCard, availableBox, title, titlePanel,
               allMovementsButton, balanceJsonButton, forceRefresh, attempsBox);
 
 			loadRemainingDays(opt, nordigenBankAccount, diasBox);
 		}
-		
+
 		private void loadRemainingDays(NordigenModuleOptions opt, NordigenBankAccount nordigenBankAccount, InlineLabel diasBox) {
 		        NORDIGEN_SERVICE.getRemainingDays(opt.getOccam(), nordigenBankAccount, new AsyncCallback<Integer>() {
 		            @Override
@@ -794,7 +802,7 @@ public class NordigenModule extends MainEntryPoint {
 		            sb.append("Tus actualizaciones:");
 		            sb.append("<ul style='list-style: none; text-align: left;'>");
                     for (String status : callStatuses) {
-                      if(status.contains("disponible en:")){
+                      if(status.contains("disponible en: ")){
                         sb.append("<li style='color: red;'>").append(status).append("</li>");
                       } else
                         sb.append("<li>").append(status).append("</li>");
@@ -804,7 +812,7 @@ public class NordigenModule extends MainEntryPoint {
                     attempsBox.setHTML(sb.toString());
 		            attempsBox.addStyleName(AON.CSS.aonBold());
 
-		            long realizadas = callStatuses.stream().filter(s -> s.contains("disponible en:")).count();
+		            long realizadas = callStatuses.stream().filter(s -> s.contains("disponible en: ")).count();
 		            boolean allRealizadas = realizadas == 3;
 		            if (allRealizadas) {
 		                if (updateButton != null) {
@@ -1048,6 +1056,7 @@ public class NordigenModule extends MainEntryPoint {
 					    label.addStyleName(AON.CSS.aonColorGreen());
 					    sessionLog.add(label);
 					    openFootPanel();
+                        loadRemainingCalls(opt, nordigenBankAccount, attempsBox);
 				    }
 				}
 			});
@@ -1667,11 +1676,9 @@ public class NordigenModule extends MainEntryPoint {
 					@Override
 					public void onSuccess(NordigenRequisition result) {
 						if (registrationTable != null) {
-							drawShit(opt, dial, nordigenBankAccount, result, registrationTable);
-//							Storage sessionStorage = Storage.getSessionStorageIfSupported();
-//							if (sessionStorage != null) {
-//							    sessionStorage.setItem("nordigenRefreshAfterAuth", "true");
-//							}
+                          Storage storage = Storage.getLocalStorageIfSupported();
+                          storage.setItem("bankSuccessAdd", result.getId());
+                          drawShit(opt, dial, nordigenBankAccount, result, registrationTable);
 						}
 						Window.open(result.getLink(), "REGISTRO DE CUENTA", "_blank");
 						nordigenBankAccount.setInstitution(null);
@@ -1691,7 +1698,7 @@ public class NordigenModule extends MainEntryPoint {
 	}
 
 	private void drawShit(NordigenModuleOptions opt, AonDialog dial, NordigenBankAccount nordigenBankAccount,NordigenRequisition result, FlexTable registrationTable) {
-		if (dial != null) {			
+		if (dial != null) {
 			dial.setAutoHideEnabled(false);
 		}
 		int rowSize = registrationTable.getRowCount();

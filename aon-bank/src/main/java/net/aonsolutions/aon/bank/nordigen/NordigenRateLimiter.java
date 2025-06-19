@@ -9,29 +9,13 @@ import java.util.regex.Pattern;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenCallLogDAO;
+import java.util.Map;
 
 public class NordigenRateLimiter {
     private static final int LIMIT = 3;
 
     private NordigenRateLimiter() {
         throw new IllegalStateException("Utility class");
-    }
-
-    /**
-     * Verifica si se puede realizar una llamada ahora mismo, en base al número de llamadas
-     * reales realizadas en las últimas 24 horas y si hay un bloqueo temporal (rate limit).
-     */
-    public static boolean checkAllowed(AONContext ctx, int domain, Integer rbankId, String callType) throws NordigenException {
-        LocalDateTime now = LocalDateTime.now();
-
-        LocalDateTime retryAfter = NordigenCallLogDAO.getLatestRetryAfter(ctx, domain, rbankId, callType);
-        if (retryAfter != null && retryAfter.isAfter(now)) {
-            return false;
-        }
-
-        List<LocalDateTime> recentCalls = NordigenCallLogDAO.getRecentCallTimes(ctx, domain, rbankId, callType);
-
-        return recentCalls.size() < LIMIT;
     }
 
     /**

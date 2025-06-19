@@ -9,6 +9,9 @@ import org.jooq.Record1;
 import static com.esferalia.aon.jooq.tables.NordigenCallLog.NORDIGEN_CALL_LOG;
 
 import com.esferalia.aon.occam.api.AONContext;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NordigenCallLogDAO {
 
@@ -36,7 +39,7 @@ public class NordigenCallLogDAO {
                 reintentos != null ? reintentos : 3
             ).execute();
     }
-    
+  /*  
     public static int getCallsMadeToday(AONContext ctx, int domain, Integer rbankId, String callType) {
         LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
         return ctx.getDslContext()
@@ -48,7 +51,35 @@ public class NordigenCallLogDAO {
             .and(NORDIGEN_CALL_LOG.CALL_TIME.greaterOrEqual(Timestamp.valueOf(startOfDay)))
             .fetchOne(0, int.class);
     }
+*/
+    public static int getCallsMadeToday(AONContext ctx, int domain, Integer rbankId, String callType) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime twentyFourHoursAgo = now.minusHours(24); // Hace 24 horas desde el momento actual
 
+        // Consultar la cantidad de llamadas y el último retry_count dentro de las últimas 24 horas
+        Integer retryCount = ctx.getDslContext()
+            .select(NORDIGEN_CALL_LOG.RETRY_COUNT)
+            .from(NORDIGEN_CALL_LOG)
+            .where(NORDIGEN_CALL_LOG.DOMAIN.eq(domain))
+            .and(NORDIGEN_CALL_LOG.RBANK.eq(rbankId))
+            .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq(callType))
+            .and(NORDIGEN_CALL_LOG.CALL_TIME.greaterOrEqual(Timestamp.valueOf(twentyFourHoursAgo)))
+            .orderBy(NORDIGEN_CALL_LOG.CALL_TIME.desc())  // Ordenar por el más reciente
+            .limit(1)  // Solo tomamos el más reciente
+            .fetchOne(NORDIGEN_CALL_LOG.RETRY_COUNT);
+
+        // Si no se encuentra retryCount (por ejemplo, si no hay llamadas en las últimas 24 horas)
+        if (retryCount == null) {
+            return 0;  // Si no se encontraron llamadas
+        } else if (retryCount == 2 || retryCount == 3) {
+        // Aplicar la lógica de negocio para el valor de retry_count
+            return 0;  // Si el retry_count es 2 o 3, devolvemos 0 (reinicio)
+        }
+        
+        return retryCount + 1;
+    }
+
+    
     public static LocalDateTime getLatestRetryAfter(AONContext ctx, int domain, Integer rbankId, String callType) {
         Record1<Timestamp> record = ctx.getDslContext()
             .select(NORDIGEN_CALL_LOG.RETRY_AFTER)
@@ -72,10 +103,35 @@ public class NordigenCallLogDAO {
            .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq(callType))
            .execute();
     }
-    
-    public static List<LocalDateTime> getRecentCallTimes(
-            AONContext ctx, int domain, Integer rbankId, String callType) {
 
+    public static Map<Integer, LocalDateTime> getRecentCallTimes(
+      AONContext ctx, int domain, Integer rbankId, String callType
+    ) {
+      LocalDateTime now = LocalDateTime.now();
+      LocalDateTime from = now.minusHours(24);
+
+      return ctx.getDslContext()
+          .select(NORDIGEN_CALL_LOG.CALL_TIME, NORDIGEN_CALL_LOG.RETRY_COUNT)
+          .from(NORDIGEN_CALL_LOG)
+          .where(NORDIGEN_CALL_LOG.DOMAIN.eq(domain))
+          .and(NORDIGEN_CALL_LOG.RBANK.eq(rbankId))
+          .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq(callType))
+          .and(NORDIGEN_CALL_LOG.CALL_TIME.greaterOrEqual(Timestamp.valueOf(from)))
+          .orderBy(NORDIGEN_CALL_LOG.CALL_TIME.asc())
+          .fetch(record -> new AbstractMap.SimpleEntry<>(
+              record.get(NORDIGEN_CALL_LOG.RETRY_COUNT),
+              record.get(NORDIGEN_CALL_LOG.CALL_TIME).toLocalDateTime()
+          ))
+          .stream()
+          .collect(Collectors.toMap(
+              AbstractMap.SimpleEntry::getKey,
+              AbstractMap.SimpleEntry::getValue
+          ));
+    }
+
+    public static LocalDateTime getRecentCallTimesFail(
+      AONContext ctx, int domain, Integer rbankId
+    ) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime from = now.minusHours(24);
 
@@ -84,9 +140,11 @@ public class NordigenCallLogDAO {
             .from(NORDIGEN_CALL_LOG)
             .where(NORDIGEN_CALL_LOG.DOMAIN.eq(domain))
             .and(NORDIGEN_CALL_LOG.RBANK.eq(rbankId))
-            .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq(callType))
+            .and(NORDIGEN_CALL_LOG.CALL_TYPE.eq("fail_update"))
             .and(NORDIGEN_CALL_LOG.CALL_TIME.greaterOrEqual(Timestamp.valueOf(from)))
-            .orderBy(NORDIGEN_CALL_LOG.CALL_TIME.asc())
-            .fetch(record -> record.get(NORDIGEN_CALL_LOG.CALL_TIME).toLocalDateTime());
+            .orderBy(NORDIGEN_CALL_LOG.CALL_TIME.desc())
+            .limit(1)
+            .fetchOne(record -> record.get(NORDIGEN_CALL_LOG.CALL_TIME).toLocalDateTime());
     }
+
 }
