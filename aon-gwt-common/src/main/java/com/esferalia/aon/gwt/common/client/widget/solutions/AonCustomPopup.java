@@ -18,6 +18,7 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 	private DockLayoutPanel dockLayoutPanel;
 	private Label caption;
 	private Button closeButton;
+	private FlowPanel dialogBar;
 	
 	public AonCustomPopup() {
 		this(true);
@@ -28,7 +29,7 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 		setAnimationEnabled(false);
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);	
 		
-		FlowPanel dialogBar = new FlowPanel ();
+		dialogBar = new FlowPanel ();
 		dialogBar.setStyleName(AON.CSS.aonCustomDialogPanel());
 		FlowPanel header = new FlowPanel();
 		header.setStyleName(AON.CSS.aonCustomDialogHeader());
@@ -63,6 +64,11 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 
 	public void setCaption(String captionText) {
 		caption.setText(captionText);
+	}
+	
+	public void hideHeader() {
+		dockLayoutPanel.setWidgetSize(dialogBar, 0);
+		dockLayoutPanel.remove(dialogBar);
 	}
 
 	@Override

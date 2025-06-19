@@ -95,6 +95,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonCustomDockLayout feeDockLayout;
 
 	private AonToolbarButton createButton;
+	private AonToolbarButton duplicateValueButton;
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
 	private AonToolbarButton exportButton;
@@ -1006,6 +1007,7 @@ public class CustomerFee extends MainEntryPoint {
 							});
 						}
 						
+						duplicateValueButton.setEnabled(selectedItemList.isEmpty());
 						addValueButton.setEnabled(selectedItemList.isEmpty());
 						deleteFeeButton.setEnabled(selectedItemList.isEmpty());
 						exportButton.setEnabled(selectedItemList.isEmpty());
@@ -1035,6 +1037,7 @@ public class CustomerFee extends MainEntryPoint {
 							});
 						}
 						
+						duplicateValueButton.setEnabled(selectedItemList.isEmpty());
 						addValueButton.setEnabled(selectedItemList.isEmpty());
 						deleteFeeButton.setEnabled(selectedItemList.isEmpty());
 						exportButton.setEnabled(selectedItemList.isEmpty());
@@ -1119,6 +1122,9 @@ public class CustomerFee extends MainEntryPoint {
 		row.addDomHandler(e -> {
 			e.stopPropagation();
 			if(!isCustomer()) {
+				
+				Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+				
 				new CustomerFeeDialog(fee, options, searchDomain) {
 					
 					@Override
@@ -1138,10 +1144,23 @@ public class CustomerFee extends MainEntryPoint {
 									@Override
 									public void onSuccess(Integer updates) {
 										AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+										duplicateValueButton.setEnabled(false);
 										addValueButton.setEnabled(false);
 										deleteFeeButton.setEnabled(false);
 										exportButton.setEnabled(false);
 										onSearch();
+										
+										if(null != originalSeller) {
+											
+											// Desasignar
+											if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), false, originalSeller);
+											
+											if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), true, null);
+											
+										} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+											sendFeeEmail(fee.getId(), true, null);
 									}
 								});
 					}
@@ -1161,6 +1180,8 @@ public class CustomerFee extends MainEntryPoint {
 				};
 			} else {
 				getCustomer(customer -> {
+					Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+					
 					new CustomerFeeDialog(fee, customer, options, searchDomain) {
 						
 						@Override
@@ -1180,10 +1201,23 @@ public class CustomerFee extends MainEntryPoint {
 										@Override
 										public void onSuccess(Integer updates) {
 											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+											duplicateValueButton.setEnabled(false);
 											addValueButton.setEnabled(false);
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);
 										}
 									});
 						}
@@ -1219,6 +1253,7 @@ public class CustomerFee extends MainEntryPoint {
 			}
 			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
 			
+			duplicateValueButton.setEnabled(!selectedItemList.isEmpty());
 			addValueButton.setEnabled(!selectedItemList.isEmpty());
 			deleteFeeButton.setEnabled(!selectedItemList.isEmpty());
 			exportButton.setEnabled(!selectedItemList.isEmpty());
@@ -1389,13 +1424,14 @@ public class CustomerFee extends MainEntryPoint {
 								@Override
 								public void onSuccess(Fee customerFee) {
 									AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+									duplicateValueButton.setEnabled(false);
 									addValueButton.setEnabled(false);
 									deleteFeeButton.setEnabled(false);
 									exportButton.setEnabled(false);
 									onSearch();
 									
 									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
-										sendFeeEmail(customerFee.getId());
+										sendFeeEmail(customerFee.getId(), true, null);
 								}
 								
 								@Override
@@ -1438,13 +1474,14 @@ public class CustomerFee extends MainEntryPoint {
 							@Override
 							public void onSuccess(Fee customerFee) {
 								AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+								duplicateValueButton.setEnabled(false);
 								addValueButton.setEnabled(false);
 								deleteFeeButton.setEnabled(false);
 								exportButton.setEnabled(false);
 								onSearch();
 								
 								if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
-									sendFeeEmail(customerFee.getId());
+									sendFeeEmail(customerFee.getId(), true, null);
 							}
 							
 							@Override
@@ -1479,13 +1516,85 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		feeDockLayout.addToolbarButton(createButton);
 		
+		duplicateValueButton = new AonToolbarButton("Duplicar Cuota", AON.CSS.aonIconCopy());
+		duplicateValueButton.setEnabled(false);
+		duplicateValueButton.addClickHandler(e -> {
+			List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+			if(selectedItemList.size() == 1) {
+				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
+				if(null != selectedFee) {
+					Fee duplicateFee = new Fee();
+					duplicateFee.duplicate(selectedFee);
+					
+					selectedItems.values().forEach(check ->{
+						check.addStyleName(AON.CSS.aonIconCheck());
+						check.removeStyleName(AON.CSS.aonIconChecked());
+					});
+					duplicateValueButton.setEnabled(false);
+					addValueButton.setEnabled(false);
+					deleteFeeButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					
+					CustomerFeeDialog feeDialog = new CustomerFeeDialog(duplicateFee, options, searchDomain) {
+						
+						@Override
+						protected void onAccept(Fee fee) {
+							SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+								
+								@Override
+								public void onSuccess(Fee customerFee) {
+									AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+									duplicateValueButton.setEnabled(false);
+									addValueButton.setEnabled(false);
+									deleteFeeButton.setEnabled(false);
+									exportButton.setEnabled(false);
+									onSearch();
+									
+									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+										sendFeeEmail(customerFee.getId(), true, null);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								}
+							});
+							
+						}
+
+						@Override
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+						@Override
+						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					};
+					
+					feeDialog.setCaption("Duplicar Cuota");
+					
+				}
+			} else {
+				Window.alert("Duplicar masivamente en desarrollo...");
+			}
+		});
+		feeDockLayout.addToolbarButton(duplicateValueButton);
+		
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
 			List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
 			if(selectedItemList.size() == 1) {
 				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
-				if(null != selectedFee)
+				if(null != selectedFee) {
+					
+					Integer originalSeller = null == selectedFee.getSeller() ? null : selectedFee.getSeller().getId();
+					
 					new CustomerFeeDialog(selectedFee, options, searchDomain) {
 						
 						@Override
@@ -1509,6 +1618,18 @@ public class CustomerFee extends MainEntryPoint {
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);		
 										}
 									});
 						}
@@ -1526,6 +1647,7 @@ public class CustomerFee extends MainEntryPoint {
 						}
 						
 					};
+				}
 			} else {
 				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options, searchDomain) {
 					
@@ -1604,6 +1726,7 @@ public class CustomerFee extends MainEntryPoint {
 									.filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked()))
 									.map(entry -> entry.getKey())
 									.collect(Collectors.toCollection(LinkedList::new));
+							
 							AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
 									new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
 							
@@ -1711,6 +1834,7 @@ public class CustomerFee extends MainEntryPoint {
 											@Override
 											public void onSuccess(Void result) {
 												AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
+												duplicateValueButton.setEnabled(false);
 												addValueButton.setEnabled(false);
 												deleteFeeButton.setEnabled(false);
 												exportButton.setEnabled(false);
@@ -1752,6 +1876,11 @@ public class CustomerFee extends MainEntryPoint {
 								.map(entry -> entry.getValue())
 								.collect(Collectors.toCollection(LinkedList::new));
 						
+						deletedFees.forEach(deleteFee -> {
+							if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
+								sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+						});
+						
 						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), deletedFees,
 								new AsyncCallback<Void>() {
 
@@ -1763,6 +1892,7 @@ public class CustomerFee extends MainEntryPoint {
 									@Override
 									public void onSuccess(Void result) {
 										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+										duplicateValueButton.setEnabled(false);
 										addValueButton.setEnabled(false);
 										deleteFeeButton.setEnabled(false);
 										exportButton.setEnabled(false);
@@ -1937,7 +2067,7 @@ public class CustomerFee extends MainEntryPoint {
 	    return btoa(str);
 	}-*/;
 	
-	private void sendFeeEmail(Integer feeId) {
+	private void sendFeeEmail(Integer feeId, Boolean add, Integer oldSellerId) {
 		String host = Window.Location.getHost();
 		String endPoint = "/ms/api/fee-mail/";
 
@@ -1949,6 +2079,9 @@ public class CustomerFee extends MainEntryPoint {
 		JSONObject body = new JSONObject();
 
 		body.put("feeId", new JSONString(feeId.toString()));
+		
+		if(add)	body.put("add", new JSONString(add.toString()));
+		else if(null != oldSellerId) body.put("oldSellerId", new JSONString(oldSellerId.toString()));
 		
 		// Create a URL builder and add query parameters
 		UrlBuilder urlBuilder = new UrlBuilder();

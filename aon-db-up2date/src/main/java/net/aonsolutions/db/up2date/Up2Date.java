@@ -19,23 +19,15 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AlterContractCostExpression;
-import net.aonsolutions.db.up2date.attach.DocumentalCategoryTree;
-import net.aonsolutions.db.up2date.attach.DocumentalRDoc;
 import net.aonsolutions.db.up2date.attach.RdocTag;
 import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
 import net.aonsolutions.db.up2date.finance.NordigenCallsLog;
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentsMonthFix;
-import net.aonsolutions.db.up2date.tgss.AgriculturalPercentageCgcE2025Fix;
-import net.aonsolutions.db.up2date.tgss.Artist2025CgcTempRemove;
-import net.aonsolutions.db.up2date.tgss.HomePrestITInsert;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw1782025Art28300Fix;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2025Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.payroll.PPEITFix;
-import net.aonsolutions.db.up2date.payroll.PPEITUpdate;
 import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
-import net.aonsolutions.db.up2date.payroll.PPEITUpdateII;
-import net.aonsolutions.db.up2date.payroll.PPEUpdate2Cost;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsITIMSFix;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsNamesFix;
+import net.aonsolutions.db.up2date.tgss.TrainingExcessRoundFix;
 
 public class Up2Date {
 
@@ -551,10 +543,12 @@ public class Up2Date {
 			// PPEITUpdate.PPE_IT_UPDATE,
 			// PPEITFix.PPE_IT_FIX,
 			// PPEITUpdateII.PPE_IT_UPDATEII,
-			PPEUpdate2Cost.PPE_IT_UPDATE2COST,
-			Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
-
-			
+			// PPEUpdate2Cost.PPE_IT_UPDATE2COST,
+			// Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
+			TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
+			TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
+			TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
+			IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 //			 MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
