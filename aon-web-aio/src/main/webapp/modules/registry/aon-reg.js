@@ -36,6 +36,7 @@ export class AonReg extends AonElement {
 	oneAddress;
 	logo;
 	options;
+	clientFile;
 
 	segments;
 
@@ -202,7 +203,8 @@ export class AonReg extends AonElement {
 		card.firstChild.firstChild.style.marginBottom = "5px";
 
 		if(this.registry.id){
-			if(this.isCustomer()){
+			console.log(this.clientFile)
+			if(this.isCustomer() && !this.clientFile){
 				this.buildEnterpriseLinked();
 			}
 
