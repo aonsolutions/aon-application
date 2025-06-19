@@ -136,7 +136,7 @@ public class CustomerFee extends MainEntryPoint {
 	private ScrollPanel tableScrollPanel;
 	private AonCustomTable tab;
 	
-	private final int limit = 100;
+	private int limit = 100;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
@@ -1580,7 +1580,97 @@ public class CustomerFee extends MainEntryPoint {
 					
 				}
 			} else {
-				Window.alert("Duplicar masivamente en desarrollo...");
+				new CustomerFeeDuplicateDialog() {
+					
+					@Override
+					protected void onAccept(Double discount, Date startDate, Date endDate, Date billingDate, BillingPeriod period) {
+						List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+						
+						if(selectedItemList.size() == rowFees.size()) {
+							offset.setValue(0);
+							limit = Integer.MAX_VALUE;
+							getWidgetParams();
+							
+							getList(dbFees -> {
+								LinkedList<Fee> updatedFees = new LinkedList<Fee>();
+								
+								dbFees.forEach(dbFee -> {
+									Fee newFee = new Fee();
+									newFee.duplicate(dbFee);
+									
+									newFee.setDiscount(discount);
+									newFee.setStartDate(startDate);
+									newFee.setEndDate(endDate);
+									newFee.setBillingDate(billingDate);
+									newFee.setPeriod(period);
+									
+									updatedFees.add(newFee);
+								});
+								
+								createDuplicateFees(updatedFees, 0, 0);
+							});
+						} else {
+							// Solo cuotas seleccionadas
+							LinkedList<Integer> selectedFees = selectedItemList.stream()
+									.filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked()))
+									.map(entry -> entry.getKey())
+									.collect(Collectors.toCollection(LinkedList::new));
+							
+							LinkedList<Fee> updatedFees = new LinkedList<Fee>();
+							
+							selectedFees.forEach(feeId -> {
+								Fee feeIt = rowFees.get(feeId);
+								
+								Fee newFee = new Fee();
+								newFee.duplicate(feeIt);
+								
+								newFee.setDiscount(discount);
+								newFee.setStartDate(startDate);
+								newFee.setEndDate(endDate);
+								newFee.setBillingDate(billingDate);
+								newFee.setPeriod(period);
+								
+								updatedFees.add(newFee);
+							});
+							
+							createDuplicateFees(updatedFees, 0, 0);
+						}
+					}
+
+					private void createDuplicateFees(LinkedList<Fee> updatedFees, int index, int accumulatedUpdates) {
+						if (index >= updatedFees.size()) {
+					       AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + accumulatedUpdates + " cuotas correctamente");
+					       duplicateValueButton.setEnabled(false);
+					       addValueButton.setEnabled(false);
+					       deleteFeeButton.setEnabled(false);
+					       exportButton.setEnabled(false);
+					       onSearch();
+					       return;
+					    }
+
+					    Fee currentFee = updatedFees.get(index);
+					    
+					    SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), currentFee, new AsyncCallback<Fee>() {
+							
+							@Override
+							public void onSuccess(Fee customerFee) {
+								if(null != currentFee.getPrice() && currentFee.getPrice() >= 0.00 && null != currentFee.getSeller() && null != currentFee.getSeller().getId())
+									sendFeeEmail(customerFee.getId(), true, null);
+								
+								createDuplicateFees(updatedFees, index + 1, accumulatedUpdates + 1);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								// Continuar aunque haya error
+								createDuplicateFees(updatedFees, index + 1, accumulatedUpdates);
+							}
+						});
+						
+					    
+					}
+				};
 			}
 		});
 		feeDockLayout.addToolbarButton(duplicateValueButton);
@@ -1822,25 +1912,39 @@ public class CustomerFee extends MainEntryPoint {
 
 							@Override
 							public void onAccept() {
-								AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
-								SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-										new AsyncCallback<Void>() {
+								offset.setValue(0);
+								limit = Integer.MAX_VALUE;
+								getWidgetParams();
+								
+								// Hay que eliminar las cuotas cuando se haya realizado el envio de email (lo que hay es un error)
+								getList(deletedFees -> {
+									deletedFees.forEach(deleteFee -> {
+										if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
+											sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+									});
+									
+									AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+									SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+											new AsyncCallback<Void>() {
 
-											@Override
-											public void onFailure(Throwable caught) {
-												AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
-											}
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+												}
 
-											@Override
-											public void onSuccess(Void result) {
-												AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
-												duplicateValueButton.setEnabled(false);
-												addValueButton.setEnabled(false);
-												deleteFeeButton.setEnabled(false);
-												exportButton.setEnabled(false);
-												onSearch();
-											}
-										});
+												@Override
+												public void onSuccess(Void result) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
+													duplicateValueButton.setEnabled(false);
+													addValueButton.setEnabled(false);
+													deleteFeeButton.setEnabled(false);
+													exportButton.setEnabled(false);
+													onSearch();
+												}
+											});
+								});
+								
+								
 							}
 						});
 					}

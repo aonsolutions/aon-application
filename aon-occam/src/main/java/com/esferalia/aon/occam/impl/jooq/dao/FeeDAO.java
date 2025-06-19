@@ -665,6 +665,33 @@ public class FeeDAO {
 	}
 	
 	public static Integer saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		if(!feeList.isEmpty() && feeList.size() == 1) {
+			Fee fee = feeList.get(0);
+			Integer customerId = fee.getCustomer().getId();
+		    Short desiredLine = fee.getLine();
+
+		    List<Short> existingLines = ctx.getDslContext()
+		        .select(CUSTOMER_FEE.LINE)
+		        .from(CUSTOMER_FEE)
+		        .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+		        .orderBy(CUSTOMER_FEE.LINE.asc())
+		        .fetchInto(Short.class);
+
+		    if (desiredLine == null) {
+		        desiredLine = (short) (existingLines.isEmpty() ? 1 : existingLines.get(existingLines.size() - 1) + 1);
+		        fee.setLine(desiredLine);
+		    }
+
+		    // 3. Si hay conflictos, desplazar lineas >= fee.line hacia abajo
+		    if (existingLines.contains(desiredLine)) {
+		        ctx.getDslContext().update(CUSTOMER_FEE)
+		            .set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.plus((short) 1))
+		            .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+		            .and(CUSTOMER_FEE.LINE.greaterOrEqual(desiredLine))
+		            .execute();
+		    }
+		}
+		
 		feeList.stream()
 			.filter(fee -> fee.isModify())
 			.forEach(fee -> {
@@ -1076,16 +1103,46 @@ public class FeeDAO {
 		return customerFeeSuggestions;
 	}
 	
+//	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+//		if(fee.getLine() == null) {
+//			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
+//					.from(CUSTOMER_FEE)
+//					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
+//			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
+//		} 
+//		
+//		return insert(ctx, fee);
+//	}
+	
 	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
-		if(fee.getLine() == null) {
-			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
-					.from(CUSTOMER_FEE)
-					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
-			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
-		} 
-		
-		return insert(ctx, fee);
+	    Integer customerId = fee.getCustomer().getId();
+	    Short desiredLine = fee.getLine();
+
+	    List<Short> existingLines = ctx.getDslContext()
+	        .select(CUSTOMER_FEE.LINE)
+	        .from(CUSTOMER_FEE)
+	        .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+	        .orderBy(CUSTOMER_FEE.LINE.asc())
+	        .fetchInto(Short.class);
+
+	    if (desiredLine == null) {
+	        desiredLine = (short) (existingLines.isEmpty() ? 1 : existingLines.get(existingLines.size() - 1) + 1);
+	        fee.setLine(desiredLine);
+	    }
+
+	    // 3. Si hay conflictos, desplazar lineas >= fee.line hacia abajo
+	    if (existingLines.contains(desiredLine)) {
+	        ctx.getDslContext().update(CUSTOMER_FEE)
+	            .set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.plus((short) 1))
+	            .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+	            .and(CUSTOMER_FEE.LINE.greaterOrEqual(desiredLine))
+	            .execute();
+	    }
+
+	    // 4. Insertar la nueva Fee
+	    return insert(ctx, fee);
 	}
+
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
 		Condition condition = createFeeCondition(ctx, customerFeeParams);

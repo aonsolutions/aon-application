@@ -51,21 +51,25 @@
                 				</tr>
                 				<tr>
                 					<td>
-                						<p style="font-size: 14px;"><strong>Importe:</strong> $amount</p>
-                					</td>
-                					<td>
                 						<p style="font-size: 14px;"><strong>F. Inicio:</strong> $startDate</p>
                 					</td>
                 					<td>
                 						<p style="font-size: 14px;"><strong>F. Fin:</strong> $endDate</p>
                 					</td>
-                				</tr>
-                				<tr>
                 					<td>
                 						<p style="font-size: 14px;"><strong>F. Facturación:</strong> $chargeDate</p>
                 					</td>
-                					<td colspan="2">
+                					
+                				</tr>
+                				<tr>
+                					<td>
                 						<p style="font-size: 14px;"><strong>Periocidad:</strong> $periocity</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Importe:</strong> $amount</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Importe:</strong> $netAmount</p>
                 					</td>
                 				</tr>
                 			</table>
