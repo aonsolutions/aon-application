@@ -2068,8 +2068,7 @@ public class SalaryDraftBuilder
 	}
 		
 	private static String getName (Deduction deduction ) {
-		return deduction.getName()
-				.replaceFirst("EXCESS_", "");
+		return AonStringUtils.replaceOnce(deduction.getName(),"EXCESS_", "");
 	}
 
 	private static boolean isExcess (Deduction deduction ) {
