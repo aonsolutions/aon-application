@@ -785,4 +785,9 @@ public class AonNordigen  {
 			agreement != null ? agreement.getInstitutionId() : null,
 			redirect);
 	}
+	
+	static NordigenAgreement createAgreementForTest(NordigenAccessToken token, String institutionId)  {
+		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(token.getAccess(), MAX_DAYS, MAX_DAYS, null, institutionId);
+		return agreement;
+	}
 }

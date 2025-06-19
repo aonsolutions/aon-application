@@ -157,8 +157,7 @@ public class NordigenTestCase {
 			if (AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES))
 			.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
 				
-//				NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, CAIXABANK_CAIXESBB);
-				NordigenAgreement agreement = new NordigenAgreement();
+				NordigenAgreement agreement = AonNordigen.createAgreementForTest(nordigenToken, CAIXABANK_CAIXESBB);
 				//COMENTADO PORQUE LA API NO OBTIENE LOS "SCOPES" CUANDO SE CREA
 				//assertAgreement(agreement);
 				Integer expectedHistoricalDays = 90;
@@ -179,8 +178,7 @@ public class NordigenTestCase {
 		try {
 			if (AonCollectionUtils.stream(AonNordigen.getInstitutionsByCountry(nordigenToken, Country.ES))
 					.anyMatch( ins -> CAIXABANK_CAIXESBB.equals(ins.getId()))) {
-//				NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, CAIXABANK_CAIXESBB);
-				NordigenAgreement agreement = new NordigenAgreement();
+				NordigenAgreement agreement = AonNordigen.createAgreementForTest(nordigenToken, CAIXABANK_CAIXESBB);
 				NordigenRequisition requisition = AonNordigen.createRequisition(nordigenToken, agreement, "https://aonsolutions.org/");
 				assertRequisition(requisition);
 				AonNordigen.getRequisition(nordigenToken, requisition.getId());

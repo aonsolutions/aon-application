@@ -7288,7 +7288,7 @@ CREATE TABLE `rbank` (
   `available_balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo disponible banco',
   `balance_date` datetime DEFAULT NULL COMMENT 'Fecha actualizacion saldo',
   `agreement` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Acuerdo asociado a la cuenta bancaria',
-  `days_until_agreement_ends` int DEFAULT NULL COMMENT 'Días hasta la finalización del acuerdo',
+  `days_until_agreement_ends` int DEFAULT NULL COMMENT 'Dï¿½as hasta la finalizaciï¿½n del acuerdo',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
@@ -9426,9 +9426,9 @@ CREATE TABLE `nordigen_call_log` (
   `rbank` int NOT NULL COMMENT 'Referencia a la cuenta bancaria',
   `call_type` VARCHAR(50) NOT NULL COMMENT 'Tipo de llamada: balance, transaction, etc.',
   `call_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la llamada',
-  `was_rate_limited` BOOLEAN DEFAULT FALSE COMMENT 'Indica si se alcanzó el límite de llamadas',
-  `retry_after` DATETIME NULL COMMENT 'Cuándo se puede volver a intentar en caso de rate limit',
-  `retry_count` int DEFAULT 4 COMMENT 'Número de intentos restantes en el día',
+  `was_rate_limited` BOOLEAN DEFAULT FALSE COMMENT 'Indica si se alcanzo el limite de llamadas',
+  `retry_after` DATETIME NULL COMMENT 'Cuando se puede volver a intentar en caso de rate limit',
+  `retry_count` int DEFAULT 4 COMMENT 'Numero de intentos restantes en el dia',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historial de llamadas a Nordigen para controlar el rate limit.';
 

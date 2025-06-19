@@ -112,13 +112,13 @@ public class NordigenModule extends MainEntryPoint {
 	public void onModuleLoad() {
         // Mostrar cargando  
         applyStylesLoad();
-        // Eliminar el vanco que se intento sincronizar, si existe
+        // Eliminar el banco que se intento sincronizar, si existe
         Storage storage = Storage.getLocalStorageIfSupported();
         String storedValue = storage.getItem("bankSuccessAdd");
-        if (storedValue != null && storedValue == nordigenBankAccount.getRequisitionId()) {
+        if (storedValue != null) {
           storage.removeItem("bankSuccessAdd");
         }
-        // Seguimos con la carga normla
+        // Seguimos con la carga normal
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		NordigenModuleOptions options = new NordigenModuleOptions()
             .setParentWidget(root)

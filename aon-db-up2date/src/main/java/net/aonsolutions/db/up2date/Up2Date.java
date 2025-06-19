@@ -557,11 +557,11 @@ public class Up2Date {
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
-			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
-//			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
+//			 MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
+			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 //			RdocTag.RDOC_TAG,
 //			UpdateCategoryTree.UPDATE_CATEGORY_TREE,
-//			NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
+			NordigenCallsLog.NORDIGEN_CALL_LOG_TABLE,
 			AddRegistryBankAgreement.ADD_AGREEMENT_COLUMN
 
 	};
