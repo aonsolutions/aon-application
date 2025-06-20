@@ -255,7 +255,7 @@ public class BookingCustomer extends HTMLPanel {
 		}
 		
 		private void createCustomerFee(OldItem oldItem, Customer customer) {
-			new CustomerFeeDialog(options, oldItem, customer) {
+			new CustomerFeeDialog(options, oldItem, customer, options.getDomain()) {
 				
 				@Override
 				protected void onAccept(Fee fee) {}
@@ -455,7 +455,7 @@ public class BookingCustomer extends HTMLPanel {
 		}
 		
 		private void editCustomerFee() {
-			new CustomerFeeDialog(feeMenu.getFee(), options) {
+			new CustomerFeeDialog(feeMenu.getFee(), options, options.getDomain()) {
 				
 				@Override
 				protected void onAccept(Fee fee) {

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCardSmall;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
@@ -24,9 +25,19 @@ import com.esferalia.aon.occam.api.model.registry.RegistryNote;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -197,11 +208,14 @@ public class CustomerNotesModule extends MainEntryPoint {
 			deleteBtn.addClickHandler(e -> {
 				e.stopPropagation();
 				
-				observation.setDescription(AonStringUtils.EMPTY);
-				observation.setComments(AonStringUtils.EMPTY);
-				observation.setNoteDate(null);
+				deleteNote(observation, deleteBtn, deletion -> {
+					observation.setDescription(AonStringUtils.EMPTY);
+					observation.setComments(AonStringUtils.EMPTY);
+					observation.setNoteDate(null);
+					
+					saveNote(observation);
+				});
 				
-				saveNote(observation);
 			});
 			buttonsPanel.add(deleteBtn);
 			
@@ -346,7 +360,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 				AonTableButton deleteBtn = new AonTableButton("Borrar nota", AON.CSS.aonIconDelete());
 				deleteBtn.addClickHandler(e -> {
 					e.stopPropagation();
-					deleteNote(message);
+					
+					deleteNote(message, deleteBtn, delete -> deleteNote(message));
 				});
 				buttonsPanel.add(deleteBtn);
 		
@@ -421,6 +436,104 @@ public class CustomerNotesModule extends MainEntryPoint {
 			
 			notesContent.add(cardsPanel);
 		}
+	}
+	
+	private void deleteNote(RegistryNote note, AonTableButton btn, Consumer<Void> deletion) {
+	    AonCustomPopup confirmPopup = new AonCustomPopup(false);
+	    confirmPopup.setWidth("16rem");
+	    confirmPopup.setHeight("4rem");
+	    confirmPopup.setAutoHideEnabled(true);
+	    confirmPopup.hideHeader();
+	    confirmPopup.setAutoHideOnHistoryEventsEnabled(false);
+	    confirmPopup.setGlassEnabled(false);
+
+	    FocusPanel focusablePanel = new FocusPanel();
+	    HTMLPanel panel = new HTMLPanel(AonStringUtils.EMPTY);
+	    panel.addStyleName(AON.CSS.aonFlexColumn());
+	    panel.getElement().getStyle().setProperty("padding", "0 .5rem");
+	    panel.getElement().getStyle().setProperty("gap", "0");
+
+	    Label msg = new Label(note.getNoteType().equals(NoteType.MESSAGE)
+	            ? "\u00bfEst\u00e1s seguro de que quieres borrar la nota?"
+	            : "\u00bfEst\u00e1s seguro de que quieres borrar la observaci\u00f3n?"
+	    );
+
+	    HTMLPanel buttons = new HTMLPanel(AonStringUtils.EMPTY);
+	    buttons.addStyleName(AON.CSS.aonItemFlex());
+	    buttons.addStyleName(AON.CSS.aonDisplayFlexEnd());
+	    buttons.getElement().getStyle().setProperty("font-size", "11px");
+
+	    Anchor delete4EverBtn = new Anchor("Borrar");
+	    delete4EverBtn.getElement().getStyle().setProperty("text-transform", "none");
+	    delete4EverBtn.getElement().getStyle().setProperty("border-radius", "5px");
+	    delete4EverBtn.getElement().getStyle().setProperty("border", "1px solid red");
+	    delete4EverBtn.getElement().getStyle().setProperty("color", "red");
+	    delete4EverBtn.getElement().getStyle().setProperty("padding", ".2rem .3em");
+
+	    Anchor cancelBtn = new Anchor("Cancelar");
+	    cancelBtn.getElement().getStyle().setProperty("text-transform", "none");
+	    cancelBtn.getElement().getStyle().setProperty("border-radius", "5px");
+	    cancelBtn.getElement().getStyle().setProperty("border", "1px solid transparent");
+	    cancelBtn.getElement().getStyle().setProperty("color", "white");
+	    cancelBtn.getElement().getStyle().setProperty("background-color", "#04be04");
+	    cancelBtn.getElement().getStyle().setProperty("padding", "0.2rem 0.5em");
+
+	    buttons.add(delete4EverBtn);
+	    buttons.add(cancelBtn);
+
+	    panel.add(msg);
+	    panel.add(buttons);
+
+	    focusablePanel.add(panel);
+	    confirmPopup.setWidget(focusablePanel);
+	    
+	 // Antes de mostrar el popup
+	    Scheduler.get().scheduleDeferred(() -> {
+	        focusablePanel.setFocus(true); // ok
+	        RootPanel.get().getElement().focus(); // forzar a GWT el foco general
+	    });
+
+	    // Posicionar el popup junto al botón
+	    int left = btn.getAbsoluteLeft();
+	    int top = btn.getAbsoluteTop() + btn.getOffsetHeight();
+	    confirmPopup.setPopupPosition(left, top);
+	    confirmPopup.show();
+
+	    Scheduler.get().scheduleDeferred(() -> focusablePanel.setFocus(true));
+
+	    // Lógica de confirmación
+	    cancelBtn.addClickHandler(e -> confirmPopup.hide());
+	    delete4EverBtn.addClickHandler(event -> {
+	        confirmPopup.hide();
+	        deletion.accept(null);
+	    });
+
+	    // Alternativa más robusta: ESC global
+	    final HandlerRegistration[] escHandler = new HandlerRegistration[1];
+
+	    confirmPopup.setPreviewingAllNativeEvents(true);
+
+	    escHandler[0] = Event.addNativePreviewHandler(new NativePreviewHandler() {
+	        @Override
+	        public void onPreviewNativeEvent(NativePreviewEvent event) {
+	        	NativeEvent ne = event.getNativeEvent();
+	            
+	        	GWT.log("Evento global capturado: " + event.getNativeEvent().getKeyCode());
+	        	 GWT.log("Tipo: " + event.getTypeInt() + " Código tecla: " + ne.getKeyCode());
+
+	            if (event.getTypeInt() == Event.ONKEYDOWN) {
+	            	 GWT.log("ESC detectado, ocultando popup");
+	                int keyCode = event.getNativeEvent().getKeyCode();
+	                if (keyCode == KeyCodes.KEY_ESCAPE) {
+	                    confirmPopup.hide();
+	                    escHandler[0].removeHandler();
+	                    event.cancel(); // evitar que lo reciba otra parte
+	                    event.getNativeEvent().stopPropagation();
+	                }
+	            }
+	        }
+	    });
+
 	}
 
 	private void getCustomerNotes(Consumer<List<RegistryNote>> success) {

@@ -214,9 +214,13 @@ public class DraftPayrollBuilder {
 			deductions.stream().filter(p -> p != null).filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 				Double percent = null;
 				
-				String percentName = "PORCENTAJE_" + d.getName();
+				String deductionName = d.getName();
+				deductionName = AonStringUtils.replaceOnce(deductionName, "EXCESS_", "");
 				
-				if (AonStringUtils.containsIgnoreCase(d.getName(), "fogasa")) {
+				
+				String percentName = "PORCENTAJE_" + deductionName;
+				
+				if (AonStringUtils.containsIgnoreCase(deductionName, "fogasa")) {
 					percentName = "PORCENTAJE_FOGASA";
 				}
 				
@@ -245,7 +249,7 @@ public class DraftPayrollBuilder {
 				}
 				
 				Double base = null;
-				String baseName = "BASE_" + d.getName();
+				String baseName = "BASE_" + deductionName;
 
 				try {
 					
@@ -265,11 +269,11 @@ public class DraftPayrollBuilder {
 				String description = d.getDescription();
 				
 				if(description == null || description.isEmpty() || description.matches("\\s*\\d+(\\.\\d+)?\\s*%\\s*")) 
-					description = Optional.ofNullable(PayrollUtils.getDeductionNameDescription(d.getName()))
+					description = Optional.ofNullable(PayrollUtils.getDeductionNameDescription(deductionName))
 					.orElseGet( () -> getDeductionTypeDescription(d.getType().ordinal()));
 				
 				DeductionType deductionType = AonEnumUtils.enumValue(DeductionType.class, d.getType().ordinal() );
-				PDFDeduction pdfDeduction = new PDFDeduction(d.getAmount(), d.getName(), description, percent, base, deductionType );
+				PDFDeduction pdfDeduction = new PDFDeduction(d.getAmount(), deductionName, description, percent, base, deductionType );
 				if (!pdfDeductionsMap.containsKey(pdfType)) 
 					pdfDeductionsMap.put(pdfType, new ArrayList<>());
 				
@@ -382,12 +386,15 @@ public class DraftPayrollBuilder {
 			HashMap<Integer, ArrayList<PDFDeduction>> pdfCostsMap = new HashMap<>();
 			for (IDeduction cost : costs) {
 				
+				String costName = cost.getName();
+				costName = AonStringUtils.replaceOnce(costName, "EXCESS_", "");
+
 				Double percentD = null;
 				try {
 					
-					String dataName = "PORCENTAJE_" + cost.getName();
+					String dataName = "PORCENTAJE_" + costName;
 					
-					if (AonStringUtils.containsIgnoreCase(cost.getName(), "fogasa")) {
+					if (AonStringUtils.containsIgnoreCase(costName, "fogasa")) {
 						dataName = "PORCENTAJE_FOGASA";
 					}
 					
@@ -412,7 +419,7 @@ public class DraftPayrollBuilder {
 				
 				try {
 					
-					String baseNameE = "BASE_" + cost.getName();
+					String baseNameE = "BASE_" + costName;
 					String baseName = AonStringUtils.removeEnd(baseNameE, "_E");
 					Set<SalaryData> datas = salary.getSalaryDatas();
 					Optional<SalaryData> optBase = 
@@ -431,15 +438,15 @@ public class DraftPayrollBuilder {
 				Optional<Double> base = Optional.ofNullable(baseD);
 				
 
-				if (cost.getName().equals("CGC_E")) {
+				if (costName.equals("CGC_E")) {
 					common_cont_ap_enterprise += cost.getAmount();
 					setPercent(percent, common_cont_ap_enterprise, salary.getCommonBase(), (p) -> contingencyBasesBuilder.setCommonContType(p));
 				}
-				else if (cost.getName().equals("MEI_E")) {
+				else if (costName.equals("MEI_E")) {
 					mei_ap_enterprise += cost.getAmount();
 					setPercent(percent, mei_ap_enterprise, salary.getCommonBase(), (p) -> contingencyBasesBuilder.setMeiType(p));
 				}
-				else if (cost.getName().equals("IMS_E")) {
+				else if (costName.equals("IMS_E")) {
 					at_ep_ap_enterprise += cost.getAmount();   
 					
 					if(percentD != null)
@@ -460,7 +467,7 @@ public class DraftPayrollBuilder {
 					
 					setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> contingencyBasesBuilder.setAtEpType(p));
 				}
-				else if(cost.getName().equals("IT_E")) {
+				else if(costName.equals("IT_E")) {
 					at_ep_ap_enterprise += cost.getAmount();
 					
 					if(percentD != null)
@@ -480,15 +487,15 @@ public class DraftPayrollBuilder {
 					
 					setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> contingencyBasesBuilder.setAtEpType(p));
 				}
-				else if (cost.getName().equals("DESMPL_E")) {
+				else if (costName.equals("DESMPL_E")) {
 					unemployment_ap_enterprise += cost.getAmount();
 					setPercent(percent, unemployment_ap_enterprise, salary.getProfessionalBase(), (p) -> contingencyBasesBuilder.setUnemploymentType(p));
 				}
-				else if (cost.getName().equals("FP_E")) {
+				else if (costName.equals("FP_E")) {
 					profes_form_ap_enterprise += cost.getAmount();
 					setPercent(percent, profes_form_ap_enterprise, salary.getProfessionalBase(), (p) -> contingencyBasesBuilder.setProfesFormType(p));
 				}
-				else if (cost.getName().equals("FOGASA_E")) { 
+				else if (costName.equals("FOGASA_E")) { 
 					fogasa_ap_enterprise += cost.getAmount();
 					
 					if(percentD == null){
@@ -506,11 +513,11 @@ public class DraftPayrollBuilder {
 					}
 					
 				}
-				else if (cost.getName().equals("EXTR_E")) {
+				else if (costName.equals("EXTR_E")) {
 					force_majeure_ap_enterprise += cost.getAmount();
 					setPercent(percent, force_majeure_ap_enterprise, salary.getOvertimeBase(), (p) -> contingencyBasesBuilder.setForceMajeureType(p));						
 				}
-				else if (cost.getName().equals("NEXTR_E")) {
+				else if (costName.equals("NEXTR_E")) {
 					no_struct_ap_enterprise += cost.getAmount();
 					setPercent(percent, no_struct_ap_enterprise, salary.getNonEstructuralOvertimeBase(), (p) -> contingencyBasesBuilder.setNoStructType(p));
 				}					
@@ -518,7 +525,7 @@ public class DraftPayrollBuilder {
 				if ( cost.getType() != null  ) {
 					int pdfType = getDeductionPDFType(cost.getType().ordinal());
 					DeductionType costType = AonEnumUtils.enumValue(DeductionType.class, cost.getType().ordinal() );
-					PDFDeduction pdfCost = new PDFDeduction(cost.getAmount(), cost.getName(), cost.getDescription(), percent.orElse(0d), base.orElse(0d), costType );
+					PDFDeduction pdfCost = new PDFDeduction(cost.getAmount(), costName, cost.getDescription(), percent.orElse(0d), base.orElse(0d), costType );
 					if (!pdfCostsMap.containsKey(pdfType)) 
 						pdfCostsMap.put(pdfType, new ArrayList<>());
 					

@@ -1,6 +1,6 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
-import * as GWT from '../../gwt/gwt.js';
+import * as JSF from '../aon-jsf-app.js';
 
 export class AonGarageMenu extends AonSuiteMenu {
 
@@ -49,52 +49,52 @@ export class AonGarageMenu extends AonSuiteMenu {
             options: [{
                 description: "Órdenes de Reparación",
                 title: "Órdenes de Reparación",
-                action: () => alert("Órdenes de Reparación")
+                action: () => this.rootPanel(new JSF.AonJsfProjectTas())
             }, {
                 description: "Operarios",
                 title: "Operarios",
-                action: () => alert("Operarios")
+                action: () => this.rootPanel(new JSF.AonJsfTaskHolder())
             }]
         }, {
             title: 'Presupuestos',
             options: [{
-                description: "Modelos",
-                title: "Modelos",
-                action: () => alert("Modelos")
+                description: MSG.OFFERS,
+                title: MSG.OFFERS,
+                action: () => this.rootPanel(new JSF.AonJsfOffer())
             }, {
-                description: "Clientes Potenciales",
-                title: "Clientes Potenciales",
-                action: () => alert("Clientes Potenciales")
+                description: MSG.TARGETS,
+                title: MSG.TARGETS,
+                action: () => this.rootPanel(new JSF.AonJsfTarget())
             }, {
                 description: "Agentes Comerciales",
                 title: "Agentes Comerciales",
-                action: () => alert("Agentes Comerciales")
+                action: () => this.rootPanel(new JSF.AonJsfSeller())
             }, {
                 description: "Condiciones Comerciales",
                 title: "Condiciones Comerciales",
-                action: () => alert("Condiciones Comerciales")
+                action: () => this.rootPanel(new JSF.AonJsfCommercialTerm())
             }]
         }, {
             title: 'General',
             options: [{
                 description: "Marcas",
                 title: "Marcas",
-                action: () => alert("Marcas")
+                action: () => this.rootPanel(new JSF.AonJsfMake())
             }, {
                 description: "Modelos",
                 title: "Modelos",
-                action: () => alert("Modelos")
+                action: () => this.rootPanel(new JSF.AonJsfModel())
             }, {
                 description: "Vehículos",
                 title: "Vehículos",
-                action: () => alert("Vehículos")
+                action: () => this.rootPanel(new JSF.AonJsfTasItem())
             }]
         }, {
             title: 'Informes',
             options: [{
                 description: "Vehículos y Titulares",
                 title: "Vehículos y Titulares",
-                action: () => alert("Vehículos y Titulares")
+                action: () => this.rootPanel(new JSF.AonJsfTasStat())
             }]
         }];
     }

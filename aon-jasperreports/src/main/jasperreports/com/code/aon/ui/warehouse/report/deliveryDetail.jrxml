@@ -190,7 +190,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00##" isBlankWhenNull="false">
 				<reportElement uuid="71edb253-2075-4f16-a534-2496e4463823" key="textField-7" x="377" y="0" width="59" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 ||$F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 ||$F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -205,7 +205,7 @@
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
 				<reportElement uuid="513d2364-1037-40ce-af0c-621b8a26469b" key="textField-11" x="436" y="0" width="31" height="12">
-					<printWhenExpression><![CDATA[new Boolean((($F{quantity}.doubleValue()>=0.0 || $F{price}.doubleValue()>0.0)&&! $F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{valuated}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean((($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0)&&! $F{discountExpression}.getDiscountExpr().equals("0.0"))&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="0">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -214,13 +214,13 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA["-("+$F{discountExpression}.getDiscountExpr()+"%)"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement uuid="d48acb3c-7c89-419a-a43d-a6760aace316" key="textField-13" x="467" y="0" width="69" height="12">
-					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0)&&$P{valuated}.booleanValue())]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -236,7 +236,7 @@
 			<elementGroup>
 				<textField pattern="#,##0.###" isBlankWhenNull="false">
 					<reportElement uuid="15642d64-f5d7-43f6-a148-1ef42fea2e2a" key="textField-6" x="314" y="0" width="63" height="12">
-						<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()>0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
+						<printWhenExpression><![CDATA[new Boolean(($F{quantity}.doubleValue()!=0.0 || $F{price}.doubleValue()>0.0))]]></printWhenExpression>
 					</reportElement>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
