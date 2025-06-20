@@ -40,7 +40,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -55,10 +54,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -88,6 +95,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonCustomDockLayout feeDockLayout;
 
 	private AonToolbarButton createButton;
+	private AonToolbarButton duplicateValueButton;
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
 	private AonToolbarButton exportButton;
@@ -128,7 +136,7 @@ public class CustomerFee extends MainEntryPoint {
 	private ScrollPanel tableScrollPanel;
 	private AonCustomTable tab;
 	
-	private final int limit = 100;
+	private int limit = 100;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
 	private final MutableInt searchEnabled = new MutableInt( 0 );
@@ -240,6 +248,7 @@ public class CustomerFee extends MainEntryPoint {
 	
 	// Custome id from JS customer fee page (Portal)
 	private Integer customerId = null;
+	private Integer searchDomain = null;
 
 	@Override
 	public void onModuleLoad() {
@@ -250,8 +259,11 @@ public class CustomerFee extends MainEntryPoint {
 		options.setDomain(getCurrentDomain());
 		options.setUser(getCurrentUser());
 		
-		customerId = getCustomer();
+		customerId = getCustomer() > 0 ? getCustomer() : null;
+		searchDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
+		
 		removeCustomer();
+		removeOfficeDomain();
 		
 		this.onModuleLoad(options);
 	}
@@ -290,7 +302,6 @@ public class CustomerFee extends MainEntryPoint {
 	private void loadModule(final RegistryModuleOptions opt) {
 		initializeCustomerFeePanel(opt);
 		initializeCustomerPanel(opt);
-		
 	}
 
 	private void initializeCustomerPanel(final RegistryModuleOptions opt) {
@@ -530,7 +541,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createYearListBox(Consumer<AonCustomListBox> consumer) {
-		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
+		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -619,7 +630,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -662,7 +673,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductCategoriesSuggestion(String productCategoryQuery) {
-		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productCategorySuggestionsDB) {
@@ -705,7 +716,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProductTagsSuggestion(String productTagQuery) {
-		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productTagQuery, new AsyncCallback<Map<String, Integer>>() {
+		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, productTagQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Integer> productTagSuggestionsDB) {
@@ -750,7 +761,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getSellerSuggestion(String sellerQuery) {
-		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
@@ -795,7 +806,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getWorkplaceSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
@@ -840,7 +851,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getInvoicingGroupQuerySuggestion(String invoicingGroupQuery) {
-		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
 			
 			@Override
 			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
@@ -885,7 +896,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getProjectQuerySuggestion(String projectQuery) {
-		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, projectQuery, new AsyncCallback<Map<String, Project>>() {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), null, searchDomain, projectQuery, new AsyncCallback<Map<String, Project>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Project> projectSuggestionsDB) {
@@ -996,6 +1007,7 @@ public class CustomerFee extends MainEntryPoint {
 							});
 						}
 						
+						duplicateValueButton.setEnabled(selectedItemList.isEmpty());
 						addValueButton.setEnabled(selectedItemList.isEmpty());
 						deleteFeeButton.setEnabled(selectedItemList.isEmpty());
 						exportButton.setEnabled(selectedItemList.isEmpty());
@@ -1025,6 +1037,7 @@ public class CustomerFee extends MainEntryPoint {
 							});
 						}
 						
+						duplicateValueButton.setEnabled(selectedItemList.isEmpty());
 						addValueButton.setEnabled(selectedItemList.isEmpty());
 						deleteFeeButton.setEnabled(selectedItemList.isEmpty());
 						exportButton.setEnabled(selectedItemList.isEmpty());
@@ -1071,7 +1084,7 @@ public class CustomerFee extends MainEntryPoint {
 
 	private void getWidgetParams() {
 		if(null == params) params = new CustomerFeeParams();
-		params.setDomain(options.getDomain());
+		params.setDomain(searchDomain);
 		params.setSeller(1);
 		
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getValue()) ? null : Integer.parseInt(monthListBox.getValue()));
@@ -1109,7 +1122,10 @@ public class CustomerFee extends MainEntryPoint {
 		row.addDomHandler(e -> {
 			e.stopPropagation();
 			if(!isCustomer()) {
-				new CustomerFeeDialog(fee, options) {
+				
+				Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+				
+				new CustomerFeeDialog(fee, options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {
@@ -1128,10 +1144,23 @@ public class CustomerFee extends MainEntryPoint {
 									@Override
 									public void onSuccess(Integer updates) {
 										AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+										duplicateValueButton.setEnabled(false);
 										addValueButton.setEnabled(false);
 										deleteFeeButton.setEnabled(false);
 										exportButton.setEnabled(false);
 										onSearch();
+										
+										if(null != originalSeller) {
+											
+											// Desasignar
+											if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), false, originalSeller);
+											
+											if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+												sendFeeEmail(fee.getId(), true, null);
+											
+										} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+											sendFeeEmail(fee.getId(), true, null);
 									}
 								});
 					}
@@ -1151,7 +1180,9 @@ public class CustomerFee extends MainEntryPoint {
 				};
 			} else {
 				getCustomer(customer -> {
-					new CustomerFeeDialog(fee, customer, options) {
+					Integer originalSeller = null == fee.getSeller() ? null : fee.getSeller().getId();
+					
+					new CustomerFeeDialog(fee, customer, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1170,10 +1201,23 @@ public class CustomerFee extends MainEntryPoint {
 										@Override
 										public void onSuccess(Integer updates) {
 											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+											duplicateValueButton.setEnabled(false);
 											addValueButton.setEnabled(false);
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);
 										}
 									});
 						}
@@ -1209,6 +1253,7 @@ public class CustomerFee extends MainEntryPoint {
 			}
 			List<AonTableButton> selectedItemList = selectedItems.values().stream().filter(check -> AonStringUtils.containsIgnoreCase(check.getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
 			
+			duplicateValueButton.setEnabled(!selectedItemList.isEmpty());
 			addValueButton.setEnabled(!selectedItemList.isEmpty());
 			deleteFeeButton.setEnabled(!selectedItemList.isEmpty());
 			exportButton.setEnabled(!selectedItemList.isEmpty());
@@ -1370,7 +1415,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 				getCustomer(customer -> {
 					
-					new CustomerFeeDialog(options, customer) {
+					new CustomerFeeDialog(options, customer, searchDomain) {
 						
 						@Override
 						protected void onCreate(Fee fee) {
@@ -1379,10 +1424,14 @@ public class CustomerFee extends MainEntryPoint {
 								@Override
 								public void onSuccess(Fee customerFee) {
 									AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+									duplicateValueButton.setEnabled(false);
 									addValueButton.setEnabled(false);
 									deleteFeeButton.setEnabled(false);
 									exportButton.setEnabled(false);
 									onSearch();
+									
+									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+										sendFeeEmail(customerFee.getId(), true, null);
 								}
 								
 								@Override
@@ -1416,7 +1465,7 @@ public class CustomerFee extends MainEntryPoint {
 				
 			} else {
 			
-				new CustomerFeeDialog(options) {
+				new CustomerFeeDialog(options, searchDomain) {
 					
 					@Override
 					protected void onCreate(Fee fee) {
@@ -1425,10 +1474,14 @@ public class CustomerFee extends MainEntryPoint {
 							@Override
 							public void onSuccess(Fee customerFee) {
 								AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+								duplicateValueButton.setEnabled(false);
 								addValueButton.setEnabled(false);
 								deleteFeeButton.setEnabled(false);
 								exportButton.setEnabled(false);
 								onSearch();
+								
+								if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+									sendFeeEmail(customerFee.getId(), true, null);
 							}
 							
 							@Override
@@ -1463,14 +1516,176 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		feeDockLayout.addToolbarButton(createButton);
 		
+		duplicateValueButton = new AonToolbarButton("Duplicar Cuota", AON.CSS.aonIconCopy());
+		duplicateValueButton.setEnabled(false);
+		duplicateValueButton.addClickHandler(e -> {
+			List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+			if(selectedItemList.size() == 1) {
+				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
+				if(null != selectedFee) {
+					Fee duplicateFee = new Fee();
+					duplicateFee.duplicate(selectedFee);
+					
+					selectedItems.values().forEach(check ->{
+						check.addStyleName(AON.CSS.aonIconCheck());
+						check.removeStyleName(AON.CSS.aonIconChecked());
+					});
+					duplicateValueButton.setEnabled(false);
+					addValueButton.setEnabled(false);
+					deleteFeeButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					
+					CustomerFeeDialog feeDialog = new CustomerFeeDialog(duplicateFee, options, searchDomain) {
+						
+						@Override
+						protected void onAccept(Fee fee) {
+							SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Fee>() {
+								
+								@Override
+								public void onSuccess(Fee customerFee) {
+									AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+									duplicateValueButton.setEnabled(false);
+									addValueButton.setEnabled(false);
+									deleteFeeButton.setEnabled(false);
+									exportButton.setEnabled(false);
+									onSearch();
+									
+									if(null != fee.getPrice() && fee.getPrice() >= 0.00 && null != fee.getSeller() && null != fee.getSeller().getId())
+										sendFeeEmail(customerFee.getId(), true, null);
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								}
+							});
+							
+						}
+
+						@Override
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+						@Override
+						protected void onCreate(Fee fee) {}
+
+						@Override
+						protected void onCreate(Fee fee, Integer ritem) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					};
+					
+					feeDialog.setCaption("Duplicar Cuota");
+					
+				}
+			} else {
+				new CustomerFeeDuplicateDialog() {
+					
+					@Override
+					protected void onAccept(Double discount, Date startDate, Date endDate, Date billingDate, BillingPeriod period) {
+						List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
+						
+						if(selectedItemList.size() == rowFees.size()) {
+							offset.setValue(0);
+							limit = Integer.MAX_VALUE;
+							getWidgetParams();
+							
+							getList(dbFees -> {
+								LinkedList<Fee> updatedFees = new LinkedList<Fee>();
+								
+								dbFees.forEach(dbFee -> {
+									Fee newFee = new Fee();
+									newFee.duplicate(dbFee);
+									
+									newFee.setDiscount(discount);
+									newFee.setStartDate(startDate);
+									newFee.setEndDate(endDate);
+									newFee.setBillingDate(billingDate);
+									newFee.setPeriod(period);
+									
+									updatedFees.add(newFee);
+								});
+								
+								createDuplicateFees(updatedFees, 0, 0);
+							});
+						} else {
+							// Solo cuotas seleccionadas
+							LinkedList<Integer> selectedFees = selectedItemList.stream()
+									.filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked()))
+									.map(entry -> entry.getKey())
+									.collect(Collectors.toCollection(LinkedList::new));
+							
+							LinkedList<Fee> updatedFees = new LinkedList<Fee>();
+							
+							selectedFees.forEach(feeId -> {
+								Fee feeIt = rowFees.get(feeId);
+								
+								Fee newFee = new Fee();
+								newFee.duplicate(feeIt);
+								
+								newFee.setDiscount(discount);
+								newFee.setStartDate(startDate);
+								newFee.setEndDate(endDate);
+								newFee.setBillingDate(billingDate);
+								newFee.setPeriod(period);
+								
+								updatedFees.add(newFee);
+							});
+							
+							createDuplicateFees(updatedFees, 0, 0);
+						}
+					}
+
+					private void createDuplicateFees(LinkedList<Fee> updatedFees, int index, int accumulatedUpdates) {
+						if (index >= updatedFees.size()) {
+					       AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + accumulatedUpdates + " cuotas correctamente");
+					       duplicateValueButton.setEnabled(false);
+					       addValueButton.setEnabled(false);
+					       deleteFeeButton.setEnabled(false);
+					       exportButton.setEnabled(false);
+					       onSearch();
+					       return;
+					    }
+
+					    Fee currentFee = updatedFees.get(index);
+					    
+					    SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), currentFee, new AsyncCallback<Fee>() {
+							
+							@Override
+							public void onSuccess(Fee customerFee) {
+								if(null != currentFee.getPrice() && currentFee.getPrice() >= 0.00 && null != currentFee.getSeller() && null != currentFee.getSeller().getId())
+									sendFeeEmail(customerFee.getId(), true, null);
+								
+								createDuplicateFees(updatedFees, index + 1, accumulatedUpdates + 1);
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+								// Continuar aunque haya error
+								createDuplicateFees(updatedFees, index + 1, accumulatedUpdates);
+							}
+						});
+						
+					    
+					}
+				};
+			}
+		});
+		feeDockLayout.addToolbarButton(duplicateValueButton);
+		
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
 			List<Entry<Integer, AonTableButton>> selectedItemList = selectedItems.entrySet().stream().filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked())).collect(Collectors.toList());
 			if(selectedItemList.size() == 1) {
 				Fee selectedFee = rowFees.get(selectedItemList.get(0).getKey());
-				if(null != selectedFee)
-					new CustomerFeeDialog(selectedFee, options) {
+				if(null != selectedFee) {
+					
+					Integer originalSeller = null == selectedFee.getSeller() ? null : selectedFee.getSeller().getId();
+					
+					new CustomerFeeDialog(selectedFee, options, searchDomain) {
 						
 						@Override
 						protected void onAccept(Fee fee) {
@@ -1493,6 +1708,18 @@ public class CustomerFee extends MainEntryPoint {
 											deleteFeeButton.setEnabled(false);
 											exportButton.setEnabled(false);
 											onSearch();
+											
+											if(null != originalSeller) {
+												
+												// Desasignar
+												if(null == fee.getSeller() || null == fee.getSeller().getId() || !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), false, originalSeller);
+												
+												if(null != fee.getSeller() && null != fee.getSeller().getId() && !originalSeller.equals(fee.getSeller().getId()))
+													sendFeeEmail(fee.getId(), true, null);
+												
+											} else if(null != fee.getSeller() && null != fee.getSeller().getId())
+												sendFeeEmail(fee.getId(), true, null);		
 										}
 									});
 						}
@@ -1510,8 +1737,9 @@ public class CustomerFee extends MainEntryPoint {
 						}
 						
 					};
+				}
 			} else {
-				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options) {
+				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options, searchDomain) {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
@@ -1537,7 +1765,7 @@ public class CustomerFee extends MainEntryPoint {
 							offset.setValue(0);
 							getWidgetParams();
 							
-							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 								
 								@Override
 								public void onSuccess(Map<Integer, Integer> result) {
@@ -1588,6 +1816,7 @@ public class CustomerFee extends MainEntryPoint {
 									.filter(entry -> AonStringUtils.containsIgnoreCase(entry.getValue().getStyleName(), AON.CSS.aonIconChecked()))
 									.map(entry -> entry.getKey())
 									.collect(Collectors.toCollection(LinkedList::new));
+							
 							AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
 									new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
 							
@@ -1666,7 +1895,7 @@ public class CustomerFee extends MainEntryPoint {
 				offset.setValue(0);
 				getWidgetParams();
 				
-				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), searchDomain, params, new AsyncCallback<Map<Integer,Integer>>() {
 					
 					@Override
 					public void onSuccess(Map<Integer, Integer> result) {
@@ -1683,24 +1912,39 @@ public class CustomerFee extends MainEntryPoint {
 
 							@Override
 							public void onAccept() {
-								AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
-								SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-										new AsyncCallback<Void>() {
+								offset.setValue(0);
+								limit = Integer.MAX_VALUE;
+								getWidgetParams();
+								
+								// Hay que eliminar las cuotas cuando se haya realizado el envio de email (lo que hay es un error)
+								getList(deletedFees -> {
+									deletedFees.forEach(deleteFee -> {
+										if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
+											sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+									});
+									
+									AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+									SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+											new AsyncCallback<Void>() {
 
-											@Override
-											public void onFailure(Throwable caught) {
-												AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
-											}
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+												}
 
-											@Override
-											public void onSuccess(Void result) {
-												AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
-												addValueButton.setEnabled(false);
-												deleteFeeButton.setEnabled(false);
-												exportButton.setEnabled(false);
-												onSearch();
-											}
-										});
+												@Override
+												public void onSuccess(Void result) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
+													duplicateValueButton.setEnabled(false);
+													addValueButton.setEnabled(false);
+													deleteFeeButton.setEnabled(false);
+													exportButton.setEnabled(false);
+													onSearch();
+												}
+											});
+								});
+								
+								
 							}
 						});
 					}
@@ -1736,6 +1980,11 @@ public class CustomerFee extends MainEntryPoint {
 								.map(entry -> entry.getValue())
 								.collect(Collectors.toCollection(LinkedList::new));
 						
+						deletedFees.forEach(deleteFee -> {
+							if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
+								sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+						});
+						
 						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), deletedFees,
 								new AsyncCallback<Void>() {
 
@@ -1747,6 +1996,7 @@ public class CustomerFee extends MainEntryPoint {
 									@Override
 									public void onSuccess(Void result) {
 										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+										duplicateValueButton.setEnabled(false);
 										addValueButton.setEnabled(false);
 										deleteFeeButton.setEnabled(false);
 										exportButton.setEnabled(false);
@@ -1920,6 +2170,63 @@ public class CustomerFee extends MainEntryPoint {
 	private native String btoa(String str) /*-{
 	    return btoa(str);
 	}-*/;
+	
+	private void sendFeeEmail(Integer feeId, Boolean add, Integer oldSellerId) {
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/fee-mail/";
+
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+
+		JSONObject body = new JSONObject();
+
+		body.put("feeId", new JSONString(feeId.toString()));
+		
+		if(add)	body.put("add", new JSONString(add.toString()));
+		else if(null != oldSellerId) body.put("oldSellerId", new JSONString(oldSellerId.toString()));
+		
+		// Create a URL builder and add query parameters
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol()); // Use the current protocol
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+
+		// Create the request builder with the complete URL
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+
+		headers.entrySet().forEach(entry -> requestBuilder.setHeader(entry.getKey(), entry.getValue()));
+
+		try {
+			// Send the request
+			requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				public void onResponseReceived(Request request, Response response) {
+					JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+					String message = "";
+
+					if (jsonValue != null && jsonValue.isObject() != null) {
+						JSONObject jsonObject = jsonValue.isObject();
+
+						JSONValue messageValue = jsonObject.get("message");
+						message = null != messageValue ? messageValue.isString().stringValue()
+								: "Error desconocido";
+					}
+
+					if (response.getStatusCode() == 400)
+						AonMessagePanel.showError(messagePanel, message);
+					else
+						AonMessagePanel.showSuccess(messagePanel, message);
+				}
+
+				public void onError(Request request, Throwable exception) {
+					Window.alert(exception.getMessage());
+				}
+			});
+		} catch (RequestException exception) {
+			Window.alert("Catch : " + exception.getMessage());
+		}
+	}
 	
 	// ------------------------------------------ Eval Expression
 	

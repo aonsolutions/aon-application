@@ -319,6 +319,7 @@ export const NEW_WAREHOUSE = 'Nou Magatzem';
 export const NEXT = 'Següent';
 export const NIF = 'NIF';
 export const NO_DATA = 'No hi ha dades';
+export const NO_LINK_CLIENT = 'Client sense vincular';
 export const NOT_LINKED = 'No vinculat';
 export const NOT_LINKED1 = 'No vinculats';
 export const NOTIFICATION = 'Notificació';

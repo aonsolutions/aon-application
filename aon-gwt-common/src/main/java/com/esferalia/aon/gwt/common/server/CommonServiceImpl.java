@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.common.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -511,8 +511,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user) throws AonCoreException {
-		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	public List<Workgroup> getAviableWorkgroups(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
+		List<Workgroup> workgroups = AON.getWorkgroupStream(domainName, domain, user, f -> f.getDomainProperty().eq(domainSearch)).collect(Collectors.toList());
 		return workgroups;
 	}
 	
@@ -539,8 +539,8 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public List<ProjectType> getAviableProjectType(String domainName, int domain, String user) throws AonCoreException {
-		return AON.getProjectTypeStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domain)).collect(Collectors.toList());
+	public List<ProjectType> getAviableProjectType(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
+		return AON.getProjectTypeStream(new Domain().setName(domainName).setId(domain), new User().setLogin(user), f -> f.getDomainProperty().eq(domainSearch)).collect(Collectors.toList());
 	}
 	
 	// **************************************************
@@ -1077,20 +1077,20 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public List<TaskHolder> getTaskHolders(String domainName, Integer domain, String user) throws AonCoreException {
+	public List<TaskHolder> getTaskHolders(String domainName, Integer domain, String user, Integer domainSearch) throws AonCoreException {
 		return AON.getTaskHolderStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)), 
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1)), 
 				new Options().setFull(true))
 				.collect(Collectors.toList());
 	}
 	@Override
-	public List<ActivityType> getActivityTypes(String domainName, int domain, String user) throws AonCoreException {
+	public List<ActivityType> getActivityTypes(String domainName, int domain, String user, Integer domainSearch) throws AonCoreException {
 		return AON.getActivityTypeStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 
-				f -> f.getDomainProperty().eq(domain).and(f.getActiveProperty().eq((byte)1)))
+				f -> f.getDomainProperty().eq(domainSearch).and(f.getActiveProperty().eq((byte)1)))
 				.collect(Collectors.toList());
 	}
 
@@ -1121,22 +1121,32 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 
 	@Override
 	public List<Invoice> getCustomerInvoices(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
-		List<Invoice> invoices = AON.getInvoiceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getRegistryProperty().eq(customerId)));
+		List<Invoice> invoices = AON.getInvoiceList(domainName, domain, user, f -> f.getRegistryProperty().eq(customerId));
 		invoices.forEach(invoice -> {
-			LinkedList<Finance> finances = AON.getFinanceList(domainName, domain, user, f -> f.getDomainProperty().eq(domain).and(f.getInvoiceProperty().eq(invoice.getId())));
+			LinkedList<Finance> finances = AON.getFinanceList(domainName, domain, user, f -> f.getInvoiceProperty().eq(invoice.getId()));
 			finances.forEach(finance -> invoice.addFinance(finance));
 		});
 		return invoices;
 	}
 	
 	@Override
-	public String getInvoicePDF(String domainName, int domainId, String login, Integer invoiceId) throws AonCoreException {
+	public String getInvoicePDF(String domainName, int domainId, String login, Integer officeDomain, Integer invoiceId) throws AonCoreException {
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream(30 * 1024)){
 			
-			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			PrintInvoiceConfiguration config;
+			if(null == officeDomain)
+				config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			else
+				config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, officeDomain, true);
+			
 			Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, invoiceId);
 			
-			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
+			CompanyFull company;
+			if(null == officeDomain)
+				company = AON.getCompanyFull(domainName, domainId, login);
+			else
+				company = AON.getCompanyFull(domainName, domainId, login, officeDomain);
+			
 			Attach logo = new Attach();
 			
 			if(config.isLogo()) {

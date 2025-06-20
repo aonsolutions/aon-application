@@ -42,11 +42,14 @@ export class AonCustomer extends AonReg {
 		this.registry = this.registry || new Customer();
 		this.saveBool = true;
 		this.type = "customer";
+		this.clientFile = this.clientFile;
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
 			{ title: MSG.BANK_DATA, fn: () => {
 				this.showSaveButton();
+				if(this.clientFile)
+					this.hideSaveButton();
 				this.buildBankData();
 			}},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional() }
@@ -54,11 +57,11 @@ export class AonCustomer extends AonReg {
 
 		if (this.office) {
 			if(!this.clientFile){
-				this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
 				this.options.push({ title: MSG.AGENTS, fn: () => this.buildSellerData() });
-				this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
-				this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 			}
+			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData() });
+			this.options.push({ title: MSG.CUSTOMER_FEE, fn: () => this.buildCustomerFee() });
+			this.options.push({ title: MSG.INVOICES, fn: () => this.buildInvoices() });
 			
 			if(this.registry.registryCompany) {
 				this.options.push({ title: MSG.BOOKING, fn: () => this.buildOfficeBookingData() });
@@ -184,6 +187,9 @@ export class AonCustomer extends AonReg {
 
 	buildDataAdditional() {
 		this.showSaveButton();
+		
+		if(this.clientFile)
+			this.hideSaveButton();
 				
 		let parent = this.getElement(this.DIV);
 		parent.style.display = "flex";
@@ -222,21 +228,43 @@ export class AonCustomer extends AonReg {
 
 		table.addRow();
 
-		let divSegment = this.createElement(TAG.DIV);
-		table.addCell(divSegment);
-		this.buildSegments(divSegment);
+		if(!this.clientFile){
+			let divSegment = this.createElement(TAG.DIV);
+			table.addCell(divSegment);
+			this.buildSegments(divSegment);
+		}
 
-		getScopes().then((scopes) => {
-			const registryScope = this.registry.getScope();
-			const scopeId =
-				registryScope && registryScope.id ? registryScope.id : null;
-
-			scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
-
-			if (scopeId) {
-				scope.value = scopeId;
-			}
-		});
+		if(this.clientFile){
+			let company = LS.getCompany();
+			getRelationShipCompany({
+					url: company.domain,
+		            relatedRegistry: company.registry
+		        }).then(relationshipCompany => {
+					getScopes({
+						searchDomain: relationshipCompany.rrelationship.domain.id
+					}).then((scopes) => {
+						const registryScope = this.registry.getScope();
+						const scopeId = registryScope && registryScope.id ? registryScope.id : null;
+						
+						scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
+			
+						if (scopeId) {
+							scope.value = scopeId;
+						}
+					});
+		        });
+		} else
+			getScopes().then((scopes) => {
+				const registryScope = this.registry.getScope();
+				const scopeId =
+					registryScope && registryScope.id ? registryScope.id : null;
+	
+				scope.setOptions(scopes.map((c) => ({ ...c, value: c.id })));
+	
+				if (scopeId) {
+					scope.value = scopeId;
+				}
+			});
 	}
 
 	buildFiscalData(parent) {
@@ -319,7 +347,7 @@ export class AonCustomer extends AonReg {
 	buildEnterpriseLinkedView(resp) {
 		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
-
+		
 		const { rrelationship, companies } = resp;
 
 		const link = rrelationship && rrelationship.id;
@@ -415,7 +443,18 @@ export class AonCustomer extends AonReg {
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		GWT.iLoad(GWT.PROJECT, this.DIV);
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.PROJECT, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.PROJECT, this.DIV);
 	}
 
 	//ITEMS PRODUCTS
@@ -542,7 +581,18 @@ export class AonCustomer extends AonReg {
 
 		localStorage.setItem("customer", this.registry.getId());
 
-		GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.CUSTOMER_FEE, this.DIV);
 	}
 	
 	buildInvoices(){
@@ -557,8 +607,20 @@ export class AonCustomer extends AonReg {
   		div.style.margin = '.5rem 0';
 
 		localStorage.setItem("customer", this.registry.getId());
-
-		GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+		
+		if(this.clientFile){
+			let company = LS.getCompany();
+			
+			getRelationShipCompany({
+				url: company.domain,
+	            relatedRegistry: company.registry
+	        }).then(relationshipCompany => {
+				localStorage.setItem("officeDomain", relationshipCompany.rrelationship.domain.id);
+				GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+	        });
+		} else 
+			GWT.iLoad(GWT.CUSTOMER_INVOICE, this.DIV);
+		
 	}
 
 	getOptionsLinked(element, rrelationship = undefined) {
@@ -601,16 +663,18 @@ export class AonCustomer extends AonReg {
 				);
 			}
 		} else {
+			options.push(
+				{
+					name: "Vincular empresa",
+					value: "LINK",
+					icon: MATERIAL_ICONS.LINK,
+					fn: () => {
+						this.openDialogCompany();
+					},
+				}
+			);
 			if(this.isSig()){
 				options.push(
-					{
-						name: "Vincular con una existente",
-						value: "LINK",
-						icon: MATERIAL_ICONS.LINK,
-						fn: () => {
-							this.openDialogCompany();
-						},
-					},
 					{
 						name: "Crear nueva empresa",
 						value: "ENTERPRISE_NEW",
@@ -814,8 +878,6 @@ export class AonCustomer extends AonReg {
 		div.id = "customerNotesId";
     
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
-			notesIcon.innerHTML = 'speaker_notes_off';
-			
 			rightSidenav.appendChild(div);
 			
 			// Loader
@@ -851,9 +913,9 @@ export class AonCustomer extends AonReg {
 			} else 
 				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 				
-		} else {
-			notesIcon.innerHTML = 'speaker_notes';
 		}
+		
+		notesIcon.classList.toggle("material-icons-selected");
 		
 		this.getApplication().toogleRightSidenav();	
 		

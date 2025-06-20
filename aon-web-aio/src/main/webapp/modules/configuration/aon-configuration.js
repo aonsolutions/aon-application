@@ -100,40 +100,46 @@ export class AonConfiguration extends AonElement {
 
     let officeOptions = [];
 	
-	if(this.isBeta() || this.isAyudaT()){
 		let company = LS.getCompany();
-		getSiblingsOffice({
-			domain: company.id
-		}).then(siblings => {
-			if(
-				company && company.registry && company.type !== "OFFICE" && 
-				siblings.siblingsOffice && siblings.siblingsOffice.length > 0 &&
-				this.dur.user.domain === this.dur.domain.parentId
-			){
-		       	getRelationShipCompany({
-					url: company.domain,
-		            relatedRegistry: company.registry
-		        }).then(relationshipCompany => {
-					
-					if(relationshipCompany.rrelationship){
-						officeOptions.push({
-							name: MSG.CLIENT_FILE,
-							icon: MATERIAL_ICONS.CONTACTS,
-							fn: () => this.buildCustomerList(),
-						});
-		            } else {
-		            	officeOptions.push({
-							name: MSG.LINK_CLIENT,
-							icon: MATERIAL_ICONS.DATASET_LINKED,
-							fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
-						});
-		            }
+    if(company && (this.isBeta() || this.isAyudaT())){
+      getSiblingsOffice({
+		  	domain: company.id
+		  }).then(siblings => {
+			  if(
+			  	company && company.registry && company.type !== "OFFICE" && 
+				  siblings.siblingsOffice && siblings.siblingsOffice.length > 0 &&
+				  this.dur.user.domain === this.dur.domain.parentId
+			  ){
+		     	getRelationShipCompany({
+				  	url: company.domain,
+		        relatedRegistry: company.registry
+		      }).then(relationshipCompany => {
+					  if(relationshipCompany.rrelationship){
+						  officeOptions.push({
+							  name: MSG.CLIENT_FILE,
+							  icon: MATERIAL_ICONS.CONTACTS,
+							  fn: () => this.buildCustomerList(),
+						  });
+		        } else {
+						  officeOptions.push({
+							  name: MSG.NO_LINK_CLIENT,
+							  icon: MATERIAL_ICONS.INFO,
+							  //fn: () => {},
+						  });
+		          /*
+		          officeOptions.push({
+							  name: MSG.LINK_CLIENT,
+							  icon: MATERIAL_ICONS.DATASET_LINKED,
+							  fn: () => alert("Estamos trabajando para poder vincular la empresa con el cliente del despacho..."),
+					  	});
+						  */
+		        }
 		            
-		            aonConfiguration.addSidenavOptionsFirst(
+		        aonConfiguration.addSidenavOptionsFirst(
 				      MSG.OFFICE.toUpperCase(),
 				      officeOptions
 				    );
-		        });
+		      });
 		    }
 		});
 		
@@ -416,10 +422,9 @@ export class AonConfiguration extends AonElement {
 	  aonCustomerList.addEventListener(EVENT.BUILD, buildListener);
 	  
 	  aonConfiguration.setContent(aonCustomerList);
-
   }
 
-    buildCompanyList() {
+  buildCompanyList() {
     let aonConfiguration = this.getApplication();
     aonConfiguration.removeToolbarOptions();
 

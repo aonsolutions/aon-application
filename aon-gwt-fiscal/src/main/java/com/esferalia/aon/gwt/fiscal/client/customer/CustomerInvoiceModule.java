@@ -90,6 +90,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 	private FullViewer viewer;
 	
 	private Integer customerId;
+	private Integer officeDomain;
 	
 	private Map<Integer, CustomerInvoiceRow> rows = new HashMap<Integer, CustomerInvoiceRow>();
 	
@@ -137,9 +138,11 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		
 		// Get customer from LS
 		customerId = getCustomer() > 0 ? getCustomer() : null;
+		officeDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
 		
 		// Remove customer from LS
 		removeCustomer();
+		removeOfficeDomain();
 		
 		moduleLoad();
 	}
@@ -196,7 +199,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton openDocument = new AonTableButton("Ver documento", AON.CSS.aonIconVisibility());
+		AonTableButton openDocument = new AonTableButton("Ver documento", AON.CSS.aonIconPdf());
 		AonTableButton closeDocument = new AonTableButton("Cerrar documento", AON.CSS.aonIconVisibilityOff());
 		
 		openDocument.addStyleName(AON.CSS.aonCustomRowButtom());
@@ -393,7 +396,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 	}
 	
 	private void getInvoicePDF(Integer invoiceId, Consumer<String> success) {
-		COMMON_SERVICE.getInvoicePDF(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), invoiceId, new AsyncCallback<String>() {
+		COMMON_SERVICE.getInvoicePDF(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), officeDomain, invoiceId, new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {

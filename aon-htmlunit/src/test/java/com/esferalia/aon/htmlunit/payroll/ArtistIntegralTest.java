@@ -4,12 +4,14 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 
 import java.util.Calendar;
+import java.util.List;
 
+import org.htmlunit.html.DomElement;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ArtistIntegralTest extends BaseIntegralTestCase {
 
 	public static final String INTEGRATION_PAYROLL_URL = "integration.test.artist.payroll.url";
@@ -23,11 +25,16 @@ public class ArtistIntegralTest extends BaseIntegralTestCase {
 		setup(url, user, password);
 		
 		wait4Id("artistas");
+
+		click("viewButton");
+		wait4Id("formerMenuItem");
+		click("formerMenuItem");
 	}
 
 	// ------------------------------------------------------------------------
 
 	@Test
+	@Ignore
 	public void TestQuote() throws Exception {
 
 		if (!isDisplayed("base_minima,_parcial"))
@@ -42,6 +49,24 @@ public class ArtistIntegralTest extends BaseIntegralTestCase {
 
 	}
 
+	@Test
+	public void TestShort() throws Exception {
+
+		if (!isDisplayed("corta,_duracion"))
+			open("principal");
+
+		wait4Id("corta,_duracion");
+
+
+		draft("CORTA, DURACIÓN");
+		calculate(Calendar.JUNE, 2025);
+		
+		click("costsCheck-input");
+		List<DomElement> commonContingencyCost = getElementsById("common_contingency_cost");
+		Assert.assertEquals(1, commonContingencyCost.size());
+		click("costsCheck-input");
+
+	}
 
 	// -------------------------------------------------------------------------
 

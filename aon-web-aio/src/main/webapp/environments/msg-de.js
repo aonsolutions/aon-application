@@ -321,6 +321,7 @@ export const NEW_WAREHOUSE = 'Neue Warehouse';
 export const NEXT = 'Next';
 export const NIF = 'NIF';
 export const NO_DATA = 'Keine Daten verfügbar';
+export const NO_LINK_CLIENT = 'Nicht verknüpfter Client';
 export const NOT_LINKED = 'Nicht verbunden';
 export const NOT_LINKED1 = 'Nicht verbunden';
 export const NOTIFICATION = 'Benachrichtigung';

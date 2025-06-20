@@ -1666,6 +1666,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.TYPE); }
 		@Override public Property<Byte> getSecurityLevelProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.SECURITY_LEVEL); }
 		@Override public Property<Integer> getTagProperty() { return new FilterDAO.PropertyDAO<>(RdocTag.RDOC_TAG.TAG); }
+		@Override public Property<Timestamp> getDeleteDateProperty() { return new FilterDAO.TimestampPropertyDAO(Rdoc.RDOC.DELETE_DATE); }
 //		@Override public Property<Integer> getRattachProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.); }
 	}
 	

@@ -502,6 +502,7 @@ export const NEXT = MSG.NEXT;
 export const NIF = MSG.NIF;
 export const NOT_LINKED = MSG.NOT_LINKED;
 export const NO_DATA = MSG.NO_DATA;
+export const NO_LINK_CLIENT = MSG.NO_LINK_CLIENT;
 export const NOT_LINKED1 = MSG.NOT_LINKED1;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;

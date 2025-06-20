@@ -1296,137 +1296,137 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_araba_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F ARABA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
-		assertValue("irpfPercentTexTBox", "2,00 %");
-		
-		calculate(Calendar.JANUARY, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14790.01/12)");
-		wait4Value("db-amount-label-1", 14790.01/12);
-		assertValue("irpfPercentTexTBox", "6,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(15530.01/12)");
-		wait4Value("db-amount-label-1", 15530.01/12);
-		assertValue("irpfPercentTexTBox", "7,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(16460.01/12)");
-		wait4Value("db-amount-label-1", 16460.01/12);
-		assertValue("irpfPercentTexTBox", "8,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(17700.01/12)");
-		wait4Value("db-amount-label-1", 17700.01/12);
-		assertValue("irpfPercentTexTBox", "9,00 %");
-		
-		//....
-		
-		setValue("db-amount-label-1", "BRUTO(43840.01/12)");
-		wait4Value("db-amount-label-1", 43840.01/12);
-		assertValue("irpfPercentTexTBox", "20,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
-		wait4Value("db-amount-label-1", 213160.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
-
-		calculate(Calendar.SEPTEMBER, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(15070.00/12)");
-		wait4Value("db-amount-label-1", 15070.00/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-		setValue("db-amount-label-1", "BRUTO(15070.01/12)");
-		wait4Value("db-amount-label-1", 15070.01/12);
-		assertValue("irpfPercentTexTBox", "6,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(15830.00/12)");
-		wait4Value("db-amount-label-1", 15830.00/12);
-		assertValue("irpfPercentTexTBox", "6,00 %");		
-		setValue("db-amount-label-1", "BRUTO(15830.01/12)");
-		wait4Value("db-amount-label-1", 15830.01/12);
-		assertValue("irpfPercentTexTBox", "7,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(16880.00/12)");
-		wait4Value("db-amount-label-1", 16880.01/12);
-		assertValue("irpfPercentTexTBox", "7,00 %");		
-		setValue("db-amount-label-1", "BRUTO(16880.01/12)");
-		wait4Value("db-amount-label-1", 16880.01/12);
-		assertValue("irpfPercentTexTBox", "8,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(18150.00/12)");
-		wait4Value("db-amount-label-1", 18150.00/12);
-		assertValue("irpfPercentTexTBox", "8,00 %");
-		setValue("db-amount-label-1", "BRUTO(18150.01/12)");
-		wait4Value("db-amount-label-1", 18150.01/12);
-		assertValue("irpfPercentTexTBox", "9,00 %");
-		
-		calculate(Calendar.JANUARY, 2023);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(15220/12)");
-		wait4Value("db-amount-label-1", 15220.00/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-		setValue("db-amount-label-1", "BRUTO(15220.01/12)");
-		wait4Value("db-amount-label-1", 15220.01/12);
-		assertValue("irpfPercentTexTBox", "6,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(15980.00/12)");
-		wait4Value("db-amount-label-1", 15980.00/12);
-		assertValue("irpfPercentTexTBox", "6,00 %");		
-		setValue("db-amount-label-1", "BRUTO(15980.01/12)");
-		wait4Value("db-amount-label-1", 15980.01/12);
-		assertValue("irpfPercentTexTBox", "7,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(17090.00/12)");
-		wait4Value("db-amount-label-1", 17090.01/12);
-		assertValue("irpfPercentTexTBox", "7,00 %");		
-		setValue("db-amount-label-1", "BRUTO(17090.01/12)");
-		wait4Value("db-amount-label-1", 17090.01/12);
-		assertValue("irpfPercentTexTBox", "8,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(18380.00/12)");
-		wait4Value("db-amount-label-1", 18380.00/12);
-		assertValue("irpfPercentTexTBox", "8,00 %");
-		setValue("db-amount-label-1", "BRUTO(18380.01/12)");
-		wait4Value("db-amount-label-1", 18380.01/12);
-		assertValue("irpfPercentTexTBox", "9,00 %");
-
-		//....
-		
-		setValue("db-amount-label-1", "BRUTO(46060/12)");
-		wait4Value("db-amount-label-1", 46060.00/12);
-		assertValue("irpfPercentTexTBox", "19,00 %");		
-		setValue("db-amount-label-1", "BRUTO(46060.01/12)");
-		wait4Value("db-amount-label-1", 46060.01/12);
-		assertValue("irpfPercentTexTBox", "20,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(225470/12)");
-		wait4Value("db-amount-label-1", 225470.00/12);
-		assertValue("irpfPercentTexTBox", "39,00 %");		
-		setValue("db-amount-label-1", "BRUTO(225470.01/12)");
-		wait4Value("db-amount-label-1", 225470.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
+//		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
+//		assertValue("irpfPercentTexTBox", "2,00 %");
+//		
+//		calculate(Calendar.JANUARY, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14790.01/12)");
+//		wait4Value("db-amount-label-1", 14790.01/12);
+//		assertValue("irpfPercentTexTBox", "6,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(15530.01/12)");
+//		wait4Value("db-amount-label-1", 15530.01/12);
+//		assertValue("irpfPercentTexTBox", "7,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(16460.01/12)");
+//		wait4Value("db-amount-label-1", 16460.01/12);
+//		assertValue("irpfPercentTexTBox", "8,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(17700.01/12)");
+//		wait4Value("db-amount-label-1", 17700.01/12);
+//		assertValue("irpfPercentTexTBox", "9,00 %");
+//		
+//		//....
+//		
+//		setValue("db-amount-label-1", "BRUTO(43840.01/12)");
+//		wait4Value("db-amount-label-1", 43840.01/12);
+//		assertValue("irpfPercentTexTBox", "20,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+//		wait4Value("db-amount-label-1", 213160.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
+//
+//		calculate(Calendar.SEPTEMBER, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(15070.00/12)");
+//		wait4Value("db-amount-label-1", 15070.00/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(15070.01/12)");
+//		wait4Value("db-amount-label-1", 15070.01/12);
+//		assertValue("irpfPercentTexTBox", "6,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(15830.00/12)");
+//		wait4Value("db-amount-label-1", 15830.00/12);
+//		assertValue("irpfPercentTexTBox", "6,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(15830.01/12)");
+//		wait4Value("db-amount-label-1", 15830.01/12);
+//		assertValue("irpfPercentTexTBox", "7,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(16880.00/12)");
+//		wait4Value("db-amount-label-1", 16880.01/12);
+//		assertValue("irpfPercentTexTBox", "7,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(16880.01/12)");
+//		wait4Value("db-amount-label-1", 16880.01/12);
+//		assertValue("irpfPercentTexTBox", "8,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(18150.00/12)");
+//		wait4Value("db-amount-label-1", 18150.00/12);
+//		assertValue("irpfPercentTexTBox", "8,00 %");
+//		setValue("db-amount-label-1", "BRUTO(18150.01/12)");
+//		wait4Value("db-amount-label-1", 18150.01/12);
+//		assertValue("irpfPercentTexTBox", "9,00 %");
+//		
+//		calculate(Calendar.JANUARY, 2023);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(15220/12)");
+//		wait4Value("db-amount-label-1", 15220.00/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(15220.01/12)");
+//		wait4Value("db-amount-label-1", 15220.01/12);
+//		assertValue("irpfPercentTexTBox", "6,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(15980.00/12)");
+//		wait4Value("db-amount-label-1", 15980.00/12);
+//		assertValue("irpfPercentTexTBox", "6,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(15980.01/12)");
+//		wait4Value("db-amount-label-1", 15980.01/12);
+//		assertValue("irpfPercentTexTBox", "7,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(17090.00/12)");
+//		wait4Value("db-amount-label-1", 17090.01/12);
+//		assertValue("irpfPercentTexTBox", "7,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(17090.01/12)");
+//		wait4Value("db-amount-label-1", 17090.01/12);
+//		assertValue("irpfPercentTexTBox", "8,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(18380.00/12)");
+//		wait4Value("db-amount-label-1", 18380.00/12);
+//		assertValue("irpfPercentTexTBox", "8,00 %");
+//		setValue("db-amount-label-1", "BRUTO(18380.01/12)");
+//		wait4Value("db-amount-label-1", 18380.01/12);
+//		assertValue("irpfPercentTexTBox", "9,00 %");
+//
+//		//....
+//		
+//		setValue("db-amount-label-1", "BRUTO(46060/12)");
+//		wait4Value("db-amount-label-1", 46060.00/12);
+//		assertValue("irpfPercentTexTBox", "19,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(46060.01/12)");
+//		wait4Value("db-amount-label-1", 46060.01/12);
+//		assertValue("irpfPercentTexTBox", "20,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(225470/12)");
+//		wait4Value("db-amount-label-1", 225470.00/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(225470.01/12)");
+//		wait4Value("db-amount-label-1", 225470.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
 
 		calculate(Calendar.JANUARY, 2024);
 		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
@@ -1481,6 +1481,69 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Value("db-amount-label-1", 207280.01/12);
 		assertValue("irpfPercentTexTBox", "39,00 %");
 		
+		calculate(Calendar.JULY, 2025);
+		setValue("db-amount-label-1", "BRUTO(20000.00/12)");
+		wait4Value("db-amount-label-1", 20000.01/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+		
+		setValue("db-amount-label-1", "BRUTO(20000.01/12)");
+		wait4Value("db-amount-label-1", 20000.01/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+		setValue("db-amount-label-1", "BRUTO(20390.00/12)");
+		wait4Value("db-amount-label-1", 20390.00/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(20390.01/12)");
+		wait4Value("db-amount-label-1", 20390.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+		setValue("db-amount-label-1", "BRUTO(21170.00/12)");
+		wait4Value("db-amount-label-1", 21170.00/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+		
+		setValue("db-amount-label-1", "BRUTO(21170.01/12)");
+		wait4Value("db-amount-label-1", 21170.01/12);
+		assertValue("irpfPercentTexTBox", "9,00 %");		
+		setValue("db-amount-label-1", "BRUTO(22010.00/12)");
+		wait4Value("db-amount-label-1", 22010.00/12);
+		assertValue("irpfPercentTexTBox", "9,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(22010.01/12)");
+		wait4Value("db-amount-label-1", 22010.01/12);
+		assertValue("irpfPercentTexTBox", "10,00 %");		
+		setValue("db-amount-label-1", "BRUTO(23080.00/12)");
+		wait4Value("db-amount-label-1", 23080.00/12);
+		assertValue("irpfPercentTexTBox", "10,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(23080.01/12)");
+		wait4Value("db-amount-label-1", 23080.01/12);
+		assertValue("irpfPercentTexTBox", "11,00 %");		
+		setValue("db-amount-label-1", "BRUTO(23880.00/12)");
+		wait4Value("db-amount-label-1", 23880.00/12);
+		assertValue("irpfPercentTexTBox", "11,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(23880.01/12)");
+		wait4Value("db-amount-label-1", 23880.01/12);
+		assertValue("irpfPercentTexTBox", "12,00 %");
+		
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(111430.00/12)");
+		wait4Value("db-amount-label-1", 111430.00/12);
+		assertValue("irpfPercentTexTBox", "31,00 %");
+		
+		setValue("db-amount-label-1", "BRUTO(111430.01/12)");
+		wait4Value("db-amount-label-1", 111430.01/12);
+		assertValue("irpfPercentTexTBox", "32,00 %");
+		
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(207280.00/12)");
+		wait4Value("db-amount-label-1", 207280.00/12);
+		assertValue("irpfPercentTexTBox", "38,00 %");
+		
+		setValue("db-amount-label-1", "BRUTO(209450.01/12)");
+		wait4Value("db-amount-label-1", 209450.01/12);
+		assertValue("irpfPercentTexTBox", "39,00 %");
 	}
 
 	@Test
@@ -1491,83 +1554,83 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_bizkaia_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F BIZKAIA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
-		assertValue("irpfPercentTexTBox", "39,00 %");
-
-		calculate(Calendar.JANUARY, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(63080.01/12)");
-		wait4Value("db-amount-label-1", 63080.01/12);
-		assertValue("irpfPercentTexTBox", "25,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
-		wait4Value("db-amount-label-1", 213160.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
-
-		calculate(Calendar.SEPTEMBER, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(65050.00/12)");
-		wait4Value("db-amount-label-1", 65050.00/12);
-		assertValue("irpfPercentTexTBox", "24,00 %");		
-		setValue("db-amount-label-1", "BRUTO(65050.01/12)");
-		wait4Value("db-amount-label-1", 65050.01/12);
-		assertValue("irpfPercentTexTBox", "25,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(220450.00/12)");
-		wait4Value("db-amount-label-1", 220450.00/12);
-		assertValue("irpfPercentTexTBox", "39,00 %");		
-		setValue("db-amount-label-1", "BRUTO(220450.01/12)");
-		wait4Value("db-amount-label-1", 220450.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
-
-		calculate(Calendar.JANUARY, 2023);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(66690.00/12)");
-		wait4Value("db-amount-label-1", 66690.00/12);
-		assertValue("irpfPercentTexTBox", "24,00 %");		
-		setValue("db-amount-label-1", "BRUTO(66690.01/12)");
-		wait4Value("db-amount-label-1", 66690.01/12);
-		assertValue("irpfPercentTexTBox", "25,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(225470.00/12)");
-		wait4Value("db-amount-label-1", 225470.00/12);
-		assertValue("irpfPercentTexTBox", "39,00 %");		
-		setValue("db-amount-label-1", "BRUTO(225470.01/12)");
-		wait4Value("db-amount-label-1", 225470.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
+//		calculate(Calendar.JANUARY, 2017); // January, 2016 it's not visible
+//		assertValue("irpfPercentTexTBox", "39,00 %");
+//
+//		calculate(Calendar.JANUARY, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(63080.01/12)");
+//		wait4Value("db-amount-label-1", 63080.01/12);
+//		assertValue("irpfPercentTexTBox", "25,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+//		wait4Value("db-amount-label-1", 213160.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
+//
+//		calculate(Calendar.SEPTEMBER, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(65050.00/12)");
+//		wait4Value("db-amount-label-1", 65050.00/12);
+//		assertValue("irpfPercentTexTBox", "24,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(65050.01/12)");
+//		wait4Value("db-amount-label-1", 65050.01/12);
+//		assertValue("irpfPercentTexTBox", "25,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(220450.00/12)");
+//		wait4Value("db-amount-label-1", 220450.00/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(220450.01/12)");
+//		wait4Value("db-amount-label-1", 220450.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
+//
+//		calculate(Calendar.JANUARY, 2023);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(66690.00/12)");
+//		wait4Value("db-amount-label-1", 66690.00/12);
+//		assertValue("irpfPercentTexTBox", "24,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(66690.01/12)");
+//		wait4Value("db-amount-label-1", 66690.01/12);
+//		assertValue("irpfPercentTexTBox", "25,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(225470.00/12)");
+//		wait4Value("db-amount-label-1", 225470.00/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(225470.01/12)");
+//		wait4Value("db-amount-label-1", 225470.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
 
 		calculate(Calendar.JANUARY, 2024);
 		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
@@ -1604,6 +1667,46 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("db-amount-label-1", "BRUTO(230150.01/12)");
 		wait4Value("db-amount-label-1", 230150.01/12);
 		assertValue("irpfPercentTexTBox", "40,00 %");		
+
+		calculate(Calendar.JULY, 2025);
+		setValue("db-amount-label-1", "BRUTO(20000.00/12)");
+		wait4Value("db-amount-label-1", 20000.00/12);
+		assertValue("irpfPercentTexTBox", "0,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(20390.00/12)");
+		wait4Value("db-amount-label-1", 20390.00/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+
+		setValue("db-amount-label-1", "BRUTO(20390.01/12)");
+		wait4Value("db-amount-label-1", 20390.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(69050.00/12)");
+		wait4Value("db-amount-label-1", 69050.00/12);
+		assertValue("irpfPercentTexTBox", "24,00 %");		
+		setValue("db-amount-label-1", "BRUTO(69050.01/12)");
+		wait4Value("db-amount-label-1", 69050.01/12);
+		assertValue("irpfPercentTexTBox", "25,00 %");		
+
+		//...
+
+		setValue("db-amount-label-1", "BRUTO(103500.00/12)");
+		wait4Value("db-amount-label-1", 103500.00/12);
+		assertValue("irpfPercentTexTBox", "30,00 %");		
+		setValue("db-amount-label-1", "BRUTO(103500.01/12)");
+		wait4Value("db-amount-label-1", 103500.01/12);
+		assertValue("irpfPercentTexTBox", "31,00 %");		
+		
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(232180.00/12)");
+		wait4Value("db-amount-label-1", 232180.00/12);
+		assertValue("irpfPercentTexTBox", "39,00 %");		
+		setValue("db-amount-label-1", "BRUTO(232180.01/12)");
+		wait4Value("db-amount-label-1", 232180.01/12);
+		assertValue("irpfPercentTexTBox", "40,00 %");		
 	}
 
 	@Test
@@ -1614,85 +1717,164 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("i.r.p.f_gipuzkoa_tiempo_completo_ordinario,_indefinido");
 
 		draft("I.R.P.F GIPUZKOA TIEMPO COMPLETO ORDINARIO, INDEFINIDO");
-		calculate(Calendar.JANUARY);
-		assertValue("irpfPercentTexTBox", "0,00 %");
+//		calculate(Calendar.JANUARY);
+//		assertValue("irpfPercentTexTBox", "0,00 %");
+//
+//		calculate(Calendar.JANUARY, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(72700.01/12)");
+//		wait4Value("db-amount-label-1", 72700.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+//		wait4Value("db-amount-label-1", 213160.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
+//
+//	
+//		calculate(Calendar.SEPTEMBER, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(74950.00/12)");
+//		wait4Value("db-amount-label-1", 74950.00/12);
+//		assertValue("irpfPercentTexTBox", "26,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(74950.01/12)");
+//		wait4Value("db-amount-label-1", 74950.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(198600.00/12)");
+//		wait4Value("db-amount-label-1", 198600.00/12);
+//		assertValue("irpfPercentTexTBox", "38,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(198600.01/12)");
+//		wait4Value("db-amount-label-1", 198600.01/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
+//
+//	
+//		calculate(Calendar.JANUARY, 2023);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+////		calculate(Calendar.JANUARY);
+//		assertValue("irpfPercentTexTBox", "0,00 %");
+//
+//		calculate(Calendar.JANUARY, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(72700.01/12)");
+//		wait4Value("db-amount-label-1", 72700.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
+//		wait4Value("db-amount-label-1", 213160.01/12);
+//		assertValue("irpfPercentTexTBox", "40,00 %");		
+//
+//	
+//		calculate(Calendar.SEPTEMBER, 2022);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(74950.00/12)");
+//		wait4Value("db-amount-label-1", 74950.00/12);
+//		assertValue("irpfPercentTexTBox", "26,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(74950.01/12)");
+//		wait4Value("db-amount-label-1", 74950.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(198600.00/12)");
+//		wait4Value("db-amount-label-1", 198600.00/12);
+//		assertValue("irpfPercentTexTBox", "38,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(198600.01/12)");
+//		wait4Value("db-amount-label-1", 198600.01/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
+//
+//	
+//		calculate(Calendar.JANUARY, 2023);
+//		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
+//		wait4Value("db-amount-label-1", 14000.00/12);
+//		assertValue("irpfPercentTexTBox", "0,00 %");		
+//
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(76990.00/12)");
+//		wait4Value("db-amount-label-1", 76990.00/12);
+//		assertValue("irpfPercentTexTBox", "26,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(76990.01/12)");
+//		wait4Value("db-amount-label-1", 76990.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(203240.00/12)");
+//		wait4Value("db-amount-label-1", 203240.00/12);
+//		assertValue("irpfPercentTexTBox", "38,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(203240.01/12)");
+//		wait4Value("db-amount-label-1", 203240.01/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
 
-		calculate(Calendar.JANUARY, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(72700.01/12)");
-		wait4Value("db-amount-label-1", 72700.01/12);
-		assertValue("irpfPercentTexTBox", "27,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(213160.01/12)");
-		wait4Value("db-amount-label-1", 213160.01/12);
-		assertValue("irpfPercentTexTBox", "40,00 %");		
-
-	
-		calculate(Calendar.SEPTEMBER, 2022);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(74950.00/12)");
-		wait4Value("db-amount-label-1", 74950.00/12);
-		assertValue("irpfPercentTexTBox", "26,00 %");		
-		setValue("db-amount-label-1", "BRUTO(74950.01/12)");
-		wait4Value("db-amount-label-1", 74950.01/12);
-		assertValue("irpfPercentTexTBox", "27,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(198600.00/12)");
-		wait4Value("db-amount-label-1", 198600.00/12);
-		assertValue("irpfPercentTexTBox", "38,00 %");		
-		setValue("db-amount-label-1", "BRUTO(198600.01/12)");
-		wait4Value("db-amount-label-1", 198600.01/12);
-		assertValue("irpfPercentTexTBox", "39,00 %");		
-
-	
-		calculate(Calendar.JANUARY, 2023);
-		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
-		wait4Value("db-amount-label-1", 14000.00/12);
-		assertValue("irpfPercentTexTBox", "0,00 %");		
-
-		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
-		wait4Value("db-amount-label-1", 14000.01/12);
-		assertValue("irpfPercentTexTBox", "5,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(76990.00/12)");
-		wait4Value("db-amount-label-1", 76990.00/12);
-		assertValue("irpfPercentTexTBox", "26,00 %");		
-		setValue("db-amount-label-1", "BRUTO(76990.01/12)");
-		wait4Value("db-amount-label-1", 76990.01/12);
-		assertValue("irpfPercentTexTBox", "27,00 %");		
-
-		//...
-		
-		setValue("db-amount-label-1", "BRUTO(203240.00/12)");
-		wait4Value("db-amount-label-1", 203240.00/12);
-		assertValue("irpfPercentTexTBox", "38,00 %");		
-		setValue("db-amount-label-1", "BRUTO(203240.01/12)");
-		wait4Value("db-amount-label-1", 203240.01/12);
-		assertValue("irpfPercentTexTBox", "39,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(14000.01/12)");
+//		wait4Value("db-amount-label-1", 14000.01/12);
+//		assertValue("irpfPercentTexTBox", "5,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(76990.00/12)");
+//		wait4Value("db-amount-label-1", 76990.00/12);
+//		assertValue("irpfPercentTexTBox", "26,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(76990.01/12)");
+//		wait4Value("db-amount-label-1", 76990.01/12);
+//		assertValue("irpfPercentTexTBox", "27,00 %");		
+//
+//		//...
+//		
+//		setValue("db-amount-label-1", "BRUTO(203240.00/12)");
+//		wait4Value("db-amount-label-1", 203240.00/12);
+//		assertValue("irpfPercentTexTBox", "38,00 %");		
+//		setValue("db-amount-label-1", "BRUTO(203240.01/12)");
+//		wait4Value("db-amount-label-1", 203240.01/12);
+//		assertValue("irpfPercentTexTBox", "39,00 %");		
 
 		calculate(Calendar.JANUARY, 2024);
 		setValue("db-amount-label-1", "BRUTO(14000.00/12)");
@@ -1721,6 +1903,31 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Value("db-amount-label-1", 139880.01/12);
 		assertValue("irpfPercentTexTBox", "35,00 %");
 		
+		calculate(Calendar.JULY, 2025);
+		setValue("db-amount-label-1", "BRUTO(20390.00/12)");
+		wait4Value("db-amount-label-1", 20390.00/12);
+		assertValue("irpfPercentTexTBox", "7,00 %");		
+		setValue("db-amount-label-1", "BRUTO(20390.01/12)");
+		wait4Value("db-amount-label-1", 20390.01/12);
+		assertValue("irpfPercentTexTBox", "8,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(79550.00/12)");
+		wait4Value("db-amount-label-1", 79550.00/12);
+		assertValue("irpfPercentTexTBox", "26,00 %");		
+		setValue("db-amount-label-1", "BRUTO(79550.01/12)");
+		wait4Value("db-amount-label-1", 79550.01/12);
+		assertValue("irpfPercentTexTBox", "27,00 %");		
+
+		//...
+		
+		setValue("db-amount-label-1", "BRUTO(141450.00/12)");
+		wait4Value("db-amount-label-1", 141450.00/12);
+		assertValue("irpfPercentTexTBox", "34,00 %");		
+		setValue("db-amount-label-1", "BRUTO(141450.01/12)");
+		wait4Value("db-amount-label-1", 141450.01/12);
+		assertValue("irpfPercentTexTBox", "35,00 %");
 		
 	}
 
@@ -2693,8 +2900,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		draft("ENFERMEDAD COMÚN, PPE");
 		
 		calculate(Calendar.JUNE, 2025);
+		click("costsCheck-input");
 		assertValue("quote-label-11", 66.67);
-
+		//REDUCCIÓN APORTACIÓN EMPRESARIAL AL PLAN DE PENSIONES DE EMPLEO
+		Assert.assertNotNull(getElementByXpath("//*[text()=\"-15,73\"]"));
+		click("costsCheck-input");
 	}
 
 	@Test

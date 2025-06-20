@@ -43,6 +43,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	private ProjectPanel projectPanel;
 	
 	private Integer customerId;
+	private Integer officeDomain;
 	
 	private static CommonServiceAsync commonService;
 	
@@ -53,13 +54,14 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 		}
 	}
 	
-	public ProjectModulePanel(ProjectModuleOptions options, Integer customer) {
+	public ProjectModulePanel(ProjectModuleOptions options, Integer customer, Integer officeDomain) {
 		super(customer <= 0 ? "Expedientes" : null);
 		
 		initializeCommonService();
 		
 		this.options = options;
-		this.customerId = customer > 0 ? customer : null;
+		this.customerId = customer;
+		this.officeDomain = officeDomain;
 		
 		if(null == customerId) {
 			addButtonsToolbar();
@@ -136,7 +138,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	}
 
 	private void showSellerDialog() {
-		 new AonProjectPanel( options.getDomainName(), options.getDomain(), options.getUser(), customerId, new AonProjectPanelCallback() {
+		 new AonProjectPanel( options.getDomainName(), options.getDomain(), options.getUser(), customerId, officeDomain, new AonProjectPanelCallback() {
 				
 				@Override
 				public void onCancel() {}
@@ -151,7 +153,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	public void onSearch() {
 		ProjectParams params = getWidgetParams();
 		centerPanel.clear();
-		projectPanel = new ProjectPanel(params, customerId) {
+		projectPanel = new ProjectPanel(params, customerId, officeDomain) {
 
 			@Override
 			protected void onProjectOpen(Project project) {
@@ -213,7 +215,7 @@ public abstract class ProjectModulePanel extends AonCustomDockLayout {
 	}
 	
 	private void getProjectTypes(Consumer<List<ProjectType>> finish) {
-		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<ProjectType>>() {
+		commonService.getAviableProjectType(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, new AsyncCallback<List<ProjectType>>() {
 			
 			@Override
 			public void onSuccess(List<ProjectType> projectTypes) {

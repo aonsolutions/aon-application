@@ -145,7 +145,7 @@ public interface IFinance {
 	public Map<String, Fee> getCustomerFeeSuggestion(CloseableAONContext ctx, int domainId, Integer itemId, Integer customerId, String customerFeeQuery);
 	
 	public void reorderCustomerFeeLine(CloseableAONContext ctx, int domainId, Integer customer);
-
+	
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Integer> getProductCategoriesSuggestion(CloseableAONContext ctx, int domainId, String query);
@@ -215,6 +215,7 @@ public interface IFinance {
 	// 	***********************************************
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
+	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Integer officeDomain, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
 	
 	// 	***********************************************
