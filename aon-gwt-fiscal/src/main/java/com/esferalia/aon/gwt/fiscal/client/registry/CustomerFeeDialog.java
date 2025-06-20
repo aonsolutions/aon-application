@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
@@ -35,6 +36,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -838,6 +840,30 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			
 		});
 	}
+	
+	private void getSellersSuggestion(String sellerQuery, Consumer<Void> end) {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
+				sellerSuggestions = sellerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(sellerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
+				sellerSuggestBox.showSuggestionList();
+				
+				end.accept(null);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
 
 	private void createInvoicingGroupPanel() {
 		invoicingGroupPanel = new HTMLPanel("");
@@ -920,7 +946,33 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		projectSuggestBox.addSelectionHandler(e -> {
 			projectSuggestBox.hideSuggestionList();
-			if(null != fee) fee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
+			Project project = projectSuggestions.get(projectSuggestBox.getValue());
+			if(null != fee) fee.setProject(project);
+			
+			// Set seller to fee
+			if(null != project && null != project.getProjectHolder() 
+					&& null != project.getProjectHolder().getTaskHolder() 
+					&& (null != project.getProjectHolder().getTaskHolder().getId() ||  !project.getProjectHolders().isEmpty() )) {
+				
+				Integer taskHolderId = null;
+				if(null != project.getProjectHolder().getTaskHolder().getId()) taskHolderId = project.getProjectHolder().getTaskHolder().getId();
+				else taskHolderId = project.getProjectHolders().stream().sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate())).findFirst().get().getTaskHolder().getId();
+					
+				SERVICE.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), taskHolderId, officeDomain, new AsyncCallback<Seller>() {
+
+					@Override
+					public void onFailure(Throwable arg0) {}
+
+					@Override
+					public void onSuccess(Seller seller) {
+						if(null != fee) 
+							fee.setSeller(seller);
+						
+						getSellersSuggestion(null, end -> sellerSuggestBox.setValue(seller.getName()));
+					}
+					
+				});	
+			}
 		});
 		
 		projectSuggestBox.addValueChangeHandler(e -> {
