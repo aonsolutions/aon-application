@@ -1065,7 +1065,7 @@ public class Mod2002024DAO  {
 			
 			// Datos grupo mercantil, no se graban si hemos desmarcado el caracter 0081
 			if (mod200.isNotChecked(Mod2002024Key.C0081)) {		
-				// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
+				// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL REVISAR SI SOLO SE TIENE EN CUENTA EL CARACTER 81 O ALGUNO MAS
 				mod200.setUltimateDocument("");            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
 //				mod200.setUltimateDocumentCountry(null);   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país // ESTE SE ELIMINA ESTE AÑO
 				mod200.setUltimateName("");				   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social

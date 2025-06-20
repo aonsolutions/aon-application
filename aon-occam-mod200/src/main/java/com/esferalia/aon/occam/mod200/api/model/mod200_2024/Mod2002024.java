@@ -65,7 +65,7 @@ public class Mod2002024 extends Mod200 {
 	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 
-	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // FALTA CAMPO NUEVO b - B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
+	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
 	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
 	private LinkedList<MinorEntity> minorEntities = new LinkedList<>();                    // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
 	private LinkedList<UteForeign> uteForeign = new LinkedList<>();                        // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
@@ -451,8 +451,6 @@ public class Mod2002024 extends Mod200 {
 			return 0.0;
 		}
 		Object o = v.getValue();
-		// FALTA
-//		if (o != null && o instanceof Double) {
 		if (o instanceof Double) {
 			return (Double) o;
 		}

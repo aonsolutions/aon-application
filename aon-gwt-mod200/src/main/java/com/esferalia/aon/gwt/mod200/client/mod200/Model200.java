@@ -264,6 +264,7 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {					
+			// DO NOTHING
 		}
 		public void onNew(int year) {
 			newModel(getOptions(), year);			
@@ -281,10 +282,12 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
+			// DO NOTHING
 		}
 
 		@Override
 		public void cleanInfoPanel() {
+			// DO NOTHING
 		}
 
 		public void reset(Mod200 mod200) {
@@ -409,6 +412,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2014) {
@@ -422,6 +426,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2015) {
@@ -435,6 +440,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2016) {
@@ -448,6 +454,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2017) {
@@ -461,6 +468,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2018) {
@@ -474,6 +482,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2019) {
@@ -487,6 +496,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2020) {
@@ -500,6 +510,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2021) {
@@ -513,6 +524,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2022) {
@@ -526,6 +538,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2023) {
@@ -539,6 +552,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2024) {
@@ -552,6 +566,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else {
@@ -679,7 +694,8 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-			}
+				// DO NOTHING
+			}			
 		});
 	}
 	
@@ -694,6 +710,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -708,6 +725,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -722,6 +740,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -736,6 +755,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -751,6 +771,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -766,6 +787,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -781,6 +803,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -796,6 +819,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -811,6 +835,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -826,6 +851,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -841,6 +867,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}	

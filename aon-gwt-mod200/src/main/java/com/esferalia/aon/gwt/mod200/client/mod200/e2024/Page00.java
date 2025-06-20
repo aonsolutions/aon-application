@@ -291,35 +291,6 @@ public class Page00 extends PageAbs {
 		periodPanel.add(periodStart);
 		periodPanel.add(toLabel);
 		periodPanel.add(periodEnd);
-	
-//		FlowPanel complementaryPanel = new FlowPanel();
-		
-//		complementary = new CheckBox();
-//		complementary.addClickHandler(event -> {
-//			complementaryReceipt.setEnabled(complementary.getValue());
-//			if (!complementary.getValue()) {
-//				complementaryReceipt.setValue("", true);
-//			}
-//			callback.getMod200Object().getMod200().setComplementary(complementary.getValue());
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(complementary);
-//		
-//		complementaryReceipt = new AonTextBox();
-//		complementaryReceipt.addStyleName(AON.CSS.aonMarginLeft());
-//		complementaryReceipt.setVisibleLength(13);
-//		complementaryReceipt.setMaxLength(13);
-//		complementaryReceipt.addValueChangeHandler(event -> {
-//			callback.getMod200Object().getMod200().setReplacedNumber(complementaryReceipt.getValue());			
-//			callback.markAsDirty();
-//		});
-//
-//		InlineLabel complementaryLabel = new InlineLabel(AON.MSG.complementaryReceipt());
-//		complementaryLabel.setStyleName(AON.CSS.aonMarginLeft());
-//		
-//		complementaryPanel.add(complementary);
-//		complementaryPanel.add(complementaryLabel);
-//		complementaryPanel.add(complementaryReceipt);
 		
 		agriculturalActivities = new CheckBox();
 		agriculturalActivities.addClickHandler(event -> {			
@@ -340,7 +311,6 @@ public class Page00 extends PageAbs {
 		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
 		   .addLabelWidgetRow("", periodPanel)
-//		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel)
 		   .addLabelWidgetRow(Mod2002024Key.X0001.getDescription(), agriculturalActivities)
 		   .addLabelWidgetRow(receiptNumberLabel, receiptNumber);
 		
@@ -369,6 +339,7 @@ public class Page00 extends PageAbs {
 				rectificationNumber.setValue("", true);
 			}
 			callback.getMod200Object().getMod200().setComplementary(rectification.getValue());
+			callback.getMod200Object().calculate(); // Marcar o desmarcar este check influye en el cálculo del modelo (Casilla 866)
 			callback.markAsDirty();
 		});
 		otherInputs.add(rectification);

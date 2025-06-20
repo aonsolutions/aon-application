@@ -30,25 +30,19 @@ import com.google.gwt.user.client.ui.Widget;
 public class Page21 extends PageAbs {
 
 	FlowPanel devPanel;
-//	FlowPanel recPanel;
 	FlowPanel payPanel;
 	FlowPanel ibanPanel;
 	FlowPanel zeroPanel;
 	RadioButton devTypeR;
 	RadioButton devTypeD;
 	RadioButton devTypeV;
-//	RadioButton payTypeH;
 	RadioButton payTypeU;
 	RadioButton payTypeI;
 	RadioButton payTypeG;
 	CheckBox zeroQuota;
 	AonDoubleBox amountD;
-//	AonDoubleBox amountR;
 	AonDoubleBox amountP;
-//	AonIbanTextBox ibanD;
-//	AonIbanTextBox ibanP;
 	AonIbanTextBox iban;
-//	private AonTextBox nrc;
 	
 	public Page21( Model2002024PageCallback callback ) {
 		super(callback);
@@ -128,40 +122,13 @@ public class Page21 extends PageAbs {
 		amountD.addStyleName(AON.CSS.aonMarginLeft());
 		devPanel2.add(amountD);		
 		devPanel.add(devPanel2);
-
-//		FlowPanel devPanel3 = new FlowPanel();
-//		devPanel3.addStyleName(AON.CSS.aonMarginLeft());
-//		devPanel3.addStyleName(AON.CSS.aonMarginTop());
-//		devPanel3.add(new InlineLabel(AON.MSG.iban()));
-//		
-//		ibanD = new AonIbanTextBox(getSuggestOracle(),true);
-//		ibanD.addStyleName(AON.CSS.aonMarginLeft());
-//		ibanD.addSelectionHandler(event -> {
-//			Suggestion suggestion = event.getSelectedItem();
-//			if (suggestion instanceof IbanSuggestion) {
-//				IbanSuggestion is = (IbanSuggestion) suggestion;
-//				ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
-//				callback.getMod200Object().getMod200().setIban(ibanD.getValue());
-//				callback.getMod200Object().getMod200().setBic(ibanD.getBic());
-//			} else {
-//				ibanD.setValue(suggestion.getReplacementString());	
-//			}
-//			callback.markAsDirty();			
-//		});		
-//		otherInputs.add(ibanD);
-//		addValueChangeHandlerIban(ibanD);
-//		
-//		devPanel3.add(ibanD);
-//		devPanel.add(devPanel3);
 		
 		basePanel.add(devPanel);
 		
 		// Rectificación
-		// FALTA - QUE SOLO APAREZCA CUANDO ES RECTIFICATIVA
-//		if (callback.getMod200Object().getMod200().isComplementary()) {
-			FlexTable tableR = addTable("Rectificaci\u00F3n");
-			paintKey(tableR, Mod2002024Key.LQ866, 0, false, true);
-//		}
+		
+		FlexTable tableR = addTable("Rectificaci\u00F3n");
+		paintKey(tableR, Mod2002024Key.LQ866, 0, false, true);
 
 		// Ingreso
 		
@@ -173,23 +140,12 @@ public class Page21 extends PageAbs {
 		payPanel1.addStyleName(AON.CSS.aonMarginTop());		
 		
 		payTypeI = new RadioButton("devTypeButton");
-//		payTypeI.setText(AON.MSG.payInAccount());
 		payTypeI.setText("Adeudo en cuenta (Ingreso)");		
 		payTypeI.addClickHandler(event -> {
 			callback.getMod200Object().getMod200().setPayType("I");
 			callback.markAsDirty();				
 		});
 		otherInputs.add(payTypeI);
-		
-//		payTypeH = new RadioButton("devTypeButton");
-//		payTypeH.addStyleName(AON.CSS.aonMarginLeft());
-////		payTypeH.setText(AON.MSG.cash());
-//		payTypeH.setText("En efectivo (obsoleto)");
-//		payTypeH.addClickHandler(event -> {
-//			callback.getMod200Object().getMod200().setPayType("H");
-//			callback.markAsDirty();				
-//		});
-//		otherInputs.add(payTypeH);
 		
 		payTypeU = new RadioButton("devTypeButton");
 		payTypeU.addStyleName(AON.CSS.aonMarginLeft());
@@ -210,7 +166,6 @@ public class Page21 extends PageAbs {
 		otherInputs.add(payTypeG);
 		
 		payPanel1.add(payTypeI);
-//		payPanel1.add(payTypeH);
 		payPanel1.add(payTypeU);
 		payPanel1.add(payTypeG);
 		payPanel.add(payPanel1);
@@ -225,31 +180,6 @@ public class Page21 extends PageAbs {
 		payPanel2.add(amountP);
 		payPanel.add(payPanel2);
 		
-//		FlowPanel payPanel3 = new FlowPanel();
-//		payPanel3.addStyleName(AON.CSS.aonMarginLeft());
-//		payPanel3.addStyleName(AON.CSS.aonMarginTop());
-//		payPanel3.add(new InlineLabel(AON.MSG.iban()));
-//		
-//		ibanP = new AonIbanTextBox(getSuggestOracle(),true);
-//		ibanP.addStyleName(AON.CSS.aonMarginLeft());
-//		ibanP.addSelectionHandler(event -> {
-//			Suggestion suggestion = event.getSelectedItem();
-//			if (suggestion instanceof IbanSuggestion) {
-//				IbanSuggestion is = (IbanSuggestion) suggestion;
-//				ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
-//				callback.getMod200Object().getMod200().setIban(ibanP.getValue());
-//				callback.getMod200Object().getMod200().setBic(ibanP.getBic());
-//			} else {
-//				ibanP.setValue(suggestion.getReplacementString());
-//			}
-//			callback.markAsDirty();
-//		});		
-//		otherInputs.add(ibanP);
-//		addValueChangeHandlerIban(ibanP);		
-//	
-//		payPanel3.add(ibanP);
-//		payPanel.add(payPanel3);
-				
 		FlowPanel payPanel4 = new FlowPanel();
 		payPanel4.addStyleName(AON.CSS.aonMarginLeft());
 		payPanel4.addStyleName(AON.CSS.aonMarginTop());
@@ -304,6 +234,7 @@ public class Page21 extends PageAbs {
 		basePanel.add(ibanPanel);
 		
 		// Abono / Compensación
+		
 		FlexTable table2 = addTable("Abono / Compensaci\u00F3n");
 		paintDescription(table2, "Abono por conversi\u00F3n de activos por impuesto diferido (art. 130 LIS)", 0, 0, true);
 		paintKeyField(table2, Mod2002024Key.BN1020, 0, 1, true, "A", false);
@@ -363,13 +294,10 @@ public class Page21 extends PageAbs {
 		devTypeD.setValue(false);
 		devTypeV.setValue(false);
 		amountD.setValue(0.0);
-//		ibanD.setValue(null);
-//		payTypeH.setValue(false);
 		payTypeU.setValue(false);
 		payTypeI.setValue(false);
 		payTypeG.setValue(false);
 		amountP.setValue(0.0);
-//		ibanP.setValue(null);
 		iban.setValue(null);
 		zeroQuota.setValue(false);
 		zeroQuota.setEnabled(false);
@@ -386,7 +314,6 @@ public class Page21 extends PageAbs {
 			devTypeR.setValue("R".equals(mod200.getDevType()));
 			devTypeD.setValue("D".equals(mod200.getDevType()));
 			devTypeV.setValue("V".equals(mod200.getDevType()));
-//			ibanD.setValue(mod200.getIban(),mod200.getBic());
 			iban.setValue(mod200.getIban(),mod200.getBic());
 			amountD.setValue( mod200.getAmount() );	
 		} else if ("I".equals( mod200.getResultType()) ) {
@@ -395,18 +322,13 @@ public class Page21 extends PageAbs {
 			payPanel.setVisible(true);
 			ibanPanel.setVisible(true);
 			payTypeU.setValue("U".equals(mod200.getPayType()));
-//			payTypeH.setValue("H".equals(mod200.getPayType()));
 			payTypeI.setValue("I".equals(mod200.getPayType()));
 			payTypeG.setValue("G".equals(mod200.getPayType()));
-//			ibanP.setValue(mod200.getIban(),mod200.getBic());
 			iban.setValue(mod200.getIban(),mod200.getBic());
 			amountP.setValue( mod200.getAmount() );	
 		} else if ("N".equals( mod200.getResultType()) ) {
 			payPanel.setVisible(false);
 			devPanel.setVisible(false);
-			// FALTA - CASILLA 866 DISTINTO DE CERO, SE HABILITA TAMBIEN IBAN, DEPENDERA AL FINAL DE COMO SE CALCULE LA CASILLA 866 Y COMO SE CONTROLE LAS RECTIFICATIVAS
-			// CREO QUE NO SE NECESITA PORQUE SI 866 LLEVA CONTENIDO SE GRABARA COMO DEVOLUCION AUNQUE LUEGO EL MODELO 200 SALGA COMO RESULTADO CERO
-//			ibanPanel.setVisible(callback.getMod200Object().getDoubleValue(Mod2002024Key.LQ866) > 0.0);
 			ibanPanel.setVisible(false);
 			zeroPanel.setVisible(true);
 			zeroQuota.setValue(true);
