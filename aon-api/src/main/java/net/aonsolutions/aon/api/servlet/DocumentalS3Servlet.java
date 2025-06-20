@@ -866,16 +866,20 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             LocalDateTime now = LocalDateTime.now();
         	byte[] file = S3rDoc.download(doc.getS3key(), doc.getS3bucket());
             HttpPost post = new HttpPost(url);
+            String str = Integer.toString(orden);
+            if(str.length() == 1) {
+            	str = "0" + str;
+            }
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(StandardCharsets.UTF_8);
-            builder.addTextBody("key", "invoices/" + api.getDomain().getName() + "/" + document + "/" + api.getUser().getLogin() + "/" + now.format(formatter) + "/" + orden + Base64.getEncoder().encodeToString(doc.getName().getBytes()) + "." + doc.getMimetype().getExtension());
+            builder.addTextBody("key", "invoices/" + api.getDomain().getName() + "/" + document + "/" + api.getUser().getLogin() + "/" + now.format(formatter) + "/" + str + "_bidoq_" + Base64.getEncoder().encodeToString(doc.getName().getBytes()) + "." + doc.getMimetype().getExtension());
             builder.addTextBody("success_action_status", "201");
             builder.addTextBody("Content-Type", doc.getMimetype().getName());
             builder.addBinaryBody("file", file);
             HttpEntity multipart = builder.build();
             post.setEntity(multipart);
             try (CloseableHttpResponse response = client.execute(post)) {
-                String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             }
             return true;
         } catch (Exception e) {
