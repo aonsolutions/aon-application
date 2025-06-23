@@ -106,7 +106,6 @@ export class AonElement extends HTMLElement{
     return this.getElement(this.ROOT_PANEL);
   }
 
-
   // rootPanel(element) {
   //   let rp = this.getRootPanel();
   //   if(rp) {

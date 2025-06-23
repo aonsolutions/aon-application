@@ -96,29 +96,9 @@ export class AonHome extends AonElement {
                   color: '#ffffff',
                   flexDirection: 'row'
               }, sidenav);
-              aonHeader.buildApp(app,sidenav);
+              aonHeader.buildApp(app, sidenav);
               aonHeader.setVisibleLogo(!appEl);
               aonHeader.setVisibleApp(appEl);
-          } else if(app == APPS || app == APPLICATIONS){
-            let appEl = aonMenu.buildApp(PLANS, {
-              height: '32px',
-              color: '#ffffff',
-              flexDirection: 'row'
-            }, sidenav);
-            aonHeader.buildApp(PLANS,sidenav);
-            aonHeader.setVisibleLogo(!appEl);
-            aonHeader.setVisibleApp(PLANS);
-            /*
-              let appEl = aonMenu.buildApp(NEW_APPS, 
-                  {
-                      height: '32px',
-                      color: '#ffffff',
-                      flexDirection: 'row'
-                  }, sidenav);
-                  aonHeader.buildApp(NEW_APPS,sidenav);
-                  aonHeader.setVisibleLogo(!appEl);
-                  aonHeader.setVisibleApp(NEW_APPS);
-             */
           } else {
               aonHeader.setVisibleApp(false);
               aonHeader.setVisibleLogo(true);
@@ -129,16 +109,13 @@ export class AonHome extends AonElement {
           let appName = app.app[0].toUpperCase() + app.app.slice(1);
           aonHeader.setClassName(`${CSS.AON_HEADER} ${CSS.AON_HEADER}${appName}`); 
         });
-//		this.appendChild(aonMenu);
         content.appendChild(aonMenu);
 
 		let rootPanel = this.createElement(TAG.DIV);
 		rootPanel.id = this.ROOT_PANEL;
 		rootPanel.className = "rootPanel";
 		rootPanel.style.overflowY = "auto";
-//		this.appendChild(rootPanel);
 		content.appendChild(rootPanel);
-
 		this.appendChild(content);
 
 //

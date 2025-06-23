@@ -1,11 +1,11 @@
 import { AonElement } from '../components/AonElement.js';
 import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, 
-  AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, PLANS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps,
+ NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, PLANS, SUPERSET, getConstPlans,
   COMMERCE, OFFICE, GARAGE, ACADEMY, ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, 
   TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, 
   MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU
 } from "../services/app.js"
-import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
 import * as GWT from '../gwt/gwt.js';
@@ -46,7 +46,6 @@ import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
-import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
 import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { AonConsoleMenu } from './console/aon-console-menu.js';
@@ -73,7 +72,7 @@ const OPENED = 'opened';
 const APP = 'app';
 
 export class AonNewMenu extends AonElement {
-	AON_MENU_TOPNAV;
+    AON_MENU_TOPNAV;
 	AON_MENU_LEFTOP;
 	AON_MENU_SIDENAV;
 	AON_MENU_APP_OPTIONS;
@@ -147,21 +146,18 @@ export class AonNewMenu extends AonElement {
 	init() {
 		this.setAttribute('opened', true);
 		return new Promise((resolve, reject) => {
-			this.buildDur()
-			.then(()=> {
+			this.buildDur().then(()=> {
 				this.clear();
 				this.build();
 				resolve();
-			})
-			.catch(reject)
-			;
+			}).catch(reject);
 		});
 	}
 
 	rootPanelMenu(menu) {
 		const dur = this.getDur();
-		menu.getDur = function () { 
-			return dur; 
+		menu.getDur = function () {
+			return dur;
 		};
 		this.rootPanel(menu);
 	}
@@ -175,8 +171,6 @@ export class AonNewMenu extends AonElement {
 		const suiteApps = TOP_MENU_APPS.filter(app => this.isApp(app));
 		const suiteNoApps = TOP_MENU_APPS.filter(app => !this.isApp(app));
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-//			this.rootPanel(new AonNewDesktop(portalApps,portalNoApps,suiteApps,suiteNoApps));
-            this.rootPanel(new AonPlans());
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -188,8 +182,7 @@ export class AonNewMenu extends AonElement {
 			applications.className = 'aonMenuLeftopStart';
 		} else {
 			switch (app.app) {
-				case PLANS:
-//					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+				case PLANS.app:
 					this.rootPanel(new AonPlans());
 					break;
 				case NEW.app:
@@ -272,9 +265,6 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new Superset(this.supersetDashboard));
 					return;
 				default/*Apps.HOME*/:
-              /*
-					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
-              */
 					break;
             }
         }
@@ -395,12 +385,6 @@ export class AonNewMenu extends AonElement {
 		ul.classList.add(CSS.AON_UL);
 		ul.id = 'aonMenuList';
 		ul.classList.add("aonNewMenuSideNavUl");
-
-		const newApps = getConstNewApps(this.getDur(), this.isAyudaT());
-		const index = MENU_APPS.findIndex(app => app.app === CONSTANT.APPS);
-		if (index !== -1) {
-			MENU_APPS[index] = newApps;  // Reemplazamos el valor segun donde estemos
-		}
 
 		for (let item in MENU_APPS) {
 			if (this.isSidenavApp(MENU_APPS[item])) {
@@ -741,7 +725,6 @@ export class AonNewMenu extends AonElement {
 		const viewportY = ev.clientY;
 		let elements = document.elementsFromPoint(viewportX, viewportY);
 		for ( let element of elements ){
-			console.log(element.tagName + ": "  + (element === el));
 			if ( element === el ){
 				return true;
 			}
@@ -1061,12 +1044,12 @@ export class AonNewMenu extends AonElement {
 		if (MenuApps.COMUNICA.app === app.app) 
 			return !this.getDur().isPayroll() 
 				&& (this.getDur().isComunica() 
-				|| 	this.getDur().isSaltra());			
+				|| 	this.getDur().isSaltra());
 		if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
 		if (MenuApps.TIMECONTROL.app === app.app)
 			return !this.getDur().isDomainManagementAvailable()  && 
-				( 	this.getDur().isTimecontrol()   
+				( 	this.getDur().isTimecontrol()
 				|| 	this.getDur().isTimecontrolManager() );
 		if (MenuApps.INVOICE.app === app.app)
 			return this.getDur().isInvoice();
@@ -1082,7 +1065,9 @@ export class AonNewMenu extends AonElement {
 				;
 		if (HOME.app === app.app)
 			return !this.getDur().isConsole();
-		if (APPS.app === app.app)
+		if (PLANS.app === app.app)
+			return !this.getDur().isConsole();
+		if (APPS.app === app.app && (isAyudaT && (dur.isAdmin() || dur.isEnterprise())))
 			return !this.getDur().isConsole();
 		if (SUPERSET.app === app.app)
 			return !this.getDur().isConsole();
@@ -1267,13 +1252,10 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(aonMessengerChat);
 
 					this.isElementLoaded("#sourceTask").then(sourceTaskSelect => {
-						console.log(sourceTaskSelect);
 						sourceTaskSelect.value = "request";
 						this.isElementLoaded("#processType").then(processTypeSelect => {
-							console.log(processTypeSelect);
 							processTypeSelect.value = "2";
 							this.isElementLoaded("#aonMessengerToolbarHeaderTitleSectionMenuIconButton").then(sidenavBtn => {
-								console.log(sidenavBtn);
 								sidenavBtn.click();
 							});
 						});

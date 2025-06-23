@@ -16,7 +16,6 @@ import { AonDialog } from "./aon-dialog.js";
 import { AonToast } from "./aon-toast.js";
 
 export class AonApplication extends AonElement {
-  
   SIDENAV;
   SIDENAV_RIGHT;
   TOOLBAR;
@@ -105,7 +104,6 @@ export class AonApplication extends AonElement {
     this.MOBILE_SIDENAV = this.id + 'MobileSidenav';
     this.MOBILE_SIDENAV_CONTENT = this.MOBILE_SIDENAV + 'Content';
   }
-
 
   build() {
     let toolbar = new AonToolbar();
@@ -208,10 +206,10 @@ export class AonApplication extends AonElement {
     this.appendChild(div);
 
     div.onclick = (event) => {
-			if (event.target === div) {
-				this.closeMobileSidenav();
-			}
-		}
+      if (event.target === div) {
+        this.closeMobileSidenav();
+      }
+    }
   }
 
   startLoader() {
@@ -347,7 +345,6 @@ export class AonApplication extends AonElement {
     div.appendChild(content);
   }
 
-
   addSidenavWidget2(data, element) {
     this.addSidenavOptionsTitle(data);
 
@@ -458,7 +455,7 @@ export class AonApplication extends AonElement {
     return div;
   }
 
-   addSidenavOptionsList(data, options) {
+  addSidenavOptionsList(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     if(data && data.id && sidenav){
       let div = this.getElement(sidenav.id + data.id);
@@ -965,7 +962,6 @@ export class AonApplication extends AonElement {
     d.open();
   }
 
-
   removeBackgroundSidenavAll(color){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((li) => {
@@ -1085,10 +1081,22 @@ export class AonApplication extends AonElement {
     if(toolbar) toolbar.removeButtons();
   }
 
+  removeToolbar() {
+    let toolbar = this.getElement(this.TOOLBAR);
+    if (toolbar) {
+      toolbar.remove();
+    }
+  }
+
   setContent(element) {
     this.clearElementById(this.CONTENT);
     let content = this.getElement(this.CONTENT);
     if(content) content.appendChild(element);
+  }
+
+  addContent(element) {
+    let content = this.getElement(this.CONTENT);
+    if (content) content.appendChild(element);
   }
 
   addFloatOption(action, fn) {
@@ -1157,6 +1165,13 @@ export class AonApplication extends AonElement {
 
   getSidenav() {
     return this.getElement(this.SIDENAV);
+  }
+
+  removeSidenav() {
+    let sidenav = this.getSidenav();
+    if (sidenav) {
+      sidenav.remove();
+    }
   }
 
   getRightSidenav() {

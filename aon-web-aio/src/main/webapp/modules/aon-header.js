@@ -1041,7 +1041,6 @@ export class AonHeader extends AonElement {
 		else if(!company.active) icon = 'domain_disabled';
 		
 		return icon;
-		
 	}
 	
 	showDesktop() {
@@ -1108,8 +1107,6 @@ export class AonHeader extends AonElement {
 			callback();
 		});
 	}
-	
-	
 
 	buildMenuLeftop() {
 		let aonMenuLeftop = this.getElement(this.AON_MENU_LEFTOP);
