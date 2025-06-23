@@ -431,8 +431,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 	private void deleteNote(RegistryNote note, AonTableButton btn, Consumer<Void> deletion) {
 		AonCustomDeleteTooltip aonCustomDeleteTooltip = new AonCustomDeleteTooltip(
 				note.getNoteType().equals(NoteType.MESSAGE)
-	            ? "\u00bfEliminar nota?"
-	            : "\u00bfEliminar observaci\u00f3n?",
+	            ? "Eliminar nota"
+	            : "Eliminar observaci\u00f3n",
 	            note.getNoteType().equals(NoteType.MESSAGE)
 	            ? "\u00bfSeguro que quiere eliminar la nota?"
 	            : "\u00bfSeguro que quiere eliminar la observaci\u00f3n?",
