@@ -12,7 +12,6 @@ import { NotificationUtils } from "../modules/notification/utils/NotificationUti
 import { AonApplication } from "../components/aon-application.js";
 import * as LS from '../services/localStorageService.js';
 
-
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export class AonNotificationPanel extends AonElement {
@@ -35,7 +34,7 @@ export class AonNotificationPanel extends AonElement {
 
     connectedCallback () {
         this.initialize();
-        this.build();   
+        this.build();
     }
 
     goAonNotification(){
@@ -131,22 +130,19 @@ export class AonNotificationPanel extends AonElement {
 
         if(res.source){
             let icon = new AonIcon();
-            icon.size = "40px";
+            if(!this.isNewStyle()){
+              icon.size = "40px";
+            }
             icon.classList.add("notificationPanelRowIcon");
             if(res.source == "DOCUMENTAL"){
                 icon.icon = "aon_new_documental";
-                icon.setAttribute("data-icon", icon.icon);
             }else if (res.source == "MESSENGER"){
                 icon.icon = "aon_new_messenger";
-                icon.setAttribute("data-icon", icon.icon);
             }else if (res.source == "COMUNICA"){
                 icon.icon = "aon_new_payroll";
-                icon.setAttribute("data-icon", icon.icon);
             }else if (res.source == "INVOICE"){
                 icon.icon = "aon_new_invoice";
-                icon.setAttribute("data-icon", icon.icon); 
-            }    
-            
+            }
             if(LS.isDarkBetaTheme())
             	icon.color = "var(--aonNewWhite)";
             else
@@ -177,7 +173,7 @@ export class AonNotificationPanel extends AonElement {
         let subDiv3 = this.createDiv();
         subDiv3.classList.add("notificationPanelRowSubDiv3");
         subDiv3.innerHTML = "( "+firstLetters(this.formatDate(res))+" )";
-        div.appendChild(subDiv1);   
+        div.appendChild(subDiv1);
         div.appendChild(subDiv3);
         div.appendChild(subDiv2);
 

@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -127,6 +128,8 @@ public abstract class Activity extends ResizeComposite {
 	}
 
 	// TABLA DATOS ACTIVIDAD
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	@UiField
 	HTMLPanel activityDataTable;
@@ -167,6 +170,7 @@ public abstract class Activity extends ResizeComposite {
 	protected Activity() {
 		cccWidget = new CCCWidgetImpl();
 		initWidget(uiBinder.createAndBindUi(this));
+		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
 		initializeView();
 	}
 	
@@ -291,10 +295,6 @@ public abstract class Activity extends ResizeComposite {
 	
 	public void hideActivityColumn() {
 		cccWidget.hideActivityColumn();
-	}
-
-	public void setActivityDraftCCCHeight() {
-		cccWidget.setActivityDraftCCCHeight();
 	}
 	
 	public void addWarningIcon(Widget widget) {

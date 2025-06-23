@@ -144,6 +144,7 @@ public class AyudatInvofoxCounters {
 		private String name;
 		private String document;
 		private double processed;	
+		private double duplicated;
 		
 		public String getName() {
 			return name;
@@ -167,10 +168,22 @@ public class AyudatInvofoxCounters {
 			this.processed = processed;
 			return this;
 		}
-		public void addProcessed(double processed) {
+		public Invofox addProcessed(double processed) {
 			this.processed = AonMathUtils.round(this.processed + processed);
+			return this;
 		}
 		
+		public double getDuplicated() {
+			return duplicated;
+		}
+		public Invofox setDuplicated(double duplicated) {
+			this.duplicated = duplicated;
+			return this;
+		}
+		public Invofox addDuplicated(double duplicated) {
+			this.duplicated = AonMathUtils.round(this.duplicated + duplicated);
+			return this;
+		}
 	}
 	
 
@@ -327,15 +340,20 @@ public class AyudatInvofoxCounters {
 						System.out.print(" " + document + " ---> ");
 						if (AonStringUtils.isNotBlank( document )) {
 							double processed = row.getCell( 3 ).getNumericCellValue();
+							double duplicated = row.getCell( 6 ).getNumericCellValue();
+							System.out.print( "processed , duplicated --> " + processed + " , " + duplicated);
 							Invofox invofox = map.get( document );
 							if (invofox == null) {
 								invofox = new Invofox()
 									.setDocument(document)
 									.setProcessed( processed )	
+									.setDuplicated( duplicated )
 									;
 								map.put(document, invofox);
 							} else {
-								invofox.addProcessed( processed );
+								invofox
+									.addProcessed( processed )
+									.addDuplicated( duplicated );
 							}
 						} else {
 							System.out.print(" EMPTY");
@@ -442,6 +460,7 @@ public class AyudatInvofoxCounters {
 				,"TaxId"
 				,"AON"
 				,"Processed"
+				,"Duplicated"
 				,"BD"
 				,"COMPANY ID"
 				,"COMPANY NIF"
@@ -476,6 +495,8 @@ public class AyudatInvofoxCounters {
 			cell.setCellStyle(decimalBoldStyle);
 			cell = addCell(invofox.getProcessed());
 			cell.setCellStyle(decimalBoldStyle);
+			cell = addCell(invofox.getDuplicated());
+			cell.setCellStyle(decimalBoldStyle);
 			addEmptyCell();
 			addEmptyCell();
 			addEmptyCell();
@@ -504,8 +525,11 @@ public class AyudatInvofoxCounters {
 			}
 			
 			if (!grouped || counter == 0) {
+				System.out.print( " ["+invofox.getProcessed() + " , "+ invofox.getDuplicated() +"]");
 				addCell(invofox.getProcessed());
+				addCell(invofox.getDuplicated());
 			} else {
+				addEmptyCell();
 				addEmptyCell();
 			}
 			if (domain != null) {

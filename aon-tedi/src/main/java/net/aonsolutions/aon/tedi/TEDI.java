@@ -44,7 +44,7 @@ public class TEDI {
 				fillAONContext( tctx );
 				ctx = tctx.getAONContext();
 			}
-			TediValidator.validateInvoice(ctx,result);
+			TediValidator.validateInvoice(ctx,tctx.getAonConfiguration(),result);
 		} catch (Exception e) {
 			throw new TediException(e.getMessage());
 		} finally {

@@ -31,13 +31,12 @@ import {AonStringUtils} from './utils/AonStringUtils.js'
 const AON_DIALOG_SEARCH = 'aon-dialog-search';
 
 class AonDialogSearch extends AonDialogMenu {
-	
 	constructor(){
-		super();	
+		super();
 	}
 	
 	close() {
-		this.hide();	
+		this.hide();
 	}
 	
 	hasContent(){
@@ -46,7 +45,6 @@ class AonDialogSearch extends AonDialogMenu {
 }
 
 export class AonHeader extends AonElement {
-
 	BASE_ID;
 	activeTimecontrol;
 	newTheme;
@@ -75,7 +73,7 @@ export class AonHeader extends AonElement {
 		this.initialize();
 		this.activeTimecontrol = false;
 		this.build();
-  }
+    }
 
 	initialize() {
 		this.BASE_ID = 'aonHeader';
@@ -530,7 +528,6 @@ export class AonHeader extends AonElement {
 					}
 			});
 		}
-		
 
 		let header1 = this.getElement("aonHeaderCompanyName")
 		header1.style.color = "var--(aonGrayHeaderButtonsColor)";
@@ -553,7 +550,6 @@ export class AonHeader extends AonElement {
 		let aonHeaderSearchDialogMenu = new AonDialogSearch();
 		aonHeaderSearchDialogMenu.id = this.AON_HEADER_SEARCH_DIALOG_MENU;
 		this.appendChild(aonHeaderSearchDialogMenu);
-
 	}
 
 	timeControlStatus(signin) {
@@ -593,7 +589,6 @@ export class AonHeader extends AonElement {
 	}
 
 	buildLogo() {
-
 		aonLogo.addEventListener('click', () => {
 			if(LS.getDomainId()){
 				this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
@@ -773,8 +768,7 @@ export class AonHeader extends AonElement {
 			icon.color = "var(--aonIcon)";
 			icon.classList.add("aonHeaderAppIcon");
 			div.appendChild(icon);
-		}
-		else{
+		} else {
 			if (app.cssIcon) {
 				const appColor = app.newColor || app.color;
 				let aonIcon = new AonIcon();
@@ -850,21 +844,21 @@ export class AonHeader extends AonElement {
 	}
 	
 	setVisibleApp(visible) {
-		this.setVisibleElement('aonHeaderApp', visible)
+		this.setVisibleElement('aonHeaderApp', visible);
 	}
 
 	setVisibleLogo(visible) {
-		this.setVisibleElement('aonLogo', visible)
+		this.setVisibleElement('aonLogo', visible);
 	}
 
 	setVisibleHomeButton(visible) {
-		// this.setVisibleElement('aonHeaderHomeButton', visible)
+		// this.setVisibleElement('aonHeaderHomeButton', visible);
 	}
 
 	setVisibleCompanyListButton(visible) {
-		this.setVisibleElement('aonHeaderCompanyListButton', visible);
+		this.setVisibleElement(this.AON_HEADER_COMPANY_LIST, visible);
 	}
-	
+
 	setVisibleElement(elementId, visible) {
 		if(this.getElement(elementId)){
 			if ( visible )

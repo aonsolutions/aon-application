@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,6 +51,9 @@ public abstract class Workplace extends ResizeComposite{
 	}
 
 	// TABLA DATOS CENTRO DE TRABAJO
+	
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	@UiField
 	HTMLPanel workplaceDescriptionPanel;
@@ -89,6 +93,7 @@ public abstract class Workplace extends ResizeComposite{
 
 	protected Workplace() {
 		initWidget(uiBinder.createAndBindUi(this));
+		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
 		initializeView();
 	}
 

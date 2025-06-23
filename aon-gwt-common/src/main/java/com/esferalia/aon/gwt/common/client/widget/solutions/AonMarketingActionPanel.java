@@ -451,7 +451,7 @@ public abstract class AonMarketingActionPanel extends SimplePanel {
 	}
 	
 	private void getAviableWorkgroups(Consumer<List<Workgroup>> success) {
-		commonService.getAviableWorkgroups(domainName, domainId, user, new AsyncCallback<List<Workgroup>>() {
+		commonService.getAviableWorkgroups(domainName, domainId, user, domainId, new AsyncCallback<List<Workgroup>>() {
 			
 			@Override
 			public void onSuccess(List<Workgroup> workgroups) {

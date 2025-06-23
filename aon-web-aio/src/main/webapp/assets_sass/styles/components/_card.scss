@@ -3,28 +3,41 @@
 aon-card{
   display       : block;
   border-radius : v.$border-radius;
-  .aonCard{
-    .aonCardTitle{
-      section{
-        padding     : v.$px-16 v.$padding;
-        font-weight : v.$font-weight-medium;
-        font-size   : v.$px-18;
-        &:empty {
-          display : none;
-        }
+  
+  .aonCardTitle{
+    section{
+      padding     : v.$px-16 v.$padding;
+      font-weight : v.$font-weight-medium;
+      font-size   : v.$px-18;
+      &:empty {
+        display : none;
       }
     }
+  }
+  .aonCardContent{
+    padding : v.$padding;
+    .card-list{
+      display: grid;
+      gap    : v.$gap;
+      .card-list-row{
+        display     : flex;
+        align-items : center;
+        gap         : v.$px-8;
+      }
+    }
+  }
+  // Listado como si fueran botoones
+  &.card-list-buttom{
     .aonCardContent{
-      >div{
+      padding : v.$px-0;
+      .buttoms{
         padding : v.$px-16 v.$px-0 v.$px-16 v.$px-0;
-        .card-list, .card-list-buttom{
-          padding     : v.$px-8 v.$padding v.$px-8 v.$padding;
+        .buttom{
+          padding     : v.$px-8 v.$padding;
           display     : flex;
           align-items : center;
           gap         : v.$px-8;
-        }
-        .card-list-buttom{
-          cursor : pointer;
+          cursor      : pointer;
         }
       }
     }

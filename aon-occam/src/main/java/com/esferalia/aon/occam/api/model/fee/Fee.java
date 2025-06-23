@@ -48,6 +48,32 @@ public class Fee implements Serializable{
 	
 	private LinkedList<String> segments;
 	
+	public void duplicate(Fee fee) {
+		this.domain = fee.getDomain();
+		this.project = fee.getProject();
+		this.customer = fee.getCustomer();
+		this.line = fee.getLine();
+		this.item = fee.getItem();
+		this.description = fee.getDescription();
+		this.quantity = fee.getQuantity();
+		this.price = fee.getPrice();
+		this.netCost = fee.getNetCost();
+		this.totalNetPrice = fee.getTotalNetPrice();
+		this.totalPrice = fee.getTotalPrice();
+		this.discountExpr = fee.getDiscountExpr();
+		this.startDate = fee.getStartDate();
+		this.endDate = fee.getEndDate();
+		this.billingDate = fee.getBillingDate();
+		this.period = fee.getPeriod();
+		this.securityLevel = fee.getSecurityLevel();
+		this.invoicingGroup = fee.getInvoicingGroup();
+		this.seller = fee.getSeller();
+		this.workplace = fee.getWorkplace();
+		this.hasRItem = fee.hasRItem();
+		this.sellerSupport = fee.getSellerSupport();
+		this.sellerComercial = fee.getSellerComercial();
+	}
+	
 		
 	public Double getQuantity() {
 		return quantity;

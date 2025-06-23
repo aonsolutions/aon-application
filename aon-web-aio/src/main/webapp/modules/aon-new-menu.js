@@ -1,8 +1,10 @@
 import { AonElement } from '../components/AonElement.js';
-import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, NEW_APPS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps } from '../services/app.js';
-import {COMMERCE, OFFICE, GARAGE, ACADEMY} from  "../services/app.js";
-
-import {ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU} from "../services/app.js"
+import { Apps, HomeApps, MenuApps, AuxApps, DESKTOP_APPS, MENU_APPS, TOP_MENU_APPS, 
+  AON_APPS, NEW, HOME, AON_CLASSIC, APPS, APPLICATIONS, PLANS, SUPERSET, TOP_MENU_APPS_HOME, getConstNewApps,
+  COMMERCE, OFFICE, GARAGE, ACADEMY, ACCOUNTING_MENU, COMMERCIAL_MENU, GROUPWARE_MENU, MANAGEMENT_MENU, 
+  TREASURY_MENU, WAREHOUSE_MENU, FISCAL_MENU, PAYROLL_MENU, 
+  MARKETING_MENU, CONFIGURATION_MENU, ENTERPRISE_MENU, CONSOLE_MENU
+} from "../services/app.js"
 import { MSG, CONSTANT, AON_ICONS, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonDocumental } from '../modules/documental/aon-documental.js';
 import '../modules/project/aon-project-panel.js';
@@ -31,7 +33,7 @@ import * as OPTION from '../modules/invoice/InvoiceOptions.js';
 import { TASK_SOURCE } from '../modules/messenger/MessengerEnums.js';
 import { uploadDocuments } from "../modules/documental/DocumentalUtils.js";
 
-import { AonNewDesktop } from './aon-new-desktop.js';
+import { AonPlans } from './aon-plans';
 import { AonAccountingMenu } from './accounting/aon-accounting-menu.js';
 import { AonCommercialMenu } from './commercial/aon-commercial-menu.js';
 import { AonManagementMenu } from './management/aon-management-menu.js';
@@ -45,6 +47,7 @@ import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
 import { AonGarageMenu } from './garage/aon-garage-menu.js';
 import { AonConfigurationMenu } from './configuration/aon-configuration-menu.js';
+import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
 import { AonEnterpriseMenu } from './enterprise/aon-enterprise-menu.js';
 import { AonConsoleMenu } from './console/aon-console-menu.js';
 import { Superset } from './superset/superset.js';
@@ -172,7 +175,8 @@ export class AonNewMenu extends AonElement {
 		const suiteApps = TOP_MENU_APPS.filter(app => this.isApp(app));
 		const suiteNoApps = TOP_MENU_APPS.filter(app => !this.isApp(app));
 		if (!this.isApp(app) && !excludedApps.includes(app.app)) {
-			this.rootPanel(new AonNewDesktop(portalApps,portalNoApps,suiteApps,suiteNoApps));
+//			this.rootPanel(new AonNewDesktop(portalApps,portalNoApps,suiteApps,suiteNoApps));
+            this.rootPanel(new AonPlans());
 			let headerapp = this.getElement("aonHeaderApp");
 			headerapp.style.display = "none";
 			let logo = this.getElement("aonLogo");
@@ -184,8 +188,9 @@ export class AonNewMenu extends AonElement {
 			applications.className = 'aonMenuLeftopStart';
 		} else {
 			switch (app.app) {
-				case NEW_APPS:
-					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+				case PLANS:
+//					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+					this.rootPanel(new AonPlans());
 					break;
 				case NEW.app:
 					this.removeOldNewDialogContents();
@@ -267,7 +272,9 @@ export class AonNewMenu extends AonElement {
 					this.rootPanel(new Superset(this.supersetDashboard));
 					return;
 				default/*Apps.HOME*/:
+              /*
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
+              */
 					break;
             }
         }
@@ -318,7 +325,7 @@ export class AonNewMenu extends AonElement {
 		case MARKETING_MENU.app:
 			return new AonMarketingMenu();
 		case CONFIGURATION_MENU.app:
-			return new AonConfigurationMenu();
+			return new AonConfiguration();
 		case ACADEMY.app:
 			return new AonAcademyMenu();
 		case COMMERCE.app:
@@ -430,35 +437,37 @@ export class AonNewMenu extends AonElement {
 	buildMenuTopnav() {
 		const showAllApps = LS.isAppMenu();
 		let aonMenuTopnav = this.getElement(this.AON_MENU_TOPNAV);
-		let div = this.createElement(TAG.DIV);
-		div.classList.add("aonNewMenuTopNavDiv");
-		div.id = "aonTopMenuDiv";
+		let aonTopMenuDiv = this.createElement(TAG.DIV);
+		aonTopMenuDiv.classList.add("aonNewMenuTopNavDiv");
+		aonTopMenuDiv.id = "aonTopMenuDiv";
 
 		const excludedApps = ['commerce', 'garage', 'academy', 'office'];
 
-			for (let item in TOP_MENU_APPS) {
+		for (let item in TOP_MENU_APPS) {
+			let app = TOP_MENU_APPS[item];
 
-				let app = TOP_MENU_APPS[item];
-				
-				if (!this.isApp(app)) {
-					if (!showAllApps || excludedApps.includes(app.app)) {
-						continue;
-					} else {
-						let appElement = this.buildTopApp(app);
+			if (!this.isApp(app)) {
+				if (!showAllApps || excludedApps.includes(app.app)) {
+					continue;
+				} else {
+					let appElement = this.buildTopApp(app);
 
-						appElement.classList.add("aonNewMenuTopNavAppElement");
-						app.color = "var(--aonTopMenuNotAvailable)";
-						div.appendChild(appElement);
-						continue;
-					}
-				}
-
-				let appElement = this.buildTopApp(app);
-				div.appendChild(appElement);
+					appElement.classList.add("aonNewMenuTopNavAppElement");
+					app.color = "var(--aonTopMenuNotAvailable)";
+					aonTopMenuDiv.appendChild(appElement);
+					continue;
+				} 
 			}
+            let appElement = this.buildTopApp(app);
+            aonTopMenuDiv.appendChild(appElement);
+		}
 
 		this.clearElement(aonMenuTopnav);
-		aonMenuTopnav.appendChild(div);
+		aonMenuTopnav.appendChild(aonTopMenuDiv);
+		
+		if ( aonTopMenuDiv.childElementCount === 0 ){
+			this.hideTopNav();
+		}
 	}
 
 	reloadTopNav() {
@@ -1008,16 +1017,17 @@ export class AonNewMenu extends AonElement {
 
 	isApp(app) {
 		if (OFFICE.app === app.app){
-			return (this.isBeta() || this.isAyudaTorInfoautonomos()) && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
-		}
-
+			return (this.isBeta() || this.isAyudaTorInfoautonomos()) 
+				&& this.getDur().getDomain().isOffice() 
+				//&& this.getDur().isManagementManager()
+				;
+        }
 		if (ACADEMY.app === app.app)
 			return this.getDur().isAcademy();
 		if (COMMERCE.app === app.app)
 			return this.getDur().isCommerce();
 		if (GARAGE.app === app.app)
 			return this.getDur().isGarage();
-
 		if (COMMERCIAL_MENU.app === app.app)
 			return this.getDur().isCommercial();
 		if (MANAGEMENT_MENU.app === app.app)
@@ -1043,51 +1053,63 @@ export class AonNewMenu extends AonElement {
 		if (CONSOLE_MENU.app === app.app)
 			return this.getDur().isConsole();
 		if (MenuApps.ACCOUNTING.app === app.app)
-			return this.getDur().isAccounting();
-		else if (MenuApps.FISCAL.app === app.app)
-			return this.getDur().isFiscal();
-		else if (MenuApps.PAYROLL.app === app.app)
-			return this.getDur().isPayroll();
-		else if (MenuApps.COMUNICA.app === app.app) 
-			return !this.getDur().isPayroll() && (this.getDur().isComunica() || this.getDur().isSaltra());			
-		else if (MenuApps.DOCUMENTAL.app === app.app)
+			return this.getDur().isAccountingUser();
+		if (MenuApps.FISCAL.app === app.app)
+			return this.getDur().isFiscalUser();
+		if (MenuApps.PAYROLL.app === app.app)
+			return this.getDur().isPayrollUser();
+		if (MenuApps.COMUNICA.app === app.app) 
+			return !this.getDur().isPayroll() 
+				&& (this.getDur().isComunica() 
+				|| 	this.getDur().isSaltra());			
+		if (MenuApps.DOCUMENTAL.app === app.app)
 			return this.getDur().isDocumental();
-		else if (MenuApps.TIMECONTROL.app === app.app)
-			return this.getDur().isTimecontrol();
-		else if (MenuApps.INVOICE.app === app.app)
+		if (MenuApps.TIMECONTROL.app === app.app)
+			return !this.getDur().isDomainManagementAvailable()  && 
+				( 	this.getDur().isTimecontrol()   
+				|| 	this.getDur().isTimecontrolManager() );
+		if (MenuApps.INVOICE.app === app.app)
 			return this.getDur().isInvoice();
-		else if (MenuApps.MESSENGER.app === app.app)
+		if (MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if (AON_CLASSIC.app === app.app)
+		if (AON_CLASSIC.app === app.app)
 			return this.getDur().isAon();
-		else if (NEW.app === app.app)
+		if (NEW.app === app.app)
 			return this.getDur().isAon()
 				|| this.getDur().isInvoice()
 				|| this.getDur().isMessenger()
-				|| this.getDur().isDocumental();
-		else if (HOME.app === app.app)
+				|| this.getDur().isDocumental()
+				;
+		if (HOME.app === app.app)
 			return !this.getDur().isConsole();
-		else if (APPS.app === app.app)
+		if (APPS.app === app.app)
 			return !this.getDur().isConsole();
-		else if (SUPERSET.app === app.app)
+		if (SUPERSET.app === app.app)
 			return !this.getDur().isConsole();
-		else if (APPLICATIONS.app === app.app)
+		if (APPLICATIONS.app === app.app)
 			return !this.getDur().isConsole();
-		else if (MenuApps.NOTES.app === app.app)
+		if (MenuApps.NOTES.app === app.app)
 			return !this.getDur().isConsole();
-		else if (MenuApps.TOOLS.app === app.app)
+		if (MenuApps.TOOLS.app === app.app)
 			return this.isBeta() && !LS.isNewTheme();
-		else if (MenuApps.OFFICE.app === app.app) {
-			return this.isBeta() && this.getDur().getDomain().isOffice() && !this.getDur().isEmployee();
-		} else if (MenuApps.MARKETING.app === app.app) {
+		if (MenuApps.OFFICE.app === app.app)
+			return this.isBeta() 
+				&& this.getDur().getDomain().isOffice() 
+				&& this.getDur().isManagementManager();
+		if (MenuApps.MARKETING.app === app.app) 
 			return this.isBeta() && this.getDur().isMarketing();
-		} else if (MenuApps.WAREHOUSE.app === app.app) {
+		if (MenuApps.WAREHOUSE.app === app.app) {
 			const domain = this.getDur().getDomain();
-			return !this.getDur().isConsole() && domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
-		} else if (MenuApps.CONSOLE.app === app.app){
+			return !this.getDur().isConsole() 
+				&& domain.getName() 
+				&& (domain.getName().includes("udapa") 
+					|| domain.getName().includes("paturpat") 
+					|| this.isLocal());
+		} 
+		if (MenuApps.CONSOLE.app === app.app)
 			return this.getDur().isConsole();
-		}
-		else return false;
+		else 
+			return false;
 	}
 
 	isSidenavApp(app) {
@@ -1138,7 +1160,7 @@ export class AonNewMenu extends AonElement {
 		let newDialogMenu =  this.getApplication().getOptionDialog();
 
 		let newMenuOptions = [];
-		if(this.getDur().isInvoice()){
+		if(this.getDur().isInvoiceUser()){
 			let optionsMenu = [
 				{
 					name: MSG.ISSUEDS,

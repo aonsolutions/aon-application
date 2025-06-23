@@ -622,7 +622,7 @@ public class BookingCustomerPanel extends MainEntryPoint {
 	}
 
 	private void createYearListBox(Consumer<ListBox> consumer) {
-		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
+		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -717,7 +717,7 @@ public class BookingCustomerPanel extends MainEntryPoint {
 	}
 	
 	private void getCustomersSuggestion(String customerQuery) {
-		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
@@ -772,7 +772,7 @@ public class BookingCustomerPanel extends MainEntryPoint {
 	}
 	
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), options.getDomain(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -1830,7 +1830,7 @@ public class BookingCustomerPanel extends MainEntryPoint {
 	}
 	
 	private void createCustomerFee(OldItem oldItem, Customer customer) {
-		new CustomerFeeDialog(options, oldItem, customer) {
+		new CustomerFeeDialog(options, oldItem, customer, options.getDomain()) {
 			
 			@Override
 			protected void onAccept(Fee fee) {}

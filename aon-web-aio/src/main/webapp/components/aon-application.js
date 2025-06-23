@@ -383,14 +383,17 @@ export class AonApplication extends AonElement {
     }
   }
 
-  addSidenavOptionsTitle(data, newButton) {
+  addSidenavOptionsTitle(data, newButton, first) {
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
       : this.getElement(this.SIDENAV);
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
-    sidenav.appendChild(div);
+    
+    // Insert to sidenav
+    if(first) sidenav.insertBefore(div, sidenav.firstChild);
+    else sidenav.appendChild(div);
 
     if(data.button && !this.isMobile()) {
       let buttonDiv = this.createElement(TAG.DIV);
@@ -836,6 +839,19 @@ export class AonApplication extends AonElement {
         name: title,
       };
       tmp = this.addSidenavOptionsTitle(data, newButton);
+      this.addSidenavOptionsList(data,options);
+    }
+    return tmp;
+  }
+  
+  addSidenavOptionsFirst(title, options, newButton) {
+    let tmp = undefined;
+    if (options && options.length > 0) {
+      let data = {
+        id: title,
+        name: title,
+      };
+      tmp = this.addSidenavOptionsTitle(data, newButton, true);
       this.addSidenavOptionsList(data,options);
     }
     return tmp;

@@ -889,6 +889,7 @@ public interface Properties {
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
 		
+		Property<Integer> getRelatedRegistryProperty();
 		Property<Integer> getRegistryRelationProperty();
 	}
 	
@@ -1976,6 +1977,7 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<Byte> getSecurityLevelProperty();
 		Property<Integer> getTagProperty();
+		Property<Timestamp> getDeleteDateProperty();
 	}
 	
 	public interface S3CategoryProperties{

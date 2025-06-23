@@ -3085,6 +3085,10 @@ background-image: url("../favicon.png");
   background-color: var(--aonBlue);
 }
 
+.aonHeaderNewConfigurationMenu {
+  background-color: var(--aonBlue);
+}
+
 .aonHeaderNote .material-icons,
 .aonHeaderFiscal .material-icons,
 .aonHeaderPayroll .material-icons,
@@ -3110,6 +3114,7 @@ background-image: url("../favicon.png");
 .aonHeaderPayrollMenu .material-icons,
 .aonHeaderMarketingMenu .material-icons,
 .aonHeaderConfigurationMenu .material-icons,
+.aonHeaderNewConfigurationMenu .material-icons,
 .aonHeaderEnterpriseMenu .material-icons,
 .aonHeaderConsoleMenu .material-icons,
 .aonHeaderNotification .material-icons,
@@ -3145,6 +3150,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aon-search-buttonIcon,
 .aonHeaderMarketingMenu #aon-search-buttonIcon,
 .aonHeaderConfigurationMenu #aon-search-buttonIcon,
+.aonHeaderNewConfigurationMenu #aon-search-buttonIcon,
 .aonHeaderEnterpriseMenu #aon-search-buttonIcon,
 .aonHeaderConsoleMenu #aon-search-buttonIcon,
 .aonHeaderNotification #aon-search-buttonIcon{
@@ -3212,6 +3218,7 @@ color: var(--aonWhite);
 .aonHeaderPayrollMenu #aonHeaderCompanyName,
 .aonHeaderMarketingMenu #aonHeaderCompanyName,
 .aonHeaderConfigurationMenu #aonHeaderCompanyName,
+.aonHeaderNewConfigurationMenu #aonHeaderCompanyName,
 .aonHeaderEnterpriseMenu #aonHeaderCompanyName,
 .aonHeaderConsoleMenu #aonHeaderCompanyName,
 .aonHeaderNotification #aonHeaderCompanyName,
@@ -3261,7 +3268,7 @@ color: var(--aonWhite);
   /*transition: background-color 0.2s;*/
 }
 
-#home {
+#aonMenuList-new {
   margin-top: 6px;
 }
 
@@ -3335,7 +3342,19 @@ color: var(--aonWhite);
   margin-top: -16px;
 }
 
-.helpCardText:hover{
+.configCardText {
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  padding: .5rem 1rem;
+  transition: background-color .2s;
+  width: 100%;
+  gap: .5rem;
+  align-items: center;
+}
+
+.helpCardText:hover,
+.configCardText:hover {
   background-color:rgba(0,36,105,0.1);
 }
 
@@ -4072,7 +4091,7 @@ border-radius: 5px;
 display: block;
 }
 
-.aonUserConfigLink {
+.aonUserPasswordLink {
   font-size: 12px;
   cursor: pointer;
   text-decoration: underline;

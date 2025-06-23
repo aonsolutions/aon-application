@@ -1,0 +1,79 @@
+<html>
+<head></head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 10px 0; color: #333;">
+    <table align="center" width="100%" padding: 20px;">
+        <tr>
+            <td align="center">
+                <table style="max-width: 650px; width: 100%; background-color: rgba(241, 240, 232, 0.1); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 10px 15px;" cellpadding="0" cellspacing="0">
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="padding: 20px;">
+                            <img src="$logo" alt="$parentName" style="max-width: 200px; border-radius: 10px;">
+                        </td>
+                    </tr>
+                    <!-- Title -->
+                    <tr>
+                    	#if($new)
+	                        <td align="center" style="color: #333333; font-size: 18px; font-weight: bold; padding: 10px;">
+	                            Asignación Cuota
+	                        </td>
+	                    #else
+	                    	 <td align="center" style="color: #333333; font-size: 18px; font-weight: bold; padding: 10px;">
+	                            Desasignación Cuota
+	                        </td>
+	                    #end
+                    </tr>
+                     <tr>
+                        <td align="center" style="color: #333333; font-size: 16px; font-weight: bold; padding: 10px;">
+                            <strong>$customerName</strong>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="color: #555555; font-size: 14px; line-height: 1.6; padding: 20px;">
+                            <p>A continuación le detallamos los datos de la cuota:</p>
+                            <table style="margin-left: 15px max-width: 650px; width: 100%; padding: 10px 15px;" cellpadding="1" cellspacing="3">
+                				<tr>
+                					<td colspan="3">
+                						<p style="font-size: 14px;"><strong>Producto:</strong> $productFullName</p>
+                					</td>
+                				</tr>
+                				<tr>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Cantidad:</strong> $quantity</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Precio:</strong> $price</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Dto.:</strong> $discount</p>
+                					</td>
+                				</tr>
+                				<tr>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Importe:</strong> $amount</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>F. Inicio:</strong> $startDate</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>F. Fin:</strong> $endDate</p>
+                					</td>
+                				</tr>
+                				<tr>
+                					<td>
+                						<p style="font-size: 14px;"><strong>F. Facturación:</strong> $chargeDate</p>
+                					</td>
+                					<td colspan="2">
+                						<p style="font-size: 14px;"><strong>Periocidad:</strong> $periocity</p>
+                					</td>
+                				</tr>
+                			</table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

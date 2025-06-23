@@ -1,13 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <!-- Rectángulo superior centrado -->
-  <rect x="1" y="1" width="22" height="2.5" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"/>
-  <!-- Path superior centrado -->
-  <path fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"
-        d="M11.35,24 l-11.26,-0.02 v-5.26 h16.11 C16.06,21.80 14.10,23.70 11.35,24 z"/>
-  <!-- Rectángulo central -->
-  <rect x="7.85" y="12.31" width="8.34" height="3.30" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"/>
-   <!-- Path inferior centrado -->
-  <path fill="none" stroke="black" stroke-width="2" stroke-linejoin="round"
-        d="M12.43,6.24 l11.51,-0.03 v5.22 H7.91 C7.65,8.37 10.52,6.19 12.43,6.24 z"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.49 23">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #000;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M21.74.75v3.59H.75V.75h20.99M22.49,0H0v5.09h22.49V0h0Z"/>
+  <path class="cls-1" d="M14.36,18.67c-.35,2.04-1.69,3.33-3.77,3.58l-9.79-.02v-3.56h13.55M15.19,17.92H.06v5.06l10.58.02c2.58-.29,4.42-2.05,4.56-5.08h0Z"/>
+  <path class="cls-1" d="M14.44,12.55v3.6h-6.34v-3.6h6.34M15.19,11.8h-7.84v5.1h7.84v-5.1h0Z"/>
+  <path class="cls-1" d="M21.72,6.69v3.52h-13.55c.11-1.06.67-1.84,1.04-2.24.69-.75,1.65-1.25,2.38-1.25h.06s0,0,0,0l10.07-.03M22.47,5.94l-10.82.03s-.04,0-.06,0c-1.79,0-4.42,2.08-4.18,4.99h15.06v-5.02h0Z"/>
 </svg>
-

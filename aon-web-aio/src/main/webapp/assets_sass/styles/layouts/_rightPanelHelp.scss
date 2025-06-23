@@ -31,8 +31,8 @@ aon-right-panel{
             }
           }
           .divInfo{
-            padding-left: v.$padding;
-            font-size: v.$px-12;
+            display: grid;
+            justify-content: flex-end;
           }
         }  
       } 

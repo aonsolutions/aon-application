@@ -48,6 +48,7 @@ public abstract class ProjectHolderTable extends ScrollPanel {
 	private String user;
 	
 	private Project project;
+	private Integer officeDomain;
 	
 	private static enum COLS {
 		  TYP("Tipo"								,"5rem"				,"white-space: nowrap; overflow: hidden; text-overflow: ellipsis;")
@@ -78,7 +79,7 @@ public abstract class ProjectHolderTable extends ScrollPanel {
 		}
 	}
 	
-	public ProjectHolderTable(String domainName, int domain, String user, Project project) {
+	public ProjectHolderTable(String domainName, int domain, String user, Project project, Integer officeDomain) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
@@ -86,7 +87,8 @@ public abstract class ProjectHolderTable extends ScrollPanel {
 		this.domain = domain;
 		this.user = user;
 		this.project = project;
-
+		this.officeDomain = officeDomain;
+		
 		container = new SimplePanel();
 		container.getElement().getStyle().setProperty("max-height", "200px");
 		container.getElement().getStyle().setProperty("padding-left", "1px");
@@ -184,7 +186,7 @@ public abstract class ProjectHolderTable extends ScrollPanel {
 	}
 	
 	private void editProjectHolder(ProjectHolder projectHolder) {
-		new AonProjectHolderPanel( domainName, domain, user, project.getId(), project.getProjectHolders(), projectHolder, new AonProjectHolderPanelCallback() {
+		new AonProjectHolderPanel( domainName, domain, user, project.getId(), officeDomain, project.getProjectHolders(), projectHolder,  new AonProjectHolderPanelCallback() {
 			
 			@Override
 			public void onCancel() {}

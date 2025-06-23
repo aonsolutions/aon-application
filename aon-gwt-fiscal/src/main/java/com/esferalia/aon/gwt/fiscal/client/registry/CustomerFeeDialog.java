@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
@@ -116,15 +117,18 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private Customer customer;
 	
 	private Integer ritem;
+	
+	private Integer officeDomain;
 
 	// ------------------------------------------------- Constructor
 
-	protected CustomerFeeDialog(OldItem item, RegistryModuleOptions options) {
+	protected CustomerFeeDialog(OldItem item, RegistryModuleOptions options, Integer officeDomain) {
 		setCaption("Edici\u00f3n Cuota");
 		
 		this.isSameProduct = null != item;
 		this.item = item;
 		this.options = options;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -133,11 +137,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	protected CustomerFeeDialog(Fee fee, RegistryModuleOptions options) {
+	protected CustomerFeeDialog(Fee fee, RegistryModuleOptions options, Integer officeDomain) {
 		setCaption("Edici\u00f3n Cuota");
 		
 		this.fee = fee;
 		this.options = options;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -146,12 +151,13 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	protected CustomerFeeDialog(Fee fee, Customer customer, RegistryModuleOptions options) {
+	protected CustomerFeeDialog(Fee fee, Customer customer, RegistryModuleOptions options, Integer officeDomain) {
 		setCaption("Edici\u00f3n Cuota");
 		
 		this.fee = fee;
 		this.options = options;
 		this.customer = customer;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -160,11 +166,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	protected CustomerFeeDialog(RegistryModuleOptions options) {
+	protected CustomerFeeDialog(RegistryModuleOptions options, Integer officeDomain) {
 		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.options = options;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -173,12 +180,13 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	protected CustomerFeeDialog(RegistryModuleOptions options, Customer customer) {
+	protected CustomerFeeDialog(RegistryModuleOptions options, Customer customer, Integer officeDomain) {
 		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.customer = customer;
 		this.options = options;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -187,13 +195,14 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	protected CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer) {
+	protected CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer, Integer officeDomain) {
 		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
 		this.item = item;
 		this.customer = customer;
 		this.options = options;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -202,7 +211,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		showDialog();
 	}
 	
-	public CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer, Integer ritem) {
+	public CustomerFeeDialog(RegistryModuleOptions options, OldItem item, Customer customer, Integer ritem, Integer officeDomain) {
 		setCaption("Nueva Cuota");
 		
 		this.isNewFee = true;
@@ -210,6 +219,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		this.customer = customer;
 		this.options = options;
 		this.ritem = ritem;
+		this.officeDomain = officeDomain;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
 		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
@@ -315,7 +325,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 
 	private void getCustomersSuggestion(String customerQuery) {
-		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, customerQuery, new AsyncCallback<Map<String, Customer>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
@@ -393,6 +403,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			productTextBox.setValue(item.getProduct().getName());
 			productTextBox.setVisible(true);
 			
+			if(null != fee)
+				fee.setDescription(item.getProduct().getName());
+			
 			if(null != fee) fee.setItem(item);
 		});
 		
@@ -444,7 +457,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 
 	private void getProductsSuggestion(String productQuery) {
-		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, productQuery, new AsyncCallback<Map<String, OldItem>>() {
 			
 			@Override
 			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
@@ -717,7 +730,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 
 	private void getWorkplacesSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
@@ -780,7 +793,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 
 	private void getSellersSuggestion(String sellerQuery) {
-		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
@@ -843,7 +856,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	private void getInvoicingGroupsSuggestion(String invoicingGroupQuery) {
-		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
 			
 			@Override
 			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
@@ -917,7 +930,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	}
 	
 	private void getProjectsSuggestion(Integer customerId, String projectQuery) {
-		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerId, projectQuery, new AsyncCallback<Map<String, Project>>() {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerId, officeDomain, projectQuery, new AsyncCallback<Map<String, Project>>() {
 			
 			@Override
 			public void onSuccess(Map<String, Project> projectProjectSuggestionsDB) {
@@ -1049,6 +1062,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 
 	private void createNewFee() {
 		Fee newFee = new Fee();
+		newFee.setDomain(new Domain().setId(officeDomain));
 		
 		if(AonStringUtils.isNotBlank(projectSuggestBox.getValue())) newFee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
 		

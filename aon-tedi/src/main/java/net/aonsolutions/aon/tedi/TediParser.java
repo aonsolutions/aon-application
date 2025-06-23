@@ -878,7 +878,7 @@ public class TediParser {
 		// ----------
 //		InvoiceCalculator.calculate(ai);
 		// ----------
-		TediValidator.validateInvoice(ctx,result);
+		TediValidator.validateInvoice(ctx,aonCtx,result);
 		
 		return result;
 	}

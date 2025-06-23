@@ -32,7 +32,9 @@ export const AON_THEME = '/css/theme/aon.css';
 export const DARK_THEME = '/css/theme/dark.css';
 export const DARK_BETA_THEME = '/css/theme/darkBeta.css';
 
-export const BETADOC = 'betadoc';
+export const BETA     = 'beta';
+export const BETADOC  = 'betadoc';
+
 export const get = (item) => {
 	let value = getParam(item);
 	if ( value === null ){
@@ -42,15 +44,15 @@ export const get = (item) => {
         value = getComputedStyle(document.body).getPropertyValue(`--${item}`);
     } 
     return value;
-}
+};
 
 export const set = (item, value) => {
     localStorage.setItem(item, value);
-}
+};
 
 export const remove = (item) => {
     localStorage.removeItem(item);
-}
+};
 
 export const closeSession = () => {
     let theme = getTheme();
@@ -66,83 +68,83 @@ export const closeSession = () => {
     setTopMenu(topMenu);
     setLeftMenu(leftMenu);
     setPortalChecked(portalChecked);
-}
+};
 
 export const getLanguage = () => get(AON_LANGUAGE);
 
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
     location.reload();
-}
+};
 
 export const isTopMenu= () => {
     let aon = getTopMenu();
     return  CONSTANT.TRUE == aon;
-}
+};
 
 export const isLeftMenu = () => {
     let aon = getLeftMenu();
     return CONSTANT.TRUE == aon;
-}
+};
 
 export const getTopMenu = () => {
     return get(TOP_MENU);
-}
+};
 
 export const setTopMenu = (value) => {
     set(TOP_MENU, value);
-}
+};
 
 export const getLeftMenu = () => {
     return get(LEFT_MENU);
-}
+};
 
 export const setLeftMenu = (value) => {
     set(LEFT_MENU,value);
-} 
+};
 
 export const isCompanySelected = () => {
     let aon = getCompanySelected();
     return CONSTANT.TRUE == aon;
-}
+};
 
 export const getCompanySelected = () => {
     return get(COMPANY_SELECTED);
-}
+};
 
 export const setCompanySelected = (value) => {
     set(COMPANY_SELECTED ,value);
-} 
+};
 
 export const isPortalChecked = () => {
     let aon = getPortalChecked();
     return CONSTANT.TRUE == aon;
-}
+};
 
 export const getPortalChecked = () => {
     return get(PORTAL_CHECKED);
-}
+};
 
 export const setPortalChecked = (value) => {
     set(PORTAL_CHECKED ,value);
-} 
+};
 
 export const isAppMenu = () => {
     let aon = getAppMenu();
     return CONSTANT.TRUE == aon;
-}
+};
 
 export const getAppMenu = () => {
     return get(APP_MENU);
-}
+};
 
 export const setAppMenu = (value) => {
     set(APP_MENU, value);
-}
+};
 
 export const getTheme = () => {
     return get(THEME);
-}
+};
 
 export const setTheme = (theme) => {
     if(theme){
@@ -151,17 +153,17 @@ export const setTheme = (theme) => {
         remove(THEME);
     }
     location.reload();
-}
+};
 
 export const isDarkTheme = () => {
     let theme = get(THEME);
     return DARK_THEME == theme;
-}
+};
 
 export const isDarkBetaTheme = () => {
     let theme = get(THEME);
     return DARK_BETA_THEME == theme;
-}
+};
 
 export const setDarkTheme = (value) => {
     if (value == CONSTANT.TRUE) {
@@ -169,186 +171,189 @@ export const setDarkTheme = (value) => {
     } else {
         remove(THEME);
     }
-}
+};
 
 export const isWhiteBrand = () => {
     let aon = getWhiteBrand();
     return CONSTANT.TRUE == aon;
-}
+};
 
 export const getWhiteBrand = () => {
     return get (WHITE_BRAND);
-}
+};
 
 export const setWhiteBrand = (value) => {
     set(WHITE_BRAND, value);
-}
+};
 
 export const isRightPanel= () => {
     let aon = getRightPanel();
     return  aon;
-}
+};
 
 export const getRightPanel = () => {
     return get(RIGHT_PANEL);
-}
+};
 
 export const setRightPanel = (panel) => {
     set(RIGHT_PANEL,panel);
-}
+};
 
 export const removeRightPanel = () => {
     remove(RIGHT_PANEL);
-}
+};
 
 export const removeLanguage = () => {
     remove(AON_LANGUAGE);
-}
+};
 
 export const getToken = () => get(AON_SESSION_ID);
 
 export const setToken = (value) => {
     set(AON_SESSION_ID, value);
-}
+};
 
 export const removeToken = () => {
     remove(AON_SESSION_ID);
-}
+};
 
 export const getDomainName = () => get(AON_DOMAIN_NAME);
 
-
 export const setDomainName = (value) => {
     set(AON_DOMAIN_NAME, value);
-}
+};
 
 export const removeDomainName = () => {
     remove(AON_DOMAIN_NAME);
-}
+};
 
 export const getDomainId = () =>  get(AON_DOMAIN_ID);
 
 export const setDomainId = (value) => {
     set(AON_DOMAIN_ID, value);
-}
+};
 
 export const removeDomainId = () => {
     remove(AON_DOMAIN_ID);
-}
+};
 
 export const getDomainLogin = () =>  get(AON_DOMAIN_LOGIN);
 
 export const setDomainLogin = (value) => {
     set(AON_DOMAIN_LOGIN, value);
-}
+};
 
 export const removeDomainLogin = () => {
     remove(AON_DOMAIN_LOGIN);
-}
+};
 
 export const getDomainDocument = () => get(AON_DOMAIN_DOCUMENT);
 
-
 export const setDomainDocument = (value) => {
     set(AON_DOMAIN_DOCUMENT, value);
-}
+};
 
 export const removeDomainDocument = () => {
     remove(AON_DOMAIN_DOCUMENT);
-}
+};
 
 export const getApplicationTop = () =>  get(AON_APPLICATION_TOP);
 
 export const setApplicationTop = (value) => {
     set(AON_APPLICATION_TOP, value);
-}
+};
 
 export const removeApplicationTop = () => {
     remove(AON_APPLICATION_TOP);
-}
+};
 
 export const getAonSolutions = () => get(AON_SOLUTIONS);
 
 export const isAonSolutions = () => {
     const aon = get(AON_SOLUTIONS);
     return  aon && CONSTANT.FALSE !== aon;
-}
+};
 
 export const setAonSolutions = (value) => {
     set(AON_SOLUTIONS, value);
-}
+};
 
 export const removeAonSolutions = () => {
     remove(AON_SOLUTIONS);
-}
+};
 
 export const getRootPanel = () =>  get(ROOT_PANEL);
 
 export const setRootPanel = (value) => {
     set(ROOT_PANEL, value);
-}
+};
 
 export const removeRootPanel = () => {
     remove(ROOT_PANEL);
-}
+};
 
 export const getCompany = () =>  get(COMPANY) ? JSON.parse(get(COMPANY)) : null;
 
 export const setCompany = (value) => {
    set(COMPANY, value);
-}
+};
 
 export const removeCompany = () => {
     remove(COMPANY);
-}
+};
 
 export const isOnlyOne = () => {
     const aon = get(ONLY_ONE);
     return  aon && CONSTANT.FALSE !== aon;
-}
+};
 
 export const setOnlyOne = (onlyOne) => {
     set(ONLY_ONE, onlyOne);
-}
+};
 
 export const isNewTheme = () => {
     const newTheme = get(NEW_THEME);
     return newTheme &&  CONSTANT.FALSE !== newTheme;
-}
+};
 
 export const setNewTheme = (newTheme, reload) => {
     set(NEW_THEME, newTheme);
     if(reload) location.reload();
-}
+};
 
 export const isSuite = () => {
     const suite = get(SUITE);
     return suite &&  CONSTANT.TRUE === suite;
-}
+};
 
 export const setSuite = (suite) => {
     set(SUITE, suite);
     location.reload();
-}
+};
+
+export const isBeta = () => {
+    const beta = get(BETA);
+    return CONSTANT.TRUE == beta;
+};
 
 export const isBetaDoc = () => {
     const betadoc = get(BETADOC);
     return CONSTANT.TRUE == betadoc;
-}
+};
+
 export const setBetaDoc = (betadoc) => {
   set(BETADOC, betadoc);
-}
+};
 
 export const removeDomain = () => {
     removeDomainId();
     removeDomainName();
     removeDomainLogin();
     removeDomainDocument();
-}
+};
 
 const getParam = (paramName) => {
 	const queryString = window.location.search;
 	const searchParams = new URLSearchParams(queryString);
 	return searchParams.get(paramName);
-}
-
+};

@@ -22,6 +22,7 @@ export class AonIcon extends AonElement {
 
   set icon(icon) {
     this.setAttribute('icon', icon);
+    this.textContent = icon;
   }
 
   get color() {

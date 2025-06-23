@@ -8,7 +8,8 @@ import { AonHelp } from './aon-help.js';
 import { AonRightPanel } from './aon-right-panel.js';
 import { AonLoginPanel } from './aon-login-panel.js';
 import { AonNotificationPanel } from './aon-notification-panel.js';
-import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
+//import { APPLICATIONS, APPS, NEW_APPS } from '../services/app.js';
+import { APPLICATIONS, APPS, PLANS } from '../services/app.js';
 import { clearAuth } from '../services/service.js';
 
 import { AonMobileHeader } from '../modules/aon-mobile-header.js';
@@ -86,7 +87,7 @@ export class AonHome extends AonElement {
         aonMenu.addEventListener(EVENT.AON_APPLICATION_SELECT, (e) => {
           let app = e.detail.app;
           let sidenav = e.detail.sidenav; 
-          console.log(JSON.stringify(e.detail));
+          // console.log(JSON.stringify(e.detail));
           const appColor = app.newColor || app.color;
           if ( !app.home ){
               let appEl = aonMenu.buildApp(app, 
@@ -99,6 +100,15 @@ export class AonHome extends AonElement {
               aonHeader.setVisibleLogo(!appEl);
               aonHeader.setVisibleApp(appEl);
           } else if(app == APPS || app == APPLICATIONS){
+            let appEl = aonMenu.buildApp(PLANS, {
+              height: '32px',
+              color: '#ffffff',
+              flexDirection: 'row'
+            }, sidenav);
+            aonHeader.buildApp(PLANS,sidenav);
+            aonHeader.setVisibleLogo(!appEl);
+            aonHeader.setVisibleApp(PLANS);
+            /*
               let appEl = aonMenu.buildApp(NEW_APPS, 
                   {
                       height: '32px',
@@ -108,6 +118,7 @@ export class AonHome extends AonElement {
                   aonHeader.buildApp(NEW_APPS,sidenav);
                   aonHeader.setVisibleLogo(!appEl);
                   aonHeader.setVisibleApp(NEW_APPS);
+             */
           } else {
               aonHeader.setVisibleApp(false);
               aonHeader.setVisibleLogo(true);

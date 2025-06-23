@@ -1,8 +1,9 @@
 import { AonElement } from '../components/AonElement.js';
 import { AonAvatar } from '../components/aon-avatar.js';
+import { AonIcon } from '../components/aon-icon';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
-import { closeSession, getAuth } from '../services/service.js';
-import { AonConfiguration } from '../modules/configuration/aon-configuration.js';
+import { closeSession, getAuth } from '../services/service';
+import { AonUser } from '../modules/user/aon-user';
 import * as LS from '../services/localStorageService.js';
 
 export class AonLoginPanel extends AonElement {
@@ -11,7 +12,7 @@ export class AonLoginPanel extends AonElement {
 	LOGOUT;
 	EDITBUTTON;
 	CHANGEPASSWORD;
-	rightPanel; // Añadido para guardar la referencia al rightPanel
+	rightPanel; // Agregado para guardar la referencia al rightPanel
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -47,8 +48,8 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	create(auth) {
-      this.rightPanel = this.getElement("aonRightPanel");
       if(!this.isNewStyle()){
+        this.rightPanel = this.getElement("aonRightPanel");
         this.rightPanel.style.boxShadow = "0 24px 54px rgba(0,0,0,.15),0 4.5px 13.5px rgba(0,0,0,.08)";
         this.rightPanel.style.marginTop = '0px';
         this.rightPanel.style.height = '234px';
@@ -65,8 +66,11 @@ export class AonLoginPanel extends AonElement {
       }
       let avatar = new AonAvatar();
       avatar.setAuth(auth);
-      divGeneral.appendChild(avatar);
-
+      if(!this.isNewStyle()){
+        divGeneral.appendChild(avatar);
+      } else {
+        loginContent.appendChild(avatar);
+      }
       let divUserInfo = this.createDiv();
       divUserInfo.className = "userPanelDivUserInfo";
       if ((!auth.name && !auth.email && !auth.document && !auth.phone) || !auth) {
@@ -97,40 +101,47 @@ export class AonLoginPanel extends AonElement {
         else
           divUserInfo.appendChild(this.buildInfo(MATERIAL_ICONS.ASSIGNMENT_IND, MSG.NO_DATA));
       }
-
-      if (auth.name) {
-        let divConfiguration = this.createDiv();
-        divConfiguration.className = 'aonUserConfigLink';
-        divConfiguration.innerText = MSG.CONFIGURATION;
-        divConfiguration.addEventListener(EVENT.CLICK, () => {
-            let aonConfiguration = new AonConfiguration();
-            aonConfiguration.user = auth.name;
-            this.rootPanel(aonConfiguration);
-            let rightPanel = document.querySelector('aon-right-panel'); 
-            if (rightPanel) {
-                rightPanel.close(); 
-            }
-            let companyy = this.getElement("aonHeaderCompanyListButton");
-            let companyyy = this.getElement("aonHeaderCompanyList");
-            companyy.style.display = "block";
-            companyyy.style.display = "block";
-        });
-        divUserInfo.appendChild(divConfiguration);
+      if(!this.isNewStyle()){
+        divGeneral.appendChild(divUserInfo);
+      } else {
+        loginContent.appendChild(divUserInfo);
       }
-
-      divGeneral.appendChild(divUserInfo);
-
-      let divLogout = this.createDiv();
-      divLogout.id = this.LOGOUT;
-      divLogout.className = 'divLogout';
-      divLogout.addEventListener(EVENT.CLICK, () => {
-          closeSession();
+      if (auth.name) {
+        if(!this.isNewStyle()){
+          let divPassword = this.createDiv();
+          divPassword.className = 'aonUserPasswordLink';
+          divPassword.innerText =  MSG.CHANGE_PASSWORD;
+          divPassword.addEventListener("click", (e) => {
+              let aonUser = new AonUser();
+              aonUser.editPassword();
+          });
+          divUserInfo.appendChild(divPassword);
+        } else {
+          let buttonEditPass = this.createElement(TAG.BUTTON);
+          buttonEditPass.innerText =  MSG.CHANGE_PASSWORD;
+          buttonEditPass.addEventListener("click", (e) => {
+              let aonUser = new AonUser();
+              aonUser.editPassword();
+              let rightPanel = this.closest('aon-right-panel');
+              rightPanel?.close?.();
+          });
+          loginContent.appendChild(buttonEditPass);
+        }
+      }
+      let buttonLogout        = this.createElement(TAG.BUTTON);
+      buttonLogout.id         = this.LOGOUT;
+      buttonLogout.className  = 'divLogout';
+      this.buildbuttonLogout(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION, buttonLogout);
+      buttonLogout.addEventListener(EVENT.CLICK, () => {
+        closeSession();
+        if(!this.isNewStyle()){
           LS.setNewTheme(true);
+        }
       });
-      divLogout.appendChild(this.buildInfoLink(MATERIAL_ICONS.LOGOUT, MSG.CLOSE_SESSION));
-
-      loginContent.appendChild(divGeneral);
-      loginContent.appendChild(divLogout);
+      if(!this.isNewStyle()){
+        loginContent.appendChild(divGeneral);
+      }
+      loginContent.appendChild(buttonLogout);
 
       if(!this.isNewStyle()){
         let openButton = this.getElement("openNotificationButton");
@@ -140,11 +151,12 @@ export class AonLoginPanel extends AonElement {
 	}
 
 	handleDocumentClick(event) {
-		const aonHeaderUser = document.getElementById('aonHeaderUser');
-		const aonHeaderHelp = document.getElementById('aonHeaderHelp');
-		const aonHeaderConfig = document.getElementById('aonHeaderConfig');
-		const aonHeaderNotification = document.getElementById('aonHeaderNotification');
-
+      const aonHeaderUser         = document.getElementById('aonHeaderUser');
+      const aonHeaderHelp         = document.getElementById('aonHeaderHelp');
+      const aonHeaderConfig       = document.getElementById('aonHeaderConfig');
+      const aonHeaderNotification = document.getElementById('aonHeaderNotification');
+      
+      if(!this.isNewStyle()){
 		if (this.rightPanel &&
 			this.rightPanel.style.visibility === "visible" &&
 			!this.rightPanel.contains(event.target) &&
@@ -155,9 +167,10 @@ export class AonLoginPanel extends AonElement {
 			!(aonHeaderNotification && aonHeaderNotification.contains(event.target))) {
 			let rightPanel = document.querySelector('aon-right-panel'); 
 			if (rightPanel) {
-				rightPanel.close(); 
+				rightPanel.close();
 			}
 		}
+      }
 	}
 
 	buildName(value) {
@@ -192,21 +205,29 @@ export class AonLoginPanel extends AonElement {
 		return div;
 	}
 
-	buildInfoLink(icon, value) {
-		let div = this.createDiv();
-		div.className = "userPanelInfoLinkDiv";
+	buildbuttonLogout(icon, value, button) {
+      if(!this.isNewStyle()){
+        let div = this.createDiv();
+        div.className = "userPanelInfoLinkDiv";
 
 		let i = this.createElement(TAG.I);
 		i.className = CSS.MATERIAL_ICONS + " userPanelInfoLinkI";
-		i.setAttribute("data-icon", icon);
 		i.innerHTML = icon;
 		div.appendChild(i);
-
-		let span = this.createDiv();
-		span.className = CSS.AON_CARD_TEXT + " userPanelInfoLinkSpan";
-		span.innerHTML = value;
-		div.appendChild(span);
-		return div;
+        
+        let span = this.createDiv();
+        span.className = CSS.AON_CARD_TEXT + " userPanelInfoLinkSpan";
+        span.innerHTML = value;
+        div.appendChild(span);
+        
+        button.appendChild(div);
+      } else {
+        // Icono
+        let i   = new AonIcon();
+		i.icon  = icon;
+		button.appendChild(i);
+        button.innerHTML += value;
+      }
 	}
 
 	buildImage(letters) {

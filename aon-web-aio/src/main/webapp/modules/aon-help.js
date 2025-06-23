@@ -1,6 +1,7 @@
 import { AonElement } from '../components/AonElement.js';
 import { MSG, CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
-import { AonCard } from '../components/aon-card.js';
+import { AonCard } from '../components/aon-card';
+import { AonIcon } from '../components/aon-icon';
 import { getManifest, getDomainUserRoles} from "../services/service.js";
 import { AonSwitch } from "../components/aon-switch.js";
 import { getSupport, setSupport } from '../services/supportService.js';
@@ -9,7 +10,6 @@ import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import * as JSF from './aon-jsf-app.js';
 
 export class AonHelp extends AonElement {
-
 	SUPPORT_SWITCH;
 	ABOUT_CONTACT_CARD;
 	SCHEDULE_CONTACT_CARD;
@@ -44,7 +44,6 @@ export class AonHelp extends AonElement {
 	}
 
 	build() {
-		
 		let helpContent = this.createDiv(this.HELP_CONTENT, "aonFlexColumn");
 		
 		let supportContent = this.createDiv(this.SUPPORT_CONTENT, "aonFlexBetween");
@@ -62,7 +61,8 @@ export class AonHelp extends AonElement {
 		
 		helpContent.appendChild(supportContent);
 
-		let helpContentIndexDiv = this.createSpan();
+      if(!this.isNewStyle()){
+        let helpContentIndexDiv = this.createSpan();
 		helpContentIndexDiv.className = "helpCardText";
 
 		let helpContentIndexI = this.createElement(TAG.I);
@@ -80,7 +80,7 @@ export class AonHelp extends AonElement {
 		helpContent.appendChild(helpContentIndexDiv);
 		
 		helpContentIndexDiv.addEventListener(EVENT.CLICK, () => {
-			this.rootPanel(new JSF.AonJsfHelpContent())
+			this.rootPanel(new JSF.AonJsfHelpContent());
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
 
@@ -105,14 +105,41 @@ export class AonHelp extends AonElement {
 			this.rootPanel(new JSF.AonJsfHelpNotification());
 			this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
 		});
+      } else {
+        let buttonContent = this.createElement(TAG.BUTTON);
+        // Icono
+        let i   = new AonIcon();
+        i.icon  = "school";
+        buttonContent.appendChild(i);
+        buttonContent.innerHTML += MSG.CONTENT_INDEX;
+        helpContent.appendChild(buttonContent);
+        buttonContent.addEventListener(EVENT.CLICK, () => {
+          this.rootPanel(new JSF.AonJsfHelpContent());
+          this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+          let rightPanel = this.closest('aon-right-panel');
+          rightPanel?.close?.();
+        });
+        let buttonNotif = this.createElement(TAG.BUTTON);
+        // Icono
+        let ic   = new AonIcon();
+        ic.icon  = "rss_feed";
+        buttonNotif.appendChild(ic);
+        buttonNotif.innerHTML += MSG.NOTIFICATIONS;
+        helpContent.appendChild(buttonNotif);
+        buttonNotif.addEventListener(EVENT.CLICK, () => {
+          this.rootPanel(new JSF.AonJsfHelpNotification());
+          this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_OPEN, {}));
+          let rightPanel = this.closest('aon-right-panel');
+          rightPanel?.close?.();
+        });
+      }
 
 		getSupport().then(r => {
 			rightPanelSwitchSupportButton.checked = r.value;
-
-		})
+		});
 		rightPanelSwitchSupportButton.addEventListener(EVENT.CHANGE, () => {
-			let data = {value: rightPanelSwitchSupportButton.isChecked()}
-			setSupport(data).then(r => {})
+			let data = {value: rightPanelSwitchSupportButton.isChecked()};
+			setSupport(data).then(r => {});
 		});
 
 		if ((this.dur.isDomainPayer())||(this.dur.isOffice())){
@@ -126,6 +153,7 @@ export class AonHelp extends AonElement {
 			cardDiv.className = "aonCard rightPanelcardDiv";
 			
 			let divGeneral = this.createDiv();
+			divGeneral.className = "card-list";
 			divGeneral.appendChild(this.buildSupportData("AON SOLUTIONS S.L.", MSG.COMPANY, MATERIAL_ICONS.BUSINESS, CSS.AON_SUPPORT_NAME));
 			divGeneral.appendChild(this.buildSupportData("(+34) 900 831 205", MSG.PHONE, MATERIAL_ICONS.PHONE, CSS.AON_SUPPORT_TELEPHONE));
 			divGeneral.appendChild(this.buildSupportData("soporte@aonSolutions.es", "Atención a usuarios", MATERIAL_ICONS.MAIL, CSS.AON_SUPPORT_USERS_EMAIL));
@@ -143,6 +171,7 @@ export class AonHelp extends AonElement {
 			cardDiv2.className = "aonCard rightPanelCardDiv";
 
 			let divGeneral2 = this.createDiv();
+			divGeneral2.className = "card-list";
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_SCHEDULE,MSG.WEEK_SCHEDULE, MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_SCHEDULE));
 			divGeneral2.appendChild(this.buildSupportData(MSG.WEEK_FRIDAY_SCHEDULE, MSG.WEEK_SCHEDULE,MATERIAL_ICONS.SCHEDULE, CSS.AON_WEEK_FRIDAY_SCHEDULE));
 			rightPanelAboutScheduleCard.setContent(divGeneral2);
@@ -189,7 +218,7 @@ export class AonHelp extends AonElement {
 						<!-- ${MSG.REGISTERED_TRADEMARK_AON} -->
 					</span> 
 				  </span>
-				  <div id="aonManifest">${version}</div>`;
+				  <small id="aonManifest">${version}</small>`;
 				  helpContent.appendChild(divInfo);
 			}
 		);
@@ -200,23 +229,26 @@ export class AonHelp extends AonElement {
 	}
 
 	buildSupportData(value, title, icon, className) {
-		let div 				= this.createDiv();
-		div.className		= "card-list";
+		let div 		= this.createDiv();
+		div.className	= "card-list-row";
 		div.style.title = title;
 		if(!this.isNewStyle()){
-			div.style.marginTop = '10px';
-			div.style.display = "flex";
-		}
-		let i = this.createElement(TAG.I);
-		i.className = CSS.MATERIAL_ICONS + " mailIcon";
-		i.id = "aonContactIcon" + this.cont;
-		if(!this.isNewStyle()){
-			i.style.marginRight = '5px';
-			i.style.verticalAlign = "middle";
-		}
-		i.setAttribute("data-icon", icon);
-		i.innerHTML= icon;
-		div.appendChild(i);
+          div.style.marginTop = '10px';
+          div.style.display = "flex";
+
+          let i = this.createElement(TAG.I);
+          i.className = CSS.MATERIAL_ICONS + " mailIcon";
+          i.id = "aonContactIcon" + this.cont;
+          i.style.marginRight = '5px';
+          i.style.verticalAlign = "middle";
+          i.setAttribute("data-icon", icon);
+          i.innerHTML= icon;
+          div.appendChild(i);
+		} else {
+          let i  = new AonIcon();
+          i.icon = icon;
+          div.appendChild(i);
+        }
 
 		let span = this.createDiv();
 		span.className = `${CSS.AON_CARD_TEXT} ${className}`;

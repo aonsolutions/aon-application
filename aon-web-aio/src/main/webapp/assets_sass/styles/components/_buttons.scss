@@ -5,7 +5,8 @@ $btn-padding       : v.$px-8 v.$px-16;
 $btn-width         : v.$pct-100;
 $btn-height        : v.$pct-100;
 $btn-cursor        : pointer;
-$btn-display       : inline-block;
+/*$btn-display       : inline-block;*/
+$btn-display       : flex;
 $btn-text-align    : center;
 $btn-gap           : v.$px-10;
 $text-transform-l  : lowercase;
@@ -21,6 +22,7 @@ button {
   border-radius    : v.$border-radius;
   cursor           : $btn-cursor;
   display          : $btn-display;
+  justify-content  : $btn-text-align;
   text-align       : $btn-text-align;
   gap              : $btn-gap;
   text-transform   : $text-transform-l;

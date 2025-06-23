@@ -96,35 +96,23 @@
             // Menu derecha - Usuario
             #aonLoginPanel{
               #loginContent{
-                >div{
-                  aon-avatar{
-                    div{
-                      .profile-avatar-letters{
-                        background-color : $color-600;
-                        color : WHITE;
-                      }
-                    }
-                  }
-                  .userPanelDivUserInfo{
-                    background-color: $color-box;
-                    .aonUserConfigLink{
-                      // esto habra que quitarlo porque sera un button normal (hay que cambiarle la etiqueta)
-                      background-color : $color-button-card;
-                      &:hover{
-                        background-color : $color-button-card-hover;
-                        color            : $color-text;
-                      }
-                    }
+                aon-avatar{
+                  .profile-avatar-letters{
+                    background-color : $color-600;
+                    color : WHITE;
                   }
                 }
-                #aonLoginPanelLogout{
+                .userPanelDivUserInfo{
+                  background-color: $color-box;
+                }
+/*                #aonLoginPanelLogout{
                   // esto habra que quitarlo porque sera un button normal (hay que cambiarle la etiqueta)
                   background-color : $color-button-card;
                   &:hover{
                     background-color : $color-button-card-hover;
                     color            : $color-text;
                   }
-                }
+                }*/
               }
             }
             // Menu derecha - Notificaciones
@@ -296,17 +284,15 @@
           border-bottom : v.$px-1-6 solid $color-300;
         }
         .aonCardContent{
-          >div{
-            .card-list, .card-list-buttom{
-              color : $color-text-card;
+          .card-list, buttoms{
+            color : $color-text-card;
+          }
+          .buttom{
+            &:hover{
+              background-color : $color-50;
             }
-            .card-list-buttom{
-              &:hover{
-                background-color : $color-50;
-              }
-              &.active{
-                background-color : $color-100;
-              }
+            &.active{
+              background-color : $color-100;
             }
           }
         }

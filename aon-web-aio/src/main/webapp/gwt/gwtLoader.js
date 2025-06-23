@@ -1,7 +1,6 @@
 	import { TAG } from '../environments/environments.js'; 
 	import * as LS from '../services/localStorageService.js';
 
-	
 	export const removeRootPanel = (panel) => {
 		panel = panel || 'rootPanel';
 		const myNode = window.document.getElementById(panel);

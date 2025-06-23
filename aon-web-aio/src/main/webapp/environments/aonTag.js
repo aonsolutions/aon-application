@@ -345,6 +345,11 @@ export const AON_JSF_ACCOUNTING_BOOK = 'aon-jsf-accounting-book' ;
 export const AON_JSF_ACCOUNTING_GRAPH = 'aon-jsf-accounting-graph' ;
 export const AON_JSF_PAYROLL_GRAPH = 'aon-jsf-payroll-graph' ;
 export const AON_JSF_CONTRACT_GRAPH = 'aon-jsf-contract-graph' ;
+export const AON_JSF_PROJECT_TAS = 'aon-jsf-project-tas' ;
+export const AON_JSF_MAKE = 'aon-jsf-make' ;
+export const AON_JSF_MODEL = 'aon-jsf-model' ;
+export const AON_JSF_TAS_ITEM = 'aon-jsf-tas-item' ;
+export const AON_JSF_TAS_STAT = 'aon-jsf-tas-stat' ;
 
 export const AON_WAREHOUSE_MENU = 'aon-warehouse-menu';
 export const AON_JSF_INCOME = 'aon-jsf-income' ;

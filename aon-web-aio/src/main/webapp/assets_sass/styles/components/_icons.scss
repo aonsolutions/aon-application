@@ -91,7 +91,7 @@ $icons: (
       }
     }
   }
-  i[data-icon="#{$icon-name}"], aon-icon[data-icon="#{$icon-name}"]{
+  i[data-icon="#{$icon-name}"], aon-icon[data-icon="#{$icon-name}"], aon-icon[icon="#{$icon-name}"]{
     display          : inline-block;
     width            : $icon-size;
     height           : $icon-size;

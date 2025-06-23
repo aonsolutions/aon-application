@@ -571,6 +571,8 @@ public final class IJsonNames {
 	public static final String ROOT_BAR = "/";
 	public static final String RSELLER = "rseller";
 	public static final String RSS = "rss";
+	public static final String RRELATIONSHIP = "rrelationship";
+	public static final String RELATED_REGISTRY = "relatedRegistry";
 	// ---------------------------------------------------------------------------------------------	[S] 
 
 	public static final String S3_BUCKET = "s3Bucket";
@@ -634,6 +636,8 @@ public final class IJsonNames {
 	public static final String STREET_TYPE = "streetType";
 	public static final String SUBJECT = "subject";
 	public static final String SUFIX = "sufix";
+	public static final String SUP_USER = "supUser";
+	public static final String SUP_DOMAIN = "supDomain";
 	public static final String SUPPORT = "support";
 	public static final String SURCHARGE_PERCENT = "surchargePercent";
 	public static final String SURCHARGE_QUOTA = "surcharge_quota";

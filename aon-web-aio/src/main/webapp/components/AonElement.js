@@ -179,17 +179,17 @@ export class AonElement extends HTMLElement{
 
   isBeta(){
     const href = window.location.href;
-    return href.includes('aonsolutions.org') || this.isLocal();
+    return href.includes('aonsolutions.org') || LS.isBeta();
   }
 
   isBetaDoc(){
     return (this.isBeta() && LS.isBetaDoc()) || (this.isAyudaTorInfoautonomos() && LS.isBetaDoc());
   }
-  
+
   isNewStyle(){
     return localStorage.getItem('sass') === 'true';
   };
-  
+
   isAyudaTorInfoautonomos() {
     const href = localStorage.getItem("aon_domain_name");
     return href ? href.includes('ayudat') || href.includes('infoautonomos') : false;

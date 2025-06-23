@@ -1052,11 +1052,18 @@ public class AON {
 		}
 
 	}
+	
 	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyFull(ctx, domainId);
 		}
 
+	}
+	
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login, Integer officeDomain){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, officeDomain);
+		}
 	}
 		
 	public static Company getCompany(Occam occam, CompanyFilter filter){
@@ -2783,27 +2790,27 @@ public class AON {
 	// ************************************* FEE **
 	// ********************************************
 	
-	public static Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getWorkplacesSuggestion(ctx, domainId, query);
+			return getFinance().getWorkplacesSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<String, Seller> getSellersSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Seller> getSellersSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getSellersSuggestion(ctx, domainId, query);
+			return getFinance().getSellersSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
+			return getFinance().getInvoicingGroupsSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<String, Project> getProjectsSuggestion(String domainName, int domainId, String login, Integer customerId, String query) {
+	public static Map<String, Project> getProjectsSuggestion(String domainName, int domainId, String login, Integer customerId, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getProjectsSuggestion(ctx, domainId, customerId, query);
+			return getFinance().getProjectsSuggestion(ctx, searchDomain, customerId, query);
 		}
 	}
 	
@@ -2819,33 +2826,33 @@ public class AON {
 		}
 	}
 	
-	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getProductsSuggestion(ctx, domainId, query);
+			return getFinance().getProductsSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getProductCategoriesSuggestion(ctx, domainId, query);
+			return getFinance().getProductCategoriesSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<String, Integer> getProductTagsSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Integer> getProductTagsSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getProductTagsSuggestion(ctx, domainId, query);
+			return getFinance().getProductTagsSuggestion(ctx, searchDomain, query);
 		}
 	}
 
-	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, Integer searchDomain, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getCustomersSuggestion(ctx, domainId, query);
+			return getFinance().getCustomersSuggestion(ctx, searchDomain, query);
 		}
 	}
 	
-	public static Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domainId, String login, CustomerFeeParams customerFeeParams) {
+	public static Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domainId, String login, Integer searchDomain, CustomerFeeParams customerFeeParams) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getCustomerProductsUpdates(ctx, domainId, customerFeeParams);
+			return getFinance().getCustomerProductsUpdates(ctx, searchDomain, customerFeeParams);
 		}
 	}
 	
@@ -2932,9 +2939,9 @@ public class AON {
 		}	
 	}
 	
-	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domainId, String login) {
+	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domainId, String login, Integer searchDomain) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getMinMaxCustomerFeeYear(ctx, domainId);
+			return getFinance().getMinMaxCustomerFeeYear(ctx, searchDomain);
 		}
 	}
 	
