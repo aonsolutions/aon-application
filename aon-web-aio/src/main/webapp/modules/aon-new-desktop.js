@@ -42,7 +42,11 @@ export class AonNewDesktop extends AonElement {
       // Se compruebe de esta manera : this.getDur().isAdmin() && this.getDur().isAdmin() 
       // Que especificamente seas uno de ellos, ya que siendo admin tambien devuelve que eres empleado en algunos casos
 		if(this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
-			this.appendChild(this.buildPlans());
+			this.createApplication(this.PLANES, MSG.APPLICATIONS, new AonApplication());
+			this.applicationEl = this.getApplication();
+			this.applicationEl.removeToolbar(); // Sin Toolbar
+			this.applicationEl.removeSidenav(); // Sin Menu
+			this.applicationEl.setContent(this.buildPlans());
 		}else{
 			let app = this.createApplication(this.AON_DESKTOP, MSG.APPLICATIONS, new AonApplication());
 			app.main = "true";
