@@ -42,6 +42,7 @@ export class AonCustomer extends AonReg {
 		this.registry = this.registry || new Customer();
 		this.saveBool = true;
 		this.type = "customer";
+		this.clientFile = this.clientFile;
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
@@ -877,8 +878,6 @@ export class AonCustomer extends AonReg {
 		div.id = "customerNotesId";
     
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
-			notesIcon.innerHTML = 'speaker_notes_off';
-			
 			rightSidenav.appendChild(div);
 			
 			// Loader
@@ -914,9 +913,9 @@ export class AonCustomer extends AonReg {
 			} else 
 				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 				
-		} else {
-			notesIcon.innerHTML = 'speaker_notes';
 		}
+		
+		notesIcon.classList.toggle("material-icons-selected");
 		
 		this.getApplication().toogleRightSidenav();	
 		
