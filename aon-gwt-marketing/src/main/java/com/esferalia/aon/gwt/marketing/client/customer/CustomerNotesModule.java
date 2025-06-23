@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCardSmall;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDeleteTooltip;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.marketing.client.MainEntryPoint;
@@ -197,11 +198,14 @@ public class CustomerNotesModule extends MainEntryPoint {
 			deleteBtn.addClickHandler(e -> {
 				e.stopPropagation();
 				
-				observation.setDescription(AonStringUtils.EMPTY);
-				observation.setComments(AonStringUtils.EMPTY);
-				observation.setNoteDate(null);
+				deleteNote(observation, deleteBtn, deletion -> {
+					observation.setDescription(AonStringUtils.EMPTY);
+					observation.setComments(AonStringUtils.EMPTY);
+					observation.setNoteDate(null);
+					
+					saveNote(observation);
+				});
 				
-				saveNote(observation);
 			});
 			buttonsPanel.add(deleteBtn);
 			
@@ -346,7 +350,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 				AonTableButton deleteBtn = new AonTableButton("Borrar nota", AON.CSS.aonIconDelete());
 				deleteBtn.addClickHandler(e -> {
 					e.stopPropagation();
-					deleteNote(message);
+					
+					deleteNote(message, deleteBtn, delete -> deleteNote(message));
 				});
 				buttonsPanel.add(deleteBtn);
 		
@@ -421,6 +426,18 @@ public class CustomerNotesModule extends MainEntryPoint {
 			
 			notesContent.add(cardsPanel);
 		}
+	}
+	
+	private void deleteNote(RegistryNote note, AonTableButton btn, Consumer<Void> deletion) {
+		AonCustomDeleteTooltip aonCustomDeleteTooltip = new AonCustomDeleteTooltip(
+				note.getNoteType().equals(NoteType.MESSAGE)
+	            ? "\u00bfEliminar nota?"
+	            : "\u00bfEliminar observaci\u00f3n?",
+	            note.getNoteType().equals(NoteType.MESSAGE)
+	            ? "\u00bfSeguro que quiere eliminar la nota?"
+	            : "\u00bfSeguro que quiere eliminar la observaci\u00f3n?",
+	            btn );
+		aonCustomDeleteTooltip.addDeleteHandler(e -> deletion.accept(null));
 	}
 
 	private void getCustomerNotes(Consumer<List<RegistryNote>> success) {

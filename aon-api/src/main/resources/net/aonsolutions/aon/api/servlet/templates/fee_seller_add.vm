@@ -13,17 +13,25 @@
                     </tr>
                     <!-- Title -->
                     <tr>
-                        <td align="center" style="color: #333333; font-size: 18px; font-weight: bold; padding: 10px;">
-                            Asignación Cuota <br/> <strong>$productName</strong>
+                    	#if($new)
+	                        <td align="center" style="color: #333333; font-size: 18px; font-weight: bold; padding: 10px;">
+	                            Asignación Cuota
+	                        </td>
+	                    #else
+	                    	 <td align="center" style="color: #333333; font-size: 18px; font-weight: bold; padding: 10px;">
+	                            Desasignación Cuota
+	                        </td>
+	                    #end
+                    </tr>
+                     <tr>
+                        <td align="center" style="color: #333333; font-size: 16px; font-weight: bold; padding: 10px;">
+                            <strong>$customerName</strong>
                         </td>
                     </tr>
                     <!-- Body -->
                     <tr>
                         <td style="color: #555555; font-size: 14px; line-height: 1.6; padding: 20px;">
-                            <p>¡Enhorabuena! Acabamos de asignarle una cuota del cliente <strong>$customerName</strong>.</p>
-                            <p>A continuación le detallamos los datos de la cuota <strong>$productName</strong>:</p>
-                            <p><strong>Cuota:</strong></p>
-                            
+                            <p>A continuación le detallamos los datos de la cuota:</p>
                             <table style="margin-left: 15px max-width: 650px; width: 100%; padding: 10px 15px;" cellpadding="1" cellspacing="3">
                 				<tr>
                 					<td colspan="3">
@@ -38,7 +46,7 @@
                 						<p style="font-size: 14px;"><strong>Precio:</strong> $price</p>
                 					</td>
                 					<td>
-                						<p style="font-size: 14px;"><strong>Descuento:</strong> $discount</p>
+                						<p style="font-size: 14px;"><strong>Dto.:</strong> $discount</p>
                 					</td>
                 				</tr>
                 				<tr>
@@ -51,13 +59,17 @@
                 					<td>
                 						<p style="font-size: 14px;"><strong>F. Facturación:</strong> $chargeDate</p>
                 					</td>
+                					
                 				</tr>
                 				<tr>
                 					<td>
                 						<p style="font-size: 14px;"><strong>Periocidad:</strong> $periocity</p>
                 					</td>
-                					<td colspan="2">
-                						<p style="font-size: 14px;"><strong>Linea:</strong> $line</p>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Importe:</strong> $amount</p>
+                					</td>
+                					<td>
+                						<p style="font-size: 14px;"><strong>Importe:</strong> $netAmount</p>
                 					</td>
                 				</tr>
                 			</table>

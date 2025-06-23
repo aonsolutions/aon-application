@@ -325,8 +325,13 @@ public class BankAccount implements Serializable {
 			if (!isValidBbanLength())
 				return false;
 			else {
-				String control = calculateBbanControlDigit();
-				return control != null && control.equals(AonStringUtils.substring(getBban3(), 0, 2));
+				try {
+					String control = calculateBbanControlDigit();
+					return control != null && control.equals(AonStringUtils.substring(getBban3(), 0, 2));
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
 			}
 		}
 	}
@@ -387,8 +392,13 @@ public class BankAccount implements Serializable {
 			if (!isValidIbanLength())
 				return false;
 			else {
-				String control = calculateIbanControlDigit();
-				return control != null && control.equals(getCheck());
+				try {
+					String control = calculateIbanControlDigit();
+					return control != null && control.equals(getCheck());
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
 			}
 		}
 	}
