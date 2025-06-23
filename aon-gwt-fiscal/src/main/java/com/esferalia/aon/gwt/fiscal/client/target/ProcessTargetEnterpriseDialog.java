@@ -58,6 +58,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 	private HTMLPanel targetContainer = new HTMLPanel(AonStringUtils.EMPTY);
 
 	private AonCustomListBox supportSeller;
+	private AonCustomListBox commercialSeller;
 
 	// Variables
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -231,6 +232,13 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 		supportSellers.forEach(seller -> supportSeller.addItem(seller.getName(), seller.getId().toString()));
 
 		targetContainer.add(createRow(supportSeller, null));
+		
+		commercialSeller = new AonCustomListBox("Agente comercial (con usuario)");
+		commercialSeller.clearItems();
+		commercialSeller.addItem("-", "");
+		supportSellers.forEach(seller -> commercialSeller.addItem(seller.getName(), seller.getId().toString()));
+
+		targetContainer.add(createRow(commercialSeller, null));
 
 		scrollPanel = new ScrollPanel(targetContainer);
 		scrollPanel.setWidth("100%");
@@ -340,6 +348,7 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 			body.put("registry", new JSONString(target.getId().toString()));
 
 			body.put("sellerSupport", new JSONString(supportSeller.getValue()));
+			body.put("sellerCommercial", new JSONString(commercialSeller.getValue()));
 
 			body.put("source", new JSONString("TARGET"));
 

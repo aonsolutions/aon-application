@@ -42,6 +42,7 @@ export const ARROW_DROP_UP = 'arrow_drop_up';
 export const ARROW_RIGHT = 'arrow_right';
 export const ARROW_RIGHT_ALT = 'arrow_right_alt';
 export const ARTICLE = 'article';
+export const ARTICLE_PERSON = 'article_person';
 export const ASPECT_RATIO = 'aspect_ratio';
 export const ASSESSMENT = 'assessment';
 export const ASSIGNMENT = 'assignment';

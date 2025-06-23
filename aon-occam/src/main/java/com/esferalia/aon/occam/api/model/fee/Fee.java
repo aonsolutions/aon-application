@@ -52,7 +52,7 @@ public class Fee implements Serializable{
 		this.domain = fee.getDomain();
 		this.project = fee.getProject();
 		this.customer = fee.getCustomer();
-		this.line = fee.getLine();
+//		this.line = fee.getLine();
 		this.item = fee.getItem();
 		this.description = fee.getDescription();
 		this.quantity = fee.getQuantity();

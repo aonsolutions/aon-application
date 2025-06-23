@@ -838,7 +838,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 											AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(rdoc.getId()), null);
 											cont++;
 										}
-									}
+									} 
 								}else{
 									S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
 									if(uploadDocumentOCR(api, docu, document, i)) {										
@@ -862,20 +862,24 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static boolean uploadDocumentOCR(AonApiData api, S3Document doc, String document, int orden) {
 		String url = "https://aon-upload-post.s3.amazonaws.com/";
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             LocalDateTime now = LocalDateTime.now();
         	byte[] file = S3rDoc.download(doc.getS3key(), doc.getS3bucket());
             HttpPost post = new HttpPost(url);
+            String str = Integer.toString(orden);
+            if(str.length() == 1) {
+            	str = "0" + str;
+            }
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(StandardCharsets.UTF_8);
-            builder.addTextBody("key", "invoices/" + api.getDomain().getName() + "/" + document + "/" + api.getUser().getLogin() + "/" + now.format(formatter) + "/" + orden + "_bidoq_" + Base64.getEncoder().encodeToString(doc.getName().getBytes()) + "." + doc.getMimetype().getExtension());
+            builder.addTextBody("key", "invoices/" + api.getDomain().getName() + "/" + document + "/" + api.getUser().getLogin() + "/" + now.format(formatter) + "/" + str + "_bidoq_" + Base64.getEncoder().encodeToString(doc.getName().getBytes()) + "." + doc.getMimetype().getExtension());
             builder.addTextBody("success_action_status", "201");
             builder.addTextBody("Content-Type", doc.getMimetype().getName());
             builder.addBinaryBody("file", file);
             HttpEntity multipart = builder.build();
             post.setEntity(multipart);
             try (CloseableHttpResponse response = client.execute(post)) {
-                String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             }
             return true;
         } catch (Exception e) {
