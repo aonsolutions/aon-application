@@ -4587,6 +4587,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public List<com.esferalia.aon.occam.api.model.EnterpriseCCC> getActivityCCCList(String domainName, String userLogin, Integer activityId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getActivityCCCs(domainName, domainId, userLogin, activityId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	
 	// ------------------------------------------------ Mod145 (API)
 	
 	@Override

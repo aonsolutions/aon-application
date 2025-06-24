@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContractExtendedDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
@@ -119,6 +120,8 @@ public interface IPayroll {
 	public void deleteCCC(AONContext ctx, Integer cccId);
 	
 	public EnterpriseCCC saveCCC(AONContext ctx, EnterpriseCCC ccc);
+	
+	public List<EnterpriseCCC> getActivityCCCs(AONContext ctx, EnterpriseCCCFilter filter);
 	
 	// ----------MOD145
 	

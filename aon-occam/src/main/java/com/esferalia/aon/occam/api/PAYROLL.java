@@ -417,6 +417,12 @@ public class PAYROLL {
 		}
 	}
 	
+	public static List<EnterpriseCCC> getActivityCCCs(String domainName, Integer domainId, String login, Integer activityId) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getActivityCCCs(ctx, f -> f.getEnterpriseActivityProperty().eq(activityId));
+		}
+	}
+	
 	// -------------------- MOD 145
 	
 	public static List<Mod145> getMod145List(String domainName, Integer domainId, String login, Mod145Filter filter) {
