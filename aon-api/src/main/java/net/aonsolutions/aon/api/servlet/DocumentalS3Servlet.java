@@ -744,13 +744,13 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			return true;
 	}
 	
-	private static JSONObject callBidoq(String document) {
+	private static JSONObject callBidoq(String document, String method) {
         String url = "https://mispapeles.es/api/v2/";
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(url);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(StandardCharsets.UTF_8);
-            builder.addTextBody("method", "transfer_document_aon");
+            builder.addTextBody("method", method);
             builder.addTextBody("operating_system_version", "0.5");
             builder.addTextBody("app_version", "1990");
             builder.addTextBody("device_info", "AON");
@@ -771,21 +771,17 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static boolean checkBidoqDocumentsToAon(AonApiData api) {
 		String document = api.getData().getString(IJsonNames.DOCUMENT);
-		JSONObject json = callBidoq(document);
-		if(json.has("code") && json.getInt("code") == 0) {
-			return true;
-		} else {
-			return false;
-		}
+        JSONObject json = callBidoq(document, "transfer_document_aon_exist_user");
+        return json.has("code") && json.getInt("code") == 0 ? true : false;
 	}
 	
 	private static Integer getBidoqDocumentsToOCRCount(AonApiData api) {
 		String document = api.getData().getString(IJsonNames.DOCUMENT);
 //		JSONObject json = callBidoq("78150882x");
-		if(!document.equals("93176905H")) {
-			return 0;
-		}
-		JSONObject json = callBidoq(document);
+//		if(!document.equals("93176905H")) {
+//			return 0;
+//		}
+		JSONObject json = callBidoq(document, "transfer_document_aon");
 		int count = 0;
 		if(json.has("datos")) {
 			JSONObject folders = json.getJSONObject("datos");
@@ -794,10 +790,10 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 					if(folders.getJSONObject(folder).has("docs")) {
 						JSONArray array = folders.getJSONObject(folder).getJSONArray("docs");
 						for(int i = 0; i < array.length(); i++) {
-							if(array.get(i) instanceof JSONObject) {								
+							if(array.get(i) instanceof JSONObject) {
 								JSONObject doc = (JSONObject) array.get(i);
 								Optional<S3Document> optRdoc = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(doc.getString("rutaS3"))).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null)).findFirst();
-								if(!optRdoc.isPresent()) 
+								if(!optRdoc.isPresent())
 									count++;
 								else if(optRdoc.get().getDeleteDate() == null)
 									count++;
@@ -814,11 +810,11 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 		String document = api.getData().getString(IJsonNames.DOCUMENT);
 		Integer order = api.getData().getInt(IJsonNames.ORDER);
 		Integer size = api.getData().getInt(IJsonNames.SIZE);
-		if(!document.equals("93176905H")) {
-			return new JSONObject().put("result", "OK");
-		}
+//		if(!document.equals("93176905H")) {
+//			return new JSONObject().put("result", "OK");
+//		}
 //		JSONObject json = callBidoq("78150882x");
-		JSONObject json = callBidoq(document);
+		JSONObject json = callBidoq(document, "transfer_document_aon");
 		int count = getBidoqDocumentsToOCRCount(api);
 		int cont = 0;
 		if(json.has("datos")) {		
@@ -834,14 +830,14 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 								if(optRdoc.isPresent()) {
 									S3Document rdoc = optRdoc.get();
 									if(rdoc.getDeleteDate() == null){
-										if(uploadDocumentOCR(api, rdoc, document, i)) {											
+										if(uploadDocumentOCR(api, rdoc, document, i)) {
 											AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(rdoc.getId()), null);
 											cont++;
 										}
-									} 
+									}
 								}else{
 									S3Document docu = createBidoqDocument(api, doc, folders.getJSONObject(folder).getString("nombre"));
-									if(uploadDocumentOCR(api, docu, document, i)) {										
+									if(uploadDocumentOCR(api, docu, document, i)) {
 										S3Document fac = AON_SOLUTIONS.insertS3Document(api.getDomain(), api.getUser(), docu);
 										AON_SOLUTIONS.deleteS3Document(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(fac.getId()), null);
 										cont++;
