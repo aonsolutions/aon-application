@@ -724,13 +724,11 @@ export class AonParent extends AonElement {
 			} else if ( this.getDur() ) {
 				resolve(`${MSG.CONNECTING_TO} ${this.getDur().domain.description}`)
 			}  
-			else if ( LS.getDomainName() ) {
+			else  {
 				this.buildDur()
 				.then( dur =>  resolve(`${MSG.CONNECTING_TO} ${dur.domain.description}`))
 				.catch( err  => resolve( MSG.WELCOME_TO_AON_SOLUTIONS ) );
-			} else {
-				resolve( MSG.WELCOME_TO_AON_SOLUTIONS );
-			}
+			} 
 		});
 	     
 	}
