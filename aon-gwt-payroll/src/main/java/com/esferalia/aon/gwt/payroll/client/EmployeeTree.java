@@ -3332,26 +3332,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					checkStatus(enterpriseDraftObject);
 				}
 				
-				@Override
-				protected void showSuccessMessage(Map<String, String> messages) {
-					EmployeeTree.this.showSuccessMessage(messages);
-				}
-
-				@Override
-				protected void showErrorMessage(Map<String, String> messages) {
-					EmployeeTree.this.showErrorMessage(messages);
-				}
-				
-				@Override
-				protected void showWarningMessage(Map<String, String> messages) {
-					EmployeeTree.this.showWarningMessage(messages);
-				}
-
-				@Override
-				protected void showLoadingMessage(String message) {
-					EmployeeTree.this.showLoadingMessage(message);
-				}
-			
 			}.setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
@@ -3361,26 +3341,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			@Override
 			protected void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject) {
 				checkStatus(enterpriseDraftObject);
-			}
-		
-			@Override
-			protected void showSuccessMessage(Map<String, String> messages) {
-				EmployeeTree.this.showSuccessMessage(messages);
-			}
-
-			@Override
-			protected void showErrorMessage(Map<String, String> messages) {
-				EmployeeTree.this.showErrorMessage(messages);
-			}
-			
-			@Override
-			protected void showWarningMessage(Map<String, String> messages) {
-				EmployeeTree.this.showWarningMessage(messages);
-			}
-
-			@Override
-			protected void showLoadingMessage(String message) {
-				EmployeeTree.this.showLoadingMessage(message);
 			}
 			
 		}.setOnSaved(w -> refreshEnterprise());
@@ -3409,24 +3369,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
-			workplaceDraft = new WorkplaceDraft() {
-				
-				@Override
-				protected void showSuccessMessage(Map<String, String> messages) {
-					EmployeeTree.this.showSuccessMessage(messages);
-				}
-	
-				@Override
-				protected void showErrorMessage(Map<String, String> messages) {
-					EmployeeTree.this.showErrorMessage(messages);
-				}
-
-				@Override
-				protected void hideMessage() {
-					EmployeeTree.this.hideMessagePanel();
-				}
-			
-			};
+			workplaceDraft = new WorkplaceDraft();
 		return workplaceDraft;
 	}
 

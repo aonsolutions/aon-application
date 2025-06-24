@@ -235,7 +235,7 @@ export const NOTES = {
     id: CONSTANT.NOTES.initCap(),
     name: MSG.NOTES,
     title: MSG.NOTES,
-    icon: MATERIAL_ICONS.NOTES
+    icon: MATERIAL_ICONS.ARTICLE_PERSON
 }
 
 export const EDIT_FILE = {

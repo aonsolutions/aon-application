@@ -197,7 +197,8 @@ public class FeeMailServlet extends AonApiHttpServlet {
 		context.put("quantity", null == fee.getQuantity() ? "0" : fee.getQuantity().intValue());
 		context.put("price", null == fee.getPrice() ? "0.00" : fee.getPrice().toString());
 		context.put("discount", AonStringUtils.isBlank(fee.getDiscountExpr()) ? "0.00" : fee.getDiscountExpr());
-		context.put("amount", getTotalNetPrice(fee.getQuantity(), fee.getPrice(), fee.getDiscount()));
+		context.put("amount", getTotalPrice(fee.getQuantity(), fee.getPrice(), fee.getDiscount()));
+		context.put("netAmount", getTotalNetPrice(fee.getQuantity(), fee.getPrice(), fee.getDiscount()));
 		context.put("startDate", AonDateUtils.simpleFormat(fee.getStartDate()));
 		context.put("endDate", null == fee.getEndDate() ? "" : AonDateUtils.simpleFormat(fee.getEndDate()));
 		context.put("chargeDate", AonDateUtils.simpleFormat(fee.getBillingDate()));
@@ -214,8 +215,17 @@ public class FeeMailServlet extends AonApiHttpServlet {
 	}
 	
 
+	private static double getTotalPrice(Double quantity, Double price, Double dto) {
+		if(null == quantity) quantity = 1.00;
+		if(null == price) price = 0.00;
+		if(null == dto) dto = 0.00;
+		return roundTwoDecimals( price * quantity );
+	}
 	
 	private static double getTotalNetPrice(Double quantity, Double price, Double dto) {
+		if(null == quantity) quantity = 1.00;
+		if(null == price) price = 0.00;
+		if(null == dto) dto = 0.00;
 		return roundTwoDecimals( getNetCost(price, dto) * quantity );
 	}
 

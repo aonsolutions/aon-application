@@ -612,6 +612,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setMdTBT(mdTbt);
 	}
 	
+	public void setMdTBT(String tbtType) {
+		add(contractData::setMdTBT, 
+				contractData.getMdTBT(), 
+				Byte.parseByte(tbtType) );
+		
+		contractData.setMdTBT(Byte.parseByte(tbtType));
+	}
+	
 	public void setActivityInfo(String activityInfo) {
 		Integer activityId = null;
 		Integer cccId = null;
@@ -634,6 +642,18 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				activityID );
 		
 		contractData.setActivityId(activityID);
+	}
+	
+	public void setMdctz(String mdCtz) {
+		add(contractData::setMdctz, 
+				contractData.getMdctz(), 
+				mdCtz );
+		
+		contractData.setMdctz(mdCtz);
+	}
+	
+	public void setContractMdCtz(String mdCtz) {
+		
 	}
 
 	public void setContractCCCId(Integer cccId) {
@@ -889,6 +909,15 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				city );
 		
 		employeeData.setAddressCity(city);
+	}
+	
+	public void setEmployeeAddressCity(String cityName, String cityCode) {
+		add(employeeData::setAddressCity, 
+				employeeData.getAddressCity(), 
+				cityCode );
+		
+		employeeData.setAddressCity(cityCode);
+		employeeData.setAddressCityDescription(cityName);
 	}
 
 	public void setEmployeeMobile(String mobile) {

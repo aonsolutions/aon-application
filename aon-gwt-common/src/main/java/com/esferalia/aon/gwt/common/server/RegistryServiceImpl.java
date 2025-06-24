@@ -208,7 +208,14 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	
 	@Override
 	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String query) {
-		return AON.getProjectsSuggestion(domainName, domain, user, customerId, searchDomain, query);
+		Map<String, Project> projects = AON.getProjectsSuggestion(domainName, domain, user, customerId, searchDomain, query);
+		return projects;
+	}
+	
+	@Override
+	public Seller getSellerByTaskHolder(String domainName, int domain, String user, Integer taskHolderId, Integer officeDomain) {
+		Seller seller = AON.getSeller(domainName, domain, user, f -> f.getDomainProperty().eq(officeDomain).and(f.getTaskHolderProperty().eq(taskHolderId)));
+		return seller;
 	}
 
 	@Override

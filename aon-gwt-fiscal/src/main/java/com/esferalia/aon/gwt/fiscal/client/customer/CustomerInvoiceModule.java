@@ -199,7 +199,7 @@ public class CustomerInvoiceModule extends MainEntryPoint {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		
-		AonTableButton openDocument = new AonTableButton("Ver documento", AON.CSS.aonIconVisibility());
+		AonTableButton openDocument = new AonTableButton("Ver documento", AON.CSS.aonIconPdf());
 		AonTableButton closeDocument = new AonTableButton("Cerrar documento", AON.CSS.aonIconVisibilityOff());
 		
 		openDocument.addStyleName(AON.CSS.aonCustomRowButtom());

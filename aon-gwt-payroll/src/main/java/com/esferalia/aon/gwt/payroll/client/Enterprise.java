@@ -6,526 +6,425 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.OptionElement;
-import com.google.gwt.dom.client.SelectElement;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Enterprise extends ResizeComposite {
+public abstract class Enterprise extends ScrollPanel {
 	
-	// -------------------------------------------------- UiBinder
-
-	private static EnterpriseUiBinder uiBinder = GWT.create(EnterpriseUiBinder.class);
-
-	interface EnterpriseUiBinder extends UiBinder<Widget, Enterprise> {
-	}
-
 	// -------------------------------------------------- UiFields
-
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String documentError();
-		String inputPadding();
-		String inputLBHeight();
-		String warningColor();
-		String warningTB();
-	}
 	
-	// TABLA DATOS EMPRESA
+	private HTMLPanel content = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel gridPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
-	@UiField
-	ScrollPanel scrollPanel;
+	// General Info
+	private AonCustomTextBox name = new AonCustomTextBox("Nombre");
+	private AonCustomTextBox alias = new AonCustomTextBox("Alias");
+	private AonCustomTextBox documentType = new AonCustomTextBox("Tipo");
+	private AonCustomTextBox document = new AonCustomTextBox("Documento");
+	private AonCustomSuggestBox documentCountry = new AonCustomSuggestBox("P. Emisi\u00f3n");
 	
-	@UiField
-	TextBox enterpriseName;
+	private AonCustomListBox streetType = new AonCustomListBox("Tipo V\u00eda");
+	private AonCustomTextBox address = new AonCustomTextBox("Direcci\u00f3n");
+	private AonCustomTextBox addressNum = new AonCustomTextBox("N\u00famero");
 	
-	@UiField
-	TextBox enterpriseAlias;
+	private AonCustomTextBox addressZip = new AonCustomTextBox("C\u00f3digo Postal");
+	private AonCustomListBox addressProvince = new AonCustomListBox("Provincia");
+	private AonCustomListBox addressMunicipality = new AonCustomListBox("Localidad");
 	
-	@UiField
-	Label documentType;
+	private AonCustomTextBox mobile = new AonCustomTextBox("M\u00f3vil");
+	private AonCustomTextBox phone = new AonCustomTextBox("Tel\u00e9fono");
+	private AonCustomTextBox email = new AonCustomTextBox("Email");
 	
-	@UiField
-	TextBox document;
+	private AonCustomTextBox web = new AonCustomTextBox("Web");
+	private AonCustomListBox scope = new AonCustomListBox("Ambito");
 	
-	@UiField (provided = true)
-	AonToolbarSmallButton documentStatus;
+	// Other Info
+	private AonCustomListBox enterprisePaysheetModel = new AonCustomListBox("Mod. Recibo Salarial");
+	private AonCustomListBox enterprisePaysheetSendType = new AonCustomListBox("Envio N\u00f3minas");
+	private AonCustomTextBox payrollEmail = new AonCustomTextBox("Email Envio N\u00f3minas");
+	private AonCustomSuggestBox agreement = new AonCustomSuggestBox("Convenio");
 	
-	@UiField 
-	Label nationalityLabel;
-	
-	@UiField (provided = true)
-	SuggestBox nationality;
-	
-	@UiField
-	ListBox streetType;
-	
-	@UiField
-	TextBox address;
-	
-	@UiField
-	TextBox addressNum;
-	
-	@UiField
-	TextBox addressZip;
-	
-	@UiField
-	ListBox addressCity;
-	
-	@UiField
-	ListBox addressProvince;
-	
-	@UiField
-	TextBox mobile;
-	
-	@UiField
-	TextBox phone;
-	
-	@UiField
-	TextBox email;
-	
-	@UiField
-	TextBox enterpriseWeb;
-	
-	@UiField
-	HTMLPanel enterpriseScopePanel;
-	
-	// TABLA OTRO DATOS
-	
-	@UiField
-	ListBox enterprisePaysheetModel;
-	
-	@UiField
-	ListBox enterprisePaysheetSendType;
-	
-	@UiField
-	HTMLPanel enterprisePaysheetSendPanel;
-	
-	@UiField
-	TextBox enterprisePaysheetSendEmail;
-	
-	@UiField
-	SuggestBox enterpriseAgreement;
-	
-	// TABLA TGSS
-	
-	@UiField
-	TextBox enterprisePayAuthorizationKey;
-	
-	@UiField
-	ListBox enterprisePaySsMutual;
+	// Sistema RED
+	private AonCustomTextBox authKey = new AonCustomTextBox("Clave Autorizaci\u00f3n");
+	private AonCustomListBox paySSMutual = new AonCustomListBox("Entidad Gestora Plan de Pensiones");
 	
 	// -------------------------------------------------- Variables
 	
 	private List<Agreement> enterpriseAgreements;
+	private Municipalities municipalities = new Municipalities();
 
 	// -------------------------------------------------- Constructor
 
 	protected Enterprise() {
-		//Initialize Nationality SuggestBox
-		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
-		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
-		countries.forEach(c -> oracleCountries.add(c.getName()));
-		this.nationality = new SuggestBox(oracleCountries);
-		
-		documentStatus = new AonToolbarSmallButton("", AON.CSS.aonIconValid());
-		
-		// Inicializamos la vista del empleado
-		initWidget(uiBinder.createAndBindUi(this));
-		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
 		initializeView();
 	}
 	
 	// -------------------------------------------------- initializeView
 	
 	public void initializeView() {
-		removeWarning(enterpriseName);
+		clear();
+		content.clear();
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.add(messagePanel);
 		
-		resetElements();
-		initializeListBox();
+		initDocumentContry();
+		initStreetType();
+		initAddressProvince();
+		initPaysheetModel();
+		initPaysheetSendType();
+		initPaySSMutual();
+		
+		initHandlers();
+		
+		initView();
+		
+		Scheduler.get().scheduleDeferred(() -> {
+			setWidget(content);
+		});
 	}
 
-	private void resetElements() {
+	private void initDocumentContry() {
+		List<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
+		List<String> countriesSuggestions = countries.stream().map(country -> country.getName()).collect(Collectors.toList());
+		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) documentCountry.getSuggestBox().getSuggestOracle();
+		orclNames.addAll(countriesSuggestions);
 		
-		this.enterpriseName.setValue(null);
-		this.enterpriseAlias.setValue(null);
-		this.documentType.setText("");
-		this.document.setValue(null);
-		this.streetType.clear();
-		this.address.setValue(null);
-		this.addressNum.setValue(null);
-		this.addressZip.setValue(null);
-		this.addressCity.clear();
-		this.addressProvince.clear();
-		this.mobile.setValue(null);
-		this.phone.setValue(null);
-		this.email.setValue(null);
-		this.enterpriseWeb.setValue(null);
-		this.enterpriseScopePanel.clear();
-		
-		this.enterprisePaysheetModel.clear();
-		this.enterprisePaysheetSendType.clear();
-		this.enterprisePaysheetSendEmail.setValue(null);
-		this.enterpriseAgreement.setValue(null);
-		
-		this.enterprisePayAuthorizationKey.setValue(null);
-		this.enterprisePaySsMutual.clear();
+		documentCountry.setAutoSelectEnabled(true);
 	}
-
-	private void initializeListBox() {
-		//STREET TYPE
+	
+	private void initStreetType() {
+		streetType.clearItems();
 		for(int i=0; i<StreetType.values().length; i++)
 			if(null != StreetType.values()[i].getLanguage() && StreetType.values()[i].getLanguage().equals(AonLanguage.SPANISH))
-				this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getIneCode());
+				streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getIneCode());
 		
-		//PROVINCE
-		this.addressProvince.addItem("-");
+	}
+	
+	private void initAddressProvince() {
+		addressProvince.clearItems();
+		addressProvince.addItem("-", "");
 		for(int i=0; i<Province.values().length; i++)
 			this.addressProvince.addItem(Province.values()[i].getName(), AonStringUtils.leftPad(i + "", 2, '0'));
 		
-		//PAYSHEET MODEL
-		this.enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
-		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (2 columnas)", "salary_dualColumn");
-		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
-		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
-		this.enterprisePaysheetModel.addItem("Detallada (new)", "salary_connorMacleod");
-		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (new)", "salary_connorMacleod_classic");
+	}
+	
+	private void initPaysheetModel() {
+		enterprisePaysheetModel.clearItems();
+		enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
+		enterprisePaysheetModel.addItem("Est\u00E1ndar (2 columnas)", "salary_dualColumn");
+		enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
+		enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
+//		enterprisePaysheetModel.addItem("Detallada (new)", "salary_connorMacleod");
+//		enterprisePaysheetModel.addItem("Est\u00E1ndar (new)", "salary_connorMacleod_classic");
 		
-		disableDeprecatedPaysheetModels();
-		
-		//SEND PAYSHEET
-		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
-		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
-		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
-		
-		this.enterprisePaySsMutual.addItem("-", "");
-		this.enterprisePaySsMutual.addItem("CNP PARTNERS SEGUROS Y REASEGUROS SA", "G0001");
-		this.enterprisePaySsMutual.addItem("ABANCA VIDA Y PENSIONES DE SEGUROS Y REASEGUROS S.A.U.", "G0002");
-		this.enterprisePaySsMutual.addItem("UNICORP VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0003");
-		this.enterprisePaySsMutual.addItem("BANKINTER SEGUROS DE VIDA", "G0006");
-//		this.enterprisePaySsMutual.addItem("FIATC, MUTUA DE SEGUROS Y REASEGUROS", "G0010");
-		this.enterprisePaySsMutual.addItem("SA NOSTRA COMPA\u00d1IA DE SEGUROS DE VIDA SA", "G0012");
-		this.enterprisePaySsMutual.addItem("VIDA-CAIXA SA DE SEGUROS Y REASEGUROS", "G0021");
-		this.enterprisePaySsMutual.addItem("GENERALI ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0037");
-		this.enterprisePaySsMutual.addItem("CCM VIDA Y PENSIONES S.A. DE SEG.Y REAS", "G0048");
-//		this.enterprisePaySsMutual.addItem("GESPENSION CAMINOS, S.A. E.G.F.P.", "G0067");
-		this.enterprisePaySsMutual.addItem("IBERCAJA PENSION,E.G.F.P. , S.A.U.", "G0079");
-		this.enterprisePaySsMutual.addItem("SANTANDER PENSIONES, S.A., E.G.F.P.", "G0080");
-		this.enterprisePaySsMutual.addItem("BBVA PENSIONES S.A. EGFP", "G0082");
-		this.enterprisePaySsMutual.addItem("BANSABADELL PENSIONES, E.G.F.P., S.A.", "G0085");
-		this.enterprisePaySsMutual.addItem("MEDIOLANUM PENSIONES, S.A., S.G.F.P.", "G0091");
-//		this.enterprisePaySsMutual.addItem("MUTUALITAT DELS ENGINYERS MPS", "G0105");
-		this.enterprisePaySsMutual.addItem("GVC GAESCO PENSIONES,S.A. S.G.F.P.", "G0111");
-		this.enterprisePaySsMutual.addItem("MAPFRE VIDA PENSIONES,E.G.F.P.,S.A", "G0121");
-		this.enterprisePaySsMutual.addItem("LORETO MUTUA, MUTUALIDAD DE PREVISION SOCIAL", "G0124");
-		this.enterprisePaySsMutual.addItem("RGA RURAL PENSIONES S.A. EGFP", "G0131");
-		this.enterprisePaySsMutual.addItem("GESTION DE PREVISION Y PENSIONES EGFP S.A.", "G0133");
-		this.enterprisePaySsMutual.addItem("MUTUACTIVOS PENSIONES SGFP S.A.U", "G0135");
-//		this.enterprisePaySsMutual.addItem("ARQUIPENSIONES EGFP, S.A.", "G0137");
-		this.enterprisePaySsMutual.addItem("PREVISION SANITARIA NACIONAL, MUTUA DE SEGUROS A PRIMA FIJA", "G0148");
-		this.enterprisePaySsMutual.addItem("MERCHBANC, E.G.F.P., S.A.", "G0153");
-//		this.enterprisePaySsMutual.addItem("SEGUROS EL CORTE INGLES VIDA PENSIONES Y REASEGUROS S.A.U.", "G0154");
-		this.enterprisePaySsMutual.addItem("FONDITEL PENSIONES E.G.F.P.,S.A.", "G0162");
-//		this.enterprisePaySsMutual.addItem("TARGOPENSIONES ENTIDAD GESTORA DE FONDOS DE PENSIONES, S.A.U", "G0172");
-		this.enterprisePaySsMutual.addItem("AXA PENSIONES,S.A., E.G.F.P.", "G0177");
-		this.enterprisePaySsMutual.addItem("BESTINVER PENSIONES E.G.F.P. ,S.A", "G0179");
-		this.enterprisePaySsMutual.addItem("LIBERBANK PENSIONES SGFP SA", "G0180");
-		this.enterprisePaySsMutual.addItem("RENTA 4 PENSIONES, S.A., E.G.F.P.", "G0185");
-		this.enterprisePaySsMutual.addItem("DEUTSCHE ZURICH PENSIONES, ENTIDAD GESTO ", "G0187");
-		this.enterprisePaySsMutual.addItem("NATIONALE-NEDERLANDEN VIDA COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.E", "G0190");
-//		this.enterprisePaySsMutual.addItem("MARCH GESTION DE PENSIONES SGFP, S.A.", "G0197");
-//		this.enterprisePaySsMutual.addItem("PUEYO PENSIONES E.G.F.P., S.A.", "G0198");
-		this.enterprisePaySsMutual.addItem("TREA PENSIONES, E.G.F.P., S.AU.", "G0202");
-//		this.enterprisePaySsMutual.addItem("FINECO PREVISION", "G0207");
-		this.enterprisePaySsMutual.addItem("SURNE MUTUA DE SEGUROS Y REASEGUROS A PRIMA FIJA", "G0211");
-		this.enterprisePaySsMutual.addItem("CAJAMARVIDA, S.A. DE SEGUROS Y REASEGUROS", "G0214");
-//		this.enterprisePaySsMutual.addItem("CAJA LABORAL PENSIONES S.A., G.F.P.", "G0217");
-		this.enterprisePaySsMutual.addItem("CASER PENSIONES ENTIDAD GESTORA DE FONDOS DE PENSIONES SA", "G0219");
-		this.enterprisePaySsMutual.addItem("DUNAS CAPITAL PENSIONES, S.G.F.P., S.A.U.", "G0224");
-		this.enterprisePaySsMutual.addItem("CAJA INGENIEROS VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0225");
-		this.enterprisePaySsMutual.addItem("AEGON ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0230");
-		this.enterprisePaySsMutual.addItem("LIBERBANK VIDA Y PENSIONES, DE SEGUROS Y REASEGUROS, S.A.", "G0231");
-//		this.enterprisePaySsMutual.addItem("HERMANDAD NACIONAL DE ARQUITECTOS, ARQUITECTOS TECNICOS Y QUIMICOS, MPS", "G0232");
-//		this.enterprisePaySsMutual.addItem("Abante Pensiones EGFP S.A.", "G0233");
-		this.enterprisePaySsMutual.addItem("KUTXABANK PENSIONES, E.G.F.P., S.A.U.", "G0234");
-		this.enterprisePaySsMutual.addItem("GCO GESTORA DE PENSIONES, EGFP, S.A.", "G0236");
-		this.enterprisePaySsMutual.addItem("UNION DEL DUERO, COMPA\u00d1IA DE SEGUROS DE VIDA, S.A.", "G0237");
-		this.enterprisePaySsMutual.addItem("COBAS PENSIONES SGFP SA", "G0238");
-		this.enterprisePaySsMutual.addItem("ALLIANZ, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0239");
-		this.enterprisePaySsMutual.addItem("SANTA LUCIA, S.A. COMPA\u00d1IA DE SEGUROS Y REASEGUROS", "G0240");
-		
-		this.enterprisePaySsMutual.addItem("MONTEPIO DEL IGUALATORIO, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00008");
-		this.enterprisePaySsMutual.addItem("ELKARKIDETZA EPSV DE EMPLEO PREFERENTE", "00053");
-		this.enterprisePaySsMutual.addItem("LAGUNARO, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO PREFERENTE", "00069");
-		this.enterprisePaySsMutual.addItem("CAJA JUAN URRUTIA, EPSV DE EMPLEO", "00081");
-		this.enterprisePaySsMutual.addItem("BIHARKO, EPSV DE EMPLEO", "00087");
-		this.enterprisePaySsMutual.addItem("ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO ALEJANDRO ECHEVARRIA", "00088");
-		this.enterprisePaySsMutual.addItem("BIDEPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00101");
-		this.enterprisePaySsMutual.addItem("KUTXABANK EMPLEO, EPSV DE EMPLEO", "00105");
-		this.enterprisePaySsMutual.addItem("ETORPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00110");
-		this.enterprisePaySsMutual.addItem("NORPYME, EPSV DE EMPLEO", "00111");
-		this.enterprisePaySsMutual.addItem("ARABA ETA GASTEIZ AURREZKI KUTXA I EPSV DE EMPLEO PARA EL COLECTIVO DE BENEFICIARIOS POR PENSIONES CAUSADAS", "00121");
-		this.enterprisePaySsMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA II PARA EL COLECTIVO DE EMPLEADOS EN ACTIVO E INCORPORADOS ANTES DEL 1 DE ABRIL DE 1990", "00122");
-		this.enterprisePaySsMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA III PARA EL COLECTIVO DE EMPLEADOS DE LA CAJA DE AHORROS DE VITORIA Y ÁLAVA INGRESADOS DURANTE EL PERÍODO COMPRENDIDO ENTRE EL 01.04.1990 Y EL 25.10.96", "00123");
-		this.enterprisePaySsMutual.addItem("LANAUR BAT, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00124");
-		this.enterprisePaySsMutual.addItem("LANAUR BI, ENTIDAD DE PREVISIÓN SOCIAL VOLUNTARIA DE EMPLEO", "00125");
-		this.enterprisePaySsMutual.addItem("LANAUR HIRU, ENTIDAD DE PREVISION SOCIAL OLUNTARIA DE EMPLEO", "00126");
-		this.enterprisePaySsMutual.addItem("GRUPO DE EMPRESAS TUBACEX, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00127");
-		this.enterprisePaySsMutual.addItem("GAUZATU EPSV DE EMPLEO", "00129");
-		this.enterprisePaySsMutual.addItem("HAZIA-BBK EPSV DE EMPLEO", "00130");
-		this.enterprisePaySsMutual.addItem("ZAINTZA EPSV DE EMPLEO", "00132");
-		this.enterprisePaySsMutual.addItem("TUBOS REUNIDOS EPSV DE EMPLEO", "00133");
-		this.enterprisePaySsMutual.addItem("EPSV DE EMPLEO DEL COLECTIVO DE LOS ANTIGUOS TRABAJADORES DEL BANCO DE VITORIA", "00137");
-		this.enterprisePaySsMutual.addItem("E.P.S.V. GERTAKIZUN", "00138");
-		this.enterprisePaySsMutual.addItem("IZARPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00139");
-		this.enterprisePaySsMutual.addItem("GEROA PENTSIOAK EPSV DE EMPLEO PREFERENTE", "00178");
-		this.enterprisePaySsMutual.addItem("ENTIDAD DE PREVISIÓN SOCIAL VOLUNTARIA GARAIZ PREVISION DE EMPLEO", "00199");
-		this.enterprisePaySsMutual.addItem("PREVISION VIVIENDAS DE VIZCAYA GIZARTEA, EPSV DE EMPLEO", "00207");
-		this.enterprisePaySsMutual.addItem("AROGESTION AHORRO-JUBILACION, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00218");
-		this.enterprisePaySsMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA IV PARA EL COLECTIVO DE EMPLEADOS Y EMPLEADAS DE LA CAJA DE AHORROS DE VITORIA Y ÁLAVA INGRESADOS INGRESADOS/AS A PARTIR DEL 25 OCTUBRE DE 1996", "00222");
-		this.enterprisePaySsMutual.addItem("EPSV DE EMPLEO TRABAJADORES DE PRODUCTOS TUBULARES", "00226");
-		this.enterprisePaySsMutual.addItem("GENERALI EMPLEO, EPSV DE EMPLEO", "00234");
-		this.enterprisePaySsMutual.addItem("GEROCAIXA PYME, EPSV DE EMPLEO", "00241");
-		this.enterprisePaySsMutual.addItem("SVRNE LAN, EPSV DE EMPLEO", "00242");
-		this.enterprisePaySsMutual.addItem("RAUPEN-ARRETA, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00245");
-		this.enterprisePaySsMutual.addItem("SANTANDER PREVISION COLECTIVA, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00246");
-		this.enterprisePaySsMutual.addItem("GEROKOA LAN, EPSV DE EMPLEO", "00256");
-		this.enterprisePaySsMutual.addItem("ITZARRI, EPSV DE EMPLEO", "00260");
-		this.enterprisePaySsMutual.addItem("RURAL PENSION XXI EMPLEO, EPSV", "00281");
-		this.enterprisePaySsMutual.addItem("MAPFRE VIDA EMPLEO, EPSV", "00282");
-		this.enterprisePaySsMutual.addItem("BANSABADELL PREVISION EMPRESAS, EPSV DE EMPLEO", "00283");
-		this.enterprisePaySsMutual.addItem("ETORKIZUMA EPVS DE EMPLEO", "0285B");
+	}
+	
+	private void initPaysheetSendType() {
+		enterprisePaysheetSendType.clearItems();
+		enterprisePaysheetSendType.addItem("Email", "EMAIL");
+		enterprisePaysheetSendType.addItem("Papel", "PAPER");
+		enterprisePaysheetSendType.addItem("Otro", "OTHERS");
 	}
 
-	// ------------------------------------------------- UiHandlers
-	
-	@UiHandler("enterpriseName")
-	void onEnterpriseNameChangeValue(ChangeEvent event) {
-		if(AonStringUtils.isNotBlank(enterpriseName.getValue())) {
-			removeWarning(enterpriseName);
-			onEnterpriseNameChange();
-		} else {
-			addWarning(enterpriseName);
-			Map<String, String> errorMap = new HashMap<>();
-			errorMap.put("Nombre obligatorio", "Este campo debe ser rellenado obligatoriamente");
-			fireErrorMessage(errorMap);
-		}
-	}
-	
-	@UiHandler("enterpriseAlias")
-	void onEnterpriseAliasChangeValue(ChangeEvent event) {
-		onEnterpriseAliasChange();
+	private void initPaySSMutual() {
+		paySSMutual.clearItems();
+		paySSMutual.addItem("-", "");
+		paySSMutual.addItem("CNP PARTNERS SEGUROS Y REASEGUROS SA", "G0001");
+		paySSMutual.addItem("ABANCA VIDA Y PENSIONES DE SEGUROS Y REASEGUROS S.A.U.", "G0002");
+		paySSMutual.addItem("UNICORP VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0003");
+		paySSMutual.addItem("BANKINTER SEGUROS DE VIDA", "G0006");
+		paySSMutual.addItem("SA NOSTRA COMPA\u00d1IA DE SEGUROS DE VIDA SA", "G0012");
+		paySSMutual.addItem("VIDA-CAIXA SA DE SEGUROS Y REASEGUROS", "G0021");
+		paySSMutual.addItem("GENERALI ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0037");
+		paySSMutual.addItem("CCM VIDA Y PENSIONES S.A. DE SEG.Y REAS", "G0048");
+		paySSMutual.addItem("IBERCAJA PENSION,E.G.F.P. , S.A.U.", "G0079");
+		paySSMutual.addItem("SANTANDER PENSIONES, S.A., E.G.F.P.", "G0080");
+		paySSMutual.addItem("BBVA PENSIONES S.A. EGFP", "G0082");
+		paySSMutual.addItem("BANSABADELL PENSIONES, E.G.F.P., S.A.", "G0085");
+		paySSMutual.addItem("MEDIOLANUM PENSIONES, S.A., S.G.F.P.", "G0091");
+		paySSMutual.addItem("GVC GAESCO PENSIONES,S.A. S.G.F.P.", "G0111");
+		paySSMutual.addItem("MAPFRE VIDA PENSIONES,E.G.F.P.,S.A", "G0121");
+		paySSMutual.addItem("LORETO MUTUA, MUTUALIDAD DE PREVISION SOCIAL", "G0124");
+		paySSMutual.addItem("RGA RURAL PENSIONES S.A. EGFP", "G0131");
+		paySSMutual.addItem("GESTION DE PREVISION Y PENSIONES EGFP S.A.", "G0133");
+		paySSMutual.addItem("MUTUACTIVOS PENSIONES SGFP S.A.U", "G0135");
+		paySSMutual.addItem("PREVISION SANITARIA NACIONAL, MUTUA DE SEGUROS A PRIMA FIJA", "G0148");
+		paySSMutual.addItem("MERCHBANC, E.G.F.P., S.A.", "G0153");
+		paySSMutual.addItem("FONDITEL PENSIONES E.G.F.P.,S.A.", "G0162");
+		paySSMutual.addItem("AXA PENSIONES,S.A., E.G.F.P.", "G0177");
+		paySSMutual.addItem("BESTINVER PENSIONES E.G.F.P. ,S.A", "G0179");
+		paySSMutual.addItem("LIBERBANK PENSIONES SGFP SA", "G0180");
+		paySSMutual.addItem("RENTA 4 PENSIONES, S.A., E.G.F.P.", "G0185");
+		paySSMutual.addItem("DEUTSCHE ZURICH PENSIONES, ENTIDAD GESTO ", "G0187");
+		paySSMutual.addItem("NATIONALE-NEDERLANDEN VIDA COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.E", "G0190");
+		paySSMutual.addItem("TREA PENSIONES, E.G.F.P., S.AU.", "G0202");
+		paySSMutual.addItem("SURNE MUTUA DE SEGUROS Y REASEGUROS A PRIMA FIJA", "G0211");
+		paySSMutual.addItem("CAJAMARVIDA, S.A. DE SEGUROS Y REASEGUROS", "G0214");
+		paySSMutual.addItem("CASER PENSIONES ENTIDAD GESTORA DE FONDOS DE PENSIONES SA", "G0219");
+		paySSMutual.addItem("DUNAS CAPITAL PENSIONES, S.G.F.P., S.A.U.", "G0224");
+		paySSMutual.addItem("CAJA INGENIEROS VIDA, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0225");
+		paySSMutual.addItem("AEGON ESPA\u00d1A, S.A. DE SEGUROS Y REASEGUROS", "G0230");
+		paySSMutual.addItem("LIBERBANK VIDA Y PENSIONES, DE SEGUROS Y REASEGUROS, S.A.", "G0231");
+		paySSMutual.addItem("KUTXABANK PENSIONES, E.G.F.P., S.A.U.", "G0234");
+		paySSMutual.addItem("GCO GESTORA DE PENSIONES, EGFP, S.A.", "G0236");
+		paySSMutual.addItem("UNION DEL DUERO, COMPA\u00d1IA DE SEGUROS DE VIDA, S.A.", "G0237");
+		paySSMutual.addItem("COBAS PENSIONES SGFP SA", "G0238");
+		paySSMutual.addItem("ALLIANZ, COMPA\u00d1IA DE SEGUROS Y REASEGUROS, S.A.", "G0239");
+		paySSMutual.addItem("SANTA LUCIA, S.A. COMPA\u00d1IA DE SEGUROS Y REASEGUROS", "G0240");
+		
+		paySSMutual.addItem("MONTEPIO DEL IGUALATORIO, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00008");
+		paySSMutual.addItem("ELKARKIDETZA EPSV DE EMPLEO PREFERENTE", "00053");
+		paySSMutual.addItem("LAGUNARO, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO PREFERENTE", "00069");
+		paySSMutual.addItem("CAJA JUAN URRUTIA, EPSV DE EMPLEO", "00081");
+		paySSMutual.addItem("BIHARKO, EPSV DE EMPLEO", "00087");
+		paySSMutual.addItem("ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO ALEJANDRO ECHEVARRIA", "00088");
+		paySSMutual.addItem("BIDEPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00101");
+		paySSMutual.addItem("KUTXABANK EMPLEO, EPSV DE EMPLEO", "00105");
+		paySSMutual.addItem("ETORPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00110");
+		paySSMutual.addItem("NORPYME, EPSV DE EMPLEO", "00111");
+		paySSMutual.addItem("ARABA ETA GASTEIZ AURREZKI KUTXA I EPSV DE EMPLEO PARA EL COLECTIVO DE BENEFICIARIOS POR PENSIONES CAUSADAS", "00121");
+		paySSMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA II PARA EL COLECTIVO DE EMPLEADOS EN ACTIVO E INCORPORADOS ANTES DEL 1 DE ABRIL DE 1990", "00122");
+		paySSMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA III PARA EL COLECTIVO DE EMPLEADOS DE LA CAJA DE AHORROS DE VITORIA Y ÁLAVA INGRESADOS DURANTE EL PERÍODO COMPRENDIDO ENTRE EL 01.04.1990 Y EL 25.10.96", "00123");
+		paySSMutual.addItem("LANAUR BAT, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00124");
+		paySSMutual.addItem("LANAUR BI, ENTIDAD DE PREVISIÓN SOCIAL VOLUNTARIA DE EMPLEO", "00125");
+		paySSMutual.addItem("LANAUR HIRU, ENTIDAD DE PREVISION SOCIAL OLUNTARIA DE EMPLEO", "00126");
+		paySSMutual.addItem("GRUPO DE EMPRESAS TUBACEX, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00127");
+		paySSMutual.addItem("GAUZATU EPSV DE EMPLEO", "00129");
+		paySSMutual.addItem("HAZIA-BBK EPSV DE EMPLEO", "00130");
+		paySSMutual.addItem("ZAINTZA EPSV DE EMPLEO", "00132");
+		paySSMutual.addItem("TUBOS REUNIDOS EPSV DE EMPLEO", "00133");
+		paySSMutual.addItem("EPSV DE EMPLEO DEL COLECTIVO DE LOS ANTIGUOS TRABAJADORES DEL BANCO DE VITORIA", "00137");
+		paySSMutual.addItem("E.P.S.V. GERTAKIZUN", "00138");
+		paySSMutual.addItem("IZARPENSION, EPSV DE LA MODALIDAD DE EMPLEO", "00139");
+		paySSMutual.addItem("GEROA PENTSIOAK EPSV DE EMPLEO PREFERENTE", "00178");
+		paySSMutual.addItem("ENTIDAD DE PREVISIÓN SOCIAL VOLUNTARIA GARAIZ PREVISION DE EMPLEO", "00199");
+		paySSMutual.addItem("PREVISION VIVIENDAS DE VIZCAYA GIZARTEA, EPSV DE EMPLEO", "00207");
+		paySSMutual.addItem("AROGESTION AHORRO-JUBILACION, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00218");
+		paySSMutual.addItem("EPSV DE EMPLEO ARABA ETA GASTEIZ AURREZKI KUTXA IV PARA EL COLECTIVO DE EMPLEADOS Y EMPLEADAS DE LA CAJA DE AHORROS DE VITORIA Y ÁLAVA INGRESADOS INGRESADOS/AS A PARTIR DEL 25 OCTUBRE DE 1996", "00222");
+		paySSMutual.addItem("EPSV DE EMPLEO TRABAJADORES DE PRODUCTOS TUBULARES", "00226");
+		paySSMutual.addItem("GENERALI EMPLEO, EPSV DE EMPLEO", "00234");
+		paySSMutual.addItem("GEROCAIXA PYME, EPSV DE EMPLEO", "00241");
+		paySSMutual.addItem("SVRNE LAN, EPSV DE EMPLEO", "00242");
+		paySSMutual.addItem("RAUPEN-ARRETA, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00245");
+		paySSMutual.addItem("SANTANDER PREVISION COLECTIVA, ENTIDAD DE PREVISION SOCIAL VOLUNTARIA DE EMPLEO", "00246");
+		paySSMutual.addItem("GEROKOA LAN, EPSV DE EMPLEO", "00256");
+		paySSMutual.addItem("ITZARRI, EPSV DE EMPLEO", "00260");
+		paySSMutual.addItem("RURAL PENSION XXI EMPLEO, EPSV", "00281");
+		paySSMutual.addItem("MAPFRE VIDA EMPLEO, EPSV", "00282");
+		paySSMutual.addItem("BANSABADELL PREVISION EMPRESAS, EPSV DE EMPLEO", "00283");
+		paySSMutual.addItem("ETORKIZUMA EPVS DE EMPLEO", "0285B");
 	}
 
-	@UiHandler("document")
-	void onEnterpriseDocumentChangeValue(ValueChangeEvent<String> event) {
-		onEnterpriseDocumentChange();
+	private void initHandlers() {
+		name.addValueChangeHandler(e -> {
+			String nameValue = e.getValue();
+			if(AonStringUtils.isBlank(nameValue)) {
+				name.addError();
+				showError("El campo nombre es obligatorio");
+			} else {
+				name.removeError();
+				onEnterpriseNameChange(nameValue);
+			}
+		});
+		
+		alias.addValueChangeHandler(e -> onEnterpriseAliasChange(e.getValue()));
+		document.addValueChangeHandler(e -> {
+			checkDocument(true);
+			onEnterpriseDocumentChange(e.getValue());
+		});
+		documentCountry.getSuggestBox().addSelectionHandler(e -> onEnterpriseNationalityChange(documentCountry.getValue()));
+		
+		streetType.addChangeHandler(e -> onEnterpriseStreetTypeChange(streetType.getValue()));
+		address.addValueChangeHandler(e -> onEnterpriseAddressChange(e.getValue()));
+		addressNum.addValueChangeHandler(e -> onEnterpriseAddressNumChange(e.getValue()));
+		addressZip.addValueChangeHandler(e -> {
+			updateProvince();
+			updateMunicipalities();
+			onEnterpriseAddressZipChange(e.getValue());
+		});
+		addressProvince.addChangeHandler(e -> {
+			onEnterpriseAddressProvinceChange(addressProvince.getValue());
+			updateMunicipalities();
+		});
+		addressMunicipality.addChangeHandler(e -> onEnterpriseAddressCityChange(addressMunicipality.getValue()));
+		
+		mobile.addValueChangeHandler(e -> onEnterpriseMobileChange(e.getValue()));
+		phone.addValueChangeHandler(e -> onEnterprisePhoneChange(e.getValue()));
+		email.addValueChangeHandler(e -> onEnterpriseEmailChange(e.getValue()));
+		
+		web.addValueChangeHandler(e -> onEnterpriseWebChange(e.getValue()));
+		scope.addChangeHandler(e -> onEnterpriseScopeChange(AonStringUtils.isBlank(scope.getValue()) ? null : Integer.parseInt(scope.getValue())));
+		
+		enterprisePaysheetModel.addChangeHandler(e -> onEnterprisePaysheetModelChange(enterprisePaysheetModel.getValue()));
+		enterprisePaysheetSendType.addChangeHandler(e -> {
+			checkPaysheetSendType();
+			onEnterprisePaysheetSendTypeChange(enterprisePaysheetSendType.getValue());
+		});
+		payrollEmail.addValueChangeHandler(e -> onEnterprisePaysheetSendEmailChange(e.getValue()));
+		
+		agreement.getSuggestBox().addValueChangeHandler(e -> {
+			String agreementValue = e.getValue();
+			if(AonStringUtils.isBlank(agreementValue))
+				onEnterpriseAgreementChange(null);
+			else if(AonStringUtils.containsIgnoreCase(agreementValue, " - "))
+				for(Agreement agreement : this.enterpriseAgreements)
+					if(agreement.getId().equals(Integer.parseInt(AonStringUtils.substringBefore(agreementValue, " -")))
+							/*AonStringUtils.equalsIgnoreCase(agreement.getDescription(), agreementValue)*/)
+						onEnterpriseAgreementChange(agreement.getId());	
+		});
+		
+		authKey.addValueChangeHandler(e -> onnterprisePayAuthorizationKeyChange(authKey.getValue()));
+		paySSMutual.addChangeHandler(e -> onEnterprisePaySsMutualChange(paySSMutual.getValue()));
 	}
 	
-	@UiHandler("nationality")
-	void onEnterpriseNationalitySelection(SelectionEvent<Suggestion> event) {
-		onEnterpriseNationalityChange();
+	private void initView() {
+		gridPanel.clear();
+		gridPanel.setStyleName(AON.CSS.aonGridTwoCols());
+		gridPanel.getElement().getStyle().setProperty("padding", "0 1rem");
+		
+		AonCustomCard infoCard = new AonCustomCard("Informaci\u00f3n General");
+		
+		HTMLPanel tableInfo = createTable();
+		
+		documentType.setWidth("8rem");
+		streetType.setWidth("8rem");
+		addressZip.setWidth("8rem");
+		
+		tableInfo.add(createRow(name, alias, null));
+		tableInfo.add(createRow(documentType, document, documentCountry));
+		tableInfo.add(createRow(streetType, address, addressNum));
+		tableInfo.add(createRow(addressZip, addressProvince, addressMunicipality));
+		tableInfo.add(createRow(mobile, phone, email));
+		tableInfo.add(createRow(web, scope, null));
+		
+		infoCard.add(tableInfo);
+		gridPanel.add(infoCard);
+		
+		AonCustomCard otherDataCard = new AonCustomCard("Otros Datos");
+		
+		HTMLPanel tableOther = createTable();
+		tableOther.setHeight("100%");
+		
+		enterprisePaysheetModel.setWidth("10em");
+		enterprisePaysheetSendType.setWidth("10rem");
+		
+		tableOther.add(createRow(agreement, enterprisePaysheetModel, null));
+		tableOther.add(createRow(enterprisePaysheetSendType, payrollEmail, null));
+		
+		otherDataCard.add(tableOther);
+		gridPanel.add(otherDataCard);
+		
+		AonCustomCard sistemREDCard = new AonCustomCard("Sistema RED");
+		
+		HTMLPanel tableSistemRED = createTable();
+		
+		paySSMutual.getElement().getStyle().setProperty("max-width", "30rem");
+		tableSistemRED.add(createRow(authKey, paySSMutual, null));
+		
+		sistemREDCard.add(tableSistemRED);
+		gridPanel.add(sistemREDCard);
+		
+		content.remove(gridPanel);
+		content.add(gridPanel);
 	}
 	
-	@UiHandler("streetType")
-	void onEnterpriseStreetTypeChangeValue(ChangeEvent event) {
-		onEnterpriseStreetTypeChange();
+	private HTMLPanel createTable() {
+		HTMLPanel table = new HTMLPanel("");
+		table.setStyleName(AON.CSS.aonFlexColumn());
+		return table;
 	}
 	
-	@UiHandler("address")
-	void onEnterpriseAddressChangeValue(ValueChangeEvent<String> event) {
-		onEnterpriseAddressChange();
+	private HTMLPanel createRow(Widget w1, Widget w2, Widget w3) {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(AON.CSS.aonItemFlex());
+		
+		panel.add(w1);
+		if(null != w2) panel.add(w2);
+		if(null != w3) panel.add(w3);
+		
+		return panel;
 	}
 	
-	@UiHandler("addressNum")
-	void onEnterpriseAddressNumChangeValue(ChangeEvent event) {
-		onEnterpriseAddressNumChange();
-	}
-	
-	@UiHandler("addressZip")
-	void onEnterpriseAddressZipChangeValue(ChangeEvent event) {
-		onEnterpriseAddressZipChange();
-	}
-	
-	@UiHandler("addressCity")
-	void onEnterpriseAddressCityChangeValue(ChangeEvent event) {
-		onEnterpriseAddressCityChange();
-	}
-	
-	@UiHandler("addressProvince")
-	void onEnterpriseAddressProvinceChangeValue(ChangeEvent event) {
-		onEnterpriseAddressProvinceChange();
-	}
-	
-	@UiHandler("mobile")
-	void onEnterpriseMobileChangeValue(ChangeEvent event) {
-		onEnterpriseMobileChange();
-	}
-	
-	@UiHandler("phone")
-	void onEnterprisePhoneChangeValue(ChangeEvent event) {
-		onEnterprisePhoneChange();
-	}
-	
-	@UiHandler("email")
-	void onEnterpriseEmailChangeValue(ChangeEvent event) {
-		onEnterpriseEmailChange();
-	}
-	
-	@UiHandler("enterpriseWeb")
-	void onEnterpriseWebChangeValue(ChangeEvent event) {
-		onEnterpriseWebChange();
-	}
-	
-	@UiHandler("enterprisePaysheetModel")
-	void onEnterprisePaysheetModelChangeValue(ChangeEvent event) {
-		onEnterprisePaysheetModelChange();
-	}
-	
-	@UiHandler("enterprisePaysheetSendType")
-	void onEnterprisePaysheetSendTypeChangeValue(ChangeEvent event) {
-		onEnterprisePaysheetSendTypeChange();
-	}
-	
-	@UiHandler("enterprisePaysheetSendEmail")
-	void onEnterprisePaysheetSendEmailChangeValue(ChangeEvent event) {
-		onEnterprisePaysheetSendEmailChange();
-	}
-	
-	@UiHandler("enterpriseAgreement")
-	void onEnterpriseAgreementSelection(SelectionEvent<Suggestion> event) {
-		String agreementDescription = enterpriseAgreement.getValue();
-		for(Agreement agreement : this.enterpriseAgreements)
-			if(AonStringUtils.equalsIgnoreCase(agreement.getDescription(), agreementDescription))
-				onEnterpriseAgreementChange(agreement.getId());		
-	}
-	
-	@UiHandler("enterpriseAgreement")
-	void onEnterpriseAgreementValueChange(ValueChangeEvent<String> event) {
-		String agreementDescription = enterpriseAgreement.getValue();
-		if(AonStringUtils.isBlank(agreementDescription))
-			onEnterpriseAgreementChange(null);
-	}
-	
-	@UiHandler("enterprisePaySsMutual")
-	void onEnterprisePaySsMutualChangeValue(ChangeEvent event) {
-		onEnterprisePaySsMutualChange();
-	}
-	
-	@UiHandler("enterprisePayAuthorizationKey")
-	void onEnterprisePayAuthorizationKeyChangeValue(ChangeEvent event) {
-		onnterprisePayAuthorizationKeyChange();
-	}
-	
+
 	// ------------------------------------------------- Abstract Methods
 	
-	// TABLA DATOS EMPRESA
+	// General Info
+	public abstract void onEnterpriseNameChange(String name);
+	public abstract void onEnterpriseAliasChange(String alias);
+	public abstract void onEnterpriseDocumentChange(String document);
+	public abstract void onEnterpriseNationalityChange(String nationality);
+	public abstract void onEnterpriseStreetTypeChange(String streetType);
+	public abstract void onEnterpriseAddressChange(String address);
+	public abstract void onEnterpriseAddressNumChange(String number);
+	public abstract void onEnterpriseAddressZipChange(String zip);
+	public abstract void onEnterpriseAddressCityChange(String city);
+	public abstract void onEnterpriseAddressProvinceChange(String province);
+	public abstract void onEnterpriseMobileChange(String mobile);
+	public abstract void onEnterprisePhoneChange(String phone);
+	public abstract void onEnterpriseEmailChange(String email);
+	public abstract void onEnterpriseWebChange(String web);
 	
-	public abstract void onEnterpriseNameChange();
-	public abstract void onEnterpriseAliasChange();
-	public abstract void onEnterpriseDocumentChange();
-	public abstract void onEnterpriseNationalityChange();
-	public abstract void onEnterpriseStreetTypeChange();
-	public abstract void onEnterpriseAddressChange();
-	public abstract void onEnterpriseAddressNumChange();
-	public abstract void onEnterpriseAddressZipChange();
-	public abstract void onEnterpriseAddressCityChange();
-	public abstract void onEnterpriseAddressProvinceChange();
-	public abstract void onEnterpriseMobileChange();
-	public abstract void onEnterprisePhoneChange();
-	public abstract void onEnterpriseEmailChange();
-	public abstract void onEnterpriseWebChange();
-	
-	// TABLA OTROS DATOS EMPRESA
-	
-	public abstract void onEnterprisePaysheetModelChange();
-	public abstract void onEnterprisePaysheetSendTypeChange();
-	public abstract void onEnterprisePaysheetSendEmailChange();
+	// Other Info
+	public abstract void onEnterprisePaysheetModelChange(String paysheetModel);
+	public abstract void onEnterprisePaysheetSendTypeChange(String sendType);
+	public abstract void onEnterprisePaysheetSendEmailChange(String sendEmail);
 	public abstract void onEnterpriseAgreementChange(Integer agreementId);
 	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
-	public abstract void fireErrorMessage(Map<String, String> messages);
-	public abstract void fireWarningMessage(Map<String, String> messages);
-	
-	// TABLA TGSS EMPRESA
-	
-	public abstract void onEnterprisePaySsMutualChange();
-	public abstract void onnterprisePayAuthorizationKeyChange();
+	// Sistema RED
+	public abstract void onEnterprisePaySsMutualChange(String paySSMutual);
+	public abstract void onnterprisePayAuthorizationKeyChange(String authKey);
 	
 	// ------------------------------------------------- Auxiliar Methods	
 	
 	public void checkDocument(boolean fireMessage) {
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("Formato documento", "El documento no est\u00E1 definido o tiene un formato err\u00F3neo");
-		
 		if(AonStringUtils.isNotBlank(document.getValue())) {
 			String documentTypeValue = checkDocumentType();
 		
-			documentType.setText(documentTypeValue);
+			documentType.setValue(documentTypeValue);
 			showNationality();
 		
 			if(checkDocumentValidation()) {
-				showDocumentError();
+				document.addError();
 				if(Boolean.TRUE.equals(fireMessage))
-					fireWarningMessage(infoMap);
+					showError("El documento no est\u00E1 definido o tiene un formato err\u00F3neo");
 			}else {
-				hideDocumentError();
+				document.removeError();
 			}
 		}else {
-			showDocumentError();
+			document.addError();
 			if(Boolean.TRUE.equals(fireMessage))
-				fireWarningMessage(infoMap);
+				showError("El documento no est\u00E1 definido o tiene un formato err\u00F3neo");
 		}
-	}
-	
-	private void showDocumentError() {
-		documentStatus.removeStyleName(AON.CSS.aonIconValid());
-		documentStatus.addStyleName(AON.CSS.aonIconInvalid());
-		document.addStyleName(style.documentError());
-		document.setTitle("Documento no definido o formato err\u00F3neo");
-		documentStatus.setTitle("Documento no definido o formato err\u00F3neo");
-	}
-	
-	private void hideDocumentError() {
-		documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
-		document.removeStyleName(style.documentError());
-		documentStatus.addStyleName(AON.CSS.aonIconValid());
-		document.setTitle("");
-		documentStatus.setTitle("");
 	}
 	
 	private String checkDocumentType() {
@@ -548,19 +447,13 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	private void showNationality() {
 		String documentTypeStr = checkDocumentType();
-		
-		if (	AonStringUtils.equals(documentTypeStr, "CIF") || 
+		documentCountry.setVisible(
+				AonStringUtils.equals(documentTypeStr, "CIF") || 
 				AonStringUtils.equals(documentTypeStr, "Pasaporte") || 
-				AonStringUtils.equals(documentTypeStr, "NIE")) {
-			
-			nationalityLabel.getElement().getStyle().clearDisplay();
-			nationality.getElement().getStyle().clearDisplay();
-			
-		} else {
-			nationalityLabel.getElement().getStyle().setDisplay(Display.NONE);
-			nationality.getElement().getStyle().setDisplay(Display.NONE);
-			nationality.setValue("ESPA\u00D1A");
-		}
+				AonStringUtils.equals(documentTypeStr, "NIE")
+		);
+		
+		if(!documentCountry.isVisible()) documentCountry.setValue("ESPA\u00D1A");
 	}
 	
 	private boolean checkDocumentValidation() {
@@ -571,105 +464,139 @@ public abstract class Enterprise extends ResizeComposite {
 			return false;
 		else if(AonStringUtils.equals(documentTypeStr, "DNI"))
 			return !Dni.checkDNI(value);
+		else if(AonStringUtils.equals(documentTypeStr, "NIE"))
+			return !Dni.checkNIE(value);
 		else
 			return false;
 	}
 	
 	// ------------------------------------------------- Initialize ListBoxes
-
-	public void initializeScopeCell(Map<Integer, String> enterprisecopes) {
-		Widget enterpriseScopeWidget;
+	
+	public void setScopes(Map<Integer, String> enterprisecopes) {
+		scope.clearItems();
+		scope.addItem("-", "");
 		
-		if(enterprisecopes.size() == 0)
-			enterpriseScopeWidget = createEmptyListLabel();
-		else {
-			ListBox scopeListBox = new ListBox();
-			scopeListBox.setStyleName("aon-selectOneMenu");
-			scopeListBox.addStyleName(style.inputLBHeight());
-			scopeListBox.addStyleName(style.inputPadding());
-			scopeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
-			
-			for(Entry<Integer, String> entry : enterprisecopes.entrySet())
-				scopeListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			scopeListBox.addChangeHandler(e -> {
-				Integer scopeId = Integer.valueOf(scopeListBox.getSelectedValue());
-				onEnterpriseScopeChange(scopeId);
-			});
-			
-			enterpriseScopeWidget = scopeListBox;
-		}
-		
-		enterpriseScopePanel.add(enterpriseScopeWidget);
+		for(Entry<Integer, String> entry : enterprisecopes.entrySet())
+			scope.addItem(entry.getValue(), entry.getKey().toString());
 	}
-
-	public void initializeAgreementCell(List<Agreement> enterpriseAgreements) {
-		this.enterpriseAgreements = enterpriseAgreements;
+	
+	public void setAgreements(List<Agreement> enterpriseAgreementsDb) {
+		enterpriseAgreements = enterpriseAgreementsDb;
 		
-		List<String> agreementDescriptions = new ArrayList<>();
+		List<String> agreementSuggestions = new ArrayList<>();
+		enterpriseAgreements.forEach(agreement -> agreementSuggestions.add(agreement.getDescription()));
 		
-		for (Agreement agreement : this.enterpriseAgreements)
-			agreementDescriptions.add(agreement.getDescription());
+		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) agreement.getSuggestBox().getSuggestOracle();
+		orclNames.addAll(agreementSuggestions);
 		
-		MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) enterpriseAgreement.getSuggestOracle();
-		orclAgreements.addAll(agreementDescriptions);
-		orclAgreements.setDefaultSuggestionsFromText(agreementDescriptions);
-		enterpriseAgreement.setAutoSelectEnabled(true);
-		enterpriseAgreement.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
+		agreement.setAutoSelectEnabled(true);
+		agreement.setPlaceHolder("Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
 		
-		enterpriseAgreement.getValueBox().addKeyUpHandler(e -> {
+		agreement.getSuggestBox().addKeyUpHandler(e -> {
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				enterpriseAgreement.setText("");
-				enterpriseAgreement.showSuggestionList();
+				agreement.setValue("");
+				agreement.showSuggestionList();
 			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
-				enterpriseAgreement.hideSuggestionList();
+				agreement.hideSuggestionList();
 		});
 	}
 	
-	public Label createEmptyListLabel() {
-		Label label = new Label();
+	public void fillEnterprise(com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) {
+		name.setValue(enterprise.getName());
+		alias.setValue(enterprise.getAlias());
+		documentType.setValue(null == enterprise.getDocumentType() ? null : enterprise.getDocumentType().getDescription());
+		document.setValue(enterprise.getDocument());
+		documentCountry.setValue(null == enterprise.getDocumentCountry() ? null : enterprise.getDocumentCountry().getName());
+		checkDocument(false);
 		
-		label.setText("No hay entradas disponibles");
-		label.setStyleName("aon-inputText");
-		label.addStyleName(style.warningColor());
-		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		if(null != enterprise.getAddress()){
+			RegistryAddress addressObj = enterprise.getAddress();
+			streetType.setValue(addressObj.getStreetType().getIneCode());
+			address.setValue(addressObj.getAddress());
+			addressNum.setValue(addressObj.getNumber());
+			addressZip.setValue(addressObj.getZip());
+			
+			updateProvince();
+			
+			addressProvince.setValue(addressObj.getGeozoneCode());
+			
+			if(null != addressObj.getGeozoneCode()) {
+				updateMunicipalities();
+				addressMunicipality.setValue(addressObj.getMunicipalityCode());
+			}
+		}
 		
-		return label;
+		Optional<RegistryMedia> mobileOpt = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
+		mobile.setValue(mobileOpt.isEmpty() ? null : mobileOpt.get().getValue());
+		
+		Optional<RegistryMedia> phoneOpt = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.FIXED_PHONE).findFirst();
+		phone.setValue(phoneOpt.isEmpty() ? null : phoneOpt.get().getValue());
+		
+		Optional<RegistryMedia> emailOpt = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.EMAIL).findFirst();
+		email.setValue(emailOpt.isEmpty() ? null : emailOpt.get().getValue());
+		
+		Optional<RegistryMedia> webOpt = enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.WEB).findFirst();
+		web.setValue(webOpt.isEmpty() ? null : webOpt.get().getValue());
+		
+		scope.setValue(null == enterprise.getScope() ? null : enterprise.getScope().toString());
+		
+		Optional<EnterpriseData> paySheetModel = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
+		enterprisePaysheetModel.setValue(paySheetModel.isEmpty() ? null : paySheetModel.get().getExpression());
+		
+		Optional<EnterpriseData> paysheetSend = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
+		enterprisePaysheetSendType.setValue(paysheetSend.isEmpty() ? null : paysheetSend.get().getExpression());
+		
+		Optional<EnterpriseData> paysheetSendEmail = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
+		payrollEmail.setValue(paysheetSendEmail.isEmpty() ? null : paysheetSendEmail.get().getExpression());
+		
+		Optional<EnterpriseData> agreementOpt = enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
+		if(!agreementOpt.isEmpty()) {
+			Optional<Agreement> agreemntOpt = enterpriseAgreements.stream().filter(a -> a.getId().equals(Integer.parseInt(agreementOpt.get().getExpression()))).findFirst();
+			agreement.setValue(agreemntOpt.isEmpty() ? null : (agreemntOpt.get().getId() + " - " + agreemntOpt.get().getDescription()));
+		}
+		
+		Optional<EnterpriseData> payAuthorizationKey = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_authorization_key_PAY")).findFirst();
+		authKey.setValue(payAuthorizationKey.isEmpty() ? null : payAuthorizationKey.get().getExpression());
+		
+		Optional<EnterpriseData> paySsMutual = enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_ss_pension_plan_mutual_PAY")).findFirst();
+		paySSMutual.setValue(paySsMutual.isEmpty() ? null : paySsMutual.get().getExpression());
+		
 	}
 	
+	private void updateProvince() {
+		String zip = addressZip.getValue();
+		if(AonStringUtils.isNotBlank(zip)) {
+			String zipCode = zip.substring(0, 2);
+			addressProvince.setValue(AonStringUtils.leftPad(zipCode, 2, '0'));
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
+		}
+	}
+	
+	private void updateMunicipalities() {
+		String provinceCode = addressProvince.getValue();
+		addressMunicipality.clearItems();
+		addressMunicipality.addItem("-", "");
+		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		municipalitiesOfProvince.entrySet().forEach(e -> addressMunicipality.addItem(e.getValue(), e.getKey()));
+	}
+
 	// ------------------------------------------------- checkPaysheetSendType
 	
-	public void checkPaysheetSendType(String email) {
-		String paysheetSendType = String.valueOf(enterprisePaysheetSendType.getSelectedValue());
-		
-		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
-			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
-			enterprisePaysheetSendEmail.setValue(email);
-			enterprisePaysheetSendType.setWidth("115px");
-		}else {
-			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
-			enterprisePaysheetSendType.setWidth("100%");
-		}	
+	public void checkPaysheetSendType() {
+		String paysheetSendType = String.valueOf(enterprisePaysheetSendType.getValue());
+		payrollEmail.setVisible(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) ;
 	}
 	
-	// ------------------------------------------------- Warning Styles
-	
-	private void addWarning(Widget widget) {
-		widget.addStyleName(style.warningTB());
+	public void showError(String message) {
+		AonMessagePanel.showError(messagePanel, message);
 	}
 	
-	private void removeWarning(Widget widget) {
-		widget.removeStyleName(style.warningTB());
+	public void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
 	}
-
-
-	private void disableDeprecatedPaysheetModels() {
-	    NodeList<OptionElement> enterprisePaysheetOptions = ((SelectElement)this.enterprisePaysheetModel.getElement().cast()).getOptions();
-	    for (int i = 0; i < enterprisePaysheetOptions.getLength(); i++ ) {
-	        OptionElement enterprisePaysheetOption =  enterprisePaysheetOptions.getItem(i);
-	        if ( !AonStringUtils.startsWith(enterprisePaysheetOption.getValue(), "salary_connorMacleod") ) {
-		        enterprisePaysheetOption.setDisabled(true);
-	        }
-	    }
+	
+	public void showSuccess(String message) {
+		AonMessagePanel.showSuccess(messagePanel, message);
 	}
+	
 }
