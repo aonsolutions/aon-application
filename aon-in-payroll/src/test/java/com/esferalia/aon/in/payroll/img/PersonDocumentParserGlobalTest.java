@@ -59,7 +59,6 @@ public class PersonDocumentParserGlobalTest {
 			}
 		}
 
-		@Ignore("No recupera bien el nombre del DNI")
 		@Test
 		public void personDocumentParserPDFOldFormatTest() throws Exception {
 			String file = "com/esferalia/aon/in/payroll/pdf/DNIJordi.pdf";
