@@ -542,6 +542,7 @@ export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
+export const PAYMETHODS = MSG.PAYMETHODS;
 export const PAYROLL = MSG.PAYROLL;
 export const PAYSHEET = MSG.PAYSHEET;
 export const PAYSHEETS = MSG.PAYSHEETS;

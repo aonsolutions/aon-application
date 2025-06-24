@@ -363,6 +363,7 @@ export const PARENT_APPS = 'Aplicaciones del padre';
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contraseña';
 export const PAYMETHOD = 'Forma de Pago';
+export const PAYMETHODS = 'Formas de Pago';
 export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nómina';
 export const PAYSHEETS = 'Nóminas';

@@ -356,6 +356,7 @@ export const PARENT_APPS = "Parent apps";
 export const PAUSE = 'Pause';
 export const PASSWORD = 'Password';
 export const PAYMETHOD = 'Payment Method';
+export const PAYMETHODS = 'Payment Methods';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
 export const PAYSHEETS = 'Paysheets';
