@@ -626,6 +626,9 @@ export class AonHeader extends AonElement {
 		let aonHeaderCompanyList = this.getElement(this.AON_HEADER_COMPANY_LIST);
 		aonHeaderCompanyList.style.display = company && !onlyOne ? 'block' : 'none';
 
+		let aonHeaderCompanyListButton = this.getElement(this.AON_HEADER_COMPANY_LIST_BUTTON);
+		aonHeaderCompanyListButton.style.display = company && !onlyOne ? 'block' : 'none';
+
 		let aonHeaderHelp = this.getElement(this.AON_HEADER_HELP);
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 

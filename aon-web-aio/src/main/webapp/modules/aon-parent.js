@@ -89,6 +89,9 @@ export class AonParent extends AonElement {
 					this.companySelection(companies[0], true);
 				} else {
 					
+					if ( LS.getCompany() ) {
+						this.getAonHeader().showCompanyOption(LS.getCompany(), false);
+					}
 					
 					let aonMenu = this.getElement('aonMenu');
 					aonMenu.init()
