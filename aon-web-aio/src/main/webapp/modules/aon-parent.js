@@ -308,6 +308,7 @@ export class AonParent extends AonElement {
 		this.getWelcomeImage().then( img => welcomeImg.src = img );
 		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
 		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
+		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load		
 		welcomeDiv.appendChild(welcomeImg);
 
 
