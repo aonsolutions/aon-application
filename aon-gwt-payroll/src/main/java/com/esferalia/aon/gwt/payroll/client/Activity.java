@@ -3,162 +3,83 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCheckBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.payroll.client.CCCDialog.CCCDialogCallback;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Activity extends ResizeComposite {
+public abstract class Activity extends ScrollPanel {
 	
 	// ------------------------------------------- CCC
 
 	private class CCCWidgetImpl extends CCC {
-		
-		@Override
-		protected void onInsertRow() {
-			Activity.this.onInsertRow();
+
+		protected CCCWidgetImpl(Integer activityId) {
+			super(activityId);
 		}
 
 		@Override
-		protected void onInsertRows() {
-			Activity.this.onInsertRows();
+		protected void fireError(String message) {
+			showError(message);
 		}
 
 		@Override
-		protected void onDeleteCCC(Integer cccId) {
-			Activity.this.onDeleteCCC(cccId);
+		protected void fireWarning(String message) {
+			showWarning(message);
 		}
 
 		@Override
-		protected void onInsertCCC(EnterpriseCCC ccc) {
-			Activity.this.onInsertCCC(ccc);
-		}
-
-		@Override
-		protected void onInsertActivity(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
-			// Nothing to do
-		}
-
-		@Override
-		protected Set<Entry<Integer, String>> getActivities() {
-			return Activity.this.getActivities();
+		protected void fireLoading(String message) {
+			showLoading(message);
 		}
 		
 		@Override
-		protected List<EnterpriseCCC> getEnterpriseCCCs() {
-			return Activity.this.getEnterpriseCCCs();
-		}
-
-		@Override
-		protected <T> void fireWarningMessage(Map<String, T> warningMap) {
-			Activity.this.fireWarningMessage(toStringMap(warningMap));
-		}
-		
-		@Override
-		protected <T> void fireInfoMessage(Map<String, T> warningMap) {
-		    Activity.this.fireInfoMessage(toStringMap(warningMap));
-		}
-
-		@Override
-		protected <T> void fireLoadingMessage(T message) {
-		    if ( message == null ){
-			    Activity.this.fireLoadingMessage(message.toString());
-		    }
-		}
-
-		@Override
-		protected void hideMessage() {
-			Activity.this.fireHideMessage();
+		protected void hideMessagePanel() {
+			hideMessage();
 		}
 
 		@Override
 		protected void showPDF(String dataURI, String title, boolean isLaboralLife) {
 			Activity.this.showPDF(dataURI, isLaboralLife);
 		}
-		
-		private <T> Map<String,String> toStringMap(Map<String,T> map) {
-		    return
-		    map.entrySet().stream()
-		    .filter(e -> e.getValue() != null )
-		    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString() ));
-		}
-		
+			
 	}
 	
 	// ------------------------------------------- UiBinder
+	
+	private HTMLPanel content = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel gridPanel = new HTMLPanel(AonStringUtils.EMPTY);
 
-	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
-
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, Activity> {}
+	private AonCustomTextBox description = new AonCustomTextBox("Descripci\u00f3n");
+	private AonCustomSuggestBox cnae = new AonCustomSuggestBox("CNAE2009");
+	private AonCustomDateBox startDate = new AonCustomDateBox("F. Inicio");
+	private AonCustomDateBox endDate = new AonCustomDateBox("F. Fin");
+	private AonCustomCheckBox principal = new AonCustomCheckBox("Actividad principal");
 	
-	// ------------------------------------------- UiFields
-
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String warningTB();
-	}
-
-	// TABLA DATOS ACTIVIDAD
-	@UiField
-	ScrollPanel scrollPanel;
+	private AonCustomCard cccCard;
+	private CCC cccWidget;
 	
-	@UiField
-	HTMLPanel activityDataTable;
-	
-	@UiField
-	HTMLPanel activityDescriptionPanel;
-	
-	@UiField
-	TextBox activityDescription;
-	
-	@UiField
-	HTMLPanel activityCNAE2009Panel;
-	
-	@UiField
-	SuggestBox activityCNAE2009;
-	
-	@UiField
-	DateBoxEx startDate;
-	
-	@UiField
-	DateBoxEx endDate;
-	
-	@UiField
-	CheckBox activityActive;
-	
-	// TABLA DATOS CCCs
-	
-	@UiField (provided = true)
-	CCC cccWidget;
+	private com.esferalia.aon.occam.api.model.payroll.Activity activity;
 	
 	// ------------------------------------------- Variables
 	
@@ -167,90 +88,28 @@ public abstract class Activity extends ResizeComposite {
 
 	// ------------------------------------------- Constructor
 
-	protected Activity() {
-		cccWidget = new CCCWidgetImpl();
-		initWidget(uiBinder.createAndBindUi(this));
-		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
+	protected Activity(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
+		this.activity = activity;
 		initializeView();
 	}
 	
-	// ------------------------------------------- UiHandlers
-	
-	// TABLA DATOS ACTIVIDAD
-	
-	@UiHandler("activityDescription")
-	void onDescriptionChangeValue(ChangeEvent event) {
-		if(AonStringUtils.isBlank(activityDescription.getValue())) {
-			addWarningIcon(activityDescription);
-			activityDescription.setTitle("La descripci\u00f3n debe rellenarse");
-			
-			fireErrorMessage(new HashMap<String, String>(){{ put("Descripci\u00F3n obligatoria", "El campo descripci\u00F3n es obligatorio"); }});
-		} else {
-			removeWarningIcon(activityDescription);
-			activityDescription.setTitle("");
-			
-			onActivityDescriptionChange();
-		}
-	}
-	
-	@UiHandler("activityCNAE2009")
-	void onCNAE2009SelectionValue(SelectionEvent<Suggestion> event) {
-		String cnae2009Value = activityCNAE2009.getValue();
-		Optional<Entry<Integer, String>> cnae2009Opt = this.cnaeMap.entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
-		if(cnae2009Opt.isPresent()) { 
-			Integer cnaeId = cnae2009Opt.get().getKey();
-			String cnaeCode = cnae2009Opt.get().getValue().split(" - ")[0];
-			String cnaeTitle = cnae2009Opt.get().getValue().split(" - ")[1];
-			onActivityCNAE2009Change(cnaeId, cnaeCode, cnaeTitle); 
-		} else onActivityCNAE2009Change(null, null, null);
-	}
-	
-	@UiHandler("startDate")
-	void onStartDateChangeValue(ValueChangeEvent<Date> event) {
-		onActivityStartDateChange();
-	}
-	
-	@UiHandler("endDate")
-	void onEndDateChangeValue(ValueChangeEvent<Date> event) {
-		onActivityEndDateChange();
-	}
-	
-	@UiHandler("activityActive")
-	void onActiveClick(ClickEvent event) {
-		onActivityActiveChange(); 
-	}
-	
-	// ------------------------------------------- Abstract Methods
-	
-	// TABLA DATOS ACTIVIDAD
-	
-	public abstract void onActivityDescriptionChange();
-	public abstract void onActivityCNAE2009Change(Integer cnaeId, String cnaeCode, String cnaeTitle);
-	public abstract void onActivityStartDateChange();
-	public abstract void onActivityEndDateChange();
-	public abstract void onActivityActiveChange();
-	
-	public abstract void onInsertRow();
-	public abstract void onInsertRows();
-	public abstract void onDeleteCCC(Integer cccId);
-	public abstract void onInsertCCC(EnterpriseCCC ccc);
-	public abstract Set<Entry<Integer, String>> getActivities();
-	public abstract List<EnterpriseCCC> getEnterpriseCCCs();
-
-	protected abstract void fireErrorMessage(Map<String, String> messages);
-	protected abstract void fireWarningMessage(Map<String, String> messages);
-	protected abstract void fireInfoMessage(Map<String, String> messages);
-	protected abstract void fireLoadingMessage(String message);
-	protected abstract void fireHideMessage();
-	
-	public abstract void showPDF(String dataURI, boolean isLaboralLife);
-
-	// ------------------------------------------- Auxiliar Methods
-
 	public void initializeView() {
+		clear();
+		content.clear();
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.add(messagePanel);
+		
 		initializeCnae();
-		removeWarningIcon(activityDescription);
-		cccWidget.resetPreview();
+		
+		initHandlers();
+		
+		cccWidget = new CCCWidgetImpl(this.activity.getId());
+		
+		initView();
+		
+		Scheduler.get().scheduleDeferred(() -> {
+			setWidget(content);
+		});
 	}
 	
 	private void initializeCnae() {
@@ -259,62 +118,162 @@ public abstract class Activity extends ResizeComposite {
 			@Override
 			public void onSuccess(Map<Integer, String> cnaeMapIn) {
 				cnaeMap = cnaeMapIn;
+				
 				List<String> cnaeDescriptions = new ArrayList<>();
-				
-				for (Entry<Integer, String> entry : cnaeMap.entrySet())
-					cnaeDescriptions.add(entry.getValue());
-				
+				cnaeMap.entrySet().forEach(entry -> cnaeDescriptions.add(entry.getValue()));
 				cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
 				
-				MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) activityCNAE2009.getSuggestOracle();
+				MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cnae.getSuggestBox().getSuggestOracle();
 				orclCnaes.addAll(cnaeDescriptions);
 				orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
-				activityCNAE2009.setAutoSelectEnabled(true);
-				activityCNAE2009.getElement().setPropertyString("placeholder", "C\u00f3digo/Descripci\u00f3n del CNAE... (Ctrl + espacio para ver sugerencias)");
+				cnae.setAutoSelectEnabled(true);
+				cnae.setPlaceHolder("CNAE... (Ctrl + espacio para ver sugerencias)");
 				
-				activityCNAE2009.getValueBox().addKeyUpHandler(e -> {
+				cnae.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
 					if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-						activityCNAE2009.setText("");
-						activityCNAE2009.showSuggestionList();
+						cnae.setValue(AonStringUtils.EMPTY);
+						cnae.showSuggestionList();
 					} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
-						activityCNAE2009.hideSuggestionList();
+						cnae.hideSuggestionList();
 				});
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				fireWarningMessage(new HashMap<String,String>() {{ put("ERRO CNAE", caught.getMessage()); }});
+				showError("CNAE : " + caught.getMessage());
 			}
+			
 		});
 		
 	}
+	
+	private void initHandlers() {
+		description.addValueChangeHandler(e -> {
+			if(AonStringUtils.isBlank(e.getValue())) {
+				description.addError();
+				showError("Descripci\u00F3n obligatoria");
+			} else {
+				description.removeError();
+				onActivityDescriptionChange(e.getValue());
+			}
+		});
+		
+		cnae.getSuggestBox().addSelectionHandler(e -> {
+			String cnae2009Value = cnae.getValue();
+			Optional<Entry<Integer, String>> cnae2009Opt = this.cnaeMap.entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
+			if(cnae2009Opt.isPresent()) { 
+				Integer cnaeId = cnae2009Opt.get().getKey();
+				String cnaeCode = cnae2009Opt.get().getValue().split(" - ")[0];
+				String cnaeTitle = cnae2009Opt.get().getValue().split(" - ")[1];
+				onActivityCNAE2009Change(cnaeId, cnaeCode, cnaeTitle); 
+			} else onActivityCNAE2009Change(null, null, null);
+		});
 
-	public void addNewCCC() {
-		cccWidget.insertNewRow();
+		startDate.addValueChangeHandler(e -> onActivityStartDateChange(e.getValue()));
+		endDate.addValueChangeHandler(e -> onActivityEndDateChange(e.getValue()));
+		principal.addValueChangeHandler(e -> onActivityActiveChange(e.getValue()));
+	}
+
+	private void initView() {
+		gridPanel.clear();
+		gridPanel.setStyleName(AON.CSS.aonGridTwoCols());
+		gridPanel.getElement().getStyle().setProperty("padding", "0 1rem");
+		
+		AonCustomCard activityCard = new AonCustomCard("Datos actividad");
+		
+		if(null != activity.getId()) {
+			description.setValue(activity.getDescription());
+			cnae.setValue(activity.getCnaeCode() + " - " + activity.getCnaeDescription());
+			startDate.setValue(activity.getStartDate());
+			endDate.setValue(activity.getEndDate());
+			principal.setValue(activity.isPrincipal());
+		}
+		
+		principal.setWidth("20rem");
+		
+		HTMLPanel tableInfo = createTable();
+		tableInfo.add(createRow(description, cnae, null));
+		tableInfo.add(createRow(startDate, endDate, principal));
+		
+		activityCard.add(tableInfo);
+		gridPanel.add(activityCard);
+		
+		AonToolbarButton addCCC = new AonToolbarButton("Nuevo CCC", AON.CSS.aonIconAdd());
+		addCCC.addClickHandler(e -> createCCC());
+		cccCard = new AonCustomCard("Cuentas Cotizaci\u00f3n", addCCC);
+		cccCard.add(cccWidget);
+		
+		gridPanel.add(cccCard);
+		
+		content.remove(gridPanel);
+		content.add(gridPanel);
+	}
+	private HTMLPanel createTable() {
+		HTMLPanel table = new HTMLPanel("");
+		table.setStyleName(AON.CSS.aonFlexColumn());
+		return table;
 	}
 	
-	public void hideActivityColumn() {
-		cccWidget.hideActivityColumn();
+	private HTMLPanel createRow(Widget w1, Widget w2, Widget w3) {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(AON.CSS.aonItemFlex());
+		
+		panel.add(w1);
+		if(null != w2) panel.add(w2);
+		if(null != w3) panel.add(w3);
+		
+		return panel;
 	}
 	
-	public void addWarningIcon(Widget widget) {
-		widget.addStyleName(style.warningTB());
+	void createCCC() {
+		new CCCDialog(activity.getDomain(), activity.getId(), new CCCDialogCallback() {
+			@Override
+			public void onAccept(EnterpriseCCC ccc) {
+				initializeView();
+			}
+		});
+	}
+
+	void hideCCCCard() {
+		cccCard.setVisible(false);
 	}
 	
-	public void removeWarningIcon(Widget widget) {
-		widget.removeStyleName(style.warningTB());
+	CCC getCCCWidget() {
+		return cccWidget;
 	}
+	
+	// ------------------------------------------- Abstract Methods
+	
+	// TABLA DATOS ACTIVIDAD
+	
+	public abstract void onActivityDescriptionChange(String description);
+	public abstract void onActivityCNAE2009Change(Integer cnaeId, String cnaeCode, String cnaeTitle);
+	public abstract void onActivityStartDateChange(Date startDate);
+	public abstract void onActivityEndDateChange(Date endDate);
+	public abstract void onActivityActiveChange(Boolean principal);
+	
+	public abstract void showPDF(String dataURI, boolean isLaboralLife);
 
-	public void showCCCMessage() {
-		cccWidget.showCCCMessage();
+	// ------------------------------------------- Auxiliar Methods
+
+	void showError(String message) {
+		AonMessagePanel.showError(messagePanel, message);
 	}
-
-	public void showCCCTable() {
-		cccWidget.showCCCTable();
+	
+	void showSuccess(String message) {
+		AonMessagePanel.showSuccess(messagePanel, message);
 	}
-
-	public void onAddNewCCC() {
-		cccWidget.onAddNewCCC();
+	
+	void showWarning(String message) {
+		AonMessagePanel.showWarning(messagePanel, message);
+	}
+	
+	void showLoading(String message) {
+		AonMessagePanel.showLoading(messagePanel, message);
+	}
+	
+	void hideMessage() {
+		AonMessagePanel.hideMessage(messagePanel);
 	}
 
 }

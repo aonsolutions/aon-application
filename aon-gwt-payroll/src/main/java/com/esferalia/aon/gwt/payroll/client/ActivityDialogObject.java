@@ -93,4 +93,8 @@ public class ActivityDialogObject {
 		return activityInfo.getDomain();
 	}
 	
+	public Activity getActivity() {
+		return activityInfo;
+	}
+	
 }

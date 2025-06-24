@@ -289,6 +289,8 @@ public interface EnterprisesServiceAsync {
 	
 	void saveCCC(String currentDomainName, String user, EnterpriseCCC ccc, AsyncCallback<EnterpriseCCC> asyncCallback) throws IllegalArgumentException;
 	
+	void getActivityCCCList(String currentDomainName, String currentUser, Integer activityId, AsyncCallback<List<EnterpriseCCC>> asyncCallback) throws IllegalArgumentException;
+	
 	// --------------------------- Mod 145 (API)
 	
 	void getMod145List(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<Mod145>> asyncCallback) throws IllegalArgumentException;
@@ -365,5 +367,6 @@ public interface EnterprisesServiceAsync {
 	void agreementIntegrityFix(String currentDomainName, Integer agreementId, AgreementIntegrityFix agreementIntegrityFix, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	
 	void fixAgreementIntegrity(String currentDomainName, Integer agreementId, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	
 
 }

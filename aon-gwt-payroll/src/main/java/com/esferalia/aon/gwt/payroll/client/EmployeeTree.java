@@ -3375,38 +3375,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private ActivityDraft getActivityDraft() {
 		if (activityDraft == null)
-			activityDraft = new ActivityDraft() {
-
-				@Override
-				protected void showSuccessMessage(Map<String, String> messages) {
-					EmployeeTree.this.showSuccessMessage(messages);
-				}
-
-				@Override
-				protected void showErrorMessage(Map<String, String> messages) {
-					EmployeeTree.this.showErrorMessage(messages);
-				}
-				
-				@Override
-				protected void showWarningMessage(Map<String, String> messages) {
-					EmployeeTree.this.showWarningMessage(messages);
-				}
-				
-				@Override
-				protected void showInfoMessage(Map<String, String> messages) {
-					EmployeeTree.this.showInfoMessage(messages);
-				}
-
-				@Override
-				protected void showLoadingMessage(String message) {
-					EmployeeTree.this.showLoadingMessage(message);
-				}
-
-				@Override
-				protected void hideMessage() {
-					EmployeeTree.this.hideMessagePanel();
-				}
-			};
+			activityDraft = new ActivityDraft();
 				
 		return activityDraft;
 	}
