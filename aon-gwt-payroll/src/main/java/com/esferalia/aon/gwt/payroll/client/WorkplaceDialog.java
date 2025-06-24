@@ -105,19 +105,35 @@ public class WorkplaceDialog extends AonCustomDialog {
 	// ------------------------------------------------- Buttons Panel
 	
 	private void getButtonsPanel() {
-		Button closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText( AON.MSG.cancelAction());
+		buttonsPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
+		buttonsPanel.getElement().getStyle().setProperty("margin", "1rem");
+		
+		Button closeBtnDialog = createButton("Cancelar");
 		closeBtnDialog.addClickHandler(e -> onCloseDialog());
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		Button acceptBtnDialog = new Button();
-		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText( AON.MSG.accept());
+		Button acceptBtnDialog = createButton("Crear");
+		acceptBtnDialog.getElement().getStyle().setProperty("color", "green");
 		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 		
 		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private Button createButton(String text) {
+		Button button = new Button(text);
+		button.getElement().getStyle().setProperty("background", "none");
+		button.getElement().getStyle().setProperty("background-color", "#fafafa");
+		button.getElement().getStyle().setProperty("padding", "5px");
+		button.getElement().getStyle().setProperty("height", "auto");
+		button.getElement().getStyle().setProperty("font-size", "12px");
+//		button.getElement().getStyle().setProperty("font-family", "Arial Unicode MS, Arial, sans-serif");
+		button.getElement().getStyle().setProperty("text-transform", "inherit");
+		button.getElement().getStyle().setProperty("font-weight", "bold");
+		button.getElement().getStyle().setProperty("border", "1px solid #d0d0d0");
+		button.getElement().getStyle().setProperty("border-radius", "5px");
+		
+		return button;
 	}
 	
 	private void onCloseDialog() {

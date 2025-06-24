@@ -15,10 +15,8 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -203,23 +201,21 @@ public abstract class Workplace extends ScrollPanel {
 	
 	public void initializeCalendarCell(String calendarDescription, CalendarDraftObjectData calendarDraftObjectData) {
 		Widget calendarWidget;
+		workplaceCalendarPanel.clear();
+		workplaceCalendarPanel.setWidth("100%");
 		
 		if(AonStringUtils.isBlank(calendarDescription))
 			calendarWidget = createEmptyLabel("Calendario");
 		else {
-			HTMLPanel hPanel = new HTMLPanel(AonStringUtils.EMPTY);
-			hPanel.addStyleName(AON.CSS.aonItemFlex());
-			hPanel.setWidth("100%");
-			
-			Label calendarLabel = new Label(calendarDescription);
-			calendarLabel.getElement().getStyle().setMarginRight(5.00, Unit.PX);
-			
 			AonTableButton calendarButton = new AonTableButton("Calendario", AON.CSS.aonIconEditCalendar());
 			calendarButton.addClickHandler(e -> EmployeeTree.showWorkplaceCalendar(calendarDraftObjectData));
 			
-			hPanel.add(calendarLabel);
-			hPanel.add(calendarButton);
-			calendarWidget = hPanel;
+			AonCustomTextBox calendar = new AonCustomTextBox("Calendario");
+			calendar.setValue(calendarDescription);
+			calendar.setEnable(false);
+			calendar.addButton(calendarButton);
+			
+			calendarWidget = calendar;
 		}
 		
 		workplaceCalendarPanel.add(calendarWidget);

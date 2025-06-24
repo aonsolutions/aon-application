@@ -64,6 +64,7 @@ public class WorkplaceDraft extends AonCustomDockLayout {
 		super("Centro Trabajo");
 		
 		getToolbarPanel();
+		hideSearchWidget();
 		
 		workplace = new WorkplaceImplementation();
 		add(workplace);
