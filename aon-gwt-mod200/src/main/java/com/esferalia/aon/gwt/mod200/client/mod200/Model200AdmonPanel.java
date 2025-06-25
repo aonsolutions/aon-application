@@ -247,7 +247,8 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 			new AonConfirmDialogCallback() {
 			
 				@Override
-				public void onCancel() {					
+				public void onCancel() {		
+					// DO NOTHING
 				}
 				
 				@Override
@@ -359,7 +360,6 @@ public class Model200AdmonPanel extends DockLayoutPanel {
 					getCallback().sendSuccessfully();
 					Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
 				} else {
-//					showHtml( buff.toString() );	
 					getCallback().sendSuccessfully();
 					Scheduler.get().scheduleDeferred(() -> showHtml( buff.toString() ));
 				}
