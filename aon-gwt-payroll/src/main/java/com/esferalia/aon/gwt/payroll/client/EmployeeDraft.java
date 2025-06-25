@@ -746,7 +746,12 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 	private void fillExistingEmployee() {
 		EmployeeInfo employeeData = employeeDraftObject.getEmployeeData();
 		
-		employee.document.setValue(employeeData.getDocument(), true);
+		employee.document.setValue(employeeData.getDocument());
+		
+		if(!employee.checkDocumentValidation(employeeData.getDocument()))
+				employee.document.addError();
+		else employee.document.removeError();
+		
 		employee.nationality.setValue(employeeData.getNationality());
 		employee.securitySocialNum.setValue(employeeData.getSsNumber(), true);
 		
