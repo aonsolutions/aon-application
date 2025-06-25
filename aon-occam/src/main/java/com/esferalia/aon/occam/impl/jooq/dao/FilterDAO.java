@@ -312,6 +312,11 @@ public class FilterDAO implements Filter {
 		}
 
 		@Override
+		public Filter isNullS3() {
+			return new FilterDAO(field.isNull());
+		}
+
+		@Override
 		public Filter isNotNull() {
 			return new FilterDAO(field.isNotNull());
 		}

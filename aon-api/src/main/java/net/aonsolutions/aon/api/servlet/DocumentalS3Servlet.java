@@ -194,7 +194,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	private static Attach getFile(AonApiData api) throws Exception {
 		try {
 			Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
-			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
+			S3Document document = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNullS3()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null).toList().getFirst();
 			byte[] data = null;
 			if(type == 0 && document.getS3key() != null) {
 				data = S3rDoc.download(document.getS3key(), document.getS3bucket());
@@ -254,7 +254,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				else
 					idsRattach[i] = array.getJSONObject(i).getInt(IJsonNames.ID);
 			}
-			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
+			List<S3Document> documents = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().in(idsRdoc).and(f.getDeleteDateProperty().isNullS3()), f -> f.getIdProperty().in(idsRattach), null, null, null, null).toList();
 			List<byte[]> files = new LinkedList<byte[]>();
 			List<String> filenames = new LinkedList<String>();
 			for (S3Document document : documents) {
@@ -310,9 +310,9 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static Object getAction(AonApiData api) {
 		if(api.getData().has(IJsonNames.ID)) {
-			return getOne(api);			
+			return getOne(api);
 		} else {
-			return getList(api);	
+			return getList(api);
 		}
 	}
 	
@@ -334,20 +334,19 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), document.getId(), document.getType())
 				.forEach(id -> tagArray.put(new JSONObject().put("id", id)));
 
-			doc.put(IJsonNames.TAG, tagArray);  
+			doc.put(IJsonNames.TAG, tagArray);
 
 			jsArray.put(doc);
 		});
 		return jsArray;
 	}
 
-	
 	private static JSONObject getOne(AonApiData api) {
 		System.out.println("GET ONE METHOD");
 		JSONArray jsArray = new JSONArray();
 		Integer type = JsonUtils.getInteger(api.getData(), IJsonNames.TYPE);
 		JSONArray array = new JSONArray();
-		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNull()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
+		AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)).and(f.getDeleteDateProperty().isNullS3()), f -> f.getIdProperty().eq(api.getData().getInt(IJsonNames.ID)), type, null, null, null)
 		.forEach(document -> {
 			JSONObject doc = fullDocumentToJson(document);
 			AON_SOLUTIONS.getDocumentTags(api.getDomain(), api.getUser(), api.getData().getInt(IJsonNames.ID), type).forEach(id -> {
@@ -451,7 +450,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static Filter generateFilter(S3DocumentProperties f, AonApiData api, Integer[] scopes) {
 		DomainUserRoles dur = SECURITY.getDomainUserRoles(api.getDomain(), api.getUser().getLogin(), api.getUser().getId());
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDeleteDateProperty().isNull());
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()).and(f.getDeleteDateProperty().isNullS3());
 		JSONObject json = api.getData();
 		String type = json.optString("registryType", null) != null ? json.optString("registryType") : "all";
 		if(scopes != null)
@@ -493,7 +492,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
             	} else filter = filter.and(f.getTypeProperty().isNull());
         	}
     	}
-		if(api.getData().has(IJsonNames.TAG)) {			
+		if(api.getData().has(IJsonNames.TAG)) {
 			JSONArray tags = new JSONArray(api.getData().getString(IJsonNames.TAG));
 			if(tags.length() > 0) {
 				Integer[] idsTags = new Integer[tags.length()];
@@ -502,6 +501,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 				filter = filter.and(f.getTagProperty().in(idsTags));
 			}
 		}
+
 		return filter;
 	}
 	
@@ -634,7 +634,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static JSONObject getBidoqDocumentsToAon(AonApiData api) {
 		String document = api.getData().getString(IJsonNames.DOCUMENT);
-		JSONObject json = callBidoq(document);
+		JSONObject json = callBidoq(document, "transfer_document_aon");
 		if(json.has("datos")) {		
 			JSONObject folders = json.getJSONObject("datos");
 			for(String folder : JSONObject.getNames(folders)) {
@@ -737,7 +737,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	}
 	
 	private static boolean checkBidoqDocument(AonApiData api, String s3key) {
-		Stream<S3Document> list = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(s3key)).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)).and(f.getDeleteDateProperty().isNull()), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null));
+		Stream<S3Document> list = AON_SOLUTIONS.getS3DocumentStream(api.getDomain(), api.getUser(), f -> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getS3Property().eq(s3key)).and(f.getS3BucketProperty().eq(BIDOQ_BUCKET_NAME)).and(f.getDeleteDateProperty().isNullS3()), f -> null, 0, null, Optional.ofNullable(null), Optional.ofNullable(null));
 		if(list.count() == 0)
 			return false;
 		else 
@@ -777,7 +777,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 	
 	private static Integer getBidoqDocumentsToOCRCount(AonApiData api) {
 		String document = api.getData().getString(IJsonNames.DOCUMENT);
-//		JSONObject json = callBidoq("78150882x");
+//		JSONObject json = callBidoq("78150882x", "transfer_document_aon");
 //		if(!document.equals("93176905H")) {
 //			return 0;
 //		}
@@ -813,7 +813,7 @@ public class DocumentalS3Servlet extends AonApiHttpServlet {
 //		if(!document.equals("93176905H")) {
 //			return new JSONObject().put("result", "OK");
 //		}
-//		JSONObject json = callBidoq("78150882x");
+//		JSONObject json = callBidoq("78150882x", "transfer_document_aon");
 		JSONObject json = callBidoq(document, "transfer_document_aon");
 		int count = getBidoqDocumentsToOCRCount(api);
 		int cont = 0;
