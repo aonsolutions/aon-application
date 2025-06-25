@@ -237,6 +237,12 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 		commercialSeller.clearItems();
 		commercialSeller.addItem("-", "");
 		supportSellers.forEach(seller -> commercialSeller.addItem(seller.getName(), seller.getId().toString()));
+		
+		if(null != target.getRegistry().getCreationUser()) {
+			getSellerByUserLogin(seller -> {
+				if(null != seller && null != seller.getId()) commercialSeller.setValue(seller.getId().toString());
+			});
+		}
 
 		targetContainer.add(createRow(commercialSeller, null));
 
@@ -511,6 +517,21 @@ public abstract class ProcessTargetEnterpriseDialog extends AonCustomDialog {
 		});
 	}
 
+	private void getSellerByUserLogin(Consumer<Seller> success) {
+		COMMON_SERVICE.getSellerByUserLogin(params.getDomainName(), params.getDomain(), params.getUser(), target.getId(), new AsyncCallback<Seller>() {
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				success.accept(null);
+			}
+
+			@Override
+			public void onSuccess(Seller seller) {
+				success.accept(seller);
+			}}
+		);
+	}
+	
 	public static native void onSaleProcess(String data) /*-{
 		$wnd.top.postMessage(
 		  { type: "CUSTOMER_ENTERPRISE_DONE", payload: data },

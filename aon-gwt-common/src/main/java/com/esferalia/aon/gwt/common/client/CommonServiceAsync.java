@@ -361,6 +361,7 @@ public interface CommonServiceAsync {
 	void getCustomerByDocument(String domainName, int domain, String user, String document, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
 	void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> asyncCallback) throws AonCoreException;
 	void getCompanyByDocument(String domainName, int domain, String user, String document, AsyncCallback<Company> asyncCallback) throws AonCoreException;
+	void getSellerByUserLogin(String domainName, int domain, String user, Integer targetId, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// **************************************** [PROJECT]
