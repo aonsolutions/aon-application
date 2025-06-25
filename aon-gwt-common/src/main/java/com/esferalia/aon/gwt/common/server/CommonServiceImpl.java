@@ -1030,6 +1030,26 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 				f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().in(silbingDomains.toArray(new Integer[0]))));
 	}
 	
+	@Override
+	public Seller getSellerByUserLogin(String domainName, int domainId, String user, Integer targetId) throws AonCoreException {
+		Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(domainId));
+		Integer parentDomain = domain.isParent() ? domain.getId() : domain.getParentId();
+		
+		Optional<Target> target = AON.getTarget(domainName, domainId, user, targetId);
+		if(target.isPresent() && null != target.get().getCreationUser()) {
+			User userCreator = AON.getUser(domainName, domainId, user, f -> f.getLoginProperty().eq(target.get().getCreationUser()).and(f.getDomainProperty().eq(parentDomain)));
+			if(null != userCreator && null != userCreator.getId()) {
+				TaskHolder taskHolder = AON.getTaskHolder(domainName, domainId, user, f -> f.getUserIdProperty().eq(userCreator.getId()));
+				if(null != taskHolder && null != taskHolder.getId()) {
+					Seller seller = AON.getSeller(domainName, domainId, user, f -> f.getTaskHolderProperty().eq(taskHolder.getId()));
+					if(null != seller && null != seller.getId())
+						return seller;
+				}
+			}
+		}
+		return null;
+	}
+	
 	// **************************************************
 	// **************************************** [PROJECT]
 	// **************************************************
