@@ -10,7 +10,6 @@ import * as LS from "../../../../services/localStorageService.js";
 import { Chart } from "chart.js/auto";
 
 export class AonStatistics extends AonElement {
-  
   TABLE_ID;
   dur;
   taskHolder;

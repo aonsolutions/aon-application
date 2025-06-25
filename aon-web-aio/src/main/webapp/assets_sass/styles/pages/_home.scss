@@ -27,5 +27,16 @@ aon-home{
       display : block;
       height  : v.$pct-100;
     }
+    .aonFlex{
+      display : flex;
+      gap     : v.$gap;
+      
+      .aonSidenav:empty{
+        display: none;
+      }
+      .aonRightSidenav:empty{
+        display: none;
+      }
+    }
   }
 }

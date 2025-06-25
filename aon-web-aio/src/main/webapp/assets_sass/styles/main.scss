@@ -37,8 +37,9 @@
 @use './layouts/menu' as menu;
 
 // Importamos vistas
-@use './pages/index' as index;  // login
-@use './pages/home' as home;    // home - logueado
+@use './pages/index' as index;                // login
+@use './pages/home' as home;                  // home - logueado
+@use './pages/home_desktop' as home_desktop;  // home - en empresa
 
 :root{
   font-family : v.$font-primary-regular;

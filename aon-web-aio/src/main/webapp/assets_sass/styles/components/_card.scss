@@ -6,9 +6,11 @@ aon-card{
   
   .aonCardTitle{
     section{
-      padding     : v.$px-16 v.$padding;
-      font-weight : v.$font-weight-medium;
-      font-size   : v.$px-18;
+      padding        : v.$px-12 v.$padding;
+      font-family    : v.$font-primary-semibold;
+      font-size      : v.$font-size-h4;
+      line-height    : v.$line-height-h4;
+      letter-spacing : v.$letter-spacing-h4;
       &:empty {
         display : none;
       }

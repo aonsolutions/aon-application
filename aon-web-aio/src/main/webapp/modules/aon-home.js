@@ -90,8 +90,7 @@ export class AonHome extends AonElement {
           // console.log(JSON.stringify(e.detail));
           const appColor = app.newColor || app.color;
           if ( !app.home ){
-              let appEl = aonMenu.buildApp(app, 
-              {
+              let appEl = aonMenu.buildApp(app, {
                   height: '32px',
                   color: '#ffffff',
                   flexDirection: 'row'

@@ -351,6 +351,9 @@ export class AonSign extends AonElement {
           let sumHour = datos.reduce((total, {time, status, in_date})=> status && status.indexOf("in")>=0 && in_date ? ((total + (new Date().getTime() - in_date))  + time) : total + time, 0);
           if(sumHour>0){
             let content = this.getElement(this.CONTENT);
+            
+            console.log(content)
+            
             const div = this.getElement(this.TOTAL_HOUR) || this.createElement(TAG.DIV);
             div.id = this.TOTAL_HOUR;
             div.style.color =  LS.isDarkTheme() ? "#ffffff" : "gray";

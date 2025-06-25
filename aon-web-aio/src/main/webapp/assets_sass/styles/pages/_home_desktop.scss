@@ -1,0 +1,12 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+aon-home{
+  #rootPanel {
+    .aonFlex #cardsPanel{
+      display   : flex;
+      gap       : v.$gap;
+      flex-wrap : wrap;
+    }
+  }
+}
