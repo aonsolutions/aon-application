@@ -168,6 +168,7 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 
 		@Override
 		public void onContractAgreementChange(Integer agreementId, String agreementSSNumber) {
+//			Windo
 			employeeDraftObject.setContractAgreementId(agreementId);
 			employeeDraftObject.setContractAgreementLevelId(null);
 			employeeDraftObject.setContractCategory(null);
@@ -958,7 +959,7 @@ public abstract class EmployeeDraft extends AonCustomDockLayout {
 	// ------------------------------------------------- Auxiliar Methods
 
 	private void getAgreementLevels(Integer agreementId, Consumer<Agreement> success, Consumer<Throwable> failure) {
-		employee.level.clear();
+		employee.level.clearItems();
 		employee.level.addItem("-", "-1");
 		
 		employeeDraftObject.getAgreement(agreementId,  
