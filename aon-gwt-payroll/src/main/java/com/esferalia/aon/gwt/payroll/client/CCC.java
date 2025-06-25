@@ -157,6 +157,7 @@ public abstract class CCC extends ScrollPanel {
 	private void onSearch() {
 		container.clear();
 		tab = new AonCustomTable();
+		tab.ensureDebugId("cccTable");
 		tab.setMaxHeight("160x");
 		scrollPanel = new ScrollPanel(tab);
 		
@@ -190,6 +191,7 @@ public abstract class CCC extends ScrollPanel {
 		
 		AonTableButton deleteButton = new AonTableButton("Borrar CCC", AON.CSS.aonIconDelete());
 		deleteButton.addStyleName(AON.CSS.aonCustomRowButtom());
+		deleteButton.ensureDebugId("delete");
 		deleteButton.addClickHandler(e -> {
 			e.stopPropagation();
 			deleteButton.setEnabled(false);
