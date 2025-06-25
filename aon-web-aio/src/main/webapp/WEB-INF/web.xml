@@ -589,6 +589,10 @@
 
 	<security-constraint>
 		<web-resource-collection>
+			<web-resource-name>jsfhelp</web-resource-name>
+			<url-pattern>/jsfhelp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>rpc_agreement</web-resource-name>
 			<url-pattern>/aon_gwt_payroll/agreement/*</url-pattern>
 		</web-resource-collection>

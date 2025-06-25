@@ -1136,7 +1136,7 @@ public class Payment extends ResizeComposite {
 
 	private boolean taxEditableAndQuoteFull() {
 		com.esferalia.aon.gwt.payroll.shared.Payment.Type type = getType();
-		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0013 );
+		return ( type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0013 || type == com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0022 );
 	}
 
 	private boolean taxAndQuoteFull() {

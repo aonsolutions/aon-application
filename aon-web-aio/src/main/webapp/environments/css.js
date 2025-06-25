@@ -151,6 +151,8 @@ export const AON_DASHBOARD_CARD = 'aonDashboardCard';
 
 export const AON_PARENT_DIV = 'aonParentDiv';
 export const AON_WELCOME_DIV = 'aonWelcomeDiv';
+export const AON_WELCOME_LOGO = 'aonWelcomeLogo';
+export const AON_WELCOME_MESSAGE = 'aonWelcomeMessage';
 export const AON_APPS_DIV = 'aonAppsDiv';
 
 export const AON_COMPANY_DIV = 'aonCompanyDiv';

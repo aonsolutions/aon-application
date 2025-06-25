@@ -5,8 +5,7 @@ import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 import { AonAccountingBeta } from './aon-accounting-beta.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
-
-
+import { PAYMETHODS } from '../MenuOptions.js';
 
 export class AonAccountingMenu extends AonSuiteMenu {
 
@@ -263,11 +262,7 @@ export class AonAccountingMenu extends AonSuiteMenu {
 				description: "Cartera de cobros y pagos",
 				title: "Cartera de cobros y pagos",
 				action: () => GWT.iLoad(GWT.FINANCE)
-			},{
-				description: "Formas de pago",
-				title: "Formas de pago",
-				action: () => GWT.iLoad(GWT.PAY_METHOD)
-			}],
+			}, PAYMETHODS],
 			filter: () => this.isNotDomainManagementAvailable()
 		},{
 			title: 'Registro Mercantil',

@@ -465,9 +465,9 @@ public abstract class EmployeeWidget extends FlowPanel {
 				this.documentType.setValue(documentTypeValue);
 				
 				if (checkDocumentValidation(documentValue))
-					this.document.removeError();
-				else
 					this.document.addError();
+				else
+					this.document.removeError();
 
 				onEmployeeDocumentChange(documentValue, documentTypeValue);
 			} else {

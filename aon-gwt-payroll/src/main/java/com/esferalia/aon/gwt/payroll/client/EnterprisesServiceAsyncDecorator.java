@@ -1137,6 +1137,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.saveCCC(domainName, user, ccc, callback);
 	}
 	
+	@Override
+	public void getActivityCCCList(String domainName, String user, Integer activityId,
+			AsyncCallback<List<EnterpriseCCC>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivityCCCList(domainName, user, activityId, callback);
+	}
+	
 	// --------------------------- Mod 145 (API)
 
 	@Override

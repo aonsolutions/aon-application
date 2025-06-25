@@ -49,62 +49,38 @@ public class MainConfigComunica extends MainEntryPoint{
 	
 	private class CCCWidgetImpl extends CCC {
 
-		@Override
-		protected void onInsertRow() {}
-		
-		@Override
-		protected void onInsertRows() {
-			mainConfigComunicaObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
+		protected CCCWidgetImpl(Integer activityId) {
+			super(activityId);
 		}
 
 		@Override
-		protected void onDeleteCCC(Integer cccId) {
-			mainConfigComunicaObject.deleteCCC(cccId);
+		protected void fireError(String message) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		protected void onInsertCCC(EnterpriseCCC ccc) {
-			mainConfigComunicaObject.insertCCC(ccc);
+		protected void fireWarning(String message) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		protected Set<Entry<Integer, String>> getActivities() {
-			return mainConfigComunicaObject.getActivities();
-		}
-		
-		@Override
-		public List<EnterpriseCCC> getEnterpriseCCCs() {
-			return mainConfigComunicaObject.getActiveCCCs();
+		protected void fireLoading(String message) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		protected <T> void fireWarningMessage(Map<String, T> warningMap) {
-			// Nothing to do here
-		}
-		
-		@Override
-		protected <T> void fireInfoMessage(Map<String, T> warningMap) {
-			// Nothing to do here
-		}
-
-		@Override
-		protected <T> void fireLoadingMessage(T message) {
-			// Nothing to do here
-		}
-
-		@Override
-		protected void hideMessage() {
-			// Nothing to do here
+		protected void hideMessagePanel() {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
 		protected void showPDF(String dataURI, String title, boolean isLaboralLife) {
-			// Nothing to do here
-		}
-
-		@Override
-		protected void onInsertActivity(Activity activity) {
-			// Nothing to do here
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}
@@ -175,7 +151,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		
 		toolbar = getToolbarPanel();
 		workplaceComunicaWidget = new WorkplaceComunicaWidgetImpl();
-		cccWidget = new CCCWidgetImpl();
+		cccWidget = new CCCWidgetImpl(null);
 		agreementComunicaWidget = new AgreementComunicaWidgetImpl();
 		
 		Widget ui = binder.createAndBindUi(this);
@@ -199,8 +175,8 @@ public class MainConfigComunica extends MainEntryPoint{
 		this.mainConfigComunicaObject.getComunicaEnterpriseSettings(s -> {
 			workplaceComunicaWidget.setAddresses(mainConfigComunicaObject.getAddresses());
 			workplaceComunicaWidget.onInsertRows();
-			cccWidget.setDomain(mainConfigComunicaObject.getDomain());
-			cccWidget.onInsertRows();
+//			cccWidget.setDomain(mainConfigComunicaObject.getDomain());
+//			cccWidget.onInsertRows();
 			agreementComunicaWidget.setServiAgreements(mainConfigComunicaObject.getServiAgreements());
 			agreementComunicaWidget.onInsertRows();
 		}, f -> {});
@@ -224,8 +200,8 @@ public class MainConfigComunica extends MainEntryPoint{
 		this.mainConfigComunicaObject.setComunicaEnterpriseSettings(s -> {
 			workplaceComunicaWidget.resetPreview();
 			workplaceComunicaWidget.onInsertRows();
-			cccWidget.resetPreview();
-			cccWidget.onInsertRows();
+//			cccWidget.resetPreview();
+//			cccWidget.onInsertRows();
 			agreementComunicaWidget.resetPreview();
 			agreementComunicaWidget.onInsertRows();
 		}, f -> {});

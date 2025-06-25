@@ -6,6 +6,7 @@ export class AonJsfApp extends AonElement {
 
 	IFRAME;
 	
+	jsfapp = 'jsfapp';
 	viewId = '';
 	action = '';
 	redirectUrl = '';
@@ -41,7 +42,7 @@ export class AonJsfApp extends AonElement {
 
 		let form = this.createElement(TAG.FORM);
 		form.style.display = 'none';
-		form.action = 'jsfapp';
+		form.action =this.jsfapp;
 		form.target = this.IFRAME;
 
 		let viewIdInput = this.createElement(TAG.INPUT);
@@ -107,12 +108,20 @@ export class AonJsfApp extends AonElement {
 
 	}
 
+	getForm() {
+		return this.getIFrame().contentDocument?.querySelector(TAG.FORM);
+	}
+	
 	getIFrame() {
 		return this.getElement(this.IFRAME) || this.createElement(TAG.IFRAME, this.IFRAME);
 	}
 
 	setViewId(viewId) {
 		this.viewId = viewId;
+	}
+	
+	setJsfApp(jsfapp) {
+		this.jsfapp = jsfapp;
 	}
 
 	setExpireSession(expireSession) {
@@ -1263,19 +1272,23 @@ export class AonJsfAccountingBook extends AonJsfApp {
 	}
 }
 
+
 export class AonJsfHelpContent extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/helpContent.xhtml');
+		this.setJsfApp('jsfhelp');
+		this.setViewId('/facelet/help/helpContent.xhtml');
 	}
+	
 }
 
 export class AonJsfHelpNotification extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/helpNotification.xhtml');
+		this.setJsfApp('jsfhelp');
+		this.setViewId('/facelet/help/helpNotification.xhtml');
 	}
 }
 
