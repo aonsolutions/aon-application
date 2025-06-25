@@ -105,6 +105,12 @@ public class FilterDAO implements Filter {
 		public Filter notIn(T[] t) {
 			return new FilterDAO(field.notIn(t));
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	public static class DateBetweenPropertyDAO implements Property<Date> {
@@ -186,6 +192,12 @@ public class FilterDAO implements Filter {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 
@@ -259,6 +271,12 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter notIn(Date[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}
@@ -416,6 +434,12 @@ public class FilterDAO implements Filter {
 		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 
@@ -490,6 +514,12 @@ public class FilterDAO implements Filter {
 		@Override
 		public Filter notIn(Boolean[] t) {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Filter isNullS3() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
