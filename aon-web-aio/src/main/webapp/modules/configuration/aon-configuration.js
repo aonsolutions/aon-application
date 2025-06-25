@@ -227,7 +227,7 @@ export class AonConfiguration extends AonElement {
         appOptions.push({
           id: AON_SALTRA.title,
           name: AON_SALTRA.title,
-          icon: AON_SALTRA.icon,
+          icon: MATERIAL_ICONS.ALTERNATE_EMAIL,
           fn: () => this.buildComunicaConfiguration(),
         });
       } else if(this.dur.isComunicaManager()){
