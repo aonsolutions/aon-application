@@ -275,9 +275,7 @@ public class Mod2002024Compute {
 	static {
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ500,"PG500");
-		// FALTA - VER COMO LO HACE SOCIEDADES WEB PORQUE EN EL DOC PADIS LAS COMPROBACIONES SE HACEN AHORA TAMBIEN CON LA CASILLA 00004, POR LO TANTO IGUAL LA 301 NO SE PUEDE ASIGNAR DIRECTAMENTE A LO QUE TENGA LA 326
-		// SOCIEDADES WEB DEJA CUMPLIMENTAR DE FORMA MANUAL LAS 3 CASILLAS (301, 302 Y 004)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ301,"(PG326<0)?(PG326*-1):(0.0)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ301,"(PG326<0)?((PG326*-1)-LQ004):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ302,"(PG326>0)?(PG326):(0.0)");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LQ501,"(LQ500+LQ301-LQ302+LQ004)");
 		
@@ -733,7 +731,6 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1251,"isLimitEnabled()?PG284:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1252,"isLimitEnabled()?PG285:0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1253,"isLimitEnabled()?PG287:0.0");
-//		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1249,"isLimitEnabled()?computeLM1249():0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1249,"isLimitEnabled()?round((LM1250-LM1251-LM1252-LM1253+LM1254-LM2368) * 0.30):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM2369,"isLimitEnabled()?computeLM2369():0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1260,"isLimitEnabled()?LM1243+LM1257:0.0");
@@ -782,10 +779,7 @@ public class Mod2002024Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.LM1628,"LM1626-LM1627");  // Fila 2024
 		addBreakdown(Mod2002024LM1494Key.values(), Mod2002024Key.LM1494, false);  // Fila de totales
 		
-		// FALTA - VER SI ASIGNAR TAMBIEN CASILLAS 2810 Y 990 SI TIENEN CALCULOS FIJOS AL FINAL 
-		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital ...
-//		 02810 (pág. 20 quater) = 02919 (pág. 12)
-//		 00990 (pág. 20 quater) = 00524 (pág. 12)
+		// Reversión de las pérdidas por deterioro de valores representativos de la participación en el capital...
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RV991, "RV941-RV2810-RV990");
 		
 		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales		
@@ -798,7 +792,7 @@ public class Mod2002024Compute {
 	
 		// Régimen especial de la reserva para inversiones en las Illes Balears. La última columna no sigue la regla estandar y no tiene fila de totales
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB2917,"RB1707-RB2914-RB2915-RB1936");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB1708,"RB2363+RB2364-RB2374");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB1708,"RB2362-RB2941+RB2363+RB2364-RB2374");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002024Key.RB1709,"RB2918-RB1708");
 				
 	}

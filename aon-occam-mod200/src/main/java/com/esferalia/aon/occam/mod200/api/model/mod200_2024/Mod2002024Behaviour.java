@@ -15,8 +15,6 @@ public class Mod2002024Behaviour {
 	// Elemento 0 ---> isTitle?    : Hace que aparezca en negrita y la casilla desplazada a la derecha
 	// Elemento 1 ---> isDisabled? : Hace que la casilla esté deshabilitada
 
-	// FALTA - TERMINAR DE REVISAR CON EL DOCUMENTO PADIS QUE CASILLAS ESTARAN DESHABILITADAS O DEBEN APARECER EN NEGRITA
-	
 	static { 
 		
 		// PARTICIPACIONES
@@ -72,11 +70,14 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP198, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP199, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP200, new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP768, new Boolean[]{TRUE,FALSE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP769, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP201, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP202, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP208, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP209, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP210, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP780, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP781, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP211, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP216, new Boolean[]{TRUE,TRUE});
@@ -86,6 +87,7 @@ public class Mod2002024Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP226, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP227, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP228, new Boolean[]{TRUE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP785, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP786, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP229, new Boolean[]{TRUE,FALSE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002024Key.BP230, new Boolean[]{TRUE,FALSE});

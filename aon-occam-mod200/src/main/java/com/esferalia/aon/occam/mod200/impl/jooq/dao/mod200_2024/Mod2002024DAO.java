@@ -87,8 +87,6 @@ public class Mod2002024DAO  {
 				.setBookValue(reg.getBookValue())
 				.setIncomes(reg.getIncomes())
 				.setValueCorrection(reg.getAValue())
-				// FALTA - VER SI ES NECESARIO CONTROLAR POSIBLES NULOS
-//				.setLossReversion(reg.getBValue() == null ? 0.0 : reg.getBValue())				
 				.setLossReversion(reg.getBValue())
 				.setAccountingElimination(reg.getCcValue())
 				.setValuesElimination(reg.getDdValue())
@@ -1063,15 +1061,13 @@ public class Mod2002024DAO  {
 				}
 			}
 			
-			// Datos grupo mercantil, no se graban si hemos desmarcado el caracter 0081
-			if (mod200.isNotChecked(Mod2002024Key.C0081)) {		
-				// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL REVISAR SI SOLO SE TIENE EN CUENTA EL CARACTER 81 O ALGUNO MAS
-				mod200.setUltimateDocument("");            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
-//				mod200.setUltimateDocumentCountry(null);   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país // ESTE SE ELIMINA ESTE AÑO
-				mod200.setUltimateName("");				   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
-				mod200.setUltimateGroupName("");		   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo 
-				mod200.setUltimateResidenceCountry(null);  // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País de residencia
-				mod200.setUltimateResidenceDocument("");   // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Número de identificación fiscal en el país de residencia (TIN)
+			// Datos grupo mercantil, no se graban si hemos desmarcado el caracter 0081, 0082 o 0039
+			if (mod200.isNotChecked(Mod2002024Key.C0081) && mod200.isNotChecked(Mod2002024Key.C0082) && mod200.isNotChecked(Mod2002024Key.C0039)) {		
+				mod200.setUltimateDocument("");            // Grupo mercantil - Datos de la sociedad matriz última: NIF
+				mod200.setUltimateName("");				   // Grupo mercantil - Datos de la sociedad matriz última: Razón social
+				mod200.setUltimateGroupName("");		   // Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo 
+				mod200.setUltimateResidenceCountry(null);  // Grupo mercantil - Datos de la sociedad matriz última: País de residencia
+				mod200.setUltimateResidenceDocument("");   // Grupo mercantil - Datos de la sociedad matriz última: Número de identificación fiscal en el país de residencia (TIN)
 		    }	
 			
 			// Grupos de sociedades, art. 42 código de comercio, incluidas entidades de crédito y aseguradoras
@@ -1097,12 +1093,6 @@ public class Mod2002024DAO  {
 			if (mod200.isNotChecked(Mod2002024Key.C0089)) {				
 				mod200.getUteParticipationsBis().clear();
 			}
-			
-			// FALTA - ESTE AÑO HAY TRES OPCIONES, PROBAR A IMPORTAR COOPERATIVA Y NO COOPERATIVA 
-			// Volumen de operaciones: Si no es cooperativa y estaba marcado el 3, ponerle el 2 (este año solo hay 2 opciones, excepto cooperativas)			
-//			if (mod200.getDoubleValue(Mod2002024Key.VOLOPE) == 3.0 && mod200.isNotChecked(Mod2002024Key.C0017) && mod200.isNotChecked(Mod2002024Key.C0018) && mod200.isNotChecked(Mod2002024Key.C0019)) {
-//				mod200.setDoubleValue(Mod2002024Key.VOLOPE, 2.0);
-//			}
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002024Key)
 			Mod2002024MVELContext mvelCtx = new Mod2002024MVELContext( mod200, ACCEPTER );		

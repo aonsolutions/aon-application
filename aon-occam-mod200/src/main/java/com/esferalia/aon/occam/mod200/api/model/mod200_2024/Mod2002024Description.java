@@ -126,7 +126,7 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.P1502,"Valor en libros (en el activo de la declarante) de la participaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002024Key.P1503,"Ingresos por dividendos recibidos en el ejercicio declarado");
 		DESCRIPTION_MAP.put(Mod2002024Key.P1504,"a) Correcci\u00F3n de valor incluida en p\u00E9rdidas y ganancias del periodo");
-		DESCRIPTION_MAP.put(Mod2002024Key.P2376,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (DT 16\u00BA LIS)");
+		DESCRIPTION_MAP.put(Mod2002024Key.P2376,"b) Reversi\u00F3n de p\u00E9rdidas por deterioro de valores (DT 16\u00AA LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.P1506,"c) Eliminaci\u00F3n del deterioro contable incluido en P y G (art. 13.2b) LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.P1809,"d) Eliminaci\u00F3n del deterioro de valores repr. de partic. en el capital o fondos propios (art. 15 k) LIS)");
 		DESCRIPTION_MAP.put(Mod2002024Key.P1810,"e) Ajuste por la disminuci\u00F3n de valor originada por criterio de valor razonable (art. 15 l) LIS)");
@@ -589,6 +589,9 @@ public class Mod2002024Description {
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1578, "Resultado a ingresar como consecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al periodo impositivo 2024"); 
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ1584, "Devoluci\u00F3n acordada por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de autoliquidaciones anteriores o liquidaciones administrativas correspondientes al periodo impositivo 2024"); 
 		DESCRIPTION_MAP.put(Mod2002024Key.BN621,  "Resultado");
+		
+		DESCRIPTION_MAP.put(Mod2002024Key.ING01,  "Resultado a ingresar correspondiente a la anterior autoliquidaci\u00F3n o liquidaci\u00F3n administrativa correspondiente al periodo impositivo 2024, previos a la rectificaci\u00F3n");
+		DESCRIPTION_MAP.put(Mod2002024Key.ING02,  "Resultado a ingresar correspondiente a la anterior autoliquidaci\u00F3n o liquidaci\u00F3n administrativa correspondiente al periodo impositivo 2024, que se anula con la presentaci\u00F3n de esta autoliquidaci\u00F3n rectificativa");
 		
 		DESCRIPTION_MAP.put(Mod2002024Key.LQ866,  "Rectificaci\u00F3n");
 		

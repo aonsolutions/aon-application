@@ -29,13 +29,15 @@ public class Page14 extends PageAbs {
 		addTable(AON.MSG.combinedTaxation1(), Mod2002024Constants.COMBINED_TAXATION_1);
 		addTable(AON.MSG.combinedTaxation2(), Mod2002024Constants.COMBINED_TAXATION_2);
 		
-		paintTable("Determinaci\u00F3n del resultado correspondiente a cada una de las Administraciones", Mod2002024Constants.COMBINED_TAXATION_3, HEADERS, Mod2002024Key.TR420, Mod2002024Key.TR474, Mod2002024Key.TR494, Mod2002024Key.TR1624);
+		FlexTable table = paintTable("Determinaci\u00F3n del resultado correspondiente a cada una de las Administraciones", Mod2002024Constants.COMBINED_TAXATION_3_1, HEADERS, Mod2002024Key.TR420, Mod2002024Key.TR474);
+		paintTable(table, Mod2002024Constants.COMBINED_TAXATION_3_2);
+		paintTable(table, Mod2002024Constants.COMBINED_TAXATION_3_3, Mod2002024Key.TR1624, Mod2002024Key.TR494);
 		paintTable("Opci\u00F3n de fraccionamiento art. 19.1 LIS", Mod2002024Constants.COMBINED_TAXATION_4, HEADERS, Mod2002024Key.TR1646, Mod2002024Key.TR1654);
 		paintTable("Conversi\u00F3n de activos por impuesto diferido en cr\u00E9dito exigible frente a la Administraci\u00F3n tributaria (art. 130 LIS)", Mod2002024Constants.COMBINED_TAXATION_5, HEADERS);
 		
 	}
 	
-	private void paintTable(String title, Mod2002024Key[][] liquidationKeys, String[] headers, Mod2002024Key... boldKeys) {
+	private FlexTable paintTable(String title, Mod2002024Key[][] liquidationKeys, String[] headers, Mod2002024Key... boldKeys) {
 		
 		FlexTable table = addTable(title, headers.length, "140px");
 	
@@ -48,7 +50,15 @@ public class Page14 extends PageAbs {
 			col++;			
 		}
 		
-		row++;
+		paintTable(table, liquidationKeys, boldKeys);
+		
+		return table;
+		
+	}
+	
+	private void paintTable(FlexTable table, Mod2002024Key[][] liquidationKeys, Mod2002024Key... boldKeys) {
+
+		int row = table.getRowCount();
 		
 		for (Mod2002024Key[] keys : liquidationKeys) {
 			boolean paintDescription = true;							
@@ -70,6 +80,7 @@ public class Page14 extends PageAbs {
 		}
 		
 	}
+	
 	
 	@Override
 	protected boolean isAvailable() {

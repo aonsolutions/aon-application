@@ -185,17 +185,17 @@ public class Mod2002024Import2023 {
 			
 			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002024Key.VOLOPE, mod200old.getDoubleValue(Mod2002023Key.VOLOPE))
 			
-			// GRUPOS FISCALES 
+			// GRUPOS FISCAL 
 			
 			,(mod200old,mod200new) -> mod200new.setFiscalGroup( mod200old.getFiscalGroup() )              // Grupo Fiscal - Nº de grupo fiscal al que pertenecen las entidades  que hayan marcado las claves 009 ó 010  [040]
 			,(mod200old,mod200new) -> mod200new.setDominantDocument( mod200old.getDominantDocument() )    // Grupo Fiscal - NIF de la entidad representante/dominante (incluida en el grupo fiscal)
 			,(mod200old,mod200new) -> mod200new.setDominantIdentificationNumber( mod200old.getDominantIdentificationNumber() ) // Grupo Fiscal - Nº identificación de la entidad dominante (en el caso de grupos constituidos sólo por entidades dependientes)
 			
-			// FALTA - VER AL FINAL QUE CAMPOS SE QUEDAN Y CUALES DESAPARECEN PARA NO COPIARLOS DEL AÑO PASADO
-			,(mod200old,mod200new) -> mod200new.setUltimateDocument( mod200old.getUltimateDocument() )    // Grupo Mercantil - Datos de la sociedad matriz última: NIF
-//			,(mod200old,mod200new) -> mod200new.setUltimateDocumentCountry( mod200old.getUltimateDocumentCountry() )    // Grupo Mercantil - Datos de la sociedad matriz última: Código Pais (NIF) - ESTE DATO SE ELIMINA PARA EL 2024
-			,(mod200old,mod200new) -> mod200new.setUltimateName( mod200old.getUltimateName() )            // Grupo Mercantil - Datos de la sociedad matriz última: Razón social
-			,(mod200old,mod200new) -> mod200new.setUltimateResidenceCountry( mod200old.getUltimateCountry() )      // Grupo Mercantil - Datos de la sociedad matriz última: País de residencia fiscal
+			// GRUPO MERCANTIL
+			
+			,(mod200old,mod200new) -> mod200new.setUltimateDocument( mod200old.getUltimateDocument() )          // Grupo Mercantil - Datos de la sociedad matriz última: NIF
+			,(mod200old,mod200new) -> mod200new.setUltimateName( mod200old.getUltimateName() )                  // Grupo Mercantil - Datos de la sociedad matriz última: Razón social
+			,(mod200old,mod200new) -> mod200new.setUltimateResidenceCountry( mod200old.getUltimateCountry() )   // Grupo Mercantil - Datos de la sociedad matriz última: País de residencia fiscal
 			
 			// ESTADOS DE CUENTAS 
 			
@@ -822,9 +822,6 @@ public class Mod2002024Import2023 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002024Key.BN1381, AonMathUtils.round(mod200old.getDoubleValue(Mod2002023Key.BN1384)/0.05)+
        			   																	   AonMathUtils.round(mod200old.getDoubleValue(Mod2002023Key.BN2708)/0.05)) // 2023
 			
-			// FALTA - ESTE APARTADO NO SE TRASPASA DEL EJERCICIO ANTERIOR
-			// Deducciones I+D+i excluidas de límite. Opción art. 39.2 LIS
-			
 		})
 
 		,PAG20 ( new IPropertyFiller[] {
@@ -945,9 +942,6 @@ public class Mod2002024Import2023 {
             
             // Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) - Inversiones anticipadas
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002024Key.RC1176, mod200old.getDoubleValue(Mod2002023Key.RC2451)) // 2020
-            // FALTA - QUITAN TODAS ESTAS CASILLAS LUEGO EL IMPORTE PTE DEL AÑO ANTERIOR DESAPARECE
-//            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002024Key.RC1823, mod200old.getDoubleValue(Mod2002023Key.RC1184)) // 2021
-//            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002024Key.RC2823, mod200old.getDoubleValue(Mod2002023Key.RC1600)) // 2022
 
         	// Régimen de cooperativas - Detalle de compensación de cuotas	                                                                				
             ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002024Key.LQ673 , mod200old.getDoubleValue(Mod2002023Key.LQ1224)) // 2000 			

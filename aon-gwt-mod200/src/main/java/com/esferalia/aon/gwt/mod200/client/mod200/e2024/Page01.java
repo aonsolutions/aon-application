@@ -62,7 +62,7 @@ public class Page01 extends PageAbs {
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
 
-		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo, a efectos de determinar si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima del art. 30 bis LIS, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, los l\u00EDmites de compensaci\u00F3n de cuotas en el r\u00E9gimen de cooperativas, las correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los arts, 31, 32, 100.10\u00BA y DT 23\u00BA LIS (l\u00EDmites aplicables de acuerdo con la DA 8\u00AA Ley 20/1990 y DA 15\u00AA LIS)");		
+		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo, a efectos de determinar si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima del art. 30 bis LIS, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, los l\u00EDmites de compensaci\u00F3n de cuotas en el r\u00E9gimen de cooperativas, las correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los arts, 31, 32, 100.10\u00BA y DT 23\u00AA LIS (l\u00EDmites aplicables de acuerdo con la DA 8\u00AA Ley 20/1990 y DA 15\u00AA LIS)");		
 		
 		// PERSONAL ASALARIADO
 		

@@ -514,7 +514,7 @@ public class Mod2002024Writer {
 					// Casillas BN103x van con formato 7,2
 					if (key == Mod2002024Key.BN103A || key == Mod2002024Key.BN103B || key == Mod2002024Key.BN103C || key == Mod2002024Key.BN103D)
 						addUnSignedKey(l, m, key, 7, 4); // Según los errores que da el fichero, se está esperando 4 decimales
-					// Elemento 2 de cada fila es un porcentaje (formato 4,2) // FALTA - EXCEPTO CASILLAS 586 Y 254 QUE TAMBIEN VAN A 17,2 	
+					// Elemento 2 de cada fila es un porcentaje (formato 4,2) // EXCEPTO CASILLAS 586 Y 254 QUE TAMBIEN VAN A 17,2 	
 					else if (pos == 2 && key != Mod2002024Key.BN586 && key != Mod2002024Key.BN254) 
 						addUnSignedKey(l, m, key, 4, 2);
 					// Resto importe normal
@@ -755,11 +755,11 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))               // Grupo fiscal - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))  // Grupo fiscal - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
 				
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				      // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				      // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateGroupName(), 40))                         // FALTA // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateResidenceCountry()), 2)) // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateResidenceDocument(), 15))                 // FALTA // Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       				      // Grupo mercantil - Datos de la sociedad matriz última: NIF
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           				      // Grupo mercantil - Datos de la sociedad matriz última: Razón social
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateGroupName(), 40))                         // Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateResidenceCountry()), 2)) // Grupo mercantil - Identificación fiscal del país de residencia - País de residencia
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateResidenceDocument(), 15))                 // Grupo mercantil - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 				
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned(mod200.getBalanceType() == null ? 0 : mod200.getBalanceType().ordinal() + 1, 1, 0))                                             // Balance 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.unsigned((mod200.getEcpnType() == null || mod200.getEcpnType() == EcpnType.NO_CONSTA) ? 0 : mod200.getEcpnType().ordinal() + 1, 1, 0))   // ECPN 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
@@ -1731,7 +1731,7 @@ public class Mod2002024Writer {
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")				
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN570Key.values())  
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS CEROS EN UNO DE LOS PORCENTAJES (CASILLA 586) VER SI AL FINAL SE QUEDA ASI 
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN1344Key.values())  
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN1280Key.values())
 				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN572Key.values())
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
@@ -1741,7 +1741,7 @@ public class Mod2002024Writer {
 		, PAG16("T20016000", new IPropertyFiller[] { 
 				 (line, mod200, label) -> addStartLabel(line, label)
 				,(line, mod200, label) -> line.append(" ")
-				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values()) // FALTA - EL FORMATO DE LA VERSION 1.01 PONE UNOS CEROS EN UNO DE LOS PORCENTAJES (CASILLA 254) VER SI AL FINAL SE QUEDA ASI
+				,(line, mod200, label) -> addBreakdownDoubleImposition(line, mod200, Mod2002024BN571Key.values()) 
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN573Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN585Key.values())
 				,(line, mod200, label) -> addBreakdown(line, mod200, Mod2002024BN584Key.values())
@@ -1941,7 +1941,7 @@ public class Mod2002024Writer {
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoVI()), 22));    // Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getNrsAnexoV()), 22));     // Documento normalizado presentado por el Anexo V Orden HAP/871/2016 (Art. 16.4 RIS)
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustCanarias()), 13));  // Número de justificante identificativo de la declaración informativa de ayudas Régimen Económico y Fiscal de Canarias
-						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustBaleares()), 13));  // FALTA CAMPO NUEVO - Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears
+						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustBaleares()), 13));  // Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears
 						line.append(AonFiscalFileUtils.text((isComplementary?"":mod200.getJustActivos()), 13));   // Número de justificante identificativo autoliquidación de la prestación patrimonial por conversión de activos (DA 13ª LIS)
 						
 						addUnSignedKey(line, mod200, Mod2002024Key.IPCRG01, 5, 0, isComplementary);  // Inversiones en producciones cinematográficas o series audiovisuales. Régimen general: Producciones cinematográficas (excepto series audiovisuales)
@@ -2088,12 +2088,12 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.TR628, 5, 2)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.TR629, 5, 2)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002024Key.TR625, 5, 2)
-				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_3)
+				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_3_1)
+				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_3_3)
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_4)
 				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_5)
-				// FALTA - CASILLAS [02378][02379][02407][02408][00466] VAN AL FINAL DE LA PAGINA Y NO ENTREMEDIAS DE COMBINED_TAXATION_3 
-				// SI AL FINAL SE QUEDA ASI, HABRA QUE DIVIDIR COMBINED_TAXATION_3 EN 3 PARTES PARA PODER PONERLO BIEN EN EL WRITER
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(200)) // Reservado para la AEAT
+				,(line, mod200, label) -> addBreakdownFromConstants(line, mod200, Mod2002024Constants.COMBINED_TAXATION_3_2)  // CASILLAS [02378][02379][02407][02408][00466] VAN AL FINAL DE LA PAGINA Y NO ENTREMEDIAS DE COMBINED_TAXATION_3
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.spaces(115)) // Reservado para la AEAT 
 				,(line, mod200, label) -> addEndLabel(line, label) // Etiqueta fin de pagina
 		})
 		
@@ -2183,28 +2183,6 @@ public class Mod2002024Writer {
 				,(line, mod200, label) -> {
 					
 					double importe = mod200.getDoubleValue(Mod2002024Key.BN621); // importe a ingresar o a devolver
-					
-//					line.append(AonFiscalFileUtils.text(importe < 0 ? ("V".equals(mod200.getDevType()) ? "" : mod200.getDevType()) : "", 1)); // Devolución - Renuncia o por Transferencia ("blanco","R","D")
-//					line.append(AonFiscalFileUtils.signedZero(importe < 0 ? Math.abs(importe) : 0.0, DS, DD)); 						          // Devolución - Importe a devolver
-//					
-//					addSignedKey(line, mod200, Mod2002024Key.LQ866);  // Rectificación - Solicito que el importe que, en su caso, pudiera resultar a devolver como consecuencia de la rectificación, me sea abonado mediante transferencia bancaria en la cuenta de la que soy titular [00866]
-//					
-//					// FALTA - A VER COMO FUNCIONA LO DE LA RECTIFICACION, SUPONGO QUE EL IBAN TAMBIEN HABRA QUE PONERLO CUANDO HAYA IMPORTE RECTIFICACION (CASILLA 866) NO SOLO CUANDO SEA DEVOLUCION
-//					line.append(importe < 0 && "D".equals(mod200.getDevType()) ? "1" : "0");  // Cuenta Bancaria - Marca SEPA (0 Vacía, 1 Cuenta España, 2 Unión Europea SEPA, 3 Resto Países) (Se asume cuenta de España)					
-//                    line.append(AonFiscalFileUtils.text(importe < 0 && "D".equals(mod200.getDevType()) ? mod200.getIban() : "", 34));  // Cuenta Bancaria - Número de cuenta IBAN (si devolución por transferencia)
-//					line.append(AonFiscalFileUtils.spaces(11));  // Cuenta Bancaria - Código SWIFT-BIC (No pongo nada porque se supone que si es de España no debe indicarse nada, ya que si ponemos algo al cargar el archivo par la presentacion en la AEAT, lo pone por defecto en el apartado de cuenta extranjera UE)
-//					line.append(AonFiscalFileUtils.spaces(70));  // Cuenta Bancaria - Banco/Bank name (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
-//					line.append(AonFiscalFileUtils.spaces(35));  // Cuenta Bancaria - Dirección del Banco/ Bank adress (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
-//					line.append(AonFiscalFileUtils.spaces(30));  // Cuenta Bancaria - Ciudad/City (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)					
-//					line.append(AonFiscalFileUtils.spaces( 2));  // Cuenta Bancaria - Código País/Country code (Cuenta bancaria abierta en el extranjero, fuera de la unión europea, se asume que la cuenta es de España)
-//					
-//					line.append(AonFiscalFileUtils.text(importe > 0 ? mod200.getPayType() : "", 1));  // Ingreso - Modalidad de ingreso. Uno de los siguientes valores "blanco", "I" Ingreso, "U" Domiciliación
-//					if (mod200.getDoubleValue(Mod2002024Key.LQ2489) > 0) 
-//					   line.append(AonFiscalFileUtils.signedZero(mod200.getDoubleValue(Mod2002024Key.LQ2489), DS, DD));  // Ingreso - Importe a ingresar
-//					else
-//					   line.append(AonFiscalFileUtils.signedZero(importe > 0 ? importe : 0.0, DS, DD));  // Ingreso - Importe a ingresar
-//					line.append(AonFiscalFileUtils.text(importe > 0 && ("I".equals(mod200.getPayType()) || "U".equals(mod200.getPayType()))	? mod200.getIban() : "", 34));  // Ingreso - Número de cuenta IBAN (si cargo en cuenta o domiciliacion bancaria)
-					
 					double ingreso = 0.0;
 					double devolucion = 0.0;
 					double rectificacion = mod200.getDoubleValue(Mod2002024Key.LQ866);

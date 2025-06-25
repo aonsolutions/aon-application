@@ -54,6 +54,8 @@ public class Mod2002024Code {
 		CODE_MAP.put(Mod2002024Key.IPCRC02, ""); // Régimen fiscal Canarias: Series audiovisuales
 		CODE_MAP.put(Mod2002024Key.IPCRC03, ""); // Régimen fiscal Canarias: Número de episodios
 		CODE_MAP.put(Mod2002024Key.RV000, "");   // Reversión de las pérdidas por deterioro de valores representativos... Número de período impositivo
+		CODE_MAP.put(Mod2002024Key.ING01, "");   // Resultado a ingresar correspondiente a la anterior autoliquidación o liquidación administrativa correspondiente al período impositivo 2024, previos a la rectificación  
+		CODE_MAP.put(Mod2002024Key.ING02, "");   // Resultado a ingresar correspondiente a la anterior autoliquidación o liquidación administrativa correspondiente al periodo impositivo 2024, que se anula con la presentación de esta autoliquidación rectificativa  
 		
 	}
 	

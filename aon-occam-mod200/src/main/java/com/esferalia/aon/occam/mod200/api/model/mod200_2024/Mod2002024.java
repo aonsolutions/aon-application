@@ -45,13 +45,13 @@ public class Mod2002024 extends Mod200 {
 	private String dominantDocument;              // Grupo fiscal - Claves 00009 ó 00010 - N.I.F. de la sociedad representante/dominante (incluida en el grupo fiscal)
 	private String dominantIdentificationNumber;  // Grupo fiscal - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
 	
-	private String ultimateDocument;            // Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: NIF
-	private String ultimateName;				// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Razón social
-	private String ultimateGroupName; 			// FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Nombre de grupo
+	private String ultimateDocument;            // Grupo mercantil - Datos de la sociedad matriz última: NIF
+	private String ultimateName;				// Grupo mercantil - Datos de la sociedad matriz última: Razón social
+	private String ultimateGroupName; 			// FALTA - CAMPO NUEVO - Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo
 //	private Country ultimateDocumentCountry; 	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país ESTE DESAPARECE
 //	private Country ultimateCountry; 			// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción  ESTE SERIA EL NUEVO País de residencia
-    private Country ultimateResidenceCountry;   // FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - País de residencia
-    private String ultimateResidenceDocument;   // FALTA - CAMPO NUEVO - Grupo mercantil - Clave 00081 - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+    private Country ultimateResidenceCountry;   // FALTA - CAMPO NUEVO - Grupo mercantil - Identificación fiscal del país de residencia - País de residencia
+    private String ultimateResidenceDocument;   // FALTA - CAMPO NUEVO - Grupo mercantil - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 	
 	private BalanceType balanceType;
 	private EcpnType ecpnType;
