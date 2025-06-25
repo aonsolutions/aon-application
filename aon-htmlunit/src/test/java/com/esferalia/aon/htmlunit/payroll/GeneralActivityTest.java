@@ -17,7 +17,10 @@ import java.util.logging.Level;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import com.esferalia.aon.htmlunit.HtmlUnitIT;
 
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.NicelyResynchronizingAjaxController;
@@ -133,57 +136,65 @@ public class GeneralActivityTest {
 	public void TestActivity() throws Exception {
 		loadActivity("oficinas_y_despachos-content");
 		
-		wait4InputText("activityNameTB", "OFICINAS Y DESPACHOS");
-		wait4InputText("activityCnaeTB", "6201 - Actividades de programaci\u00f3n inform\u00e1tica");
+		wait4InputText("activityNameInput", "OFICINAS Y DESPACHOS");
+		wait4InputText("activityCnaeInput", "6201 - Actividades de programaci\u00f3n inform\u00e1tica");
 		
 		// Change name
-		String activityName = ((HtmlInput)getElementById("activityNameTB")).getValue();
+		String activityNameTextBoxValue = ((HtmlInput)getElementById("activityNameInput")).getValue();
 		
-		wait4NoClass("activityNameTB", "warningTB");
-		setValue("activityNameTB", "");
-		wait4Class("activityNameTB", "warningTB");
-		setValue("activityNameTB", activityName);
-		wait4NoClass("activityNameTB", "warningTB");
+		wait4NoClass("activityName", "aon_custom_error");
+		setValue("activityNameInput", "");
+		wait4Class("activityName", "aon_custom_error");
+		setValue("activityNameInput", activityNameTextBoxValue);
+		wait4NoClass("activityName", "aon_custom_error");
 	}
 	
 	@Test
 	public void TestCCC() throws Exception {
 		loadActivity("oficinas_y_despachos");
 		
-		wait4InputText("activityNameTB", "OFICINAS Y DESPACHOS");
+		wait4InputText("activityNameInput", "OFICINAS Y DESPACHOS");
 		
-		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
-		Assert.assertEquals(cccTable.getRowCount(), 4);
+		HtmlDivision cccTable = (HtmlDivision)getElementById("cccTable");
+		Assert.assertEquals(cccTable.querySelectorAll(".aon_custom_row").size(), 4);
 		
+		// Create Artist CCC
 		getElementById("createCCCBtn").click();
-		wait4(htmlPage, htmlPage -> cccTable.getRowCount() == 5);
+		wait4Id("cccDialog_Content");
 		
-		// ARTISTAS
-		((HtmlSelect)getElementById("cccRegime_4")).setSelectedIndex(8);
-		wait4DivText("regimeCode_4", "0112");
-		setValue("account_4", "12345678901");
-		wait4DivText("geozone_4", "CASTELLON");
-		wait4Class("account_4", "warningTB");
+		wait4NoClass("cccDialog_Account", "aon_custom_warning");
+		wait4NoClass("cccDialog_Geozone", "aon_custom_warning");
 		
-		getElementById("activityAcceptBtn").click();
-		wait4(htmlPage, htmlPage -> ((HtmlDivision)getElementById("geozone_0")).getTextContent().equals("CASTELLON"));
+		((HtmlSelect)getElementById("cccDialog_TypeSelect")).setSelectedIndex(9);
+		wait4InputText("cccDialog_RegimeInput", "0112");
+		setValue("cccDialog_AccountInput", "12345678901");
+		wait4InputText("cccDialog_GeozoneInput", "CASTELLON");
 		
-		setValue("account_0", "01105360062");
-		wait4DivText("geozone_0", "ARABA/ALAVA");
-		wait4NoClass("account_0", "warningTB");
+		wait4Class("cccDialog_Account", "aon_custom_warning");
+		wait4Class("cccDialog_Geozone", "aon_custom_warning");
 		
-		getElementById("delete_0").click();
+		getElementById("cccDialog_Accept").click();
+		
+		wait4Id("cccTable");
+		HtmlDivision newCccTable = (HtmlDivision)getElementById("cccTable");
+		wait4(htmlPage, htmlPage -> newCccTable.querySelectorAll(".aon_custom_row").size() > 4);
+		
+		// Remove Artist CCC
+		HtmlDivision createdRow = (HtmlDivision)newCccTable.querySelectorAll(".aon_custom_row").get(0);
+		HtmlButton deleteArtistButton = (HtmlButton)createdRow.querySelector("#gwt-debug-delete");
+		deleteArtistButton.click();
 		wait4Id("acceptDialogButton");
 		((HtmlButton)getElementById("acceptDialogButton")).click();
 		
-		getElementById("activityAcceptBtn").click();
-		wait4(htmlPage, htmlPage -> ((HtmlDivision)getElementById("geozone_0")).getTextContent().equals("MADRID"));
-		Assert.assertEquals(cccTable.getRowCount(), 4);
+		wait4Id("cccTable");
+		HtmlDivision deletionCccTable = (HtmlDivision)getElementById("cccTable");
+		wait4(htmlPage, htmlPage -> deletionCccTable.querySelectorAll(".aon_custom_row").size() == 4);
 	}
 
 	private void loadActivity(String activityId) throws InterruptedException, IOException {
 		wait4Id(activityId);
 		htmlPage = getElementById(activityId).click();
+		wait4Id("activityName");
 	}
 
 	// ------------------------------------------------------------------------

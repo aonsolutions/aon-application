@@ -109,6 +109,10 @@ public abstract class Activity extends ScrollPanel {
 		
 		Scheduler.get().scheduleDeferred(() -> {
 			setWidget(content);
+			
+			// Ensure debugId
+			description.ensureDebugId("activityName");
+			cnae.ensureDebugId("activityCnae");
 		});
 	}
 	

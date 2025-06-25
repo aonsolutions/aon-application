@@ -132,19 +132,21 @@ public class GeneralEnterpriseTest {
 	public void TestEnterprise() throws Exception {
 		loadEnterprise("atrasos", "regimen_general");
 		
-		wait4InputText("enterpriseNameTB", "R\u00c9GIMEN GENERAL");
+		wait4Id("enterpriseName");
+		
+		wait4InputText("enterpriseNameInput", "R\u00c9GIMEN GENERAL");
 		
 		// Change document
-		wait4Class("enterpriseDocumentTB", "documentError");
-		setValue("enterpriseDocumentTB", "49306849R");
-		wait4NoClass("enterpriseDocumentTB", "documentError");
-		wait4DivText("enterpriseDocumentType", "DNI");
+		wait4Class("enterpriseDocument", "aon_custom_error");
+		setValue("enterpriseDocumentInput", "49306849R");
+		wait4NoClass("enterpriseDocument", "aon_custom_error");
+		wait4InputText("enterpriseDocumentTypeInput", "DNI");
 		
 		// Change Zip address
-		setValue("enterpriseZipAddressTB", "28822");
+		setValue("enterpriseAddressZipInput", "28822");
 		
 		// Province Madrid
-		wait4SelectedIndex("enterpriseProvinceAddressTB", 29);
+		wait4SelectedIndex("enterpriseAddressProvinceSelect", 29);
 		
 		// UndoAll
 		((HtmlButton)getElementById("undoAllButton")).click();
@@ -152,10 +154,14 @@ public class GeneralEnterpriseTest {
 		((HtmlButton)getElementById("acceptDialogButton")).click();
 		
 		// Default values
-		wait4Class("enterpriseDocumentTB", "documentError");
-		wait4DivText("enterpriseDocumentType", "");
-		wait4InputText("enterpriseZipAddressTB", "");
-		wait4SelectedIndex("enterpriseProvinceAddressTB", 0);
+		wait4Id("enterpriseName");
+		
+		wait4InputText("enterpriseNameInput", "R\u00c9GIMEN GENERAL");
+		
+		wait4Class("enterpriseDocument", "aon_custom_error");
+		wait4InputText("enterpriseDocumentInput", "");
+		wait4InputText("enterpriseAddressZipInput", "");
+		wait4SelectedIndex("enterpriseAddressProvinceSelect", 0);
 		
 	}
 

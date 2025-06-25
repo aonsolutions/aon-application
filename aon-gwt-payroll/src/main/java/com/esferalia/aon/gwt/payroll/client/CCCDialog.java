@@ -31,6 +31,7 @@ public class CCCDialog extends AonCustomDialog {
 	private AonCustomTextBox geozone = new AonCustomTextBox("Provincia");
 	
 	private HTMLPanel buttonsPanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private Button acceptBtnDialog;
 	
 	private EnterpriseCCC ccc;
 	private CCCDialogCallback callback;
@@ -127,6 +128,14 @@ public class CCCDialog extends AonCustomDialog {
 		}
 		
 		Scheduler.get().scheduleDeferred(() -> {
+			content.ensureDebugId("cccDialog_Content");
+			type.ensureDebugId("cccDialog_Type");
+			regime.ensureDebugId("cccDialog_Regime");
+			account.ensureDebugId("cccDialog_Account");
+			geozone.ensureDebugId("cccDialog_Geozone");
+			
+			acceptBtnDialog.ensureDebugId("cccDialog_Accept");
+			
 			setWidget(content);
 			center();
 			show();
@@ -142,7 +151,7 @@ public class CCCDialog extends AonCustomDialog {
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		Button acceptBtnDialog = createButton(null == ccc.getId() ? "Crear" : "Actualizar");
+		acceptBtnDialog = createButton(null == ccc.getId() ? "Crear" : "Actualizar");
 		acceptBtnDialog.getElement().getStyle().setProperty("color", "green");
 		acceptBtnDialog.addClickHandler(e -> {
 			acceptBtnDialog.setEnabled(false);

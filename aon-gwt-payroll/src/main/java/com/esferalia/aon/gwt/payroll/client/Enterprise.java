@@ -108,6 +108,12 @@ public abstract class Enterprise extends ScrollPanel {
 		initView();
 		
 		Scheduler.get().scheduleDeferred(() -> {
+			name.ensureDebugId("enterpriseName");
+			document.ensureDebugId("enterpriseDocument");
+			documentType.ensureDebugId("enterpriseDocumentType");
+			addressZip.ensureDebugId("enterpriseAddressZip");
+			addressProvince.ensureDebugId("enterpriseAddressProvince");
+			
 			setWidget(content);
 		});
 	}
