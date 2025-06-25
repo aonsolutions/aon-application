@@ -1646,14 +1646,6 @@ public class PropertiesDAO {
 		
         protected Condition[] getConditions(S3DocumentFilter filter) {
           FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-
-            if (filterDAO != null && filterDAO.getCondition() != null) {
-                System.out.println(">>> Filtro SQL generado:");
-                System.out.println(filterDAO.getCondition()); 
-            } else {
-                System.out.println(">>> No se generó ningún filtro.");
-            }
-
           if (filterDAO == null) {
             return new Condition[0];
           }
