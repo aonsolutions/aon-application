@@ -247,6 +247,10 @@ export const AON_JSF_APP = 'aon-jsf-app' ;
 
 export const AON_ACCOUNTING_MENU = 'aon-accounting-menu';
 export const AON_JSF_ACCOUNT = 'aon-jsf-account' ;
+export const AON_JSF_ACCOUNTING_PARAMS = 'aon-jsf-accounting-params';
+export const AON_JSF_FISCAL_PARAMS = 'aon-jsf-fiscal-params';
+export const AON_JSF_PAYROLL_PARAMS = 'aon-jsf-payroll-params';
+export const AON_JSF_CONTRACT_PARAMS = 'aon-jsf-contract-params';
 export const AON_JSF_BALANCE = 'aon-jsf-balance' ;
 export const AON_JSF_AUT_CONCEPT = 'aon-jsf-aut-concept' ;
 export const AON_JSF_ACC_PERIOD = 'aon-jsf-acc-period' ;

@@ -56,6 +56,8 @@ public class GlobalConfigurationController implements Serializable {
 	
 	private boolean entrepiseSelected;
 	
+	private boolean showSideNav = true;
+	
 	public void onInit( ActionEvent event ) {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 		controller.onLoad(event);
@@ -153,6 +155,14 @@ public class GlobalConfigurationController implements Serializable {
 			}								
 		}
 		return false;
+	}
+	
+	public void setShowSideNav(boolean showSideNav) {
+		this.showSideNav = showSideNav;
+	}
+	
+	public boolean isShowSideNav() {
+		return showSideNav;
 	}
 	
 }

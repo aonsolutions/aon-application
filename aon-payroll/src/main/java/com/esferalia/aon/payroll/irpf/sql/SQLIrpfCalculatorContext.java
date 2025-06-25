@@ -827,6 +827,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		if (contractDays == 1)
 			return Contrato.CUATRO;
 		
+		if (isFixedDiscontinuos()) {
+			// if the contract is fixed-discontinuous, we consider it as a indefinite contract
+			return Contrato.UNO;
+		}
 
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTimeInMillis(startDate.getTime());
@@ -1488,8 +1492,22 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			ctx.getExpressionContext().eval(ContextVariable.TC2.getName(), ctx.getStartDate(), ctx.getEndDate(), String.class)
 			.stream()
 			.map(v -> v.getValue(v.getPeriod()) )
-			.map ( s -> Integer.parseInt(s))
+			.map ( Integer::parseInt)
 			.anyMatch( n -> n >= 400 )
+			;
+		} catch (ExpressionException e) {
+			return false;
+		}
+	}
+
+	private boolean isFixedDiscontinuos() {
+		try {
+			return
+			ctx.getExpressionContext().eval(ContextVariable.TC2.getName(), ctx.getStartDate(), ctx.getEndDate(), String.class)
+			.stream()
+			.map(v -> v.getValue(v.getPeriod()) )
+			.map ( Integer::parseInt)
+			.anyMatch(n -> n >= 300 && n < 400)
 			;
 		} catch (ExpressionException e) {
 			return false;
