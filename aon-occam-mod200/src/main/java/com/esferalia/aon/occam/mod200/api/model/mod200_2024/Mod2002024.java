@@ -47,21 +47,15 @@ public class Mod2002024 extends Mod200 {
 	
 	private String ultimateDocument;            // Grupo mercantil - Datos de la sociedad matriz última: NIF
 	private String ultimateName;				// Grupo mercantil - Datos de la sociedad matriz última: Razón social
-	private String ultimateGroupName; 			// FALTA - CAMPO NUEVO - Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo
-//	private Country ultimateDocumentCountry; 	// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: Código país ESTE DESAPARECE
-//	private Country ultimateCountry; 			// Grupo mercantil - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción  ESTE SERIA EL NUEVO País de residencia
-    private Country ultimateResidenceCountry;   // FALTA - CAMPO NUEVO - Grupo mercantil - Identificación fiscal del país de residencia - País de residencia
-    private String ultimateResidenceDocument;   // FALTA - CAMPO NUEVO - Grupo mercantil - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
+	private String ultimateGroupName; 			// Grupo mercantil - Datos de la sociedad matriz última: Nombre de grupo
+    private Country ultimateResidenceCountry;   // Grupo mercantil - Identificación fiscal del país de residencia - País de residencia
+    private String ultimateResidenceDocument;   // Grupo mercantil - Identificación fiscal del país de residencia - NIF en el país de residencia (TIN)
 	
 	private BalanceType balanceType;
 	private EcpnType ecpnType;
 	private BalanceType pygType;
 	
 	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
-	
-	// FALTA - HABRA QUE MODIFICAR EL TIPO DE LOS CAMPOS TYPE Y PROVINCE DE LA TABLA FS_MODEL_REGISTRY 
-	// QUE PASE DE TINYINT(1) A TINYINT (QUE SERIA LONGITUD 4), PARA EVITAR LOS PROBLEMAS QUE HABIA ESTOS 
-	// AÑOS PASADOS AL DUPLICAR UN DOMINIO Y TAMBIEN EL CAMPO PERIOD_TYPE DE FS_MODEL200 QUE ESTA EN LA MISMA SITUACION
 	
 	private LinkedList<LegalRepresentative> representatives = new LinkedList<>();          // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<>();    // A. Relación de administradores 
@@ -91,7 +85,7 @@ public class Mod2002024 extends Mod200 {
 	private String nrsAnexoVric; // Presentación de documentación previa en la sede electrónica. Documentación presentada por el Anexo V (RIC: Inversiones anticipadas)
 	private String justActivos;  // Presentación de documentación previa en la sede electrónica. Número justificante autoliquidación de la prestación patrimonial por conversión de activos
 	private String nrsAnexoVI;   // Presentación de documentación previa en la sede electrónica. Documentación presentada por el Anexo VI (RIIB: Inversiones anticipadas)
-	private String justBaleares; // FALTA CAMPO NUEVO - Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears	
+	private String justBaleares; // Presentación de documentación previa en la sede electrónica. Número de justificante declaración informativa de ayudas Régimen Económico y Fiscal Illes Balears	
 	
 	private HashMap<IMod200Key,DoubleVariableEx> keysMap = new HashMap<>();
 	private HashMap<IMod200Key,DoubleVariableEx> draftMap = new HashMap<>();

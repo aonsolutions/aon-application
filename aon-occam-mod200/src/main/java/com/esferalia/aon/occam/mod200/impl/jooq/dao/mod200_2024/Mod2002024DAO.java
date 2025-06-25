@@ -338,19 +338,16 @@ public class Mod2002024DAO  {
 			 .set(FS_MODEL200.BIC,mod200.getBic())
 			 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
 			 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
-			// FALTA - CAMPO NUEVO DOC BALEARES
-//			 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
+			 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
 			 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 			 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 			 .set(FS_MODEL200.NRS_ANEXOV_RIC,mod200.getNrsAnexoVric())
 			 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
-			 // FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 			 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-//			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry())) // ESTE SE ELIMINA ESTE AÑO
 			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
-//			 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
+			 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
 			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
-//			 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
+			 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
 			 .set(FS_MODEL200.CREATION_USER, mod200.getCreationUser())
 			 .set(FS_MODEL200.CREATION_DATE, AonDateUtils.toTimestamp(mod200.getCreationDate()))
 			 .set(FS_MODEL200.FS_MODEL, mod200.getFsModel())
@@ -723,19 +720,16 @@ public class Mod2002024DAO  {
 		 .set(FS_MODEL200.BIC,mod200.getBic())
 		 .set(FS_MODEL200.NRS_ANEXOIII,mod200.getNrsAnexoIII())
 		 .set(FS_MODEL200.JUST_CANARIAS,mod200.getJustCanarias())
-		// FALTA - CAMPO NUEVO DOC BALEARES
-//		 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
+		 .set(FS_MODEL200.JUST_BALEARES,mod200.getJustBaleares())
 		 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 		 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 		 .set(FS_MODEL200.NRS_ANEXOV_RIC,mod200.getNrsAnexoVric())
 		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
-		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 		 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
-//		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))  // ESTE SE ELIMINA ESTE AÑO
 		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
-//		 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
+		 .set(FS_MODEL200.ULTIMATE_GROUP_NAME,mod200.getUltimateGroupName())
 		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateResidenceCountry()))
-//		 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
+		 .set(FS_MODEL200.ULTIMATE_RESIDENCE_DOCUMENT,mod200.getUltimateResidenceDocument())
 		 .set(FS_MODEL200.STATUS, AonEnumUtils.getByte(mod200.getStatus()))
 		 .set(FS_MODEL200.MODIFICATION_USER, mod200.getModificationUser())
 		 .set(FS_MODEL200.MODIFICATION_DATE, AonDateUtils.toTimestamp(mod200.getModificationDate()))
@@ -872,19 +866,16 @@ public class Mod2002024DAO  {
 		mod200.setBic(rec.getBic());
 		mod200.setNrsAnexoIII(rec.getNrsAnexoiii());
 		mod200.setJustCanarias(rec.getJustCanarias());
-		// FALTA - CAMPOS NUEVO DOC BALEARES
-//		mod200.setJustBaleares(record.getJustBaleares());
+		mod200.setJustBaleares(rec.getJustBaleares());
 		mod200.setNrsAnexoIV(rec.getNrsAnexoiv());
 		mod200.setNrsAnexoV(rec.getNrsAnexov());
 		mod200.setNrsAnexoVric(rec.getNrsAnexovRic());
 		mod200.setJustActivos(rec.getJustActivos());
-		// FALTA - CAMPOS NUEVOS GRUPO MERCANTIL
 		mod200.setUltimateDocument(rec.getUltimateDocument());
-//		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry())); // ESTE SE ELIMINA ESTE AÑO
 		mod200.setUltimateName(rec.getUltimateName());
-//		mod200.setUltimateGroupName(record.getUltimateGroupName());
+		mod200.setUltimateGroupName(rec.getUltimateGroupName());
 		mod200.setUltimateResidenceCountry(Country.safeValueOf(rec.getUltimateCountry()));
-//		mod200.setUltimateResidenceDocument(record.getUltimateResidenceDocument());
+		mod200.setUltimateResidenceDocument(rec.getUltimateResidenceDocument());
 		mod200.setStatus(FiscalStatus.safeValueOf(rec.getStatus()));
 		mod200.setCreationUser(rec.getCreationUser());
 		mod200.setCreationDate(rec.getCreationDate());
