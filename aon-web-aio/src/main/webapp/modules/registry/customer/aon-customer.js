@@ -631,9 +631,9 @@ export class AonCustomer extends AonReg {
 			if(this.isSig() /*|| this.isAyudaT()*/){
 				options.push(
 					{
-						name: "Navegar",
-						value: "supplant",
-						icon: 'token',
+						name: "Acceder",
+						value: "access",
+						icon: MATERIAL_ICONS.OPEN_IN_NEW,
 						fn: () => this.suplant(rrelationship),
 					}
 				);
