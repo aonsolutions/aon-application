@@ -23,6 +23,7 @@ import * as GWT from '../../../gwt/gwt.js';
 import * as LS from '../../../services/localStorageService.js';
 import { AonUserList } from "../../user/aon-user-list.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
+import { generateTokenJson, getUser } from "../../../services/userService.js";
 
 export class AonCustomer extends AonReg {
 	
@@ -42,6 +43,7 @@ export class AonCustomer extends AonReg {
 		this.registry = this.registry || new Customer();
 		this.saveBool = true;
 		this.type = "customer";
+		this.clientFile = this.clientFile;
 		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData() },
@@ -626,6 +628,17 @@ export class AonCustomer extends AonReg {
 		let options = [];
 
 		if (rrelationship) {
+			if(this.isSig() /*|| this.isAyudaT()*/){
+				options.push(
+				{
+					name: "Suplantar",
+					value: "supplant",
+					icon: 'token',
+					fn: () => this.suplant(),
+				}
+			);
+			}
+			
 			options.push(
 				{
 					name: "Abrir",
@@ -710,6 +723,32 @@ export class AonCustomer extends AonReg {
 			d.setMenuOptions(options, top, left);
 			d.open();
 		}
+	}
+	
+	suplant(){
+		getUser().then(user => {
+			console.log("User");
+			console.log(user);
+			
+			let d = this.getApplication().getDialog();
+			d.clear();
+			
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle("Suplantar Usuario");
+			
+			d.setContentHTML("Estás seguro de suplantar a " + user.login);
+			d.addAcceptAction(() => {
+				let data = {
+					supUser: LS.getDomainLogin(),
+					id: user.id,
+					time: 0
+				};
+				generateTokenJson(data).then(token => {
+					open(`https://${LS.getDomainName()}/app?token=${token.session_id}`, '_blank');
+				}).catch(e => this.showError(e));
+			});			
+			d.open();		
+		});
 	}
 
 	openDialogCompany(companies = []) {
@@ -877,8 +916,6 @@ export class AonCustomer extends AonReg {
 		div.id = "customerNotesId";
     
 		if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
-			notesIcon.innerHTML = 'speaker_notes_off';
-			
 			rightSidenav.appendChild(div);
 			
 			// Loader
@@ -914,9 +951,9 @@ export class AonCustomer extends AonReg {
 			} else 
 				GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 				
-		} else {
-			notesIcon.innerHTML = 'speaker_notes';
 		}
+		
+		notesIcon.classList.toggle("material-icons-selected");
 		
 		this.getApplication().toogleRightSidenav();	
 		

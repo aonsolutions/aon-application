@@ -104,6 +104,9 @@ export const s3UploadInvoice = (company, file, jobId, data, success, error) => {
     formData.append('success_action_status', '201');
     formData.append('Content-Type', file.type);
     formData.append('file', file);
+    if(data.activity) {
+        formData.append('x-amz-meta-activity',  data.activity);
+    }
 
     xhr.open('POST', "https://aon-upload-post.s3.amazonaws.com/", true);
     xhr.addEventListener('readystatechange', (e) => {
@@ -139,7 +142,7 @@ export const getTrashPendingFromOption = (invoice) => {
     invoice = new Invoice(invoice);
     if(invoice.isEmitida()) {
         return OPTION.INVOICE_ISSUED_BETA;
-    } else if (invoice.isTicket()){
+    } else if (invoice.isTicket()) {
         return OPTION.INVOICE_TICKET;
     } else return OPTION.INVOICE_RECEIVED_BETA;
 }

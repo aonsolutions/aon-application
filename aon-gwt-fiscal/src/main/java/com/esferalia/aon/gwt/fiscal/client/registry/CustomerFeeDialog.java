@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RegistryService;
@@ -35,6 +36,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -359,7 +361,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		lineTextBox.setWidth("8.8em");
 		lineTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		lineTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setLine(Double.parseDouble(e.getValue()));});
-		if(null != fee) lineTextBox.setValue(fee.getLine().toString());
+		if(null != fee) lineTextBox.setValue(null == fee.getLine() ? null : fee.getLine().toString());
 		
 		Label confidentialLabel = new Label("Confidencial");
 		confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -403,6 +405,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			productTextBox.setValue(item.getProduct().getName());
 			productTextBox.setVisible(true);
 			
+			if(null != fee)
+				fee.setDescription(item.getProduct().getName());
+			
 			if(null != fee) fee.setItem(item);
 		});
 		
@@ -422,6 +427,19 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			productTextBox.setVisible(false);
 			productSuggestBox.setEnabled(true);
 			productSuggestBox.setValue("");
+			
+			if(null != fee) {
+				fee.setDescription(AonStringUtils.EMPTY);
+				fee.setItem(null);
+				fee.setQuantity(1.00);
+				fee.setPrice(0.00);
+				fee.setDiscountExpr("0.00");
+			}
+			
+			quantityTextBox.setValue("1");
+			priceTextBox.setValue("0.00");
+			discountTextBox.setValue("0.00");
+			totalAmount.setValue("0.00");
 		});
 		
 		productTextBox = new AutoResizeTextArea();
@@ -490,7 +508,13 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			quantityTextBox.setHeight("2em");
 			quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 			quantityTextBox.addValueChangeHandler(e -> { 
-				if(null != fee) fee.setQuantity(Double.parseDouble(e.getValue()));
+				if(null != fee) {
+					try {
+						fee.setQuantity(Double.parseDouble(e.getValue()));
+					} catch (Exception exception) {
+						fee.setQuantity(1.00);
+					}
+				}
 				recalculateTotalAmount();
 			});
 			if(null != fee && null != fee.getQuantity()) quantityTextBox.setValue(fee.getQuantity().toString());
@@ -507,7 +531,13 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		priceTextBox.setWidth("8.8em");
 		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		priceTextBox.addValueChangeHandler(e -> { 
-			if(null != fee) fee.setPrice(Double.parseDouble(e.getValue()));
+			if(null != fee) {
+				try {
+					fee.setPrice(Double.parseDouble(e.getValue()));
+				} catch (Exception exception) {
+					fee.setPrice(0.00);
+				}
+			}
 			recalculateTotalAmount();
 		});
 		if(null != fee && null != fee.getPrice()) priceTextBox.setValue(fee.getPrice().toString());
@@ -810,6 +840,30 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			
 		});
 	}
+	
+	private void getSellersSuggestion(String sellerQuery, Consumer<Void> end) {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), officeDomain, sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
+				sellerSuggestions = sellerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(sellerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
+				sellerSuggestBox.showSuggestionList();
+				
+				end.accept(null);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
 
 	private void createInvoicingGroupPanel() {
 		invoicingGroupPanel = new HTMLPanel("");
@@ -892,7 +946,33 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		projectSuggestBox.addSelectionHandler(e -> {
 			projectSuggestBox.hideSuggestionList();
-			if(null != fee) fee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
+			Project project = projectSuggestions.get(projectSuggestBox.getValue());
+			if(null != fee) fee.setProject(project);
+			
+			// Set seller to fee
+			if(null != project && null != project.getProjectHolder() 
+					&& null != project.getProjectHolder().getTaskHolder() 
+					&& (null != project.getProjectHolder().getTaskHolder().getId() ||  !project.getProjectHolders().isEmpty() )) {
+				
+				Integer taskHolderId = null;
+				if(null != project.getProjectHolder().getTaskHolder().getId()) taskHolderId = project.getProjectHolder().getTaskHolder().getId();
+				else taskHolderId = project.getProjectHolders().stream().sorted((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate())).findFirst().get().getTaskHolder().getId();
+					
+				SERVICE.getSellerByTaskHolder(options.getDomainName(), options.getDomain(), options.getUser(), taskHolderId, officeDomain, new AsyncCallback<Seller>() {
+
+					@Override
+					public void onFailure(Throwable arg0) {}
+
+					@Override
+					public void onSuccess(Seller seller) {
+						if(null != fee) 
+							fee.setSeller(seller);
+						
+						getSellersSuggestion(null, end -> sellerSuggestBox.setValue(seller.getName()));
+					}
+					
+				});	
+			}
 		});
 		
 		projectSuggestBox.addValueChangeHandler(e -> {
@@ -1071,7 +1151,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			return;
 		}
 		
-		newFee.setLine(AonStringUtils.isBlank(lineTextBox.getValue()) ? 1.00 : Double.parseDouble(lineTextBox.getValue()));
+		try {
+			newFee.setLine(Double.parseDouble(lineTextBox.getValue()));
+		} catch (Exception exception) {
+			newFee.setLine((Short) null);
+		}
+		
 		newFee.setItem(item);
 		
 		if(item == null) {
@@ -1080,8 +1165,18 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		}
 		
 		newFee.setDescription(newFee.getItem().getProduct().getName());
-		newFee.setQuantity(AonStringUtils.isBlank(quantityTextBox.getValue()) ? null : Double.parseDouble(quantityTextBox.getValue()));
-		newFee.setPrice(AonStringUtils.isBlank(priceTextBox.getValue()) ? null : Double.parseDouble(priceTextBox.getValue()));
+		
+		try {
+			newFee.setQuantity(Double.parseDouble(quantityTextBox.getValue()));
+		} catch (Exception exception) {
+			newFee.setQuantity(1.00);
+		}
+		
+		try {
+			newFee.setPrice(Double.parseDouble(priceTextBox.getValue()));
+		} catch (Exception exception) {
+			newFee.setPrice(0.00);
+		}
 		newFee.setDiscountExpr(discountTextBox.getValue());
 		
 		newFee.setStartDate(startDateBox.getValue());

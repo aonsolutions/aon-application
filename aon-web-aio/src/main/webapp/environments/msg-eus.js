@@ -354,6 +354,7 @@ export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
+export const PAYMETHODS = 'Ordainketa Erak';
 export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nomina';
 export const PAYSHEETS = 'Nominak';

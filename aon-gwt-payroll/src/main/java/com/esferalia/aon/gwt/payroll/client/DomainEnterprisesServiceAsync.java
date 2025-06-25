@@ -748,6 +748,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.saveCCC(getCurrentDomainName(), getCurrentUser(), ccc, asyncCallback);
 	}
 	
+	public void getActivityCCCList(Integer activityId, AsyncCallback<List<EnterpriseCCC>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivityCCCList(getCurrentDomainName(), getCurrentUser(), activityId, asyncCallback);
+	}
+	
 	// ------------------------------------------------ Mod145 (API)
 	
 	public void getMod145List(Integer contractId, AsyncCallback<List<Mod145>> asyncCallback) throws IllegalArgumentException {

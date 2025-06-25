@@ -88,6 +88,8 @@ public class FeeMailServlet extends AonApiHttpServlet {
 				JSONObject data = api.getData();
 				
 				Integer feeId = JsonUtils.getInteger(data, "feeId");
+				Boolean add =  JsonUtils.getBoolean(data, "add");
+				Integer oldSellerId = JsonUtils.getInteger(data, "oldSellerId");
 				
 				Domain parent = api.getDomain().isParent() 
 						? api.getDomain()
@@ -103,7 +105,7 @@ public class FeeMailServlet extends AonApiHttpServlet {
 
 				Fee fee = FeeDAO.getFee(ctx, feeId);
 				
-				Stream<RegistryMedia> feeSellerMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(fee.getSeller().getId()));
+				Stream<RegistryMedia> feeSellerMedias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(null != oldSellerId ? oldSellerId : fee.getSeller().getId()));
 				Optional<RegistryMedia> feeSellerEmailOpt = feeSellerMedias.filter(media -> media.getMedia().equals(MediaType.EMAIL)).findFirst();
 				
 				if(feeSellerEmailOpt.isEmpty() || AonStringUtils.isBlank(feeSellerEmailOpt.get().getValue()))
@@ -113,8 +115,8 @@ public class FeeMailServlet extends AonApiHttpServlet {
 						.setFrom(from)
 						.setTo(feeSellerEmailOpt.get().getValue())
 						.setReplyTo(from)
-						.setSubject("Asignac\u00f3n Cuota")
-						.setBody(createEnterpriseCreatedBody(logoUrl, parent, from, fee));
+						.setSubject(null != add && add ? "Asignac\u00f3n Cuota" : "Desasignac\u00f3n Cuota")
+						.setBody(createEnterpriseCreatedBody(logoUrl, parent, from, fee, add));
 
 				SES.sendEmail(msg);
 				
@@ -179,7 +181,7 @@ public class FeeMailServlet extends AonApiHttpServlet {
 		return from;
 	}
 
-	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from, Fee fee) {
+	private static String createEnterpriseCreatedBody(String logoUrl, Domain parentDomain, String from, Fee fee, Boolean add) {
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -192,14 +194,17 @@ public class FeeMailServlet extends AonApiHttpServlet {
 		context.put("customerName", fee.getCustomer().getName());
 		context.put("productName", fee.getItem().getProduct().getName());
 		context.put("productFullName", fee.getItem().getProduct().getName() + " ( " + fee.getItem().getProduct().getCode() + " )");
-		context.put("line", null == fee.getLine() ? "N/D" : fee.getLine().toString());
 		context.put("quantity", null == fee.getQuantity() ? "0" : fee.getQuantity().intValue());
 		context.put("price", null == fee.getPrice() ? "0.00" : fee.getPrice().toString());
 		context.put("discount", AonStringUtils.isBlank(fee.getDiscountExpr()) ? "0.00" : fee.getDiscountExpr());
+		context.put("amount", getTotalPrice(fee.getQuantity(), fee.getPrice(), fee.getDiscount()));
+		context.put("netAmount", getTotalNetPrice(fee.getQuantity(), fee.getPrice(), fee.getDiscount()));
 		context.put("startDate", AonDateUtils.simpleFormat(fee.getStartDate()));
 		context.put("endDate", null == fee.getEndDate() ? "" : AonDateUtils.simpleFormat(fee.getEndDate()));
 		context.put("chargeDate", AonDateUtils.simpleFormat(fee.getBillingDate()));
 		context.put("periocity", null == fee.getPeriod() ? "Sin periodo" : AonStringUtils.isBlank( BillingPeriod.toString(fee.getPeriod()) ) ? "Sin periodo" : BillingPeriod.toString(fee.getPeriod()) );
+		
+		if(null != add && add) context.put("new", true);
 		
 		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/fee_seller_add.vm");
 
@@ -207,6 +212,29 @@ public class FeeMailServlet extends AonApiHttpServlet {
 		template.merge(context, writer);
 
 		return writer.toString();
+	}
+	
+
+	private static double getTotalPrice(Double quantity, Double price, Double dto) {
+		if(null == quantity) quantity = 1.00;
+		if(null == price) price = 0.00;
+		if(null == dto) dto = 0.00;
+		return roundTwoDecimals( price * quantity );
+	}
+	
+	private static double getTotalNetPrice(Double quantity, Double price, Double dto) {
+		if(null == quantity) quantity = 1.00;
+		if(null == price) price = 0.00;
+		if(null == dto) dto = 0.00;
+		return roundTwoDecimals( getNetCost(price, dto) * quantity );
+	}
+
+	private static double getNetCost(Double price, Double dto) {
+		return price * (1 - dto/100);
+	}
+	
+	private static double roundTwoDecimals(double value) {
+	    return Math.round(value * 100.0) / 100.0;
 	}
 
 }

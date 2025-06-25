@@ -97,6 +97,7 @@ public class AonCompany implements Serializable {
 			.put("active", getCompany().getDomain().isActive())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("type", getDomain().getDomainType().name())
+			.put("domainManagement", getDomain().isDomainManagement())
 			.put("parent",getDomain().isParent())
 			.put("shared", isShared())
 			.put("parentId",getDomain().getParentId())

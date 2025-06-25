@@ -7034,7 +7034,7 @@ public class AON {
 				if(null == certificate.getData())
 					throw new CertificateNotFoundException();
 				return certificate;
-			} catch (ArrayIndexOutOfBoundsException e) {
+			} catch (Exception e) {
 				throw new IllegalArgumentException("El certificado no se ha podido obtener. Revise que los certificados esten en vigor");
 			}
 		}

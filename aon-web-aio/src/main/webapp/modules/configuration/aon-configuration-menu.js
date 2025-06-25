@@ -3,6 +3,7 @@ import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 import { AonConfiguration } from '../configuration/aon-configuration.js';
+import { PAYMETHODS } from '../MenuOptions.js';
 
 
 export class AonConfigurationMenu extends AonSuiteMenu {
@@ -98,11 +99,8 @@ export class AonConfigurationMenu extends AonSuiteMenu {
             ]
         }, {
             title: 'Tablas Auxiliares de Gestión',
-            options: [{
-                description: "Formas de Pago",
-                title: "Formas de Page",
-                action: () => this.rootPanel(new JSF.AonJsfPayMethod())
-            }, {
+            options: [PAYMETHODS,
+            {
                 description: "Asignación contable por tipo de forma de pago",
                 title: "Asignación contable por tipo de forma de pago",
                 action: () => alert("Asignación contable por tipo de forma de pago"),

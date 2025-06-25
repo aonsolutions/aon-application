@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
@@ -50,6 +51,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.jooq.tables.records.CustomerRecord;
 import com.esferalia.aon.jooq.tables.records.RrelationshipRecord;
+import com.esferalia.aon.jooq.tables.records.RsellerRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.jooq.tables.records.UserScopeRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -68,8 +70,8 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.RegistrySellerType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
@@ -665,6 +667,33 @@ public class FeeDAO {
 	}
 	
 	public static Integer saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		if(!feeList.isEmpty() && feeList.size() == 1) {
+			Fee fee = feeList.get(0);
+			Integer customerId = fee.getCustomer().getId();
+		    Short desiredLine = fee.getLine();
+
+		    List<Short> existingLines = ctx.getDslContext()
+		        .select(CUSTOMER_FEE.LINE)
+		        .from(CUSTOMER_FEE)
+		        .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+		        .orderBy(CUSTOMER_FEE.LINE.asc())
+		        .fetchInto(Short.class);
+
+		    if (desiredLine == null) {
+		        desiredLine = (short) (existingLines.isEmpty() ? 1 : existingLines.get(existingLines.size() - 1) + 1);
+		        fee.setLine(desiredLine);
+		    }
+
+		    // 3. Si hay conflictos, desplazar lineas >= fee.line hacia abajo
+		    if (existingLines.contains(desiredLine)) {
+		        ctx.getDslContext().update(CUSTOMER_FEE)
+		            .set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.plus((short) 1))
+		            .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+		            .and(CUSTOMER_FEE.LINE.greaterOrEqual(desiredLine))
+		            .execute();
+		    }
+		}
+		
 		feeList.stream()
 			.filter(fee -> fee.isModify())
 			.forEach(fee -> {
@@ -718,9 +747,9 @@ public class FeeDAO {
 			.values(fee.getDomain().getId(), fee.getProject().getId(), fee.getCustomer().getId(), fee.getLine(), fee.getItem().getId(), fee.getDescription(), fee.getQuantity(), fee.getPrice(), fee.getDiscountExpr(), startDate, endDate, billingDate, (short) fee.getPeriod().value(), fee.getSecurityLevel().value(), fee.getInvoicingGroup().getId(), fee.getSeller().getId(), fee.getWorkplace().getId())
 			.returning(CUSTOMER_FEE.ID).fetchOne().getValue(CUSTOMER_FEE.ID);
 		
-		fee.setId(id);
-		
 		updateSellerUserScope(ctx, fee);
+		
+		fee.setId(id);
 		
 		return fee;
 	}
@@ -768,11 +797,13 @@ public class FeeDAO {
 			.where(RITEM.CUSTOMER_FEE.eq(fee.getId()))
 			.execute();
 			
+			deleteSellerUserScope(ctx, fee);
+			
 			ctx.getDslContext()
 			.delete(CUSTOMER_FEE)
 			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
 			
-			deleteSellerUserScope(ctx, fee);
+			
 		}));
 		
 	}
@@ -786,11 +817,13 @@ public class FeeDAO {
 				.where(RITEM.CUSTOMER_FEE.eq(f.getId()))
 				.execute();
 			
+			deleteSellerUserScope(ctx, f);
+			
 			ctx.getDslContext()
 				.delete(CUSTOMER_FEE)
 				.where(CUSTOMER_FEE.ID.equal(f.getId())).execute();
 			
-			deleteSellerUserScope(ctx, f);
+			
 			
 		});
 	}
@@ -1011,6 +1044,7 @@ public class FeeDAO {
 
 		projectRecords.forEach(r -> {
 			Project project = ProjectFiller.build(r);
+			project.setProjectHolders(ProjectHolderDAO.getList(ctx, f -> f.getProjectProperty().eq(project.getId())));
 			suggestions.put(r.get(PROJECT.NAME), project);
 		});
 		
@@ -1076,16 +1110,46 @@ public class FeeDAO {
 		return customerFeeSuggestions;
 	}
 	
+//	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
+//		if(fee.getLine() == null) {
+//			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
+//					.from(CUSTOMER_FEE)
+//					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
+//			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
+//		} 
+//		
+//		return insert(ctx, fee);
+//	}
+	
 	public static Fee createCustomerFeeList(AONContext ctx, Fee fee) {
-		if(fee.getLine() == null) {
-			Result<Record1<Short>> n = ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.LINE))
-					.from(CUSTOMER_FEE)
-					.where(CUSTOMER_FEE.DOMAIN.eq(ctx.getDomainId()).and(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))).fetch();
-			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
-		} 
-		
-		return insert(ctx, fee);
+	    Integer customerId = fee.getCustomer().getId();
+	    Short desiredLine = fee.getLine();
+
+	    List<Short> existingLines = ctx.getDslContext()
+	        .select(CUSTOMER_FEE.LINE)
+	        .from(CUSTOMER_FEE)
+	        .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+	        .orderBy(CUSTOMER_FEE.LINE.asc())
+	        .fetchInto(Short.class);
+
+	    if (desiredLine == null) {
+	        desiredLine = (short) (existingLines.isEmpty() ? 1 : existingLines.get(existingLines.size() - 1) + 1);
+	        fee.setLine(desiredLine);
+	    }
+
+	    // 3. Si hay conflictos, desplazar lineas >= fee.line hacia abajo
+	    if (existingLines.contains(desiredLine)) {
+	        ctx.getDslContext().update(CUSTOMER_FEE)
+	            .set(CUSTOMER_FEE.LINE, CUSTOMER_FEE.LINE.plus((short) 1))
+	            .where(CUSTOMER_FEE.CUSTOMER.eq(customerId))
+	            .and(CUSTOMER_FEE.LINE.greaterOrEqual(desiredLine))
+	            .execute();
+	    }
+
+	    // 4. Insertar la nueva Fee
+	    return insert(ctx, fee);
 	}
+
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
@@ -1235,7 +1299,6 @@ public class FeeDAO {
 					customerFee.store();
 				}
 			}
-			
 		}
 		
 	}
@@ -1243,13 +1306,15 @@ public class FeeDAO {
 	private static void updateSellerUserScope(AONContext ctx, Fee fee) {
 		Seller newSeller = fee.getSeller();
 		
-		Integer oldSeller = ctx.getDslContext().select(CUSTOMER_FEE.SELLER)
-				.from(CUSTOMER_FEE)
-				.where(CUSTOMER_FEE.ID.eq(fee.getId()))
-				.fetchOne(CUSTOMER_FEE.SELLER);
-		
-		if(null != oldSeller)
-			deleteOldSellerUserScope(ctx, fee, oldSeller);
+		if(null != fee.getId()) {
+			Integer oldSeller = ctx.getDslContext().select(CUSTOMER_FEE.SELLER)
+					.from(CUSTOMER_FEE)
+					.where(CUSTOMER_FEE.ID.eq(fee.getId()))
+					.fetchOne(CUSTOMER_FEE.SELLER);
+			
+			if(null != oldSeller)
+				deleteOldSellerUserScope(ctx, fee, oldSeller);
+		}
 		
 		if(null != newSeller && null != newSeller.getId()) {
 			Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
@@ -1265,7 +1330,7 @@ public class FeeDAO {
 					// Domain Customer Scope
 					Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
 						.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
-						.and(RRELATIONSHIP.ID.eq(-1))
+						.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
 						.fetch();
 					
 					UserRecord user = ctx.getDslContext().selectFrom(USER)
@@ -1281,22 +1346,51 @@ public class FeeDAO {
 							.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
 							.fetchOne();
 						
-						Integer domainScope = company.get(DOMAIN.SCOPE);
+						if(null != company) {
 						
-						// Get user scopes
-						Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-								.where(USER_SCOPE.USER_ID.eq(userId))
-								.fetch();
-						
-						Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> userScopeIt.getScope().equals(domainScope)).findFirst();
-						
-						// Delete user scopes
-						if(userScope.isEmpty()) {
-							ctx.getDslContext().insertInto(USER_SCOPE)
-								.set(USER_SCOPE.DOMAIN, user.getDomain())
-								.set(USER_SCOPE.USER_ID, userId)
-								.set(USER_SCOPE.SCOPE, domainScope)
-								.execute();
+							Integer domainScope = company.get(DOMAIN.SCOPE);
+							
+							Record scope = ctx.getDslContext().select().from(SCOPE)
+									.where(SCOPE.ID.eq(domainScope))
+									.fetchOne();
+							
+							if(null != domainScope || !AonStringUtils.equalsIgnoreCase(scope.get(SCOPE.DESCRIPTION), fee.getCustomer().getDocument())) {
+								// Get user scopes
+								Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+										.where(USER_SCOPE.USER_ID.eq(userId))
+										.and(USER_SCOPE.SCOPE.isNotNull())
+										.fetch();
+								
+								Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
+								
+								// Insert user scopes
+								if(userScope.isEmpty()) {
+									ctx.getDslContext().insertInto(USER_SCOPE)
+										.set(USER_SCOPE.DOMAIN, user.getDomain())
+										.set(USER_SCOPE.USER_ID, userId)
+										.set(USER_SCOPE.SCOPE, domainScope)
+										.execute();
+								}
+							} else {
+								Integer scopeId = ctx.getDslContext().insertInto(SCOPE)
+									.set(SCOPE.DOMAIN, null == company.get(DOMAIN.PARENT) ? company.get(DOMAIN.ID) : company.get(DOMAIN.PARENT))
+									.set(SCOPE.DESCRIPTION, fee.getCustomer().getDocument())
+									.returning(SCOPE.ID)
+									.fetchOne().value1();
+								
+								if(null == domainScope) {
+									ctx.getDslContext().update(DOMAIN)
+										.set(DOMAIN.SCOPE, scopeId)
+										.where(DOMAIN.ID.eq(company.field(DOMAIN.ID)))
+										.execute();
+								}
+								
+								ctx.getDslContext().insertInto(USER_SCOPE)
+									.set(USER_SCOPE.DOMAIN, user.getDomain())
+									.set(USER_SCOPE.USER_ID, userId)
+									.set(USER_SCOPE.SCOPE, scopeId)
+									.execute();
+							}
 						}
 					}
 				}
@@ -1316,8 +1410,14 @@ public class FeeDAO {
 			customerFee.getSeller().equals(oldSeller) && 
 			!customerFee.getId().equals(fee.getId())).findFirst();
 		
+		Result<RsellerRecord> rseller = ctx.getDslContext().selectFrom(RSELLER)
+				.where(RSELLER.REGISTRY.eq(fee.getCustomer().getId()))
+				.and(RSELLER.SELLER.eq(oldSeller))
+				.and(RSELLER.TYPE.eq(RegistrySellerType.SOPORTE.value()))
+				.fetch();
+		
 		// Delete seller user Scope
-		if(oldSellerCustomerFee.isEmpty()) {
+		if(oldSellerCustomerFee.isEmpty() && rseller.isEmpty()) {
 			Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
 				.where(SELLER.REGISTRY.eq(oldSeller))
 				.fetchOne(SELLER.TASK_HOLDER);
@@ -1343,20 +1443,26 @@ public class FeeDAO {
 							.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
 							.fetchOne();
 						
-						Integer domainScope = company.get(DOMAIN.SCOPE);
+						if(null != company) {
 						
-						// Get user scopes
-						Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-								.where(USER_SCOPE.USER_ID.eq(userId))
-								.fetch();
-						
-						Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> userScopeIt.getScope().equals(domainScope)).findFirst();
-						
-						// Delete user scopes
-						if(userScope.isPresent()) {
-							ctx.getDslContext().delete(USER_SCOPE)
-								.where(USER_SCOPE.ID.eq(userScope.get().getId()))
-								.execute();
+							Integer domainScope = company.get(DOMAIN.SCOPE);
+							
+							if(null != domainScope) {
+								// Get user scopes
+								Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+										.where(USER_SCOPE.USER_ID.eq(userId))
+										.and(USER_SCOPE.SCOPE.isNotNull())
+										.fetch();
+								
+								Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> domainScope.equals(userScopeIt.getScope())).findFirst();
+								
+								// Delete user scopes
+								if(userScope.isPresent()) {
+									ctx.getDslContext().delete(USER_SCOPE)
+										.where(USER_SCOPE.ID.eq(userScope.get().getId()))
+										.execute();
+								}
+							}
 						}
 					}
 				}
@@ -1366,43 +1472,79 @@ public class FeeDAO {
 	
 	private static void deleteSellerUserScope(AONContext ctx, Fee fee) {
 		Seller seller = fee.getSeller();
-		if(null != seller && null != seller.getId()) {
+		
+		Result<CustomerFeeRecord> customerFees = ctx.getDslContext().selectFrom(CUSTOMER_FEE)
+				.where(CUSTOMER_FEE.CUSTOMER.eq(fee.getCustomer().getId()))
+				.fetch();
+		
+		// Exist seller in other fee
+		Optional<CustomerFeeRecord> oldSellerCustomerFee = customerFees.stream().filter(customerFee -> 
+			null != customerFee.getSeller() && 
+			customerFee.getSeller().equals(seller.getId()) && 
+			!customerFee.getId().equals(fee.getId())).findFirst();
+		
+		if(oldSellerCustomerFee.isEmpty() && null != seller && null != seller.getId()) {
 			
-			TaskHolder taskHolder = seller.getTaskHolder();
-			
-			if(null != taskHolder && null != taskHolder.getId() && null != taskHolder.getUserId()) {
-				
-				// Domain Customer Scope
-				Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
-					.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
-					.and(RRELATIONSHIP.ID.eq(-1))
+			Result<RsellerRecord> rseller = ctx.getDslContext().selectFrom(RSELLER)
+					.where(RSELLER.REGISTRY.eq(fee.getCustomer().getId()))
+					.and(RSELLER.SELLER.eq(seller.getId()))
+					.and(RSELLER.TYPE.eq(RegistrySellerType.SOPORTE.value()))
 					.fetch();
+			
+			if(rseller.isEmpty()) {
 				
-				if(rrelationships.isNotEmpty()) {
-					RrelationshipRecord rrelationship = rrelationships.get(0);
-					
-					// Get domain scope
-					Record company = ctx.getDslContext().select().from(COMPANY)
-						.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
-						.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
-						.fetchOne();
-					
-					Integer domainScope = company.get(DOMAIN.SCOPE);
-					
-					// Get user scopes
-					Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
-							.where(USER_SCOPE.USER_ID.eq(taskHolder.getUserId()))
+				Integer taskHolder = ctx.getDslContext().select(SELLER.TASK_HOLDER).from(SELLER)
+						.where(SELLER.REGISTRY.eq(seller.getId()))
+						.fetchOne(SELLER.TASK_HOLDER);
+				
+				if(null != taskHolder) {
+					Integer userId = ctx.getDslContext().select(TASK_HOLDER.USER_ID).from(TASK_HOLDER)
+						.where(TASK_HOLDER.REGISTRY.eq(taskHolder))
+						.fetchOne(TASK_HOLDER.USER_ID);
+				
+					if(null != userId) {
+						// Domain Customer Scope
+						Result<RrelationshipRecord> rrelationships = ctx.getDslContext().selectFrom(RRELATIONSHIP)
+							.where(RRELATIONSHIP.REGISTRY.eq(fee.getCustomer().getId()))
+							.and(RRELATIONSHIP.RELATIONSHIP.eq(-1))
 							.fetch();
-					
-					Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt -> userScopeIt.getScope().equals(domainScope)).findFirst();
-					
-					// Delete user scopes
-					if(userScope.isPresent()) {
-						ctx.getDslContext().delete(USER_SCOPE)
-							.where(USER_SCOPE.ID.eq(userScope.get().getId()))
-							.execute();
+						
+						if(rrelationships.isNotEmpty()) {
+							RrelationshipRecord rrelationship = rrelationships.get(0);
+							
+							// Get domain scope
+							Record company = ctx.getDslContext().select().from(COMPANY)
+								.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+								.where(COMPANY.REGISTRY.eq(rrelationship.getRelatedRegistry()))
+								.fetchOne();
+							
+							if(null != company) {
+							
+								Integer domainScope = company.get(DOMAIN.SCOPE);
+								
+								if(null != domainScope) {
+								
+									// Get user scopes
+									Result<UserScopeRecord> userScopes = ctx.getDslContext().selectFrom(USER_SCOPE)
+											.where(USER_SCOPE.USER_ID.eq(userId))
+											.and(USER_SCOPE.SCOPE.isNotNull())
+											.fetch();
+									
+									Optional<UserScopeRecord> userScope = userScopes.stream().filter(userScopeIt ->  domainScope.equals(userScopeIt.getScope())).findFirst();
+									
+									// Delete user scopes
+									if(userScope.isPresent()) {
+										ctx.getDslContext().delete(USER_SCOPE)
+											.where(USER_SCOPE.ID.eq(userScope.get().getId()))
+											.execute();
+									}
+								
+								}
+							}
+						}
 					}
 				}
+				
 			}
 			
 		}
