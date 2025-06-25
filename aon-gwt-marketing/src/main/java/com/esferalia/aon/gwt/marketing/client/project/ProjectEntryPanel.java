@@ -32,6 +32,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ProjectEntryPanel extends AonCustomDockLayout {
@@ -56,6 +57,7 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 	private Label projectIteration;
 	private AonToolbarButton nextProject;
 	
+	private ScrollPanel scrollPanel;
 	private HTMLPanel container;
 	
 	private HTMLPanel messagePanel = new HTMLPanel(EMPTY_STRING);
@@ -94,12 +96,16 @@ public abstract class ProjectEntryPanel extends AonCustomDockLayout {
 		addButtonsToolbar();
 		hideSearchWidget();
 		
+		scrollPanel = new ScrollPanel();
+		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
 		
 		container.add(messagePanel);
 		
-		add(container);
+		scrollPanel.setWidget(container);
+		
+		add(scrollPanel);
 	}
 	
 	@Override

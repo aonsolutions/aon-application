@@ -213,4 +213,8 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		}
 	}
 
+	public Activity getActivity() {
+		return activity;
+	}
+
 }

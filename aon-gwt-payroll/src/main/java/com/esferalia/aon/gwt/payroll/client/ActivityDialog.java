@@ -1,34 +1,31 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class ActivityDialog extends AonCustomDialog {
 
 	private class ActivityImplementation extends Activity{
 
+		protected ActivityImplementation(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
+			super(activity);
+		}
+
 		@Override
-		public void onActivityDescriptionChange() {
-			activityDialogObject.setActivityDescription(activityDescription.getValue());
+		public void showPDF(String dataURI, boolean isLaboralLife) {
+			// Nothing to do here
+		}
+
+		@Override
+		public void onActivityDescriptionChange(String description) {
+			activityDialogObject.setActivityDescription(description);
 		}
 
 		@Override
@@ -37,100 +34,28 @@ public class ActivityDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void onActivityStartDateChange() {
-			activityDialogObject.setActivityStartDate(startDate.getValue());
+		public void onActivityStartDateChange(Date startDate) {
+			activityDialogObject.setActivityStartDate(startDate);
 		}
 
 		@Override
-		public void onActivityEndDateChange() {
-			activityDialogObject.setActivityEndDate(endDate.getValue());
+		public void onActivityEndDateChange(Date endDate) {
+			activityDialogObject.setActivityEndDate(endDate);
 		}
 
 		@Override
-		public void onActivityActiveChange() {
-			activityDialogObject.setActivityActive(activityActive.getValue());
-		}
-		
-		@Override
-		public void onInsertRow() {
-			activity.hideActivityColumn();
-		}
-		
-		@Override
-		public void onInsertRows() {
-			activityDialogObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
-			activity.hideActivityColumn();
-		}
-
-		@Override
-		public void onDeleteCCC(Integer cccId) {
-			activityDialogObject.deleteCCC(cccId);
-		}
-
-		@Override
-		public void onInsertCCC(EnterpriseCCC ccc) {
-			activityDialogObject.insertCCC(ccc);
-		}
-
-		@Override
-		public Set<Entry<Integer, String>> getActivities() {
-			return Collections.emptySet();
-		}
-		
-		@Override
-		public List<EnterpriseCCC> getEnterpriseCCCs() {
-			return activityDialogObject.getActiveCCCs();
-		}
-
-		@Override
-		public void fireErrorMessage(Map<String, String> messages) {
-			AonMessagePanel.showError(messagePanel, messages);
-		}
-		
-		@Override
-		public void fireWarningMessage(Map<String, String> messages) {
-			AonMessagePanel.showWarning(messagePanel, messages);
-		}
-		
-		@Override
-		public void fireInfoMessage(Map<String, String> messages) {
-			AonMessagePanel.showInfo(messagePanel, messages);
-		}
-
-		@Override
-		protected void fireLoadingMessage(String message) {
-			AonMessagePanel.showLoading(messagePanel, message);
-		}
-
-		@Override
-		protected void fireHideMessage() {
-			AonMessagePanel.hideMessage(messagePanel);
-		}
-
-		@Override
-		public void showPDF(String dataURI, boolean isLaboralLife) {
-			// Nothing to do here
+		public void onActivityActiveChange(Boolean principal) {
+			activityDialogObject.setActivityActive(principal);
 		}
 		
 	}
 	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
-	interface ActivityDraftUiBinder extends UiBinder<Widget, ActivityDialog> {}
-	
-	private static ActivityDraftUiBinder binder = GWT.create(ActivityDraftUiBinder.class);
-	
-	@UiField (provided = true)
-	AonToolbar toolbar;
-	
-	@UiField
-	HTMLPanel messagePanel;
-	
-	@UiField (provided = true)
-	Activity activity;
-	
-	@UiField
-	HTMLPanel buttonsPanel;
+	private HTMLPanel content = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private Activity activity;
+	private HTMLPanel buttonsPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
@@ -139,44 +64,58 @@ public class ActivityDialog extends AonCustomDialog {
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public ActivityDialog() {	
-		activity = new ActivityImplementation();
-		activity.cccWidget.setDialogHeight();
-		
-		createToolbar();
-		
 		setCaption("Nueva Actividad");
-		setWidget(binder.createAndBindUi(this));
-		
-		AonMessagePanel.hideMessage(messagePanel);
-		
-		getButtonsPanel();
 	}
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
 	public void setActivityDialogObject(ActivityDialogObject activityDialogObject) {
 		this.activityDialogObject = activityDialogObject;
-		activity.cccWidget.setDomain(activityDialogObject.getDomain());
-		activity.hideActivityColumn();
+		
+		activity = new ActivityImplementation(activityDialogObject.getActivity());
+		activity.hideCCCCard();
+		
+		getButtonsPanel();
+		
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.add(messagePanel);
+		content.add(activity);
+		content.add(buttonsPanel);
+		
+		add(content);
 		showDialog();
 	}
 	
 	private void getButtonsPanel() {
-		Button closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.addClickHandler(e -> onCloseDialog());
+		buttonsPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
+		buttonsPanel.getElement().getStyle().setProperty("margin", "1rem");
+		
+		Button closeBtnDialog = createButton("Cancelar");
+		closeBtnDialog.addClickHandler(e -> hide());
+		
 		buttonsPanel.add(closeBtnDialog);
 		
-		Button acceptBtnDialog = new Button();
-		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText( AON.MSG.accept());
+		Button acceptBtnDialog = createButton("Crear");
+		acceptBtnDialog.getElement().getStyle().setProperty("color", "green");
 		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
+		
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog() {
-		hide();
+	private Button createButton(String text) {
+		Button button = new Button(text);
+		button.getElement().getStyle().setProperty("background", "none");
+		button.getElement().getStyle().setProperty("background-color", "#fafafa");
+		button.getElement().getStyle().setProperty("padding", "5px");
+		button.getElement().getStyle().setProperty("height", "auto");
+		button.getElement().getStyle().setProperty("font-size", "12px");
+//		button.getElement().getStyle().setProperty("font-family", "Arial Unicode MS, Arial, sans-serif");
+		button.getElement().getStyle().setProperty("text-transform", "inherit");
+		button.getElement().getStyle().setProperty("font-weight", "bold");
+		button.getElement().getStyle().setProperty("border", "1px solid #d0d0d0");
+		button.getElement().getStyle().setProperty("border-radius", "5px");
+		
+		return button;
 	}
 	
 	private void onAcceptDialog() {
@@ -188,24 +127,12 @@ public class ActivityDialog extends AonCustomDialog {
 				},
 				f -> {}
 			);
-		}else {
-			Map<String, String> warningMap = new HashMap<>();
-			warningMap.put("CUIDADO", "Hay que rellenar los campos azules obligatoriamente.");
-			AonMessagePanel.showWarning(messagePanel, warningMap);
-		}
+		}else
+			AonMessagePanel.showWarning(messagePanel, "El campo descripci\u00f3n es obligatorio.");
 	}
 	
 	private boolean checkIfSaveIsPossible() {
-		return !AonStringUtils.isBlank(activity.activityDescription.getValue());
-	}
-	
-	private void createToolbar() {
-		toolbar = new AonToolbar();
-		
-		AonToolbarButton addCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd());
-		addCCCBtn.ensureDebugId("addCCCBtn");
-		addCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
-		toolbar.add(addCCCBtn);
+		return !AonStringUtils.isBlank(activityDialogObject.getActivity().getDescription());
 	}
 	
 	public void showDialog() {

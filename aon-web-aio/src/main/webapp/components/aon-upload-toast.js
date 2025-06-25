@@ -1,6 +1,6 @@
 import { CONSTANT, CSS, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { uploadDocument } from '../modules/documental/DocumentalUtils.js';
-import { generateJobId, s3UploadInvoice, uploadInvoice2 } from '../modules/invoice/InvoiceUtils.js';
+import { generateJobId, s3UploadInvoice } from '../modules/invoice/InvoiceUtils.js';
 import { getCompany } from '../services/companyService.js';
 import {AonElement} from './AonElement.js';
 import { AonCard } from './aon-card.js';
@@ -125,8 +125,7 @@ export class AonUploadToast extends AonElement {
 				} else s3UploadInvoice(company, file, this.JOB_ID, data, success, error);
 			});
  		} else if("documental" === type) {
-			const isBetaDoc = this.isBetaDoc();
-			uploadDocument(file, data, success, error, isBetaDoc);
+			uploadDocument(file, data, success, error, this.isBetaDoc());
 		}
 	}
 

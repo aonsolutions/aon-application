@@ -205,7 +205,8 @@ public class InvoiceDocDAO {
 	
 				@Override
 				public AonURIBuilder visitDrive() {
-					return builder.setParameter(IJsonNames.DRIVE_ID,doc.getDriveId());
+					return builder.setParameter(IJsonNames.DRIVE_ID,doc.getDriveId())
+						.setParameter(IJsonNames.AON_ID, AonNumberUtils.toString(doc.getAonId()));
 				}
 	
 				@Override

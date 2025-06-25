@@ -352,6 +352,7 @@ export const PARENT_APPS = "Aplicacions del pare";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contrasenya';
 export const PAYMETHOD = 'Forma de Pagament';
+export const PAYMETHODS = 'Formes de Pagament';
 export const PAYROLL = "Laboral";
 export const PAYSHEET = 'Nòmina';
 export const PAYSHEETS = 'Nòminas';

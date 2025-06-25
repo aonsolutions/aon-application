@@ -626,6 +626,9 @@ export class AonHeader extends AonElement {
 		let aonHeaderCompanyList = this.getElement(this.AON_HEADER_COMPANY_LIST);
 		aonHeaderCompanyList.style.display = company && !onlyOne ? 'block' : 'none';
 
+		let aonHeaderCompanyListButton = this.getElement(this.AON_HEADER_COMPANY_LIST_BUTTON);
+		aonHeaderCompanyListButton.style.display = company && !onlyOne ? 'block' : 'none';
+
 		let aonHeaderHelp = this.getElement(this.AON_HEADER_HELP);
 		aonHeaderHelp.style.display = company ? 'block' : 'none';
 
@@ -1087,13 +1090,27 @@ export class AonHeader extends AonElement {
 		
 	}
 	
+	showParent() {
+		let aonParent = new AonParent();
+		aonParent.id = "aonParent";
+		this.rootPanel(aonParent);
+	}
+
 	showDesktop() {
 		let aonDesktop = new AonDesktop();
 		aonDesktop.id = "aonDesktop";
 		this.rootPanel(aonDesktop);
 	}
 	
-	companySelection(company, onlyOne, callback = () => { this.showDesktop(); } ) {
+	showCompany(company) {
+		if  ( company.domainManagement ) {
+			this.showParent();
+		} else {
+			this.showDesktop();
+		}
+	}
+
+	companySelection(company, onlyOne, callback = ( company ) =>  this.showCompany(company) ) {
 		localStorage.setItem('company', JSON.stringify(company));
 		LS.setDomainId(company.id);
 		LS.setDomainName(company.domain);
@@ -1141,7 +1158,7 @@ export class AonHeader extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			callback();				
+			callback(company);				
 		});
 	}
 	

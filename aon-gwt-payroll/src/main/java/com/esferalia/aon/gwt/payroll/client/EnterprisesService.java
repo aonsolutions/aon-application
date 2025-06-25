@@ -73,7 +73,6 @@ import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -424,7 +423,9 @@ public interface EnterprisesService extends RemoteService {
 	void deleteCCC(String currentDomainName, String user, Integer cccId) throws IllegalArgumentException;
 	
 	EnterpriseCCC saveCCC(String currentDomainName, String user, EnterpriseCCC ccc) throws IllegalArgumentException;
-
+	
+	List<EnterpriseCCC> getActivityCCCList(String currentDomainName, String currentUser, Integer activityId) throws IllegalArgumentException;
+	
 	// --------------------------- Mod 145 (API)
 	
 	List<Mod145> getMod145List(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
