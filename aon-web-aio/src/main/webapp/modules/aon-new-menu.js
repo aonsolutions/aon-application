@@ -42,7 +42,6 @@ import { AonWarehouseMenu } from './warehouse/aon-warehouse-menu.js';
 import { AonFiscalMenu } from './fiscal/aon-fiscal-menu.js';
 import { AonFiscalBeta } from './fiscal/aon-fiscal-beta.js';
 import { AonPayrollMenu } from './payroll/aon-payroll-menu.js';
-import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 import { AonMarketingMenu } from './marketing/aon-marketing-menu.js';
 import { AonAcademyMenu } from './academy/aon-academy-menu.js';
 import { AonCommerceMenu } from './commerce/aon-commerce-menu.js';
@@ -253,29 +252,8 @@ export class AonNewMenu extends AonElement {
 					this.showApplicationsDialog();
 					break;
 				case ACCOUNTING_MENU.app:
-					if(this.isBeta()){
-						this.rootPanel(new AonAccountingBeta());
-						break;
-					}else {
-						this.rootPanelMenu(this.getAonSuiteMenu(app));
-						break;					
-					}
 				case FISCAL_MENU.app:
-					if(this.isBeta()){
-						this.rootPanel(new AonFiscalBeta());
-						break;
-					}else {
-						this.rootPanelMenu(this.getAonSuiteMenu(app));
-						break;					
-					}
 				case PAYROLL_MENU.app:
-					if(this.isBeta()){
-						this.rootPanel(new AonPayrollBeta());
-						break;
-					}else {
-						this.rootPanelMenu(this.getAonSuiteMenu(app));
-						break;					
-					}
 				case COMMERCIAL_MENU.app:
 				case GROUPWARE_MENU.app:
 				case MANAGEMENT_MENU.app:

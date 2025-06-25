@@ -3,6 +3,10 @@ import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccoun
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { AON_ICONS, CONSTANT, MATERIAL_ICONS, MSG, TAG, EVENT } from '../../environments/environments.js';
+import * as JSF from '../aon-jsf-app.js';
+import { AonRightPanel } from '../aon-right-panel.js';
+import { AonIconButton } from "../../components/aon-icon-button.js";
+import * as GWT from '../../gwt/gwt.js';
 
 import { AonAccountingMenu } from './aon-accounting-menu.js';
 
@@ -54,7 +58,7 @@ export class AonAccountingBeta extends AonElement {
 			id: "parameters",
 			icon: "settings_applications",
 			name: "Parametros",
-			fn: () => this.buildParameters(),
+			fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
 	  });
 	  
 	  configurationOptions.push({
@@ -82,13 +86,42 @@ export class AonAccountingBeta extends AonElement {
 
     this.buildAccountingMenu();
   }
-
-  buildParameters() {
-	alert("En construcción");
-  }
   
   buildObservations() {
-	alert("En construcción");
+	let rightSidenav = this.getApplication().getRightSidenav();
+	this.clearElement(rightSidenav);
+	
+	let div = this.createElement(TAG.DIV);
+	div.style = `
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		height: 100%;
+	`;
+	div.id = "customerNotesId";
+
+	if (rightSidenav.style.flexBasis === "0px" || rightSidenav.style.flexBasis.length == 0) {
+		rightSidenav.appendChild(div);
+		
+		let loaderSpan = this.createElement(TAG.SPAN);
+		loaderSpan.className = CONSTANT.SPIN;
+		loaderSpan.style.display = 'flex';
+		loaderSpan.style.height = '100%';
+		loaderSpan.style.justifyContent = 'center';
+		loaderSpan.style.alignItems = 'center';
+		
+		let aib = new AonIconButton();
+		aib.id = 'spinLoader';
+		aib.icon  = 'sync';
+		aib.title = 'Cargando...';
+		loaderSpan.appendChild(aib);
+		
+		div.appendChild(loaderSpan);
+		
+		GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
+			
+	}		
+	this.getApplication().toogleRightSidenav();	
   }
   
   buildAccountingMenu() {
