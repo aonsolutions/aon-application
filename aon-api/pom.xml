@@ -96,6 +96,13 @@
       		<version>${project.version}</version>
       		<scope>compile</scope>
     	</dependency>
+    	
+    	<dependency>
+      		<groupId>net.aonsolutions</groupId>
+     	 	<artifactId>aon.in.pdf</artifactId>
+      		<version>${project.version}</version>
+      		<scope>compile</scope>
+    	</dependency>
 		
 		<dependency>
       		<groupId>com.code.aon</groupId>

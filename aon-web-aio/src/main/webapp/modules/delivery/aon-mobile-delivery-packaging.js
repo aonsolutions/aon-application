@@ -1,16 +1,15 @@
 import { AonElement } from '../../components/AonElement.js';
-
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
-
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import * as LS from '../../services/localStorageService.js';
 import { deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
-
-import * as ACTION from '../actions.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { round } from '../../services/utils.js';
+
+import * as LS from '../../services/localStorageService.js';
+import * as ACTION from '../actions.js';
+import * as UA from '../../services/userAgentService.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -228,13 +227,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	print() {
 		let json = {
+			delivery: this.delivery,
 			container: this.packaging.item.id,
 			domain_id: LS.getDomainId(),
 			domain_name: LS.getDomainName(),
 			login: LS.getDomainLogin()
 		};
 
-		let fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		let fileUrl = '/ms/api/deliveryPackagingTag?json=' + btoa(JSON.stringify(json));
 		if(UA.isAndroidApp()) {
 			let file = {
 				url: fileUrl,
