@@ -291,6 +291,7 @@ public final class IJsonNames {
 	public static final String HEADER_TEXT = "headerText";
 	public static final String HIDE_DATETIME_ON_FOOTER = "hideDateTimeOnFooter";
 	public static final String HIDE_FILTER = "hideFilter";
+	public static final String HUELLA = "huella";
 	// ---------------------------------------------------------------------------------------------	[I] 
 	public static final String IAE = "iae";
 	public static final String IBAN = "iban";

@@ -6,7 +6,8 @@ public enum DataRequestType implements Serializable{
 
 	SII,
 	TBAI,
-	LROE;
+	LROE,
+	VERIFACTU;
 
 	public byte value() {
 		return (byte) this.ordinal();

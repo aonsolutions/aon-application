@@ -33,7 +33,8 @@ public enum DataAttachSource implements Serializable {
 	MOD347,
 	MOD349,
 	MOD200,
-	MOD369
+	MOD369,
+	VERIFACTU
 	;
 
 	public byte value() {
