@@ -23,6 +23,7 @@ import * as GWT from '../../../gwt/gwt.js';
 import * as LS from '../../../services/localStorageService.js';
 import { AonUserList } from "../../user/aon-user-list.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
+import { generateTokenJson, getUser } from "../../../services/userService.js";
 
 export class AonCustomer extends AonReg {
 	
@@ -627,6 +628,17 @@ export class AonCustomer extends AonReg {
 		let options = [];
 
 		if (rrelationship) {
+			if(this.isSig() /*|| this.isAyudaT()*/){
+				options.push(
+					{
+						name: "Acceder",
+						value: "access",
+						icon: MATERIAL_ICONS.OPEN_IN_NEW,
+						fn: () => this.suplant(rrelationship),
+					}
+				);
+			}
+			
 			options.push(
 				{
 					name: "Abrir",
@@ -711,6 +723,32 @@ export class AonCustomer extends AonReg {
 			d.setMenuOptions(options, top, left);
 			d.open();
 		}
+	}
+	
+	suplant(rrelationship){
+		getUser().then(user => {
+			//console.log("User");
+			//console.log(user);
+			
+			let d = this.getApplication().getDialog();
+			d.clear();
+			
+			if(!this.isMobile()) d.width = '400px';
+			d.setTitle("Suplantar Usuario");
+			
+			d.setContentHTML("Estás seguro de suplantar a " + user.login);
+			d.addAcceptAction(() => {
+				let data = {
+					supUser: LS.getDomainLogin(),
+					id: user.id,
+					time: 0
+				};
+				generateTokenJson(data).then(token => {
+					open(`https://${rrelationship.comments}/app?token=${token.session_id}`, '_blank');
+				}).catch(e => this.showError(e));
+			});			
+			d.open();		
+		});
 	}
 
 	openDialogCompany(companies = []) {

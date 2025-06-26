@@ -16,6 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
+import static com.esferalia.aon.payroll.enumeration.ContractCode.C300;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C401;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C501;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -71,12 +72,14 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
@@ -4517,6 +4520,97 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 
 	}
+
+	@Test
+	public void test3XX() throws ExpressionException, SQLException, SalaryException {
+
+		Date startContract = AonDateUtils.getFirstDayOfYear(getToday());
+
+		Date startDate = startContract;
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract100 = newContract(aonContext, 
+				startContract, 
+				null, 
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), C100.getValue());
+						put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+					}
+				}, 
+				new String[] { 
+				"( P_1 + P_2 ) * 0.10 ",
+				"50.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				},
+				null);
+		
+		
+		ISQLContractSalaryCalculatorContext ctx100 = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract100);
+		ctx100.setListener(irpfOutcome -> {
+				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println(irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				System.out.println(irpfOutcome.getIrpfResult().getBaseIrpf());
+		});
+		Salary salary100 = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx100);
+		
+		
+		
+		ContractRecord contract300 = newContract(aonContext, 
+				startContract, 
+				add(startContract, Calendar.DAY_OF_MONTH, 45 ), 
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), ContractCode.C300.getValue());
+						put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+						put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+						put(ContextVariable.PARTIAL_FACTOR.getName(), "1.00");
+					}
+				}, 
+				new String[] { 
+				"( P_1 + P_2 ) * 0.10 ",
+				"50.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10",
+				"BASE_NESTR * 0.20", 
+				"BASE_IRPF * PORCENTAJE_IRPF" 
+				},
+				null);
+		
+		ISQLContractSalaryCalculatorContext ctx300 = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract300);
+		ctx300.setListener(irpfOutcome -> {
+				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println(irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				System.out.println(irpfOutcome.getIrpfResult().getBaseIrpf());
+		});
+		Salary salary300 = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx300);
+		
+		salary300.getSalaryPayments().forEach(p -> {
+			System.out.println("Payment: " + p.getDescription() + " - " + p.getAmount());
+		});
+		
+		assertEquals(salary100.getSalaryData(IRPF_PERCENT.getName()), salary300.getSalaryData(IRPF_PERCENT.getName()));
+	
+	}
+
+
 	// ------------------------------------------------------------------------
 
 	protected void assertAnnualRemuneration(double expected,

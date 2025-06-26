@@ -11,12 +11,14 @@
 
 	<ui:define name="content">
 
-		<h:panelGrid columns="2" styleClass="aon-width-all aon-noborder"
-			columnClasses="aon-width-150 aon-vertical-align-top aon-ConfigPanel, aon-vertical-align-top aon-ConfigContent">
+		<h:panelGrid columns="#{globalConfig.showSideNav ? 2 : 1}" styleClass="aon-width-all aon-noborder"
+			columnClasses="#{ globalConfig.showSideNav ? 'aon-width-150 aon-vertical-align-top aon-ConfigPanel,' : ''} aon-vertical-align-top aon-ConfigContent">
 
 			<aon:panelGroup>
-				<ui:include
-					src="/com/code/aon/ui/admin/facelet/globalConfig/configPanel.xhtml" />
+				<aon:if test="#{globalConfig.showSideNav}" >
+					<ui:include
+						src="/com/code/aon/ui/admin/facelet/globalConfig/configPanel.xhtml" />
+				</aon:if>
 			</aon:panelGroup>
 			
 			<aon:panelGroup id="configContent">

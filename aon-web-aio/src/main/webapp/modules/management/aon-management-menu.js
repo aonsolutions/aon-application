@@ -1,9 +1,8 @@
-import { MSG, CSS, EVENT, TAG } from '../../environments/environments.js'; 
+import { MSG, TAG } from '../../environments/environments.js'; 
 import { AonSuiteMenu } from '../aon-suite-menu.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
-
-
+import { PAYMETHODS } from '../MenuOptions.js';
 
 export class AonManagementMenu extends AonSuiteMenu {
 
@@ -81,8 +80,8 @@ export class AonManagementMenu extends AonSuiteMenu {
         }, {
             title: 'Compras',
             options: [{
-                description: "Proveedores",
-                title: "Proveedores",
+                description: MSG.SUPPLIERS,
+                title: MSG.SUPPLIERS,
                 action: () => this.rootPanel(new JSF.AonJsfSupplier())
             }, {
                 description: "Facturas de Compra",
@@ -96,8 +95,8 @@ export class AonManagementMenu extends AonSuiteMenu {
         }, {
             title: 'Gastos',
             options: [{
-                description: "Acreedores",
-                title: "Acreedores",
+                description: MSG.CREDITORS,
+                title: MSG.CREDITORS,
                 action: () => this.rootPanel(new JSF.AonJsfCreditor())
             }, {
                 description: "Facturas de Gastos",
@@ -122,16 +121,7 @@ export class AonManagementMenu extends AonSuiteMenu {
                 description: "Cartera de cobros y pagos",
                 title: "Cartera de cobros y pagos",
                 action: () => GWT.iLoad(GWT.FINANCE)
-            }, {
-                description: "Formas de Pago",
-                title: "Formas de Pago",
-                action: () => this.rootPanel(new JSF.AonJsfPayMethod())
-            }, 
-            // {
-            //     description: "Borrado de Facturas",
-            //     title: "Borrado de Facturas",
-            //     action: () => this.rootPanel(new JSF.AonJsfInvoiceRemove())
-            // }
+            }, PAYMETHODS 
             , {
                 description: "Estadisticas Globales",
                 title: "Estadisticas Globales",
@@ -159,16 +149,16 @@ export class AonManagementMenu extends AonSuiteMenu {
         }, {
             title: 'Maestros',
             options: [{
-                description: "Productos",
-                title: "Productos",
+                description: MSG.PRODUCTS,
+                title: MSG.PRODUCTS,
                 action: () => this.rootPanel(new JSF.AonJsfProduct())
             }, {
                 description: "Gastos",
                 title: "Gastos",
                 action: () => this.rootPanel(new JSF.AonJsfExpense())
             }, {
-                description: "Categorías",
-                title: "Categorías",
+                description: MSG.CATEGORIES,
+                title: MSG.CATEGORIES,
                 action: () => this.rootPanel(new JSF.AonJsfProductCategory())
             }, {
                 description: "Pais/Provincia",

@@ -2584,6 +2584,17 @@ size: 32px;
     padding-bottom: 60px;
 }
 
+.aonWelcomeLogo   {
+	right: 22%;
+	position: absolute;
+	max-width: 201px;
+}
+
+.aonWelcomeMessage  {
+	font-size: 22px;
+}
+
+
 .aonAppsDiv  {
     width: 20%;
     bottom: 40px;

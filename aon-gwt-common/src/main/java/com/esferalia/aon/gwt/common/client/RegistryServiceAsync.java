@@ -75,6 +75,7 @@ public interface RegistryServiceAsync {
 	void getSellersSuggestion(String domainName, int domain, String user, Integer searchDomain, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
 	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, Integer searchDomain, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
 	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, Integer searchDomain, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
+	void getSellerByTaskHolder(String domainName, int domain, String user, Integer taskHolderId, Integer officeDomain, AsyncCallback<Seller> asyncCallback);
 	
 	void getCustomerFeeSuggestion(String domainName, int domain, String user, Integer itemId, Integer customerId, String customerFeeQuery, AsyncCallback<Map<String, Fee>> asyncCallback);
 	

@@ -1,35 +1,23 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDockLayout;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.Widget;
 
-public abstract class WorkplaceDraft extends Composite {
+public class WorkplaceDraft extends AonCustomDockLayout {
 	
 	// ------------------------------------------------- Workpalce
 	
 	private class WorkplaceImplementation extends Workplace{
 
 		@Override
-		public void onWorkplaceDescriptionChange() {
-			String workplacedescription = workplaceDescription.getValue();
+		public void onWorkplaceDescriptionChange(String workplacedescription) {
 			workplaceDraftObject.setWorkplaceDescription(workplacedescription);
-			setToolbaTitle(workplacedescription);
+			setToolbarTitle(workplacedescription);
 			setHasChange(true);
 		}
 
@@ -40,8 +28,7 @@ public abstract class WorkplaceDraft extends Composite {
 		}
 
 		@Override
-		public void onWorkplaceEconomicConcertChange() {
-			Byte economicConcert = Byte.valueOf(this.workplaceEconomicConcert.getSelectedValue());
+		public void onWorkplaceEconomicConcertChange(Byte economicConcert) {
 			workplaceDraftObject.setWorkplaceEconomicConcert(economicConcert);
 			setHasChange(true);
 		}
@@ -57,32 +44,8 @@ public abstract class WorkplaceDraft extends Composite {
 			workplaceDraftObject.setWorkplaceActivity(AonNumberUtils.equals(-1, activityId) ? null : activityId);
 			setHasChange(true);
 		}
-
-		@Override
-		public void fireErrorMessage(Map<String, String> messages) {
-			showErrorMessage(messages);
-		}
-
-		@Override
-		public void fireHideMessage() {
-			hideMessage();
-		}
 		
 	}
-	
-	// ------------------------------------------------- UiBinder
-
-	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
-
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, WorkplaceDraft> {}
-
-	// ------------------------------------------------- UiFields
-
-	@UiField
-	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	HTMLPanel centerContainer;
 	
 	// ------------------------------------------------- Variables
 
@@ -90,7 +53,6 @@ public abstract class WorkplaceDraft extends Composite {
 	
 	private Workplace workplace;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton acceptButton;
 	private AonToolbarButton undoAllButton;
 	
@@ -99,16 +61,17 @@ public abstract class WorkplaceDraft extends Composite {
 	// ------------------------------------------------- Constructor
 
 	public WorkplaceDraft() {
-		workplace = new WorkplaceImplementation();
+		super("Centro Trabajo");
+		
 		getToolbarPanel();
+		hideSearchWidget();
 		
-		// Inicializamos la vista del empleado
-		initWidget(uiBinder.createAndBindUi(this));
-		
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		
-		centerContainer.add(workplace);
+		workplace = new WorkplaceImplementation();
+		add(workplace);
 	}
+	
+	@Override
+	protected void onClearFilter() {}
 
 	// ------------------------------------------------- setWorkplaceDraftObject
 
@@ -124,7 +87,7 @@ public abstract class WorkplaceDraft extends Composite {
 	}
 	
 	private void initializeView() {
-		setToolbaTitle(workplaceDraftObject.getWorkplaceDescription());
+		setToolbarTitle(workplaceDraftObject.getWorkplaceDescription());
 		
 		workplace.initializeView();
 		initializeListBox();
@@ -146,37 +109,16 @@ public abstract class WorkplaceDraft extends Composite {
 	}
 
 	private void fillWorkplaceInfo() {
-		workplace.workplaceDescription.setValue(workplaceDraftObject.getWorkplaceDescription());
-		if(!workplaceDraftObject.getWorkplaceAddresses().isEmpty()) 
-			setSelectedValueLB((ListBox) workplace.workplaceAddressPanel.getWidget(0), workplaceDraftObject.getWorkplaceAddress());
-		setSelectedValueLB(workplace.workplaceEconomicConcert, workplaceDraftObject.getWorkplaceEconomicConcert());	
-		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) 
-			((SuggestBox) workplace.workplaceAgreementPanel.getWidget(0)).setValue(workplaceDraftObject.getAgreementDescription());
-		if(!workplaceDraftObject.getWorkplaceActivities().isEmpty())
-			setSelectedValueLB((ListBox) workplace.workplaceActivityPanel.getWidget(0), workplaceDraftObject.getWorkplaceActivity());
-	}
-	
-	private void setSelectedValueLB(ListBox lBox, String str) {
-	    String text = str;
-	    int indexToFind = 0;
-	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
-	            indexToFind = i;
-	            break;
-	        }
-	    }
-	    lBox.setSelectedIndex(indexToFind);
+		workplace.fillWorkplace(workplaceDraftObject.getWorkplaceInfo());
 	}
 	
 	// ------------------------------------------------- Toolbar
 	
 	private void getToolbarPanel() {
-		toolbar = new AonToolbar("Centro de trabajo");
-
 		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		acceptButton.ensureDebugId("acceptWorkplaceBtn");
 		acceptButton.addClickHandler(e -> onAccept());
-		toolbar.add(acceptButton);
+		addToolbarButton(acceptButton);
 		
 		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
 		undoAllButton.ensureDebugId("undoAllButton");
@@ -201,15 +143,11 @@ public abstract class WorkplaceDraft extends Composite {
 				}
 			});
 		});
-		toolbar.add(undoAllButton);
+		addToolbarButton(undoAllButton);
 		
 		AonToolbarButton newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
 		newContract.addClickHandler(e -> onNewContract());
-		toolbar.add(newContract);
-	}
-	
-	private void setToolbaTitle(String title) {
-		toolbar.setTitle(title);
+		addToolbarButton(newContract);
 	}
 	
 	// ------------------------------------------------- Toolbar.Methods
@@ -217,7 +155,7 @@ public abstract class WorkplaceDraft extends Composite {
 	private void onAccept() {
 		workplaceDraftObject.updateWorkplace(
 				r -> {
-					showSuccessMessage(new HashMap<String, String>(){{ put("CT Guardado", "Todos los cambios han sido guardados correctamente"); }});
+					workplace.showSucces("Todos los cambios han sido guardados correctamente");
 					setHasChange(false);
 				}, 
 				t -> {}
@@ -233,11 +171,4 @@ public abstract class WorkplaceDraft extends Composite {
 		acceptButton.setEnabled(this.hasChange);
 		undoAllButton.setEnabled(this.hasChange);
 	}
-	
-	// -------------------------------------------------- Abstract Methods
-
-	protected abstract void showSuccessMessage(Map<String, String> messages);
-	protected abstract void showErrorMessage(Map<String, String> messages);
-	protected abstract void hideMessage();
-	
 }

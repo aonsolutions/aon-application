@@ -2566,3 +2566,19 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
+
+.aon_slide_down_appear{
+	opacity: 0;
+  	transform: translateY(-10px);
+ 	 transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.aon_slide_down_appear_active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.aon_slide_down_disappear{
+	opacity: 0;
+  	transform: translateY(-10px);
+}

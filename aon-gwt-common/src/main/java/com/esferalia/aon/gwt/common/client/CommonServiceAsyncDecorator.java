@@ -1036,6 +1036,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCompanyByDocument(domainName, domain, user, document, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void getSellerByUserLogin(String domainName, int domain, String user, Integer targetId, AsyncCallback<Seller> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellerByUserLogin(domainName, domain, user, targetId, new AsyncCallbackWrapper<>(callback));
+	}
 	
 	// **************************************************
 	// **************************************** [PROJECT]

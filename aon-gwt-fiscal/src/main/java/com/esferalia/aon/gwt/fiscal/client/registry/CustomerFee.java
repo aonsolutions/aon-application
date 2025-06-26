@@ -1915,34 +1915,60 @@ public class CustomerFee extends MainEntryPoint {
 								offset.setValue(0);
 								limit = Integer.MAX_VALUE;
 								getWidgetParams();
-								
-								// Hay que eliminar las cuotas cuando se haya realizado el envio de email (lo que hay es un error)
+
+								// Hay que eliminar las cuotas cuando se haya realizado el envío de email
 								getList(deletedFees -> {
+									if (deletedFees.isEmpty()) {
+										deleteFees(resultEntry.get().getValue()); // Si no hay ninguna, se puede eliminar directamente
+										return;
+									}
+
+									MutableInt pendingEmails = new MutableInt(deletedFees.size());
+
 									deletedFees.forEach(deleteFee -> {
-										if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
-											sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+										Integer sellerId = deleteFee.getSeller() != null ? deleteFee.getSeller().getId() : null;
+
+										sendFeeEmail(deleteFee.getId(), false, sellerId, () -> {
+											// Cuando una llamada termina
+											pendingEmails.decrement();
+											if (pendingEmails.getValue() == 0) {
+												deleteFees(resultEntry.get().getValue()); // Ejecutar eliminación cuando todas hayan terminado
+											}
+										});
 									});
-									
-									AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
-									SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-											new AsyncCallback<Void>() {
-
-												@Override
-												public void onFailure(Throwable caught) {
-													AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
-												}
-
-												@Override
-												public void onSuccess(Void result) {
-													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
-													duplicateValueButton.setEnabled(false);
-													addValueButton.setEnabled(false);
-													deleteFeeButton.setEnabled(false);
-													exportButton.setEnabled(false);
-													onSearch();
-												}
-											});
 								});
+								
+//								offset.setValue(0);
+//								limit = Integer.MAX_VALUE;
+//								getWidgetParams();
+//								
+//								// Hay que eliminar las cuotas cuando se haya realizado el envio de email (lo que hay es un error)
+//								getList(deletedFees -> {
+//									deletedFees.forEach(deleteFee -> {
+//										if(null != deleteFee.getSeller() || null != deleteFee.getSeller().getId())
+//											sendFeeEmail(deleteFee.getId(), false, deleteFee.getSeller().getId());
+//									});
+//									
+//									AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+//									SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+//											new AsyncCallback<Void>() {
+//
+//												@Override
+//												public void onFailure(Throwable caught) {
+//													AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+//												}
+//
+//												@Override
+//												public void onSuccess(Void result) {
+//													AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
+//													duplicateValueButton.setEnabled(false);
+//													addValueButton.setEnabled(false);
+//													deleteFeeButton.setEnabled(false);
+//													exportButton.setEnabled(false);
+//													onSearch();
+//												}
+//											});
+//								});
 								
 								
 							}
@@ -2066,6 +2092,90 @@ public class CustomerFee extends MainEntryPoint {
 			feeDockLayout.addToolbarButton(customerButton);
 		}
 	}
+	
+	private void deleteFees(Integer deleteCount) {
+		AonMessagePanel.showLoading(messagePanel, "Eliminando cuotas seleccionadas ...");
+		SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + deleteCount + " cuotas correctamente");
+						duplicateValueButton.setEnabled(false);
+						addValueButton.setEnabled(false);
+						deleteFeeButton.setEnabled(false);
+						exportButton.setEnabled(false);
+						onSearch();
+					}
+				});
+	}
+	
+	private void sendFeeEmail(Integer feeId, Boolean add, Integer oldSellerId, Runnable onComplete) {
+		String host = Window.Location.getHost();
+		String endPoint = "/ms/api/fee-mail/";
+
+		HashMap<String, String> headers = new HashMap<>();
+		headers.put("domain_name", options.getDomainName());
+		headers.put("domain_login", options.getUser());
+		headers.put("domain_id", String.valueOf(options.getDomain()));
+
+		JSONObject body = new JSONObject();
+		body.put("feeId", new JSONString(feeId.toString()));
+
+		if (add) {
+			body.put("add", new JSONString(add.toString()));
+		} else if (oldSellerId != null) {
+			body.put("oldSellerId", new JSONString(oldSellerId.toString()));
+		}
+
+		UrlBuilder urlBuilder = new UrlBuilder();
+		urlBuilder.setProtocol(Window.Location.getProtocol());
+		urlBuilder.setHost(host);
+		urlBuilder.setPath(endPoint);
+
+		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, urlBuilder.buildString());
+
+		headers.forEach(requestBuilder::setHeader);
+
+		try {
+			requestBuilder.sendRequest(body.toString(), new RequestCallback() {
+				public void onResponseReceived(Request request, Response response) {
+					String message = "Respuesta sin mensaje";
+					if (response.getStatusCode() == 200 || response.getStatusCode() == 400) {
+						try {
+							JSONValue jsonValue = JSONParser.parseStrict(response.getText());
+							if (jsonValue != null && jsonValue.isObject() != null) {
+								JSONObject jsonObject = jsonValue.isObject();
+								JSONValue msgVal = jsonObject.get("message");
+								message = msgVal != null ? msgVal.isString().stringValue() : "Error desconocido";
+							}
+						} catch (Exception e) {
+							message = "Error parseando respuesta";
+						}
+					}
+
+					if (response.getStatusCode() == 400)
+						AonMessagePanel.showError(messagePanel, message);
+					else
+						AonMessagePanel.showSuccess(messagePanel, message);
+
+					onComplete.run();
+				}
+
+				public void onError(Request request, Throwable exception) {
+					onComplete.run();
+				}
+			});
+		} catch (RequestException exception) {
+			onComplete.run();
+		}
+	}
+
 	
 	private void showCustomerFeeTable() {
 		deckLayoutPanel.showWidget(0);	

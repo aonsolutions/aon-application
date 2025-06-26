@@ -114,10 +114,11 @@ public class DocServlet extends HttpServlet {
 
 			@Override
 			public String visitDrive() {
-				String driveId = JsonUtils.getString(json, IJsonNames.DRIVE_ID);
-				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domain, "");
-				Drive drive = AonDrive.getInstace().serviceInitialize(g);
-				return AonDrive.getInstace().getFile(drive, driveId).getWebContentLink();
+				return visitAon();
+//				String driveId = JsonUtils.getString(json, IJsonNames.DRIVE_ID);
+//				DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domain, "");
+//				Drive drive = AonDrive.getInstace().serviceInitialize(g);
+//				return AonDrive.getInstace().getFile(drive, driveId).getWebContentLink();
 			}
 
 			@Override
@@ -142,7 +143,7 @@ public class DocServlet extends HttpServlet {
 			
 		});
 		
-		if(externalStorage.isAon()) new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
+		if(externalStorage.isAon() || externalStorage.isDrive()) new ForwardHttpServletRequestWrapper(req, longURL).forward(resp);
 		else forwardToExternal(req, resp, longURL);
 	}
 	

@@ -3990,7 +3990,7 @@ CREATE TABLE `fs_model200` (
   `receipt` varchar(13) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Declaracion',
   `complementary_receipt` varchar(13) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de Declaracion sustituida',
   `cnae` varchar(5) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo CNAE',
-  `period_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Tipo de periodo',
+  `period_type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de periodo',
   `period_start` date NOT NULL COMMENT 'Inicio periodo',
   `period_end` date NOT NULL COMMENT 'Fin periodo',
   `fiscal_group` varchar(9) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de grupo fiscal',
@@ -4022,6 +4022,9 @@ CREATE TABLE `fs_model200` (
   `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
   `nrs_anexoVI` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `nrc` varchar(22) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
+  `ultimate_group_name` varchar(40) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre de grupo mercantil',
+  `ultimate_residence_document` varchar(15) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'NIF en el pais de residencia', 
+  `just_baleares` varchar(13) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de justificante Baleares',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL200_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL200_ENTERPRISE` (`enterprise`),
@@ -4058,11 +4061,11 @@ CREATE TABLE `fs_model200_registry` (
   `fs_model200` int NOT NULL COMMENT 'Identificador del modelo 200',
   `document` varchar(20) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `name` varchar(45) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
-  `province` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Provincia',
+  `province` tinyint NOT NULL DEFAULT '0' COMMENT 'Codigo de Provincia',
   `country` varchar(2) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Pais',
   `residence` varchar(45) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Residencia',
   `representative` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Representante',
-  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Tipo. Administrador/participacion ',
+  `type` tinyint NOT NULL DEFAULT '0' COMMENT 'Tipo de linea',
   `percent` decimal(15,3) DEFAULT NULL COMMENT 'Porcentaje',
   `nominal_value` decimal(15,3) DEFAULT NULL COMMENT 'Valor Nominal',
   `book_value` decimal(15,3) DEFAULT NULL COMMENT 'Valor en libros',
@@ -7287,6 +7290,8 @@ CREATE TABLE `rbank` (
   `balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo banco',
   `available_balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo disponible banco',
   `balance_date` datetime DEFAULT NULL COMMENT 'Fecha actualizacion saldo',
+  `agreement` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Acuerdo asociado a la cuenta bancaria',
+  `days_until_agreement_ends` int DEFAULT NULL COMMENT 'D�as hasta la finalizaci�n del acuerdo',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
@@ -9417,6 +9422,20 @@ CREATE TABLE `rdoc_tag` (
   CONSTRAINT `FK_RDOC_TAG_RDOC` FOREIGN KEY (`rdoc`) REFERENCES `rdoc` (`id`),
   CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asociacion N:N de rdocs con tags.';
+
+CREATE TABLE `nordigen_call_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain` int NOT NULL COMMENT 'dominio al que pertenece el banco',
+  `rbank` int NOT NULL COMMENT 'Referencia a la cuenta bancaria',
+  `call_type` VARCHAR(50) NOT NULL COMMENT 'Tipo de llamada: balance, transaction, etc.',
+  `call_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la llamada',
+  `was_rate_limited` BOOLEAN DEFAULT FALSE COMMENT 'Indica si se alcanzo el limite de llamadas',
+  `retry_after` DATETIME NULL COMMENT 'Cuando se puede volver a intentar en caso de rate limit',
+  `retry_count` int DEFAULT 4 COMMENT 'Numero de intentos restantes en el dia',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historial de llamadas a Nordigen para controlar el rate limit.';
+
+
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 
