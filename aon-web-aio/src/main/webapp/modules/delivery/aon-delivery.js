@@ -154,6 +154,8 @@ export class AonDelivery extends AonElement {
 		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
 		// packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setDelivery(this.delivery.id);
+		packagingList.setDeliveryDetails(this.delivery.details);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);

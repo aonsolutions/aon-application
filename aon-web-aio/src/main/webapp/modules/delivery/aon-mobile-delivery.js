@@ -171,11 +171,11 @@ export class AonMobileDelivery extends AonElement {
 		let packagingList = new AonMobileDeliveryPackagingList();
 		packagingList.setDeliveryToolbar(this.DELIVERY_TOOLBAR);
 		packagingList.setDelivery(this.delivery.id);
+		packagingList.setDeliveryDetails(this.delivery.details);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
 	}
-
 
 	setDelivery(delivery) {
 		this.delivery = delivery;
