@@ -589,7 +589,7 @@ export class AonDelivery extends AonElement {
 					let table2 = this.getElement(this.id + 'Envasesss22');
 					table2.addRow();
 					let span = this.createSpan();
-					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
+					span.innerHTML = detail.item.product.name + ' #' + c.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
 					span2.innerHTML = this.getFormat(detail.item, c.quantity);
