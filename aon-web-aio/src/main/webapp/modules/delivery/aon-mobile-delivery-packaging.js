@@ -1,15 +1,15 @@
 import { AonElement } from '../../components/AonElement.js';
-
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
-
 import { Elaboration } from '../../models/elaboration/Elaboration.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
-import * as LS from '../../services/localStorageService.js';
 import { deleteDeliveryPackaging, openFileUrl} from '../../services/service.js';
-
-import * as ACTION from '../actions.js';
 import { createCard, createInput } from '../../components/CreateComponent.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
+import { round } from '../../services/utils.js';
+
+import * as LS from '../../services/localStorageService.js';
+import * as ACTION from '../actions.js';
+import * as UA from '../../services/userAgentService.js';
 
 export class AonMobileDeliveryPackaging extends AonElement {
 
@@ -32,6 +32,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	packaging;
 	delivery;
+	deliveryDetails;
 
 	ELABORATION_TOOLBAR;
 	DELIVERY_TOOLBAR;
@@ -166,7 +167,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			td.style.paddingRight = '10px';
 
 			let span2 = this.createSpan();
-			span2.innerHTML = c.quantity;
+			span2.innerHTML = this.getFormat(this.getItemFromDelivery(c.compositionItem) ,c.quantity);
 			span2.style.fontWeight = 'bold';
 			let td2 = table.addCell(span2)
 			td2.style.paddingBottom = '10px';
@@ -180,6 +181,29 @@ export class AonMobileDeliveryPackaging extends AonElement {
 			let td3 = table.addCell(aonIconButton);
 			td3.style.paddingBottom = '10px';
 		});
+	}
+
+	getFormat(item, quantity) {
+		let stockUnitTag = item.stockUnitTag.id;
+		let packFormatTag = item.packFormatTag.id;
+		let packUnitsTag = item.packUnitsTag.id;
+		let packUnits = item.packUnits;
+		let packMeasurementTag = item.packMeasurementTag.id;
+		let packMeasurement = item.packMeasurement;
+		
+		let formatQuantity = quantity;
+		if(stockUnitTag === packMeasurementTag) {
+			formatQuantity = quantity / packMeasurement;
+			formatQuantity = formatQuantity / packUnits;	
+		} else if(stockUnitTag === packUnitsTag) {
+			formatQuantity = quantity / packUnits;	
+		}
+		return round(formatQuantity);
+	}
+
+	getItemFromDelivery(item) {
+		let detail = this.deliveryDetails.filter(f => f.item.id === item)[0];
+		return detail.item;
 	}
 
 	subtractDialog(composition) {
@@ -203,13 +227,14 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	print() {
 		let json = {
+			delivery: this.delivery,
 			container: this.packaging.item.id,
 			domain_id: LS.getDomainId(),
 			domain_name: LS.getDomainName(),
 			login: LS.getDomainLogin()
 		};
 
-		let fileUrl = '/ms/api/download_packaging_pdf?json=' + btoa(JSON.stringify(json));
+		let fileUrl = '/ms/api/deliveryPackagingTag?json=' + btoa(JSON.stringify(json));
 		if(UA.isAndroidApp()) {
 			let file = {
 				url: fileUrl,
@@ -245,6 +270,10 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	setDelivery(delivery) {
 		this.delivery = delivery;
+	}
+
+	setDeliveryDetails(deliveryDetails) {
+		this.deliveryDetails = deliveryDetails;
 	}
 
 	setElaborationToolbar(toolbar) {
