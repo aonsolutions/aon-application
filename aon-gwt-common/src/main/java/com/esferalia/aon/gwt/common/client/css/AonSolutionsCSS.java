@@ -48,6 +48,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_filter")
 	String aonIconFilter();
 	
+	@ClassName("aon_icon_filter_off")
+	String aonIconFilterOff();
+	
+	@ClassName("aon_icon_filter_on")
+	String aonIconFilterOn();
+	
 	@ClassName("aon_icon_filter_list")
 	String aonIconFilterList();
 	

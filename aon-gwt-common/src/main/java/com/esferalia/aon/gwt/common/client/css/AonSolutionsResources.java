@@ -141,6 +141,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconFilter();
 	
+	@Source("icons/aon-icon-filter-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFilterOff();
+	
+	@Source("icons/aon-icon-filter-on.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFilterOn();
+	
 	@Source("icons/aon-icon-filter-list.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconFilterList();

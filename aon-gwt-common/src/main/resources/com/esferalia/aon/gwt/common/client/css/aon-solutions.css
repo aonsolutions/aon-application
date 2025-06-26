@@ -41,6 +41,10 @@
 .aon_icon_data_settings { background-image: iconDataSettings;}
 @url iconFilter aonIconFilter;
 .aon_icon_filter { background-image: iconFilter;}
+@url iconFilterOff aonIconFilterOff;
+.aon_icon_filter_off { background-image: iconFilterOff;}
+@url iconFilterOn aonIconFilterOn;
+.aon_icon_filter_on { background-image: iconFilterOn;}
 @url iconFilterList aonIconFilterList;
 .aon_icon_filter_list { background-image: iconFilterList;}
 @url iconFilterListOff aonIconFilterListOff;
