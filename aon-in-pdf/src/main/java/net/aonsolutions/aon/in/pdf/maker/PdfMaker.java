@@ -1,24 +1,14 @@
 package net.aonsolutions.aon.in.pdf.maker;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
-import net.aonsolutions.aon.in.pdf.maker.invoice.InvoiceTemplate;
 import net.aonsolutions.aon.in.pdf.maker.warehouse.MultipleWarehouseTemplate;
 import net.aonsolutions.aon.in.pdf.maker.warehouse.PackagingTag;
 import net.aonsolutions.aon.in.pdf.maker.warehouse.WarehouseSaleTemplate;
@@ -35,23 +25,23 @@ public class PdfMaker {
 	 * @param invoice, Invoice Object
 	 * @param config, print invoice configuration
 	 */
-	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
-		try {
-			InvoiceTemplate template = new InvoiceTemplate(company, invoice, config, qrUrl, logo, tbaiId);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
-		try {
-			InvoiceTemplate template = new InvoiceTemplate(company, invoices, config, qrUrl, logo, tbaiId);
-			template.print(out);
-		} catch (CanNotCreatePdfException e) {
-			e.printStackTrace();
-		}		
-	}
+//	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
+//		try {
+//			InvoiceTemplate template = new InvoiceTemplate(company, invoice, config, qrUrl, logo, tbaiId);
+//			template.print(out);
+//		} catch (CanNotCreatePdfException e) {
+//			e.printStackTrace();
+//		}		
+//	}
+//	
+//	public static void printInvoice(OutputStream out, CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) {
+//		try {
+//			InvoiceTemplate template = new InvoiceTemplate(company, invoices, config, qrUrl, logo, tbaiId);
+//			template.print(out);
+//		} catch (CanNotCreatePdfException e) {
+//			e.printStackTrace();
+//		}		
+//	}
 
 	/***** WAREHOUSE 
 	 * @throws CanNotCreatePdfException 
