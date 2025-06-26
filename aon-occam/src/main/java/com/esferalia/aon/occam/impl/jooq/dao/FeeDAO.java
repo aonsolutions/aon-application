@@ -1378,12 +1378,11 @@ public class FeeDAO {
 									.returning(SCOPE.ID)
 									.fetchOne().value1();
 								
-								if(null == domainScope) {
-									ctx.getDslContext().update(DOMAIN)
-										.set(DOMAIN.SCOPE, scopeId)
-										.where(DOMAIN.ID.eq(company.field(DOMAIN.ID)))
-										.execute();
-								}
+								// Update domain scope with new document scope
+								ctx.getDslContext().update(DOMAIN)
+									.set(DOMAIN.SCOPE, scopeId)
+									.where(DOMAIN.ID.eq(company.field(DOMAIN.ID)))
+									.execute();
 								
 								ctx.getDslContext().insertInto(USER_SCOPE)
 									.set(USER_SCOPE.DOMAIN, user.getDomain())
