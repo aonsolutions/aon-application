@@ -720,14 +720,14 @@ export class AonParent extends AonElement {
 	getWelcomeMessage() {
 		return new Promise((resolve, reject) => {
 			if ( LS.getCompany()?.name ) {
-				resolve(`${MSG.CONNECTING_TO} ${LS.getCompany()?.name}`);
+				resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${LS.getCompany()?.name}</span>`);
 			} else if ( this.getDur() ) {
-				resolve(`${MSG.CONNECTING_TO} ${this.getDur().domain.description}`)
+				resolve(`<span style='font-weight:lighter;'  >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${this.getDur().domain.description}</span>`)
 			}  
 			else  {
 				this.buildDur()
-				.then( dur =>  resolve(`${MSG.CONNECTING_TO} ${dur.domain.description}`))
-				.catch( err  => resolve( MSG.WELCOME_TO_AON_SOLUTIONS ) );
+				.then( dur =>  resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${dur.domain.description}</span>`))
+				.catch( err  => resolve( `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>` ) );
 			} 
 		});
 	     

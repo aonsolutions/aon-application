@@ -364,6 +364,7 @@ public interface CommonService extends RemoteService {
 	Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
 	TargetFull getTargetFull(String domainName, int domain, String user, Integer registry) throws AonCoreException;
 	Company getCompanyByDocument(String domainName, int domain, String user, String document) throws AonCoreException;
+	Seller getSellerByUserLogin(String domainName, int domain, String user, Integer targetId) throws AonCoreException;
 	
 	// **************************************************
 	// **************************************** [PROJECT]

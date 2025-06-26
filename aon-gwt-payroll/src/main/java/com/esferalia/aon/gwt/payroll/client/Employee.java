@@ -432,9 +432,9 @@ public abstract class Employee extends ResizeComposite {
 			this.documentType.setText(documentTypeStr);
 
 			if (checkDocumentValidation(documentStr))
-				removeErrorBorder(this.document);
-			else
 				addErrorBorder(this.document);
+			else
+				removeErrorBorder(this.document);
 
 //			showNationality(documentTypeStr);	
 
@@ -1645,13 +1645,13 @@ public abstract class Employee extends ResizeComposite {
 		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
 
 		if (dniPattern.test(document.toUpperCase()))
-			return "( DNI )";
+			return "DNI";
 		else if (niePattern.test(document.toUpperCase()))
-			return "( NIE )";
+			return "NIE";
 		else if (cifPattern.test(document.toUpperCase()))
-			return "( CIF) ";
+			return "CIF";
 		else
-			return "( Pasaporte )";
+			return "Pasaporte";
 	}
 
 	public boolean checkDocumentValidation(String document) {

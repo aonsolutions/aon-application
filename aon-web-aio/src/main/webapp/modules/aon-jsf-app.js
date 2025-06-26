@@ -1185,6 +1185,37 @@ export class AonJsfAccount extends AonJsfApp {
 	}
 }
 
+export class AonJsfAccountingParams extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/accountingParams.xhtml');
+	}
+}
+
+export class AonJsfFiscalParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fiscalParams.xhtml');
+	}
+}
+
+export class AonJsfPayrollParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/payrollParams.xhtml');
+	}
+}
+
+export class AonJsfContractParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/contractParams.xhtml');
+	}
+}
 export class AonJsfBalance extends AonJsfApp {
 
 	constructor() {
@@ -1829,6 +1860,22 @@ if (!window.customElements.get(TAG.AON_JSF_WAREHOUSE)) {
 
 if (!window.customElements.get(TAG.AON_JSF_ACCOUNT)) {
 	window.customElements.define(TAG.AON_JSF_ACCOUNT, AonJsfAccount);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_ACCOUNTING_PARAMS, AonJsfAccountingParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_FISCAL_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_FISCAL_PARAMS, AonJsfFiscalParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PAYROLL_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_PAYROLL_PARAMS, AonJsfPayrollParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_CONTRACT_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_CONTRACT_PARAMS, AonJsfContractParams);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_BALANCE)) {

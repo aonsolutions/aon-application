@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.attach.RdocTag;
 import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
 import net.aonsolutions.db.up2date.finance.NordigenCallsLog;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002024;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2025Insert;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
 import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
@@ -548,7 +549,9 @@ public class Up2Date {
 			TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
 			TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
 			TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
-			IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,			
+			IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
+			AlterFsMod2002024.ALTER_FS_MODEL_200_2024, 
+			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
 //			 MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
