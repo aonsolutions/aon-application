@@ -301,8 +301,13 @@ export class AonApplication extends AonElement {
 	  
   }
 
-  closeRightSidenav() {
-    let rightSidenav = this.getElement(this.SIDENAV);
+  openRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.style.flexBasis = "350px";
+  }
+
+   closeRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
     rightSidenav.style.flexBasis = "0px";
   }
 
