@@ -85,7 +85,7 @@ export class AonDocumental extends AonElement {
 		// `;
 
 		let aonApplication = new AonApplication();
-		aonApplication.setAttribute("drag_and_drop", true);        
+		aonApplication.setAttribute("drag_and_drop", true);
 		this.createApplication(this.DOCUMENTAL, MSG.DOCUMENTARY, aonApplication);
 
 		let input = document.createElement("input");
@@ -772,7 +772,6 @@ export class AonDocumental extends AonElement {
 		return response;
 	}
 
-            
     aonDocumentalListRestFilter(){
       let documentalList = this.getElement('aonDocumentalList');
       documentalList.buildToolbarSearch();
