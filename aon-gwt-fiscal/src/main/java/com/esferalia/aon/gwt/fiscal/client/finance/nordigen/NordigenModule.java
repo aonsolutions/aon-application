@@ -111,7 +111,7 @@ public class NordigenModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
         // Mostrar cargando  
-        applyStylesLoad();
+//        applyStylesLoad();
         // Eliminar el banco que se intento sincronizar, si existe
         Storage storage = Storage.getLocalStorageIfSupported();
         String storedValue = storage.getItem("bankSuccessAdd");
