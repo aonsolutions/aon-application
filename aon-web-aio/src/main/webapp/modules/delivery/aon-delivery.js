@@ -154,6 +154,8 @@ export class AonDelivery extends AonElement {
 		let div = this.createDiv("aonPackageDiv")
 		let packagingList = new AonMobileDeliveryPackagingList();
 		// packagingList.setToolbar(this.DELIVERY_TOOLBAR);
+		packagingList.setDelivery(this.delivery.id);
+		packagingList.setDeliveryDetails(this.delivery.details);
 		packagingList.setPackages(this.delivery.packaging);
 		div.appendChild(packagingList);
 		parent.appendChild(div);
@@ -589,7 +591,7 @@ export class AonDelivery extends AonElement {
 					let table2 = this.getElement(this.id + 'Envasesss22');
 					table2.addRow();
 					let span = this.createSpan();
-					span.innerHTML = detail.item.product.code + ' #' + c.composition.serialNumber;
+					span.innerHTML = detail.item.product.name + ' #' + c.composition.serialNumber;
 					table2.addCell(span);
 					let span2 = this.createSpan();
 					span2.innerHTML = this.getFormat(detail.item, c.quantity);

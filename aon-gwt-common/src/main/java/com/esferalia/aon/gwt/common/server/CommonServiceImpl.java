@@ -6,13 +6,16 @@ import java.io.Writer;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
@@ -992,20 +995,23 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		List<TargetFull> targetFullList = AON.getTargetNotUserFull(new Domain().setName(params.getDomainName()).setId(params.getDomain()), params.getUser(), params);
 		
 		Map<TargetFull, List<RegistrySeller>> resultMap = targetFullList.stream().collect(
-			Collectors.toMap(
-				Function.identity(),
-				targetFull -> AON.getRegistrySellerStream(
-							new Domain().setName(params.getDomainName()).setId(params.getDomain()), 
-							params.getUser(),
-							 f -> f.getDomainProperty().eq(params.getDomain())
-	                         .and(f.getRegistryProperty().eq(targetFull.getId()))
-						).collect(Collectors.toList())
-			)
-			
+		    Collectors.toMap(
+		        Function.identity(),
+		        targetFull -> AON.getRegistrySellerStream(
+		            new Domain().setName(params.getDomainName()).setId(params.getDomain()), 
+		            params.getUser(),
+		            f -> f.getDomainProperty().eq(params.getDomain())
+		                 .and(f.getRegistryProperty().eq(targetFull.getId()))
+		        ).collect(Collectors.toList()),
+		        (v1, v2) -> v1,
+		        LinkedHashMap::new
+		    )
 		);
+
 		
 		return resultMap;
 	}
+	
 	@Override
 	public Customer getCustomerByDocument(String domainName, int domain, String user, String document) throws AonCoreException {
 		return AON.getCustomer(domainName, domain, user, f -> f.getDocumentProperty().eq(document).and(f.getDomainProperty().eq(domain)));
@@ -1033,21 +1039,35 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public Seller getSellerByUserLogin(String domainName, int domainId, String user, Integer targetId) throws AonCoreException {
 		Domain domain = AON.getDomain(domainName, domainId, user, f -> f.getIdProperty().eq(domainId));
-		Integer parentDomain = domain.isParent() ? domain.getId() : domain.getParentId();
-		
-		Optional<Target> target = AON.getTarget(domainName, domainId, user, targetId);
-		if(target.isPresent() && null != target.get().getCreationUser()) {
-			User userCreator = AON.getUser(domainName, domainId, user, f -> f.getLoginProperty().eq(target.get().getCreationUser()).and(f.getDomainProperty().eq(parentDomain)));
-			if(null != userCreator && null != userCreator.getId()) {
-				TaskHolder taskHolder = AON.getTaskHolder(domainName, domainId, user, f -> f.getUserIdProperty().eq(userCreator.getId()));
-				if(null != taskHolder && null != taskHolder.getId()) {
-					Seller seller = AON.getSeller(domainName, domainId, user, f -> f.getTaskHolderProperty().eq(taskHolder.getId()));
-					if(null != seller && null != seller.getId())
-						return seller;
-				}
-			}
-		}
-		return null;
+	    Integer parentDomain = domain.isParent() ? domain.getId() : domain.getParentId();
+	    Integer[] domains = new Integer[]{domain.getId(), parentDomain};
+
+	    AtomicReference<Seller> sellerResult = new AtomicReference<>();
+
+	    Optional<Target> target = AON.getTarget(domainName, domainId, user, targetId);
+	    if (target.isPresent() && target.get().getCreationUser() != null) {
+	        Stream<User> userCreators = AON.getUserStream(domainName, domainId, user,
+	            f -> f.getLoginProperty().eq(target.get().getCreationUser()).and(f.getDomainProperty().in(domains)),
+	            new Options().setFull(false));
+
+	        userCreators
+	            .sorted((o1, o2) -> o2.getDomain().getId().compareTo(o1.getDomain().getId()))
+	            .anyMatch(userCreator -> {
+	                if (userCreator != null && userCreator.getId() != null) {
+	                    TaskHolder taskHolder = AON.getTaskHolder(domainName, domainId, user, f -> f.getUserIdProperty().eq(userCreator.getId()));
+	                    if (taskHolder != null && taskHolder.getId() != null) {
+	                        Seller seller = AON.getSeller(domainName, domainId, user, f -> f.getTaskHolderProperty().eq(taskHolder.getId()));
+	                        if (seller != null && seller.getId() != null) {
+	                            sellerResult.set(seller);
+	                            return true; // salir del anyMatch
+	                        }
+	                    }
+	                }
+	                return false;
+	            });
+	    }
+	    
+	    return sellerResult.get();
 	}
 	
 	// **************************************************
