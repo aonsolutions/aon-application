@@ -6,23 +6,23 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum NoteType implements Serializable {
 	
-
     UNKNOWN,
     OBSERVATION,
     MESSAGE,
     TRACKING,
     FACTURAE,
-    EDI;
+    EDI,
+    CUSTOMER_STATUS,
+    PAYROLL,
+    FISCAL,
+    ACCOUNTING
+    ;
 	
-	
-	private NoteType() {
-	
-	}
+	private NoteType() {}
 	
 	public byte value() {
 		return (byte) this.ordinal();
 	}
-	
 	
 	public static NoteType safeValueOf( Byte i ) {
 		if (i == null) return null;

@@ -134,7 +134,7 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.getItem("customer");
 	}-*/;
 	
-	public static native int removeCustomer()
+	public static native void removeCustomer()
 	/*-{
 		return $wnd.localStorage.removeItem("customer");
 	}-*/;
@@ -144,9 +144,19 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.localStorage.getItem("officeDomain");
 	}-*/;
 	
-	public static native int removeOfficeDomain()
+	public static native void removeOfficeDomain()
 	/*-{
 		return $wnd.localStorage.removeItem("officeDomain");
+	}-*/;
+	
+	public static native String getNotesSource()
+	/*-{
+		return $wnd.localStorage.getItem("notesSource");
+	}-*/;
+	
+	public static native void removeNotesSource()
+	/*-{
+		return $wnd.localStorage.removeItem("notesSource");
 	}-*/;
 	
 	/**
