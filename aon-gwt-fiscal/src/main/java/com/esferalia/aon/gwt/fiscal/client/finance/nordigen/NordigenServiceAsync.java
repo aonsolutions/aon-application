@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface NordigenServiceAsync {
 
 	void getConfiguration(Occam occam, AsyncCallback<NordigenConfiguration> callback);
-	void setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback);
+	void setAccountValues(NordigenAccessToken token, Occam occam, NordigenBankAccount account, boolean refresh, AsyncCallback<NordigenBankAccount> callback);
 	void getDomainRequisitions(NordigenAccessToken token, String currentDomainName, AsyncCallback<List<NordigenRequisition>> callback);
 	void deleteRequisitionById (NordigenAccessToken token, Occam occam, String requisitionId, AsyncCallback<Boolean> callback);
 	void cancelRequisition (NordigenAccessToken token, Occam occam, Integer rbankId, AsyncCallback<Void> callback);
@@ -26,5 +26,10 @@ public interface NordigenServiceAsync {
 	void getInstitutionsByBic(NordigenAccessToken token, String bic, AsyncCallback<List<NordigenInstitution>> callback);
 	void insertTransactions(Occam occam, NordigenBankAccount nordigenBankAccount, AsyncCallback<Integer> callback);
 	void getInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback);
-	
+	void setAllBankAccountValues(Occam occam, NordigenAccessToken token, AsyncCallback<List<NordigenBankAccount>> callback);
+	void getRemainingDays(Occam occam,NordigenBankAccount account,AsyncCallback<Integer> callback);
+	void getRemainingCallsToday(Occam occam, NordigenBankAccount account, AsyncCallback<Integer> callback) ;
+	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback); 
+	void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>>callback); 
+
 }

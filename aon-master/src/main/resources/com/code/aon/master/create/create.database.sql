@@ -7290,6 +7290,8 @@ CREATE TABLE `rbank` (
   `balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo banco',
   `available_balance` decimal(15,4) DEFAULT 0.0000 COMMENT 'Saldo disponible banco',
   `balance_date` datetime DEFAULT NULL COMMENT 'Fecha actualizacion saldo',
+  `agreement` varchar(255) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Acuerdo asociado a la cuenta bancaria',
+  `days_until_agreement_ends` int DEFAULT NULL COMMENT 'D�as hasta la finalizaci�n del acuerdo',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
@@ -9420,6 +9422,20 @@ CREATE TABLE `rdoc_tag` (
   CONSTRAINT `FK_RDOC_TAG_RDOC` FOREIGN KEY (`rdoc`) REFERENCES `rdoc` (`id`),
   CONSTRAINT `FK_RDOC_TAG_TAG` FOREIGN KEY (`tag`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asociacion N:N de rdocs con tags.';
+
+CREATE TABLE `nordigen_call_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `domain` int NOT NULL COMMENT 'dominio al que pertenece el banco',
+  `rbank` int NOT NULL COMMENT 'Referencia a la cuenta bancaria',
+  `call_type` VARCHAR(50) NOT NULL COMMENT 'Tipo de llamada: balance, transaction, etc.',
+  `call_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora de la llamada',
+  `was_rate_limited` BOOLEAN DEFAULT FALSE COMMENT 'Indica si se alcanzo el limite de llamadas',
+  `retry_after` DATETIME NULL COMMENT 'Cuando se puede volver a intentar en caso de rate limit',
+  `retry_count` int DEFAULT 4 COMMENT 'Numero de intentos restantes en el dia',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historial de llamadas a Nordigen para controlar el rate limit.';
+
+
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 

@@ -2,7 +2,6 @@ import {clearCompanyService} from './companyService.js';
 import { mobileAction, MOBILE_ACTION } from './mobileService.js';
 import { clearAuth } from './authService.js';
 
-
 import './AonStringUtils.js';
 
 import './AonDateUtils.js';

@@ -301,8 +301,13 @@ export class AonApplication extends AonElement {
 	  
   }
 
-  closeRightSidenav() {
-    let rightSidenav = this.getElement(this.SIDENAV);
+  openRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
+    rightSidenav.style.flexBasis = "350px";
+  }
+
+   closeRightSidenav() {
+    let rightSidenav = this.getRightSidenav();
     rightSidenav.style.flexBasis = "0px";
   }
 
@@ -1085,6 +1090,13 @@ export class AonApplication extends AonElement {
     if(toolbar) toolbar.removeButtons();
   }
 
+  removeToolbar() {
+    let toolbar = this.getElement(this.TOOLBAR);
+    if (toolbar) {
+      toolbar.remove();
+    }
+  }
+
   setContent(element) {
     this.clearElementById(this.CONTENT);
     let content = this.getElement(this.CONTENT);
@@ -1157,6 +1169,12 @@ export class AonApplication extends AonElement {
 
   getSidenav() {
     return this.getElement(this.SIDENAV);
+  }
+  removeSidenav() {
+    let sidenav = this.getSidenav();
+    if (sidenav) {
+      sidenav.remove();
+    }
   }
 
   getRightSidenav() {
