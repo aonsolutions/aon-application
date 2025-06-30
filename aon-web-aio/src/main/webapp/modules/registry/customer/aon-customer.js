@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { Transactions } from "../../../services/transaction.js";
 import { Customer } from "../../../models/registry/Customer.js";
-import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getCustomerNotes, getRelationShipCompany } from "../../../services/registryService.js";
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer, getRelationShipCompany, getRegistryNotes } from "../../../services/registryService.js";
 import { AonCustomerList } from "./aon-customer-list.js";
 import { getScopes } from "../../../services/documentalService.js";
 import { getDomainCompanies, saveCompany } from "../../../services/companyService.js";
@@ -116,7 +116,7 @@ export class AonCustomer extends AonReg {
 			
 			toolbar.addButtonTitle(ACTION.NOTES, () => this.notes());
 			
-			getCustomerNotes({customer: this.registry.getId()})
+			getRegistryNotes({registry: this.registry.getId()})
 				.then(notes => {
 					const existsNotes = notes.some(item => item.type === "MESSAGE" );
 					

@@ -99,7 +99,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 	public void onSearch() {
 		content.clear();
 		
-		getCustomerNotes(customerNotes -> {
+		getRegistryNotes(registryNotes -> {
 			createNotesPanel();
 		});
 	}
@@ -466,8 +466,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 		aonCustomDeleteTooltip.addDeleteHandler(e -> deletion.accept(null));
 	}
 
-	private void getCustomerNotes(Consumer<List<RegistryNote>> success) {
-		COMMON_SERVICE.getCustomerNotes(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), registryId,
+	private void getRegistryNotes(Consumer<List<RegistryNote>> success) {
+		COMMON_SERVICE.getRegistryNotes(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), registryId,
 			new AsyncCallback<List<RegistryNote>>() {
 
 				@Override
@@ -507,6 +507,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 								@Override
 								public void onSuccess(RegistryNote result) {
 									onSearch();
+									onNoteSaved();
 								}
 
 								@Override
@@ -529,6 +530,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(RegistryNote result) {
 					onSearch();
+					onNoteSaved();
 				}
 
 				@Override
@@ -543,11 +545,20 @@ public class CustomerNotesModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(Void result) {
 					onSearch();
+					onNoteSaved();
 				}
 
 				@Override
 				public void onFailure(Throwable caught) { }
 		});
 	}
+	
+	// Send to JS client
+	public static native void onNoteSaved() /*-{
+		$wnd.top.postMessage(
+		  { type: "REGISTRY_NOTE_SAVED", payload: {} },
+		  "*"
+		);
+	}-*/;
 
 }

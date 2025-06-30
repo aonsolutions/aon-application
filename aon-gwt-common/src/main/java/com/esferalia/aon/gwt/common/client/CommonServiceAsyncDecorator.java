@@ -1112,9 +1112,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 
 	@Override
-	public void getCustomerNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
+	public void getRegistryNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getRegistryNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

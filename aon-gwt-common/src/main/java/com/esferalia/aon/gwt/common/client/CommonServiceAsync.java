@@ -385,7 +385,7 @@ public interface CommonServiceAsync {
 	// ********************************* [CUSTOMER NOTES]
 	// **************************************************
 	
-	void getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
+	void getRegistryNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
 	void saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note, AsyncCallback<RegistryNote> asyncCallback) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	
