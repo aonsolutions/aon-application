@@ -388,7 +388,7 @@ public interface CommonService extends RemoteService {
 	// ********************************* [CUSTOMER NOTES]
 	// **************************************************
 	
-	List<RegistryNote> getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
+	List<RegistryNote> getRegistryNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId) throws AonCoreException;
 	RegistryNote saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id) throws AonCoreException;
 

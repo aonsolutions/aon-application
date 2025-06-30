@@ -1139,7 +1139,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	// **************************************************
 
 	@Override
-	public List<RegistryNote> getCustomerNotes(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
+	public List<RegistryNote> getRegistryNotes(String domainName, int domain, String user, Integer customerId) throws AonCoreException {
 		return AON.getRegistryNoteStream(
 				new Domain().setName(domainName).setId(domain), 
 				new User().setName(user).setLogin(user), 

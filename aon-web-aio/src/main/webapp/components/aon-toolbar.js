@@ -324,14 +324,14 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
-	addTitleToolSection(title) {
+	addTitleToolSection(title, uppercase = true) {
 		const id = this.TOOL_SECTION + 'Title';
 		if(this.getElement(id) == null) {
 			this.addSeparator();
 			let span = this.createElement(TAG.SPAN);
 			span.id = id;
 			span.style.marginRight = "10px";
-			if(title) span.innerHTML = title.toString().toUpperCase();
+			if(title) span.innerHTML = uppercase ? title.toString().toUpperCase() : title;
 			let titleSection = this.getElement(this.TOOL_SECTION);
 			titleSection.insertBefore(span, titleSection.children[0]);
 		}

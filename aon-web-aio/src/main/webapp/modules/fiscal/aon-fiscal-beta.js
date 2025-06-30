@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getCompany, getDomainUserRoles } from "../../services/service.js";
+import { getCompany, getDomainUserRoles, getRegistryNotes } from "../../services/service.js";
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
@@ -8,6 +8,7 @@ import * as GWT from '../../gwt/gwt.js';
 import * as JSF from '../aon-jsf-app.js';
 import { AonFiscalMenu } from './aon-fiscal-menu.js';
 import * as LS from '../../services/localStorageService.js';
+import * as ACTION from '../actions.js';
 
 export class AonFiscalBeta extends AonElement {
 	AON_FISCAL_BETA;
@@ -48,6 +49,8 @@ export class AonFiscalBeta extends AonElement {
 	}
 
 	build() {
+		this.buildToolbar();
+		
 		let aonFiscalBeta = this.getElement(this.AON_FISCAL_BETA);
 
 		if (localStorage.getItem("aon_domain_id")) {
@@ -84,10 +87,72 @@ export class AonFiscalBeta extends AonElement {
 
 		this.buildFiscalMenu();
 	}
+	
+	buildToolbar(){
+		this.getApplication().removeToolbarOptions();
+		
+		let company = LS.getCompany();
+		
+		window.addEventListener("message", (event) => {
+			if ( (event.origin === "null" || event.origin === window.origin) 
+				&& event.data?.type === "REGISTRY_NOTE_SAVED" ) {
+				
+				// This payload if needed info from GWT
+				// const customerRegistry = event.data.payload;
+				
+				getRegistryNotes({registry: company.registry, source: 'FISCAL'})
+					.then(notes => {
+						let countNotes = notes.filter(item => item.date).length;
+						let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+						
+						countNotes += countObservations;
+						
+						let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+						
+						let titleToolbar = this.getElement("aonFiscalBetaToolbarHeaderToolSectionTitle");
+						titleToolbar.innerHTML = notesTitle;
+						
+						let existsNotes = notes.some(item => item.date);
+						let notesIcon = this.getElement("aonFiscalBetaToolbarHeaderToolSectionNotesButtonIcon");
+						if(existsNotes)
+							notesIcon.style.color = 'green';
+						else
+							notesIcon.style.color = 'rgb(95, 99, 104)';
+					});
+			}
+		});
+		
+		getRegistryNotes({registry: company.registry, source: 'FISCAL'})
+				.then(notes => {
+					let countNotes = notes.filter(item => item.date).length;
+					let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+					
+					countNotes += countObservations;
+					
+					let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+					
+					this.getApplication().addTitleToolSection(notesTitle, false);
+					
+					this.getApplication().addToolbarOption2(ACTION.NOTES, () => this.buildObservations());
+					
+					let existsNotes = notes.some(item => item.date);
+					
+					if(existsNotes){
+						let notesIcon = this.getElement("aonFiscalBetaToolbarHeaderToolSectionNotesButtonIcon");
+						notesIcon.style.color = 'green';
+					}
+					
+					let existsObservation = notes.some(item => !item.date && item.comments && item.comments.trim() !== "");
+					if(existsObservation) this.buildObservations();
+					
+				});
+	}
 
 	buildObservations() {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
+
+		let notesIcon = this.getElement("aonFiscalBetaToolbarHeaderToolSectionNotesButtonIcon");
 
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -124,6 +189,8 @@ export class AonFiscalBeta extends AonElement {
 
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 		}
+		
+		notesIcon.classList.toggle("material-icons-selected");
 
 		this.getApplication().toogleRightSidenav();
 	}

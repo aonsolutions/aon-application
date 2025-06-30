@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getCompany, getDomainUserRoles } from "../../services/service.js";
+import { getCompany, getDomainUserRoles, getRegistryNotes } from "../../services/service.js";
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
@@ -7,6 +7,7 @@ import * as JSF from '../aon-jsf-app.js';
 import { AonIconButton } from "../../components/aon-icon-button.js";
 import * as GWT from '../../gwt/gwt.js';
 import * as LS from '../../services/localStorageService.js';
+import * as ACTION from '../actions.js';
 
 import { AonAccountingMenu } from './aon-accounting-menu.js';
 
@@ -32,7 +33,6 @@ export class AonAccountingBeta extends AonElement {
 		this.initialize();
 		this.createApplication(this.AON_ACCOUNTING_BETA, MSG.ACCOUNTING, new AonApplication());
 
-
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
 			getCompany().then(company => {
@@ -49,6 +49,8 @@ export class AonAccountingBeta extends AonElement {
 	}
 
 	build() {
+		this.buildToolbar();
+		
 		let aonAccountingBeta = this.getElement(this.AON_ACCOUNTING_BETA);
 
 		if (localStorage.getItem("aon_domain_id")) {
@@ -60,6 +62,7 @@ export class AonAccountingBeta extends AonElement {
 				fn: () => this.getApplication().setContent(new JSF.AonJsfAccountingParams()),
 			});
 
+			
 			configurationOptions.push({
 				id: "observations",
 				icon: "speaker_notes",
@@ -85,10 +88,72 @@ export class AonAccountingBeta extends AonElement {
 
 		this.buildAccountingMenu();
 	}
+	
+	buildToolbar(){
+		this.getApplication().removeToolbarOptions();
+		
+		let company = LS.getCompany();
+		
+		window.addEventListener("message", (event) => {
+			if ( (event.origin === "null" || event.origin === window.origin) 
+				&& event.data?.type === "REGISTRY_NOTE_SAVED" ) {
+				
+				// This payload if needed info from GWT
+				// const customerRegistry = event.data.payload;
+				
+				getRegistryNotes({registry: company.registry, source: 'ACCOUNTING'})
+					.then(notes => {
+						let countNotes = notes.filter(item => item.date).length;
+						let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+						
+						countNotes += countObservations;
+						
+						let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+						
+						let titleToolbar = this.getElement("aonAccountingBetaToolbarHeaderToolSectionTitle");
+						titleToolbar.innerHTML = notesTitle;
+						
+						let existsNotes = notes.some(item => item.date);
+						let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
+						if(existsNotes)
+							notesIcon.style.color = 'green';
+						else
+							notesIcon.style.color = 'rgb(95, 99, 104)';
+					});
+			}
+		});
+		
+		getRegistryNotes({registry: company.registry, source: 'ACCOUNTING'})
+				.then(notes => {
+					let countNotes = notes.filter(item => item.date).length;
+					let countObservations = notes.filter(item => !item.date && item.comments && item.comments.trim() !== "").length;
+					
+					countNotes += countObservations;
+					
+					let notesTitle = `${countNotes > 0 ? (countNotes == 1 ? countNotes + ' Anotación' : countNotes + ' Anotaciones') : 'Sin Anotaciones'}`;
+					
+					this.getApplication().addTitleToolSection(notesTitle, false);
+					
+					this.getApplication().addToolbarOption2(ACTION.NOTES, () => this.buildObservations());
+					
+					const existsNotes = notes.some(item => item.date);
+					
+					if(existsNotes){
+						let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
+						notesIcon.style.color = 'green';
+					}
+					
+					let existsObservation = notes.some(item => !item.date && item.comments && item.comments.trim() !== "");
+					if(existsObservation) this.buildObservations();
+					
+				});
+	}
 
 	buildObservations() {
 		let rightSidenav = this.getApplication().getRightSidenav();
 		this.clearElement(rightSidenav);
+		
+		let notesIcon = this.getElement("aonAccountingBetaToolbarHeaderToolSectionNotesButtonIcon");
 
 		let div = this.createElement(TAG.DIV);
 		div.style = `
@@ -125,6 +190,8 @@ export class AonAccountingBeta extends AonElement {
 
 			GWT.iLoad(GWT.CUSTOMER_NOTES, div.id);
 		}
+		
+		notesIcon.classList.toggle("material-icons-selected");
 
 		this.getApplication().toogleRightSidenav();
 	}
