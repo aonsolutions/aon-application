@@ -111,7 +111,7 @@ public class NordigenModule extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
         // Mostrar cargando  
-//        applyStylesLoad();
+        applyStylesLoad();
         // Eliminar el banco que se intento sincronizar, si existe
         Storage storage = Storage.getLocalStorageIfSupported();
         String storedValue = storage.getItem("bankSuccessAdd");
@@ -528,12 +528,10 @@ public class NordigenModule extends MainEntryPoint {
 
 			FlowPanel body = new FlowPanel();
             body.addStyleName(AON.CSS.aonPaddingRight());
-            body.addStyleName(AON.CSS.aonPaddingRight());
-            body.getElement().getStyle().setProperty("width", "max-content");
+            body.getElement().getStyle().setProperty("width", "98%");
             body.getElement().getStyle().setProperty("display", "grid");
             body.getElement().getStyle().setProperty("gap", "0.5rem");
             getMenuPanel().addStyleName(AON.CSS.aonPaddingLeft());
-            bottomTable.addStyleName(AON.CSS.aonPaddingLeft());
 			FlowPanel ibanPanel = new FlowPanel();
 			InlineLabel ibanBox = new InlineLabel();
 			ibanBox.setText(formatIban(iban));
@@ -2196,54 +2194,42 @@ public class NordigenModule extends MainEntryPoint {
 	}
 
     public static void applyStylesLoad() {
-        // Obtener el elemento <html>
-        Element htmlLoad = Document.get().getDocumentElement();
-        // Aplicar los estilos CSS al <html>
-        htmlLoad.getStyle().setProperty("display", "flex");
-        htmlLoad.getStyle().setProperty("alignContent", "center");
-        htmlLoad.getStyle().setProperty("justifyContent", "center");
-        htmlLoad.getStyle().setProperty("alignItems", "center");
-        htmlLoad.getStyle().setProperty("height", "100%");
-        // Obtener el elemento <body>
-        BodyElement bodyLoad = Document.get().getBody();
-        // Aplicar los estilos CSS al <body>
-        bodyLoad.getStyle().setProperty("border", "5px solid #ccc");
-        bodyLoad.getStyle().setProperty("borderTop", "5px solid #666");
-        bodyLoad.getStyle().setProperty("width", "100px");
-        bodyLoad.getStyle().setProperty("height", "100px");
-        // Agregar la clase CSS al <body>
-        bodyLoad.addClassName(AON.CSS.aonLoader());
-        // Obtener el primer hijo del <body>
-        Element firstChild = bodyLoad.getFirstChildElement();
-        if (firstChild != null) {
-            // Aplicar el estilo visibility: hidden al primer hijo
-            firstChild.getStyle().setProperty("visibility", "hidden");
-        }
+      Element existingLoader = Document.get().getElementById("aonModuleLoaderGWT");
+      if (existingLoader != null) {
+          // Si ya existe, no hacer nada
+          return;
+      }
+      
+      Element aonLoader = Document.get().createElement("aon-loader-gwt");
+      aonLoader.setId("aonModuleLoaderGWT");
+      aonLoader.getStyle().setProperty("display", "flex");
+      aonLoader.getStyle().setProperty("alignContent", "center");
+      aonLoader.getStyle().setProperty("justifyContent", "center");
+      aonLoader.getStyle().setProperty("alignItems", "center");
+      aonLoader.getStyle().setProperty("width", "100%");
+      aonLoader.getStyle().setProperty("height", "100%");
+      aonLoader.getStyle().setProperty("background-color", "#F0F0F0DB");
+      aonLoader.getStyle().setProperty("position", "fixed");
+      aonLoader.getStyle().setProperty("z-index", "1");
+      
+      Element aonLoaderDiv = Document.get().createElement("div");
+      aonLoaderDiv.getStyle().setProperty("border", "5px solid #ccc");
+      aonLoaderDiv.getStyle().setProperty("borderTop", "5px solid #666");
+      aonLoaderDiv.getStyle().setProperty("width", "100px");
+      aonLoaderDiv.getStyle().setProperty("height", "100px");
+      aonLoaderDiv.addClassName(AON.CSS.aonLoader());
+      aonLoader.appendChild(aonLoaderDiv);
+  
+      // Agregar el contenedor <aon-loader> al body o a un contenedor específico
+      BodyElement bodyLoad = Document.get().getBody();
+      bodyLoad.appendChild(aonLoader);
     }
     
     public static void removeStylesLoad() {
-        // Obtener el elemento <html>
-        Element htmlLoad = Document.get().getDocumentElement();
-        // Eliminar los estilos CSS del <html>
-        htmlLoad.getStyle().clearProperty("display");
-        htmlLoad.getStyle().clearProperty("alignContent");
-        htmlLoad.getStyle().clearProperty("justifyContent");
-        htmlLoad.getStyle().clearProperty("alignItems");
-        htmlLoad.getStyle().clearProperty("height");
-        // Obtener el elemento <body>
-        BodyElement bodyLoad = Document.get().getBody();
-        // Eliminar los estilos CSS del <body>
-        bodyLoad.getStyle().clearProperty("border");
-        bodyLoad.getStyle().clearProperty("borderTop");
-        bodyLoad.getStyle().clearProperty("width");
-        bodyLoad.getStyle().clearProperty("height");
-        // Quitar la clase CSS del <body>
-        bodyLoad.removeClassName(AON.CSS.aonLoader());
-        // Obtener el primer hijo del <body>
-        Element firstChild = bodyLoad.getFirstChildElement();
-        if (firstChild != null) {
-            // Aplicar el estilo visibility: hidden al primer hijo
-            firstChild.getStyle().setProperty("visibility", "visible");
-        }
+      // Eliminar el <aon-loader-gwt> si existe
+      Element aonLoader = Document.get().getElementById("aonModuleLoaderGWT");
+      if (aonLoader != null) {
+          aonLoader.removeFromParent();
+      }
     }
 }

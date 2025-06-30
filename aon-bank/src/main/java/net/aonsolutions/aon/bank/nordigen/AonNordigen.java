@@ -356,7 +356,7 @@ public class AonNordigen  {
 	            account.addLog("Error al verificar estado de cuenta: " + e.getLocalizedMessage());
 	        }
 	    }
-	    account.addLog("Cuenta no llegó al estado READY tras " + maxRetries + " intentos.");
+	    account.addLog("Cuenta no llego al estado READY tras " + maxRetries + " intentos.");
 	    
 	    return false;
 	}
@@ -378,8 +378,8 @@ public class AonNordigen  {
 				return loadStoredAccount(occam, token, account);
 			}
 
-			if (!waitForAccountReady(token, account, 10, 2000)) {
-				account.addLog("La cuenta no alcanzó el estado READY. No se obtendrán balances ni transacciones.");
+			if (!waitForAccountReady(token, account, 15, 3000)) {
+				account.addLog("La cuenta no alcanzo el estado READY. No se obtendrán balances ni transacciones.");
 				return account;
 			}
 
