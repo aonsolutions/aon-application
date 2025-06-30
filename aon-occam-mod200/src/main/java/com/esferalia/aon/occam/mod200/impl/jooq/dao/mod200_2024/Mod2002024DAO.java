@@ -1087,8 +1087,9 @@ public class Mod2002024DAO  {
 			
 			// Inicialización estados contables (solo afecta a claves de Mod2002024Key)
 			Mod2002024MVELContext mvelCtx = new Mod2002024MVELContext( mod200, ACCEPTER );		
-			AccMiningParameters params = getParams(ctx,mod200);
+			AccMiningParameters params = getParams(ctx,mod200);			
 			if (params != null) {
+				params.setAccountLevel(5); // AHORA PARA OBTENER LOS SALDOS SE DEBE PONER A 5 DIGITOS
 				mvelCtx.setAccounts( ACCOUNTING.getAccountBalances(ctx, params) );
 			} else {
 				mvelCtx.setAccounts( new HashMap<String,AccountBalance>() );
