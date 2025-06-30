@@ -717,6 +717,7 @@ public class Utils {
 		params.setPeriodId(period.getId());
 		params.setStartDate(period.getInitiationDate());
 		params.setEndDate(period.getDeadline());
+		params.setAccountLevel(5); // Ahora se debe indicar que queremos los saldos a 5 dígitos
 		return params;
 	}
 	
