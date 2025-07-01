@@ -546,15 +546,15 @@ public class Up2Date {
 			// PPEITUpdateII.PPE_IT_UPDATEII,
 			// PPEUpdate2Cost.PPE_IT_UPDATE2COST,
 			// Artist2025CgcTempRemove.ARTIST2025CGCTEMPREMOVE,
-			TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
-			TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
-			TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
-			IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
+			// TrainingExcessDeductionsITIMSFix.TRAININGEXCESSDEDUCTIONSITIMSFIX,
+			// TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
+			// TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
+			// IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
 			AlterFsMod2002024.ALTER_FS_MODEL_200_2024, 
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 
-//			 MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
+			// MoveAgreementPaymentConcepts.MOVEAGREEMENTPAYMENTCONCEPTS,
 			DeleteUnusedPaymentConcepts.DELETEUNUSEDPAYMENTCONCEPTS,
 			// RdocTag.RDOC_TAG,
 			// UpdateCategoryTree.UPDATE_CATEGORY_TREE,
