@@ -744,6 +744,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 	//	Importe calculado:
 	//	 - Si GFN ((01248 + 01258 + 01259)) > 01249, y 01249 > 1.000.000 entonces 02369 = 01249 + 01255
 	//	 - Si GFN ((01248 + 01258 + 01259)) > 01249, y 01249 <= 1.000.000 entonces 02369 = la mayor de 01249 + 01255 o 1.000.000
+	//        Si 01249 tuviera valor negativo deberá tenerse en cuenta el valor cero en la casilla 01249 a efectos de calcular el sumatorio de 01249 + 01255.
 	//	 - Si GFN ((01248 + 01258 + 01259)) <= 01249, y 01249 > 1.000.000 entonces 02369 = 01249
 	//	 - Si GFN ((01248 + 01258 + 01259)) <= 01249, y 01249 <= 1.000.000 entonces 02369 = 1.000.000
 	// Excepción en la aplicación de los límites de deducibilidad de gastos financieros (art. 16.6.b LIS): 
@@ -763,7 +764,8 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 			if (gfn > lm1249 && lm1249 > getLimit(LIM_2)) {
 				return round(lm1249 + lm1255);
 			} else if (gfn > lm1249 && lm1249 <= getLimit(LIM_2)) {
-				return round(lm1249 + lm1255) > getLimit(LIM_2) ? round(lm1249 + lm1255) : getLimit(LIM_2); 
+				double amount = (lm1249 < 0 ? lm1255 : round(lm1249 + lm1255));
+				return amount > getLimit(LIM_2) ? amount : getLimit(LIM_2); 
 			} else if (gfn <= lm1249 && lm1249 > getLimit(LIM_2)) {
 				return lm1249;
 			} else {

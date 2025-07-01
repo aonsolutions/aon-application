@@ -40,6 +40,7 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -1291,12 +1292,14 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		for ( int i = 0; i < 12; i++ ) {
 			Date endDate = getLastDayOfMonth(startDate);
 			smartCalculateAndSave(connection, getContractSalaryCalculatorContext(
-				connection, startDate, endDate, endDate, contract));
+				connection, startDate, endDate, endDate, contract)) ;
+			//System.out.println( "Nómina [" + startDate + "," + endDate + "] : "  );
 			days += get(endDate, Calendar.DAY_OF_MONTH) - get(Period.max(startDate, contractStartDate), Calendar.DAY_OF_MONTH) +1; 
 			startDate = add(startDate, Calendar.MONTH, 1);
 		}
 		
-		
+		//AON.getSalaries(aonContext, f -> f.getContractProperty().eq(contract.getId()))
+		//.forEach( s -> System.out.println("Nómina [" + s.getStartDate() + "," + s.getEndDate() + "] : "  + s.getCommonContingenciesBase()));
 
 		startDate = add(startDate, Calendar.MONTH, 1);
 		Date endDate = getLastDayOfMonth(startDate);
@@ -1306,8 +1309,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		
 		
 		int firstMonthDays = get(getLastDayOfMonth(contractStartDate), Calendar.DAY_OF_MONTH) - get(contractStartDate, Calendar.DAY_OF_MONTH) + 1;
-		double br = ( 1500.00 / 30 * firstMonthDays + 1500.00 * 11 ) / days;
+		double br = ( 1500.00 / 30 * Math.min(firstMonthDays, 30) + 1500.00 * 11 ) / Math.min(days, 365);
 		
+		//System.out.println("Days :"  + days  + ",  First month days :" + firstMonthDays +", BR :" + br );
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, 
