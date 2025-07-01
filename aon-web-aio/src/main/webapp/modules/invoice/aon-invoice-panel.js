@@ -1,7 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
 import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, 
   getBidoqToOCR, getBidoqToOCRCount, getInvoice, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
-  checkBidoq
+  checkBidoq,
+  getCompanyActivities
 } from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
@@ -49,6 +50,7 @@ import { AonInvoiceClosingList } from "./aon-invoice-closing-list.js";
 import { AonIncomeList } from "./aon-income-list.js";
 import { AonExpenseList } from "./aon-expense-list.js";
 import { AonInvoiceProcessing } from "./aon-invoice-processing.js";
+import { AonDialog } from "../../components/aon-dialog.js";
 
 export class AonInvoicePanel extends AonElement {
   selectedOption;
@@ -974,16 +976,53 @@ export class AonInvoicePanel extends AonElement {
   }
 
   upload(files) {
-      let uploadToast = this.getElement("aonUploadToast");
-      if (!uploadToast) {
-        uploadToast = new AonUploadToast();
-        this.appendChild(uploadToast);
-      }
-      let data = { uploaded: 0 };
-      uploadToast.setJobId(generateJobId());
-      for (let file of files) {
-        uploadToast.addFile("invoice", file, data);
-      }
+    getCompanyActivities({}).then(activities => {
+			let data = { uploaded: 0 };
+			if(this.isBeta() && activities.length > 1) {
+				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+ 				activity.default = true;
+				activity.setAlias("id", "description");
+				if(activities.length > 0) {
+					activity.setOptions(activities);
+					activity.value = activities[0].id;
+				}
+	
+				let d = new AonDialog();
+				let rootPanel = document.getElementById("rootPanel");
+				rootPanel.appendChild(d);
+				d.clear();
+	
+				d.setTitle(MSG.UPLOAD_INVOICE);
+				d.setContent(activity);
+				d.addAcceptAction(() => {
+					data.activity = activity.getValueObject().id;
+					let uploadToast = this.getElement('aonUploadToast');
+					if (!uploadToast) {
+						uploadToast = new AonUploadToast();
+						this.appendChild(uploadToast);
+					}
+			
+					uploadToast.setJobId(generateJobId());
+					for (let file of files) {
+						uploadToast.addFile("invoice", file, data);
+					}
+				});
+				d.open();
+			} else {
+ 				if(this.isBeta() && activities.length > 0) {
+					data.activity = activities[0].id;
+				}
+				let uploadToast = this.getElement('aonUploadToast');
+				if (!uploadToast) {
+					uploadToast = new AonUploadToast();
+					this.appendChild(uploadToast);
+				}
+				uploadToast.setJobId(generateJobId());
+				for (let file of files) {
+					uploadToast.addFile("invoice", file, data);
+				}
+			}
+		});
   }
 
   uploadCamera(files) {

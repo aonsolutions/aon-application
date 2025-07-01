@@ -29,6 +29,8 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.AonInvofox;
 import net.aonsolutions.aon.api.AonSecurity;
@@ -408,7 +410,13 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     	json.put(IJsonNames.STATUS, rawdocStatus.getTediName());
     	json.put("camera", s3UploadEventObject.isCamera());
     	json.put("signed", s3UploadEventObject.isSigned());
-    	
+    	if(AonStringUtils.isNotBlank(s3UploadEventObject.getActivity())
+    			&& AonNumberUtils.isNumber(s3UploadEventObject.getActivity())) {
+    		JSONObject activityJSON = new JSONObject();
+    		activityJSON.put("id", s3UploadEventObject.getActivity());
+    		json.put("activity", activityJSON);
+        }
+    	json.put("bidoq", s3UploadEventObject.isBidoq());
 		JSONObject resp = AonInvofox.createRawdoc(s3UploadEventObject.getDomain(), s3UploadEventObject.getUser(), json);
     	return JsonUtils.getInteger(resp, IJsonNames.ID);
 	}

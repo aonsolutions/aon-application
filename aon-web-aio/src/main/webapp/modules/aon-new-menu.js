@@ -63,6 +63,9 @@ import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
 import { Income } from './invoice/Income.js';
 import { Expense } from './invoice/Expense.js';
+import { createSelect } from '../components/CreateComponent.js';
+import { getCompanyActivities } from '../services/companyService.js';
+import { AonDialog } from '../components/aon-dialog.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -1205,16 +1208,55 @@ export class AonNewMenu extends AonElement {
 						input.multiple = 'multiple';
 						
 						input.addEventListener(EVENT.CHANGE, ({target}) => {
-							let uploadToast = this.getElement('aonUploadToast');
-							if(!uploadToast){ 
-								uploadToast = new AonUploadToast();
-								this.getApplication().getContent().appendChild(uploadToast);
-							}
-							let data = { uploaded : 0 };
-							uploadToast.setJobId(generateJobId());
-							for (let file of target.files) {
-								uploadToast.addFile("invoice", file, data);
-							}			
+
+							getCompanyActivities({}).then(activities => {
+								let data = { uploaded: 0}
+								if(this.isBeta() && activities.length > 1) {
+									let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
+									activity.default = true;
+									activity.setAlias("id", "description");
+									if(activities.length > 0) {
+										activity.setOptions(activities);
+										activity.value = activities[0].id;
+									}
+							
+									let d = new AonDialog();
+									let rootPanel = document.getElementById("rootPanel");
+									rootPanel.appendChild(d);
+									d.clear();
+							
+									d.setTitle(MSG.UPLOAD_INVOICE);
+									d.setContent(activity);
+									d.addAcceptAction(() => {
+										data.activity = activity.getValueObject().id;
+										let uploadToast = this.getElement('aonUploadToast');
+										if (!uploadToast) {
+											uploadToast = new AonUploadToast();
+											this.getApplication().getContent().appendChild(uploadToast);
+										}
+								
+										uploadToast.setJobId(generateJobId());
+										for (let file of target.files) {
+											uploadToast.addFile("invoice", file, data);
+										}
+									});
+									d.open();
+								} else {
+									if(this.isBeta() && activities.length > 0) {
+										data.activity = activities[0].id;
+									}
+									let uploadToast = this.getElement('aonUploadToast');
+									if (!uploadToast) {
+										uploadToast = new AonUploadToast();
+										this.getApplication().getContent().appendChild(uploadToast);
+									}
+									
+									uploadToast.setJobId(generateJobId());
+									for (let file of target.files) {
+										uploadToast.addFile("invoice", file, data);
+									}
+								}
+							});
 						});
 						input.click();
 					}
