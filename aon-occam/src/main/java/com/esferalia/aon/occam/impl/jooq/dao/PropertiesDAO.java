@@ -1644,14 +1644,14 @@ public class PropertiesDAO {
 			return filterDAO.build(select);
 		}
 		
-		protected Condition[] getConditions(S3DocumentFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) {
-				return new Condition[0];
-			}
-			return new Condition[] {filterDAO.getCondition()};
-		}
-		
+        protected Condition[] getConditions(S3DocumentFilter filter) {
+          FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+          if (filterDAO == null) {
+            return new Condition[0];
+          }
+          return new Condition[] {filterDAO.getCondition()};
+        }
+
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.ID);}
 		@Override public Property<Integer> getDomainProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.DOMAIN); }
 		@Override public Property<String> getNameProperty() { return new FilterDAO.PropertyDAO<>(Rdoc.RDOC.NAME); }

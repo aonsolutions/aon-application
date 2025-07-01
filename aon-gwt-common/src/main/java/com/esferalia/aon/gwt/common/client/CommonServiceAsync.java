@@ -361,6 +361,7 @@ public interface CommonServiceAsync {
 	void getCustomerByDocument(String domainName, int domain, String user, String document, AsyncCallback<Customer> asyncCallback) throws AonCoreException;
 	void getTargetFull(String domainName, int domain, String user, Integer registry, AsyncCallback<TargetFull> asyncCallback) throws AonCoreException;
 	void getCompanyByDocument(String domainName, int domain, String user, String document, AsyncCallback<Company> asyncCallback) throws AonCoreException;
+	void getSellerByUserLogin(String domainName, int domain, String user, Integer targetId, AsyncCallback<Seller> asyncCallback) throws AonCoreException;
 	
 	// **************************************************
 	// **************************************** [PROJECT]
@@ -384,7 +385,7 @@ public interface CommonServiceAsync {
 	// ********************************* [CUSTOMER NOTES]
 	// **************************************************
 	
-	void getCustomerNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
+	void getRegistryNotes(String currentDomainName, int currentDomain, String currentUser, Integer customerId, AsyncCallback<List<RegistryNote>> asyncCallback) throws AonCoreException;
 	void saveNote(String currentDomainName, int currentDomain, String currentUser, RegistryNote note, AsyncCallback<RegistryNote> asyncCallback) throws AonCoreException;
 	void deleteNote(String currentDomainName, int currentDomain, String currentUser, Integer id, AsyncCallback<Void> asyncCallback) throws AonCoreException;
 	

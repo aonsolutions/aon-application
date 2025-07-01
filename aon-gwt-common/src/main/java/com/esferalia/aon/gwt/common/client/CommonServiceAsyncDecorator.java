@@ -1036,6 +1036,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 		AON.start();
 		serviceAsync.getCompanyByDocument(domainName, domain, user, document, new AsyncCallbackWrapper<>(callback));
 	}
+
+	@Override
+	public void getSellerByUserLogin(String domainName, int domain, String user, Integer targetId, AsyncCallback<Seller> callback) throws AonCoreException {
+		AON.start();
+		serviceAsync.getSellerByUserLogin(domainName, domain, user, targetId, new AsyncCallbackWrapper<>(callback));
+	}
 	
 	// **************************************************
 	// **************************************** [PROJECT]
@@ -1106,9 +1112,9 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	// **************************************************
 
 	@Override
-	public void getCustomerNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
+	public void getRegistryNotes(String domainName, int domain, String user, Integer customerId, AsyncCallback<List<RegistryNote>> callback) throws AonCoreException {
 		AON.start();
-		serviceAsync.getCustomerNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
+		serviceAsync.getRegistryNotes(domainName, domain, user, customerId, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override

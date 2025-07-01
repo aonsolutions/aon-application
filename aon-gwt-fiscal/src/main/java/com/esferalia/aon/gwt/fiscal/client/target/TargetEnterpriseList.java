@@ -130,11 +130,12 @@ public class TargetEnterpriseList extends AonCustomDockLayout {
 		sort.addItem("Fecha", "date");
 		sort.addItem("Nombre", "name");
 		sort.addItem("Documento", "document");
-		sort.setValue("name");
+		sort.setValue("date");
 		sort.getListBox().addChangeHandler(event -> onSearch());
 		
 		asc.addItem("Ascendente", "true");
 		asc.addItem("Descendete", "false");
+		asc.setValue("false");
 		asc.getListBox().addChangeHandler(event -> onSearch());
 		
 		addSortWidget(sort);
@@ -165,7 +166,8 @@ public class TargetEnterpriseList extends AonCustomDockLayout {
 	protected void onClearFilter() {
 		getSearchTextBox().setValue(null, false);
 		date.setValue(null);
-		sort.setValue("name");
+		sort.setValue("date");
+		asc.setValue("false");
 		resetSearchOffset();
 		onSearch();
 	}
