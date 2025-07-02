@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.marketing.client.customer.CustomerNotesModule;
 import com.esferalia.aon.gwt.marketing.client.marketing.campaign.MarketingCompaignModule;
 import com.esferalia.aon.gwt.marketing.client.project.ProjectModule;
 import com.esferalia.aon.gwt.marketing.client.question.QuestionModule;
+import com.esferalia.aon.gwt.marketing.client.taskholder.TaskHolderModule;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.template.client.Templates;
@@ -394,6 +395,22 @@ public class Aio implements EntryPoint {
 				public void onSuccess() {
 					CustomerNotesModule customerNotesModule = new CustomerNotesModule();
 					customerNotesModule.onModuleLoad();
+				}
+			});		
+			break;
+			
+		case Modules.TASK_HOLDER_MODULE:
+			GWT.runAsync(TaskHolderModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					TaskHolderModule taskHolderModule = new TaskHolderModule();
+					taskHolderModule.onModuleLoad();
 				}
 			});		
 			break;

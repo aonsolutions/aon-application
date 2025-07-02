@@ -7,21 +7,24 @@ import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
-@SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	private Integer registry;
 	private TaskHolderType type;
 	private Boolean active;
-	private Integer userId;
+	private User user;
 	private Integer costProfile;
 	
 	private List<Workgroup> workgroups;
 	
-	
-	public TaskHolder() {}
+	public TaskHolder() {
+		super();
+	}
 	
 	public TaskHolder copy(Registry registry) {
 		return super.copy( registry, this);
@@ -71,12 +74,21 @@ public class TaskHolder extends Registry implements Serializable{
 	}
 
 	public Integer getUserId() {
-		return userId;
+		return null == user ? null : user.getId();
 	}
 
 	public TaskHolder setUserId(Integer userId) {
-		this.userId = userId;
+		user = null == user ? new User().setId(userId) : user.setId(userId);
 		return this;
+	}
+	
+	public TaskHolder setUser(User user) {
+		this.user = user;
+		return this;
+	}
+
+	public User getUser() {
+		return this.user;
 	}
 
 	public Integer getCostProfile() {

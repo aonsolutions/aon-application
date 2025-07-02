@@ -38,6 +38,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -67,6 +68,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertie
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractExtendedDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ContractDAO {
 	
@@ -192,6 +194,24 @@ public class ContractDAO {
 		ctx.checkRead();
 		return AGREEMENT_LEVEL_CATEGORY_PROPERTIES.build(ctx.getDslContext().select()
 			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
+	}
+	
+	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, Integer domainId, Integer parentDomain, Integer year){
+		ctx.checkRead();
+		
+		Date startDate = AonDateUtils.getYearFirstDay(year);
+		Date endDate = AonDateUtils.getYearLastDay(year);
+		
+		return ctx.getDslContext().select()
+			.from(AGREEMENT_LEVEL_CATEGORY)
+			.join(CONTRACT).on(
+					CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL)
+					.and(CONTRACT.START_DATE.le(AonDateUtils.toSql(endDate)))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(AonDateUtils.toSql(startDate))))
+			)
+			.fetch()
+			.stream()
+			.map(new AgreementLevelCategoryFiller());
 	}
 	
 	public static void delete(AONContext ctx, Integer ...contractIds){
