@@ -3,10 +3,9 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -18,6 +17,8 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal", "/aon_gwt_mod200/ms/Fiscal" })
 public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implements FiscalMSService {
@@ -50,6 +51,12 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			DataResponseDAO.insertPDFModel(ctx, model, data);
 		} 
+	}
+	
+	// Para envio de email	
+	@Override
+	public void sendEmail(Occam occam, IFiscalModel model) throws AonCoreException {
+		ModelAdmonUtils.sendEmail(occam, model);
 	}
 	
 //	// -------------------------------------------------------------- ACTIVITIES

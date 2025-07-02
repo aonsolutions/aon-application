@@ -20,5 +20,8 @@ public interface FiscalMSService extends RemoteService {
 	
 	// Para carga del PDF del modelo
 	void savePDFModel(Occam occam, IFiscalModel model, String data);
+	
+	// Para envio de email
+	void sendEmail(Occam occam, IFiscalModel model) throws AonCoreException;
 
 }
