@@ -283,6 +283,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	addPackaging() {
+		let pk = this.package;
 		this.getApplication().removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
@@ -310,7 +311,10 @@ export class AonMobileDelivery extends AonElement {
 		table2.id = this.id + 'Envasesss22';
 		packagingDiv.appendChild(table2);
 
-		this.buildProductPackaging(table, table2);
+		if(pk) {
+			this.buildExistingPackaging(table, table2, pk);
+		} else this.buildProductPackaging(table, table2);
+
 
 
 		let pendingCard = new AonCard();
@@ -549,7 +553,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 
-	buildExistingPackaging(table, table2) {
+	buildExistingPackaging(table, table2, pk) {
 		table.addRow();
 		let envaseSelect = createSelect(this.id + 'DialogEnvase', 'Envases');
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
@@ -601,6 +605,9 @@ export class AonMobileDelivery extends AonElement {
 				name: p.item.serialNumber
 			  }
 		}));
+		if(pk) {
+			envaseSelect.value = pk.item.serialNumber;
+		}
 
 		let td = table.addCell(envaseSelect);
 		td.style.width = '100%';

@@ -51,11 +51,13 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
+		this.getElement('aonDelivery').package = this.packaging;
 		this.build();
     }
 
 	disconnectedCallback() {
 		this.removeToolbar();
+		this.getElement('aonDelivery').package = undefined;
 	}
 
 	initialize() {
@@ -105,7 +107,7 @@ export class AonMobileDeliveryPackaging extends AonElement {
 		if(this.ELABORATION_TOOLBAR) {
 			let elaborationToolbar = this.getElement(this.ELABORATION_TOOLBAR);	
 			if(elaborationToolbar) elaborationToolbar.removeButton(ACTION.PRINT.id);
-		}	
+		}
 
 		if(this.DELIVERY_TOOLBAR) {
 			let deliveryToolbar = this.getElement(this.DELIVERY_TOOLBAR);	
@@ -208,7 +210,43 @@ export class AonMobileDeliveryPackaging extends AonElement {
 
 	subtractDialog(composition) {
 		this.getApplication().development();
-	}
+		// let table = new AonBasicTable();
+		// table.id = this.id + 'SubstractTable';
+
+		// table.addRow();
+		// let product = createInput(this.PACKAGING_PRODUCT, MSG.CONTAINER + ' (SSCC)');
+		// table.addCell(product);
+		// product.addIcon(MATERIAL_ICONS.QR_CODE_SCANNER, undefined, () => this.openBarcode(product));			
+
+		// let addButton = new AonIconButton();
+		// addButton.id = this.id + 'AddButton';
+		// addButton.title = MSG.ADD;
+		// addButton.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+		// addButton.addEventListener(EVENT.CLICK, () => {
+		// 	this.packaging = {};
+
+		// 	while(table.rows >= 1) {
+		// 		table.removeRow(table.rows);
+		// 	}
+		// 	this.buildSubstractDestinyNew(table);
+		// });
+		// table.addCell(addButton);
+
+
+
+		// let d = this.getApplication().getDialog();
+		// d.clear();
+		// if(!this.isMobile()) d.width = '400px';
+		// d.setTitle(MSG.ACCEPT);
+		// d.setContent(table);
+		// d.addAcceptAction(() => {
+		// 	substractDeliveryPackaging({
+		// 		composition,
+		// 		destiny: product.value
+		// 	}).then(() => this.aonDelivery());
+		// });
+		// d.open();
+	}	
 	
 	buildTag(){
 
