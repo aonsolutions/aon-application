@@ -1915,12 +1915,11 @@ public class CretaServlet extends HttpServlet
 
 	
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> findBases(HttpServletRequest req) throws SQLException{
-//		return Stream.empty();
-		String login = ":-)" ; 
 		Date from = getFromDate();
 		String domainName = getDomainName(req);
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
+		String login = req.getParameter(CretaService.Parameter.USER.name());
 		
 		return
 		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)

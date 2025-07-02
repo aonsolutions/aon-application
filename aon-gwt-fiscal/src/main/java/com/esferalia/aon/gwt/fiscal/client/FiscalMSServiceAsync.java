@@ -17,5 +17,8 @@ public interface FiscalMSServiceAsync {
 	
 	// Para carga del PDF del modelo 
 	void savePDFModel(Occam occam, IFiscalModel model, String data, AsyncCallback<Void> callback);
+	
+	// Para envio de email
+	void sendEmail(Occam occam, IFiscalModel model, AsyncCallback<Void> callback);
 
 }

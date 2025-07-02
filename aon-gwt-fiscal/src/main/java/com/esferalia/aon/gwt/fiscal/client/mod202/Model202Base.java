@@ -597,6 +597,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
 				showPaymentInfo(callback.getModel());
+				FiscalModelUtils.sendEmail(callback, result); // Si ha ido bien el cambio de estado, entonces se envía email de notificación
 			}
 
 			@Override
