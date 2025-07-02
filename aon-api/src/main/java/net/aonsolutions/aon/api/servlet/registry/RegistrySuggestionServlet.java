@@ -80,7 +80,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		String document = JsonUtils.getString(api.getData(), IJsonNames.DOCUMENT);
 		
 		if(!AonStringUtils.isBlank(document)) {
-			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
+			filter = filter.and(f.getDocumentProperty().like(document + "%"));
 		} else if(!AonStringUtils.isBlank(name)) {
 			filter = filter.and(f.getNameProperty().like("%" + name + "%"));
 		}
@@ -94,7 +94,7 @@ public class RegistrySuggestionServlet extends AonApiHttpServlet {
 		String document = api.getData().optString("document");
 		
 		if(!AonStringUtils.isBlank(document)) {
-			filter = filter.and(f.getDocumentProperty().like("%" + document + "%"));
+			filter = filter.and(f.getDocumentProperty().like(document + "%"));
 		} else if(!AonStringUtils.isBlank(name)) {
 			filter = filter.and(f.getNameProperty().match(toBooleanMode(name)));
 		}
