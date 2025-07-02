@@ -7,9 +7,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
@@ -112,6 +112,8 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 			FlexTable aplazaTable = new FlexTable();
 			Label aplazaLabel = new Label("Datos aplazamiento");
 			Label avisoLabel = new Label("En el caso de Solicitud de Aplazamiento, la presentaci\u00F3n del modelo debe hacerse de forma manual, desde la Oficina Virtual de la Agencia Tributaria, importando el fichero generado desde la aplicaci\u00F3n de AON. En este caso los datos IBAN, n\u00FAmero de plazos y fecha de primer plazo, se guardan en el modelo a t\u00EDtulo informativo, pues no se trasladan al fichero para su presentaci\u00F3n.");
+			avisoLabel.setStyleName(AON.CSS.aonPadding());
+			avisoLabel.addStyleName(AON.CSS.aonFontSmall());
 			AonIntegerBox plazos = new AonIntegerBox();
 			AonDateBox fechaPlazo = new AonDateBox();
 			
@@ -250,6 +252,20 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 
 		}
 		
+		// Aviso de envio de email de notificacion
+		if (callback != null 
+				&& callback.getOptions() != null 
+				&& callback.getOptions().getConfiguration().fiscal().isCustomerCheckEnabled() 
+				&& model.getStatus() != FiscalStatus.CUSTOMER_CHECK) {
+			row++;		
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			
+			Label sendEmailLabel = new Label("Si pulsa \"Env\u00EDo a Cliente\", adem\u00E1s de cambiar el estado del modelo, se enviar\u00E1 un mensaje de correo electr\u00F3nico a la direcci\u00F3n email de la empresa cliente, indicando que tiene un nuevo modelo para confirmar en el portal.");
+			sendEmailLabel.setStyleName(AON.CSS.aonPadding());
+			sendEmailLabel.addStyleName(AON.CSS.aonFontSmall());
+			tab.setWidget(row, 0, sendEmailLabel);
+		}
+		
 		row++;
 		
 	}
@@ -260,7 +276,7 @@ public class AonFinishDeclarationPopup<T extends FiscalModel,O extends FiscalMod
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.setStyleName(AON.CSS.aonPadding());
-		flowPanel.addStyleName(AON.CSS.aonMarginTop());
+//		flowPanel.addStyleName(AON.CSS.aonMarginTop());
 		flowPanel.addStyleName(AON.CSS.aonTextCenter());
 		Button acceptButton = new Button();
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
