@@ -7371,8 +7371,8 @@ CREATE TABLE `registry` (
   `nationality` varchar(2) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT 'ES' COMMENT 'Nacionalidad',
   `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad',
   PRIMARY KEY (`id`),
-  KEY `IDX_REGISTRY_NAME` (`name`),
-  KEY `IDX_REGISTRY_DOCUMENT` (`document`),
+  FULLTEXT KEY `IDX_REGISTRY_NAME` (`name`),
+  FULLTEXT KEY `IDX_REGISTRY_DOCUMENT` (`document`),
   KEY `IDX_REGISTRY_DOMAIN` (`domain`),
   CONSTRAINT `FK_REGISTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
