@@ -87,5 +87,11 @@ public class AonCustomTextBox extends HTMLPanel {
 	public void setMaxWidth(String maxWidth) {
 		getElement().getStyle().setProperty("max-width", maxWidth);
 	}
+	
+	@Override
+	protected void onEnsureDebugId(String baseID) {
+		super.onEnsureDebugId(baseID);
+		this.textBox.ensureDebugId(baseID + "Input");
+	}
 
 }

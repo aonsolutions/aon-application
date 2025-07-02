@@ -1,5 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
-import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, getBidoqToOCR, getBidoqToOCRCount, getInvoice, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel } from "../../services/service.js";
+import { insertInvoice, mobileAction, MOBILE_ACTION, selfconta, downloadInvoiceExcel, 
+  getBidoqToOCR, getBidoqToOCRCount, getInvoice, getRawdocCount, invoiceDuplicateFix, saveInvoiceClosing, downloadRegistryExcel,
+  checkBidoq
+} from "../../services/service.js";
 import { Invoice } from "./Invoice.js";
 import { AonInvoice } from "./aon-invoice.js";
 import { AonMobileInvoice } from "./aon-mobile-invoice.js";
@@ -157,21 +160,31 @@ export class AonInvoicePanel extends AonElement {
     this.clearToolbar();
   } 
 
-  buildInvoiceHomeToolbarOptions() {
+  async buildInvoiceHomeToolbarOptions() {
     this.clearToolbar();
     if(!this.isMobile()) {
-      this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());      
+      let hasBidoq = await this.hasBidoq();
+      this.getApplication().addToolbarOption2(ACTION.ADD_INVOICE, () => this.addInvoice());
       this.getApplication().addToolbarOption2(ACTION.REFRESH, () => this.refreshInvoicePanel());
       if (this.getDur().isOcr() || this.getDur().isInvofox())
         this.getApplication().addToolbarOption2(ACTION.UPLOAD_FILE, () => this.addInvoiceFile());
-	  if(window.location.hostname.includes("mariacea-ayudat.aonsolutions.net"))
+	  if(hasBidoq && this.getDur().isInvoiceManager()){
 	  	this.getApplication().addToolbarOption2(ACTION.BIDOQ_IMPORT, () => this.importBidoqDocumentsToAon());
+      }
     } else {
       this.getApplication().removeFloatOption();
       this.getApplication().addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
     } 
   }
-  
+
+  async hasBidoq(){
+      let data = {
+        document: localStorage.getItem('aon_domain_document')
+      };
+      let response = await checkBidoq(data);
+      return response;
+  }
+
   async importBidoqDocumentsToAon() {
 	// Crear overlay
 	let loadingOverlay = document.createElement('div');

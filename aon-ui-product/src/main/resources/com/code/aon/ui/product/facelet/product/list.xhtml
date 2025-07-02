@@ -14,7 +14,8 @@
 				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{product}" />
 				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="productList-excel-report" value="&#160;" 
+					<aon:htmlCommandLink id="productList-excel-report" value="&#160;"
+						title="#{bundle.aon_excel_download}" 
 						target="_new" action="#{report.onExecute}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
@@ -35,6 +36,11 @@
 						onclick="productx('#{productExport.code}','#{productExport.name}','#{productExport.category.id}','#{productExport.tagsStr}','#{productExport.brand.id}','#{productExport.vat.id}','#{productExport.retention.id}','#{productExport.purchaseAccount.id}','#{productExport.salesAccount.id}','#{productExport.serializable}','#{productExport.inventoriable}','#{productExport.manufactured}','#{productExport.composition}', '#{productExport.statusesStr}','#{productExport.typesStr}'
 											,'#{productExport.barcode}','#{productExport.serialNumber}','#{productExport.itemSerialDate1}','#{productExport.itemSerialDate2}','#{productExport.detail}','#{productExport.detail2}','#{productExport.detail3}','#{productExport.description}','#{productExport.purchasePrice}','#{productExport.profitPercent}','#{productExport.price}','#{productExport.internet}','#{productExport.itemStatusesStr}','#{productExport.supplierCode}'
 											,'#{productExport.creationUser}','#{productExport.creationDate1}','#{productExport.creationDate2}','#{productExport.modificationUser}','#{productExport.modificationDate1}','#{productExport.modificationDate2}')"
+						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
+					</aon:commandLink>
+					
+					<aon:commandLink id="product-import" value="#{bundle.aon_import}"
+						onclick="product()"
 						styleClass="aon-finding-toolbar-item aon-icon-export-excel-trans">
 					</aon:commandLink>
 			

@@ -61,6 +61,10 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Mod2002023Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Mod2002023ServiceAsync;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Mod2002023ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2023.Model2002023;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Mod2002024ServiceAsyncDecorator;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2024.Model2002024;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
@@ -74,6 +78,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2023.Mod2002023;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2024.Mod2002024;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -109,6 +114,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002021ServiceAsync mod2002021Service;
 	static Mod2002022ServiceAsync mod2002022Service;
 	static Mod2002023ServiceAsync mod2002023Service;
+	static Mod2002024ServiceAsync mod2002024Service;
 	
 	private Model200ModuleOptions options;
 
@@ -117,6 +123,14 @@ public class Model200 extends MainEntryPoint {
 	
 	private Model200Table model200Table;
 	
+	public static Mod2002024ServiceAsync getMod2002024Service() {
+		if (mod2002024Service == null) {
+			Mod2002024ServiceAsync mod2002024ServiceRaw = GWT.create(Mod2002024Service.class);
+			mod2002024Service = new Mod2002024ServiceAsyncDecorator(mod2002024ServiceRaw);
+		}
+		return mod2002024Service;
+	}
+
 	public static Mod2002023ServiceAsync getMod2002023Service() {
 		if (mod2002023Service == null) {
 			Mod2002023ServiceAsync mod2002023ServiceRaw = GWT.create(Mod2002023Service.class);
@@ -250,6 +264,7 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {					
+			// DO NOTHING
 		}
 		public void onNew(int year) {
 			newModel(getOptions(), year);			
@@ -267,10 +282,12 @@ public class Model200 extends MainEntryPoint {
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
+			// DO NOTHING
 		}
 
 		@Override
 		public void cleanInfoPanel() {
+			// DO NOTHING
 		}
 
 		public void reset(Mod200 mod200) {
@@ -287,6 +304,9 @@ public class Model200 extends MainEntryPoint {
 					break;
 				case 2023:
 					changeView2023((Mod2002023) mod200);
+					break;
+				case 2024:
+					changeView2024((Mod2002024) mod200);
 					break;					
 			}
 		}
@@ -392,6 +412,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2014) {
@@ -405,6 +426,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2015) {
@@ -418,6 +440,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2016) {
@@ -431,6 +454,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2017) {
@@ -444,6 +468,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2018) {
@@ -457,6 +482,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2019) {
@@ -470,6 +496,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2020) {
@@ -483,6 +510,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2021) {
@@ -496,6 +524,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2022) {
@@ -509,6 +538,7 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
 		} else if (mod.getYear() == 2023) {
@@ -522,9 +552,24 @@ public class Model200 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
+							// DO NOTHING
 						}
 					});
-		}else {
+		} else if (mod.getYear() == 2024) {
+			getMod2002024Service().getMod2002024ById(options.getOccam(), mod.getId()
+					, new AsyncCallback<Mod2002024>() {
+
+						@Override
+						public void onSuccess(Mod2002024 mod200) {
+							changeView2024(mod200);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// DO NOTHING
+						}
+					});
+		} else {
 			Window.alert(AON.MSG.unableToShowData(AON.MSG.noModuleForYear()));
 		}
 		
@@ -593,6 +638,9 @@ public class Model200 extends MainEntryPoint {
 	private void changeView2023(Mod2002023 mod200) {
 		declarationContainer.setWidget(new Model2002023(new Model200Callback(), mod200));
 	}
+	private void changeView2024(Mod2002024 mod200) {
+		declarationContainer.setWidget(new Model2002024(new Model200Callback(), mod200));
+	}
 	
 	protected void newModel(Model200ModuleOptions options, int year) {
 		switch (year) {
@@ -629,6 +677,9 @@ public class Model200 extends MainEntryPoint {
 			case 2023:
 				new2023(options);	
 				break;
+			case 2024:
+				new2024(options);	
+				break;
 		}		
 	}
 	
@@ -643,7 +694,8 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-			}
+				// DO NOTHING
+			}			
 		});
 	}
 	
@@ -658,6 +710,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -672,6 +725,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -686,6 +740,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -700,6 +755,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -715,6 +771,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -730,6 +787,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -745,6 +803,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -760,6 +819,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -775,6 +835,7 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}
@@ -790,6 +851,23 @@ public class Model200 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// DO NOTHING
+			}
+		});
+	}
+	
+	protected void new2024(Model200ModuleOptions options) {
+		getMod2002024Service().createMod2002024(options.getOccam(), 2024
+		, new AsyncCallback<Mod2002024>() {
+
+			@Override
+			public void onSuccess(Mod2002024 mod200) {				
+				changeView2024(mod200);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// DO NOTHING
 			}
 		});
 	}	

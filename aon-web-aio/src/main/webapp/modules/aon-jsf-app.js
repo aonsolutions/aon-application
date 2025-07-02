@@ -6,6 +6,7 @@ export class AonJsfApp extends AonElement {
 
 	IFRAME;
 	
+	jsfapp = 'jsfapp';
 	viewId = '';
 	action = '';
 	redirectUrl = '';
@@ -41,7 +42,7 @@ export class AonJsfApp extends AonElement {
 
 		let form = this.createElement(TAG.FORM);
 		form.style.display = 'none';
-		form.action = 'jsfapp';
+		form.action =this.jsfapp;
 		form.target = this.IFRAME;
 
 		let viewIdInput = this.createElement(TAG.INPUT);
@@ -107,12 +108,20 @@ export class AonJsfApp extends AonElement {
 
 	}
 
+	getForm() {
+		return this.getIFrame().contentDocument?.querySelector(TAG.FORM);
+	}
+	
 	getIFrame() {
 		return this.getElement(this.IFRAME) || this.createElement(TAG.IFRAME, this.IFRAME);
 	}
 
 	setViewId(viewId) {
 		this.viewId = viewId;
+	}
+	
+	setJsfApp(jsfapp) {
+		this.jsfapp = jsfapp;
 	}
 
 	setExpireSession(expireSession) {
@@ -1176,6 +1185,37 @@ export class AonJsfAccount extends AonJsfApp {
 	}
 }
 
+export class AonJsfAccountingParams extends AonJsfApp {
+
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/accountingParams.xhtml');
+	}
+}
+
+export class AonJsfFiscalParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/fiscalParams.xhtml');
+	}
+}
+
+export class AonJsfPayrollParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/payrollParams.xhtml');
+	}
+}
+
+export class AonJsfContractParams extends AonJsfApp {
+	
+	constructor() {
+		super();
+		this.setViewId('/facelet/app/contractParams.xhtml');
+	}
+}
 export class AonJsfBalance extends AonJsfApp {
 
 	constructor() {
@@ -1232,19 +1272,23 @@ export class AonJsfAccountingBook extends AonJsfApp {
 	}
 }
 
+
 export class AonJsfHelpContent extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/helpContent.xhtml');
+		this.setJsfApp('jsfhelp');
+		this.setViewId('/facelet/help/helpContent.xhtml');
 	}
+	
 }
 
 export class AonJsfHelpNotification extends AonJsfApp {
 
 	constructor() {
 		super();
-		this.setViewId('/facelet/app/helpNotification.xhtml');
+		this.setJsfApp('jsfhelp');
+		this.setViewId('/facelet/help/helpNotification.xhtml');
 	}
 }
 
@@ -1816,6 +1860,22 @@ if (!window.customElements.get(TAG.AON_JSF_WAREHOUSE)) {
 
 if (!window.customElements.get(TAG.AON_JSF_ACCOUNT)) {
 	window.customElements.define(TAG.AON_JSF_ACCOUNT, AonJsfAccount);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_ACCOUNTING_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_ACCOUNTING_PARAMS, AonJsfAccountingParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_FISCAL_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_FISCAL_PARAMS, AonJsfFiscalParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_PAYROLL_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_PAYROLL_PARAMS, AonJsfPayrollParams);
+}
+
+if (!window.customElements.get(TAG.AON_JSF_CONTRACT_PARAMS)) {
+	window.customElements.define(TAG.AON_JSF_CONTRACT_PARAMS, AonJsfContractParams);
 }
 
 if (!window.customElements.get(TAG.AON_JSF_BALANCE)) {

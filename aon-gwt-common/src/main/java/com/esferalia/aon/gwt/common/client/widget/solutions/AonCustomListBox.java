@@ -103,4 +103,9 @@ public class AonCustomListBox extends HTMLPanel {
 		getElement().getStyle().setProperty("min-width", minWidth);
 	}
 
+	@Override
+	protected void onEnsureDebugId(String baseID) {
+		super.onEnsureDebugId(baseID);
+		this.listBox.ensureDebugId(baseID + "Select");
+	}
 }

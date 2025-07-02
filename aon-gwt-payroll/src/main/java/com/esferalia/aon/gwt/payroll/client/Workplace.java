@@ -1,205 +1,195 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomCard;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomSuggestBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Workplace extends ResizeComposite{
+public abstract class Workplace extends ScrollPanel {
 	
-	// -------------------------------------------------- UiBinder
-
-	private static WorkplaceUiBinder uiBinder = GWT.create(WorkplaceUiBinder.class);
-
-	interface WorkplaceUiBinder extends UiBinder<Widget, Workplace> {
-	}
-
-	// -------------------------------------------------- UiFields
-
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String inputPadding();
-		String inputLBHeight();
-		String inputTextHeight();
-		String warningTB();
-	}
+	private HTMLPanel content = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel messagePanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel gridPanel = new HTMLPanel(AonStringUtils.EMPTY);
 
 	// TABLA DATOS CENTRO DE TRABAJO
 	
-	@UiField
-	ScrollPanel scrollPanel;
+	private AonCustomTextBox workplaceDescription = new AonCustomTextBox("Descripci\u00f3n");
+	private HTMLPanel workplaceAddressPanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private AonCustomListBox workplaceEconomicConcert = new AonCustomListBox("Concierto Econ\u00f3mico");
 	
-	@UiField
-	HTMLPanel workplaceDescriptionPanel;
-	
-	@UiField
-	TextBox workplaceDescription;
-	
-	@UiField
-	HTMLPanel workplaceAddressParentPanel;
-	
-	@UiField
-	HTMLPanel workplaceAddressPanel;
-	
-	@UiField
-	ListBox workplaceEconomicConcert;
-
 	// TABLA DATOS CENTRO DE TRABAJO (LABORAL)
 	
-	@UiField
-	HTMLPanel workplaceCalendarHTMLPanel;
-	
-	@UiField
-	HTMLPanel workplaceCalendarPanel;
-
-	@UiField
-	HTMLPanel workplaceAgreementPanel;
-
-	@UiField
-	HTMLPanel workplaceActivityPanel;
+	private HTMLPanel workplaceCalendarPanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel workplaceAgreementPanel = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel workplaceActivityPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
 	// ------------------------------------------------ Variables
 	
-	private static final String STYLESELECT = "aon-selectOneMenu";
 	private List<Agreement> workplacesAgreements;
+	private Map<Integer, String> workplaceAddresses;
+	private Map<Integer, String> workplaceActivities;
 
 	// ------------------------------------------------ Constructor
 
 	protected Workplace() {
-		initWidget(uiBinder.createAndBindUi(this));
-		scrollPanel.getElement().getStyle().setProperty("height", "calc(100vh - 7rem)");
 		initializeView();
 	}
-
-	// ------------------------------------------------- UiHandlers
 	
-	@UiHandler("workplaceDescription")
-	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
-		if(AonStringUtils.isNotBlank(workplaceDescription.getValue())) {
-			removeWarning(workplaceDescription);
-			fireHideMessage();
-			onWorkplaceDescriptionChange();		
-		} else {
-			addWarning(workplaceDescription);
-			fireErrorMessage(new HashMap<String, String>(){{ put("Descripci\u00F3n Obligatoria", "Este campo es obligatorio"); }});
-		}
+	public void initializeView() {
+		clear();
+		content.clear();
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		content.add(messagePanel);
+		
+		initializeListBox();
+		
+		initHandlers();
+		
+		initView();
+		
+		Scheduler.get().scheduleDeferred(() -> {
+			setWidget(content);
+		});
 	}
 
-	@UiHandler("workplaceEconomicConcert")
-	void onWorkplaceEconomicConcertChangeValue(ChangeEvent event) {
-		onWorkplaceEconomicConcertChange();
+	private void initializeListBox() {
+		//CONCIERTO ECONOMICO
+		workplaceEconomicConcert.clearItems();
+		workplaceEconomicConcert.addItem("-", "");
+		workplaceEconomicConcert.addItem(String.valueOf("\u00C1")+"lava", "0");
+		workplaceEconomicConcert.addItem("Bizkaia", "1");
+		workplaceEconomicConcert.addItem("Gipuzkoa", "2");
+		workplaceEconomicConcert.addItem("Navarra", "3");
+		workplaceEconomicConcert.addItem("Territorio Com\u00FAn", "4");
+	}
+	
+	private void initHandlers() {
+		workplaceDescription.addValueChangeHandler(e -> {
+			if(AonStringUtils.isNotBlank(workplaceDescription.getValue())) {
+				workplaceDescription.removeError();
+				hideMessage();
+				onWorkplaceDescriptionChange(workplaceDescription.getValue());		
+			} else {
+				workplaceDescription.addError();
+				showError("Descripci\u00F3n Obligatoria");
+			}
+		});
+		
+		workplaceEconomicConcert.addChangeHandler(e -> {
+			onWorkplaceEconomicConcertChange(AonStringUtils.isBlank(workplaceEconomicConcert.getValue()) ? null : Byte.parseByte(workplaceEconomicConcert.getValue()));
+		});
+	}
+	
+	private void initView() {
+		gridPanel.clear();
+		gridPanel.setStyleName(AON.CSS.aonGridTwoCols());
+		gridPanel.getElement().getStyle().setProperty("padding", "0 1rem");
+		
+		AonCustomCard infoCard = new AonCustomCard("Informaci\u00f3n General");
+		
+		HTMLPanel tableInfo = createTable();
+		
+		workplaceEconomicConcert.setWidth("100%");
+		
+		tableInfo.add(createRow(workplaceDescription, null, null));
+		tableInfo.add(createRow(workplaceAddressPanel, workplaceEconomicConcert, null));
+		
+		infoCard.add(tableInfo);
+		gridPanel.add(infoCard);
+		
+		AonCustomCard otherDataCard = new AonCustomCard("Datos Laborales");
+		
+		HTMLPanel tableOther = createTable();
+		
+		tableOther.add(createRow(workplaceCalendarPanel, workplaceActivityPanel, null));
+		tableOther.add(createRow(workplaceAgreementPanel, null, null));
+		
+		otherDataCard.add(tableOther);
+		gridPanel.add(otherDataCard);
+		
+		content.remove(gridPanel);
+		content.add(gridPanel);
+	}
+	
+	private HTMLPanel createTable() {
+		HTMLPanel table = new HTMLPanel("");
+		table.setStyleName(AON.CSS.aonFlexColumn());
+		return table;
+	}
+	
+	private HTMLPanel createRow(Widget w1, Widget w2, Widget w3) {
+		HTMLPanel panel = new HTMLPanel("");
+		panel.setStyleName(AON.CSS.aonItemFlex());
+		
+		panel.add(w1);
+		if(null != w2) panel.add(w2);
+		if(null != w3) panel.add(w3);
+		
+		return panel;
 	}
 	
 	// ------------------------------------------------- AbstractMethods
 	
 	// TABLA DATOS CENTRO DE TRABAJO
 	
-	public abstract void onWorkplaceDescriptionChange();
+	public abstract void onWorkplaceDescriptionChange(String workplacedescription);
 	public abstract void onWorkplaceAddressChange(Integer addressId);
-	public abstract void onWorkplaceEconomicConcertChange();
+	public abstract void onWorkplaceEconomicConcertChange(Byte economicConcert);
 	
 	// TABLA DATOS CENTRO DE TRABAJO (LABORAL)
 	
 	public abstract void onWorkplaceAgreementChange(Integer agreementId);
 	public abstract void onWorkplaceActivityChange(Integer activityId);
 	
-	public abstract void fireErrorMessage(Map<String, String> messages);
-	public abstract void fireHideMessage();
-
-	// ------------------------------------------------- Initialize View
-
-	public void initializeView() {
-		removeWarning(workplaceDescription);
-		
-		resetElements();
-		initializeListBox();
-	}
-
-	private void resetElements() {
-		// Clear general elements
-		this.workplaceDescription.setValue("");
-		this.workplaceAddressPanel.clear();
-		this.workplaceEconomicConcert.clear();
-
-		// Clear payroll elements
-		this.workplaceCalendarPanel.clear();
-		this.workplaceAgreementPanel.clear();
-		this.workplaceActivityPanel.clear();	
-	}
-
-	private void initializeListBox() {
-		//CONCIERTO ECONOMICO
-		this.workplaceEconomicConcert.addItem("-", "-1");
-		this.workplaceEconomicConcert.addItem(String.valueOf("\u00C1")+"lava", "0");
-		this.workplaceEconomicConcert.addItem("Bizkaia", "1");
-		this.workplaceEconomicConcert.addItem("Gipuzkoa", "2");
-		this.workplaceEconomicConcert.addItem("Navarra", "3");
-		this.workplaceEconomicConcert.addItem("Territorio Com\u00FAn", "4");
-	}
-	
 	// ------------------------------------------------- Initialize Cells
 
-	public void initializeAddressCell(Map<Integer, String> workplaceAddresses) {
-		Widget workplaceAddressWidget;
+	public void initializeAddressCell(Map<Integer, String> workplaceAddressesDb) {
+		workplaceAddresses = workplaceAddressesDb;
+		
 		workplaceAddressPanel.clear();
+		workplaceAddressPanel.setWidth("100%");
+		
+		Widget workplaceAddressWidget;
 		
 		if(workplaceAddresses.size() == 0)
-			workplaceAddressWidget = createEmptyLabel();
+			workplaceAddressWidget = createEmptyLabel("Direcci\u00f3n");
 		else{
-			ListBox addressListBox = new ListBox();
-			addressListBox.ensureDebugId("address");
-			addressListBox.setStyleName(STYLESELECT);
-			addressListBox.addStyleName(style.inputLBHeight());
-			addressListBox.addStyleName(style.inputPadding());
-			addressListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
+			AonCustomListBox addressListBox = new AonCustomListBox("Direcci\u00f3n");
 			addressListBox.addItem("-", "-1");
-			
-			for(Entry<Integer, String> entry : workplaceAddresses.entrySet())
-				addressListBox.addItem(entry.getValue(), entry.getKey().toString());
+			 workplaceAddresses.entrySet().forEach(entry -> addressListBox.addItem(entry.getValue(), entry.getKey().toString()));
 			
 			addressListBox.addChangeHandler(e -> {
-				Integer addressId = Integer.valueOf(addressListBox.getSelectedValue());
+				Integer addressId = Integer.valueOf(addressListBox.getValue());
 				if(addressId == -1) {
-					addWarning(addressListBox);
-					fireErrorMessage(new HashMap<String, String>(){{ put("Direcci\u00F3n Obligatoria", "Este campo es obligatorio"); }});
+					addressListBox.addWarning();
+					showError("Direcci\u00F3n Obligatoria");
 				} else {
-					removeWarning(addressListBox);
-					fireHideMessage();
+					addressListBox.removeWarning();
+					hideMessage();
 					onWorkplaceAddressChange(addressId);
 				}
 			});
 			
 			// If only one activity, selected it and fire event
-			if(addressListBox.getItemCount() == 2){
-				addressListBox.setSelectedIndex(1);
-				Integer addressId = Integer.valueOf(addressListBox.getSelectedValue());
+			if(addressListBox.getListBox().getItemCount() == 2){
+				addressListBox.getListBox().setSelectedIndex(1);
+				Integer addressId = Integer.valueOf(addressListBox.getValue());
 				onWorkplaceAddressChange(addressId);
 			}
 			
@@ -211,40 +201,36 @@ public abstract class Workplace extends ResizeComposite{
 	
 	public void initializeCalendarCell(String calendarDescription, CalendarDraftObjectData calendarDraftObjectData) {
 		Widget calendarWidget;
+		workplaceCalendarPanel.clear();
+		workplaceCalendarPanel.setWidth("100%");
 		
 		if(AonStringUtils.isBlank(calendarDescription))
-			calendarWidget = createEmptyLabel();
+			calendarWidget = createEmptyLabel("Calendario");
 		else {
-			HTMLPanel hPanel = new HTMLPanel("");
-			hPanel.getElement().getStyle().setDisplay(Display.FLEX);
-			
-			Label calendarLabel = new Label(calendarDescription);
-			calendarLabel.getElement().getStyle().setMarginRight(5.00, Unit.PX);
-			
-			Button calendarButton = new Button();
-			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
+			AonTableButton calendarButton = new AonTableButton("Calendario", AON.CSS.aonIconEditCalendar());
 			calendarButton.addClickHandler(e -> EmployeeTree.showWorkplaceCalendar(calendarDraftObjectData));
 			
-			hPanel.add(calendarLabel);
-			hPanel.add(calendarButton);
-			calendarWidget = hPanel;
+			AonCustomTextBox calendar = new AonCustomTextBox("Calendario");
+			calendar.setValue(calendarDescription);
+			calendar.setEnable(false);
+			calendar.addButton(calendarButton);
+			
+			calendarWidget = calendar;
 		}
 		
 		workplaceCalendarPanel.add(calendarWidget);
 	}
 
 	public void initializeAgreementCell(List<Agreement> workplacesAgreements) {
-		Widget workplaceAgreementWidget;
 		workplaceAgreementPanel.clear();
+		workplaceAgreementPanel.setWidth("100%");
+		
+		Widget workplaceAgreementWidget;
 		
 		if(workplacesAgreements.isEmpty())
-			workplaceAgreementWidget = createEmptyLabel();
+			workplaceAgreementWidget = createEmptyLabel("Convenio");
 		else{
-			SuggestBox agreementSuggestBox = new SuggestBox();
-			agreementSuggestBox.setStyleName(STYLESELECT);
-			agreementSuggestBox.addStyleName(style.inputTextHeight());
-			agreementSuggestBox.addStyleName(style.inputPadding());
-			agreementSuggestBox.getElement().getStyle().setProperty("width", "calc(100% - 13px)");
+			AonCustomSuggestBox agreementSuggestBox = new AonCustomSuggestBox("Convenio");
 			
 			this.workplacesAgreements = workplacesAgreements;
 			
@@ -253,28 +239,28 @@ public abstract class Workplace extends ResizeComposite{
 			for (Agreement agreement : this.workplacesAgreements)
 				agreementDescriptions.add(agreement.getDescription());
 			
-			MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) agreementSuggestBox.getSuggestOracle();
+			MultiWordSuggestOracle orclAgreements = (MultiWordSuggestOracle) agreementSuggestBox.getSuggestBox().getSuggestOracle();
 			orclAgreements.addAll(agreementDescriptions);
 			orclAgreements.setDefaultSuggestionsFromText(agreementDescriptions);
 			agreementSuggestBox.setAutoSelectEnabled(true);
 			agreementSuggestBox.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio... (Ctrl + espacio para ver sugerencias)");
 			
-			agreementSuggestBox.getValueBox().addKeyUpHandler(e -> {
+			agreementSuggestBox.getSuggestBox().getValueBox().addKeyUpHandler(e -> {
 				if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-					agreementSuggestBox.setText("");
+					agreementSuggestBox.setValue(AonStringUtils.EMPTY);
 					agreementSuggestBox.showSuggestionList();
 				} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
 					agreementSuggestBox.hideSuggestionList();
 			});
 			
-			agreementSuggestBox.addSelectionHandler(e -> {
+			agreementSuggestBox.getSuggestBox().addSelectionHandler(e -> {
 				String agreementDescription = agreementSuggestBox.getValue();
 				for(Agreement agreement : this.workplacesAgreements)
 					if(AonStringUtils.equalsIgnoreCase(agreement.getDescription(), agreementDescription))
 						onWorkplaceAgreementChange(agreement.getId());		
 			});
 			
-			agreementSuggestBox.addValueChangeHandler(e -> {
+			agreementSuggestBox.getSuggestBox().addValueChangeHandler(e -> {
 				String agreementDescription = agreementSuggestBox.getValue();
 				if(AonStringUtils.isBlank(agreementDescription))
 					onWorkplaceAgreementChange(null);
@@ -289,29 +275,27 @@ public abstract class Workplace extends ResizeComposite{
 	public void initializeActivityCell(Map<Integer, String> workplaceActivities) {
 		Widget workplaceActivityWidget;
 		
+		workplaceActivityPanel.clear();
+		workplaceActivityPanel.setWidth("100%");
+		
+		this.workplaceActivities = workplaceActivities;
+		
 		if(workplaceActivities.size() == 0)
-			workplaceActivityWidget = createEmptyLabel();
+			workplaceActivityWidget = createEmptyLabel("Actividad");
 		else{
-			ListBox activityListBox = new ListBox();
-			activityListBox.setStyleName(STYLESELECT);
-			activityListBox.addStyleName(style.inputLBHeight());
-			activityListBox.addStyleName(style.inputPadding());
-			activityListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
+			AonCustomListBox activityListBox = new AonCustomListBox("Actividad");
 			activityListBox.addItem("-", "-1");
-			
-			for(Entry<Integer, String> entry : workplaceActivities.entrySet())
-				activityListBox.addItem(entry.getValue(), entry.getKey().toString());
+			this.workplaceActivities.entrySet().forEach(entry -> activityListBox.addItem(entry.getValue(), entry.getKey().toString()));
 			
 			activityListBox.addChangeHandler(e -> {
-				Integer activityId = Integer.valueOf(activityListBox.getSelectedValue());
+				Integer activityId = Integer.valueOf(activityListBox.getValue());
 				onWorkplaceActivityChange(activityId);
 			}); 
 			
 			// If only one activity, selected it and fire event
-			if(activityListBox.getItemCount() == 2){
-				activityListBox.setSelectedIndex(1);
-				Integer activityId = Integer.valueOf(activityListBox.getSelectedValue());
+			if(activityListBox.getListBox().getItemCount() == 2){
+				activityListBox.getListBox().setSelectedIndex(1);
+				Integer activityId = Integer.valueOf(activityListBox.getValue());
 				onWorkplaceActivityChange(activityId);
 			}
 			
@@ -323,26 +307,68 @@ public abstract class Workplace extends ResizeComposite{
 	
 	// ------------------------------------------------- Auxiliar Methods
 	
-	private Label createEmptyLabel() {
-		Label label = new Label();
+	private AonCustomTextBox createEmptyLabel(String title) {
+		AonCustomTextBox text = new AonCustomTextBox(title);
+		text.setEnable(false);
+		text.setValue("No hay entradas disponibles");
+		text.addWarning();
 		
-		label.setText("No hay entradas disponibles");
-		label.getElement().getStyle().setColor("red");
-		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		text.setWidth("11rem");
 		
-		return label;
+		return text;
+	}
+	
+	public void showError(String message) {
+		AonMessagePanel.showError(messagePanel, message);
+	}
+	
+	public void showSucces(String message) {
+		AonMessagePanel.showSuccess(messagePanel, message);
+	}
+	
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messagePanel);
 	}
 	
 	public void hideCalendarPanel() {
-		workplaceCalendarHTMLPanel.setVisible(false);
+		workplaceCalendarPanel.setVisible(false);
+	}
+
+	public void fillWorkplace(WorkplaceInfo workplaceInfo) {
+		workplaceDescription.setValue(workplaceInfo.getDescription());
+		if(!workplaceAddresses.isEmpty()) 
+			((AonCustomListBox) workplaceAddressPanel.getWidget(0)).setValue(null == workplaceInfo.getAddressId() ? null : workplaceInfo.getAddressId().toString());
+		workplaceEconomicConcert.setValue(String.valueOf(workplaceInfo.getEconomicConcert()));
+		if(!workplacesAgreements.isEmpty()) 
+			((AonCustomSuggestBox) workplaceAgreementPanel.getWidget(0)).setValue(getAgreementDescription(workplaceInfo));
+		if(!workplaceActivities.isEmpty())
+			((AonCustomListBox) workplaceActivityPanel.getWidget(0)).setValue(null == workplaceInfo.getActivityId() ? null : workplaceInfo.getActivityId().toString());
 	}
 	
-	private void addWarning(Widget widget) {
-		widget.addStyleName(style.warningTB());
+	private String getWorkplaceAgreement(WorkplaceInfo workplaceInfo){
+		Integer agreeementId = workplaceInfo.getAgreementId();
+		return null == agreeementId ? null : agreeementId.toString();
 	}
 	
-	private void removeWarning(Widget widget) {
-		widget.removeStyleName(style.warningTB());
+	private String getAgreementDescription(WorkplaceInfo workplaceInfo) {
+		String workplaceAgreementId = getWorkplaceAgreement(workplaceInfo);
+		if(AonStringUtils.isBlank(workplaceAgreementId))
+			return null;
+		else {
+			Integer agreementId = Integer.parseInt(workplaceAgreementId);
+			for(Agreement agreement : workplacesAgreements)
+				if(agreement.getId().equals(agreementId))
+					return agreement.getDescription();
+		}
+		return null;
+	}
+
+	public AonCustomTextBox getWorkplaceDescription() {
+		return workplaceDescription;
+	}
+
+	public HTMLPanel getWorkplaceAddressPanel() {
+		return workplaceAddressPanel;
 	}
 
 }

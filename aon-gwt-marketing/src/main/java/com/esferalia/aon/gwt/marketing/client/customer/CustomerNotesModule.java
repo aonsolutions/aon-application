@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.marketing.client.customer;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,8 +49,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 	private HTMLPanel notesContent;
 
 	private List<RegistryNote> notes;
-	private Integer customerId;
+	private Integer registryId; // customerId or companyId
 	private Integer officeDomain;
+	private String notesSource;
 	
 	private RegistryNote observation;
 
@@ -65,8 +67,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 		
 		initializeService();
 		
-		customerId = getCustomer() > 0 ? getCustomer() : null;
+		registryId = getCustomer() > 0 ? getCustomer() : null;
 		officeDomain = getOfficeDomain() > 0 ? getOfficeDomain() : getCurrentDomain();
+		notesSource = AonStringUtils.isNotBlank(getNotesSource()) ? getNotesSource() : null;
 		
 		container = new HTMLPanel(AonStringUtils.EMPTY);
 		container.setStyleName(AON.CSS.aonFlexColumn());
@@ -85,6 +88,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 		// Remove customer from LS
 		removeCustomer();
 		removeOfficeDomain();
+		removeNotesSource();
 	}
 	
 	private void initializeService() {
@@ -95,7 +99,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 	public void onSearch() {
 		content.clear();
 		
-		getCustomerNotes(customerNotes -> {
+		getRegistryNotes(registryNotes -> {
 			createNotesPanel();
 		});
 	}
@@ -116,18 +120,29 @@ public class CustomerNotesModule extends MainEntryPoint {
 	}
 	
 	private void createObservations() {
-		List<RegistryNote> observations = notes.stream().filter(note -> note.getNoteType().equals(NoteType.OBSERVATION)).collect(Collectors.toList());
+		List<RegistryNote> observations = new ArrayList<RegistryNote>();
 		
-		observation = new RegistryNote()
+		if(AonStringUtils.isBlank(notesSource))
+			observations = notes.stream().filter(note -> note.getNoteType().equals(NoteType.OBSERVATION)).collect(Collectors.toList());
+		else
+			observations = notes.stream().filter(note -> note.getNoteType().equals(NoteType.safeValueOf(notesSource)) && note.getNoteDate() == null).collect(Collectors.toList());
+		
+		if(AonStringUtils.isBlank(notesSource))
+			observation = new RegistryNote()
+					.setDomain(officeDomain)
+					.setNoteDate(new Date())
+					.setNoteType(NoteType.OBSERVATION)
+					.setRegistry(registryId)
+					.setConfidential(false);
+		else 
+			observation = new RegistryNote()
 				.setDomain(officeDomain)
-				.setNoteDate(new Date())
-				.setNoteType(NoteType.OBSERVATION)
-				.setRegistry(customerId)
+				.setNoteType(NoteType.safeValueOf(notesSource))
+				.setRegistry(registryId)
 				.setConfidential(false);
 		
-		if(!observations.isEmpty()) {
+		if(!observations.isEmpty())
 			observation = observations.get(0);
-		}
 		
 		HTMLPanel cardsPanel = new HTMLPanel(AonStringUtils.EMPTY);
 		cardsPanel.addStyleName(AON.CSS.aonFlexColumn());
@@ -209,12 +224,17 @@ public class CustomerNotesModule extends MainEntryPoint {
 			});
 			buttonsPanel.add(deleteBtn);
 			
-			AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
-			noteBtn.addClickHandler(e -> {
-				e.stopPropagation();
-				moveToNotes(observation);
-			});
-			buttonsPanel.add(noteBtn);
+			// Only if exist observation, prevent non default observation for PAYROLL, FISCAL, ACCOUNTING
+			
+			if(null != observation.getId()) {
+				AonTableButton noteBtn = new AonTableButton("Archivar nota", AON.CSS.aonIconMoveToInbox());
+				noteBtn.addClickHandler(e -> {
+					e.stopPropagation();
+					moveToNotes(observation);
+				});
+				buttonsPanel.add(noteBtn);
+			}
+			
 		}
 			
 		footerPanel.add(noteDate);
@@ -247,7 +267,13 @@ public class CustomerNotesModule extends MainEntryPoint {
 	private void createNotes() {
 		notesContent.clear();
 		
-		List<RegistryNote> messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.MESSAGE)).collect(Collectors.toList());
+		List<RegistryNote> messages = new ArrayList<RegistryNote>();
+		
+		if(AonStringUtils.isBlank(notesSource))
+			messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.MESSAGE)).collect(Collectors.toList());
+		else
+			messages = notes.stream().filter(note -> note.getNoteType().equals(NoteType.safeValueOf(notesSource)) && null != note.getNoteDate()).collect(Collectors.toList());
+		
 		messages.sort(Comparator.comparing(RegistryNote::getNoteDate, Comparator.nullsFirst(Comparator.reverseOrder())));
 		
 		AonToolbarSmall toolbar = new AonToolbarSmall((messages.isEmpty() ? "Sin" : messages.size()) + (messages.isEmpty() || messages.size() > 1 ? " Anotaciones" : " Anotaci\u00f3n"));
@@ -258,9 +284,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 			notes.add(
 				new RegistryNote()
 				.setDomain(officeDomain)
-				.setNoteType(NoteType.MESSAGE)
+				.setNoteType(AonStringUtils.isBlank(notesSource) ? NoteType.MESSAGE : NoteType.safeValueOf(notesSource))
 				.setNoteDate(new Date())
-				.setRegistry(customerId)
+				.setRegistry(registryId)
 				.setConfidential(false)
 			);
 			
@@ -431,8 +457,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 	private void deleteNote(RegistryNote note, AonTableButton btn, Consumer<Void> deletion) {
 		AonCustomDeleteTooltip aonCustomDeleteTooltip = new AonCustomDeleteTooltip(
 				note.getNoteType().equals(NoteType.MESSAGE)
-	            ? "\u00bfEliminar nota?"
-	            : "\u00bfEliminar observaci\u00f3n?",
+	            ? "Eliminar nota"
+	            : "Eliminar observaci\u00f3n",
 	            note.getNoteType().equals(NoteType.MESSAGE)
 	            ? "\u00bfSeguro que quiere eliminar la nota?"
 	            : "\u00bfSeguro que quiere eliminar la observaci\u00f3n?",
@@ -440,8 +466,8 @@ public class CustomerNotesModule extends MainEntryPoint {
 		aonCustomDeleteTooltip.addDeleteHandler(e -> deletion.accept(null));
 	}
 
-	private void getCustomerNotes(Consumer<List<RegistryNote>> success) {
-		COMMON_SERVICE.getCustomerNotes(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), customerId,
+	private void getRegistryNotes(Consumer<List<RegistryNote>> success) {
+		COMMON_SERVICE.getRegistryNotes(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), registryId,
 			new AsyncCallback<List<RegistryNote>>() {
 
 				@Override
@@ -462,9 +488,9 @@ public class CustomerNotesModule extends MainEntryPoint {
 				.setConfidential(observation.isConfidential())
 				.setDescription(observation.getDescription())
 				.setSecurityLevel(observation.getSecurityLevel())
-				.setNoteType(NoteType.MESSAGE)
+				.setNoteType(AonStringUtils.isBlank(notesSource) ? NoteType.MESSAGE : NoteType.safeValueOf(notesSource))
 				.setNoteDate(new Date())
-				.setRegistry(customerId);
+				.setRegistry(registryId);
 		
 		observation.setDescription(AonStringUtils.EMPTY);
 		observation.setComments(AonStringUtils.EMPTY);
@@ -481,6 +507,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 								@Override
 								public void onSuccess(RegistryNote result) {
 									onSearch();
+									onNoteSaved();
 								}
 
 								@Override
@@ -503,6 +530,7 @@ public class CustomerNotesModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(RegistryNote result) {
 					onSearch();
+					onNoteSaved();
 				}
 
 				@Override
@@ -517,11 +545,20 @@ public class CustomerNotesModule extends MainEntryPoint {
 				@Override
 				public void onSuccess(Void result) {
 					onSearch();
+					onNoteSaved();
 				}
 
 				@Override
 				public void onFailure(Throwable caught) { }
 		});
 	}
+	
+	// Send to JS client
+	public static native void onNoteSaved() /*-{
+		$wnd.top.postMessage(
+		  { type: "REGISTRY_NOTE_SAVED", payload: {} },
+		  "*"
+		);
+	}-*/;
 
 }

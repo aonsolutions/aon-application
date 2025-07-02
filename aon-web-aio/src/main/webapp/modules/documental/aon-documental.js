@@ -772,7 +772,6 @@ export class AonDocumental extends AonElement {
 		return response;
 	}
 
-            
     aonDocumentalListRestFilter(){
       let documentalList = this.getElement('aonDocumentalList');
       documentalList.buildToolbarSearch();

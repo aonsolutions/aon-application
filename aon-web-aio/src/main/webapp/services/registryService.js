@@ -11,7 +11,7 @@ const SEGMENTS = `${API_URL}/segments`;
 const RELATIONSHIP = `${API_URL}/relationship`;
 const RELATIONSHIP_COMPANY = `${API_URL}/relationship/company`;
 const SIBLINGS_OFFICE = `${API_URL}/relationship/siblingsOffice`;
-const CUSTOMER_NOTES = `${API_URL}/customersNotes`;
+const REGISTRY_NOTES = `${API_URL}/registryNotes`;
 const EMAILS = `emails`;
 const TRANSACTION = `transaction`;
 
@@ -69,4 +69,4 @@ export const downloadRegistryExcel = (data) => openFileUrl(`${API_URL}/downloadR
 
 // CUSTOMER NOTES
 
-export const getCustomerNotes = (data) => get(CUSTOMER_NOTES, data);
+export const getRegistryNotes = (data) => get(REGISTRY_NOTES, data);

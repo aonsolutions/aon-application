@@ -16,17 +16,15 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.core.client.GWT;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class EmployeeDialog extends AonCustomDialog {
 	
@@ -372,22 +370,13 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 	}	
 
-	// ------------------------------------------------- UiBinder
-	
-	interface Binder extends UiBinder<Widget, EmployeeDialog> {}
-	
-	private static final Binder binder = GWT.create(Binder.class);
-	
 	// ------------------------------------------------- UiFields
 	
-	@UiField
-	HTMLPanel messageContainer;
-	
-	@UiField (provided = true)
-	EmployeeWidget employee;
-	
-	@UiField
-	HTMLPanel buttonsPanel;
+	private HTMLPanel content = new HTMLPanel(AonStringUtils.EMPTY);
+	private HTMLPanel messageContainer = new HTMLPanel(AonStringUtils.EMPTY);
+	private ScrollPanel scrollPanel = new ScrollPanel();
+	private EmployeeWidget employee;
+	private HTMLPanel buttonsPanel = new HTMLPanel(AonStringUtils.EMPTY);
 	
 	// ------------------------------------------------- Class variables
 	
@@ -401,14 +390,28 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 	
 	protected EmployeeDialog(Boolean hideEmployeePanel) {
-		employee = new EmployeeImplementation();
+		setCaption("Nuevo Contrato");
 		
 		this.hideEmployeePanel = hideEmployeePanel;
 		
-		setCaption("Trabajador");
-		setWidget(binder.createAndBindUi(this));
+		content.addStyleName(AON.CSS.aonFlexColumn());
+		employee = new EmployeeImplementation();
 		
 		getButtonsPanel();
+		
+		content.add(messageContainer);
+		
+		scrollPanel.setWidget(employee);
+		scrollPanel.setHeight("30rem");
+		scrollPanel.getElement().getStyle().setProperty("padding", "1rem");
+		
+		content.add(scrollPanel);
+		
+		content.add(buttonsPanel);
+		
+		Scheduler.get().scheduleDeferred(() -> {
+			setWidget(content);
+		});
 	}
 	
 	// ------------------------------------------------- Abstract Methods
@@ -500,6 +503,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	
 	public void fillExistingEmployee( boolean isContractActive){
+		employee.cleanErrorStyles();
 		fillExistingEmployee();
 		fillExistingContract();
 		if(isContractActive)
@@ -652,18 +656,16 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	// ------------------------------------------------- Buttons panel
 		
 	private void getButtonsPanel() {
-		Button closeBtnDialog = new Button();
-		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
-		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.addClickHandler(e -> onCloseDialog());
+		buttonsPanel.addStyleName(AON.CSS.aonDisplayFlexEnd());
+		buttonsPanel.getElement().getStyle().setProperty("margin", "1rem");
 		
-		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		Button closeBtnDialog = createButton("Cancelar");
+		closeBtnDialog.addClickHandler(e -> hide());
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
-		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
-		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog = createButton("Crear");
+		acceptBtnDialog.getElement().getStyle().setProperty("color", "green");
 		acceptBtnDialog.addClickHandler(e -> {
 			onAcceptDialog();
 		});
@@ -671,24 +673,41 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog() {
-		hide();
+	private Button createButton(String text) {
+		Button button = new Button(text);
+		button.getElement().getStyle().setProperty("background", "none");
+		button.getElement().getStyle().setProperty("background-color", "#fafafa");
+		button.getElement().getStyle().setProperty("padding", "5px");
+		button.getElement().getStyle().setProperty("height", "auto");
+		button.getElement().getStyle().setProperty("font-size", "12px");
+//		button.getElement().getStyle().setProperty("font-family", "Arial Unicode MS, Arial, sans-serif");
+		button.getElement().getStyle().setProperty("text-transform", "inherit");
+		button.getElement().getStyle().setProperty("font-weight", "bold");
+		button.getElement().getStyle().setProperty("border", "1px solid #d0d0d0");
+		button.getElement().getStyle().setProperty("border-radius", "5px");
+		
+		return button;
 	}
 	
 	private void onAcceptDialog() {
 		acceptBtnDialog.setEnabled(false);
 		if(employee.checkIfNewEmployeeIsPossible()) {
-			this.employeeDialogObject.createEmployeeContract(
-					contractId -> { 
-							hide();
-							
-							if(null != employeeDialogObject.getWorkplaceObj()) 
-								EmployeeTree.invokeRefreshWorkplace();
-			
-							onAccept(contractId);
-						 }, 
-					t -> AonMessagePanel.showError(messageContainer, t.getMessage())
-			);
+			Map<String, String> messageMap = employee.checkSaveAndGetErrors();
+			if(messageMap.isEmpty())
+				this.employeeDialogObject.createEmployeeContract(
+						contractId -> { 
+								hide();
+								
+								if(null != employeeDialogObject.getWorkplaceObj()) 
+									EmployeeTree.invokeRefreshWorkplace();
+				
+								onAccept(contractId);
+							 }, 
+						t -> AonMessagePanel.showError(messageContainer, t.getMessage())
+				);
+			else {
+				AonMessagePanel.showError(messageContainer, messageMap);
+			}
 		} else
 			acceptBtnDialog.setEnabled(true);
 	}

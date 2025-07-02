@@ -5,14 +5,17 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jooq.InsertValuesStep11;
+import org.jooq.Record2;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBalanceType;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
@@ -40,17 +43,23 @@ public class NordigenDAO {
 
 	public static List<NordigenBankAccount> getAllAccounts(AONContext ctx) {
 		Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
-		return RegistryBankDAO.getStream(ctx
-			,f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
-				.and(f.getRegistryProperty().eq(company.getId())))
-			.map(rbank -> new NordigenBankAccount()
-				.setRbank(rbank)
-				.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
-				.setBankAlias(rbank != null ? rbank.getAlias() : null)
-				.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
-				.setRequisitionId(rbank.getRequisition())
-				.setLastMovementDate(  BankStatementDAO.getLastMovementDate(ctx, rbank.getId()) ))
-			.collect(Collectors.toList());
+		
+		return RegistryBankDAO.getStream(ctx,
+		        f -> f.getActiveProperty().eq(AonEnumUtils.getByte(true))
+		            .and(f.getRegistryProperty().eq(company.getId())))
+		    .map(rbank -> {
+		        NordigenBankAccount account = new NordigenBankAccount()
+		            .setRbank(rbank)
+		            .setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
+		            .setBankAlias(rbank != null ? rbank.getAlias() : null)
+		            .setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+		            .setRequisitionId(rbank.getRequisition())
+		            .setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+
+		        return NordigenDAO.loadStoredBalance(ctx, account);
+		    })
+		    .collect(Collectors.toList());
+
 	}
 	
 	public static NordigenBankAccount updateRegistryBank(AONContext ctx, NordigenBankAccount account) {
@@ -58,17 +67,23 @@ public class NordigenDAO {
 		Double balance = 0.0;
 		Double remainder = 0.0;
 		List<NordigenAccountBalance> balances = account.getBalances();
+		
 		NordigenAccountBalance consolidado = filterConsolidado(balances);
 		NordigenAccountBalance real = filterReal(balances);
+
 		if (consolidado != null && consolidado.getBalanceAmount() != null) {
-			balance += AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
+		    balance = AonNumberUtils.zeroIfNull(consolidado.getBalanceAmount().getAmount());
 		}
 		if (real == null || real.getBalanceAmount() == null) {
-			real = consolidado;
+		    real = consolidado;
 		}
 		if (real != null && real.getBalanceAmount() != null) {
-			remainder += AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
+		    remainder = AonNumberUtils.zeroIfNull(real.getBalanceAmount().getAmount());
 		}
+		if (balance == 0.0 && remainder == 0.0) {
+		    return account;
+		}
+
 		ctx.getDslContext().update(RBANK)
 			.set(RBANK.BALANCE, AonNumberUtils.zeroIfNull(balance))
 			.set(RBANK.AVAILABLE_BALANCE, AonNumberUtils.zeroIfNull(remainder))
@@ -180,6 +195,84 @@ public class NordigenDAO {
 		bs.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, rec.getSecurityLevel()));
 		bs.setStatus(AonEnumUtils.enumValue(StatementStatus.class, rec.getStatus()));
 		return bs;
+	}
+	
+
+	public static NordigenBankAccount loadStoredBalance(AONContext ctx, NordigenBankAccount account) {
+	    RegistryBank rbank = account.getRbank();
+
+	   Record2<Double, Double> result = ctx.getDslContext()
+	        .select(RBANK.BALANCE, RBANK.AVAILABLE_BALANCE)
+	        .from(RBANK)
+	        .where(RBANK.ID.eq(rbank.getId()))
+	        .fetchOne();
+
+	    if (result != null) {
+	    	Double balanceStored = result.value1();
+	    	Double availableStored = result.value2();
+
+	        LinkedList<NordigenAccountBalance> balanceList = new LinkedList<>();
+
+	        if (balanceStored != null) {
+	            NordigenAccountAmount amount = new NordigenAccountAmount();
+	            amount.setAmount(balanceStored);
+
+	            NordigenAccountBalance consolidated = new NordigenAccountBalance()
+	            	    .setBalanceAmount(amount)
+	            	    .setBalanceType(NordigenBalanceType.CLOSING_BOOKED);
+	            balanceList.add(consolidated);
+	        }
+	        
+	        
+
+	        if (availableStored != null) {
+	            NordigenAccountAmount amount = new NordigenAccountAmount();
+	            amount.setAmount(availableStored);
+
+	            NordigenAccountBalance real = new NordigenAccountBalance()
+	            	    .setBalanceAmount(amount)
+	            	    .setBalanceType(NordigenBalanceType.INTERIM_AVAILABLE);
+	            balanceList.add(real);
+	        }
+
+	        account.setBalances(balanceList);
+	    }
+	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
+
+	    return account;
+	}
+	
+	public static NordigenBankAccount insertAgreement(AONContext ctx, NordigenBankAccount account, String agreement) {
+		ctx.getDslContext().update(RBANK)
+		.set(RBANK.AGREEMENT, agreement)
+		.where(RBANK.ID.eq(account.getRbank().getId()))
+		.execute();
+		return account;
+	}
+	
+	public static NordigenBankAccount insertAgreementDays(AONContext ctx, NordigenBankAccount account, int daysRemaining) {
+		ctx.getDslContext()
+		.update(RBANK)
+		.set(RBANK.DAYS_UNTIL_AGREEMENT_ENDS, daysRemaining)
+		.where(RBANK.ID.eq(account.getRbank().getId()))
+		.execute();
+		return account;
+	}
+	
+	public static String getAgreementId(AONContext ctx, NordigenBankAccount account) {
+		return ctx.getDslContext()
+				.select(RBANK.AGREEMENT)
+				.from(RBANK)
+				.where(RBANK.ID.eq(account.getRbank().getId()))
+				.fetchOne(RBANK.AGREEMENT);
+	}
+	
+	public static Integer getRemainingDays(AONContext ctx, NordigenBankAccount account) {
+	    return ctx.getDslContext()
+	              .select(RBANK.DAYS_UNTIL_AGREEMENT_ENDS)
+	              .from(RBANK)
+	              .where(RBANK.ID.eq(account.getRbank().getId()))
+	              .fetchOneInto(Integer.class);
 	}
 
 	// ***********************************************************************************

@@ -20,6 +20,8 @@ import software.amazon.awssdk.services.textract.model.Document;
 
 class ImageExtracter implements IPersonDocumentExtracter {
 
+	private static final double CONFIDENCE_THRESHOLD = 80.00;
+
 	@Override
 	public boolean accept(byte [] bytes) {
 		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes)) {
@@ -58,11 +60,22 @@ class ImageExtracter implements IPersonDocumentExtracter {
  
 		if (blocks != null && blocks.length > 0) {
 			LinkedList<Block> lines = new LinkedList<>();
-			for (int i = 0; i < blocks.length; i++) {
-				lines.addAll(Arrays.asList(blocks));
+//			for (int i = 0; i < blocks.length; i++) {
+//				lines.addAll(Arrays.asList(blocks));
+//			}
+			int i ;
+			for (i = 0; i < blocks.length; i++) {
+				if ( blocks[i].confidence() >= CONFIDENCE_THRESHOLD) {
+					lines .add(blocks[i]); 
+					break;
+				}
 			}
-			for (int i = 1; i < blocks.length; i++) {
+			
+			for ( i += 1 ; i < blocks.length; i++) {
 				Block block = blocks[i];
+				if (block.confidence() < 80.00) {
+					continue; // Skip blocks with low confidence
+				}
 				Block line = lines.peekLast();
 				if (intersects(line, block)) {
 					Block newLine = Block.builder()
@@ -72,9 +85,11 @@ class ImageExtracter implements IPersonDocumentExtracter {
 							.build();
 					lines.remove(line);
 					lines.add(newLine);
-				} else lines.add(block);
-				extract = lines.stream().map(Block::text).collect(Collectors.joining("\r\n"));
+				} else {
+					lines.add(block);
+				}
 			}
+			extract = lines.stream().map(Block::text).collect(Collectors.joining("\r\n"));
 		}
 		return extract;
 	}

@@ -66,6 +66,7 @@ export class AonParent extends AonElement {
 			this.getApplication().updateSidenavCount(this.ENTERPRISES, companies?.length || 0);
 			this.getApplication().updateSidenavTitle(CONSTANT.ENTERPRISES, `${MSG.ENTERPRISES}`); 
 		});
+		
 	}
 
 	select(filter, callback) {
@@ -77,11 +78,15 @@ export class AonParent extends AonElement {
 				let cps = companies.filter(r => r.id == LS.getDomainId());
 				if(cps.length > 0 && !cps[0].parent) {
 					this.companySelection(cps[0], companies.length == 1 );
-				} else if ( LS.getCompany() ) {
+				} else if ( LS.getCompany() && !LS.getCompany().domainManagement ) {
 					this.companySelection(LS.getCompany(), companies.length == 1 );
 				} else if(companies.length === 1) {
 					this.companySelection(companies[0], true);
 				} else {
+					if ( LS.getCompany() ) {
+						this.getAonHeader().showCompanyOption(LS.getCompany(), false);
+					}
+
 					let aonMenu = this.getElement('aonMenu');
 					aonMenu.init().then(() => {
 						LS.setDomainLogin(aonMenu.getDur().getUser().login);
@@ -109,8 +114,7 @@ export class AonParent extends AonElement {
 							resolve(companies);
 							callback?.(companies);
 						});
-					}
-					else {
+					} else {
 						resolve(companies);
 						callback?.(companies);
 					}
@@ -212,9 +216,9 @@ export class AonParent extends AonElement {
 			}
 	
 			if(filter.entorno) {
-				value &&= !company.parentId && company.type === 'CONSULTANCY';
+				value &&= company.domainManagement ;
 			} else {
-				value &&= company.parentId || company.type !== 'CONSULTANCY';
+				value &&= !company.domainManagement;
 			}
 	
 			if(filter.despacho) {
@@ -283,12 +287,21 @@ export class AonParent extends AonElement {
 
 		let welcomeDiv = this.createDiv();
 		welcomeDiv.className = CSS.AON_WELCOME_DIV;
+
 		let welcomeSpan = this.createSpan();
-		welcomeSpan.innerHTML = MSG.WELCOME_TO_AON_SOLUTIONS;
-		welcomeSpan.style.fontSize = '24px';
-		welcomeSpan.style.fontWeight = '600';
+		this.getWelcomeMessage().then( msg => welcomeSpan.innerHTML = msg ); 
+		welcomeSpan.classList.add(CSS.AON_WELCOME_MESSAGE);
 		welcomeDiv.appendChild(welcomeSpan);
 		
+				
+		let welcomeImg = this.createElement(TAG.IMG);
+		welcomeImg.onerror = () => 	welcomeImg.style.display = 'none'; // Hide image if it fails to load
+		welcomeImg.onload = () => this.getApplication().openRightSidenav() ;// Show image if it loads successfully 
+		this.getWelcomeImage().then( img => welcomeImg.src = img );
+		this.getWelcomeMessage().then( msg  => welcomeImg.title = msg );
+		welcomeImg.classList.add(CSS.AON_WELCOME_LOGO);
+		this.getApplication().getRightSidenav().appendChild(welcomeImg);		
+
 		// Companies
 		let companyDiv = this.createDiv();
 		companyDiv.className = CSS.AON_COMPANY_DIV;
@@ -674,9 +687,37 @@ export class AonParent extends AonElement {
 		return filteredCompanies.sort( (c1,c2) => ( filter.count?.[c2.domain] || 0 )  -  ( filter.count?.[c1.domain] || 1 ) );
 	}
 	
-	isLocationCompany( company ) {
-		return company?.domain?.toUpperCase() == window?.location?.hostname?.toUpperCase();
+	isSharedCompany( company ) {
+		return !company?.parentId || company?.parentId != LS.getCompany()?.id;
 	}
+
+	isLocationCompany( company ) {
+		return company?.domain?.toUpperCase() == window?.location?.hostname?.toUpperCase()
+			|| company?.domain?.toUpperCase() == LS.getCompany()?.domain?.toUpperCase();
+	}
+	
+	getWelcomeImage() {
+		return new Promise((resolve, reject) => {
+        resolve(`${window.location.protocol}//${LS.getCompany()?.domain || window.location.hostname}:${window.location.port}/aonDocuments/company.logo`);
+		});
+    }
+
+	getWelcomeMessage() {
+		return new Promise((resolve, reject) => {
+			if ( LS.getCompany()?.name ) {
+				resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${LS.getCompany()?.name}</span>`);
+			} else if ( this.getDur() ) {
+				resolve(`<span style='font-weight:lighter;'  >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${this.getDur().domain.description}</span>`)
+			}  
+			else  {
+				this.buildDur()
+				.then( dur =>  resolve(`<span style='font-weight:lighter;' >${MSG.ENVIRONMENT}</span> <span style='font-weight:bolder;'>${dur.domain.description}</span>`))
+				.catch( err  => resolve( `<span style='font-weight:bolder;'>${MSG.WELCOME_TO_AON_SOLUTIONS}</span>` ) );
+			} 
+		});
+	     
+	}
+
 }
 
 if(!window.customElements.get(TAG.AON_PARENT)){

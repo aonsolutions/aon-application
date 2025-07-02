@@ -38,6 +38,7 @@ import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod130AEAT2024Declaration extends Mod130Declaration {
 	
@@ -282,9 +283,12 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 				.collect(Collectors.toCollection(LinkedList::new));
 		double c05 = 0;
 		for (FiscalModel fm : list) {
-			double c007 = fm.getAmount(Mod130Key.C07);
-			c007 = c007 < 0 ? 0.0 : c007;
-			c05 = AonMathUtils.round( c05 + ( c007 - fm.getAmount(Mod130Key.C16)));
+			// Tener en cuenta tambien el NIF por si hay mas de un modelo 130 por varios comuneros por ejemplo
+			if (AonStringUtils.equals(fm.getDocument(), mod.getDocument())) {
+				double c007 = fm.getAmount(Mod130Key.C07);
+				c007 = c007 < 0 ? 0.0 : c007;
+				c05 = AonMathUtils.round( c05 + ( c007 - fm.getAmount(Mod130Key.C16)));
+			}
 		}
 		return c05;
 	}
@@ -547,6 +551,7 @@ public class Mod130AEAT2024Declaration extends Mod130Declaration {
 								"Declaraciones de trimestres anteriores:"))
 						.append("</tr>");
 				long count = Mod130DAO.getPreviousEffectiveModels(ctx, (Mod130) fm)
+				 .filter(m -> AonStringUtils.equals(m.getDocument(),mod.getDocument())) // Tener en cuenta tambien el NIF por si hay mas de un modelo 130 por varios comuneros por ejemplo
 				 .map(m -> {
 					 double c007 = AonMathUtils.zeroIfNegative(m.getAmount(Mod130Key.C07));
 					 double c016 = m.getAmount(Mod130Key.C16);
