@@ -2,7 +2,6 @@ package solutions.aon.in.invoice.aws.lambda;
 
 import static java.lang.String.format;
 import static solutions.aon.aws.s3.S3UploadEventObject.getS3UploadEventObjects;
-import static solutions.aon.in.invoice.aws.lambda.InvofoxWebhookHandler.format;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,20 +18,18 @@ import org.json.JSONObject;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.finance.InvofoxConfiguration;
 import com.esferalia.aon.occam.api.model.task.Task;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import net.aonsolutions.aon.api.AonInvofox;
 import net.aonsolutions.aon.api.AonSecurity;
-import net.aonsolutions.aon.api.AonTask;
 import net.aonsolutions.aon.in.pdf.maker.exception.CanNotCreatePdfException;
 import net.aonsolutions.aon.in.pdf.maker.image.ImageToPdf;
 import net.aonsolutions.aon.sign.PdfSigner;
@@ -140,7 +137,6 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     	    
         		loadDocuments(invofoxConfiguration, DocumentType.INVOICE, companyId, loadBatchId, clientData,  downloadURL);
     	    
-        		documentSent(s3UploadEventObject, loadBatchTaskJSON, downloadURL);
     		} else {
         		createRawdoc(s3UploadEventObject, RawdocStatus.INBOX);
     		}
@@ -257,7 +253,7 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
 	    JSONObject taskJSON ;
 	    
 	    try {
-		taskJSON =  AonTask.newTask(s3UploadEventObject.getDomain(), s3UploadEventObject.getUser(), task );
+		taskJSON =  TaskJSON.toJSON(task);
 	    } catch ( Exception t ) {
 		taskJSON = new JSONObject()
 		.put("id", Integer.MAX_VALUE );
@@ -275,83 +271,6 @@ public class S3RequestHandler implements RequestHandler<Object, String> {
     }
     
     
-    static String documentSent(S3UploadEventObject s3UploadEventObject, JSONObject loadBatchTaskJSON, String downloadURL) throws URISyntaxException, IOException, InterruptedException {
-	
-	String s3Key = s3UploadEventObject.getKey();
-	String s3Bucket = s3UploadEventObject.getBucket();
-	String userLogin = s3UploadEventObject.getUser();
-	String domainName = s3UploadEventObject.getDomain();
-
-
-	TaskWorkflow taskWorkflow = new TaskWorkflow();
-	
-	Integer task = loadBatchTaskJSON.getJSONObject(LOAD_TASK).getInt("id");
-	
-	taskWorkflow.setTask(task);
-	taskWorkflow.setType(TaskWorkflowType.COMMENT);
-	
-	Map<String, String> params = new HashMap<>();
-	
-	params.put("s3Key", s3UploadEventObject.getKey());
-	
-	params.put("publicState", "Procesando");
-	params.put("publicStateColor", "darkblue");
-	
-	params.put("downloadURL", downloadURL);
-	params.put("fileName", s3UploadEventObject.getFileName());
-	
-	params.put("creationDate", format(new Date(), ""));
-	
-	String companyName = S3Invoice.getCompanyName(s3Bucket, s3Key);
-
-	params.put("companyName", InvofoxWebhookHandler.getOrDefault(companyName, "") );
-	
-	params.put("font", "font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57);");
-	
-	taskWorkflow.setComment(format(
-                """
-                <!-- s3Key:"${s3Key}" -->
-                <div style="font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57); font-weight:normal;">
-                <table style="width:100%;padding: 8px; border-collpase:collapse;">
-                <thead style="background-color:#f5f7fa">
-                <tr>
-                <th style="padding:8px;" >Tipo</th>
-                <th style="padding:8px;">Compañia</th>
-                <th style="padding:8px;">Estado</th>
-                <th style="padding:8px;">Núm.factura</th>
-                <th style="padding:8px;">Nombre emisor</th>
-                <th style="padding:8px;">Nombre receptor</th>
-                <th style="padding:8px;" >Base Imponible</th>
-                <th style="padding:8px;">Fecha emisión</th>
-                <th style="padding:8px;">Fecha de subida</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                <td style="padding:8px;" >-</td>
-                <td style="padding:8px;">${companyName}</td>
-                <td style="padding:8px;"><span style="background-color:${publicStateColor};padding: 2px 16px; border-radius: 22px; color: white; font-weight: bold;" >${publicState}</span></td>
-                <td style="padding:8px;"><a href="${downloadURL}" target="_blank" style="text-decoration:underline;">${fileName}</a></td>
-                <td style="padding:8px;">-</td>
-                <td style="padding:8px;">-</td>
-                <td style="padding:8px;" >-</td>
-                <td style="padding:8px;">-</td>
-                <td style="padding:8px;">${creationDate}</td>
-                </tr>
-                </tbody>
-                </table>
-                </div>
-                """, 
-		params));
-	
-	
-	taskWorkflow.setCreationDate(new Date());
-	taskWorkflow.setCreationUser(userLogin);
-	
-	JSONObject taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
-	
-	return taskWorkflowJSON.toString(1);
-    }
 
 //    {
 //	  "Records": [
