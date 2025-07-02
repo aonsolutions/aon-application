@@ -552,9 +552,16 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 		return AonMathUtils.isNotZero(value);
 	}
 
-	private int getDays() {
-		if ( mod200.getPeriodType() == 3) {
-			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd());
+	// ESTE METODO ME DEVUELVE LOS DIAS ENTRE DOS FECHAS (FECHA_FIN-FECHA_INI) Y EN ALGUNOS SITIOS NECESITO LOS DIAS DEL PERIODO (FECHA_FIN-FECHA_INI+1)
+//	private int getDaysOld() {
+//		if ( mod200.getPeriodType() == 3) {
+//			return (int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd());
+//		}
+//		return 365;
+//	}
+	private int getDaysOfPeriod() {
+		if (mod200.getPeriodType() == 3) {
+			return ((int) AonDateUtils.getDaysBetweenDates(mod200.getPeriodStart(), mod200.getPeriodEnd())) + 1;
 		}
 		return 365;
 	}
@@ -626,7 +633,7 @@ public class Mod2002024MVELContext implements Map<String, Object> {
 	}
 	
 	private double getLimit(int limit) {
-		return AonMathUtils.round( (double) limit * getDays() / 365);
+		return AonMathUtils.round( (double) limit * getDaysOfPeriod() / 365);
 	}
 	
 	public double computeD1004(double d1004) throws AonCoreException {
