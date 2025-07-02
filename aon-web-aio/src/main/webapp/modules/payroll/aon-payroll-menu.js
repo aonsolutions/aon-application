@@ -26,7 +26,7 @@ export class AonPayrollMenu extends AonSuiteMenu {
 	        this.initialize();
 	        this.build();
 	        this.setTitle("Opciones de laboral");
-			if (this.isBeta()) {
+			if (this.isBeta() && !this.isDomainManagementAvailable()) {
 			   	let newViewButton = new AonIconButton();
 			   	newViewButton.id = this.id + "NewViewBtn";
 				newViewButton.icon = "open_in_new";
