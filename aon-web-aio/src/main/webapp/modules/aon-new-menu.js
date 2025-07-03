@@ -1191,8 +1191,7 @@ export class AonNewMenu extends AonElement {
 				}, {
 					name: MSG.TICKETS+"/"+MSG.SUPPORTING_DOCUMENTS,
 					icon: MATERIAL_ICONS.RECEIPT,
-					fn: () => this.newInvoice('ticket')
-					
+					fn: () => this.newInvoice('ticket')	
 				}
 			];
 			
@@ -1211,7 +1210,7 @@ export class AonNewMenu extends AonElement {
 
 							getCompanyActivities({}).then(activities => {
 								let data = { uploaded: 0}
-								if(this.isBeta() && activities.length > 1) {
+								if(activities.length > 1) {
 									let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
 									activity.default = true;
 									activity.setAlias("id", "description");
@@ -1242,7 +1241,7 @@ export class AonNewMenu extends AonElement {
 									});
 									d.open();
 								} else {
-									if(this.isBeta() && activities.length > 0) {
+									if(activities.length > 0) {
 										data.activity = activities[0].id;
 									}
 									let uploadToast = this.getElement('aonUploadToast');
