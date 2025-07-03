@@ -366,7 +366,7 @@ export class AonDesktop extends AonElement {
 	uploadInvoiceDesktop(input, files) {
 		getCompanyActivities({}).then(activities => {
 			let data = { uploaded: 0 };
-			if(this.isBeta() && activities.length > 1) {
+			if(activities.length > 1) {
 				let activity =  createSelect(this.ACTIVITY, MSG.ACTIVITY);
 				activity.default = true;
 				activity.setAlias("id", "description");
@@ -397,7 +397,7 @@ export class AonDesktop extends AonElement {
 				});
 				d.open();
 			} else {
-				if(this.isBeta() && activities.length > 0) {
+				if(activities.length > 0) {
 					data.activity = activities[0].id;
 				}
 
