@@ -340,6 +340,19 @@ public class PAYROLL {
 			}
 		}
 	}
+	
+	public static Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(String domainName, Integer domainId, String login, Integer parentDomain, Integer year) {
+		CloseableAONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getPayroll().getAgreementLevelCategoryStream(ctx, domainId, parentDomain, year );
+		} finally {
+			if (ctx != null){
+				ctx.close();
+			}
+		}
+	}
+	
 	public static Optional<AgreementLevelCategory> getAgreementLevelCategory(String domainName, Integer domainId, String login, AgreementLevelCategoryFilter filter) {
 		CloseableAONContext ctx = null;
 		try {

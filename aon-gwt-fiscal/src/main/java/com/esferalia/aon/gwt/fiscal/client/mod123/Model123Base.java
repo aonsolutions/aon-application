@@ -599,6 +599,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
 				showPaymentInfo(result);
+				FiscalModelUtils.sendEmail(getCallback(), result); // Si ha ido bien el cambio de estado, entonces se envía email de notificación
 			}
 
 			@Override

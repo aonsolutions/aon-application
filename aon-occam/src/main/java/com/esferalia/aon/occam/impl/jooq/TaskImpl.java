@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Options;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -332,5 +333,17 @@ public class TaskImpl implements ITask {
 	public List<TaskHolder> getAviableSellerTaskHolders(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> TaskHolderDAO.getAviableSellerTaskHolders(ctx));	
+	}
+	
+	@Override
+	public List<TaskHolder> getTaskHolderList(AONContext ctx, TaskHolderParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.getTaskHolderList(ctx, params));
+	}
+	
+	@Override
+	public Integer getTaskHoldersCount(AONContext ctx, TaskHolderParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TaskHolderDAO.getTaskHoldersCount(ctx, params));
 	}
 }
