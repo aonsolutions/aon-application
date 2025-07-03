@@ -66,6 +66,7 @@ import { Expense } from './invoice/Expense.js';
 import { createSelect } from '../components/CreateComponent.js';
 import { getCompanyActivities } from '../services/companyService.js';
 import { AonDialog } from '../components/aon-dialog.js';
+import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -316,7 +317,7 @@ export class AonNewMenu extends AonElement {
 	getAonSuiteMenu( app ) {
 		switch (app.app) {
 		case ACCOUNTING_MENU.app:
-			return new AonAccountingMenu();
+			return this.isDomainManagementAvailable() ? new AonAccountingMenu() : new AonAccountingBeta();
 		case COMMERCIAL_MENU.app:
 			return new AonCommercialMenu();
 		case GROUPWARE_MENU.app:
@@ -328,9 +329,9 @@ export class AonNewMenu extends AonElement {
 		case WAREHOUSE_MENU.app:
 			return new AonWarehouseMenu();
 		case FISCAL_MENU.app:
-			return new AonFiscalMenu();
+			return this.isDomainManagementAvailable() ? new AonFiscalMenu() : new AonFiscalBeta();
 		case PAYROLL_MENU.app:
-			return new AonPayrollMenu();
+			return this.isDomainManagementAvailable() ? new AonPayrollMenu() :  new AonPayrollBeta();
 		case MARKETING_MENU.app:
 			return new AonMarketingMenu();
 		case CONFIGURATION_MENU.app:
@@ -1518,6 +1519,10 @@ export class AonNewMenu extends AonElement {
 
 		aonMenuSearchDialog.open();
 				
+	}
+	
+	isDomainManagementAvailable() {
+		return this.getDur().isDomainManagementAvailable();
 	}
 	
 }
