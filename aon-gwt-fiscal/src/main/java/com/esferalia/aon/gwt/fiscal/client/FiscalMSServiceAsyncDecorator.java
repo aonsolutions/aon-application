@@ -41,4 +41,11 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 		serviceAsync.savePDFModel(occam, model, data, new AsyncCallbackWrapper<Void>(callback));		
 	}
 	
+	// Para envio de email
+	@Override
+	public void sendEmail(Occam occam, IFiscalModel model, AsyncCallback<Void> callback) {		
+		AON.start();		
+		serviceAsync.sendEmail(occam, model, new AsyncCallbackWrapper<Void>(callback));		
+	}
+	
 }

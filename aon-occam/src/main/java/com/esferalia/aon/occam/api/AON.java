@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -91,6 +92,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -6799,6 +6801,21 @@ public class AON {
 	public static Stream<TaskHolder> getTaskHolderStream(String domainName, Integer domainId, String login, TaskHolderFilter filter, Options...options){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getTask().getTaskHolderStream(ctx, filter, options);
+		}
+	}
+	
+	public static List<TaskHolder> getTaskHolderList(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return new ArrayList<>(getTask().getTaskHolderList(ctx, params));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<TaskHolder>();
+		}
+	}
+	
+	public static Integer getTaskHoldersCount(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getTask().getTaskHoldersCount(ctx, params);
 		}
 	}
 	

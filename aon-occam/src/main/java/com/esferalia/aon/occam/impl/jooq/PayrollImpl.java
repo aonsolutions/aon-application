@@ -171,6 +171,12 @@ public class PayrollImpl implements IPayroll {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ContractDAO.getAgreementLevelCategoryStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, Integer domainId, Integer parentDomain, Integer year) {
+		return ctx.getDslContext().transactionResult(configuration ->
+			ContractDAO.getAgreementLevelCategoryStream(ctx, domainId, parentDomain, year));
+	}
 
 	// -------------------- CCC
 	@Override

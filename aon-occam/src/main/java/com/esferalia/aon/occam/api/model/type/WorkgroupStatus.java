@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum WorkgroupStatus {
+public enum WorkgroupStatus implements Serializable {
 	
     ACTIVE,
     INACTIVE;
