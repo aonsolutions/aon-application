@@ -42,6 +42,7 @@ public class printContractMedia extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.log(Level.INFO, "Print Salaried Staff - GET METHOD");
+		
 		HashMap<String, String> parameters = SecurityUtils.getInstance().getParameters(req.getPathInfo().substring(1));
 		String domainName = parameters.get("domain");
 		String login = parameters.get("login");
@@ -69,6 +70,7 @@ public class printContractMedia extends HttpServlet{
 			categoryArray.put(ToJSON.objectToJSON(r.getId(), r.getDescription()));
 		});
 		json.put("categories", categoryArray);
+		
 		File file = createPdf(json, resume, detail);
 		
         Utils.addCorsHeader(resp);

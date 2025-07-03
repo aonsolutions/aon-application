@@ -30,6 +30,7 @@ public class Contract implements Serializable{
 	ContractStatus ssStatus;
 	String personDocument;
 	String personSsNumber;
+	String personName;
 
 	public Contract() {
 	
@@ -212,6 +213,15 @@ public class Contract implements Serializable{
 	
 	public Contract setPersonSsNumber(String personSsNumber) {
 		this.personSsNumber = personSsNumber;
+		return this;
+	}
+
+	public String getPersonName() {
+		return personName;
+	}
+
+	public Contract setPersonName(String personName) {
+		this.personName = personName;
 		return this;
 	}
 
