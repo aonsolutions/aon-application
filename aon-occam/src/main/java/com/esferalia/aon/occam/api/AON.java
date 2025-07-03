@@ -8322,6 +8322,12 @@ public class AON {
 		}
 	}
 	
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny);
+		}
+	}
+	
 	// ---------- DOMAIN LINKED
 
 	public static List<DomainLinked> getDomainLinkedList(String domainName, Integer domainId, String login, Integer registry) {
