@@ -30,6 +30,8 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SUBTRACT_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
+	DELIVERY_GENERAL_CARD;
+	DELIVERY_DETAIL_CARD;
 	PACKAGING_PRODUCT;
 	PACKAGING_SOURCE_PRODUCT;
 	PACKAGING_SOURCE_QUANTITY;
@@ -68,6 +70,8 @@ export class AonMobileDelivery extends AonElement {
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
+		this.DELIVERY_GENERAL_CARD = this.id + 'GeneralCard';
+		this.DELIVERY_DETAIL_CARD = this.id + 'DetailCard';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -137,6 +141,11 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	buildDeliveryGeneral(parent) {
+		let card = createCard(this.DELIVERY_GENERAL_CARD, 'Datos Albarán', parent);
+
+		let div = this.createDiv(this.DELIVERY_GENERAL_CARD + 'Customer');
+		div.innerHTML = this.delivery.customer.name;
+		card.setContent(div);
 
 	}
 
