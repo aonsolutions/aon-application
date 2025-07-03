@@ -105,14 +105,6 @@
                 .userPanelDivUserInfo{
                   background-color: $color-box;
                 }
-/*                #aonLoginPanelLogout{
-                  // esto habra que quitarlo porque sera un button normal (hay que cambiarle la etiqueta)
-                  background-color : $color-button-card;
-                  &:hover{
-                    background-color : $color-button-card-hover;
-                    color            : $color-text;
-                  }
-                }*/
               }
             }
             // Menu derecha - Notificaciones
@@ -259,12 +251,12 @@
       aon-input, aon-new-input{ 
         .aonInputMsg{
           .aonInputMsgError{
-            color : $color-red-500;
+            color: $color-red-500;
           }
         }
         aon-icon-button i {
           &::after {
-            background-color : $color-300;
+            background-color: $color-300;
           }
         }
         input{
@@ -279,20 +271,20 @@
       }
       // Card
       aon-card{
-        background-color : $color-box;
+        background-color: $color-box;
         .aonCardTitle{
-          border-bottom : v.$px-1-6 solid $color-300;
+          border-bottom: v.$px-1-6 solid $color-300;
         }
         .aonCardContent{
           .card-list, buttoms{
-            color : $color-text-card;
+            color: $color-text-card;
           }
           .buttom{
             &:hover{
-              background-color : $color-50;
+              background-color: $color-50;
             }
             &.active{
-              background-color : $color-100;
+              background-color: $color-100;
             }
           }
         }
@@ -302,10 +294,10 @@
         .aonSwitch{
           span{
             // fondo
-            background-color : $color-switch;
+            background-color: $color-switch;
             &::before {
               // circulo
-              background-color : $color-switch-off;
+              background-color: $color-switch-off;
             }
           }
         }
@@ -314,7 +306,7 @@
             span{
               &::before {
                 // circulo
-                background-color : $color-switch-on;
+                background-color: $color-switch-on;
               }
             }
           } 
@@ -342,6 +334,14 @@
             .aonLoginTitle{
               color : $color-text-login;
             }
+          }
+        }
+      }
+      // Plans
+      aon-plans .aonFlex #Content{
+        .plansGrid{
+          .contracted{
+            color: $color-menu-green;
           }
         }
       }

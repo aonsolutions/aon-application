@@ -1,0 +1,48 @@
+@use '../variables' as v;
+
+aon-table{
+  width: v.$pct-100;
+  table{
+    width: v.$pct-100;
+    border-collapse: separate;
+    border-spacing: 0 v.$gap;
+    th, td {
+      border: none;
+    }
+    td{
+      padding: 0 v.$padding;
+    }
+    thead{
+      height: 60px;
+      //background-color: $color-200;
+      background-color: #E2E8F0;
+    }
+    tbody{
+      tr{
+        height: 58px;
+        cursor: pointer;
+        td {
+          //border-top: $border;
+          //border-bottom: $border;
+          border-top: v.$px-1 solid #E2E8F0;
+          border-bottom: v.$px-1 solid #E2E8F0;
+          border-radius: 0;
+        }
+        // Primer td de la fila ? esquinas izquierda
+        tr td:first-child {
+          //border-left: $border;
+          border-left: v.$px-1 solid #E2E8F0;
+          border-top-left-radius: v.$border-radius;
+          border-bottom-left-radius: v.$border-radius;
+        }
+        // Ultimo td de la fila ? esquinas derecha
+        tr td:last-child {
+          //border-right: $border;
+          border-right: v.$px-1 solid #E2E8F0;
+          border-top-right-radius: v.$border-radius;
+          border-bottom-right-radius: v.$border-radius;
+        }
+      }
+    }
+  }
+}

@@ -68,13 +68,14 @@ export class AonPlans extends AonElement {
   build() {
     // Titulo
     const tittleDiv = this.createElement(TAG.DIV);
+    tittleDiv.className = "title-plans";
 
-    const titleH1 = this.createElement(TAG.H1);
+    const titleH1 = this.createElement(TAG.H2);
     titleH1.innerHTML = "Mejora tu plan. Impulsa tu negocio.";
-    this.applicationEl.setContent(titleH1);
+    tittleDiv.appendChild(titleH1);
 
     //Subtitulo
-    const subtitleP = this.createElement(TAG.P);
+    const subtitleP = this.createElement(TAG.DIV);
     subtitleP.textContent = "Olvídate de invertir en recursos externos para aumentar tu productividad. Nuestro software tiene todo lo que necesitas en un único lugar ¡Descúbrelo!";
     tittleDiv.appendChild(subtitleP);
     this.applicationEl.addContent(tittleDiv);
@@ -91,37 +92,24 @@ export class AonPlans extends AonElement {
     this.applicationEl.addContent(plansGrid);
 
     // Contenedor de la card de usuarios
-    const plansFooter = this.createElement(TAG.DIV);
-    plansFooter.classList.add("plansFooter");
+    const cardAddUsers      = new AonCard;
+    cardAddUsers.className  = "plansFooter";
+    cardAddUsers.title      = "¿Necesitas añadir usuarios?";
+    // Agregamos la card
+    this.applicationEl.addContent(cardAddUsers);
+      // Adjuntamos datos a la card
+      const usersDesc = this.createElement(TAG.DIV);
+      usersDesc.textContent = `Para utilizar de forma simultánea este software con otras personas, necesitas varios usuarios. Cada usuario dispondrá de un acceso individual a las funcionalidades contratadas.`;
+      cardAddUsers.addContent(usersDesc);
 
-    const userCard = this.createElement(TAG.DIV);
-    userCard.classList.add("planCard", "fullWidthCard");
-
-    const userTitle = this.createElement(TAG.H3);
-    userTitle.textContent = "¿Necesitas añadir usuarios?";
-    userTitle.style.textAlign = "center";
-    userTitle.style.fontSize = "1.2rem";
-    userTitle.style.marginTop = "5px";
-
-    const userDesc = this.createElement(TAG.P);
-    userDesc.textContent = `Para utilizar de forma simultánea este software con otras personas, necesitas varios usuarios. Cada usuario dispondrá de un acceso individual a las funcionalidades contratadas.`;
-    userDesc.style.textAlign = "center";
-    userDesc.style.marginTop = "2px";
-    userDesc.style.marginBottom = "25px";
-
-    const userButton = this.createElement(TAG.BUTTON);
-    userButton.classList.add("planButton");
-    userButton.textContent = "AÑADE USUARIOS";
-    userButton.addEventListener(EVENT.CLICK, () => {
-        this.sendDataforPlan("Añadir usuarios");
-    });
-
-    userCard.appendChild(userTitle);
-    userCard.appendChild(userDesc);
-    userCard.appendChild(userButton);
-    plansFooter.appendChild(userCard);
-
-    this.applicationEl.addContent(plansFooter);
+      // Adjuntamos boton a la card
+      const usersButton = this.createElement(TAG.BUTTON);
+      usersButton.classList.add("planButton");
+      usersButton.textContent = "AÑADE USUARIOS";
+      usersButton.addEventListener(EVENT.CLICK, () => {
+          this.sendDataforPlan("Añadir usuarios");
+      });
+      cardAddUsers.addContent(usersButton);
   }
 
   buildPlanCard(plan, index, userLevel, plansGrid) {
@@ -136,7 +124,7 @@ export class AonPlans extends AonElement {
     subtitle.innerHTML = plan.subtitle;
     card.addContent(subtitle);
 
-    const description = this.createElement(TAG.P);
+    const description = this.createElement(TAG.DIV);
     description.classList.add("planDescription");
     description.textContent = plan.description;
     card.addContent(description);
@@ -146,8 +134,8 @@ export class AonPlans extends AonElement {
     price.classList.add("planPrice");
     const isAlreadyContracted = index === userLevel;
     if (isAlreadyContracted) {
+        price.className   = "contracted";
         price.textContent = "Ya contratado";
-        price.style.color = "#28a745";
     } else {
         price.textContent = plan.price;
     }

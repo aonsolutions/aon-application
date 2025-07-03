@@ -26,6 +26,7 @@
 @use './components/icons' as icon;
 @use './components/card' as card;
 @use './components/switch' as switch;
+@use './components/table' as table;
 
 // Importamos layouts
 @use './layouts/header' as header;
@@ -38,8 +39,9 @@
 
 // Importamos vistas
 @use './pages/index' as index;                // login
-@use './pages/home' as home;                  // home - logueado
-@use './pages/home_desktop' as home_desktop;  // home - en empresa
+@use './pages/home' as home;                  // home  - logueado
+@use './pages/home_desktop' as home_desktop;  // home  - en empresa
+@use './pages/plans' as plans;                // plans - Listado de planes que se pueden contratar
 
 :root{
   font-family : v.$font-primary-regular;
