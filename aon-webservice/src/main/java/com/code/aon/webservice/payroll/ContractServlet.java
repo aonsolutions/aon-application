@@ -80,6 +80,7 @@ public class ContractServlet extends HttpServlet{
 		PAYROLL.getContractStream(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(AonDateUtils.toSql(ejInitDate))))
+			.and(f.getStartDateProperty().le(AonDateUtils.toSql(ejFinalDate)))
 		)
 		.sorted((a,b) ->  AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(a.getPerson())).get().getName().compareTo(
 				 AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(b.getPerson())).get().getName()))

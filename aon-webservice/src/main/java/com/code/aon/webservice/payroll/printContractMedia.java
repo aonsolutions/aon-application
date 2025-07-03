@@ -68,11 +68,6 @@ public class printContractMedia extends HttpServlet{
 		.forEach(r -> {
 			categoryArray.put(ToJSON.objectToJSON(r.getId(), r.getDescription()));
 		});
-//		PAYROLL.getAgreementLevelCategoryStream(domain.getName(), domain.getId(), login, f ->
-//		f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-//		.forEach(r -> {
-//			categoryArray.put(ToJSON.objectToJSON(r.getId(), r.getDescription()));
-//		});
 		json.put("categories", categoryArray);
 		File file = createPdf(json, resume, detail);
 		
