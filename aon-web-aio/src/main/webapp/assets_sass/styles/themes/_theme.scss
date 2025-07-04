@@ -129,11 +129,11 @@
           ul{
             background-color : $color-box;
             li{
+              &:hover, &.aonMenuSidenavLiSeleted{
+                background-color : $color-100;
+              }
               a{
                 div{
-                  &:hover{
-                    background-color : $color-100;
-                  }
                   i{
                     background-color : $color-icon-menu;
                   }
@@ -157,6 +157,24 @@
       // Carga el contenido
       #rootPanel{
         background-color : $color-100;
+      }
+      // submenu in content
+      .aonSidenav{
+        background-color : $color-box;
+        ul {
+          li{
+            &:hover, &.aonAppMenuSidenavListSelected{
+              background-color : $color-100;
+            }
+          }
+        }
+        aon-icon-button{
+          i{
+            &::after{
+              background-color: $color-text;
+            }
+          }
+        }
       }
     // 
     // Componentes
@@ -291,8 +309,8 @@
       }
       // Switch
       aon-switch{
-        .aonSwitch{
-          span{
+        .aonSwitch-slider{
+          .slider{
             // fondo
             background-color: $color-switch;
             &::before {
@@ -302,14 +320,38 @@
           }
         }
         &[checked="true"]{
-          .aonSwitch{
-            span{
+          .aonSwitch-slider{
+            .slider{
               &::before {
                 // circulo
                 background-color: $color-switch-on;
               }
             }
           } 
+        }
+      }
+      // Tables
+      aon-table{
+        table{
+          thead{
+            background-color: $color-200;
+          }
+          tbody{
+            tr{
+              td {
+                border-top   : $border;
+                border-bottom: $border;
+                // Primer td de la fila ? esquinas izquierda
+                &:first-child {
+                  border-left: $border;
+                }
+                // Ultimo td de la fila ? esquinas derecha
+                &:last-child {
+                  border-right: $border;
+                }
+              }
+            }
+          }
         }
       }
     // 
@@ -344,6 +386,10 @@
             color: $color-menu-green;
           }
         }
+      }
+      // Documental
+      aon-documental .aonFlex #aonDocumentalContent{
+        background-color : $color-box;
       }
     }
   }

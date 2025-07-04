@@ -76,10 +76,9 @@ export class AonSwitch extends AonElement {
       if(el) el.checked = boolean;
       this.value = boolean;
   	} else if(CONSTANT.TITLE === name) {
-			let title = this.getElement(this.TITLE);
-			if(title)
-				title.innerHTML = this.hasAttribute(CONSTANT.TITLE)
-					? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
+      let title = this.getElement(this.TITLE);
+      if(title)
+        title.innerHTML = this.hasAttribute(CONSTANT.TITLE) ? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
     } else if (CONSTANT.DISABLED === name) {
       if (el) {
         if (newValue ==CONSTANT.FALSE)
@@ -103,41 +102,53 @@ export class AonSwitch extends AonElement {
     label.id = this.LABEL;
     label.className = "aonSwitch";
     this.appendChild(label);
+    
+    // TITULO
+    let span        = this.createElement(TAG.SPAN);
+    span.id         = this.TITLE;
+    span.className  = "title";
+    label.appendChild(span);
 
+    let contentSlider = this.createElement(TAG.SPAN);
+    contentSlider.className = "aonSwitch-slider";
+    // INPUT
     let input = this.createElement(TAG.INPUT);
     input.id   = this.INPUT;
     input.name = this.name || this.INPUT ;
     input.type = "checkbox";
     if(this.disabled =="true") input.disabled = this.disabled;
-    label.appendChild(input);
+//    label.appendChild(input);
+    contentSlider.appendChild(input);
 
-    let span = this.createElement(TAG.SPAN);
-    span.id = this.TITLE;
-    label.appendChild(span);
+    // CIRCULO
+    let spanSlider        = this.createElement(TAG.SPAN);
+    spanSlider.className  = "slider";
+//    label.appendChild(spanSlider);
+    contentSlider.appendChild(spanSlider);
+    label.appendChild(contentSlider);
 
     input.addEventListener(EVENT.CHANGE, () => {
       this.value = input.value;
       this.checked = input.checked;
     });
-		if(this.hasAttribute(CONSTANT.READONLY)) {
-			input.setAttribute(CONSTANT.READONLY, CONSTANT.READONLY);
-		}
    
-		span.innerHTML = this.hasAttribute(CONSTANT.TITLE)
-			? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
-    let boolean = false
-    if(this.checked && this.checked==CONSTANT.TRUE) {
+    if(this.hasAttribute(CONSTANT.READONLY)) {
+        input.setAttribute(CONSTANT.READONLY, CONSTANT.READONLY);
+    }
+    span.innerHTML = this.hasAttribute(CONSTANT.TITLE) ? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
+    let boolean = false;
+    if(this.checked && this.checked === CONSTANT.TRUE) {
       input.checked = true;
-      boolean= true;
+      boolean = true;
     }
     this.value = boolean;
   }
 
   initialize() {
     this.id = this.id || 'aonSwitch';
-		this.INPUT = this.id + CONSTANT.INPUT.initCap();
+    this.INPUT = this.id + CONSTANT.INPUT.initCap();
     this.LABEL = this.id + "Label";
-		this.TITLE = this.id + CONSTANT.TITLE.initCap();
+    this.TITLE = this.id + CONSTANT.TITLE.initCap();
   }
 
   isChecked(){

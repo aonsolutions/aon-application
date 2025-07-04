@@ -1,0 +1,90 @@
+@use '../variables' as v;
+
+$icon-size: v.$px-18;
+$icon-gap : calc(v.$gap / 2);
+
+// Submenu que carga dentro de las paginas
+.aonSidenav{
+  display       : flex;
+  flex-direction: column;
+  border-radius : v.$border-radius;
+  gap           : v.$gap;
+  padding-bottom: v.$padding;
+  div:first-child .aonSidenavTitle{
+    padding-top: v.$padding;
+  }
+  .aonSidenavTitle{
+    padding        : 0 v.$padding;
+    display        : flex;
+    gap            : $icon-gap;
+    justify-content: space-between;
+    align-items    : center;
+    cursor         : pointer;
+    &> * {
+      font-size  : v.$px-16;
+      font-family: v.$font-primary-bold;
+    }
+    aon-icon[icon="chevron-down"] {
+      transform : rotate(0deg);
+      transition: transform 0.3s ease;
+    }
+    .aonSidenavTitleName{
+      width      : v.$pct-100;
+    }
+  }
+  ul {
+    list-style    : none;
+    margin        : 0;
+    padding       : 0;
+    opacity       : 1;
+    transform     : translateY(0);
+    pointer-events: auto;
+    visibility    : visible;
+    transition    : opacity 0.3s ease, transform 0.3s ease;
+    li{
+      font-family    : v.$font-primary-regular;
+      font-size      : v.$px-14;
+      padding        : v.$px-10 v.$padding v.$px-10 (v.$padding + v.$padding);
+      cursor         : pointer;
+      display        : flex;
+      gap            : v.$gap;
+      justify-content: space-between;
+      &>span{
+        display    : flex;
+        gap        : $icon-gap;
+        align-items: center;
+        &.aonMenuItemSpan{
+          width      : v.$pct-100;
+        } 
+        button{
+          width : $icon-size;
+          height: $icon-size;
+          i {
+            width : $icon-size;
+            height: $icon-size;
+            &::after {
+              width : $icon-size;
+              height: $icon-size;
+            }
+          }
+        }
+      }
+    }
+  }
+  // Ocultar un apartado
+  .sidenav-hidden{
+    .aonSidenavTitle aon-icon[icon="chevron-down"] {
+      transform: rotate(-90deg);
+    }
+    ul{
+      opacity       : 0;
+      transform     : translateY(20px);
+      pointer-events: none;
+      visibility    : hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+    }
+  }
+}

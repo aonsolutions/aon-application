@@ -124,6 +124,9 @@ export class AonDesktop extends AonElement {
 		aonDesktop.setContent(content);
 
         this.createDashboard(content, company);
+        // Quitamos el toolbar
+        const toolbar = this.querySelector('aon-toolbar');
+        if (toolbar) toolbar.remove();
 	}
 
 	async createDashboard(parent, company) {

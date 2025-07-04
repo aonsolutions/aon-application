@@ -1,0 +1,12 @@
+@use '../variables' as v;
+@use '../base/mixins' as mixin;
+
+aon-home{
+  #rootPanel {
+    aon-documental .aonFlex #aonDocumentalContent{
+      width        : v.$pct-100;
+      padding      : v.$padding;
+      border-radius: v.$border-radius;
+    }
+  }
+}

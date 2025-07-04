@@ -46,9 +46,6 @@ export class AonPlans extends AonElement {
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
       if(this.isAyudaT() && (this.getDur().isAdmin() || this.getDur().isEnterprise())){
-        
-        console.log(this.PLANES);
-        
         this.createApplication(this.PLANES, MSG.APPLICATIONS, new AonApplication());
         this.applicationEl = this.getApplication();
         this.applicationEl.removeToolbar(); // Sin Toolbar

@@ -1,0 +1,19 @@
+@use '../variables' as v;
+
+aon-toolbar{
+  header{
+    display: flex;
+    gap    : v.$gap;
+    width  : v.$pct-100;
+    justify-content: space-between;
+    align-items: center;
+    section{
+      display: flex;
+      gap    : v.$gap;
+      width  : v.$pct-100;
+      &:last-child{
+        justify-content: flex-end;
+      }
+    }
+  }
+}

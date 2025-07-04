@@ -181,8 +181,6 @@ export const SERES = {
   getMenuOptions: (dur) => DocumentalOptions.getOptions(dur)
 };
 
-
-
 export const COMMERCIAL = {
   app: CONSTANT.COMMERCIAL,
   title: MSG.COMMERCIAL,
