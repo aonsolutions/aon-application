@@ -585,6 +585,7 @@ public class FillerDAO {
 					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
 					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
 					.setPersonSsNumber(r.getValue(PERSON.SOCIAL_SECURITY_NUM))
+					.setPersonName(r.getValue(REGISTRY.NAME))
 
 				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
 					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));

@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class S3UploadEventObject extends S3EventObject {
     
-    
     private int order;
 
     private String job;
     private String user;
     private String domain;
     private String document;
+    private String activity;
     private String prefix;
     private String fileName;
     private boolean camera;
@@ -49,16 +49,18 @@ public class S3UploadEventObject extends S3EventObject {
 			s3Object.setBucket(bucketName, s3Object);	
 
 			// key = <invoices>/<domain>/<document>/<user>/<job>/<order>_?<CM>_<filename>
+			// key with activity = <invoices>/<domain>/<document>/<activity>/<user>/<job>/<order>_?<CM>_<filename>
 			// ?<CM> --> identifica si viene o no de la camara.
 			String [] paths = objectKey.split("/");
+			boolean withActivity = paths.length == 7;
 			s3Object.setPrefix(paths[0]);
 			s3Object.setDomain(paths[1]);
 			s3Object.setDocument(paths[2]);
-			s3Object.setUser(paths[3]);
-			s3Object.setJob(paths[4]);
-			s3Object.setFileName(paths[5]);
+			if(withActivity) s3Object.setActivity(paths[3]);
+			s3Object.setUser(paths[withActivity ? 4 : 3]);
+			s3Object.setJob(paths[withActivity ? 5 :4]);
+			s3Object.setFileName(paths[withActivity ? 6 : 5]);
 			s3Object.setOrder(Integer.parseInt(s3Object.getFileName().substring(0, 2)));
-	    
 			String[] array = s3Object.getFileName().split("_");
 			s3Object.setCamera(array.length > 2 && "CM".equals(array[1]));
 	    	Date eventTime = getEventTime(record);
@@ -100,6 +102,14 @@ public class S3UploadEventObject extends S3EventObject {
     	this.document = document;
     }
 
+    public String getActivity() {
+		return activity;
+	}
+    
+    public void setActivity(String activity) {
+		this.activity = activity;
+	}
+    
     public String getPrefix() {
     	return prefix;
     }
@@ -138,5 +148,9 @@ public class S3UploadEventObject extends S3EventObject {
     
     public void setSigned(boolean signed) {
 		this.signed = signed;
+	}
+    
+    public boolean isBidoq() {
+		return getFileName().contains("bidoq");
 	}
 }

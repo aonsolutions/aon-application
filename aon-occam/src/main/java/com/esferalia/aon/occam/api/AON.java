@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -91,6 +92,7 @@ import com.esferalia.aon.occam.api.model.SellerWorkloadParams;
 import com.esferalia.aon.occam.api.model.Series;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.Survey;
+import com.esferalia.aon.occam.api.model.TaskHolderParams;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -6802,6 +6804,21 @@ public class AON {
 		}
 	}
 	
+	public static List<TaskHolder> getTaskHolderList(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return new ArrayList<>(getTask().getTaskHolderList(ctx, params));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<TaskHolder>();
+		}
+	}
+	
+	public static Integer getTaskHoldersCount(TaskHolderParams params){
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getTask().getTaskHoldersCount(ctx, params);
+		}
+	}
+	
 	// -----
 	
 	public static Stream<TaskHolder> getTaskHolderWorkgroupStream(Domain domain, User user, TaskHolderFilter filter, Integer workgroupId, int ofs, int limit){
@@ -8319,6 +8336,12 @@ public class AON {
 	public static void deleteDeliveryPackaging(Domain domain, User user, Integer deliveryId, String sscc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getWarehouse().deleteDeliveryPackaging(ctx, deliveryId, sscc);
+		}
+	}
+	
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny);
 		}
 	}
 	

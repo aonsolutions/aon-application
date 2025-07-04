@@ -695,8 +695,10 @@ public class AonNordigen  {
 	    RegistryBank rbank = account.getRbank();
 	    account.setLinked(true);
 	    account.setLastMovementDate(BankStatementDAO.getLastMovementDate(ctx, rbank.getId()));
-	    account.setRequisition(getRequisition(token, rbank.getRequisition()));
-	    account.setMetadata(getNordigenAccountMetadata(token, account.getRequisition(), rbank));
+	    NordigenRequisition requisition = getRequisition(token, rbank.getRequisition()); 
+	    account.setRequisition(requisition);
+	    NordigenAccountMetadata metadata = getNordigenAccountMetadata(token, account.getRequisition(), rbank);
+	    account.setMetadata(metadata);
 
 	    try {
 	        if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
@@ -711,7 +713,7 @@ public class AonNordigen  {
 	private static boolean shouldUpdateAgreementDays(NordigenBankAccount account) {
 	    return account.getRequisition() != null;
 	}
-
+	
 	private static void updateAgreementDays(AONContext ctx, NordigenAccessToken token, NordigenBankAccount account) {
 	    String agreementId = NordigenDAO.getAgreementId(ctx, account);
 	    if(agreementId == null) {
@@ -732,26 +734,33 @@ public class AonNordigen  {
 
 	private static void updateBalancesAndTransactions(AONContext ctx, Occam occam, NordigenAccessToken token, NordigenBankAccount account) {
 	    try {
-	        CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
-	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
-	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
-	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account));
+	    	
+	    	List<NordigenBankAccount> bankList = NordigenDAO.getAllAccounts(ctx);
+	    	
+	    	for (int i = 0; i < bankList.size(); i++) {
+	    		if(account.getIban().equals(bankList.get(i).getIban()) && account.isLinked()) {
+	    			CompletableFuture<LinkedList<NordigenAccountBalance>> balancesFuture =
+	    	                CompletableFuture.supplyAsync(() -> getAccountBalances(token, account.getMetadata().getId()));
+	    	        CompletableFuture<LinkedList<NordigenBankStatement>> transactionsFuture =
+	    	                CompletableFuture.supplyAsync(() -> getNotInsertedTransactions(token, account));
 
-	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
+	    	        CompletableFuture.allOf(balancesFuture, transactionsFuture).join();
 
-	        account.setBalances(balancesFuture.get());
-	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
-	        account.setNotInsertedMovements(notInserted);
+	    	        account.setBalances(balancesFuture.get());
+	    	        LinkedList<NordigenBankStatement> notInserted = transactionsFuture.get();
+	    	        account.setNotInsertedMovements(notInserted);
 
-	        if (notInserted != null && !notInserted.isEmpty()) {
-	            insertStatements(occam, account);
-	        }
+	    	        if (notInserted != null && !notInserted.isEmpty()) {
+	    	            insertStatements(occam, account);
+	    	        }
 
-	        Integer calls = NordigenCallLogDAO.getCallsMadeToday(ctx, ctx.getDomainId(),
-	                account.getRbank().getId(), "update");
-	        NordigenRateLimiter.registerCall(ctx, ctx.getDomainId(), account.getRbank().getId(), "update", calls);
+	    	        Integer calls = NordigenCallLogDAO.getCallsMadeToday(ctx, ctx.getDomainId(),
+	    	                account.getRbank().getId(), "update");
+	    	        NordigenRateLimiter.registerCall(ctx, ctx.getDomainId(), account.getRbank().getId(), "update", calls);
 
-	        NordigenDAO.updateRegistryBank(ctx, account);
+	    	        NordigenDAO.updateRegistryBank(ctx, account);
+	    		}	
+			}
 	    } catch (CompletionException e) {
 	        handleRateLimitException(ctx, account, e);
 	    } catch (Exception e) {

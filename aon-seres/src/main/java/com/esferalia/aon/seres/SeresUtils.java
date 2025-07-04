@@ -33,5 +33,12 @@ public class SeresUtils {
 	public static boolean isDia(String document) {
 		return "A80782519".equalsIgnoreCase(document);
 	}
+	
+	public static boolean isAldi(String document) {
+		return "B63667109".equalsIgnoreCase(document)
+			|| "B56242415".equalsIgnoreCase(document)
+			|| "B84160233".equalsIgnoreCase(document)
+			|| "B56242407".equalsIgnoreCase(document);
+	}
 
 }
