@@ -83,8 +83,6 @@ public class ContractServlet extends HttpServlet{
 			.and(f.getStartDateProperty().le(AonDateUtils.toSql(ejFinalDate)))
 		)
 		.sorted((a,b) ->  a.getPersonName().compareTo(b.getPersonName()))
-//		.sorted((a,b) ->  AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(a.getPerson())).get().getName().compareTo(
-//				 AON.getPerson(domainName, domainId, login, f-> f.getIdProperty().eq(b.getPerson())).get().getName()))
 		.forEach(contract -> {
 			LinkedList<ContractData> list = PAYROLL.getContractDataList(domainName, domainId, login, g -> 
 				g.getContractProperty().eq(contract.getId()));
