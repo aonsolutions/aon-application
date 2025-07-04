@@ -114,6 +114,29 @@ public class D2DepositConstants {
 		D2DepositHeaderKey.ITR8216023,	
 	};
 	
+	// III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	public static D2DepositHeaderKey[] ITR_KEYS_3_A = new D2DepositHeaderKey[] {
+			D2DepositHeaderKey.ITR8230201, 
+			D2DepositHeaderKey.ITR8230202, 
+			D2DepositHeaderKey.ITR8230203, 
+			D2DepositHeaderKey.ITR8230204, 
+			D2DepositHeaderKey.ITR8230205, 
+			D2DepositHeaderKey.ITR8230206, 
+			D2DepositHeaderKey.ITR8230207, 
+			D2DepositHeaderKey.ITR8230208, 
+			D2DepositHeaderKey.ITR8230209,
+			
+			D2DepositHeaderKey.ITR8230211, 
+			D2DepositHeaderKey.ITR8230212, 
+			D2DepositHeaderKey.ITR8230213, 
+			D2DepositHeaderKey.ITR8230214, 
+			D2DepositHeaderKey.ITR8230215, 
+			D2DepositHeaderKey.ITR8230216, 
+			D2DepositHeaderKey.ITR8230217, 
+			D2DepositHeaderKey.ITR8230218, 
+			D2DepositHeaderKey.ITR8230219
+	};
+	
 	public static D2DepositHeaderKey[] IMA_ABREVIATE_KEYS = new D2DepositHeaderKey[]{
 		D2DepositHeaderKey.IMA8099000, D2DepositHeaderKey.IMA8099010
 	};

@@ -6,11 +6,13 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositConstants;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositHeaderKey;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.D2DepositKey;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -64,11 +66,14 @@ public class PageITR extends PageAbs {
 	@UiField HTMLPanel table5Panel;
 	@UiField HTMLPanel table6Panel;
 	
+	@UiField HTMLPanel table3aPanel;
+	
 	@UiField(provided = true) FlexTable table2;
 	@UiField(provided = true) FlexTable table3;
 	@UiField(provided = true) FlexTable table4;
 	@UiField(provided = true) FlexTable table5;
 	@UiField(provided = true) FlexTable table6;
+	@UiField(provided = true) FlexTable table3a;
 	
 	String codeAux;
 	
@@ -80,6 +85,7 @@ public class PageITR extends PageAbs {
 		table4 = new FlexTable();
 		table5 = new FlexTable();
 		table6 = new FlexTable();
+		table3a = new FlexTable();
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 		initWidget(ui);
@@ -170,17 +176,23 @@ public class PageITR extends PageAbs {
 	@Override
 	protected void initializeTable() {
 		init();
-		if(getYear() >= 2022) {
+		if (getYear() >= 2022) {
 			table1Panel.setVisible(false);
 			table2Panel.setVisible(false);
 			table3Panel.setVisible(false);
+			table3aPanel.setVisible(getYear() >= 2024);
 			table4();
 			table5();
 			table6();
+			if (getYear() >= 2024) {
+				table3a();
+			}
+			
 		} else {
 			table4Panel.setVisible(false);
 			table5Panel.setVisible(false);
 			table6Panel.setVisible(false);
+			table3aPanel.setVisible(false);
 			table();
 			table2();
 			table3();
@@ -618,6 +630,67 @@ public class PageITR extends PageAbs {
 		}
 	}
 	
+	private void table3a(){
+		
+		table3a.setWidth("100%");
+		table3a.setCellSpacing(0);
+		
+		// FALTA - ESTO NO SE SI SIRVE DE MUCHO, PORQUE LUEGO CUANDO SE CREAN LOS TEXTBOX NO PUEDES DECIRLE AL TEXTBOX QUE ANCHO QUIERES
+//		table3a.getColumnFormatter().setWidth(0, "70px");  // Documento TR
+//		table3a.getColumnFormatter().setWidth(1, "50px");  // Nivel
+//		table3a.getColumnFormatter().setWidth(2, "200px"); // Denominación social
+//		table3a.getColumnFormatter().setWidth(3, "70px"); // País expedicion documento
+//		table3a.getColumnFormatter().setWidth(4, "70px");  // Tipo documento
+//		table3a.getColumnFormatter().setWidth(5, "70px");  // Documento
+//		table3a.getColumnFormatter().setWidth(6, "70px");  // Nacionalidad
+//		table3a.getColumnFormatter().setWidth(7, "200px");  // Domicilio social
+//		table3a.getColumnFormatter().setWidth(8, "70px");  // Datos registrales / LEI
+
+		// FALTA - PONER LAS CABECERAS REALES
+        paintHeaderTable(table3a, "Documento del Titular Real", "Nivel en la cadena de control", "Denominaci\u00F3n social de la sociedad", "Pa\u00EDs documento", "Tipo documento", "Documento", "Nacionalidad", "Domicilio social", "Datos registrales o LEI");
+		
+		int row = table3a.getRowCount();
+		
+		for (int i = 0; i < D2DepositConstants.ITR_KEYS_3_A.length; i += 9){
+			D2DepositHeaderKey[] d2 = new D2DepositHeaderKey[]{
+					D2DepositConstants.ITR_KEYS_3_A[i],
+					D2DepositConstants.ITR_KEYS_3_A[i+1],
+					D2DepositConstants.ITR_KEYS_3_A[i+2],
+					D2DepositConstants.ITR_KEYS_3_A[i+3],
+					D2DepositConstants.ITR_KEYS_3_A[i+4],
+					D2DepositConstants.ITR_KEYS_3_A[i+5],
+					D2DepositConstants.ITR_KEYS_3_A[i+6],
+					D2DepositConstants.ITR_KEYS_3_A[i+7],
+					D2DepositConstants.ITR_KEYS_3_A[i+8]							
+			};
+			
+			paintTextKeyField(table3a, d2[0], row, 0); // Documento identificativo Titular Real sobre el que se detalla la cadena de control. Texto 20.						
+			paintIntegerKeyField(table3a, d2[1], row, 1); // Nivel en la cadena de control. Entero							
+			paintTextKeyField(table3a, d2[2], row, 2); // Denominación social de la sociedad. Texto 70		
+			paintListKeyField(table3a, d2[3], row, 3); // País de expedición del documento identificativo. Texto 2. Lista de países ISO 3166 Alpha-2	
+			paintDocumentTypeListKeyField(table3a, d2[4], row, 4); // El tipo de documento que identifica a la persona jurídica. Entero. 2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+			paintTextKeyField(table3a, d2[5], row, 5); // Documento identificativo de la persona jurídica. Texto 20		
+			paintListKeyField(table3a, d2[6], row, 6); // Nacionalidad de la persona jurídica. Texto 2. Lista de países ISO 3166 Alpha-2	
+			paintTextKeyField(table3a, d2[7], row, 7); // Domicilio social de la persona jurídica. Texto 80		
+			paintTextKeyField(table3a, d2[8], row, 8); // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene. Texto 20		
+			row++;		
+		}
+	}
+	
+	private void paintHeaderTable(FlexTable table, String... headers) {
+		
+		int row = table.getRowCount();
+		int col = 0;
+		for (String header : headers) {
+			table.setWidget(row, col, new Label(header));
+			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBorderBottom());
+			table.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+			col++;
+		}
+		
+	}
+
 	protected int paintKey(FlexTable tab, D2DepositKey[] keys,  int row) {
 		for (Integer i = 0; i < keys.length ; i++) {
 			paintKeyField(tab,keys[i],row,i+1);
@@ -626,11 +699,21 @@ public class PageITR extends PageAbs {
 	}
 	
 	private void paintTextKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col){
+		paintTextKeyField(tab, key, row, col, 0);
+	}
+	
+	private void paintTextKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col, int maxLength){
 		FlowPanel panel = new FlowPanel();
 		String codeId = key.getCode();
 		
 		final TextBox text = new TextBox();
 		text.setStyleName(AON.AON_CSS.aonInputText());
+		
+		// FALTA - PRUEBA MAXLENGTH
+		if (maxLength > 0) {
+			text.setMaxLength(maxLength);
+			text.setVisibleLength(maxLength);
+		}		
 		
 		codeAux = codeId;
 		text.addChangeHandler(new ChangeHandler() {
@@ -745,6 +828,45 @@ public class PageITR extends PageAbs {
 			text.setValue(d);
 		}
 		else text.setValue(0.0);
+		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
+		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
+		
+		panel.add(text);
+		
+		tab.setWidget(row, col, panel);
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextCenter());
+		tab.getFlexCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
+	}
+	
+	private void paintIntegerKeyField(FlexTable tab, D2DepositHeaderKey key,  int row, int col){
+		FlowPanel panel = new FlowPanel();
+		String codeId = key.getCode();
+		
+		final IntegerBox text = new IntegerBox();
+		text.setWidth("50px");
+		text.setTitle(codeId);
+		codeAux = codeId;
+		text.addChangeHandler(new ChangeHandler() {
+			String code = codeAux;
+			@Override
+			public void onChange(ChangeEvent event) {
+				try {
+					if (AonStringUtils.isEmpty(text.getText())) {
+						text.setValue(0,false);
+					}
+					Integer d = text.getValueOrThrow();
+					text.setTitle(code);
+					onEdit(code, Integer.toString(d).toString());
+				} catch (ParseException e) {
+					// nothing.
+				}
+			}
+		});
+		if(getMap().containsKey(key.getCode())){
+			Integer d = AonNumberUtils.toint(getMap().get(key.getCode()));
+			text.setValue(d);
+		}
+		else text.setValue(0);
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());
 		

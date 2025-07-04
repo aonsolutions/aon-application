@@ -434,7 +434,7 @@ public enum D2DepositHeaderKey {
 	,IMA8099051(8099051)
 	,IMA8099061(8099061)
 	
-	// IDENTIFICADOR DEL TITULO REAL
+	// IDENTIFICADOR DEL TITULAR REAL
 	,ITR8080828(8080828)
 	,ITR8080829(8080829)
 	
@@ -596,6 +596,33 @@ public enum D2DepositHeaderKey {
 	,ITR8230127(8230127)
 	,ITR8230128(8230128)
 	,ITR8230129(8230129)
+	
+	// III.a Detalle de las sociedades intervinientes en la cadena de control - Control a través de participación en el capital
+	
+	// FALTA - EL DATO DEL NIVEL, HABRA QUE HACER QUE SE GRABE EN BLANCO SI LA LINEA ENTERA NO ESTA CUMPLIMENTADA, PORQUE SI NO SE CARGA EN EL D2 CON UN CERO Y DA ERROR
+	// MIRAR AHORA COMO SE GRABAN LOS 0.00 DE PARTICIPACION DIRECTA O INDIRECTA PORQUE AUNQUE SE VEAN 0.00 EN PANTALLA LUEGO NO SE ESTAN GRABANDO LAS CLAVES EN EL XML
+	
+	,ITR8230201(8230201) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
+	,ITR8230202(8230202) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
+	,ITR8230203(8230203) // Denominación social de la sociedad	Desde la 8230203 hasta la 8230593 (incrementando 10). Total: 40 campos	Texto	70				no		
+	,ITR8230204(8230204) // País de expedición del documento identificativo	Desde la 8230204 hasta la 8230594 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230205(8230205) // El tipo de documento que identifica a la persona jurídica	Desde la 8230205 hasta la 8230595 (incrementando 10). Total: 40 campos	Entero					No	2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+	,ITR8230206(8230206) // Documento identificativo de la persona jurídica	Desde la 8230206 hasta la 8230596 (incrementando 10). Total: 40 campos	Texto	20				No		
+	,ITR8230207(8230207) // Nacionalidad de la persona jurídica	Desde la 8230207 hasta la 8230597 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230208(8230208) // Domicilio social de la persona jurídica	Desde la 8230208 hasta la 8230598 (incrementando 10). Total: 40 campos	Texto	80				No		
+	,ITR8230209(8230209) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene	Desde la 8230209 hasta la 8230599 (incrementando 10). Total: 40 campos	Texto	20				No
+	
+	,ITR8230211(8230211) // Documento identificativo Titular Real sobre el que se detalla la cadena de control	Desde la 8230201 hasta la 8230591 (incrementando 10). Total: 40 campos	Texto	20						
+	,ITR8230212(8230212) // Nivel en la cadena de control	Desde la 8230202 hasta la 8230592 (incrementando 10). Total: 40 campos	Entero							
+	,ITR8230213(8230213) // Denominación social de la sociedad	Desde la 8230203 hasta la 8230593 (incrementando 10). Total: 40 campos	Texto	70				no		
+	,ITR8230214(8230214) // País de expedición del documento identificativo	Desde la 8230204 hasta la 8230594 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230215(8230215) // El tipo de documento que identifica a la persona jurídica	Desde la 8230205 hasta la 8230595 (incrementando 10). Total: 40 campos	Entero					No	2 = NIF - Número de identificación fiscal, 4 = TIN - Tax Identification, Number (países OCDE), 6 = OTRO - Identificador propio de cada país distinto del TIN	
+	,ITR8230216(8230216) // Documento identificativo de la persona jurídica	Desde la 8230206 hasta la 8230596 (incrementando 10). Total: 40 campos	Texto	20				No		
+	,ITR8230217(8230217) // Nacionalidad de la persona jurídica	Desde la 8230207 hasta la 8230597 (incrementando 10). Total: 40 campos	Texto	2				Sí	Lista de países ISO 3166 Alpha-2	
+	,ITR8230218(8230218) // Domicilio social de la persona jurídica	Desde la 8230208 hasta la 8230598 (incrementando 10). Total: 40 campos	Texto	80				No		
+	,ITR8230219(8230219) // Datos identificativos del registro donde conste inscrita o LEI (Legal Entity Identifier) si lo tiene	Desde la 8230209 hasta la 8230599 (incrementando 10). Total: 40 campos	Texto	20				No		
+	
+	// DOCUMENTO SOBRE SERVICIOS A TERCEROS
 	
 	,SRP8080831(8080831)
 	,SRP8080832(8080832)

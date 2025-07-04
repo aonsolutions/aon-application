@@ -119,6 +119,17 @@
 					</div>
 					</g:HTMLPanel>
 					
+					<g:HTMLPanel ui:field="table3aPanel">
+					<div class="{aonResources.css.aonGroup}">
+						<div class="{aonResources.css.aonGroupTitle}">
+							<g:InlineLabel text="Detalle de las sociedades intervinientes en la cadena de control a través de participación en el capital" />
+						</div>
+						<div class="{aonResources.css.aonBorderBottom} {aonResources.css.aonFiscalScrollTableWrapper}">
+							<g:FlexTable ui:field="table3a" />
+						</div>
+					</div>
+					</g:HTMLPanel>
+					
 				</div>
 			</div>
 		</g:HTMLPanel>
