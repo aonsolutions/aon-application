@@ -146,6 +146,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonCertificateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -310,7 +311,7 @@ public class ModelAdmonUtils {
 			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 		}
 		if(AonStringUtils.isBlank(params.getPass())) {
-			params.setPass(attach.getDescription().split("HIDE\\(")[1].split("\\)")[0]);
+			params.setPass(AonCertificateUtils.getCertificatePassword(attach.getDescription()));
 		}
 		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -319,6 +320,7 @@ public class ModelAdmonUtils {
    		kmf.init(keyStore, params.getPass().toCharArray());
    		return kmf.getKeyManagers();
 	}
+	
     
 	public static synchronized  void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
 		try {
