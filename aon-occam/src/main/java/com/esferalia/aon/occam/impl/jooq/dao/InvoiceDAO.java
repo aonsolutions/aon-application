@@ -54,6 +54,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IDAOCallback;
@@ -165,6 +166,7 @@ public class InvoiceDAO {
 		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(Rmedia.RMEDIA.VALUE);}
 	}
 
 	private static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();

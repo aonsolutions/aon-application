@@ -170,6 +170,10 @@ public class CustomersServlet extends AonApiHttpServlet {
 					.or(f.getAliasProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
 		}
+
+		if (api.getData().opt(IJsonNames.EMAIL) != null) {
+			filter = filter.and(f.getEmailProperty().like(JsonUtils.getString(api.getData(), IJsonNames.EMAIL)));
+		}
 		return filter;
 	}
 
