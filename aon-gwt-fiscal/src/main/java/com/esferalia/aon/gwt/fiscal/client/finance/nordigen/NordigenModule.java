@@ -761,7 +761,7 @@ public class NordigenModule extends MainEntryPoint {
 			boolean forceRefresh = false;
             Storage storage = Storage.getLocalStorageIfSupported();
             String storedValue = storage.getItem("bankSuccessAdd");
-            if (storedValue != null && storedValue == nordigenBankAccount.getRequisitionId()) {
+            if (storedValue != null && storedValue.equals(nordigenBankAccount.getRequisitionId())) {
               forceRefresh = true;
               storage.removeItem("bankSuccessAdd");
             }

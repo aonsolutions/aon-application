@@ -30,6 +30,8 @@ export class AonMobileDelivery extends AonElement {
 	DELIVERY_SUBTRACT_BUTTON;
 	DELIVERY_TABS
 	DELIVERY_TABS_BUTTON;
+	DELIVERY_GENERAL_CARD;
+	DELIVERY_DETAIL_CARD;
 	PACKAGING_PRODUCT;
 	PACKAGING_SOURCE_PRODUCT;
 	PACKAGING_SOURCE_QUANTITY;
@@ -68,6 +70,8 @@ export class AonMobileDelivery extends AonElement {
 		this.PACKAGING_PRODUCT = this.id + 'PackagingProduct';
 		this.PACKAGING_SOURCE_PRODUCT = this.id + 'PackagingSourceProduct';
 		this.PACKAGING_SOURCE_QUANTITY = this.id + 'PackagingSourceQuantity';
+		this.DELIVERY_GENERAL_CARD = this.id + 'GeneralCard';
+		this.DELIVERY_DETAIL_CARD = this.id + 'DetailCard';
 		this.DELIVERY_TABS = this.id + CONSTANT.TABS.initCap();
 		this.DELIVERY_TABS_BUTTON = [
 			{
@@ -137,6 +141,11 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	buildDeliveryGeneral(parent) {
+		let card = createCard(this.DELIVERY_GENERAL_CARD, 'Datos Albarán', parent);
+
+		let div = this.createDiv(this.DELIVERY_GENERAL_CARD + 'Customer');
+		div.innerHTML = this.delivery.customer.name;
+		card.setContent(div);
 
 	}
 
@@ -283,6 +292,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 	addPackaging() {
+		let pk = this.package;
 		this.getApplication().removeFloatOption();
 		this.clear();
 		let toolbar = new AonToolbar();
@@ -310,7 +320,10 @@ export class AonMobileDelivery extends AonElement {
 		table2.id = this.id + 'Envasesss22';
 		packagingDiv.appendChild(table2);
 
-		this.buildProductPackaging(table, table2);
+		if(pk) {
+			this.buildExistingPackaging(table, table2, pk);
+		} else this.buildProductPackaging(table, table2);
+
 
 
 		let pendingCard = new AonCard();
@@ -549,7 +562,7 @@ export class AonMobileDelivery extends AonElement {
 	}
 
 
-	buildExistingPackaging(table, table2) {
+	buildExistingPackaging(table, table2, pk) {
 		table.addRow();
 		let envaseSelect = createSelect(this.id + 'DialogEnvase', 'Envases');
 		envaseSelect.addEventListener(EVENT.SELECT, () => {
@@ -601,6 +614,9 @@ export class AonMobileDelivery extends AonElement {
 				name: p.item.serialNumber
 			  }
 		}));
+		if(pk) {
+			envaseSelect.value = pk.item.serialNumber;
+		}
 
 		let td = table.addCell(envaseSelect);
 		td.style.width = '100%';

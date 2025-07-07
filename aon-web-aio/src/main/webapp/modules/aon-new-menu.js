@@ -64,6 +64,10 @@ import { AonIncome } from './invoice/aon-income.js';
 import { AonExpense } from './invoice/aon-expense.js';
 import { Income } from './invoice/Income.js';
 import { Expense } from './invoice/Expense.js';
+import { createSelect } from '../components/CreateComponent.js';
+import { getCompanyActivities } from '../services/companyService.js';
+import { AonDialog } from '../components/aon-dialog.js';
+import { AonPayrollBeta } from './payroll/aon-payroll-beta.js';
 
 //	Falla la compilación por esta línea que no se usa. REVISAR!!
 // import { FISCAL } from '../../../../target/aon-aio/environments/msg-es.js';
@@ -299,7 +303,7 @@ export class AonNewMenu extends AonElement {
 	getAonSuiteMenu( app ) {
 		switch (app.app) {
 		case ACCOUNTING_MENU.app:
-			return new AonAccountingMenu();
+			return this.isDomainManagementAvailable() ? new AonAccountingMenu() : new AonAccountingBeta();
 		case COMMERCIAL_MENU.app:
 			return new AonCommercialMenu();
 		case GROUPWARE_MENU.app:
@@ -311,9 +315,9 @@ export class AonNewMenu extends AonElement {
 		case WAREHOUSE_MENU.app:
 			return new AonWarehouseMenu();
 		case FISCAL_MENU.app:
-			return new AonFiscalMenu();
+			return this.isDomainManagementAvailable() ? new AonFiscalMenu() : new AonFiscalBeta();
 		case PAYROLL_MENU.app:
-			return new AonPayrollMenu();
+			return this.isDomainManagementAvailable() ? new AonPayrollMenu() :  new AonPayrollBeta();
 		case MARKETING_MENU.app:
 			return new AonMarketingMenu();
 		case CONFIGURATION_MENU.app:
@@ -1144,8 +1148,8 @@ export class AonNewMenu extends AonElement {
 
 	showNewDialogMenu(el){
 		let newDialogMenu =  this.getApplication().getOptionDialog();
-
 		let newMenuOptions = [];
+
 		if(this.getDur().isInvoiceUser()){
 			let optionsMenu = [
 				{
@@ -1162,34 +1166,6 @@ export class AonNewMenu extends AonElement {
 					fn: () => this.newInvoice('ticket')
 				}
 			];
-
-			if( this.getDur().isOcr() || this.getDur().isInvofox() ){
-				optionsMenu.push({
-					name: MSG.UPLOAD_INVOICE,
-					icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-					fn: () => {
-						let input = this.createElement(TAG.INPUT);
-						input.type = CONSTANT.FILE;
-						input.accept = this.accept;
-						input.className = CSS.AON_NONE;
-						input.multiple = 'multiple';
-						
-						input.addEventListener(EVENT.CHANGE, ({target}) => {
-							let uploadToast = this.getElement('aonUploadToast');
-							if(!uploadToast){ 
-								uploadToast = new AonUploadToast();
-								this.getApplication().getContent().appendChild(uploadToast);
-							}
-							let data = { uploaded : 0 };
-							uploadToast.setJobId(generateJobId());
-							for (let file of target.files) {
-								uploadToast.addFile("invoice", file, data);
-							}
-						});
-						input.click();
-					}
-				});
-			}
 
 			let otherOptions = [
 				{
@@ -1218,26 +1194,12 @@ export class AonNewMenu extends AonElement {
 			});
 		}
 
-		if(this.getDur().isDocumental() && !this.isBetaDoc()){
-			newMenuOptions.push({
-				fn: () => {
-					let input = this.createElement(TAG.INPUT);
-					input.type = CONSTANT.FILE;
-					input.accept = this.accept;
-					input.className = CSS.AON_NONE;
-					input.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(input, target.files) );
-					input.click();
-				},
-				icon: MATERIAL_ICONS.CLOUD_UPLOAD,
-				name: MSG.UPLOAD_DOCUMENT,
-			});
-		}
 		if(this.getDur().isMessenger()){
 			newMenuOptions.push({
 				icon: 'add_comment',
 				name: MSG.CREATE_QUERY,
 				fn: () => {
-					let aonMessengerChat = new AonMessenger();	
+					let aonMessengerChat = new AonMessenger();
 					aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
 					this.rootPanel(aonMessengerChat);
 				}
@@ -1431,6 +1393,10 @@ export class AonNewMenu extends AonElement {
 		aonMenuSearchDialogContent.insertBefore( aonMenuSearch, aonMenuSearchDialogContent.firstChild );
 
 		aonMenuSearchDialog.open();
+	}
+
+	isDomainManagementAvailable() {
+		return this.getDur().isDomainManagementAvailable();
 	}
 }
 if (!window.customElements.get(TAG.AON_NEW_MENU)) {

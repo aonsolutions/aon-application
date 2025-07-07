@@ -375,6 +375,14 @@ public class DomainDAO {
 				.execute();
 	}
 	
+	public static void updateDomainScopeValue(AONContext ctx, String domainName, Integer domainId, Integer scope) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.SCOPE, scope)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
+	}
+	
 	//-------------------- DOMAIN G SERVICE ACCOUNT
 	
 	public static DomainGserviceaccount getDomainGserviceaccount(AONContext ctx, DomainGserviceaccountFilter filter){

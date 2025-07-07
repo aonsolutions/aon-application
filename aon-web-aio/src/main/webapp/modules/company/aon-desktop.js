@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Apps, ClassicApps, getAppsByDur } from '../../services/app.js';
-import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getCompanyOne } from '../../services/service.js';
+import { getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach, getPeriodLaboral, getTrailData, getCompanyOne, getCompanyActivities } from '../../services/service.js';
 import { getAccessBidoq } from '../../services/bidoqService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -45,6 +45,7 @@ import { MessegerUtils } from '../messenger/utils/MessengerUtils.js';
 import { AonTrial } from '../invoice/aon-trial.js';
 import { AonDashboardSalesPurchases } from '../accounting/aon-dashboard-sales-purchases.js';
 import { AonJsfAccountingGraph, AonJsfPayrollGraph, AonJsfContractGraph } from '../aon-jsf-app.js';
+import { createSelect } from '../../components/CreateComponent.js';
 
 export class AonDesktop extends AonElement {
 	dur;
@@ -126,7 +127,8 @@ export class AonDesktop extends AonElement {
         this.createDashboard(content, company);
         // Quitamos el toolbar
         const toolbar = this.querySelector('aon-toolbar');
-        if (toolbar) toolbar.remove();
+        if (toolbar)
+          toolbar.remove();
 	}
 
 	async createDashboard(parent, company) {

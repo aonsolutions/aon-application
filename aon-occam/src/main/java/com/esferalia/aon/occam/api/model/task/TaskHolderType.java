@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum TaskHolderType  {
+public enum TaskHolderType implements Serializable  {
 
 	INTERNAL,
 	EXTERNAL;
