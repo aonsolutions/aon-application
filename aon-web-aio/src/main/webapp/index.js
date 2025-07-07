@@ -69,7 +69,7 @@ export const loadTheme = async  () => {
 	
 	let mobileCss = UA.isAndroidApp() ? LS.AON_MOBILE_ANDROID : LS.AON_MOBILE_THEME;
 	 		
-	let themeUrl = UA.isMobile() ? mobileCss : paramCss  || "/customview" || LS.AON_THEME;
+	let themeUrl = UA.isMobile() ? mobileCss : ( paramCss  || "/customview" || LS.AON_THEME );
 		
 	return new Promise((resolve, reject) => {
 		
@@ -85,7 +85,7 @@ export const loadTheme = async  () => {
 			});
 			
 		} catch ( err ) {
-			reject(new Error(`Something was wrong with theme '${themeUrl}'`));
+			reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
 		}
 	});
 }
