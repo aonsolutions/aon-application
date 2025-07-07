@@ -2,17 +2,14 @@ package solutions.aon.in.invoice.aws.lambda;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +17,9 @@ import org.json.JSONObject;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
-import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.AonInvofox;
-import net.aonsolutions.aon.api.AonTask;
-import solutions.aon.aws.s3.S3;
 
 
 public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
@@ -139,276 +131,31 @@ public class InvofoxWebhookHandler implements RequestHandler<Object, String> {
 		}
 	}
 
-	private TaskWorkflow getTaskWorkflow(JSONObject data, Predicate<JSONObject> filter)
-			throws URISyntaxException, IOException, InterruptedException {
-		Integer taskId = get(data, "clientData/loadTask/id");
-		String userLogin = get(data, "clientData/loadS3/user");
-		String domainName = get(data, "clientData/loadS3/domain");
-
-		JSONArray taskWorkflows = AonTask.getTaskWorkflows(domainName, userLogin, taskId);
-		for (int i = 0; i < taskWorkflows.length(); i++) {
-			JSONObject taskWorkflowJSON = taskWorkflows.getJSONObject(i);
-			if (filter.test(taskWorkflowJSON)) {
-				return TaskWorkflowJSON.fromJSON(taskWorkflowJSON);
-			}
-		}
-
-		return null;
-
-	}
-
-	private TaskWorkflow getDocumentSent(JSONObject data) throws URISyntaxException, IOException, InterruptedException {
-		String s3Key = get(data, "clientData/loadS3/key");
-		return getTaskWorkflow(data,
-				taskWorflowJSON -> AonStringUtils.contains(taskWorflowJSON.getString("comment"), s3Key));
-
-	}
-
-	private TaskWorkflow getDocumentProcessed(JSONObject data)
-			throws URISyntaxException, IOException, InterruptedException {
-		String id = get(data, "_id");
-		return getTaskWorkflow(data,
-				taskWorflowJSON -> AonStringUtils.contains(taskWorflowJSON.getString("comment"), id));
-
-	}
 
 	private String documentFinished(JSONObject data) throws URISyntaxException, IOException, InterruptedException {
-		// JSONObject taskWorkflowJSON = getDocumentProcessed(data);
-		// if ( taskWorkflowJSON != null ) {
-		// return taskWorkflowJSON.toString(1);
-		// }
-
-		TaskWorkflow taskWorkflow = getDocumentSent(data);
-		if (taskWorkflow == null) {
-			taskWorkflow = getDocumentProcessed(data);
-		}
-		if (taskWorkflow == null) {
-			Integer task = get(data, "clientData/loadTask/id");
-			taskWorkflow = new TaskWorkflow().setTask(task).setType(TaskWorkflowType.COMMENT);
-		}
-
-		Map<String, String> params = new HashMap<>();
-
 		String id = get(data, "_id");
-		params.put("id", id);
-
-		String type = get(data, "type");
-		params.put("type", valueOf(type, Type.unknown).getDescription());
-
 		String publicState = get(data, "publicState");
-		params.put("publicState", valueOf(publicState, State.unknown).getDescription());
-		params.put("publicStateColor", valueOf(publicState, State.unknown).getColor());
-
-		JSONArray errors = get(data, "validationInfo/errors");
-
-		String errorsHTML = formatErrors(errors);
-
-		params.put("errorsHTML", errorsHTML);
-
-		String confidence = get(data, "confidence");
-		params.put("confidenceColor", valueOf(confidence, Confidence.unknown).getColor());
-
-		String s3Key = get(data, "clientData/loadS3/key");
-		String s3Bucket = get(data, "clientData/loadS3/bucket");
-
-		URL downloadURL = S3.getInstance().getURL(s3Bucket, s3Key);
-		params.put("downloadURL", downloadURL.toExternalForm());
-
-		String documentNumber = get(data, "data/documentNumber/value");
-		params.put("documentNumber", getOrDefault(documentNumber, "-"));
-
-		String issuerName = get(data, "data/issuerName/value");
-		params.put("issuerName", getOrDefault(issuerName, ""));
-
-		String recipientName = get(data, "data/recipientName/value");
-		params.put("recipientName", getOrDefault(recipientName, ""));
-
-		Number totalTaxBaseAmount = get(data, "data/totalTaxBaseAmount/value");
-		params.put("totalTaxBaseAmount", format(totalTaxBaseAmount, ""));
-
-		Date issueDate = parse(get(data, "data/issueDate/value"));
-		params.put("issueDate", format(issueDate, "dd/MM/yyyy", ""));
-
-		Date creationDate = parse(get(data, "creation"));
-		params.put("creationDate", format(creationDate, ""));
-		String companyName = S3Invoice.getCompanyName(s3Bucket, s3Key);
-		params.put("companyName", getOrDefault(companyName, ""));
-
-		params.put("font", "font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57);");
-
-		taskWorkflow.setComment(
-				format("""
-						<!-- id:"${id}" -->
-						<div style="font-family: Karla,sans-serif;font-size: 11px; color: rgb(57,57,57); font-weight:normal;">
-						<table style="width:100%;padding: 8px; border-collpase:collapse;">
-						<thead style="background-color:#f5f7fa">
-						<tr>
-						<th style="padding:8px;" >Tipo</th>
-						<th style="padding:8px;">Compañia</th>
-						<!--th style="padding:8px;">Extracción</th-->
-						<th style="padding:8px;">Estado</th>
-						<th style="padding:8px;">Núm.factura</th>
-						<th style="padding:8px;">Nombre emisor</th>
-						<th style="padding:8px;">Nombre receptor</th>
-						<th style="padding:8px;" >Base Imponible</th>
-						<th style="padding:8px;">Fecha emisión</th>
-						<th style="padding:8px;">Fecha de subida</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-						<td style="padding:8px;" >${type}</td>
-						<td style="padding:8px;">${companyName}</td>
-						<!--td style="padding:8px;text-align:center;"><span class="material-icons" style="color:${confidenceColor};" >warning</span></td-->
-						<td style="padding:8px;"><span style="background-color:${publicStateColor};padding: 2px 16px; border-radius: 22px; color: white; font-weight: bold;" >${publicState}</span></td>
-						<td style="padding:8px;"><a href="${downloadURL}" target="_blank" style="text-decoration:underline;">${documentNumber}</a></td>
-						<td style="padding:8px;">${issuerName}</td>
-						<td style="padding:8px;">${recipientName}</td>
-						<td style="padding:8px;" >${totalTaxBaseAmount}</td>
-						<td style="padding:8px;">${issueDate}</td>
-						<td style="padding:8px;">${creationDate}</td>
-						</tr>
-						</tbody>
-						</table>
-						${errorsHTML}
-						</div>
-						""",
-						params));
-
 		String userLogin = get(data, "clientData/loadS3/user");
 		String domainName = get(data, "clientData/loadS3/domain");
 
-		taskWorkflow.setCreationDate(new Date());
-		taskWorkflow.setCreationUser(userLogin);
 
-		JSONObject taskWorkflowJSON = new JSONObject();
+		JSONObject json = new JSONObject();
 		try {
 			State state = valueOf(publicState, State.unknown);
 
 			if (publicState != null && (State.pendingCorrection.equals(state) || 
 					State.discarded.equals(state) || State.pendingDecission.equals(state) || 
 					State.rejected.equals(state) || State.approved.equals(state))) {
-				AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
+				json = AonInvofox.rawdocInvofoxInvoice(domainName, userLogin, id);
 			}
 
-			taskWorkflowJSON = AonTask.addTaskWorkflow(domainName, userLogin, taskWorkflow);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return taskWorkflowJSON.toString(1);
+		return json.toString(1);
 	}
 
-	/**
-	 * @param errors
-	 * @param errorsHTMLBuilder
-	 */
-	private String formatErrors(JSONArray errors) {
-		if (errors.isEmpty()) {
-			return "";
-		}
-
-		Map<String, String> errorsParams = new HashMap<>();
-		int lowCondfidenceErrors = 0;
-		StringBuilder errorsDescriptionBuilder = new StringBuilder();
-		for (int i = 0; i < errors.length(); i++) {
-			JSONObject error = errors.getJSONObject(i);
-
-			System.out.println(error.toString(1));
-
-			String code = error.getString("code");
-			String severity = error.getString("severity");
-			if ("ERR_LOW_CONFIDENCE".equalsIgnoreCase(code)) {
-				lowCondfidenceErrors++;
-				continue;
-			}
-
-			String errorDescription = getErrorDescription(error);
-			String errorColor = valueOf(severity, Severity.unknown).getColor();
-
-			Map<String, String> errorParams = new HashMap<>();
-			errorParams.put("errorColor", errorColor);
-			errorParams.put("errorDescription", errorDescription);
-			errorsDescriptionBuilder.append(
-					format("""
-							<div style="table; width:100%; padding: 8px; font-weight:bold">
-							<span class="material-icons" style="display:table-cell; vertical-align:middle; text-align: left;padding: 0px 8px;font-size: 19px; color:${errorColor}">warning</span>
-							<span style="display:table-cell; vertical-align:middle; text-align: left; width: 100%;padding: 0px 8px" >${errorDescription}</span>
-							</div>
-							""",
-							errorParams));
-		}
-
-		if (lowCondfidenceErrors > 0) {
-
-			Map<String, String> errorParams = new HashMap<>();
-
-			StringBuilder fieldsDescriptionsBuilder = new StringBuilder();
-			for (int i = 0; i < errors.length(); i++) {
-				JSONObject error = errors.getJSONObject(i);
-				String code = error.getString("code");
-				if (!"ERR_LOW_CONFIDENCE".equalsIgnoreCase(code)) {
-					continue;
-				}
-				JSONArray fields = error.getJSONArray("fields");
-				for (int j = 0; j < fields.length(); j++) {
-					JSONObject field = fields.getJSONObject(j);
-					String fieldName = field.getString("name");
-					String fieldDescription = getFieldDescription(fieldName);
-
-					String fieldPrefix = field.getString("prefix");
-					if ("breakdowns".equals(fieldPrefix)) {
-						int fieldIndex = field.getInt("index");
-						fieldDescription += " de la línea " + (fieldIndex + 1);
-					}
-
-					fieldsDescriptionsBuilder.append(format("""
-							<li style="text-align: left; ">El campo <b>${fieldName}</b> tiene poca confianza.</li>
-							""", Collections.singletonMap("fieldName", fieldDescription)));
-				}
-
-			}
-
-			errorParams.put("errorColor", "orange");
-			errorParams.put("fieldsDescriptions", fieldsDescriptionsBuilder.toString());
-			errorParams.put("errorDescription", String.format("%d campo(s) con poca confianza", lowCondfidenceErrors));
-			errorsDescriptionBuilder.append(
-
-					format("""
-							<div style="table; width:100%; padding: 8px; font-weight:bold">
-							<span class="material-icons" style="display:table-cell; vertical-align:middle; text-align: left;padding: 0px 8px;font-size: 19px; color:${errorColor}">warning</span>
-							<span style="display:table-cell; vertical-align:middle; text-align: left; width: 100%;padding: 0px 8px" >${errorDescription}</span>
-							</br style="font-size: 4px;" >
-							<span onclick="this.nextElementSibling.style.display = 'inherit';" style="display:table-cell; vertical-align:middle; text-align: left; width: 100%;padding: 0px 44px; font-weight: normal; cursor:pointer;" >Ver Campos</span>
-							<ul style="padding: 0px 54px; font-weight: normal; display: none">
-							${fieldsDescriptions}
-							</ul>
-							</div>
-							""",
-							errorParams));
-
-		}
-
-		String errorsDescription = errorsDescriptionBuilder.toString();
-		errorsParams.put("errorsDescription", errorsDescription);
-
-		String errorsLabel = format(
-				"""
-						<div style="background-color:#e83151;color:#FFF; display:table; width:100%; padding: 8px">
-						<span class="material-icons" style="display:table-cell; vertical-align:middle; text-align: left;padding: 0px 8px;">warning</span>
-						<span style="display:table-cell; vertical-align:middle; text-align: left; width: 100%;padding: 0px 8px" >${errorsTitle}</span>
-						</div>
-						""",
-				Collections.singletonMap("errorsTitle", String.format("%d error(es)", errors.length())));
-		errorsParams.put("errorsLabel", errorsLabel);
-
-		return format("""
-				<div style="width:100%;border:1px solid #e83151; border-radius: 6px; display:table;" >
-				${errorsLabel}
-				${errorsDescription}
-				</div>
-				""", errorsParams);
-	}
 
 	static String getFieldDescription(String fieldName) {
 		Map<String, String> fieldNamesDescription = getFieldsDescriptionsMap();
