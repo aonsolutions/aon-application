@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.server;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
@@ -1286,7 +1287,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		else
 			users = AON.getUserStream(new Domain().setName(domainName).setId(domainId), user, f -> f.getDomainProperty().eq(domainId), new Options().setFull(true)).collect(Collectors.toList());
 		
-		users.sort(Comparator.comparing(User::getName));
+		users.sort(Comparator.comparing(userIt -> normalizeName(userIt.getName())));
 		
 		// Filter already asigned users
 		if(!all) {
@@ -1297,6 +1298,17 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		}
 		
 		return users;
+	}
+	
+	private static String normalizeName(String name) {
+		if(AonStringUtils.isBlank(name)) return AonStringUtils.EMPTY;
+
+		name = name.trim();
+
+	    String noAccents = Normalizer.normalize(name, Normalizer.Form.NFD)
+	            .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+	    return noAccents.toLowerCase();
 	}
 	
 	@Override

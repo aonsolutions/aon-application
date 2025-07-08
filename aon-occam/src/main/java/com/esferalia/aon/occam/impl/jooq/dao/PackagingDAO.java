@@ -398,6 +398,81 @@ public class PackagingDAO {
 		});
 	}
 	
+	public static void deleteDeliveryPackagingComposition(AONContext ctx, Integer deliveryId, ItemComposition composition, String destiny) {
+		Item destinyItem = ItemDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getSerialNumberProperty().eq(destiny)));
+		
+		if(destinyItem == null ||  destinyItem.isEmpty()) {
+			throw new AonCoreException("El envase destino no existe.");
+		}
+		
+		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
+		.and(f.getSourceIdProperty().eq(deliveryId))).forEach(dr -> {
+			DataResponseDetail drd = DataResponseDAO.getDataResponseDetailStream(ctx, g -> g.getDataResponseProperty().eq(dr.getId()))
+					.findFirst().orElse(null);
+			if(drd != null) {
+				PackagingDelivery packaging = PackagingDeliveryJSON.fromJSON(new JSONObject(drd.getDataValue()));				
+				if(packaging.getContainer().getItem().equals(composition.getItemId())) {
+					for(Integer i = 0; i < packaging.getContent().size(); i++) {
+						for(Integer j = 0; j < packaging.getContent().get(i).getComposition().size(); j++) {
+							if(packaging.getContent().get(i).getComposition().get(j).getId().equals(composition.getId())) {
+								packaging.getContent().get(i).getComposition().remove(j.intValue());
+								drd.setDataValue(PackagingDeliveryJSON.toJSON(packaging).toString());
+								DataResponseDAO.updateDataResponseDetail(ctx, drd, f -> f.getIdProperty().eq(drd.getId()));
+							}
+						}
+					}				
+				}
+			}
+		});
+		
+		// TRASPASAR CONTENIDO AL NUEVO ENVASE
+		composition.setItemId(destinyItem.getId());
+		ItemCompositionDAO.save(ctx, composition);
+
+		// SUMAR STOCK Y ACTUALIZAR PEDIDO
+		
+		Integer productId = composition.getComposition().getProduct().getId();
+		DeliveryDetail dd = DeliveryDetailDAO.get(ctx, f -> f.getDelivery().eq(deliveryId)
+			.and(f.getItem().eq(composition.getCompositionItemId())));
+	
+		double dq = dd.getQuantity() - composition.getQuantity();
+		if(dq == 0) {
+			DeliveryDetailDAO.delete(ctx, f -> f.getIdProperty().eq(dd.getId()));
+		} else {
+			dd.setQuantity(dq);
+			DeliveryDetailDAO.save(ctx, dd);
+		}
+		
+		SalesDetail sd = SalesDetailDAO.get(ctx, f -> f.getIdProperty().eq(dd.getSalesDetail()));
+		sd.setDelivered(sd.getDelivered() - composition.getQuantity());
+		sd.setStatus(sd.getDelivered() > 0 ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
+		SalesDetailDAO.save(ctx, sd);
+		
+		// TODO FALTA REVISAR PEDIDO!!!
+		List<SalesDetail> list = SalesDetailDAO.getStream(ctx, f -> 
+			f.getSalesProperty().eq(sd.getSales().getId())
+			.and(f.getDomainProperty().eq(sd.getDomain()))
+			.and(f.getDeliveryProperty().isNotNull()))
+			.toList();
+		if(list.isEmpty()) {
+			Sales sales = SalesDAO.get(ctx, sd.getSales().getId());
+			sales.setStatus(SalesStatus.PENDING);
+			SalesDAO.save(ctx, sales);
+		}
+	
+		Stock stock = WarehouseDAO.getStock(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getItemProperty().eq(composition.getCompositionItemId())));
+		if(stock.getId() != null) {
+			stock.setQuantity(stock.getQuantity() + composition.getQuantity());
+			WarehouseDAO.saveStock(ctx, stock);
+		}
+	
+		deleteItemBox(ctx, deliveryId, productId, composition.getQuantity());
+
+		
+	}
+	
 	public static void deleteDeliveryPackaging(AONContext ctx, Integer delivery) {
 		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
 			.and(f.getSourceIdProperty().eq(delivery))).forEach(dr -> {

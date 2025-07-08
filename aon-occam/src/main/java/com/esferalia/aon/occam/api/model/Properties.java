@@ -958,6 +958,8 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 		Property<String> getNationalityProperty();
 		Property<Byte> getSecurityLevelProperty();
+		
+		Property<String> getEmailProperty();
 	}
 	
 	public interface CarrierProperties extends RegistryProperties {

@@ -565,8 +565,10 @@ class SistemaREDMov {
 				throw new InvalidDataException();
 			}
 		}
+		
+		return null;
 			
-		throw new SegSocialException(MESSAGE_ERROR);
+//		throw new SegSocialException(MESSAGE_ERROR);
 	}
 
 	private static void movPrevDeleteImpl(final InputStream certificateInputStream, final String certificatePassword,

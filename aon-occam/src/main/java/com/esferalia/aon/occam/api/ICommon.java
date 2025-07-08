@@ -132,6 +132,7 @@ public interface ICommon {
 	
 	public void updateDomainScope(AONContext ctx, Domain domain);
 	public void updateDomainOwner(AONContext ctx, String domainName, Integer domainId, String owner);
+	public void updateDomainScopeValue(AONContext ctx, String domainName, Integer domainId, Integer scope);
 
 	public DomainGserviceaccount getDomainGserviceaccount(AONContext ctx);
 	public DomainGserviceaccount getGeneralDomainGserviceaccount(AONContext ctx);

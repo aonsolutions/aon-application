@@ -691,6 +691,12 @@ public class AON {
 		}
 	}
 	
+	public static void updateDomainScopeValue(String domainName, Integer domainId, String user, Integer scope) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, user)) {
+			getCommon().updateDomainScopeValue(ctx, domainName, domainId, scope);
+		}
+	}
+	
 	public static Domain getCompanyDomain(String domainName, Integer domainId,
 			String user, String document) {
 		CloseableAONContext ctx = null;
@@ -8336,6 +8342,12 @@ public class AON {
 	public static void deleteDeliveryPackaging(Domain domain, User user, Integer deliveryId, String sscc) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
 			getWarehouse().deleteDeliveryPackaging(ctx, deliveryId, sscc);
+		}
+	}
+	
+	public static void deleteDeliveryPackagingComposition(Domain domain, User user, Integer deliveryId, ItemComposition composition, String destiny) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getWarehouse().deleteDeliveryPackagingComposition(ctx, deliveryId, composition, destiny);
 		}
 	}
 	

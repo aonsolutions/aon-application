@@ -19,17 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.attach.RdocTag;
-import net.aonsolutions.db.up2date.attach.UpdateCategoryTree;
 import net.aonsolutions.db.up2date.config.InsertIAE869;
-import net.aonsolutions.db.up2date.finance.NordigenCallsLog;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002024;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2025Insert;
+import net.aonsolutions.db.up2date.notification.NotificationReceiverAuthIndex;
 import net.aonsolutions.db.up2date.payroll.DeleteUnusedPaymentConcepts;
-import net.aonsolutions.db.up2date.registry.AddRegistryBankAgreement;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsITIMSFix;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessDeductionsNamesFix;
-import net.aonsolutions.db.up2date.tgss.TrainingExcessRoundFix;
+import net.aonsolutions.db.up2date.registry.RegistryDocumentIndex;
+import net.aonsolutions.db.up2date.registry.RegistryFulltextKey;
+import net.aonsolutions.db.up2date.task.TaskParentIndex;
 
 public class Up2Date {
 
@@ -551,8 +547,12 @@ public class Up2Date {
 			// TrainingExcessRoundFix.TRAININGEXCESSROUNDFIX,
 			// TrainingExcessDeductionsNamesFix.TRAININGEXCESSDEDUCTIONSNAMESFIX,
 			// IrpfEuskadi2025Insert.IRPFEUSKADI2025INSERT,
-			AlterFsMod2002024.ALTER_FS_MODEL_200_2024, 
-			InsertIAE869.INSERT_IAE_869,
+			// AlterFsMod2002024.ALTER_FS_MODEL_200_2024, 
+			// InsertIAE869.INSERT_IAE_869,
+			// RegistryFulltextKey.REGISTRY_FULLTEXT_KEY,
+			TaskParentIndex.TASK_PARENT_INDEX,
+			NotificationReceiverAuthIndex.NOTIFICATION_RECEIVER_AUTH_INDEX,
+			RegistryDocumentIndex.REGISTRY_DOCUMENT_INDEX,
 			
 			// ----------------------------------------------------------------
 			// Warning. Don't delete or comment following instructions 

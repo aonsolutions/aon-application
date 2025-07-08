@@ -87,12 +87,6 @@ export class AonRegistry extends AonElement {
     doc.addEventListener(EVENT.CHANGE, () => {
       this.registry.document = doc.value;
       this.registry.id = undefined;
-      // getGlobalRegistries().then(r => {
-      //   if(r.length > 0) {
-      //     this.setRegistry(r[0]);
-      //   }
-      //   this.dispatchEvent(new Event(EVENT.CHANGE));
-      // });
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
     doc.addEventListener(EVENT.KEYUP, (e) => {
