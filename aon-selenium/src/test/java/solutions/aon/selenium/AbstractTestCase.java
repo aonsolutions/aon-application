@@ -29,8 +29,27 @@ public class AbstractTestCase {
 	protected static String getPassword() {
 		return System.getProperty("password", "123456");
 	}
+	
+	protected static boolean onGitHubActions(){
+		// Check if the environment variable GITHUB_ACTIONS is set to true
+		String githubActions = System.getenv("GITHUB_ACTIONS");
+		return githubActions != null && githubActions.equalsIgnoreCase("true");
+	}
 
-	protected static WebDriver newChromeDriver() {
+	public static  WebDriver newWebDriver() throws MalformedURLException, URISyntaxException {
+		WebDriver webDriver;
+		if (onGitHubActions()) {
+			// Use Remote in GitHub Actions
+			webDriver = newRemoteDriver();
+		} else {
+			// Use Chrome or Firefox locally
+			webDriver = newChromeDriver();
+			// webDriver = newFirefoxDriver();
+		}
+		return webDriver;
+	}
+
+	public static WebDriver newChromeDriver() {
 		
 		
 		ChromeOptions options = new ChromeOptions();
