@@ -172,7 +172,7 @@ public class TediValidator {
 	private static final Consumer<ValidationContext> OPERATIONS_DEADLINE = ctx -> {
 		if (ctx.getConfig() != null) {
 			Date deadline = ctx.getConfig().getOperationsDeadline();
-			if (deadline != null && deadline.after(ctx.getInvoice().getIssueDate()))
+			if (deadline != null && ctx.getInvoice().getIssueDate() != null && deadline.after(ctx.getInvoice().getIssueDate()))
 				ctx.add( InvoiceErrorMessages.C007.wrn(InvoiceErrorKey.ISSUE_DATE) );
 		}
 	};
