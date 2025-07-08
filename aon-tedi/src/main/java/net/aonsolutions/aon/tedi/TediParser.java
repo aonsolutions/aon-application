@@ -30,7 +30,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceError;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorKey;
+import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorLevel.InvoiceErrorLevelVisitor;
 import com.esferalia.aon.occam.api.model.invoice.InvoiceErrorMessages;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -840,6 +842,21 @@ public class TediParser {
 		}		
 	};
 
+	private static final Consumer<TediParserContext> INVOICE_MESSAGES = ctx ->
+		ctx.getTediResult().getInv().messageStream()
+			.filter( m -> m != null)
+			.filter( m -> AonStringUtils.isNotBlank( m.getMessage())) 
+			.map( m -> m.getLevel() == null
+				?InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.GENERIC, m.getMessage() )
+				:m.getLevel().visit( new InvoiceErrorLevelVisitor<InvoiceError>() {
+					@Override public InvoiceError visitINF() {return InvoiceErrorMessages.C300.inf( InvoiceErrorKey.GENERIC, m.getMessage());}
+					@Override public InvoiceError visitWRN() {return InvoiceErrorMessages.C300.wrn( InvoiceErrorKey.GENERIC, m.getMessage());}
+					@Override public InvoiceError visitERR() {return visitWRN();}
+				})
+			)
+			.forEach( m -> ctx.getTediResult().getInvoice().addMessage(m) )
+	;
+	
 	public static TediResult toAccountingInvoice(AONContext ctx, AonConfiguration aonCtx, Rawdoc rawdoc) {
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
@@ -868,6 +885,7 @@ public class TediParser {
 		.andThen(INVOICE_FINANCES)		
 		.andThen(INVOICE_COMMENTS)
 		.andThen(INVOICE_SETTLED_MANUALLY)
+		.andThen(INVOICE_MESSAGES)
 		.accept(tctx);
 		
 		fillVats(ctx, aonCtx, result);
