@@ -82,7 +82,10 @@ export const loadTheme = async  () => {
 			loadLink(themeUrl, 'stylesheet', 'text/css').then(() => {
 				resolve();
 				aonThemeSpan.remove();
-			});
+			}).catch((err) => {
+                reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
+                aonThemeSpan.remove();
+            });
 			
 		} catch ( err ) {
 			reject(new Error(`Something was wrong with theme '${themeUrl}' ${err}`));
