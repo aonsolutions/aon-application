@@ -1084,14 +1084,14 @@ public class InvoiceDAO {
 	private static void deleteDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		beforeDeleteDetail(ctx, config, invoice, detail);
 		
-		int count = ctx.getDslContext()
-			.delete(INVOICE_TAX)
-			.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
-			.execute();
-		ctx.log().debug("DELETE INVOICE_TAX detalles de la factura: {0} ({1} filas)",detail.getId(),count);
+		InvoiceTaxDAO.delete(ctx, f -> f.getDomainProperty().eq(detail.getDomain()).and(f.getInvoiceDetailProperty().eq(detail.getId())));
+		
+		ctx.getDslContext().delete(INVOICE_DETAIL_ACCOUNT)
+		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+		.execute();
 		
 		// Se borran la linea
-		count = ctx.getDslContext()
+		int count = ctx.getDslContext()
 			.delete(INVOICE_DETAIL)
 			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
 			.execute();
