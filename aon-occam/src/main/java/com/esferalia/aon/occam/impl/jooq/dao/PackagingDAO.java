@@ -406,6 +406,11 @@ public class PackagingDAO {
 			throw new AonCoreException("El envase destino no existe.");
 		}
 		
+		DeliveryPackaging dp = DeliveryPackagingDAO.get(ctx, f -> f.getItemProperty().eq(destinyItem.getId()));
+		if(dp != null && !dp.isEmpty()) {
+			throw new AonCoreException("El envase destino ya está en un albarán.");
+		}
+		
 		DataResponseDAO.getStream(ctx, f -> f.getSourceProperty().eq(DataResponseSource.PACKAGING_DELIVERY.value())
 		.and(f.getSourceIdProperty().eq(deliveryId))).forEach(dr -> {
 			DataResponseDetail drd = DataResponseDAO.getDataResponseDetailStream(ctx, g -> g.getDataResponseProperty().eq(dr.getId()))

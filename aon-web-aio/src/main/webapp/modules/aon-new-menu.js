@@ -279,13 +279,8 @@ export class AonNewMenu extends AonElement {
 				default/*Apps.HOME*/:
 					this.rootPanel(new AonNewDesktop(portalApps, portalNoApps, suiteApps, suiteNoApps));
 					break;
+			}		
 		}
-		
-	    let rootPanel = this.getElement("rootPanel");
-	    rootPanel.style.height = 'calc(100vh - 7rem)';
-	    rootPanel.style.marginTop = '4rem';
-		
-	}
 	
 		let detail = {
 			app,
