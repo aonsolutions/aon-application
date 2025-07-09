@@ -616,9 +616,11 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
 								.and(f.getIssueDateProperty().between(start, end));
 					} else {
+						// If no date is provided, we assume the last year
+						java.sql.Date lastYear  = new java.sql.Date(DateUtils.addYears(new Date(), -1).getTime());
 						return f.getDomainProperty().eq(ctx.getDomainId())
 								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
-								.and(f.getIssueDateProperty().isNotNull());
+								.and(f.getIssueDateProperty().ge(lastYear));
 					}
 				})
 				.filter(detail-> ArrayUtils.contains(statuses, detail.getDataValue())
