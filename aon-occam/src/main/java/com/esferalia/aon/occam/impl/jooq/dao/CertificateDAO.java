@@ -233,11 +233,26 @@ public class CertificateDAO {
 		            String ocupation = null;
 		            String cif = null;
 		            String type = null;
-		           
+		            
 		            try {
 		            	enterprise = subjectDN.split("O=\"")[1].split("\"")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+		            
+		            try {
 		            	cif = subjectDN.split("=VATES-")[1].split(",")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+		           
+		            try {
 			            type = subjectDN.split("T=")[1].split(",")[0];
+		            } catch (Exception e) {
+		            	e.printStackTrace();
+		            }
+
+		            try {
 			            ocupation = subjectDN.split("OU=")[1].split(",")[0];
 		            } catch (Exception e) {
 		            	e.printStackTrace();

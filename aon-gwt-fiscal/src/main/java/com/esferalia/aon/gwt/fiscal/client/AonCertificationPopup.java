@@ -294,7 +294,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				getCertificateInfo(params, certificates.getSelectedValue());
 			}
 		});
-
+		
 		table.addRow()
 			.addCell(l2)
 			.addCell(password);
@@ -375,12 +375,12 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				
 				@Override
 				public void onSuccess(CertificateInfo info) {
-					if (AonStringUtils.isNotBlank(info.getDocument())) {
-						document.setText(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
-					    name.setText((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
-					} else if (AonStringUtils.isNotBlank(info.getCif())) {
+					if (AonStringUtils.isNotBlank(info.getCif())) {
 						document.setText(AonStringUtils.trimToEmpty(info.getCif()).toUpperCase());
 					    name.setText((AonStringUtils.trimToEmpty(info.getEnterprise())).toUpperCase());
+					} else if (AonStringUtils.isNotBlank(info.getDocument())) {
+						document.setText(AonStringUtils.trimToEmpty(info.getDocument()).toUpperCase());
+					    name.setText((AonStringUtils.trimToEmpty(info.getSurname()) + " " + AonStringUtils.trimToEmpty(info.getName())).toUpperCase());
 					} else {
 						document.setText("");
 						name.setText("");						
