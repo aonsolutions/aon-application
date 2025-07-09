@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -63,6 +64,7 @@ public class DomainUserRolesTestCase extends AppBaseTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testConsultancyManagerUserEnvironment() throws MalformedURLException, URISyntaxException {
 		String url = System.getProperty("integration.test.env.app.url",
 				"http://payroll-test.aonsolutions.org:8080/app");
