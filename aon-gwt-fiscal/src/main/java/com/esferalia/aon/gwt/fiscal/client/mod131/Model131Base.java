@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToastModel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtilsBis;
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelEmailUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.js.JsAccountingBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.accounting.js.JsAccountingBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
@@ -617,7 +617,7 @@ abstract class Model131Base extends DockLayoutPanel {
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
 				showPaymentInfo(getModel());
-				FiscalModelUtilsBis.sendEmail(getCallback(), result); // Si ha ido bien el cambio de estado, entonces se envía email de notificación
+				FiscalModelEmailUtils.sendEmail(getCallback(), result); // Si ha ido bien el cambio de estado, entonces se envía email de notificación
 			}
 
 			@Override
