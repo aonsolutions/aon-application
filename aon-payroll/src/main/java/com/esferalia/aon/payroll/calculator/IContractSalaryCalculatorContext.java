@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -50,6 +51,8 @@ public interface IContractSalaryCalculatorContext extends
 	public SalaryType getSalaryType();
 
 	public String getCcc();
+
+	public CCCType getCCCType();
 
 	public String getEnterpriseName();
 	
