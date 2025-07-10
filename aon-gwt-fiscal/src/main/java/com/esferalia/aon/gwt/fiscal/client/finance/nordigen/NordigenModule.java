@@ -76,6 +76,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 public class NordigenModule extends MainEntryPoint {
 	private static final String GWT_SELECTOR_CLASS = "gwt-Selector";
@@ -127,6 +128,8 @@ public class NordigenModule extends MainEntryPoint {
 			.setUser(getCurrentUser())
 		;
 		this.onModuleLoad( options );
+        
+        this.repairBank( options );
 	}
 	
 	public void onModuleLoad( final NordigenModuleOptions opt ) {
@@ -992,7 +995,7 @@ public class NordigenModule extends MainEntryPoint {
 			movementsFlow.add(periodMovContainer);
 			
 			ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
-			if (!isMobile()) {				
+			if (!isMobile()) {
 				movementsPanel.getElement().getStyle().setProperty(MIN_WIDTH, "700px");
 				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
 			}
@@ -1948,7 +1951,7 @@ public class NordigenModule extends MainEntryPoint {
 			}
 		});
 	}
-	
+
 	private void completeMovementsTable(FlexTable tab, List<NordigenBankStatement> statements, String periodStr, NordigenBankAccount nordigenBankAccount) {
 		periodStr = periodStr != null ? periodStr : "";
 		if (statements != null && !statements.isEmpty()) {
@@ -2057,7 +2060,7 @@ public class NordigenModule extends MainEntryPoint {
 			balanceLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 			descriptionLabel.getElement().getStyle().setFontSize(13, Unit.PX);
 			amountLabel.getElement().getStyle().setFontSize(14, Unit.PX);
-		} else {				
+		} else {
 			balanceLabel.addStyleName(AON.CSS.aonFontLarger());
 			descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
 			amountLabel.addStyleName(AON.CSS.aonFontMedium());
@@ -2232,4 +2235,66 @@ public class NordigenModule extends MainEntryPoint {
           aonLoader.removeFromParent();
       }
     }
+    
+  /*
+    Importados -- 
+      import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+      import org.jooq.Record1;
+  */
+    public static void repairBank(NordigenModuleOptions opt) {
+      NORDIGEN_SERVICE.getByRequisitionIsNotNull(opt.getOccam(), new AsyncCallback<List<RegistryBank>>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public void onSuccess(List<RegistryBank> banks) {
+          int totalBanks = banks.size();
+          AtomicInteger completedRequests = new AtomicInteger(0);
+
+          for(int i = 0; i < banks.size(); i++){
+            // Bancos activos, que tienen requisition
+            RegistryBank bank = banks.get(i);
+            logToConsoleString("--------------------------------------");
+            logToConsole( bank.getId() );
+            logToConsoleString( bank.getRequisition() );
+            logToConsoleString("******************************************");
+            // Comprobar si tiene mas de un IBAN asociado al requisition
+            NORDIGEN_SERVICE.getRequisition(opt.getConfiguration().getToken(), bank.getRequisition(), new AsyncCallback<NordigenRequisition>() {
+              @Override
+              public void onFailure(Throwable caught) {
+                  LOGGER.info("hola");
+                  LOGGER.info(caught.getMessage());
+              }
+
+              @Override
+              public void onSuccess(NordigenRequisition result) {
+                logToConsoleString("+++++++++++++++++++++++++++++++++++++++");
+                List<String> IBANS_id = result.getAccounts();
+                logToConsole( IBANS_id.size() );
+                // Recorremos IBANS
+                for (String iban : IBANS_id) {
+                    logToConsoleString(iban);
+                }
+
+                // Incrementar contador de respuestas completadas
+                if (completedRequests.incrementAndGet() == totalBanks) {
+                    // Realiza alguna acción cuando todas las respuestas estén listas
+                    logToConsoleString("Todas las respuestas se han procesado.");
+                }
+              }
+            });
+          }
+        }
+
+        private native void logToConsole(int bankId) /*-{
+          console.log(bankId);
+        }-*/;
+        private native void logToConsoleString(String bankId) /*-{
+          console.log(bankId);
+        }-*/;
+      });
+    }
+
 }

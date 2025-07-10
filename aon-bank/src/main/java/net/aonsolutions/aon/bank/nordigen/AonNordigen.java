@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.impl.jooq.dao.BankStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenCallLogDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.NordigenDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -54,6 +55,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import java.util.Map;
+import org.jooq.Record1;
 
 public class AonNordigen  {
 
@@ -61,7 +63,6 @@ public class AonNordigen  {
 	private static final Pattern LINK_PATTERN = Pattern.compile(LINK_REGEX, Pattern.CASE_INSENSITIVE);
 	private static final Integer MAX_DAYS = 90;
 
-	
 	private AonNordigen() {
 	}
 	
@@ -450,7 +451,7 @@ public class AonNordigen  {
 		rbank.setRequisition(null);
 		AON.saveRegistryBank(occam, rbank);
 		if (requisition != null) {
-			deleteRequisition(token, requisition);				
+			deleteRequisition(token, requisition);
 		}
 	}
 	
@@ -759,22 +760,33 @@ public class AonNordigen  {
 	    e.printStackTrace();
 	}
 
-
 	// -------------------------- Métodos con tests.
 
-	static void deleteAgreement(NordigenAccessToken token, NordigenAgreement agreement)  {
+	static void deleteAgreement(NordigenAccessToken token, NordigenAgreement agreement) {
 		NordigenAPI.deleteEndUserAgreement(token.getAccess(), agreement != null ? agreement.getId() : null);
 	}
 	
-	static NordigenRequisition createRequisition(NordigenAccessToken token, NordigenAgreement agreement, String redirect)  {
+	static NordigenRequisition createRequisition(NordigenAccessToken token, NordigenAgreement agreement, String redirect) {
 		return  createRequisition(token,
 			agreement != null ? agreement.getId() : null,
 			agreement != null ? agreement.getInstitutionId() : null,
 			redirect);
 	}
 	
-	static NordigenAgreement createAgreementForTest(NordigenAccessToken token, String institutionId)  {
+	static NordigenAgreement createAgreementForTest(NordigenAccessToken token, String institutionId) {
 		NordigenAgreement agreement = NordigenAPI.createEndUserAgreement(token.getAccess(), MAX_DAYS, MAX_DAYS, null, institutionId);
 		return agreement;
 	}
+
+    /*
+      Se ha importados:
+        import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
+        import org.jooq.Record1;
+      Una vez usado ELIMINAR
+    */
+    public static List<RegistryBank> getByRequisitionIsNotNull(Occam occam){
+      try (CloseableAONContext ctx =  AONContext.getAONContext(occam)) {
+        return RegistryBankDAO.getByRequisitionIsNotNull(ctx);
+      }
+    }
 }

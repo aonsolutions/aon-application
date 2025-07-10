@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenException;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 
 import jakarta.servlet.annotation.WebServlet;
@@ -77,7 +78,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<NordigenInstitution> getInstitutions(NordigenAccessToken token, Country country) throws NordigenException {
 		return AonNordigen.getInstitutionsByCountry(token, country);
 	}
-	@Override 
+	@Override
 	public List<NordigenBankAccount> setAllBankAccountValues(Occam occam, NordigenAccessToken token) throws NordigenException {
 		return AonNordigen.setAllBankAccountValues(occam, token);
 	}
@@ -100,4 +101,14 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<String> getCallStatuses(Occam occam, NordigenBankAccount account){
 		return AonNordigen.getCallStatuses(occam, account);
 	}
+    
+    /*
+      Se ha importados:
+        import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+      Una vez usado ELIMINAR
+    */
+    @Override
+    public List<RegistryBank> getByRequisitionIsNotNull(Occam occam){
+      return AonNordigen.getByRequisitionIsNotNull(occam);
+    }
 }

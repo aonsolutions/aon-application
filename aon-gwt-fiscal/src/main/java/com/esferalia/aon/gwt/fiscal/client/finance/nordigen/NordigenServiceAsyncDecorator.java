@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -117,5 +118,10 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 	public void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>> callback) {
 		AON.start();
 		fsa.getCallStatuses(occam, account, callback);
-	} 
+	}
+    
+	public void getByRequisitionIsNotNull(Occam occam, AsyncCallback<List<RegistryBank>> callback) {
+      AON.start();
+      fsa.getByRequisitionIsNotNull(occam, callback);
+	}
 }

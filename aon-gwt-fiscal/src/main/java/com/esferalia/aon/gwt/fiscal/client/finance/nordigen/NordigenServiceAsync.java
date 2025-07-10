@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenConfiguration;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -28,8 +29,9 @@ public interface NordigenServiceAsync {
 	void getInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback);
 	void setAllBankAccountValues(Occam occam, NordigenAccessToken token, AsyncCallback<List<NordigenBankAccount>> callback);
 	void getRemainingDays(Occam occam,NordigenBankAccount account,AsyncCallback<Integer> callback);
-	void getRemainingCallsToday(Occam occam, NordigenBankAccount account, AsyncCallback<Integer> callback) ;
-	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback); 
-	void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>>callback); 
+	void getRemainingCallsToday(Occam occam, NordigenBankAccount account, AsyncCallback<Integer> callback);
+	void getLatestRetryAfter(Occam occam, NordigenBankAccount account, AsyncCallback<String> callback);
+	void getCallStatuses(Occam occam, NordigenBankAccount account, AsyncCallback<List<String>> callback);
+    void getByRequisitionIsNotNull(Occam occam, AsyncCallback<List<RegistryBank>> callback);
 
 }
